@@ -2,13 +2,17 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 // paquetes de terceros
 import { NgbModule, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap'; // https://ng-bootstrap.github.io/
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { PushNotificationComponent } from './../app/components/notification/notification.component';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { ToastrModule } from 'ngx-toastr';
 
 // rutas
 import { _routes } from './app.routes';
@@ -152,19 +156,15 @@ import { RoundNumberPipe } from './pipes/round-number.pipe';
 import { FocusDirective } from './directives/focus.directive';
 import { DeleteMovementOfCashComponent } from './components/delete-movement-of-cash/delete-movement-of-cash.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
-import { AddDepositComponent } from './components/add-deposit/add-deposit.component';
+import { DepositComponent } from './components/deposit/deposit.component';
 import { ListDepositsComponent } from './components/list-deposits/list-deposits.component';
-import { UpdateDepositComponent } from './components/update-deposit/update-deposit.component';
-import { DeleteDepositComponent } from './components/delete-deposit/delete-deposit.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
 import { ReportSalesByPaymentMethodComponent } from './components/report-sales-by-payment-method/report-sales-by-payment-method.component';
 import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
 import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
 import { ReportSalesByCategoryComponent } from './components/report-sales-by-category/report-sales-by-category.component';
 import { CashBoxComponent } from './components/cash-box/cash-box.component';
-import { AddLocationComponent } from './components/add-location/add-location.component';
-import { UpdateLocationComponent } from './components/update-location/update-location.component';
-import { DeleteLocationComponent } from './components/delete-location/delete-location.component';
+import { LocationComponent } from './components/location/location.component';
 import { ListLocationsComponent } from './components/list-locations/list-locations.component';
 import { CompanyNewsComponent } from './components/company-news/company-news.component';
 import { ListMovementOfCashesComponent } from './components/list-movements-of-cashes/list-movements-of-cashes.component';
@@ -256,8 +256,13 @@ import { PrintVatBookComponent } from './components/print/print-vat-book/print-v
 import { PrintLabelComponent } from './components/print/print-label/print-label.component';
 import { PrintTransactionTypeComponent } from './components/print/print-transaction-type/print-transaction-type.component';
 import { ProgressbarComponent } from './components/progressbar/progressbar.component';
+import { ReportsList } from './components/reports-list/reports-list.component';
 
-// const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
+const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} };
+
+export function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http);
+}
 
 @NgModule({
   declarations: [
@@ -355,10 +360,8 @@ import { ProgressbarComponent } from './components/progressbar/progressbar.compo
     ListPaymentMethodsComponent,
     DeleteMovementOfCashComponent,
     StatisticsComponent,
-    AddDepositComponent,
+    DepositComponent,
     ListDepositsComponent,
-    UpdateDepositComponent,
-    DeleteDepositComponent,
     ReportBestSellingArticleComponent,
     ReportSalesByPaymentMethodComponent,
     ReportSalesByClientComponent,
@@ -367,9 +370,7 @@ import { ProgressbarComponent } from './components/progressbar/progressbar.compo
     ReportBirthdayComponent,
     ReportSalesByEmployeeComponent,
     CashBoxComponent,
-    AddLocationComponent,
-    UpdateLocationComponent,
-    DeleteLocationComponent,
+    LocationComponent,
     ListLocationsComponent,
     CompanyNewsComponent,
     ListMovementOfCashesComponent,
@@ -440,7 +441,8 @@ import { ProgressbarComponent } from './components/progressbar/progressbar.compo
     PrintVatBookComponent,
     PrintLabelComponent,
     PrintTransactionTypeComponent,
-    ProgressbarComponent
+    ProgressbarComponent,
+    ReportsList
   ],
   entryComponents: [
     HomeComponent,
@@ -530,10 +532,8 @@ import { ProgressbarComponent } from './components/progressbar/progressbar.compo
     ListPaymentMethodsComponent,
     DeleteMovementOfCashComponent,
     StatisticsComponent,
-    AddDepositComponent,
+    DepositComponent,
     ListDepositsComponent,
-    UpdateDepositComponent,
-    DeleteDepositComponent,
     ReportBestSellingArticleComponent,
     ReportSalesByPaymentMethodComponent,
     ReportSalesByClientComponent,
@@ -542,9 +542,7 @@ import { ProgressbarComponent } from './components/progressbar/progressbar.compo
     ReportBirthdayComponent,
     ReportSalesByEmployeeComponent,
     CashBoxComponent,
-    AddLocationComponent,
-    UpdateLocationComponent,
-    DeleteLocationComponent,
+    LocationComponent,
     ListLocationsComponent,
     CompanyNewsComponent,
     ListMovementOfCashesComponent,
@@ -608,7 +606,8 @@ import { ProgressbarComponent } from './components/progressbar/progressbar.compo
     PrintVatBookComponent,
     PrintLabelComponent,
     PrintTransactionTypeComponent,
-    ProgressbarComponent
+    ProgressbarComponent,
+    ReportsList
   ],
   imports: [
     BrowserModule,
@@ -619,7 +618,16 @@ import { ProgressbarComponent } from './components/progressbar/progressbar.compo
     NgbModule.forRoot(),
     NgxPaginationModule,
     HttpClientModule,
-    // SocketIoModule.forRoot(config),
+    DragDropModule,
+    TranslateModule.forRoot({
+      loader: {
+          provide: TranslateLoader,
+          useFactory: HttpLoaderFactory,
+          deps: [HttpClient]
+      }
+    }),
+    SocketIoModule.forRoot(configSocket),
+    ToastrModule.forRoot(),
   ],
   providers: [
     NgbActiveModal,

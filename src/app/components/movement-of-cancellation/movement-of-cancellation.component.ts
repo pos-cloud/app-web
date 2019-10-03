@@ -22,6 +22,7 @@ import { Taxes } from 'app/models/taxes';
 import { Config } from 'app/app.config';
 import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
 import { Router } from '@angular/router';
+import { TaxBase } from 'app/models/tax';
 
 @Component({
   selector: 'app-movement-of-cancellation',
@@ -593,14 +594,14 @@ export class MovementOfCancellationComponent implements OnInit {
                     let tax: Taxes = new Taxes();
                     tax.percentage = this.roundNumber.transform(taxAux.percentage);
                     tax.tax = taxAux.tax;
-                    tax.taxBase = movementOfArticle.salePrice;
-                    if(tax.percentage === 0 && tax.taxAmount && tax.taxAmount !== 0) {
-                      tax.taxAmount = tax.taxAmount * movementOfArticle.amount;
-                    } else {
-                      tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+                    if(tax.tax.taxBase == TaxBase.Neto) {
+                      tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice);
                     }
-                    tax.taxBase = this.roundNumber.transform(tax.taxBase);
-                    tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
+                    if(tax.percentage === 0) {
+                      tax.taxAmount = this.roundNumber.transform(tax.taxAmount * movementOfArticle.amount);
+                    } else {
+                      tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+                    }
                     movementOfArticle.salePrice += tax.taxAmount;
                     taxes.push(tax);
                   }
@@ -678,12 +679,20 @@ export class MovementOfCancellationComponent implements OnInit {
     if (this.transactionDestination.type.requestTaxes) {
       if (movementOfArticle.article && movementOfArticle.article.taxes && movementOfArticle.article.taxes.length > 0) {
         let taxes: Taxes[] = new Array();
-        for (let articleTax of movementOfArticle.article.taxes) {
-          articleTax.taxBase = taxedAmount;
-          if(articleTax.percentage && articleTax.percentage !== 0) {
-            articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
+        for (let articleTax of movementOfArticle.taxes) {
+          if(articleTax.tax.taxBase === TaxBase.Neto) {
+            articleTax.taxBase = taxedAmount;
           } else {
-            articleTax.taxAmount = articleTax.taxAmount * movementOfArticle.amount;
+            articleTax.taxBase = 0;
+          }
+          if(articleTax.percentage === 0) {
+            for (let artTax of movementOfArticle.article.taxes) {
+              if(artTax.tax._id === articleTax.tax._id) {
+                articleTax.taxAmount = this.roundNumber.transform(artTax.taxAmount * movementOfArticle.amount);
+              }
+            }
+          } else {
+            articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
           }
           taxes.push(articleTax);
           movementOfArticle.costPrice += articleTax.taxAmount;
@@ -749,21 +758,23 @@ export class MovementOfCancellationComponent implements OnInit {
     if (this.transactionDestination.type.requestTaxes) {
       let taxes: Taxes[] = new Array();
       if (movementOfArticle.article && movementOfArticle.article.taxes && movementOfArticle.article.taxes.length > 0) {
+        let impInt: number = 0;
+        for (let taxAux of movementOfArticle.article.taxes) {
+          if(taxAux.percentage === 0) {
+            impInt = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount);
+          }
+        }
         for (let taxAux of movementOfArticle.article.taxes) {
           let tax: Taxes = new Taxes();
           tax.percentage = this.roundNumber.transform(taxAux.percentage);
           tax.tax = taxAux.tax;
-          if(tax.percentage === 0 && tax.taxAmount && tax.taxAmount !== 0) {
-            tax.taxAmount = tax.taxAmount * movementOfArticle.amount;
+          if(tax.percentage === 0) {
+            tax.taxAmount = impInt;
+            tax.taxBase = 0;
           } else {
-            tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-            if(tax.taxBase === 0) {
-              tax.taxBase = movementOfArticle.salePrice;
-            }
-            tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+            tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice - impInt) / ((tax.percentage / 100) + 1));
+            tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
           }
-          tax.taxBase = this.roundNumber.transform(tax.taxBase);
-          tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
           taxes.push(tax);
         }
       }

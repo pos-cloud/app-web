@@ -59,7 +59,6 @@
         <div class="center-content">
           <div class="row">
             <div class="col-md-12" align="right">
-              <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
               <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid || loading">
                 <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
                 <span *ngIf="!loading">Iniciar</span>

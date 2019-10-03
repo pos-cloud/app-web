@@ -9,6 +9,7 @@ import { ConfigService } from './services/config.service';
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 import { AuthService } from './services/auth.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -30,7 +31,9 @@ export class AppComponent {
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal,
     public _router: Router,
+    private _translateService: TranslateService
   ) {
+    this._translateService.setDefaultLang('es');
     this.setApiConfigurationSettings();
     this.config$ = this._configService.getConfig;
   }

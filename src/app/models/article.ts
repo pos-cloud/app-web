@@ -33,8 +33,20 @@ export class Article {
   public salePrice: number = 0.00;
   public currency: Currency;
   public make: Make;
-  public deposit: Deposit;
-  public location: Location;
+  public deposits: [{
+      _id: string;
+      deposit : Deposit,
+      capacity : number;	
+  }];
+  public locations: [{
+      _id: string;
+      location : Location
+  }];
+  public children: [{
+      _id: string;
+      article : Article,
+      quantity : number
+  }];
   public category: Category;
   public barcode: string;
   public printIn: ArticlePrintIn = ArticlePrintIn.Counter;
@@ -47,6 +59,7 @@ export class Article {
   public favourite: Boolean = false;
   public picture: string = 'default.jpg';
   public providers : Company[];
+  public operationType : string;
   public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public updateUser: User;

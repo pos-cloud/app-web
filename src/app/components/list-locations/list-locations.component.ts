@@ -6,9 +6,7 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Location } from './../../models/location';
 import { LocationService } from './../../services/location.service';
 
-import { AddLocationComponent } from './../../components/add-location/add-location.component';
-import { UpdateLocationComponent } from './../../components/update-location/update-location.component';
-import { DeleteLocationComponent } from './../../components/delete-location/delete-location.component';
+import { LocationComponent } from '../location/location.component';
 
 @Component({
   selector: 'app-list-locations',
@@ -57,6 +55,7 @@ export class ListLocationsComponent implements OnInit {
             this.areLocationsEmpty = true;
           } else {
             this.hideMessage();
+            console.log(result.locations)
             this.loading = false;
             this.locations = result.locations;
             this.totalItems = this.locations.length;
@@ -89,21 +88,26 @@ export class ListLocationsComponent implements OnInit {
     let modalRef;
     switch(op) {
       case 'view':
-        modalRef = this._modalService.open(UpdateLocationComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.location = location;
+        modalRef = this._modalService.open(LocationComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.locationId = location._id;
         modalRef.componentInstance.readonly = true;
+        modalRef.componentInstance.operation = "view";
         break;
       case 'add' :
-        modalRef = this._modalService.open(AddLocationComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
+        modalRef = this._modalService.open(LocationComponent, { size: 'lg', backdrop: 'static' })
+        modalRef.componentInstance.readonly = false;
+        modalRef.componentInstance.operation = "add";
+        modalRef.result.then((result) => {
           this.getLocations();
         }, (reason) => {
           this.getLocations();
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(UpdateLocationComponent, { size: 'lg', backdrop: 'static' });
-          modalRef.componentInstance.location = location;
+          modalRef = this._modalService.open(LocationComponent, { size: 'lg', backdrop: 'static' });
+          modalRef.componentInstance.locationId = location._id;
           modalRef.componentInstance.readonly = false;
+          modalRef.componentInstance.operation = "update";
           modalRef.result.then((result) => {
             if (result === 'save_close') {
               this.getLocations();
@@ -113,8 +117,10 @@ export class ListLocationsComponent implements OnInit {
           });
         break;
       case 'delete' :
-          modalRef = this._modalService.open(DeleteLocationComponent, { size: 'lg', backdrop: 'static' })
-          modalRef.componentInstance.location = location;
+          modalRef = this._modalService.open(LocationComponent, { size: 'lg', backdrop: 'static' })
+          modalRef.componentInstance.locationId = location._id;
+          modalRef.componentInstance.readonly = true;
+          modalRef.componentInstance.operation = "delete";
           modalRef.result.then((result) => {
             if (result === 'delete_close') {
               this.getLocations();

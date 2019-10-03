@@ -20,12 +20,16 @@
             <th (click)="orderBy('branch','name')">Sucursal </th>
             <th (click)="orderBy('name')">Nombre </th>
             <th (click)="orderBy('capacity')">Capacidad </th>
+            <th (click)="orderBy('default')">Defecto</th>
+
           </tr>
           <tr class="filters">
             <th></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterBranch" placeholder="Sucursal..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterName" placeholder="Nombre..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterCapacity" placeholder="Capacidad..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterDefault" placeholder="Defecto..."></th>
+
           </tr>
         </thead>
         <tbody>
@@ -37,6 +41,7 @@
           <tr *ngFor="let deposit of deposits | filter: filterName:'name'
                                               | filter: filterBranch:'name':'branch'
                                               | filter: filterCapacity:'capacity'
+                                              | filter: filterDefault:'default'
                                               | orderBy: orderTerm: propertyTerm
                                               | paginate: { itemsPerPage: itemsPerPage,
                                                         currentPage: p,
@@ -57,6 +62,8 @@
             <td class="flat" *ngIf="!deposit.branch"></td>
             <td class="flat">{{deposit.name}}</td>
             <td class="flat">{{deposit.capacity}}</td>
+            <td class="flat">{{deposit.default}}</td>
+
           </tr>
           <tr align="center" *ngIf="areDepositsEmpty && !loading">
             <td colspan="4">No se encontraron depósitos</td>

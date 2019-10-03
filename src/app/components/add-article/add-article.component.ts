@@ -1,10 +1,10 @@
 // Angular
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 
 // Terceros
-import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 // Models
 import { Article, ArticlePrintIn, ArticleType } from './../../models/article';
@@ -57,6 +57,7 @@ export class AddArticleComponent implements OnInit {
   @Input() operation: string;
   @Input() readonly: boolean;
   public articleStock: ArticleStock;
+  public articles : Article [];
   public config: Config;
   public articleForm: FormGroup;
   public currencies: Currency[] = new Array();
@@ -82,6 +83,7 @@ export class AddArticleComponent implements OnInit {
   public articleType: string;
   public filtersTaxClassification: TaxClassification[] = [TaxClassification.Tax];
   public lastPricePurchase: number = 0.00;
+  public lastDatePurchase: string;
   public otherFieldsAlfabetico = false;
   public otherFieldsNumber = false;
   public orientation: string = 'horizontal';
@@ -154,6 +156,7 @@ export class AddArticleComponent implements OnInit {
     public _variantService: VariantService,
     public _depositService: DepositService,
     public _locationService: LocationService,
+    public _modalService : NgbModal,
     public _makeService: MakeService,
     public _categoryService: CategoryService,
     public _companyService : CompanyService,
@@ -178,6 +181,8 @@ export class AddArticleComponent implements OnInit {
     } else if (pathLocation[2] === "variantes") {
       this.articleType = "Variante";
     }
+
+    this.getArticles();
   }
 
   async ngOnInit() {
@@ -230,6 +235,23 @@ export class AddArticleComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public getArticles() {
+    this._articleService.getArticles().subscribe(
+      result =>{
+        if(result && result.articles){
+          this.articles = result.articles
+        } else {
+          this.showMessage("No se encontraron articulos", 'danger', false);
+          this.loading = false;
+        }
+      },
+      error =>{
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    )
   }
 
   ngAfterViewInit() {
@@ -292,15 +314,10 @@ export class AddArticleComponent implements OnInit {
       'unitOfMeasurement': [this.article.unitOfMeasurement, [
         ]
       ],
-      'deposit' : [this.article.deposit, [
-        ]
-      ],
-      'location' : [this.article.location, [
-        ]
-      ],
-      'observation': [this.article.observation, [
-        ]
-      ],
+      'deposits' :  this._fb.array([]),
+      'locations' : this._fb.array([]),
+      'children' : this._fb.array([]),
+      'observation': [this.article.observation, []],
       'barcode': [this.article.barcode, [
         Validators.maxLength(14)
         ]
@@ -330,7 +347,8 @@ export class AddArticleComponent implements OnInit {
         ]
       ],
       'providers' : [this.article.providers, []],
-      'lastPricePurchase' : [0.00,[]]
+      'lastPricePurchase' : [0.00,[]],
+      'lastDatePurchase' : [0.00,[]]
     });
 
     this.articleForm.valueChanges.subscribe(data => this.onValueChanged(data));
@@ -354,6 +372,151 @@ export class AddArticleComponent implements OnInit {
         }
       }
     }
+  }
+
+  public getDeposit(id: string) : Promise<Deposit> {
+
+    return new Promise<Deposit>((resolve, reject) => {
+      this._depositService.getDeposit(id).subscribe(
+        result => {
+          if(result && result.deposit){
+            resolve(result.deposit)
+          } else {
+            resolve(null)
+          }
+        }
+      )
+    })
+  }
+  
+  async addDeposit(depositForm: NgForm) {
+    
+    let valid = true;
+    const deposits = this.articleForm.controls.deposits as FormArray;
+
+    let deposit = await this.getDeposit(depositForm.value.deposit)
+
+    this.articleForm.controls.deposits.value.forEach(async element => {
+
+      let depositAux = await this.getDeposit(element.deposit);
+
+      if(depositAux.branch._id === deposit.branch._id){
+        valid = false;
+        this.showMessage("Solo puede tener un deposito por sucursal","danger",true)
+      }
+
+    });
+
+
+    this.articleForm.controls.deposits.value.forEach(element => {
+
+      if(depositForm.value.deposit == element.deposit){
+        valid = false;
+        this.showMessage("El depósito ya existe","danger",true)
+      }
+
+    });
+
+    if(depositForm.value.deposit == '' || depositForm.value.deposit == 0 || depositForm.value.deposit == null ){
+      this.showMessage("Debe seleccionar un depósito","danger",true)
+      valid = false;
+    }
+
+    setTimeout(() => {
+      if(valid){
+        deposits.push(
+          this._fb.group({
+            _id: null,
+            deposit : depositForm.value.deposit,
+            capacity : 0
+          })
+        );
+        depositForm.resetForm();
+      }
+    }, 5000);
+
+  }
+
+  async addLocation(locationForm : NgForm){
+    
+    let valid = true;
+    const locations = this.articleForm.controls.locations as FormArray;
+
+    if(locationForm.value.location == '' || locationForm.value.location == 0 || locationForm.value.location == null ){
+      this.showMessage("Debe seleccionar una ubicación","danger",true)
+      valid = false;
+    }
+
+    this.articleForm.controls.locations.value.forEach(element => {
+
+      if(locationForm.value.location == element.location){
+        valid = false;
+        this.showMessage("La ubicación ya existe","danger",true)
+      }
+
+    });
+
+    if(valid){
+      locations.push(
+        this._fb.group({
+          _id: null,
+          location : locationForm.value.location,
+        })
+      );
+      locationForm.resetForm();
+    }
+  }
+
+  async addChildren(childrenForm : NgForm){
+    
+    let valid = true;
+    const children = this.articleForm.controls.children as FormArray;
+
+    this.articleForm.controls.children.value.forEach(element => {
+
+      if(childrenForm.value.article == element.article){
+        valid = false;
+        this.showMessage("El producto ya existe","danger",true)
+      }
+
+    });
+
+    if(childrenForm.value.quantity == '' || childrenForm.value.quantity == 0 || childrenForm.value.quantity == null ){
+      this.showMessage("El valor no puede ser 0 o vacio","danger",true)
+      valid = false;
+    }
+
+    if(childrenForm.value.article == '' || childrenForm.value.article == 0 || childrenForm.value.article == null ){
+      this.showMessage("Debe seleccionar un producto","danger",true)
+      valid = false;
+    }
+
+    if(valid){
+      children.push(
+        this._fb.group({
+          _id: null,
+          article : childrenForm.value.article,
+          quantity : childrenForm.value.quantity
+        })
+      );
+      childrenForm.resetForm();
+    }
+  }
+
+
+  deleteDeposit(index) {
+    let control = <FormArray>this.articleForm.controls.deposits;
+    control.removeAt(index)
+  }
+
+  deleteLocation(index) {
+    let control = <FormArray>this.articleForm.controls.locations;
+    control.removeAt(index)
+  }
+
+  deleteChildren(index) {
+    let control = <FormArray>this.articleForm.controls.children;
+    control.removeAt(index)
   }
 
   public getCurrencies(): void {
@@ -404,6 +567,8 @@ export class AddArticleComponent implements OnInit {
             this.article.code = '';
           }
           this.setValuesForm();
+          this.setValuesArray();
+
         }
       },
       error => {
@@ -411,6 +576,54 @@ export class AddArticleComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public setValuesArray() : void {
+
+    if(this.article.deposits && this.article.deposits.length > 0){
+      let deposits = this.articleForm.controls.deposits as FormArray;
+      this.article.deposits.forEach(x => {
+
+        if(x.deposit && x.deposit._id && x.deposit.operationType != 'D') {
+          deposits.push(this._fb.group({ 
+            '_id': null,
+            'deposit' : x.deposit._id,
+            'capacity' : x.capacity
+          }))
+        }
+      })
+    }
+
+    if(this.article.locations && this.article.locations.length > 0){
+      let locations = this.articleForm.controls.locations as FormArray;
+      this.article.locations.forEach(x => {
+
+        let locationId;
+        if(x.location && x.location._id && x.location.operationType != 'D') {
+          locationId = x.location._id;
+          locations.push(this._fb.group({ 
+            '_id': null,
+            'location' : locationId
+          }))
+        }
+
+      })
+    }
+
+    if(this.article.children && this.article.children.length > 0){
+      let children = this.articleForm.controls.children as FormArray;
+      this.article.children.forEach(x => {
+
+        if(x.article && x.article._id && x.article.operationType != 'D') {
+          children.push(this._fb.group({ 
+            '_id': null,
+            'article' :  x.article._id,
+            'quantity' : x.quantity
+          }))
+        }
+
+      })
+    }
   }
 
   public getVariantsByArticleParent(): void {
@@ -511,6 +724,19 @@ export class AddArticleComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  async openModal(op: string, articleId?: string) {
+
+    let modalRef;
+    switch (op) {
+      case 'view':
+        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.articleId = articleId;
+        modalRef.componentInstance.readonly = true;
+        modalRef.componentInstance.operation = "view";
+        break;
+    }
   }
 
   public saveArticleStock(): void {
@@ -666,12 +892,18 @@ export class AddArticleComponent implements OnInit {
 
     match = JSON.parse(match);
 
+    let timezone = "-03:00";
+    if(Config.timezone && Config.timezone !== '') {
+      timezone = Config.timezone.split('UTC')[1];
+    }
+
     let project = {
         "transaction.state": 1,
         "transaction.operationType": 1,
         "article._id": 1,
         "operationType": 1,
         "transaction.endDate": 1,
+        'endDate': { $dateToString: { date: "$transaction.endDate", format: "%d/%m/%Y", timezone: timezone }},
         "transaction.type.name": 1,
         "transaction.type.transactionMovement" : 1,
         "transaction._id": 1,
@@ -704,6 +936,7 @@ export class AddArticleComponent implements OnInit {
         if(result && result[0] && result[0].movementsOfArticles && result[0].movementsOfArticles.length > 0) {
           let movementOfArticle = result[0].movementsOfArticles[0];
           this.lastPricePurchase = this.roundNumber.transform(movementOfArticle.basePrice / movementOfArticle.amount);
+          this.lastDatePurchase = movementOfArticle['endDate'];
           let quotation = 1;
           if(movementOfArticle.transaction && movementOfArticle.transaction.quotation) {
             quotation = movementOfArticle.transaction.quotation;
@@ -944,28 +1177,6 @@ export class AddArticleComponent implements OnInit {
       }
     }
 
-    let deposit;
-    if (!this.article.deposit) {
-      deposit = null;
-    } else {
-      if (this.article.deposit._id) {
-        deposit = this.article.deposit._id;
-      } else {
-        deposit = this.article.deposit;
-      }
-    }
-
-    let location;
-    if (!this.article.location) {
-      location = null;
-    } else {
-      if (this.article.location._id) {
-        location = this.article.location._id;
-      } else {
-        location = this.article.location;
-      }
-    }
-
     if (!this.article.description) { this.article.description = ''; }
     if (!this.article.posDescription) { this.article.posDescription = ''; }
     if (!this.article.basePrice) { this.article.basePrice = 0.00; }
@@ -1026,8 +1237,6 @@ export class AddArticleComponent implements OnInit {
       'codeSAT': this.article.codeSAT,
       'currency': currency,
       'make': make,
-      'deposit' : deposit,
-      'location' : location,
       'description': this.article.description,
       'posDescription': this.article.posDescription,
       'basePrice': this.article.basePrice,
@@ -1052,7 +1261,8 @@ export class AddArticleComponent implements OnInit {
       'lastPricePurchase' : lastPricePurchase
     };
 
-    this.articleForm.setValue(values);
+
+    this.articleForm.patchValue(values);
   }
 
   public addArticle(): void {

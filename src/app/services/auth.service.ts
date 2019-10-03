@@ -6,11 +6,7 @@ import { Observable } from "rxjs/Observable";
 import { map, catchError } from "rxjs/operators";
 
 import { User } from 'app/models/user';
-import { Employee } from 'app/models/employee';
-import { EmployeeType } from 'app/models/employee-type';
 import { Config } from 'app/app.config';
-import { Branch } from 'app/models/branch';
-import { Origin } from 'app/models/origin';
 
 @Injectable()
 export class AuthService {

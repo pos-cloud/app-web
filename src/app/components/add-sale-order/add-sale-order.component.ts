@@ -62,7 +62,7 @@ import { CancellationType } from 'app/models/cancellation-type';
 import { ListCategoriesComponent } from '../list-categories/list-categories.component';
 import { ImportComponent } from '../import/import.component';
 import { MovementOfCash } from 'app/models/movement-of-cash';
-import { TaxClassification } from 'app/models/tax';
+import { TaxClassification, TaxBase } from 'app/models/tax';
 import { ClaimService } from 'app/services/claim.service';
 import { Claim, ClaimPriority, ClaimType } from 'app/models/claim';
 import { TransportService } from 'app/services/transport.service';
@@ -72,7 +72,12 @@ import { ConfigService } from 'app/services/config.service';
 import { ListArticlesPosComponent } from '../list-articles-pos/list-articles-pos.component';
 import { PriceList } from 'app/models/price-list';
 import { PriceListService } from 'app/services/price-list.service';
+<<<<<<< HEAD
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
+=======
+import { Deposit } from 'app/models/deposit';
+import { DepositService } from 'app/services/deposit.service';
+>>>>>>> testing
 
 @Component({
   selector: 'app-add-sale-order',
@@ -149,6 +154,7 @@ export class AddSaleOrderComponent {
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal,
     public _printerService: PrinterService,
+    public _depositService : DepositService,
     public _userService: UserService,
     private _taxService: TaxService,
     public _useOfCFDIService: UseOfCFDIService,
@@ -357,7 +363,7 @@ export class AddSaleOrderComponent {
   }
 
   async changeTransport(transport) {
-    if(transport){
+    if(transport) {
       this.transaction.transport = transport;
     } else {
       this.transaction.transport = null;
@@ -720,7 +726,7 @@ export class AddSaleOrderComponent {
               if(articleStock) {
                 realStock = articleStock.realStock;
               }
-              this.showMessage("No tiene el stock suficiente del producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + "). Stock Actual: " + realStock + " en el Depósito: " + this.transaction.depositOrigin.name, 'info', true);
+              this.showMessage("No tiene el stock suficiente del producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + "). Stock Actual: " + realStock , 'info', true);
             }
           }
         );
@@ -732,10 +738,27 @@ export class AddSaleOrderComponent {
 
     return new Promise<ArticleStock>((resolve, reject) => {
 
-      let query = `where= "article": "${movementOfArticle.article._id}",
-                          "branch": "${this.transaction.branchOrigin._id}",
-                          "deposit": "${this.transaction.depositOrigin._id}"`;
-                          
+      let depositID;
+      let query;
+
+      if(movementOfArticle.article.deposits && movementOfArticle.article.deposits.length > 0){
+        movementOfArticle.article.deposits.forEach(element => {
+          if(element.deposit.branch._id === this.transaction.branchOrigin._id){
+            depositID = element.deposit._id;
+          }
+        });
+      }
+
+      if(depositID){
+        query = `where= "article": "${movementOfArticle.article._id}",
+                        "branch": "${this.transaction.branchOrigin._id}",
+                        "deposit": "${depositID}"`;
+      } else {
+        query = `where= "article": "${movementOfArticle.article._id}",
+                        "branch": "${this.transaction.branchOrigin._id}",
+                        "deposit": "${this.transaction.depositOrigin._id}"`;
+      }
+              
       this._articleStockService.getArticleStocks(query).subscribe(
         result => {
           if (!result.articleStocks || result.articleStocks.length <= 0) {
@@ -796,17 +819,24 @@ export class AddSaleOrderComponent {
         fields.push(field);
       }
     }
-    
     movementOfArticle.otherFields = fields;
     if (movementOfArticle.transaction.type.requestTaxes) {
       if (movementOfArticle.taxes && movementOfArticle.taxes.length > 0) {
         let taxes: Taxes[] = new Array();
         for (let articleTax of movementOfArticle.taxes) {
-          articleTax.taxBase = taxedAmount;
-          if(articleTax.percentage && articleTax.percentage !== 0) {
-            articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
+          if(articleTax.tax.taxBase === TaxBase.Neto) {
+            articleTax.taxBase = taxedAmount;
           } else {
-            articleTax.taxAmount = this.roundNumber.transform((articleTax.taxAmount / this.lastQuotation) * quotation) * movementOfArticle.amount;
+            articleTax.taxBase = 0;
+          }
+          if(articleTax.percentage === 0) {
+            for (let artTax of movementOfArticle.article.taxes) {
+              if(artTax.tax._id === articleTax.tax._id) {
+                articleTax.taxAmount = this.roundNumber.transform(artTax.taxAmount * movementOfArticle.amount);
+              }
+            }
+          } else {
+            articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
           }
           taxes.push(articleTax);
           movementOfArticle.costPrice += articleTax.taxAmount;
@@ -839,8 +869,6 @@ export class AddSaleOrderComponent {
           this.config['currency']._id !== movementOfArticle.article.currency._id) {
             movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
         }
-
-
       }
   
       let fields: ArticleFields[] = new Array();
@@ -875,23 +903,22 @@ export class AddSaleOrderComponent {
           movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice / this.lastQuotation) * quotation);
       }
 
-
-      if(movementOfArticle.article && this.priceList){
+      if(movementOfArticle.article && this.priceList) {
 
         let increasePrice = 0;
-        if(this.priceList.allowSpecialRules && this.priceList.rules && this.priceList.rules.length > 0){
+        if(this.priceList.allowSpecialRules && this.priceList.rules && this.priceList.rules.length > 0) {
           this.priceList.rules.forEach(rule => {
-            if(rule){
-              if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.category._id === movementOfArticle.category._id && rule.make._id === movementOfArticle.make._id){
+            if(rule) {
+              if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.category._id === movementOfArticle.category._id && rule.make._id === movementOfArticle.make._id) {
                 increasePrice = rule.percentage + this.priceList.percentage
               }
-              if(rule.make && movementOfArticle.make && rule.category == null && rule.make._id === movementOfArticle.make._id){
+              if(rule.make && movementOfArticle.make && rule.category == null && rule.make._id === movementOfArticle.make._id) {
                 increasePrice = rule.percentage + this.priceList.percentage
               }
-              if(rule.category && movementOfArticle.category && rule.make == null && rule.category._id === movementOfArticle.category._id){
+              if(rule.category && movementOfArticle.category && rule.make == null && rule.category._id === movementOfArticle.category._id) {
                 increasePrice = rule.percentage + this.priceList.percentage
               }
-              if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.make._id !== movementOfArticle.make._id && rule.category._id !== movementOfArticle.category._id){
+              if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.make._id !== movementOfArticle.make._id && rule.category._id !== movementOfArticle.category._id) {
                 increasePrice = this.priceList.percentage
               }
             }
@@ -900,37 +927,36 @@ export class AddSaleOrderComponent {
           increasePrice = this.priceList.percentage
         }
 
-        if(this.priceList.exceptions && this.priceList.exceptions.length > 0){
+        if(this.priceList.exceptions && this.priceList.exceptions.length > 0) {
           this.priceList.exceptions.forEach(exception =>{
-            if(exception){
-              if(exception.article._id === movementOfArticle.article._id){
+            if(exception) {
+              if(exception.article._id === movementOfArticle.article._id) {
                 increasePrice = exception.percentage
               }
             }
           })
         }
 
-        if(increasePrice != 0){
-          movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice * 100 ) / (100+increasePrice) );
+        if(increasePrice != 0) {
+          movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice * 100 ) / (100 + increasePrice) );
         }
-
       }
 
-      if(movementOfArticle.article && this.newPriceList){
+      if(movementOfArticle.article && this.newPriceList) {
         let increasePrice = 0;
-        if(this.newPriceList.allowSpecialRules && this.newPriceList.rules && this.newPriceList.rules.length > 0){
+        if(this.newPriceList.allowSpecialRules && this.newPriceList.rules && this.newPriceList.rules.length > 0) {
           this.newPriceList.rules.forEach(rule => {
-            if(rule){
-              if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.category._id === movementOfArticle.category._id && rule.make._id === movementOfArticle.make._id){
+            if(rule) {
+              if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.category._id === movementOfArticle.category._id && rule.make._id === movementOfArticle.make._id) {
                 increasePrice = rule.percentage + this.newPriceList.percentage
               }
-              if(rule.make && movementOfArticle.make && rule.category == null && rule.make._id === movementOfArticle.make._id){
+              if(rule.make && movementOfArticle.make && rule.category == null && rule.make._id === movementOfArticle.make._id) {
                 increasePrice = rule.percentage + this.newPriceList.percentage
               }
-              if(rule.category && movementOfArticle.category && rule.make == null && rule.category._id === movementOfArticle.category._id){
+              if(rule.category && movementOfArticle.category && rule.make == null && rule.category._id === movementOfArticle.category._id) {
                 increasePrice = rule.percentage + this.newPriceList.percentage
               }
-              if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.make._id !== movementOfArticle.make._id && rule.category._id !== movementOfArticle.category._id){
+              if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.make._id !== movementOfArticle.make._id && rule.category._id !== movementOfArticle.category._id) {
                 increasePrice = this.newPriceList.percentage
               }
             }
@@ -939,21 +965,19 @@ export class AddSaleOrderComponent {
           increasePrice = this.newPriceList.percentage
         }
 
-        if(this.newPriceList.exceptions && this.newPriceList.exceptions.length > 0){
+        if(this.newPriceList.exceptions && this.newPriceList.exceptions.length > 0) {
           this.newPriceList.exceptions.forEach(exception =>{
-            if(exception){
-              if(exception.article._id === movementOfArticle.article._id){
+            if(exception) {
+              if(exception.article._id === movementOfArticle.article._id) {
                 increasePrice = exception.percentage
               }
             }
           })
         }
 
-        if(increasePrice != 0){
+        if(increasePrice != 0) {
           movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + (movementOfArticle.unitPrice * increasePrice / 100));
         }
-
-
       }
 
       movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
@@ -961,34 +985,39 @@ export class AddSaleOrderComponent {
       movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
       movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
       movementOfArticle.markupPercentage = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.costPrice * 100), 3);
-      
-      
+
       if (movementOfArticle.transaction.type.requestTaxes) {
         let taxes: Taxes[] = new Array();
         if (movementOfArticle.taxes) {
+          let impInt: number = 0;
+          for (let taxAux of movementOfArticle.article.taxes) {
+            if(taxAux.percentage === 0) {
+              impInt = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount);
+            }
+          }
           for (let taxAux of movementOfArticle.taxes) {
             let tax: Taxes = new Taxes();
             tax.tax = taxAux.tax;
             tax.percentage = this.roundNumber.transform(taxAux.percentage);
-            if(taxAux.percentage === 0 && taxAux.taxAmount !== 0) {
-              tax.taxAmount = taxAux.taxAmount * movementOfArticle.amount;
-            } else {
-              tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-              tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+            if(tax.tax.taxBase == TaxBase.Neto) {
+              tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice - impInt) / ((tax.percentage / 100) + 1));
             }
-            tax.taxBase = this.roundNumber.transform(tax.taxBase);
-            tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
+            if(taxAux.percentage === 0) {
+              for (let artTax of movementOfArticle.article.taxes) {
+                if(artTax.tax._id === tax.tax._id) {
+                  tax.taxAmount = this.roundNumber.transform(artTax.taxAmount * movementOfArticle.amount);
+                }
+              }
+            } else {
+              tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+            }
             taxes.push(tax);
           }
         }
         movementOfArticle.taxes = taxes;
       }
-
       resolve(movementOfArticle);
-      
     });
-
-    
   }
 
   public getMovementOfArticleByArticle(articleId: string): MovementOfArticle {
@@ -1111,6 +1140,8 @@ export class AddSaleOrderComponent {
     if (this.movementsOfArticles) {
       for (let movementOfArticle of this.movementsOfArticles) {
         if (movementOfArticle.taxes && movementOfArticle.taxes.length !== 0) {
+          let taxBaseTotal = 0;
+          let taxAmountTotal = 0;
           for (let taxesAux of movementOfArticle.taxes) {
             let transactionTax: Taxes = new Taxes();
             if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
@@ -1123,6 +1154,11 @@ export class AddSaleOrderComponent {
             }
             transactionTaxesAUX.push(transactionTax);
             this.transaction.basePrice += transactionTax.taxBase;
+            taxBaseTotal += transactionTax.taxBase;
+            taxAmountTotal += transactionTax.taxAmount;
+          }
+          if(taxBaseTotal === 0) {
+            this.transaction.exempt += movementOfArticle.salePrice - taxAmountTotal;
           }
         } else {
           this.transaction.exempt += movementOfArticle.salePrice;
@@ -1376,29 +1412,29 @@ export class AddSaleOrderComponent {
           if (result.company) {
 
 
-            if(!this.transaction.company && result.company.priceList){
+            if(!this.transaction.company && result.company.priceList) {
               this.priceList = undefined
               this.newPriceList = await this.getPriceList(result.company.priceList._id);
             }
 
-            if(this.transaction.company && this.transaction.company.priceList && result.company.priceList){
+            if(this.transaction.company && this.transaction.company.priceList && result.company.priceList) {
               this.priceList = await this.getPriceList(this.transaction.company.priceList._id);
               this.newPriceList = await this.getPriceList(result.company.priceList._id)
             }
 
-            if(this.transaction.company && !this.transaction.company.priceList && result.company.priceList){
+            if(this.transaction.company && !this.transaction.company.priceList && result.company.priceList) {
               this.priceList = undefined;
               this.newPriceList = await this.getPriceList(result.company.priceList._id);
             }
 
-            if(result.company.priceList == null && this.transaction.company && this.transaction.company.priceList){ 
+            if(result.company.priceList == null && this.transaction.company && this.transaction.company.priceList) { 
               this.priceList =  await this.getPriceList(this.transaction.company.priceList._id);
               this.newPriceList = undefined;
             }
 
             this.transaction.company = result.company;
 
-            if(this.transaction.company.transport){
+            if(this.transaction.company.transport) {
               this.transaction.transport = this.transaction.company.transport;
             } else {
               this.transaction.transport = null;
@@ -1653,7 +1689,7 @@ export class AddSaleOrderComponent {
       case 'change-transport':
         modalRef = this._modalService.open(SelectTransportComponent);
         modalRef.result.then((result) => {
-          if(result && result.transport){
+          if(result && result.transport) {
             this.transaction.transport = result.transport
             this.updateTransaction();
           }
@@ -1681,7 +1717,7 @@ export class AddSaleOrderComponent {
     if(this.transaction.type.requestPaymentMethods && 
       this.fastPayment &&
       this.fastPayment.isCurrentAccount && 
-      !this.transaction.company){
+      !this.transaction.company) {
       isValid = false;
       this.showMessage("Debe seleccionar una empresa para poder efectuarse un pago con el método " + this.fastPayment.name + ".", "info", true);
     }
@@ -1690,7 +1726,7 @@ export class AddSaleOrderComponent {
         this.fastPayment &&
         this.fastPayment.isCurrentAccount && 
         this.transaction.company && 
-        !this.transaction.company.allowCurrentAccount){
+        !this.transaction.company.allowCurrentAccount) {
       isValid = false;
       this.showMessage("La empresa seleccionada no esta habilitada para cobrar con el método " + this.fastPayment.name + ".", "info", true);
     }
@@ -1901,82 +1937,103 @@ export class AddSaleOrderComponent {
 
   public updateRealStock(movementOfArticle: MovementOfArticle): Promise<boolean> {
 
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<boolean>(async(resolve, reject) => {
 
       let amountToModify;
+      let deposit: Deposit;
+
+      if(movementOfArticle.article.deposits && movementOfArticle.article.deposits.length >0){
+        movementOfArticle.article.deposits.forEach(element => {
+            if(element.deposit.branch._id === this.transaction.branchDestination._id){
+              deposit = element.deposit;
+            }
+        });
+      } else {
+        let deposits : Deposit[] = await this.getDeposits()
+
+        deposits.forEach(element =>{
+          if(element.branch._id === this.transaction.branchDestination._id && element.default){
+            deposit = element;
+          }
+        })
+      }
 
       switch (this.transaction.type.stockMovement) {
         case StockMovement.Inflows:
-          amountToModify = movementOfArticle.amount;
-          this._articleStockService.updateRealStock(
-            movementOfArticle.article,
-            this.transaction.depositDestination,
-            amountToModify, 
-            this.transaction.type.stockMovement.toString()
-          ).subscribe(
-            result => {
-              this.loading = false;
-              if (!result.articleStock) {
-                if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            amountToModify = movementOfArticle.amount;
+            this._articleStockService.updateRealStock(
+              movementOfArticle.article,
+              this.transaction.depositOrigin,
+              amountToModify, 
+              this.transaction.type.stockMovement.toString()
+            ).subscribe(
+              result => {
+                this.loading = false;
+                if (!result.articleStock) {
+                  if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+                  resolve(null);
+                } else {
+                  resolve(result.articleStock);
+                }
+              },
+              error => {
+                this.loading = false;
+                this.showMessage(error._body, 'danger', false);
                 resolve(null);
-              } else {
-                resolve(result.articleStock);
               }
-            },
-            error => {
-              this.loading = false;
-              this.showMessage(error._body, 'danger', false);
-              resolve(null);
-            }
-          );
+            );
+          
           break;
         case StockMovement.Inventory:
-          amountToModify = movementOfArticle.amount;
-          this._articleStockService.updateRealStock(
-            movementOfArticle.article,
-            this.transaction.depositDestination,
-            amountToModify, 
-            this.transaction.type.stockMovement.toString()
-          ).subscribe(
-            result => {
-              this.loading = false;
-              if (!result.articleStock) {
-                if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          
+            amountToModify = movementOfArticle.amount;
+            this._articleStockService.updateRealStock(
+              movementOfArticle.article,
+              this.transaction.depositOrigin,
+              amountToModify, 
+              this.transaction.type.stockMovement.toString()
+            ).subscribe(
+              result => {
+                this.loading = false;
+                if (!result.articleStock) {
+                  if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+                  resolve(null);
+                } else {
+                  resolve(result.articleStock);
+                }
+              },
+              error => {
+                this.loading = false;
+                this.showMessage(error._body, 'danger', false);
                 resolve(null);
-              } else {
-                resolve(result.articleStock);
               }
-            },
-            error => {
-              this.loading = false;
-              this.showMessage(error._body, 'danger', false);
-              resolve(null);
-            }
-          );
+            );
+          
           break;
         case StockMovement.Outflows:
-          amountToModify = this.roundNumber.transform(movementOfArticle.amount * -1);
-          this._articleStockService.updateRealStock(
-            movementOfArticle.article,
-            this.transaction.depositDestination,
-            amountToModify, 
-            this.transaction.type.stockMovement.toString()
-          ).subscribe(
-            result => {
-              this.loading = false;
-              if (!result.articleStock) {
-                if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            amountToModify = this.roundNumber.transform(movementOfArticle.amount * -1);
+            this._articleStockService.updateRealStock(
+              movementOfArticle.article,
+              this.transaction.depositOrigin,
+              amountToModify, 
+              this.transaction.type.stockMovement.toString()
+            ).subscribe(
+              result => {
+                this.loading = false;
+                if (!result.articleStock) {
+                  if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+                  resolve(null);
+                } else {
+                  resolve(result.articleStock);
+                }
+              },
+              error => {
+                this.loading = false;
+                this.showMessage(error._body, 'danger', false);
                 resolve(null);
-              } else {
-                resolve(result.articleStock);
               }
-            },
-            error => {
-              this.loading = false;
-              this.showMessage(error._body, 'danger', false);
-              resolve(null);
-            }
-          );
+            );
+          
           break;
         case StockMovement.Transfer:
             this._articleStockService.updateRealStock(
@@ -2024,36 +2081,30 @@ export class AddSaleOrderComponent {
         default:
           break;
       }
+    
 
-      /*if (this.transaction.type.stockMovement === StockMovement.Inflows || this.transaction.type.stockMovement === StockMovement.Inventory) {
-        amountToModify = movementOfArticle.amount;
-      } else {
-        amountToModify = this.roundNumber.transform(movementOfArticle.amount * -1);
-      }*/
+    
+    });
+  }
 
-      /*this._articleStockService.updateRealStock(
-        movementOfArticle.article,
-        this.transaction.branchDestination,
-        this.transaction.depositDestination,
-        amountToModify, 
-        this.transaction.type.stockMovement.toString()
-      ).subscribe(
-        result => {
-          this.loading = false;
-          if (!result.articleStock) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            resolve(null);
+  public getDeposits(): Promise<Deposit[]> {
+
+    return new Promise<Deposit[]>((resolve, reject) => {
+      this._depositService.getDeposits().subscribe(
+        result =>{
+          if(result && result.deposits){
+            resolve(result.deposits)
           } else {
-            resolve(result.articleStock);
+            resolve(null)
           }
         },
-        error => {
-          this.loading = false;
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
+        error =>{
+          this.showMessage(error._body, 'info', true);
+          resolve(null)
         }
-      );*/
-    });
+      )
+    })
+    
   }
 
   async close() {
@@ -2277,6 +2328,7 @@ export class AddSaleOrderComponent {
   }
 
   public getTransports(): void {
+
     this.loading = true;
 
     // ORDENAMOS LA CONSULTA

@@ -168,6 +168,7 @@ export class AddTransactionComponent implements OnInit {
           }
           this.transactionMovement = this.transaction.type.transactionMovement.toString();
           this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
+          this.transaction.balance = this.roundNumber.transform(this.transaction.balance);
           if(this.transaction.company) {
             this.companyName = this.transaction.company.name;
           }

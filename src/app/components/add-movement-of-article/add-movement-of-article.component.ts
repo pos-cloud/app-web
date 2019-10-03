@@ -28,6 +28,8 @@ import { ArticleFieldType } from '../../models/article-field';
 import { ArticleFields } from '../../models/article-fields';
 import { OrderByPipe } from 'app/pipes/order-by.pipe';
 import { ConfigService } from 'app/services/config.service';
+import { Deposit } from 'app/models/deposit';
+import { TaxBase } from 'app/models/tax';
 
 @Component({
   selector: 'app-add-movement-of-article',
@@ -94,21 +96,30 @@ export class AddMovementOfArticleComponent implements OnInit {
   }
 
   async ngOnInit() {
-
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.config$ = this._configService.getConfig;
 
     if (this.movementOfArticle.article) {
       this.containsVariants = this.movementOfArticle.article.containsVariants;
-      if(this.movementOfArticle.article.deposit) {
-        this.position += `Dep. ${this.movementOfArticle.article.deposit.name} - `;
+      let depositArticle : Deposit
+      if(this.movementOfArticle.article.deposits && this.movementOfArticle.article.deposits.length > 0) {
+        this.movementOfArticle.article.deposits.forEach(element => {
+            if(element.deposit.branch === this.movementOfArticle.transaction.depositDestination.branch) {
+              this.position += `Dep. ${element.deposit.name} - `;
+              depositArticle = element.deposit;
+            }
+        });
       }
-      if(this.movementOfArticle.article.location) {
-        this.position += `Ubic. ${this.movementOfArticle.article.location.description} - 
-                          ${this.movementOfArticle.article.location.positionX} - 
-                          ${this.movementOfArticle.article.location.positionY} - 
-                          ${this.movementOfArticle.article.location.positionZ}`;
+      if(this.movementOfArticle.article.locations && this.movementOfArticle.article.locations.length > 0) {
+        this.movementOfArticle.article.locations.forEach(element => {
+          if(element.location.deposit === depositArticle){
+            this.position += `Ubic. ${element.location.description} - 
+                                    ${element.location.positionX} - 
+                                    ${element.location.positionY} - 
+                                    ${element.location.positionZ}`;
+          }
+        });
       }
       if(Config.modules && Config.modules.stock && this.movementOfArticle.transaction.type.modifyStock) {
         await this.getArticleStock().then(
@@ -131,17 +142,18 @@ export class AddMovementOfArticleComponent implements OnInit {
   }
 
   public buildForm(): void {
-
     if (this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
       if (this.movementOfArticle.transaction.type.entryAmount === EntryAmount.SaleWithoutVAT) {
         if (this.movementOfArticle.taxes && this.movementOfArticle.taxes.length > 0) {
           let unitPrice = this.movementOfArticle.unitPrice;
           for (const articleTax of this.movementOfArticle.taxes) {
-            if(articleTax.percentage && articleTax.percentage !== 0) {
-              articleTax.taxBase = this.roundNumber.transform((unitPrice / ((articleTax.percentage / 100) + 1)));
-              articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
+            if(articleTax.tax.taxBase == TaxBase.Neto) {
+              articleTax.taxBase = this.roundNumber.transform((unitPrice) / ((articleTax.percentage / 100) + 1));
+            }
+            if(articleTax.percentage === 0) {
+              articleTax.taxAmount = this.roundNumber.transform(articleTax.taxAmount * this.movementOfArticle.amount);
             } else {
-              articleTax.taxAmount = articleTax.taxAmount * this.movementOfArticle.amount;
+              articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
             }
             this.movementOfArticle.unitPrice -= (articleTax.taxAmount);
           }
@@ -152,11 +164,15 @@ export class AddMovementOfArticleComponent implements OnInit {
         if (this.movementOfArticle.taxes && this.movementOfArticle.taxes.length > 0) {
           let unitPrice = this.movementOfArticle.unitPrice;
           for (const articleTax of this.movementOfArticle.taxes) {
-            articleTax.taxBase = unitPrice;
-            if(articleTax.percentage && articleTax.percentage !== 0) {
-              articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
+            if(articleTax.percentage === 0) {
+              for (let artTax of this.movementOfArticle.article.taxes) {
+                if(artTax.tax._id === articleTax.tax._id) {
+                  articleTax.taxAmount = this.roundNumber.transform(artTax.taxAmount);
+                }
+              }
             } else {
-              articleTax.taxAmount = articleTax.taxAmount * this.movementOfArticle.amount;
+              articleTax.taxBase = unitPrice;
+              articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
             }
             this.movementOfArticle.unitPrice += (articleTax.taxAmount);
           }
@@ -426,7 +442,7 @@ export class AddMovementOfArticleComponent implements OnInit {
   }
 
   async addMovementOfArticle() {
-
+    
     if(this.movementOfArticleForm.value.amount >= 0) {
       if (this.movementOfArticleForm.value.measure) {
         this.movementOfArticle.measure = this.movementOfArticleForm.value.measure;
@@ -439,7 +455,6 @@ export class AddMovementOfArticleComponent implements OnInit {
       }
 
       if(this.containsVariants) {
-
         this.movementOfArticle.article = this.getArticleBySelectedVariants();
       }
 
@@ -504,12 +519,22 @@ export class AddMovementOfArticleComponent implements OnInit {
           if (this.movementOfArticle.taxes && this.movementOfArticle.taxes.length > 0) {
             let unitPrice = this.movementOfArticleForm.value.unitPrice;
             this.movementOfArticle.unitPrice = unitPrice;
+            let impInt: number = 0;
+            for (let taxAux of this.movementOfArticle.article.taxes) {
+              if(taxAux.percentage === 0) {
+                impInt = this.roundNumber.transform(taxAux.taxAmount);
+              }
+            }
             for (const articleTax of this.movementOfArticle.taxes) {
-              if(articleTax.percentage && articleTax.percentage !== 0) {
-                articleTax.taxBase = this.roundNumber.transform((unitPrice / ((articleTax.percentage / 100) + 1)));
-                articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
+              if(articleTax.percentage === 0) {
+                for (let artTax of this.movementOfArticle.article.taxes) {
+                  if(artTax.tax._id === articleTax.tax._id) {
+                    articleTax.taxAmount = this.roundNumber.transform(artTax.taxAmount);
+                  }
+                }
               } else {
-                articleTax.taxAmount = articleTax.taxAmount * this.movementOfArticle.amount;
+                articleTax.taxBase = this.roundNumber.transform(((unitPrice - impInt) / ((articleTax.percentage / 100) + 1)));
+                articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
               }
               this.movementOfArticle.unitPrice -= (articleTax.taxAmount);
             }
@@ -599,17 +624,14 @@ export class AddMovementOfArticleComponent implements OnInit {
               let tax: Taxes = new Taxes();
               tax.percentage = this.roundNumber.transform(taxAux.percentage);
               tax.tax = taxAux.tax;
-              if(tax.percentage === 0 && tax.taxAmount && tax.taxAmount !== 0) {
-                tax.taxAmount = taxAux.taxAmount * this.movementOfArticle.amount;
-              } else {
-                tax.taxBase = (this.movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-                if(tax.taxBase === 0) {
-                  tax.taxBase = this.movementOfArticle.salePrice;
-                }
-                tax.taxAmount = (tax.taxBase * tax.percentage / 100); 
+              if(tax.tax.taxBase == TaxBase.Neto) {
+                tax.taxBase = this.roundNumber.transform(this.movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
               }
-              tax.taxBase = this.roundNumber.transform(tax.taxBase);
-              tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
+              if(tax.percentage === 0) {
+                tax.taxAmount = this.roundNumber.transform(taxAux.taxAmount * this.movementOfArticle.amount);
+              } else {
+                tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100); 
+              }
               taxes.push(tax);
             }
           }
@@ -645,9 +667,11 @@ export class AddMovementOfArticleComponent implements OnInit {
         let taxes: Taxes[] = new Array();
         if (articleSelected.taxes) {
           for (let taxAux of articleSelected.taxes) {
-            taxAux.taxBase = this.roundNumber.transform(taxedAmount);
-            if(taxAux.percentage === 0 && taxAux.taxAmount !== 0) {
-              taxAux.taxAmount = taxAux.tax.amount * this.movementOfArticle.amount;
+            if(taxAux.tax.taxBase == TaxBase.Neto) {
+              taxAux.taxBase = this.roundNumber.transform(taxedAmount);
+            }
+            if(taxAux.percentage === 0) {
+              taxAux.taxAmount = this.roundNumber.transform(taxAux.tax.amount * this.movementOfArticle.amount);
             } else {
               taxAux.taxAmount = this.roundNumber.transform((taxAux.taxBase * taxAux.percentage / 100));
             }
@@ -699,7 +723,7 @@ export class AddMovementOfArticleComponent implements OnInit {
               taxAmount += tax.taxAmount;
           }
         }
-        if(taxAmount > this.movementOfArticle.unitPrice) {
+        if(taxAmount > this.movementOfArticleForm.value.unitPrice) {
           isValid = false;
           this.showMessage("El precio unitario del producto no puede ser menor a la suma de impuestos con monto fijo.", 'info', true);
         }
@@ -732,9 +756,31 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     return new Promise<ArticleStock>((resolve, reject) => {
 
+     /* let depositID;
+      let query;
+
+      if(this.movementOfArticle.article.deposits && this.movementOfArticle.article.deposits.length > 0){
+        this.movementOfArticle.article.deposits.forEach(async element => {
+          if(element.deposit.branch._id === this.movementOfArticle.transaction.depositDestination._id){
+            depositID = element.deposit._id;
+          }
+        });
+      }
+
+      if(depositID){
+        query = `where= "article": "${this.movementOfArticle.article._id}",
+                        "branch": "${this.movementOfArticle.transaction.branchDestination._id}",
+                        "deposit": "${depositID}"`;
+
+      } else {
+       
+
+      }*/
+
+
       let query = `where= "article": "${this.movementOfArticle.article._id}",
-                          "branch": "${this.movementOfArticle.transaction.branchDestination._id}",
-                          "deposit": "${this.movementOfArticle.transaction.depositDestination._id}"`;
+                  "branch": "${this.movementOfArticle.transaction.branchDestination._id}",
+                  "deposit": "${this.movementOfArticle.transaction.depositDestination._id}"`;
 
       this._articleStockService.getArticleStocks(query).subscribe(
         result => {
@@ -880,16 +926,15 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   public recalculateCostPrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
 
-    let quotation = 1;
-
-    if(movementOfArticle.transaction.quotation) {
-      quotation = movementOfArticle.transaction.quotation;
-    }
-
     movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount);
+
     movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
     movementOfArticle.unitPrice -= movementOfArticle.transactionDiscountAmount;
+    console.log(movementOfArticle.basePrice);
+    console.log(movementOfArticle.unitPrice);
+    console.log(movementOfArticle.amount);
     movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
+    console.log(movementOfArticle.basePrice);
     movementOfArticle.markupPrice = 0.00;
     movementOfArticle.markupPercentage = 0.00;
 
@@ -919,11 +964,19 @@ export class AddMovementOfArticleComponent implements OnInit {
       if (movementOfArticle.taxes && movementOfArticle.taxes.length > 0) {
         let taxes: Taxes[] = new Array();
         for (let articleTax of movementOfArticle.taxes) {
-          articleTax.taxBase = taxedAmount;
-          if(articleTax.percentage && articleTax.percentage !== 0) {
-            articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
+          if(articleTax.tax.taxBase === TaxBase.Neto) {
+            articleTax.taxBase = taxedAmount;
           } else {
-            articleTax.taxAmount = articleTax.taxAmount * movementOfArticle.amount;
+            articleTax.taxBase = 0;
+          }
+          if(articleTax.percentage === 0) {
+            for (let artTax of movementOfArticle.article.taxes) {
+              if(artTax.tax._id === articleTax.tax._id) {
+                articleTax.taxAmount = this.roundNumber.transform(artTax.taxAmount * movementOfArticle.amount);
+              }
+            }
+          } else {
+            articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
           }
           taxes.push(articleTax);
           movementOfArticle.costPrice += articleTax.taxAmount;
@@ -933,7 +986,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     }
     movementOfArticle.costPrice += this.roundNumber.transform(taxedAmount);
     movementOfArticle.salePrice = movementOfArticle.costPrice + movementOfArticle.roundingAmount;
-
+    console.log(movementOfArticle);
     return movementOfArticle;
   }
 
@@ -989,21 +1042,24 @@ export class AddMovementOfArticleComponent implements OnInit {
       if (movementOfArticle.transaction.type.requestTaxes) {
         let taxes: Taxes[] = new Array();
         if (movementOfArticle.taxes) {
+          let impInt: number = 0;
+          for (let taxAux of movementOfArticle.article.taxes) {
+            if(taxAux.percentage === 0) {
+              impInt = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount);
+            }
+          }
           for (let taxAux of movementOfArticle.taxes) {
             let tax: Taxes = new Taxes();
             tax.tax = taxAux.tax;
             tax.percentage = this.roundNumber.transform(taxAux.percentage);
-            if(tax.percentage === 0 && tax.taxAmount && tax.taxAmount !== 0) {
-              tax.taxAmount = taxAux.taxAmount * movementOfArticle.amount;
-            } else {
-              tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-              if(tax.taxBase === 0) {
-                tax.taxBase = this.movementOfArticle.salePrice;
-              }
-              tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+            if(tax.tax.taxBase == TaxBase.Neto) {
+              tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice - impInt) / ((tax.percentage / 100) + 1));
             }
-            tax.taxBase = this.roundNumber.transform(tax.taxBase);
-            tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
+            if(tax.percentage === 0) {
+              tax.taxAmount = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount);
+            } else {
+              tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100));
+            }
             taxes.push(tax);
           }
         }

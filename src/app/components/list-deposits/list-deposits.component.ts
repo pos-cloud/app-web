@@ -7,9 +7,7 @@ import { Deposit } from './../../models/deposit';
 import { DepositService } from './../../services/deposit.service';
 
 
-import { AddDepositComponent } from './../../components/add-deposit/add-deposit.component';
-import { UpdateDepositComponent } from './../../components/update-deposit/update-deposit.component';
-import { DeleteDepositComponent } from './../../components/delete-deposit/delete-deposit.component';
+import { DepositComponent } from '../deposit/deposit.component';
 
 @Component({
   selector: 'app-list-deposits',
@@ -91,20 +89,24 @@ export class ListDepositsComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(UpdateDepositComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.deposit = deposit;
+        modalRef = this._modalService.open(DepositComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.depositId = deposit._id;
+        modalRef.componentInstance.operation = "view";
         modalRef.componentInstance.readonly = true;
         break;
       case 'add':
-        modalRef = this._modalService.open(AddDepositComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
-          this.getDeposits();
-        }, (reason) => {
-          this.getDeposits();
-        });
+        modalRef = this._modalService.open(DepositComponent, { size: 'lg', backdrop: 'static' })
+          modalRef.componentInstance.operation = "add";
+          modalRef.result.then((result) => {
+            this.getDeposits();
+          }, (reason) => {
+            this.getDeposits();
+          });
         break;
       case 'update':
-        modalRef = this._modalService.open(UpdateDepositComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.deposit = deposit;
+        modalRef = this._modalService.open(DepositComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.depositId = deposit._id;
+        modalRef.componentInstance.operation = "update";
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
           this.getDeposits();
@@ -113,8 +115,10 @@ export class ListDepositsComponent implements OnInit {
         });
         break;
       case 'delete':
-        modalRef = this._modalService.open(DeleteDepositComponent, { size: 'lg', backdrop: 'static' })
-        modalRef.componentInstance.deposit = deposit;
+        modalRef = this._modalService.open(DepositComponent, { size: 'lg', backdrop: 'static' })
+        modalRef.componentInstance.depositId = deposit._id;
+        modalRef.componentInstance.operation = "delete";
+
         modalRef.result.then((result) => {
           if (result === 'delete_close') {
             this.getDeposits();
