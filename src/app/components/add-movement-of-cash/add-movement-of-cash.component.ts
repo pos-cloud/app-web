@@ -893,13 +893,17 @@ export class AddMovementOfCashComponent implements OnInit {
       }
 
       if(this.paymentMethodSelected.checkDetail && 
-        (!this.movementOfCash.number && !this.movementOfCashForm.value.number)) {
+        (!this.paymentMethodSelected.inputAndOuput ||
+        this.transaction.type.movement === Movements.Inflows) &&
+        (!this.movementOfCashForm.value.number || this.movementOfCashForm.value.number === '')) {
           resolve(false);
-          if(this.paymentMethodSelected.inputAndOuput) {
-            this.showMessage('Debe seleccionar los métodos de pago en cartera a utilizar.', 'info', true);
-          } else {
-            this.showMessage('Debe completar el numero de comprobante', 'info', true);
-          }
+          this.showMessage('Debe completar el numero de comprobante', 'info', true);
+      } else if(this.paymentMethodSelected.checkDetail && 
+                this.paymentMethodSelected.inputAndOuput && 
+                this.transaction.type.movement === Movements.Outflows &&
+                !isCopy) {
+        resolve(false);
+        this.showMessage('Debe seleccionar los métodos de pago en cartera a utilizar.', 'info', true);
       }
   
       if(this.paymentMethodSelected.allowToFinance) {
