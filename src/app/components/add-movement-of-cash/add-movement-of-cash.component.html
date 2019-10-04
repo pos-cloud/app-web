@@ -157,9 +157,10 @@
             </textarea>
           </div>
         </div>
-        <div *ngIf="paymentMethodSelected && 
-                    paymentMethodSelected.inputAndOuput &&
-                    transaction.type.movement.toString() === 'Entrada'" >
+        <div *ngIf="paymentMethodSelected &&
+                    paymentMethodSelected.checkDetail && 
+                    (!paymentMethodSelected.inputAndOuput ||
+                    transaction.type.movement.toString() === 'Entrada')" >
           <div class="row" >
             <div class="form-group col-md-6">
               <b>Datos del cheque:</b>

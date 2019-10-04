@@ -183,7 +183,7 @@ export class PaymentMethodComponent implements OnInit {
       'surcharge': this.paymentMethod.surcharge,
       'isCurrentAccount': this.paymentMethod.isCurrentAccount,
       'acceptReturned': this.paymentMethod.acceptReturned,
-      'inputAndOuput': this.paymentMethod.acceptReturned,
+      'inputAndOuput': this.paymentMethod.inputAndOuput,
       'checkDetail': this.paymentMethod.checkDetail,
       'cardDetail': this.paymentMethod.cardDetail,
       'allowToFinance': this.paymentMethod.allowToFinance,
