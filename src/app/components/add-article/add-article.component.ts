@@ -440,7 +440,7 @@ export class AddArticleComponent implements OnInit {
     let valid = true;
     const locations = this.articleForm.controls.locations as FormArray;
 
-    if(locationForm.value.location == '' || locationForm.value.location == 0 || locationForm.value.location == null ){
+    if(locationForm.value.location == '' || locationForm.value.location == null ){
       this.showMessage("Debe seleccionar una ubicación","danger",true)
       valid = false;
     }
@@ -479,13 +479,13 @@ export class AddArticleComponent implements OnInit {
 
     });
 
-    if(childrenForm.value.quantity == '' || childrenForm.value.quantity == 0 || childrenForm.value.quantity == null ){
-      this.showMessage("El valor no puede ser 0 o vacio","danger",true)
+    if(childrenForm.value.quantity == ''  || childrenForm.value.quantity == null ){
+      this.showMessage("El valor no puede ser vacio","danger",true)
       valid = false;
     }
 
     if(childrenForm.value.quantity <= 0 ){
-      this.showMessage("El valor no puede ser menor a 0","danger",true)
+      this.showMessage("El valor no puede ser menor o igual 0","danger",true)
       valid = false;
     }
 
