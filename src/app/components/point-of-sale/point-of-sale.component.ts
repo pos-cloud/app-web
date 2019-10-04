@@ -701,8 +701,7 @@ export class PointOfSaleComponent implements OnInit {
 
     return new Promise<boolean>(async (resolve, reject) => {
       if(!this.transaction.depositDestination || !this.transaction.depositOrigin){
-        
-          console.log(this.transaction)
+
           await this.getDeposits({ branch: { $oid: this.transaction.branchOrigin._id }, operationType: { $ne: 'D' } }).then(
             deposits => {
               if(deposits && deposits.length > 0) {
