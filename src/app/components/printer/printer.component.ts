@@ -241,7 +241,6 @@ export class PrinterComponent implements OnInit {
           position : fieldForm.value.position
         })
       );
-      fieldForm.resetForm();
     }
       
   }
