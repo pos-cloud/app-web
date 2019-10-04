@@ -118,7 +118,7 @@ export class ListDepositsComponent implements OnInit {
         modalRef = this._modalService.open(DepositComponent, { size: 'lg', backdrop: 'static' })
         modalRef.componentInstance.depositId = deposit._id;
         modalRef.componentInstance.operation = "delete";
-
+        modalRef.componentInstance.readonly = true;
         modalRef.result.then((result) => {
           if (result === 'delete_close') {
             this.getDeposits();
