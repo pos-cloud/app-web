@@ -701,38 +701,39 @@ export class PointOfSaleComponent implements OnInit {
 
     return new Promise<boolean>(async (resolve, reject) => {
       if(!this.transaction.depositDestination || !this.transaction.depositOrigin){
-        if(this.transaction.type.transactionMovement === TransactionMovement.Stock){
-          if(this.transaction.type.stockMovement === StockMovement.Transfer){
-            this.openModal('transfer')
-          } else {
-            this.openModal('deposit')
-          }
-        } else {
-          await this.getDeposits({ branch: { $oid: this.transaction.branchDestination._id }, operationType: { $ne: 'D' } }).then(
+        
+          console.log(this.transaction)
+          await this.getDeposits({ branch: { $oid: this.transaction.branchOrigin._id }, operationType: { $ne: 'D' } }).then(
             deposits => {
               if(deposits && deposits.length > 0) {
-                deposits.forEach(element => {
-                  let deposit : Deposit = element; 
-                  if(deposit && deposit.default){
-                    this.transaction.depositOrigin = deposit;
-                    this.transaction.depositDestination = deposit;
-                  } else {
-                    this.transaction.depositOrigin = deposit;
-                    this.transaction.depositDestination = deposit;
-                  }
-                });
-                
-                resolve(true);
+                if(deposits.length === 0){
+                  this.transaction.depositOrigin = deposits[0];
+                  this.transaction.depositDestination = deposits[0];                 
+                  resolve(true);
+                } else {
+                  deposits.forEach(element => {
+                    let deposit : Deposit = element; 
+                    if(deposit && deposit.default){
+                      this.transaction.depositOrigin = deposit;
+                      this.transaction.depositDestination = deposit;
+                      resolve(true)
+                    } else {
+                      this.showMessage("Debe asignar un depósito principal para la sucursal " + this.transaction.branchDestination.name, "info", true);
+                      resolve(false);
+                    }
+                  });
+                }
               } else {
-                this.showMessage("Debe crear un depósito defecto para la sucursal " + this.transaction.branchDestination.name, "info", true);
+                this.showMessage("Debe crear un depósito para la sucursal " + this.transaction.branchDestination.name, "info", true);
                 resolve(false);
               }
             }
           );
+        
+          
+        } else {
+          resolve(true)
         }
-      } else {
-        resolve(true)
-      }
     });
   }
 
@@ -767,8 +768,8 @@ export class PointOfSaleComponent implements OnInit {
 
     if(this.transaction && (!this.transaction._id || this.transaction._id === "")) {
       let result;
-      if(this.transaction.type.transactionMovement === TransactionMovement.Stock){
-        result = await this.assignDeposit();
+      if(this.transaction.type.transactionMovement === TransactionMovement.Stock && this.transaction.type.stockMovement === StockMovement.Transfer){
+        this.openModal('transfer')
       } else {
         result = await this.assignBranch();
       }

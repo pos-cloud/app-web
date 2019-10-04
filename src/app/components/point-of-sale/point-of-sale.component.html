@@ -346,8 +346,8 @@
               <td *ngIf="!transaction.company && (transactionMovement === 'Venta')" (click)="openTransaction(transaction)">Consumidor Final</td>
               <td *ngIf="!transaction.company && (transactionMovement === 'Compra')" (click)="openTransaction(transaction)"></td>
               <td *ngIf="transactionMovement !== 'Stock'">{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-              <td *ngIf="transactionMovement === 'Stock' && transaction.type.stockMovement !== 'Transferencia'">{{transaction.depositOrigin.name}}</td>
-              <td *ngIf="transactionMovement === 'Stock' && transaction.type.stockMovement === 'Transferencia'">{{transaction.depositOrigin.name}} -> {{transaction.depositDestination.name}}</td>
+              <td *ngIf="transactionMovement === 'Stock' && transaction.type.stockMovement !== 'Transferencia' && transaction.depositOrigin">{{transaction.depositOrigin.name}}</td>
+              <td *ngIf="transactionMovement === 'Stock' && transaction.type.stockMovement === 'Transferencia' && transaction.depositOrigin && transaction.depositDestination">{{transaction.depositOrigin.name}} -> {{transaction.depositDestination.name}}</td>
 
             </tr>
             <tr align="center" *ngIf="areTransactionsEmpty">
