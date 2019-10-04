@@ -1,11 +1,10 @@
-import { Component, OnInit, EventEmitter, Input, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray, NgForm, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit, EventEmitter, Input, ViewEncapsulation, Output } from '@angular/core';
+import { FormGroup, FormBuilder, Validators, FormArray, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Printer, PrinterType, PrinterPrintIn, PositionPrint } from '../../models/printer';
-import { Company } from '../../models/company'
 
 import { PrinterService } from '../../services/printer.service';
 
@@ -223,31 +222,36 @@ export class PrinterComponent implements OnInit {
     const fields = this.printerForm.controls.fields as FormArray;
 
     if(valid){
+
+      let field = {
+        _id: null,
+        type: fieldForm.value.type,
+        label: fieldForm.value.label,
+        value: fieldForm.value.value,
+        font : fieldForm.value.font,
+        fontType : fieldForm.value.fontType,
+        fontSize : fieldForm.value.fontSize,
+        positionStartX : fieldForm.value.positionStartX,
+        positionStartY : fieldForm.value.positionStartY,
+        positionEndX : fieldForm.value.positionEndX,
+        positionEndY : fieldForm.value.positionEndY,
+        splitting : fieldForm.value.splitting,
+        colour : fieldForm.value.colour,
+        position : fieldForm.value.position
+      };
+
       fields.push(
-        this._fb.group({
-          _id: null,
-          type: fieldForm.value.type,
-          label: fieldForm.value.label,
-          value: fieldForm.value.value,
-          font : fieldForm.value.font,
-          fontType : fieldForm.value.fontType,
-          fontSize : fieldForm.value.fontSize,
-          positionStartX : fieldForm.value.positionStartX,
-          positionStartY : fieldForm.value.positionStartY,
-          positionEndX : fieldForm.value.positionEndX,
-          positionEndY : fieldForm.value.positionEndY,
-          splitting : fieldForm.value.splitting,
-          colour : fieldForm.value.colour,
-          position : fieldForm.value.position
-        })
+        this._fb.group(field)
       );
+
+      this.addPrinter();
     }
-      
   }
 
   deleteField(index) {
     let control = <FormArray>this.printerForm.controls.fields;
-    control.removeAt(index)
+    control.removeAt(index);
+    this.addPrinter();
   }
 
   public onValueChanged(data?: any): void {
@@ -399,7 +403,7 @@ export class PrinterComponent implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
-          this.showMessage("La impresora se ha actualizado con éxito.", 'success', true);
+          // this.showMessage("La impresora se ha actualizado con éxito.", 'success', true);
         }
         this.loading = false;
       },

@@ -1,8 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import * as jsPDF from 'jspdf';
-import { Observable, Observer } from 'rxjs';
 
 //servicios
 import { MovementOfCancellationService } from 'app/services/movement-of-cancellation.service';
@@ -19,7 +18,6 @@ import { MovementOfArticle } from 'app/models/movement-of-article';
 import { Company } from 'app/models/company';
 import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
 import { Transaction } from 'app/models/transaction';
-import { async } from 'q';
 import { PrintService } from 'app/services/print.service';
 
 
@@ -43,7 +41,7 @@ export class PrintTransactionTypeComponent implements OnInit {
   public config : Config;
   public doc;
   public pdfURL;
-  public alertMessage;
+  public alertMessage: string;
 
   constructor(
     public _transactionService : TransactionService,
@@ -59,7 +57,6 @@ export class PrintTransactionTypeComponent implements OnInit {
 
   async ngOnInit() {
 
-
     await this.getConfigApi().then(
       config => {
         if(config) {
@@ -68,11 +65,18 @@ export class PrintTransactionTypeComponent implements OnInit {
       }
     );
 
-    if(this.transactionId){
+    if(this.transactionId) {
       this.getTransaction();
     }
 
     if(this.origin === 'view'){
+      this.buildPrint();
+    }
+  }
+
+  public ngOnChanges(changes: SimpleChanges): void {
+    if(changes.printer.currentValue) {
+      console.log("entro");
       this.buildPrint();
     }
   }
@@ -507,30 +511,29 @@ export class PrintTransactionTypeComponent implements OnInit {
 
   public finishImpression(): void {
 
-    if(!this.source){
+    if(this.transaction) {
       this.doc.autoPrint();
-      this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
     }
     
+    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
 
-    if(this.transaction && this.transaction.type && this.transaction.type.electronics){
+
+    if(this.transaction && this.transaction.type && this.transaction.type.electronics) {
       this._printService.saveFile(this.doc.output('blob'),'invoice',this.transactionId).then(
         result =>{
         },
         error =>{
         }
       )
-    } else {
-      if(this.source === "mail"){
-        this._printService.saveFile(this.doc.output('blob'),'others',this.transactionId).then(
-          result =>{
-          },
-          error =>{
-          }
-        )
-      }
+    } else if(this.source === "mail") {
+      
+      this._printService.saveFile(this.doc.output('blob'),'others',this.transactionId).then(
+        result =>{
+        },
+        error =>{
+        }
+      )
     }
-
   }
 
   async getCompanyPicture(img) {
