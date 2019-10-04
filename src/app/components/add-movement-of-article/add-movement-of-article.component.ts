@@ -932,11 +932,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
     movementOfArticle.unitPrice -= movementOfArticle.transactionDiscountAmount;
-    console.log(movementOfArticle.basePrice);
-    console.log(movementOfArticle.unitPrice);
-    console.log(movementOfArticle.amount);
     movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
-    console.log(movementOfArticle.basePrice);
     movementOfArticle.markupPrice = 0.00;
     movementOfArticle.markupPercentage = 0.00;
 
@@ -988,7 +984,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     }
     movementOfArticle.costPrice += this.roundNumber.transform(taxedAmount);
     movementOfArticle.salePrice = movementOfArticle.costPrice + movementOfArticle.roundingAmount;
-    console.log(movementOfArticle);
+
     return movementOfArticle;
   }
 

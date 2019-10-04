@@ -37,6 +37,7 @@ export class HeaderComponent {
   public isReportVisible: boolean;  
   public licenseDays: number;
   public readedNotification: boolean = false;
+  public intervalSocket;
 
   constructor(
     private _authService: AuthService,
@@ -92,10 +93,9 @@ export class HeaderComponent {
         }
       }
     });
-      // this.sessionTimer = setTimeout(this.logout(), this.identity.tokenExpiration);
-      // this.renderer.listen(this.elementRef.nativeElement, 'click', (event) => {
-      //   this.sessionCount();
-      // });
+
+    // this.renderer.listen(this.elementRef.nativeElement, 'click', (event) => {
+    // });
 
     this.initSocket();
   }
@@ -105,16 +105,30 @@ export class HeaderComponent {
     let identity: User = JSON.parse(sessionStorage.getItem('user'));
 
     if(identity && Config.database && Config.database !== '') {
-      // INICIAMOS SOCKET
-      this.socket.emit('start', {
-        database: Config.database,
-        clientType: 'pos'
-      });
-      
-      // ESCUCHAMOS SOCKET
-      this.socket.on('message', (mnj) => {
-        this.showToast(mnj);
-      });
+
+      if(!this.socket.ioSocket.connected) {
+        // INICIAMOS SOCKET
+        this.socket.emit('start', {
+          database: Config.database,
+          clientType: 'pos'
+        });
+        
+        // ESCUCHAMOS SOCKET
+        this.socket.on('message', (mnj) => {
+          this.showToast(mnj);
+        });
+
+        if(this.intervalSocket) {
+          clearInterval(this.intervalSocket);
+        }
+      }
+
+      // INICIAR CONTADOR PARA VERIFICAR CONEXION DE SOCKET
+      this.intervalSocket = setInterval(() => {
+        if(!this.socket.ioSocket.connected) {
+          this.initSocket();
+        }
+      }, 5000);
     }
   }
 
@@ -181,9 +195,6 @@ export class HeaderComponent {
       default: 
         break;
     }
-  }
-
-  public sessionCount() {
   }
 
   public goToHome(): void {

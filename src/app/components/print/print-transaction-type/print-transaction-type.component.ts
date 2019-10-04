@@ -76,7 +76,6 @@ export class PrintTransactionTypeComponent implements OnInit {
 
   public ngOnChanges(changes: SimpleChanges): void {
     if(changes.printer.currentValue) {
-      console.log("entro");
       this.buildPrint();
     }
   }
