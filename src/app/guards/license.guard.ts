@@ -16,24 +16,21 @@ export class LicenseGuard implements CanActivate {
     return this._configService.getConfig.pipe(
       take(1),
       map((config: Config) => {
-        let enabled: boolean = false;
         if(next.data.module) {
           if(config) {
-            if(eval(next.data.module)) enabled = true;
+            if(eval(next.data.module)) return true; return false;
           } else {
             this.getConfigApi().then(
               config => {
                 if(config) {
                   this._configService.setConfig(config);
-                  if(eval(next.data.module)) enabled = true;
+                  if(eval(next.data.module)) return true; return false;
                 }
               }
             );
           }
-        } else {
-          enabled = true;
         }
-        return enabled;
+        return true;
       })
     );
   }
