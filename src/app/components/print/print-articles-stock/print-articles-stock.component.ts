@@ -176,12 +176,12 @@ export class PrintArticlesStockComponent implements OnInit {
     row += 3;
     this.doc.line(0, row, 400, row);
     row += 5;
-
-    let page = 1;
+    let count = 0;
 
     // // Detalle de productos
     if(articleStocks && articleStocks.length > 0) {
       for(let articleStock of articleStocks) {
+        
         if(articleStock.article.code) {
           this.doc.text(articleStock.article.code, 5, row);
         }
@@ -198,12 +198,9 @@ export class PrintArticlesStockComponent implements OnInit {
           this.doc.text(this.roundNumber.transform(articleStock.realStock).toString(), 195, row);
         }
         row += 5;
+        count ++
+        if (count === 54) {
 
-        if (row >= (this.pageHigh - 20)) {
-
-          if(page === 120) {
-            break;
-          }
           this.doc.addPage();
 
           var row = 15;
@@ -242,6 +239,7 @@ export class PrintArticlesStockComponent implements OnInit {
           row += 3;
           this.doc.line(0, row, 400, row);
           row += 5;
+          count = 0;
         }
       }
     }
