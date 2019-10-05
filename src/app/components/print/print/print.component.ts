@@ -2337,6 +2337,7 @@ export class PrintComponent implements OnInit {
     }
 
 
+
     //LADO IZQUIERDO
     this.doc.line(0, row, width, row);
     row += 10;
@@ -2431,6 +2432,18 @@ export class PrintComponent implements OnInit {
           this.doc.setTextColor(0, 0, 0);
         }
       }
+    }
+
+    if(this.transaction.letter === "A"){
+      row += 3;
+      this.doc.line(0, row, width, row);
+      row += 3;
+      this.doc.text("Impuestos: ", 5, row);
+      this.doc.setFontType('small');
+      this.transaction.taxes.forEach(element => {
+        row +=3;
+        this.doc.text(element.tax.name +": " + "$" + this.roundNumber.transform(element.taxAmount).toString(), 5, row)
+      });
     }
 
     row += 3;
