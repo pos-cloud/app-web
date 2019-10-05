@@ -159,19 +159,10 @@
                 </span>
                 <img *ngIf="movementOfArticle.article && (movementOfArticle.article.picture !== 'default.jpg' && movementOfArticle.article.picture !== undefined)" [src]="apiURL + 'get-image-article/'+movementOfArticle.article.picture + '/' + database" height="50" width="50">
               </td>
-              <td *ngIf="transaction.type.showDescriptionType === 'Descripción'">{{movementOfArticle.description}}
-                <div *ngIf="movementOfArticle.make && movementOfArticle.make.visibleSale" style="font-size: 13px">{{movementOfArticle.make.description}}</div>
-                <strong *ngIf="movementOfArticle.notes">
-                  <br>{{movementOfArticle.notes}}
-                </strong>
-              </td>
-              <td *ngIf="transaction.type.showDescriptionType === 'Descripción Corta'">{{movementOfArticle.article.posDescription}}
-                <div *ngIf="movementOfArticle.make && movementOfArticle.make.visibleSale" style="font-size: 13px">{{movementOfArticle.make.description}}</div>
-                <strong *ngIf="movementOfArticle.notes">
-                  <br>{{movementOfArticle.notes}}
-                </strong>
-              </td>
-              <td *ngIf="transaction.type.showDescriptionType === 'Código'">{{movementOfArticle.code}}
+              <td>
+                <span *ngIf="transaction.type.showDescriptionType === 'Descripción'">{{movementOfArticle.description}}</span>
+                <span *ngIf="transaction.type.showDescriptionType === 'Descripción Corta'">{{movementOfArticle.article.posDescription}}</span>
+                <span *ngIf="transaction.type.showDescriptionType === 'Código'">{{movementOfArticle.code}}</span>
                 <div *ngIf="movementOfArticle.make && movementOfArticle.make.visibleSale" style="font-size: 13px">{{movementOfArticle.make.description}}</div>
                 <strong *ngIf="movementOfArticle.notes">
                   <br>{{movementOfArticle.notes}}
@@ -179,7 +170,6 @@
               </td>
               <td *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Final'">{{movementOfArticle.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
               <td *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Base'">{{movementOfArticle.basePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-
             </tr>
             <tr align="center " *ngIf="areMovementsOfArticlesEmpty ">
               <td colspan="10 ">Todavía no se cargaron productos al pedido</td>
