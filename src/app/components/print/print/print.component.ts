@@ -2434,7 +2434,7 @@ export class PrintComponent implements OnInit {
       }
     }
 
-    if(this.transaction.company.vatCondition.discriminate){
+    if(this.transaction.company && this.transaction.company.vatCondition && this.transaction.company.vatCondition.discriminate){
       row += 3;
       this.doc.line(0, row, width, row);
       row += 3;
