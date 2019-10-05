@@ -155,7 +155,7 @@ export class PointOfSaleComponent implements OnInit {
     return new Promise<Deposit[]>((resolve, reject) => {
       
       this._depositService.getDepositsV2(
-          {}, // PROJECT
+          { }, // PROJECT
           match, // MATCH
           { name: 1 }, // SORT
           {}, // GROUP
@@ -163,6 +163,7 @@ export class PointOfSaleComponent implements OnInit {
           0 // SKIP
       ).subscribe(
         result => {
+          console.log(result.deposits)
           if (result.deposits) {
             resolve(result.deposits);
           } else {
@@ -701,7 +702,6 @@ export class PointOfSaleComponent implements OnInit {
 
     return new Promise<boolean>(async (resolve, reject) => {
       if(!this.transaction.depositDestination || !this.transaction.depositOrigin){
-
           await this.getDeposits({ branch: { $oid: this.transaction.branchOrigin._id }, operationType: { $ne: 'D' } }).then(
             deposits => {
               if(deposits && deposits.length > 0) {
@@ -765,9 +765,13 @@ export class PointOfSaleComponent implements OnInit {
 
   async nextStepTransaction() {
 
+    console.log(this.transaction);
+
     if(this.transaction && (!this.transaction._id || this.transaction._id === "")) {
       let result;
-      if(this.transaction.type.transactionMovement === TransactionMovement.Stock && this.transaction.type.stockMovement === StockMovement.Transfer){
+      if(this.transaction.type.transactionMovement === TransactionMovement.Stock && 
+          this.transaction.type.stockMovement === StockMovement.Transfer &&
+          (!this.transaction.depositDestination || !this.transaction.depositOrigin)){
         this.openModal('transfer')
       } else {
         result = await this.assignBranch();
@@ -1133,10 +1137,12 @@ export class PointOfSaleComponent implements OnInit {
               if (result && result.origin && result.destination) {
                 let depositOrigin = await this.getDeposits({ _id: { $oid: result.origin }, operationType: { $ne: 'D' } });
                 this.transaction.depositOrigin = depositOrigin[0]
-                this.transaction.branchOrigin = depositOrigin[0].branch
+                let branchO = await this.getBranches({ _id : { $oid : depositOrigin[0].branch},operationType: { $ne: 'D' }});
+                this.transaction.branchOrigin = branchO[0];
                 let depositDestination = await this.getDeposits({ _id: { $oid: result.destination }, operationType: { $ne: 'D' } });
+                let branchD = await this.getBranches({ _id : { $oid : depositDestination[0].branch},operationType: { $ne: 'D' }});
+                this.transaction.branchDestination = branchD[0]
                 this.transaction.depositDestination = depositDestination[0]
-                this.transaction.branchDestination = depositDestination[0].branch
                 this.nextStepTransaction();
               } else {
                 this.hideMessage();
@@ -1145,25 +1151,7 @@ export class PointOfSaleComponent implements OnInit {
               this.hideMessage();
             });
         break;
-        case 'deposit':
-          modalRef = this._modalService.open(SelectDepositComponent);
-          modalRef.componentInstance.op = op
-          modalRef.result.then(
-            async (result) => {
-              if (result && result.deposit) {
-                let deposit = await this.getDeposits({ _id: { $oid: result.deposit }, operationType: { $ne: 'D' } });
-                this.transaction.depositOrigin = deposit[0]
-                this.transaction.branchOrigin = deposit[0].branch
-                this.transaction.depositDestination = deposit[0]
-                this.transaction.branchDestination = deposit[0].branch
-                this.nextStepTransaction();
-              } else {
-                this.hideMessage();
-              }
-            }, (reason) => {
-              this.hideMessage();
-            });
-        break;
+        
 
       default: ;
     }
