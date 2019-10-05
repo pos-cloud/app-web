@@ -18,7 +18,6 @@ export class LicenseGuard implements CanActivate {
       map((config: Config) => {
         let enabled: boolean = false;
         if(next.data.module) {
-          let asd = eval(next.data.module);
           if(config) {
             if(eval(next.data.module)) enabled = true;
           } else {
