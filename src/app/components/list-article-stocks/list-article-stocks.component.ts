@@ -202,6 +202,7 @@ export class ListArticleStocksComponent implements OnInit {
       'article.make.description' : 1,
       'article.category.description' : 1,
       'article.operationType' : 1,
+      'article.quantityPerMeasure' :1,
       'article.containsVariants' : 1,
       'branch.number' : { $toString: '$branch.number' },
       'deposit.name' : 1,

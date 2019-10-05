@@ -28,6 +28,7 @@
             <th (click)="orderBy('article.barcode')">Cód. Barras </th>
             <th (click)="orderBy('article.description')">Descripción </th>
             <th (click)="orderBy('realStock')">Stock Actual </th>
+            <th (click)="orderBy('article.quantityPerMeasure')">Cantidad </th>
             <th (click)="orderBy('article.costPrice')">Costo </th>
             <th> Total </th>
           </tr>
@@ -74,11 +75,12 @@
             <td class="flat">{{articleStock.article.barcode}}</td>
             <td class="flat">{{articleStock.article.description}}</td>
             <td class="flat">{{articleStock.realStock}}</td>
+            <td class="flat" >{{articleStock.article.quantityPerMeasure}}</td>
             <td class="flat">{{articleStock.article.costPrice | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
             <td class="flat">{{articleStock.article.costPrice * articleStock.realStock | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
-            <td colspan="10">No se encontraron artículos en stock</td>
+            <td colspan="11">No se encontraron artículos en stock</td>
           </tr>
         </tbody>
         <tfoot>
@@ -92,6 +94,7 @@
             <th></th>
             <th></th>
             <th>{{totalRealStock}}</th>
+            <th></th>
             <th>{{totalCost | currency:'USD':'symbol-narrow':'1.2-2'}}</th>
             <th>{{totalTotal | currency:'USD':'symbol-narrow':'1.2-2'}}</th>
           </tr>
