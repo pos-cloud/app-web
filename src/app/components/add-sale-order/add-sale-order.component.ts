@@ -746,6 +746,8 @@ export class AddSaleOrderComponent {
         });
       }
 
+      console.log(depositID)
+
       if(depositID){
         query = `where= "article": "${movementOfArticle.article._id}",
                         "branch": "${this.transaction.branchOrigin._id}",
@@ -1941,7 +1943,7 @@ export class AddSaleOrderComponent {
 
       if(movementOfArticle.article.deposits && movementOfArticle.article.deposits.length >0){
         for (const element of movementOfArticle.article.deposits) {
-          if(element.deposit.branch._id === this.transaction.branchDestination._id){
+          if(element.deposit && element.deposit.branch && element.deposit.branch._id === this.transaction.branchDestination._id){
             deposit = element.deposit;
           }
         }

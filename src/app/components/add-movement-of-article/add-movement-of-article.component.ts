@@ -765,7 +765,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
       if(this.movementOfArticle.article.deposits && this.movementOfArticle.article.deposits.length > 0){
         this.movementOfArticle.article.deposits.forEach(async element => {
-          if(element.deposit.branch._id === this.movementOfArticle.transaction.depositOrigin._id){
+          if(element.deposit && element.deposit.branch && element.deposit.branch._id === this.movementOfArticle.transaction.branchOrigin._id){
             depositID = element.deposit._id;
           }
         });
