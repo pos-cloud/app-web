@@ -75,6 +75,7 @@ export class AddArticleFieldsComponent implements OnInit {
         ]
       ],
       'value': [this.field.value, [
+        Validators.required
         ]
       ]
     });
