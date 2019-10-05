@@ -17,7 +17,8 @@
               <label for="deposit" class="control-label">Deposito:</label>
               <select class="form-control" formControlName="deposit">
                 <option *ngFor="let deposit of deposits"
-                        [selected]="location.deposit && deposit._id===location.deposit._id"
+                        [selected]="(location.deposit && location.deposit._id && deposit._id===location.deposit._id) ||
+                                    (location.deposit && deposit._id===location.deposit)"
                         [value]="deposit._id"
                         [disabled]="readonly">
                         {{deposit.name}}
