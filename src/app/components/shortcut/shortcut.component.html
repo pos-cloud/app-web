@@ -15,12 +15,17 @@
       <tbody>
         <tr>
           <td class="flat"><input  class="form-control" placeholder="Name" [(ngModel)]="shortcut.name" [focus]="focusEvent"></td>
-          <td class="flat"><input  class="form-control" placeholder="URL" [(ngModel)]="shortcut.url"></td>
+          <td class="flat">
+              <div class="input-group">
+                <span class="input-group-addon">{{dominio}}</span>
+                <input  class="form-control" placeholder="URL" [(ngModel)]="shortcut.url">
+              </div>
+          </td>
           <td align="left" width="50"><button type="button" class="btn btn-success btn-sm" (click)="addShortcut()" title="Agregar"><i class="fa fa-plus"></i></button></td>
         </tr>
         <tr *ngFor="let shortcut of shortcuts">
           <td class="flat"><pre>{{shortcut.name}} </pre></td>
-          <td class="flat"><pre>{{shortcut.url}}</pre></td>
+          <td class="flat"><pre>{{dominio}}{{shortcut.url}}</pre></td>
           <td align="left" width="50"><button type="button" class="btn btn-danger btn-sm" (click)="deleteShortcut(shortcut)" title="Eliminar"><i class="fa fa-trash-o"></i></button></td>
         </tr>
       </tbody>

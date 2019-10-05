@@ -15,6 +15,7 @@ export class ShortcutComponent  implements OnInit {
   public alertMessage: string = '';
   public userType: string;
   public focusEvent = new EventEmitter<boolean>();
+  public dominio: string;
   public shortcut: {
     name: string,
     url: string
@@ -37,6 +38,9 @@ export class ShortcutComponent  implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    if(window.location.href.includes('/#/')) {
+      this.dominio = window.location.href.split('/#/')[0] + '/#/';
+    }
 
     if(!this.shortcuts) {
       this.shortcuts = new Array();
