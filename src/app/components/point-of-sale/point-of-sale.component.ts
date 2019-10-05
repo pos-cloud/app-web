@@ -153,7 +153,7 @@ export class PointOfSaleComponent implements OnInit {
   public getDeposits(match: {} = {}): Promise<Deposit[]> {
 
     return new Promise<Deposit[]>((resolve, reject) => {
-  
+      
       this._depositService.getDepositsV2(
           {}, // PROJECT
           match, // MATCH
@@ -705,7 +705,7 @@ export class PointOfSaleComponent implements OnInit {
           await this.getDeposits({ branch: { $oid: this.transaction.branchOrigin._id }, operationType: { $ne: 'D' } }).then(
             deposits => {
               if(deposits && deposits.length > 0) {
-                if(deposits.length === 0){
+                if(deposits.length === 1){
                   this.transaction.depositOrigin = deposits[0];
                   this.transaction.depositDestination = deposits[0];                 
                   resolve(true);

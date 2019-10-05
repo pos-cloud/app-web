@@ -120,7 +120,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
       if(this.movementOfArticle.article.locations && this.movementOfArticle.article.locations.length > 0) {
         this.movementOfArticle.article.locations.forEach(element => {
-          if(element.location.deposit._id === depositArticle._id){
+          if(element.location && element.location.deposit && element.location.deposit._id === depositArticle._id){
             this.position += `Ubic. ${element.location.description} - ${element.location.positionX} - ${element.location.positionY} - ${element.location.positionZ}`;
           }
         });
