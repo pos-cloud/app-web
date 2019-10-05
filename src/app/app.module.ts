@@ -258,6 +258,7 @@ import { PrintTransactionTypeComponent } from './components/print/print-transact
 import { ProgressbarComponent } from './components/progressbar/progressbar.component';
 import { ReportsList } from './components/reports-list/reports-list.component';
 import { ShortcutComponent } from './components/shortcut/shortcut.component';
+import { LicenseGuard } from './guards/license.guard';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -684,6 +685,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     BankService,
     BranchService,
     AuthGuard,
+    LicenseGuard,
     AuthService,
     OriginService,
     ClaimService,
