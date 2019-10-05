@@ -80,7 +80,8 @@ export class AddUserComponent  implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
 
@@ -162,6 +163,10 @@ export class AddUserComponent  implements OnInit {
         }
       }
     }
+  }
+  
+  public addShortcut(shortcuts) {
+    this.user.shortcuts = shortcuts;
   }
 
   public getUser(): void {
@@ -316,7 +321,9 @@ export class AddUserComponent  implements OnInit {
   public addUser(): void {
     
     this.loading = true;
+    let shortcuts = this.user.shortcuts;
     this.user = this.userForm.value;
+    this.user.shortcuts = shortcuts;
     this.user.tokenExpiration = 1440;
     
     if (this.operation === 'add') {

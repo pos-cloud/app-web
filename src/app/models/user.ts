@@ -14,6 +14,10 @@ export class User {
 	public employee: Employee = null;
 	public company: Company = null;
 	public origin: Origin = null;
+	public shortcuts: [{
+		name: string,
+		url: string
+	}];
 
 	constructor () {}
 }

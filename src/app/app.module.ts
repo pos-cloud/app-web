@@ -257,6 +257,7 @@ import { PrintLabelComponent } from './components/print/print-label/print-label.
 import { PrintTransactionTypeComponent } from './components/print/print-transaction-type/print-transaction-type.component';
 import { ProgressbarComponent } from './components/progressbar/progressbar.component';
 import { ReportsList } from './components/reports-list/reports-list.component';
+import { ShortcutComponent } from './components/shortcut/shortcut.component';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -443,7 +444,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     PrintLabelComponent,
     PrintTransactionTypeComponent,
     ProgressbarComponent,
-    ReportsList
+    ReportsList,
+    ShortcutComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -608,7 +610,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     PrintLabelComponent,
     PrintTransactionTypeComponent,
     ProgressbarComponent,
-    ReportsList
+    ReportsList,
+    ShortcutComponent
   ],
   imports: [
     BrowserModule,
