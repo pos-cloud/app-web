@@ -1,0 +1,29 @@
+<section class="container-fluid" *ngIf="userType=='admin'">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Nombre </th>
+          <th>URL </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="flat"><input  class="form-control" placeholder="Name" [(ngModel)]="shortcut.name" [focus]="focusEvent"></td>
+          <td class="flat"><input  class="form-control" placeholder="URL" [(ngModel)]="shortcut.url"></td>
+          <td align="left" width="50"><button type="button" class="btn btn-success btn-sm" (click)="addShortcut()" title="Agregar"><i class="fa fa-plus"></i></button></td>
+        </tr>
+        <tr *ngFor="let shortcut of shortcuts">
+          <td class="flat"><pre>{{shortcut.name}} </pre></td>
+          <td class="flat"><pre>{{shortcut.url}}</pre></td>
+          <td align="left" width="50"><button type="button" class="btn btn-danger btn-sm" (click)="deleteShortcut(shortcut)" title="Eliminar"><i class="fa fa-trash-o"></i></button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

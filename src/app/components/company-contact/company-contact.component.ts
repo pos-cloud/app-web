@@ -63,9 +63,6 @@ export class CompanyContactComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  
-
-
   public getCompaniesContacts(): void {
 
     this.loading = true;
