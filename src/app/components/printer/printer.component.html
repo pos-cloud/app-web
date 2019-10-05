@@ -91,7 +91,7 @@
         <ngb-tab title="Diseño">
           <ng-template ngbTabContent>
             <div class = "row">
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <form #fieldForm="ngForm" (ngSubmit)="addField(fieldForm)">
                         <div class="row">
                           <div class="form-group col-md-3">
@@ -141,17 +141,17 @@
                           </div>
                         </div>
                         <div class = "row" *ngIf="type === 'data' || type === 'dataSum' || type === 'label'">
+                          <div class="form-group col-md-4">
+                              <label for="font" class="control-label">Fuente:</label>
+                              <select class="form-control" [(ngModel)]="font" name="font">
+                                <option value="default" [selected]="default">Default</option>
+                                <option value="courier" [selected]="courier">Courier</option>
+                                <option value="times" [selected]="times">Times</option>
+                                <option value="helvetica" [selected]="helvetica">Helvetica</option>
+                              </select>
+                            </div>
                             <div class="form-group col-md-4">
-                                <label for="font" class="control-label">Fuente:</label>
-                                <select class="form-control" [(ngModel)]="font" name="font">
-                                  <option value="default" [selected]="default">Default</option>
-                                  <option value="courier" [selected]="courier">Courier</option>
-                                  <option value="times" [selected]="times">Times</option>
-                                  <option value="helvetica" [selected]="helvetica">Helvetica</option>
-                                </select>
-                              </div>
-                              <div class="form-group col-md-4">
-                                <label for="fontType" class="control-label">Letra:</label>
+                              <label for="fontType" class="control-label">Letra:</label>
                                 <select class="form-control" [(ngModel)]="fontType" name="fontType"  required>
                                   <option value="normal" [selected]="normal">Normal</option>
                                   <option value="italic" [selected]="italic">Italic</option>
@@ -206,7 +206,10 @@
                             </div>
                         </div>
                     </form>
-                  </div>
+                </div>
+                <div class="col-md-6">
+                  <app-print-transaction-type [printer]="printer"></app-print-transaction-type>
+                </div>
             </div>
             <div class = "row">
                 <div class="col-md-12">

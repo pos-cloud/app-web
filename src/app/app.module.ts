@@ -258,7 +258,8 @@ import { PrintTransactionTypeComponent } from './components/print/print-transact
 import { ProgressbarComponent } from './components/progressbar/progressbar.component';
 import { ReportsList } from './components/reports-list/reports-list.component';
 
-const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} };
+// const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
+const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
