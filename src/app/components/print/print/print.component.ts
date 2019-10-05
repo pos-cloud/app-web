@@ -2434,7 +2434,7 @@ export class PrintComponent implements OnInit {
       }
     }
 
-    if(this.transaction.letter === "A"){
+    if(this.transaction.company.vatCondition.discriminate){
       row += 3;
       this.doc.line(0, row, width, row);
       row += 3;
