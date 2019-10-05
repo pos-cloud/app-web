@@ -765,7 +765,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
       if(this.movementOfArticle.article.deposits && this.movementOfArticle.article.deposits.length > 0){
         this.movementOfArticle.article.deposits.forEach(async element => {
-          if(element.deposit.branch._id === this.movementOfArticle.transaction.depositDestination._id){
+          if(element.deposit.branch._id === this.movementOfArticle.transaction.depositOrigin._id){
             depositID = element.deposit._id;
           }
         });
@@ -773,13 +773,13 @@ export class AddMovementOfArticleComponent implements OnInit {
 
       if(depositID){
         query = `where= "article": "${this.movementOfArticle.article._id}",
-                        "branch": "${this.movementOfArticle.transaction.branchDestination._id}",
+                        "branch": "${this.movementOfArticle.transaction.branchOrigin._id}",
                         "deposit": "${depositID}"`;
 
       } else {
         query = `where= "article": "${this.movementOfArticle.article._id}",
-                    "branch": "${this.movementOfArticle.transaction.branchDestination._id}",
-                    "deposit": "${this.movementOfArticle.transaction.depositDestination._id}"`;
+                        "branch": "${this.movementOfArticle.transaction.branchOrigin._id}",
+                        "deposit": "${this.movementOfArticle.transaction.depositOrigin._id}"`;
       }
 
 
