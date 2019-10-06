@@ -213,7 +213,7 @@ export class ListArticlesPosComponent implements OnInit {
   }
 
   async addItem(articleSelected: Article, amount?: number, salePrice?: number) {
-
+    
     let err: boolean = false;
 
     await this.getArticle(articleSelected._id).then(
@@ -223,40 +223,38 @@ export class ListArticlesPosComponent implements OnInit {
 
           if(this.transaction && this.transaction.company && this.transaction.company.priceList && this.transaction.company.type === CompanyType.Client ) {
             let priceList = await this.getPriceList(this.transaction.company.priceList._id)
-            if(priceList){
-              if(priceList.allowSpecialRules){
-                  priceList.rules.forEach(rule => {
-                    if(rule){
-                      if(rule.category && article.category && rule.make && article.make && rule.category._id === article.category._id && rule.make._id === article.make._id){
-                        increasePrice = rule.percentage + priceList.percentage
-                      }
-                      if(rule.make && article.make && rule.category == null && rule.make._id === article.make._id){
-                        increasePrice = rule.percentage + priceList.percentage
-                      }
-                      if(rule.category && article.category && rule.make == null && rule.category._id === article.category._id){
-                        increasePrice = rule.percentage + priceList.percentage
-                      }
-                      if(rule.category && article.category && rule.make && article.make && rule.make._id !== article.make._id && rule.category._id !== article.category._id){
-                        increasePrice = priceList.percentage
-                      }
+            if(priceList) {
+              if(priceList.allowSpecialRules) {
+                priceList.rules.forEach(rule => {
+                  if(rule) {
+                    if(rule.category && article.category && rule.make && article.make && rule.category._id === article.category._id && rule.make._id === article.make._id) {
+                      increasePrice = rule.percentage + priceList.percentage
                     }
-                  });
-                } else {
-                  increasePrice = priceList.percentage
-                }
+                    if(rule.make && article.make && rule.category == null && rule.make._id === article.make._id) {
+                      increasePrice = rule.percentage + priceList.percentage
+                    }
+                    if(rule.category && article.category && rule.make == null && rule.category._id === article.category._id) {
+                      increasePrice = rule.percentage + priceList.percentage
+                    }
+                    if(rule.category && article.category && rule.make && article.make && rule.make._id !== article.make._id && rule.category._id !== article.category._id) {
+                      increasePrice = priceList.percentage
+                    }
+                  }
+                });
+              } else {
+                increasePrice = priceList.percentage
+              }
 
-                if(priceList.exceptions && priceList.exceptions.length > 0){
-                  priceList.exceptions.forEach(exception =>{
-                    if(exception){
-                      if(article && exception.article && exception.article._id === article._id){
-                        increasePrice = exception.percentage
-                      }
+              if(priceList.exceptions && priceList.exceptions.length > 0) {
+                priceList.exceptions.forEach(exception =>{
+                  if(exception) {
+                    if(article && exception.article && exception.article._id === article._id) {
+                      increasePrice = exception.percentage
                     }
-                  })
-                }
-              
+                  }
+                })
+              }
             }
-              
           }
 
           let movementOfArticle = new MovementOfArticle();
@@ -322,7 +320,7 @@ export class ListArticlesPosComponent implements OnInit {
                   movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
               }
 
-              if(increasePrice != 0){
+              if(increasePrice != 0) {
                   movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.markupPrice + (movementOfArticle.markupPrice *increasePrice / 100));
                   movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice +(movementOfArticle.unitPrice *increasePrice / 100));
                   movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice +(movementOfArticle.salePrice *increasePrice / 100));
@@ -476,7 +474,7 @@ export class ListArticlesPosComponent implements OnInit {
     });
   }
 
-  public filterItem(category?: Category) {
+  public filterItem(article?: Article, category?: Category) {
 
     let isCodePrefix: boolean = false;
 
@@ -497,7 +495,14 @@ export class ListArticlesPosComponent implements OnInit {
     }
     
     // FILTRA DENTRO DE LA CATEGORIA SI EXISTE
-    if(category) {
+    if(article) {
+      // CORTAMOS EL CÓDIGO SI MANDA CANTIDAD *
+      var amount = 1;
+      if(this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*') {
+        amount = parseFloat(this.filterArticle.slice(1, this.filterArticle.length));
+      }
+      this.addItem(article, amount);
+    } else if(category) {
       this.filteredArticles = this.filterPipe.transform(this.articles, category._id, 'category');
       this.filteredArticles = this.filterPipe.transform(this.filteredArticles, ArticleType.Final.toString(), 'type');
       if (this.filterArticle && this.filterArticle !== "") {
@@ -511,7 +516,6 @@ export class ListArticlesPosComponent implements OnInit {
 
         this.hideMessage();
 
-        let article;
         var count = 1;
 
         if (this.filteredArticles.length === 1) {
