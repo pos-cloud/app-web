@@ -53,6 +53,17 @@ body {
       justify-content: flex-end;
 }
 
+.popover-class {
+      background: white;
+      padding: 20px !important;
+      font-size: 15px !important;
+      min-width: 250px !important;
+}
+
+.popover-class .arrow::after {
+      border-top-color: white;
+}
+
 /* LISTADOS */
 .card {
       min-height: 85vh;
