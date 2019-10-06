@@ -163,7 +163,6 @@ export class PointOfSaleComponent implements OnInit {
           0 // SKIP
       ).subscribe(
         result => {
-          console.log(result.deposits)
           if (result.deposits) {
             resolve(result.deposits);
           } else {
@@ -677,7 +676,7 @@ export class PointOfSaleComponent implements OnInit {
             }
           }
         );
-      } else if (!this.transaction.depositDestination || this.transaction.depositOrigin) {
+      } else if (!this.transaction.depositDestination || !this.transaction.depositOrigin) {
         let depositAssigned = await this.assignDeposit();
         if(depositAssigned) {
           if (!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0) {
@@ -699,7 +698,6 @@ export class PointOfSaleComponent implements OnInit {
   }
 
   async assignDeposit(): Promise<boolean> {
-
     return new Promise<boolean>(async (resolve, reject) => {
       if(!this.transaction.depositDestination || !this.transaction.depositOrigin) {
           await this.getDeposits({ branch: { $oid: this.transaction.branchOrigin._id }, operationType: { $ne: 'D' } }).then(
@@ -710,17 +708,20 @@ export class PointOfSaleComponent implements OnInit {
                   this.transaction.depositDestination = deposits[0];                 
                   resolve(true);
                 } else {
+                  let depositDefault: Deposit;
                   deposits.forEach(element => {
-                    let deposit : Deposit = element; 
-                    if(deposit && deposit.default) {
-                      this.transaction.depositOrigin = deposit;
-                      this.transaction.depositDestination = deposit;
-                      resolve(true)
-                    } else {
-                      this.showMessage("Debe asignar un depósito principal para la sucursal " + this.transaction.branchDestination.name, "info", true);
-                      resolve(false);
+                    if(element && element.default) {
+                      depositDefault = element;
                     }
                   });
+                  if(depositDefault) {
+                    this.transaction.depositOrigin = depositDefault;
+                    this.transaction.depositDestination = depositDefault;       
+                    resolve(true);
+                  } else {
+                    this.showMessage("Debe asignar un depósito principal para la sucursal " + this.transaction.branchDestination.name, "info", true);
+                    resolve(false);
+                  }
                 }
               } else {
                 this.showMessage("Debe crear un depósito para la sucursal " + this.transaction.branchDestination.name, "info", true);
@@ -728,10 +729,8 @@ export class PointOfSaleComponent implements OnInit {
               }
             }
           );
-        
-          
         } else {
-          resolve(true)
+          resolve(true);
         }
     });
   }
@@ -765,14 +764,12 @@ export class PointOfSaleComponent implements OnInit {
 
   async nextStepTransaction() {
 
-    console.log(this.transaction);
-
     if(this.transaction && (!this.transaction._id || this.transaction._id === "")) {
       let result;
       if(this.transaction.type.transactionMovement === TransactionMovement.Stock && 
           this.transaction.type.stockMovement === StockMovement.Transfer &&
           (!this.transaction.depositDestination || !this.transaction.depositOrigin)) {
-        this.openModal('transfer')
+        this.openModal('transfer');
       } else {
         result = await this.assignBranch();
       }
@@ -821,13 +818,6 @@ export class PointOfSaleComponent implements OnInit {
           }
         }
       );
-
-      if(!this.transaction.depositDestination || !this.transaction.depositOrigin){
-        let depositAssign = await this.assignDeposit()
-        if(depositAssign){
-          this.nextStepTransaction();
-        }
-      }
 
       if( !this.transaction.branchDestination || 
           !this.transaction.branchOrigin ||
