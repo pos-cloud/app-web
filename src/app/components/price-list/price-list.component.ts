@@ -110,7 +110,7 @@ export class PriceListComponent implements OnInit {
   }
 
   public addNewRule(e :any): void {
-    if(this.priceListForm.value.rules.lenght <= 0 && e){
+    if(this.priceListForm.value.rules.lenght <= 0 && e) {
       const rules = this.priceListForm.controls.rules as FormArray;
       rules.push(
         this._fb.group({
@@ -124,7 +124,7 @@ export class PriceListComponent implements OnInit {
   }
 
   public addNewException(e :any): void {
-    if(this.priceListForm.value.exceptions.lenght <= 0 && e){
+    if(this.priceListForm.value.exceptions.lenght <= 0 && e) {
       const exceptions = this.priceListForm.controls.exceptions as FormArray;
       exceptions.push(
         this._fb.group({
@@ -141,26 +141,26 @@ export class PriceListComponent implements OnInit {
     let valid = true;
     const rules = this.priceListForm.controls.rules as FormArray;
 
-    if((ruleForm.value.make == '' || ruleForm.value.make == null) && (ruleForm.value.category == '' || ruleForm.value.category == null)){
+    if((ruleForm.value.make == '' || ruleForm.value.make == null) && (ruleForm.value.category == '' || ruleForm.value.category == null)) {
       this.showMessage("No puede seleccionar Todos los Rubros y Todas las Marcas","danger",true)
       valid = false;
     }
 
-    if(ruleForm.value.percentage == '' || ruleForm.value.percentage == 0 || ruleForm.value.percentage == null ){
+    if(ruleForm.value.percentage == '' || ruleForm.value.percentage == 0 || ruleForm.value.percentage == null ) {
       this.showMessage("El porcentaje no puede ser 0","danger",true)
       valid = false;
     }
 
     this.priceListForm.controls.rules.value.forEach(element => {
 
-      if(ruleForm.value.make == element.make && ruleForm.value.category == element.category){
+      if(ruleForm.value.make == element.make && ruleForm.value.category == element.category) {
         this.showMessage("Esta regla ya existe","danger",true)
         valid = false;
       } 
 
     });
 
-    if(valid){
+    if(valid) {
       rules.push(
         this._fb.group({
           _id: null,
@@ -181,24 +181,24 @@ export class PriceListComponent implements OnInit {
 
     this.priceListForm.controls.exceptions.value.forEach(element => {
 
-      if(exceptionForm.value.article == element.article){
+      if(exceptionForm.value.article == element.article) {
         this.showMessage("Esta excepcion ya existe","danger",true)
         valid = false;
       } 
 
     });
 
-    if(exceptionForm.value.percentage == '' || exceptionForm.value.percentage == 0 || exceptionForm.value.percentage == null ){
+    if(exceptionForm.value.percentage == '' || exceptionForm.value.percentage == 0 || exceptionForm.value.percentage == null ) {
       this.showMessage("El porcentaje no puede ser 0 o vacio","danger",true)
       valid = false;
     }
 
-    if(exceptionForm.value.article == '' || exceptionForm.value.article == 0 || exceptionForm.value.article == null ){
+    if(exceptionForm.value.article == '' || exceptionForm.value.article == 0 || exceptionForm.value.article == null ) {
       this.showMessage("Debe seleccionar un producto","danger",true)
       valid = false;
     }
 
-    if(valid){
+    if(valid) {
       exceptions.push(
         this._fb.group({
           _id: null,
@@ -251,7 +251,7 @@ export class PriceListComponent implements OnInit {
         } else {
           this.hideMessage();
           this.priceList = result.priceList;
-          if(this.priceList.allowSpecialRules){
+          if(this.priceList.allowSpecialRules) {
             this.viewRules = true;
           }
           this.setValueForm();
@@ -279,7 +279,7 @@ export class PriceListComponent implements OnInit {
       'allowSpecialRules' : this.priceList.allowSpecialRules
     };
 
-    if(this.priceList.rules && this.priceList.rules.length > 0){
+    if(this.priceList.rules && this.priceList.rules.length > 0) {
       let rules = <FormArray>this.priceListForm.controls.rules;
       this.priceList.rules.forEach(x => {
 
@@ -303,7 +303,7 @@ export class PriceListComponent implements OnInit {
     }
     
 
-    if(this.priceList.exceptions && this.priceList.exceptions.length > 0){
+    if(this.priceList.exceptions && this.priceList.exceptions.length > 0) {
       let exceptions = <FormArray>this.priceListForm.controls.exceptions;
       this.priceList.exceptions.forEach(x => {
 
@@ -409,7 +409,7 @@ export class PriceListComponent implements OnInit {
     );
   }
 
-  public getCategories(){
+  public getCategories() {
     this.loading = true;
 
     let query = 'sort="description":1';
@@ -432,7 +432,7 @@ export class PriceListComponent implements OnInit {
     );
   }
 
-  public getMakes(){
+  public getMakes() {
     this.loading = true;
 
     this._makeService.getMakes().subscribe(
@@ -454,7 +454,7 @@ export class PriceListComponent implements OnInit {
       );
   }
 
-  public getArticles(){
+  public getArticles() {
     this.loading = true;
 
     this._articleService.getArticles().subscribe(

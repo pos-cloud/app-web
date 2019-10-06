@@ -209,9 +209,9 @@ export class ListCompaniesComponent implements OnInit {
 
         modalRef = this._modalService.open(SendEmailComponent, { size: 'lg', backdrop: 'static' });
         if(this.companies && this.companies.length > 0) {
-          for(let i=0; i < this.companies.length; i++){
+          for(let i=0; i < this.companies.length; i++) {
             emails += this.companies[i].emails;
-            if ((i-this.companies.length)<=-2){
+            if ((i-this.companies.length)<=-2) {
               emails += ",";
             }
           }

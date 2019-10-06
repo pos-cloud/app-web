@@ -71,30 +71,30 @@ export class PrintArticlesStockComponent implements OnInit {
 
     let match = `{`;
 
-    if(this.branch ){
+    if(this.branch ) {
       match += `"branchDestination.number": { "$regex": "${this.branch}", "$options": "i" }, `
 
     }
-    if(this.deposit ){
+    if(this.deposit ) {
       match += `"depositDestination.name": { "$regex": "${this.deposit}", "$options": "i" }, `
 
     }
-    if(this.make ){
+    if(this.make ) {
       match += `"article.make.description": { "$regex": "${this.make}", "$options": "i" }, `
 
     }
-    if(this.category ){
+    if(this.category ) {
       match += `"article.category.description": { "$regex": "${this.category}", "$options": "i" }, `
     }
-    if(this.code ){
+    if(this.code ) {
       match += `"article.code": { "$regex": "${this.code}", "$options": "i" }, `
 
     }
-    if(this.barcode ){
+    if(this.barcode ) {
       match += `"article.barcode": { "$regex": "${this.barcode}", "$options": "i" }, `
 
     }
-    if(this.description ){
+    if(this.description ) {
       match += `"article.description": { "$regex": "${this.description}", "$options": "i" }, `
     }
 

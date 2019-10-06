@@ -79,7 +79,7 @@ export class ListCashBoxComponent implements OnInit {
     this.openModal('cashBox')
   }
 
-  public getCashBox(cashBoxId : string){
+  public getCashBox(cashBoxId : string) {
 
     this.loading = true;
 

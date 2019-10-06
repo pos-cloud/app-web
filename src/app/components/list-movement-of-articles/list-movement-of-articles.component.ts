@@ -90,7 +90,7 @@ export class ListMovementOfArticlesComponent implements OnInit {
     this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    if(pathLocation[3] != ':id'){
+    if(pathLocation[3] != ':id') {
       this.getArticle(pathLocation[3].toString());
     } else {
       this.openModal('article');

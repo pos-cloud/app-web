@@ -120,7 +120,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
       if(this.movementOfArticle.article.locations && this.movementOfArticle.article.locations.length > 0) {
         this.movementOfArticle.article.locations.forEach(element => {
-          if(element.location && element.location.deposit && element.location.deposit._id === depositArticle._id){
+          if(element.location && element.location.deposit && element.location.deposit._id === depositArticle._id) {
             this.position += `Ubic. ${element.location.description} - ${element.location.positionX} - ${element.location.positionY} - ${element.location.positionZ}`;
           }
         });
@@ -763,15 +763,15 @@ export class AddMovementOfArticleComponent implements OnInit {
       let depositID;
       let query;
 
-      if(this.movementOfArticle.article.deposits && this.movementOfArticle.article.deposits.length > 0){
+      if(this.movementOfArticle.article.deposits && this.movementOfArticle.article.deposits.length > 0) {
         this.movementOfArticle.article.deposits.forEach(async element => {
-          if(element.deposit && element.deposit.branch && element.deposit.branch._id === this.movementOfArticle.transaction.branchOrigin._id){
+          if(element.deposit && element.deposit.branch && element.deposit.branch._id === this.movementOfArticle.transaction.branchOrigin._id) {
             depositID = element.deposit._id;
           }
         });
       }
 
-      if(depositID){
+      if(depositID) {
         query = `where= "article": "${this.movementOfArticle.article._id}",
                         "branch": "${this.movementOfArticle.transaction.branchOrigin._id}",
                         "deposit": "${depositID}"`;

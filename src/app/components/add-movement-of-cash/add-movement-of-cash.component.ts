@@ -219,7 +219,7 @@ export class AddMovementOfCashComponent implements OnInit {
     if (!this.amountPaid) this.amountPaid = 0.00;
     if (!this.amountDiscount) this.amountDiscount = 0.00;
 
-    if(this.paymentMethodSelected.observation){
+    if(this.paymentMethodSelected.observation) {
       this.movementOfCash.observation = this.paymentMethodSelected.observation;
     }
 
@@ -677,7 +677,7 @@ export class AddMovementOfCashComponent implements OnInit {
 
       this._movementOfCashService.getMovementsOfCashes(query).subscribe(
         async result => {
-          if(result && result.movementsOfCashes){
+          if(result && result.movementsOfCashes) {
             resolve(result.movementsOfCashes);
           } else {
             resolve(null);

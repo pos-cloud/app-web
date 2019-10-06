@@ -101,7 +101,7 @@ export class PrintPriceListComponent implements OnInit {
 
     await this._configService.getConfigApi().subscribe(
        result => {
-        if(result && result.configs){
+        if(result && result.configs) {
           this.config = result.configs
         }
        },
@@ -268,15 +268,15 @@ export class PrintPriceListComponent implements OnInit {
 
     let match = `{`;
 
-    if(this.printPriceListForm.value.make){
+    if(this.printPriceListForm.value.make) {
       match += `"make._id" :  { "$oid" : "${this.printPriceListForm.value.make}" },`
     }
 
-    if(this.printPriceListForm.value.category){
+    if(this.printPriceListForm.value.category) {
       match += `"category._id" :  { "$oid" : "${this.printPriceListForm.value.category}" },`
     }
 
-    if(this.printPriceListForm.value.otherFields && this.printPriceListForm.value.articleFieldsValue){
+    if(this.printPriceListForm.value.otherFields && this.printPriceListForm.value.articleFieldsValue) {
       match += `"otherFields.value" : "${this.printPriceListForm.value.articleFieldsValue}",`
     }
 
@@ -322,7 +322,7 @@ export class PrintPriceListComponent implements OnInit {
       result => {
         if (result && result[0] && result[0].articles) {
             this.articles = result[0].articles;
-            if(this.printPriceListForm.value.withImage){
+            if(this.printPriceListForm.value.withImage) {
               this.printPriceListWithImagen();
             } else {
               this.printPriceListWithoutImagen();
@@ -367,10 +367,10 @@ export class PrintPriceListComponent implements OnInit {
     this.doc.line(0, row, 400, row);
     count = 0;
 
-    if(this.articles && this.articles.length > 0){
+    if(this.articles && this.articles.length > 0) {
       for(let article of this.articles) {
           this.doc.setFontType('blod')
-          if(article.picture !== 'default.jpg' &&  await this.getPicture(article.picture)){
+          if(article.picture !== 'default.jpg' &&  await this.getPicture(article.picture)) {
             this.doc.addImage(this.imageURL, 'JPEG', 15, row+4, 60, 40);
           }
           row +=5
@@ -378,34 +378,34 @@ export class PrintPriceListComponent implements OnInit {
           this.doc.text(5, row, article.description)
           row +=5
           this.doc.setFontSize(this.fontSizes.normal)
-          if(article.posDescription){
+          if(article.posDescription) {
             this.doc.text(95, row, 'COD: ' + article.posDescription)
           }
           row +=5
           this.doc.setFontSize(this.fontSizes.normal)
-          if(article.make){
+          if(article.make) {
             this.doc.text(95, row, 'Marca: ' + article.make.description)
           }
           this.doc.text(160, row, 'Precio')
           this.doc.setFontSize(this.fontSizes.extraLarge)
           
           let increasePrice = 0;
-          if(this.printPriceListForm.value.priceList){
+          if(this.printPriceListForm.value.priceList) {
             let priceList = await this.getPriceList(this.printPriceListForm.value.priceList)
-            if(priceList){
-              if(priceList.allowSpecialRules){
+            if(priceList) {
+              if(priceList.allowSpecialRules) {
                   priceList.rules.forEach(rule => {
-                    if(rule){
-                      if(rule.category && article.category && rule.make && article.make && rule.category._id === article.category._id && rule.make._id === article.make._id){
+                    if(rule) {
+                      if(rule.category && article.category && rule.make && article.make && rule.category._id === article.category._id && rule.make._id === article.make._id) {
                         increasePrice = rule.percentage + priceList.percentage
                       }
-                      if(rule.make && article.make && rule.category == null && rule.make._id === article.make._id){
+                      if(rule.make && article.make && rule.category == null && rule.make._id === article.make._id) {
                         increasePrice = rule.percentage + priceList.percentage
                       }
-                      if(rule.category && article.category && rule.make == null && rule.category._id === article.category._id){
+                      if(rule.category && article.category && rule.make == null && rule.category._id === article.category._id) {
                         increasePrice = rule.percentage + priceList.percentage
                       }
-                      if(rule.category && article.category && rule.make && article.make && rule.make._id !== article.make._id && rule.category._id !== article.category._id){
+                      if(rule.category && article.category && rule.make && article.make && rule.make._id !== article.make._id && rule.category._id !== article.category._id) {
                         increasePrice = priceList.percentage
                       }
                     }
@@ -414,10 +414,10 @@ export class PrintPriceListComponent implements OnInit {
                   increasePrice = priceList.percentage
                 }
 
-                if(priceList.exceptions && priceList.exceptions.length > 0){
+                if(priceList.exceptions && priceList.exceptions.length > 0) {
                   priceList.exceptions.forEach(exception =>{
-                    if(exception){
-                      if(article && exception.article && exception.article._id === article._id){
+                    if(exception) {
+                      if(article && exception.article && exception.article._id === article._id) {
                         increasePrice = exception.percentage
                       }
                     }
@@ -426,7 +426,7 @@ export class PrintPriceListComponent implements OnInit {
               
             }
           }
-          if(increasePrice != 0){
+          if(increasePrice != 0) {
             this.doc.text(160, row + 8,"$" + (this.roundNumber.transform(article.salePrice +(article.salePrice *increasePrice / 100))).toString());
           } else {
             this.doc.text(160, row + 8,"$" + (this.roundNumber.transform(article.salePrice)).toString());
@@ -434,28 +434,28 @@ export class PrintPriceListComponent implements OnInit {
           this.doc.setFontSize(this.fontSizes.normal)
           row +=5
           this.doc.text(95, row, 'Categoría: ' + article.category.description)
-          if(article.otherFields && article.otherFields.length > 0 ){
-            for (let fields of article.otherFields){
+          if(article.otherFields && article.otherFields.length > 0 ) {
+            for (let fields of article.otherFields) {
               row +=5
               this.doc.text(95, row, fields.articleField.name + ": " + fields.value)
             }
           }
-          if(article.containsVariants){
+          if(article.containsVariants) {
             let variants = await this.getVariants(article._id)
-            for(let variant of variants){
+            for(let variant of variants) {
               row +=5
               this.doc.text(95, row, variant["_id"]["type"]["name"] + ":")
               let col = 110 + variant["_id"]["type"]["name"].length;
-              for(let value of variant["value"] ){
+              for(let value of variant["value"] ) {
                 this.doc.text(col, row , value["description"])
                 col += 5 + value["description"].length;
               }
               row +=5
               this.doc.text(95, row, "Stock Disp.:")
               let col2 = 110 + variant["_id"]["type"]["name"].length;
-              for(let value of variant["value"] ){
+              for(let value of variant["value"] ) {
                 var stock = await this.getStock(value['id'])
-                if(stock){
+                if(stock) {
                   this.doc.text(col2, row , stock.toString())
                 } else {
                   this.doc.text(col2, row , "0")
@@ -466,7 +466,7 @@ export class PrintPriceListComponent implements OnInit {
           } else {
             row +=5
             var stock = await this.getStock(article._id)
-            if(stock){
+            if(stock) {
               this.doc.text(95, row , "Stock Disp.: "+stock.toString())
             } else {
               this.doc.text(95, row , "Stock Disp.: 0")
@@ -575,22 +575,22 @@ export class PrintPriceListComponent implements OnInit {
           this.doc.text(this.articles[index].category.description.slice(0, 18), 145, row);
         }
         let increasePrice = 0;
-        if(this.printPriceListForm.value.priceList){
+        if(this.printPriceListForm.value.priceList) {
           let priceList = await this.getPriceList(this.printPriceListForm.value.priceList)
-          if(priceList){
-            if(priceList.allowSpecialRules){
+          if(priceList) {
+            if(priceList.allowSpecialRules) {
                 priceList.rules.forEach(rule => {
-                  if(rule){
-                    if(rule.category && this.articles[index].category && rule.make && this.articles[index].make && rule.category._id === this.articles[index].category._id && rule.make._id === this.articles[index].make._id){
+                  if(rule) {
+                    if(rule.category && this.articles[index].category && rule.make && this.articles[index].make && rule.category._id === this.articles[index].category._id && rule.make._id === this.articles[index].make._id) {
                       increasePrice = rule.percentage + priceList.percentage
                     }
-                    if(rule.make && this.articles[index].make && rule.category == null && rule.make._id === this.articles[index].make._id){
+                    if(rule.make && this.articles[index].make && rule.category == null && rule.make._id === this.articles[index].make._id) {
                       increasePrice = rule.percentage + priceList.percentage
                     }
-                    if(rule.category && this.articles[index].category && rule.make == null && rule.category._id === this.articles[index].category._id){
+                    if(rule.category && this.articles[index].category && rule.make == null && rule.category._id === this.articles[index].category._id) {
                       increasePrice = rule.percentage + priceList.percentage
                     }
-                    if(rule.category && this.articles[index].category && rule.make && this.articles[index].make && rule.make._id !== this.articles[index].make._id && rule.category._id !== this.articles[index].category._id){
+                    if(rule.category && this.articles[index].category && rule.make && this.articles[index].make && rule.make._id !== this.articles[index].make._id && rule.category._id !== this.articles[index].category._id) {
                       increasePrice = priceList.percentage
                     }
                   }
@@ -599,10 +599,10 @@ export class PrintPriceListComponent implements OnInit {
                 increasePrice = priceList.percentage
               }
 
-              if(priceList.exceptions && priceList.exceptions.length > 0){
+              if(priceList.exceptions && priceList.exceptions.length > 0) {
                 priceList.exceptions.forEach(exception =>{
-                  if(exception){
-                    if(this.articles[index] && exception.article && exception.article._id === this.articles[index]._id){
+                  if(exception) {
+                    if(this.articles[index] && exception.article && exception.article._id === this.articles[index]._id) {
                       increasePrice = exception.percentage
                     }
                   }
@@ -611,7 +611,7 @@ export class PrintPriceListComponent implements OnInit {
             
           }
         }
-          if(increasePrice != 0){
+          if(increasePrice != 0) {
             this.doc.text(190,row,"$" + (this.roundNumber.transform(this.articles[index].salePrice +(this.articles[index].salePrice *increasePrice / 100))).toString());
           } else {
             this.doc.text(190,row,"$" + (this.roundNumber.transform(this.articles[index].salePrice)).toString());
@@ -682,7 +682,7 @@ export class PrintPriceListComponent implements OnInit {
             }
           },
           error => {
-            if(error){
+            if(error) {
               resolve(false);
             }
           }
@@ -690,7 +690,7 @@ export class PrintPriceListComponent implements OnInit {
     });
   }
 
-  public getVariants(articleId){
+  public getVariants(articleId) {
     return new Promise<Array<[]>> ((resolve, reject) => {
 
       let match = `{"articleParent._id" :  { "$oid" : "${articleId}" },"operationType" : { "$ne" : "D" } }`;

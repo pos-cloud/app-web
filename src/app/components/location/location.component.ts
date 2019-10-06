@@ -64,18 +64,22 @@ export class LocationComponent implements OnInit {
     this.location = new Location();
     this.buildForm();
 
-    if(this.locationId){
-      this.getLocation()
+    if(this.locationId) {
+      this.getLocation();
     }
+  }
+
+  ngAfterViewInit() {
+    this.focusEvent.emit(true);
   }
 
   public getDeposits() : void {
     this._depositService.getDeposits().subscribe(
       result =>{
-        if(result && result.deposits){
+        if(result && result.deposits) {
           this.deposits = result.deposits;
         } else {
-          this.showMessage("No se encontraron depositos cargados", 'danger', false);
+          this.showMessage("No se encontraron depósitos cargados.", 'info', false);
           this.loading = false;
         }
       },
@@ -132,9 +136,7 @@ export class LocationComponent implements OnInit {
       'positionZ' : this.location.positionZ,
       'deposit' : deposit
     });
-
   }
-
   
   public addLocation() {
 
@@ -146,11 +148,6 @@ export class LocationComponent implements OnInit {
         this.updateLocation();
         break;
     }
-  }
-  
-
-  ngAfterViewInit() {
-    this.focusEvent.emit(true);
   }
 
   public buildForm(): void {

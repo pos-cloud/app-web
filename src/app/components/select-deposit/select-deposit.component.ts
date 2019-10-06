@@ -42,10 +42,10 @@ export class SelectDepositComponent implements OnInit {
   public getDeposits() : void {
     this._depositService.getDeposits().subscribe(
       result => {
-        if(result && result.deposits){
+        if(result && result.deposits) {
           this.deposits = result.deposits
         } else {
-          this.showMessage("No se encontraron depositos" , "danger", false);
+          this.showMessage("No se encontraron depósitos." , "info", false);
         }
       },
       error => {

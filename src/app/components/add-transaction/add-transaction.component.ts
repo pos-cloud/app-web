@@ -337,8 +337,8 @@ export class AddTransactionComponent implements OnInit {
     }
   }
 
-  public validateBalance(){
-    if(this.transactionForm.value.balance > this.transaction.totalPrice){
+  public validateBalance() {
+    if(this.transactionForm.value.balance > this.transaction.totalPrice) {
       this.showMessage("El saldo no puede ser mayor a: $" + this.transaction.totalPrice , 'danger', false);
       this.setValuesForm();
     } 

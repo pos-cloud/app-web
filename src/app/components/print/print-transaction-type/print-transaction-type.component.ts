@@ -69,7 +69,7 @@ export class PrintTransactionTypeComponent implements OnInit {
       this.getTransaction();
     }
 
-    if(this.origin === 'view'){
+    if(this.origin === 'view') {
       this.buildPrint();
     }
   }
@@ -294,10 +294,10 @@ export class PrintTransactionTypeComponent implements OnInit {
   async buildFooter() : Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       for (const field of this.printer.fields) {
-        if(field.position === PositionPrint.Footer){
+        if(field.position === PositionPrint.Footer) {
           switch (field.type) {
             case 'label':
-              if(field.font !== 'default'){
+              if(field.font !== 'default') {
                 this.doc.setFont(field.font)
               }   
               this.doc.setFontType(field.fontType)
@@ -309,7 +309,7 @@ export class PrintTransactionTypeComponent implements OnInit {
               this.doc.line(field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY)
               break;
             case 'data':
-              if(field.font !== 'default'){
+              if(field.font !== 'default') {
                 this.doc.setFont(field.font)
               }   
               this.doc.setFontType(field.fontType)
@@ -321,45 +321,45 @@ export class PrintTransactionTypeComponent implements OnInit {
               }
               break;
             case 'dataSum':
-              if(field.font !== 'default'){
+              if(field.font !== 'default') {
                 this.doc.setFont(field.font)
               }   
               this.doc.setFontType(field.fontType)
               this.doc.setFontSize(field.fontSize)
               
-              if(field.value.split('.')[0] === "movementOfArticle" && this.movementOfArticle){
+              if(field.value.split('.')[0] === "movementOfArticle" && this.movementOfArticle) {
                 this.movementOfArticle.forEach(async movementOfArticle => {
                   let sum = 0;
-                  if(typeof eval("this."+field.value) === "number"){
+                  if(typeof eval("this."+field.value) === "number") {
                     sum = sum + eval("this"+field.value);
                   }
                   try {
                     this.doc.text(field.positionStartX,field.positionStartY,sum.toString())
-                  } catch (e){
+                  } catch (e) {
                     this.doc.text(field.positionStartX,field.positionStartY,field.value)
                   }
                 });
-              } else if(field.value.split('.')[0] === "movementOfCash" && this.movementOfCash){
+              } else if(field.value.split('.')[0] === "movementOfCash" && this.movementOfCash) {
                 this.movementOfCash.forEach(async movementOfCash => {
                   let sum = 0;
-                  if(typeof eval("this."+field.value) === "number"){
+                  if(typeof eval("this."+field.value) === "number") {
                     sum = sum + eval("this"+field.value);
                   }
                   try {
                     this.doc.text(field.positionStartX,field.positionStartY,sum.toString())
-                  } catch (e){
+                  } catch (e) {
                     this.doc.text(field.positionStartX,field.positionStartY,field.value)
                   }
                 });
-              } else if(field.value.split('.')[0] === "movementOfCancellation" && this.movementOfCancellation){
+              } else if(field.value.split('.')[0] === "movementOfCancellation" && this.movementOfCancellation) {
                 this.movementOfCancellation.forEach(async movementOfCancellation => {
                   let sum = 0;
-                  if(typeof eval("this."+field.value) === "number"){
+                  if(typeof eval("this."+field.value) === "number") {
                     sum = sum + eval("this"+field.value);
                   }
                   try {
                     this.doc.text(field.positionStartX,field.positionStartY,sum.toString())
-                  } catch (e){
+                  } catch (e) {
                     this.doc.text(field.positionStartX,field.positionStartY,field.value)
                   }
                 });
@@ -384,10 +384,10 @@ export class PrintTransactionTypeComponent implements OnInit {
   async buildHeader() : Promise<boolean> {
     return new Promise<boolean>(async (resolve, reject) => {
       for (const field of this.printer.fields) {
-        if(field.position === PositionPrint.Header){
+        if(field.position === PositionPrint.Header) {
           switch (field.type) {
             case 'label':
-              if(field.font !== 'default'){
+              if(field.font !== 'default') {
                 this.doc.setFont(field.font)
               }              
               this.doc.setFontType(field.fontType)
@@ -403,7 +403,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                 this.doc.addImage(this.imageURL, 'jpeg', field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY);   
               break;
             case 'data':
-              if(field.font !== 'default'){
+              if(field.font !== 'default') {
                 this.doc.setFont(field.font)
               }   
               this.doc.setFontType(field.fontType)
@@ -427,10 +427,10 @@ export class PrintTransactionTypeComponent implements OnInit {
   async buildBody() : Promise<boolean>{
     return new Promise<boolean>(async(resolve, reject)=>{
       for (const field of this.printer.fields) {
-        if(field.position === PositionPrint.Body){
+        if(field.position === PositionPrint.Body) {
           switch (field.type) {
             case 'label':
-              if(field.font !== 'default'){
+              if(field.font !== 'default') {
                 this.doc.setFont(field.font)
               }   
               this.doc.setFontType(field.fontType)
@@ -443,49 +443,49 @@ export class PrintTransactionTypeComponent implements OnInit {
               break;
             case 'data':
               let row = field.positionStartY
-              if(field.font !== 'default'){
+              if(field.font !== 'default') {
                 this.doc.setFont(field.font)
               }   
               this.doc.setFontType(field.fontType)
               this.doc.setFontSize(field.fontSize)
   
-              if(field.value.split('.')[0] === "movementOfArticle" && this.movementOfArticle){
+              if(field.value.split('.')[0] === "movementOfArticle" && this.movementOfArticle) {
                 this.movementOfArticle.forEach(async movementOfArticle => {
                   try {
                     this.doc.text(field.positionStartX,row,(eval(field.value)).toString())
-                  } catch (e){
+                  } catch (e) {
                     this.doc.text(field.positionStartX,row,field.value)
                   }
                   row = row + this.printer.row;
-                  if(row > this.printer.addPag){
+                  if(row > this.printer.addPag) {
                     this.doc.addPag()
                     await this.buildHeader()
                     row = field.positionStartY
                   }
                 });
-              } else if(field.value.split('.')[0] === "movementOfCash" && this.movementOfCash){
+              } else if(field.value.split('.')[0] === "movementOfCash" && this.movementOfCash) {
                 this.movementOfCash.forEach(async movementOfCash => {
                   try {
                     this.doc.text(field.positionStartX,row,(eval(field.value)).toString())
-                  } catch (e){
+                  } catch (e) {
                     this.doc.text(field.positionStartX,row,field.value)
                   }
                   row = row + this.printer.row;
-                  if(row > this.printer.addPag){
+                  if(row > this.printer.addPag) {
                     this.doc.addPag()
                     await this.buildHeader()
                     row = field.positionStartY
                   }
                 });
-              } else if(field.value.split('.')[0] === "movementOfCancellation" && this.movementOfCancellation){
+              } else if(field.value.split('.')[0] === "movementOfCancellation" && this.movementOfCancellation) {
                 this.movementOfCancellation.forEach(async movementOfCancellation => {
                   try {
                     this.doc.text(field.positionStartX,row,(eval(field.value)).toString())
-                  } catch (e){
+                  } catch (e) {
                     this.doc.text(field.positionStartX,row,field.value)
                   }
                   row = row + this.printer.row;
-                  if(row > this.printer.addPag){
+                  if(row > this.printer.addPag) {
                     this.doc.addPag()
                     await this.buildHeader()
                     row = field.positionStartY

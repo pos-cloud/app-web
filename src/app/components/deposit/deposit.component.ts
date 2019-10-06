@@ -72,7 +72,7 @@ export class DepositComponent implements OnInit {
     this.buildForm();
     this.getBranches();
 
-    if(this.depositId){
+    if(this.depositId) {
       this.getDeposit();
     }
   }
@@ -84,7 +84,7 @@ export class DepositComponent implements OnInit {
   public getDeposit() : void {
     this._depositService.getDeposit(this.depositId).subscribe(
       result => {
-        if(result && result.deposit){
+        if(result && result.deposit) {
           this.deposit = result.deposit;
           this.setValuesForm();
         }
@@ -183,7 +183,7 @@ export class DepositComponent implements OnInit {
   public getDeposits() : void {
     this._depositService.getDeposits().subscribe(
       result =>{
-        if(result && result.deposits){
+        if(result && result.deposits) {
           this.deposits = result.deposits
         }
       },
@@ -198,15 +198,15 @@ export class DepositComponent implements OnInit {
     
     let valid = true;
 
-    if(this.deposit.default === null){
+    if(this.deposit.default === null) {
       this.showMessage("Debe seleccionar si es primario", 'danger', true);
       valid = false;
     }
 
-    if(this.deposits && this.deposits.length > 0 && this.deposit.default !== null){
+    if(this.deposits && this.deposits.length > 0 && this.deposit.default !== null) {
       for (const element of this.deposits) {
-        if(this.deposit.default === true && element.default === this.deposit.default && element.branch._id.toString() === this.deposit.branch.toString()){
-          this.showMessage("Solo puede existir un deposito principal por sucursal", 'danger', true);
+        if(this.deposit.default === true && element.default === this.deposit.default && element.branch._id.toString() === this.deposit.branch.toString()) {
+          this.showMessage("Solo puede existir un depósito principal por sucursal.", 'danger', true);
           valid = false;
         }
       }
@@ -263,7 +263,7 @@ export class DepositComponent implements OnInit {
 
     this.loading = true;
 
-    if(this.isValid()){
+    if(this.isValid()) {
       this._depositService.updateDeposit(this.deposit).subscribe(
         result => {
           if (!result.deposit) {
@@ -291,7 +291,7 @@ export class DepositComponent implements OnInit {
 
     this.loading = true;
 
-    if(this.isValid()){
+    if(this.isValid()) {
       this._depositService.saveDeposit(this.deposit).subscribe(
         result => {
           if (!result.deposit) {

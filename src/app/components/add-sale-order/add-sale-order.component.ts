@@ -11,7 +11,7 @@ import 'moment/locale/es';
 import { Transaction, TransactionState } from './../../models/transaction';
 import { TransactionMovement, StockMovement } from './../../models/transaction-type';
 import { Taxes } from './../../models/taxes';
-import { ArticlePrintIn } from './../../models/article';
+import { ArticlePrintIn, Article } from './../../models/article';
 import { ArticleStock } from './../../models/article-stock';
 import { MovementOfArticle } from './../../models/movement-of-article';
 import { Table, TableState } from './../../models/table';
@@ -131,6 +131,7 @@ export class AddSaleOrderComponent {
   public transports: Transport[];
   public config: Config;
   public database: string;
+  public lastMovementOfArticle: MovementOfArticle;
 
   public priceList: PriceList;
   public newPriceList: PriceList;
@@ -541,10 +542,12 @@ export class AddSaleOrderComponent {
         if (!result.movementsOfArticles) {
           this.areMovementsOfArticlesEmpty = true;
           this.movementsOfArticles = new Array();
+          this.lastMovementOfArticle = null;
           this.updatePrices();
         } else {
           this.areMovementsOfArticlesEmpty = false;
           this.movementsOfArticles = result.movementsOfArticles;
+          this.lastMovementOfArticle = this.movementsOfArticles[this.movementsOfArticles.length - 1];
           this.containerMovementsOfArticles.nativeElement.scrollTop = this.containerMovementsOfArticles.nativeElement.scrollHeight;
           this.updatePrices();
         }
@@ -568,14 +571,16 @@ export class AddSaleOrderComponent {
         let movementOfArticle: MovementOfArticle;
 
         if(!itemData.article.isWeigth) {
-          let query = `where="transaction":"${this.transaction._id}","article":"${itemData.article._id}"`;
-          await this.getMovementsOfArticles(query).then(
-            movementsOfArticles => {
-              if(movementsOfArticles && movementsOfArticles.length > 0) {
-                movementOfArticle = movementsOfArticles[0];
+          if(this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*') {
+            let query = `where="_id":"${this.lastMovementOfArticle._id}"`;
+            await this.getMovementsOfArticles(query).then(
+              movementsOfArticles => {
+                if(movementsOfArticles && movementsOfArticles.length > 0) {
+                  movementOfArticle = movementsOfArticles[0];
+                }
               }
-            }
-          );
+            );
+          }
         }
 
         if (!movementOfArticle) {
@@ -597,7 +602,12 @@ export class AddSaleOrderComponent {
             );
           }
         } else {
-          movementOfArticle.amount += 1;
+          if(this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*') {
+            movementOfArticle.amount = itemData.amount;
+            this.filterArticle = '';
+          } else {
+            movementOfArticle.amount += 1;
+          }
           if(await this.isValidMovementOfArticle(movementOfArticle)) {
             if (movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
               await this.updateMovementOfArticle(await this.recalculateSalePrice(movementOfArticle)).then(
@@ -738,17 +748,15 @@ export class AddSaleOrderComponent {
       let depositID;
       let query;
 
-      if(movementOfArticle.article.deposits && movementOfArticle.article.deposits.length > 0){
+      if(movementOfArticle.article.deposits && movementOfArticle.article.deposits.length > 0) {
         movementOfArticle.article.deposits.forEach(element => {
-          if(element.deposit.branch._id === this.transaction.branchOrigin._id){
+          if(element.deposit.branch._id === this.transaction.branchOrigin._id) {
             depositID = element.deposit._id;
           }
         });
       }
 
-      console.log(depositID)
-
-      if(depositID){
+      if(depositID) {
         query = `where= "article": "${movementOfArticle.article._id}",
                         "branch": "${this.transaction.branchOrigin._id}",
                         "deposit": "${depositID}"`;
@@ -1334,6 +1342,7 @@ export class AddSaleOrderComponent {
                   await this.saveMovementsOfCancellations(result.movementsOfCancellations).then(
                     movementsOfCancellations => {
                       if(movementsOfCancellations) {
+                        this.focusEvent.emit(true);
                         this.getMovementsOfTransaction();
                       }
                     }
@@ -1354,8 +1363,10 @@ export class AddSaleOrderComponent {
         modalRef = this._modalService.open(AddMovementOfArticleComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.movementOfArticle = movementOfArticle;
         modalRef.result.then((result) => {
+          this.focusEvent.emit(true);
           this.getMovementsOfTransaction();
         }, (reason) => {
+          this.focusEvent.emit(true);
           this.getMovementsOfTransaction();
         });
         break;
@@ -1639,7 +1650,7 @@ export class AddSaleOrderComponent {
         });
         break;
       case 'print':
-        if(this.transaction.type.readLayout){
+        if(this.transaction.type.readLayout) {
           modalRef = this._modalService.open(PrintTransactionTypeComponent)
           modalRef.componentInstance.transactionId = this.transaction._id
           modalRef.result.then((result) => {
@@ -1680,8 +1691,10 @@ export class AddSaleOrderComponent {
 
         modalRef.componentInstance.model = model;
         modalRef.result.then((result) => {
+          this.focusEvent.emit(true);
           this.getMovementsOfTransaction();
         }, (reason) => {
+          this.focusEvent.emit(true);
           this.getMovementsOfTransaction();
         });
         break;
@@ -1941,9 +1954,9 @@ export class AddSaleOrderComponent {
       let amountToModify;
       let deposit: Deposit;
 
-      if(movementOfArticle.article.deposits && movementOfArticle.article.deposits.length >0){
+      if(movementOfArticle.article.deposits && movementOfArticle.article.deposits.length >0) {
         for (const element of movementOfArticle.article.deposits) {
-          if(element.deposit && element.deposit.branch && element.deposit.branch._id === this.transaction.branchDestination._id){
+          if(element.deposit && element.deposit.branch && element.deposit.branch._id === this.transaction.branchDestination._id) {
             deposit = element.deposit;
           }
         }
@@ -2172,6 +2185,7 @@ export class AddSaleOrderComponent {
           await this.saveMovementOfArticle(movementOfArticle).then(
             movementOfArticle => {
               if(movementOfArticle) {
+                this.focusEvent.emit(true);
                 this.getMovementsOfTransaction();
               }
             }
@@ -2375,7 +2389,11 @@ export class AddSaleOrderComponent {
   public filterArticles(): void {
 
     this.listArticlesComponent.filterArticle = this.filterArticle;
-    this.listArticlesComponent.filterItem(this.categorySelected);
+    if(this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*') {
+      this.listArticlesComponent.filterItem(this.lastMovementOfArticle.article, this.categorySelected);
+    } else {
+      this.listArticlesComponent.filterItem(null, this.categorySelected);
+    }
     if(!this.filterArticle || this.filterArticle === '') {
       this.showCategories();
     }
@@ -2384,7 +2402,9 @@ export class AddSaleOrderComponent {
   public showCategories(): void {
 
     this.categorySelected = null;
-    this.filterArticle = '';
+    if(!(this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*')) {
+      this.filterArticle = '';
+    }
     this.listCategoriesComponent.areCategoriesVisible = true;
     this.listArticlesComponent.areArticlesVisible = false;
     this.listArticlesComponent.filterArticle = this.filterArticle;
@@ -2397,7 +2417,7 @@ export class AddSaleOrderComponent {
 
     if(category) {
       this.categorySelected = category;
-      this.listArticlesComponent.filterItem(this.categorySelected);
+      this.listArticlesComponent.filterItem(null, this.categorySelected);
       this.listArticlesComponent.hideMessage();
     }
     this.listCategoriesComponent.areCategoriesVisible = false;

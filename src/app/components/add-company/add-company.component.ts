@@ -625,7 +625,7 @@ export class AddCompanyComponent  implements OnInit {
     this._companyService.getCompanies(query).subscribe(
         result => {
           let code = 1;
-          if (result.companies){
+          if (result.companies) {
             if (result.companies[0] !== undefined) {
               code = result.companies[0].code + 1;
             }

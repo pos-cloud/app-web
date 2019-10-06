@@ -242,7 +242,7 @@ export class ListMovementOfCashesComponent implements OnInit {
 
   public calculateTotal() :void {
     this.totalAmount = 0;
-    for(let movementofCash of this.movementsOfCashes){
+    for(let movementofCash of this.movementsOfCashes) {
       this.totalAmount = this.totalAmount + parseFloat(movementofCash.amountPaid.toString());
     }
   }
@@ -258,7 +258,7 @@ export class ListMovementOfCashesComponent implements OnInit {
         this.movementsOfCashesSelected.push(movementOfCash);
       } else {
         this.deleteMovementOfCashSelected(movementOfCash);
-        if(this.pathLocation[2] !== "fondos"){
+        if(this.pathLocation[2] !== "fondos") {
           this.showMessage("El monto $" + movementOfCashSelected.amountPaid + " es superior al de la transacción.", 'info', false);
         }
       }

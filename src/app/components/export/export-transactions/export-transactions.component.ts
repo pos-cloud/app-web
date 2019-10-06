@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 
 import { NgbModal, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
@@ -12,12 +11,9 @@ import { ConfigService } from '../../../services/config.service';
 import { CompanyService } from '../../../services/company.service';
 
 
-import { PrintComponent } from '../../print/print/print.component'
 import { DateFormatPipe } from 'app/pipes/date-format.pipe';
-import { Taxes } from 'app/models/taxes';
-import { TaxClassification } from 'app/models/tax';
 import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
-import { Movements, TransactionMovement, TransactionType } from 'app/models/transaction-type';
+import { TransactionMovement, TransactionType } from 'app/models/transaction-type';
 import { Transaction, TransactionState } from 'app/models/transaction';
 import { Config } from 'app/app.config';
 import { Company, CompanyType } from 'app/models/company';
@@ -44,14 +40,11 @@ export class ExportTransactionsComponent implements OnInit {
   public aliURL: string;
   public dateFormat = new DateFormatPipe();
   public roundNumber = new RoundNumberPipe();
-
-
   public transactions : Transaction[];
   public companies : Company[]
   public types : TransactionType[];
   public employees : Employee[];
   public branches : Branch[];
-
   public startDate: string;
   public endDate: string;
 
@@ -152,16 +145,16 @@ export class ExportTransactionsComponent implements OnInit {
     // FILTRAMOS LA CONSULTA
     let match = `{`
 
-    if(this.exportForm.value.company != null){
+    if(this.exportForm.value.company != null) {
       match += `"company._id" : { "$oid" : "${this.exportForm.value.company}"},`
     }
-    if(this.exportForm.value.type != null){
+    if(this.exportForm.value.type != null) {
       match += `"type._id" : { "$oid" : "${this.exportForm.value.type}"},`
     }
-    if(this.exportForm.value.employee != null){
+    if(this.exportForm.value.employee != null) {
       match += `"employeeClosing._id" : { "$oid" : "${this.exportForm.value.employee}"},`
     }
-    if(this.exportForm.value.branch != null){
+    if(this.exportForm.value.branch != null) {
       match += `"branchDestination._id" : { "$oid" : "${this.exportForm.value.branch}"},`
     }
     
@@ -246,8 +239,8 @@ export class ExportTransactionsComponent implements OnInit {
       data[index]['Origen'] = this.transactions[index].origin; 
       data[index]['Letra'] = this.transactions[index].letter;
       data[index]['N° Comprobante'] = this.transactions[index].number;
-      if(this.transactions[index].company){
-        if(this.transactionMovement === TransactionMovement.Sale){
+      if(this.transactions[index].company) {
+        if(this.transactionMovement === TransactionMovement.Sale) {
           data[index]['Cliente'] = this.transactions[index].company.name
         } else {
           data[index]['Proveedor'] = this.transactions[index].company.name
@@ -268,7 +261,7 @@ export class ExportTransactionsComponent implements OnInit {
 
     let type;
 
-    if(this.transactionMovement === TransactionMovement.Sale){
+    if(this.transactionMovement === TransactionMovement.Sale) {
       type = CompanyType.Client
     } else {
       type = CompanyType.Provider
