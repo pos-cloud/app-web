@@ -269,6 +269,8 @@ export class ListArticlesPosComponent implements OnInit {
           movementOfArticle.transaction = this.transaction;
           movementOfArticle.modifyStock = this.transaction.type.modifyStock;
           movementOfArticle.otherFields = article.otherFields;
+          if(amount && amount > 0) movementOfArticle.amount = amount; 
+
           if(this.transaction.type.stockMovement) {
             movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
           }
@@ -285,7 +287,6 @@ export class ListArticlesPosComponent implements OnInit {
             Config.currency._id !== article.currency._id) {
             movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
           }
-
 
           if (this.transaction &&
             this.transaction.type &&
@@ -308,8 +309,7 @@ export class ListArticlesPosComponent implements OnInit {
               movementOfArticle.costPrice = this.roundNumber.transform(article.costPrice);
               movementOfArticle.markupPercentage = article.markupPercentage;
               movementOfArticle.markupPrice = this.roundNumber.transform(article.markupPrice);
-              if(salePrice) article.salePrice = salePrice; 
-              if(amount && amount > 0) movementOfArticle.amount = amount; 
+              if(salePrice) article.salePrice = salePrice;
               movementOfArticle.unitPrice = this.roundNumber.transform(article.salePrice / movementOfArticle.amount);
               movementOfArticle.salePrice = this.roundNumber.transform(article.salePrice);
 

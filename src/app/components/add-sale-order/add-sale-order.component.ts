@@ -542,6 +542,7 @@ export class AddSaleOrderComponent {
         if (!result.movementsOfArticles) {
           this.areMovementsOfArticlesEmpty = true;
           this.movementsOfArticles = new Array();
+          this.lastMovementOfArticle = null;
           this.updatePrices();
         } else {
           this.areMovementsOfArticlesEmpty = false;
