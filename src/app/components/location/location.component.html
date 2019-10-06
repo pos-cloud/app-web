@@ -14,7 +14,7 @@
     <div class="modal-body">
       <div class="row">
           <div class="form-group col-md-6">
-              <label for="deposit" class="control-label">Deposito:</label>
+              <label for="deposit" class="control-label">Depósito:</label>
               <select class="form-control" formControlName="deposit">
                 <option *ngFor="let deposit of deposits"
                         [selected]="(location.deposit && location.deposit._id && deposit._id===location.deposit._id) ||

@@ -135,12 +135,12 @@ export class MovementOfCancellationComponent implements OnInit {
       if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
         for (let index = 0; index < result.movementsOfCancellations.length; index++) {
           let transaction = new Transaction;
-          if(this.transactionOriginViewId){
+          if(this.transactionOriginViewId) {
             transaction = await this.getTransaction(result.movementsOfCancellations[index].transactionDestination)
           } else {
             transaction = await this.getTransaction(result.movementsOfCancellations[index].transactionOrigin)
           }
-          if(transaction){
+          if(transaction) {
             this.transactions.push(transaction);
           } else {
             this.showMessage("No se encontraron transactiones relacionadas", 'danger', false);

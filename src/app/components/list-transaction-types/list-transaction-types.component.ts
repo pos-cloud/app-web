@@ -295,7 +295,7 @@ export class ListTransactionTypesComponent implements OnInit {
 
     for (let index = 0; index < this.items.length; index++) {
       this.totalItem = this.totalItem + this.items[index]['count'];
-      if(this.items[index]['_id']['movement'] === "Entrada"){
+      if(this.items[index]['_id']['movement'] === "Entrada") {
         this.totalAmount = this.totalAmount + this.items[index]['totalPrice'];
       } else {
         this.totalAmount = this.totalAmount - this.items[index]['totalPrice'];

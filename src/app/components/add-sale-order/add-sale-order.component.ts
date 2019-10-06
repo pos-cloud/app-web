@@ -747,9 +747,9 @@ export class AddSaleOrderComponent {
       let depositID;
       let query;
 
-      if(movementOfArticle.article.deposits && movementOfArticle.article.deposits.length > 0){
+      if(movementOfArticle.article.deposits && movementOfArticle.article.deposits.length > 0) {
         movementOfArticle.article.deposits.forEach(element => {
-          if(element.deposit.branch._id === this.transaction.branchOrigin._id){
+          if(element.deposit.branch._id === this.transaction.branchOrigin._id) {
             depositID = element.deposit._id;
           }
         });
@@ -1649,7 +1649,7 @@ export class AddSaleOrderComponent {
         });
         break;
       case 'print':
-        if(this.transaction.type.readLayout){
+        if(this.transaction.type.readLayout) {
           modalRef = this._modalService.open(PrintTransactionTypeComponent)
           modalRef.componentInstance.transactionId = this.transaction._id
           modalRef.result.then((result) => {
@@ -1953,9 +1953,9 @@ export class AddSaleOrderComponent {
       let amountToModify;
       let deposit: Deposit;
 
-      if(movementOfArticle.article.deposits && movementOfArticle.article.deposits.length >0){
+      if(movementOfArticle.article.deposits && movementOfArticle.article.deposits.length >0) {
         for (const element of movementOfArticle.article.deposits) {
-          if(element.deposit && element.deposit.branch && element.deposit.branch._id === this.transaction.branchDestination._id){
+          if(element.deposit && element.deposit.branch && element.deposit.branch._id === this.transaction.branchDestination._id) {
             deposit = element.deposit;
           }
         }

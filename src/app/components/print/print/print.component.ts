@@ -532,7 +532,7 @@ export class PrintComponent implements OnInit {
           this.doc.text("-", 80, row);
         }
         
-        if (this.movementsOfCashes[i].bank){
+        if (this.movementsOfCashes[i].bank) {
           this.doc.text(this.movementsOfCashes[i].bank.name, 105, row);
         } else {
           this.doc.text("-", 105, row);
@@ -549,7 +549,7 @@ export class PrintComponent implements OnInit {
         transport = transport + this.movementsOfCashes[i].amountPaid;
 
 
-        if(i%21 == 0 && i != 0 ){
+        if(i%21 == 0 && i != 0 ) {
 
           this.doc.setFontType("bold");
           this.doc.text("TRANSPORTE:".toString(),25, row);
@@ -651,7 +651,7 @@ export class PrintComponent implements OnInit {
 
     await this.getCancellationsOfMovements(this.transactionId)
     
-    if(this.transactions){
+    if(this.transactions) {
       this.doc.setFontType('bold');
       this.doc.setFontSize(this.fontSizes.normal);
       this.doc.line(0, row, 100, row)
@@ -716,7 +716,7 @@ export class PrintComponent implements OnInit {
             let transaction = new Transaction;
             transaction = await this.getTransaction2(result.movementsOfCancellations[index].transactionOrigin)
             
-            if(transaction){
+            if(transaction) {
               this.transactions.push(transaction);
             } else {
               resolve(null)
@@ -1748,7 +1748,7 @@ export class PrintComponent implements OnInit {
     if(!this.transaction.type.isPreprinted) {
 
 
-      if(this.config[0].companyPicture && this.config[0].companyPicture !== 'default.jpg'){
+      if(this.config[0].companyPicture && this.config[0].companyPicture !== 'default.jpg') {
         await this.getCompanyPicture(10, 5, 80, 40);
       } else {
         this.getCompanyData()
@@ -1827,7 +1827,7 @@ export class PrintComponent implements OnInit {
         this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
         if (this.transaction.type.codes && Config.country === 'AR') {
           for (let i = 0; i < this.transaction.type.codes.length; i++) {
-            if(this.transaction.letter === this.transaction.type.codes[i].letter){
+            if(this.transaction.letter === this.transaction.type.codes[i].letter) {
               this.doc.setFontSize('8');
               this.doc.text("Cod:"+this.padString((this.transaction.type.codes[i].code).toString(),2),101,16);
             }
@@ -1880,7 +1880,7 @@ export class PrintComponent implements OnInit {
 
         let detalle = ''
 
-        if(this.transaction && this.transaction.type && this.transaction.type.printDescriptionType && this.transaction.type.printDescriptionType === DescriptionType.Description){
+        if(this.transaction && this.transaction.type && this.transaction.type.printDescriptionType && this.transaction.type.printDescriptionType === DescriptionType.Description) {
           if (this.movementsOfArticles[i].description) {
             if( this.movementsOfArticles[i].category &&
                 this.movementsOfArticles[i].category.visibleInvoice &&
@@ -1898,7 +1898,7 @@ export class PrintComponent implements OnInit {
             } else {
               if (this.movementsOfArticles[i].category &&
                   this.movementsOfArticles[i].category.visibleInvoice &&
-                  this.movementsOfArticles[i].category.visibleInvoice){
+                  this.movementsOfArticles[i].category.visibleInvoice) {
                 detalle = this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description;
               }else if (this.movementsOfArticles[i].make && this.movementsOfArticles[i].make.visibleSale && this.movementsOfArticles[i].make.visibleSale) {
                 detalle = this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].make.description;
@@ -1926,7 +1926,7 @@ export class PrintComponent implements OnInit {
               }
             } else {
               if (this.movementsOfArticles[i].category &&
-                  this.movementsOfArticles[i].category.visibleInvoice ){
+                  this.movementsOfArticles[i].category.visibleInvoice ) {
                 detalle = this.movementsOfArticles[i].article.posDescription + ' - ' + this.movementsOfArticles[i].category.description;
               }else if (this.movementsOfArticles[i].make && 
                         this.movementsOfArticles[i].make.visibleSale ) {
@@ -1938,7 +1938,7 @@ export class PrintComponent implements OnInit {
           }
         }
 
-        if(this.movementsOfArticles[i].otherFields && this.movementsOfArticles[i].otherFields !== null && this.transaction.type.printDescriptionType === DescriptionType.PosDescription){
+        if(this.movementsOfArticles[i].otherFields && this.movementsOfArticles[i].otherFields !== null && this.transaction.type.printDescriptionType === DescriptionType.PosDescription) {
           let temp = this.movementsOfArticles[i].article.description.split(' ');
           detalle += " Talle:" + temp.pop();
         }
@@ -1952,9 +1952,9 @@ export class PrintComponent implements OnInit {
             this.transaction.company.vatCondition.discriminate) {
               let prUnit = 0;
               let colum = 165;
-            for(let tax of this.movementsOfArticles[i].taxes){
+            for(let tax of this.movementsOfArticles[i].taxes) {
                 prUnit = prUnit + (tax.taxBase/this.movementsOfArticles[i].amount)
-                if(tax.percentage != 0){
+                if(tax.percentage != 0) {
                   this.doc.text("%" + this.roundNumber.transform(tax.percentage,2), colum, row);
                 } else {
                   this.doc.text("$" + this.roundNumber.transform(tax.taxAmount,2), colum, row);
@@ -1972,11 +1972,11 @@ export class PrintComponent implements OnInit {
         if (this.movementsOfArticles[i].notes) {
           this.doc.setFontStyle("italic");
           this.doc.text(this.movementsOfArticles[i].notes.slice(0, 55), 46, row + 5);
-          if(this.movementsOfArticles[i].notes.slice(55, 110) != ''){
+          if(this.movementsOfArticles[i].notes.slice(55, 110) != '') {
             row += 5;
             this.doc.text(this.movementsOfArticles[i].notes.slice(55, 110), 46, row + 5);
           }
-          if(this.movementsOfArticles[i].notes.slice(110, 165) != ''){
+          if(this.movementsOfArticles[i].notes.slice(110, 165) != '') {
             row += 5;
             this.doc.text(this.movementsOfArticles[i].notes.slice(110, 165), 46, row + 5);
           }
@@ -1988,7 +1988,7 @@ export class PrintComponent implements OnInit {
 
         row += 8;
 
-        if(row > 240){
+        if(row > 240) {
           this.doc.setFontType("bold");
           this.doc.text("TRANSPORTE:".toString(),25, row);
           this.doc.text(this.roundNumber.transform(transport).toString(), 185, row);
@@ -2000,7 +2000,7 @@ export class PrintComponent implements OnInit {
           this.doc.text("TRANSPORTE:".toString(),25,85);
           this.doc.text(this.roundNumber.transform(transport).toString(), 185, 85);
 
-          if(!this.transaction.type.isPreprinted){
+          if(!this.transaction.type.isPreprinted) {
 
             //this.getHeader(true);
           
@@ -2224,7 +2224,7 @@ export class PrintComponent implements OnInit {
         this.doc.text(observation.slice(60, 140) + "-", margin, row += 4);
       }
     } else {
-      if(this.transaction.transport){
+      if(this.transaction.transport) {
         this.doc.setFontType('bold');
         this.doc.text("TRANSPORTE:", margin, row);
         this.doc.text("DOMICILIO:", margin, row + 4);
@@ -2241,7 +2241,7 @@ export class PrintComponent implements OnInit {
       
     }
 
-    if(this.transaction.type.printSign){
+    if(this.transaction.type.printSign) {
       row += 10
       this.doc.line(70, row, 120, row)
       this.doc.text("FIRMA CONFORME", 80, row + 5)
@@ -2359,7 +2359,7 @@ export class PrintComponent implements OnInit {
     //LADO DERECHO
     this.doc.setFontSize(15)
     this.doc.setFontType('blod')
-    if(this.transaction.type.labelPrint){
+    if(this.transaction.type.labelPrint) {
       this.doc.text(this.transaction.type.labelPrint,45,25)
     } else {
       this.doc.text(this.transaction.type.name,45,25)
@@ -2393,7 +2393,7 @@ export class PrintComponent implements OnInit {
     this.doc.line(0, row, width, row);
     row += 3;
 
-    if(this.transaction.cashBox){
+    if(this.transaction.cashBox) {
       this.doc.text("Caja : " + this.transaction.cashBox.number, margin, row);
       row += 3;
       this.doc.line(0, row, width, row);
@@ -2418,7 +2418,7 @@ export class PrintComponent implements OnInit {
         this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice).toString(), width/1.18, row);
         row +=3;
         movementOfArticle.article.taxes.forEach(element => {
-          if(element.percentage >= 0){
+          if(element.percentage >= 0) {
             this.doc.text("( IVA: " + this.roundNumber.transform(movementOfArticle.article.taxes[0].percentage).toFixed(2) + " %)",13,row)
           }
         });
@@ -2434,7 +2434,7 @@ export class PrintComponent implements OnInit {
       }
     }
 
-    if(this.transaction.company && this.transaction.company.vatCondition && this.transaction.company.vatCondition.discriminate){
+    if(this.transaction.company && this.transaction.company.vatCondition && this.transaction.company.vatCondition.discriminate) {
       row += 3;
       this.doc.line(0, row, width, row);
       row += 3;
@@ -2555,13 +2555,13 @@ export class PrintComponent implements OnInit {
 
   public finishImpression(): void {
     
-    if(!this.source){
+    if(!this.source) {
       this.doc.autoPrint();
       this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
     }
     
 
-    if(this.transaction && this.transaction.type && this.transaction.type.electronics){
+    if(this.transaction && this.transaction.type && this.transaction.type.electronics) {
       this._printService.saveFile(this.doc.output('blob'),'invoice',this.transactionId).then(
         result =>{
         },
@@ -2569,7 +2569,7 @@ export class PrintComponent implements OnInit {
         }
       )
     } else {
-      if(this.source === "mail"){
+      if(this.source === "mail") {
         this._printService.saveFile(this.doc.output('blob'),'others',this.transactionId).then(
           result =>{
           },
@@ -2779,7 +2779,7 @@ export class PrintComponent implements OnInit {
       if (this.transaction.employeeOpening) {
         this.doc.text("Mozo: " + this.transaction.employeeOpening.name, margin, row);
       }
-      if (this.transaction.table){
+      if (this.transaction.table) {
         this.doc.text("Mesa: " + this.transaction.table.description, 40, row);
       }
       this.doc.setFontType('normal');
@@ -2824,7 +2824,7 @@ export class PrintComponent implements OnInit {
     //Pie de la tabla de productos
     row += 5;
     this.doc.line(0, row, 240, row);
-    if(this.transaction.discountAmount > 0){
+    if(this.transaction.discountAmount > 0) {
       row += 5;
       this.doc.text("DESCUENTO", margin, row);
       this.doc.text("- $" + this.roundNumber.transform(this.transaction.discountAmount).toString(), width - 15, row)

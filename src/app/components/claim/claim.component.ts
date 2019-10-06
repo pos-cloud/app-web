@@ -192,7 +192,7 @@ export class ClaimComponent  implements OnInit {
 
     this._claimService.makeFileRequest(this.filesToUpload).then(
       result =>{
-        if(result){
+        if(result) {
           this.file = result['file'];
           this.showMessage("El archivo se guardo correstamente", 'info', false);
         }
@@ -207,7 +207,7 @@ export class ClaimComponent  implements OnInit {
 
     this._claimService.deleteFile(this.file).subscribe(
       result =>{
-        if(result){
+        if(result) {
           this.showMessage(result.message, 'info', false);
           this.fileName = null;
           this.file = null;

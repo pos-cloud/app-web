@@ -296,11 +296,11 @@ export class PointOfSaleComponent implements OnInit {
             this.loading = false;
             this.rooms = result.rooms;
 
-            if (this.roomSelected._id === undefined){
+            if (this.roomSelected._id === undefined) {
               this.roomSelected = this.rooms[0];
             } else {
               for(let room of this.rooms) {
-                if (this.roomSelected._id === room._id){
+                if (this.roomSelected._id === room._id) {
                   this.roomSelected = room;
                 }
               }
@@ -701,18 +701,18 @@ export class PointOfSaleComponent implements OnInit {
   async assignDeposit(): Promise<boolean> {
 
     return new Promise<boolean>(async (resolve, reject) => {
-      if(!this.transaction.depositDestination || !this.transaction.depositOrigin){
+      if(!this.transaction.depositDestination || !this.transaction.depositOrigin) {
           await this.getDeposits({ branch: { $oid: this.transaction.branchOrigin._id }, operationType: { $ne: 'D' } }).then(
             deposits => {
               if(deposits && deposits.length > 0) {
-                if(deposits.length === 1){
+                if(deposits.length === 1) {
                   this.transaction.depositOrigin = deposits[0];
                   this.transaction.depositDestination = deposits[0];                 
                   resolve(true);
                 } else {
                   deposits.forEach(element => {
                     let deposit : Deposit = element; 
-                    if(deposit && deposit.default){
+                    if(deposit && deposit.default) {
                       this.transaction.depositOrigin = deposit;
                       this.transaction.depositDestination = deposit;
                       resolve(true)
@@ -771,7 +771,7 @@ export class PointOfSaleComponent implements OnInit {
       let result;
       if(this.transaction.type.transactionMovement === TransactionMovement.Stock && 
           this.transaction.type.stockMovement === StockMovement.Transfer &&
-          (!this.transaction.depositDestination || !this.transaction.depositOrigin)){
+          (!this.transaction.depositDestination || !this.transaction.depositOrigin)) {
         this.openModal('transfer')
       } else {
         result = await this.assignBranch();
@@ -939,7 +939,7 @@ export class PointOfSaleComponent implements OnInit {
         break;
       }
       case 'print':
-        if(this.transaction.type.readLayout){
+        if(this.transaction.type.readLayout) {
           modalRef = this._modalService.open(PrintTransactionTypeComponent)
           modalRef.componentInstance.transactionId = this.transaction._id
           modalRef.result.then((result) => {

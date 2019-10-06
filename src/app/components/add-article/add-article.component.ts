@@ -209,7 +209,7 @@ export class AddArticleComponent implements OnInit {
     }
   }
 
-  public getArticleFields(){
+  public getArticleFields() {
     
     this.loading = true;
 
@@ -219,11 +219,11 @@ export class AddArticleComponent implements OnInit {
           for (let x = 0; x < result.articleFields.length; x++) {
             
             if(result.articleFields[x]['datatype'] === ArticleFieldType.String || 
-              result.articleFields[x]['datatype'] === ArticleFieldType.Array){
+              result.articleFields[x]['datatype'] === ArticleFieldType.Array) {
               this.otherFieldsAlfabetico = true;
             }
             if(result.articleFields[x]['datatype'] !== ArticleFieldType.String &&
-            result.articleFields[x]['datatype'] !== ArticleFieldType.Array){
+            result.articleFields[x]['datatype'] !== ArticleFieldType.Array) {
               this.otherFieldsNumber = true;
             }
             
@@ -240,7 +240,7 @@ export class AddArticleComponent implements OnInit {
   public getArticles() {
     this._articleService.getArticles().subscribe(
       result =>{
-        if(result && result.articles){
+        if(result && result.articles) {
           this.articles = result.articles
         } else {
           this.showMessage("No se encontraron articulos", 'danger', false);
@@ -379,7 +379,7 @@ export class AddArticleComponent implements OnInit {
     return new Promise<Deposit>((resolve, reject) => {
       this._depositService.getDeposit(id).subscribe(
         result => {
-          if(result && result.deposit){
+          if(result && result.deposit) {
             resolve(result.deposit)
           } else {
             resolve(null)
@@ -401,28 +401,27 @@ export class AddArticleComponent implements OnInit {
       
       let depositAux = await this.getDeposit(element.deposit);
 
-      if(depositAux.branch._id === deposit.branch._id){
+      if(depositAux.branch._id === deposit.branch._id) {
         valid = false;
-        this.showMessage("Solo puede tener un deposito por sucursal","danger",true)
+        this.showMessage("Solo puede tener un depósito por sucursal.", "info", true);
       }
-
     }
 
     this.articleForm.controls.deposits.value.forEach(element => {
 
-      if(depositForm.value.deposit == element.deposit){
+      if(depositForm.value.deposit == element.deposit) {
         valid = false;
-        this.showMessage("El depósito ya existe","danger",true)
+        this.showMessage("El depósito ya existe", "info", true);
       }
 
     });
 
-    if(depositForm.value.deposit == '' || depositForm.value.deposit == 0 || depositForm.value.deposit == null ){
-      this.showMessage("Debe seleccionar un depósito","danger",true)
+    if(depositForm.value.deposit == '' || depositForm.value.deposit == 0 || depositForm.value.deposit == null ) {
+      this.showMessage("Debe seleccionar un depósito", "info", true);
       valid = false;
     }
 
-    if(valid){
+    if(valid) {
       deposits.push(
         this._fb.group({
           _id: null,
@@ -435,26 +434,25 @@ export class AddArticleComponent implements OnInit {
 
   }
 
-  async addLocation(locationForm : NgForm){
+  async addLocation(locationForm : NgForm) {
     
     let valid = true;
     const locations = this.articleForm.controls.locations as FormArray;
 
-    if(locationForm.value.location == '' || locationForm.value.location == null ){
-      this.showMessage("Debe seleccionar una ubicación","danger",true)
+    if(locationForm.value.location == '' || locationForm.value.location == null ) {
+      this.showMessage("Debe seleccionar una ubicación.", "info", true);
       valid = false;
     }
 
     this.articleForm.controls.locations.value.forEach(element => {
 
-      if(locationForm.value.location == element.location){
+      if(locationForm.value.location == element.location) {
         valid = false;
-        this.showMessage("La ubicación ya existe","danger",true)
+        this.showMessage("La ubicación ya existe.", "info", true);
       }
-
     });
 
-    if(valid){
+    if(valid) {
       locations.push(
         this._fb.group({
           _id: null,
@@ -465,36 +463,36 @@ export class AddArticleComponent implements OnInit {
     }
   }
 
-  async addChildren(childrenForm : NgForm){
+  async addChildren(childrenForm : NgForm) {
     
     let valid = true;
     const children = this.articleForm.controls.children as FormArray;
 
     this.articleForm.controls.children.value.forEach(element => {
 
-      if(childrenForm.value.article == element.article){
+      if(childrenForm.value.article == element.article) {
         valid = false;
-        this.showMessage("El producto ya existe","danger",true)
+        this.showMessage("El producto ya existe.", "info", true);
       }
 
     });
 
-    if(childrenForm.value.quantity == ''  || childrenForm.value.quantity == null ){
-      this.showMessage("El valor no puede ser vacio","danger",true)
+    if(childrenForm.value.quantity == ''  || childrenForm.value.quantity == null ) {
+      this.showMessage("El valor no puede estar vacio.", "info", true);
       valid = false;
     }
 
-    if(childrenForm.value.quantity <= 0 ){
-      this.showMessage("El valor no puede ser menor o igual 0","danger",true)
+    if(childrenForm.value.quantity <= 0 ) {
+      this.showMessage("El valor no puede ser menor o igual 0.", "info", true);
       valid = false;
     }
 
-    if(childrenForm.value.article == '' || childrenForm.value.article == 0 || childrenForm.value.article == null ){
-      this.showMessage("Debe seleccionar un producto","danger",true)
+    if(childrenForm.value.article == '' || childrenForm.value.article == 0 || childrenForm.value.article == null ) {
+      this.showMessage("Debe seleccionar un producto.", "info", true);
       valid = false;
     }
 
-    if(valid){
+    if(valid) {
       children.push(
         this._fb.group({
           _id: null,
@@ -506,19 +504,18 @@ export class AddArticleComponent implements OnInit {
     }
   }
 
-
-  deleteDeposit(index) {
-    let control = <FormArray>this.articleForm.controls.deposits;
+  public deleteDeposit(index): void {
+    let control = <FormArray> this.articleForm.controls.deposits;
     control.removeAt(index)
   }
 
-  deleteLocation(index) {
-    let control = <FormArray>this.articleForm.controls.locations;
+  public deleteLocation(index): void {
+    let control = <FormArray> this.articleForm.controls.locations;
     control.removeAt(index)
   }
 
-  deleteChildren(index) {
-    let control = <FormArray>this.articleForm.controls.children;
+  public deleteChildren(index): void {
+    let control = <FormArray> this.articleForm.controls.children;
     control.removeAt(index)
   }
 
@@ -565,7 +562,7 @@ export class AddArticleComponent implements OnInit {
           if(this.article.containsVariants) {
             this.getVariantsByArticleParent();
           }
-          if(this.operation === 'copy'){
+          if(this.operation === 'copy') {
             this.article._id = null;
             this.article.code = '';
           }
@@ -583,7 +580,7 @@ export class AddArticleComponent implements OnInit {
 
   public setValuesArray() : void {
 
-    if(this.article.deposits && this.article.deposits.length > 0){
+    if(this.article.deposits && this.article.deposits.length > 0) {
       let deposits = this.articleForm.controls.deposits as FormArray;
       this.article.deposits.forEach(x => {
 
@@ -597,7 +594,7 @@ export class AddArticleComponent implements OnInit {
       })
     }
 
-    if(this.article.locations && this.article.locations.length > 0){
+    if(this.article.locations && this.article.locations.length > 0) {
       let locations = this.articleForm.controls.locations as FormArray;
       this.article.locations.forEach(x => {
 
@@ -613,7 +610,7 @@ export class AddArticleComponent implements OnInit {
       })
     }
 
-    if(this.article.children && this.article.children.length > 0){
+    if(this.article.children && this.article.children.length > 0) {
       let children = this.articleForm.controls.children as FormArray;
       this.article.children.forEach(x => {
 
@@ -709,7 +706,7 @@ export class AddArticleComponent implements OnInit {
             }
           }
         }
-        if(this.operation === 'add'){
+        if(this.operation === 'add') {
           let category: Category = new Category();
           if (this.categories[0]) {
             category = this.categories[0];
@@ -1005,7 +1002,7 @@ export class AddArticleComponent implements OnInit {
             if (field.articleField.modifyVAT) {
               taxedAmount += field.amount;
             } else {
-              if(field.amount){
+              if(field.amount) {
                 this.articleForm.value.costPrice += field.amount;
               }
             }

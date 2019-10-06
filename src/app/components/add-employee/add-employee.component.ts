@@ -101,7 +101,7 @@ export class AddEmployeeComponent  implements OnInit {
         result => {
           let code = 1;
           let employeeType: EmployeeType = new EmployeeType();
-          if (result.employees){
+          if (result.employees) {
             if (result.employees[0] !== undefined) {
               code = result.employees[0].code + 1;
             }

@@ -145,7 +145,7 @@ export class ListSummaryOfAccountsComponent implements OnInit {
     this.propertyTerm = property;
   }
 
-  public calculateTotal(items,col){
+  public calculateTotal(items,col) {
 
     let total = 0;
     if (items) {
@@ -166,7 +166,7 @@ export class ListSummaryOfAccountsComponent implements OnInit {
     this.alertMessage = '';
   }
 
-  public openModal(op : string){
+  public openModal(op : string) {
     
     let modalRef;
     switch (op) {

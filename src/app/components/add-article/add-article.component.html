@@ -295,7 +295,7 @@
                     <tbody>
                       <tr class="separation" *ngFor="let depositAux of articleForm.get('deposits').controls; let i = index;">
                         <div *ngFor="let deposit of deposits; let i = index">
-                          <td *ngIf="depositAux && depositAux.value && depositAux.value.deposit &&  depositAux.value.deposit === deposit._id">Sucursal {{deposit.branch.name}} - Deposito {{deposit.name}}</td>
+                          <td *ngIf="depositAux && depositAux.value && depositAux.value.deposit &&  depositAux.value.deposit === deposit._id">Sucursal {{deposit.branch.name}} - Depósito {{deposit.name}}</td>
                         </div>
                         <td align="right" width="10">
                             <button type="button" class="btn btn-danger btn-sm" (click)="deleteDeposit(i)">

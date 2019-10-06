@@ -164,7 +164,7 @@ export class UpdateMakeComponent implements OnInit {
     );
   }
 
-  public fileChangeEvent(fileInput: any){
+  public fileChangeEvent(fileInput: any) {
 
     this.filesToUpload = <Array<File>>fileInput.target.files;
   }

@@ -94,20 +94,20 @@ export class PrinterComponent implements OnInit {
 
   public getDocuments() : void {
 
-    let collection = this.collection.replace(/\.?([A-Z])/g, function (x,y){return "-" + y.toLowerCase()}).replace(/^_/, "");
+    let collection = this.collection.replace(/\.?([A-Z])/g, function (x,y) {return "-" + y.toLowerCase()}).replace(/^_/, "");
 
     this._configService.getModel(collection).subscribe(
       result =>{
         this.documents = new Array();
-        if(this.collection === "config"){
+        if(this.collection === "config") {
           for (let i = 0; i < result.model.length; i++) {
-            if(result.model[i].slice(0,7) === 'company'){
+            if(result.model[i].slice(0,7) === 'company') {
               this.documents.push(result.model[i])
             }
           }
-        } else if(this.collection === "movementOfCancellation"){
+        } else if(this.collection === "movementOfCancellation") {
           for (let i = 0; i < result.model.length; i++) {
-            if(result.model[i].slice(0,17) === 'transactionOrigin'){
+            if(result.model[i].slice(0,17) === 'transactionOrigin') {
               this.documents.push(result.model[i])
             }
           }
@@ -193,7 +193,7 @@ export class PrinterComponent implements OnInit {
   }
 
   /*public addNewField(e :any): void {
-    if(this.printerForm.value.fields.lenght <= 0 && e){
+    if(this.printerForm.value.fields.lenght <= 0 && e) {
       const fields = this.printerForm.controls.fields as FormArray;
       fields.push(
         this._fb.group({
@@ -221,7 +221,7 @@ export class PrinterComponent implements OnInit {
     let valid = true;
     const fields = this.printerForm.controls.fields as FormArray;
 
-    if(valid){
+    if(valid) {
 
       let field = {
         _id: null,
@@ -325,7 +325,7 @@ export class PrinterComponent implements OnInit {
       'addPag' : this.printer.addPag
     }
 
-    if(this.printer.fields && this.printer.fields.length > 0){
+    if(this.printer.fields && this.printer.fields.length > 0) {
       let fields = <FormArray>this.printerForm.controls.fields;
       this.printer.fields.forEach(x => {
 

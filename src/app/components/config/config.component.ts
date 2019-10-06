@@ -133,7 +133,7 @@ export class ConfigComponent implements OnInit {
     });
   }
 
-  public fileChangeEvent(fileInput: any){
+  public fileChangeEvent(fileInput: any) {
       this.filesToUpload = <Array<File>> fileInput.target.files;
   }
 
@@ -241,7 +241,7 @@ export class ConfigComponent implements OnInit {
     }
   }
 
-  public buildFormEmail(){
+  public buildFormEmail() {
     this.configFormEmail = this._fb.group({
       '_id': [this.config._id, [
           Validators.required
@@ -282,7 +282,7 @@ export class ConfigComponent implements OnInit {
     }
   }
 
-  public buildFormSystem(){
+  public buildFormSystem() {
     this.configFormSystem = this._fb.group({
       '_id': [this.config._id, [
           Validators.required

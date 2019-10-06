@@ -42,10 +42,10 @@ export class SelectDepositComponent implements OnInit {
   public getDeposits() : void {
     this._depositService.getDeposits().subscribe(
       result => {
-        if(result && result.deposits){
+        if(result && result.deposits) {
           this.deposits = result.deposits
         } else {
-          this.showMessage("No se encontraron depositos" , "danger", false);
+          this.showMessage("No se encontraron depósitos." , "info", false);
         }
       },
       error => {
@@ -55,8 +55,8 @@ export class SelectDepositComponent implements OnInit {
   }
 
   public selectTransfer() :void {
-    if(this.transferForm.value.origin === this.transferForm.value.destination && this.op === 'transfer'){
-      this.showMessage("No puede seleccionar el mismo deposito de origen y destino",'danger',true)
+    if(this.transferForm.value.origin === this.transferForm.value.destination && this.op === 'transfer') {
+      this.showMessage("No puede seleccionar el mismo depósito de origen y destino.", 'info', true);
     } else {
       this.activeModal.close({ origin: this.transferForm.value.origin, destination: this.transferForm.value.destination, deposit: this.transferForm.value.deposit });
     }

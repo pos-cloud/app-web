@@ -75,19 +75,19 @@ export class CurrentAccountDetailsComponent implements OnInit {
     let match = `{`;
 
 
-    if(this.address ){
+    if(this.address ) {
       match += `"company.address": { "$regex": "${this.address}", "$options": "i" }, `
     }
-    if(this.emails ){
+    if(this.emails ) {
       match += `"company.emails": { "$regex": "${this.emails}", "$options": "i" }, `
     }
-    if(this.name ){
+    if(this.name ) {
       match += `"company.name": { "$regex": "${this.name}", "$options": "i" }, `
     }
-    if(this.identification ){
+    if(this.identification ) {
       match += `"company.identificationValue": { "$regex": "${this.identification}", "$options": "i" }, `
     }
-    if(this.employee ){
+    if(this.employee ) {
       match += `"company.employee.name": { "$regex": "${this.employee}", "$options": "i" }, `
     }
     
@@ -175,7 +175,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
     row += 5;
     this.doc.setFontSize(this.fontSizes.large)
     this.doc.text(180, 280, "Hoja:" + page)
-    for(var i = 0; i < this.items.length; i++){
+    for(var i = 0; i < this.items.length; i++) {
       this.doc.setLineWidth(1)
       this.doc.line(0, row, 1000, row)
       row += 5;
@@ -186,33 +186,33 @@ export class CurrentAccountDetailsComponent implements OnInit {
       if(this.items[i]._id.company.identificationType && this.items[i]._id.company.identificationValue) {
         this.doc.text(5,row,this.items[i]._id.company.identificationType.name+":"+this.items[i]._id.company.identificationValue);
       }
-      if(Config.country === 'AR'){
+      if(Config.country === 'AR') {
         this.doc.text(100,row,"Condición de IVA:")
-        if(this.items[i]._id.company.vatCondition){
+        if(this.items[i]._id.company.vatCondition) {
           this.doc.text(100+30,row,this.items[i]._id.company.vatCondition.description);
         }
       } else {
         this.doc.text(100,row,"Régimen Fiscal:")
-        if(this.items[i]._id.company.vatCondition){
+        if(this.items[i]._id.company.vatCondition) {
           this.doc.text(100+30,row,+this.items[i]._id.company.vatCondition.description);
         }
       }
       row += 5;
       this.doc.text(5,row,"Dirección:")
-      if(this.items[i]._id.company.address){
+      if(this.items[i]._id.company.address) {
         this.doc.text(5+20,row,this.items[i]._id.company.address)
       }
       this.doc.text(100,row,"Ciudad:")
-      if(this.items[i]._id.company.city){
+      if(this.items[i]._id.company.city) {
         this.doc.text(100+20,row,this.items[i]._id.company.city)
       }
       row += 5;
       this.doc.text(5,row,"Provincia:")
-      if(this.items[i]._id.company.state){
+      if(this.items[i]._id.company.state) {
         this.doc.text(5+20,row,this.items[i]._id.company.state.name)
       }
       this.doc.text(100,row,"Teléfono:")
-      if(this.items[i]._id.company.phones){
+      if(this.items[i]._id.company.phones) {
         this.doc.text(100+20,row,this.items[i]._id.company.phones)
       }
       
@@ -235,13 +235,13 @@ export class CurrentAccountDetailsComponent implements OnInit {
       let total;
       for(let transaction of this.items[i].transactions) {
         this.doc.text(5,row,transaction.endDate);
-        if(transaction.type.labelPrint){
+        if(transaction.type.labelPrint) {
           this.doc.text(30,row,transaction.type.labelPrint);
         } else {
           this.doc.text(30,row,transaction.type.name);
         }
         this.doc.text(75,row,this.padString(transaction.origin, 4) + "-" + transaction.letter + "-" + this.padString(transaction.number, 8));
-        if(transaction.expirationDate){
+        if(transaction.expirationDate) {
           this.doc.text(120,row,transaction.expirationDate);
         }
         this.doc.text(155,row, "$" + this.roundNumber.transform(transaction.totalPrice).toString());
@@ -249,7 +249,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
         this.doc.text(180,row, "$" + this.roundNumber.transform(transaction.balance).toString());
         row += 5;
 
-        if(transaction.type.movement === "Entrada"){
+        if(transaction.type.movement === "Entrada") {
           totalPrice = totalPrice + transaction.totalPrice;
           balance = balance + transaction.balance;
         } else {
@@ -258,7 +258,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
         }
         
 
-        if(row > 220){
+        if(row > 220) {
           page += 1;
           this.doc.addPage();
           this.doc.setFontSize(this.fontSizes.large)
@@ -275,7 +275,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
       this.doc.text(180,row,"$" +this.roundNumber.transform(balance).toString());
       this.doc.setFontType("normal");
       row += 5;
-      if(row > 220){
+      if(row > 220) {
         page += 1;
         this.doc.addPage();
         this.doc.setFontSize(this.fontSizes.large)

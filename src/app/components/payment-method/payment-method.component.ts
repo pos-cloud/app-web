@@ -58,7 +58,7 @@ export class PaymentMethodComponent implements OnInit {
     this.paymentMethod = new PaymentMethod();
     this.buildForm();
 
-    if(this.paymentMethodId){
+    if(this.paymentMethodId) {
       this.getPaymentMetod()
     }
   }
@@ -66,7 +66,7 @@ export class PaymentMethodComponent implements OnInit {
   public getPaymentMetod() {
     this._paymentMethodService.getPaymentMethod(this.paymentMethodId).subscribe(
       result =>{
-        if(result && result.paymentMethod){
+        if(result && result.paymentMethod) {
           this.paymentMethod = result.paymentMethod;
           this.setValueForm();
         }

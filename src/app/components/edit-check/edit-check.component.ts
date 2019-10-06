@@ -53,7 +53,7 @@ export class EditCheckComponent implements OnInit {
 
   ngOnInit() {
 
-    if(this.movementOfCashId){
+    if(this.movementOfCashId) {
       this.getMovementOfCash()
     }
 

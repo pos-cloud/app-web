@@ -234,12 +234,12 @@ export class CancellationTypeComponent implements OnInit {
 
     switch (this.operation) {
       case 'add':
-        if(this.isValid()){
+        if(this.isValid()) {
           this.saveCancellationType();
         }
         break;
       case 'edit':
-        if(this.isValid()){
+        if(this.isValid()) {
           this.updateCancellationType();
         }
         break;
@@ -262,7 +262,7 @@ export class CancellationTypeComponent implements OnInit {
     }
     
     if(this.originSelected.modifyStock && destinationSelected.modifyStock) {
-      if(this.originSelected.stockMovement === destinationSelected.stockMovement){
+      if(this.originSelected.stockMovement === destinationSelected.stockMovement) {
         valid = false
         this.showMessage('No se puede relacionar transacciones con el mismo movimiento de stock', 'danger', false);
       }
