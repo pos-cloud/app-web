@@ -822,6 +822,13 @@ export class PointOfSaleComponent implements OnInit {
         }
       );
 
+      if(!this.transaction.depositDestination || !this.transaction.depositOrigin){
+        let depositAssign = await this.assignDeposit()
+        if(depositAssign){
+          this.nextStepTransaction();
+        }
+      }
+
       if( !this.transaction.branchDestination || 
           !this.transaction.branchOrigin ||
           !this.transaction.depositDestination ||
