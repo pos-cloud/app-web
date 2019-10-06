@@ -35,7 +35,6 @@ export class SelectDepositComponent implements OnInit {
       'origin': [, []],
       'destination': [, []],
       'deposit': [, []]
-
     })
   }
 
@@ -58,17 +57,17 @@ export class SelectDepositComponent implements OnInit {
 
     let valid = true;
 
-    if(this.transferForm.value.origin === this.transferForm.value.destination && this.op === 'transfer'){
-      this.showMessage("No puede seleccionar el mismo deposito de origen y destino",'danger',true)
+    if(this.transferForm.value.origin === this.transferForm.value.destination && this.op === 'transfer') {
+      this.showMessage("No puede seleccionar el mismo depósito de origen y destino", 'info', true)
       valid = false
     }
 
-    if(this.op === 'transfer' && (this.transferForm.value.origin === null || this.transferForm.value.destination === null)){
-      this.showMessage("Debe seleccionar un deposito para origen y otro para destino",'danger',true)
+    if(this.op === 'transfer' && (this.transferForm.value.origin === null || this.transferForm.value.destination === null)) {
+      this.showMessage("Debe seleccionar un depósito para origen y otro para destino", 'info', true)
       valid = false
     }
 
-    if(valid){
+    if(valid) {
       this.activeModal.close({ origin: this.transferForm.value.origin, destination: this.transferForm.value.destination, deposit: this.transferForm.value.deposit });
     }
   }
