@@ -57,6 +57,7 @@ export class AddUserComponent  implements OnInit {
       'required':       'Este campo es requerido.'
     },
     'email': {
+      'required':       'Este campo es requerido.'
     },
     'password': {
       'required':       'Este campo es requerido.'
