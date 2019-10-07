@@ -25,6 +25,10 @@ body {
       color: black;
 }
 
+.btn-light {
+      border-color: #ccc !important;
+}
+
 .container-fluid {
       background-color: #e4e9f2;
       padding: 2.25rem 2.25rem .75rem !important;
