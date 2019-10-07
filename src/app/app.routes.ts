@@ -69,6 +69,7 @@ import { ListArticlesPosComponent } from './components/list-articles-pos/list-ar
 import { ReportsList } from './components/reports-list/reports-list.component';
 import { LicenseGuard } from './guards/license.guard';
 import { Config } from './app.config';
+import { ListStructureComponent } from './components/list-structure/list-structure.component';
 
 export const _routes: Routes = [
   { 
@@ -514,6 +515,11 @@ export const _routes: Routes = [
   {
     path : 'admin/licence-payment',
     component : LicensePaymentComponent,
+    canActivate: [AuthGuard, LicenseGuard]
+  },
+  {
+    path : 'admin/structures',
+    component : ListStructureComponent,
     canActivate: [AuthGuard, LicenseGuard]
   },
   {

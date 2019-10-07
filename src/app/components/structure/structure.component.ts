@@ -8,8 +8,9 @@ import { Config } from 'app/app.config';
 import { ArticleService } from 'app/services/article.service';
 import { Article } from 'app/models/article';
 
+import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap, catchError, map, tap  } from 'rxjs/operators';
+import { visitAstChildren } from '@angular/compiler';
 
 
 @Component({
@@ -27,16 +28,16 @@ export class StructureComponent implements OnInit {
     distinctUntilChanged(),
     tap(() => this.loading = true),
     switchMap(term =>
-      this.getArticles(`where="name": { "$regex": "${term}", "$options": "i" }&limit=10`).then(
-        companies => {
-          return companies;
+      this.getArticles(`where="description": { "$regex": "${term}", "$options": "i" }&limit=10`).then(
+        articles => {
+          return articles;
         }
       )
     ),
     tap(() => this.loading = false)
   )
 
-  public formatterArticles = (x: {name: string}) => x.name;
+  public formatterArticles = (x: {description: string}) => x.description;
 
   
   public filterKey = '';
@@ -131,37 +132,13 @@ export class StructureComponent implements OnInit {
   public setValueForm(): void {
    
     if (!this.structure._id) { this.structure._id = ''; }
-    
-    
-    let parent;
-    if (!this.structure.parent) {
-      parent = null;
-    } else {
-      if (this.structure.parent._id) {
-        parent = this.structure.parent._id;
-      } else {
-        parent = this.structure.parent;
-      }
-    }
-
-    let child;
-    if (!this.structure.child) {
-      child = null;
-    } else {
-      if (this.structure.child._id) {
-        child = this.structure.child._id;
-      } else {
-        child = this.structure.child;
-      }
-    }
-
     if (!this.structure.quantity) { this.structure.quantity = 0; }
 
 
     const values = {
       '_id': this.structure._id,
-      'parent': parent,
-      'child': child,
+      'parent': this.structure.parent,
+      'child': this.structure.child,
       'quantity' : this.structure.quantity
     };
 
@@ -231,21 +208,25 @@ export class StructureComponent implements OnInit {
 
     this.structure = this.structureForm.value;
 
-    this._structureService.updateStructure(this.structure).subscribe(
-      result => {
-        if (!result.structure) {
+    if(this.isValid()){
+      this._structureService.updateStructure(this.structure).subscribe(
+        result => {
+          if (!result.structure) {
+            this.loading = false;
+            if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+          } else {
+            this.loading = false;
+            this.showMessage('La estructura se ha actualizado con éxito.', 'success', false);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
-          if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
-        } else {
-          this.loading = false;
-          this.showMessage('La estructura se ha actualizado con éxito.', 'success', false);
         }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    } else {
+      this.loading = false;
+    }
   }
 
   public saveStructure() {
@@ -254,23 +235,27 @@ export class StructureComponent implements OnInit {
 
     this.structure = this.structureForm.value;
 
-    this._structureService.saveStructure(this.structure).subscribe(
-      result => {
-        if (!result.structure) {
-          this.loading = false;
-          if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
-        } else {
+    if(this.isValid()){
+      this._structureService.saveStructure(this.structure).subscribe(
+        result => {
+          if (!result.structure) {
             this.loading = false;
-            this.showMessage('La estructura se ha añadido con éxito.', 'success', false);
-            this.structure = new Structure();
-            this.buildForm();
+            if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+          } else {
+              this.loading = false;
+              this.showMessage('La estructura se ha añadido con éxito.', 'success', false);
+              this.structure = new Structure();
+              this.buildForm();
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
         }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    } else {
+      this.loading = false;
+    }
   }
 
   public deleteStructure() {
@@ -291,6 +276,22 @@ export class StructureComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public isValid() : boolean {
+    let valid = true;
+
+    if(this.structure.child._id === this.structure.parent._id){
+      this.showMessage("No puede ser el mismo padre e hijo","danger",true)
+      valid = false;
+    }
+
+    if(this.structure.quantity === 0 || this.structure.quantity < 0 || this.structure.quantity === null){
+      this.showMessage("La cantidad tiene que ser mayor a 0","danger",true)
+      valid = false;
+    }
+
+    return valid
   }
 
   private getArticles(query): Promise<Article[]> {
@@ -322,21 +323,4 @@ export class StructureComponent implements OnInit {
     this.alertMessage = '';
   }
 
-}
-var filter = function(){
-  if (this.filterKey !== ''){
-      this.filteredItems = this.countries.filter(function(e){
-          return (e.toLowerCase().substr(0, this.filterKey.length) ==
-this.filterKey.toLowerCase()) == true;
-      }.bind(this));
-  }
-  else{
-      this.filteredItems = [];
-  }
-}
-
-//SELCTION ITEM METHOD.
-var select = function(item){
-  this.filterKey = item;
-  this.filteredItems = [];
 }

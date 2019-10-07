@@ -1,15 +1,6 @@
 <div class="modal-header">
-  <h4 class="modal-title" *ngIf="operation==='add'">
-    <span>Agregar Estructure</span>
-  </h4>
-  <h4 class="modal-title" *ngIf="operation==='edit'">
-    <span>Editar Estructure {{structure.parent}}</span>
-  </h4>
-  <h4 class="modal-title" *ngIf="operation==='view'">
-      <span>Estructure {{structure.parent}}</span>
-  </h4>
-  <h4 class="modal-title" *ngIf="operation==='delete'">
-    <span>Eliminar Estructure {{structure.parent}}</span>
+  <h4 class="modal-title">
+    <span>Estructure</span>
   </h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
@@ -29,32 +20,41 @@
             <div class="row tab-content">
               <div class="form-group col-md-12">
                 <div class="row">
-                  <div class="form-group col-md-5">
+                  <div class="form-group col-md-12">
                     <ng-template #rtArticles let-r="result" let-t="term">
-                      <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+                      <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
                     </ng-template>
-                    <label for="article">Padre:</label>
-                    <input id="article"
+                    <label for="parent">Padre:</label>
+                    <input id="parent"
                           type="text"
                           class="form-control"
-                          formControlName="article"
-                          name="article"
+                          formControlName="parent"
+                          name="parent"
                           [ngbTypeahead]="searchArticles"
                           [resultTemplate]="rtArticles"
                           [inputFormatter]="formatterArticles" />
                   </div>
-                  <div class="form-group col-md-5">
-                      <label for="child" class="control-label">Hijo</label>
-                      <select class="form-control" formControlName="child">
-                        <option *ngFor="let child of articles"
-                                [selected]="(structure.child && structure.child._id && child._id===structure.child._id) ||
-                                            (structure.child && child._id===structure.child)"
-                                [value]="child._id"
-                                [disabled]="readonly">
-                                {{child.description}}</option>
-                      </select>
+                  <hr>
+                </div>
+                <div class = "row">
+                  <div class="form-group col-md-12">
+                    <ng-template #rtArticles let-r="result" let-t="term">
+                      <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+                    </ng-template>
+                    <label for="child">Hijo:</label>
+                    <input id="child"
+                          type="text"
+                          class="form-control"
+                          formControlName="child"
+                          name="child"
+                          [ngbTypeahead]="searchArticles"
+                          [resultTemplate]="rtArticles"
+                          [inputFormatter]="formatterArticles" />
                   </div>
-                  <div class="form-group col-md-2">
+                  <hr>
+                </div>
+                <div class = "row">
+                                    <div class="form-group col-md-2">
                     <label for="name" class="control-label">Cantidad</label>
                     <div class="input-group">
                       <input type="quantity" class="form-control" formControlName="quantity" name="quantity" id="quantity" [readonly]="readonly" [focus]="focusEvent"/>
