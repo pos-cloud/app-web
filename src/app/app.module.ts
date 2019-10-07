@@ -259,6 +259,9 @@ import { ProgressbarComponent } from './components/progressbar/progressbar.compo
 import { ReportsList } from './components/reports-list/reports-list.component';
 import { ShortcutComponent } from './components/shortcut/shortcut.component';
 import { LicenseGuard } from './guards/license.guard';
+import { StructureService } from './services/structure.service';
+import { StructureComponent } from './components/structure/structure.component';
+import { ListStructureComponent } from './components/list-structure/list-structure.component';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -446,7 +449,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     PrintTransactionTypeComponent,
     ProgressbarComponent,
     ReportsList,
-    ShortcutComponent
+    ShortcutComponent,
+    StructureComponent,
+    ListStructureComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -612,7 +617,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     PrintTransactionTypeComponent,
     ProgressbarComponent,
     ReportsList,
-    ShortcutComponent
+    ShortcutComponent,
+    StructureComponent
   ],
   imports: [
     BrowserModule,
@@ -691,7 +697,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     OriginService,
     ClaimService,
     TransportService,
-    PriceListService
+    PriceListService,
+    StructureService
   ],
   bootstrap: [AppComponent]
 })
