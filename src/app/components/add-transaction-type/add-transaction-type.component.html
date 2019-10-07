@@ -28,7 +28,7 @@
                                 [selected]="transactionType.transactionMovement && transactionType.transactionMovement === transactionMovement"
                         >{{transactionMovement}}</option>
                       </select>
-                      <button type="button" class="btn btn-secondary" placement="right"
+                      <button type="button" class="btn btn-light" placement="right"
                       popoverClass="popover-class" ngbPopover="¿Qué tipo de movimiento es el comprobante que quieres crear/editar?">
                         <b>?</b>
                       </button>
@@ -41,7 +41,7 @@
                     <label for="abbreviation">Abrev.</label>
                     <div class="input-group">
                       <input type="text" class="form-control" formControlName="abbreviation" name="abbreviation" id="abbreviation" [focus]="focusEvent" [readonly]="readonly"/>
-                      <button type="button" class="btn btn-secondary" placement="right"
+                      <button type="button" class="btn btn-light" placement="right"
                       popoverClass="popover-class" ngbPopover="Siglas utilizadas para la alta de transacciones en la aplicación">
                         <b>?</b>
                       </button>
@@ -54,7 +54,7 @@
                     <label for="name">Nombre</label>
                     <div class="input-group">
                       <input type="text" class="form-control" formControlName="name" name="name" id="name" [readonly]="readonly"/>
-                      <button type="button" class="btn btn-secondary" placement="right"
+                      <button type="button" class="btn btn-light" placement="right"
                       popoverClass="popover-class" ngbPopover="¿Nombre de la transacción?">
                         <b>?</b>
                       </button>
@@ -67,7 +67,7 @@
                     <label for="labelPrint">Nombre en Impresión</label>
                     <div class="input-group">
                       <input type="text" class="form-control" formControlName="labelPrint" name="labelPrint" id="labelPrint" [readonly]="readonly"/>
-                      <button type="button" class="btn btn-secondary" placement="right"
+                      <button type="button" class="btn btn-light" placement="right"
                       popoverClass="popover-class" ngbPopover="¿Como saldrá el nombre de la transacción en la impresión?">
                         <b>?</b>
                       </button>
@@ -83,7 +83,7 @@
                         <option value="No" [selected]="transactionType.currentAccount.toString() === 'No'" [disabled]="readonly">No</option>
                         <option value="Cobra" [selected]="transactionType.currentAccount.toString() === 'Cobra'" [disabled]="readonly">Cobra/Paga</option>
                       </select>
-                      <button type="button" class="btn btn-secondary" placement="right"
+                      <button type="button" class="btn btn-light" placement="right"
                       popoverClass="popover-class" ngbPopover="¿Afecta la cuenta corriente la transacción?">
                         <b>?</b>
                       </button>
@@ -97,7 +97,7 @@
                         <option value="Entrada" [selected]="transactionType.movement.toString() === 'Entrada'" [disabled]="readonly">Entrada</option>
                         <option value="Salida" [selected]="transactionType.movement.toString() === 'Salida'" [disabled]="readonly">Salida</option>
                       </select>
-                      <button type="button" class="btn btn-secondary" placement="right"
+                      <button type="button" class="btn btn-light" placement="right"
                       popoverClass="popover-class" ngbPopover="¿Qué tipo de movimiento de dinero realiza?">
                         <b>?</b>
                       </button>
@@ -113,7 +113,7 @@
                         <option value="false" [selected]="!transactionType.electronics" [disabled]="readonly">No</option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="¿Se valida la transacción fiscal?"
@@ -127,7 +127,7 @@
                     <div class="input-group">
                       <input type="text" class="form-control" formControlName="fiscalCode" name="fiscalCode" id="fiscalCode" [readonly]="readonly"/>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="¿Cuál es el tipo de comprobante según el ente fiscal?">
@@ -147,7 +147,7 @@
                             {{ useOfCFDI.description }}</option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="Al dar de alta la transacción el Uso de CFDI elegido estará asignado por defecto.">
@@ -177,7 +177,7 @@
                         <option value="false" [selected]="!transactionType.automaticCreation" [disabled]="readonly">No</option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="¿Crea automáticamente después de finalizar una operación?">
@@ -193,7 +193,7 @@
                         <option value="false" [selected]="!transactionType.requestTaxes" [disabled]="readonly">No</option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="¿Permite cargar impuestos en la transacción?">
@@ -209,7 +209,7 @@
                         <option value="false" [selected]="!transactionType.tax" [disabled]="readonly">No</option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="¿La transacción aparece en el Libro de IVA?">
@@ -229,7 +229,7 @@
                         <option value="false" [selected]="!transactionType.allowEdit" [disabled]="readonly">No</option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="¿Se puede editar la transacción?">
@@ -244,7 +244,7 @@
                         <option value="true" [selected]="transactionType.allowDelete" [disabled]="readonly">Si</option>
                         <option value="false" [selected]="!transactionType.allowDelete" [disabled]="readonly">No</option>
                       </select>
-                      <button type="button" class="btn btn-secondary" placement="right"
+                      <button type="button" class="btn btn-light" placement="right"
                       popoverClass="popover-class" ngbPopover="¿Se puede borrar la transacción?">
                         <b>?</b>
                       </button>
@@ -257,7 +257,7 @@
                         <option value="true" [selected]="transactionType.allowAPP" [disabled]="readonly">Si</option>
                         <option value="false" [selected]="!transactionType.allowAPP" [disabled]="readonly">No</option>
                       </select>
-                      <button type="button" class="btn btn-secondary" placement="right"
+                      <button type="button" class="btn btn-light" placement="right"
                       popoverClass="popover-class" ngbPopover="¿Permitir usar en la aplicación?">
                         <b>?</b>
                       </button>
@@ -270,7 +270,7 @@
                           <option value="true" [selected]="transactionType.requestTransport" [disabled]="readonly">Si</option>
                           <option value="false" [selected]="!transactionType.requestTransport" [disabled]="readonly">No</option>
                         </select>
-                        <button type="button" class="btn btn-secondary" placement="right"
+                        <button type="button" class="btn btn-light" placement="right"
                         popoverClass="popover-class" ngbPopover="¿Pide Transporte?">
                           <b>?</b>
                         </button>
@@ -291,7 +291,7 @@
                           >{{ companyType }}</option>
                         </select>
                         <button type="button"
-                                class="btn btn-secondary"
+                                class="btn btn-light"
                                 placement="right"
                                 popoverClass="popover-class"
                                 ngbPopover="Selecciona el tipo de empresa a solicitar en la carga">
@@ -312,7 +312,7 @@
                         >{{ employeeType.description }}</option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="Selecciona el tipo de empleado a solicitar en la carga">
@@ -328,7 +328,7 @@
                         <option value="false" [selected]="!transactionType.requestCurrency" [disabled]="readonly">No</option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="¿Pide tipo de moneda al dar el alta la transacción?">
@@ -344,7 +344,7 @@
                           <option value="false" [selected]="!transactionType.defectOrders" [disabled]="readonly">No</option>
                         </select>
                         <button type="button"
-                                class="btn btn-secondary"
+                                class="btn btn-light"
                                 placement="right"
                                 popoverClass="popover-class"
                                 ngbPopover="¿Se utiliza para dar de alta pedidos en POS modo resto o delivery?">
@@ -369,7 +369,7 @@
                         <option value="true" [selected]="transactionType.automaticNumbering" [disabled]="readonly">Si</option>
                         <option value="false" [selected]="!transactionType.automaticNumbering" [disabled]="readonly">No</option>
                       </select>
-                      <button type="button" class="btn btn-secondary" placement="right"
+                      <button type="button" class="btn btn-light" placement="right"
                       popoverClass="popover-class" ngbPopover="¿Desea que el sistema enumere la transacción automaticamente?">
                         <b>?</b>
                       </button>
@@ -379,7 +379,7 @@
                     <label for="fixedOrigin">Punto de venta fijo</label>
                     <div class="input-group">
                       <input type="number" class="form-control" formControlName="fixedOrigin" name="fixedOrigin" id="fixedOrigin" [readonly]="readonly"/>
-                      <button type="button" class="btn btn-secondary" placement="right"
+                      <button type="button" class="btn btn-light" placement="right"
                       popoverClass="popover-class" ngbPopover="¿La transacción siempre va a tener el mismo punto de venta?, ¿Cuál?">
                         <b>?</b>
                       </button>
@@ -396,7 +396,7 @@
                           {{ letter }}
                         </option>
                       </select>
-                      <button type="button" class="btn btn-secondary" placement="right"
+                      <button type="button" class="btn btn-light" placement="right"
                       popoverClass="popover-class" ngbPopover="¿La transacción siempre va a tener la misma letra?, ¿Cuál?">
                         <b>?</b>
                       </button>
@@ -409,7 +409,7 @@
                         <option value="true" [selected]="transactionType.resetNumber" [disabled]="readonly">Si</option>
                         <option value="false" [selected]="!transactionType.resetNumber" [disabled]="readonly">No</option>
                       </select>
-                      <button type="button" class="btn btn-secondary" placement="right"
+                      <button type="button" class="btn btn-light" placement="right"
                       popoverClass="popover-class" ngbPopover="¿Se resetea el número cuando abre una nueva caja?">
                         <b>?</b>
                       </button>
@@ -433,7 +433,7 @@
                         <option value="false" [selected]="!transactionType.requestArticles" [disabled]="readonly">No</option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="¿Se intercambia productos en la transacción?">
@@ -448,7 +448,7 @@
                         <option value="true" [selected]="transactionType.modifyArticle" [disabled]="readonly">Si</option>
                         <option value="false" [selected]="!transactionType.modifyArticle" [disabled]="readonly">No</option>
                       </select>
-                      <button type="button" class="btn btn-secondary" placement="right"
+                      <button type="button" class="btn btn-light" placement="right"
                       popoverClass="popover-class" ngbPopover="¿Permite modificar el producto dentro de la transacción?">
                         <b>?</b>
                       </button>
@@ -465,7 +465,7 @@
                         <option value="Venta con IVA" [selected]="transactionType.entryAmount.toString() === 'Venta con IVA'" [disabled]="readonly">Venta con IVA</option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="¿Cuál es el precio unitario a modificar dentro de la transacción?">
@@ -481,7 +481,7 @@
                         <option value="false" [selected]="!transactionType.showPrices" [disabled]="readonly">No</option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="¿Permite ver el precio del producto en el listado dentro de la transacción?">
@@ -503,7 +503,7 @@
                         </option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="¿Cuál es el precio que se muestra a la derecha en mostrador?">
@@ -523,7 +523,7 @@
                         </option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="¿Cuál la descripción que se muestra a la derecha en mostrador?">
@@ -549,7 +549,7 @@
                         <option value="false" [selected]="!transactionType.requestPaymentMethods" [disabled]="readonly">No</option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="Al finalizar la transacción, ¿Desea que se solicite el método de pago?">
@@ -564,7 +564,7 @@
                         <option value="true" [selected]="transactionType.allowZero" [disabled]="readonly">Si</option>
                         <option value="false" [selected]="!transactionType.allowZero" [disabled]="readonly">No</option>
                       </select>
-                      <button type="button" class="btn btn-secondary" placement="right"
+                      <button type="button" class="btn btn-light" placement="right"
                       popoverClass="popover-class" ngbPopover="Según los métodos de pago cargados, se asigna el monto a la transacción">
                         <b>?</b>
                       </button>
@@ -585,7 +585,7 @@
                         </option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="¿Qué método de pago tendrá el botón de pago rápido?">
@@ -611,7 +611,7 @@
                         <option value="false" [selected]="!transactionType.modifyStock" [disabled]="readonly">No</option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="¿Afecta el stock la transacción?">
@@ -630,7 +630,7 @@
                         <option value="Transferencia" [selected]="transactionType.stockMovement.toString() === 'Transferencia'" [disabled]="readonly">Transferencia</option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="¿Como modifica al stock?">
@@ -656,7 +656,7 @@
                         <option value="false" [selected]="!transactionType.cashBoxImpact" [disabled]="readonly">No</option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="¿Afecta la caja diaria?">
@@ -672,7 +672,7 @@
                         <option value="false" [selected]="!transactionType.cashOpening" [disabled]="readonly">No</option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="¿Se utiliza para apertura de caja?">
@@ -688,7 +688,7 @@
                         <option value="false" [selected]="!transactionType.cashClosing" [disabled]="readonly">No</option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="¿Se utiliza para cierre de caja?">
@@ -718,7 +718,7 @@
                         {{printer.name}}</option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="Al imprimir la transacción, se emitirá por la impresora seleccionada como defecto.">
@@ -734,7 +734,7 @@
                         <option value="false" [selected]="!transactionType.printable" >No</option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="Si se imprime al finalizar la carga de la transacción">
@@ -750,7 +750,7 @@
                           <option value="false" [selected]="!transactionType.readLayout" >No</option>
                         </select>
                         <button type="button"
-                                class="btn btn-secondary"
+                                class="btn btn-light"
                                 placement="right"
                                 popoverClass="popover-class"
                                 ngbPopover="Lee el diseño cargado en la impresora?">
@@ -779,7 +779,7 @@
                         <option value="Descripción Corta" [selected]="transactionType.printDescriptionType.toString() === 'Descripción Corta'" [disabled]="readonly">Descripción Corta</option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="¿Cuál la descripción que se muestra en la impresión ?">
@@ -797,7 +797,7 @@
                         <option value="false" [selected]="!transactionType.printSign" >No</option>
                       </select>
                       <button type="button"
-                              class="btn btn-secondary"
+                              class="btn btn-light"
                               placement="right"
                               popoverClass="popover-class"
                               ngbPopover="Si se imprime para firmar el comprobante">
@@ -843,7 +843,7 @@
       </ngb-tabset>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+      <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
       <button type="submit" class="btn btn-primary" [disabled]="!transactionTypeForm.valid || loading">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Guardar</span>

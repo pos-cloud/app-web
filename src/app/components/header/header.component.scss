@@ -1,25 +1,9 @@
-.btn, .nav-link {
-  cursor: pointer;
-}
-
-.nav-link:active {
-  border: 1px solid #000;
-}
-
-.nav-link:hover {
-  border: 1px solid #000;
-}
-
-.nav-link:visited {
-  border: 1px solid #000;
-}
-
 .mega-dropdown-menu {
   background-color: white;
   border: 1px solid #D8D8D8;
   border-radius: 5px 5px;
   z-index: 100;
-  position: absolute;
+  position: fixed;
 }
 
 .center-content {
@@ -95,4 +79,20 @@ li > a {
   .navbar-brand img {
     margin-top: 10px;
   }
+}
+
+.nav-link {
+  color: black !important;
+}
+
+.nav-link:active {
+  border: 1px solid #000;
+}
+
+.nav-link:hover {
+  border: 1px solid #000;
+}
+
+.nav-link:visited {
+  border: 1px solid #000;
 }

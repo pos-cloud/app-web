@@ -104,7 +104,7 @@
                       class="btn btn-variant"
                       *ngFor="let variant of getVariantsByType(variantType)"
                       [ngClass]="{'btn-primary': selectedVariants[variant.type.name] !== null && selectedVariants[variant.type.name] === variant.value.description,
-                                  'btn-secondary': selectedVariants[variant.type.name] === null  || selectedVariants[variant.type.name] !== variant.value.description}"
+                                  'btn-light': selectedVariants[variant.type.name] === null  || selectedVariants[variant.type.name] !== variant.value.description}"
                       (click)="selectVariant(variant.type, variant.value)" >
                       {{ variant.value.description }}
               </button>
@@ -119,7 +119,7 @@
         <div class="form-group col-md-12">
           <label for="unitPrice" class="control-label">Precio Unitario:</label>
           <div class="input-group">
-            <span class="input-group-addon">$</span>
+            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
             <input type="number" class="form-control" formControlName="unitPrice" name="unitPrice" id="unitPrice" step="1" [readOnly]="!movementOfArticle.transaction.type.modifyArticle"/>
           </div>
           <div *ngIf="formErrors.unitPrice" class="alert alert-danger">
@@ -140,7 +140,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+      <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
       <button type="button" class="btn btn-danger" *ngIf="movementOfArticle && movementOfArticle._id && movementOfArticle._id !== ''" (click)="deleteMovementOfArticle()" [disabled]="false">Eliminar</button>
       <button type="submit" class="btn btn-primary" [disabled]="!movementOfArticleForm.valid || loading">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>

@@ -67,7 +67,7 @@
 				<div class="form-group col-md-12">
 					<label for="percentage" class="control-label">Porcentaje a incrementar:</label>
 					<div class="input-group">
-						<span class="input-group-addon">%</span>
+						<div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
 						<input type="number" class="form-control" formControlName="percentage" name="percentage"/>
 					</div>
 					<div *ngIf="formErrors.percentage" class="alert alert-danger">
@@ -77,7 +77,7 @@
 			</div>
 		</div>
 		<div class="modal-footer">
-			<button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+			<button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
 			<button type="submit" class="btn btn-primary" [disabled]="!updatePriceForm.valid || loading" >
 				<i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
 				<span *ngIf="!loading">Actualizar</span>

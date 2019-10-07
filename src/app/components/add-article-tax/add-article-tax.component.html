@@ -20,7 +20,7 @@
           <label for="percentage" class="control-label">Porcentaje:</label>
           <div class="input-group">
             <input type="number" class="form-control" formControlName="percentage" name="percentage" id="percentage" step="1" (blur)="changeTax('percentage')"/>
-            <span class="input-group-addon">%</span>
+            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
           </div>
           <div *ngIf="formErrors.percentage" class="alert alert-danger">
             {{ formErrors.percentage }}
@@ -29,7 +29,7 @@
         <div class="form-group col-md-3">
           <label for="taxAmount" class="control-label">Monto:</label>
           <div class="input-group">
-            <span class="input-group-addon">$</span>
+            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
             <input type="number" class="form-control" formControlName="taxAmount" name="taxAmount" id="taxAmount" step="1" (blur)="changeTax('taxAmount')"/>
           </div>
           <div *ngIf="formErrors.taxAmount" class="alert alert-danger">

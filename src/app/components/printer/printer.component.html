@@ -259,8 +259,8 @@
       </ngb-tabset>
     </div>
     <div class="modal-footer" *ngIf="operation !== 'view'">
-      <button type="button" class="btn btn-secondary" (click)="buildPDF()"><i class="fa fa-eye"></i></button>
-      <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss('cancel')">Cancelar</button>
+      <button type="button" class="btn btn-light" (click)="buildPDF()"><i class="fa fa-eye"></i></button>
+      <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
       <button type="submit" class="btn btn-primary" [disabled]="!printerForm.valid || loading" *ngIf="operation !== 'delete'">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Guardar</span>

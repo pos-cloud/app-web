@@ -12,11 +12,17 @@ app-home {
     margin: auto;
   }
   .card {
-    min-width: 250px;
-    width: 250px;
-    height: 130px;
-    min-height: 130px;
+    min-width: 250px !important;
+    width: 250px !important;
+    height: 130px !important;
+    min-height: 130px !important;
     float: left;
     margin: 20px;
+  }
+  .card-block {
+    min-width: 250px !important;
+    width: 250px !important;
+    height: 130px !important;
+    min-height: 130px !important;
   }
 }

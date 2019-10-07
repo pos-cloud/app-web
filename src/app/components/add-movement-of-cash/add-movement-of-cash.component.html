@@ -16,7 +16,7 @@
           <div class="form-group col-md-12">
             <label for="transactionAmount" class="control-label">Importe de la transacción:</label>
             <div class="input-group">
-              <span class="input-group-addon">$</span>
+              <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
               <input type="number" class="form-control" formControlName="transactionAmount" name="transactionAmount" readonly/>
             </div>
           </div>
@@ -44,21 +44,21 @@
           <div class="form-group col-md-4">
             <label for="discount" class="control-label">Descuento:</label>
             <div class="input-group">
-              <span class="input-group-addon">%</span>
+              <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
               <input type="number" class="form-control" formControlName="discount" name="discount" min="0" step="1" readonly/>
             </div>
           </div>
           <div class="form-group col-md-4">
             <label for="surcharge" class="control-label">Recargo:</label>
             <div class="input-group">
-              <span class="input-group-addon">%</span>
+              <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
               <input type="number" class="form-control" formControlName="surcharge" name="surcharge" min="0" step="1" readonly/>
             </div>
           </div>
           <div class="form-group col-md-4">
             <label for="amountDiscount" class="control-label">Monto Descuento/Recargo:</label>
             <div class="input-group">
-              <span class="input-group-addon">$</span>
+              <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
               <input type="number" class="form-control" min="0" step="1" formControlName="amountDiscount" name="amountDiscount" readonly/>
             </div>
           </div>
@@ -73,7 +73,7 @@
           <div class="form-group col-md-6">
             <label for="amountToPay" class="control-label">Importe a pagar:</label>
             <div class="input-group">
-              <span class="input-group-addon">$</span>
+              <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
               <input type="number" class="form-control" formControlName="amountToPay" name="amountToPay" min="0" step="1" [focus]="focusEvent" (change)="updateAmounts('amountToPay')"/>
             </div>
             <div *ngIf="formErrors.amountToPay" class="alert alert-danger">
@@ -83,7 +83,7 @@
           <div class="form-group col-md-6">
             <label for="amountPaid" class="control-label">Importe abonado:</label>
             <div class="input-group">
-              <span class="input-group-addon">$</span>
+              <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
               <input type="number" class="form-control" formControlName="amountPaid" name="amountPaid" min="0" step="1" readonly/>
             </div>
             <div *ngIf="formErrors.amountPaid" class="alert alert-danger">
@@ -102,14 +102,14 @@
               <div class="form-group col-md-6">
                 <label for="quotas" class="control-label">Cant. Cuotas:</label>
                 <div class="input-group">
-                  <span class="input-group-addon"><i class="fa fa-list-ol"></i></span>
+                  <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1"><i class="fa fa-list-ol"></i></span></div>
                   <input type="number" class="form-control" formControlName="quotas" name="quotas" min="0" step="1" (change)="calculateQuotas('quotas')"/>
                 </div>
               </div>
               <div class="form-group col-md-6">
                 <label for="days" class="control-label">Cant. Días:</label>
                 <div class="input-group">
-                  <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                  <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span></div>
                   <input type="number" class="form-control" formControlName="days" name="days" min="0" step="1" (change)="calculateQuotas('days')"/>
                 </div>
               </div>
@@ -134,7 +134,7 @@
               </div>
               <div class="form-group col-md-4">
                 <div class="input-group">
-                  <span class="input-group-addon">$</span>
+                  <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
                   <input type="number" class="form-control" name="amountPaid" min="0" step="1" #amountPaidMov [value]="mov.amountPaid" (change)="calculateQuotas('amountPaid', amountPaidMov.value, mov)"/>
                 </div>
               </div>
@@ -145,7 +145,7 @@
           <div class="form-group col-md-12">
             <label for="paymentChange" class="control-label">Su vuelto es:</label>
             <div class="input-group">
-              <span class="input-group-addon">$</span>
+              <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
               <input type="number" class="form-control"  name="paymentChange" formControlName="paymentChange" min="0" step="1" [(ngModel)]="paymentChange" readonly/>
             </div>
           </div>
@@ -257,7 +257,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="cancel()">Cancelar</button>
+        <button type="button" class="btn btn-light" (click)="cancel()">Cancelar</button>
         <button type="submit" class="btn btn-primary" [disabled]="!movementOfCashForm.valid || loading" >
           <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
           <span *ngIf="!loading">Guardar</span>

@@ -10,7 +10,7 @@
     <div class="row center-content">
       <div class="btn-group btn-lg" role="group" aria-label="Basic example">
         <button type="button" [ngClass]="{'btn btn-primary':roomSelected._id===room._id,
-                            'btn btn-secondary':roomSelected._id!==room._id}" *ngFor="let room of rooms" (click)="changeRoom(room)"  title="Cambiar de Salón">
+                            'btn btn-light':roomSelected._id!==room._id}" *ngFor="let room of rooms" (click)="changeRoom(room)"  title="Cambiar de Salón">
           {{room.description}}
         </button>
       </div>
@@ -497,7 +497,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
+      <button type="button" class="btn btn-light" (click)="c('cancel')">Cancelar</button>
     </div>
   </ng-template>
   

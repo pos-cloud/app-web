@@ -56,7 +56,7 @@
                           <option value="true" [selected]="cancellationType.modifyBalance" [disabled]="readonly">Si</option>
                           <option value="false" [selected]="!cancellationType.modifyBalance" [disabled]="readonly">No</option>
                         </select>
-                        <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Al cancelar la transacción modifica el saldo asignado a la misma?">
+                        <button type="button" class="btn btn-light" placement="right" ngbPopover="¿Al cancelar la transacción modifica el saldo asignado a la misma?">
                           <b>?</b>
                         </button>
                       </div>
@@ -99,7 +99,7 @@
         </ngb-tabset>
       </div>
       <div class="modal-footer" *ngIf="operation !== 'view'">
-        <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss('cancel')">Cancelar</button>
+        <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
         <button type="submit" class="btn btn-primary" [disabled]="!cancellationTypeForm.valid || loading" *ngIf="operation !== 'delete'">
           <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
           <span *ngIf="!loading">Guardar</span>

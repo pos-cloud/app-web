@@ -17,7 +17,7 @@
           <td class="flat"><input  class="form-control" placeholder="Name" [(ngModel)]="shortcut.name" [focus]="focusEvent"></td>
           <td class="flat">
               <div class="input-group">
-                <span class="input-group-addon">{{dominio}}</span>
+                <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">{{dominio}}</span></div>
                 <input  class="form-control" placeholder="URL" [(ngModel)]="shortcut.url">
               </div>
           </td>

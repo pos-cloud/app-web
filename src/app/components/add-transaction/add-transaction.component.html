@@ -23,7 +23,7 @@
           <input type="text" class="form-control" formControlName="company" name="company" readonly/>
         </div>
         <div class="col-md-2" align="right">
-          <button type="button" class="btn btn-secondary" (click)="changeCompany()">
+          <button type="button" class="btn btn-light" (click)="changeCompany()">
             Cambiar
           </button>
         </div>
@@ -93,7 +93,7 @@
         <div class="form-group col-md-6">
           <label for="basePrice" class="control-label">Importe Gravado:</label>
           <div class="input-group">
-            <span class="input-group-addon">$</span>
+            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
             <input type="number" class="form-control" formControlName="basePrice" name="basePrice" min="0" step="1" (blur)="updatePrices('basePrice')" [readonly]="readonly"/>
           </div>
           <div *ngIf="formErrors.basePrice" class="alert alert-danger">
@@ -103,7 +103,7 @@
         <div class="form-group col-md-6">
           <label for="exempt" class="control-label">Importe Exento:</label>
           <div class="input-group">
-            <span class="input-group-addon">$</span>
+            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
             <input type="number" class="form-control" formControlName="exempt" name="exempt" min="0" step="1" (blur)="updatePrices('exempt')" [readonly]="readonly"/>
           </div>
           <div *ngIf="formErrors.exempt" class="alert alert-danger">
@@ -119,7 +119,7 @@
       </app-add-article-tax>
       <div class="row" *ngIf="showButtonCancelation && transaction && transaction.company && (userType === 'pos' || posType === 'cuentas-corrientes')">
         <div class="col-md-12 center-content">
-          <button type="button" class="btn btn-secondary" (click)="openModal('list-cancellations')">
+          <button type="button" class="btn btn-light" (click)="openModal('list-cancellations')">
             Buscar Transacciones a Cancelar
           </button>
         </div>
@@ -132,7 +132,7 @@
       <div class="row" *ngIf="transaction && transaction.type && !transaction.type.requestArticles && (userType === 'pos' || posType === 'cuentas-corrientes')">
         <div class="form-group col-md-12" *ngIf="showButtonCancelation && transaction && transaction.company">
           <div class="input-group">
-            <span class="input-group-addon">$</span>
+            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
             <input type="number" class="form-control" formControlName="totalPrice" name="totalPrice" min="0" step="1" (blur)="updatePrices('totalPrice')" [readonly]="readonly"/>
           </div>
           <div *ngIf="formErrors.totalPrice" class="alert alert-danger">
@@ -141,7 +141,7 @@
         </div>
         <div class="form-group col-md-12" *ngIf="!showButtonCancelation || !transaction.company || !transaction.type.requestCompany">
             <div class="input-group">
-              <span class="input-group-addon">$</span>
+              <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
               <input type="number" class="form-control" formControlName="totalPrice" name="totalPrice" min="0" step="1" (blur)="updatePrices('totalPrice')" [readonly]="readonly"/>
             </div>
             <div *ngIf="formErrors.totalPrice" class="alert alert-danger">
@@ -153,7 +153,7 @@
         <div class = "col-md-12">
           <label for="balance" class="control-label">Saldo:</label>
           <div class="input-group">
-            <span class="input-group-addon">$</span>
+            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
             <input type="number" class="form-control" formControlName="balance" name="balance" (change)="validateBalance()" [readonly]="readonly"/>
           </div>
           <div *ngIf="formErrors.balance" class="alert alert-danger">
@@ -189,7 +189,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+      <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
       <button type="submit" class="btn btn-primary" [disabled]="!transactionForm.valid || loading">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Siguiente</span>

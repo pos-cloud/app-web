@@ -27,7 +27,7 @@
         <div class="form-group col-md-4">
           <label for="amount" class="control-label">Monto:</label>
           <div class="input-group">
-            <span class="input-group-addon">$</span>
+            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
             <input type="number" class="form-control" formControlName="amount" name="amount" min="0" step="1" [focus]="focusEvent" />
           </div>
           <div *ngIf="formErrors.amount" class="alert alert-danger">

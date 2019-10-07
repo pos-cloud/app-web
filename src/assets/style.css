@@ -18,6 +18,10 @@ body {
       z-index: 99;
 }
 
+.nav-link {
+      color: black;
+}
+
 .container-fluid {
       background-color: #e4e9f2;
       padding: 2.25rem 2.25rem .75rem !important;
@@ -55,7 +59,7 @@ body {
 
 .popover-class {
       background: white;
-      padding: 20px !important;
+      padding: 10px !important;
       font-size: 15px !important;
       min-width: 250px !important;
 }
@@ -64,9 +68,13 @@ body {
       border-top-color: white;
 }
 
+.bg-white {
+      background-color: white;
+}
+
 /* LISTADOS */
 .card {
-      min-height: 85vh;
+      min-height: 60vh !important;
       height: auto;
       border: 0px !important;
       box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
@@ -89,6 +97,8 @@ body {
 
 .card-block {
       background-color: white;
+      min-height: 60vh !important;
+      padding: 1.25rem;
 }
 
 .btn {

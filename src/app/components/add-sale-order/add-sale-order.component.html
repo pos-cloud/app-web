@@ -67,7 +67,7 @@
               Cotización: {{ transaction.quotation | currency:'USD':'symbol-narrow':'1.2-2' }}
             </button>
             <button type="button" 
-                    class="btn btn-secondary fa fa-pencil" 
+                    class="btn btn-light fa fa-pencil" 
                     (click)="openModal('change-quotation')">
             </button>
           </div>
@@ -78,7 +78,7 @@
                   Transporte
                 </button>
                 <button type="button" 
-                        class="btn btn-secondary fa fa-exchange" 
+                        class="btn btn-light fa fa-exchange" 
                         (click)="openModal('change-transport')">
                 </button>
               </div>
@@ -317,7 +317,7 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
+    <button type="button" class="btn btn-light" (click)="c('cancel')">Cancelar</button>
   </div>
 </ng-template>
 
@@ -338,7 +338,7 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
+    <button type="button" class="btn btn-light" (click)="c('cancel')">Cancelar</button>
     <button type="submit" class="btn btn-primary" (click)="c('y')">
       <span>Sí</span>
     </button>
@@ -365,7 +365,7 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
+    <button type="button" class="btn btn-light" (click)="c('cancel')">Cancelar</button>
     <button type="submit" class="btn btn-primary" (click)="c('y')">
       <span>Cambiar</span>
     </button>
@@ -384,7 +384,7 @@
       <div class="row">
         <div class="col-md-12">
           <div class="input-group">
-            <span class="input-group-addon">$</span>
+            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
             <input  type="number"
                     class="form-control"
                     [(ngModel)]="transaction.quotation"
@@ -395,7 +395,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
+      <button type="button" class="btn btn-light" (click)="c('cancel')">Cancelar</button>
       <button type="submit" class="btn btn-primary" (click)="c('y')">
         <span>Cambiar</span>
       </button>

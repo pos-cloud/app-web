@@ -620,7 +620,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     FormsModule,
     ReactiveFormsModule,
     RouterModule.forRoot(_routes, { useHash: true}),
-    NgbModule.forRoot(),
+    NgbModule,
     NgxPaginationModule,
     HttpClientModule,
     DragDropModule,

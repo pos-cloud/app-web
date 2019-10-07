@@ -171,7 +171,7 @@
                   <div class="form-group col-md-6">
                     <label for="basePrice" class="control-label">Precio Base:</label>
                     <div class="input-group">
-                      <span class="input-group-addon">$</span>
+                      <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
                       <input type="number" class="form-control" formControlName="basePrice" name="basePrice" id="basePrice" step="1" (blur)="updatePrices('basePrice')" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.basePrice" class="alert alert-danger">
@@ -181,7 +181,7 @@
                   <div class="col-md-3">
                     <label class="control-label">Precio última compra:</label>
                     <div class="input-group">
-                      <span class="input-group-addon">$</span> 
+                      <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div> 
                       <input type="number" class="form-control" formControlName="lastPricePurchase" [(ngModel)]="lastPricePurchase" readonly/> 
                     </div>
                   </div>
@@ -198,7 +198,7 @@
                   <div class="form-group col-md-12">
                     <label for="costPrice" class="control-label">Precio de costo:</label>
                     <div class="input-group">
-                      <span class="input-group-addon">$</span>
+                      <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
                       <input type="number" class="form-control" formControlName="costPrice" name="costPrice" id="costPrice" step="1" (blur)="updatePrices('costPrice')" readonly/>
                     </div>
                     <div *ngIf="formErrors.costPrice" class="alert alert-danger">
@@ -211,7 +211,7 @@
                   <div class="form-group col-md-4">
                     <label for="markupPercentage" class="control-label">Margen:</label>
                     <div class="input-group">
-                      <span class="input-group-addon">%</span>
+                      <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
                       <input type="number" class="form-control" formControlName="markupPercentage" name="markupPercentage" id="markupPercentage" step="1" (blur)="updatePrices('markupPercentage')" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.markupPercentage" class="alert alert-danger">
@@ -221,7 +221,7 @@
                   <div class="form-group col-md-4">
                     <label for="markupPrice" class="control-label">Utilidad:</label>
                     <div class="input-group">
-                      <span class="input-group-addon">$</span>
+                      <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
                       <input type="number" class="form-control" formControlName="markupPrice" name="markupPrice" id="markupPrice" step="1" (blur)="updatePrices('markupPrice')" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.markupPrice" class="alert alert-danger">
@@ -231,7 +231,7 @@
                   <div class="form-group col-md-4">
                     <label for="salePrice" class="control-label">Precio de Venta:</label>
                     <div class="input-group">
-                      <span class="input-group-addon">$</span>
+                      <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
                       <input type="number" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice" step="1" (blur)="updatePrices('salePrice')" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.salePrice" class="alert alert-danger">
@@ -547,8 +547,8 @@
 			</ngb-tabset>
 		</div>
 		<div class="modal-footer" *ngIf="!readonly">
-			<button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
-			<button type="button" class="btn btn-secondary" (click)="cleanForm()" *ngIf="hasChanged">Nuevo</button>
+			<button type="button" class="btn btn-light" (click)="closeModal()">Cancelar</button>
+			<button type="button" class="btn btn-light" (click)="cleanForm()" *ngIf="hasChanged">Nuevo</button>
 			<button type="submit" class="btn btn-primary" [disabled]="!articleForm.valid || loading" >
 				<i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
 				<span *ngIf="!loading">Guardar</span>
