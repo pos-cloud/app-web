@@ -45,6 +45,7 @@ import { SelectOriginComponent } from '../select-origin/select-origin.component'
 import { SelectDepositComponent } from '../select-deposit/select-deposit.component';
 import { ConfigService } from 'app/services/config.service';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -597,7 +598,7 @@ export class PointOfSaleComponent implements OnInit {
     return new Promise<boolean>(async (resolve, reject) => {
       
       if(!this.transaction.branchDestination || !this.transaction.branchOrigin) {
-        this._authService.getIdentity.subscribe(
+        this._authService.getIdentity.pipe(first()).subscribe(
           async identity => {
             // CONSULTAMOS SI TIENE PUNTO DE VENTA ASIGNADO AL USUARIO
             if(identity && identity.origin) {
