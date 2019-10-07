@@ -6,7 +6,7 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
 // paquetes de terceros
-import { NgbModule, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap'; // https://ng-bootstrap.github.io/
+import { NgbModule, NgbActiveModal, NgbAlertConfig, NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap'; // https://ng-bootstrap.github.io/
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { PushNotificationComponent } from './../app/components/notification/notification.component';
@@ -621,6 +621,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ReactiveFormsModule,
     RouterModule.forRoot(_routes, { useHash: true}),
     NgbModule,
+    NgbCollapseModule,
     NgxPaginationModule,
     HttpClientModule,
     DragDropModule,
