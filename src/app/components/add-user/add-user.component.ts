@@ -137,6 +137,7 @@ export class AddUserComponent  implements OnInit {
         ]
       ],
       'email': [this.user.email, [
+        Validators.required
         ]
       ],
       'password': [this.user.password, [
