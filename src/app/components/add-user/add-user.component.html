@@ -98,19 +98,19 @@
                 </div>
                 <div class="row">
                   <div class="form-group col-md-12">
-                    <label for="company" class="control-label">Compañia Asociada</label>
-                    <select class="form-control" formControlName="company">
-                      <option [ngValue]="null" [selected]="!user || !user.company" 
-                              [disabled]="readonly || (identity && identity.employee && identity.employee.type && identity.employee.type.description !== 'Administrador')"></option>
-                      <option *ngFor="let company of companies" 
-                              [value]="company._id"
-                              [disabled]="readonly || (identity && identity.employee && identity.employee.type && identity.employee.type.description !== 'Administrador')"
-                              [selected]="(user.company && user.company._id && company._id===user.company._id) ||
-                                          (user.company && company._id===user.company)">
-                              {{company.name}} 
-                              <span *ngIf="company.identificationValue"> ( {{company.identificationValue}} ) </span>
-                      </option>
-                    </select>
+                    <ng-template #rtCompanies let-r="result" let-t="term">
+                      <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+                    </ng-template>
+                    <label for="company">Compañia Asociada:</label>
+                    <input id="company"
+                          type="text"
+                          class="form-control"
+                          formControlName="company"
+                          name="company"
+                          [ngbTypeahead]="searchCompanies"
+                          [resultTemplate]="rtCompanies"
+                          [inputFormatter]="formatterCompanies" />
+                    <hr>
                     <div *ngIf="formErrors.company" class="alert alert-danger">
                       {{ formErrors.state }}
                     </div>

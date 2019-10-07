@@ -15,6 +15,8 @@ import { Origin } from 'app/models/origin';
 import { OriginService } from 'app/services/origin.service';
 import { EmployeeType } from 'app/models/employee-type';
 import { AuthService } from 'app/services/auth.service';
+import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-add-user',
@@ -70,6 +72,23 @@ export class AddUserComponent  implements OnInit {
     }
   };
 
+  public searchCompanies = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(() => this.loading = true),
+      switchMap(term =>
+        this.getCompanies(`where="name": { "$regex": "${term}", "$options": "i" }&limit=10`).then(
+          companies => {
+            return companies;
+          }
+        )
+      ),
+      tap(() => this.loading = false)
+    )
+
+  public formatterCompanies = (x: {name: string}) => x.name;
+
   constructor(
     private _userService: UserService,
     private _employeeService: EmployeeService,
@@ -100,7 +119,6 @@ export class AddUserComponent  implements OnInit {
     }
     this.buildForm();
     this.getEmployees();
-    this.getCompanies();
     this.getOrigins();
   }
 
@@ -209,17 +227,6 @@ export class AddUserComponent  implements OnInit {
       }
     }
 
-    let company;
-    if (!this.user.company) {
-      company = null;
-    } else {
-      if (this.user.company._id) {
-        company = this.user.company._id;
-      } else {
-        company = this.user.company;
-      }
-    }
-
     let origin;
     if (!this.user.origin) {
       origin = null;
@@ -238,7 +245,7 @@ export class AddUserComponent  implements OnInit {
       'password': this.user.password,
       'state': this.user.state,
       'employee': employee,
-      'company': company,
+      'company': this.user.company,
       'origin': origin
     });
   }
@@ -266,29 +273,23 @@ export class AddUserComponent  implements OnInit {
     );
   }
 
-  public getCompanies(): void {
+  private getCompanies(query): Promise<Company[]> {
 
-    this.loading = true;
-
-    let query = 'sort="name":1';
-    
-    this._companyService.getCompanies(query).subscribe(
-        result => {
-					if (!result.companies) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
-            this.loading = false;
-					  this.companies = null;
-					} else {
-            this.hideMessage();
-					  this.companies = result.companies;
+    return new Promise((resolve, reject) => {
+      
+      this._companyService.getCompanies(query).subscribe(
+          result => {
+            if (!result.companies) {
+              resolve(null);
+            } else {
+              resolve(result.companies);
+            }
+          },
+          error => {
+            resolve(null);
           }
-          this.loading = false;
-				},
-				error => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
-				}
-      );
+        );
+    });
    }
 
    public getOrigins(): void {
