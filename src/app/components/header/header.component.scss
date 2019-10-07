@@ -83,6 +83,10 @@ li > a {
     position: relative;
     top: 45vh;
   }
+  .dropdown-menu {
+    max-height: 200px;
+    overflow-y: scroll !important;
+  }
 }
 
 .nav-link {

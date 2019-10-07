@@ -1,10 +1,13 @@
 /* CONTENIDO */
 html{
       font-family: Open Sans, sans-serif !important;
+      height: 100%;
 }
 
 body {
       font-family: Open Sans, sans-serif !important;
+      height: 100%;
+      min-height: 100%;
 }
 
 .navbar {
