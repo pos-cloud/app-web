@@ -282,12 +282,12 @@ export class StructureComponent implements OnInit {
     let valid = true;
 
     if(this.structure.child._id === this.structure.parent._id){
-      this.showMessage("No puede ser el mismo padre e hijo","danger",true)
+      this.showMessage("No puede ser el mismo padre e hijo","info",true)
       valid = false;
     }
 
     if(this.structure.quantity === 0 || this.structure.quantity < 0 || this.structure.quantity === null){
-      this.showMessage("La cantidad tiene que ser mayor a 0","danger",true)
+      this.showMessage("La cantidad tiene que ser mayor a 0","info",true)
       valid = false;
     }
 

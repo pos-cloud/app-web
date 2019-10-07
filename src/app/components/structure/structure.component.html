@@ -1,6 +1,6 @@
 <div class="modal-header">
   <h4 class="modal-title">
-    <span>Estructure</span>
+    <span>Estructura</span>
   </h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
@@ -32,7 +32,8 @@
                           name="parent"
                           [ngbTypeahead]="searchArticles"
                           [resultTemplate]="rtArticles"
-                          [inputFormatter]="formatterArticles" />
+                          [inputFormatter]="formatterArticles"
+                          [focus]="focusEvent" />
                   </div>
                   <hr>
                 </div>
@@ -101,7 +102,7 @@
       </ngb-tabset>
     </div>
     <div class="modal-footer" *ngIf="operation !== 'view'">
-      <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss('cancel')">Cancelar</button>
+      <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
       <button type="submit" class="btn btn-primary" [disabled]="!structureForm.valid || loading" *ngIf="operation !== 'delete'">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Guardar</span>
