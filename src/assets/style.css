@@ -29,6 +29,11 @@ body {
       border-color: #ccc !important;
 }
 
+.dropdown-menu {
+      max-height: 90vh;
+      overflow-y: scroll !important;
+    }
+
 .container-fluid {
       background-color: #e4e9f2;
       padding: 2.25rem 2.25rem .75rem !important;
