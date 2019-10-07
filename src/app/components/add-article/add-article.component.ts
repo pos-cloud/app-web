@@ -181,8 +181,6 @@ export class AddArticleComponent implements OnInit {
     } else if (pathLocation[2] === "variantes") {
       this.articleType = "Variante";
     }
-
-    this.getArticles();
   }
 
   async ngOnInit() {
@@ -235,23 +233,6 @@ export class AddArticleComponent implements OnInit {
         this.loading = false;
       }
     );
-  }
-
-  public getArticles() {
-    this._articleService.getArticles().subscribe(
-      result =>{
-        if(result && result.articles) {
-          this.articles = result.articles
-        } else {
-          this.showMessage("No se encontraron articulos", 'danger', false);
-          this.loading = false;
-        }
-      },
-      error =>{
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    )
   }
 
   ngAfterViewInit() {
@@ -463,47 +444,6 @@ export class AddArticleComponent implements OnInit {
     }
   }
 
-  async addChildren(childrenForm : NgForm) {
-    
-    let valid = true;
-    const children = this.articleForm.controls.children as FormArray;
-
-    this.articleForm.controls.children.value.forEach(element => {
-
-      if(childrenForm.value.article == element.article) {
-        valid = false;
-        this.showMessage("El producto ya existe.", "info", true);
-      }
-
-    });
-
-    if(childrenForm.value.quantity == ''  || childrenForm.value.quantity == null ) {
-      this.showMessage("El valor no puede estar vacio.", "info", true);
-      valid = false;
-    }
-
-    if(childrenForm.value.quantity <= 0 ) {
-      this.showMessage("El valor no puede ser menor o igual 0.", "info", true);
-      valid = false;
-    }
-
-    if(childrenForm.value.article == '' || childrenForm.value.article == 0 || childrenForm.value.article == null ) {
-      this.showMessage("Debe seleccionar un producto.", "info", true);
-      valid = false;
-    }
-
-    if(valid) {
-      children.push(
-        this._fb.group({
-          _id: null,
-          article : childrenForm.value.article,
-          quantity : childrenForm.value.quantity
-        })
-      );
-      childrenForm.resetForm();
-    }
-  }
-
   public deleteDeposit(index): void {
     let control = <FormArray> this.articleForm.controls.deposits;
     control.removeAt(index)
@@ -511,11 +451,6 @@ export class AddArticleComponent implements OnInit {
 
   public deleteLocation(index): void {
     let control = <FormArray> this.articleForm.controls.locations;
-    control.removeAt(index)
-  }
-
-  public deleteChildren(index): void {
-    let control = <FormArray> this.articleForm.controls.children;
     control.removeAt(index)
   }
 
@@ -604,21 +539,6 @@ export class AddArticleComponent implements OnInit {
           locations.push(this._fb.group({ 
             '_id': null,
             'location' : locationId
-          }))
-        }
-
-      })
-    }
-
-    if(this.article.children && this.article.children.length > 0) {
-      let children = this.articleForm.controls.children as FormArray;
-      this.article.children.forEach(x => {
-
-        if(x.article && x.article._id && x.article.operationType != 'D') {
-          children.push(this._fb.group({ 
-            '_id': null,
-            'article' :  x.article._id,
-            'quantity' : x.quantity
           }))
         }
 

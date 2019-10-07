@@ -359,69 +359,6 @@
           
 					</ng-template>
 				</ngb-tab>
-				<ngb-tab title="Estructura">
-					<ng-template ngbTabContent>
-            <div class="row tab-content">
-
-                <form #childrenForm="ngForm" (ngSubmit)="addChildren(childrenForm)">
-                    <div class="row">
-                        <div class="form-group col-md-8">
-                            <label for="article" class="control-label">Producto:</label>
-                            <select class="form-control" ngModel name="article">
-                              <option *ngFor="let article of articles" 
-                                      [value]="article._id" 
-                                      [disabled]="readonly">{{article.description}}</option>
-                            </select>
-                        </div>
-                        <div class="form-group col-md-3">
-                          <label for="quantity" class="control-label">Cantidad:</label>
-                          <div class="input-group">
-                            <input type="number" class="form-control" ngModel name="quantity" [readonly]="readonly"/>
-                          </div>
-                        </div>
-                        <div class="form-group col-md-1">              
-                            <button type="summit" class="btn btn-success btn-sm especial">
-                                <i class="fa fa-plus"></i>
-                            </button>
-                        </div>
-                      </div>
-                </form>  
-
-                <table class="table table-striped">
-                    <thead>
-                      <tr class="separation">
-                          <th>
-                              <i class="fa fa-bars"></i>
-                            </th>
-                        <th>Producto</th>
-                        <th>Cantidad</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr class="separation" *ngFor="let articleAux of articleForm.get('children').controls; let i = index;">
-                        <td align="left" width="174">
-                          <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', articleAux.value.article)" title="Ver"><i class="fa fa-eye"></i></button>
-                        </td>
-                        <div *ngFor="let article of articles; let i = index">
-                          <td *ngIf="articleAux && articleAux.value && articleAux.value.article && articleAux.value.article === article._id">{{article.description}}</td>
-                        </div>
-                        <td *ngIf="articleAux && articleAux.value">{{articleAux.value.quantity}}</td>
-                        <td align="right" width="10">
-                            <button type="button" class="btn btn-danger btn-sm" (click)="deleteChildren(i)">
-                                <i class="fa fa-trash-o"></i>
-                            </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                    <tfoot>
-                    </tfoot>
-                  </table>
-
-
-                
-            </div>
-					</ng-template>
-				</ngb-tab>
 				<ngb-tab title="Variantes" *ngIf="articleType === 'Producto'">
 					<ng-template ngbTabContent>
 						<app-add-variant (eventAddVariants)="manageVariants($event)" [article]="article" [variants]="variants"></app-add-variant>
