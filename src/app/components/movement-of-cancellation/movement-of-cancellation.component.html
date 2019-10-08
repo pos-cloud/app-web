@@ -1,5 +1,5 @@
-<!-- VISTA POS -->
-<section class="container-fluid" *ngIf="userType==='pos'">
+<!-- SELECCIONAR -->
+<section class="container-fluid" *ngIf="selectionView">
   <div class="card ">
     <div class="card-header">Seleccionar Transacciones a Cancelar
       <div class="pull-right">
@@ -94,7 +94,7 @@
   </div>
 </section>
 <!-- VISTA ADMIN -->
-<section class="container-fluid" *ngIf="userType==='admin'">
+<section class="container-fluid" *ngIf="!selectionView">
   <div class="center-content" *ngIf="alertMessage !== '' && totalItems > 0">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}

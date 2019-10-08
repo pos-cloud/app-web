@@ -259,12 +259,12 @@
       </ngb-tab>
       <ngb-tab title="Transacciones Canceladas">
         <ng-template ngbTabContent>
-          <app-movement-of-cancellation [transactionDestinationViewId]="transaction._id"></app-movement-of-cancellation>
+          <app-movement-of-cancellation [transactionDestinationViewId]="transaction._id" [selectionView]="false"></app-movement-of-cancellation>
         </ng-template>
       </ngb-tab>
       <ngb-tab title="Transacciones Cancelatorias">
         <ng-template ngbTabContent>
-          <app-movement-of-cancellation [transactionOriginViewId]="transaction._id"></app-movement-of-cancellation>
+          <app-movement-of-cancellation [transactionOriginViewId]="transaction._id" [selectionView]="false"></app-movement-of-cancellation>
         </ng-template>
       </ngb-tab>
       <ngb-tab title="Auditoría">

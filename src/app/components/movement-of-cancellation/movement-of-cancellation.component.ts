@@ -37,6 +37,7 @@ export class MovementOfCancellationComponent implements OnInit {
   @Input() transactionDestinationViewId: string;
   @Input() transactionOriginViewId : string;
   @Input() totalPrice: number = 0;
+  @Input() selectionView: boolean = false;
   public transactionDestination: Transaction;
   public transactionMovement: TransactionMovement;
   public movementsOfCancellations: MovementOfCancellation[];
