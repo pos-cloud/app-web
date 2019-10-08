@@ -58,7 +58,7 @@
                                     <div class="form-group col-md-2">
                     <label for="name" class="control-label">Cantidad</label>
                     <div class="input-group">
-                      <input type="quantity" class="form-control" formControlName="quantity" name="quantity" id="quantity" [readonly]="readonly" [focus]="focusEvent"/>
+                      <input type="quantity" class="form-control" formControlName="quantity" name="quantity" id="quantity" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.quantity" class="alert alert-danger">
                       {{ formErrors.quantity }}

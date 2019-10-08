@@ -47,7 +47,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Razón Social</span>
+              <span class="input-group-addon" id="basic-addon1">Razón Social:</span>
               <input type="text" class="form-control" formControlName="companyName" name="companyName" id="companyName" aria-describedby="basic-addon1">
             </div>
             <div *ngIf="formErrors.companyName" class="alert alert-danger">
@@ -58,7 +58,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Nombre de fantasía</span>
+              <span class="input-group-addon" id="basic-addon1">Nombre de fantasía:</span>
               <input type="text" class="form-control" formControlName="companyFantasyName" name="companyFantasyName" id="companyFantasyName" aria-describedby="basic-addon1">
             </div>
             <div *ngIf="formErrors.companyFantasyName" class="alert alert-danger">
@@ -69,7 +69,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">País</span>
+              <span class="input-group-addon" id="basic-addon1">País:</span>
               <select class="form-control" formControlName="country" name="country" id="country" (ngModelChange)="getTimeZone($event)">
                 <option *ngFor="let country of countries"
                         [value]="country.alpha2Code">
@@ -82,7 +82,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Zona Horaria</span>
+              <span class="input-group-addon" id="basic-addon1">Zona Horaria:</span>
               <select class="form-control" formControlName="timezone" name="timezone" id="timezone">
                 <option *ngFor="let timezone of timezones"
                         [value]="timezone">
@@ -95,7 +95,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Código Postal</span>
+              <span class="input-group-addon" id="basic-addon1">Código Postal:</span>
               <input type="text" class="form-control" formControlName="companyPostalCode" name="companyPostalCode" id="companyPostalCode" aria-describedby="basic-addon1">
             </div>
             <div *ngIf="formErrors.companyPostalCode" class="alert alert-danger">
@@ -106,7 +106,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Moneda</span>
+              <span class="input-group-addon" id="basic-addon1">Moneda:</span>
               <select class="form-control" formControlName="currency" name="currency" id="currency">
                 <option *ngFor="let currency of currencies"
                         [selected]="(config['currency'] && config['currency']._id && currency._id===config['currency']._id) ||
@@ -135,7 +135,7 @@
           </div>
           <div class="form-group col-md-6">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Nro. de Identificación</span>
+              <span class="input-group-addon" id="basic-addon1">Nro. de Identificación:</span>
               <input type="text" class="form-control" formControlName="companyIdentificationValue" name="companyIdentificationValue" id="companyIdentificationValue" aria-describedby="basic-addon1">
             </div>
             <div *ngIf="formErrors.companyIdentificationValue" class="alert alert-danger">
@@ -162,7 +162,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Fecha de inicio de actividades</span>
+              <span class="input-group-addon" id="basic-addon1">Fecha de inicio de actividades:</span>
               <input type="text" class="form-control" formControlName="companyStartOfActivity" placeholder="DD/MM/AAAA" name="companyStartOfActivity" id="companyStartOfActivity" aria-describedby="basic-addon1">
             </div>
             <div *ngIf="formErrors.companyStartOfActivity" class="alert alert-danger">
@@ -173,7 +173,7 @@
         <div class="row" *ngIf="configFormCompany.value.country === 'AR'">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Ingresos Brutos</span>
+              <span class="input-group-addon" id="basic-addon1">Ingresos Brutos:</span>
               <input type="text" class="form-control" formControlName="companyGrossIncome" name="companyGrossIncome" id="companyGrossIncome"
                 aria-describedby="basic-addon1">
             </div>
@@ -182,7 +182,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Dirección</span>
+              <span class="input-group-addon" id="basic-addon1">Dirección:</span>
               <input type="text" class="form-control" formControlName="companyAddress" name="companyAddress" id="companyAddress" aria-describedby="basic-addon1">
             </div>
             <div *ngIf="formErrors.companyAddress" class="alert alert-danger">
@@ -193,7 +193,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Teléfono</span>
+              <span class="input-group-addon" id="basic-addon1">Teléfono:</span>
               <input type="text" class="form-control" formControlName="companyPhone" name="companyPhone" id="companyPhone" aria-describedby="basic-addon1">
             </div>
             <div *ngIf="formErrors.companyPhone" class="alert alert-danger">
@@ -204,7 +204,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Pie de Impresión</span>
+              <span class="input-group-addon" id="basic-addon1">Pie de Impresión:</span>
               <input type="text" class="form-control" formControlName="footerInvoice" name="footerInvoice" id="footerInvoice" aria-describedby="basic-addon1">
             </div>
             <div *ngIf="formErrors.footerInvoice" class="alert alert-danger">
@@ -233,7 +233,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Cuenta de Email</span>
+              <span class="input-group-addon" id="basic-addon1">Cuenta de Email:</span>
               <button type="button"
                     class="btn btn-light"
                     placement="right"
@@ -252,7 +252,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Contraseña de Email</span>
+              <span class="input-group-addon" id="basic-addon1">Contraseña de Email:</span>
               <input type="password" class="form-control" formControlName="emailPassword" name="emailPassword" id="emailPassword" aria-describedby="basic-addon1">
             </div>
             <div *ngIf="formErrors.emailPassword" class="alert alert-danger">
@@ -307,7 +307,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Longitud de código interno en artículo</span>
+              <span class="input-group-addon" id="basic-addon1">Longitud de código interno en artículo:</span>
               <input type="number" class="form-control" formControlName="article.code.validators.maxLength" name="article.code.validators.maxLength" id="article.code.validators.maxLength" aria-describedby="basic-addon1">
             </div>
           </div>
@@ -332,7 +332,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Valor defecto si permite cuenta corriente al dar de alta una empresa</span>
+              <span class="input-group-addon" id="basic-addon1">Valor defecto si permite cuenta corriente al dar de alta una empresa:</span>
               <select class="form-control" formControlName="company.allowCurrentAccount.default" name="company.allowCurrentAccount.default" id="company.allowCurrentAccount.default">
                 <option value="true">Si</option>
                 <option value="false">No</option>
@@ -343,7 +343,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Administrar caja por usuario</span>
+              <span class="input-group-addon" id="basic-addon1">Administrar caja por usuario:</span>
               <select class="form-control" formControlName="cashBox.perUser" name="cashBox.perUser" id="cashBox.perUser">
                 <option value="true">Si</option>
                 <option value="false">No</option>
@@ -354,7 +354,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Código a imprimir en la etiqueta del artículo</span>
+              <span class="input-group-addon" id="basic-addon1">Código a imprimir en la etiqueta del artículo:</span>
               <select class="form-control" formControlName="article.printLabel.value" name="article.printLabel.value" id="article.printLabel.value">
                 <option value="code">Código Interno</option>
                 <option value="barcode">Código de Barras</option>
@@ -365,7 +365,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Vista invertida en cuenta corriente de clientes</span>
+              <span class="input-group-addon" id="basic-addon1">Vista invertida en cuenta corriente de clientes:</span>
               <select class="form-control" formControlName="reports.summaryOfAccounts.invertedViewClient" name="reports.summaryOfAccounts.invertedViewClient" id="reports.summaryOfAccounts.invertedViewClient">
                 <option value="true">Si</option>
                 <option value="false">No</option>
@@ -376,7 +376,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Vista invertida en cuenta corriente de proveedores</span>
+              <span class="input-group-addon" id="basic-addon1">Vista invertida en cuenta corriente de proveedores:</span>
               <select class="form-control" formControlName="reports.summaryOfAccounts.invertedViewProvider" name="reports.summaryOfAccounts.invertedViewProvider" id="reports.summaryOfAccounts.invertedViewProvider">
                 <option value="true">Si</option>
                 <option value="false">No</option>
@@ -387,7 +387,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Detallar método de pago en el reporte de cuentas corrientes por empresa</span>
+              <span class="input-group-addon" id="basic-addon1">Detallar método de pago en el reporte de cuentas corrientes por empresa:</span>
               <select class="form-control" formControlName="reports.summaryOfAccounts.detailsPaymentMethod" name="reports.summaryOfAccounts.detailsPaymentMethod" id="reports.summaryOfAccounts.detailsPaymentMethod">
                 <option value="true">Si</option>
                 <option value="false">No</option>
@@ -398,7 +398,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Valor defecto si el artículo es pesable al dar de alta</span>
+              <span class="input-group-addon" id="basic-addon1">Valor defecto si el artículo es pesable al dar de alta:</span>
               <select class="form-control" formControlName="article.isWeigth.default" name="article.isWeigth.default" id="article.isWeigth.default">
                 <option value="true">Si</option>
                 <option value="false">No</option>
@@ -409,7 +409,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Prefijo del código de barra de la balanza</span>
+              <span class="input-group-addon" id="basic-addon1">Prefijo del código de barra de la balanza:</span>
               <input type="number" class="form-control" formControlName="tradeBalance.codePrefix" name="tradeBalance.codePrefix" id="tradeBalance.codePrefix" aria-describedby="basic-addon1">
             </div>
           </div>
@@ -417,7 +417,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Número de cantidad de producto del código de barra de la balanza</span>
+              <span class="input-group-addon" id="basic-addon1">Número de cantidad de producto del código de barra de la balanza:</span>
               <input type="number" class="form-control" formControlName="tradeBalance.numberOfQuantity" name="tradeBalance.numberOfQuantity" id="tradeBalance.numberOfQuantity" aria-describedby="basic-addon1">
             </div>
           </div>
@@ -425,7 +425,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Número de enteros del precio del código de barra de la balanza</span>
+              <span class="input-group-addon" id="basic-addon1">Número de enteros del precio del código de barra de la balanza:</span>
               <input type="number" class="form-control" formControlName="tradeBalance.numberOfIntegers" name="tradeBalance.numberOfIntegers" id="tradeBalance.numberOfIntegers" aria-describedby="basic-addon1">
             </div>
           </div>
@@ -433,7 +433,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Número de decimales del precio en el código de barra de la balanza</span>
+              <span class="input-group-addon" id="basic-addon1">Número de decimales del precio en el código de barra de la balanza:</span>
               <input type="number" class="form-control" formControlName="tradeBalance.numberOfDecimals" name="tradeBalance.numberOfDecimals" id="tradeBalance.numberOfDecimals" aria-describedby="basic-addon1">
             </div>
           </div>

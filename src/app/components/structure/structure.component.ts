@@ -1,7 +1,7 @@
-import { Component, OnInit, Input, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 import { Structure } from 'app/models/structure';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { NgbAlertConfig, NgbActiveModal, NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { StructureService } from 'app/services/structure.service';
 import { Router } from '@angular/router';
 import { Config } from 'app/app.config';
@@ -10,7 +10,6 @@ import { Article } from 'app/models/article';
 
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { visitAstChildren } from '@angular/compiler';
 
 
 @Component({
@@ -20,7 +19,6 @@ import { visitAstChildren } from '@angular/compiler';
 })
 
 export class StructureComponent implements OnInit {
-
 
   public searchArticles = (text$: Observable<string>) =>
   text$.pipe(
@@ -38,7 +36,6 @@ export class StructureComponent implements OnInit {
   )
 
   public formatterArticles = (x: {description: string}) => x.description;
-
   
   public filterKey = '';
   public filteredItems = [];
@@ -58,6 +55,9 @@ export class StructureComponent implements OnInit {
   public userCountry: string;
   public orientation: string = 'horizontal';
   public result;
+  public structureForm: FormGroup;
+  public searching: boolean = false;
+
   public formErrors = {
     'parent': '',
     'child': '',
@@ -74,10 +74,6 @@ export class StructureComponent implements OnInit {
       'required': 'Este campo es requerido.'
     }
   };
-
-  public structureForm: FormGroup;
-
-  public searching: boolean = false;
 
   constructor(
     public alertConfig: NgbAlertConfig,
@@ -104,7 +100,6 @@ export class StructureComponent implements OnInit {
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
-
   }
 
   public getStructure() {
@@ -133,7 +128,6 @@ export class StructureComponent implements OnInit {
    
     if (!this.structure._id) { this.structure._id = ''; }
     if (!this.structure.quantity) { this.structure.quantity = 0; }
-
 
     const values = {
       '_id': this.structure._id,
@@ -245,7 +239,9 @@ export class StructureComponent implements OnInit {
               this.loading = false;
               this.showMessage('La estructura se ha añadido con éxito.', 'success', false);
               this.structure = new Structure();
+              this.structure.parent = this.structureForm.value.parent;
               this.buildForm();
+              this.focusEvent.emit(true);
           }
         },
         error => {
@@ -279,19 +275,20 @@ export class StructureComponent implements OnInit {
   }
 
   public isValid() : boolean {
+
     let valid = true;
 
     if(this.structure.child._id === this.structure.parent._id){
-      this.showMessage("No puede ser el mismo padre e hijo","info",true)
+      this.showMessage("Un producto no puede ser estructura de si mismo.", "info", true);
       valid = false;
     }
 
     if(this.structure.quantity === 0 || this.structure.quantity < 0 || this.structure.quantity === null){
-      this.showMessage("La cantidad tiene que ser mayor a 0","info",true)
+      this.showMessage("La cantidad tiene que ser mayor a 0.", "info", true);
       valid = false;
     }
 
-    return valid
+    return valid;
   }
 
   private getArticles(query): Promise<Article[]> {
