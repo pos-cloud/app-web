@@ -46,6 +46,7 @@ export class StructureComponent implements OnInit {
   @Input() readonly: boolean;
   @Input() structureId : string;
   public articles : Article[];
+  public structures : Structure[];
   public alertMessage: string = '';
   public userType: string;
   public structure: Structure;
@@ -96,7 +97,6 @@ export class StructureComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];;
     this.buildForm();
-    
     if (this.structureId) {
       this.getStructure();
     }
@@ -290,7 +290,7 @@ export class StructureComponent implements OnInit {
       this.showMessage("La cantidad tiene que ser mayor a 0","info",true)
       valid = false;
     }
-
+    
     return valid
   }
 
