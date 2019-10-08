@@ -79,20 +79,26 @@ export class PrintLabelComponent implements OnInit {
   public toPrintBarcode(): void {
 
     if (this.articleStock) {
-      this.doc.text(this.articleStock.article.description, 0 , 5);
+      this.doc.text(this.article.description.slice(0,19), 0 , 5);
+      this.doc.text(this.article.description.slice(19,38), 0 , 10);
+      this.doc.text(this.article.description.slice(38,100), 0 , 15);      
       let imgdata = 'data:image/png;base64,' + this.barcode64;
-      this.doc.addImage(imgdata, 'PNG', 1, 5, (this.printer.pageHigh) -2, (this.printer.pageWidth) -5 );
+      this.doc.addImage(imgdata, 'PNG', 1, 15, (this.printer.pageHigh) -2, (this.printer.pageWidth) -15 );
       for (let index = 0; index < this.articleStock.realStock -1 ; index++) {
         this.doc.addPage();
-        this.doc.text(this.articleStock.article.description, 0 , 5);
+        this.doc.text(this.article.description.slice(0,19), 0 , 5);
+        this.doc.text(this.article.description.slice(19,38), 0 , 10);
+        this.doc.text(this.article.description.slice(38,100), 0 , 15);        
         let imgdata = 'data:image/png;base64,' + this.barcode64;
-        this.doc.addImage(imgdata, 'PNG', 1, 5, (this.printer.pageHigh) -2, (this.printer.pageWidth) -5 );
+        this.doc.addImage(imgdata, 'PNG', 1, 15, (this.printer.pageHigh) -2, (this.printer.pageWidth) -15 );
       }
       this.finishImpression();
     }  else if (this.article) {
-      this.doc.text(this.article.description, 0 , 5);
+      this.doc.text(this.article.description.slice(0,19), 0 , 5);
+      this.doc.text(this.article.description.slice(19,38), 0 , 10);
+      this.doc.text(this.article.description.slice(38,100), 0 , 15);
       let imgdata = 'data:image/png;base64,' + this.barcode64;
-      this.doc.addImage(imgdata, 'PNG', 1, 5, (this.printer.pageHigh ) -2, (this.printer.pageWidth) -5 );
+      this.doc.addImage(imgdata, 'PNG', 1, 15, (this.printer.pageHigh ) -2, (this.printer.pageWidth) -15 );
       this.finishImpression();
     }
   }
