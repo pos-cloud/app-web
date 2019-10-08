@@ -263,13 +263,14 @@ export class CancellationTypeComponent implements OnInit {
     
     if(this.originSelected.modifyStock && destinationSelected.modifyStock) {
       if(this.originSelected.stockMovement === destinationSelected.stockMovement) {
-        valid = false
-        this.showMessage('No se puede relacionar transacciones con el mismo movimiento de stock', 'danger', false);
+        valid = false;
+        this.showMessage('No se puede relacionar transacciones con el mismo movimiento de stock', 'info', false);
       }
     }
 
-    if(destinationSelected._id === this.originSelected._id) {valid = false
-      this.showMessage('No se puede cancelar una transacción con otra del mismo tipo', 'danger', false);
+    if(destinationSelected._id === this.originSelected._id) {
+      valid = false;
+      this.showMessage('No se puede cancelar una transacción con otra del mismo tipo', 'info', false);
     }
     
     return valid;
@@ -312,6 +313,9 @@ export class CancellationTypeComponent implements OnInit {
         } else {
             this.loading = false;
             this.showMessage('El tipo de cancelación se ha añadido con éxito.', 'success', false);
+            this.cancellationType = new CancellationType();
+            this.cancellationType.origin = this.cancellationTypeForm.value.origin;
+            this.cancellationType.destination = this.cancellationTypeForm.value.destination;
             this.buildForm();
         }
       },

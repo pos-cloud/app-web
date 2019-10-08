@@ -1332,6 +1332,7 @@ export class AddSaleOrderComponent {
       case 'list-cancellations':
         modalRef = this._modalService.open(MovementOfCancellationComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.transactionDestinationId = this.transaction._id;
+        modalRef.componentInstance.selectionView = true;
         modalRef.result.then(async (result) => {
           if(result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
             this.showButtonCancelation = false;
