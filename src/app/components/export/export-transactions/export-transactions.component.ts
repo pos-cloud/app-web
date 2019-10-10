@@ -248,7 +248,7 @@ export class ExportTransactionsComponent implements OnInit {
       } else {
         data[index]['Cliente'] = "Consumidor Final"
       }
-      
+      data[index]['Observación'] = this.transactions[index].observation
       data[index]['Total'] = this.roundNumber.transform(this.transactions[index].totalPrice)
       
     }
