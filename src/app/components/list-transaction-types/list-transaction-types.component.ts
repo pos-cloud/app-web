@@ -214,8 +214,8 @@ export class ListTransactionTypesComponent implements OnInit {
                     "state" : "Cerrado", 
                     "type.transactionMovement" : "${movement}",
                     "type.operationType": { "$ne": "D" },
-                    "endDate" : { "$gte": {"$date": "${this.startDate}T00:00:00${timezone}"},
-                                  "$lte": {"$date": "${this.endDate}T23:59:59${timezone}"}
+                    "endDate" : { "$gte": {"$date": "${this.startDate}T${this.startTime}:00${timezone}"},
+                                  "$lte": {"$date": "${this.endDate}T${this.endTime}:00${timezone}"}
                                 }`
     
     if(this.branchSelectedId) {
