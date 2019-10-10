@@ -232,9 +232,8 @@ export class PrintVatBookComponent implements OnInit {
       totalAmount += transaction.totalPrice;
 
       
-
       for (let index = 0; index < this.dataIVA.length; index++) {
-        if(this.dataIVA[index]['_id'] === transaction.company.vatCondition) {
+        if(transaction.company && transaction.company.vatCondition && this.dataIVA[index]['_id'] === transaction.company.vatCondition) {
           this.dataIVA[index]['total'] = this.dataIVA[index]['total'] + transaction.totalPrice;
         }
       }
