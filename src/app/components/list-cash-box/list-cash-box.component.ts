@@ -12,6 +12,8 @@ import { ViewTransactionComponent } from '../view-transaction/view-transaction.c
 import { ListCashBoxesComponent } from '../list-cash-boxes/list-cash-boxes.component';
 import { CashBoxService } from 'app/services/cash-box.service';
 import { Movements } from 'app/models/transaction-type';
+import { PrintArticlesStockComponent } from '../print/print-articles-stock/print-articles-stock.component';
+import { PrintComponent } from '../print/print/print.component';
 
 
 @Component({
@@ -50,6 +52,7 @@ export class ListCashBoxComponent implements OnInit {
       'costPrice',
       'salePrice',
       'transaction.type.transactionMovement',
+      'transaction.type.movement',
       'transaction.type.name',
       'transaction.number',
       'type.name',
@@ -294,6 +297,11 @@ export class ListCashBoxComponent implements OnInit {
           }
         );
         break;
+      case 'print':
+        modalRef = this._modalService.open(PrintComponent);
+        modalRef.componentInstance.cashBox = this.cashBoxSelected;
+        modalRef.componentInstance.typePrint = 'cash-box';
+            break;
       default: ;
     }
   }
