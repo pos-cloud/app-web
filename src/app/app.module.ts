@@ -262,6 +262,7 @@ import { LicenseGuard } from './guards/license.guard';
 import { StructureService } from './services/structure.service';
 import { StructureComponent } from './components/structure/structure.component';
 import { ListStructureComponent } from './components/list-structure/list-structure.component';
+import { ExportExcelComponent } from './components/export/export-excel/export-excel.component';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -451,7 +452,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     ReportsList,
     ShortcutComponent,
     StructureComponent,
-    ListStructureComponent
+    ListStructureComponent,
+    ExportExcelComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -618,7 +620,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     ProgressbarComponent,
     ReportsList,
     ShortcutComponent,
-    StructureComponent
+    StructureComponent,
+    ExportExcelComponent
   ],
   imports: [
     BrowserModule,
