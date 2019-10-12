@@ -12,7 +12,6 @@
         <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
         <button class="btn" *ngIf="identity.name === 'soporte'" (click)="openModal('import', null)"><i class="fa fa-cloud-upload"></i><span>Importar</span></button>
         <button class="btn" (click)="exportAsXLSX()"><i class="fa fa-cloud-download"></i>Exportar</button>
-        
       </div>
     </div>
       <div class="card-block table-responsive">
@@ -169,7 +168,8 @@
         <table class="table table-striped">
           <thead>
             <tr>
-              <th (click)="orderBy('name')">Nombre </th>
+              <th (click)="orderBy('name')">Nombre</th>
+              <th (click)="orderBy('fantasyName')">Nombre de Fantasía</th>
               <th (click)="orderBy('name')" *ngIf="userCountry === 'AR'">Condición IVA </th>
               <th (click)="orderBy('name')" *ngIf="userCountry !== 'AR'">Régimen Fiscal </th>
               <th (click)="orderBy('identificationValue')">Identificador</th>
@@ -179,6 +179,7 @@
             </tr>
             <tr>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterFantasyName" placeholder="Nombre de Fantasía..." ></th>
                 <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Condición IVA..." ></th>
                 <th *ngIf="userCountry !== 'AR'"><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Régimen Fiscal..."></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterIdentificationValue" placeholder="Identificador" ></th>
@@ -196,6 +197,7 @@
             <tr *ngFor="let company of companies  | orderBy: orderTerm: propertyTerm
                                                   | filter: filterCode:'code'
                                                   | filter: filterName:'name'
+                                                  | filter: filterFantasyName:'fantasyName'
                                                   | filter: filterVATCondition:'description':'vatCondition'
                                                   | filter: filterIdentificationValue:'identificationValue'
                                                   | filter: filterAddress:'address'
@@ -207,6 +209,7 @@
                                                               }"
                 (click)="selectCompany(company)">
               <td>{{company.name}}</td>
+              <td>{{company.fantasyName}}</td>
               <td *ngIf="company.vatCondition">{{company.vatCondition.description}}</td>
               <td *ngIf="!company.vatCondition">Consumidor Final</td>
               <td>{{company.identificationValue}}</td>
