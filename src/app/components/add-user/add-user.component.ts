@@ -217,6 +217,7 @@ export class AddUserComponent  implements OnInit {
     if(!this.user.email) this.user.email = "";
     if(!this.user.password) this.user.password = "";
     if(!this.user.state) this.user.state = UserState.Enabled;
+    if(!this.user.company) this.user.company = null;
 
     let employee;
     if (!this.user.employee) {
