@@ -383,6 +383,10 @@ export class ListTransactionsComponent implements OnInit {
         } else {
           modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente http://${Config.database}.poscloud.com.ar:300/api/print/others/` + transaction._id;
         }
+
+        if(Config.country === 'MX'){
+          modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}.poscloud.com.ar:300/api/print/xml/CFDI-33_Factura_` + transaction.number;
+        }
         
         break;
       case "export":
