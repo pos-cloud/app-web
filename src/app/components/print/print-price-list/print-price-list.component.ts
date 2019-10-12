@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit, EventEmitter } from '@angular/core';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -26,7 +26,6 @@ import { ArticleField } from 'app/models/article-field';
 import { PriceListService } from 'app/services/price-list.service';
 import { PriceList } from 'app/models/price-list';
 import { ArticleStockService } from 'app/services/article-stock.service';
-import { ArticleStock } from 'app/models/article-stock';
 
 @Component({
   selector: 'app-print-price-list',
@@ -51,7 +50,7 @@ export class PrintPriceListComponent implements OnInit {
   public roundNumber = new RoundNumberPipe();
   public pageWidth;
   public pageHigh;
-  public articleFieldId;
+  public articleFieldId: string;
   public withImage = false;
   public articleFields : ArticleField [];
   public priceLists : PriceList [];
@@ -63,7 +62,6 @@ export class PrintPriceListComponent implements OnInit {
                                   "normal" : 10,
                                   "large" : 15,
                                   "extraLarge" : 20}`);
-
 
   public formErrors = {
     'make': '',
@@ -87,7 +85,6 @@ export class PrintPriceListComponent implements OnInit {
     public _configService: ConfigService,
     public _variantService: VariantService,
     private domSanitizer: DomSanitizer
-
   ) { 
     this.pageWidth = 210 * 100 / 35.27751646284102;
     this.pageHigh = 297 * 100 / 35.27751646284102;
@@ -114,7 +111,6 @@ export class PrintPriceListComponent implements OnInit {
     this.userType = pathLocation[1];
     this.buildForm();
     this.doc = new jsPDF('p', 'mm', [this.pageWidth, this.pageHigh]);
-
   }
 
   ngAfterViewInit() {
@@ -265,6 +261,7 @@ export class PrintPriceListComponent implements OnInit {
 
   public getArticles(): void {
 
+    this.loading = true;
 
     let match = `{`;
 
@@ -280,14 +277,10 @@ export class PrintPriceListComponent implements OnInit {
       match += `"otherFields.value" : "${this.printPriceListForm.value.articleFieldsValue}",`
     }
 
-    
     match += `"type" : "Final", "allowSale": true , "operationType" : { "$ne" : "D" } }`;
 
     match = JSON.parse(match);
 
-    //filtrar por los de stock
-
-    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
     let project = {
       "_id": 1,
       type:1,
@@ -304,33 +297,27 @@ export class PrintPriceListComponent implements OnInit {
       "allowSale" : 1,
       "containsVariants" : 1
     }
-
-    let group = {
-      _id: null,
-      count: { $sum: 1 },
-      articles: { $push: "$$ROOT" }
-    };
     
     this._articleService.getArticlesV2(
         project, // PROJECT
         match, // MATCH
         { description: 1 }, // SORT
-        group, // GROUP
+        {}, // GROUP
         0, // LIMIT
         0 // SKIP
     ).subscribe(
       result => {
-        if (result && result[0] && result[0].articles) {
-            this.articles = result[0].articles;
-            if(this.printPriceListForm.value.withImage) {
-              this.printPriceListWithImagen();
-            } else {
-              this.printPriceListWithoutImagen();
-            }
-            
+        this.loading = false;
+        if (result && result.articles) {
+          this.articles = result.articles;
+          if(this.printPriceListForm.value.withImage == true) {
+            this.printPriceListWithImagen();
+          } else {
+            this.printPriceListWithoutImagen();
+          }
         } else {
-            this.showMessage("No se encontraron articulos", 'danger', false);
-            this.articles = null;
+          this.showMessage("No se encontraron articulos", 'info', true);
+          this.articles = null;
         }
       },
       error => {
@@ -423,7 +410,6 @@ export class PrintPriceListComponent implements OnInit {
                     }
                   })
                 }
-              
             }
           }
           if(increasePrice != 0) {
@@ -506,15 +492,13 @@ export class PrintPriceListComponent implements OnInit {
             this.doc.line(0, row, 400, row);
             count = 0;
           }
-        
-          
       }
     }
     this.finishImpression();
   }
 
   async printPriceListWithoutImagen() {
-    
+
     this.loading = true;
     var row = 15;
     var margin = 5;
@@ -536,8 +520,6 @@ export class PrintPriceListComponent implements OnInit {
     this.centerText(margin, margin, 210, 0, row, "LISTA DE PRECIOS AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
     row += 3;
     this.doc.line(0, row, 400, row);
-    
-
 
     row += 5;
     // Encabezado de la tabla de Detalle de Productos
@@ -559,9 +541,6 @@ export class PrintPriceListComponent implements OnInit {
     // // Detalle de productos
     if(this.articles && this.articles.length > 0) {
       for (let index = 0; index < this.articles.length; index++) {
-        
-     
-
         if(this.articles[index].code) {
           this.doc.text(this.articles[index].code, 5, row);
         }
@@ -611,18 +590,15 @@ export class PrintPriceListComponent implements OnInit {
             
           }
         }
-          if(increasePrice != 0) {
-            this.doc.text(190,row,"$" + (this.roundNumber.transform(this.articles[index].salePrice +(this.articles[index].salePrice *increasePrice / 100))).toString());
-          } else {
-            this.doc.text(190,row,"$" + (this.roundNumber.transform(this.articles[index].salePrice)).toString());
-          }
+        if(increasePrice != 0) {
+          this.doc.text(190,row,"$" + (this.roundNumber.transform(this.articles[index].salePrice +(this.articles[index].salePrice *increasePrice / 100))).toString());
+        } else {
+          this.doc.text(190,row,"$" + (this.roundNumber.transform(this.articles[index].salePrice)).toString());
+        }
         row += 5;
 
         if (index%52 === 0 && index != 0) {
 
-          /*if(page === 120) {
-            break;
-          }*/
           this.doc.addPage();
 
           var row = 15;
@@ -664,6 +640,8 @@ export class PrintPriceListComponent implements OnInit {
         }
       }
     }
+
+    this.loading = false;
 
     this.finishImpression();
   }
@@ -715,7 +693,6 @@ export class PrintPriceListComponent implements OnInit {
         
       };
       
-
       this._variantService.getVariantsV2(
         project, // PROJECT
         match, // MATCH
