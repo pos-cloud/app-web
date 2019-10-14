@@ -26,6 +26,12 @@ export class HomeComponent {
 
   ngOnInit(): void {
 
+    // this._userService.getURL().subscribe(
+    //   result => {
+    //     document.getElementById('embeddedChart')['src'] = result.url;
+    //   }
+    // );
+
     this._authService.getIdentity.subscribe(
       identity => {
         this.identity = identity;
