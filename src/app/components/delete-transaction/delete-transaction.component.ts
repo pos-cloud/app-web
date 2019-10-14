@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter } from '@angular/core';
+import { Component, Input, EventEmitter } from '@angular/core';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -54,7 +54,6 @@ export class DeleteTransactionComponent {
       result => {
         if (!result.transaction) {
           this.showMessage(result.message, 'danger', false);
-          this.loading = false;
         } else {
           this.hideMessage();
           this.transaction = result.transaction;

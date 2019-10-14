@@ -19,6 +19,6 @@
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-light" (click)="activeModal.close('close_click')">Cancelar</button>
-  <button type="submit" class="btn btn-primary" (click)="cancelTransaction()" [focus]="focusEvent" *ngIf="op === 'cancel'">Anular</button>
-  <button type="submit" class="btn btn-danger" (click)="deleteTransaction()" [focus]="focusEvent"*ngIf="op === 'delete'">Eliminar</button>
+  <button type="submit" class="btn btn-primary" (click)="cancelTransaction()" [focus]="focusEvent" *ngIf="op === 'cancel'" [disabled]="loading">Anular</button>
+  <button type="submit" class="btn btn-danger" (click)="deleteTransaction()" [focus]="focusEvent"*ngIf="op === 'delete'" [disabled]="loading">Eliminar</button>
 </div>
