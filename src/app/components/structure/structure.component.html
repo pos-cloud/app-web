@@ -55,15 +55,23 @@
                   <hr>
                 </div>
                 <div class = "row">
-                                    <div class="form-group col-md-2">
-                    <label for="name" class="control-label">Cantidad</label>
-                    <div class="input-group">
-                      <input type="quantity" class="form-control" formControlName="quantity" name="quantity" id="quantity" [readonly]="readonly"/>
+                    <div class="form-group col-md-4">
+                      <label for="name" class="control-label">Cantidad</label>
+                      <div class="input-group">
+                        <input type="quantity" class="form-control" formControlName="quantity" name="quantity" id="quantity" [readonly]="readonly"/>
+                      </div>
+                      <div *ngIf="formErrors.quantity" class="alert alert-danger">
+                        {{ formErrors.quantity }}
+                      </div>
                     </div>
-                    <div *ngIf="formErrors.quantity" class="alert alert-danger">
-                      {{ formErrors.quantity }}
+                    <div class="form-group col-md-4">
+                      <label for="utilization" class="control-label">Se utiliza en:</label>
+                      <select class="form-control" formControlName="utilization">
+                        <option *ngFor="let utilization of utilizations"
+                                [ngValue]="utilization"
+                                [disabled]="readonly">{{utilization}}</option>
+                      </select>
                     </div>
-                </div>
                 </div>
               </div>
             </div>

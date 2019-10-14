@@ -9,6 +9,7 @@ export class Structure {
     public parent: Article;
     public child: Article;
     public quantity: number = 0;
+    public utilization: Utilization = Utilization.Sales;
 	public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     public updateUser: User;
@@ -16,3 +17,7 @@ export class Structure {
     constructor() { }
 }
 
+export enum Utilization {
+    Productions = <any> "Produccion",
+    Sales = <any> "Ventas",
+}

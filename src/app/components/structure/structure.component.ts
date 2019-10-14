@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
-import { Structure } from 'app/models/structure';
+import { Structure, Utilization } from 'app/models/structure';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { StructureService } from 'app/services/structure.service';
@@ -19,6 +19,8 @@ import { Observable } from 'rxjs';
 })
 
 export class StructureComponent implements OnInit {
+
+  public utilizations: Utilization[] = [Utilization.Productions, Utilization.Sales];
 
   public searchArticles = (text$: Observable<string>) =>
   text$.pipe(
@@ -127,13 +129,17 @@ export class StructureComponent implements OnInit {
   public setValueForm(): void {
    
     if (!this.structure._id) { this.structure._id = ''; }
-    if (!this.structure.quantity) { this.structure.quantity = 0; }
+    if (!this.structure.quantity) { this.structure.quantity = 0; }    
+    if (!this.structure.utilization) { this.structure.utilization = Utilization.Sales; }
+
 
     const values = {
       '_id': this.structure._id,
       'parent': this.structure.parent,
       'child': this.structure.child,
-      'quantity' : this.structure.quantity
+      'quantity' : this.structure.quantity,
+      'utilization' : this.structure.utilization
+
     };
 
     this.structureForm.setValue(values);
@@ -152,6 +158,10 @@ export class StructureComponent implements OnInit {
         ]
       ],
       'quantity': [this.structure.quantity, [
+        Validators.required
+        ]
+      ],
+      'utilization': [this.structure.utilization, [
         Validators.required
         ]
       ]
