@@ -20,7 +20,7 @@ import { Observable } from 'rxjs';
 
 export class StructureComponent implements OnInit {
 
-  public utilizations: Utilization[] = [Utilization.Productions, Utilization.Sales];
+  public utilizations: Utilization[] = [Utilization.Sale, Utilization.Production];
 
   public searchArticles = (text$: Observable<string>) =>
   text$.pipe(
@@ -130,7 +130,7 @@ export class StructureComponent implements OnInit {
    
     if (!this.structure._id) { this.structure._id = ''; }
     if (!this.structure.quantity) { this.structure.quantity = 0; }    
-    if (!this.structure.utilization) { this.structure.utilization = Utilization.Sales; }
+    if (!this.structure.utilization) { this.structure.utilization = Utilization.Sale; }
 
 
     const values = {
