@@ -138,7 +138,7 @@
             <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
             <input type="number" class="form-control" formControlName="totalPrice" name="totalPrice" min="0" step="1"
                   (blur)="updatePrices('totalPrice')"
-                  [readonly]="readonly || transaction.state.toString() === 'Cerrado' || transaction.state.toString() === 'Anulado' || transaction.type.requestArticles"/>
+                  [readonly]="readonly || transaction.state.toString() === 'Cerrado' || transaction.state.toString() === 'Anulado' || !transaction.type || transaction.type.requestArticles"/>
           </div>
           <div *ngIf="formErrors.totalPrice" class="alert alert-danger">
             {{ formErrors.totalPrice }}

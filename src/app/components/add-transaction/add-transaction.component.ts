@@ -334,7 +334,7 @@ export class AddTransactionComponent implements OnInit {
 
   public changeCompany(): void {
     if (this.transaction._id && this.transaction._id !== '') {
-      this.openModal('change-company', this.transaction);
+      this.openModal('change-company');
     } else {
       this.activeModal.close('change-company');
     }
@@ -347,9 +347,7 @@ export class AddTransactionComponent implements OnInit {
     } 
   }
 
-  async openModal(
-    op: string,
-    transaction?: Transaction) {
+  async openModal(op: string) {
 
     let modalRef;
 
@@ -389,18 +387,25 @@ export class AddTransactionComponent implements OnInit {
         break;
       case 'change-company':
         modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg', backdrop: 'static' });
-        if (transaction.type.transactionMovement === TransactionMovement.Purchase) {
+        if (this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
           modalRef.componentInstance.type = CompanyType.Provider;
-        } else if (transaction.type.transactionMovement === TransactionMovement.Sale) {
+        } else if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
           modalRef.componentInstance.type = CompanyType.Client;
         }
         modalRef.componentInstance.selectionView = true;
         modalRef.result.then(
-          (result) => {
+          async (result) => {
             if (result.company) {
-              transaction.company = result.company;
-              this.companyName = transaction.company.name;
-              this.setValuesForm();
+              this.transaction.company = result.company;
+              this.companyName = this.transaction.company.name;
+              await this.updateTransaction().then(
+                transaction => {
+                  if(transaction) {
+                    this.transaction = transaction;
+                    this.setValuesForm();
+                  }
+                }
+              );
             }
           }, (reason) => {
 
