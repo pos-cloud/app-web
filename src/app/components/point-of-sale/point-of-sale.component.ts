@@ -791,6 +791,7 @@ export class PointOfSaleComponent implements OnInit {
                         this.transaction = transaction;
                         if(this.posType === "resto") {
                           this.tableSelected.lastTransaction = this.transaction;
+                          this.tableSelected.state = TableState.Busy;
                           await this.updateTable().then(
                             table => {
                               if(table) {
@@ -811,7 +812,6 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     if(this.transaction && this.transaction._id && this.transaction._id !== "") {
-      
       await this.updateTransaction().then(
         transaction => {
           if(transaction) {
@@ -819,7 +819,6 @@ export class PointOfSaleComponent implements OnInit {
           }
         }
       );
-
       if( !this.transaction.branchDestination || 
           !this.transaction.branchOrigin ||
           !this.transaction.depositDestination ||
@@ -1378,7 +1377,7 @@ export class PointOfSaleComponent implements OnInit {
     });
   }
 
-  public selectTable(table: Table): void {
+  async selectTable(table: Table) {
 
     this.tableSelected = table;
 
@@ -1386,7 +1385,8 @@ export class PointOfSaleComponent implements OnInit {
         this.tableSelected.state !== TableState.Reserved) {
       if(this.tableSelected.state === TableState.Busy ||
          this.tableSelected.state === TableState.Pending) {
-          this._router.navigate(['/pos/resto/salones/' + this.tableSelected.room._id + '/mesas/' + this.tableSelected._id + '/editar-transaccion/' + this.tableSelected.lastTransaction._id]);
+        this.transaction = this.tableSelected.lastTransaction;
+        this.nextStepTransaction();
       } else {
         this.getDefectOrder();
       }
