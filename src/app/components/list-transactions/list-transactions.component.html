@@ -29,7 +29,6 @@
             <th (click)="orderBy('company.name')">Cliente</th>
             <th *ngIf ="allowResto" (click)="orderBy('table.description')">Mesa</th>
             <th (click)="orderBy('employeeClosing.name')">Empleado</th>
-            <th *ngIf ="allowResto" (click)="orderBy('turnOpening.startDate')">Turno</th>
             <th *ngIf ="allowResto" (click)="orderBy('diners')">Comensales</th>
             <th *ngIf ="(modules | async)?.money" (click)="orderBy('cashBox.number')">Caja</th>
             <th (click)="orderBy('madein')">Canal</th>
@@ -50,7 +49,6 @@
             <th><input type="text" class="form-control" [(ngModel)]="filters['company.name']" (keydown.enter)="getTransactions()" placeholder="Cliente..."></th>
             <th *ngIf="allowResto"><input type="text" class="form-control" [(ngModel)]="filters['table.description']" (keydown.enter)="getTransactions()" placeholder="Mesa..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['employeeClosing.name']" (keydown.enter)="getTransactions()" placeholder="Empleado..."></th>
-            <th *ngIf="allowResto"><input type="text" class="form-control" [(ngModel)]="filters['turnOpening.startDate']" (keydown.enter)="getTransactions()" placeholder="Turno..."></th>
             <th *ngIf="allowResto"><input type="text" class="form-control" [(ngModel)]="filters['diners']" (keydown.enter)="getTransactions()" placeholder="Comensales..."></th>
             <th *ngIf="(modules | async)?.money"><input type="text" class="form-control" [(ngModel)]="filters['cashBox.number']" (keydown.enter)="getTransactions()" placeholder="Caja..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['madein']" (keydown.enter)="getTransactions()" placeholder="Canal..."></th>
@@ -119,8 +117,6 @@
             <td *ngIf ="allowResto && !transaction.table"></td>
             <td *ngIf="transaction.employeeClosing">{{transaction.employeeClosing.name}}</td>
             <td *ngIf="!transaction.employeeClosing"></td>
-            <td *ngIf="allowResto && transaction.turnOpening">{{transaction.turnOpening.startDate }}</td>
-            <td *ngIf="allowResto && !transaction.turnOpening"></td>
             <td *ngIf="allowResto && transaction.diners">{{transaction.diners}}</td>
             <td *ngIf="allowResto && !transaction.diners"></td>
             <td *ngIf="(modules | async)?.money && transaction.cashBox">{{transaction.cashBox.number}}</td>
