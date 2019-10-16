@@ -329,7 +329,10 @@ export class MovementOfCancellationComponent implements OnInit {
                       }
                       for(let movementOfCancellation of this.movementsOfCancellations) {
                         if(this.transactionDestination.state !== TransactionState.Closed) {
-                          if(movementOfCancellation.transactionOrigin.type.movement === Movements.Outflows) {
+                          if((movementOfCancellation.transactionOrigin.type.transactionMovement === TransactionMovement.Sale && 
+                            movementOfCancellation.transactionOrigin.type.movement === Movements.Outflows) || 
+                            (movementOfCancellation.transactionOrigin.type.transactionMovement === TransactionMovement.Purchase && 
+                              movementOfCancellation.transactionOrigin.type.movement === Movements.Inflows)) {
                             this.balanceSelected -= movementOfCancellation.balance;
                           } else {
                             this.balanceSelected += movementOfCancellation.balance;
@@ -420,7 +423,10 @@ export class MovementOfCancellationComponent implements OnInit {
             } else {
               movementOfCancellation.balance = this.roundNumber.transform(this.totalPrice - this.balanceSelected);
             }
-            if(transaction.type.movement === Movements.Outflows) {
+            if((transaction.type.transactionMovement === TransactionMovement.Sale && 
+              transaction.type.movement === Movements.Outflows) || 
+              (transaction.type.transactionMovement === TransactionMovement.Purchase && 
+                transaction.type.movement === Movements.Inflows)) {
               this.balanceSelected -= movementOfCancellation.balance;
             } else {
               this.balanceSelected += movementOfCancellation.balance;
@@ -472,7 +478,10 @@ export class MovementOfCancellationComponent implements OnInit {
       } else {
         movementOfCancellation.balance = 0;
       }
-      if(movementOfCancellation.transactionOrigin.type.movement === Movements.Outflows) {
+      if((movementOfCancellation.transactionOrigin.type.transactionMovement === TransactionMovement.Sale && 
+        movementOfCancellation.transactionOrigin.type.movement === Movements.Outflows) || 
+        (movementOfCancellation.transactionOrigin.type.transactionMovement === TransactionMovement.Purchase && 
+          movementOfCancellation.transactionOrigin.type.movement === Movements.Inflows)) {
         this.balanceSelected -= transactionSelected.balance;
       } else {
         this.balanceSelected += transactionSelected.balance;
@@ -844,7 +853,10 @@ export class MovementOfCancellationComponent implements OnInit {
           mov.balance = transaction['balanceSelected'];
         }
         if(mov.transactionOrigin.balance > 0) {
-          if(mov.transactionOrigin.type.movement === Movements.Outflows) {
+          if((mov.transactionOrigin.type.transactionMovement === TransactionMovement.Sale && 
+            mov.transactionOrigin.type.movement === Movements.Outflows) || 
+            (mov.transactionOrigin.type.transactionMovement === TransactionMovement.Purchase && 
+              mov.transactionOrigin.type.movement === Movements.Inflows)) {
             this.balanceSelected -= mov.balance;
           } else {
             this.balanceSelected += mov.balance;
