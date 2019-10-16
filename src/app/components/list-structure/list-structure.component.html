@@ -22,13 +22,13 @@
             <th>
               <i class="fa fa-bars"></i>
             </th>
-            <th (click)="orderBy('parent')">Padre</th>
-            <th (click)="orderBy('child')">Hijo</th>
+            <th (click)="orderBy('parent.description')">Padre</th>
+            <th (click)="orderBy('child.description')">Hijo</th>
           </tr>
           <tr class="filters">
             <th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['parent']" (input)="getStructures()" placeholder="Número..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['child']" (input)="getStructures()" placeholder="Nombre..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['parent.description']" (input)="getStructures()" placeholder="Número..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['child.description']" (input)="getStructures()" placeholder="Nombre..."></th>
           </tr>
         </thead>
         <tbody>
