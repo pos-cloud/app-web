@@ -943,7 +943,7 @@ export class AddMovementOfCashComponent implements OnInit {
         this.showMessage("La empresa seleccionada no esta habilitada para cobrar con el método " + this.paymentMethodSelected.name + ".", "info", true);
       }
 
-      if (this.transaction.totalPrice !== 0 && this.amountToPay === 0) {
+      if (this.amountToPay === 0) {
         this.showMessage("El monto a pagar no puede ser 0.", 'info', true);
         resolve(false);
       }
