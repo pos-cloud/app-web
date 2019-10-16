@@ -1,8 +1,8 @@
 import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { TransactionMovement } from '../../models/transaction-type'
-import { Transaction } from '../../models/transaction'
+import { TransactionMovement, Movements } from '../../models/transaction-type'
+import { Transaction, TransactionState } from '../../models/transaction'
 
 //service
 import { CancellationTypeService } from "../../services/cancellation-type.service"
@@ -95,7 +95,6 @@ export class MovementOfCancellationComponent implements OnInit {
   }
 
   async ngOnInit() {
-
     if(this.transactionDestinationViewId || this.transactionOriginViewId) {
       this.getCancellationsOfMovements();
     } else {
@@ -113,13 +112,14 @@ export class MovementOfCancellationComponent implements OnInit {
     let match;
     // FILTRAMOS LA CONSULTA
     if(this.transactionOriginViewId) {
-      match = { "transactionOrigin": { $oid: this.transactionOriginViewId} , "operationType": { "$ne": "D" } };
+      match = { "transactionOrigin": { $oid: this.transactionOriginViewId} , "operationType": { "$ne": "D" }, "balance": { $gt: 0 } };
     } else {
-      match = { "transactionDestination": { $oid: this.transactionDestinationViewId} , "operationType": { "$ne": "D" } };
+      match = { "transactionDestination": { $oid: this.transactionDestinationViewId} , "operationType": { "$ne": "D" }, "balance": { $gt: 0 }  };
     }
 
     // CAMPOS A TRAER
     let project = {
+      "balance": 1,
       "transactionOrigin": 1,
       "transactionDestination": 1,
       "operationType" : 1
@@ -162,7 +162,6 @@ export class MovementOfCancellationComponent implements OnInit {
       this.loading = false;
     });
   }
-
 
   public getTransaction(transactionId: string): Promise<Transaction> {
 
@@ -268,7 +267,7 @@ export class MovementOfCancellationComponent implements OnInit {
       match +=  `{ "type._id"  : "${this.cancellationTypes[0].origin._id}"}`
     }
 
-    match += `"operationType": { "$ne": "D" } , "state" : "Cerrado" , "company._id":  "${this.transactionDestination.company._id}","balance": { "$gt": "0" } }`;
+    match += `"operationType": { "$ne": "D" } , "state" : "Cerrado" , "company._id":  "${this.transactionDestination.company._id}", "balance": { "$gt": 0 } }`;
 
     match = JSON.parse(match);
 
@@ -285,12 +284,14 @@ export class MovementOfCancellationComponent implements OnInit {
       letter: 1,
       state: 1,
       totalPrice: { $toString : '$totalPrice' },
-      balance: { $toString : '$balance' },
+      balance: 1,
+      balanceSelected: '$balance',
       operationType: 1,
       'company._id': { $toString : '$company._id' },
       'type._id': { $toString : '$type._id' },
       'type.name': 1,
       'type.requestArticles': 1,
+      'type.movement': 1,
     };
 
     // AGRUPAMOS EL RESULTADO
@@ -319,8 +320,21 @@ export class MovementOfCancellationComponent implements OnInit {
                   movementsOfCancellations => {
                     if(movementsOfCancellations && movementsOfCancellations.length > 0) {
                       this.movementsOfCancellations = movementsOfCancellations;
+                      for(let transaction of this.transactions) {
+                        for(let mov of this.movementsOfCancellations) {
+                          if(mov.transactionOrigin._id === transaction._id) {
+                            transaction['balanceSelected'] = mov.balance;
+                          }
+                        }
+                      }
                       for(let movementOfCancellation of this.movementsOfCancellations) {
-                        this.balanceSelected += movementOfCancellation.balance;
+                        if(this.transactionDestination.state !== TransactionState.Closed) {
+                          if(movementOfCancellation.transactionOrigin.type.movement === Movements.Outflows) {
+                            this.balanceSelected -= movementOfCancellation.balance;
+                          } else {
+                            this.balanceSelected += movementOfCancellation.balance;
+                          }
+                        }
                         for(let transaction of this.transactions) {
                           if(movementOfCancellation.transactionOrigin._id.toString() === transaction._id.toString()) {
                             transaction.balance = movementOfCancellation.balance;
@@ -330,6 +344,7 @@ export class MovementOfCancellationComponent implements OnInit {
                     }
                   }
                 );
+
                 if(this.balanceSelected === 0) {
                   this.selectAutomatically();
                 }
@@ -393,17 +408,26 @@ export class MovementOfCancellationComponent implements OnInit {
     if(this.totalPrice > 0) {
       for(let transaction of this.transactions) {
         if(this.totalPrice > (transaction.balance + amountSelected)) {
-          await this.selectTransaction(transaction);
+          await this.selectTransaction(transaction, true);
           amountSelected += transaction.balance;
         } else {
           if(this.totalPrice > this.balanceSelected) {
             let movementOfCancellation = new MovementOfCancellation();
             movementOfCancellation.transactionOrigin = transaction;
             movementOfCancellation.transactionDestination = this.transactionDestination;
-            movementOfCancellation.balance = this.roundNumber.transform(this.totalPrice - this.balanceSelected);
-            this.balanceSelected += movementOfCancellation.balance;
+            if((this.totalPrice - this.balanceSelected) > transaction.balance) {
+              movementOfCancellation.balance = transaction.balance;
+            } else {
+              movementOfCancellation.balance = this.roundNumber.transform(this.totalPrice - this.balanceSelected);
+            }
+            if(transaction.type.movement === Movements.Outflows) {
+              this.balanceSelected -= movementOfCancellation.balance;
+            } else {
+              this.balanceSelected += movementOfCancellation.balance;
+            }
             amountSelected += movementOfCancellation.balance;
             transaction.balance = movementOfCancellation.balance;
+            transaction['balanceSelected'] = movementOfCancellation.balance;
             this.movementsOfCancellations.push(movementOfCancellation);
           }
         }
@@ -433,11 +457,12 @@ export class MovementOfCancellationComponent implements OnInit {
     }
   }
 
-  async selectTransaction(transactionSelected: Transaction) {
+  async selectTransaction(transactionSelected: Transaction, automatic: boolean = false) {
 
     transactionSelected = await this.getTransaction(transactionSelected._id);
+
     if(this.isTransactionSelected(transactionSelected)) {
-      this.deleteTransactionSelected(transactionSelected);
+      if(!automatic) this.deleteTransactionSelected(transactionSelected);
     } else {
       let movementOfCancellation = new MovementOfCancellation();
       movementOfCancellation.transactionOrigin = transactionSelected;
@@ -447,7 +472,11 @@ export class MovementOfCancellationComponent implements OnInit {
       } else {
         movementOfCancellation.balance = 0;
       }
-      this.balanceSelected += transactionSelected.balance;
+      if(movementOfCancellation.transactionOrigin.type.movement === Movements.Outflows) {
+        this.balanceSelected -= transactionSelected.balance;
+      } else {
+        this.balanceSelected += transactionSelected.balance;
+      }
       this.movementsOfCancellations.push(movementOfCancellation);
     }
   }
@@ -478,6 +507,10 @@ export class MovementOfCancellationComponent implements OnInit {
       this.balanceSelected -= this.movementsOfCancellations[movementToDelete].balance;
       this.movementsOfCancellations.splice(movementToDelete, 1);
     }
+
+    if(this.balanceSelected < 0) {
+      this.balanceSelected = 0;
+    }
   }
 
   public isTransactionSelected(transaction: Transaction) {
@@ -499,40 +532,45 @@ export class MovementOfCancellationComponent implements OnInit {
 
     let endedProcess = true;
 
-    if(this.movementsOfCancellations.length > 0) {
-      for(let mov of this.movementsOfCancellations) {
-        if(mov.balance > 0 || !this.modifyBalance(mov.transactionOrigin)) {
-          if((mov.balance <= mov.transactionOrigin.balance) || !this.modifyBalance(mov.transactionOrigin)) {
-            if(mov.transactionDestination.type.requestArticles) {
-              await this.getMovementOfArticles(mov.transactionOrigin).then(
-                async movementsOfArticles => {
-                  if(movementsOfArticles && movementsOfArticles.length > 0) {
-                    await this.saveMovementsOfArticles(movementsOfArticles).then(
-                      movementsOfArticlesSaved => {
-                        if(movementsOfArticlesSaved && movementsOfArticlesSaved.length > 0) {
-                        } else {
-                          endedProcess = false;
-                        }
+    if(this.balanceSelected >= 0) {
+      if(this.movementsOfCancellations.length > 0) {
+        for(let mov of this.movementsOfCancellations) {
+          if(mov.balance > 0 || !this.modifyBalance(mov.transactionOrigin)) {
+            if((mov.balance <= mov.transactionOrigin.balance) || !this.modifyBalance(mov.transactionOrigin)) {
+                if(mov.transactionDestination.type && mov.transactionDestination.type.requestArticles) {
+                  await this.getMovementOfArticles(mov.transactionOrigin).then(
+                    async movementsOfArticles => {
+                      if(movementsOfArticles && movementsOfArticles.length > 0) {
+                        await this.saveMovementsOfArticles(movementsOfArticles).then(
+                          movementsOfArticlesSaved => {
+                            if(movementsOfArticlesSaved && movementsOfArticlesSaved.length > 0) {
+                            } else {
+                              endedProcess = false;
+                            }
+                          }
+                        );
                       }
-                    );
-                  }
+                    }
+                  );
                 }
-              );
+            } else {
+              endedProcess = false;
+              this.showMessage("El saldo ingresado en la transacción " + mov.transactionOrigin.type.name + " " + mov.transactionOrigin.number + " no puede ser mayor que el saldo restante de la misma.", "info", true);
             }
           } else {
             endedProcess = false;
-            this.showMessage("El saldo ingresado en la transacción " + mov.transactionOrigin.type.name + " " + mov.transactionOrigin.number + " no puede ser mayor que el saldo restante de la misma ($ " + mov.transactionOrigin.balance + ").", "info", true);
+            this.showMessage("El saldo ingresado en la transacción " + mov.transactionOrigin.type.name + " " + mov.transactionOrigin.number + " debe ser mayor a 0.", "info", true);
           }
-        } else {
-          endedProcess = false;
-          this.showMessage("El saldo ingresado en la transacción " + mov.transactionOrigin.type.name + " " + mov.transactionOrigin.number + " debe ser mayor a 0.", "info", true);
         }
-      }
-      if(endedProcess) {
+        if(endedProcess) {
+          this.closeModal();
+        }
+      } else {
         this.closeModal();
       }
     } else {
-      this.closeModal();
+      endedProcess = false;
+      this.showMessage("El saldo seleccionado debe ser mayor o igual a 0.", "info", true);
     }
   }
 
@@ -797,25 +835,25 @@ export class MovementOfCancellationComponent implements OnInit {
     );
   }
 
-  public updateBalanceOrigin(transaction: Transaction, balance): void {
+  public updateBalanceOrigin(transaction: Transaction): void {
 
-    this.balanceSelected = 0;
-
-    if(balance === undefined) {
-      balance = 0;
+    if(transaction['balanceSelected'] <= transaction.balance) {
+      this.balanceSelected = 0;
+      for(let mov of this.movementsOfCancellations) {
+        if(mov.transactionOrigin._id.toString() === transaction._id.toString()) {
+          mov.balance = transaction['balanceSelected'];
+        }
+        if(mov.transactionOrigin.balance > 0) {
+          if(mov.transactionOrigin.type.movement === Movements.Outflows) {
+            this.balanceSelected -= mov.balance;
+          } else {
+            this.balanceSelected += mov.balance;
+          }
+        }
+      }
     } else {
-      try {
-        balance = parseFloat(balance.toString());
-      } catch (err) {
-        balance = 0;
-      }
-    }
-
-    for(let mov of this.movementsOfCancellations) {
-      if(mov.transactionOrigin._id.toString() === transaction._id.toString()) {
-        mov.balance = balance;
-      }
-      this.balanceSelected += mov.balance;
+      this.showMessage(`El saldo ingresado no puede ser mayor al saldo de la transacción (${transaction.balance}).`, 'info', true);
+      transaction['balanceSelected'] = transaction.balance;
     }
   }
 

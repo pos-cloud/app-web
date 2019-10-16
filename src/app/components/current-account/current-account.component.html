@@ -137,7 +137,13 @@
                                                         totalItems: totalItems
                                                       }">
               <td align="left" width="100">
-                <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view-transaction', item._id)" title="Ver"><i class="fa fa-eye"></i></button>
+                <button type="button" class="btn btn-success btn-sm" (click)="openModal('view-transaction', item._id)" title="Ver"><i class="fa fa-eye"></i></button>
+                <button type="button"
+                        *ngIf="item.transactionTypeAllowEdit"
+                        class="btn btn-primary btn-sm"
+                        (click)="openModal('edit-transaction', item._id)"
+                        title="Editar"><i class="fa fa-pencil"></i>
+                </button>
                 <button type="button" class="btn btn-light btn-sm" (click)="openModal('print-transaction', item._id)" title="Imprimir"><i class="fa fa-print"></i></button>
               </td>
               <td class="align-center" *ngIf="item.transactionEndDate">{{item.transactionEndDate | dateFormat: 'DD/MM/YYYY' }}</td>

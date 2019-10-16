@@ -25,12 +25,13 @@ import { AuthService } from 'app/services/auth.service';
 
 export class ListCompaniesComponent implements OnInit {
 
+  @Input() type: CompanyType;
+  @Input() userType: string;
+  @Input() selectionView: boolean = false;
   public identity: User;
   public companies: Company[];
-  @Input() type: CompanyType;
   public areCompaniesEmpty: boolean = true;
   public alertMessage: string = '';
-  @Input() userType: string;
   public orderTerm: string[] = ['name'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;

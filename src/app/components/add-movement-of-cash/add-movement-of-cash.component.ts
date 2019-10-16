@@ -223,7 +223,6 @@ export class AddMovementOfCashComponent implements OnInit {
       this.movementOfCash.observation = this.paymentMethodSelected.observation;
     }
 
-
     let type;
     if (!this.movementOfCash.type) {
       type = null;
@@ -648,23 +647,26 @@ export class AddMovementOfCashComponent implements OnInit {
   async finish() {
 
     if (await this.areValidAmounts()) {
+      let paid = 0;
+      for (let mov of this.movementsOfCashes) {
+        paid += mov.amountPaid;
+      } 
       if(this.transaction.totalPrice === 0) {
-        let paid = 0;
-        for (let mov of this.movementsOfCashes) {
-          paid += mov.amountPaid;
-        } 
-        if(paid > 0) {
-          this.transaction.totalPrice = this.roundNumber.transform(paid);
-          await this.updateTransaction().then(
-            transaction => {
-              if(transaction) {
-                this.transaction = transaction;
-              }
+        this.transaction.totalPrice = this.roundNumber.transform(paid);
+        await this.updateTransaction().then(
+          transaction => {
+            if(transaction) {
+              this.transaction = transaction;
+              this.activeModal.close({ movementsOfCashes: this.movementsOfCashes, movementOfArticle: this.movementOfArticle });
             }
-          );
-        }
+          }
+        );
       } else {
-        this.activeModal.close({ movementsOfCashes: this.movementsOfCashes, movementOfArticle: this.movementOfArticle });
+        if(this.transaction.totalPrice < paid) {
+          this.activeModal.close({ movementsOfCashes: this.movementsOfCashes, movementOfArticle: this.movementOfArticle });
+        } else {
+          this.showMessage('La suma de métodos de pago debe ser igual o mayor al de la transacción.', 'info', true);
+        }
       }
     } else {
       this.fastPayment = null;
@@ -940,6 +942,11 @@ export class AddMovementOfCashComponent implements OnInit {
         resolve(false);
         this.showMessage("La empresa seleccionada no esta habilitada para cobrar con el método " + this.paymentMethodSelected.name + ".", "info", true);
       }
+
+      if (this.transaction.totalPrice !== 0 && this.amountToPay === 0) {
+        this.showMessage("El monto a pagar no puede ser 0.", 'info', true);
+        resolve(false);
+      }
   
       if (this.paymentMethodSelected.isCurrentAccount &&
           this.transaction.type.currentAccount === CurrentAccount.Charge) {
@@ -990,7 +997,7 @@ export class AddMovementOfCashComponent implements OnInit {
         resolve(false);
       }
 
-      if (this.roundNumber.transform(paid) <= 0) {
+      if (this.transaction.totalPrice !== 0 && this.roundNumber.transform(paid) <= 0) {
         this.showMessage("La suma de monto de medios de pago no puede ser menor o igual a 0.", 'info', true);
         resolve(false);
       }

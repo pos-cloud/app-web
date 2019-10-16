@@ -1419,6 +1419,7 @@ export class AddSaleOrderComponent {
         } else if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
           modalRef.componentInstance.type = CompanyType.Client;
         }
+        modalRef.componentInstance.selectionView = true;
         modalRef.result.then(async (result) => {
           if (result.company) {
 

@@ -4,6 +4,7 @@
     <div class="card-header">Seleccionar Transacciones a Cancelar
       <div class="pull-right">
         <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</button>
+        <button class="btn fa fa-close" (click)="activeModal.dismiss('close_click')"><span>Cerrar</span></button>
       </div>
     </div>
     <div class="center-content" *ngIf="alertMessage !== '' && totalItems > 0">
@@ -21,8 +22,8 @@
             <th (click)="orderBy('endDate')">Fecha</th>
             <th (click)="orderBy('type.name')">Nombre</th>
             <th (click)="orderBy('origin')" *ngIf="userCountry === 'AR'">POS</th>
-            <th (click)="orderBy('number')">Número</th>
             <th (click)="orderBy('letter')">Letra</th>
+            <th (click)="orderBy('number')">Número</th>
             <th (click)="orderBy('totalPrice')">Precio Total</th>
             <th (click)="orderBy('balance')">Saldo</th>
           </tr>
@@ -31,8 +32,8 @@
             <th><input type="text" class="form-control" [(ngModel)]="filters['endDate']" (input)="getTransactions()" placeholder="Fecha..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (input)="getTransactions()" placeholder="Nombre..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['origin']" (input)="getTransactions()" placeholder="POS..." *ngIf="userCountry === 'AR'"></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (input)="getTransactions()" placeholder="Número..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['letter']" (input)="getTransactions()" placeholder="Letra..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (input)="getTransactions()" placeholder="Número..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['totalPrice']" (input)="getTransactions()" placeholder="Precio Total..."></th>
             <th></th>
           </tr>
@@ -51,18 +52,18 @@
                       (click)="openModal('view', transaction)" 
                       title="Ver"><i class="fa fa-eye"></i></button>
             </td>
-            <td (click)="selectTransaction(transaction, $event)">{{transaction.endDate}}</td>
-            <td *ngIf="transaction.type" (click)="selectTransaction(transaction, $event)">{{transaction.type.name}}</td>
-            <td *ngIf="!transaction.type" (click)="selectTransaction(transaction, $event)"></td>
-            <td  *ngIf="userCountry === 'AR'" (click)="selectTransaction(transaction, $event)">{{transaction.origin}}</td>
-            <td (click)="selectTransaction(transaction, $event)">{{transaction.number}}</td> 
-            <td (click)="selectTransaction(transaction, $event)">{{transaction.letter}}</td>
-            <td (click)="selectTransaction(transaction, $event)">{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
+            <td (click)="selectTransaction(transaction, false)">{{transaction.endDate}}</td>
+            <td *ngIf="transaction.type" (click)="selectTransaction(transaction, false)">{{transaction.type.name}}</td>
+            <td *ngIf="!transaction.type" (click)="selectTransaction(transaction, false)"></td>
+            <td  *ngIf="userCountry === 'AR'" (click)="selectTransaction(transaction, false)">{{transaction.origin}}</td>
+            <td (click)="selectTransaction(transaction, false)">{{transaction.letter}}</td>
+            <td (click)="selectTransaction(transaction, false)">{{transaction.number}}</td> 
+            <td (click)="selectTransaction(transaction, false)">{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
             <td>
               <input  type="number" 
                       class="form-control" 
-                      [(ngModel)]="transaction.balance" 
-                      (blur)="updateBalanceOrigin(transaction, $event.target.value)"
+                      [(ngModel)]="transaction['balanceSelected']"
+                      (blur)="updateBalanceOrigin(transaction)"
                       [readonly]="!isTransactionSelected(transaction) || transactionDestination.type.requestArticles">
             </td>
           </tr>
@@ -93,6 +94,7 @@
     </div>
   </div>
 </section>
+
 <!-- VISTA ADMIN -->
 <section class="container-fluid" *ngIf="!selectionView">
   <div class="center-content" *ngIf="alertMessage !== '' && totalItems > 0">
@@ -110,8 +112,8 @@
           <th (click)="orderBy('endDate')">Fecha</th>
           <th (click)="orderBy('type.name')">Nombre</th>
           <th (click)="orderBy('origin')" *ngIf="userCountry === 'AR'">POS</th>
-          <th (click)="orderBy('number')">Número</th>
           <th (click)="orderBy('letter')">Letra</th>
+          <th (click)="orderBy('number')">Número</th>
           <th (click)="orderBy('totalPrice')">Precio Total</th>
           <th (click)="orderBy('balance')">Saldo</th>
         </tr>
@@ -120,8 +122,8 @@
           <th><input type="text" class="form-control" [(ngModel)]="filters['endDate']" (input)="getTransactions()" placeholder="Fecha..."></th>
           <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (input)="getTransactions()" placeholder="Nombre..."></th>
           <th><input type="text" class="form-control" [(ngModel)]="filters['origin']" (input)="getTransactions()" placeholder="POS..." *ngIf="userCountry === 'AR'"></th>
-          <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (input)="getTransactions()" placeholder="Número..."></th>
           <th><input type="text" class="form-control" [(ngModel)]="filters['letter']" (input)="getTransactions()" placeholder="Letra..."></th>
+          <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (input)="getTransactions()" placeholder="Número..."></th>
           <th><input type="text" class="form-control" [(ngModel)]="filters['totalPrice']" (input)="getTransactions()" placeholder="Precio Total..."></th>
           <th></th>
         </tr>
@@ -144,8 +146,8 @@
           <td *ngIf="transaction.type">{{transaction.type.name}}</td>
           <td *ngIf="!transaction.type"></td>
           <td  *ngIf="userCountry === 'AR'">{{transaction.origin}}</td>
-          <td>{{transaction.number}}</td> 
           <td>{{transaction.letter}}</td>
+          <td>{{transaction.number}}</td> 
           <td>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
           <td>{{transaction.balance | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
         </tr>

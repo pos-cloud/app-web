@@ -10,7 +10,7 @@ import 'moment/locale/es';
 
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionMovement } from './../../models/transaction-type';
+import { TransactionMovement, Movements } from './../../models/transaction-type';
 import { Company, CompanyType } from './../../models/company';
 import { Taxes } from '../../models/taxes';
 import { Employee } from './../../models/employee';
@@ -48,6 +48,7 @@ export class AddTransactionComponent implements OnInit {
   @Input() transactionId: string;
   public transaction: Transaction;
   public taxes: Taxes[] = new Array();
+  private movementsOfCancellations: MovementOfCancellation[];
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
@@ -72,6 +73,7 @@ export class AddTransactionComponent implements OnInit {
   public userCountry: string;
   public showButtonCancelation: boolean;
   public filtersTaxClassification: TaxClassification[] = [ TaxClassification.Perception, TaxClassification.Withholding ];
+  public balanceTotal: number = -1; // SE ASIGNA -1 PARA VALIDAR SI SE NECESITA RECALCULAR EL SALDO, O SE EDITA MANUALMENTE.
 
   public formErrors = {
     'date': '',
@@ -135,6 +137,7 @@ export class AddTransactionComponent implements OnInit {
   ) {
     this.transaction = new Transaction();
     this.transactionDate = this.transaction.startDate;
+    this.movementsOfCancellations = new Array();
   }
 
   ngOnInit(): void {
@@ -354,35 +357,29 @@ export class AddTransactionComponent implements OnInit {
       case 'list-cancellations':
         modalRef = this._modalService.open(MovementOfCancellationComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.transactionDestinationId = this.transaction._id;
-        modalRef.componentInstance.totalPrice = this.transactionForm.value.totalPrice;
+        if(this.transaction.state === TransactionState.Closed) {
+          modalRef.componentInstance.totalPrice = this.transaction.balance;
+        } else {
+          modalRef.componentInstance.totalPrice = this.transactionForm.value.totalPrice;
+        }
         modalRef.componentInstance.selectionView = true;
         modalRef.result.then(async (result) => {
           if(result && result.movementsOfCancellations) {
-            await this.daleteMovementsOfCancellations('{"transactionDestination":"'+this.transaction._id+'"}').then(
-              async movementsOfCancellations => {
-                if(movementsOfCancellations) {
-                  await this.saveMovementsOfCancellations(result.movementsOfCancellations).then(
-                    movementsOfCancellations => {
-                      if(movementsOfCancellations) {
-                        let balanceTotal = 0;
-                        for(let mov of result.movementsOfCancellations) {
-                          balanceTotal += mov.balance;
-                        }
-                        this.transaction.totalPrice = balanceTotal;
-                        this.updateTransaction().then(
-                          transaction => {
-                            if(transaction) {
-                              this.transaction = transaction;
-                              this.setValuesForm();
-                            }
-                          }
-                        );
-                      }
-                    }
-                  );
-                }
+            this.movementsOfCancellations = result.movementsOfCancellations;
+            
+            this.balanceTotal = 0;
+            for(let mov of this.movementsOfCancellations) {
+              if(mov.transactionOrigin.type.movement === Movements.Outflows) {
+                this.balanceTotal -= mov.balance;
+              } else {
+                this.balanceTotal += mov.balance;
               }
-            );
+            }
+            if(this.transaction.totalPrice === 0) {
+              this.transaction.totalPrice = this.balanceTotal;
+            }
+            this.transaction.balance = this.roundNumber.transform(this.transaction.totalPrice - this.balanceTotal);
+            this.setValuesForm();
           }
         }, (reason) => {
         });
@@ -394,6 +391,7 @@ export class AddTransactionComponent implements OnInit {
         } else if (transaction.type.transactionMovement === TransactionMovement.Sale) {
           modalRef.componentInstance.type = CompanyType.Client;
         }
+        modalRef.componentInstance.selectionView = true;
         modalRef.result.then(
           (result) => {
             if (result.company) {
@@ -409,6 +407,75 @@ export class AddTransactionComponent implements OnInit {
       default:
         break;
     }
+  }
+
+  async finishTransaction() {
+
+    let isValid: boolean = true;
+
+    if(this.movementsOfCancellations && this.movementsOfCancellations.length > 0) {
+      await this.daleteMovementsOfCancellations('{"transactionDestination":"'+this.transaction._id+'"}').then(
+        async movementsOfCancellations => {
+          if(movementsOfCancellations) {
+            await this.saveMovementsOfCancellations(this.movementsOfCancellations).then(
+              movementsOfCancellations => {
+                if(!movementsOfCancellations) {
+                  isValid = false;
+                }
+              }
+            );
+          }
+        }
+      );
+    }
+
+    if(isValid) {
+      if(this.transaction.state === TransactionState.Closed && this.balanceTotal !== -1) {
+        await this.updateBalance().then(
+          async balance => {
+            if(balance !== null) {
+              this.transaction.balance = balance;
+              await this.updateTransaction().then(
+                transaction => {
+                  if(transaction) {
+                    this.transaction = transaction;
+                    this.activeModal.close({ transaction: this.transaction });
+                  }
+                }
+              );
+            }
+        });
+      } else {
+        await this.updateTransaction().then(
+          transaction => {
+            if(transaction) {
+              this.transaction = transaction;
+              this.activeModal.close({ transaction: this.transaction });
+            }
+          }
+        );
+      }
+    }
+  }
+
+  public updateBalance(): Promise<number> {
+
+    return new Promise<number>((resolve, reject) => {
+      this._transactionService.updateBalance(this.transaction).subscribe(
+        async result => {
+          if (!result.transaction) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
+          } else {
+            resolve(result.transaction.balance);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          reject(null);
+        }
+      )
+    });
   }
 
   public getEmployees(query: string): void {
@@ -456,26 +523,24 @@ export class AddTransactionComponent implements OnInit {
       this.transaction.number = this.transactionForm.value.number;
       this.transaction.basePrice = this.transactionForm.value.basePrice;
       this.transaction.totalPrice = this.transactionForm.value.totalPrice;
-      if (this.transaction.type.requestArticles ||
-        (this.transaction.totalPrice > 0 &&
-        !this.transaction.type.requestArticles) || 
-        (this.transaction.totalPrice === 0 &&
-        !this.transaction.type.requestArticles &&
-        this.transaction.type.allowZero)) {
-        if (this.transactionForm.value.state) {
-          this.transaction.state = this.transactionForm.value.state;
-        }
-
-        await this.updateTransaction().then(
-          transaction => {
-            if(transaction) {
-              this.transaction = transaction;
-              this.activeModal.close({ transaction: this.transaction });
-            }
+      if((this.balanceTotal <= this.transaction.totalPrice && this.transaction.state !== TransactionState.Closed) ||
+        (this.balanceTotal <= this.transaction.balance && this.transaction.state === TransactionState.Closed)) {
+        if (this.transaction.type.requestArticles ||
+          (this.transaction.totalPrice > 0 &&
+          !this.transaction.type.requestArticles) || 
+          (this.transaction.totalPrice === 0 &&
+          !this.transaction.type.requestArticles &&
+          this.transaction.type.allowZero)) {
+          if (this.transactionForm.value.state) {
+            this.transaction.state = this.transactionForm.value.state;
           }
-        );
+  
+          this.finishTransaction();
+        } else {
+          this.showMessage("El importe total ingresado debe ser mayor a 0.", "info", true);
+        }
       } else {
-        this.showMessage("El importe total ingresado debe ser mayor a 0.", "info", true);
+        this.showMessage("El monto de la transacción no puede ser menor a la suma de las transacciones canceladas.", "info", true);
       }
     } else {
       this.showMessage("Debe asignar el empleado " + this.transaction.type.requestEmployee.description, "info", true);

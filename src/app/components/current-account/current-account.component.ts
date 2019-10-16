@@ -29,6 +29,7 @@ import { Config } from 'app/app.config';
 import { ConfigService } from 'app/services/config.service';
 import { TransactionMovement } from 'app/models/transaction-type';
 import { CompanyType } from 'app/models/payment-method';
+import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
 
 @Component({
   selector: 'app-current-account',
@@ -177,11 +178,10 @@ export class CurrentAccountComponent implements OnInit {
   }
 
   public refresh(): void {
-
     if (this.companySelected) {
       this.getSummary();
     } else {
-      this.showMessage("Debe seleccionar una empresa", 'info', true);
+      this.showMessage("Debe seleccionar una empresa.", 'info', true);
     }
   }
 
@@ -209,12 +209,23 @@ export class CurrentAccountComponent implements OnInit {
         modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.transactionId = transactionId;
         break;
+      case 'edit-transaction':
+        modalRef = this._modalService.open(AddTransactionComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.transactionId = transactionId;
+        modalRef.result.then((result) => {
+          if (result.transaction) {
+            // this.refresh();
+          }
+        }, (reason) => {
+
+        });
+        break;
       case 'company':
         modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg', backdrop: 'static' });
         let pathLocation: string[] = this._router.url.split('/');
         let companyType = pathLocation[3].charAt(0).toUpperCase() + pathLocation[3].slice(1);
         modalRef.componentInstance.type = companyType;
-        modalRef.componentInstance.userType = 'pos';
+        modalRef.componentInstance.selectionView = true;
         modalRef.result.then(
           (result) => {
             if (result.company) {
@@ -239,11 +250,10 @@ export class CurrentAccountComponent implements OnInit {
           modalRef.componentInstance.typePrint = 'current-account';
           modalRef.componentInstance.balance = this.balance;
         } else {
-          this.showMessage("Debe seleccionar una empresa",'info', true);
+          this.showMessage("Debe seleccionar una empresa.",'info', true);
         }
         break;
       case 'print-transaction':
-
         modalRef = this._modalService.open(PrintComponent);
         modalRef.componentInstance.transactionId = transactionId;
         modalRef.componentInstance.company = this.companySelected;

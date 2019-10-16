@@ -1,4 +1,4 @@
-<section class="container-fluid" *ngIf="userType=='admin'">
+<section class="container-fluid" *ngIf="!selectionView">
   <div class="center-content" *ngIf="alertMessage !== '' && !areCompaniesEmpty">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
@@ -150,7 +150,7 @@
   </div>
 </section>
 
-<section class="container-fluid" *ngIf="userType=='pos'">
+<section class="container-fluid" *ngIf="selectionView">
   <div class="center-content" *ngIf="alertMessage !== '' && !areCompaniesEmpty">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
