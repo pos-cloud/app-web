@@ -2378,8 +2378,19 @@ export class PrintComponent implements OnInit {
 
     if(this.transaction.company) {
       this.doc.setFontType('bold');
-      this.doc.text("Cliente :" + this.transaction.company.name, margin, row);
+      this.doc.text("Razón Social : " + this.transaction.company.name, margin, row);
+      row += 3;
+      this.doc.text( this.transaction.company.identificationType.name + " :" + this.transaction.company.identificationValue, margin, row);
+      row += 3;
+      this.doc.text("Condición de IVA : " + this.transaction.company.vatCondition.description, margin, row);
+      row += 3;
+      this.doc.text("Dirección : " + this.transaction.company.address +" " + this.transaction.company.addressNumber, margin, row);
+      row += 3;
+      this.doc.text("Telefono : " + this.transaction.company.phones, margin, row);
+      row += 3;
+      this.doc.text("Localidad : " + this.transaction.company.city, margin, row);
       this.doc.setFontType('normal');
+
     } else {
       if(this.transaction.madein == 'resto' || this.transaction.madein == 'mostrador') {
         this.doc.setFontType('bold');
