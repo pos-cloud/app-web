@@ -443,7 +443,7 @@ export class MovementOfCancellationComponent implements OnInit {
             transactionSelected.type.movement === Movements.Inflows)) {
               transBalance *= -1;
         }
-        if((this.totalPrice < ((transBalance) + this.balanceSelected))) {
+        if(automatic && (this.totalPrice < ((transBalance) + this.balanceSelected))) {
           movementOfCancellation.balance = this.roundNumber.transform(this.totalPrice - this.balanceSelected);
           for(let t of this.transactions) {
             if(t._id.toString() == transactionSelected._id.toString()) {
