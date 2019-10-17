@@ -1241,8 +1241,35 @@ export class AddSaleOrderComponent {
               msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
             }
             this.showMessage(msn, 'info', true);
-            let body = 'transaction=' + JSON.stringify(this.transaction) + '&' + 'config=' + '{"companyIdentificationValue":"' + this.config['companyIdentificationValue'] + '","vatCondition":' + this.config['companyVatCondition'].code + ',"database":"' + this.config['database'] + '"}';
-            this.saveClaim('ERROR FE ' + moment().format('DD/MM/YYYY HH:mm') + " : " + msn, body);
+            let body = {
+              transaction: {
+                origin: this.transaction.origin,
+                letter: this.transaction.letter,
+                number: this.transaction.number,
+                startDate: this.transaction.startDate,
+                endDate: this.transaction.endDate,
+                expirationDate: this.transaction.expirationDate,
+                VATPeriod: this.transaction.VATPeriod,
+                state: this.transaction.state,
+                basePrice: this.transaction.basePrice,
+                exempt: this.transaction.exempt,
+                discountAmount: this.transaction.discountAmount,
+                discountPercent: this.transaction.discountPercent,
+                totalPrice: this.transaction.totalPrice,
+                roundingAmount: this.transaction.roundingAmount,
+                CAE: this.transaction.CAE,
+                CAEExpirationDate: this.transaction.CAEExpirationDate,
+                type: this.transaction.type,
+                company: this.transaction.company,
+                priceList: this.transaction.priceList
+              },
+              config: {
+                companyIdentificationValue: this.config['companyIdentificationValue'],
+                vatCondition: this.config['companyVatCondition'].code,
+                database: this.config['database']
+              }
+            }
+            this.saveClaim('ERROR FE AR' + moment().format('DD/MM/YYYY HH:mm') + " : " + msn, JSON.stringify(body));
           } else {
             this.transaction.number = result.number;
             this.transaction.CAE = result.CAE;
@@ -1266,7 +1293,7 @@ export class AddSaleOrderComponent {
   }
   
   public saveClaim(titulo: string, message: string): void {
-    
+
     this.loading = true;
 
     let claim: Claim = new Claim();
@@ -1298,12 +1325,35 @@ export class AddSaleOrderComponent {
           }
           this.showMessage(msn, 'info', true);
 
-          let body ='transaction=' + JSON.stringify(this.transaction) + '&' +
-                    'movementsOfArticles=' + JSON.stringify(this.movementsOfArticles) + '&' +
-                    'movementsOfCashes=' + JSON.stringify(this.movementsOfCashes) + '&' +
-                    'config=' + '{"companyIdentificationValue":"' + this.config['companyIdentificationValue'] + '","vatCondition":' + this.config['companyVatCondition'].code + ',"companyName":"' + this.config['companyName'] + '","companyPostalCode":"' + this.config['companyPostalCode'] + '","database":"' + this.config['database'] + '"}';
-      
-          this.saveClaim('ERROR FE ' + moment().format('DD/MM/YYYY HH:mm') + " : " + msn, body);
+          let body = {
+            transaction: {
+              origin: this.transaction.origin,
+              letter: this.transaction.letter,
+              number: this.transaction.number,
+              startDate: this.transaction.startDate,
+              endDate: this.transaction.endDate,
+              expirationDate: this.transaction.expirationDate,
+              VATPeriod: this.transaction.VATPeriod,
+              state: this.transaction.state,
+              basePrice: this.transaction.basePrice,
+              exempt: this.transaction.exempt,
+              discountAmount: this.transaction.discountAmount,
+              discountPercent: this.transaction.discountPercent,
+              totalPrice: this.transaction.totalPrice,
+              roundingAmount: this.transaction.roundingAmount,
+              CAE: this.transaction.CAE,
+              CAEExpirationDate: this.transaction.CAEExpirationDate,
+              type: this.transaction.type,
+              company: this.transaction.company,
+              priceList: this.transaction.priceList
+            },
+            config: {
+              companyIdentificationValue: this.config['companyIdentificationValue'],
+              vatCondition: this.config['companyVatCondition'].code,
+              database: this.config['database']
+            }
+          }
+          this.saveClaim('ERROR FE MX ' + moment().format('DD/MM/YYYY HH:mm') + " : " + msn, JSON.stringify(body));
         } else {
           this.transaction.state = TransactionState.Closed;
           this.transaction.stringSAT = result.stringSAT;
