@@ -152,13 +152,13 @@
               <td class="align-center"  *ngIf="userCountry === 'AR'">{{item.transactionOrigin}}</td>
               <td class="align-center">{{item.transactionLetter}}</td>
               <td class="align-center">{{item.transactionNumber}}</td>
-              <td class="align-left">{{item.transactionTotalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-              <td class="align-left" *ngIf="showPaymentMethod">{{item.paymentMethodName}}</td>
+              <td class="align-right">{{item.transactionTotalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+              <td class="align-right" *ngIf="showPaymentMethod">{{item.paymentMethodName}}</td>
               <td class="align-center" *ngIf="showPaymentMethod">{{item.quota}}</td>
               <td class="align-center" *ngIf="showPaymentMethod">{{item.paymentMethodExpirationDate | dateFormat: 'DD/MM/YYYY' }}</td>
-              <td class="align-left" [ngClass]="{'credit': item.debe > 0 }">{{item.debe | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-              <td class="align-left" [ngClass]="{'debit': item.haber > 0 }">{{item.haber | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-              <td class="align-left" [ngClass]="{'credit':item.balance>0,'debit':item.balance<0}">{{item.balance | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+              <td class="align-right" [ngClass]="{'credit': item.debe > 0 }">{{item.debe | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+              <td class="align-right" [ngClass]="{'debit': item.haber > 0 }">{{item.haber | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+              <td class="align-right" [ngClass]="{'credit':item.balance>0,'debit':item.balance<0}">{{item.balance | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
             </tr>
             <tr align="center" *ngIf="items.length === 0 && !loading">
               <td colspan="13">No se encontraron movimientos</td>
@@ -171,10 +171,10 @@
             <td colspan="9" class="align-right" *ngIf="!showPaymentMethod">
               <strong>SALDO TOTAL</strong>
             </td>
-            <td *ngIf="balance>=0" class="align-left">
+            <td *ngIf="balance>=0" class="align-right">
               <strong>{{balance | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
             </td>
-            <td *ngIf="balance<0" class="align-left">
+            <td *ngIf="balance<0" class="align-right">
               <strong>{{balance | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
             </td>
           </tfoot>
