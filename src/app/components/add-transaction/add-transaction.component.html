@@ -120,7 +120,7 @@
                             [filtersTaxClassification]="filtersTaxClassification"
                             *ngIf="transaction && transaction.type && transaction.type.requestTaxes && !transaction.type.requestArticles">
       </app-add-article-tax>
-      <div class="row" *ngIf="showButtonCancelation && transaction && transaction.company && ((transaction.state.toString() !== 'Cerrado' && transaction.state.toString() !== 'Anulado') || transaction.balance > 0)">
+      <div class="row" *ngIf="showButtonCancelation && transaction && transaction.company && ((transaction.state.toString() !== 'Cerrado' && transaction.state.toString() !== 'Anulado') || transaction.balance != 0)">
         <div class="col-md-12 center-content">
           <button type="button" class="btn btn-light" (click)="openModal('list-cancellations')">
             Buscar Transacciones a Cancelar
