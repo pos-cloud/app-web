@@ -325,7 +325,6 @@ export class AddTransactionTypeComponent implements OnInit {
       'automaticNumbering' : [this.transactionType.automaticNumbering,[]],
       'automaticCreation' : [this.transactionType.automaticCreation,[]],
       'readLayout' : [this.transactionType.readLayout,[]],
-      'showQuantity' : [this.transactionType.showQuantity,[]],
       'updatePrice' : [this.transactionType.updatePrice,[]]
 
     });
@@ -489,7 +488,6 @@ export class AddTransactionTypeComponent implements OnInit {
     if (!this.transactionType.printDescriptionType) this.transactionType.printDescriptionType = DescriptionType.Description;
     if (!this.transactionType.printSign) this.transactionType.printSign = false;
 
-    if (!this.transactionType.showQuantity) this.transactionType.showQuantity = false;
     if (!this.transactionType.updatePrice) this.transactionType.updatePrice = false;
 
 
@@ -542,8 +540,7 @@ export class AddTransactionTypeComponent implements OnInit {
       'printDescriptionType' : this.transactionType.printDescriptionType,
       'printSign' : this.transactionType.printSign,
       'readLayout' : this.transactionType.readLayout,
-      'updatePrice' : this.transactionType.updatePrice,
-      'showQuantity' : this.transactionType.showQuantity
+      'updatePrice' : this.transactionType.updatePrice
     });
   }
 
