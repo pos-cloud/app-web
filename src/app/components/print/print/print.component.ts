@@ -2425,7 +2425,23 @@ export class PrintComponent implements OnInit {
         row += 3;
         this.centerText(margin, margin, 15, 0, row, movementOfArticle.amount.toString());
         this.doc.text(movementOfArticle.description.slice(0, 20), 13, row);
-        this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice/movementOfArticle.amount).toString(), 50, row);
+        //this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice/movementOfArticle.amount).toString(), 50, row);
+
+        if (this.transaction.type && this.transaction.type.showPrices) {
+          if(this.transaction.type.requestTaxes  && 
+            this.transaction.company &&
+            this.transaction.company.vatCondition.discriminate) {
+              let prUnit = 0;
+            for(let tax of movementOfArticle.taxes) {
+                prUnit = prUnit + (tax.taxBase/movementOfArticle.amount)
+            }
+            this.doc.text("$ " + this.roundNumber.transform(prUnit,2), 50, row);
+          } else {
+            this.doc.text("$ " + this.roundNumber.transform(movementOfArticle.salePrice/movementOfArticle.amount,2), 50, row);
+          }
+          
+        }
+
         this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice).toString(), width/1.18, row);
         row +=3;
         movementOfArticle.article.taxes.forEach(element => {
