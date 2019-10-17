@@ -8,6 +8,7 @@ import { RoundNumberPipe } from './../../../pipes/round-number.pipe';
 import { TransactionService } from 'app/services/transaction.service';
 import { Config } from './../../../app.config';
 import { CompanyType } from 'app/models/company';
+import { ConfigService } from 'app/services/config.service';
 
 @Component({
   selector: 'app-current-account-details',
@@ -49,6 +50,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
   constructor(
     public _transactionService : TransactionService,
+    public _configService : ConfigService,
     public _router: Router,
     private domSanitizer: DomSanitizer
   ) { 
@@ -56,7 +58,13 @@ export class CurrentAccountDetailsComponent implements OnInit {
     this.pageHigh = 297 * 100 / 35.27751646284102;
   }
 
-  public ngOnInit(): void {
+  async ngOnInit() {
+
+    await this._configService.getConfig.subscribe(
+      config => {
+        this.config = config;
+      }
+    );
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
@@ -249,21 +257,41 @@ export class CurrentAccountDetailsComponent implements OnInit {
         this.doc.text(180,row, "$" + this.roundNumber.transform(transaction.balance).toString());
         row += 5;
 
-        if(transaction.type.currentAccount === "Si"){
-          if(transaction.type.movement === "Entrada") {
-            totalPrice = totalPrice + transaction.totalPrice;
-            balance = balance + transaction.balance;
+        if(!this.config.report.summaryOfAccounts.invertedViewClient || !this.config.report.summaryOfAccounts.invertedViewProvider){
+          if(transaction.type.currentAccount === "Si"){
+            if(transaction.type.movement === "Entrada") {
+              totalPrice = totalPrice + transaction.totalPrice;
+              balance = balance + transaction.balance;
+            } else {
+              totalPrice = totalPrice - transaction.totalPrice;
+              balance = balance - transaction.balance;
+            }
           } else {
-            totalPrice = totalPrice - transaction.totalPrice;
-            balance = balance - transaction.balance;
+            if(transaction.type.movement === "Entrada") {
+              totalPrice = totalPrice - transaction.totalPrice;
+              balance = balance - transaction.balance;
+            } else {
+              totalPrice = totalPrice + transaction.totalPrice;
+              balance = balance + transaction.balance;
+            }
           }
         } else {
-          if(transaction.type.movement === "Entrada") {
-            totalPrice = totalPrice - transaction.totalPrice;
-            balance = balance - transaction.balance;
+          if(transaction.type.currentAccount === "Si"){
+            if(transaction.type.movement === "Entrada") {
+              totalPrice = totalPrice - transaction.totalPrice;
+              balance = balance - transaction.balance;
+            } else {
+              totalPrice = totalPrice + transaction.totalPrice;
+              balance = balance + transaction.balance;
+            }
           } else {
-            totalPrice = totalPrice + transaction.totalPrice;
-            balance = balance + transaction.balance;
+            if(transaction.type.movement === "Entrada") {
+              totalPrice = totalPrice + transaction.totalPrice;
+              balance = balance + transaction.balance;
+            } else {
+              totalPrice = totalPrice - transaction.totalPrice;
+              balance = balance - transaction.balance;
+            }
           }
         }
         
