@@ -249,12 +249,22 @@ export class CurrentAccountDetailsComponent implements OnInit {
         this.doc.text(180,row, "$" + this.roundNumber.transform(transaction.balance).toString());
         row += 5;
 
-        if(transaction.type.movement === "Entrada") {
-          totalPrice = totalPrice + transaction.totalPrice;
-          balance = balance + transaction.balance;
+        if(transaction.type.currentAccount === "Si"){
+          if(transaction.type.movement === "Entrada") {
+            totalPrice = totalPrice + transaction.totalPrice;
+            balance = balance + transaction.balance;
+          } else {
+            totalPrice = totalPrice - transaction.totalPrice;
+            balance = balance - transaction.balance;
+          }
         } else {
-          totalPrice = totalPrice - transaction.totalPrice;
-          balance = balance - transaction.balance;
+          if(transaction.type.movement === "Entrada") {
+            totalPrice = totalPrice - transaction.totalPrice;
+            balance = balance - transaction.balance;
+          } else {
+            totalPrice = totalPrice + transaction.totalPrice;
+            balance = balance + transaction.balance;
+          }
         }
         
 
