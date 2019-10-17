@@ -180,6 +180,11 @@
       <div class="row table-totals" *ngIf="transaction.type && transaction.type.showPrices">
         <table class="table table-striped">
           <tbody>
+            <tr *ngIf="transaction.type.showQuantity">
+              <td align="left">
+                <strong>Cantidad : {{quantity}}</strong>
+              </td>
+            </tr>
             <tr *ngIf="transactionMovement !== 'Stock' && transaction.type.requestTaxes"
                 (click)="openModal('change-taxes')"
                 class="pointer totals">

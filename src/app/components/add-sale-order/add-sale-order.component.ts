@@ -138,6 +138,7 @@ export class AddSaleOrderComponent {
   public increasePrice = 0;
   public lastIncreasePrice = 0;
   public companyOld: boolean = false;
+  public quantity = 0;
 
   constructor(
     public _transactionService: TransactionService,
@@ -1077,6 +1078,7 @@ export class AddSaleOrderComponent {
 
     let totalPriceAux = 0;
     let discountAmountAux = 0;
+    this.quantity = 0;
 
     if (discountPercent !== undefined) {
       this.transaction.discountPercent = this.roundNumber.transform(discountPercent, 3);
@@ -1089,6 +1091,7 @@ export class AddSaleOrderComponent {
 
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let movementOfArticle of this.movementsOfArticles) {
+        this.quantity = this.quantity + movementOfArticle.amount;
         movementOfArticle.transaction.discountPercent = this.transaction.discountPercent;
         if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
           movementOfArticle = await this.recalculateSalePrice(movementOfArticle);
