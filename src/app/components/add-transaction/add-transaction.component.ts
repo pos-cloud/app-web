@@ -531,8 +531,8 @@ export class AddTransactionComponent implements OnInit {
       this.transaction.number = this.transactionForm.value.number;
       this.transaction.basePrice = this.transactionForm.value.basePrice;
       this.transaction.totalPrice = this.transactionForm.value.totalPrice;
-      if((this.balanceTotal <= this.transaction.totalPrice && this.transaction.state !== TransactionState.Closed) ||
-        (this.balanceTotal <= this.transaction.balance && this.transaction.state === TransactionState.Closed)) {
+
+      if(this.balanceTotal <= this.transaction.totalPrice) {
         if (this.transaction.type.requestArticles ||
           (this.transaction.totalPrice > 0 &&
           !this.transaction.type.requestArticles) || 

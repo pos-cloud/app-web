@@ -472,15 +472,30 @@ export class MovementOfCancellationComponent implements OnInit {
   public recalculateBalanceSelected(): void {
     this.balanceSelected = 0;
     for(let mov of this.movementsOfCancellations) {
-      if((mov.transactionOrigin.type.transactionMovement === TransactionMovement.Sale && 
-        mov.transactionOrigin.type.movement === Movements.Outflows) || 
-        (mov.transactionOrigin.type.transactionMovement === TransactionMovement.Purchase && 
-          mov.transactionOrigin.type.movement === Movements.Inflows)) {
-        this.balanceSelected -= mov.balance;
-      } else {
-        this.balanceSelected += mov.balance;
+      if(!this.isMovementClosed(mov.transactionOrigin)) {
+        if((mov.transactionOrigin.type.transactionMovement === TransactionMovement.Sale && 
+          mov.transactionOrigin.type.movement === Movements.Outflows) || 
+          (mov.transactionOrigin.type.transactionMovement === TransactionMovement.Purchase && 
+            mov.transactionOrigin.type.movement === Movements.Inflows)) {
+          this.balanceSelected -= mov.balance;
+        } else {
+          this.balanceSelected += mov.balance;
+        }
       }
     }
+  }
+
+  private isMovementClosed(transaction: Transaction): boolean {
+
+    let closed: boolean = true;
+
+    for(let trans of this.transactions) {
+      if(trans._id.toString() === transaction._id.toString()) {
+        closed = false;
+      }
+    }
+
+    return closed;
   }
 
   public modifyBalance(transaction: Transaction) {
