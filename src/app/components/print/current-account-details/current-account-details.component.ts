@@ -257,24 +257,28 @@ export class CurrentAccountDetailsComponent implements OnInit {
         this.doc.text(180,row, "$" + this.roundNumber.transform(transaction.balance).toString());
         row += 5;
 
-        if(!this.config.report.summaryOfAccounts.invertedViewClient || !this.config.report.summaryOfAccounts.invertedViewProvider){
-          if(transaction.type.currentAccount === "Si"){
-            if(transaction.type.movement === "Entrada") {
-              totalPrice = totalPrice + transaction.totalPrice;
-              balance = balance + transaction.balance;
-            } else {
-              totalPrice = totalPrice - transaction.totalPrice;
-              balance = balance - transaction.balance;
-            }
-          } else {
-            if(transaction.type.movement === "Entrada") {
-              totalPrice = totalPrice - transaction.totalPrice;
-              balance = balance - transaction.balance;
-            } else {
-              totalPrice = totalPrice + transaction.totalPrice;
-              balance = balance + transaction.balance;
-            }
-          }
+        if( this.config && 
+            this.config.reports && 
+            this.config.reports.summaryOfAccounts && 
+            this.config.reports.summaryOfAccounts.invertedViewClient === false || this.config.reports.summaryOfAccounts.invertedViewProvider === false){
+
+              if(transaction.type.currentAccount === "Si"){
+                if(transaction.type.movement === "Entrada") {
+                  totalPrice = totalPrice + transaction.totalPrice;
+                  balance = balance + transaction.balance;
+                } else {
+                  totalPrice = totalPrice - transaction.totalPrice;
+                  balance = balance - transaction.balance;
+                }
+              } else {
+                if(transaction.type.movement === "Entrada") {
+                  totalPrice = totalPrice - transaction.totalPrice;
+                  balance = balance - transaction.balance;
+                } else {
+                  totalPrice = totalPrice + transaction.totalPrice;
+                  balance = balance + transaction.balance;
+                }
+              }
         } else {
           if(transaction.type.currentAccount === "Si"){
             if(transaction.type.movement === "Entrada") {
