@@ -361,6 +361,7 @@ export class AddTransactionComponent implements OnInit {
           modalRef.componentInstance.totalPrice = this.transactionForm.value.totalPrice;
         }
         modalRef.componentInstance.selectionView = true;
+        modalRef.componentInstance.movementsOfCancellations = this.movementsOfCancellations;
         modalRef.result.then(async (result) => {
           if(result && result.movementsOfCancellations) {
             this.movementsOfCancellations = result.movementsOfCancellations;
@@ -376,6 +377,7 @@ export class AddTransactionComponent implements OnInit {
                 this.balanceTotal += mov.balance;
               }
             }
+            this.balanceTotal = this.roundNumber.transform(this.balanceTotal);
             if(this.transaction.totalPrice === 0) {
               this.transaction.totalPrice = this.balanceTotal;
             }
