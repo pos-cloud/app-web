@@ -324,7 +324,9 @@ export class AddTransactionTypeComponent implements OnInit {
       'printSign' : [this.transactionType.printSign,[]],
       'automaticNumbering' : [this.transactionType.automaticNumbering,[]],
       'automaticCreation' : [this.transactionType.automaticCreation,[]],
-      'readLayout' : [this.transactionType.readLayout,[]]
+      'readLayout' : [this.transactionType.readLayout,[]],
+      'showQuantity' : [this.transactionType.showQuantity,[]],
+      'updatePrice' : [this.transactionType.updatePrice,[]]
 
     });
 
@@ -487,6 +489,10 @@ export class AddTransactionTypeComponent implements OnInit {
     if (!this.transactionType.printDescriptionType) this.transactionType.printDescriptionType = DescriptionType.Description;
     if (!this.transactionType.printSign) this.transactionType.printSign = false;
 
+    if (!this.transactionType.showQuantity) this.transactionType.showQuantity = false;
+    if (!this.transactionType.updatePrice) this.transactionType.updatePrice = false;
+
+
     this.transactionTypeForm.setValue({
       '_id': this.transactionType._id,
       'transactionMovement': this.transactionType.transactionMovement,
@@ -535,7 +541,9 @@ export class AddTransactionTypeComponent implements OnInit {
       'showPriceType' : this.transactionType.showPriceType,
       'printDescriptionType' : this.transactionType.printDescriptionType,
       'printSign' : this.transactionType.printSign,
-      'readLayout' : this.transactionType.readLayout
+      'readLayout' : this.transactionType.readLayout,
+      'updatePrice' : this.transactionType.updatePrice,
+      'showQuantity' : this.transactionType.showQuantity
     });
   }
 

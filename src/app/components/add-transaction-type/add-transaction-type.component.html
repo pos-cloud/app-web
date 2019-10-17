@@ -531,6 +531,38 @@
                       </button>
                     </div>
                   </div>
+                  <div class="form-group col-md-3">
+                      <label for="showQuantity" class="control-label">Muestra Sumatoria de Cantidad?</label>
+                      <div class="input-group">
+                        <select class="form-control" formControlName="showQuantity">
+                          <option value="true" [selected]="transactionType.showQuantity" [disabled]="readonly">Si</option>
+                          <option value="false" [selected]="!transactionType.showQuantity" [disabled]="readonly">No</option>
+                        </select>
+                        <button type="button"
+                                class="btn btn-light"
+                                placement="right"
+                                popoverClass="popover-class"
+                                ngbPopover="Si va a mostrar la cantidad de articulos que viene sumando la transacción">
+                          <b>?</b>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="updatePrice" class="control-label">Actualiza Precio?</label>
+                        <div class="input-group">
+                          <select class="form-control" formControlName="updatePrice">
+                            <option value="true" [selected]="transactionType.updatePrice" [disabled]="readonly">Si</option>
+                            <option value="false" [selected]="!transactionType.updatePrice" [disabled]="readonly">No</option>
+                          </select>
+                          <button type="button"
+                                  class="btn btn-light"
+                                  placement="right"
+                                  popoverClass="popover-class"
+                                  ngbPopover="Actualiza automaticamente los precios del producto una vez cerrada esta transacción">
+                            <b>?</b>
+                          </button>
+                        </div>
+                      </div>
                 </div>
               </div>
             </div>
