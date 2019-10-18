@@ -277,8 +277,8 @@
         <thead>
           <tr>
             <th (click)="orderBy('_id')">Nombre</th>
-            <th (click)="orderBy('count')">Cantidad</th>
-            <th (click)="orderBy('totalPrice')">Monto Total</th>
+            <th class="align-right" (click)="orderBy('count')">Cantidad</th>
+            <th class="align-right" (click)="orderBy('totalPrice')">Monto Total</th>
           </tr>
         </thead>
         <tbody>
@@ -289,9 +289,9 @@
           </tr>
           <tr *ngFor="let item of items">
             <td class="flat">{{ item._id.name }}</td>
-            <td class="flat">{{ item.count }}</td>
-            <td class="flat" *ngIf="item._id.movement === 'Salida'">({{ item.totalPrice | currency:'USD':'symbol-narrow':'1.2-2' }})</td>
-            <td class="flat" *ngIf="item._id.movement === 'Entrada'">{{ item.totalPrice | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
+            <td class="align-right">{{ item.count }}</td>
+            <td class="align-right" *ngIf="item._id.movement === 'Salida'">({{ item.totalPrice | currency:'USD':'symbol-narrow':'1.2-2' }})</td>
+            <td class="align-right" *ngIf="item._id.movement === 'Entrada'">{{ item.totalPrice | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
           </tr>
           <tr align="center" *ngIf="areItemsEmpty && !loading && pathLocation[2] === 'venta'">
             <td colspan="4">No se encontraron ventas por tipo de comprobante</td>
@@ -305,9 +305,11 @@
         </tbody>
         <tfoot>
           <tr>
-            <th >Total</th>
-            <th >{{totalItem}}</th>
-            <th >{{totalAmount | currency:'USD':'symbol-narrow':'1.2-2' }}</th>
+            <th>
+              <strong>Total</strong>
+            </th>
+            <th class="align-right"><strong>{{totalItem}}</strong></th>
+            <th class="align-right"><strong>{{totalAmount | currency:'USD':'symbol-narrow':'1.2-2' }}</strong></th>
           </tr>
         </tfoot>
       </table>
