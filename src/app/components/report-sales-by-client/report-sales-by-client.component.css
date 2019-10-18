@@ -9,3 +9,15 @@
 .btn, thead {
     cursor: pointer;
 }
+
+.align-right {
+  text-align: right;
+}
+
+.align-left {
+  text-align: left;
+}
+
+.align-center {
+  text-align: center;
+}

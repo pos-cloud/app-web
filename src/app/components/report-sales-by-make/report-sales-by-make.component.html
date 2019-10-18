@@ -107,8 +107,8 @@
         <thead>
           <tr>
             <th (click)="orderBy('make.description')">Marca</th>
-            <th (click)="orderBy('count')">Ítems</th>
-            <th (click)="orderBy('total')">Monto Total</th>
+            <th class="align-right" (click)="orderBy('count')">Ítems</th>
+            <th class="align-right" (click)="orderBy('total')">Monto Total</th>
           </tr>
         </thead>
         <tbody>
@@ -119,10 +119,10 @@
           </tr>
           <tr *ngFor="let item of items">
             <td class="flat">{{ item.make.description }}</td>
-            <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.count }}</td>
-            <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.count * -1 }}</td>
-            <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.total | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
-            <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.total * -1 | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
+            <td  class="align-right" *ngIf="transactionMovement === 'Venta'">{{ item.count }}</td>
+            <td  class="align-right" *ngIf="transactionMovement === 'Compra'">{{ item.count * -1 }}</td>
+            <td  class="align-right" *ngIf="transactionMovement === 'Venta'">{{ item.total | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
+            <td  class="align-right" *ngIf="transactionMovement === 'Compra'">{{ item.total * -1 | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
           </tr>
           <tr align="center" *ngIf="areMakesEmpty && !loading && transactionMovement === 'Venta'">
             <td colspan="3">No se encontraron ventas por marcas</td>
@@ -133,9 +133,9 @@
         </tbody>
         <tfoot>
           <tr>
-            <th >Total</th>
-            <th >{{totalItem}}</th>
-            <th >{{totalAmount | currency:'USD':'symbol-narrow':'1.2-2' }}</th>
+            <th><strong>Total</strong></th>
+            <th class="align-right"><strong>{{totalItem}}</strong></th>
+            <th class="align-right"><strong>{{totalAmount | currency:'USD':'symbol-narrow':'1.2-2' }}</strong></th>
           </tr>
         </tfoot>
       </table>
