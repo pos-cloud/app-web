@@ -9,6 +9,7 @@ import { TransactionService } from 'app/services/transaction.service';
 import { Config } from './../../../app.config';
 import { CompanyType } from 'app/models/company';
 import { ConfigService } from 'app/services/config.service';
+import { CurrentAccount, Movements } from 'app/models/transaction-type';
 
 @Component({
   selector: 'app-current-account-details',
@@ -155,7 +156,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
     this._transactionService.getTransactionsV2(
         project, // PROJECT
         match, // MATCH
-        { endDate: 1 }, // SORT
+        { 'company.name': -1, endDate: 1 }, // SORT
         group, // GROUP
         0, // LIMIT
         0 // SKIP
@@ -260,10 +261,11 @@ export class CurrentAccountDetailsComponent implements OnInit {
         if( this.config && 
             this.config.reports && 
             this.config.reports.summaryOfAccounts && 
-            this.config.reports.summaryOfAccounts.invertedViewClient === false || this.config.reports.summaryOfAccounts.invertedViewProvider === false){
+            !this.config.reports.summaryOfAccounts.invertedViewClient ||
+            !this.config.reports.summaryOfAccounts.invertedViewProvider) {
 
-              if(transaction.type.currentAccount === "Si"){
-                if(transaction.type.movement === "Entrada") {
+              if(transaction.type.currentAccount === CurrentAccount.Yes) {
+                if(transaction.type.movement === Movements.Outflows) {
                   totalPrice = totalPrice + transaction.totalPrice;
                   balance = balance + transaction.balance;
                 } else {
@@ -271,7 +273,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                   balance = balance - transaction.balance;
                 }
               } else {
-                if(transaction.type.movement === "Entrada") {
+                if(transaction.type.movement === Movements.Outflows) {
                   totalPrice = totalPrice - transaction.totalPrice;
                   balance = balance - transaction.balance;
                 } else {
@@ -280,8 +282,8 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 }
               }
         } else {
-          if(transaction.type.currentAccount === "Si"){
-            if(transaction.type.movement === "Entrada") {
+          if(transaction.type.currentAccount === CurrentAccount.Yes) {
+            if(transaction.type.movement === Movements.Outflows) {
               totalPrice = totalPrice - transaction.totalPrice;
               balance = balance - transaction.balance;
             } else {
@@ -289,7 +291,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
               balance = balance + transaction.balance;
             }
           } else {
-            if(transaction.type.movement === "Entrada") {
+            if(transaction.type.movement === Movements.Outflows) {
               totalPrice = totalPrice + transaction.totalPrice;
               balance = balance + transaction.balance;
             } else {
@@ -298,7 +300,6 @@ export class CurrentAccountDetailsComponent implements OnInit {
             }
           }
         }
-        
 
         if(row > 220) {
           page += 1;
