@@ -177,7 +177,8 @@ export class ListSummaryOfAccountsComponent implements OnInit {
         modalRef.componentInstance.address = this.filterCompanyAddress;
         modalRef.componentInstance.emails = this.filterCompanyEmails;
         modalRef.componentInstance.name = this.filterCompanyName;
-        modalRef.componentInstance.identification = this.filterIdentificationValue
+        modalRef.componentInstance.identification = this.filterIdentificationValue;
+        modalRef.componentInstance.filterCompanyType = this.filterCompanyType;
         
         break;
     }

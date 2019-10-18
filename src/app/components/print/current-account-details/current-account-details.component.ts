@@ -26,6 +26,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
   @Input() emails : string;
   @Input() name : string;
   @Input() identification : string;
+  @Input() filterCompanyType;
 
 
 
@@ -253,53 +254,138 @@ export class CurrentAccountDetailsComponent implements OnInit {
         if(transaction.expirationDate) {
           this.doc.text(120,row,transaction.expirationDate);
         }
-        this.doc.text(155,row, "$" + this.roundNumber.transform(transaction.totalPrice).toString());
-        if(!transaction.balance) transaction.balance = 0;
-        this.doc.text(180,row, "$" + this.roundNumber.transform(transaction.balance).toString());
-        row += 5;
 
-        if( this.config && 
+        var signo;
+
+        if(this.filterCompanyType === CompanyType.Client){
+         
+          if( this.config && 
+              this.config.reports && 
+              this.config.reports.summaryOfAccounts && 
+              !this.config.reports.summaryOfAccounts.invertedViewClient){
+  
+                if(transaction.type.currentAccount === "Si"){
+                  if(transaction.type.movement === "Entrada") {
+                    totalPrice = totalPrice + transaction.totalPrice;
+                    balance = balance + transaction.balance;
+                    signo = true;
+                  } else {
+                    totalPrice = totalPrice - transaction.totalPrice;
+                    balance = balance - transaction.balance;
+                    signo = false;
+                  }
+                } else {
+                  if(transaction.type.movement === "Entrada") {
+                    totalPrice = totalPrice - transaction.totalPrice;
+                    balance = balance - transaction.balance;
+                    signo = false;
+
+                  } else {
+                    totalPrice = totalPrice + transaction.totalPrice;
+                    balance = balance + transaction.balance;
+                    signo = true;
+
+                  }
+                }
+          } else {
+            if(transaction.type.currentAccount === "Si"){
+              if(transaction.type.movement === "Entrada") {
+                totalPrice = totalPrice - transaction.totalPrice;
+                balance = balance - transaction.balance;
+                signo = false;
+
+              } else {
+                totalPrice = totalPrice + transaction.totalPrice;
+                balance = balance + transaction.balance;
+                signo = true;
+
+              }
+            } else {
+              if(transaction.type.movement === "Entrada") {
+                totalPrice = totalPrice + transaction.totalPrice;
+                balance = balance + transaction.balance;
+                signo = true;
+
+              } else {
+                totalPrice = totalPrice - transaction.totalPrice;
+                balance = balance - transaction.balance;
+                signo = false;
+
+              }
+            }
+          }
+        } else {
+          if( this.config && 
             this.config.reports && 
             this.config.reports.summaryOfAccounts && 
-            !this.config.reports.summaryOfAccounts.invertedViewClient ||
-            !this.config.reports.summaryOfAccounts.invertedViewProvider) {
+            !this.config.reports.summaryOfAccounts.invertedViewProvider){
 
-              if(transaction.type.currentAccount === CurrentAccount.Yes) {
-                if(transaction.type.movement === Movements.Outflows) {
-                  totalPrice = totalPrice + transaction.totalPrice;
-                  balance = balance + transaction.balance;
-                } else {
+              if(transaction.type.currentAccount === CurrentAccount.Yes){
+                if(transaction.type.movement === Movements.Inflows) {
                   totalPrice = totalPrice - transaction.totalPrice;
                   balance = balance - transaction.balance;
+                  signo = false;
+
+                } else {
+                  totalPrice = totalPrice + transaction.totalPrice;
+                  balance = balance + transaction.balance;
+                  signo = true;
+
                 }
               } else {
-                if(transaction.type.movement === Movements.Outflows) {
-                  totalPrice = totalPrice - transaction.totalPrice;
-                  balance = balance - transaction.balance;
-                } else {
+                if(transaction.type.movement === Movements.Inflows) {
                   totalPrice = totalPrice + transaction.totalPrice;
                   balance = balance + transaction.balance;
+                  signo = true;
+
+                } else {
+                  totalPrice = totalPrice - transaction.totalPrice;
+                  balance = balance - transaction.balance;
+                  signo = false;
+
                 }
               }
-        } else {
-          if(transaction.type.currentAccount === CurrentAccount.Yes) {
-            if(transaction.type.movement === Movements.Outflows) {
-              totalPrice = totalPrice - transaction.totalPrice;
-              balance = balance - transaction.balance;
-            } else {
-              totalPrice = totalPrice + transaction.totalPrice;
-              balance = balance + transaction.balance;
-            }
           } else {
-            if(transaction.type.movement === Movements.Outflows) {
-              totalPrice = totalPrice + transaction.totalPrice;
-              balance = balance + transaction.balance;
+            if(transaction.type.currentAccount === CurrentAccount.Yes){
+              if(transaction.type.movement === Movements.Inflows) {
+                totalPrice = totalPrice + transaction.totalPrice;
+                balance = balance + transaction.balance;
+                signo = true;
+
+              } else {
+                totalPrice = totalPrice - transaction.totalPrice;
+                balance = balance - transaction.balance;
+                signo = false;
+
+              }
             } else {
-              totalPrice = totalPrice - transaction.totalPrice;
-              balance = balance - transaction.balance;
+              if(transaction.type.movement === Movements.Inflows) {
+                totalPrice = totalPrice - transaction.totalPrice;
+                balance = balance - transaction.balance;
+                signo = false;
+
+              } else {
+                totalPrice = totalPrice + transaction.totalPrice;
+                balance = balance + transaction.balance;
+                signo = true;
+
+              }
             }
           }
         }
+
+        if(signo){
+          this.doc.text(155,row, "$ " + this.roundNumber.transform(transaction.totalPrice).toString());
+          if(!transaction.balance) transaction.balance = 0;
+          this.doc.text(180,row, "$ " + this.roundNumber.transform(transaction.balance).toString());
+          row += 5;
+        } else {
+          this.doc.text(155,row, "$ -" + this.roundNumber.transform(transaction.totalPrice).toString());
+          if(!transaction.balance) transaction.balance = 0;
+          this.doc.text(180,row, "$ " + this.roundNumber.transform(transaction.balance).toString());
+          row += 5;
+        }
+
 
         if(row > 220) {
           page += 1;
