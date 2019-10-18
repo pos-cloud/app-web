@@ -1320,12 +1320,15 @@ export class PrintComponent implements OnInit {
 
     if(Object.keys(arrayMax).length > 0) {
       for (let k of Object.keys(arrayMax)) {
-        this.doc.text('- ' + k, margin + 5, row += 5);
         if(!openingAmounts[k]) openingAmounts[k] = 0; 
         if(!inputAmounts[k]) inputAmounts[k] = 0; 
         if(!outputAmounts[k]) outputAmounts[k] = 0; 
         if(!closingAmounts[k]) closingAmounts[k] = 0; 
-        this.doc.text('$ ' + decimalPipe.transform(closingAmounts[k] - ((openingAmounts[k] + inputAmounts[k]) - outputAmounts[k]), '1.2-2'), 60, row);
+        let dif: number = this.roundNumber.transform(closingAmounts[k] - ((openingAmounts[k] + inputAmounts[k]) - outputAmounts[k]));
+        if(dif != 0) {
+          this.doc.text('- ' + k, margin + 5, row += 5);
+          this.doc.text('$ ' + decimalPipe.transform(closingAmounts[k] - ((openingAmounts[k] + inputAmounts[k]) - outputAmounts[k]), '1.2-2'), 60, row);
+        }
       }
     }
     this.doc.setFontType('bold');
