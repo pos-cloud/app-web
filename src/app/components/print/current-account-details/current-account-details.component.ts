@@ -10,6 +10,7 @@ import { Config } from './../../../app.config';
 import { CompanyType } from 'app/models/company';
 import { ConfigService } from 'app/services/config.service';
 import { CurrentAccount, Movements } from 'app/models/transaction-type';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-current-account-details',
@@ -27,7 +28,8 @@ export class CurrentAccountDetailsComponent implements OnInit {
   @Input() name : string;
   @Input() identification : string;
   @Input() filterCompanyType;
-
+  @Input() startDate;
+  @Input() endDate;
 
 
   public alertMessage: string = '';
@@ -100,6 +102,17 @@ export class CurrentAccountDetailsComponent implements OnInit {
     if(this.employee ) {
       match += `"company.employee.name": { "$regex": "${this.employee}", "$options": "i" }, `
     }
+
+    if(this.startDate && this.endDate){
+
+      let timezone = "-03:00";
+      if(Config.timezone && Config.timezone !== '') {
+        timezone = Config.timezone.split('UTC')[1];
+      }
+
+      match +=  `"endDate" : {  "$gte": {"$date": "${this.startDate}T00:00:00${timezone}"},
+                                "$lte": {"$date": "${this.endDate}T00:00:00${timezone}"}},`
+    }
     
     match += `"company.type" : "${this.companyType}",
               "state" : "Cerrado",
@@ -131,7 +144,8 @@ export class CurrentAccountDetailsComponent implements OnInit {
       "company.employee.name" :1,
       "company.operationType" : 1,
       "company.state.name" :1,
-      "endDate" :{ $dateToString: { date: "$endDate", format: "%d/%m/%Y", timezone: timezone }},
+      "endDate" : 1,
+      "endDate2" : { $dateToString: { date: "$endDate", format: "%d/%m/%Y", timezone: timezone }},
       "type.name" :1,
       "type.currentAccount" : 1,
       "number" : 1,
@@ -244,7 +258,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
       let balance = 0;
       let total;
       for(let transaction of this.items[i].transactions) {
-        this.doc.text(5,row,transaction.endDate);
+        this.doc.text(5,row,transaction['endDate2']);
         if(transaction.type.labelPrint) {
           this.doc.text(30,row,transaction.type.labelPrint);
         } else {

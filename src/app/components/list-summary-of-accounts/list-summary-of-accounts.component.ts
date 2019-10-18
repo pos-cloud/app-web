@@ -179,6 +179,8 @@ export class ListSummaryOfAccountsComponent implements OnInit {
         modalRef.componentInstance.name = this.filterCompanyName;
         modalRef.componentInstance.identification = this.filterIdentificationValue;
         modalRef.componentInstance.filterCompanyType = this.filterCompanyType;
+        modalRef.componentInstance.startDate = this.startDate;
+        modalRef.componentInstance.endDate = this.endDate;
         
         break;
     }
