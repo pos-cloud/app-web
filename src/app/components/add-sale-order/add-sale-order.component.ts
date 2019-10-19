@@ -1544,9 +1544,6 @@ export class AddSaleOrderComponent {
 
               if (this.movementsOfCashes) {
 
-                console.log(this.transaction.type.updatePrice)
-                  console.log(this.movementsOfArticles)
-
                 if(this.movementsOfArticles && this.movementsOfArticles.length > 0 && this.transaction.type.updatePrice){
                   this.updateArticles(); 
                 }
