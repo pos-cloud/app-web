@@ -1871,10 +1871,12 @@ export class PrintComponent implements OnInit {
     // Detalle de productos
     var row = 85;
     var margin = 5;
+    var totalArticle = 0;
 
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (var i = 0; i < this.movementsOfArticles.length; i++) {
         if (this.movementsOfArticles[i].amount) {
+          totalArticle = totalArticle + this.movementsOfArticles[i].amount;
           this.doc.text((this.movementsOfArticles[i].amount).toString(), 6, row);
         }
         if (this.movementsOfArticles[i].code) {
@@ -2189,6 +2191,10 @@ export class PrintComponent implements OnInit {
     }
 
     // FIN FORMA DE PAGO
+
+    this.doc.setFontType('bold');
+    this.doc.text("Total de Productos: " + totalArticle, margin + 70, 246);
+    this.doc.setFontType('normal');
 
     // OBSERVATION
     
