@@ -2192,9 +2192,11 @@ export class PrintComponent implements OnInit {
 
     // FIN FORMA DE PAGO
 
-    this.doc.setFontType('bold');
-    this.doc.text("Total de Productos: " + totalArticle, margin + 70, 246);
-    this.doc.setFontType('normal');
+    if(totalArticle > 0){
+      this.doc.setFontType('bold');
+      this.doc.text("Total de Productos: " + totalArticle, margin + 70, 246);
+      this.doc.setFontType('normal');
+    }
 
     // OBSERVATION
     
