@@ -75,6 +75,9 @@ import { PriceListService } from 'app/services/price-list.service';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { Deposit } from 'app/models/deposit';
 import { DepositService } from 'app/services/deposit.service';
+import { async } from '@angular/core/testing';
+import { ArticleService } from 'app/services/article.service';
+import { resolve } from 'q';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -148,6 +151,7 @@ export class AddSaleOrderComponent {
     public _tableService: TableService,
     public _turnService: TurnService,
     public _printService: PrintService,
+    public _articleService : ArticleService,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
@@ -1539,6 +1543,14 @@ export class AddSaleOrderComponent {
               this.movementsOfCashes = result.movementsOfCashes;
 
               if (this.movementsOfCashes) {
+
+                console.log(this.transaction.type.updatePrice)
+                  console.log(this.movementsOfArticles)
+
+                if(this.movementsOfArticles && this.movementsOfArticles.length > 0 && this.transaction.type.updatePrice){
+                  this.updateArticles(); 
+                }
+
                 if (result.movementOfArticle) {
                   this.movementsOfArticles.push(result.movementOfArticle);
                 }
@@ -1766,6 +1778,83 @@ export class AddSaleOrderComponent {
         break;
       default: ;
     };
+  }
+
+  public updateArticles() : void {
+
+    let unitPrice;
+
+    this.movementsOfArticles.forEach(async element => {
+      if(element && element.article && element.article._id){
+        if(this.transaction.quotation > 1){
+          unitPrice = (element.basePrice / element.amount) / this.transaction.quotation
+        } else {
+          unitPrice = element.basePrice / element.amount
+        }
+        await this.updateArticle(unitPrice,element.article)
+      }
+    });
+  }
+
+  async updateArticle(basePrice,article : Article): Promise<boolean> {
+
+    return new Promise<boolean>( async (resolve, reject) => {
+      
+      if(basePrice && article){
+        let taxedAmount = 0;
+        article.costPrice = 0;
+        article.basePrice = basePrice;
+        taxedAmount = basePrice;
+  
+          if(article.otherFields && article.otherFields.length > 0) {
+            for (const field of article.otherFields) {
+              if(field.articleField.datatype === ArticleFieldType.Percentage) {
+                field.amount = this.roundNumber.transform((basePrice * parseFloat(field.value) / 100));
+              } else if(field.articleField.datatype === ArticleFieldType.Number) {
+                field.amount = parseFloat(field.value);
+              }
+              if (field.articleField.modifyVAT) {
+                taxedAmount += field.amount;
+              } else {
+                if(field.amount) {
+                  article.costPrice += field.amount;
+                }
+              }
+            }
+          }
+          
+          if (article.taxes && article.taxes.length > 0) {
+            for (const articleTax of article.taxes) {
+              if(articleTax.tax.percentage && articleTax.tax.percentage != 0) {
+                articleTax.taxBase = taxedAmount;
+                articleTax.taxAmount = this.roundNumber.transform((taxedAmount * articleTax.percentage / 100));
+              }
+              article.costPrice += (articleTax.taxAmount);
+            }
+          }
+          article.costPrice += taxedAmount;
+  
+          if (!(taxedAmount === 0 && article.salePrice !== 0)) {
+            article.markupPrice = this.roundNumber.transform((article.costPrice * article.markupPercentage / 100));
+            article.salePrice = article.costPrice + article.markupPrice;
+          }
+  
+          this._articleService.updateArticle(article,null).subscribe(
+            result =>{
+              if(result && result.article){
+                resolve(true)
+              }
+            },
+            error => {
+              this.showMessage(error._body, 'danger', false);
+              resolve(null);
+            }
+          )
+      } else {
+        resolve(false)
+      }
+    })
+
   }
 
   async isValidCharge(): Promise<boolean> {
