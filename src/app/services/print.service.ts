@@ -36,6 +36,32 @@ export class PrintService {
         );
     }
 
+    
+	public toPrintURL(url : string , file : string): Observable<any> {
+
+        const URL = `${Config.apiURL}printURL`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+        
+        const params = new HttpParams()
+            .set('file', file)
+            .set('url', url);
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return of(err);
+            })
+        );
+    }
+
 	public getBarcode(barcode : string): Observable<any> {
 
         const URL = `${Config.apiURL}barcode/${barcode}`;
@@ -65,7 +91,19 @@ export class PrintService {
           
             xhr.open('POST', Config.apiURL + 'upload-file/'+folder+'/'+name, true);
             xhr.setRequestHeader('Authorization', this._authService.getToken());
-            xhr.send(data);      
+
+            xhr.onreadystatechange = function () {
+				if (xhr.readyState == 4) {
+					if (xhr.status == 200) {
+						resolve(JSON.parse(xhr.response));
+					} else {
+						reject(xhr.response);
+					}
+				}
+            }
+            
+            xhr.send(data);    
+            
 		});
     }
 }

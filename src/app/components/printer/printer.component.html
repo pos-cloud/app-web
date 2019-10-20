@@ -79,11 +79,17 @@
               </div>
             </div>
             <div class="row">
-              <div class="form-group col-md-12">
+              <div class="form-group col-md-6">
                 <label for="printIn" class="control-label">Imprime en</label>
                 <select class="form-control" formControlName="printIn">
                   <option *ngFor="let printIn of printsIn" [ngValue]="printIn">{{printIn}}</option>
                 </select>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="url" class="control-label">URL:</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" formControlName="url" name="url" id="url" aria-describedby="basic-addon1"/>
+                </div>
               </div>
             </div>
           </ng-template>

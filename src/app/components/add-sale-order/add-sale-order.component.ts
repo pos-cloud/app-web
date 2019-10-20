@@ -75,9 +75,7 @@ import { PriceListService } from 'app/services/price-list.service';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { Deposit } from 'app/models/deposit';
 import { DepositService } from 'app/services/deposit.service';
-import { async } from '@angular/core/testing';
 import { ArticleService } from 'app/services/article.service';
-import { resolve } from 'q';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -117,6 +115,7 @@ export class AddSaleOrderComponent {
   public kitchenArticlesToPrint: MovementOfArticle[];
   public kitchenArticlesPrinted: number = 0;
   public barArticlesToPrint: MovementOfArticle[];
+  public barArticlesPrinted: number = 0;
   public printSelected: Print;
   public filterArticle: string = '';
   public focusEvent = new EventEmitter<boolean>();
@@ -1745,6 +1744,18 @@ export class AddSaleOrderComponent {
           this.updateMovementOfArticlePrinted();
         });
         break;
+      case 'printBar':
+        modalRef = this._modalService.open(PrintComponent);
+        modalRef.componentInstance.transactionId = this.transaction._id;
+        modalRef.componentInstance.movementsOfArticles = this.barArticlesToPrint;
+        modalRef.componentInstance.printer = this.printerSelected;
+        modalRef.componentInstance.typePrint = 'bar';
+
+        modalRef.result.then((result) => {
+        }, (reason) => {
+          this.updateMovementOfArticlePrintedBar();
+        });
+        break;
       case 'import':
         modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.transaction = this.transaction._id;
@@ -2340,41 +2351,87 @@ export class AddSaleOrderComponent {
     );
   }
 
+  public updateMovementOfArticlePrintedBar(): void {
+
+    this.loading = true;
+
+      this.barArticlesToPrint[this.barArticlesPrinted].printed = this.barArticlesToPrint[this.barArticlesPrinted].amount;
+      this._movementOfArticleService.updateMovementOfArticle(this.barArticlesToPrint[this.barArticlesPrinted]).subscribe(
+        async result => {
+          if (!result.movementOfArticle) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          } else {
+            this.barArticlesPrinted++;
+            if (this.barArticlesPrinted < this.barArticlesToPrint.length) {
+              this.updateMovementOfArticlePrintedBar();
+            } else {
+              if (this.posType === "resto") {
+                this.transaction.table.state = TableState.Busy;
+                await this.updateTable().then(table => {
+                  if(table) {
+                    this.transaction.table = table;
+                    if(this.kitchenArticlesToPrint.length > 0){
+                      this.typeOfOperationToPrint = 'kitchen';
+                      this.distributeImpressions(null)
+                    } else {
+                      this.backFinal();
+                    }
+                  }
+                });
+              } else {
+                if(this.barArticlesToPrint){
+                  this.typeOfOperationToPrint = 'kitchen';
+                  this.distributeImpressions(null)
+                } else {
+                  this.backFinal();
+                }
+              }
+            }
+          }
+          this.loading = false;
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
+        }
+      );
+  }
+
   public updateMovementOfArticlePrinted(): void {
 
     this.loading = true;
 
-    this.kitchenArticlesToPrint[this.kitchenArticlesPrinted].printed = this.kitchenArticlesToPrint[this.kitchenArticlesPrinted].amount;
-
-    this._movementOfArticleService.updateMovementOfArticle(this.kitchenArticlesToPrint[this.kitchenArticlesPrinted]).subscribe(
-      async result => {
-        if (!result.movementOfArticle) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.kitchenArticlesPrinted++;
-          if (this.kitchenArticlesPrinted < this.kitchenArticlesToPrint.length) {
-            this.updateMovementOfArticlePrinted();
+      this.kitchenArticlesToPrint[this.kitchenArticlesPrinted].printed = this.kitchenArticlesToPrint[this.kitchenArticlesPrinted].amount;
+      this._movementOfArticleService.updateMovementOfArticle(this.kitchenArticlesToPrint[this.kitchenArticlesPrinted]).subscribe(
+        async result => {
+          if (!result.movementOfArticle) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           } else {
-            if (this.posType === "resto") {
-              this.transaction.table.state = TableState.Busy;
-              await this.updateTable().then(table => {
-                if(table) {
-                  this.transaction.table = table;
-                  this.backFinal();
-                }
-              });
+            this.kitchenArticlesPrinted++;
+            if (this.kitchenArticlesPrinted < this.kitchenArticlesToPrint.length) {
+              this.updateMovementOfArticlePrinted();
             } else {
-              this.backFinal();
+              if (this.posType === "resto") {
+                this.transaction.table.state = TableState.Busy;
+                await this.updateTable().then(table => {
+                  if(table) {
+                    this.transaction.table = table;
+                    this.backFinal();
+                    
+                  }
+                });
+              } else {
+                this.backFinal();
+              }
             }
           }
+          this.loading = false;
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
   }
 
   public countPrinters(): number {
@@ -2405,9 +2462,20 @@ export class AddSaleOrderComponent {
     return numberOfPrinters;
   }
 
-  public distributeImpressions(printer: Printer) {
+  public distributeImpressions(printer?: Printer) {
 
     this.printerSelected = printer;
+
+    if(!this.printSelected && this.printers){
+      for (const element of this.printers) {
+        if(element && element.printIn === PrinterPrintIn.Bar && this.typeOfOperationToPrint === 'bar'){
+          this.printerSelected = element
+        }
+        if(element && element.printIn === PrinterPrintIn.Kitchen && this.typeOfOperationToPrint === 'kitchen'){
+          this.printerSelected = element
+        }
+      }
+    }
 
     switch (this.typeOfOperationToPrint) {
       case 'charge':
@@ -2416,14 +2484,10 @@ export class AddSaleOrderComponent {
         }
         break;
       case 'kitchen':
-        if (printer.type === PrinterType.PDF) {
           this.openModal("printKitchen");
-        }
         break;
       case 'bar':
-        if (printer.type === PrinterType.PDF) {
-          this.openModal("print");
-        }
+          this.openModal("printBar");
         break;
       default:
         this.showMessage("No se reconoce la operación de impresión.", 'danger', false);

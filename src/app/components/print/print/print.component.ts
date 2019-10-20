@@ -38,8 +38,6 @@ import { DateFormatPipe } from '../../../pipes/date-format.pipe';
 import { RoundNumberPipe } from '../../../pipes/round-number.pipe';
 import { CashBox } from '../../../models/cash-box';
 import { CashBoxService } from '../../../services/cash-box.service';
-import { TaxClassification } from 'app/models/tax';
-import { Taxes } from 'app/models/taxes';
 import { ClaimService } from 'app/services/claim.service';
 import { MovementOfCancellationService } from 'app/services/movement-of-cancellation.service';
 
@@ -145,6 +143,7 @@ export class PrintComponent implements OnInit {
 
     this.doc = new jsPDF(orientation, units, [pageWidth, pageHigh]);
 
+
     this.getConfig();
   }
 
@@ -176,6 +175,8 @@ export class PrintComponent implements OnInit {
               this.getClosingCashBox();
             } else if (this.typePrint === "kitchen") {
               this.toPrintKitchen();
+            } else if (this.typePrint === "bar") {
+              this.toPrintBar();
             } 
           }
         }
@@ -197,7 +198,7 @@ export class PrintComponent implements OnInit {
       result => {
         if (result && result.transaction) {
             this.transaction = result.transaction;
-            if(this.transaction && this.transaction.type && this.transaction.type.defectPrinter) {
+            if(this.transaction && this.transaction.type && this.transaction.type.defectPrinter && !this.printer) {
               this.printer = this.transaction.type.defectPrinter;
             }
             this.company = this.transaction.company;
@@ -215,6 +216,8 @@ export class PrintComponent implements OnInit {
               this.getClosingCashBox();
             } else if (this.typePrint === "kitchen") {
               this.toPrintKitchen();
+            } else if (this.typePrint === "bar") {
+              this.toPrintBar();
             } 
         } else {
             this.transaction = null;
@@ -2593,9 +2596,42 @@ export class PrintComponent implements OnInit {
 
   public finishImpression(): void {
     
-    if(!this.source) {
+    if(!this.source && (this.printer && !this.printer.url)) {
       this.doc.autoPrint();
       this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
+    }
+
+    if(this.typePrint === "kitchen" && this.printer.url){
+      this._printService.saveFile(this.doc.output('blob'),'kitchen',this.transactionId).then(
+        result => {
+          if(result){
+            this._printService.toPrintURL(this.printer.url,"/home/clients/"+Config.database+"/kitchen/"+this.transactionId+".pdf").subscribe(
+              (result) => {
+                //console.log(result)
+              },
+              error =>{
+                console.log(error)
+              }
+            )
+          }
+        }
+      )
+    }
+    if(this.typePrint === "bar" && this.printer.url){
+      this._printService.saveFile(this.doc.output('blob'),'bar',this.transactionId).then(
+        result => {
+          if(result){
+            this._printService.toPrintURL(this.printer.url,"/home/clients/"+Config.database+"/bar/"+this.transactionId+".pdf").subscribe(
+              (result) => {
+                //console.log(result)
+              },
+              error =>{
+                console.log(error)
+              }
+            )
+          }
+        }
+      )
     }
     
 

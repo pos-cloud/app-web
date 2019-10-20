@@ -179,6 +179,7 @@ export class PrinterComponent implements OnInit {
       'pageSize': [this.pageSizes[0], [
         ]
       ],
+      'url' : [this.printer.url,[]],
       'orientation' : [this.printer.orientation,[]],
       'row' : [this.printer.row,[]],
       'addPag' : [this.printer.addPag,[]],
@@ -311,6 +312,8 @@ export class PrinterComponent implements OnInit {
     if (!this.printer.orientation) this.printer.orientation = '';
     if (!this.printer.row) this.printer.row = 0;
     if (!this.printer.addPag) this.printer.addPag = 0;
+    if (!this.printer.url) this.printer.url = '';
+
 
     const values = {
       '_id' : this.printer._id,
@@ -322,7 +325,8 @@ export class PrinterComponent implements OnInit {
       'pageSize': this.printerForm.value.pageSize,
       'orientation' : this.printer.orientation,
       'row' : this.printer.row,
-      'addPag' : this.printer.addPag
+      'addPag' : this.printer.addPag,
+      'url' : this.printer.url
     }
 
     if(this.printer.fields && this.printer.fields.length > 0) {
@@ -402,9 +406,10 @@ export class PrinterComponent implements OnInit {
         if (!result.printer) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
-        } else {
-          // this.showMessage("La impresora se ha actualizado con éxito.", 'success', true);
-        }
+          } else {
+            this.showMessage("La impresora se ha actualizado con éxito.", 'success', true);
+            this.loading = false;
+          }
         this.loading = false;
       },
       error => {

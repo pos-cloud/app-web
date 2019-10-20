@@ -13,6 +13,7 @@ export class Printer {
     public pageWidth: number;
     public pageHigh: number;
     public printIn: PrinterPrintIn = PrinterPrintIn.Counter;
+    public url: string;
 
     public orientation : string; //hporizantal vertical
     public row : number; //espacio entre filas del for
