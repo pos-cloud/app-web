@@ -93,6 +93,14 @@ export class ReportBestSellingArticleComponent implements OnInit {
       align: 'left'
     },
     {
+      name: 'article.posDescription',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left'
+    },
+    {
       name: 'article.quantityPerMeasure',
       visible: true,
       disabled: false,
@@ -107,6 +115,38 @@ export class ReportBestSellingArticleComponent implements OnInit {
       filter: true,
       datatype: 'string',
       align: 'center'
+    },
+    {
+      name: 'article.costPrice',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'currency',
+      align: 'left'
+    },
+    {
+      name: 'article.markupPercentage',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'percent',
+      align: 'left'
+    },
+    {
+      name: 'article.markupPrice',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'currency',
+      align: 'left'
+    },
+    {
+      name: 'article.salePrice',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'currency',
+      align: 'left'
     },
     {
       name: 'count',
@@ -319,6 +359,9 @@ export class ReportBestSellingArticleComponent implements OnInit {
           break;
         case 'currency':
             value = this.currencyPipe.transform(this.roundNumberPipe.transform(eval(val)), 'USD', 'symbol-narrow', '1.2-2');
+          break;
+        case 'percent':
+            value = this.roundNumberPipe.transform(eval(val)) + '%';
           break;
         default:
             value = eval(val);

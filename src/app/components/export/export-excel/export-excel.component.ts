@@ -63,6 +63,9 @@ export class ExportExcelComponent {
         case 'currency':
             value = this.roundNumberPipe.transform(eval(val));
           break;
+        case 'percent':
+            value = this.roundNumberPipe.transform(eval(val));
+          break;
         default:
             value = eval(val);
           break;

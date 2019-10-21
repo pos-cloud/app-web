@@ -4,11 +4,16 @@
             "description": "Categoría"
         },
         "code": "Código de Barras",
+        "costPrice": "Precio de Costo",
         "description": "Descripción",
         "make": {
             "description": "Marca"
         },
+        "markupPercentage": "Margen",
+        "markupPrice": "Utilidad",
+        "posDescription": "Descripción Corta",
         "quantityPerMeasure": "Cant. de Un. de Medida",
+        "salePrice": "Precio de Venta",
         "unitOfMeasurement": {
             "abbreviation": "Un. de Medida"
         }
