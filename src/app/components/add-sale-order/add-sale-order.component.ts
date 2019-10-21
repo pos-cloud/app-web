@@ -1543,9 +1543,6 @@ export class AddSaleOrderComponent {
 
               if (this.movementsOfCashes) {
 
-                if(this.movementsOfArticles && this.movementsOfArticles.length > 0 && this.transaction.type.updatePrice){
-                  this.updateArticles(); 
-                }
 
                 if (result.movementOfArticle) {
                   this.movementsOfArticles.push(result.movementOfArticle);
@@ -1988,7 +1985,12 @@ export class AddSaleOrderComponent {
           }
     }
 
+    if(this.movementsOfArticles && this.movementsOfArticles.length > 0 && this.transaction.type.updatePrice){
+      this.updateArticles(); 
+    }
+
     if(isValid) {
+
       await this.updateBalance().then(async balance => {
         if(balance !== null) {
           this.transaction.balance = balance;
