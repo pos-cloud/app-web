@@ -30,6 +30,10 @@ import { OrderByPipe } from 'app/pipes/order-by.pipe';
 import { ConfigService } from 'app/services/config.service';
 import { Deposit } from 'app/models/deposit';
 import { TaxBase } from 'app/models/tax';
+import { Transaction } from 'app/models/transaction';
+import { CompanyType } from 'app/models/company';
+import { PriceListService } from 'app/services/price-list.service';
+import { PriceList } from 'app/models/price-list';
 
 @Component({
   selector: 'app-add-movement-of-article',
@@ -45,6 +49,7 @@ export class AddMovementOfArticleComponent implements OnInit {
   public articleStock: ArticleStock;
   public variants: Variant[];
   public variantTypes: VariantType[];
+  public transaction : Transaction;
   public selectedVariants;
   public areVariantsEmpty: boolean = true;
   public movementOfArticleForm: FormGroup;
@@ -86,6 +91,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     private _articleStockService: ArticleStockService,
     private _variantService: VariantService,
     private _configService: ConfigService,
+    private _priceListService : PriceListService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -145,7 +151,27 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  public buildForm(): void {
+  public getPriceList(id: string): Promise<PriceList> {
+
+    return new Promise<PriceList>((resolve, reject) => {
+
+      this._priceListService.getPriceList(id).subscribe(
+        result => {
+          if (!result.priceList) {
+            resolve(null);
+          } else {
+            resolve(result.priceList);
+          }
+        },
+        error => {
+          this.showMessage(error._body, "danger", false);
+          resolve(null);
+        }
+      );
+    });
+  }
+
+  async buildForm() {
     if (this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
       if (this.movementOfArticle.transaction.type.entryAmount === EntryAmount.SaleWithoutVAT) {
         if (this.movementOfArticle.taxes && this.movementOfArticle.taxes.length > 0) {
@@ -183,8 +209,10 @@ export class AddMovementOfArticleComponent implements OnInit {
         }
       }
     }
-
+      
     this.movementOfArticle.unitPrice = this.roundNumber.transform(this.movementOfArticle.unitPrice);
+    
+
 
     this.movementOfArticleForm = this._fb.group({
       '_id': [this.movementOfArticle._id, [
@@ -365,7 +393,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     return uniqueArray;
   }
 
-  public selectVariant(type: VariantType, value: VariantValue): void {
+  async selectVariant(type: VariantType, value: VariantValue) {
 
     let key = type.name;
     if (value.description === this.selectedVariants[key]) {
@@ -373,6 +401,8 @@ export class AddMovementOfArticleComponent implements OnInit {
     } else {
       this.selectedVariants[key] = value.description;
     }
+
+    this.buildForm();
 
     if(this.isValidSelectedVariants()) {
       this.movementOfArticle.article = this.getArticleBySelectedVariants();
@@ -556,7 +586,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     }
   }
 
-  public changeArticleByVariants(articleSelected: Article) {
+  async changeArticleByVariants(articleSelected: Article) {
 
     let transaction = this.movementOfArticle.transaction;
     this.movementOfArticle = new MovementOfArticle();
@@ -641,6 +671,53 @@ export class AddMovementOfArticleComponent implements OnInit {
           }
           this.movementOfArticle.taxes = taxes;
         }
+
+        let increasePrice = 0;
+    
+        if( this.movementOfArticle && 
+            this.movementOfArticle.transaction && 
+            this.movementOfArticle.transaction.company && 
+            this.movementOfArticle.transaction.company.priceList && 
+            this.movementOfArticle.transaction.company.type === CompanyType.Client ) {
+          let priceList = await this.getPriceList(this.movementOfArticle.transaction.company.priceList._id)
+          if(priceList) {
+            if(priceList.allowSpecialRules) {
+              priceList.rules.forEach(rule => {
+                if(rule) {
+                  if(this.movementOfArticle.article && rule.category && this.movementOfArticle.article.category && rule.make && this.movementOfArticle.article.make && rule.category._id === this.movementOfArticle.article.category._id && rule.make._id === this.movementOfArticle.article.make._id) {
+                    increasePrice = rule.percentage + priceList.percentage
+                  }
+                  if(this.movementOfArticle.article && rule.make && this.movementOfArticle.article.make && rule.category == null && rule.make._id === this.movementOfArticle.article.make._id) {
+                    increasePrice = rule.percentage + priceList.percentage
+                  }
+                  if(this.movementOfArticle.article && rule.category && this.movementOfArticle.article.category && rule.make == null && rule.category._id === this.movementOfArticle.article.category._id) {
+                    increasePrice = rule.percentage + priceList.percentage
+                  }
+                  if(this.movementOfArticle.article && rule.category && this.movementOfArticle.article.category && rule.make && this.movementOfArticle.article.make && rule.make._id !== this.movementOfArticle.article.make._id && rule.category._id !== this.movementOfArticle.article.category._id) {
+                    increasePrice = priceList.percentage
+                  }
+                }
+              });
+            } else {
+              increasePrice = priceList.percentage
+            }
+    
+            if(priceList.exceptions && priceList.exceptions.length > 0) {
+              priceList.exceptions.forEach(exception =>{
+                if(exception) {
+                  if(this.movementOfArticle && this.movementOfArticle.article && exception.article && exception.article._id === this.movementOfArticle.article._id) {
+                    increasePrice = exception.percentage
+                  }
+                }
+              })
+            }
+          }
+        }
+    
+        if(increasePrice != 0) {
+          this.movementOfArticle.unitPrice = this.roundNumber.transform(this.movementOfArticle.unitPrice + (this.movementOfArticle.unitPrice * increasePrice / 100));
+        } 
+
     } else {
       this.movementOfArticle.markupPercentage = 0;
       this.movementOfArticle.markupPrice = 0;
