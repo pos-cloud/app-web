@@ -133,7 +133,7 @@ export class StatisticsComponent implements OnInit {
     this.reportBestSellingArticle.endTime = this.endTime;
     this.reportBestSellingArticle.limit = 5;
     this.reportBestSellingArticle.branchSelectedId = this.branchSelectedId;
-    this.reportBestSellingArticle.getBestSellingArticle();
+    this.reportBestSellingArticle.getItems();
     this.reportSalesByPaymentMethod.startDate = this.startDate;
     this.reportSalesByPaymentMethod.startTime = this.startTime;
     this.reportSalesByPaymentMethod.endDate = this.endDate;
