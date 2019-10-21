@@ -43,7 +43,7 @@ export class ListTransactionsComponent implements OnInit {
   public areTransactionsEmpty: boolean = true;
   public alertMessage: string = '';
   public userType: string;
-  public listType: string;
+  public listType: string = 'statistics';
   public orderTerm: string[] = ['-endDate'];
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;

@@ -1,18 +1,16 @@
 <!--ESTADISTICAS GENERALES-->
 <div class="card " *ngIf="listType === 'statistics'">
   <div class="card-header">
-    <span *ngIf="transactionMovement === 'Venta'">Productos más vendidos</span>
-    <span *ngIf="transactionMovement === 'Compra'">Productos más comprados</span>
+      <span>{{title}}</span>
   </div>
   <div class="card-block table-responsive">
     <table class="table table-striped">
       <thead>
         <tr>
           <th>Producto </th>
-          <th *ngIf="transactionMovement === 'Compra'" >Ítems Comprados</th>
-          <th *ngIf="transactionMovement === 'Venta'" >Ítems Vendidos</th>
+          <th>Cantidad</th>
           <th>Unidad</th>
-          <th>Monto total </th>
+          <th>Monto</th>
         </tr>
       </thead>
       <tbody>
@@ -23,12 +21,10 @@
         </tr>
         <tr *ngFor="let item of items">
           <td class="flat">{{ item.article.description }}</td>
-          <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.count * 1 }}</td>
-          <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.count * 1 * -1 }}</td>
+          <td class="flat">{{ item.count }}</td>
           <td class="flat" *ngIf="item.article.unitOfMeasurement">{{ item.article.unitOfMeasurement.name }}</td>
           <td class="flat" *ngIf="!item.article.unitOfMeasurement"></td>
-          <td class="flat align-right" *ngIf="transactionMovement === 'Venta'">{{ item.total | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
-          <td class="flat align-right" *ngIf="transactionMovement === 'Compra'">{{ item.total * -1 | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
+          <td class="flat align-right">{{ item.total | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
         </tr>
         <tr *ngIf="items.length > 0 && transactionMovement === 'Venta'" align="center">
           <td colspan="4"><a [routerLink]="['','admin','venta','productos-mas-vendidos']">Ver más...</a></td>
@@ -36,11 +32,8 @@
         <tr *ngIf="items.length > 0 && transactionMovement === 'Compra'" align="center">
           <td colspan="4"><a [routerLink]="['','admin','compra','productos-mas-comprados']">Ver más...</a></td>
         </tr>
-        <tr align="center" *ngIf="areArticlesEmpty && !loading && transactionMovement === 'Venta'">
-          <td colspan="4">No se encontraron ventas por productos</td>
-        </tr>
-        <tr align="center" *ngIf="areArticlesEmpty && !loading && transactionMovement === 'Compra'">
-          <td colspan="4">No se encontraron compras por productos</td>
+        <tr align="center" *ngIf="areArticlesEmpty && !loading">
+          <td colspan="4">No se encontraron productos</td>
         </tr>
       </tbody>
     </table>
@@ -101,16 +94,29 @@
             <b>Acción:</b>
           </label>
       <span class="form-control btn-action center-content">
-        <i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar
+        <i class="fa fa-refresh" [ngClass]="{'fa-spin':loading}"></i>Actualizar
       </span>
     </div>
   </div>
   <div class="card  card-large">
     <div class="card-header">
-      <span *ngIf="transactionMovement === 'Venta'">Productos más vendidos</span>
-      <span *ngIf="transactionMovement === 'Compra'">Productos más comprados</span>
+      <span>{{title}}</span>
       <div class="pull-right">
-        <app-export-excel [model]="items"></app-export-excel>
+        <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems($event)"></app-export-excel>
+        <div class="btn-group" ngbDropdown>
+          <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Columnas"><i class="fa fa-columns"></i><span>Columnas</span></button>
+          <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu>
+            <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+              <div
+                class="example-box"
+                *ngFor="let column of columns"
+                cdkDrag
+                [cdkDragDisabled]="column.disabled">
+                  <label for="column"><input type="checkbox" [id]="column.name" [(ngModel)]="column.visible" (change)="getItems()" [disabled]="column.disabled">{{ column.name | translate}}</label>
+                </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -120,29 +126,22 @@
             <th>
               <i class="fa fa-bars"></i>
             </th>
-            <th (click)="orderBy('article.code')">Código</th>
-            <th (click)="orderBy('article.description')">Producto</th>
-            <th (click)="orderBy('article.category.description')">Categoría</th>
-            <th (click)="orderBy('article.make.description')">Marca</th>
-            <th class="align-right" *ngIf="transactionMovement === 'Compra'" (click)="orderBy('count')">Ítems Comprados</th>
-            <th class="align-right" *ngIf="transactionMovement === 'Venta'" (click)="orderBy('count')">Ítems Vendidos</th>
-            <th class="align-center">Presentación</th>
-            <th class="align-right" (click)="orderBy('total')">Monto Total</th>
+            <ng-container *ngFor="let column of columns">
+              <th *ngIf="column.visible" (click)="orderBy(column.name)">{{ column.name | translate }}</th>
+            </ng-container>
           </tr>
           <tr class="filters">
             <th></th>
-            <th><input type="text" class="form-control" [(ngModel)]= "filters['article.code']" placeholder="Código..." (blur)="getBestSellingArticle()" (keyup.enter)="getBestSellingArticle()"></th>
-            <th><input type="text" class="form-control" [(ngModel)]= "filters['article.description']" placeholder="Producto..." (blur)="getBestSellingArticle()" (keyup.enter)="getBestSellingArticle()"></th>
-            <th><input type="text" class="form-control" [(ngModel)]= "filters['article.category.description']" placeholder="Categoría..." (blur)="getBestSellingArticle()" (keyup.enter)="getBestSellingArticle()"></th>
-            <th><input type="text" class="form-control" [(ngModel)]= "filters['article.make.description']" placeholder="Marca..." (blur)="getBestSellingArticle()" (keyup.enter)="getBestSellingArticle()"></th>
-            <th></th>
-            <th></th>
-            <th></th>
+            <ng-container *ngFor="let column of columns">
+              <th *ngIf="column.visible">
+                <input type="text" class="form-control" [(ngModel)]="filters[column.name]" (keydown.enter)="getItems()" placeholder="{{ column.name | translate }}" [disabled]="!column.filter">
+              </th>
+            </ng-container>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td colspan="99" style="padding: 0px">
+            <td [attr.colspan]="getColumnsVisibles() + 1" style="padding: 0px">
               <app-progressbar [loading]="loading"></app-progressbar>
             </td>
           </tr>
@@ -150,35 +149,19 @@
             <td align="left" width="50">
               <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', item)" title="Ver"><i class="fa fa-eye"></i></button>
             </td>
-            <td class="flat">{{ item.article.code }}</td>
-            <td class="flat">{{ item.article.description }}</td>
-            <td class="flat" *ngIf="item.article.category">{{ item.article.category.description }}</td>
-            <td class="flat" *ngIf="!item.article.category"></td>
-            <td class="flat" *ngIf="item.article.make">{{ item.article.make.description }}</td>
-            <td class="flat" *ngIf="!item.article.make"></td> 
-            <td class="align-right" *ngIf="transactionMovement === 'Venta'">{{ item.count * 1 }}</td>
-            <td class="align-right" *ngIf="transactionMovement === 'Compra'">{{ item.count * 1 * -1 }}</td>
-            <td class="align-center" *ngIf="item.article.unitOfMeasurement && item.article.quantityPerMeasure">{{item.article.quantityPerMeasure}} {{ item.article.unitOfMeasurement.abbreviation }}</td>
-            <td class="align-center" *ngIf="!item.article.unitOfMeasurement || !item.article.quantityPerMeasure"></td>
-            <td class="align-right" *ngIf="transactionMovement === 'Venta'">{{ item.total | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
-            <td class="align-right" *ngIf="transactionMovement === 'Compra'">{{ item.total * -1 | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
+            <ng-container *ngFor="let column of columns">
+              <td *ngIf="column.visible" [attr.align]="column.align">{{getValue(item, column)}}</td>
+            </ng-container>
           </tr>
-          <tr align="center" *ngIf="areArticlesEmpty && !loading && transactionMovement === 'Venta'">
-            <td colspan="7">No se encontraron ventas por productos</td>
-          </tr>
-          <tr align="center" *ngIf="areArticlesEmpty && !loading && transactionMovement === 'Compra'">
-            <td colspan="7">No se encontraron compras por productos</td>
+          <tr align="center" *ngIf="areArticlesEmpty && !loading">
+            <td [attr.colspan]="getColumnsVisibles() + 1">No se encontraron productos</td>
           </tr>
         </tbody>
         <tfoot>
           <tr>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th> <strong>Total</strong></th>
-            <th class="align-right"><strong>{{totalItem | number:'3.2-5'}}</strong></th>
-            <th></th>
+            <th [attr.colspan]="getColumnsVisibles() - 2"></th>
+            <th class="align-right"> <strong>Total</strong></th>
+            <th class="align-right"><strong>{{totalItem | number:'1.2-2'}}</strong></th>
             <th class="align-right"><strong>{{totalAmount | currency:'USD':'symbol-narrow':'1.2-2' }}</strong></th>
           </tr>
         </tfoot>

@@ -1,1 +1,4 @@
-<button type="button" class="btn btn-light" (click)="export()">Exportar</button>
+<button type="button" class="btn" (click)="eventExport.emit(true)" [disabled]="loading">
+    <i class="fa fa-download"></i>
+    Exportar
+</button>

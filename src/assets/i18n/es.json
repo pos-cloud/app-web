@@ -1,9 +1,38 @@
 {
     "article": {
-        "type": "Tipo",
-        "code": "Código",
-        "barcode": "Código de Barras",
+        "category": {
+            "description": "Categoría"
+        },
+        "code": "Código de Barras",
         "description": "Descripción",
-        "posDescription": "Descripción Corta"
+        "make": {
+            "description": "Marca"
+        },
+        "quantityPerMeasure": "Cant. de Un. de Medida",
+        "unitOfMeasurement": {
+            "abbreviation": "Un. de Medida"
+        }
+    },
+    "barcode": "Código de Barras",
+    "category": {
+        "description": "Categoría"
+    },
+    "code": "Código",
+    "count": "Cantidad",
+    "description": "Descripción",
+    "false": "No",
+    "make": {
+        "description": "Marca"
+    },
+    "operationType": "Últ. op.",
+    "posDescription": "Descripción Corta",
+    "quantityPerMeasure": "Cant. de Un. de Medida",
+    "salePrice": "Precio de Venta",
+    "true": "Si",
+    "total": "Total",
+    "type": "Tipo",
+    "unitOfMeasurement": {
+        "abbreviation": "Unidad de Medida",
+        "name": "Unidad de Medida"
     }
 }

@@ -31,7 +31,7 @@ export class ReportSalesByMakeComponent implements OnInit {
   @Input() endDate: string;
   @Input() endTime: string;
   @Input() limit: number = 0;
-  public listType: string;
+  public listType: string = 'statistics';
   public itemsPerPage: string = "5";
   public currentPage: number = 1;
   public totalItems = 0;

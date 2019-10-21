@@ -35,7 +35,7 @@ export class ReportBirthdayComponent implements OnInit {
   @Input() limit: number = 0;
   public dates: string[] = ["HOY", "ESTE MES", "TODOS"];
   public when: string;
-  public listType: string;
+  public listType: string = 'statistics';
   public itemsPerPage: string = "5";
   public currentPage: number = 1;
   public transactionMovement: string;

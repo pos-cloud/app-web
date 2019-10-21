@@ -1,12 +1,14 @@
 
-import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild, LOCALE_ID } from '@angular/core';
 import { Router } from '@angular/router';
+import { registerLocaleData } from '@angular/common';
+import localeEsAr from '@angular/common/locales/es-AR';
+registerLocaleData(localeEsAr, 'es-Ar');
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Article, ArticleType } from './../../models/article';
+import { Article, ArticleType, columns } from './../../models/article';
 import { Config } from './../../app.config';
-import { Transaction } from './../../models/transaction';
 
 import { ArticleService } from './../../services/article.service';
 
@@ -18,7 +20,6 @@ import { RoundNumberPipe } from './../../pipes/round-number.pipe';
 import { Printer, PrinterPrintIn } from '../../models/printer';
 import { PrinterService } from '../../services/printer.service';
 import { UpdateArticlePriceComponent } from '../update-article-price/update-article-price.component';
-import { FilterPipe } from 'app/pipes/filter.pipe';
 import { AuthService } from 'app/services/auth.service';
 import { User } from 'app/models/user';
 import { PrintPriceListComponent } from '../print/print-price-list/print-price-list.component';
@@ -29,73 +30,38 @@ import { Claim, ClaimPriority, ClaimType } from 'app/models/claim';
 import { ClaimService } from 'app/services/claim.service';
 import { PrintLabelComponent } from '../print/print-label/print-label.component';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-reports-list',
   templateUrl: './reports-list.component.html',
   styleUrls: ['./reports-list.component.scss'],
-  providers: [NgbAlertConfig, RoundNumberPipe],
+  providers: [ NgbAlertConfig, { provide: LOCALE_ID, useValue: 'es-Ar' } ],
   encapsulation: ViewEncapsulation.None,
 })
 
 export class ReportsList implements OnInit {
 
   public identity: User;
-  public articles: Article[] = new Array();
   public alertMessage: string = '';
-  public userType: string = '';
-  public orderTerm: string[] = ["description"];
-  public propertyTerm: string;
-  public areFiltersVisible: boolean = false;
   public loading: boolean = false;
-  @Input() areArticlesVisible: boolean = false;
-  @Input() filterArticle: string = '';
-  @Input() transaction: Transaction;
-  public apiURL = Config.apiURL;
-  public itemsPerPage = 10;
-  public roundNumber = new RoundNumberPipe();
   public articleType: ArticleType;
-  public listTitle: string;
-  public currentPage: number = 0;
-  public database: string;
-  public columns = [
-    {
-      name: 'type',
-      visible: true,
-      disabled: true,
-      datatype: 'string'
-    },
-    {
-      name: 'code',
-      visible: true,
-      disabled: false,
-      datatype: 'string'
-    },
-    {
-      name: 'barcode',
-      visible: true,
-      disabled: false,
-      datatype: 'string'
-    },
-    {
-      name: 'description',
-      visible: true,
-      disabled: false,
-      datatype: 'string'
-    },
-    {
-      name: 'posDescription',
-      visible: true,
-      disabled: false,
-      datatype: 'string'
-    }
-  ];
-  public filters: any[];
-  public totalItems: number = 0;
-  public filterPipe: FilterPipe = new FilterPipe();
-  public filteredArticles: Article[];
   public config: Config;
-
+  private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
+  private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
+  @ViewChild(ExportExcelComponent, {static: true}) exportExcelComponent: ExportExcelComponent;
+  
+  // TABLA
+  public listTitle: string;
+  public columns: any[] = columns;
+  public filters: any[];
+  public orderTerm: string[] = ["description"];
+  public currentPage: number = 0;
+  public itemsPerPage = 10;
+  public totalItems: number = 0;
+  public items: Article[] = new Array();
+  
   constructor(
     private _articleService: ArticleService,
     private _router: Router,
@@ -109,8 +75,7 @@ export class ReportsList implements OnInit {
     private _claimService: ClaimService
   ) {
     this.filters = new Array();
-    this.articles = new Array();
-    this.filteredArticles = new Array();
+    this.items = new Array();
     for(let field of this.columns) {
       this.filters[field.name] = "";
     }
@@ -119,7 +84,6 @@ export class ReportsList implements OnInit {
   async ngOnInit() {
 
     let pathLocation: string[] = this._router.url.split('/');
-    this.userType = pathLocation[1];
     this.listTitle = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
 
     this._authService.getIdentity.subscribe(
@@ -134,8 +98,6 @@ export class ReportsList implements OnInit {
       }
     );
 
-    this.database = Config.database;
-
     if ('Variantes' === this.listTitle) {
       this.articleType = ArticleType.Variant;
     } else if ('Ingredientes' === this.listTitle) {
@@ -144,20 +106,14 @@ export class ReportsList implements OnInit {
       // ENTRA CUANDO SE HACE UNA TRANSACCIÓN O EN LA TABLA
       this.articleType = ArticleType.Final;
     }
-    this.getArticles();
+    this.getItems();
   }
 
   public drop(event: CdkDragDrop<string[]>): void {
     moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
   }
 
-  public updateView(checked: boolean): void {
-    if(checked) {
-      this.getArticles();
-    }
-  }
-
-  public getArticles(): void {
+  public getItems(): void {
     
     this.loading = true;
 
@@ -184,14 +140,8 @@ export class ReportsList implements OnInit {
         }
       }
     }
-
-    if(this.userType === 'report') {
-      if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}') match += `,`;
-      match += `"$or": [ { "type": "${ArticleType.Final}"}, {"type": "${ArticleType.Variant}" } ], "containsVariants": false, "operationType": { "$ne": "D" } }`;
-    } else {
-      if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}') match += `,`;
-      match += `"type": "${this.articleType}", "operationType": { "$ne": "D" } }`;
-    }
+    if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}') match += `,`;
+    match += `"type": "${this.articleType}", "operationType": { "$ne": "D" } }`;
     match = JSON.parse(match);
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
@@ -213,7 +163,7 @@ export class ReportsList implements OnInit {
     let group = {
         _id: null,
         count: { $sum: 1 },
-        articles: { $push: "$$ROOT" }
+        items: { $push: "$$ROOT" }
     };
 
     let page = 0;
@@ -224,7 +174,6 @@ export class ReportsList implements OnInit {
             (page * this.itemsPerPage) :
             0 // SKIP
     let limit = this.itemsPerPage;
-
     this._articleService.getArticlesV2(
       project, // PROJECT
       match, // MATCH
@@ -235,22 +184,19 @@ export class ReportsList implements OnInit {
     ).subscribe(
       result => {
         this.loading = false;
-        if(this.userType === 'pos') {
-          if (result && result && result.articles) {
-            this.articles = result.articles;
-            this.totalItems = result.count;
+        if (result && result[0] && result[0].items) {
+          if(this.itemsPerPage === 0) {
+            this.exportExcelComponent.items = result[0].items;
+            this.exportExcelComponent.export();
+            this.itemsPerPage = 10;
+            this.getItems();
           } else {
-            this.articles = new Array();
-            this.totalItems = 0;
+            this.items = result[0].items;
+            this.totalItems = result[0].count;
           }
         } else {
-          if (result && result[0] && result[0].articles) {
-            this.articles = result[0].articles;
-            this.totalItems = result[0].count;
-          } else {
-            this.articles = new Array();
-            this.totalItems = 0;
-          }
+          this.items = new Array();
+          this.totalItems = 0;
         }
       },
       error => {
@@ -261,13 +207,39 @@ export class ReportsList implements OnInit {
     );
   }
 
-  public pageChange(page): void {
-      this.currentPage = page;
-      this.getArticles();
+  public getValue(item, column): any {
+    let val: string = 'item';
+    let exists: boolean = true;
+    let value: any = '';
+    for(let a of column.name.split('.')) {
+      val += '.'+a;
+      if(exists && !eval(val)) {
+        exists = false;
+      }
+    }
+    if(exists) {
+      switch(column.datatype) {
+        case 'number':
+          value = this.roundNumberPipe.transform(eval(val));
+          break;
+        case 'currency':
+            value = this.currencyPipe.transform(this.roundNumberPipe.transform(eval(val)), 'USD', 'symbol-narrow', '1.2-2');
+          break;
+        default:
+            value = eval(val);
+          break;
+      }
+    }
+    return value;
   }
 
-  public selectArticle(articleSelected: Article): void {
-    this.activeModal.close({ article: articleSelected });
+  public pageChange(page): void {
+      this.currentPage = page;
+      this.getItems();
+  }
+
+  public selectItem(itemSelected: Article): void {
+    this.activeModal.close({ item: itemSelected });
   }
 
   public orderBy(term: string): void {
@@ -278,20 +250,20 @@ export class ReportsList implements OnInit {
       this.orderTerm[0] = term;
     }
 
-    this.getArticles();
+    this.getItems();
   }
 
   public refresh(): void {
-    this.getArticles();
+    this.getItems();
   }
 
-  async openModal(op: string, article?: Article) {
+  async openModal(op: string, item?: Article) {
 
     let modalRef;
     switch (op) {
       case 'view':
         modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.articleId = article._id;
+        modalRef.componentInstance.articleId = item._id;
         modalRef.componentInstance.readonly = true;
         modalRef.componentInstance.operation = "view";
         break;
@@ -299,28 +271,28 @@ export class ReportsList implements OnInit {
         modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "add";
         modalRef.result.then((result) => {
-          this.getArticles();
+          this.getItems();
         }, (reason) => {
-          this.getArticles();
+          this.getItems();
         });
         break;
       case 'update':
         modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.articleId = article._id;
+        modalRef.componentInstance.articleId = item._id;
         modalRef.componentInstance.operation = "update";
         modalRef.result.then((result) => {
-          this.getArticles();
+          this.getItems();
         }, (reason) => {
-          this.getArticles();
+          this.getItems();
         });
         break;
       case 'delete':
         modalRef = this._modalService.open(DeleteArticleComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.article = article;
+        modalRef.componentInstance.article = item;
         modalRef.componentInstance.readonly = true;
         modalRef.result.then((result) => {
           if (result === 'delete_close') {
-            this.getArticles();
+            this.getItems();
           }
         }, (reason) => {
 
@@ -352,7 +324,7 @@ export class ReportsList implements OnInit {
         modalRef.componentInstance.model = model;
         modalRef.result.then((result) => {
           if (result === 'import_close') {
-            this.getArticles();
+            this.getItems();
           }
         }, (reason) => {
 
@@ -373,10 +345,10 @@ export class ReportsList implements OnInit {
 
             if(labelPrinter) {
               modalRef = this._modalService.open(PrintLabelComponent);
-              if(article) {
-                modalRef.componentInstance.article = article;
+              if(item) {
+                modalRef.componentInstance.article = item;
               } else {
-                modalRef.componentInstance.articles = this.articles;
+                modalRef.componentInstance.articles = this.items;
               }
               modalRef.componentInstance.typePrint = 'label';
               modalRef.componentInstance.printer = labelPrinter;
@@ -389,28 +361,28 @@ export class ReportsList implements OnInit {
       case 'print-list':
         modalRef = this._modalService.open(PrintPriceListComponent);
         modalRef.result.then((result) => {
-          this.getArticles();
+          this.getItems();
         }, (reason) => {
-          this.getArticles();
+          this.getItems();
         });
         break;
       case 'update-prices':
         modalRef = this._modalService.open(UpdateArticlePriceComponent);
         modalRef.componentInstance.operation = "update-prices";
         modalRef.result.then((result) => {
-          this.getArticles();
+          this.getItems();
         }, (reason) => {
-          this.getArticles();
+          this.getItems();
         });
         break;
       case 'copy':
         modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "copy";
-        modalRef.componentInstance.articleId = article._id
+        modalRef.componentInstance.articleId = item._id
         modalRef.result.then((result) => {
-          this.getArticles();
+          this.getItems();
         }, (reason) => {
-          this.getArticles();
+          this.getItems();
         });
         break;
       default: ;
@@ -442,6 +414,10 @@ export class ReportsList implements OnInit {
     });
   }
 
+  public exportItems(): void {
+    this.itemsPerPage = 0;
+    this.getItems();
+  }
 
   public getTaxes(query?: string): Promise<Tax[]> {
 
@@ -464,11 +440,11 @@ export class ReportsList implements OnInit {
     });
   }
 
-  public getArticle(articleId: string): Promise<Article> {
+  public getItem(itemId: string): Promise<Article> {
 
     return new Promise<Article> ((resolve, reject) => {
 
-      this._articleService.getArticle(articleId).subscribe(
+      this._articleService.getArticle(itemId).subscribe(
         result => {
           if (!result.article) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);

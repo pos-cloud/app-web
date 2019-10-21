@@ -79,3 +79,102 @@ export enum ArticleType {
   Variant = <any>"Variante",
   Ingredient = <any>"Ingrediente"
 }
+
+export let columns = [
+  {
+    name: 'code',
+    visible: true,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    align: 'left'
+  },
+  {
+    name: 'barcode',
+    visible: true,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    align: 'left'
+  },
+  {
+    name: 'description',
+    visible: true,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    align: 'left'
+  },
+  {
+    name: 'posDescription',
+    visible: true,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    align: 'left'
+  },
+  {
+    name: 'codeSAT',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    align: 'left'
+  },
+  {
+    name: 'quantityPerMeasure',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'number',
+    align: 'right'
+  },
+  {
+    name: 'make.description',
+    visible: true,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    align: 'left'
+  },
+  {
+    name: 'category.description',
+    visible: true,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    align: 'left'
+  },
+  {
+    name: 'unitOfMeasurement.abbreviation',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    align: 'left'
+  },
+  {
+    name: 'salePrice',
+    visible: true,
+    disabled: false,
+    filter: true,
+    datatype: 'currency',
+    align: 'right'
+  },
+  {
+    name: 'type',
+    visible: true,
+    disabled: true,
+    filter: true,
+    datatype: 'string',
+    align: 'left'
+  },
+  {
+    name: 'operationType',
+    visible: true,
+    disabled: true,
+    filter: true,
+    datatype: 'string',
+    align: 'left'
+  }
+];

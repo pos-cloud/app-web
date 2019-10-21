@@ -1,63 +1,85 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { CompanyService } from 'app/services/company.service';
+import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
+import { registerLocaleData } from '@angular/common';
+import localeEsAr from '@angular/common/locales/es-AR';
+registerLocaleData(localeEsAr, 'es-Ar');
+
+import * as FileSaver from 'file-saver';
+import * as XLSX from 'xlsx';
+import { TranslatePipe } from '@ngx-translate/core';
+const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+const EXCEL_EXTENSION = '.xlsx';
 
 @Component({
   selector: 'app-export-excel',
   templateUrl: './export-excel.component.html',
-  styleUrls: ['./export-excel.component.css']
+  styleUrls: ['./export-excel.component.css'],
+  providers: [ TranslatePipe ]
 })
-export class ExportExcelComponent implements OnInit {
+export class ExportExcelComponent {
 
-  @Input() model : any
-
-  @Output() eventRefreshCurrentAccount: EventEmitter<any> = new EventEmitter<any>();
-  public roundNumber = new RoundNumberPipe();
+  @Input() columns: any[];
+  @Input() items: any[];
+  @Input() title: string;
+  @Input() loading: boolean;
+  @Output() eventExport: EventEmitter<boolean> = new EventEmitter<boolean>();
+  private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
 
   constructor(
-    private _companyService : CompanyService
+    private _translatePipe: TranslatePipe
   ) { }
 
-  ngOnInit() {
-    
-  }
-
-  public export() : void {
-
+  public export(): void {
     let data = [] ;
 
-    for (let index = 0; index < this.model.length; index++) {
-      data[index] = {};
-
-      data[index]['codigo'] = this.model[index]['article']['code']
-      if(this.model[index]['article']['make']){
-        data[index]['marca'] = this.model[index]['article']['make']['description']
-      } else {
-        data[index]['marca'] = ''
+    for (let i = 0; i < this.items.length; i++) {
+      const item = this.items[i];
+      data[i] = {};
+      for (let column of this.columns) {
+        if(column.visible) {
+          data[i][this._translatePipe.transform(column.name)] = this.getValue(item, column);
+        }
       }
-      data[index]['categoria'] = this.model[index]['article']['category']['description']
-      data[index]['descripcion'] = this.model[index]['article']['description']
-      data[index]['descripcion corta'] = this.model[index]['article']['posDescription']
-      data[index]['costPrice'] = this.roundNumber.transform(this.model[index]['article']['costPrice'])
-      data[index]['markupPercentage'] = this.roundNumber.transform(this.model[index]['article']['markupPercentage'])
-      data[index]['markupPrice'] = this.roundNumber.transform(this.model[index]['article']['markupPrice'])
-      data[index]['salePrice'] = this.roundNumber.transform(this.model[index]['article']['salePrice'])
-
-      data[index]['quantityPerMeasure'] = this.model[index]['article']['quantityPerMeasure']
-      if(this.model[index]['article']['unitOfMeasurement']){
-        data[index]['unitOfMeasurement'] = this.model[index]['article']['unitOfMeasurement']['abbreviation']
-      } else {
-        data[index]['unitOfMeasurement'] = ''
-      }
-
-
-      data[index]['total'] = this.model[index]['total']
-      data[index]['cantidad'] = this.model[index]['count']
-
     }
 
-    this._companyService.exportAsExcelFile(data, "Productos mas vendidos");
-
+    this.exportAsExcelFile(data, this.title);
   }
 
+  public getValue(item, column): any {
+    let val: string = 'item';
+    let exists: boolean = true;
+    let value: any = '';
+    for(let a of column.name.split('.')) {
+      val += '.'+a;
+      if(exists && !eval(val)) {
+        exists = false;
+      }
+    }
+    if(exists) {
+      switch(column.datatype) {
+        case 'number':
+          value = this.roundNumberPipe.transform(eval(val));
+          break;
+        case 'currency':
+            value = this.roundNumberPipe.transform(eval(val));
+          break;
+        default:
+            value = eval(val);
+          break;
+      }
+    }
+    return value;
+  }
+
+	public exportAsExcelFile(json: any[], excelFileName: string): void {
+		const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(json);
+		const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+		const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+		this.saveAsExcelFile(excelBuffer, excelFileName);
+	}
+
+	private saveAsExcelFile(buffer: any, fileName: string): void {
+		const data: Blob = new Blob([buffer], {type: EXCEL_TYPE});
+		FileSaver.saveAs(data, fileName + EXCEL_EXTENSION);
+	}
 }

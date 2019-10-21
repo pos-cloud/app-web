@@ -2,6 +2,12 @@ app-statistics {
     .card {
       margin-top: 20px;
       min-height: auto;
+      min-height: auto !important;
+      height: auto;
+    }
+    .card-block {
+      min-height: auto !important;
+      height: auto;
     }
     .cardd .card-sub {
         display: block;

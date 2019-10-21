@@ -1,5 +1,8 @@
-import { Component, OnInit, Input, ViewEncapsulation, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, ViewChild, LOCALE_ID } from '@angular/core';
 import { Router } from '@angular/router';
+import { registerLocaleData } from '@angular/common';
+import localeEsAr from '@angular/common/locales/es-AR';
+registerLocaleData(localeEsAr, 'es-Ar');
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
@@ -11,12 +14,17 @@ import { Branch } from 'app/models/branch';
 import { BranchService } from 'app/services/branch.service';
 import { AuthService } from 'app/services/auth.service';
 import { AddArticleComponent } from '../add-article/add-article.component';
+import { TransactionMovement, Movements } from 'app/models/transaction-type';
+import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
+import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
+import { CurrencyPipe } from '@angular/common';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-report-best-selling-article',
   templateUrl: './report-best-selling-article.component.html',
   styleUrls: ['./report-best-selling-article.component.scss'],
-  providers: [NgbAlertConfig],
+  providers: [ NgbAlertConfig, { provide: LOCALE_ID, useValue: 'es-Ar' } ],
   encapsulation: ViewEncapsulation.None
 })
 
@@ -33,7 +41,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
   @Input() endDate: string;
   @Input() endTime: string;
   @Input() limit: number = 0;
-  public listType: string;
+  public listType: string = 'statistics';
   public itemsPerPage: string = "5";
   public currentPage: number = 1;
   public sort = {
@@ -43,18 +51,80 @@ export class ReportBestSellingArticleComponent implements OnInit {
   public totalAmount;
   public totalItem;
   public filters: any[];
-  public displayedColumns = [
-      'article.code',
-      'article.description',
-      'article.category.description',
-      'article.make.description',
-      'article.quantityPerMeasure',
-      'article.unitOfMeasurement.name'
-  ];
   public branches: Branch[];
   @Input() branchSelectedId: String;
   public allowChangeBranch: boolean;
   public scrollY: number = 0;
+  public title: string;
+  private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
+  private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
+  @ViewChild(ExportExcelComponent, {static: false}) exportExcelComponent: ExportExcelComponent;
+  public columns = [
+    {
+      name: 'article.category.description',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left'
+    },
+    {
+      name: 'article.make.description',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left'
+    },
+    {
+      name: 'article.code',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left'
+    },
+    {
+      name: 'article.description',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left'
+    },
+    {
+      name: 'article.quantityPerMeasure',
+      visible: true,
+      disabled: false,
+      filter: false,
+      datatype: 'number',
+      align: 'right'
+    },
+    {
+      name: 'article.unitOfMeasurement.abbreviation',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'center'
+    },
+    {
+      name: 'count',
+      visible: true,
+      disabled: false,
+      filter: false,
+      datatype: 'number',
+      align: 'right'
+    },
+    {
+      name: 'total',
+      visible: true,
+      disabled: false,
+      filter: false,
+      datatype: 'currency',
+      align: 'right'
+    }
+  ];
 
   constructor(
     public _articleService: ArticleService,
@@ -71,8 +141,8 @@ export class ReportBestSellingArticleComponent implements OnInit {
     this.totalAmount = 0;
     this.totalItem = 0;
     this.filters = new Array();
-    for(let field of this.displayedColumns) {
-      this.filters[field] = "";
+    for(let field of this.columns) {
+      this.filters[field.name] = "";
     }
   }
 
@@ -100,7 +170,11 @@ export class ReportBestSellingArticleComponent implements OnInit {
       );
     }
 
-    this.getBestSellingArticle();
+    this.getItems();
+  }
+  
+  public drop(event: CdkDragDrop<string[]>): void {
+    moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
   }
 
   async openModal(op: string, item: any[]) {
@@ -151,7 +225,12 @@ export class ReportBestSellingArticleComponent implements OnInit {
     });
   }
 
-  public getBestSellingArticle(): void {
+  public exportItems(): void {
+    this.exportExcelComponent.items = this.items;
+    this.exportExcelComponent.export();
+  }
+
+  public getItems(): void {
 
     this.loading = true;
     let pathLocation: string[] = this._router.url.split('/');
@@ -159,10 +238,12 @@ export class ReportBestSellingArticleComponent implements OnInit {
     this.listType = pathLocation[3];
 
     let movement;
-    if (this.transactionMovement === "Venta") {
-      movement = "Entrada";
-    } else if (this.transactionMovement === "Compra") {
-      movement = "Salida";
+    if (this.transactionMovement === TransactionMovement.Sale.toString()) {
+      movement = Movements.Inflows.toString();
+      this.title = 'Productos más vendidos';
+    } else if (this.transactionMovement === TransactionMovement.Purchase.toString()) {
+      movement = Movements.Inflows.toString();
+      this.title = 'Productos más comprados'
     }
 
     let timezone = "-03:00";
@@ -170,22 +251,22 @@ export class ReportBestSellingArticleComponent implements OnInit {
       timezone =  Config.timezone.split('UTC')[1];
     }
 
-    // FILTRAMOS LA CONSULTA
     let match = `{`;
-    for(let i = 0; i < this.displayedColumns.length; i++) {
-      let value = this.filters[this.displayedColumns[i]];
-      if (value && value != "") {
-        if(match.charAt(match.length - 1) === "}") {
-          if (i < this.displayedColumns.length - 1) {
+    for(let i = 0; i < this.columns.length; i++) {
+      if(this.columns[i].visible) {
+        let value = this.filters[this.columns[i].name];
+        if (value && value != "") {
+          match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
+          if (i < this.columns.length - 1) {
             match += ',';
           }
         }
-        match += `"${this.displayedColumns[i]}": { "$regex": "${value}", "$options": "i"}`;
       }
     }
-    match += '}';
+    if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}') match += `,`;
+    match += `"article.operationType": { "$ne": "D" } }`;
     match = JSON.parse(match);
-
+    
     let query = {
       type: this.transactionMovement,
       movement: movement,
@@ -221,6 +302,42 @@ export class ReportBestSellingArticleComponent implements OnInit {
     );
   }
 
+  public getValue(item, column): any {
+    let val: string = 'item';
+    let exists: boolean = true;
+    let value: any = '';
+    for(let a of column.name.split('.')) {
+      val += '.'+a;
+      if(exists && !eval(val)) {
+        exists = false;
+      }
+    }
+    if(exists) {
+      switch(column.datatype) {
+        case 'number':
+          value = this.roundNumberPipe.transform(eval(val));
+          break;
+        case 'currency':
+            value = this.currencyPipe.transform(this.roundNumberPipe.transform(eval(val)), 'USD', 'symbol-narrow', '1.2-2');
+          break;
+        default:
+            value = eval(val);
+          break;
+      }
+    }
+    return value;
+  }
+
+  public getColumnsVisibles(): number {
+    let count: number = 0;
+    for (let column of this.columns) {
+      if(column.visible) {
+        count++;
+      }
+    }
+    return count;
+  }
+
   public orderBy(term: string): void {
 
     if(this.sort[term]) {
@@ -229,11 +346,11 @@ export class ReportBestSellingArticleComponent implements OnInit {
       this.sort = JSON.parse('{"' + term + '": 1 }');
     }
 
-    this.getBestSellingArticle();
+    this.getItems();
   }
 
   public refresh(): void {
-    this.getBestSellingArticle();
+    this.getItems();
   }
 
   public calculateTotal() : void {
