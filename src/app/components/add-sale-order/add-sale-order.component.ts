@@ -2000,10 +2000,12 @@ export class AddSaleOrderComponent {
     }
 
     if(this.movementsOfArticles && this.movementsOfArticles.length > 0 && this.transaction.type.updatePrice){
-      if(await this.updateArticles() === 1){
-        this.showToast("Se actualizó : 1 articulo" ,"info")
+      if(await this.updateArticles() === 0){
+        this.showToast("No se pudieron actualizar los productos" ,"info")
+      } else if(await this.updateArticles() === 1){
+        this.showToast("Se actualizó : 1 producto" ,"info")
       } else {
-        this.showToast("Se actualizaron : " + await this.updateArticles()+ " articulos" ,"info")
+        this.showToast("Se actualizaron : " + await this.updateArticles() + " productos" ,"info")
       }
     }
 
