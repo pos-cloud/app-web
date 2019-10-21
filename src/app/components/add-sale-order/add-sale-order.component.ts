@@ -76,6 +76,7 @@ import { PrintTransactionTypeComponent } from '../print/print-transaction-type/p
 import { Deposit } from 'app/models/deposit';
 import { DepositService } from 'app/services/deposit.service';
 import { ArticleService } from 'app/services/article.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -167,6 +168,7 @@ export class AddSaleOrderComponent {
     private _claimService: ClaimService,
     public _transportService: TransportService,
     public _priceListService : PriceListService,
+    public _toastr : ToastrService,
     public _configService: ConfigService
   ) {
     this.transaction = new Transaction();
@@ -1785,24 +1787,32 @@ export class AddSaleOrderComponent {
     };
   }
 
-  public updateArticles() : void {
+  async updateArticles(): Promise<number> {
 
-    let unitPrice;
+    return new Promise<number>( async (resolve, reject) => {
+      let unitPrice;
+      let countArticle = 0;
 
-    this.movementsOfArticles.forEach(async element => {
-      if(element && element.article && element.article._id){
-        if(this.transaction.quotation > 1){
-          unitPrice = (element.basePrice / element.amount) / this.transaction.quotation
-        } else {
-          unitPrice = element.basePrice / element.amount
+      for (const element of this.movementsOfArticles) {
+        if(element && element.article && element.article._id){
+          if(this.transaction.quotation > 1){
+            unitPrice = (element.basePrice / element.amount) / this.transaction.quotation
+          } else {
+            unitPrice = element.basePrice / element.amount
+          }
+          
+          unitPrice = unitPrice + element.transactionDiscountAmount;
+          
+          if(await this.updateArticle(unitPrice,element.article)){
+            countArticle ++;
+          }
+          
         }
-        
-        unitPrice = unitPrice + element.transactionDiscountAmount;
-        
-
-        await this.updateArticle(unitPrice,element.article)
       }
-    });
+
+      resolve(countArticle);
+
+    })
   }
 
   async updateArticle(basePrice,article : Article): Promise<boolean> {
@@ -1990,7 +2000,11 @@ export class AddSaleOrderComponent {
     }
 
     if(this.movementsOfArticles && this.movementsOfArticles.length > 0 && this.transaction.type.updatePrice){
-      this.updateArticles(); 
+      if(await this.updateArticles() === 1){
+        this.showToast("Se actualizó : 1 articulo" ,"info")
+      } else {
+        this.showToast("Se actualizaron : " + await this.updateArticles()+ " articulos" ,"info")
+      }
     }
 
     if(isValid) {
@@ -2647,4 +2661,24 @@ export class AddSaleOrderComponent {
   public hideMessage(): void {
     this.alertMessage = '';
   }
+
+  public showToast(message: string, type: string = 'success'): void {
+		switch(type) {
+			case 'success':
+				this._toastr.success('', message);
+				break;
+			case 'info':
+				this._toastr.info('', message);
+				break;
+			case 'warning':
+				this._toastr.warning('', message);
+				break;
+			case 'danger':
+				this._toastr.error('', message);
+				break;
+			default:
+				this._toastr.success('', message);
+				break;
+		}
+	}
 }
