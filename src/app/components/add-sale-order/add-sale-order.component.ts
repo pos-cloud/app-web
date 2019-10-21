@@ -2006,7 +2006,9 @@ export class AddSaleOrderComponent {
       if(count === 1){
         this.showToast("Se actualizó : 1 producto" ,"info")
       } else {
-        this.showToast("Se actualizaron : " + await this.updateArticles() + " productos" ,"info")
+        if( count > 1){
+          this.showToast("Se actualizaron : " + await this.updateArticles() + " productos" ,"info")
+        }
       }
     }
 
