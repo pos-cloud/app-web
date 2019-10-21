@@ -1796,6 +1796,10 @@ export class AddSaleOrderComponent {
         } else {
           unitPrice = element.basePrice / element.amount
         }
+        
+        unitPrice = unitPrice + element.transactionDiscountAmount;
+        
+
         await this.updateArticle(unitPrice,element.article)
       }
     });
