@@ -1803,8 +1803,10 @@ export class AddSaleOrderComponent {
           
           unitPrice = unitPrice + element.transactionDiscountAmount;
           
-          if(await this.updateArticle(unitPrice,element.article)){
-            countArticle ++;
+          if(unitPrice !== element.article.basePrice){
+            if(await this.updateArticle(unitPrice,element.article)){
+              countArticle ++;
+            }
           }
           
         }
