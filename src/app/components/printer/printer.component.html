@@ -142,7 +142,7 @@
                           <div class="form-group col-md-3" *ngIf="type ==='label'">
                             <label for="value" class="control-label">Valor:</label>
                             <div class="input-group">
-                              <input type="text" class="form-control" ngModel name="value"/>
+                              <input type="text" class="form-control" [(ngModel)]="value" name="value"/>
                             </div>
                           </div>
                         </div>
@@ -168,7 +168,7 @@
                               <div class="form-group col-md-4">
                                 <label for="fontSize" class="control-label">Tamaño:</label>
                                 <div class="input-group">
-                                  <input type="number" class="form-control" ngModel name="fontSize" required/>
+                                  <input type="number" class="form-control"  [(ngModel)]="fontSize" name="fontSize" required/>
                                 </div>
                               </div>
                         </div>                             
@@ -176,31 +176,31 @@
                           <div class="form-group col-md-3">
                             <label for="positionStartX" class="control-label">X ini (mm):</label>
                             <div class="input-group">
-                              <input type="number" class="form-control" ngModel name="positionStartX" required/>
+                              <input type="number" class="form-control" [(ngModel)]="positionStartX" name="positionStartX" required/>
                             </div>
                           </div>
                           <div class="form-group col-md-3">
                             <label for="positionStartY" class="control-label">Y ini (mm):</label>
                             <div class="input-group">
-                              <input type="number" class="form-control" ngModel name="positionStartY" required/>
+                              <input type="number" class="form-control" [(ngModel)]="positionStartY" name="positionStartY" required/>
                             </div>
                           </div>
                           <div class="form-group col-md-3" *ngIf="type === 'line' || type === 'image'">
                               <label for="positionEndX" class="control-label">X fin (mm):</label>
                               <div class="input-group">
-                                <input type="number" class="form-control" ngModel name="positionEndX" required/>
+                                <input type="number" class="form-control" [(ngModel)]="positionEndX" name="positionEndX" required/>
                               </div>
                           </div>
                           <div class="form-group col-md-3" *ngIf="type === 'line' || type === 'image'">
                               <label for="positionEndY" class="control-label">Y fin (mm):</label>
                             <div class="input-group">
-                              <input type="number" class="form-control" ngModel name="positionEndY" required/>
+                              <input type="number" class="form-control" [(ngModel)]="positionEndY" name="positionEndY" required/>
                             </div>
                           </div>
                           <div class="form-group col-md-3" *ngIf="type === 'data' || type === 'dataSum' || type === 'label'" >
                               <label for="splitting" class="control-label">Ancho:</label>
                               <div class="input-group">
-                                <input type="number" class="form-control" ngModel ng-pattern="^[0-9]+" name="splitting" />
+                                <input type="number" class="form-control" [(ngModel)]="splitting" ng-pattern="^[0-9]+" name="splitting" />
                               </div>
                           </div>
                         </div>
@@ -219,7 +219,6 @@
             </div>
             <div class = "row">
                 <div class="col-md-12">
-                    <form #fieldForm="ngForm">
                     <table width="100%" class="table table-striped">
                       <thead>
                         <tr>
@@ -251,7 +250,7 @@
                               <td *ngIf="field && field.value">{{field.value.positionEndY}}</td>
                               <td *ngIf="field && field.value">{{field.value.splitting}}</td>
                               <td align="right" width="10">
-                                  <button type="button" class="btn btn-primary btn-sm" (click)="editField(fieldForm,i)">
+                                  <button type="button" class="btn btn-primary btn-sm" (click)="editField(field,i)">
                                       <i class="fa fa-pencil"></i>
                                   </button>
                                   <button type="button" class="btn btn-danger btn-sm" (click)="deleteField(i)">
@@ -264,7 +263,6 @@
                       <tfoot>
                       </tfoot>
                     </table>
-                  </form>
                 </div>
             </div>
           </ng-template>

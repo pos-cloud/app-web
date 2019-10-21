@@ -263,6 +263,9 @@ import { StructureService } from './services/structure.service';
 import { StructureComponent } from './components/structure/structure.component';
 import { ListStructureComponent } from './components/list-structure/list-structure.component';
 import { ExportExcelComponent } from './components/export/export-excel/export-excel.component';
+import { ArticleTypeComponent } from './components/article-type/article-type.component';
+import { ListArticleTypesComponent } from './components/list-article-types/list-article-types.component';
+import { ArticleTypeService } from './services/article-type.service';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -453,7 +456,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     ShortcutComponent,
     StructureComponent,
     ListStructureComponent,
-    ExportExcelComponent
+    ExportExcelComponent,
+    ArticleTypeComponent,
+    ListArticleTypesComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -621,7 +626,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     ReportsList,
     ShortcutComponent,
     StructureComponent,
-    ExportExcelComponent
+    ExportExcelComponent,
+    ArticleTypeComponent
   ],
   imports: [
     BrowserModule,
@@ -701,7 +707,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     ClaimService,
     TransportService,
     PriceListService,
-    StructureService
+    StructureService,
+    ArticleTypeService
   ],
   bootstrap: [AppComponent]
 })

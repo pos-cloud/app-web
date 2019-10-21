@@ -37,11 +37,22 @@ export class PrinterComponent implements OnInit {
   public pdfURL;
   public doc;
 
-  public documents : string[];
+  // valores del add
+  public position;
+  public type;
   public collection;
-  public fontSize = 5;
-  public fontType = "normal";
+  public value;
   public font = "default";
+  public fontType = "normal";
+  public fontSize = 5;
+  public positionStartX;
+  public positionStartY;
+  public positionEndX;
+  public positionEndY;
+  public splitting;
+  public label;
+
+  public documents : string[];
 
   public formErrors = {
     'name': '',
@@ -251,13 +262,23 @@ export class PrinterComponent implements OnInit {
 
   public editField(data,i) : void {
     
-    this.deleteField(i);
+    //this.deleteField(i);
+    
+    this.type= data.value.type,
+    this.label= data.value.label,
+    this.value= data.value.value,
+    this.font = data.value.font,
+    this.fontType = data.value.fontType,
+    this.fontSize = data.value.fontSize,
+    this.positionStartX = data.value.positionStartX,
+    this.positionStartY = data.value.positionStartY,
+    this.positionEndX = data.value.positionEndX,
+    this.positionEndY = data.value.positionEndY,
+    this.splitting = data.value.splitting,
+    this.position = data.value.position
 
-    console.log(data)
 
-    this.addField(data)
-
-    this.addPrinter();
+    
 
   }
 
