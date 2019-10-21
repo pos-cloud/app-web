@@ -567,50 +567,50 @@ export class PrintVatBookComponent implements OnInit {
     row +=5;
 
     //TOTALES POR REGIMEN
-
+    row = rowInitial;
     // LINEA HORIZONTAL ARRIBA ENCABEZADO
-    this.doc.line(10, row, 105, row);
+    this.doc.line(140, row, 245, row);
     row += 5;
 
     this.doc.setFontType('bold');
     this.doc.setFontSize(9);
-    this.doc.text("TOTALES POR REGIMEN", 35, row);
+    this.doc.text("TOTALES POR REGIMEN", 175, row);
     this.doc.setFontSize(8);
     this.doc.setFontType('normal');
 
     row += 3;
     // LINEA HORIZONTAL DEBAJO ENCABEZADO
-    this.doc.line(10, row, 105, row);
+    this.doc.line(140, row, 245, row); 
     row += 5;
 
     this.doc.setFontType('bold');
     this.doc.setFontSize(9);
-    this.doc.text("REGIMEN", 15, row);
-    this.doc.text("MONTO", 85, row);
+    this.doc.text("REGIMEN", 145, row);
+    this.doc.text("MONTO", 225, row);
     this.doc.setFontSize(8);
     this.doc.setFontType('normal');
 
     row += 3;
     // LINEA HORIZONTAL DEBAJO ENCABEZADO
 
-    this.doc.line(10, row, 105, row);
+    this.doc.line(140, row, 245, row); 
     row += 5;
 
     this.dataIVA.forEach(element => {
       
-      this.doc.text(element['description'], 15, row);
-      this.doc.text(element['total'].toLocaleString('de-DE'), 85, row);
+      this.doc.text(element['description'], 145, row);
+      this.doc.text(element['total'].toLocaleString('de-DE'), 225, row);
       row += 5;
 
     });
   
     // LINEA HORIZONTAL FINAL
-    this.doc.line(10, row, 105, row);
+    this.doc.line(140, row, 245, row);
     // LINEA VERTICAL IZQUIERDA
     rowFinal = row;
-    this.doc.line(10, rowInitial, 10, rowFinal);
+    this.doc.line(140, rowInitial, 140, rowFinal);
     // LINEA VERTICAL DERECHA
-    this.doc.line(105, rowInitial, 105, rowFinal);
+    this.doc.line(245, rowInitial, 245, rowFinal);
 
 
     this.finishImpression();

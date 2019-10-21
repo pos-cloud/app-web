@@ -249,6 +249,18 @@ export class PrinterComponent implements OnInit {
     }
   }
 
+  public editField(data,i) : void {
+    
+    this.deleteField(i);
+
+    console.log(data)
+
+    this.addField(data)
+
+    this.addPrinter();
+
+  }
+
   deleteField(index) {
     let control = <FormArray>this.printerForm.controls.fields;
     control.removeAt(index);

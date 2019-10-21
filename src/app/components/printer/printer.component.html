@@ -219,6 +219,7 @@
             </div>
             <div class = "row">
                 <div class="col-md-12">
+                    <form #fieldForm="ngForm">
                     <table width="100%" class="table table-striped">
                       <thead>
                         <tr>
@@ -237,27 +238,33 @@
                       </thead>
                       <tbody>
                         <tr *ngFor="let field of printerForm.get('fields').controls; let i = index;">
-                          <td *ngIf="field && field.value">{{field.value.type}}</td>
-                          <td *ngIf="field && field.value">{{field.value.value | slice:0:10}}</td>
-                          <td *ngIf="field && field.value">{{field.value.position}}</td>
-                          <td *ngIf="field && field.value">{{field.value.font}}</td>
-                          <td *ngIf="field && field.value">{{field.value.fontType}}</td>
-                          <td *ngIf="field && field.value">{{field.value.fontSize}}</td>
-                          <td *ngIf="field && field.value">{{field.value.positionStartX}}</td>
-                          <td *ngIf="field && field.value">{{field.value.positionStartY}}</td>
-                          <td *ngIf="field && field.value">{{field.value.positionEndX}}</td>
-                          <td *ngIf="field && field.value">{{field.value.positionEndY}}</td>
-                          <td *ngIf="field && field.value">{{field.value.splitting}}</td>
-                          <td align="right" width="10">
-                              <button type="button" class="btn btn-danger btn-sm" (click)="deleteField(i)">
-                                  <i class="fa fa-trash-o"></i>
-                              </button>
-                          </td>
+                            
+                              <td *ngIf="field && field.value">{{field.value.type}}</td>
+                              <td *ngIf="field && field.value">{{field.value.value | slice:0:10}}</td>
+                              <td *ngIf="field && field.value">{{field.value.position}}</td>
+                              <td *ngIf="field && field.value">{{field.value.font}}</td>
+                              <td *ngIf="field && field.value">{{field.value.fontType}}</td>
+                              <td *ngIf="field && field.value">{{field.value.fontSize}}</td>
+                              <td *ngIf="field && field.value">{{field.value.positionStartX}}</td>
+                              <td *ngIf="field && field.value">{{field.value.positionStartY}}</td>
+                              <td *ngIf="field && field.value">{{field.value.positionEndX}}</td>
+                              <td *ngIf="field && field.value">{{field.value.positionEndY}}</td>
+                              <td *ngIf="field && field.value">{{field.value.splitting}}</td>
+                              <td align="right" width="10">
+                                  <button type="button" class="btn btn-primary btn-sm" (click)="editField(fieldForm,i)">
+                                      <i class="fa fa-pencil"></i>
+                                  </button>
+                                  <button type="button" class="btn btn-danger btn-sm" (click)="deleteField(i)">
+                                      <i class="fa fa-trash-o"></i>
+                                  </button>
+                              </td>
+                          
                         </tr>
                       </tbody>
                       <tfoot>
                       </tfoot>
                     </table>
+                  </form>
                 </div>
             </div>
           </ng-template>

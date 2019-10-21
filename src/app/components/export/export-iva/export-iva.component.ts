@@ -19,6 +19,8 @@ import { TaxClassification } from 'app/models/tax';
 import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
 import { Movements, TransactionMovement } from 'app/models/transaction-type';
 import { PrintVatBookComponent } from 'app/components/print/print-vat-book/print-vat-book.component';
+import { VATConditionService } from 'app/services/vat-condition.service';
+import { VATCondition } from 'app/models/vat-condition';
 
 @Component({
   selector: 'app-export-iva',
@@ -29,6 +31,8 @@ export class ExportIvaComponent implements OnInit {
 
   @Input() type;
   public exportIVAForm: FormGroup;
+  public dataIVA: any = [];
+  public vatConditions : VATCondition[];
   public alertMessage: string = "";
   public loading: boolean = false;
   public months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
@@ -66,6 +70,7 @@ export class ExportIvaComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _transactionService: TransactionService,
     public _configService: ConfigService,
+    public _vatConditionService : VATConditionService,
     public _userService: UserService,
     public _companyService: CompanyService,
   ) { }
@@ -73,6 +78,33 @@ export class ExportIvaComponent implements OnInit {
   ngOnInit() {
     let pathLocation: string[] = this._router.url.split('/');
     this.buildForm();
+    this.getVATConditions();
+  }
+
+  public getVATConditions(): void {
+
+    this.loading = true;
+
+    this._vatConditionService.getVATConditions().subscribe(
+      result => {
+        if (!result.vatConditions) {
+        } else {
+          this.vatConditions = result.vatConditions;
+          for (let index = 0; index < this.vatConditions.length; index++) {
+            this.dataIVA[index] = {};
+            this.dataIVA[index]['_id'] = this.vatConditions[index]._id 
+            this.dataIVA[index]['description'] = this.vatConditions[index].description 
+            this.dataIVA[index]['total'] = 0;
+          }
+          
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public buildForm(): void {
@@ -135,6 +167,13 @@ export class ExportIvaComponent implements OnInit {
             for (let transaction of result) {
               
               data[i] = {};
+
+              for (let index = 0; index < this.dataIVA.length; index++) {
+                if(transaction.company && transaction.company.vatCondition && this.dataIVA[index]['_id'] === transaction.company.vatCondition) {
+                  this.dataIVA[index]['total'] = this.dataIVA[index]['total'] + transaction.totalPrice;
+                }
+              }
+
 
               //DATOS PRINCIPALES
               data[i]['FECHA'] = this.dateFormat.transform(transaction.endDate, 'DD/MM/YYYY');
@@ -207,6 +246,7 @@ export class ExportIvaComponent implements OnInit {
               data[i]['MONTO IVA'] = this.roundNumber.transform(partialTaxAmountIVA);
               data[i]['MONTO PERCEP.'] = this.roundNumber.transform(partialTaxAmountPercep);
               data[i]['MONTO TOTAL'] = this.roundNumber.transform(partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt);
+        
 
               i++;
               data[i] = {};
@@ -236,6 +276,20 @@ export class ExportIvaComponent implements OnInit {
               data[i]['IDENTIFICADOR'] = this.roundNumber.transform(tax.taxBase);
               data[i]['TIPO COMP.'] = this.roundNumber.transform(tax.taxAmount);
             }
+
+            i += 5;
+            data[i] = {};
+            data[i]["RAZÓN SOCIAL"] = 'TOTALES POR REGIMEN';
+            i++;
+            data[i] = {};
+            data[i]["IDENTIFICADOR"] = 'REGIMEN';
+            data[i]["TIPO COMP."] = 'MONTO';
+            this.dataIVA.forEach(element => {
+              i++;
+              data[i] = {};
+              data[i]["IDENTIFICADOR"] = element['description']
+              data[i]["TIPO COMP."] = element['total']
+            });
 
             this._companyService.exportAsExcelFile(data, this.type + '-'+ this.exportIVAForm.value.year+'-'+this.exportIVAForm.value.month);
           }
