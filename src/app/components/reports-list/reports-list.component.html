@@ -7,11 +7,11 @@
   <div class="card ">
     <div class="card-header">Listado de {{ listTitle }}
       <div class="pull-right">
-        <button class="btn" (click)="openModal('add', null)" *ngIf="itemType && itemType.toString() === 'Final'"><i class="fa fa-plus"></i><span>Agregar</span></button>
+        <button class="btn" (click)="openModal('add', null)" ><i class="fa fa-plus"></i><span>Agregar</span></button>
         <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
         <button class="btn" (click)="openModal('update-prices',null)"><i class="fa fa-edit"></i><span>Actualizar Precios</span></button>
         <button class="btn" *ngIf="identity.name === 'soporte'" (click)="openModal('import', null)"><i class="fa fa-upload"></i><span>Importar</span></button>
-        <app-export-excel [title]="'Listado de '+listTitle" [loading]="loading" [columns]="columns" (eventExport)="exportItems($event)"></app-export-excel>
+        <app-export-excel [title]="'Listado de '+listTitle" [loading]="loading" [columns]="columns" (eventExport)="exportItems()"></app-export-excel>
         <button class="btn" (click)="openModal('print-list', null)"><i class="fa fa-print"></i><span>Imprimir Lista</span></button>
         <div class="btn-group" ngbDropdown>
           <button class="btn btn-light" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Columnas" [disabled]="loading">
