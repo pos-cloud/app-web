@@ -185,7 +185,7 @@ export class AddMovementOfArticleComponent implements OnInit {
             } else {
               articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
             }
-            this.movementOfArticle.unitPrice -= (articleTax.taxAmount);
+            this.movementOfArticle.unitPrice -= this.roundNumber.transform(articleTax.taxAmount);
           }
         }
       }
@@ -1008,7 +1008,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount);
 
     movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
-    movementOfArticle.unitPrice -= movementOfArticle.transactionDiscountAmount;
+    movementOfArticle.unitPrice -= this.roundNumber.transform(movementOfArticle.transactionDiscountAmount);
     movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
     movementOfArticle.markupPrice = 0.00;
     movementOfArticle.markupPercentage = 0.00;
@@ -1026,9 +1026,9 @@ export class AddMovementOfArticleComponent implements OnInit {
             field.amount = parseFloat(field.value);
           }
           if (field.articleField.modifyVAT) {
-            taxedAmount += field.amount;
+            taxedAmount += this.roundNumber.transform(field.amount);
           } else {
-            movementOfArticle.costPrice += field.amount;
+            movementOfArticle.costPrice += this.roundNumber.transform(field.amount);
           }
         }
         fields.push(field);
@@ -1040,7 +1040,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         let taxes: Taxes[] = new Array();
         for (let articleTax of movementOfArticle.taxes) {
           if(articleTax.tax.taxBase === TaxBase.Neto) {
-            articleTax.taxBase = taxedAmount;
+            articleTax.taxBase = this.roundNumber.transform(taxedAmount);
           } else {
             articleTax.taxBase = 0;
           }
@@ -1054,13 +1054,13 @@ export class AddMovementOfArticleComponent implements OnInit {
             articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
           }
           taxes.push(articleTax);
-          movementOfArticle.costPrice += articleTax.taxAmount;
+          movementOfArticle.costPrice += this.roundNumber.transform(articleTax.taxAmount);
         }
         movementOfArticle.taxes = taxes;
       }
     }
     movementOfArticle.costPrice += this.roundNumber.transform(taxedAmount);
-    movementOfArticle.salePrice = movementOfArticle.costPrice + movementOfArticle.roundingAmount;
+    movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.costPrice + movementOfArticle.roundingAmount);
 
     return movementOfArticle;
   }

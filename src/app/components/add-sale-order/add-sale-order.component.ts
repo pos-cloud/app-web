@@ -806,7 +806,7 @@ export class AddSaleOrderComponent {
     }
 
     movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
-    movementOfArticle.unitPrice -= movementOfArticle.transactionDiscountAmount;
+    movementOfArticle.unitPrice -= this.roundNumber.transform(movementOfArticle.transactionDiscountAmount);
     movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
     movementOfArticle.markupPrice = 0.00;
     movementOfArticle.markupPercentage = 0.00;
@@ -838,7 +838,7 @@ export class AddSaleOrderComponent {
         let taxes: Taxes[] = new Array();
         for (let articleTax of movementOfArticle.taxes) {
           if(articleTax.tax.taxBase === TaxBase.Neto) {
-            articleTax.taxBase = taxedAmount;
+            articleTax.taxBase = this.roundNumber.transform(taxedAmount);
           } else {
             articleTax.taxBase = 0;
           }
@@ -852,13 +852,13 @@ export class AddSaleOrderComponent {
             articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
           }
           taxes.push(articleTax);
-          movementOfArticle.costPrice += articleTax.taxAmount;
+          movementOfArticle.costPrice += this.roundNumber.transform(articleTax.taxAmount);
         }
         movementOfArticle.taxes = taxes;
       }
     }
     movementOfArticle.costPrice += this.roundNumber.transform(taxedAmount);
-    movementOfArticle.salePrice = movementOfArticle.costPrice + movementOfArticle.roundingAmount;
+    movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.costPrice + movementOfArticle.roundingAmount);
 
     return movementOfArticle;
   }
@@ -923,28 +923,28 @@ export class AddSaleOrderComponent {
           this.priceList.rules.forEach(rule => {
             if(rule) {
               if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.category._id === movementOfArticle.category._id && rule.make._id === movementOfArticle.make._id) {
-                increasePrice = rule.percentage + this.priceList.percentage
+                increasePrice = this.roundNumber.transform(rule.percentage + this.priceList.percentage);
               }
               if(rule.make && movementOfArticle.make && rule.category == null && rule.make._id === movementOfArticle.make._id) {
-                increasePrice = rule.percentage + this.priceList.percentage
+                increasePrice = this.roundNumber.transform(rule.percentage + this.priceList.percentage);
               }
               if(rule.category && movementOfArticle.category && rule.make == null && rule.category._id === movementOfArticle.category._id) {
-                increasePrice = rule.percentage + this.priceList.percentage
+                increasePrice = this.roundNumber.transform(rule.percentage + this.priceList.percentage);
               }
               if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.make._id !== movementOfArticle.make._id && rule.category._id !== movementOfArticle.category._id) {
-                increasePrice = this.priceList.percentage
+                increasePrice = this.roundNumber.transform(this.priceList.percentage);
               }
             }
           });
         } else {
-          increasePrice = this.priceList.percentage
+          increasePrice = this.roundNumber.transform(this.priceList.percentage);
         }
 
         if(this.priceList.exceptions && this.priceList.exceptions.length > 0) {
           this.priceList.exceptions.forEach(exception =>{
             if(exception) {
               if(exception.article._id === movementOfArticle.article._id) {
-                increasePrice = exception.percentage
+                increasePrice = this.roundNumber.transform(exception.percentage);
               }
             }
           })
@@ -961,28 +961,28 @@ export class AddSaleOrderComponent {
           this.newPriceList.rules.forEach(rule => {
             if(rule) {
               if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.category._id === movementOfArticle.category._id && rule.make._id === movementOfArticle.make._id) {
-                increasePrice = rule.percentage + this.newPriceList.percentage
+                increasePrice = this.roundNumber.transform(rule.percentage + this.newPriceList.percentage);
               }
               if(rule.make && movementOfArticle.make && rule.category == null && rule.make._id === movementOfArticle.make._id) {
-                increasePrice = rule.percentage + this.newPriceList.percentage
+                increasePrice = this.roundNumber.transform(rule.percentage + this.newPriceList.percentage);
               }
               if(rule.category && movementOfArticle.category && rule.make == null && rule.category._id === movementOfArticle.category._id) {
-                increasePrice = rule.percentage + this.newPriceList.percentage
+                increasePrice = this.roundNumber.transform(rule.percentage + this.newPriceList.percentage);
               }
               if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.make._id !== movementOfArticle.make._id && rule.category._id !== movementOfArticle.category._id) {
-                increasePrice = this.newPriceList.percentage
+                increasePrice = this.roundNumber.transform(this.newPriceList.percentage);
               }
             }
           });
         } else {
-          increasePrice = this.newPriceList.percentage
+          increasePrice = this.roundNumber.transform(this.newPriceList.percentage);
         }
 
         if(this.newPriceList.exceptions && this.newPriceList.exceptions.length > 0) {
           this.newPriceList.exceptions.forEach(exception =>{
             if(exception) {
               if(exception.article._id === movementOfArticle.article._id) {
-                increasePrice = exception.percentage
+                increasePrice = this.roundNumber.transform(exception.percentage);
               }
             }
           })
@@ -994,7 +994,7 @@ export class AddSaleOrderComponent {
       }
 
       movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
-      movementOfArticle.unitPrice -= movementOfArticle.transactionDiscountAmount;
+      movementOfArticle.unitPrice -= this.roundNumber.transform(movementOfArticle.transactionDiscountAmount);
       movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
       movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
       movementOfArticle.markupPercentage = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.costPrice * 100), 3);
@@ -1096,8 +1096,8 @@ export class AddSaleOrderComponent {
 
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let movementOfArticle of this.movementsOfArticles) {
-        this.quantity = this.quantity + movementOfArticle.amount;
-        movementOfArticle.transaction.discountPercent = this.transaction.discountPercent;
+        this.quantity = this.roundNumber.transform(this.quantity + movementOfArticle.amount);
+        movementOfArticle.transaction.discountPercent = this.roundNumber.transform(this.transaction.discountPercent);
         if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
           movementOfArticle = await this.recalculateSalePrice(movementOfArticle);
         } else {
@@ -1160,25 +1160,25 @@ export class AddSaleOrderComponent {
           for (let taxesAux of movementOfArticle.taxes) {
             let transactionTax: Taxes = new Taxes();
             if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-              transactionTax.percentage = taxesAux.percentage;
+              transactionTax.percentage = this.roundNumber.transform(taxesAux.percentage);
               transactionTax.tax = taxesAux.tax;
-              transactionTax.taxBase = taxesAux.taxBase;
-              transactionTax.taxAmount = taxesAux.taxAmount;
+              transactionTax.taxBase = this.roundNumber.transform(taxesAux.taxBase);
+              transactionTax.taxAmount = this.roundNumber.transform(taxesAux.taxAmount);
             } else {
-              transactionTax = taxesAux;
+              transactionTax = this.roundNumber.transform(taxesAux);
             }
             transactionTaxesAUX.push(transactionTax);
-            this.transaction.basePrice += transactionTax.taxBase;
-            taxBaseTotal += transactionTax.taxBase;
-            taxAmountTotal += transactionTax.taxAmount;
+            this.transaction.basePrice += this.roundNumber.transform(transactionTax.taxBase);
+            taxBaseTotal += this.roundNumber.transform(transactionTax.taxBase);
+            taxAmountTotal += this.roundNumber.transform(transactionTax.taxAmount);
           }
           if(taxBaseTotal === 0) {
-            this.transaction.exempt += movementOfArticle.salePrice - taxAmountTotal;
+            this.transaction.exempt += this.roundNumber.transform(movementOfArticle.salePrice - taxAmountTotal);
           }
         } else {
-          this.transaction.exempt += movementOfArticle.salePrice;
+          this.transaction.exempt += this.roundNumber.transform(movementOfArticle.salePrice);
         }
-        totalPriceAux += movementOfArticle.salePrice;
+        totalPriceAux += this.roundNumber.transform(movementOfArticle.salePrice);
       }
     }
 
@@ -1187,12 +1187,12 @@ export class AddSaleOrderComponent {
         let exists: boolean = false;
         for (let transactionTax of transactionTaxes) {
           if (transactionTaxAux.tax._id.toString() === transactionTax.tax._id.toString()) {
-            transactionTax.taxAmount += transactionTaxAux.taxAmount;
-            transactionTax.taxBase += transactionTaxAux.taxBase;
+            transactionTax.taxAmount += this.roundNumber.transform(transactionTaxAux.taxAmount);
+            transactionTax.taxBase += this.roundNumber.transform(transactionTaxAux.taxBase);
             exists = true;
           }
         }
-        this.totalTaxesAmount += transactionTaxAux.taxAmount;
+        this.totalTaxesAmount += this.roundNumber.transform(transactionTaxAux.taxAmount);
         if (!exists) {
           transactionTaxes.push(transactionTaxAux);
         }
@@ -1205,7 +1205,7 @@ export class AddSaleOrderComponent {
       for(let oldTax of oldTaxes) {
         if(oldTax.tax.classification !== TaxClassification.Tax) {
           this.transaction.taxes.push(oldTax);
-          this.totalTaxesAmount += oldTax.taxAmount;
+          this.totalTaxesAmount += this.roundNumber.transform(oldTax.taxAmount);
           // SUMAMOS AL TOTAL DE LA TRANSACCION LOS IMPUESTOS CARGADOS MANUALMENTE COMO PERCEPCIONES Y RETENCIONES
           totalPriceAux += oldTax.taxAmount;
         }
@@ -1847,7 +1847,7 @@ export class AddSaleOrderComponent {
           if (article.taxes && article.taxes.length > 0) {
             for (const articleTax of article.taxes) {
               if(articleTax.tax.percentage && articleTax.tax.percentage != 0) {
-                articleTax.taxBase = taxedAmount;
+                articleTax.taxBase = this.roundNumber.transform(taxedAmount);
                 articleTax.taxAmount = this.roundNumber.transform((taxedAmount * articleTax.percentage / 100));
               }
               article.costPrice += (articleTax.taxAmount);
