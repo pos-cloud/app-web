@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 // Models
-import { Article, ArticlePrintIn, ArticleType } from './../../models/article';
+import { Article, ArticlePrintIn, Type } from './../../models/article';
 import { ArticleStock } from './../../models/article-stock';
 import { Make } from './../../models/make';
 import { Category } from './../../models/category';
@@ -42,6 +42,8 @@ import { TaxClassification } from 'app/models/tax';
 import { ConfigService } from 'app/services/config.service';
 import { MovementOfArticleService } from 'app/services/movement-of-article.service';
 import { ArticleFieldService } from 'app/services/article-field.service';
+import { ArticleTypeService } from 'app/services/article-type.service';
+import { ArticleType } from 'app/models/article-type';
 
 @Component({
   selector: 'app-add-article',
@@ -62,6 +64,7 @@ export class AddArticleComponent implements OnInit {
   public articleForm: FormGroup;
   public currencies: Currency[] = new Array();
   public makes: Make[] = new Array();
+  public classifications : ArticleType[] = new Array();
   public companies : Company[] = new Array();
   public deposits: Deposit[] = new Array();
   public locations: Location[] = new Array();
@@ -159,6 +162,7 @@ export class AddArticleComponent implements OnInit {
     public _modalService : NgbModal,
     public _makeService: MakeService,
     public _categoryService: CategoryService,
+    public _articleTypeService : ArticleTypeService,
     public _companyService : CompanyService,
     public _unitOfMeasurementService: UnitOfMeasurementService,
     public _movementsOfArticle : MovementOfArticleService,
@@ -173,6 +177,7 @@ export class AddArticleComponent implements OnInit {
     if(window.screen.width < 1000) this.orientation = 'vertical';
     this.article = new Article();
     this.getCurrencies();
+    this.getArticleTypes();
 
     const pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
@@ -205,6 +210,48 @@ export class AddArticleComponent implements OnInit {
       this.getMakes();
       this.imageURL = './../../../assets/img/default.jpg';
     }
+  }
+
+  public getArticleTypes(){
+
+    let match = `{"operationType": { "$ne": "D" } }`;
+
+    match = JSON.parse(match);
+
+    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+    let project = {
+      "name": 1,
+      "operationType" : 1
+    };
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {
+        _id: null,
+        count: { $sum: 1 },
+        articleTypes: { $push: "$$ROOT" }
+    };
+
+    this._articleTypeService.getArticleTypes(
+        project, // PROJECT
+        match, // MATCH
+        {}, // SORT
+        group, // GROUP
+        0, // LIMIT
+        0 // SKIP
+    ).subscribe(
+      result => {
+        this.loading = false;
+        if (result && result[0] && result[0].articleTypes) {
+          this.classifications = result[0].articleTypes;
+        } else {
+          this.classifications = new Array();
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public getArticleFields() {
@@ -329,7 +376,8 @@ export class AddArticleComponent implements OnInit {
       ],
       'providers' : [this.article.providers, []],
       'lastPricePurchase' : [0.00,[]],
-      'lastDatePurchase' : [0.00,[]]
+      'lastDatePurchase' : [0.00,[]],
+      'classification' : [this.article.classification,[]]
     });
 
     this.articleForm.valueChanges.subscribe(data => this.onValueChanged(data));
@@ -612,7 +660,7 @@ export class AddArticleComponent implements OnInit {
 
     this.loading = true;
 
-    let query = `where="type":"${ArticleType.Final}"&sort="_id":-1&limit=1`;
+    let query = `where="type":"${Type.Final}"&sort="_id":-1&limit=1`;
 
     this._articleService.getArticles(query).subscribe(
       result => {
@@ -1097,6 +1145,17 @@ export class AddArticleComponent implements OnInit {
       }
     }
 
+    let classification;
+    if (!this.article.classification) {
+      classification = null;
+    } else {
+      if (this.article.classification[0]._id) {
+        classification = this.article.classification[0]._id;
+      } else {
+        classification = this.article.classification;
+      }
+    }
+
     if (!this.article.description) { this.article.description = ''; }
     if (!this.article.posDescription) { this.article.posDescription = ''; }
     if (!this.article.basePrice) { this.article.basePrice = 0.00; }
@@ -1178,7 +1237,8 @@ export class AddArticleComponent implements OnInit {
       'ecommerceEnabled': this.article.ecommerceEnabled,
       'favourite': this.article.favourite,
       'providers' : providers,
-      'lastPricePurchase' : lastPricePurchase
+      'lastPricePurchase' : lastPricePurchase,
+      'classification' : classification
     };
 
 
@@ -1202,11 +1262,11 @@ export class AddArticleComponent implements OnInit {
 
       const pathLocation: string[] = this._router.url.split('/');
       if (pathLocation[2] === "productos") {
-        this.article.type = ArticleType.Final;
+        this.article.type = Type.Final;
       } else if (pathLocation[2] === "variantes") {
-        this.article.type = ArticleType.Variant;
+        this.article.type = Type.Variant;
       } else if (pathLocation[2] === "ingredientes") {
-        this.article.type = ArticleType.Ingredient;
+        this.article.type = Type.Ingredient;
       }
 
       if (this.operation === 'add' || this.operation === 'copy') {

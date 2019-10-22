@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Article, ArticleType } from './../../models/article';
+import { Article, Type } from './../../models/article';
 import { Category } from './../../models/category';
 import { Config } from './../../app.config';
 import { MovementOfArticle } from '../../models/movement-of-article';
@@ -56,7 +56,7 @@ export class ListArticlesPosComponent implements OnInit {
   public apiURL = Config.apiURL;
   public itemsPerPage = 10;
   public roundNumber = new RoundNumberPipe();
-  public articleType: ArticleType;
+  public articleType: Type;
   public currentPage: number = 0;
   public database: string;
   public filterPipe: FilterPipe = new FilterPipe();
@@ -136,8 +136,8 @@ export class ListArticlesPosComponent implements OnInit {
     let match = {};
 
     match['$or'] = new Array();
-    match['$or'].push({ type: ArticleType.Final });
-    match['$or'].push({ type: ArticleType.Variant });
+    match['$or'].push({ type: Type.Final });
+    match['$or'].push({ type: Type.Variant });
     match['operationType'] = { $ne: "D" };
 
     if(this.transaction && this.transaction.type.transactionMovement === TransactionMovement.Sale) {
@@ -504,7 +504,7 @@ export class ListArticlesPosComponent implements OnInit {
       this.addItem(article, amount);
     } else if(category) {
       this.filteredArticles = this.filterPipe.transform(this.articles, category._id, 'category');
-      this.filteredArticles = this.filterPipe.transform(this.filteredArticles, ArticleType.Final.toString(), 'type');
+      this.filteredArticles = this.filterPipe.transform(this.filteredArticles, Type.Final.toString(), 'type');
       if (this.filterArticle && this.filterArticle !== "") {
         this.filteredArticles = this.filterPipe.transform(this.filteredArticles, this.filterArticle);
       }
@@ -523,7 +523,7 @@ export class ListArticlesPosComponent implements OnInit {
         } else if (this.filteredArticles.length > 1) {
           count = 0;
           for(let art of this.filteredArticles) {
-            if(art.type === ArticleType.Final) {
+            if(art.type === Type.Final) {
               if(isCodePrefix && 
                 this.padNumber(art.code, this.config.article.code.validators.maxLength) === this.padNumber(this.filterArticle, this.config.article.code.validators.maxLength)) {
                 count++;
@@ -567,11 +567,11 @@ export class ListArticlesPosComponent implements OnInit {
                   this.addItem(article);
                 }
         } else {
-          this.filteredArticles = this.filterPipe.transform(this.filteredArticles, ArticleType.Final.toString(), 'type');
+          this.filteredArticles = this.filterPipe.transform(this.filteredArticles, Type.Final.toString(), 'type');
           this.eventAddItem.emit(null);
         }
       } else {
-        this.filteredArticles = this.filterPipe.transform(this.filteredArticles, ArticleType.Final.toString(), 'type');
+        this.filteredArticles = this.filterPipe.transform(this.filteredArticles, Type.Final.toString(), 'type');
         this.eventAddItem.emit(null);
       }
     }

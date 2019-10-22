@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Article, ArticleType } from './../../models/article';
+import { Article, Type } from './../../models/article';
 import { Config } from './../../app.config';
 import { Transaction } from './../../models/transaction';
 
@@ -53,7 +53,7 @@ export class ListArticlesComponent implements OnInit {
   public apiURL = Config.apiURL;
   public itemsPerPage = 10;
   public roundNumber = new RoundNumberPipe();
-  public articleType: ArticleType;
+  public articleType: Type;
   public listTitle: string;
   public currentPage: number = 0;
   public database: string;
@@ -120,12 +120,12 @@ export class ListArticlesComponent implements OnInit {
     this.database = Config.database;
 
     if ('Variantes' === this.listTitle) {
-      this.articleType = ArticleType.Variant;
+      this.articleType = Type.Variant;
     } else if ('Ingredientes' === this.listTitle) {
-      this.articleType = ArticleType.Ingredient;
+      this.articleType = Type.Ingredient;
     } else {
       // ENTRA CUANDO SE HACE UNA TRANSACCIÓN O EN LA TABLA
-      this.articleType = ArticleType.Final;
+      this.articleType = Type.Final;
     }
     this.getArticles();
   }
@@ -157,7 +157,7 @@ export class ListArticlesComponent implements OnInit {
     }
     if(this.userType === 'report') {
       if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}') match += `,`;
-      match += `"$or": [ { "type": "${ArticleType.Final}"}, {"type": "${ArticleType.Variant}" } ], "containsVariants": false, "operationType": { "$ne": "D" } }`;
+      match += `"$or": [ { "type": "${Type.Final}"}, {"type": "${Type.Variant}" } ], "containsVariants": false, "operationType": { "$ne": "D" } }`;
     } else {
       if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}') match += `,`;
       match += `"type": "${this.articleType}", "operationType": { "$ne": "D" } }`;

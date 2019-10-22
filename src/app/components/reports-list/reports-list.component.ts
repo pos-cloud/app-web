@@ -7,7 +7,7 @@ registerLocaleData(localeEsAr, 'es-Ar');
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Article, ArticleType, columns } from './../../models/article';
+import { Article, Type, columns } from './../../models/article';
 import { Config } from './../../app.config';
 
 import { ArticleService } from './../../services/article.service';
@@ -46,7 +46,7 @@ export class ReportsList implements OnInit {
   public identity: User;
   public alertMessage: string = '';
   public loading: boolean = false;
-  public articleType: ArticleType;
+  public articleType: Type;
   public config: Config;
   private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
   private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
@@ -99,12 +99,12 @@ export class ReportsList implements OnInit {
     );
 
     if ('Variantes' === this.listTitle) {
-      this.articleType = ArticleType.Variant;
+      this.articleType = Type.Variant;
     } else if ('Ingredientes' === this.listTitle) {
-      this.articleType = ArticleType.Ingredient;
+      this.articleType = Type.Ingredient;
     } else {
       // ENTRA CUANDO SE HACE UNA TRANSACCIÓN O EN LA TABLA
-      this.articleType = ArticleType.Final;
+      this.articleType = Type.Final;
     }
     this.getItems();
   }

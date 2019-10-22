@@ -443,6 +443,20 @@
                     </select>
                   </div>
                 </div>
+                <!--<div class="row">
+                  <div class="form-group col-md-12">
+                    <label for="classification" class="control-label">Clasificación</label>
+                    <select class="form-control" formControlName="classification">
+                      <option [ngValue]="null" [selected]="!article || !article.classification" [disabled]="readonly"></option>
+                      <option *ngFor="let classification of classifications"
+                              [selected]="(article.classification && article.classification._id && classification._id===article.classification._id) ||
+                                          (article.classification && classification._id===article.classification)"
+                              [value]="classification._id"
+                              [disabled]="readonly">
+                              {{classification.name}}</option>
+                    </select>
+                  </div>
+                </div>-->
               </div>
             </div>
 					</ng-template>
