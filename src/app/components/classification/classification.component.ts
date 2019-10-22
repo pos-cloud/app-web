@@ -3,35 +3,35 @@ import { Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 
 
-import { ArticleTypeService } from '../../services/article-type.service';
+import { ClassificationService } from '../../services/classification.service';
 
-import { ArticleType } from '../../models/article-type';
+import { Classification } from '../../models/classification';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
 
 
 @Component({
-  selector: 'app-article-type',
-  templateUrl: './article-type.component.html',
-  styleUrls: ['./article-type.component.css']
+  selector: 'app-classification',
+  templateUrl: './classification.component.html',
+  styleUrls: ['./classification.component.css']
 })
-export class ArticleTypeComponent implements OnInit {
+export class ClassificationComponent implements OnInit {
 
   @Input() operation: string;
   @Input() readonly: boolean;
-  @Input() articleTypeId : string;
+  @Input() classificationId : string;
   public alertMessage: string = '';
   public userType: string;
-  public articleType: ArticleType;
-  public areArticleTypeEmpty: boolean = true;
+  public classification: Classification;
+  public areClassificationEmpty: boolean = true;
   public orderTerm: string[] = ['name'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public userCountry: string;
-  public articleTypeForm: FormGroup;
+  public classificationForm: FormGroup;
   public orientation: string = 'horizontal';
 
   public formErrors = {
@@ -46,13 +46,13 @@ export class ArticleTypeComponent implements OnInit {
 
   constructor(
     public alertConfig: NgbAlertConfig,
-    public _articleTypeService: ArticleTypeService,
+    public _classificationService: ClassificationService,
     public _router: Router,
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
   ) {
     if(window.screen.width < 1000) this.orientation = 'vertical';
-    this.articleType = new ArticleType();
+    this.classification = new Classification();
   }
 
   ngOnInit() {
@@ -61,8 +61,8 @@ export class ArticleTypeComponent implements OnInit {
     this.userType = pathLocation[1];;
     this.buildForm();
     
-    if (this.articleTypeId) {
-      this.getArticleType();
+    if (this.classificationId) {
+      this.getClassification();
     }
   }
 
@@ -70,17 +70,17 @@ export class ArticleTypeComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  public getArticleType() {
+  public getClassification() {
 
     this.loading = true;
 
-    this._articleTypeService.getArticleType(this.articleTypeId).subscribe(
+    this._classificationService.getClassification(this.classificationId).subscribe(
       result => {
-        if (!result.articleType) {
+        if (!result.classification) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
-          this.articleType = result.articleType;
+          this.classification = result.classification;
           this.setValueForm();
         }
         this.loading = false;
@@ -95,36 +95,36 @@ export class ArticleTypeComponent implements OnInit {
   public setValueForm(): void {
 
    
-    if (!this.articleType._id) { this.articleType._id = ''; }
-    if (!this.articleType.name) { this.articleType.name = ''; }
+    if (!this.classification._id) { this.classification._id = ''; }
+    if (!this.classification.name) { this.classification.name = ''; }
 
 
     const values = {
-      '_id': this.articleType._id,
-      'name': this.articleType.name
+      '_id': this.classification._id,
+      'name': this.classification.name
     };
-    this.articleTypeForm.setValue(values);
+    this.classificationForm.setValue(values);
   }
 
   public buildForm(): void {
 
-    this.articleTypeForm = this._fb.group({
-      '_id' : [this.articleType._id, []],
-      'name': [this.articleType.name, [
+    this.classificationForm = this._fb.group({
+      '_id' : [this.classification._id, []],
+      'name': [this.classification.name, [
         Validators.required
         ]
       ]
     });
 
-    this.articleTypeForm.valueChanges
+    this.classificationForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
     this.onValueChanged();
   }
 
   public onValueChanged(data?: any): void {
 
-    if (!this.articleTypeForm) { return; }
-    const form = this.articleTypeForm;
+    if (!this.classificationForm) { return; }
+    const form = this.classificationForm;
 
     for (const field in this.formErrors) {
       this.formErrors[field] = '';
@@ -139,36 +139,36 @@ export class ArticleTypeComponent implements OnInit {
     }
   }
 
-  public addArticleType() {
+  public addClassification() {
 
     switch (this.operation) {
       case 'add':
-        this.saveArticleType();
+        this.saveClassification();
         break;
       case 'edit':
-        this.updateArticleType();
+        this.updateClassification();
         break;
       case 'delete' :
-        this.deleteArticleType();
+        this.deleteClassification();
       default:
         break;
     }
   }
 
-  public updateArticleType() {
+  public updateClassification() {
 
     this.loading = true;
 
-    this.articleType = this.articleTypeForm.value;
+    this.classification = this.classificationForm.value;
 
-    this._articleTypeService.updateArticleType(this.articleType).subscribe(
+    this._classificationService.updateClassification(this.classification).subscribe(
       result => {
-        if (!result.articleType) {
+        if (!result.classification) {
           this.loading = false;
           if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
         } else {
           this.loading = false;
-          this.showMessage('El tipo se ha actualizado con éxito.', 'success', false);
+          this.showMessage('La clasificación se ha actualizado con éxito.', 'success', false);
         }
       },
       error => {
@@ -178,21 +178,21 @@ export class ArticleTypeComponent implements OnInit {
     );
   }
 
-  public saveArticleType() {
+  public saveClassification() {
 
     this.loading = true;
 
-    this.articleType = this.articleTypeForm.value;
+    this.classification = this.classificationForm.value;
 
-    this._articleTypeService.saveArticleType(this.articleType).subscribe(
+    this._classificationService.saveClassification(this.classification).subscribe(
       result => {
-        if (!result.articleType) {
+        if (!result.classification) {
           this.loading = false;
           if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
         } else {
             this.loading = false;
-            this.showMessage('El tipo se ha añadido con éxito.', 'success', false);
-            this.articleType = new ArticleType();
+            this.showMessage('La clasificación se ha añadido con éxito.', 'success', false);
+            this.classification = new Classification();
             this.buildForm();
         }
       },
@@ -203,14 +203,14 @@ export class ArticleTypeComponent implements OnInit {
     );
   }
 
-  public deleteArticleType() {
+  public deleteClassification() {
 
     this.loading = true;
 
-    this._articleTypeService.deleteArticleType(this.articleType._id).subscribe(
+    this._classificationService.deleteClassification(this.classification._id).subscribe(
       result => {
         this.loading = false;
-        if (!result.articleType) {
+        if (!result.classification) {
           if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
         } else {
           this.activeModal.close();

@@ -3,7 +3,7 @@ import { User } from './user';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-export class ArticleType {
+export class Classification {
 
     public _id: string;
     public name : string;

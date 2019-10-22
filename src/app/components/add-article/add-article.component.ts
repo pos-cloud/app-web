@@ -42,8 +42,8 @@ import { TaxClassification } from 'app/models/tax';
 import { ConfigService } from 'app/services/config.service';
 import { MovementOfArticleService } from 'app/services/movement-of-article.service';
 import { ArticleFieldService } from 'app/services/article-field.service';
-import { ArticleTypeService } from 'app/services/article-type.service';
-import { ArticleType } from 'app/models/article-type';
+import { ClassificationService } from 'app/services/classification.service';
+import { Classification } from 'app/models/classification';
 
 @Component({
   selector: 'app-add-article',
@@ -64,7 +64,7 @@ export class AddArticleComponent implements OnInit {
   public articleForm: FormGroup;
   public currencies: Currency[] = new Array();
   public makes: Make[] = new Array();
-  public classifications : ArticleType[] = new Array();
+  public classifications : Classification[] = new Array();
   public companies : Company[] = new Array();
   public deposits: Deposit[] = new Array();
   public locations: Location[] = new Array();
@@ -162,7 +162,7 @@ export class AddArticleComponent implements OnInit {
     public _modalService : NgbModal,
     public _makeService: MakeService,
     public _categoryService: CategoryService,
-    public _articleTypeService : ArticleTypeService,
+    public _classificationService : ClassificationService,
     public _companyService : CompanyService,
     public _unitOfMeasurementService: UnitOfMeasurementService,
     public _movementsOfArticle : MovementOfArticleService,
@@ -231,7 +231,7 @@ export class AddArticleComponent implements OnInit {
         articleTypes: { $push: "$$ROOT" }
     };
 
-    this._articleTypeService.getArticleTypes(
+    this._classificationService.getClassifications(
         project, // PROJECT
         match, // MATCH
         {}, // SORT

@@ -263,9 +263,9 @@ import { StructureService } from './services/structure.service';
 import { StructureComponent } from './components/structure/structure.component';
 import { ListStructureComponent } from './components/list-structure/list-structure.component';
 import { ExportExcelComponent } from './components/export/export-excel/export-excel.component';
-import { ArticleTypeComponent } from './components/article-type/article-type.component';
-import { ListArticleTypesComponent } from './components/list-article-types/list-article-types.component';
-import { ArticleTypeService } from './services/article-type.service';
+import { ClassificationComponent } from './components/classification/classification.component';
+import { ListClassificationsComponent } from './components/list-classifications/list-classifications.component';
+import { ClassificationService } from './services/classification.service';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -457,8 +457,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     StructureComponent,
     ListStructureComponent,
     ExportExcelComponent,
-    ArticleTypeComponent,
-    ListArticleTypesComponent
+    ClassificationComponent,
+    ListClassificationsComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -627,7 +627,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ShortcutComponent,
     StructureComponent,
     ExportExcelComponent,
-    ArticleTypeComponent
+    ClassificationComponent
   ],
   imports: [
     BrowserModule,
@@ -708,7 +708,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     TransportService,
     PriceListService,
     StructureService,
-    ArticleTypeService
+    ClassificationService
   ],
   bootstrap: [AppComponent]
 })

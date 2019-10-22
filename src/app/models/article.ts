@@ -11,7 +11,7 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 import { Currency } from './currency';
 import { Company } from './company';
-import { ArticleType } from './article-type';
+import { Classification } from './classification';
 
 export class Article {
 
@@ -60,7 +60,7 @@ export class Article {
   public favourite: Boolean = false;
   public picture: string = 'default.jpg';
   public providers : Company[];
-  public classification : ArticleType;
+  public classification : Classification;
   public operationType : string;
   public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');

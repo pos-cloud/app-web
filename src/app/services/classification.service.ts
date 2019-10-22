@@ -5,20 +5,20 @@ import { Observable } from "rxjs/Observable";
 import { map, catchError } from "rxjs/operators";
 
 import { Config } from '../app.config';
-import { ArticleType } from './../models/article-type';
+import { Classification } from '../models/classification';
 import { AuthService } from './auth.service';
 
 @Injectable()
-export class ArticleTypeService {
+export class ClassificationService {
 
 	constructor(
         private _http: HttpClient,
 		private _authService: AuthService
 	) { }
 
-    public getArticleType(_id: string): Observable<any> {
+    public getClassification(_id: string): Observable<any> {
         
-        const URL = `${Config.apiURL}article-type`;
+        const URL = `${Config.apiURL}classification`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
@@ -40,7 +40,7 @@ export class ArticleTypeService {
         );
     }
 
-    public getArticleTypes(
+    public getClassifications(
         project: {},
         match: {},
         sort: {},
@@ -49,7 +49,7 @@ export class ArticleTypeService {
         skip: number = 0
     ): Observable<any> {
 
-        const URL = `${Config.apiURL}article-types`;
+        const URL = `${Config.apiURL}classifications`;
 
         const headers = new HttpHeaders()
         .set('Content-Type', 'application/json')
@@ -76,15 +76,15 @@ export class ArticleTypeService {
         );
     }
 
-    public saveArticleType(articleType: ArticleType): Observable<any> {
+    public saveClassification(classification: Classification): Observable<any> {
 
-        const URL = `${Config.apiURL}article-type`;
+        const URL = `${Config.apiURL}classification`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
             .set('Authorization', this._authService.getToken());
 
-        return this._http.post(URL, articleType, {
+        return this._http.post(URL, classification, {
             headers: headers
         }).pipe(
             map(res => {
@@ -96,18 +96,18 @@ export class ArticleTypeService {
         );
     }
 
-    public updateArticleType(articleType: ArticleType): Observable<any> {
+    public updateClassification(classification: Classification): Observable<any> {
         
-        const URL = `${Config.apiURL}article-type`;
+        const URL = `${Config.apiURL}classification`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
             .set('Authorization', this._authService.getToken())
         
         const params = new HttpParams()
-            .set('id', articleType._id);
+            .set('id', classification._id);
 
-        return this._http.put(URL, articleType, {
+        return this._http.put(URL, classification, {
             headers: headers,
             params: params
         }).pipe(
@@ -120,9 +120,9 @@ export class ArticleTypeService {
         );
     }
 
-    public deleteArticleType(_id: string): Observable<any> {
+    public deleteClassification(_id: string): Observable<any> {
         
-        const URL = `${Config.apiURL}article-type`;
+        const URL = `${Config.apiURL}classification`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')

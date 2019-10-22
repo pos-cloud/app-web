@@ -70,7 +70,7 @@ import { ReportsList } from './components/reports-list/reports-list.component';
 import { LicenseGuard } from './guards/license.guard';
 import { Config } from './app.config';
 import { ListStructureComponent } from './components/list-structure/list-structure.component';
-import { ListArticleTypesComponent } from './components/list-article-types/list-article-types.component';
+import { ListClassificationsComponent } from './components/list-classifications/list-classifications.component';
 
 export const _routes: Routes = [
   { 
@@ -509,8 +509,8 @@ export const _routes: Routes = [
     data: { module: 'config.modules.money' }
   },
   {
-    path: 'admin/article-types',
-    component: ListArticleTypesComponent,
+    path: 'admin/classifications',
+    component: ListClassificationsComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.sale' }
   },

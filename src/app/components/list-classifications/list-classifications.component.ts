@@ -1,24 +1,24 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { ArticleTypeService } from '../../services/article-type.service'
-import { ArticleType } from '../../models/article-type'
-import { ArticleTypeComponent } from '../article-type/article-type.component'
+import { ClassificationService } from '../../services/classification.service'
+import { Classification } from '../../models/classification'
+import { ClassificationComponent } from '../classification/classification.component'
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
 
 
 @Component({
-  selector: 'app-list-article-types',
-  templateUrl: './list-article-types.component.html',
-  styleUrls: ['./list-article-types.component.css']
+  selector: 'app-list-classifications',
+  templateUrl: './list-classifications.component.html',
+  styleUrls: ['./list-classifications.component.css']
 })
-export class ListArticleTypesComponent implements OnInit {
+export class ListClassificationsComponent implements OnInit {
 
   public alertMessage: string = '';
   public userType: string;
-  public articleTypes: ArticleType[] = new Array();
-  public relationOfArticleTypeEmpty: boolean = true;
+  public classifications: Classification[] = new Array();
+  public relationOfClassificationEmpty: boolean = true;
   public orderTerm: string[] = ['-code'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
@@ -38,7 +38,7 @@ export class ListArticleTypesComponent implements OnInit {
 
   constructor(
     public alertConfig: NgbAlertConfig,
-    public _articleTypeService: ArticleTypeService,
+    public _articleTypeService: ClassificationService,
     public _router: Router,
     public _modalService: NgbModal,
   ) {
@@ -52,10 +52,10 @@ export class ListArticleTypesComponent implements OnInit {
     this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.getArticleTypes()
+    this.getClassifications()
   }
 
-  public getArticleTypes() : void {
+  public getClassifications() : void {
 
     this.loading = true;
 
@@ -102,7 +102,7 @@ export class ListArticleTypesComponent implements OnInit {
     let group = {
         _id: null,
         count: { $sum: 1 },
-        articleTypes: { $push: "$$ROOT" }
+        classifications: { $push: "$$ROOT" }
     };
 
     let page = 0;
@@ -113,7 +113,7 @@ export class ListArticleTypesComponent implements OnInit {
             (page * this.itemsPerPage) :
                 0 // SKIP
 
-    this._articleTypeService.getArticleTypes(
+    this._articleTypeService.getClassifications(
         project, // PROJECT
         match, // MATCH
         sortAux, // SORT
@@ -123,14 +123,14 @@ export class ListArticleTypesComponent implements OnInit {
     ).subscribe(
       result => {
         this.loading = false;
-        if (result && result[0] && result[0].articleTypes) {
-          this.articleTypes = result[0].articleTypes;
+        if (result && result[0] && result[0].classifications) {
+          this.classifications = result[0].classifications;
           this.totalItems = result[0].count;
-          this.relationOfArticleTypeEmpty = false;
+          this.relationOfClassificationEmpty = false;
         } else {
-          this.articleTypes = new Array();
+          this.classifications = new Array();
           this.totalItems = 0;
-          this.relationOfArticleTypeEmpty = true;
+          this.relationOfClassificationEmpty = true;
         }
       },
       error => {
@@ -143,7 +143,7 @@ export class ListArticleTypesComponent implements OnInit {
 
   public pageChange(page): void {
     this.currentPage = page;
-    this.getArticleTypes();
+    this.getClassifications();
   }
 
   public orderBy(term: string): void {
@@ -153,47 +153,47 @@ export class ListArticleTypesComponent implements OnInit {
       } else {
         this.orderTerm[0] = term;
       }
-      this.getArticleTypes();
+      this.getClassifications();
   }
 
-  public openModal (op: string, bank?: ArticleType) : void {
+  public openModal (op: string, bank?: Classification) : void {
 
     let modalRef
     switch (op) {
       case 'add':
-        modalRef = this._modalService.open(ArticleTypeComponent, { size: 'lg', backdrop: 'static' });
+        modalRef = this._modalService.open(ClassificationComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "add";
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
-          this.getArticleTypes();
+          this.getClassifications();
         }, (reason) => {
-          this.getArticleTypes();
+          this.getClassifications();
         });
         break;
       case 'edit':
-        modalRef = this._modalService.open(ArticleTypeComponent, { size: 'lg', backdrop: 'static' });
+        modalRef = this._modalService.open(ClassificationComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "edit";
         modalRef.componentInstance.bankId = bank._id;
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
-          this.getArticleTypes();
+          this.getClassifications();
         }, (reason) => {
-          this.getArticleTypes();
+          this.getClassifications();
         });
         break;
       case 'delete':
-        modalRef = this._modalService.open(ArticleTypeComponent, { size: 'lg', backdrop: 'static' });
+        modalRef = this._modalService.open(ClassificationComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "delete";
         modalRef.componentInstance.bankId = bank._id;
         modalRef.componentInstance.readonly = true;
         modalRef.result.then((result) => {
-          this.getArticleTypes();
+          this.getClassifications();
         }, (reason) => {
-          this.getArticleTypes();
+          this.getClassifications();
         });
         break;
       case 'view':
-        modalRef = this._modalService.open(ArticleTypeComponent, { size: 'lg', backdrop: 'static' });
+        modalRef = this._modalService.open(ClassificationComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "view";
         modalRef.componentInstance.bankId = bank._id;
         modalRef.componentInstance.readonly = true;
@@ -208,7 +208,7 @@ export class ListArticleTypesComponent implements OnInit {
   }
 
   public refresh(): void {
-    this.getArticleTypes();
+    this.getClassifications();
   }
 
 
