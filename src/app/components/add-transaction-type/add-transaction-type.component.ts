@@ -325,7 +325,8 @@ export class AddTransactionTypeComponent implements OnInit {
       'automaticNumbering' : [this.transactionType.automaticNumbering,[]],
       'automaticCreation' : [this.transactionType.automaticCreation,[]],
       'readLayout' : [this.transactionType.readLayout,[]],
-      'updatePrice' : [this.transactionType.updatePrice,[]]
+      'updatePrice' : [this.transactionType.updatePrice,[]],
+      'updateArticle' : [this.transactionType.updateArticle,[]]
 
     });
 
@@ -489,6 +490,7 @@ export class AddTransactionTypeComponent implements OnInit {
     if (!this.transactionType.printSign) this.transactionType.printSign = false;
 
     if (!this.transactionType.updatePrice) this.transactionType.updatePrice = false;
+    if (!this.transactionType.updateArticle) this.transactionType.updateArticle = false;
 
 
     this.transactionTypeForm.setValue({
@@ -540,7 +542,9 @@ export class AddTransactionTypeComponent implements OnInit {
       'printDescriptionType' : this.transactionType.printDescriptionType,
       'printSign' : this.transactionType.printSign,
       'readLayout' : this.transactionType.readLayout,
-      'updatePrice' : this.transactionType.updatePrice
+      'updatePrice' : this.transactionType.updatePrice,
+      'updateArticle' : this.transactionType.updateArticle
+
     });
   }
 

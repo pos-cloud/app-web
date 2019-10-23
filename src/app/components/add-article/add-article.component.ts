@@ -1267,6 +1267,8 @@ export class AddArticleComponent implements OnInit {
         this.article.type = Type.Variant;
       } else if (pathLocation[2] === "ingredientes") {
         this.article.type = Type.Ingredient;
+      } else {
+        this.article.type = Type.Final;
       }
 
       if (this.operation === 'add' || this.operation === 'copy') {
