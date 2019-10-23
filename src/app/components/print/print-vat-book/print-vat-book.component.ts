@@ -33,6 +33,10 @@ import { TaxClassification } from 'app/models/tax';
 import { IdentificationTypeService } from 'app/services/identification-type.service';
 import { VATConditionService } from 'app/services/vat-condition.service';
 import { VATCondition } from 'app/models/vat-condition';
+import { ClassificationService } from 'app/services/classification.service';
+import { Classification } from 'app/models/classification';
+import { MovementOfArticle } from 'app/models/movement-of-article';
+import { MovementOfArticleService } from 'app/services/movement-of-article.service';
 
 
 @Component({
@@ -46,6 +50,8 @@ export class PrintVatBookComponent implements OnInit {
 
   public dataIVA: any = [];
   public transactions: Transaction[];
+  public classifications : Classification[];
+  public dataClassification : any = [];
   public printPriceListForm: FormGroup;
   public alertMessage: string = '';
   public vatConditions : VATCondition[];
@@ -72,6 +78,8 @@ export class PrintVatBookComponent implements OnInit {
   constructor(
     public _transactionService : TransactionService,
     public _vatConditionService : VATConditionService,
+    public _classificationService : ClassificationService,
+    public _movementOfArticleService : MovementOfArticleService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -94,6 +102,7 @@ export class PrintVatBookComponent implements OnInit {
 
     this.doc = new jsPDF('l', 'mm', [this.pageWidth, this.pageHigh]);
     this.getVATBook();
+    this.getClassifications();
   }
 
   public getVATConditions(): void {
@@ -141,7 +150,56 @@ export class PrintVatBookComponent implements OnInit {
     );
   }
 
-  public toPrintVAT() {
+  public getClassifications(): void {
+
+    let match = `{"operationType": { "$ne": "D" } }`;
+
+    match = JSON.parse(match);
+
+    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+    let project = {
+      "name": 1,
+      "operationType" : 1
+    };
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {
+        _id: null,
+        count: { $sum: 1 },
+        classifications: { $push: "$$ROOT" }
+    };
+
+    this._classificationService.getClassifications(
+        project, // PROJECT
+        match, // MATCH
+        {}, // SORT
+        group, // GROUP
+        0, // LIMIT
+        0 // SKIP
+    ).subscribe(
+      result => {
+        this.loading = false;
+        if (result && result[0] && result[0].classifications) {
+          this.classifications = result[0].classifications;
+          for (let index = 0; index < this.classifications.length; index++) {
+            this.dataClassification[index] = {};
+            this.dataClassification[index]['_id'] = this.classifications[index]._id 
+            this.dataClassification[index]['name'] = this.classifications[index].name 
+            this.dataClassification[index]['total'] = 0;
+
+          }
+        } else {
+          this.dataClassification = new Array();
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  async toPrintVAT() {
 
     // ENCABEZADO
     var folio = 1;
@@ -238,6 +296,16 @@ export class PrintVatBookComponent implements OnInit {
         }
       }
 
+      for (let index = 0; index < this.dataClassification.length; index++) {
+        let movementOfArticles : MovementOfArticle[] = await this.getMovementOfArticle(transaction._id)
+        if(movementOfArticles && movementOfArticles.length !== 0) {
+          for (const element of movementOfArticles) {
+            if(this.dataClassification[index]['_id'] === element.article.classification._id){
+              this.dataClassification[index]['total'] = this.dataClassification[index]['total'] + element.salePrice;
+            }
+          }
+        }
+      }
 
 
       let partialTaxBase: number = 0;
@@ -566,6 +634,51 @@ export class PrintVatBookComponent implements OnInit {
 
     row +=5;
 
+    //TOTALES POR CLASSIFICACION
+    this.doc.line(10, row, 105, row);
+    row += 5;
+
+    this.doc.setFontType('bold');
+    this.doc.setFontSize(9);
+    this.doc.text("TOTALES POR CLASIFICACIÓN", 35, row);
+    this.doc.setFontSize(8);
+    this.doc.setFontType('normal');
+
+    row += 3;
+    // LINEA HORIZONTAL DEBAJO ENCABEZADO
+    this.doc.line(10, row, 105, row);
+    row += 5;
+
+    this.doc.setFontType('bold');
+    this.doc.setFontSize(9);
+    this.doc.text("CLASIFICACION", 15, row);
+    this.doc.text("MONTO", 85, row);
+    this.doc.setFontSize(8);
+    this.doc.setFontType('normal');
+
+    row += 3;
+    // LINEA HORIZONTAL DEBAJO ENCABEZADO
+
+    this.doc.line(10, row, 105, row);
+    row += 5;
+
+    this.dataClassification.forEach(element => {
+      
+      this.doc.text(element['name'], 15, row);
+      this.doc.text(element['total'].toLocaleString('de-DE'), 85, row);
+      row += 5;
+
+    });
+  
+    // LINEA HORIZONTAL FINAL
+    this.doc.line(10, row, 105, row);
+    // LINEA VERTICAL IZQUIERDA
+    rowFinal = row;
+    this.doc.line(10, rowInitial, 10, rowFinal);
+    // LINEA VERTICAL DERECHA
+    this.doc.line(105, rowInitial, 105, rowFinal);
+
+
     //TOTALES POR REGIMEN
     row = rowInitial;
     // LINEA HORIZONTAL ARRIBA ENCABEZADO
@@ -614,6 +727,29 @@ export class PrintVatBookComponent implements OnInit {
 
 
     this.finishImpression();
+  }
+
+  async getMovementOfArticle(id: string) : Promise<MovementOfArticle[]> {
+    return new Promise<MovementOfArticle[]>((resolve, reject) => {
+
+      this.loading = true;
+
+      let query = 'where="transaction":"' + id + '"';
+
+      this._movementOfArticleService.getMovementsOfArticles(query).subscribe(
+        result => {
+          if (!result.movementsOfArticles) {
+            resolve(null)
+          } else {
+            resolve(result.movementsOfArticles);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null)
+        }
+      );
+    })
   }
   
   public finishImpression(): void {

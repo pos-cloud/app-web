@@ -21,6 +21,11 @@ import { Movements, TransactionMovement } from 'app/models/transaction-type';
 import { PrintVatBookComponent } from 'app/components/print/print-vat-book/print-vat-book.component';
 import { VATConditionService } from 'app/services/vat-condition.service';
 import { VATCondition } from 'app/models/vat-condition';
+import { ClassificationService } from 'app/services/classification.service';
+import { Classification } from 'app/models/classification';
+import { MovementOfArticle } from 'app/models/movement-of-article';
+import { MovementOfArticleService } from 'app/services/movement-of-article.service';
+import { async } from '@angular/core/testing';
 
 @Component({
   selector: 'app-export-iva',
@@ -32,7 +37,9 @@ export class ExportIvaComponent implements OnInit {
   @Input() type;
   public exportIVAForm: FormGroup;
   public dataIVA: any = [];
+  public dataClassification : any = [];
   public vatConditions : VATCondition[];
+  public classifications : Classification[];
   public alertMessage: string = "";
   public loading: boolean = false;
   public months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
@@ -69,8 +76,10 @@ export class ExportIvaComponent implements OnInit {
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig,
     public _transactionService: TransactionService,
+    public _movementOfArticleService : MovementOfArticleService,
     public _configService: ConfigService,
     public _vatConditionService : VATConditionService,
+    public _classificationService : ClassificationService,
     public _userService: UserService,
     public _companyService: CompanyService,
   ) { }
@@ -79,6 +88,7 @@ export class ExportIvaComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.buildForm();
     this.getVATConditions();
+    this.getClassifications();
   }
 
   public getVATConditions(): void {
@@ -99,6 +109,55 @@ export class ExportIvaComponent implements OnInit {
           
         }
         this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getClassifications(): void {
+
+    let match = `{"operationType": { "$ne": "D" } }`;
+
+    match = JSON.parse(match);
+
+    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+    let project = {
+      "name": 1,
+      "operationType" : 1
+    };
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {
+        _id: null,
+        count: { $sum: 1 },
+        classifications: { $push: "$$ROOT" }
+    };
+
+    this._classificationService.getClassifications(
+        project, // PROJECT
+        match, // MATCH
+        {}, // SORT
+        group, // GROUP
+        0, // LIMIT
+        0 // SKIP
+    ).subscribe(
+      result => {
+        this.loading = false;
+        if (result && result[0] && result[0].classifications) {
+          this.classifications = result[0].classifications;
+          for (let index = 0; index < this.classifications.length; index++) {
+            this.dataClassification[index] = {};
+            this.dataClassification[index]['_id'] = this.classifications[index]._id 
+            this.dataClassification[index]['name'] = this.classifications[index].name 
+            this.dataClassification[index]['total'] = 0;
+
+          }
+        } else {
+          this.dataClassification = new Array();
+        }
       },
       error => {
         this.showMessage(error._body, 'danger', false);
@@ -152,7 +211,7 @@ export class ExportIvaComponent implements OnInit {
   public exportAsXLSX() : void {
 
     this._transactionService.getVATBook(this.type.replace('s','')+"&"+this.exportIVAForm.value.year+this.exportIVAForm.value.month+"&"+this.exportIVAForm.value.folioNumber).subscribe(
-      result => {
+      async result => {
         if (!result) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           } else {
@@ -173,6 +232,19 @@ export class ExportIvaComponent implements OnInit {
                   this.dataIVA[index]['total'] = this.dataIVA[index]['total'] + transaction.totalPrice;
                 }
               }
+
+              for (let index = 0; index < this.dataClassification.length; index++) {
+                let movementOfArticles : MovementOfArticle[] = await this.getMovementOfArticle(transaction._id)
+                if(movementOfArticles && movementOfArticles.length !== 0) {
+                  for (const element of movementOfArticles) {
+                    if(this.dataClassification[index]['_id'] === element.article.classification._id){
+                      this.dataClassification[index]['total'] = this.dataClassification[index]['total'] + element.salePrice;
+                    }
+                  }
+                }
+              }
+
+
 
 
               //DATOS PRINCIPALES
@@ -291,6 +363,20 @@ export class ExportIvaComponent implements OnInit {
               data[i]["TIPO COMP."] = element['total']
             });
 
+            i += 5;
+            data[i] = {};
+            data[i]["RAZÓN SOCIAL"] = 'TOTALES POR CLASIFICACIÓN';
+            i++;
+            data[i] = {};
+            data[i]["IDENTIFICADOR"] = 'CLASIFICACIÓN';
+            data[i]["TIPO COMP."] = 'MONTO';
+            this.dataClassification.forEach(element => {
+              i++;
+              data[i] = {};
+              data[i]["IDENTIFICADOR"] = element['name']
+              data[i]["TIPO COMP."] = element['total']
+            });
+
             this._companyService.exportAsExcelFile(data, this.type + '-'+ this.exportIVAForm.value.year+'-'+this.exportIVAForm.value.month);
           }
           this.loading = false;
@@ -307,6 +393,29 @@ export class ExportIvaComponent implements OnInit {
     while (n.length < length)
       n = "0" + n;
     return n;
+  }
+
+  async getMovementOfArticle(id: string) : Promise<MovementOfArticle[]> {
+    return new Promise<MovementOfArticle[]>((resolve, reject) => {
+
+      this.loading = true;
+
+      let query = 'where="transaction":"' + id + '"';
+
+      this._movementOfArticleService.getMovementsOfArticles(query).subscribe(
+        result => {
+          if (!result.movementsOfArticles) {
+            resolve(null)
+          } else {
+            resolve(result.movementsOfArticles);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null)
+        }
+      );
+    })
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

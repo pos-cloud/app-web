@@ -228,7 +228,7 @@ export class AddArticleComponent implements OnInit {
     let group = {
         _id: null,
         count: { $sum: 1 },
-        articleTypes: { $push: "$$ROOT" }
+        classifications: { $push: "$$ROOT" }
     };
 
     this._classificationService.getClassifications(
@@ -241,8 +241,8 @@ export class AddArticleComponent implements OnInit {
     ).subscribe(
       result => {
         this.loading = false;
-        if (result && result[0] && result[0].articleTypes) {
-          this.classifications = result[0].articleTypes;
+        if (result && result[0] && result[0].classifications) {
+          this.classifications = result[0].classifications;
         } else {
           this.classifications = new Array();
         }
