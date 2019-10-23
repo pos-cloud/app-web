@@ -1159,7 +1159,7 @@ export class AddSaleOrderComponent {
           let taxAmountTotal = 0;
           for (let taxesAux of movementOfArticle.taxes) {
             let transactionTax: Taxes = new Taxes();
-            if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+            if (this.transaction.type.transactionMovement === TransactionMovement.Sale || this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
               transactionTax.percentage = this.roundNumber.transform(taxesAux.percentage);
               transactionTax.tax = taxesAux.tax;
               transactionTax.taxBase = this.roundNumber.transform(taxesAux.taxBase);
