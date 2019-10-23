@@ -81,6 +81,8 @@ body {
       background-color: white;
 }
 
+/* JIVOCHAT */
+
 .label_39._bottom_3v {
       min-width: 50px !important;
       width: 50px !important;
@@ -95,6 +97,32 @@ body {
 
 .copy_2W, .text_eD {
       display: none !important;
+}
+
+.avatar_2c._expanded_1H, .avatar_2c {
+      display: none !important;
+}
+
+.title_1g {
+      display: none !important;
+}
+
+.main_Lb {
+      /* width: 50px !important; */
+}
+
+.main_2l.__auto_3S {
+    /* height: 50px !important; */
+    /* min-height: 50px !important; */
+}
+
+.headerBox_3s, .info_2s, .action_13, .drag_22 {
+      /* height: 30px !important;
+      min-height: 30px !important; */
+}
+
+.body_2s {
+      /* top: 30px !important; */
 }
 
 /* CHECK COLUMNS */
