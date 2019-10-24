@@ -127,11 +127,14 @@
           </div>
         </div>
           <div class="form-group col-md-2" 
-              *ngIf="!movementOfArticle.article.containsVariants && 
-                      movementOfArticle.article.type === 'Final' &&
-                      movementOfArticle.transaction &&
-                      movementOfArticle.transaction.type &&
-                      movementOfArticle.transaction.type.updateArticle">
+              *ngIf="movementOfArticle &&
+                    movementOfArticle.article &&
+                    !movementOfArticle.article.containsVariants &&
+                    movementOfArticle.article.type &&
+                    movementOfArticle.article.type.toString() === 'Final' &&
+                    movementOfArticle.transaction &&
+                    movementOfArticle.transaction.type &&
+                    movementOfArticle.transaction.type.updateArticle">
               <label class="control-label">Editar Producto:</label>
               <div class="input-group">
                 <button type="button" class="btn btn-primary" (click)="openModal('update')" title="Editar"><i class="fa fa-pencil"></i></button>
