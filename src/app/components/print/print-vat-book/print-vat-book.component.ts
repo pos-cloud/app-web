@@ -135,13 +135,13 @@ export class PrintVatBookComponent implements OnInit {
 
     this._transactionService.getVATBook(this.params).subscribe(
       result => {
-        if (!result) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          } else {
-            this.transactions = result;
-            this.toPrintVAT();
-          }
-          this.loading = false;
+        if (result && result.transactions && this.transactions.length !== 0) {
+          this.transactions = result.transactions;
+          this.toPrintVAT();
+        } else {
+          this.showMessage("No se encontraron Comprobantes para el período", 'info', true);
+        }
+        this.loading = false;
         },
         error => {
           this.showMessage(error._body, 'danger', false);
