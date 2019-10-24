@@ -164,7 +164,7 @@ export class AddUserComponent  implements OnInit {
       'company': [this.user.company, [
         ]
       ],
-      'printer' : this._fb.array([]),
+      'printers' : this._fb.array([]),
     });
 
     this.userForm.valueChanges
@@ -279,10 +279,38 @@ export class AddUserComponent  implements OnInit {
 
   }
 
-  public addPrinter(printerForm: NgForm): void {
+  
+  public getPrinter(id: string) : Promise<Printer> {
+
+    return new Promise<Printer>((resolve, reject) => {
+      this._printerService.getPrinter(id).subscribe(
+        result => {
+          if(result && result.printer) {
+            resolve(result.printer)
+          } else {
+            resolve(null)
+          }
+        }
+      )
+    })
+  }
+
+  async addPrinter(printerForm: NgForm) {
 
     let valid = true;
     const printers = this.userForm.controls.printers as FormArray;
+
+    let printer = await this.getPrinter(printerForm.value.printer)
+
+    for (const element of this.userForm.controls.printers.value) {
+      
+      let printerAux = await this.getPrinter(element.printer);
+
+      if(printerAux.printIn === printer.printIn) {
+        valid = false;
+        this.showMessage("Solo puede tener una impresora de cada tipo.", "info", true);
+      }
+    }
 
     this.userForm.controls.printers.value.forEach(element => {
 
@@ -397,8 +425,6 @@ export class AddUserComponent  implements OnInit {
             this.hideMessage();
             this.loading = false;
             this.AuxPrinters = result.printers;
-
-            console.log(this.AuxPrinters)
           }
         },
         error => {

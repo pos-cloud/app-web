@@ -20,6 +20,7 @@ export class User {
 		url: string
 	}];
 	public printers : [{
+		_id: string;
 		printer : Printer
 	}]
 
