@@ -1,6 +1,7 @@
 import { Employee } from './employee';
 import { Company } from './company';
 import { Origin } from './origin';
+import { Printer } from './printer';
 
 export class User {
 
@@ -18,6 +19,9 @@ export class User {
 		name: string,
 		url: string
 	}];
+	public printers : [{
+		printer : Printer
+	}]
 
 	constructor () {}
 }

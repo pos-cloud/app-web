@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, NgForm, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -17,6 +17,8 @@ import { EmployeeType } from 'app/models/employee-type';
 import { AuthService } from 'app/services/auth.service';
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { Printer } from 'app/models/printer';
+import { PrinterService } from 'app/services/printer.service';
 
 @Component({
   selector: 'app-add-user',
@@ -41,6 +43,7 @@ export class AddUserComponent  implements OnInit {
   public companies: Company[] = new Array();
   public origins: Origin[] = new Array();
   public focusEvent = new EventEmitter<boolean>();
+  public AuxPrinters : Printer[] = new Array();
 
   public formErrors = {
     'name': '',
@@ -96,11 +99,15 @@ export class AddUserComponent  implements OnInit {
     private _companyService: CompanyService,
     private _originService: OriginService,
     private _authService: AuthService,
+    private _printerService : PrinterService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
   ) {
+    this.getEmployees();
+    this.getOrigins();
+    this.getPrinters();
   }
 
   ngOnInit(): void {
@@ -119,8 +126,7 @@ export class AddUserComponent  implements OnInit {
       this.getUser();
     }
     this.buildForm();
-    this.getEmployees();
-    this.getOrigins();
+
   }
 
   ngAfterViewInit() {
@@ -157,7 +163,8 @@ export class AddUserComponent  implements OnInit {
       ],
       'company': [this.user.company, [
         ]
-      ]
+      ],
+      'printer' : this._fb.array([]),
     });
 
     this.userForm.valueChanges
@@ -241,7 +248,7 @@ export class AddUserComponent  implements OnInit {
       }
     }
 
-    this.userForm.setValue({
+    const values = {
       '_id': this.user._id,
       'name': this.user.name,
       'email': this.user.email,
@@ -250,7 +257,62 @@ export class AddUserComponent  implements OnInit {
       'employee': employee,
       'company': this.user.company,
       'origin': origin
+    };
+
+    if(this.user.printers && this.user.printers.length > 0) {
+      let printers = <FormArray>this.userForm.controls.printers;
+      this.user.printers.forEach(x => {
+
+        let printerId;
+        if(x.printer && x.printer._id) {
+          printerId = x.printer._id;
+        }
+
+        printers.push(this._fb.group({ 
+          '_id': null, 
+          'printer' : printerId,
+        }))
+      })
+    }
+    
+    this.userForm.patchValue(values);
+
+  }
+
+  public addPrinter(printerForm: NgForm): void {
+
+    let valid = true;
+    const printers = this.userForm.controls.printers as FormArray;
+
+    this.userForm.controls.printers.value.forEach(element => {
+
+      if(printerForm.value.printer == element.printer) {
+        this.showMessage("Esta impresora ya existe","danger",true)
+        valid = false;
+      } 
+
     });
+
+    if(printerForm.value.printer == '' || printerForm.value.printer == null ) {
+      this.showMessage("Debe seleccionar una impresora","danger",true)
+      valid = false;
+    }
+
+    if(valid) {
+      printers.push(
+        this._fb.group({
+          _id: null,
+          printer: printerForm.value.printer || null,
+        })
+      );
+      printerForm.resetForm();
+    }
+      
+  }
+
+  deletePrinter(index) {
+    let control = <FormArray>this.userForm.controls.printers;
+    control.removeAt(index)
   }
 
   public getEmployees(): void {  
@@ -293,9 +355,9 @@ export class AddUserComponent  implements OnInit {
           }
         );
     });
-   }
+  }
 
-   public getOrigins(): void {
+  public getOrigins(): void {
 
     this.loading = true;
     
@@ -320,6 +382,30 @@ export class AddUserComponent  implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public getPrinters(): void {
+    this.loading = true;
+
+    this._printerService.getPrinters().subscribe(
+        result => {
+          if (!result.printers) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            this.loading = false;
+            this.AuxPrinters = new Array();
+          } else {
+            this.hideMessage();
+            this.loading = false;
+            this.AuxPrinters = result.printers;
+
+            console.log(this.AuxPrinters)
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
+        }
+      );
   }
 
   public addUser(): void {

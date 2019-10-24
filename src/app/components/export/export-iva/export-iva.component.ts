@@ -237,7 +237,7 @@ export class ExportIvaComponent implements OnInit {
                 let movementOfArticles : MovementOfArticle[] = await this.getMovementOfArticle(transaction._id)
                 if(movementOfArticles && movementOfArticles.length !== 0) {
                   for (const element of movementOfArticles) {
-                    if(this.dataClassification[index]['_id'] === element.article.classification._id){
+                    if(element.article && element.article.classification && this.dataClassification[index]['_id'] === element.article.classification._id){
                       this.dataClassification[index]['total'] = this.dataClassification[index]['total'] + element.salePrice;
                     }
                   }
@@ -291,7 +291,7 @@ export class ExportIvaComponent implements OnInit {
                   
                   let exists: boolean = false;
                   for (let transactionTaxAux of totalTaxes) {
-                    if (transactionTaxAux.tax._id.toString() === transactionTax.tax._id.toString()) {
+                    if (transactionTax.tax && transactionTaxAux.tax && transactionTaxAux.tax._id.toString() === transactionTax.tax._id.toString()) {
                       transactionTaxAux.taxAmount += transactionTax.taxAmount;
                       transactionTaxAux.taxBase += transactionTax.taxBase;
                       exists = true;
