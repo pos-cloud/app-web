@@ -1138,6 +1138,8 @@ export class AddSaleOrderComponent {
           }
         );
       }
+    } else {
+      this.getMovementsOfTransaction();
     }
   }
 
