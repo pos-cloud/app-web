@@ -135,7 +135,7 @@ export class PrintVatBookComponent implements OnInit {
 
     this._transactionService.getVATBook(this.params).subscribe(
       result => {
-        if (result && result.transactions && this.transactions.length !== 0) {
+        if (result && result.transactions) {
           this.transactions = result.transactions;
           this.toPrintVAT();
         } else {

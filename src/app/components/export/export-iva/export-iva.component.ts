@@ -212,7 +212,7 @@ export class ExportIvaComponent implements OnInit {
 
     this._transactionService.getVATBook(this.type.replace('s','')+"&"+this.exportIVAForm.value.year+this.exportIVAForm.value.month+"&"+this.exportIVAForm.value.folioNumber).subscribe(
       async result => {
-          if(result && result.transactions && result.transactions.length !== 0){
+          if(result && result.transactions){
 
             let data: any = [];
             let totalTaxBase = 0;
