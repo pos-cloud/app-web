@@ -2601,7 +2601,24 @@ export class PrintComponent implements OnInit {
       this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
     }
 
-    if(this.typePrint === "kitchen" && this.printer.url){
+    if(this.printer.url && this.typePrint){
+      this._printService.saveFile(this.doc.output('blob'),this.typePrint,this.transactionId).then(
+        result => {
+          if(result){
+            this._printService.toPrintURL(this.printer.url,"/home/clients/"+Config.database+"/"+this.typePrint+"/"+this.transactionId+".pdf").subscribe(
+              (result) => {
+                //console.log(result)
+              },
+              error =>{
+                console.log(error)
+              }
+            )
+          }
+        }
+      )
+    }
+
+    /*if(this.typePrint === "kitchen" && this.printer.url){
       this._printService.saveFile(this.doc.output('blob'),'kitchen',this.transactionId).then(
         result => {
           if(result){
@@ -2633,7 +2650,7 @@ export class PrintComponent implements OnInit {
         }
       )
     }
-    
+    */
 
     if(this.transaction && this.transaction.type && this.transaction.type.electronics) {
       this._printService.saveFile(this.doc.output('blob'),'invoice',this.transactionId).then(

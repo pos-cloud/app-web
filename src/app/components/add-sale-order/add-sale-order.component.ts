@@ -77,6 +77,7 @@ import { Deposit } from 'app/models/deposit';
 import { DepositService } from 'app/services/deposit.service';
 import { ArticleService } from 'app/services/article.service';
 import { ToastrService } from 'ngx-toastr';
+import { User } from 'app/models/user';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -103,6 +104,7 @@ export class AddSaleOrderComponent {
   public printerSelected: Printer;
   public printersAux: Printer[];  //Variable utilizada para guardar las impresoras de una operación determinada (Cocina, mostrador, Bar)
   public userType: string;
+  public user : User;
   public posType: string;
   public loading: boolean;
   @ViewChild('contentPrinters', {static: true}) contentPrinters: ElementRef;
@@ -192,6 +194,20 @@ export class AddSaleOrderComponent {
   }
 
   async ngOnInit() {
+
+    let identity: User = JSON.parse(sessionStorage.getItem('user'));
+    this._userService.getUser(identity._id).subscribe(
+      result =>{
+        if(result && result.user){
+          this.user = result.user
+        } else {
+          this.showMessage("Debe volver a iniciar session", "danger", false);
+        }
+      },
+      error =>{
+        this.showMessage(error._body, "danger", false);
+      }
+    )
 
     this.database = Config.database;
     
@@ -2495,6 +2511,17 @@ export class AddSaleOrderComponent {
         }
         if(element && element.printIn === PrinterPrintIn.Kitchen && this.typeOfOperationToPrint === 'kitchen'){
           this.printerSelected = element
+        }
+      }
+    }
+
+    if(this.user && this.user.printers && this.user.printers.length > 0){
+      for (const element of this.user.printers) {
+        if(element && element.printer && element.printer.printIn === PrinterPrintIn.Bar && this.typeOfOperationToPrint === 'bar'){
+          this.printerSelected = element.printer
+        }
+        if(element && element.printer && element.printer.printIn === PrinterPrintIn.Kitchen && this.typeOfOperationToPrint === 'kitchen'){
+          this.printerSelected = element.printer
         }
       }
     }
