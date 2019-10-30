@@ -408,6 +408,7 @@
               <th (click)="orderBy('startDate')">Fecha</th>
               <th (click)="orderBy('number')">Número</th>
               <th (click)="orderBy('company','name')" >Cliente</th>
+              <th (click)="orderBy('observation')" >Observación</th>
               <th (click)="orderBy('totalPrice')">Precio Total</th>
             </tr>
             <tr class="filters">
@@ -415,6 +416,7 @@
               <th><input type="date" class="form-control" [(ngModel)]="filterStartDate" placeholder="Fecha..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Empresa..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total..."></th>
             </tr>
           </thead>
@@ -428,6 +430,7 @@
                                                         | filter: filterNumber:'number'
                                                         | filter: filterCompany:'name':'company'
                                                         | filter: filterTotalPrice:'totalPrice'
+                                                        | filter : filterObservation : 'observation'
                                                         | orderBy: orderTerm: propertyTerm
                                                         | paginate: { itemsPerPage: itemsPerPage,
                                                                       currentPage: p,
@@ -435,6 +438,7 @@
                                                                     }">
               <td align="left" width="150">
                 <button type="button" class="btn btn-success" (click)="viewTransaction(transaction)"  title="Ver"><i class="fa fa-eye"></i></button>
+                <button type="button" *ngIf="transaction.type.allowEdit" class="btn btn-primary" (click)="chargeCompany(transaction)" title="Editar"><i class="fa fa-pencil"></i></button>
                 <button type="button" class="btn btn-danger" (click)="cancelTransaction(transaction)" title="Anular"><i class="fa fa-close"></i></button>
               </td>
               <td *ngIf="transaction.endDate" >{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}</td>
@@ -442,10 +446,11 @@
               <td ><b>{{transaction.number}}</b></td>
               <td *ngIf="transaction.company" >{{transaction.company.name}}</td>
               <td *ngIf="!transaction.company" >Consumidor Final</td>
+              <td>{{transaction.observation}}</td>
               <td>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
             </tr>
             <tr align="center" *ngIf="areTransactionsEmpty">
-              <td colspan="7">Aún no hay transacciones pendientes</td>
+              <td colspan="8">Aún no hay transacciones pendientes</td>
             </tr>
           </tbody>
         </table>

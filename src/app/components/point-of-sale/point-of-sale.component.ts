@@ -843,6 +843,8 @@ export class PointOfSaleComponent implements OnInit {
       } else if (this.transaction.type.automaticNumbering && this.transaction.type.requestArticles) {
         if (this.posType === 'resto') {
           this._router.navigate(['/pos/resto/salones/' + this.tableSelected.room._id + '/mesas/' + this.tableSelected._id + '/editar-transaccion/' + this.tableSelected.lastTransaction._id]);
+        } else if (this.posType === 'pedidos-web') {
+          this._router.navigate(['/pos/' + this.posType ]);
         } else {
           this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + this.transaction._id]);
         }
@@ -865,6 +867,11 @@ export class PointOfSaleComponent implements OnInit {
   public chargeTransaction(transaction: Transaction): void {
     this.transaction = transaction;
     this.openModal('charge');
+  }
+
+  public chargeCompany(transaction: Transaction): void {
+    this.transaction = transaction;
+    this.openModal('company');
   }
 
   public openTransaction(transaction: Transaction): void {
