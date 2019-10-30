@@ -521,7 +521,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     }
   }
 
-  public calculateUnitPrice(): void {
+  async calculateUnitPrice() {
 
     if (this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
       if (this.movementOfArticle.transaction.type.entryAmount === EntryAmount.SaleWithVAT) {
@@ -686,16 +686,44 @@ export class AddMovementOfArticleComponent implements OnInit {
             if(priceList.allowSpecialRules) {
               priceList.rules.forEach(rule => {
                 if(rule) {
-                  if(this.movementOfArticle.article && rule.category && this.movementOfArticle.article.category && rule.make && this.movementOfArticle.article.make && rule.category._id === this.movementOfArticle.article.category._id && rule.make._id === this.movementOfArticle.article.make._id) {
+                  if( this.movementOfArticle &&
+                      this.movementOfArticle.article &&
+                      this.movementOfArticle.article.category &&  
+                      this.movementOfArticle.article.make &&
+                      rule.category && 
+                      rule.make &&  
+                      rule.category._id === this.movementOfArticle.article.category._id && 
+                      rule.make._id === this.movementOfArticle.article.make._id) {
+
                     increasePrice = rule.percentage + priceList.percentage
                   }
-                  if(this.movementOfArticle.article && rule.make && this.movementOfArticle.article.make && rule.category == null && rule.make._id === this.movementOfArticle.article.make._id) {
+                  if( this.movementOfArticle &&
+                      this.movementOfArticle.article && 
+                      this.movementOfArticle.article.make &&
+                      rule.make &&  
+                      rule.category === null && 
+                      rule.make._id === this.movementOfArticle.article.make._id) {
+
                     increasePrice = rule.percentage + priceList.percentage
                   }
-                  if(this.movementOfArticle.article && rule.category && this.movementOfArticle.article.category && rule.make == null && rule.category._id === this.movementOfArticle.article.category._id) {
+                  if( this.movementOfArticle &&
+                      this.movementOfArticle.article && 
+                      this.movementOfArticle.article.category &&
+                      rule.category &&  
+                      rule.make === null && 
+                      rule.category._id === this.movementOfArticle.article.category._id) {
+
                     increasePrice = rule.percentage + priceList.percentage
                   }
-                  if(this.movementOfArticle.article && rule.category && this.movementOfArticle.article.category && rule.make && this.movementOfArticle.article.make && rule.make._id !== this.movementOfArticle.article.make._id && rule.category._id !== this.movementOfArticle.article.category._id) {
+                  if( this.movementOfArticle &&
+                      this.movementOfArticle.article && 
+                      this.movementOfArticle.article.category &&
+                      this.movementOfArticle.article.make && 
+                      rule.category &&  
+                      rule.make && 
+                      rule.make._id !== this.movementOfArticle.article.make._id && 
+                      rule.category._id !== this.movementOfArticle.article.category._id) {
+
                     increasePrice = priceList.percentage
                   }
                 }
@@ -715,7 +743,7 @@ export class AddMovementOfArticleComponent implements OnInit {
             }
           }
         }
-    
+
         if(increasePrice != 0) {
           this.movementOfArticle.unitPrice = this.roundNumber.transform(this.movementOfArticle.unitPrice + (this.movementOfArticle.unitPrice * increasePrice / 100));
         } 
@@ -767,7 +795,7 @@ export class AddMovementOfArticleComponent implements OnInit {
       this.movementOfArticle.costPrice += this.roundNumber.transform(taxedAmount);
       this.movementOfArticle.unitPrice = this.movementOfArticle.basePrice;
       this.movementOfArticle.salePrice = this.movementOfArticle.costPrice;
-    }
+    } 
     this.setValueForm();
   }
 
