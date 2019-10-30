@@ -106,6 +106,7 @@ export enum EntryAmount {
 export enum PriceType {
 	Base = <any>"Precio Base",
 	Final = <any>"Precio Final",
+	SinTax = <any> "Precio Sin Impuestos"
 }
 
 export enum DescriptionType {

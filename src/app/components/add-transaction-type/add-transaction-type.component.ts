@@ -32,7 +32,7 @@ export class AddTransactionTypeComponent implements OnInit {
   @Input() transactionType: TransactionType;
   public transactionMovements: any[] = [TransactionMovement.Sale, TransactionMovement.Purchase, TransactionMovement.Stock, TransactionMovement.Money];
   public stockMovements: any [] = [StockMovement.Inflows,StockMovement.Outflows,StockMovement.Inventory, StockMovement.Transfer]
-  public PriceTypes : any [] = [PriceType.Final,PriceType.Base]
+  public PriceTypes : any [] = [PriceType.Final,PriceType.Base,PriceType.SinTax]
   public DescriptionTypes : any [] = [DescriptionType.Description,DescriptionType.PosDescription,DescriptionType.Code]
   public transactionTypeForm: FormGroup;
   public companyTypes: CompanyType[] = [CompanyType.None, CompanyType.Client, CompanyType.Provider];

@@ -11,7 +11,7 @@ import 'moment/locale/es';
 import { Transaction, TransactionState } from './../../models/transaction';
 import { TransactionMovement, StockMovement } from './../../models/transaction-type';
 import { Taxes } from './../../models/taxes';
-import { ArticlePrintIn, Article } from './../../models/article';
+import { ArticlePrintIn, Article, Type } from './../../models/article';
 import { ArticleStock } from './../../models/article-stock';
 import { MovementOfArticle } from './../../models/movement-of-article';
 import { Table, TableState } from './../../models/table';
@@ -917,7 +917,6 @@ export class AddSaleOrderComponent {
       }
 
       if(movementOfArticle.article && this.priceList) {
-
         let increasePrice = 0;
         if(this.priceList.allowSpecialRules && this.priceList.rules && this.priceList.rules.length > 0) {
           this.priceList.rules.forEach(rule => {

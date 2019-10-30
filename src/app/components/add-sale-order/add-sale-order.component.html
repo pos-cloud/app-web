@@ -170,6 +170,7 @@
               </td>
               <td *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Final'">{{movementOfArticle.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
               <td *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Base'">{{movementOfArticle.basePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+              <td *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Sin Impuestos'">{{movementOfArticle.salePrice - movementOfArticle.taxes[0].taxAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
             </tr>
             <tr align="center " *ngIf="areMovementsOfArticlesEmpty ">
               <td colspan="10 ">Todavía no se cargaron productos al pedido</td>
@@ -181,26 +182,40 @@
         <table class="table table-striped">
           <tbody>
             <tr class="totals">
-              <td align="right">
+              <td align="left">
                 <strong>Productos</strong>
               </td>
-              <td align="right">
+              <td align="left">
                   <strong>{{quantity}}</strong>
+              </td>
+              <td align="left">
+                <strong>Sub Total</strong>
+              </td>
+              <td align="right">
+                <strong>{{transaction.totalPrice - transaction.discountAmount - totalTaxesAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
               </td>
             </tr>
             <tr *ngIf="transactionMovement !== 'Stock' && transaction.type.requestTaxes"
                 (click)="openModal('change-taxes')"
                 class="pointer totals">
-              <td align="right">
+              <td align="left">
+              </td>
+              <td align="left">
+              </td>
+              <td align="left">
                 <strong>Impuestos</strong>
               </td>
               <td align="right">
-                <strong>({{totalTaxesAmount | currency:'USD':'symbol-narrow':'1.2-2'}})</strong>
+                <strong>{{totalTaxesAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
               </td>
             </tr>
             <tr class="totals"
                 *ngIf="transactionMovement !== 'Stock'">
-              <td align="right">
+                <td align="left">
+                </td>
+                <td align="left">
+                </td>
+              <td align="left">
                 <strong>Descuento</strong>
               </td>
               <td align="right">
@@ -208,15 +223,21 @@
               </td>
             </tr>
             <tr>
-              <td align="right">
-                <h3>
-                  <b>TOTAL</b>
-                </h3>
+                <td align="left">
+                  </td>
+                  <td align="left">
+                      
+                    </td>
+                  
+              <td align="left">
+                  <h6>
+                      <b>TOTAL</b>
+                    </h6>
               </td>
               <td align="right">
-                <h3>
+                <h5>
                   <b>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</b>
-                </h3>
+                </h5>
               </td>
             </tr>
           </tbody>
