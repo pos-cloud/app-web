@@ -148,7 +148,7 @@
               <th width="90px">Cantidad</th>
               <th width="150px" *ngIf="movementsOfArticles.length === 0">Descripción</th>
               <th  *ngIf="movementsOfArticles.length > 0">Descripción</th>
-              <th width="100px" *ngIf="transaction.type && transaction.type.showPrices">Monto</th>
+              <th align="right" width="100px" *ngIf="transaction.type && transaction.type.showPrices">Monto</th>
             </tr>
           </thead>
           <tbody>
@@ -168,13 +168,27 @@
                   <strong>{{movementOfArticle.notes}}</strong>
                 </div>
               </td>
-              <td *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Final'">{{movementOfArticle.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-              <td *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Base'">{{movementOfArticle.basePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-              <td *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Sin Impuestos'">{{movementOfArticle.salePrice - movementOfArticle.taxes[0].taxAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+              <td align="right">
+                <div *ngIf="movementOfArticle.transactionDiscountAmount === 0">
+                  <span *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Final'">{{movementOfArticle.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                  <span *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Base'">{{movementOfArticle.basePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                  <span *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Sin Impuestos'">{{movementOfArticle.salePrice - movementOfArticle.taxes[0].taxAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                </div>
+                
+                <div *ngIf="movementOfArticle.transactionDiscountAmount !== 0">
+                    <span style="text-decoration:line-through;" *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Final'">{{movementOfArticle.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                    <span style="text-decoration:line-through;" *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Base'">{{movementOfArticle.basePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                    <span style="text-decoration:line-through;" *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Sin Impuestos'">{{movementOfArticle.salePrice - movementOfArticle.taxes[0].taxAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                    <br>
+                    <span *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Final'">{{movementOfArticle.salePrice + movementOfArticle.transactionDiscountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                    <span *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Base'">{{movementOfArticle.basePrice + movementOfArticle.transactionDiscountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                    <span *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Sin Impuestos'">{{movementOfArticle.salePrice - movementOfArticle.taxes[0].taxAmount + movementOfArticle.transactionDiscountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                </div>
+              </td>
             </tr>
             <tr align="center " *ngIf="areMovementsOfArticlesEmpty ">
               <td colspan="10 ">Todavía no se cargaron productos al pedido</td>
-            </tr>
+            </tr> 
           </tbody>
         </table>
       </div>
