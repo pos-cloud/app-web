@@ -169,20 +169,15 @@
                 </div>
               </td>
               <td align="right">
-                <div *ngIf="movementOfArticle.transactionDiscountAmount === 0">
+                <div>
                   <span *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Final'">{{movementOfArticle.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
                   <span *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Base'">{{movementOfArticle.basePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
                   <span *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Sin Impuestos'">{{movementOfArticle.salePrice - movementOfArticle.taxes[0].taxAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
                 </div>
-                
                 <div *ngIf="movementOfArticle.transactionDiscountAmount !== 0">
-                    <span style="text-decoration:line-through;" *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Final'">{{movementOfArticle.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
-                    <span style="text-decoration:line-through;" *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Base'">{{movementOfArticle.basePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
-                    <span style="text-decoration:line-through;" *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Sin Impuestos'">{{movementOfArticle.salePrice - movementOfArticle.taxes[0].taxAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
-                    <br>
-                    <span *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Final'">{{movementOfArticle.salePrice + movementOfArticle.transactionDiscountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
-                    <span *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Base'">{{movementOfArticle.basePrice + movementOfArticle.transactionDiscountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
-                    <span *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Sin Impuestos'">{{movementOfArticle.salePrice - movementOfArticle.taxes[0].taxAmount + movementOfArticle.transactionDiscountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                  <span style="text-decoration:line-through;"*ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Final'">{{movementOfArticle.salePrice + movementOfArticle.transactionDiscountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                  <span style="text-decoration:line-through;"*ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Base'">{{movementOfArticle.basePrice + movementOfArticle.transactionDiscountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                  <span style="text-decoration:line-through;" *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Sin Impuestos'">{{movementOfArticle.salePrice - movementOfArticle.taxes[0].taxAmount + movementOfArticle.transactionDiscountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
                 </div>
               </td>
             </tr>
@@ -203,7 +198,7 @@
                   <strong>{{quantity}}</strong>
               </td>
               <td align="left">
-                <strong>Sub Total</strong>
+                <strong>Subtotal</strong>
               </td>
               <td align="right">
                 <strong>{{transaction.totalPrice + transaction.discountAmount - totalTaxesAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
