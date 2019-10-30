@@ -192,7 +192,7 @@
                 <strong>Sub Total</strong>
               </td>
               <td align="right">
-                <strong>{{transaction.totalPrice - transaction.discountAmount - totalTaxesAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
+                <strong>{{transaction.totalPrice + transaction.discountAmount - totalTaxesAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
               </td>
             </tr>
             <tr *ngIf="transactionMovement !== 'Stock' && transaction.type.requestTaxes"
