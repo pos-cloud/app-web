@@ -291,7 +291,7 @@
         </div>
         <div class="row">
           <div class="form-group col-md-4" [hidden]="!cert">
-            <input type="file" class="form-control" (change)="fileChangeEvent($event)" placeholder="Upload file..." />
+            <input type="file" accept=".crt" class="form-control" (change)="fileChangeEvent($event)" placeholder="Upload file..." />
             <button type="button" class="btn btn-secundary" (click)="upload()">Subir</button>
           </div>
         </div>

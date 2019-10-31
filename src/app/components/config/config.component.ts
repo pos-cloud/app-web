@@ -20,6 +20,7 @@ import { IdentificationTypeService } from 'app/services/identification-type.serv
 import { LicensePaymentComponent} from 'app/components/license-payment/license-payment.component'
 import { Currency } from 'app/models/currency';
 import { CurrencyService } from 'app/services/currency.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-config',
@@ -85,6 +86,7 @@ export class ConfigComponent implements OnInit {
     public _currencyService: CurrencyService,
     public _userService: UserService,
     public _fb: FormBuilder,
+    public _toastr : ToastrService,
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal
   ) {
@@ -127,38 +129,25 @@ export class ConfigComponent implements OnInit {
   }
 
   public upload() {
-    this.makeFileRequest(this.apiURL + "/upload", [], this.filesToUpload).then((result) => {
-    }, (error) => {
-        console.error(error);
-    });
+
+
+    this._configService.updloadFile(this.filesToUpload)
+      .then(
+        result =>{
+          if(result){
+            this.showToast("Certificado subido correctamente" ,"success")
+          }
+        },
+        error =>{
+          this.showToast(error ,"warning")
+        }
+      )
   }
 
   public fileChangeEvent(fileInput: any) {
       this.filesToUpload = <Array<File>> fileInput.target.files;
   }
 
-  public makeFileRequest(url: string, params: Array<string>, files: Array<File>) {
-      return new Promise((resolve, reject) => {
-          var formData: any = new FormData();
-          var xhr = new XMLHttpRequest();
-          if(files && files.length > 0) {
-            for(var i = 0; i < files.length; i++) {
-                formData.append("poscloud", files[i], files[i].name);
-            }
-          }
-          xhr.onreadystatechange = function () {
-              if (xhr.readyState == 4) {
-                  if (xhr.status == 200) {
-                      resolve(JSON.parse(xhr.response));
-                  } else {
-                      reject(xhr.response);
-                  }
-              }
-          }
-          xhr.open("POST", url, true);
-          xhr.send(formData);
-      });
-  }
 
   public buildFormCompany() {
 
@@ -743,4 +732,24 @@ export class ConfigComponent implements OnInit {
   public hideMessage():void {
     this.alertMessage = "";
   }
+
+  public showToast(message: string, type: string): void {
+		switch(type) {
+			case 'success':
+				this._toastr.success('', message);
+				break;
+			case 'info':
+				this._toastr.info('', message);
+				break;
+			case 'warning':
+				this._toastr.warning('', message);
+				break;
+			case 'danger':
+				this._toastr.error('', message);
+				break;
+			default:
+				this._toastr.success('', message);
+				break;
+		}
+	}
 }
