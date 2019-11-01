@@ -11,9 +11,7 @@ import { TransactionTypeService } from './../../services/transaction-type.servic
 import { TurnService } from './../../services/turn.service';
 import { UserService } from './../../services/user.service';
 
-import { AddTableComponent } from './../../components/add-table/add-table.component';
-import { UpdateTableComponent } from './../../components/update-table/update-table.component';
-import { DeleteTableComponent } from './../../components/delete-table/delete-table.component';
+import { TableComponent } from '../table/table.component';
 import { TransactionType } from 'app/models/transaction-type';
 
 @Component({
@@ -132,44 +130,45 @@ export class ListTablesComponent implements OnInit {
 
   public openModal(op: string, table: Table): void {
 
-    this.tableSelected = table;
-
     let modalRef;
 
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(UpdateTableComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.table = this.tableSelected;
+        modalRef = this._modalService.open(TableComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.tableId = table._id;
         modalRef.componentInstance.readonly = true;
+        modalRef.componentInstance.operation = op;
         break;
       case 'add':
-        modalRef = this._modalService.open(AddTableComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
+        modalRef = this._modalService.open(TableComponent, { size: 'lg', backdrop: 'static' })
+        modalRef.componentInstance.operation = op;
+        modalRef.componentInstance.readonly = false;
+        modalRef.result.then((result) => {
           this.getTables();
         }, (reason) => {
           this.getTables();
         });
         break;
       case 'update':
-        modalRef = this._modalService.open(UpdateTableComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.table = this.tableSelected;
+        modalRef = this._modalService.open(TableComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.operation = op;
+        modalRef.componentInstance.tableId = table._id;
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
-          if (result === 'save_close') {
-            this.getTables();
-          }
+          this.getTables();
         }, (reason) => {
-
+          this.getTables();
         });
         break;
       case 'delete':
-        modalRef = this._modalService.open(DeleteTableComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.table = this.tableSelected;
+        modalRef = this._modalService.open(TableComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.operation = op;
+        modalRef.componentInstance.tableId = table._id;
+        modalRef.componentInstance.readonly = true;
         modalRef.result.then((result) => {
-          if (result === 'delete_close') {
-            this.getTables();
-          }
+          this.getTables();
         }, (reason) => {
-
+          this.getTables();
         });
         break;
       default: ;

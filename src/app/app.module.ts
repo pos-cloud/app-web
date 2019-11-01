@@ -71,9 +71,7 @@ import { AddEmployeeComponent } from './components/add-employee/add-employee.com
 import { UpdateEmployeeComponent } from './components/update-employee/update-employee.component';
 import { DeleteEmployeeComponent } from './components/delete-employee/delete-employee.component';
 import { ListTablesComponent } from './components/list-tables/list-tables.component';
-import { AddTableComponent } from './components/add-table/add-table.component';
-import { UpdateTableComponent } from './components/update-table/update-table.component';
-import { DeleteTableComponent } from './components/delete-table/delete-table.component';
+import { TableComponent } from './components/table/table.component';
 import { ListCashBoxesComponent } from './components/list-cash-boxes/list-cash-boxes.component';
 import { DeleteCashBoxComponent } from './components/delete-cash-box/delete-cash-box.component';
 import { ListTransactionsComponent } from './components/list-transactions/list-transactions.component';
@@ -287,9 +285,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     UpdateEmployeeComponent,
     DeleteEmployeeComponent,
     ListTablesComponent,
-    AddTableComponent,
-    UpdateTableComponent,
-    DeleteTableComponent,
+    TableComponent,
     ListCashBoxesComponent,
     DeleteCashBoxComponent,
     ListTransactionsComponent,
@@ -471,9 +467,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     UpdateEmployeeComponent,
     DeleteEmployeeComponent,
     ListTablesComponent,
-    AddTableComponent,
-    UpdateTableComponent,
-    DeleteTableComponent,
+    TableComponent,
     ListCashBoxesComponent,
     DeleteCashBoxComponent,
     ListTransactionsComponent,

@@ -1,24 +1,27 @@
-import { Component, OnInit, EventEmitter } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Table, TableState } from './../../models/table';
-import { Room } from './../../models/room';
+import { Table, TableState } from '../../models/table';
+import { Room } from '../../models/room';
 
-import { TableService } from './../../services/table.service';
-import { RoomService } from './../../services/room.service';
+import { TableService } from '../../services/table.service';
+import { RoomService } from '../../services/room.service';
 
 @Component({
-  selector: 'app-add-table',
-  templateUrl: './add-table.component.html',
-  styleUrls: ['./add-table.component.css'],
+  selector: 'app-table',
+  templateUrl: './table.component.html',
+  styleUrls: ['./table.component.css'],
   providers: [NgbAlertConfig]
 })
 
-export class AddTableComponent  implements OnInit {
+export class TableComponent  implements OnInit {
 
+  @Input() operation: string;
+  @Input() readonly: boolean;
+  @Input() tableId : string;
   public table: Table;
   public states: TableState[] = [TableState.Available, TableState.Disabled, TableState.Reserved];
   public rooms: Room[] = new Array();
@@ -31,7 +34,7 @@ export class AddTableComponent  implements OnInit {
   public formErrors = {
     'description': '',
     'room': '',
-    'chair': 2,
+    'chair': '',
     'state': ''
   };
 
@@ -58,7 +61,9 @@ export class AddTableComponent  implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-  ) { }
+  ) { 
+    this.getRooms();
+  }
 
   ngOnInit(): void {
 
@@ -66,7 +71,11 @@ export class AddTableComponent  implements OnInit {
     this.userType = pathLocation[1];
     this.table = new Table ();
     this.buildForm();
-    this.getRooms();
+
+    if (this.tableId) {
+      this.getTable();
+    }
+
   }
 
   ngAfterViewInit() {
@@ -76,6 +85,9 @@ export class AddTableComponent  implements OnInit {
   public buildForm(): void {
 
     this.tableForm = this._fb.group({
+      '_id': [this.table._id, [
+        ]
+      ],
       'description': [this.table.description, [
           Validators.required,
           Validators.maxLength(5)
@@ -132,34 +144,108 @@ export class AddTableComponent  implements OnInit {
           } else {
             this.loading = false;
             this.rooms = result.rooms;
-            if (this.rooms[0] !== undefined) {
-              room = this.rooms[0];
-            }
           }
-          this.tableForm.setValue({
-            'room': room,
-            'description': '',
-            'chair': 2,
-            'state': TableState.Available,
-          });
-          this.loading = false;
         },
         error => {
           this.showMessage(error._body, 'danger', false);
           this.loading = false;
         }
       );
-   }
+  }
+
+  public getTable() {
+
+    this.loading = true;
+
+    this._tableService.getTable(this.tableId).subscribe(
+      result => {
+        if (!result.table) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.hideMessage();
+          this.table = result.table;
+          this.setValueForm();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public setValueForm(){
+    
+    if (!this.table._id) { this.table._id = ''; }
+    if (!this.table.description) { this.table.description = ''; }
+    
+    if (!this.table.chair) { this.table.chair = 0; }
+    if (!this.table.state) { this.table.state = TableState.Available }
+
+    let room;
+    if (!this.table.room) {
+      room = null;
+    } else {
+      if (this.table.room._id) {
+        room = this.table.room._id;
+      } else {
+        room = this.table.room;
+      }
+    }
+    
+    this.tableForm.setValue({
+      '_id':this.table._id,
+      'description':this.table.description,
+      'room': room,
+      'chair': this.table.chair,
+      'state': this.table.state
+    });
+  }
 
   public addTable(): void {
+    
+    switch (this.operation) {
+      case 'add':
+        this.saveTable();
+        break;
+      case 'update':
+        this.updateTable();
+        break;
+      case 'delete' :
+        this.deleteTable();
+      default:
+        break;
+    }
+  }
+
+  public updateTable() {
+
     this.loading = true;
+
     this.table = this.tableForm.value;
-    this.saveTable();
+
+    this._tableService.updateTable(this.table).subscribe(
+      result => {
+        if (!result.table) {
+          this.loading = false;
+          if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+        } else {
+          this.loading = false;
+          this.showMessage('La mesa se ha actualizado con éxito.', 'success', false);
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public saveTable(): void {
     
     this.loading = true;
+    this.table = this.tableForm.value;
 
     this._tableService.saveTable(this.table).subscribe(
       result => {
@@ -174,6 +260,26 @@ export class AddTableComponent  implements OnInit {
           this.getRooms();
         }
         this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public deleteTable() {
+
+    this.loading = true;
+
+    this._tableService.deleteTable(this.table._id).subscribe(
+      result => {
+        this.loading = false;
+        if (!result.table) {
+          if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+        } else {
+          this.activeModal.close();
+        }
       },
       error => {
         this.showMessage(error._body, 'danger', false);
