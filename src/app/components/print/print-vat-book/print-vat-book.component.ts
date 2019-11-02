@@ -241,9 +241,10 @@ export class PrintVatBookComponent implements OnInit {
     this.doc.text("NRO COMP.", 120, row);
     this.doc.text("GRAVADO", 150, row);
     this.doc.text("EXENTO", 175, row);
-    this.doc.text("MONTO IVA", 195, row);
-    this.doc.text("MONTO PERCEP.", 225, row);
-    this.doc.text("MONTO TOTAL", 260, row);
+    this.doc.text("IVA", 195, row);
+    this.doc.text("IMP INT", 215, row);
+    this.doc.text("PERCEP.", 230, row);
+    this.doc.text("TOTAL", 260, row);
     this.doc.setFontSize(8);
     this.doc.setFontType('normal');
 
@@ -257,6 +258,7 @@ export class PrintVatBookComponent implements OnInit {
     let totalTaxAmountIVA = 0;
     let totalTaxAmountPercep = 0;
     let totalAmount = 0;
+    let totalImpInt = 0;
     let totalTaxes: Taxes[] = new Array();
 
     for (let transaction of this.transactions) {
@@ -311,7 +313,8 @@ export class PrintVatBookComponent implements OnInit {
       let partialTaxBase: number = 0;
       let partialTaxAmountIVA: number = 0;
       let partialTaxAmountPercep: number = 0;
-      
+      let partialImpInt : number = 0;
+
       if(transaction.taxes && transaction.taxes.length > 0 && transaction.taxes[0].tax) {
         for(let transactionTax of transaction.taxes) {
 
@@ -334,11 +337,21 @@ export class PrintVatBookComponent implements OnInit {
             totalTaxes.push(transactionTax);
           }
 
+          
           if(transactionTax.tax.classification === TaxClassification.Tax) {
+                    
             totalTaxBase += transactionTax.taxBase;
-            partialTaxAmountIVA += transactionTax.taxAmount;
             partialTaxBase += transactionTax.taxBase;
-            totalTaxAmountIVA += transactionTax.taxAmount;
+
+            if(transactionTax.tax.code === '04'){
+              totalImpInt += transactionTax.taxAmount;
+              partialImpInt += transactionTax.taxAmount;
+            }
+            if(transactionTax.tax.code === '3' || transactionTax.tax.code === '4' || transactionTax.tax.code === '5' || transactionTax.tax.code === '6'){
+              partialTaxAmountIVA += transactionTax.taxAmount;
+              totalTaxAmountIVA += transactionTax.taxAmount;
+            }
+            
           } else {
             partialTaxAmountPercep += transactionTax.taxAmount;
             totalTaxAmountPercep += transactionTax.taxAmount;
@@ -379,6 +392,17 @@ export class PrintVatBookComponent implements OnInit {
         printTaxAmountÌVA = partialTaxAmountIVA.toLocaleString('de-DE') + ",00";
       }
 
+      let printImpInt = "0,00";
+      if ((this.roundNumber.transform(partialImpInt)).toString().split(".")[1]) {
+        if (this.roundNumber.transform(partialImpInt).toString().split(".")[1].length === 1) {
+          printImpInt = partialImpInt.toLocaleString('de-DE') + "0";
+        } else {
+          printImpInt = partialImpInt.toLocaleString('de-DE');
+        }
+      } else if (this.roundNumber.transform(partialImpInt)) {
+        printImpInt = partialImpInt.toLocaleString('de-DE') + ",00";
+      }
+
       let printTaxAmountPercep = "0,00";
       if ((this.roundNumber.transform(partialTaxAmountPercep)).toString().split(".")[1]) {
         if (this.roundNumber.transform(partialTaxAmountPercep).toString().split(".")[1].length === 1) {
@@ -406,7 +430,8 @@ export class PrintVatBookComponent implements OnInit {
       this.doc.text(printGravado, 150, row);
       this.doc.text(printExempt, 175, row);
       this.doc.text(printTaxAmountÌVA, 195, row);
-      this.doc.text(printTaxAmountPercep, 225, row);
+      this.doc.text(printImpInt,215,row)
+      this.doc.text(printTaxAmountPercep, 230, row);
       this.doc.text((printTotal), 260, row);
 
       row += 5;
@@ -451,9 +476,10 @@ export class PrintVatBookComponent implements OnInit {
         this.doc.text("NRO COMP.", 120, row);
         this.doc.text("GRAVADO", 150, row);
         this.doc.text("EXENTO", 175, row);
-        this.doc.text("MONTO IVA", 195, row);
-        this.doc.text("MONTO PERCEP.", 225, row);
-        this.doc.text("MONTO TOTAL", 260, row);
+        this.doc.text("IVA", 195, row);
+        this.doc.text("IMP INT", 215, row);
+        this.doc.text("PERCEP.", 230, row);
+        this.doc.text("TOTAL", 260, row);
         this.doc.setFontSize(8);
         this.doc.setFontType('normal');
 
@@ -500,6 +526,17 @@ export class PrintVatBookComponent implements OnInit {
       printTaxAmountIVA = totalTaxAmountIVA.toLocaleString('de-DE') + ",00";
     }
 
+    let printImpInt = "0,00";
+    if ((this.roundNumber.transform(totalImpInt)).toString().split(".")[1]) {
+      if (this.roundNumber.transform(totalImpInt).toString().split(".")[1].length === 1) {
+        printImpInt = totalImpInt.toLocaleString('de-DE') + "0";
+      } else {
+        printImpInt = totalImpInt.toLocaleString('de-DE');
+      }
+    } else if (this.roundNumber.transform(totalImpInt)) {
+      printImpInt = totalImpInt.toLocaleString('de-DE') + ",00";
+    }
+
     let printTaxAmountPercep = "0,00";
     if ((this.roundNumber.transform(totalTaxAmountPercep)).toString().split(".")[1]) {
       if (this.roundNumber.transform(totalTaxAmountPercep).toString().split(".")[1].length === 1) {
@@ -525,7 +562,8 @@ export class PrintVatBookComponent implements OnInit {
     this.doc.text(printTaxBase, 150, row);
     this.doc.text(printExempt, 175, row);
     this.doc.text(printTaxAmountIVA, 195, row);
-    this.doc.text(printTaxAmountPercep, 225, row);
+    this.doc.text(printImpInt, 215, row);
+    this.doc.text(printTaxAmountPercep, 230, row);
     this.doc.text(printAmount, 260, row);
 
     this.doc.setFontType('normal');

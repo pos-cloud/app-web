@@ -219,6 +219,7 @@ export class ExportIvaComponent implements OnInit {
             let totalExempt = 0;
             let totalTaxAmountIVA = 0;
             let totalTaxAmountPercep = 0;
+            let totalImpInt = 0;
             let totalAmount = 0;
             let totalTaxes: Taxes[] = new Array();
             let i = 0;
@@ -277,8 +278,9 @@ export class ExportIvaComponent implements OnInit {
               let partialTaxBase: number = 0;
               let partialTaxAmountIVA: number = 0;
               let partialTaxAmountPercep: number = 0;
+              let partialImpInt : number = 0;
     
-              if(transaction.taxes && transaction.taxes.length > 0 && transaction.taxes[0].tax) {
+              if(transaction.taxes && transaction.taxes.length > 0) {
                 for(let transactionTax of transaction.taxes) {
     
                   // DATOS NUMÉRICOS
@@ -301,10 +303,19 @@ export class ExportIvaComponent implements OnInit {
                   }
     
                   if(transactionTax.tax.classification === TaxClassification.Tax) {
+                    
                     totalTaxBase += transactionTax.taxBase;
-                    partialTaxAmountIVA += transactionTax.taxAmount;
                     partialTaxBase += transactionTax.taxBase;
-                    totalTaxAmountIVA += transactionTax.taxAmount;
+
+                    if(transactionTax.tax.code === '04'){
+                      totalImpInt += transactionTax.taxAmount;
+                      partialImpInt += transactionTax.taxAmount;
+                    }
+                    if(transactionTax.tax.code === '3' || transactionTax.tax.code === '4' || transactionTax.tax.code === '5' || transactionTax.tax.code === '6'){
+                      partialTaxAmountIVA += transactionTax.taxAmount;
+                      totalTaxAmountIVA += transactionTax.taxAmount;
+                    }
+                    
                   } else {
                     partialTaxAmountPercep += transactionTax.taxAmount;
                     totalTaxAmountPercep += transactionTax.taxAmount;
@@ -315,6 +326,7 @@ export class ExportIvaComponent implements OnInit {
               data[i]['GRAVADO'] = this.roundNumber.transform(partialTaxBase);
               data[i]['EXENTO'] = this.roundNumber.transform(transaction.exempt);
               data[i]['MONTO IVA'] = this.roundNumber.transform(partialTaxAmountIVA);
+              data[i]['MONTO IMP INT'] = this.roundNumber.transform(partialImpInt)
               data[i]['MONTO PERCEP.'] = this.roundNumber.transform(partialTaxAmountPercep);
               data[i]['MONTO TOTAL'] = this.roundNumber.transform(partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt);
         
@@ -329,6 +341,7 @@ export class ExportIvaComponent implements OnInit {
             data[i]['GRAVADO'] = this.roundNumber.transform(totalTaxBase);
             data[i]['EXENTO'] = this.roundNumber.transform(totalExempt);
             data[i]['MONTO IVA'] = this.roundNumber.transform(totalTaxAmountIVA);
+            data[i]['MONTO IMP INT'] = this.roundNumber.transform(totalImpInt)
             data[i]['MONTO PERCEP.'] = this.roundNumber.transform(totalTaxAmountPercep);
             data[i]['MONTO TOTAL'] = this.roundNumber.transform(totalAmount);
     
