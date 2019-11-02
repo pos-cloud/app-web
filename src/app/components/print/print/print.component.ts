@@ -2224,8 +2224,9 @@ export class PrintComponent implements OnInit {
         this.transaction.SATStamp &&
         this.transaction.CFDStamp) {
           this.doc.setFontType('bold');
-          this.doc.text("Observaciones: ", 35, row);
+          this.doc.text("Observaciones: ", margin, row);
           this.doc.setFontType('normal');
+          row += 4
           
           this.doc.text(observation.slice(0, 45) + "-", 65, row);
           this.doc.text(observation.slice(45, 105) + "-", 35, row += 4);
@@ -2233,8 +2234,9 @@ export class PrintComponent implements OnInit {
         this.doc.setFontType('bold');
         this.doc.text("Observaciones: ", margin, row);
         this.doc.setFontType('normal');
-        
-        this.doc.text(observation.slice(0, 60) + "-", 37, row);
+        row += 4
+
+        this.doc.text(observation.slice(0, 60) + "-", margin, row);
         this.doc.text(observation.slice(60, 140) + "-", margin, row += 4);
       }
     } else {

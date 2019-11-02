@@ -298,6 +298,7 @@
               <th (click)="orderBy('employeeClosing','name')" *ngIf="transactionMovement === 'Venta'">Vendedor</th>
               <th (click)="orderBy('company','name')" *ngIf="transactionMovement === 'Venta'">Cliente</th>
               <th (click)="orderBy('company','name')" *ngIf="transactionMovement === 'Compra'">Proveedor</th>
+              <th (click)="orderBy('observation')">Observación</th>
               <th (click)="orderBy('depositOrigin','name')" *ngIf="transactionMovement === 'Stock'" >Depósito</th>
               <th (click)="orderBy('totalPrice')" *ngIf="transactionMovement !== 'Stock'" >Precio Total</th>
             </tr>
@@ -308,6 +309,7 @@
               <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
               <th *ngIf="transactionMovement === 'Venta'"><input type="text" class="form-control" [(ngModel)]="filterEmployeeClosing" placeholder="Vendedor..."></th>
               <th *ngIf="(transactionMovement === 'Compra' || transactionMovement === 'Venta')"><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Empresa..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación..."></th>
               <th *ngIf="transactionMovement !== 'Stock'"><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total..."></th>
               <th *ngIf="transactionMovement === 'Stock'" ><input type="text" class="form-control" [(ngModel)]="filterDeposit" placeholder="Depósito Origen..."></th>
             </tr>
@@ -321,6 +323,7 @@
             <tr *ngFor="let transaction of transactions | filter: filterType:'name':'type'
                                                         | filter: filterStartDate:'startDate'
                                                         | filter: filterNumber:'number'
+                                                        | filter: filterObservation:'observation'
                                                         | filter: filterEmployeeClosing:'name':'employeeClosing'
                                                         | filter: filterCompany:'name':'company'
                                                         | filter: filterTotalPrice:'totalPrice'
@@ -345,6 +348,7 @@
               <td *ngIf="transaction.company && (transactionMovement === 'Compra' || transactionMovement === 'Venta')" (click)="openTransaction(transaction)">{{transaction.company.name}}</td>
               <td *ngIf="!transaction.company && (transactionMovement === 'Venta')" (click)="openTransaction(transaction)">Consumidor Final</td>
               <td *ngIf="!transaction.company && (transactionMovement === 'Compra')" (click)="openTransaction(transaction)"></td>
+              <td>{{transaction.observation}}</td>
               <td *ngIf="transactionMovement !== 'Stock'">{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
               <td *ngIf="transactionMovement === 'Stock' && transaction.type.stockMovement !== 'Transferencia' && transaction.depositOrigin">{{transaction.depositOrigin.name}}</td>
               <td *ngIf="transactionMovement === 'Stock' && transaction.type.stockMovement === 'Transferencia' && transaction.depositOrigin && transaction.depositDestination">{{transaction.depositOrigin.name}} -> {{transaction.depositDestination.name}}</td>
