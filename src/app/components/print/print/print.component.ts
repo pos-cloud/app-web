@@ -2922,8 +2922,22 @@ export class PrintComponent implements OnInit {
       this.doc.text("DESCUENTO", margin, row);
       this.doc.text("- $" + this.roundNumber.transform(this.transaction.discountAmount).toString(), width - 15, row)
     }
+
+    if(this.movementsOfCashes){
+      this.movementsOfCashes.forEach(element => {
+          if(element && element.paymentChange > 0){
+            row += 5;
+            this.doc.text("Paga con: $ " + (element.paymentChange + element.amountPaid).toString(),margin,row)
+            row += 5;
+            this.doc.text("Su vuelto es: $ " + element.paymentChange.toString(),margin,row)
+            row += 5;
+          }
+      });
+    }
+
     this.doc.setFontStyle('bold');
     row += 5;
+    
     this.doc.setFontSize(15);
     this.centerText(margin, margin, width, 2, row, "TOTAL $ "+ this.transaction.totalPrice);
     //this.doc.text("$ " + this.transaction.totalPrice, width/1.4, row);
@@ -2941,7 +2955,6 @@ export class PrintComponent implements OnInit {
     row += 5;
     this.centerText(margin, margin, width, 0, row, "Generado en POSCLOUD.com.ar");
     this.doc.setTextColor(0, 0, 0);
-
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.finishImpression();
     } else {

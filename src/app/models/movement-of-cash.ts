@@ -24,6 +24,7 @@ export class MovementOfCash {
     public titular: string;
     public CUIT: string;
     public deliveredBy: string;
+    public paymentChange: number = 0.00;
 
     constructor() { }
 }

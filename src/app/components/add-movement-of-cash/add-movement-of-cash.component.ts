@@ -156,7 +156,7 @@ export class AddMovementOfCashComponent implements OnInit {
       'amountDiscount': [this.amountDiscount, [
         ]
       ],
-      'paymentChange': [this.paymentChange, [
+      'paymentChange': [this.movementOfCash.paymentChange, [
         ]
       ],
       'observation': [this.movementOfCash.observation, [
@@ -251,7 +251,7 @@ export class AddMovementOfCashComponent implements OnInit {
       'amountToPay': parseFloat(this.roundNumber.transform(this.amountToPay).toFixed(2)),
       'amountPaid': parseFloat(this.roundNumber.transform(this.amountPaid).toFixed(2)),
       'amountDiscount': parseFloat(this.roundNumber.transform(this.amountDiscount).toFixed(2)),
-      'paymentChange': this.paymentChange,
+      'paymentChange': parseFloat(this.roundNumber.transform(this.paymentChange).toFixed(2)),
       'observation': this.movementOfCash.observation,
       'discount': parseFloat(this.roundNumber.transform(this.movementOfCash.discount).toFixed(2)),
       'surcharge': parseFloat(this.roundNumber.transform(this.movementOfCash.surcharge).toFixed(2)),
@@ -1017,6 +1017,7 @@ export class AddMovementOfCashComponent implements OnInit {
             this.movementOfCash.amountPaid = this.amountToPay;
           }
           this.movementOfCash.transaction = this.transaction;
+          this.movementOfCash.paymentChange = this.movementOfCashForm.value.paymentChange;
           this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
           this.movementOfCash.observation = this.movementOfCashForm.value.observation;
           this.movementOfCash.expirationDate = moment(this.movementOfCash.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
