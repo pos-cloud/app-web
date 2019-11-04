@@ -95,20 +95,20 @@ export class ListPaymentMethodsComponent implements OnInit {
         modalRef.componentInstance.readonly = true;
         break;
       case 'add':
-        modalRef = this._modalService.open(PaymentMethodComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
-          modalRef.componentInstance.readonly = false;
-          modalRef.componentInstance.operation = "add";
-
+        modalRef = this._modalService.open(PaymentMethodComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.readonly = false;
+        modalRef.componentInstance.operation = "add";
+        modalRef.result.then((result) => {
           this.getPaymentMethods();
         }, (reason) => {
-          this.getPaymentMethods();
+            this.getPaymentMethods();
         });
         break;
       case 'update':
         modalRef = this._modalService.open(PaymentMethodComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.paymentMethodId = paymentMethod._id;
         modalRef.componentInstance.readonly = false;
-        modalRef.componentInstance.operation = "update"
+        modalRef.componentInstance.operation = "update";
         modalRef.result.then((result) => {
           this.getPaymentMethods();
         }, (reason) => {

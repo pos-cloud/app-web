@@ -17,9 +17,9 @@ import { PaymentMethodService } from '../../services/payment-method.service';
 
 export class PaymentMethodComponent implements OnInit {
 
-  @Input() paymentMethodId : string;
-  @Input() readonly : boolean
-  @Input() operation : string;
+  @Input() paymentMethodId: string;
+  @Input() readonly: boolean
+  @Input() operation: string;
   public paymentMethod: PaymentMethod;
   public paymentMethodForm: FormGroup;
   public alertMessage: string = '';
@@ -85,7 +85,7 @@ export class PaymentMethodComponent implements OnInit {
   public buildForm(): void {
 
     this.paymentMethodForm = this._fb.group({
-      '_id' : [this.paymentMethod._id, []],
+      '_id': [this.paymentMethod._id, []],
       'code': [this.paymentMethod.code, [
         ]
       ],
@@ -144,7 +144,6 @@ export class PaymentMethodComponent implements OnInit {
   }
 
   public addPaymentMethod() {
-
     switch (this.operation) {
       case 'add':
         this.savePaymentMethod();
@@ -173,8 +172,6 @@ export class PaymentMethodComponent implements OnInit {
     if (!this.paymentMethod.company) this.paymentMethod.company = null;
     if (!this.paymentMethod.observation) this.paymentMethod.observation = '';
 
-
-
     this.paymentMethodForm.setValue({
       '_id': this.paymentMethod._id,
       'code': this.paymentMethod.code,
@@ -188,9 +185,9 @@ export class PaymentMethodComponent implements OnInit {
       'cardDetail': this.paymentMethod.cardDetail,
       'allowToFinance': this.paymentMethod.allowToFinance,
       'cashBoxImpact': this.paymentMethod.cashBoxImpact,
-      'bankReconciliation' :this.paymentMethod.bankReconciliation,
-      'company' : this.paymentMethod.company,
-      'observation' : this.paymentMethod.observation
+      'bankReconciliation':this.paymentMethod.bankReconciliation,
+      'company': this.paymentMethod.company,
+      'observation': this.paymentMethod.observation
     });
   }
 
@@ -223,7 +220,6 @@ export class PaymentMethodComponent implements OnInit {
       }
     );
   }
-
   
   public deletePaymentMethod(): void {
 
