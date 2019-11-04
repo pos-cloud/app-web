@@ -657,7 +657,11 @@ export class AddMovementOfCashComponent implements OnInit {
           transaction => {
             if(transaction) {
               this.transaction = transaction;
-              this.activeModal.close({ movementsOfCashes: this.movementsOfCashes, movementOfArticle: this.movementOfArticle });
+              if(this.checkPrices()) {
+                this.activeModal.close({ movementsOfCashes: this.movementsOfCashes, movementOfArticle: this.movementOfArticle });
+              } else {
+                this.showMessage('Ocurrió un error al querer finalizar la transacción, inténtelo nuevamente.', 'info', true);
+              }
             }
           }
         );
@@ -671,6 +675,25 @@ export class AddMovementOfCashComponent implements OnInit {
     } else {
       this.fastPayment = null;
     }
+  }
+
+  //FUNCIÓN PARA CONTROLAR QUE LA SUMA DE PRECIO DE ARTÍCULOS SEA IGUAL AL TOTAL DE LA TRANSACCIÓN
+  private checkPrices(): boolean {
+
+    let isValid: boolean = false;
+    let totalPrice: number = 0;
+    
+    if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
+      for (let movementOfCash of this.movementsOfCashes) {
+        totalPrice += this.roundNumber.transform(movementOfCash.amountPaid);
+      }
+    }
+    
+    if(this.roundNumber.transform(totalPrice) === this.roundNumber.transform(this.transaction.totalPrice)) {
+      isValid = true;
+    }
+
+    return isValid;
   }
 
   public getMovementsOfCashes(query?: string): Promise<MovementOfCash[]> {
