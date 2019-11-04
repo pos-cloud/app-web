@@ -380,7 +380,14 @@ export class AddSaleOrderComponent {
 
   async changeUseOfCFDI(useOfCFDI) {
     this.transaction.useOfCFDI = useOfCFDI;
-    await this.updateTransaction();
+    await this.updateTransaction().then(
+      transaction => {
+        if(transaction) {
+          this.transaction = transaction;
+          this.checkPrices();
+        }
+      }
+    );
   }
 
   async changeTransport(transport) {
@@ -389,7 +396,14 @@ export class AddSaleOrderComponent {
     } else {
       this.transaction.transport = null;
     }
-    await this.updateTransaction();
+    await this.updateTransaction().then(
+      transaction => {
+        if(transaction) {
+          this.transaction = transaction;
+          this.checkPrices();
+        }
+      }
+    );
   }
 
   public getRelationTypes(): Promise<RelationType[]> {
@@ -511,7 +525,7 @@ export class AddSaleOrderComponent {
     });
   }
 
-  public changeCurrency(currency: Currency): void {
+  async changeCurrency(currency: Currency) {
     this.transaction.currency = currency;
     if(this.config['currency'] && this.transaction.currency._id !== this.config['currency']._id) {
       for(let currency of this.currencies) {
@@ -524,10 +538,11 @@ export class AddSaleOrderComponent {
         this.transaction.quotation = currency.quotation;
       }
     }
-    this.updateTransaction().then(
+    await this.updateTransaction().then(
       transaction => {
         if(transaction) {
           this.transaction = transaction;
+          this.checkPrices();
         }
       }
     );
@@ -1127,7 +1142,6 @@ export class AddSaleOrderComponent {
           break;
         }
       }
-
     } else {
       isUpdateValid = true;
       totalPriceAux = 0;
@@ -1150,11 +1164,28 @@ export class AddSaleOrderComponent {
             if(transaction) {
               this.transaction = transaction;
               this.lastQuotation = this.transaction.quotation;
+              this.checkPrices();
             }
           }
         );
       }
     } else {
+      this.getMovementsOfTransaction(); // EN CASO DE QUE DE ERROR DE ACTUALIZAR ALGÚN PRODUCTO.
+    }
+  }
+
+  //FUNCIÓN PARA CONTROLAR QUE LA SUMA DE PRECIO DE ARTÍCULOS SEA IGUAL AL TOTAL DE LA TRANSACCIÓN
+  private checkPrices(): void {
+
+    let totalPrice: number = 0;
+    
+    if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
+      for (let movementOfArticle of this.movementsOfArticles) {
+        totalPrice += this.roundNumber.transform(movementOfArticle.salePrice);
+      }
+    }
+    
+    if(this.roundNumber.transform(totalPrice) !== this.roundNumber.transform(this.transaction.totalPrice)) {
       this.getMovementsOfTransaction();
     }
   }
@@ -1233,6 +1264,7 @@ export class AddSaleOrderComponent {
         if(transaction) {
           this.transaction = transaction;
           this.lastQuotation = this.transaction.quotation;
+          this.checkPrices();
         }
       }
     );
@@ -1495,7 +1527,6 @@ export class AddSaleOrderComponent {
         modalRef.result.then(async (result) => {
           if (result.company) {
 
-
             if(!this.transaction.company && result.company.priceList) {
               this.priceList = undefined
               this.newPriceList = await this.getPriceList(result.company.priceList._id);
@@ -1525,15 +1556,6 @@ export class AddSaleOrderComponent {
             }
             
             this.updatePrices();
-
-            
-            await this.updateTransaction().then(
-              transaction => {
-                if(transaction) {
-                  this.transaction = transaction;
-                }
-              }
-            );
           }
         }, (reason) => {
 
@@ -1666,6 +1688,7 @@ export class AddSaleOrderComponent {
                 transaction => {
                   if(transaction) {
                     this.transaction = transaction;
+                    this.checkPrices();
                   }
                 }
               );
@@ -1678,11 +1701,11 @@ export class AddSaleOrderComponent {
           modalRef = this._modalService.open(this.contentChangeObservation).result.then(async (result) => {
             if (result !== "cancel" && result !== '') {
               if(this.transaction.observation) {
-                this.transaction.observation = this.transaction.observation;
                 await this.updateTransaction().then(
                   transaction => {
                     if(transaction) {
                       this.transaction = transaction;
+                      this.checkPrices();
                     }
                   }
                 );
@@ -1734,6 +1757,7 @@ export class AddSaleOrderComponent {
                       }
                     );
                   }
+                  this.checkPrices();
                 }
               }
             );
@@ -1805,13 +1829,19 @@ export class AddSaleOrderComponent {
         break;
       case 'change-transport':
         modalRef = this._modalService.open(SelectTransportComponent);
-        modalRef.result.then((result) => {
+        modalRef.result.then(async (result) => {
           if(result && result.transport) {
             this.transaction.transport = result.transport
-            this.updateTransaction();
+            await this.updateTransaction().then(
+              transaction => {
+                if(transaction) {
+                  this.transaction = transaction;
+                  this.checkPrices();
+                }
+              }
+            );
           }
         }, (reason) => {
-          this.updateTransaction()
         });
         break;
       default: ;
