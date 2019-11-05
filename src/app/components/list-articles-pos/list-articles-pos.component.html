@@ -30,7 +30,7 @@
                                 <div *ngIf="article.make && rule.category === null && rule.make === article.make._id">
                                     <b>PL: {{ article.salePrice + (article.salePrice * ((rule.percentage + priceList.percentage) / 100)) | currency:'USD':'symbol-narrow':'1.2-2' }}</b>
                                 </div>
-                                <div *ngIf="article.make && rule.category !== article.category && rule.make !== article.make._id">
+                                <div *ngIf="article.make && article.category && rule.make && rule.category && rule.category !== article.category && rule.make !== article.make._id">
                                   <b>PL: {{ article.salePrice + (article.salePrice * priceList.percentage / 100) | currency:'USD':'symbol-narrow':'1.2-2' }}</b>
                                 </div>
                               </div>
@@ -53,7 +53,7 @@
                             <div *ngIf="article.make && rule.category === null && rule.make === article.make._id">
                                 <b>PL: {{ article.salePrice + (article.salePrice * ((rule.percentage + priceList.percentage) / 100)) | currency:'USD':'symbol-narrow':'1.2-2' }}</b>
                             </div>
-                            <div *ngIf="article.make && rule.category !== article.category && rule.make !== article.make._id">
+                            <div *ngIf="article.make && article.category && rule.make && rule.category && rule.category !== article.category && rule.make !== article.make._id">
                               <b>PL: {{ article.salePrice + (article.salePrice * priceList.percentage / 100) | currency:'USD':'symbol-narrow':'1.2-2' }}</b>
                             </div>
                           </div>
