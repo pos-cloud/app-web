@@ -680,6 +680,7 @@ export class AddMovementOfArticleComponent implements OnInit {
             this.movementOfArticle.transaction && 
             this.movementOfArticle.transaction.company && 
             this.movementOfArticle.transaction.company.priceList && 
+            this.movementOfArticle.transaction.company.priceList != null &&
             this.movementOfArticle.transaction.company.type === CompanyType.Client ) {
           let priceList = await this.getPriceList(this.movementOfArticle.transaction.company.priceList._id)
           if(priceList) {
