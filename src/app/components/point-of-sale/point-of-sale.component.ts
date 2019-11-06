@@ -887,7 +887,7 @@ export class PointOfSaleComponent implements OnInit {
     switch (op) {
       case 'company':
         modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.type = this.transaction.company.type;
+        modalRef.componentInstance.type = this.transaction.type.requestCompany
         modalRef.componentInstance.selectionView = true;
         modalRef.result.then(
           async (result) => {
