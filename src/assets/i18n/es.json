@@ -29,7 +29,7 @@
     "make": {
         "description": "Marca"
     },
-    "operationType": "Últ. op.",
+    "operationType": "Auditoría",
     "posDescription": "Descripción Corta",
     "quantityPerMeasure": "Cant. de Un. de Medida",
     "salePrice": "Precio de Venta",
@@ -39,5 +39,7 @@
     "unitOfMeasurement": {
         "abbreviation": "Unidad de Medida",
         "name": "Unidad de Medida"
-    }
+    },
+    "amount" : "Cantidad",
+    "transaction.endDate" : "Fecha"
 }

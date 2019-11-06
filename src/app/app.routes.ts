@@ -71,6 +71,7 @@ import { LicenseGuard } from './guards/license.guard';
 import { Config } from './app.config';
 import { ListStructureComponent } from './components/list-structure/list-structure.component';
 import { ListClassificationsComponent } from './components/list-classifications/list-classifications.component';
+import { ListMovementsOfArticlesComponent } from './components/list-movements-of-articles/list-movements-of-articles.component';
 
 export const _routes: Routes = [
   { 
@@ -277,6 +278,11 @@ export const _routes: Routes = [
     component: ListRoomsComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.sale.resto' }
+  },
+  {
+    path: 'admin/list-movements-of-articles',
+    component: ListMovementsOfArticlesComponent,
+    canActivate: [AuthGuard, LicenseGuard],
   },
   {
     path: 'admin/marcas',
