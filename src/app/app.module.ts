@@ -217,7 +217,7 @@ import { MovementOfCancellationService } from './services/movement-of-cancellati
 import { CurrencyComponent } from './components/currency/currency.component';
 import { ListCurrenciesComponent } from './components/list-currencies/list-currencies.component';
 import { CurrencyService } from './services/currency.service';
-import { ListMovementOfArticlesComponent } from './components/list-movement-of-articles/list-movement-of-articles.component';
+import { ReportKardexComponent } from './components/report-kardex/report-kardex.component';
 import { StateComponent } from './components/state/state.component';
 import { ListStatesComponent } from './components/list-states/list-states.component';
 import { CountryComponent } from './components/country/country.component';
@@ -417,7 +417,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MovementOfCancellationComponent,
     CurrencyComponent,
     ListCurrenciesComponent,
-    ListMovementOfArticlesComponent,
+    ReportKardexComponent,
     StateComponent,
     ListStatesComponent,
     CountryComponent,
@@ -454,7 +454,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ListStructureComponent,
     ExportExcelComponent,
     ClassificationComponent,
-    ListClassificationsComponent
+    ListClassificationsComponent,
   ],
   entryComponents: [
     HomeComponent,
@@ -591,7 +591,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MovementOfCancellationComponent,
     CurrencyComponent,
     ListCurrenciesComponent,
-    ListMovementOfArticlesComponent,
+    ReportKardexComponent,
     StateComponent,
     CountryComponent,
     BankComponent,

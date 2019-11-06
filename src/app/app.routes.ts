@@ -55,7 +55,7 @@ import { LicensePaymentComponent } from './components/license-payment/license-pa
 import { ListCancellationTypeComponent } from './components/list-cancellation-types/list-cancellation-types.component';
 import { Routes } from '@angular/router';
 import { ListCurrenciesComponent } from './components/list-currencies/list-currencies.component';
-import { ListMovementOfArticlesComponent } from './components/list-movement-of-articles/list-movement-of-articles.component';
+import { ReportKardexComponent } from './components/report-kardex/report-kardex.component';
 import { ListStatesComponent } from './components/list-states/list-states.component';
 import { ListCountriesComponent } from './components/list-countries/list-countries.component';
 import { ListBankComponent } from './components/list-bank/list-bank.component'
@@ -370,7 +370,7 @@ export const _routes: Routes = [
   },
   {
     path : 'report/kardex-de-productos/:id',
-    component : ListMovementOfArticlesComponent,
+    component : ReportKardexComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.stock' }
   },
