@@ -986,7 +986,7 @@ export class AddSaleOrderComponent {
               if(rule.category && movementOfArticle.category && rule.make == null && rule.category._id === movementOfArticle.category._id) {
                 increasePrice = this.roundNumber.transform(rule.percentage + this.priceList.percentage);
               }
-              if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.make._id !== movementOfArticle.make._id && rule.category._id !== movementOfArticle.category._id) {
+              if(rule.make !== movementOfArticle.make && rule.category !== movementOfArticle.category) {
                 increasePrice = this.roundNumber.transform(this.priceList.percentage);
               }
             }
@@ -1024,7 +1024,7 @@ export class AddSaleOrderComponent {
               if(rule.category && movementOfArticle.category && rule.make == null && rule.category._id === movementOfArticle.category._id) {
                 increasePrice = this.roundNumber.transform(rule.percentage + this.newPriceList.percentage);
               }
-              if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.make._id !== movementOfArticle.make._id && rule.category._id !== movementOfArticle.category._id) {
+              if(rule.make !== movementOfArticle.make && rule.category !== movementOfArticle.category) {
                 increasePrice = this.roundNumber.transform(this.newPriceList.percentage);
               }
             }

@@ -236,7 +236,7 @@ export class ListArticlesPosComponent implements OnInit {
                     if(rule.category && article.category && rule.make == null && rule.category._id === article.category._id) {
                       increasePrice = rule.percentage + priceList.percentage
                     }
-                    if(rule.category && article.category && rule.make && article.make && rule.make._id !== article.make._id && rule.category._id !== article.category._id) {
+                    if(rule.make !== article.make && rule.category !== article.category) {
                       increasePrice = priceList.percentage
                     }
                   }

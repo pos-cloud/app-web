@@ -716,15 +716,9 @@ export class AddMovementOfArticleComponent implements OnInit {
 
                     increasePrice = rule.percentage + priceList.percentage
                   }
-                  if( this.movementOfArticle &&
-                      this.movementOfArticle.article && 
-                      this.movementOfArticle.article.category &&
-                      this.movementOfArticle.article.make && 
-                      rule.category &&  
-                      rule.make && 
-                      rule.make._id !== this.movementOfArticle.article.make._id && 
-                      rule.category._id !== this.movementOfArticle.article.category._id) {
-
+                  if( rule.make !== this.movementOfArticle.article.make && 
+                      rule.category !== this.movementOfArticle.article.category) {
+                      
                     increasePrice = priceList.percentage
                   }
                 }
@@ -747,7 +741,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
         if(increasePrice != 0) {
           this.movementOfArticle.unitPrice = this.roundNumber.transform(this.movementOfArticle.unitPrice + (this.movementOfArticle.unitPrice * increasePrice / 100));
-        } 
+        }
 
     } else {
       this.movementOfArticle.markupPercentage = 0;
