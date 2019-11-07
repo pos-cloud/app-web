@@ -564,6 +564,9 @@ export class AddSaleOrderComponent {
               }
             }
           );
+        } else {
+          this.hideMessage();
+          this.getMovementsOfTransaction();
         }
       }
     );
@@ -1135,7 +1138,6 @@ export class AddSaleOrderComponent {
 
     let totalPriceAux = 0;
     let discountAmountAux = 0;
-    this.quantity = 0;
 
     if (discountPercent !== undefined) {
       this.transaction.discountPercent = this.roundNumber.transform(discountPercent, 3);
@@ -1148,7 +1150,6 @@ export class AddSaleOrderComponent {
 
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let movementOfArticle of this.movementsOfArticles) {
-        this.quantity = this.roundNumber.transform(this.quantity + movementOfArticle.amount);
         movementOfArticle.transaction.discountPercent = this.roundNumber.transform(this.transaction.discountPercent);
         if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
           movementOfArticle = await this.recalculateSalePrice(movementOfArticle);
@@ -1192,6 +1193,9 @@ export class AddSaleOrderComponent {
                   }
                 }
               );
+            } else {
+              this.hideMessage();
+              this.getMovementsOfTransaction();
             }
           }
         );
@@ -1209,10 +1213,12 @@ export class AddSaleOrderComponent {
       let isValid: boolean = false;
 
       let totalPrice: number = 0;
+      this.quantity = 0;
       
       if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
         for (let movementOfArticle of this.movementsOfArticles) {
           totalPrice += this.roundNumber.transform(movementOfArticle.salePrice);
+          this.quantity += movementOfArticle.amount;
         }
       }
       
@@ -1305,6 +1311,9 @@ export class AddSaleOrderComponent {
               }
             }
           );
+        } else {
+          this.hideMessage();
+          this.getMovementsOfTransaction();
         }
       }
     );
