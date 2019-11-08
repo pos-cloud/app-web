@@ -199,6 +199,11 @@ export class ListMovementsOfArticlesComponent implements OnInit {
     }
   };
 
+  public pageChange(page): void {
+    this.currentPage = page;
+    this.getItems();
+}
+
   public getBranches(match: {} = {}): Promise<Branch[]> {
 
     return new Promise<Branch[]>((resolve, reject) => {
