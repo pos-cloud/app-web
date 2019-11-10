@@ -716,11 +716,9 @@ export class AddMovementOfArticleComponent implements OnInit {
 
                     increasePrice = rule.percentage + priceList.percentage
                   }
-                  if( rule.make !== this.movementOfArticle.article.make && 
-                      rule.category !== this.movementOfArticle.article.category) {
-                      
-                    increasePrice = priceList.percentage
-                  }
+                }
+                if(increasePrice === 0){
+                  increasePrice = priceList.percentage
                 }
               });
             } else {

@@ -969,11 +969,14 @@ export class AddSaleOrderComponent {
               if(rule.category && movementOfArticle.category && rule.make == null && rule.category._id === movementOfArticle.category._id) {
                 increasePrice = this.roundNumber.transform(rule.percentage + this.priceList.percentage);
               }
-              if(rule.make !== movementOfArticle.make && rule.category !== movementOfArticle.category) {
+              /*if(rule.make !== movementOfArticle.make && rule.category !== movementOfArticle.category) {
                 increasePrice = this.roundNumber.transform(this.priceList.percentage);
-              }
+              }*/
             }
           });
+          if(increasePrice === 0){
+            increasePrice = this.roundNumber.transform(this.priceList.percentage);
+          }
         } else {
           increasePrice = this.roundNumber.transform(this.priceList.percentage);
         }
@@ -1007,11 +1010,14 @@ export class AddSaleOrderComponent {
               if(rule.category && movementOfArticle.category && rule.make == null && rule.category._id === movementOfArticle.category._id) {
                 increasePrice = this.roundNumber.transform(rule.percentage + this.newPriceList.percentage);
               }
-              if(rule.make !== movementOfArticle.make && rule.category !== movementOfArticle.category) {
+             /* if(rule.make !== movementOfArticle.make && rule.category !== movementOfArticle.category) {
                 increasePrice = this.roundNumber.transform(this.newPriceList.percentage);
-              }
+              }*/
             }
           });
+          if(increasePrice === 0){
+            increasePrice = this.roundNumber.transform(this.newPriceList.percentage);
+          }
         } else {
           increasePrice = this.roundNumber.transform(this.newPriceList.percentage);
         }

@@ -29,6 +29,7 @@ import { PriceList } from 'app/models/price-list';
 import { PriceListService } from 'app/services/price-list.service';
 import { CompanyType } from 'app/models/company';
 import { TransactionService } from 'app/services/transaction.service';
+import { async } from 'q';
 
 
 @Component({
@@ -58,6 +59,7 @@ export class ListArticlesPosComponent implements OnInit {
   public roundNumber = new RoundNumberPipe();
   public articleType: Type;
   public currentPage: number = 0;
+  public priceList : PriceList;
   public database: string;
   public filterPipe: FilterPipe = new FilterPipe();
   public filteredArticles: Article[];
@@ -99,8 +101,11 @@ export class ListArticlesPosComponent implements OnInit {
 
     if((!this.transaction || !this.transaction._id || this.transaction._id === '') && this.transactionId) {
       await this.getTransaction().then(
-        transaction => {
+        async transaction => {
           this.transaction = transaction;
+          if(this.transaction && this.transaction.company && this.transaction.company.priceList && this.transaction.company.type === CompanyType.Client ) {
+            this.priceList = await this.getPriceList(this.transaction.company.priceList._id)
+          }
         }
       );
     }
@@ -192,6 +197,48 @@ export class ListArticlesPosComponent implements OnInit {
     );
   }
 
+  public getRealPrice(article : Article) : void {
+    
+    let increasePrice = 0;
+    if(this.priceList) {
+      if(this.priceList.allowSpecialRules) {
+        this.priceList.rules.forEach(rule => {
+          if(rule) {
+            if(rule.category && article.category && rule.make && article.make && rule.category._id === article.category.toString() && rule.make._id === article.make._id) {
+              increasePrice = rule.percentage + this.priceList.percentage
+            }
+            if(rule.make && article.make && rule.category == null && rule.make._id === article.make._id) {
+              increasePrice = rule.percentage + this.priceList.percentage
+            }
+            if(rule.category && article.category && rule.make == null && rule.category._id === article.category.toString()) {
+              increasePrice = rule.percentage + this.priceList.percentage
+            }
+          }
+        });
+        if(increasePrice === 0){
+          increasePrice = this.priceList.percentage;
+        }
+      } else {
+        increasePrice = this.priceList.percentage
+      }
+
+      if(this.priceList.exceptions && this.priceList.exceptions.length > 0) {
+        this.priceList.exceptions.forEach(exception =>{
+          if(exception) {
+            if(article && exception.article && exception.article._id === article._id) {
+              increasePrice = exception.percentage
+            }
+          }
+        })
+      }
+
+    }
+    let realPrice = this.roundNumber.transform(article.salePrice + (article.salePrice * increasePrice / 100));
+
+    return realPrice
+
+  }
+
   public getPriceList(id: string): Promise<PriceList> {
 
     return new Promise<PriceList>((resolve, reject) => {
@@ -236,11 +283,11 @@ export class ListArticlesPosComponent implements OnInit {
                     if(rule.category && article.category && rule.make == null && rule.category._id === article.category._id) {
                       increasePrice = rule.percentage + priceList.percentage
                     }
-                    if(rule.make !== article.make && rule.category !== article.category) {
-                      increasePrice = priceList.percentage
-                    }
                   }
                 });
+                if(increasePrice === 0){
+                  increasePrice = priceList.percentage;
+                }
               } else {
                 increasePrice = priceList.percentage
               }
