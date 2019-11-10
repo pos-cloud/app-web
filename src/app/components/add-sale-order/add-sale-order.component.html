@@ -8,7 +8,7 @@
         <div class="col-md-2" *ngIf="posType==='mostrador' && transaction.type" (click)="openModal('observation')">
           <b>{{transaction.type.name}} {{ transaction.number }}</b>
         </div>
-        <div class="col-md-2" *ngIf="transaction.type && transaction.type.requestEmployee">
+        <div class="col-md-2" *ngIf="transaction.type && transaction.type.requestEmployee && transaction.employeeClosing">
           <b>{{ transaction.type.requestEmployee.description }}:</b>
           <span *ngIf="transaction.employeeClosing">{{transaction.employeeClosing.name}}</span>
         </div>
@@ -26,7 +26,7 @@
           <span *ngIf="!transaction.company && transactionMovement === 'Venta'">Consumidor final</span>
           <span *ngIf="transaction.company">{{transaction.company.name}}</span>
         </div>
-        <div class="col-md-2" *ngIf="posType==='resto'">
+        <div class="col-md-2" *ngIf="posType==='resto' && transaction.diners > 0">
           <b>Comensales:</b>
           {{transaction.diners}}
         </div>
@@ -38,7 +38,7 @@
           <b>Fecha:</b>
           {{transaction.endDate | dateFormat:'DD/MM/YYYY'}}
         </div>
-        <div class="col-md-2" *ngIf="transaction.type && transaction.type.requestEmployee">
+        <div class="col-md-2" *ngIf="transaction.type && transaction.type.requestEmployee && transaction.employeeClosing">
           <div class="btn-group">
             <button type="button" class="btn btn-outline-secondary" (click)="openModal('change-employee')">
               Cambiar {{ transaction.type.requestEmployee.description }}
