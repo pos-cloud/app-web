@@ -241,23 +241,6 @@ export class PointOfSaleComponent implements OnInit {
     );
   }
 
-  public getTransactionTypesByMovement(): void {
-
-    let query = 'where="transactionMovement":"' + this.transactionMovement + '"';
-
-    this._transactionTypeService.getTransactionTypes(query).subscribe(
-      result => {
-        if (!result.transactionTypes) {
-        } else {
-          this.transactionTypes = result.transactionTypes;
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-      }
-    );
-  }
-
   public getTransactionTypes(query?: string): Promise<TransactionType[]> {
 
     return new Promise<TransactionType[]>((resolve, reject) => {
@@ -314,44 +297,6 @@ export class PointOfSaleComponent implements OnInit {
       );
   }
 
-  public getOpenTransactions(): void {
-
-    this.loading = true;
-
-    let query = `where= "$and":[{"state":{"$ne": "${TransactionState.Closed}"}},
-                                {"state":{"$ne": "${TransactionState.Canceled}"}},`
-                                
-    this._authService.getIdentity.subscribe(
-      identity => {
-        if(identity && identity.origin) {
-          query += `{"branch":"${identity.origin.branch._id}"},`;
-        }
-      }
-    );
-
-    query += `{"madein":"${this.posType}"}]`;
-
-    this._transactionService.getTransactions(query).subscribe(
-      result => {
-        if (!result.transactions) {
-          this.hideMessage();
-          this.transactions = null;
-          this.areTransactionsEmpty = true;
-        } else {
-          this.hideMessage();
-          this.transactions = result.transactions;
-          this.totalItems = this.transactions.length;
-          this.areTransactionsEmpty = false;
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
   public getOpenTransactionsByMovement(transactionMovement: TransactionMovement, query: string): void {
 
     this.loading = true;
@@ -380,7 +325,7 @@ export class PointOfSaleComponent implements OnInit {
   async refresh() {
 
     let pathLocation: string[] = this._router.url.split('/');
-    if (this.posType === "resto") {
+    if (this.posType === 'resto') {
       this.roomSelected._id = pathLocation[4];
       this.getRooms();
     } else if (this.posType === "delivery") {
@@ -391,7 +336,33 @@ export class PointOfSaleComponent implements OnInit {
           }
         }
       );
-      this.getOpenTransactions();
+
+      let query = `where="$and":[{"state":{"$ne": "${TransactionState.Closed}"}},{"state":{"$ne":"${TransactionState.Canceled}"}},`
+          
+      this._authService.getIdentity.subscribe(
+        identity => {
+          if(identity && identity.origin) {
+            query += `{"branch":"${identity.origin.branch._id}"},`;
+          }
+        }
+      );
+
+      query += `{"madein":"${this.posType}"}]`;
+
+      await this.getTransactions(query).then(
+        transactions => {
+          this.hideMessage();
+          if (!transactions) {
+            this.transactions = null;
+            this.areTransactionsEmpty = true;
+          } else {
+            this.hideMessage();
+            this.transactions = transactions;
+            this.totalItems = this.transactions.length;
+            this.areTransactionsEmpty = false;
+          }
+        }
+      );
     } else if (this.posType === "pedidos-web") {
       this.transactionMovement = TransactionMovement.Sale;
       let query = `where="state":"${TransactionState.Closed}","madein":"${this.posType}","balance":{"$gt":0}&sort="startDate":-1`;
@@ -464,21 +435,42 @@ export class PointOfSaleComponent implements OnInit {
     }
   }
 
-  public getDefectOrder(): void {
+  public async initTransactionByType(op: string, openPending: boolean = false) {
+    
+    let query = `where="${op}":true`;
 
-    let query = 'where="defectOrders":' + true;
+    await this.getTransactionTypes(query).then(
+      async transactionTypes => {
+        if(transactionTypes && transactionTypes.length > 0) {
+          if(openPending) {
+            let query = `where="$and":[{"state":{"$ne": "${TransactionState.Closed}"}},{"state":{"$ne":"${TransactionState.Canceled}"}},`
+          
+            this._authService.getIdentity.subscribe(
+              identity => {
+                if(identity && identity.origin) {
+                  query += `{"branch":"${identity.origin.branch._id}"},`;
+                }
+              }
+            );
 
-    this._transactionTypeService.getTransactionTypes(query).subscribe(
-      async result => {
-        if (!result.transactionTypes) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.transactionTypes = null;
+            query += `{"madein":"${this.posType}"},{"type":"${transactionTypes[0]._id}"},{"$or":[{"table":{"$exists":false}},{"table":null}]}]&limit=1`;
+            await this.getTransactions(query).then(
+              transactions => {
+                if(transactions && transactions.length > 0) {
+                  this.transaction = transactions[0];
+                  this.tableSelected = this.transaction.table;
+                  this.nextStepTransaction();
+                } else {
+                  this.addTransaction(transactionTypes[0]);
+                }
+              }
+            );
+          } else {
+            this.addTransaction(transactionTypes[0]);
+          }
         } else {
-          this.addTransaction(result.transactionTypes[0]);
+          this.showMessage('Es necesario configurar el tipo de transacción.', 'info', true);
         }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
       }
     );
   }
@@ -775,10 +767,16 @@ export class PointOfSaleComponent implements OnInit {
         result = await this.assignBranch();
       }
       if(result) {
-        await this.getLastTransactionByType().then(
-          async transaction => {
-            if(transaction) {
-              this.transaction.number = transaction.number + 1;
+        // CONSULTAR ULTIMA TRANSACCIÓN PARA ENUMARAR LA SIGUIENTE
+        let query = `where= "type":"${this.transaction.type._id}",
+                          "origin":"${this.transaction.origin}",
+                          "letter":"${this.transaction.letter}"
+                  &sort="number":-1
+                  &limit=1`;
+        await this.getTransactions(query).then(
+          async transactions => {
+            if(transactions && transactions.length > 0) {
+              this.transaction.number = transactions[0].number + 1;
             } else {
               this.transaction.number = 1;
             }
@@ -789,7 +787,7 @@ export class PointOfSaleComponent implements OnInit {
                     async transaction => {
                       if(transaction) {
                         this.transaction = transaction;
-                        if(this.posType === "resto") {
+                        if(this.posType === 'resto' && this.tableSelected) {
                           this.tableSelected.lastTransaction = this.transaction;
                           this.tableSelected.state = TableState.Busy;
                           await this.updateTable().then(
@@ -830,7 +828,8 @@ export class PointOfSaleComponent implements OnInit {
       } else if (!this.transaction.employeeClosing &&
           this.transaction.type.requestEmployee &&
           this.transaction.type.requestArticles &&
-          this.posType !== 'delivery') {
+          this.posType !== 'delivery' &&
+          (this.posType === 'resto' && this.transaction.table)) {
         this.openModal('select-employee');
       } else if (!this.transaction.company &&
                   this.transaction.type.requestCompany) {
@@ -842,7 +841,11 @@ export class PointOfSaleComponent implements OnInit {
         }
       } else if (this.transaction.type.automaticNumbering && this.transaction.type.requestArticles) {
         if (this.posType === 'resto') {
-          this._router.navigate(['/pos/resto/salones/' + this.tableSelected.room._id + '/mesas/' + this.tableSelected._id + '/editar-transaccion/' + this.tableSelected.lastTransaction._id]);
+          if(this.tableSelected) {
+            this._router.navigate(['/pos/resto/salones/' + this.tableSelected.room._id + '/mesas/' + this.tableSelected._id + '/editar-transaccion/' + this.tableSelected.lastTransaction._id]);
+          } else {
+            this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + this.transaction._id]);
+          }
         } else if (this.posType === 'pedidos-web') {
           this._router.navigate(['/pos/' + this.posType ]);
         } else {
@@ -1090,7 +1093,7 @@ export class PointOfSaleComponent implements OnInit {
       case 'select-employee':
         modalRef = this._modalService.open(SelectEmployeeComponent);
         modalRef.componentInstance.requireLogin = false;
-        if(this.posType === 'resto') {
+        if(this.posType === 'resto' && this.tableSelected) {
           modalRef.componentInstance.op = 'open-table';
           modalRef.componentInstance.table = this.tableSelected;
         } else {
@@ -1112,7 +1115,7 @@ export class PointOfSaleComponent implements OnInit {
                     }
                   }
                 );
-              } else if (this.posType === 'resto') {
+              } else if (this.posType === 'resto' && this.tableSelected) {
                 this.tableSelected.employee = result.employee;
                 this.tableSelected.diners = result.diners;
                 await this.updateTable().then(
@@ -1234,7 +1237,7 @@ export class PointOfSaleComponent implements OnInit {
       async balance => {
         if(balance !== null) {
           this.transaction.balance = balance;
-          if (this.posType === "resto" || this.posType === "delivery") {
+          if (this.posType === 'resto' || this.posType === "delivery") {
             this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
             this.transaction.VATPeriod = moment().format('YYYYMM');
           } else {
@@ -1272,22 +1275,16 @@ export class PointOfSaleComponent implements OnInit {
     });
   }
 
-  public getLastTransactionByType(): Promise<Transaction> {
+  public getTransactions(query: string): Promise<Transaction[]> {
 
-    return new Promise<Transaction>((resolve, reject) => {
-
-      let query = `where= "type":"${this.transaction.type._id}",
-                          "origin":"${this.transaction.origin}",
-                          "letter":"${this.transaction.letter}"
-                  &sort="number":-1
-                  &limit=1`;
+    return new Promise<Transaction[]>((resolve, reject) => {
 
       this._transactionService.getTransactions(query).subscribe(
         result => {
           if (!result.transactions) {
             resolve(null);
           } else {
-            resolve(result.transactions[0]);
+            resolve(result.transactions);
           }
         },
         error => {
@@ -1395,7 +1392,7 @@ export class PointOfSaleComponent implements OnInit {
         this.transaction = this.tableSelected.lastTransaction;
         this.nextStepTransaction();
       } else {
-        this.getDefectOrder();
+        this.initTransactionByType('defectOrders');
       }
     } else {
       this.showMessage("La mesa seleccionada se encuentra " + this.tableSelected.state, 'info', true);

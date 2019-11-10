@@ -5,7 +5,6 @@ import { ListEmployeesComponent } from './components/list-employees/list-employe
 import { ListEmployeeTypesComponent } from './components/list-employee-types/list-employee-types.component';
 import { ListTablesComponent } from './components/list-tables/list-tables.component';
 import { ListTransactionsComponent } from './components/list-transactions/list-transactions.component';
-import { DeleteTransactionComponent } from './components/delete-transaction/delete-transaction.component';
 import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
 import { ListRoomsComponent } from './components/list-rooms/list-rooms.component';
 import { ListCategoriesComponent } from './components/list-categories/list-categories.component';
@@ -569,6 +568,12 @@ export const _routes: Routes = [
   },
   {
     path: 'pos/resto/salones/:id/mesas/:id/editar-transaccion/:id',
+    component: AddSaleOrderComponent,
+    canActivate: [AuthGuard, LicenseGuard],
+    data: { module: 'config.modules.sale.resto' }
+  },
+  {
+    path: 'pos/resto/editar-transaccion/:id',
     component: AddSaleOrderComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.sale.resto' }

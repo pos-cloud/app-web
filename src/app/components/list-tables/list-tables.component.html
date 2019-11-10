@@ -102,7 +102,6 @@
   </div>
   <div class="row">
     <div class="col-md-6" align="left">
-      <h5><b>Mesas</b></h5>
     </div>
     <div class="col-md-6" align="right">
       <h5><b>Comensales: {{amountOfDinersNow}}/{{amountOfDiners}}</b></h5>
@@ -118,7 +117,7 @@
         <div class="row" class="number-diners" *ngIf="table.state==='Ocupada' || table.state==='Reservada' || table.state==='Pendiente'">
           <div class="col-md-2 offset-md-7">
             <span class="badge badge-warning">
-              <b>{{table.diners}}</b>
+              <i class="fa fa-user" style="margin-right: 5px;"></i><b>{{table.diners}}</b>
             </span>
           </div>
         </div>

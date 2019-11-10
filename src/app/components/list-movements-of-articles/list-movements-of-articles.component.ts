@@ -292,7 +292,6 @@ export class ListMovementsOfArticlesComponent implements OnInit {
     }
     project += `}`;
 
-    console.log(project)
     project = JSON.parse(project);
 
     // AGRUPAMOS EL RESULTADO

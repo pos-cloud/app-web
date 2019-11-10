@@ -104,7 +104,6 @@ export class AddSaleOrderComponent {
   public printerSelected: Printer;
   public printersAux: Printer[];  //Variable utilizada para guardar las impresoras de una operación determinada (Cocina, mostrador, Bar)
   public userType: string;
-  public user : User;
   public posType: string;
   public loading: boolean;
   @ViewChild('contentPrinters', {static: true}) contentPrinters: ElementRef;
@@ -187,7 +186,7 @@ export class AddSaleOrderComponent {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
-    if (this.posType !== 'resto') {
+    if (!pathLocation[8]) {
       this.transactionId = pathLocation[4];
     } else {
       this.transactionId = pathLocation[8];
@@ -195,20 +194,6 @@ export class AddSaleOrderComponent {
   }
 
   async ngOnInit() {
-
-    let identity: User = JSON.parse(sessionStorage.getItem('user'));
-    this._userService.getUser(identity._id).subscribe(
-      result =>{
-        if(result && result.user){
-          this.user = result.user
-        } else {
-          this.showMessage("Debe volver a iniciar session", "danger", false);
-        }
-      },
-      error =>{
-        this.showMessage(error._body, "danger", false);
-      }
-    )
 
     this.database = Config.database;
     
@@ -234,16 +219,14 @@ export class AddSaleOrderComponent {
         }
       }
     );
-
     if(this.transactionId) {
       await this.getTransaction().then(
         async transaction => {
           if(transaction) {
             this.transaction = transaction;
-
             if(this.transaction.state === TransactionState.Closed ||
               this.transaction.state === TransactionState.Canceled) {
-                if(this.posType === 'resto') {
+                if(this.posType === 'resto' && this.transaction.table) {
                   this.transaction.table.employee = null;
                   this.transaction.table.state = TableState.Available;
                   await this.updateTable().then(table => {
@@ -1547,7 +1530,7 @@ export class AddSaleOrderComponent {
         modalRef.componentInstance.transactionId = this.transaction._id;
         modalRef.result.then(async (result) => {
           if (result === 'delete_close') {
-            if (this.posType === "resto") {
+            if (this.posType === 'resto' && this.transaction.table) {
               this.transaction.table.employee = null;
               this.transaction.table.state = TableState.Available;
               await this.updateTable().then(table => {
@@ -2202,7 +2185,7 @@ export class AddSaleOrderComponent {
                     this.openModal('printers');
                   }
                 } else {
-                  if (this.posType === "resto") {
+                  if (this.posType === 'resto' && this.transaction.table) {
                     this.transaction.table.employee = null;
                     this.transaction.table.state = TableState.Available;
                     await this.updateTable().then(table => {
@@ -2433,7 +2416,7 @@ export class AddSaleOrderComponent {
     } else if (this.kitchenArticlesToPrint && this.kitchenArticlesToPrint.length !== 0) {
       this.typeOfOperationToPrint = "kitchen";
       this.openModal('printers');
-    } else if (this.posType === "resto") {
+    } else if (this.posType === 'resto' && this.transaction.table) {
       this.transaction.table.state = TableState.Busy;
       await this.updateTable().then(table => {
         if(table) {
@@ -2448,11 +2431,15 @@ export class AddSaleOrderComponent {
 
   public backFinal(): void {
 
-    if (this.posType === "resto") {
-      if(this.transaction.table.room && this.transaction.table.room._id) {
-        this._router.navigate(['/pos/resto/salones/' + this.transaction.table.room._id + '/mesas']);
+    if (this.posType === 'resto') {
+      if(this.transaction.table) {
+        if(this.transaction.table.room && this.transaction.table.room._id) {
+          this._router.navigate(['/pos/resto/salones/' + this.transaction.table.room._id + '/mesas']);
+        } else {
+          this._router.navigate(['/pos/resto/salones/' + this.transaction.table.room + '/mesas']);
+        }
       } else {
-        this._router.navigate(['/pos/resto/salones/' + this.transaction.table.room + '/mesas']);
+        this._router.navigate(['/pos/resto']);
       }
     } else if (this.posType === "mostrador") {
       if (this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
@@ -2532,19 +2519,28 @@ export class AddSaleOrderComponent {
             if (this.barArticlesPrinted < this.barArticlesToPrint.length) {
               this.updateMovementOfArticlePrintedBar();
             } else {
-              if (this.posType === "resto") {
-                this.transaction.table.state = TableState.Busy;
-                await this.updateTable().then(table => {
-                  if(table) {
-                    this.transaction.table = table;
-                    if(this.kitchenArticlesToPrint.length > 0){
-                      this.typeOfOperationToPrint = 'kitchen';
-                      this.distributeImpressions(null)
-                    } else {
-                      this.backFinal();
+              if (this.posType === 'resto') {
+                if(this.transaction.table) {
+                  this.transaction.table.state = TableState.Busy;
+                  await this.updateTable().then(table => {
+                    if(table) {
+                      this.transaction.table = table;
+                      if(this.kitchenArticlesToPrint.length > 0){
+                        this.typeOfOperationToPrint = 'kitchen';
+                        this.distributeImpressions(null)
+                      } else {
+                        this.backFinal();
+                      }
                     }
+                  });
+                } else {
+                  if(this.kitchenArticlesToPrint.length > 0){
+                    this.typeOfOperationToPrint = 'kitchen';
+                    this.distributeImpressions(null)
+                  } else {
+                    this.backFinal();
                   }
-                });
+                }
               } else {
                 if(this.barArticlesToPrint){
                   this.typeOfOperationToPrint = 'kitchen';
@@ -2578,7 +2574,7 @@ export class AddSaleOrderComponent {
             if (this.kitchenArticlesPrinted < this.kitchenArticlesToPrint.length) {
               this.updateMovementOfArticlePrinted();
             } else {
-              if (this.posType === "resto") {
+              if (this.posType === 'resto' && this.transaction.table) {
                 this.transaction.table.state = TableState.Busy;
                 await this.updateTable().then(table => {
                   if(table) {
@@ -2644,8 +2640,25 @@ export class AddSaleOrderComponent {
       }
     }
 
-    if(this.user && this.user.printers && this.user.printers.length > 0){
-      for (const element of this.user.printers) {
+    let identity: User = JSON.parse(sessionStorage.getItem('user'));
+    let user;
+    if(identity) {
+      this._userService.getUser(identity._id).subscribe(
+        result =>{
+          if(result && result.user) {
+            user = result.user;
+          } else {
+            this.showMessage("Debe volver a iniciar session", "danger", false);
+          }
+        },
+        error =>{
+          this.showMessage(error._body, "danger", false);
+        }
+      )
+    }
+
+    if(user && user.printers && user.printers.length > 0){
+      for (const element of user.printers) {
         if(element && element.printer && element.printer.printIn === PrinterPrintIn.Bar && this.typeOfOperationToPrint === 'bar'){
           this.printerSelected = element.printer
         }

@@ -13,26 +13,36 @@ app-point-of-sale {
 	}
 	
 	.tables-container {
-		height:70vh;
-		padding-left: 50px;
-		padding-right: 50px;
+		height:75vh;
 	}
-	
-	.btn-turn {
-		background: #0275d8;
-		width: 100px;
-		height: 100px;
-		margin: 25px;
-		float: left;
+
+	.header-bottom {
+		position: fixed;
+		height: 120px;
+		bottom: 0px;
+		left: 0;
+		right: 0;
+		padding: 20px;
+		margin: 0;
+		background-color: white;
+	}
+
+	.quick-btn {
+		height: 80px;
+		width: 90px;
+		color: #2E2E2E;
+		background-color: white;
 		text-align: center;
+		padding-top: 5px;
+		font-size: 15px;
+		border-radius: 5px;
+		border: 1px solid #848484;
+		font-weight: 500;
 		cursor: pointer;
-		border: 1px solid black;
-		padding-top: 20px;
-		box-shadow: 0px 0px 2px;
-	}
-	
-	.btn-turn:hover {
-		opacity: 0.5;
+		margin-left: 20px;
+		i {
+			font-size: 20px;
+		}
 	}
 	
 	.btn-turn-text {
@@ -57,6 +67,22 @@ app-point-of-sale {
 		.tables-container {
 			padding: 0px;
 			margin: 0px;
+		}
+
+		.header-bottom {
+			height: 80px;
+			padding: 10px;
+		}
+	
+		.quick-btn {
+			height: 60px;
+			width: 70px;
+			padding-top: 5px;
+			font-size: 10px;
+			margin-left: 10px;
+			i {
+				font-size: 15px;
+			}
 		}
 	}
 }

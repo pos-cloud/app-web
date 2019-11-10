@@ -7,7 +7,7 @@ app-list-tables {
         float: left;
         text-align: center;
         cursor: pointer;
-        border: 1px solid black;
+		border: 1px solid #848484;
         border-radius: 5px;
         box-shadow: 0px 0px 2px;
     }
@@ -53,16 +53,6 @@ app-list-tables {
     
     .table-description {
         font-size: 30px;
-    }
-    
-    .center-content {
-        margin-top: 30px;
-        display: -webkit-flex;
-        display: flex;
-        -webkit-flex-wrap: wrap;
-        flex-wrap: wrap;
-        -webkit-justify-content: center;
-        justify-content: center;
     }
 
 	/* RESPONSIVE */

@@ -9,8 +9,12 @@
     </div> 
     <div class="row center-content">
       <div class="btn-group btn-lg" role="group" aria-label="Basic example">
-        <button type="button" [ngClass]="{'btn btn-primary':roomSelected._id===room._id,
-                            'btn btn-light':roomSelected._id!==room._id}" *ngFor="let room of rooms" (click)="changeRoom(room)"  title="Cambiar de Salón">
+        <button type="button"
+                [ngClass]="{'btn btn-primary':roomSelected._id===room._id, 'btn btn-light':roomSelected._id!==room._id}"
+                *ngFor="let room of rooms"
+                (click)="changeRoom(room)"
+                title="Cambiar de Salón"
+                style="padding: 5px;">
           {{room.description}}
         </button>
       </div>
@@ -19,6 +23,33 @@
       <div *ngIf="roomSelected">
         <app-list-tables (eventBackToRoom)="changeRoom($room)" (eventTableSelected)="selectTable($event)" [filterRoom]="roomSelected.description"></app-list-tables>
       </div>
+    </div>
+    <div class="row header-bottom">
+      <div class="quick-btn" (click)="initTransactionByType('defectOrders', true)">
+        <i class="fa fa-bolt"></i>
+        <br>
+        <strong>Venta<br>Rápida</strong>
+      </div>
+      <div class="quick-btn" (click)="initTransactionByType('cashOpening')" *ngIf="config.modules.money">
+        <i class="fa fa-money"></i>
+        <br>
+        <strong>Apertura<br>Caja</strong>
+      </div>
+      <div class="quick-btn" (click)="initTransactionByType('cashClosing')" *ngIf="config.modules.money">
+        <i class="fa fa-money"></i>
+        <br>
+        <strong>Cierre<br>Caja</strong>
+      </div>
+      <!-- <div class="quick-btn" (click)="changeTable()">
+        <i class="fa fa-exchange"></i>
+        <br>
+        <strong>Cambiar<br>Mesa</strong>
+      </div>
+      <div class="quick-btn" (click)="joinTables()">
+        <i class="fa fa-th-large"></i>
+        <br>
+        <strong>Unir<br>Mesas</strong>
+      </div> -->
     </div>
   </section>
   
@@ -38,7 +69,7 @@
               <button class="dropdown-item" *ngFor="let transactionType of transactionTypes" (click)="addTransaction(transactionType)">{{transactionType.name}}</button>
             </div>
           </div>
-          <button class="btn" (click)="getDefectOrder()"><i class="fa fa-plus"></i><span>Nuevo Pedido</span></button>
+          <button class="btn" (click)="initTransactionByType('defectOrders')"><i class="fa fa-plus"></i><span>Nuevo Pedido</span></button>
           <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
         </div>
       </div>
