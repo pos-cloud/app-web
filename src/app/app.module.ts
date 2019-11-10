@@ -149,6 +149,7 @@ import { OrderByPipe } from './pipes/order-by.pipe';
 import { DateFormatPipe } from './pipes/date-format.pipe';
 import { TotalPipe } from './pipes/total.pipe';
 import { RoundNumberPipe } from './pipes/round-number.pipe';
+import { CapitalizePipe } from './pipes/capitalize';
 
 // directives
 import { FocusDirective } from './directives/focus.directive';
@@ -313,6 +314,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     FilterPipe,
     OrderByPipe,
     DateFormatPipe,
+    CapitalizePipe,
     TotalPipe,
     RoundNumberPipe,
     AddUserComponent,

@@ -16,6 +16,7 @@
             <tr>
               <th><i class="fa fa-bars"></i></th>
               <th (click)="orderBy('number')">Número</th>
+              <th>Día</th>
               <th (click)="orderBy('openingDate')">Fecha Apertura</th>
               <th (click)="orderBy('closingDate')">Fecha Cierre</th>
               <th (click)="orderBy('state')">Estado</th>
@@ -24,6 +25,7 @@
             <tr class="filters">
               <th></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterNumber" placeholder="Número..." ></th>
+              <th></th>
               <th><input type="date" class="form-control" [(ngModel)]= "filterOpeningDate" placeholder="Fecha Apertura..." ></th>
               <th><input type="date" class="form-control" [(ngModel)]= "filterClosingDate" placeholder="Fecha Cierre..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterState" placeholder="Estado..." ></th>
@@ -53,6 +55,7 @@
                 </button>
               </td>
               <td>{{cashBox.number }}</td>
+              <td>{{cashBox.openingDate | dateFormat:'dddd' | capitalize }}</td>
               <td>{{cashBox.openingDate | dateFormat:'DD/MM/YYYY HH:mm' }}</td>
               <td>{{cashBox.closingDate | dateFormat:'DD/MM/YYYY HH:mm' }}</td>
               <td>
