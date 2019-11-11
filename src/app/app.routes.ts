@@ -682,8 +682,7 @@ export const _routes: Routes = [
   {
     path: 'pos/mostrador/editar-transaccion/:id',
     component: AddSaleOrderComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale.counter' }
+    canActivate: [AuthGuard, LicenseGuard]
   },
   { path: '**', pathMatch: 'full', redirectTo: '' }
 ];
