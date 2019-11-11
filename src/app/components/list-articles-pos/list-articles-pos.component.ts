@@ -170,7 +170,6 @@ export class ListArticlesPosComponent implements OnInit {
       "make._id": 1,
       "make.description": 1,
       "make.visibleSale": 1,
-      priceLists: 1,
       favourite: 1
     }
     
