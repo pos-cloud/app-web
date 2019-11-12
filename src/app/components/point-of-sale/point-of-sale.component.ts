@@ -825,13 +825,13 @@ export class PointOfSaleComponent implements OnInit {
             if(branchAssigned) {
               this.nextStepTransaction();
             }
-      } else if (!this.transaction.employeeClosing &&
-          this.transaction.type.requestEmployee &&
-          this.transaction.type.requestArticles &&
-          this.posType !== 'delivery' &&
-          (this.posType === 'resto' && this.transaction.table)) {
-        this.openModal('select-employee');
-      } else if (!this.transaction.company &&
+          } else if (!this.transaction.employeeClosing &&
+            this.transaction.type.requestEmployee &&
+            this.transaction.type.requestArticles &&
+            (this.posType === 'mostrador' ||
+            (this.posType === 'resto' && this.transaction.table))) {
+          this.openModal('select-employee');
+        } else if (!this.transaction.company &&
                   this.transaction.type.requestCompany) {
         if(!this.company) {
           this.openModal('company');
