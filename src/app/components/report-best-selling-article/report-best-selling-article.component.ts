@@ -117,6 +117,14 @@ export class ReportBestSellingArticleComponent implements OnInit {
       align: 'center'
     },
     {
+      name: 'article.taxes[0].percentage',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'number',
+      align: 'left'
+    },
+    {
       name: 'article.costPrice',
       visible: false,
       disabled: false,
