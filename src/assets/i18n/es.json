@@ -16,6 +16,18 @@
         "salePrice": "Precio de Venta",
         "unitOfMeasurement": {
             "abbreviation": "Un. de Medida"
+        },
+        "taxes[0]" : {
+            "percentage" : "Porcentaje Imp",
+            "amount" : "Monto Imp"
+        },
+        "taxes[1]" : {
+            "percentage" : "Porcentaje Imp",
+            "amount" : "Monto Imp"
+        },
+        "taxes[2]" : {
+            "percentage" : "Porcentaje Imp",
+            "amount" : "Monto Imp"
         }
     },
     "barcode": "Código de Barras",
