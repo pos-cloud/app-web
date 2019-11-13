@@ -421,8 +421,8 @@ export class PrintVatBookComponent implements OnInit {
         } else {
           printTotal = (partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt).toLocaleString('de-DE');
         }
-      } else if (this.roundNumber.transform((partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt))) {
-        printTotal = (partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt).toLocaleString('de-DE') + ",00";
+      } else if (this.roundNumber.transform((partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt + partialImpInt))) {
+        printTotal = (partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt + partialImpInt).toLocaleString('de-DE') + ",00";
       }
 
       

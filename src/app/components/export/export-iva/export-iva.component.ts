@@ -328,7 +328,7 @@ export class ExportIvaComponent implements OnInit {
               data[i]['MONTO IVA'] = this.roundNumber.transform(partialTaxAmountIVA);
               data[i]['MONTO IMP INT'] = this.roundNumber.transform(partialImpInt)
               data[i]['MONTO PERCEP.'] = this.roundNumber.transform(partialTaxAmountPercep);
-              data[i]['MONTO TOTAL'] = this.roundNumber.transform(partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt);
+              data[i]['MONTO TOTAL'] = this.roundNumber.transform(partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt + partialImpInt);
         
     
               i++;
