@@ -139,7 +139,7 @@
                     <div class="row">
                       <div class="form-group col-md-12">
                         <label for="note" class="control-label">Notas:</label>
-                        <input type="text" class="form-control" name="note" id="note" (keydown.enter)="addNote($event.target.value)" [focus]="focusNoteEvent" [readonly]="readonly" />
+                        <input type="text" class="form-control" name="note" id="note" (keydown.enter)="addNote($event.target.value)" placeholder="Ingresar la nota y luego presionar enter por cada nota." [focus]="focusNoteEvent" [readonly]="readonly" />
                         <div *ngIf="formErrorsNote" class="alert alert-danger">
                           {{ formErrorsNote }}
                         </div>
