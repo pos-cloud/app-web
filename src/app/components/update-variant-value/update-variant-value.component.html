@@ -27,7 +27,7 @@
         </div>
         <div class="form-group col-md-4">
           <label for="order" class="control-label">Orden:</label>
-          <input type="text" class="form-control" formControlName="order" name="order" id="order" [focus]="focusEvent" [readonly]="readonly" />
+          <input type="number" class="form-control" formControlName="order" name="order" id="order" [focus]="focusEvent" [readonly]="readonly" />
           <div *ngIf="formErrors.order" class="alert alert-danger">
             {{ formErrors.order }}
           </div>

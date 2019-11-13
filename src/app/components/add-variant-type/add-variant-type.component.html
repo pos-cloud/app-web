@@ -14,8 +14,8 @@
     <div class="modal-body">
       <div class="row">
         <div class="form-group col-md-6">
-          <label for="order" class="control-label">Order:</label>
-          <input type="text" class="form-control" formControlName="order" order="order" id="order" [focus]="focusEvent" />
+          <label for="order" class="control-label">Orden:</label>
+          <input type="number" class="form-control" formControlName="order" order="order" id="order" [focus]="focusEvent" />
           <div *ngIf="formErrors.order" class="alert alert-danger">
             {{ formErrors.order }}
           </div>
