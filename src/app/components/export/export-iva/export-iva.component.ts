@@ -227,25 +227,6 @@ export class ExportIvaComponent implements OnInit {
               
               data[i] = {};
     
-              for (let index = 0; index < this.dataIVA.length; index++) {
-                if(transaction.company && transaction.company.vatCondition && this.dataIVA[index]['_id'] === transaction.company.vatCondition) {
-                  this.dataIVA[index]['total'] = this.dataIVA[index]['total'] + transaction.totalPrice;
-                }
-              }
-    
-              for (let index = 0; index < this.dataClassification.length; index++) {
-                let movementOfArticles : MovementOfArticle[] = await this.getMovementOfArticle(transaction._id)
-                if(movementOfArticles && movementOfArticles.length !== 0) {
-                  for (const element of movementOfArticles) {
-                    if(element.article && element.article.classification && this.dataClassification[index]['_id'] === element.article.classification._id){
-                      this.dataClassification[index]['total'] = this.dataClassification[index]['total'] + element.salePrice;
-                    }
-                  }
-                }
-              }
-    
-    
-    
     
               //DATOS PRINCIPALES
               data[i]['FECHA'] = this.dateFormat.transform(transaction.endDate, 'DD/MM/YYYY');
@@ -319,6 +300,23 @@ export class ExportIvaComponent implements OnInit {
                   } else {
                     partialTaxAmountPercep += transactionTax.taxAmount;
                     totalTaxAmountPercep += transactionTax.taxAmount;
+                  }
+                }
+              }
+
+              for (let index = 0; index < this.dataIVA.length; index++) {
+                if(transaction.company && transaction.company.vatCondition && this.dataIVA[index]['_id'] === transaction.company.vatCondition) {
+                  this.dataIVA[index]['total'] = this.dataIVA[index]['total'] + partialTaxBase;
+                }
+              }
+    
+              for (let index = 0; index < this.dataClassification.length; index++) {
+                let movementOfArticles : MovementOfArticle[] = await this.getMovementOfArticle(transaction._id)
+                if(movementOfArticles && movementOfArticles.length !== 0) {
+                  for (const element of movementOfArticles) {
+                    if(element.article && element.article.classification && this.dataClassification[index]['_id'] === element.article.classification._id){
+                      this.dataClassification[index]['total'] = this.dataClassification[index]['total'] + partialTaxBase;
+                    }
                   }
                 }
               }
