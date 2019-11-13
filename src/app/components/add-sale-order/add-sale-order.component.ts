@@ -78,6 +78,7 @@ import { DepositService } from 'app/services/deposit.service';
 import { ArticleService } from 'app/services/article.service';
 import { ToastrService } from 'ngx-toastr';
 import { User } from 'app/models/user';
+import { CancellationTypeAutomaticComponent } from '../cancellation-types-automatic/cancellation-types-automatic.component';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -137,6 +138,7 @@ export class AddSaleOrderComponent {
   public config: Config;
   public database: string;
   public lastMovementOfArticle: MovementOfArticle;
+  public isCancellationAutomatic: boolean = false;
 
   public priceList: PriceList;
   public newPriceList: PriceList;
@@ -173,24 +175,7 @@ export class AddSaleOrderComponent {
     public _toastr : ToastrService,
     public _configService: ConfigService
   ) {
-    this.transaction = new Transaction();
-    this.movementsOfArticles = new Array();
-    this.printers = new Array();
-    this.printersAux = new Array();
-    this.barArticlesToPrint = new Array();
-    this.kitchenArticlesToPrint = new Array();
-    this.usesOfCFDI = new Array();
-    this.relationTypes = new Array();
-    this.currencies = new Array();
-    this.cancellationTypes = new Array();
-    let pathLocation: string[] = this._router.url.split('/');
-    this.userType = pathLocation[1];
-    this.posType = pathLocation[2];
-    if (!pathLocation[8]) {
-      this.transactionId = pathLocation[4];
-    } else {
-      this.transactionId = pathLocation[8];
-    }
+    this.initVariables();
   }
 
   async ngOnInit() {
@@ -219,6 +204,34 @@ export class AddSaleOrderComponent {
         }
       }
     );
+    
+    let pathLocation: string[] = this._router.url.split('/');
+    this.userType = pathLocation[1];
+    this.posType = pathLocation[2];
+    if (!pathLocation[8]) {
+      this.transactionId = pathLocation[4];
+    } else {
+      this.transactionId = pathLocation[8];
+    }
+
+    this.initComponent();
+  }
+
+  public initVariables(): void {
+    this.transaction = new Transaction();
+    this.movementsOfArticles = new Array();
+    this.printers = new Array();
+    this.printersAux = new Array();
+    this.barArticlesToPrint = new Array();
+    this.kitchenArticlesToPrint = new Array();
+    this.usesOfCFDI = new Array();
+    this.relationTypes = new Array();
+    this.currencies = new Array();
+    this.cancellationTypes = new Array();
+  }
+
+  public async initComponent() {
+    
     if(this.transactionId) {
       await this.getTransaction().then(
         async transaction => {
@@ -368,13 +381,9 @@ export class AddSaleOrderComponent {
         if(transaction) {
           this.transaction = transaction;
           this.lastQuotation = this.transaction.quotation;
-          await this.checkPrices().then(
-            isValid => {
-              if(!isValid) {
-                this.getMovementsOfTransaction();
-              }
-            }
-          );
+          if(!this.checkPrices()) {
+            this.getMovementsOfTransaction();
+          }
         }
       }
     );
@@ -391,13 +400,9 @@ export class AddSaleOrderComponent {
         if(transaction) {
           this.transaction = transaction;
           this.lastQuotation = this.transaction.quotation;
-          await this.checkPrices().then(
-            isValid => {
-              if(!isValid) {
-                this.getMovementsOfTransaction();
-              }
-            }
-          );
+          if(!this.checkPrices()) {
+            this.getMovementsOfTransaction();
+          }
         }
       }
     );
@@ -540,13 +545,9 @@ export class AddSaleOrderComponent {
         if(transaction) {
           this.transaction = transaction;
           this.lastQuotation = this.transaction.quotation;
-          await this.checkPrices().then(
-            isValid => {
-              if(!isValid) {
-                this.getMovementsOfTransaction();
-              }
-            }
-          );
+          if(!this.checkPrices()) {
+            this.getMovementsOfTransaction();
+          }
         } else {
           this.hideMessage();
           this.getMovementsOfTransaction();
@@ -1175,13 +1176,13 @@ export class AddSaleOrderComponent {
             if(transaction) {
               this.transaction = transaction;
               this.lastQuotation = this.transaction.quotation;
-              await this.checkPrices().then(
-                isValid => {
-                  if(!isValid) {
-                    this.getMovementsOfTransaction();
-                  }
+              if(!this.checkPrices()) {
+                this.getMovementsOfTransaction();
+              } else {
+                if(this.isCancellationAutomatic) {
+                  this.openModal('charge');
                 }
-              );
+              }
             } else {
               this.hideMessage();
               this.getMovementsOfTransaction();
@@ -1195,28 +1196,25 @@ export class AddSaleOrderComponent {
   }
 
   //FUNCIÓN PARA CONTROLAR QUE LA SUMA DE PRECIO DE ARTÍCULOS SEA IGUAL AL TOTAL DE LA TRANSACCIÓN
-  private checkPrices(): Promise<boolean> {
-
-    return new Promise<boolean>((resolve, reject) => {
+  private checkPrices(): boolean {
       
-      let isValid: boolean = false;
+    let isValid: boolean = false;
 
-      let totalPrice: number = 0;
-      this.quantity = 0;
-      
-      if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
-        for (let movementOfArticle of this.movementsOfArticles) {
-          totalPrice += this.roundNumber.transform(movementOfArticle.salePrice);
-          this.quantity += movementOfArticle.amount;
-        }
+    let totalPrice: number = 0;
+    this.quantity = 0;
+    
+    if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
+      for (let movementOfArticle of this.movementsOfArticles) {
+        totalPrice += this.roundNumber.transform(movementOfArticle.salePrice);
+        this.quantity += movementOfArticle.amount;
       }
-      
-      if(this.roundNumber.transform(totalPrice) === this.roundNumber.transform(this.transaction.totalPrice)) {
-        isValid = true;
-      }
+    }
+    
+    if(this.roundNumber.transform(totalPrice) === this.roundNumber.transform(this.transaction.totalPrice)) {
+      isValid = true;
+    }
 
-      return isValid;
-    });
+    return isValid;
   }
 
   async updateTaxes() {
@@ -1293,13 +1291,13 @@ export class AddSaleOrderComponent {
         if(transaction) {
           this.transaction = transaction;
           this.lastQuotation = this.transaction.quotation;
-          await this.checkPrices().then(
-            isValid => {
-              if(!isValid) {
-                this.getMovementsOfTransaction();
-              }
+          if(!this.checkPrices()) {
+            this.getMovementsOfTransaction();
+          } else {
+            if(this.isCancellationAutomatic) {
+              this.openModal('charge');
             }
-          );
+          }
         } else {
           this.hideMessage();
           this.getMovementsOfTransaction();
@@ -1478,7 +1476,6 @@ export class AddSaleOrderComponent {
         modalRef.result.then(async (result) => {
           if(result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
             this.showButtonCancelation = false;
-
             await this.daleteMovementsOfCancellations('{"transactionDestination":"'+this.transaction._id+'"}').then(
               async movementsOfCancellations => {
                 if(movementsOfCancellations) {
@@ -1600,7 +1597,7 @@ export class AddSaleOrderComponent {
         });
         break;
       case 'charge':
-
+        
         this.typeOfOperationToPrint = "charge";
 
         if(this.checkPrices()) {
@@ -1688,6 +1685,30 @@ export class AddSaleOrderComponent {
           this.showMessage("Controlando movimientos, inténtelo nuevamente...", "info", true);
         }
         break;
+      case 'cancelation-type-automatic':
+        modalRef = this._modalService.open(CancellationTypeAutomaticComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.transactionId = this.transaction._id;
+        modalRef.result.then((result) => {
+          if(result && result.transaction) {
+            this.isCancellationAutomatic = true;
+            this.initVariables();
+            this.transactionId = result.transaction._id;
+            this.initComponent();
+          } else {
+            if (this.transaction && this.transaction.type.printable) {
+              this.print();
+            } else {
+              this.backFinal();
+            }
+          }
+        }, (reason) => {
+          if (this.transaction && this.transaction.type.printable) {
+            this.print();
+          } else {
+            this.backFinal();
+          }
+        });
+        break;
       case 'printers':
 
         await this.getPrinters().then(
@@ -1732,13 +1753,9 @@ export class AddSaleOrderComponent {
                   if(transaction) {
                     this.transaction = transaction;
                     this.lastQuotation = this.transaction.quotation;
-                    await this.checkPrices().then(
-                      isValid => {
-                        if(!isValid) {
-                          this.getMovementsOfTransaction();
-                        }
-                      }
-                    );
+                    if(!this.checkPrices()) {
+                      this.getMovementsOfTransaction();
+                    }
                   }
                 }
               );
@@ -1756,13 +1773,9 @@ export class AddSaleOrderComponent {
                     if(transaction) {
                       this.transaction = transaction;
                       this.lastQuotation = this.transaction.quotation;
-                      await this.checkPrices().then(
-                        isValid => {
-                          if(!isValid) {
-                            this.getMovementsOfTransaction();
-                          }
-                        }
-                      );
+                      if(!this.checkPrices()) {
+                        this.getMovementsOfTransaction();
+                      }
                     }
                   }
                 );
@@ -1814,13 +1827,9 @@ export class AddSaleOrderComponent {
                       }
                     );
                   }
-                  await this.checkPrices().then(
-                    isValid => {
-                      if(!isValid) {
-                        this.getMovementsOfTransaction();
-                      }
-                    }
-                  );
+                  if(!this.checkPrices()) {
+                    this.getMovementsOfTransaction();
+                  }
                 }
               }
             );
@@ -1900,13 +1909,9 @@ export class AddSaleOrderComponent {
                 if(transaction) {
                   this.transaction = transaction;
                   this.lastQuotation = this.transaction.quotation;
-                  await this.checkPrices().then(
-                    isValid => {
-                      if(!isValid) {
-                        this.getMovementsOfTransaction();
-                      }
-                    }
-                  );
+                  if(!this.checkPrices()) {
+                    this.getMovementsOfTransaction();
+                  }
                 }
               }
             );
@@ -2048,7 +2053,7 @@ export class AddSaleOrderComponent {
 
     if (isValid &&
       this.transaction.type.electronics &&
-      this.transaction.totalPrice > 5000 &&
+      this.transaction.totalPrice >= 5000 &&
       !this.transaction.company &&
       this.config['country'] === 'AR') {
       isValid = false;
@@ -2162,52 +2167,49 @@ export class AddSaleOrderComponent {
               if(transaction) {
                 this.transaction = transaction;
 
-                if (this.transaction && this.transaction.type.printable) {
-
-                  if (this.transaction.table) {
-                    this.transaction.table.employee = null;
-                    this.transaction.table.state = TableState.Available;
-                    await this.updateTable().then(
-                      table => {
-                        if(table) {
-                          this.transaction.table = table;
-                        }
-                      }
-                    );
-                  }
-
-                  await this.getPrinters().then(
-                    printers => {
-                      if(printers) {
-                        this.printers = printers;
-                      }
+                if (this.transaction.table) {
+                  this.transaction.table.employee = null;
+                  this.transaction.table.state = TableState.Available;
+                  await this.updateTable().then(table => {
+                    if(table) {
+                      this.transaction.table = table;
                     }
-                  );
+                  });
+                }
+                
+                let cancellationTypesAutomatic = await this.getCancellationTypesAutomatic();
 
-                  if (this.transaction.type.defectPrinter) {
-                    this.printerSelected = this.transaction.type.defectPrinter;
-                    this.distributeImpressions(this.transaction.type.defectPrinter);
-                  } else {
-                    this.openModal('printers');
-                  }
-                } else {
-                  if (this.posType === 'resto' && this.transaction.table) {
-                    this.transaction.table.employee = null;
-                    this.transaction.table.state = TableState.Available;
-                    await this.updateTable().then(table => {
-                      if(table) {
-                        this.transaction.table = table;
-                        this.backFinal();
-                      }
-                    });
+                if(!cancellationTypesAutomatic || cancellationTypesAutomatic.length == 0) {
+                  if (this.transaction && this.transaction.type.printable) {
+                    this.print();
                   } else {
                     this.backFinal();
                   }
+                } else {
+                  this.openModal('cancelation-type-automatic');
                 }
               }
           });
         }
       });
+    }
+  }
+
+  public async print() {
+
+    await this.getPrinters().then(
+      printers => {
+        if(printers) {
+          this.printers = printers;
+        }
+      }
+    );
+
+    if (this.transaction.type.defectPrinter) {
+      this.printerSelected = this.transaction.type.defectPrinter;
+      this.distributeImpressions(this.transaction.type.defectPrinter);
+    } else {
+      this.openModal('printers');
     }
   }
 
@@ -2395,9 +2397,49 @@ export class AddSaleOrderComponent {
         default:
           break;
       }
-    
+    });
+  }
 
-    
+  public getCancellationTypesAutomatic() : Promise<CancellationType[]> {
+
+    return new Promise<CancellationType[]>((resolve, reject) => {
+
+      this.loading = true;
+  
+      this._cancellationTypeService.getCancellationTypes(
+        {
+          "origin._id": 1,
+          "origin.operationType": 1,
+          "destination._id": 1,
+          "destination.name": 1,
+          "destination.operationType": 1,
+          "operationType" : 1,
+          "requestAutomatic": 1
+        }, // PROJECT
+        {
+          "origin._id": { $oid: this.transaction.type._id},
+          "requestAutomatic": true,
+          "operationType": { "$ne": "D" },
+          "destination.operationType": { "$ne": "D" },
+          "origin.operationType": { "$ne": "D" }
+        }, // MATCH
+        {}, // SORT
+        {}, // GROUP
+        0, // LIMIT
+        0 // SKIP
+      ).subscribe(result => {
+        this.loading = false;
+        if (result && result.cancellationTypes && result.cancellationTypes.length > 0) {
+            resolve(result.cancellationTypes);
+        } else {
+          resolve(null);
+        }
+      },
+      error => {
+        this.loading = false;
+        this.showMessage(error._body, 'danger', false);
+        resolve(null);
+      });
     });
   }
 
@@ -2760,7 +2802,12 @@ export class AddSaleOrderComponent {
 
   public assignTransactionNumber() {
 
-    let query = 'where="type":"' + this.transaction.type._id + '","origin":"' + this.transaction.origin + '","letter":"' + this.transaction.letter + '"&sort="number":-1&limit=1';
+    let query = `where= "type":"${this.transaction.type._id}",
+                    "origin":${this.transaction.origin},
+                    "letter":"${this.transaction.letter}",
+                    "_id":{"$ne":"${this.transaction._id}"}
+                    &sort="number":-1
+                    &limit=1`;
 
     this._transactionService.getTransactions(query).subscribe(
       result => {

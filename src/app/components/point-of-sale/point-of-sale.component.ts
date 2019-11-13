@@ -769,7 +769,7 @@ export class PointOfSaleComponent implements OnInit {
       if(result) {
         // CONSULTAR ULTIMA TRANSACCIÓN PARA ENUMARAR LA SIGUIENTE
         let query = `where= "type":"${this.transaction.type._id}",
-                          "origin":"${this.transaction.origin}",
+                          "origin":${this.transaction.origin},
                           "letter":"${this.transaction.letter}"
                   &sort="number":-1
                   &limit=1`;
@@ -799,8 +799,8 @@ export class PointOfSaleComponent implements OnInit {
                           );
                         }
                       }
-                    })
-                  ;
+                    }
+                  );
                 }
               }
             );
@@ -825,13 +825,13 @@ export class PointOfSaleComponent implements OnInit {
             if(branchAssigned) {
               this.nextStepTransaction();
             }
-          } else if (!this.transaction.employeeClosing &&
-            this.transaction.type.requestEmployee &&
-            this.transaction.type.requestArticles &&
-            (this.posType === 'mostrador' ||
-            (this.posType === 'resto' && this.transaction.table))) {
-          this.openModal('select-employee');
-        } else if (!this.transaction.company &&
+      } else if (!this.transaction.employeeClosing &&
+          this.transaction.type.requestEmployee &&
+          this.transaction.type.requestArticles &&
+          (this.posType === 'mostrador' ||
+          (this.posType === 'resto' && this.transaction.table))) {
+        this.openModal('select-employee');
+      } else if (!this.transaction.company &&
                   this.transaction.type.requestCompany) {
         if(!this.company) {
           this.openModal('company');
@@ -1199,7 +1199,7 @@ export class PointOfSaleComponent implements OnInit {
 
     if (isValid &&
       this.transaction.type.electronics &&
-      this.transaction.totalPrice > 5000 &&
+      this.transaction.totalPrice >= 5000 &&
       !this.transaction.company &&
       Config.country === 'AR') {
       isValid = false;

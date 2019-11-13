@@ -54,8 +54,8 @@ export class CancellationTypeComponent implements OnInit {
 
   constructor(
     public alertConfig: NgbAlertConfig,
-    public _cancelationTypeService: CancellationTypeService,
-    public transactionTypeService : TransactionTypeService,
+    public _cancellationTypeService: CancellationTypeService,
+    public _transactionTypeService: TransactionTypeService,
     public _router: Router,
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
@@ -79,7 +79,7 @@ export class CancellationTypeComponent implements OnInit {
 
     this.loading = true;
 
-    this._cancelationTypeService.getCancellationType(this.cancellationTypeId).subscribe(
+    this._cancellationTypeService.getCancellationType(this.cancellationTypeId).subscribe(
       result => {
         if (!result.cancellationType) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
@@ -103,6 +103,7 @@ export class CancellationTypeComponent implements OnInit {
 
     if (!this.cancellationType._id) { this.cancellationType._id = ''; }
     if (this.cancellationType.modifyBalance === undefined) { this.cancellationType.modifyBalance = true; }
+    if (this.cancellationType.requestAutomatic === undefined) { this.cancellationType.requestAutomatic = false; }
 
     let origin;
     if (!this.cancellationType.origin) {
@@ -131,6 +132,7 @@ export class CancellationTypeComponent implements OnInit {
       'origin': origin,
       'destination': destination,
       'modifyBalance': this.cancellationType.modifyBalance,
+      'requestAutomatic': this.cancellationType.requestAutomatic
     };
     this.cancellationTypeForm.setValue(values);
   }
@@ -139,7 +141,7 @@ export class CancellationTypeComponent implements OnInit {
 
     this.loading = true;
 
-    this.transactionTypeService.getTransactionTypes('sort="transactionMovement":1').subscribe(
+    this._transactionTypeService.getTransactionTypes('sort="transactionMovement":1').subscribe(
       result => {
         if (!result.transactionTypes) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
@@ -167,7 +169,7 @@ export class CancellationTypeComponent implements OnInit {
 
     let query = 'where="transactionMovement":"' + this.originSelected.transactionMovement + '","_id":{"$ne":"' + this.originSelected._id + '"}';
     
-    this.transactionTypeService.getTransactionTypes(query).subscribe(
+    this._transactionTypeService.getTransactionTypes(query).subscribe(
       result => {
         if (!result.transactionTypes) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
@@ -202,6 +204,10 @@ export class CancellationTypeComponent implements OnInit {
         ]
       ],
       'modifyBalance': [this.cancellationType.modifyBalance, [
+          Validators.required
+        ]
+      ],
+      'requestAutomatic': [this.cancellationType.requestAutomatic, [
           Validators.required
         ]
       ]
@@ -282,7 +288,7 @@ export class CancellationTypeComponent implements OnInit {
 
     this.cancellationType = this.cancellationTypeForm.value;
 
-    this._cancelationTypeService.updateCancellationType(this.cancellationType).subscribe(
+    this._cancellationTypeService.updateCancellationType(this.cancellationType).subscribe(
       result => {
         if (!result.cancellationType) {
           this.loading = false;
@@ -305,7 +311,7 @@ export class CancellationTypeComponent implements OnInit {
 
     this.cancellationType = this.cancellationTypeForm.value;
 
-    this._cancelationTypeService.saveCancellationType(this.cancellationType).subscribe(
+    this._cancellationTypeService.saveCancellationType(this.cancellationType).subscribe(
       result => {
         if (!result.cancellationType) {
           this.loading = false;
@@ -332,7 +338,7 @@ export class CancellationTypeComponent implements OnInit {
 
     this.cancellationType = this.cancellationTypeForm.value;
 
-    this._cancelationTypeService.deleteCancellationType(this.cancellationType._id).subscribe(
+    this._cancellationTypeService.deleteCancellationType(this.cancellationType._id).subscribe(
       result => {
         this.loading = false;
         if (!result.cancellationType) {

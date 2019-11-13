@@ -145,11 +145,11 @@ export class ListArticlesPosComponent implements OnInit {
     match['$or'].push({ type: Type.Variant });
     match['operationType'] = { $ne: "D" };
 
-    if(this.transaction && this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+    if(this.transaction && this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Sale) {
       match['allowSale'] = true;
     }
 
-    if(this.transaction && this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
+    if(this.transaction && this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
       match['allowPurchase'] = true;
     }
 

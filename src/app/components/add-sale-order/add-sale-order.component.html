@@ -160,9 +160,9 @@
                 <img *ngIf="movementOfArticle.article && (movementOfArticle.article.picture !== 'default.jpg' && movementOfArticle.article.picture !== undefined)" [src]="apiURL + 'get-image-article/'+movementOfArticle.article.picture + '/' + database" height="50" width="50">
               </td>
               <td>
-                <span *ngIf="transaction.type.showDescriptionType === 'Descripción'">{{movementOfArticle.description}}</span>
-                <span *ngIf="transaction.type.showDescriptionType === 'Descripción Corta'">{{movementOfArticle.article.posDescription}}</span>
-                <span *ngIf="transaction.type.showDescriptionType === 'Código'">{{movementOfArticle.code}}</span>
+                <span *ngIf="transaction.type && transaction.type.showDescriptionType === 'Descripción'">{{movementOfArticle.description}}</span>
+                <span *ngIf="transaction.type && transaction.type.showDescriptionType === 'Descripción Corta'">{{movementOfArticle.article.posDescription}}</span>
+                <span *ngIf="transaction.type && transaction.type.showDescriptionType === 'Código'">{{movementOfArticle.code}}</span>
                 <div *ngIf="movementOfArticle.make && movementOfArticle.make.visibleSale" style="font-size: 13px">{{movementOfArticle.make.description}}</div>
                 <div *ngIf="movementOfArticle.notes">
                   <strong>{{movementOfArticle.notes}}</strong>

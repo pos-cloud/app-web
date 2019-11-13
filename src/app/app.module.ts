@@ -266,6 +266,7 @@ import { ClassificationComponent } from './components/classification/classificat
 import { ListClassificationsComponent } from './components/list-classifications/list-classifications.component';
 import { ClassificationService } from './services/classification.service';
 import { ListMovementsOfArticlesComponent } from './components/list-movements-of-articles/list-movements-of-articles.component';
+import { CancellationTypeAutomaticComponent } from './components/cancellation-types-automatic/cancellation-types-automatic.component';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -457,6 +458,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ListStructureComponent,
     ExportExcelComponent,
     ClassificationComponent,
+    CancellationTypeAutomaticComponent,
     ListClassificationsComponent,
     ListMovementsOfArticlesComponent,
   ],
@@ -626,6 +628,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     StructureComponent,
     ExportExcelComponent,
     ClassificationComponent,
+    CancellationTypeAutomaticComponent,
     ListMovementsOfArticlesComponent
   ],
   imports: [

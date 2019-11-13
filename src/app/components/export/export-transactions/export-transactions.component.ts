@@ -68,7 +68,7 @@ export class ExportTransactionsComponent implements OnInit {
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig,
     public _transactionService: TransactionService,
-    public transactionTypeService : TransactionTypeService,
+    public _transactionTypeService : TransactionTypeService,
     public _employeeService : EmployeeService,
     public _branchesService : BranchService,
     public _configService: ConfigService,
@@ -292,7 +292,7 @@ export class ExportTransactionsComponent implements OnInit {
     
     let query = `where="transactionMovement":"${this.transactionMovement}"`;
     
-    this.transactionTypeService.getTransactionTypes(query).subscribe(
+    this._transactionTypeService.getTransactionTypes(query).subscribe(
       result => {
         if (!result.transactionTypes) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);

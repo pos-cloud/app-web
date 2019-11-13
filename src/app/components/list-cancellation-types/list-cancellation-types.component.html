@@ -18,7 +18,7 @@
           <tr>
             <th></th>
             <th colspan="2" >Transacción Cancelada</th>
-            <th colspan="3" >Transacción Cancelatoria</th>
+            <th colspan="4" >Transacción Cancelatoria</th>
           </tr>
           <tr>
             <th>
@@ -29,6 +29,7 @@
             <th (click)="orderBy('destination.transactionMovement')" >Tipo</th>
             <th (click)="orderBy('destination.name')" >Nombre</th>
             <th (click)="orderBy('modifyBalance')">Modifica el Saldo</th>
+            <th (click)="orderBy('requestAutomatic')">Solicita al final</th>
           </tr>
           <tr class="filters">
             <th>
@@ -37,6 +38,7 @@
             <th><input type="text" class="form-control" [(ngModel)]="filters['destination.transactionMovement']" (input)="getCancellationTypes()" placeholder="Tipo de Transacción Cancelatoria..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['destination.name']" (input)="getCancellationTypes()" placeholder="Nombre de Transacción Cancelatoria..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['modifyBalance']" (input)="getCancellationTypes()" placeholder="Modifica el Saldo..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['requestAutomatic']" (input)="getCancellationTypes()" placeholder="Solicita al final..."></th>
           </tr>
         </thead>
         <tbody>
@@ -70,6 +72,7 @@
             <td>{{cancellationType.destination.transactionMovement}}</td>
             <td>{{cancellationType.destination.name}}</td>
             <td>{{cancellationType.modifyBalance}}</td>
+            <td>{{cancellationType.requestAutomatic}}</td>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
             <td colspan="6">No se encontraron cancelaciones</td>
           </tr>
