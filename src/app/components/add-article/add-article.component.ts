@@ -1,5 +1,5 @@
 // Angular
-import { Component, OnInit, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -48,8 +48,9 @@ import { Classification } from 'app/models/classification';
 @Component({
   selector: 'app-add-article',
   templateUrl: './add-article.component.html',
-  styleUrls: ['./add-article.component.css'],
-  providers: [NgbAlertConfig, DecimalPipe]
+  styleUrls: ['./add-article.component.scss'],
+  providers: [NgbAlertConfig, DecimalPipe],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class AddArticleComponent implements OnInit {
@@ -78,6 +79,7 @@ export class AddArticleComponent implements OnInit {
   public userType: string;
   public loading = false;
   public focusEvent = new EventEmitter<boolean>();
+  public focusNoteEvent = new EventEmitter<boolean>();
   public apiURL = Config.apiURL;
   public filesToUpload: Array<File>;
   public hasChanged = false;
@@ -90,6 +92,8 @@ export class AddArticleComponent implements OnInit {
   public otherFieldsAlfabetico = false;
   public otherFieldsNumber = false;
   public orientation: string = 'horizontal';
+  public notes: string[];
+  public formErrorsNote: string;
 
   public formErrors = {
     'code': '',
@@ -106,7 +110,8 @@ export class AddArticleComponent implements OnInit {
     'location': '',
     'barcode': '',
     'currency': '',
-    'providers' : ''
+    'providers' : '',
+    'note': ''
   };
 
   public validationMessages = {
@@ -150,6 +155,8 @@ export class AddArticleComponent implements OnInit {
     },
     'currency': {
       'maxlength': 'No puede exceder los 14 dígitos.'
+    },
+    'note': {
     }
   };
 
@@ -176,6 +183,7 @@ export class AddArticleComponent implements OnInit {
   ) {
     if(window.screen.width < 1000) this.orientation = 'vertical';
     this.article = new Article();
+    this.notes = new Array();
     this.getCurrencies();
     this.getArticleTypes();
 
@@ -403,6 +411,29 @@ export class AddArticleComponent implements OnInit {
     }
   }
 
+  public addNote(note: string): void {
+    note = note.toUpperCase();
+    if(!this.notes) this.notes = new Array();
+    if(note && note !== '') {
+      if(this.notes.indexOf(note) == -1) {
+        this.notes.push(note);
+        this.formErrorsNote = null;
+      } else {
+        this.formErrorsNote = "La nota ingresada ya existe.";
+      }
+    } else {
+      this.formErrorsNote = "Debe ingresar un valór válido.";
+    }
+    this.focusNoteEvent.emit(true);
+  }
+
+  public deleteNote(note: string): void {
+    note = note.toUpperCase();
+    if(note) this.notes.splice(this.notes.indexOf(note), 1 );
+    this.formErrorsNote = null;
+    this.focusNoteEvent.emit(true);
+  }
+
   public getDeposit(id: string) : Promise<Deposit> {
 
     return new Promise<Deposit>((resolve, reject) => {
@@ -533,6 +564,7 @@ export class AddArticleComponent implements OnInit {
         } else {
           this.hideMessage();
           this.article = result.article;
+          this.notes = this.article.notes;
           this.taxes = this.article.taxes;
           this.otherFields = this.article.otherFields;
           if (this.article.picture && this.article.picture !== 'default.jpg') {
@@ -1251,6 +1283,7 @@ export class AddArticleComponent implements OnInit {
       this.loading = true;
       this.loadPosDescription();
       this.article = this.articleForm.value;
+      this.article.notes = this.notes;
       this.autocompleteCode();
       if (this.variants && this.variants.length > 0) {
         this.article.containsVariants = true;

@@ -214,6 +214,10 @@ body {
       cursor: pointer;
 }
 
+.pointer {
+      cursor: pointer;
+}
+
 th {
       cursor: pointer;
       font-weight: 500;

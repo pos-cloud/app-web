@@ -1,5 +1,5 @@
 //Angular
-import { Component, OnInit, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -39,8 +39,9 @@ import { AddArticleComponent } from '../add-article/add-article.component';
 @Component({
   selector: 'app-add-movement-of-article',
   templateUrl: './add-movement-of-article.component.html',
-  styleUrls: ['./add-movement-of-article.component.css'],
-  providers: [NgbAlertConfig]
+  styleUrls: ['./add-movement-of-article.component.scss'],
+  providers: [NgbAlertConfig],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class AddMovementOfArticleComponent implements OnInit {
@@ -64,6 +65,7 @@ export class AddMovementOfArticleComponent implements OnInit {
   public orderByPipe: OrderByPipe = new OrderByPipe();
   public stock: number = 0;
   public position: string = '';
+  public notes: string[];
 
   public formErrors = {
     'description': '',
@@ -151,6 +153,30 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
+  }
+
+  public addNote(note: string): void {
+    note = note.toUpperCase();
+    if(!this.notes) this.notes = new Array();
+    if(note && note !== '') {
+      if(this.notes.indexOf(note) == -1) {
+        this.notes.push(note);
+      } else {
+        this.deleteNote(note);
+      }
+    }
+  }
+
+  public deleteNote(note: string): void {
+    note = note.toUpperCase();
+    if(note) this.notes.splice(this.notes.indexOf(note), 1 );
+  }
+
+  public clearNotes(): void {
+    this.movementOfArticle.notes = '';
+    this.movementOfArticleForm.value.notes = '' ;
+    this.notes = new Array();
+    this.setValueForm();
   }
 
   public getPriceList(id: string): Promise<PriceList> {
@@ -490,6 +516,21 @@ export class AddMovementOfArticleComponent implements OnInit {
         this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
       }
 
+      if(this.notes && this.notes.length > 0) {
+        for(let i = 0; i < this.notes.length; i++) {
+          if(i == 0 && this.movementOfArticle.notes && this.movementOfArticle.notes !== '') {
+            this.movementOfArticle.notes += `; `;
+          }
+          this.movementOfArticle.notes += this.notes[i];
+
+          if(i < this.notes.length - 1) {
+            this.movementOfArticle.notes += `; `;
+          }
+        }
+      }
+
+      this.movementOfArticleForm.value.notes = this.movementOfArticle.notes;
+      
       if(this.containsVariants) {
         this.movementOfArticle.article = this.getArticleBySelectedVariants();
       }

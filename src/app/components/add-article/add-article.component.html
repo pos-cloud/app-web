@@ -136,6 +136,20 @@
                         </div>
                       </div>
                     </div>
+                    <div class="row">
+                      <div class="form-group col-md-12">
+                        <label for="note" class="control-label">Notas:</label>
+                        <input type="text" class="form-control" name="note" id="note" (keydown.enter)="addNote($event.target.value)" [focus]="focusNoteEvent" [readonly]="readonly" />
+                        <div *ngIf="formErrorsNote" class="alert alert-danger">
+                          {{ formErrorsNote }}
+                        </div>
+                        <div class="row" style="margin-top: 10px;">
+                          <div class="col-md-12">
+                            <span class="badge badge-ligth" *ngFor="let n of notes">{{n}} <span class="badge badge-danger pointer" (click)="deleteNote(n)">X</span></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div *ngIf="config.country === 'MX'" class="row">

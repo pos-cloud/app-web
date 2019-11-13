@@ -25,6 +25,7 @@ export class Article {
   public quantityPerMeasure: number = 1;
   public unitOfMeasurement: UnitOfMeasurement;
   public observation: string;
+  public notes: string[];
   public basePrice: number = 0.00;
   public taxes: Taxes[];
   public otherFields: ArticleFields[];
