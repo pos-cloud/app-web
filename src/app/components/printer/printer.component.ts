@@ -26,7 +26,7 @@ export class PrinterComponent implements OnInit {
   @Input() operation : string;
   public printer: Printer;
   public types: PrinterType[] = [PrinterType.PDF];
-  public printsIn: PrinterPrintIn[] = [PrinterPrintIn.Counter, PrinterPrintIn.Kitchen, PrinterPrintIn.Bar, PrinterPrintIn.Label];
+  public printsIn: PrinterPrintIn[] = [PrinterPrintIn.Counter, PrinterPrintIn.Kitchen, PrinterPrintIn.Bar, PrinterPrintIn.Label, PrinterPrintIn.Voucher];
   public positions: any[] = [PositionPrint.Header, PositionPrint.Body, PositionPrint.Footer];
   public printerForm: FormGroup;
   public alertMessage: string = '';

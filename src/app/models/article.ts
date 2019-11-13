@@ -74,7 +74,8 @@ export class Article {
 export enum ArticlePrintIn {
   Bar = <any> "Bar",
   Kitchen = <any> "Cocina",
-  Counter = <any> "Mostrador"
+  Counter = <any> "Mostrador",
+  Voucher = <any> "Voucher"
 }
 
 export enum Type {

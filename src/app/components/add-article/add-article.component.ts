@@ -74,7 +74,7 @@ export class AddArticleComponent implements OnInit {
   public unitsOfMeasurement: UnitOfMeasurement[] = new Array();
   public taxes: Taxes[] = new Array();
   public otherFields: ArticleFields[] = new Array();
-  public printIns: ArticlePrintIn[] = [ArticlePrintIn.Counter, ArticlePrintIn.Kitchen, ArticlePrintIn.Bar];
+  public printIns: ArticlePrintIn[] = [ArticlePrintIn.Counter, ArticlePrintIn.Kitchen, ArticlePrintIn.Bar, ArticlePrintIn.Voucher];
   public alertMessage = '';
   public userType: string;
   public loading = false;

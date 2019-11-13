@@ -39,7 +39,7 @@
                     </div>
                     <div class="row">
                       <div class="form-group col-md-6">
-                          <label for="make" class="control-label">Marca</label>
+                          <label for="make" class="control-label">Marca:</label>
                           <select class="form-control" formControlName="make">
                             <option [ngValue]="null" [selected]="!article || !article.make" [disabled]="readonly"></option>
                             <option *ngFor="let make of makes"
@@ -90,7 +90,7 @@
                     <div class="custom-file">
                       <label class="custom-file-label btn btn-action" for="customFileLang">Cambiar Imagen</label>
                       <input  *ngIf="operation !== 'view'" type="file" class="custom-file-input" lang="es" accept="image/*" id="customFileLang" (change)="fileChangeEvent($event)"/>
-                      <img [src]="imageURL" height="120" width="120" >
+                      <img class="img-article" [src]="imageURL" height="120" width="120" >
                     </div>
                   </div>
                 </div>
@@ -255,7 +255,7 @@
                 </div>
                 <div class="row" *ngIf="currencies && currencies.length > 0">
                   <div class="form-group col-md-12">
-                    <label for="currency" class="control-label">Moneda</label>
+                    <label for="currency" class="control-label">Moneda:</label>
                     <select class="form-control" formControlName="currency">
                       <option *ngFor="let currency of currencies"
                               [selected]="(article.currency && article.currency._id && currency._id===article.currency._id) ||
@@ -302,7 +302,7 @@
                 <table class="table table-striped">
                     <thead>
                       <tr class="separation">
-                        <th>Depósitos Disponibles</th>
+                        <th>Depósitos Disponibles:</th>
                         
                       </tr>
                     </thead>
@@ -347,7 +347,7 @@
                   <table class="table table-striped">
                       <thead>
                         <tr class="separation">
-                          <th>Ubicaciones Disponibles</th>
+                          <th>Ubicaciones Disponibles:</th>
                           
                         </tr>
                       </thead>
