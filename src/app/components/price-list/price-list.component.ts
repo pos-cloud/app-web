@@ -11,6 +11,9 @@ import { MakeService } from 'app/services/make.service';
 import { ArticleService } from 'app/services/article.service';
 import { Article } from 'app/models/article';
 
+import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+
 @Component({
   selector: 'app-price-list',
   templateUrl: './price-list.component.html',
@@ -18,6 +21,24 @@ import { Article } from 'app/models/article';
   providers: [NgbAlertConfig]
 })
 export class PriceListComponent implements OnInit {
+
+
+  public searchArticles = (text$: Observable<string>) =>
+  text$.pipe(
+    debounceTime(300),
+    distinctUntilChanged(),
+    tap(() => this.loading = true),
+    switchMap(term =>
+      this.getArticles2(`where="description": { "$regex": "${term}", "$options": "i" }&limit=10`).then(
+        articles => {
+          return articles;
+        }
+      )
+    ),
+    tap(() => this.loading = false)
+  )
+
+  public formatterArticles = (x: {description: string}) => x.description;
 
   @Input() operation: string;
   @Input() readonly: boolean;
@@ -475,6 +496,26 @@ export class PriceListComponent implements OnInit {
         }
       );
   }
+
+  
+  private getArticles2(query): Promise<Article[]> {
+
+    return new Promise((resolve, reject) => {
+      
+      this._articleService.getArticles(query).subscribe(
+          result => {
+            if (!result.articles) {
+              resolve(null);
+            } else {
+              resolve(result.articles);
+            }
+          },
+          error => {
+            resolve(null);
+          }
+        );
+    });
+   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;

@@ -135,56 +135,63 @@
         <ngb-tab title="Excepciones">
 					<ng-template ngbTabContent>
             <div class="row tab-content">
-              <form #exceptionForm="ngForm" (ngSubmit)="addException(exceptionForm)">
-                  <div class="row">
-                      <div class="form-group col-md-4">
-                        <label for="article" class="control-label">Producto</label>
-                        <select class="form-control" ngModel name="article">
-                          <option *ngFor="let article of articles"
-                                  [ngValue]="article._id"
-                                  [disabled]="readonly">
-                                  {{article.description}}</option>
-                        </select>
-                      </div>
-                      <div class="form-group col-md-3">
-                        <label for="percentage" class="control-label">Porcentaje:</label>
-                        <div class="input-group">
-                          <input type="number" class="form-control" ngModel name="percentage" [readonly]="readonly"/>
+              <div class="col-md-12">
+
+                <form #exceptionForm="ngForm" (ngSubmit)="addException(exceptionForm)">
+                    <div class="row">
+                        <div class="form-group col-md-8">
+                          <ng-template #rtArticles let-r="result" let-t="term">
+                            <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+                          </ng-template>
+                          <label for="article">Producto:</label>
+                          <input id="article"
+                                type="text"
+                                ngModel
+                                class="form-control"
+                                name="article"
+                                [ngbTypeahead]="searchArticles"
+                                [resultTemplate]="rtArticles"
+                                [inputFormatter]="formatterArticles"
+                                [focus]="focusEvent" />
+                        </div>
+                        <div class="form-group col-md-3">
+                          <label for="percentage" class="control-label">Porcentaje:</label>
+                          <div class="input-group">
+                            <input type="number" class="form-control" ngModel name="percentage" [readonly]="readonly"/>
+                          </div>
+                        </div>
+                        <div class="form-group col-md-1">                      
+                            <label class="control-label">Acción:</label>
+                            <button type="summit" class="btn btn-success btn-sm">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                            {{percentageSelected}}
                         </div>
                       </div>
-                      <div class="form-group col-md-1">                      
-                          <label class="control-label">Acción:</label>
-                          <button type="summit" class="btn btn-success btn-sm">
-                              <i class="fa fa-plus"></i>
-                          </button>
-                          {{percentageSelected}}
-                      </div>
-                    </div>
-              </form>  
-              
-              <div formArrayName="exceptions" *ngFor="let exception of priceListForm.get('exceptions').controls; let i = index;">
-                <div [formGroupName]="i">
-                  <div class="row">
-                    <div class="form-group col-md-4">
-                      <select class="form-control" formControlName="article">
-                        <option *ngFor="let article of articles"
-                                [value]="article._id"
-                                [disabled]="readonly">
-                                {{article.description}}</option>
-                      </select>
-                    </div>
-                    <div class="form-group col-md-3">
-                      <div class="input-group">
-                        <input type="number" class="form-control" formControlName="percentage" name="percentage" id="percentage" [readonly]="readonly"/>
-                      </div>
-                    </div>
-                    <div class="form-group col-md-1">        
-                        <button type="button" class="btn btn-danger btn-sm" (click)="deleteException(i)">
-                            <i class="fa fa-trash-o"></i>
-                        </button>
-                    </div>
-                  </div>
-                </div> 
+                </form>  
+              </div>
+              <div class="col-md-12">
+                  <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th>Producto</th>
+                          <th>Porcentaje</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let exception of priceListForm.get('exceptions').controls; let i = index;">
+                          <div *ngFor="let article of articles; let i = index">
+                            <td *ngIf="exception && exception.value && exception.value.article && (exception.value.article === article._id || exception.value.article._id === article._id)">{{article.description}}</td>
+                          </div>
+                          <td>{{exception.value.percentage}}</td>
+                          <td align="right" width="10">
+                              <button type="button" class="btn btn-danger btn-sm" (click)="deleteException(i)">
+                                  <i class="fa fa-trash-o"></i>
+                              </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
               </div>
             </div>
 					</ng-template>
