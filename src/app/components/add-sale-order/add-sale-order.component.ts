@@ -1474,7 +1474,7 @@ export class AddSaleOrderComponent {
         modalRef.componentInstance.transactionDestinationId = this.transaction._id;
         modalRef.componentInstance.selectionView = true;
         modalRef.result.then(async (result) => {
-          if(result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
+          if(result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
             this.showButtonCancelation = false;
             await this.daleteMovementsOfCancellations('{"transactionDestination":"'+this.transaction._id+'"}').then(
               async movementsOfCancellations => {
