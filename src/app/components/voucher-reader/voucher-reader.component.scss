@@ -1,0 +1,34 @@
+app-voucher-reader {
+    .text {
+        font-size: 50px;
+    }
+
+    .card-footer {
+        font-size: 30px;
+    }
+
+    .card, .card-body {
+        min-height: 200px !important;
+    }
+
+    .btn {
+        font-size: 20px;
+        margin: 10px;
+        i {
+            font-size: 30px;
+            margin-right: 10px;
+        }
+    }
+
+    .blockquote-img {
+        position: absolute;
+        width: 100%;
+        .row {
+            min-height: 150px;
+            i {
+                font-size: 100px;
+                margin: auto;
+            }
+        }
+    }
+}

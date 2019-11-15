@@ -1,0 +1,65 @@
+<div class="center-content" *ngIf="alertMessage !== ''">
+	<ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+		{{alertMessage}}
+	</ngb-alert>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<input  type="text"
+				class="form-control text"
+				[(ngModel)]="text"
+				(keydown.enter)="voucherRead()" 
+				placeholder="Ingresar el cupón." [focus]="focusEvent">
+	</div>
+</div>
+<div class="row" style="margin-top: 50px;">
+	<div class="col-md-12 center-content">
+		<div class="card">
+			<div class="card-header">
+				Activa lector de código QR y enfoca el código del voucher
+			</div>
+			<div class="card-body">
+				<blockquote class="blockquote blockquote-img mb-0"  *ngIf="showCamera">
+					<div class="row">
+						<div class="col-md-12 center-content">
+							<i class="fa fa-barcode"></i>
+						</div>
+					</div>
+				</blockquote>
+				<blockquote class="blockquote mb-0">
+					<div class="row">
+						<div class="col-md-12 center-content">
+							<video id="preview"></video>
+						</div>
+					</div>
+				</blockquote>
+			</div>
+			<div class="card-footer center-content">
+				<button class="btn btn-outline-success pointer" (click)="initScanner()"><i class="fa fa-check-circle"></i><strong>ACTIVAR</strong></button>
+				<button class="btn btn-outline-danger pointer" (click)="stopScanner()"><i class="fa fa-times-circle"></i><strong>DESACTIVAR</strong></button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--MODAL DETALLE VOUCHER-->
+<ng-template #voucherDetails let-c="close" let-d="dismiss">
+	<div class="modal-header">
+		<h4 class="modal-title">Detalle de voucher</h4>
+		<button type="button" class="close" aria-label="Close" (click)="d('close_click')">
+		<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	<div class="modal-body container-fluid">
+		<div class="row" *ngFor="let mov of movementsOfArticles">
+			<div class="col-md-12">
+				{{mov.description}}
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button type="submit" class="btn btn-primary" (click)="c('y')">
+			<span>Aceptar</span>
+		</button>
+	</div>
+</ng-template>

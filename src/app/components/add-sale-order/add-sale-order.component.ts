@@ -120,6 +120,8 @@ export class AddSaleOrderComponent {
   public kitchenArticlesPrinted: number = 0;
   public barArticlesToPrint: MovementOfArticle[];
   public barArticlesPrinted: number = 0;
+  public voucherArticlesToPrint: MovementOfArticle[];
+  public voucherArticlesPrinted: number = 0;
   public printSelected: Print;
   public filterArticle: string = '';
   public focusEvent = new EventEmitter<boolean>();
@@ -224,6 +226,7 @@ export class AddSaleOrderComponent {
     this.printersAux = new Array();
     this.barArticlesToPrint = new Array();
     this.kitchenArticlesToPrint = new Array();
+    this.voucherArticlesToPrint = new Array();
     this.usesOfCFDI = new Array();
     this.relationTypes = new Array();
     this.currencies = new Array();
@@ -1867,7 +1870,7 @@ export class AddSaleOrderComponent {
 
         modalRef.result.then((result) => {
         }, (reason) => {
-          this.updateMovementOfArticlePrinted();
+          this.updateMovementOfArticlePrintedKitchen();
         });
         break;
       case 'printBar':
@@ -1880,6 +1883,18 @@ export class AddSaleOrderComponent {
         modalRef.result.then((result) => {
         }, (reason) => {
           this.updateMovementOfArticlePrintedBar();
+        });
+        break;
+      case 'printVoucher':
+        modalRef = this._modalService.open(PrintComponent);
+        modalRef.componentInstance.transactionId = this.transaction._id;
+        modalRef.componentInstance.movementsOfArticles = this.voucherArticlesToPrint;
+        modalRef.componentInstance.printer = this.printerSelected;
+        modalRef.componentInstance.typePrint = 'voucher';
+
+        modalRef.result.then((result) => {
+        }, (reason) => {
+          this.updateMovementOfArticlePrintedVoucher();
         });
         break;
       case 'import':
@@ -2455,14 +2470,22 @@ export class AddSaleOrderComponent {
         if (movementOfArticle.article && movementOfArticle.article.printIn === ArticlePrintIn.Kitchen && movementOfArticle.printed < movementOfArticle.amount) {
           this.kitchenArticlesToPrint.push(movementOfArticle);
         }
+        if (movementOfArticle.article && movementOfArticle.article.printIn === ArticlePrintIn.Voucher && movementOfArticle.printed < movementOfArticle.amount) {
+          this.voucherArticlesToPrint.push(movementOfArticle);
+        }
       }
     }
-
+    console.log(this.barArticlesToPrint);
+    console.log(this.kitchenArticlesToPrint);
+    console.log(this.voucherArticlesToPrint);
     if (this.barArticlesToPrint && this.barArticlesToPrint.length !== 0) {
       this.typeOfOperationToPrint = "bar";
       this.openModal('printers');
     } else if (this.kitchenArticlesToPrint && this.kitchenArticlesToPrint.length !== 0) {
       this.typeOfOperationToPrint = "kitchen";
+      this.openModal('printers');
+    } else if (this.voucherArticlesToPrint && this.voucherArticlesToPrint.length !== 0) {
+      this.typeOfOperationToPrint = "voucher";
       this.openModal('printers');
     } else if (this.posType === 'resto' && this.transaction.table) {
       this.transaction.table.state = TableState.Busy;
@@ -2576,6 +2599,9 @@ export class AddSaleOrderComponent {
                       if(this.kitchenArticlesToPrint.length > 0){
                         this.typeOfOperationToPrint = 'kitchen';
                         this.distributeImpressions(null)
+                      } else if(this.voucherArticlesToPrint.length > 0){
+                        this.typeOfOperationToPrint = 'voucher';
+                        this.distributeImpressions(null)
                       } else {
                         this.backFinal();
                       }
@@ -2585,12 +2611,15 @@ export class AddSaleOrderComponent {
                   if(this.kitchenArticlesToPrint.length > 0){
                     this.typeOfOperationToPrint = 'kitchen';
                     this.distributeImpressions(null)
+                  } else if(this.voucherArticlesToPrint.length > 0){
+                    this.typeOfOperationToPrint = 'voucher';
+                    this.distributeImpressions(null)
                   } else {
                     this.backFinal();
                   }
                 }
               } else {
-                if(this.barArticlesToPrint){
+                if(this.barArticlesToPrint) {
                   this.typeOfOperationToPrint = 'kitchen';
                   this.distributeImpressions(null)
                 } else {
@@ -2608,7 +2637,7 @@ export class AddSaleOrderComponent {
       );
   }
 
-  public updateMovementOfArticlePrinted(): void {
+  public updateMovementOfArticlePrintedKitchen(): void {
 
     this.loading = true;
 
@@ -2620,7 +2649,57 @@ export class AddSaleOrderComponent {
           } else {
             this.kitchenArticlesPrinted++;
             if (this.kitchenArticlesPrinted < this.kitchenArticlesToPrint.length) {
-              this.updateMovementOfArticlePrinted();
+              this.updateMovementOfArticlePrintedKitchen();
+            } else {
+              if (this.posType === 'resto') {
+                if(this.transaction.table) {
+                  this.transaction.table.state = TableState.Busy;
+                  await this.updateTable().then(table => {
+                    if(table) {
+                      this.transaction.table = table;
+                      if(this.voucherArticlesToPrint.length > 0){
+                        this.typeOfOperationToPrint = 'voucher';
+                        this.distributeImpressions(null)
+                      } else {
+                        this.backFinal();
+                      }
+                    }
+                  });
+                } else {
+                  if(this.voucherArticlesToPrint.length > 0){
+                    this.typeOfOperationToPrint = 'voucher';
+                    this.distributeImpressions(null)
+                  } else {
+                    this.backFinal();
+                  }
+                }
+              } else {
+                this.backFinal();
+              }
+            }
+          }
+          this.loading = false;
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
+        }
+      );
+  }
+
+  public updateMovementOfArticlePrintedVoucher(): void {
+
+    this.loading = true;
+
+      this.voucherArticlesToPrint[this.voucherArticlesPrinted].printed = this.voucherArticlesToPrint[this.voucherArticlesPrinted].amount;
+      this._movementOfArticleService.updateMovementOfArticle(this.voucherArticlesToPrint[this.voucherArticlesPrinted]).subscribe(
+        async result => {
+          if (!result.movementOfArticle) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          } else {
+            this.voucherArticlesPrinted++;
+            if (this.voucherArticlesPrinted < this.voucherArticlesToPrint.length) {
+              this.updateMovementOfArticlePrintedVoucher();
             } else {
               if (this.posType === 'resto' && this.transaction.table) {
                 this.transaction.table.state = TableState.Busy;
@@ -2664,6 +2743,9 @@ export class AddSaleOrderComponent {
         } else if (this.typeOfOperationToPrint === 'kitchen' && printer.printIn === PrinterPrintIn.Kitchen) {
           this.printersAux.push(printer);
           numberOfPrinters++;
+        } else if (this.typeOfOperationToPrint === 'voucher' && printer.printIn === PrinterPrintIn.Voucher) {
+          this.printersAux.push(printer);
+          numberOfPrinters++;
         }
       }
     } else {
@@ -2677,13 +2759,16 @@ export class AddSaleOrderComponent {
 
     this.printerSelected = printer;
 
-    if(!this.printSelected && this.printers){
+    if(!this.printSelected && this.printers) {
       for (const element of this.printers) {
         if(element && element.printIn === PrinterPrintIn.Bar && this.typeOfOperationToPrint === 'bar'){
-          this.printerSelected = element
+          this.printerSelected = element;
         }
         if(element && element.printIn === PrinterPrintIn.Kitchen && this.typeOfOperationToPrint === 'kitchen'){
-          this.printerSelected = element
+          this.printerSelected = element;
+        }
+        if(element && element.printIn === PrinterPrintIn.Voucher && this.typeOfOperationToPrint === 'voucher'){
+          this.printerSelected = element;
         }
       }
     }
@@ -2705,13 +2790,16 @@ export class AddSaleOrderComponent {
       )
     }
 
-    if(user && user.printers && user.printers.length > 0){
+    if(user && user.printers && user.printers.length > 0) {
       for (const element of user.printers) {
         if(element && element.printer && element.printer.printIn === PrinterPrintIn.Bar && this.typeOfOperationToPrint === 'bar'){
-          this.printerSelected = element.printer
+          this.printerSelected = element.printer;
         }
         if(element && element.printer && element.printer.printIn === PrinterPrintIn.Kitchen && this.typeOfOperationToPrint === 'kitchen'){
-          this.printerSelected = element.printer
+          this.printerSelected = element.printer;
+        }
+        if(element && element.printer && element.printer.printIn === PrinterPrintIn.Voucher && this.typeOfOperationToPrint === 'voucher'){
+          this.printerSelected = element.printer;
         }
       }
     }
@@ -2727,6 +2815,9 @@ export class AddSaleOrderComponent {
         break;
       case 'bar':
           this.openModal("printBar");
+        break;
+      case 'voucher':
+          this.openModal("printVoucher");
         break;
       default:
         this.showMessage("No se reconoce la operación de impresión.", 'danger', false);

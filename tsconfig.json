@@ -3,6 +3,7 @@
   "compilerOptions": {
     "importHelpers": true,
     "outDir": "./dist/out-tsc",
+    "allowJs": true,
     "baseUrl": "src",
     "sourceMap": true,
     "declaration": false,

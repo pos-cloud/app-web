@@ -99,6 +99,13 @@
               Delivery
             </button>
           </div>
+          <div>
+            <button class="dropdown-item"
+                    [routerLink]="['pos','lector-de-vouchers']"
+                    [routerLinkActive]="['active']">
+              Lector de Vouchers
+            </button>
+          </div>
           <div *ngIf="config.modules.app">
             <button class="dropdown-item"
                     [routerLink]="['pos','pedidos-web']"
