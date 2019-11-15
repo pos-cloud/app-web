@@ -270,6 +270,24 @@ export class ListArticlesComponent implements OnInit {
       required : false,
     },
     {
+      name: 'picture',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required : false,
+    },
+    {
+      name: 'type',
+      visible: false,
+      disabled: true,
+      filter: false,
+      datatype: 'string',
+      align: 'left',
+      required : true,
+    },
+    {
       name: 'operationType',
       visible: false,
       disabled: true,
@@ -355,9 +373,10 @@ export class ListArticlesComponent implements OnInit {
           }
         }
       }
-
+    
+    match += `,"type": "${this.articleType}"`;
     if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
-
+    
     match += `}`;
 
     match = JSON.parse(match);
