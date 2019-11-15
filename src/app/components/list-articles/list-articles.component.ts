@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Article, Type } from './../../models/article';
+import { Article, Type, attributes } from './../../models/article';
 import { Config } from './../../app.config';
 import { Transaction } from './../../models/transaction';
 
@@ -79,207 +79,7 @@ export class ListArticlesComponent implements OnInit {
   public sort = {
     "code": 1
   };
-  public columns = [
-    {
-      name: 'code',
-      visible: true,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      align: 'left',
-      required : false,
-    },
-    {
-      name: 'description',
-      visible: true,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      align: 'left',
-      required : false,
-    },
-    {
-      name: 'posDescription',
-      visible: true,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      align: 'left',
-      required : false,
-    },
-    {
-      name: 'make.description',
-      visible: true,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      align: 'left',
-      required : false,
-    },
-    {
-      name: 'category.description',
-      visible: true,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      align: 'left',
-      required : false,
-    },
-    {
-      name: 'salePrice',
-      visible: true,
-      disabled: false,
-      filter: true,
-      datatype: 'currency',
-      align: 'right',
-      required : false,
-    },
-    {
-      name: 'currency.name',
-      visible: true,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      align: 'left',
-      required : false,
-    },
-    {
-      name: 'observation',
-      visible: true,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      align: 'left',
-      required : false,
-    },
-    {
-      name: 'barcode',
-      visible: true,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      align: 'left',
-      required : false,
-    },
-    {
-      name: 'costPrice',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'currency',
-      align: 'right',
-      required : false,
-    },
-    {
-      name: 'basePrice',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'currency',
-      align: 'right',
-      required : false,
-    },
-    {
-      name: 'markupPercentage',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'percent',
-      align: 'right',
-      required : false,
-    },
-    {
-      name: 'markupPrice',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'currency',
-      align: 'right',
-      required : false,
-    },
-    {
-      name: 'printIn',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      align: 'left',
-      required : false,
-    },
-    {
-      name: 'allowPurchase',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      align: 'left',
-      required : false,
-    },
-    {
-      name: 'allowSale',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      align: 'left',
-      required : false,
-    },
-    {
-      name: 'allowPurchase',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      align: 'left',
-      required : false,
-    },
-    {
-      name: 'allowSaleWithoutStock',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      align: 'left',
-      required : false,
-    },
-    {
-      name: 'allowMeasure',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      align: 'left',
-      required : false,
-    },
-    {
-      name: 'isWeigth',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      align: 'left',
-      required : false,
-    },
-    {
-      name: 'ecommerceEnabled',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      align: 'left',
-      required : false,
-    },
-    {
-      name: 'operationType',
-      visible: false,
-      disabled: true,
-      filter: false,
-      datatype: 'string',
-      defaultFilter: `{ "$ne": "D" }`,
-      align: 'left',
-      required : true,
-    },
-  ];
+  public columns = attributes;
 
   constructor(
     private _articleService: ArticleService,
@@ -355,9 +155,10 @@ export class ListArticlesComponent implements OnInit {
           }
         }
       }
-
+    
+    match += `,"type": "${this.articleType}"`;
     if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
-
+    
     match += `}`;
 
     match = JSON.parse(match);
