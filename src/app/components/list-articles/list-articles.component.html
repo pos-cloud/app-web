@@ -20,7 +20,7 @@
                 *ngFor="let column of columns"
                 cdkDrag
                 [cdkDragDisabled]="column.disabled">
-                  <label for="column"><input type="checkbox" [id]="column.name" [(ngModel)]="column.visible" [disabled]="column.disabled">{{ column.name | translate}}</label>
+                  <label for="column"><input type="checkbox" [id]="column.name" (change)="getItems()" [(ngModel)]="column.visible" [disabled]="column.disabled">{{ column.name | translate}}</label>
                 </div>
             </div>
           </div>
@@ -139,12 +139,12 @@
             <th (click)="orderBy('barcode')">Código Barra</th>
           </tr>
           <tr class="filters">
-            <th><input type="text" class="form-control" [(ngModel)]="filters['code']" (keydown.enter)="getArticles()" placeholder="#..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['description']" (keydown.enter)="getArticles()" placeholder="Descripción..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['posDescription']" (keydown.enter)="getArticles()" placeholder="Descripción..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['make.description']" (keydown.enter)="getArticles()" placeholder="Marca..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['category.description']" (keydown.enter)="getArticles()" placeholder="Rubro..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['barcode']" (keydown.enter)="getArticles()" placeholder="Código de Barra..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['code']" (keydown.enter)="getItems()" placeholder="#..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['description']" (keydown.enter)="getItems()" placeholder="Descripción..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['posDescription']" (keydown.enter)="getItems()" placeholder="Descripción..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['make.description']" (keydown.enter)="getItems()" placeholder="Marca..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['category.description']" (keydown.enter)="getItems()" placeholder="Rubro..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['barcode']" (keydown.enter)="getItems()" placeholder="Código de Barra..."></th>
           </tr>
         </thead>
         <tbody>
@@ -153,7 +153,7 @@
               <app-progressbar [loading]="loading"></app-progressbar>
             </td>
           </tr>
-          <tr *ngFor="let article of articles"
+          <tr *ngFor="let article of items"
             (click)="selectArticle(article)">
             <td>{{article.code}}</td>
             <td>{{article.description}}</td>
@@ -173,7 +173,7 @@
     <div class="card-footer">
       <div class="row">
         <div class="form-group col-md-2 offset-md-10">
-          <select class="form-control"  [(ngModel)]="itemsPerPage" (change)="getArticles()">
+          <select class="form-control"  [(ngModel)]="itemsPerPage" (change)="getItems()">
             <option [value]="5">Mostrar 5 Registros</option>
             <option [value]="10">Mostrar 10 Registros</option>
             <option [value]="15">Mostrar 15 Registros</option>

@@ -7,7 +7,7 @@ registerLocaleData(localeEsAr, 'es-Ar');
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Article, Type, columns } from './../../models/article';
+import { Article, Type, attributes } from './../../models/article';
 import { Config } from './../../app.config';
 
 import { ArticleService } from './../../services/article.service';
@@ -54,7 +54,7 @@ export class ReportsList implements OnInit {
   
   // TABLA
   public listTitle: string;
-  public columns: any[] = columns;
+  public columns: any[] = attributes;
   public filters: any[];
   public orderTerm: string[] = ["description"];
   public currentPage: number = 0;

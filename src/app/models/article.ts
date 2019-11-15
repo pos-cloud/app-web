@@ -84,22 +84,15 @@ export enum Type {
   Ingredient = <any>"Ingrediente"
 }
 
-export let columns = [
+export let attributes = [
   {
     name: 'code',
     visible: true,
     disabled: false,
     filter: true,
     datatype: 'string',
-    align: 'left'
-  },
-  {
-    name: 'barcode',
-    visible: true,
-    disabled: false,
-    filter: true,
-    datatype: 'string',
-    align: 'left'
+    align: 'left',
+    required : false,
   },
   {
     name: 'description',
@@ -107,7 +100,8 @@ export let columns = [
     disabled: false,
     filter: true,
     datatype: 'string',
-    align: 'left'
+    align: 'left',
+    required : false,
   },
   {
     name: 'posDescription',
@@ -115,23 +109,8 @@ export let columns = [
     disabled: false,
     filter: true,
     datatype: 'string',
-    align: 'left'
-  },
-  {
-    name: 'codeSAT',
-    visible: false,
-    disabled: false,
-    filter: true,
-    datatype: 'string',
-    align: 'left'
-  },
-  {
-    name: 'quantityPerMeasure',
-    visible: false,
-    disabled: false,
-    filter: true,
-    datatype: 'number',
-    align: 'right'
+    align: 'left',
+    required : false,
   },
   {
     name: 'make.description',
@@ -139,7 +118,8 @@ export let columns = [
     disabled: false,
     filter: true,
     datatype: 'string',
-    align: 'left'
+    align: 'left',
+    required : false,
   },
   {
     name: 'category.description',
@@ -147,15 +127,8 @@ export let columns = [
     disabled: false,
     filter: true,
     datatype: 'string',
-    align: 'left'
-  },
-  {
-    name: 'unitOfMeasurement.abbreviation',
-    visible: false,
-    disabled: false,
-    filter: true,
-    datatype: 'string',
-    align: 'left'
+    align: 'left',
+    required : false,
   },
   {
     name: 'salePrice',
@@ -163,22 +136,170 @@ export let columns = [
     disabled: false,
     filter: true,
     datatype: 'currency',
-    align: 'right'
+    align: 'right',
+    required : false,
+  },
+  {
+    name: 'currency.name',
+    visible: true,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    align: 'left',
+    required : false,
+  },
+  {
+    name: 'observation',
+    visible: true,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    align: 'left',
+    required : false,
+  },
+  {
+    name: 'barcode',
+    visible: true,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    align: 'left',
+    required : false,
+  },
+  {
+    name: 'costPrice',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'currency',
+    align: 'right',
+    required : false,
+  },
+  {
+    name: 'basePrice',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'currency',
+    align: 'right',
+    required : false,
+  },
+  {
+    name: 'markupPercentage',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'percent',
+    align: 'right',
+    required : false,
+  },
+  {
+    name: 'markupPrice',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'currency',
+    align: 'right',
+    required : false,
+  },
+  {
+    name: 'printIn',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    align: 'left',
+    required : false,
+  },
+  {
+    name: 'allowPurchase',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    align: 'left',
+    required : false,
+  },
+  {
+    name: 'allowSale',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    align: 'left',
+    required : false,
+  },
+  {
+    name: 'allowPurchase',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    align: 'left',
+    required : false,
+  },
+  {
+    name: 'allowSaleWithoutStock',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    align: 'left',
+    required : false,
+  },
+  {
+    name: 'allowMeasure',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    align: 'left',
+    required : false,
+  },
+  {
+    name: 'isWeigth',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    align: 'left',
+    required : false,
+  },
+  {
+    name: 'ecommerceEnabled',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    align: 'left',
+    required : false,
+  },
+  {
+    name: 'picture',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    align: 'left',
+    required : false,
   },
   {
     name: 'type',
-    visible: true,
+    visible: false,
     disabled: true,
-    filter: true,
+    filter: false,
     datatype: 'string',
-    align: 'left'
+    align: 'left',
+    required : true,
   },
   {
     name: 'operationType',
-    visible: true,
+    visible: false,
     disabled: true,
-    filter: true,
+    filter: false,
     datatype: 'string',
-    align: 'left'
-  }
+    defaultFilter: `{ "$ne": "D" }`,
+    align: 'left',
+    required : true,
+  },
 ];
