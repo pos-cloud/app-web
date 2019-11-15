@@ -384,9 +384,6 @@ export class AddSaleOrderComponent {
         if(transaction) {
           this.transaction = transaction;
           this.lastQuotation = this.transaction.quotation;
-          if(!this.checkPrices()) {
-            this.getMovementsOfTransaction();
-          }
         }
       }
     );
@@ -403,9 +400,6 @@ export class AddSaleOrderComponent {
         if(transaction) {
           this.transaction = transaction;
           this.lastQuotation = this.transaction.quotation;
-          if(!this.checkPrices()) {
-            this.getMovementsOfTransaction();
-          }
         }
       }
     );
@@ -548,9 +542,6 @@ export class AddSaleOrderComponent {
         if(transaction) {
           this.transaction = transaction;
           this.lastQuotation = this.transaction.quotation;
-          if(!this.checkPrices()) {
-            this.getMovementsOfTransaction();
-          }
         } else {
           this.hideMessage();
           this.getMovementsOfTransaction();
@@ -1179,12 +1170,8 @@ export class AddSaleOrderComponent {
             if(transaction) {
               this.transaction = transaction;
               this.lastQuotation = this.transaction.quotation;
-              if(!this.checkPrices()) {
-                this.getMovementsOfTransaction();
-              } else {
-                if(this.isCancellationAutomatic) {
-                  this.openModal('charge');
-                }
+              if(this.isCancellationAutomatic) {
+                this.openModal('charge');
               }
             } else {
               this.hideMessage();
@@ -1196,28 +1183,6 @@ export class AddSaleOrderComponent {
     } else {
       this.getMovementsOfTransaction(); // EN CASO DE QUE DE ERROR DE ACTUALIZAR ALGÚN PRODUCTO.
     }
-  }
-
-  //FUNCIÓN PARA CONTROLAR QUE LA SUMA DE PRECIO DE ARTÍCULOS SEA IGUAL AL TOTAL DE LA TRANSACCIÓN
-  private checkPrices(): boolean {
-      
-    let isValid: boolean = false;
-
-    let totalPrice: number = 0;
-    this.quantity = 0;
-    
-    if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
-      for (let movementOfArticle of this.movementsOfArticles) {
-        totalPrice += this.roundNumber.transform(movementOfArticle.salePrice);
-        this.quantity += movementOfArticle.amount;
-      }
-    }
-    
-    if(this.roundNumber.transform(totalPrice) === this.roundNumber.transform(this.transaction.totalPrice)) {
-      isValid = true;
-    }
-
-    return isValid;
   }
 
   async updateTaxes() {
@@ -1294,12 +1259,8 @@ export class AddSaleOrderComponent {
         if(transaction) {
           this.transaction = transaction;
           this.lastQuotation = this.transaction.quotation;
-          if(!this.checkPrices()) {
-            this.getMovementsOfTransaction();
-          } else {
-            if(this.isCancellationAutomatic) {
-              this.openModal('charge');
-            }
+          if(this.isCancellationAutomatic) {
+            this.openModal('charge');
           }
         } else {
           this.hideMessage();
@@ -1603,89 +1564,84 @@ export class AddSaleOrderComponent {
         
         this.typeOfOperationToPrint = "charge";
 
-        if(this.checkPrices()) {
-          if (await this.isValidCharge() &&
-              await this.areValidMovementOfArticle()) {
-  
-            if (this.transaction.type.requestPaymentMethods ||
-               fastPayment) {
-  
-              modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg', backdrop: 'static' });
-              modalRef.componentInstance.transaction = this.transaction;
-              if (fastPayment) {
-                modalRef.componentInstance.fastPayment = fastPayment;
-              }
-              modalRef.result.then((result) => {
-                this.movementsOfCashes = result.movementsOfCashes;
-  
-                if (this.movementsOfCashes) {
-  
-  
-                  if (result.movementOfArticle) {
-                    this.movementsOfArticles.push(result.movementOfArticle);
+        if (await this.isValidCharge() &&
+            await this.areValidMovementOfArticle()) {
+
+          if (this.transaction.type.requestPaymentMethods ||
+              fastPayment) {
+
+            modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg', backdrop: 'static' });
+            modalRef.componentInstance.transaction = this.transaction;
+            if (fastPayment) {
+              modalRef.componentInstance.fastPayment = fastPayment;
+            }
+            modalRef.result.then((result) => {
+              this.movementsOfCashes = result.movementsOfCashes;
+
+              if (this.movementsOfCashes) {
+
+
+                if (result.movementOfArticle) {
+                  this.movementsOfArticles.push(result.movementOfArticle);
+                }
+
+                if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+                  if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
+                    this.transaction.origin = this.transaction.type.fixedOrigin;
                   }
-  
-                  if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-                    if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
-                      this.transaction.origin = this.transaction.type.fixedOrigin;
-                    }
-  
-                    this.assignLetter();
-                    if (this.transaction.type.electronics) {
-                      if(this.config['country'] === 'MX') {
-                        if(!this.transaction.CFDStamp &&
-                          !this.transaction.SATStamp &&
-                          !this.transaction.stringSAT) {
-                          this.validateElectronicTransactionMX();
-                        } else {
-                          this.finish(); //SE FINALIZA POR ERROR EN LA FE
-                        }
-                      } else if (this.config['country'] === 'AR') {
-                        if(!this.transaction.CAE) {
-                          this.validateElectronicTransactionAR();
-                        } else {
-                          this.finish(); //SE FINALIZA POR ERROR EN LA FE
-                        }
+
+                  this.assignLetter();
+                  if (this.transaction.type.electronics) {
+                    if(this.config['country'] === 'MX') {
+                      if(!this.transaction.CFDStamp &&
+                        !this.transaction.SATStamp &&
+                        !this.transaction.stringSAT) {
+                        this.validateElectronicTransactionMX();
                       } else {
-                        this.showMessage("Facturación electrónica no esta habilitada para tu país.", "info", true);
+                        this.finish(); //SE FINALIZA POR ERROR EN LA FE
                       }
-                    } else if (this.transaction.type.electronics && this.transaction.CAE) {
-                      this.finish(); //SE FINALIZA POR ERROR EN LA FE
+                    } else if (this.config['country'] === 'AR') {
+                      if(!this.transaction.CAE) {
+                        this.validateElectronicTransactionAR();
+                      } else {
+                        this.finish(); //SE FINALIZA POR ERROR EN LA FE
+                      }
                     } else {
-                      if (this.transaction.type.fixedLetter !== this.transaction.letter) {
-                        this.assignTransactionNumber();
-                      } else {
-                        this.finish();
-                      }
+                      this.showMessage("Facturación electrónica no esta habilitada para tu país.", "info", true);
                     }
+                  } else if (this.transaction.type.electronics && this.transaction.CAE) {
+                    this.finish(); //SE FINALIZA POR ERROR EN LA FE
                   } else {
-                    this.finish();
+                    if (this.transaction.type.fixedLetter !== this.transaction.letter) {
+                      this.assignTransactionNumber();
+                    } else {
+                      this.finish();
+                    }
                   }
-                }
-              }, (reason) => {
-              });
-            } else {
-              if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-                this.assignLetter();
-                if (this.transaction.type.electronics && !this.transaction.CAE) {
-                  this.validateElectronicTransactionAR();
-                } else if (this.transaction.type.electronics && this.transaction.CAE) {
-                  this.finish(); //SE FINALIZA POR ERROR EN LA FE
                 } else {
-                  if (this.transaction.type.fixedLetter !== this.transaction.letter) {
-                        this.assignTransactionNumber();
-                      } else {
-                        this.finish();
-                      }
+                  this.finish();
                 }
-              } else {
-                this.finish();
               }
+            }, (reason) => {
+            });
+          } else {
+            if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+              this.assignLetter();
+              if (this.transaction.type.electronics && !this.transaction.CAE) {
+                this.validateElectronicTransactionAR();
+              } else if (this.transaction.type.electronics && this.transaction.CAE) {
+                this.finish(); //SE FINALIZA POR ERROR EN LA FE
+              } else {
+                if (this.transaction.type.fixedLetter !== this.transaction.letter) {
+                      this.assignTransactionNumber();
+                    } else {
+                      this.finish();
+                    }
+              }
+            } else {
+              this.finish();
             }
           }
-        } else {
-          this.getMovementsOfTransaction();
-          this.showMessage("Controlando movimientos, inténtelo nuevamente...", "info", true);
         }
         break;
       case 'cancelation-type-automatic':
@@ -1756,9 +1712,6 @@ export class AddSaleOrderComponent {
                   if(transaction) {
                     this.transaction = transaction;
                     this.lastQuotation = this.transaction.quotation;
-                    if(!this.checkPrices()) {
-                      this.getMovementsOfTransaction();
-                    }
                   }
                 }
               );
@@ -1776,9 +1729,6 @@ export class AddSaleOrderComponent {
                     if(transaction) {
                       this.transaction = transaction;
                       this.lastQuotation = this.transaction.quotation;
-                      if(!this.checkPrices()) {
-                        this.getMovementsOfTransaction();
-                      }
                     }
                   }
                 );
@@ -1829,9 +1779,6 @@ export class AddSaleOrderComponent {
                         }
                       }
                     );
-                  }
-                  if(!this.checkPrices()) {
-                    this.getMovementsOfTransaction();
                   }
                 }
               }
@@ -1924,9 +1871,6 @@ export class AddSaleOrderComponent {
                 if(transaction) {
                   this.transaction = transaction;
                   this.lastQuotation = this.transaction.quotation;
-                  if(!this.checkPrices()) {
-                    this.getMovementsOfTransaction();
-                  }
                 }
               }
             );
