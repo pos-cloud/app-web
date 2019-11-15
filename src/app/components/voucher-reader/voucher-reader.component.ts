@@ -1,11 +1,10 @@
 import { Component, OnInit, EventEmitter, ViewEncapsulation, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { MovementOfArticle } from 'app/models/movement-of-article';
+import * as moment from 'moment';
+import 'moment/locale/es';
 
-(function hello() {
-  alert('Hello!!!');
-})()
+declare const Instascan: any;
 
 @Component({
   selector: 'app-voucher-reader',
@@ -23,9 +22,11 @@ export class VoucherReaderComponent implements OnInit {
   public loading: boolean = false;
   public showCamera: boolean = true;
   @ViewChild('voucherDetails', {static: true}) voucherDetails: ElementRef;
-  public movementsOfArticles: MovementOfArticle[];
   public available: boolean = true;
   public scanner;
+  public timeOfReading: string;
+  public timeGenerate: string;
+  public voucher;
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -46,17 +47,8 @@ export class VoucherReaderComponent implements OnInit {
     this.scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
     this.scanner.addListener('scan', (content) => {
       if(this.available) {
-        this.available = false;
-        this.focusEvent.emit(true);
-        try {
-          let voucher = JSON.parse(content);
-          if (voucher.type === 'articles') {
-            this.movementsOfArticles = voucher.movementsOfArticles;
-            this.openModal('articles');
-          }
-        } catch(err) {
-          this.showMessage('Error al leer el voucher.', 'info', true);
-        }
+        this.text = content;
+        this.readVoucher();
       }
     });
 
@@ -64,11 +56,36 @@ export class VoucherReaderComponent implements OnInit {
       if (cameras.length > 0) {
         this.scanner.start(cameras[0]);
       } else {
-        console.error('No cameras found.');
+        this.showMessage('No se encontraron cámaras.', 'info', true);
       }
     }).catch(function (e) {
-      console.error(e);
+      this.showMessage(e, 'danger', true);
     });
+  }
+
+  public readVoucher(double: boolean = false): void {
+    this.available = false;
+    if(this.text && this.text !== '') {
+      try {
+        this.voucher = JSON.parse(this.text);
+        this.timeOfReading = moment().calendar();
+        this.timeGenerate = moment(this.voucher.time).calendar();
+        if (this.voucher.type === 'articles') {
+          this.text = '';
+          this.focusEvent.emit(true);
+          if(double) {
+            this.openModal('articles');
+          }
+          this.openModal('articles');
+        }
+      } catch(err) {
+        this.focusEvent.emit(true);
+        this.showMessage('Error al intentar leer el voucher.', 'info', true);
+      }
+    } else {
+      this.focusEvent.emit(true);
+      this.showMessage('Debe ingresar un código de voucher válido.', 'info', true);
+    }
   }
 
   public stopScanner(): void {
@@ -82,7 +99,6 @@ export class VoucherReaderComponent implements OnInit {
 
     switch (op) {
       case 'articles':
-        console.log(this.movementsOfArticles);
         modalRef = this._modalService.open(this.voucherDetails, { size: 'lg', backdrop: 'static' });
         modalRef.result.then(async (result) => {
           this.available = true;

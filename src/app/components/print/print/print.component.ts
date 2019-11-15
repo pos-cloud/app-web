@@ -2,8 +2,6 @@
 import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { AuthService } from '../../../services/auth.service';
-
 //Modelos
 import { Transaction } from '../../../models/transaction';
 import { MovementOfArticle } from '../../../models/movement-of-article';
@@ -12,10 +10,9 @@ import { Turn } from '../../../models/turn';
 import { Printer, PrinterPrintIn, PrinterType } from '../../../models/printer';
 import { Company } from '../../../models/company';
 import { Config } from '../../../app.config';
-import { TransactionType, TransactionMovement, Movements, DescriptionType } from '../../../models/transaction-type';
+import { TransactionType, TransactionMovement, DescriptionType } from '../../../models/transaction-type';
 import { ArticleStock } from '../../../models/article-stock';
 import { Article } from '../../../models/article';
-
 
 //Paquetes de terceros
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -40,6 +37,9 @@ import { CashBox } from '../../../models/cash-box';
 import { CashBoxService } from '../../../services/cash-box.service';
 import { ClaimService } from 'app/services/claim.service';
 import { MovementOfCancellationService } from 'app/services/movement-of-cancellation.service';
+
+import * as moment from 'moment';
+import 'moment/locale/es';
 
 @Component({
   selector: 'app-print',
@@ -2796,6 +2796,7 @@ export class PrintComponent implements OnInit {
 
     let qr: {} = {};
     qr['type'] = 'articles';
+    qr['time'] = moment();
     qr['transaction'] = this.transactionId;
     qr['movementsOfArticles'] = new Array();
 
