@@ -1,18 +1,33 @@
-<!--ADMIN-->
-<section class="container-fluid" *ngIf="userType==='admin'">
-  <div class="center-content" *ngIf="alertMessage !== '' && (articles && articles.length > 0)">
+<section class="container-fluid" *ngIf="userType==='admin'" >
+  <div class="center-content" *ngIf="alertMessage !== ''">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <div class="card ">
-    <div class="card-header">Listado de {{ listTitle }}
+  <div class="card  card-large">
+    <div class="card-header">
+      <span>{{title}}</span>
       <div class="pull-right">
         <button class="btn" (click)="openModal('add', null)" *ngIf="articleType && articleType.toString() === 'Final'"><i class="fa fa-plus"></i><span>Agregar</span></button>
         <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
         <button class="btn" (click)="openModal('update-prices',null)"><i class="fa fa-edit"></i><span>Actualizar Precios</span></button>
+        <div class="btn-group" ngbDropdown>
+          <button class="btn" ngbDropdownToggle data-toggle="tooltip" placement="buttom-left" title="Columnas"><i class="fa fa-columns"></i><span>Columnas</span></button>
+          <div class="dropdown-menu dropdown-menu-left" ngbDropdownMenu>
+            <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+              <div
+                class="example-box"
+                *ngFor="let column of columns"
+                cdkDrag
+                [cdkDragDisabled]="column.disabled">
+                  <label for="column"><input type="checkbox" [id]="column.name" [(ngModel)]="column.visible" [disabled]="column.disabled">{{ column.name | translate}}</label>
+                </div>
+            </div>
+          </div>
+        </div>
         <button class="btn" *ngIf="identity.name === 'soporte'" (click)="openModal('import', null)"><i class="fa fa-upload"></i><span>Importar Productos</span></button>
         <button class="btn" (click)="openModal('print-list', null)"><i class="fa fa-print"></i><span>Imprimir Lista</span></button>
+        <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems($event)"></app-export-excel>
         
       </div>
     </div>
@@ -23,63 +38,48 @@
             <th>
               <i class="fa fa-bars"></i>
             </th>
-            <th (click)="orderBy('code')">#</th>
-            <th (click)="orderBy('description')">Descripción</th>
-            <th (click)="orderBy('posDescription')">Descripción Corta</th>
-            <th (click)="orderBy('make.description')">Marca</th>
-            <th (click)="orderBy('category.description')">Rubro</th>
-            <th (click)="orderBy('salePrice')">Precio Venta</th>
-            <th (click)="orderBy('currency.name')">Moneda</th>
-            <th (click)="orderBy('observation')">Observación</th>
-            <th (click)="orderBy('barcode')">Código Barra</th>
+            <ng-container *ngFor="let column of columns">
+              <th *ngIf="column.visible" (click)="orderBy(column.name)">{{ column.name | translate }}</th>
+            </ng-container>
           </tr>
           <tr class="filters">
             <th></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['code']" (keydown.enter)="getArticles()" placeholder="#..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['description']" (keydown.enter)="getArticles()" placeholder="Descripción..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['posDescription']" (keydown.enter)="getArticles()" placeholder="Descripción..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['make.description']" (keydown.enter)="getArticles()" placeholder="Marca..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['category.description']" (keydown.enter)="getArticles()" placeholder="Rubro..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['salePrice']" (keydown.enter)="getArticles()" placeholder="Precio de Venta..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['currency.name']" (keydown.enter)="getArticles()" placeholder="Moneda..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['observation']" (keydown.enter)="getArticles()" placeholder="Observación..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['barcode']" (keydown.enter)="getArticles()" placeholder="Código de Barra..."></th>
+            <ng-container *ngFor="let column of columns">
+              <th *ngIf="column.visible">
+                <input type="text" class="form-control" [(ngModel)]="filters[column.name]" (keydown.enter)="getItems()" placeholder="{{ column.name | translate }}" [disabled]="!column.filter">
+              </th>
+            </ng-container>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td colspan="99" style="padding: 0px">
+            <td [attr.colspan]="getColumnsVisibles() + 1" style="padding: 0px">
               <app-progressbar [loading]="loading"></app-progressbar>
             </td>
           </tr>
-          <tr *ngFor="let article of articles | paginate: { itemsPerPage: itemsPerPage,
-                                                            currentPage: currentPage,
-                                                            totalItems: totalItems
-                                                          }">
-            <td align="left" width="174">
-              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', article)" title="Ver"><i class="fa fa-eye"></i></button>
-              <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', article)" title="Editar"><i class="fa fa-pencil"></i></button>
-              <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', article)" title="Eliminar" *ngIf="article && article.type && article.type.toString() !== 'Variante'" ><i class="fa fa-trash-o"></i></button>
-              <button type="button" class="btn btn-light btn-sm" (click)= "openModal('print-label', article)" title="Imprimir Etiqueta"><i class="fa fa-barcode"></i></button>
-              <button type="button" class="btn btn-light btn-sm" (click)= "openModal('copy', article)" title="Copiar"><i class="fa fa-copy"></i></button>
+          <tr *ngFor="let item of items | paginate: { itemsPerPage: itemsPerPage,
+                                                        currentPage: currentPage,
+                                                        totalItems: totalItems
+                                                      }">
+            <td align="left" width="50">
+              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', item)" title="Ver"><i class="fa fa-eye"></i></button>
             </td>
-            <td>{{article.code}}</td>
-            <td>{{article.description}}</td>
-            <td>{{article.posDescription}}</td>
-            <td *ngIf="article.make">{{article.make.description}}</td>
-            <td *ngIf="!article.make"></td>
-            <td *ngIf="article.category">{{article.category.description}}</td>
-            <td *ngIf="!article.category"></td>
-            <td>{{article.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-            <td *ngIf="article.currency">{{article.currency.name}}</td>
-            <td *ngIf="!article.currency"></td>
-            <td>{{article.observation | slice:0:10}}</td>
-            <td>{{article.barcode}}</td>
+            <ng-container *ngFor="let column of columns">
+              <td *ngIf="column.visible" [attr.align]="column.align">{{getValue(item, column)}}</td>
+            </ng-container>
           </tr>
-          <tr align="center" *ngIf="(!articles || articles.length === 0) && !loading">
-            <td colspan="10">No se encontraron productos</td>
+          <tr align="center" *ngIf="totalItems === 0 && !loading">
+            <td [attr.colspan]="getColumnsVisibles() + 1">No se encontraron productos</td>
           </tr>
         </tbody>
+        <tfoot>
+        <!--<tr>
+            <th [attr.colspan]="getColumnsVisibles() - 2"></th>
+            <th class="align-right"> <strong>Total</strong></th>
+            <th class="align-right"><strong>{{totalItem | number:'1.2-2'}}</strong></th>
+            <th class="align-right"><strong>{{totalAmount | currency:'USD':'symbol-narrow':'1.2-2' }}</strong></th>
+          </tr>-->
+        </tfoot>
       </table>
     </div>
     <div class="card-footer">
@@ -95,7 +95,7 @@
           </pagination-controls>
         </div>
         <div class="form-group col-md-2">
-          <select class="form-control"  [(ngModel)]="itemsPerPage" (change)="getArticles()">
+          <select class="form-control"  [(ngModel)]="itemsPerPage" (change)="getItems()">
             <option [value]="5">Mostrar 5 Registros</option>
             <option [value]="10">Mostrar 10 Registros</option>
             <option [value]="15">Mostrar 15 Registros</option>

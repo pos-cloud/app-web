@@ -1,5 +1,5 @@
 
-import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -28,6 +28,9 @@ import { ConfigService } from 'app/services/config.service';
 import { Claim, ClaimPriority, ClaimType } from 'app/models/claim';
 import { ClaimService } from 'app/services/claim.service';
 import { PrintLabelComponent } from '../print/print-label/print-label.component';
+import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
+import { CurrencyPipe } from '@angular/common';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-list-articles',
@@ -40,10 +43,10 @@ import { PrintLabelComponent } from '../print/print-label/print-label.component'
 export class ListArticlesComponent implements OnInit {
 
   public identity: User;
+  public title: string = "Listado de Productos";
   public articles: Article[] = new Array();
   public alertMessage: string = '';
   public userType: string = '';
-  public orderTerm: string[] = ["description"];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
@@ -52,32 +55,231 @@ export class ListArticlesComponent implements OnInit {
   @Input() transaction: Transaction;
   public apiURL = Config.apiURL;
   public itemsPerPage = 10;
+  @ViewChild(ExportExcelComponent, {static: false}) exportExcelComponent: ExportExcelComponent;
   public roundNumber = new RoundNumberPipe();
   public articleType: Type;
-  public listTitle: string;
   public currentPage: number = 0;
   public database: string;
-  public displayedColumns = [
-      'type',
-      'code',
-      'barcode',
-      'description',
-      'posDescription',
-      'make.description',
-      'category.description',
-      'category.description',
-      'costPrice',
-      'salePrice',
-      'observation',
-      'picture',
-      'operationType',
-      'currency.name'
-  ];
+
   public filters: any[];
-  public totalItems: number = 0;
+
   public filterPipe: FilterPipe = new FilterPipe();
   public filteredArticles: Article[];
   public config: Config;
+
+
+  //new
+
+  public items: any[] = new Array();
+  public listTitle: string;
+  public orderTerm: string[] = ["description"];
+  public totalItems: number = 0;
+  private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
+  private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
+  public sort = {
+    "code": 1
+  };
+  public columns = [
+    {
+      name: 'code',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required : false,
+    },
+    {
+      name: 'description',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required : false,
+    },
+    {
+      name: 'posDescription',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required : false,
+    },
+    {
+      name: 'make.description',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required : false,
+    },
+    {
+      name: 'category.description',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required : false,
+    },
+    {
+      name: 'salePrice',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'currency',
+      align: 'right',
+      required : false,
+    },
+    {
+      name: 'currency.name',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required : false,
+    },
+    {
+      name: 'observation',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required : false,
+    },
+    {
+      name: 'barcode',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required : false,
+    },
+    {
+      name: 'costPrice',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'currency',
+      align: 'right',
+      required : false,
+    },
+    {
+      name: 'basePrice',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'currency',
+      align: 'right',
+      required : false,
+    },
+    {
+      name: 'markupPercentage',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'percent',
+      align: 'right',
+      required : false,
+    },
+    {
+      name: 'markupPrice',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'currency',
+      align: 'right',
+      required : false,
+    },
+    {
+      name: 'printIn',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required : false,
+    },
+    {
+      name: 'allowPurchase',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required : false,
+    },
+    {
+      name: 'allowSale',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required : false,
+    },
+    {
+      name: 'allowPurchase',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required : false,
+    },
+    {
+      name: 'allowSaleWithoutStock',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required : false,
+    },
+    {
+      name: 'allowMeasure',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required : false,
+    },
+    {
+      name: 'isWeigth',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required : false,
+    },
+    {
+      name: 'ecommerceEnabled',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required : false,
+    },
+    {
+      name: 'operationType',
+      visible: false,
+      disabled: true,
+      filter: false,
+      datatype: 'string',
+      defaultFilter: `{ "$ne": "D" }`,
+      align: 'left',
+      required : true,
+    },
+  ];
 
   constructor(
     private _articleService: ArticleService,
@@ -92,10 +294,12 @@ export class ListArticlesComponent implements OnInit {
     private _claimService: ClaimService
   ) {
     this.filters = new Array();
-    this.articles = new Array();
-    this.filteredArticles = new Array();
-    for(let field of this.displayedColumns) {
-      this.filters[field] = "";
+    for(let field of this.columns) {
+      if(field.defaultFilter) {
+        this.filters[field.name] = field.defaultFilter;
+      } else {
+        this.filters[field.name] = "";
+      }
     }
   }
 
@@ -127,108 +331,93 @@ export class ListArticlesComponent implements OnInit {
       // ENTRA CUANDO SE HACE UNA TRANSACCIÓN O EN LA TABLA
       this.articleType = Type.Final;
     }
-    this.getArticles();
+    this.getItems();
   }
 
-  public getArticles(): void {
+  public getItems() : void {
     
     this.loading = true;
 
-    /// ORDENAMOS LA CONSULTA
-    let sort = {};
-    let sortAux;
-      if (this.orderTerm[0].charAt(0) === '-') {
-          sortAux = `{ "${this.orderTerm[0].split('-')[1]}" : -1 }`;
-      } else {
-          sortAux = `{ "${this.orderTerm[0]}" : 1 }`;
-      }
-    sort = JSON.parse(sortAux);
-
     // FILTRAMOS LA CONSULTA
     let match = `{`;
-    for(let i = 0; i < this.displayedColumns.length; i++) {
-      let value = this.filters[this.displayedColumns[i]];
-      if (value && value != "") {
-        match += `"${this.displayedColumns[i]}": { "$regex": "${value}", "$options": "i"}`;
-        if (i < this.displayedColumns.length - 1) {
-          match += ',';
+      for(let i = 0; i < this.columns.length; i++) {
+        if(this.columns[i].visible || this.columns[i].required) {
+          let value = this.filters[this.columns[i].name];
+          if (value && value != "" && value !== {}) {
+            if(this.columns[i].defaultFilter) {
+              match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
+            } else {
+              match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
+            }
+            if (i < this.columns.length - 1 ) {
+              match += ',';
+            }
+          }
         }
       }
-    }
-    if(this.userType === 'report') {
-      if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}') match += `,`;
-      match += `"$or": [ { "type": "${Type.Final}"}, {"type": "${Type.Variant}" } ], "containsVariants": false, "operationType": { "$ne": "D" } }`;
-    } else {
-      if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}') match += `,`;
-      match += `"type": "${this.articleType}", "operationType": { "$ne": "D" } }`;
-    }
+
+    if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
+
+    match += `}`;
+
     match = JSON.parse(match);
-    let project = {};
-    let group = {};
-    let limit = 0;
-    let skip = 0;
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-    project = {
-      'type' : 1,
-      'code' : 1,
-      'barcode' : 1,
-      'description' : 1,
-      'posDescription' : 1,
-      'containsVariants': 1,
-      'make.description' : 1,
-      'category.description' : 1,
-      'costPrice' : { $toString : '$costPrice' },
-      'salePrice' : { $toString : '$salePrice' },
-      'observation' : 1,
-      'picture' : 1,
-      'operationType': 1,
-      'currency.name': 1,
-      isWeigth: { $toString : '$isWeigth' },
+    let project = `{`;
+    let j = 0;
+    for(let i = 0; i < this.columns.length; i++) {
+      if(this.columns[i].visible || this.columns[i].required) {
+        if(j > 0) {
+          project += `,`;
+        }
+        j++;
+        project += `"${this.columns[i].name}": 1`;
+        
+      }
     }
+    project += `}`;
+
+    project = JSON.parse(project);
 
     // AGRUPAMOS EL RESULTADO
-    group = {
+    let group = {
         _id: null,
         count: { $sum: 1 },
-        articles: { $push: "$$ROOT" }
+        items: { $push: "$$ROOT" }
     };
 
     let page = 0;
     if(this.currentPage != 0) {
       page = this.currentPage - 1;
     }
-    skip = !isNaN(page * this.itemsPerPage) ?
+    let skip = !isNaN(page * this.itemsPerPage) ?
             (page * this.itemsPerPage) :
             0 // SKIP
-    limit = this.itemsPerPage;
+    let limit = this.itemsPerPage;
 
     this._articleService.getArticlesV2(
       project, // PROJECT
       match, // MATCH
-      sort, // SORT
+      this.sort, // SORT
       group, // GROUP
       limit, // LIMIT
       skip // SKIP
     ).subscribe(
       result => {
         this.loading = false;
-        if(this.userType === 'pos') {
-          if (result && result && result.articles) {
-            this.articles = result.articles;
-            this.totalItems = result.count;
+        if (result && result[0] && result[0].items) {
+          if(this.itemsPerPage === 0) {
+            this.exportExcelComponent.items = result[0].items;
+            this.exportExcelComponent.export();
+            this.itemsPerPage = 10;
+            this.getItems();
           } else {
-            this.articles = new Array();
-            this.totalItems = 0;
+            this.items = result[0].items;
+            this.totalItems = result[0].count;
           }
         } else {
-          if (result && result[0] && result[0].articles) {
-            this.articles = result[0].articles;
-            this.totalItems = result[0].count;
-          } else {
-            this.articles = new Array();
-            this.totalItems = 0;
-          }
+          this.items = new Array();
+          this.totalItems = 0;
         }
       },
       error => {
@@ -239,29 +428,78 @@ export class ListArticlesComponent implements OnInit {
     );
   }
 
+  public exportItems(): void {
+    this.exportExcelComponent.items = this.items;
+    this.exportExcelComponent.export();
+  }
+
+  public getValue(item, column): any {
+    let val: string = 'item';
+    let exists: boolean = true;
+    let value: any = '';
+    for(let a of column.name.split('.')) {
+      val += '.'+a;
+      if(exists && !eval(val)) {
+        exists = false;
+      }
+    }
+    if(exists) {
+      switch(column.datatype) {
+        case 'number':
+          value = this.roundNumberPipe.transform(eval(val));
+          break;
+        case 'currency':
+            value = this.currencyPipe.transform(this.roundNumberPipe.transform(eval(val)), 'USD', 'symbol-narrow', '1.2-2');
+          break;
+        case 'percent':
+            value = this.roundNumberPipe.transform(eval(val)) + '%';
+          break;
+        default:
+            value = eval(val);
+          break;
+      }
+    }
+    return value;
+  }
+
+  public getColumnsVisibles(): number {
+    let count: number = 0;
+    for (let column of this.columns) {
+      if(column.visible) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  public orderBy(term: string): void {
+
+    if(this.sort[term]) {
+      this.sort[term] *= -1;
+    } else {
+      this.sort = JSON.parse('{"' + term + '": 1 }');
+    }
+
+    this.getItems();
+  }
+
+  public drop(event: CdkDragDrop<string[]>): void {
+    moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
+  }
+
+  public refresh(): void {
+    this.getItems();
+  }
+
   public pageChange(page): void {
       this.currentPage = page;
-      this.getArticles();
+      this.getItems();
   }
 
   public selectArticle(articleSelected: Article): void {
     this.activeModal.close({ article: articleSelected });
   }
 
-  public orderBy(term: string): void {
-
-    if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-" + term;
-    } else {
-      this.orderTerm[0] = term;
-    }
-
-    this.getArticles();
-  }
-
-  public refresh(): void {
-    this.getArticles();
-  }
 
   async openModal(op: string, article?: Article) {
 
@@ -277,9 +515,9 @@ export class ListArticlesComponent implements OnInit {
         modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "add";
         modalRef.result.then((result) => {
-          this.getArticles();
+          this.getItems();
         }, (reason) => {
-          this.getArticles();
+          this.getItems();
         });
         break;
       case 'update':
@@ -287,9 +525,9 @@ export class ListArticlesComponent implements OnInit {
         modalRef.componentInstance.articleId = article._id;
         modalRef.componentInstance.operation = "update";
         modalRef.result.then((result) => {
-          this.getArticles();
+          this.getItems();
         }, (reason) => {
-          this.getArticles();
+          this.getItems();
         });
         break;
       case 'delete':
@@ -298,7 +536,7 @@ export class ListArticlesComponent implements OnInit {
         modalRef.componentInstance.readonly = true;
         modalRef.result.then((result) => {
           if (result === 'delete_close') {
-            this.getArticles();
+            this.getItems();
           }
         }, (reason) => {
 
@@ -330,7 +568,7 @@ export class ListArticlesComponent implements OnInit {
         modalRef.componentInstance.model = model;
         modalRef.result.then((result) => {
           if (result === 'import_close') {
-            this.getArticles();
+            this.getItems();
           }
         }, (reason) => {
 
@@ -367,18 +605,18 @@ export class ListArticlesComponent implements OnInit {
       case 'print-list':
         modalRef = this._modalService.open(PrintPriceListComponent);
         modalRef.result.then((result) => {
-          this.getArticles();
+          this.getItems();
         }, (reason) => {
-          this.getArticles();
+          this.getItems();
         });
         break;
       case 'update-prices':
         modalRef = this._modalService.open(UpdateArticlePriceComponent);
         modalRef.componentInstance.operation = "update-prices";
         modalRef.result.then((result) => {
-          this.getArticles();
+          this.getItems();
         }, (reason) => {
-          this.getArticles();
+          this.getItems();
         });
         break;
       case 'copy':
@@ -386,14 +624,14 @@ export class ListArticlesComponent implements OnInit {
         modalRef.componentInstance.operation = "copy";
         modalRef.componentInstance.articleId = article._id
         modalRef.result.then((result) => {
-          this.getArticles();
+          this.getItems();
         }, (reason) => {
-          this.getArticles();
+          this.getItems();
         });
         break;
       default: ;
     }
-  };
+  }
 
   public getPrinters(): Promise<Printer[]> {
 
@@ -419,7 +657,6 @@ export class ListArticlesComponent implements OnInit {
       );
     });
   }
-
 
   public getTaxes(query?: string): Promise<Tax[]> {
 

@@ -41,10 +41,22 @@
     "make": {
         "description": "Marca"
     },
+    "observation" : "Observación",
     "operationType": "Auditoría",
     "posDescription": "Descripción Corta",
     "quantityPerMeasure": "Cant. de Un. de Medida",
     "salePrice": "Precio de Venta",
+    "costPrice": "Precio de Costo",
+    "isWeigth" : "¿El producto pide medida?",
+    "allowMeasure" : "¿El producto es pesable?",
+    "allowSaleWithoutStock" : "¿Se puede vender el producto sin stock disponible?",
+    "allowSale" : "¿El producto está habilitado para la venta?",
+    "allowPurchase" : "¿El producto está habilitado para la compra?",
+    "printIn" : "Imprime en",
+    "markupPrice" : "Utilidad",
+    "markupPercentage" : "Margen",
+    "basePrice" : "Precio Base",
+    "ecommerceEnabled" : "¿Habilitado para Ecommerce?",
     "true": "Si",
     "total": "Total",
     "type": "Tipo",
@@ -53,5 +65,8 @@
         "name": "Unidad de Medida"
     },
     "amount" : "Cantidad",
-    "transaction.endDate" : "Fecha"
+    "transaction.endDate" : "Fecha",
+    "currency" : {
+        "name" : "Moneda"
+    }
 }
