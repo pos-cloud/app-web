@@ -684,5 +684,10 @@ export const _routes: Routes = [
     component: AddSaleOrderComponent,
     canActivate: [AuthGuard, LicenseGuard]
   },
+  {
+    path: 'pos/lector-de-vouchers',
+    component: PointOfSaleComponent,
+    canActivate: [AuthGuard, LicenseGuard]
+  },
   { path: '**', pathMatch: 'full', redirectTo: '' }
 ];

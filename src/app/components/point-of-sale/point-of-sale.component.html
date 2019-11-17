@@ -516,6 +516,11 @@
       </div>
     </div>
   </section>
+
+  <!-- LECTOR DE VOUCHERS -->
+  <section class="container-fluid" *ngIf="posType=='lector-de-vouchers'">
+    <app-voucher-reader></app-voucher-reader>
+  </section>
   
   <!--MODAL IMPRESORA-->
   <ng-template #contentPrinters let-c="close" let-d="dismiss">
