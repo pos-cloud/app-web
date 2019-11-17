@@ -106,4 +106,44 @@ export class PrintService {
             
 		});
     }
+
+    public generateVoucher(voucher: {}): Observable<any> {
+
+        const URL = `${Config.apiURL}generate-voucher`;
+    
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        return this._http.post(URL, { voucher: voucher}, {
+            headers: headers
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return of(err);
+            })
+        );
+    }
+
+    public verifyVoucher(voucher: string): Observable<any> {
+
+        const URL = `${Config.apiURL}verify-voucher`;
+    
+        const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', this._authService.getToken());
+
+        return this._http.post(URL, { voucher: voucher }, {
+            headers: headers
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return of(err);
+            })
+        );
+    }
 }

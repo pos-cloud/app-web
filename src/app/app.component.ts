@@ -109,7 +109,7 @@ export class AppComponent {
 
   public setApiConfigurationSettings() {
     let hostname = window.location.hostname;
-    let subdominio = 'barcino';
+    let subdominio = '';
     if(hostname.includes('.poscloud.com.ar')) {
       subdominio = hostname.split('.poscloud.com.ar')[0]
                           .replace(/\//g, "")

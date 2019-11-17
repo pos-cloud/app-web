@@ -2828,15 +2828,27 @@ export class PrintComponent implements OnInit {
         });
       }
     }
+    
+		qr['iat'] = moment().unix();
+    qr['exp'] = moment().add(12, "hours").unix();
+    
+    // Encrypt
+    this._printService.generateVoucher(qr).subscribe(
+      async result => {
+        if (!result.voucher) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.barcode64 = await this.getBarcode('qr?value=' + result.voucher.toString());
 
-    this.barcode64 = await this.getBarcode('qr?value=' + JSON.stringify(qr));
-
-    let imgdata = 'data:image/png;base64,' + this.barcode64;
-    let imgWidth = 30;
-    margin = this.roundNumber.transform((this.printer.pageWidth - imgWidth) / 2);
-    this.doc.addImage(imgdata, 'PNG', margin, row + 5, imgWidth, imgWidth);
-
-    this.finishImpression();
+          let imgdata = 'data:image/png;base64,' + this.barcode64;
+          let imgWidth = 40;
+          margin = this.roundNumber.transform((this.printer.pageWidth - imgWidth) / 2);
+          this.doc.addImage(imgdata, 'PNG', margin, row + 5, imgWidth, imgWidth);
+      
+          this.finishImpression();
+        }
+      }
+    );
   }
 
   public toPrintRoll() {

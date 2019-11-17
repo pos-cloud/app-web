@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
+import { PrintService } from 'app/services/print.service';
 
 declare const Instascan: any;
 
@@ -33,6 +34,7 @@ export class VoucherReaderComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _router: Router,
     public _modalService: NgbModal,
+    private _printService: PrintService
   ) { }
 
   ngOnInit(): void {
@@ -63,29 +65,43 @@ export class VoucherReaderComponent implements OnInit {
     });
   }
 
-  public readVoucher(double: boolean = false): void {
+  public readVoucher(): void {
     this.available = false;
     if(this.text && this.text !== '') {
       try {
-        this.voucher = JSON.parse(this.text);
-        this.timeOfReading = moment().calendar();
-        this.timeGenerate = moment(this.voucher.time).calendar();
-        if (this.voucher.type === 'articles') {
-          this.text = '';
-          this.focusEvent.emit(true);
-          if(double) {
-            this.openModal('articles');
+        // Decrypt
+        this._printService.verifyVoucher(this.text).subscribe(
+          async result => {
+            if (!result.voucher) {
+              this.available = true;
+              this.focusEvent.emit(true);
+              if (result.message && result.message !== '') this.showMessage(result.message, 'danger', true);
+            } else {
+              this.hideMessage();
+              this.voucher = result.voucher;
+              this.timeOfReading = moment().calendar();
+              this.timeGenerate = moment(this.voucher.time).calendar();
+              if (this.voucher.type === 'articles') {
+                this.openModal('articles');
+              }
+            }
           }
-          this.openModal('articles');
-        }
+        );
       } catch(err) {
+        this.available = true;
         this.focusEvent.emit(true);
         this.showMessage('Error al intentar leer el voucher.', 'info', true);
       }
     } else {
+      this.available = true;
       this.focusEvent.emit(true);
       this.showMessage('Debe ingresar un código de voucher válido.', 'info', true);
     }
+  }
+
+  public clearText(): void {
+    this.text = '';
+    this.focusEvent.emit(true);
   }
 
   public stopScanner(): void {
@@ -101,15 +117,17 @@ export class VoucherReaderComponent implements OnInit {
       case 'articles':
         modalRef = this._modalService.open(this.voucherDetails, { size: 'lg', backdrop: 'static' });
         modalRef.result.then(async (result) => {
+          this.clearText();
           this.available = true;
         }, (reason) => {
+          this.clearText();
           this.available = true;
         });
         break;
       default:
         break;
-      }
     }
+  }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;

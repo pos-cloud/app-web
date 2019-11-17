@@ -5,11 +5,18 @@
 </div>
 <div class="row">
 	<div class="col-md-12">
-		<input  type="text"
+		<div class="input-group">
+			<input  type="text"
 				class="form-control text"
 				[(ngModel)]="text"
-				(keydown.enter)="readVoucher(true)" 
+				(keydown.enter)="readVoucher()" 
 				placeholder="Ingresar el cupón." [focus]="focusEvent">
+			<div class="input-group-prepend pointer" (click)="clearText()">
+				<span class="input-group-text" id="basic-addon1">
+					<i class="fa fa-close"></i>
+				</span>
+			</div>
+		</div>
 	</div>
 </div>
 <div class="row" style="margin-top: 50px;">

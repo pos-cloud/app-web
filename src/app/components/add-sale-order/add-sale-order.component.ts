@@ -2419,9 +2419,6 @@ export class AddSaleOrderComponent {
         }
       }
     }
-    console.log(this.barArticlesToPrint);
-    console.log(this.kitchenArticlesToPrint);
-    console.log(this.voucherArticlesToPrint);
     if (this.barArticlesToPrint && this.barArticlesToPrint.length !== 0) {
       this.typeOfOperationToPrint = "bar";
       this.openModal('printers');
