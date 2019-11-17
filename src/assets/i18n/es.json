@@ -58,6 +58,7 @@
     "basePrice" : "Precio Base",
     "ecommerceEnabled" : "¿Habilitado para Ecommerce?",
     "picture" : "Imagen",
+    "favourite" : "Destacado",
     "true": "Si",
     "total": "Total",
     "type": "Tipo",
