@@ -172,7 +172,7 @@ export class ListArticlesComponent implements OnInit {
           project += `,`;
         }
         j++;
-        if(this.columns[i].datatype === "boolean"){
+        if(this.columns[i].datatype !== "string"){
           project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
         } else {
           project += `"${this.columns[i].name}": 1`;
