@@ -14,7 +14,16 @@
           </ngb-alert>
         </div>
         <div class="row container-filter">
-          <div class="col-md-2 offset-md-3">
+          <div class="col-md-2">
+            <label for="dataSelect" class="control-label">
+              <b>Fecha</b>
+            </label>
+            <select class="form-control" [(ngModel)]="dataSelect">
+              <option value="transaction" >Transacción</option>
+              <option value="movement-of-cash">Método de Pago</option>
+            </select>
+          </div>
+          <div class="col-md-2">
             <label for="startDate" class="control-label">
               <b>Fecha Desde:</b>
             </label>

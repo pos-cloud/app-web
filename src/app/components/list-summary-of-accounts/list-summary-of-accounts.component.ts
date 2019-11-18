@@ -36,6 +36,7 @@ export class ListSummaryOfAccountsComponent implements OnInit {
   public filterCompanyType: CompanyType;
   public startDate: string;
   public endDate: string;
+  public dataSelect : string = "transaction";
   public roundNumber = new RoundNumberPipe();
   public invertedView: boolean = false;
   public transactionMovement: TransactionMovement;
@@ -102,8 +103,10 @@ export class ListSummaryOfAccountsComponent implements OnInit {
       endDate:  this.endDate + " 23:59:59" + timezone,
       companyType: this.filterCompanyType,
       transactionMovement: this.transactionMovement,
-      invertedView: this.invertedView
+      invertedView: this.invertedView,
+      dataSelect : this.dataSelect
     }
+
 
     this._companyService.getSummaryOfAccounts(JSON.stringify(query)).subscribe(
         result => {
