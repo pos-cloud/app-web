@@ -54,6 +54,7 @@ export class ListArticlesComponent implements OnInit {
   @Input() filterArticle: string = '';
   @Input() transaction: Transaction;
   public apiURL = Config.apiURL;
+  public timezone = "-03:00";
   public itemsPerPage = 10;
   @ViewChild(ExportExcelComponent, {static: false}) exportExcelComponent: ExportExcelComponent;
   public roundNumber = new RoundNumberPipe();
@@ -173,7 +174,11 @@ export class ListArticlesComponent implements OnInit {
         }
         j++;
         if(this.columns[i].datatype !== "string"){
-          project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
+          if(this.columns[i].datatype === "date"){
+            project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`
+          } else {
+            project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
+          }
         } else {
           project += `"${this.columns[i].name}": 1`;
         }
@@ -183,6 +188,8 @@ export class ListArticlesComponent implements OnInit {
     project += `}`;
 
     project = JSON.parse(project);
+
+    console.log(project)
 
     // AGRUPAMOS EL RESULTADO
     let group = {

@@ -293,6 +293,15 @@ export let attributes = [
     required : false,
   },
   {
+    name: 'creationDate',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'date',
+    align: 'left',
+    required : false,
+  },
+  {
     name: 'type',
     visible: false,
     disabled: true,

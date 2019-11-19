@@ -70,5 +70,6 @@
     "transaction.endDate" : "Fecha",
     "currency" : {
         "name" : "Moneda"
-    }
+    },
+    "creationDate" : "Fecha de Alta"
 }
