@@ -40,3 +40,64 @@ export class MovementOfArticle {
 
 	constructor () {}
 }
+
+
+export let attributes = [
+    {
+        name: 'description',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        align: 'left',
+        required : false,
+      },
+      {
+        name: 'amount',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'number',
+        align: 'left',
+        required : false,
+      },
+      {
+        name: 'salePrice',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'currency',
+        align: 'left',
+        required : false,
+      },
+      {
+        name: 'operationType',
+        visible: false,
+        disabled: true,
+        filter: false,
+        datatype: 'string',
+        defaultFilter: `{ "$ne": "D" }`,
+        align: 'left',
+        required : true,
+      },
+      {
+        name: 'transaction.operationType',
+        visible: false,
+        disabled: true,
+        filter: true,
+        defaultFilter: `{ "$ne": "D" }`,
+        datatype: 'string',
+        align: 'left',
+        required : true,
+      },
+      {
+        name: 'transaction.endDate',
+        visible: true,
+        disabled: true,
+        filter: true,
+        datatype: 'date',
+        //defaultFilter: `{"$gte": {"$date": "${this.startDate}T00:00:00${this.timezone}"},"$lte": {"$date": "${this.endDate}T23:59:59${this.timezone}"}}`,
+        align: 'left',
+        required : true
+      }
+];

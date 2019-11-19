@@ -3,7 +3,6 @@ import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
 import { CurrencyPipe } from '@angular/common';
 import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
 import { Branch } from 'app/models/branch';
-import { ArticleService } from 'app/services/article.service';
 import { Router } from '@angular/router';
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { BranchService } from 'app/services/branch.service';
@@ -15,6 +14,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { AddArticleComponent } from '../add-article/add-article.component';
 import { Config } from 'app/app.config';
 import { MovementOfArticleService } from 'app/services/movement-of-article.service';
+import { attributes } from 'app/models/movement-of-article'
 
 @Component({
   selector: 'app-list-movements-of-articles',
@@ -59,64 +59,7 @@ export class ListMovementsOfArticlesComponent implements OnInit {
   private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
   private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
   @ViewChild(ExportExcelComponent, {static: false}) exportExcelComponent: ExportExcelComponent;
-  public columns = [
-    {
-      name: 'description',
-      visible: true,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      align: 'left',
-      required : false,
-    },
-    {
-      name: 'amount',
-      visible: true,
-      disabled: false,
-      filter: true,
-      datatype: 'number',
-      align: 'left',
-      required : false,
-    },
-    {
-      name: 'salePrice',
-      visible: true,
-      disabled: false,
-      filter: true,
-      datatype: 'currency',
-      align: 'left',
-      required : false,
-    },
-    {
-      name: 'operationType',
-      visible: false,
-      disabled: true,
-      filter: false,
-      datatype: 'string',
-      defaultFilter: `{ "$ne": "D" }`,
-      align: 'left',
-      required : true,
-    },
-    {
-      name: 'transaction.operationType',
-      visible: false,
-      disabled: true,
-      filter: true,
-      defaultFilter: `{ "$ne": "D" }`,
-      datatype: 'string',
-      align: 'left',
-      required : true,
-    },
-    {
-      name: 'transaction.endDate',
-      visible: true,
-      disabled: true,
-      filter: true,
-      datatype: 'date',
-      align: 'left',
-      required : true
-    },
-  ];
+  public columns = attributes;
 
   constructor(
     public _movementOfArticleService: MovementOfArticleService,
@@ -283,8 +226,12 @@ export class ListMovementsOfArticlesComponent implements OnInit {
           project += `,`;
         }
         j++;
-        if( this.columns[i].datatype === "date"){
-          project += `"${this.columns[i].name}":  { "$dateToString": { "date": "${this.columns[i].name}", "format": "%d/%m/%Y" , "timezone": "${this.timezone}" }}`;
+        if(this.columns[i].datatype !== "string"){
+          if(this.columns[i].datatype === "date"){
+            project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`
+          } else {
+            project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
+          }
         } else {
           project += `"${this.columns[i].name}": 1`;
         }
