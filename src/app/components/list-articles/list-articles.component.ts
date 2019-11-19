@@ -189,8 +189,6 @@ export class ListArticlesComponent implements OnInit {
 
     project = JSON.parse(project);
 
-    console.log(project)
-
     // AGRUPAMOS EL RESULTADO
     let group = {
         _id: null,
