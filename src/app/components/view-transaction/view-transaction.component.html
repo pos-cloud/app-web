@@ -122,6 +122,9 @@
                   </thead>
                   <tbody>
                     <tr *ngFor="let movementOfArticle of movementsOfArticles">
+                      <td align="left" width="100">
+                        <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view-article', movementOfArticle.article)" title="Ver"><i class="fa fa-eye"></i></button>
+                      </td>
                       <td>{{movementOfArticle.amount}}</td>
                       <td *ngIf="movementOfArticle.category">{{movementOfArticle.category.description}}</td>
                       <td *ngIf="!movementOfArticle.category"></td>

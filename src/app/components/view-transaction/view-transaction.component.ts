@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Transaction } from './../../models/transaction';
 import { MovementOfArticle } from './../../models/movement-of-article';
@@ -13,6 +13,8 @@ import { TransactionService } from '../../services/transaction.service';
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
 import { Config } from 'app/app.config';
 import { UserService } from 'app/services/user.service';
+import { Article } from 'app/models/article';
+import { AddArticleComponent } from '../add-article/add-article.component';
 
 @Component({
   selector: 'app-view-transaction',
@@ -44,6 +46,7 @@ export class ViewTransactionComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public activeModal: NgbActiveModal,
     public _userService: UserService,
+    private _modalService: NgbModal,
   ) {
     if(window.screen.width < 1000) this.orientation = 'vertical';
   }
@@ -147,6 +150,21 @@ export class ViewTransactionComponent implements OnInit {
         this.loading = false;
       }
     )
+  }
+
+  async openModal(op: string, article?: Article) {
+
+    let modalRef;
+    switch (op) {
+      case 'view-article':
+        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.articleId = article._id;
+        modalRef.componentInstance.readonly = true;
+        modalRef.componentInstance.operation = "view";
+        break;
+      default:
+        break;
+    }
   }
 
   public orderBy(term: string, property?: string): void {
