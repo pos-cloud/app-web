@@ -2590,7 +2590,7 @@ export class PrintComponent implements OnInit {
       this._printService.saveFile(this.doc.output('blob'),this.typePrint,this.transactionId).then(
         result => {
           if(result) {
-            this._printService.toPrintURL(this.printer.url,"/home/clients/"+Config.database+"/"+this.typePrint+"/"+this.transactionId+".pdf");
+            this._printService.toPrintURL(this.printer.url,"/home/clients/"+Config.database+"/"+this.typePrint+"/"+this.transactionId+".pdf").subscribe();
           }
         }
       )
