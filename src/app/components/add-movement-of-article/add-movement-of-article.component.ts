@@ -521,7 +521,7 @@ export class AddMovementOfArticleComponent implements OnInit {
           if(i == 0 && this.movementOfArticle.notes && this.movementOfArticle.notes !== '') {
             this.movementOfArticle.notes += `; `;
           }
-          this.movementOfArticle.notes += this.notes[i];
+          this.movementOfArticle.notes ? this.movementOfArticle.notes += this.notes[i]: this.movementOfArticle.notes = this.notes[i];
 
           if(i < this.notes.length - 1) {
             this.movementOfArticle.notes += `; `;
