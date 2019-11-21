@@ -322,6 +322,7 @@ export class AddTransactionTypeComponent implements OnInit {
       'showDescriptionType' : [this.transactionType.showDescriptionType,[]],
       'printDescriptionType' : [this.transactionType.printDescriptionType,[]],
       'printSign' : [this.transactionType.printSign,[]],
+      'posKitchen' : [this.transactionType.posKitchen,[]],
       'automaticNumbering' : [this.transactionType.automaticNumbering,[]],
       'automaticCreation' : [this.transactionType.automaticCreation,[]],
       'readLayout' : [this.transactionType.readLayout,[]],
@@ -487,10 +488,10 @@ export class AddTransactionTypeComponent implements OnInit {
     if (!this.transactionType.showDescriptionType) this.transactionType.showDescriptionType = DescriptionType.Description;
     if (!this.transactionType.showPriceType) this.transactionType.showPriceType = PriceType.Final;
     if (!this.transactionType.printDescriptionType) this.transactionType.printDescriptionType = DescriptionType.Description;
-    if (!this.transactionType.printSign) this.transactionType.printSign = false;
-
-    if (!this.transactionType.updatePrice) this.transactionType.updatePrice = false;
-    if (!this.transactionType.updateArticle) this.transactionType.updateArticle = false;
+    if (this.transactionType.printSign === undefined) this.transactionType.printSign = false;
+    if (this.transactionType.posKitchen === undefined) this.transactionType.posKitchen = false;
+    if (this.transactionType.updatePrice === undefined) this.transactionType.updatePrice = false;
+    if (this.transactionType.updateArticle === undefined) this.transactionType.updateArticle = false;
 
 
     this.transactionTypeForm.setValue({
@@ -541,6 +542,7 @@ export class AddTransactionTypeComponent implements OnInit {
       'showPriceType' : this.transactionType.showPriceType,
       'printDescriptionType' : this.transactionType.printDescriptionType,
       'printSign' : this.transactionType.printSign,
+      'posKitchen' : this.transactionType.posKitchen,
       'readLayout' : this.transactionType.readLayout,
       'updatePrice' : this.transactionType.updatePrice,
       'updateArticle' : this.transactionType.updateArticle

@@ -46,6 +46,7 @@
             <th (click)="orderBy('allowDelete')">Permite Eliminar</th>
             <th (click)="orderBy('allowDelete')">Cambia monto según medios</th>
             <th (click)="orderBy('printable')">Imprime al finalizar</th>
+            <th (click)="orderBy('posKitchen')">Imprime en Bar/Cocina/Voucher</th>
             <th (click)="orderBy('defectPrinter','name')">Impresora defecto</th>
             <th (click)="orderBy('requestTaxes')">Pide impuestos</th>
             <th (click)="orderBy('tax')">Afecta Libro IVA</th>
@@ -86,6 +87,7 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterAllowDelete" placeholder="Permite Eliminar..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterAllowZero" placeholder="Cambia monto según medios..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterPrintable" placeholder="Imprime al finalizar..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterPosKitchen" placeholder="Imprime en Bar/Cocina/Voucher."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterDefectPrinter" placeholder="Impresora defecto..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterRequestTaxes" placeholder="Pide impuestos..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterTax" placeholder="Afechta Libro IVA..."></th>
@@ -123,6 +125,7 @@
                                                               | filter: filterAllowDelete:'allowDelete'
                                                               | filter: filterAllowZero:'allowZero'
                                                               | filter: filterPrintable:'printable'
+                                                              | filter: filterPosKitchen: 'posKitchen'
                                                               | filter: filterDefectPrinter:'name':'defectPrinter'
                                                               | filter: filterRequestTaxes:'requestTaxes'
                                                               | filter: filterTax:'tax'
@@ -171,6 +174,7 @@
             <td class="flat">{{transactionType.allowDelete}}</td>
             <td class="flat">{{transactionType.allowZero}}</td>
             <td class="flat">{{transactionType.printable}}</td>
+            <td class="flat">{{transactionType.posKitchen}}</td>
             <td class="flat" *ngIf="transactionType.defectPrinter">{{transactionType.defectPrinter.name}}</td>
             <td class="flat" *ngIf="!transactionType.defectPrinter"></td>
             <td class="flat">{{transactionType.requestTaxes}}</td>
