@@ -52,6 +52,7 @@ export class Article {
   public category: Category;
   public barcode: string;
   public printIn: ArticlePrintIn = ArticlePrintIn.Counter;
+  public posKitchen: Boolean = false;
   public allowPurchase: Boolean = true;
   public allowSale: Boolean = true;
   public allowSaleWithoutStock: Boolean = false;
@@ -285,6 +286,15 @@ export let attributes = [
   },
   {
     name: 'favourite',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'boolean',
+    align: 'left',
+    required : false,
+  },
+  {
+    name: 'posKitchen',
     visible: false,
     disabled: false,
     filter: true,

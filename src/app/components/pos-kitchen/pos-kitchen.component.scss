@@ -1,0 +1,44 @@
+app-pos-kitchen {
+    .card {
+        min-height: auto !important;
+        .card-title {
+            font-size: 25px;
+        }
+        .card-text {
+            font-size: 20px;;
+        }
+        .col-md-8 {
+            img {
+                width: 50%;
+                cursor: pointer !important; 
+            }
+        }
+        .col-md-4 {
+            img {
+                max-height: 150px !important;
+                cursor: pointer !important; 
+            }
+            .card-img-top {
+                height: 100%;
+                width: 100%;
+                margin: auto;
+            }
+        }
+    }
+
+    .btn-production {
+        font-size: 20px !important;
+        font-weight: 600 !important;
+        margin: 10px !important;
+        padding: 10px !important;
+        border-radius: 0px !important;
+    }
+
+    @media (max-width: 767px) {
+        .col-md-4 {
+            .card-img-top {
+                width: 50% !important;
+            }
+        }
+    }
+}

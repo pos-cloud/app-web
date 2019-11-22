@@ -376,6 +376,9 @@ export class AddArticleComponent implements OnInit {
       'ecommerceEnabled' : [this.article.ecommerceEnabled, [
         ]
       ],
+      'posKitchen' : [this.article.posKitchen, [
+        ]
+      ],
       'isWeigth' : [this.article.isWeigth, [
         ]
       ],
@@ -1226,6 +1229,7 @@ export class AddArticleComponent implements OnInit {
     if (!this.article.allowSale === undefined) { this.article.allowSale = true; }
     if (!this.article.allowSaleWithoutStock === undefined) { this.article.allowSaleWithoutStock = false; }
     if (!this.article.ecommerceEnabled === undefined) { this.article.ecommerceEnabled = false; }
+    if (!this.article.posKitchen === undefined) { this.article.posKitchen = false; }
     if (!this.article.isWeigth === undefined) { this.article.isWeigth = false; }
 
     this.article.basePrice = this.roundNumber.transform(this.article.basePrice);
@@ -1267,6 +1271,7 @@ export class AddArticleComponent implements OnInit {
       'isWeigth': this.article.isWeigth,
       'allowMeasure': this.article.allowMeasure,
       'ecommerceEnabled': this.article.ecommerceEnabled,
+      'posKitchen': this.article.posKitchen,
       'favourite': this.article.favourite,
       'providers' : providers,
       'lastPricePurchase' : lastPricePurchase,

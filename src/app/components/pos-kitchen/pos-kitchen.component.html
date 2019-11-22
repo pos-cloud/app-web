@@ -1,0 +1,99 @@
+<section style="margin-top: 60px;">
+	<div class="center-content" *ngIf="alertMessage !== ''">
+		<ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+			{{alertMessage}}
+		</ngb-alert>
+	</div>
+	<div class="row">
+		<div class="col-md-12 center-content">
+			<button type="button" class="btn btn-success btn-production" (click)="startProduction()" [disabled]="productionStarted">INICIAR PRODUCCIÓN</button>
+			<button type="button" class="btn btn-danger btn-production" (click)="stopProduction()" [disabled]="!productionStarted">PARAR PRODUCCIÓN</button>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-1"></div>
+		<div class="col-md-10">
+			<div class="card">
+				<div class="card-body">
+					<div class="row">
+						<div class="col-md-8">
+							<div *ngIf="movementOfArticle" class="card-title" style="font-size: 30px;">
+								{{movementOfArticle.description}}
+							</div>
+							<div class="card-title" *ngIf="!productionStarted">
+								Esperando iniciar producción.
+							</div>
+							<div class="card-title" *ngIf="productionStarted && !loading && !movementOfArticle">
+								Esperando nuevos pedidos.
+							</div>
+							<div *ngIf="!movementOfArticle && loading" class="card-title" style="font-size: 30px;">
+								Cargando...
+							</div>
+							<div class="row" (click)="changeStatusToReady()">
+								<div class="col-md-12 center-content" style="padding: 20px;">
+									<img *ngIf="movementOfArticle && movementOfArticle.article && (!movementOfArticle.article.picture || movementOfArticle.article.picture == 'default.jpg')" src="./../../../assets/img/default.jpg">
+									<img *ngIf="movementOfArticle && movementOfArticle.article.picture && movementOfArticle.article.picture !== 'default.jpg'" [src]="apiURL + 'get-image-article/'+movementOfArticle.article.picture+'/'+database">
+								</div>
+							</div>
+							<div class="card-text" *ngIf="movementOfArticle">
+								{{movementOfArticle.notes}}
+							</div>
+						</div>
+						<div class="col-md-4" *ngIf="movementsOfArticles && movementsOfArticles.length > 0">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="card-title" style="padding: 10px;">
+										Últimos pedidos producidos
+									</div>
+								</div>
+							</div>
+							<div class="row" *ngIf="movementsOfArticles[0]">
+								<div class="col-md-4 center-content" style="padding: 20px;" (click)="viewArticle(movementsOfArticles[0])">
+									<img *ngIf="!movementsOfArticles[0] || !movementsOfArticles[0].article.picture || movementsOfArticles[0].article.picture == 'default.jpg'" src="./../../../assets/img/default.jpg">
+									<img *ngIf="movementsOfArticles[0] && movementsOfArticles[0].article.picture && movementsOfArticles[0].article.picture !== 'default.jpg'" [src]="apiURL + 'get-image-article/'+movementsOfArticles[0].article.picture+'/'+database">
+								</div>
+								<div class="col-md-8">
+										<div class="card-title">
+										{{movementsOfArticles[0].description}}
+									</div>
+									<div class="card-text">
+										{{movementsOfArticles[0].notes}}
+									</div>
+								</div>
+							</div>
+							<div class="row" *ngIf="movementsOfArticles[1]">
+								<div class="col-md-4 center-content" style="padding: 20px;" (click)="viewArticle(movementsOfArticles[1])">
+									<img *ngIf="!movementsOfArticles[1] || !movementsOfArticles[1].article.picture || movementsOfArticles[1].article.picture == 'default.jpg'" src="./../../../assets/img/default.jpg">
+									<img *ngIf="movementsOfArticles[1] && movementsOfArticles[1].article.picture && movementsOfArticles[1].article.picture !== 'default.jpg'" [src]="apiURL + 'get-image-article/'+movementsOfArticles[1].article.picture+'/'+database">
+								</div>
+								<div class="col-md-8">
+										<div class="card-title">
+										{{movementsOfArticles[1].description}}
+									</div>
+									<div class="card-text">
+										{{movementsOfArticles[1].notes}}
+									</div>
+								</div>
+							</div>
+							<div class="row" *ngIf="movementsOfArticles[2]">
+								<div class="col-md-4 center-content" style="padding: 20px;" (click)="viewArticle(movementsOfArticles[2])">
+									<img *ngIf="!movementsOfArticles[2] || !movementsOfArticles[2].article.picture || movementsOfArticles[2].article.picture == 'default.jpg'" src="./../../../assets/img/default.jpg">
+									<img *ngIf="movementsOfArticles[2] && movementsOfArticles[2].article.picture && movementsOfArticles[2].article.picture !== 'default.jpg'" [src]="apiURL + 'get-image-article/'+movementsOfArticles[2].article.picture+'/'+database">
+								</div>
+								<div class="col-md-8">
+										<div class="card-title">
+										{{movementsOfArticles[2].description}}
+									</div>
+									<div class="card-text">
+										{{movementsOfArticles[2].notes}}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-1"></div>
+	</div>
+</section>

@@ -71,6 +71,7 @@ import { Config } from './app.config';
 import { ListStructureComponent } from './components/list-structure/list-structure.component';
 import { ListClassificationsComponent } from './components/list-classifications/list-classifications.component';
 import { ListMovementsOfArticlesComponent } from './components/list-movements-of-articles/list-movements-of-articles.component';
+import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.component';
 
 export const _routes: Routes = [
   { 
@@ -687,6 +688,11 @@ export const _routes: Routes = [
   {
     path: 'pos/lector-de-vouchers',
     component: PointOfSaleComponent,
+    canActivate: [AuthGuard, LicenseGuard]
+  },
+  {
+    path: 'pos/cocina',
+    component: PosKitchenComponent,
     canActivate: [AuthGuard, LicenseGuard]
   },
   { path: '**', pathMatch: 'full', redirectTo: '' }

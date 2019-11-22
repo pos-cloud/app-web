@@ -71,5 +71,6 @@
     "currency" : {
         "name" : "Moneda"
     },
-    "creationDate" : "Fecha de Alta"
+    "creationDate" : "Fecha de Alta",
+    "posKitchen" : "Aparece en POS Cocina"
 }
