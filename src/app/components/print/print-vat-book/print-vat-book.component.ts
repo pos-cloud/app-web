@@ -418,11 +418,11 @@ export class PrintVatBookComponent implements OnInit {
       }
 
       let printTotal = "0,00";
-      if ((this.roundNumber.transform((partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt))).toString().split(".")[1]) {
-        if (this.roundNumber.transform((partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt)).toString().split(".")[1].length === 1) {
-          printTotal = (partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt).toLocaleString('de-DE') + "0";
+      if ((this.roundNumber.transform((partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt + partialImpInt))).toString().split(".")[1]) {
+        if (this.roundNumber.transform((partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt + partialImpInt)).toString().split(".")[1].length === 1) {
+          printTotal = (partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt + partialImpInt).toLocaleString('de-DE') + "0";
         } else {
-          printTotal = (partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt).toLocaleString('de-DE');
+          printTotal = (partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt + partialImpInt).toLocaleString('de-DE');
         }
       } else if (this.roundNumber.transform((partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt + partialImpInt))) {
         printTotal = (partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt + partialImpInt).toLocaleString('de-DE') + ",00";
