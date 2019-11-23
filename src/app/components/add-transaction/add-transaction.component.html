@@ -22,7 +22,7 @@
           <input type="text" class="form-control" formControlName="company" name="company" readonly/>
         </div>
         <div class="col-md-2" align="right">
-          <button type="button" class="btn btn-light" (click)="changeCompany()" [disabled]="readonly || transaction.CAE">
+          <button type="button" class="btn btn-light" (click)="changeCompany()" [disabled]="readonly || !transaction.electronics || existsCancellations">
             Cambiar
           </button>
         </div>
