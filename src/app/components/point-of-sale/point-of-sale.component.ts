@@ -877,6 +877,11 @@ export class PointOfSaleComponent implements OnInit {
     this.openModal('company');
   }
 
+  public printTransaction(transaction: Transaction): void {
+    this.transaction = transaction;
+    this.openModal('print');
+  }
+
   public openTransaction(transaction: Transaction): void {
 
     this.transaction = transaction;
@@ -949,39 +954,23 @@ export class PointOfSaleComponent implements OnInit {
       case 'print':
         if(this.transaction.type.readLayout) {
           modalRef = this._modalService.open(PrintTransactionTypeComponent)
-          modalRef.componentInstance.transactionId = this.transaction._id
-          modalRef.result.then((result) => {
-            if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
-              this.transactionTypeId = this.transaction.type._id;
-              this.transaction = undefined;
-            }
-            this.refresh();
-          }, (reason) => {
-            if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
-              this.transactionTypeId = this.transaction.type._id;
-              this.transaction = undefined;
-            }
-            this.refresh();
-          });
+          modalRef.componentInstance.transactionId = this.transaction._id;
         } else {
           modalRef = this._modalService.open(PrintComponent);
-          modalRef.componentInstance.transactionId = this.transaction._id;
           modalRef.componentInstance.company = this.transaction.company;
-          modalRef.componentInstance.printer = this.printerSelected;
+          modalRef.componentInstance.transactionId = this.transaction._id;
           modalRef.componentInstance.typePrint = 'invoice';
-          modalRef.result.then((result) => {
-            if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
-              this.transactionTypeId = this.transaction.type._id;
-              this.transaction = undefined;
+          if (this.transaction.type.defectPrinter) {
+            modalRef.componentInstance.printer = this.transaction.type.defectPrinter;
+          } else {
+            if (this.printers && this.printers.length > 0) {
+              for(let printer of this.printers) {
+                if (printer.printIn === PrinterPrintIn.Counter) {
+                  modalRef.componentInstance.printer = printer;
+                }
+              }
             }
-            this.refresh();
-          }, (reason) => {
-            if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
-              this.transactionTypeId = this.transaction.type._id;
-              this.transaction = undefined;
-            }
-            this.refresh();
-          });
+          }
         }
         break;
       case 'printers':
