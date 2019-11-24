@@ -1,6 +1,6 @@
 app-pos-kitchen {
     .card {
-        min-height: auto !important;
+        min-height: 70vh !important;
         .card-title {
             font-size: 25px;
         }
@@ -16,6 +16,7 @@ app-pos-kitchen {
         .col-md-4 {
             img {
                 max-height: 150px !important;
+                max-width: 100% !important;
                 cursor: pointer !important; 
             }
             .card-img-top {

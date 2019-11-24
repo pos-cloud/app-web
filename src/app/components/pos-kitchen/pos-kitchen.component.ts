@@ -54,19 +54,61 @@ export class PosKitchenComponent {
 
     this.productionStarted = true;
 
+    this.searchOrderToPreparing();
+  }
+
+  public async searchOrderToPreparing() {
+
     await this.updateMovementOfArticleByWhere({
-      status: MovementOfArticleStatus.Pending,
+      $or: [ { status: MovementOfArticleStatus.Pending }, { status: MovementOfArticleStatus.Preparing } ],
       operationType: { $ne: 'D' }
     }, {
-      status: MovementOfArticleStatus.Preparing
+      status: MovementOfArticleStatus.LastOrder,
+      $inc: { printed: 1 }
     },
     {
       creationDate: 1
     }).then(
-      movementOfArticle => {
+      async movementOfArticle => {
         if(movementOfArticle) {
-          this.movementOfArticle = movementOfArticle;
-          this.getMovementOfArticleToPreparing();
+          if(movementOfArticle.printed === movementOfArticle.amount) {
+            this.movementOfArticle = movementOfArticle;
+            await this.getMovementOfArticleToPreparing().then(
+              movementOfArticle => {
+                if(movementOfArticle) {
+                  this.movementOfArticle = movementOfArticle;
+                  localStorage.setItem('kitchen_movementOfArticle', JSON.stringify(this.movementOfArticle));
+                }
+              }
+            );
+          } else if(movementOfArticle.printed < movementOfArticle.amount) {
+            this.movementOfArticle = movementOfArticle;
+            this.movementOfArticle.status = MovementOfArticleStatus.Preparing;
+            await this.updateMovementOfArticle().then(
+              async movementOfArticle => {
+                if(movementOfArticle) {
+                  this.movementOfArticle = movementOfArticle;
+                  await this.getMovementOfArticleToPreparing().then(
+                    movementOfArticle => {
+                      if(movementOfArticle) {
+                        this.movementOfArticle = movementOfArticle;
+                        localStorage.setItem('kitchen_movementOfArticle', JSON.stringify(this.movementOfArticle));
+                      }
+                    }
+                  );
+                }
+              }
+            );
+          } else {
+            this.movementOfArticle.status = MovementOfArticleStatus.Ready;
+            await this.updateMovementOfArticle().then(
+              movementOfArticle => {
+                if(movementOfArticle) {
+                  this.startProduction();
+                }
+              }
+            );
+          }
         }
       }
     );
@@ -88,46 +130,60 @@ export class PosKitchenComponent {
     this.productionStarted = false;
   }
 
-  public getMovementOfArticleToPreparing() : void {
+  public finishOrder(): void {
+    
+    if(!this.movementsOfArticles) this.movementsOfArticles = new Array();
+    // AGREGAMOS AL PRINCIPIO DEL LISTADO DE PRODUCIDOS Y SOLO GUARDAMOS LOS 3 PRIMEROS
+    this.movementsOfArticles.unshift(this.movementOfArticle);
+    this.movementsOfArticles = this.movementsOfArticles.slice(0, 3);
+    sessionStorage.setItem('kitchen_movementsOfArticles', JSON.stringify(this.movementsOfArticles));
+    this.movementOfArticle = null;
+    localStorage.removeItem('kitchen_movementOfArticle');
+    this.startProduction();
+  }
 
-    this.loading = true;
+  public getMovementOfArticleToPreparing(): Promise<MovementOfArticle> {
 
-    let project = {
-      description: 1,
-      notes: 1,
-      status: 1,
-      amount: 1,
-      printed: 1,
-      'article._id': 1,
-      'article.picture': 1
-    };
+    return new Promise<MovementOfArticle>((resolve, reject) => {
+      
+      this.loading = true;
 
-    let match = { _id: this.movementOfArticle._id };
-                
-    this._movementOfArticleService.getMovementsOfArticlesV2(
-        project, // PROJECT
-        match, // MATCH
-        {}, // SORT
-        {}, // GROUP
-        1, // LIMIT
-        0 // SKIP
-    ).subscribe(
-      result => {
-        this.loading = false;
-        if(!result.movementsOfArticles) {
-          if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
-        } else {
-          if(result.movementsOfArticles && result.movementsOfArticles.length > 0) {
-            this.movementOfArticle = result.movementsOfArticles[0];
-            localStorage.setItem('kitchen_movementOfArticle', JSON.stringify(this.movementOfArticle));
+      let project = {
+        description: 1,
+        notes: 1,
+        status: 1,
+        amount: 1,
+        printed: 1,
+        'article._id': 1,
+        'article.picture': 1
+      };
+
+      let match = { _id: this.movementOfArticle._id };
+                  
+      this._movementOfArticleService.getMovementsOfArticlesV2(
+          project, // PROJECT
+          match, // MATCH
+          {}, // SORT
+          {}, // GROUP
+          1, // LIMIT
+          0 // SKIP
+      ).subscribe(
+        result => {
+          this.loading = false;
+          if(!result.movementsOfArticles) {
+            if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+            resolve(null);
+          } else {
+            resolve(result.movementsOfArticles[0]);
           }
+        },
+        error => {
+          this.loading = false;
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
         }
-      },
-      error => {
-        this.loading = false;
-        this.showMessage(error._body, 'danger', false);
-      }
-    );
+      );
+    });
   }
 
   public updateMovementOfArticleByWhere(where: {}, set: {}, sort: {}): Promise<MovementOfArticle> {
@@ -185,25 +241,27 @@ export class PosKitchenComponent {
     return new Promise(async (resolve, reject) => {
 
       if(!this.loading) {
+
         if(this.movementOfArticle.status !== MovementOfArticleStatus.Ready) {
-          // AUMENTAR LA CANTIDAD PRODUCIDA
-          this.movementOfArticle.printed ++;
-          // SI LA CANTIDAD PRODUCIDA ES IGUAL A LA CANTIDAD DE ARTICULOS PASA A ESTAR LISTO
-          if(this.movementOfArticle.printed >= this.movementOfArticle.amount) {
-            this.movementOfArticle.status = MovementOfArticleStatus.Ready;
-          }
-          await this.updateMovementOfArticle().then(
-            movementOfArticle => {
+          // PASAMOS A ÚLTIMA ORDEN PARA RESERVAR POSIBLE LA INFORMACIÓN Y OBTENER EL ÚLTIMO ESTADO
+          await this.updateMovementOfArticleByWhere({ _id: this.movementOfArticle._id }, { status: MovementOfArticleStatus.LastOrder }, {}).then(
+            async movementOfArticle => {
               if(movementOfArticle) {
-                if(!this.movementsOfArticles) this.movementsOfArticles = new Array();
-                // AGREGAMOS AL PRINCIPIO DEL LISTADO DE PRODUCIDOS Y SOLO GUARDAMOS LOS 3 PRIMEROS
-                this.movementsOfArticles.unshift(this.movementOfArticle);
-                this.movementsOfArticles = this.movementsOfArticles.slice(0, 3);
-                sessionStorage.setItem('kitchen_movementsOfArticles', JSON.stringify(this.movementsOfArticles));
-                this.movementOfArticle = null;
-                localStorage.removeItem('kitchen_movementOfArticle');
-                this.startProduction();
-                resolve(this.movementOfArticle);
+                this.movementOfArticle = movementOfArticle;
+                // SI LA CANTIDAD PRODUCIDA ES IGUAL A LA CANTIDAD DE ARTICULOS PASA A ESTAR LISTO
+                if(this.movementOfArticle.printed >= this.movementOfArticle.amount) {
+                  this.movementOfArticle.status = MovementOfArticleStatus.Ready;
+                } else {
+                  this.movementOfArticle.status = MovementOfArticleStatus.Preparing;
+                }
+                this.updateMovementOfArticle().then(
+                  movementOfArticle => {
+                    if(movementOfArticle) {
+                      this.movementOfArticle = movementOfArticle;
+                      this.finishOrder();
+                    }
+                  }
+                );
               }
             }
           );

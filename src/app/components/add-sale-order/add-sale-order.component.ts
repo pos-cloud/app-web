@@ -13,7 +13,7 @@ import { TransactionMovement, StockMovement } from './../../models/transaction-t
 import { Taxes } from './../../models/taxes';
 import { ArticlePrintIn, Article, Type } from './../../models/article';
 import { ArticleStock } from './../../models/article-stock';
-import { MovementOfArticle } from './../../models/movement-of-article';
+import { MovementOfArticle, MovementOfArticleStatus } from './../../models/movement-of-article';
 import { Table, TableState } from './../../models/table';
 import { Category } from './../../models/category';
 import { Print } from './../../models/print';
@@ -969,7 +969,7 @@ export class AddSaleOrderComponent {
               }*/
             }
           });
-          if(increasePrice === 0){
+          if(increasePrice === 0) {
             increasePrice = this.roundNumber.transform(this.priceList.percentage);
           }
         } else {
@@ -1010,7 +1010,7 @@ export class AddSaleOrderComponent {
               }*/
             }
           });
-          if(increasePrice === 0){
+          if(increasePrice === 0) {
             increasePrice = this.roundNumber.transform(this.newPriceList.percentage);
           }
         } else {
@@ -1882,24 +1882,25 @@ export class AddSaleOrderComponent {
     };
   }
 
-  async updateArticles(): Promise<number> {
+  async updateArticlesCostPrice(): Promise<number> {
 
     return new Promise<number>( async (resolve, reject) => {
-      let unitPrice;
+
+      let unitPrice: number = 0;
       let countArticle = 0;
 
       for (const element of this.movementsOfArticles) {
-        if(element && element.article && element.article._id){
-          if(this.transaction.quotation > 1){
-            unitPrice = (element.basePrice / element.amount) / this.transaction.quotation
+        if(element && element.article && element.article._id) {
+          if(this.transaction.quotation > 1) {
+            unitPrice = this.roundNumber.transform((element.basePrice / element.amount) / this.transaction.quotation);
           } else {
-            unitPrice = element.basePrice / element.amount
+            unitPrice = this.roundNumber.transform(element.basePrice / element.amount);
           }
           
-          unitPrice = unitPrice + element.transactionDiscountAmount;
+          unitPrice = this.roundNumber.transform(unitPrice + element.transactionDiscountAmount);
 
-          if(unitPrice !== element.article.basePrice){
-            if(await this.updateArticle(unitPrice,element.article)){
+          if(unitPrice !== element.article.basePrice) {
+            if(await this.updateArticleCostPrice(element.article, unitPrice)) {
               countArticle ++;
             }
           }
@@ -1908,15 +1909,14 @@ export class AddSaleOrderComponent {
       }
 
       resolve(countArticle);
-
     })
   }
 
-  async updateArticle(basePrice,article : Article): Promise<boolean> {
+  async updateArticleCostPrice(article: Article, basePrice: number): Promise<boolean> {
 
     return new Promise<boolean>( async (resolve, reject) => {
       
-      if(basePrice && article){
+      if(basePrice && article) {
         let taxedAmount = 0;
         article.costPrice = 0;
         article.basePrice = basePrice;
@@ -1957,8 +1957,8 @@ export class AddSaleOrderComponent {
   
           this._articleService.updateArticle(article,null).subscribe(
             result =>{
-              if(result && result.article){
-                resolve(true)
+              if(result && result.article) {
+                resolve(true);
               }
             },
             error => {
@@ -1969,8 +1969,7 @@ export class AddSaleOrderComponent {
       } else {
         resolve(false)
       }
-    })
-
+    });
   }
 
   async isValidCharge(): Promise<boolean> {
@@ -2086,6 +2085,25 @@ export class AddSaleOrderComponent {
 
     let isValid: boolean = true;
 
+    // ACTUALIZACIÓN DE PRECIOS DE COSTOS
+    if(isValid && this.movementsOfArticles && this.movementsOfArticles.length > 0 && this.transaction.type.updatePrice) {
+      let count = await this.updateArticlesCostPrice();
+      if(count === 1) {
+        this.showToast("Se actualizó : 1 producto" ,"info");
+      } else {
+        if( count > 1) {
+          this.showToast("Se actualizaron : " + await this.updateArticlesCostPrice() + " productos" ,"info");
+        }
+      }
+    }
+    // FIN DE ACTUALIZACIÓN DE PRECIOS DE COSTOS
+    // ACTUALIZACIÓN DE A PREPARAR SI APARECE EN COCINA LOS ARTICULOS
+    if(isValid && this.movementsOfArticles && this.movementsOfArticles.length > 0 && this.transaction.type.posKitchen) {
+      isValid = await this.changeArticlesStatusToPending();
+    }
+    // FIN DE ACTUALIZACIÓN DE A PREPARAR SI APARECE EN COCINA LOS ARTICULOS
+
+    // ACTUALIZACIÓN DE STOCK
     if (isValid &&
         this.config['modules'].stock &&
         this.transaction.type.modifyStock) {
@@ -2095,17 +2113,7 @@ export class AddSaleOrderComponent {
             isValid = false;
           }
     }
-
-    if(this.movementsOfArticles && this.movementsOfArticles.length > 0 && this.transaction.type.updatePrice){
-      let count = await this.updateArticles()
-      if(count === 1){
-        this.showToast("Se actualizó : 1 producto" ,"info")
-      } else {
-        if( count > 1){
-          this.showToast("Se actualizaron : " + await this.updateArticles() + " productos" ,"info")
-        }
-      }
-    }
+    // FIN DE ACTUALIZACIÓN DE STOCK
 
     if(isValid) {
 
@@ -2152,6 +2160,29 @@ export class AddSaleOrderComponent {
         }
       });
     }
+  }
+
+  public async changeArticlesStatusToPending(): Promise<boolean> {
+
+    return new Promise<boolean>(async (resolve, reject) => {
+
+      let isValid: boolean = true;
+
+      for (let mov of this.movementsOfArticles) {
+        if(mov.article.posKitchen) {
+          mov.status = MovementOfArticleStatus.Pending;
+          await this.updateMovementOfArticle(mov).then(
+            movementOfArticle => {
+              if(!movementOfArticle) {
+                isValid = false;
+              }
+            }
+          );
+        }
+      }
+
+      resolve(isValid);
+    });
   }
 
   public async print() {
@@ -2537,10 +2568,10 @@ export class AddSaleOrderComponent {
                   await this.updateTable().then(table => {
                     if(table) {
                       this.transaction.table = table;
-                      if(this.kitchenArticlesToPrint.length > 0){
+                      if(this.kitchenArticlesToPrint.length > 0) {
                         this.typeOfOperationToPrint = 'kitchen';
                         this.distributeImpressions(null)
-                      } else if(this.voucherArticlesToPrint.length > 0){
+                      } else if(this.voucherArticlesToPrint.length > 0) {
                         this.typeOfOperationToPrint = 'voucher';
                         this.distributeImpressions(null)
                       } else {
@@ -2549,10 +2580,10 @@ export class AddSaleOrderComponent {
                     }
                   });
                 } else {
-                  if(this.kitchenArticlesToPrint.length > 0){
+                  if(this.kitchenArticlesToPrint.length > 0) {
                     this.typeOfOperationToPrint = 'kitchen';
                     this.distributeImpressions(null)
-                  } else if(this.voucherArticlesToPrint.length > 0){
+                  } else if(this.voucherArticlesToPrint.length > 0) {
                     this.typeOfOperationToPrint = 'voucher';
                     this.distributeImpressions(null)
                   } else {
@@ -2598,7 +2629,7 @@ export class AddSaleOrderComponent {
                   await this.updateTable().then(table => {
                     if(table) {
                       this.transaction.table = table;
-                      if(this.voucherArticlesToPrint.length > 0){
+                      if(this.voucherArticlesToPrint.length > 0) {
                         this.typeOfOperationToPrint = 'voucher';
                         this.distributeImpressions(null)
                       } else {
@@ -2607,7 +2638,7 @@ export class AddSaleOrderComponent {
                     }
                   });
                 } else {
-                  if(this.voucherArticlesToPrint.length > 0){
+                  if(this.voucherArticlesToPrint.length > 0) {
                     this.typeOfOperationToPrint = 'voucher';
                     this.distributeImpressions(null)
                   } else {
@@ -2702,13 +2733,13 @@ export class AddSaleOrderComponent {
 
     if(!this.printSelected && this.printers) {
       for (const element of this.printers) {
-        if(element && element.printIn === PrinterPrintIn.Bar && this.typeOfOperationToPrint === 'bar'){
+        if(element && element.printIn === PrinterPrintIn.Bar && this.typeOfOperationToPrint === 'bar') {
           this.printerSelected = element;
         }
-        if(element && element.printIn === PrinterPrintIn.Kitchen && this.typeOfOperationToPrint === 'kitchen'){
+        if(element && element.printIn === PrinterPrintIn.Kitchen && this.typeOfOperationToPrint === 'kitchen') {
           this.printerSelected = element;
         }
-        if(element && element.printIn === PrinterPrintIn.Voucher && this.typeOfOperationToPrint === 'voucher'){
+        if(element && element.printIn === PrinterPrintIn.Voucher && this.typeOfOperationToPrint === 'voucher') {
           this.printerSelected = element;
         }
       }
@@ -2733,13 +2764,13 @@ export class AddSaleOrderComponent {
 
     if(user && user.printers && user.printers.length > 0) {
       for (const element of user.printers) {
-        if(element && element.printer && element.printer.printIn === PrinterPrintIn.Bar && this.typeOfOperationToPrint === 'bar'){
+        if(element && element.printer && element.printer.printIn === PrinterPrintIn.Bar && this.typeOfOperationToPrint === 'bar') {
           this.printerSelected = element.printer;
         }
-        if(element && element.printer && element.printer.printIn === PrinterPrintIn.Kitchen && this.typeOfOperationToPrint === 'kitchen'){
+        if(element && element.printer && element.printer.printIn === PrinterPrintIn.Kitchen && this.typeOfOperationToPrint === 'kitchen') {
           this.printerSelected = element.printer;
         }
-        if(element && element.printer && element.printer.printIn === PrinterPrintIn.Voucher && this.typeOfOperationToPrint === 'voucher'){
+        if(element && element.printer && element.printer.printIn === PrinterPrintIn.Voucher && this.typeOfOperationToPrint === 'voucher') {
           this.printerSelected = element.printer;
         }
       }

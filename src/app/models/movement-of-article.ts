@@ -45,6 +45,7 @@ export class MovementOfArticle {
 export enum MovementOfArticleStatus {
 	Pending = <any> "Pendiente",
 	Preparing = <any> "Preparando",
+	LastOrder = <any> "Última Orden",
 	Ready = <any> "Listo",
 }
 
