@@ -106,13 +106,6 @@
               Lector de Vouchers
             </button>
           </div>
-          <div>
-            <button class="dropdown-item"
-                    [routerLink]="['pos','cocina']"
-                    [routerLinkActive]="['active']">
-              Cocina
-            </button>
-          </div>
           <div *ngIf="config.modules.app">
             <button class="dropdown-item"
                     [routerLink]="['pos','pedidos-web']"
@@ -152,6 +145,24 @@
                     [routerLink]="['admin','cajas']"
                     [routerLinkActive]="['active']">
               Cajas
+            </button>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item"
+          ngbDropdown
+          *ngIf="(identity.employee &&
+                  identity.employee.type.description === 'Administrador') &&
+                  (config.modules.production && config.modules.production.kitchen)"
+          (click)="makeVisibleReport(false)">
+        <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
+          <i class="fa fa-paste"></i> Producción</a>
+        <div class="dropdown-menu" ngbDropdownMenu>
+          <div>
+            <button class="dropdown-item"
+                    [routerLink]="['pos','cocina']"
+                    [routerLinkActive]="['active']">
+              Cocina
             </button>
           </div>
         </div>

@@ -688,12 +688,14 @@ export const _routes: Routes = [
   {
     path: 'pos/lector-de-vouchers',
     component: PointOfSaleComponent,
-    canActivate: [AuthGuard, LicenseGuard]
+    canActivate: [AuthGuard, LicenseGuard],
+    data: { module: 'config.modules.sale' }
   },
   {
     path: 'pos/cocina',
     component: PosKitchenComponent,
-    canActivate: [AuthGuard, LicenseGuard]
+    canActivate: [AuthGuard, LicenseGuard],
+    data: { module: 'config.modules.production.kitchen' }
   },
   { path: '**', pathMatch: 'full', redirectTo: '' }
 ];
