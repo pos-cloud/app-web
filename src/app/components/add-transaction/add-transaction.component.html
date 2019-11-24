@@ -22,7 +22,7 @@
           <input type="text" class="form-control" formControlName="company" name="company" readonly/>
         </div>
         <div class="col-md-2" align="right">
-          <button type="button" class="btn btn-light" (click)="changeCompany()" [disabled]="readonly || !transaction.electronics || existsCancellations">
+          <button type="button" class="btn btn-light" (click)="changeCompany()" [disabled]="readonly || !transaction.electronics || transaction.state.toString() === 'Cerrado' || existsCancellations">
             Cambiar
           </button>
         </div>
