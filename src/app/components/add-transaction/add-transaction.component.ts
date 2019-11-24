@@ -50,6 +50,7 @@ export class AddTransactionComponent implements OnInit {
   public taxes: Taxes[] = new Array();
   private movementsOfCancellations: MovementOfCancellation[];
   public alertMessage: string = '';
+  public existsCancellations: boolean = false;
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -179,6 +180,7 @@ export class AddTransactionComponent implements OnInit {
           if (this.transaction.type.requestEmployee) {
             this.getEmployees('where="type":"' + this.transaction.type.requestEmployee._id + '"');
           }
+          this.getCancellationsOfMovements()
         }
         this.loading = false;
       },
@@ -345,6 +347,39 @@ export class AddTransactionComponent implements OnInit {
       this.showMessage("El saldo no puede ser mayor a: $" + this.transaction.totalPrice , 'danger', false);
       this.setValuesForm();
     } 
+  }
+
+  public getCancellationsOfMovements() {
+
+    this.loading = true;
+
+    let match = { $or : [{ "transactionOrigin": { $oid: this.transaction._id} , "operationType": { "$ne": "D" } },{ "transactionDestination": { $oid: this.transaction._id} , "operationType": { "$ne": "D" }  }] } ;
+    
+
+    // CAMPOS A TRAER
+    let project = {
+      "transactionOrigin": 1,
+      "transactionDestination": 1,
+      "operationType" : 1
+    };
+
+    this._movementOfCancellationService.getMovementsOfCancellations(
+      project, // PROJECT
+      match, // MATCH
+      { order: 1 }, // SORT
+      {}, // GROUP
+      0, // LIMIT
+      0 // SKIP
+    ).subscribe(async result => {
+      if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
+        this.existsCancellations = true;
+      }
+      this.loading = false;
+    },
+    error => {
+      this.showMessage(error._body, 'danger', false);
+      this.loading = false;
+    });
   }
 
   async openModal(op: string) {
