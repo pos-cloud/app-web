@@ -14,7 +14,8 @@
           </ngb-alert>
         </div>
         <div class="row container-filter">
-          <div class="col-md-3">
+          <div class="col-md-2"></div>
+          <div class="col-md-2">
             <label for="dataSelect" class="control-label">
               <b>Por Vencimiento de:</b>
             </label>
@@ -23,19 +24,19 @@
               <option value="movement-of-cash">Pago</option>
             </select>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-2">
             <label for="startDate" class="control-label">
               <b>Fecha Desde:</b>
             </label>
             <input type="date" class="form-control" name="startDate" min="2000-01-01" [(ngModel)]="startDate" />
           </div>
-          <div class="col-md-3">
+          <div class="col-md-2">
             <label for="endDate" class="control-label">
               <b>Fecha Hasta:</b>
             </label>
             <input type="date" class="form-control" name="endDate" min="2000-01-01" [(ngModel)]="endDate" />
           </div>
-          <div class="col-md-3" (click)="refresh()">
+          <div class="col-md-2" (click)="refresh()">
             <label for="btn-action" class="control-label"><b>Acción:</b></label>
             <span class="form-control btn-action center-content">
               <i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar
