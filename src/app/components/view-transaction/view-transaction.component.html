@@ -19,8 +19,15 @@
             <div class="form-group col-md-12">
               <label for="company" class="control-label" *ngIf="transaction && transaction.type && transaction.type.transactionMovement === 'Venta'">Cliente</label>
               <label for="company" class="control-label" *ngIf="transaction && transaction.type && transaction.type.transactionMovement === 'Compra'">Proveedor</label>
-              <input type="text" class="form-control" name="date" *ngIf="transaction.company" value="{{transaction.company.name}}" readonly/>
-              <input type="text" class="form-control" name="date" *ngIf="!transaction.company" value="Consumidor Final" readonly/>
+              <div class="input-group">
+                <div class="input-group-prepend" *ngIf="transaction.company">
+                  <span class="input-group-text bg-success pointer" id="basic-addon1" (click)="openModal('view-company')">
+                    <i class="fa fa-eye" style="color: white;"></i>
+                  </span>
+                </div>
+                <input type="text" class="form-control" name="date" *ngIf="transaction.company" value="{{transaction.company.name}}" readonly/>
+                <input type="text" class="form-control" name="date" *ngIf="!transaction.company" value="Consumidor Final" readonly/>
+              </div>
             </div>
           </div>
           <div class="row" *ngIf="transaction.type && transaction.type.requestEmployee">

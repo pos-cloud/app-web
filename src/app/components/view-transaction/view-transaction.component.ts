@@ -15,6 +15,7 @@ import { Config } from 'app/app.config';
 import { UserService } from 'app/services/user.service';
 import { Article } from 'app/models/article';
 import { AddArticleComponent } from '../add-article/add-article.component';
+import { AddCompanyComponent } from '../add-company/add-company.component';
 
 @Component({
   selector: 'app-view-transaction',
@@ -161,6 +162,12 @@ export class ViewTransactionComponent implements OnInit {
         modalRef.componentInstance.articleId = article._id;
         modalRef.componentInstance.readonly = true;
         modalRef.componentInstance.operation = "view";
+        break;
+      case 'view-company' :
+        modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.companyId = this.transaction.company._id;
+        modalRef.componentInstance.readonly = true;
+        modalRef.componentInstance.operation = 'view';
         break;
       default:
         break;
