@@ -177,18 +177,18 @@
                     </div>
                     <div class="form-group col-md-6">
                         <label class="control-label">El día:</label>
-                        <label *ngIf="transport.creationDate" class="control-label"> <b>{{transport.creationDate | dateFormat:'DD/MM/YYYY'}}</b></label>
+                        <label *ngIf="transport.creationDate" class="control-label"> <b>{{transport.creationDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
                     </div>
                   </div>
                   <div class="row">
                     <div class="form-group col-md-6">
-                        <label class="control-label">Modificado por:</label>
+                        <label class="control-label">Última modificación por:</label>
                         <label *ngIf="transport.updateUser" class="control-label"><b>{{transport.updateUser.name}}</b></label>
                         <label *ngIf="!transport.updateUser" class="control-label"><b>-</b></label>
                     </div>
                     <div class="form-group col-md-6">
                         <label class="control-label">El día:</label>
-                        <label *ngIf="transport.updateDate" class="control-label"><b>{{transport.updateDate | dateFormat:'DD/MM/YYYY'}}</b></label>
+                        <label *ngIf="transport.updateDate" class="control-label"><b>{{transport.updateDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
                         <label *ngIf="!transport.updateDate" class="control-label"><b>-</b></label>
                     </div>
                   </div>

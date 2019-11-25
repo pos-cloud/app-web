@@ -869,18 +869,18 @@
                   </div>
                   <div class="form-group col-md-6">
                       <label class="control-label">El día:</label>
-                      <label *ngIf="transactionType.creationDate" class="control-label"> <b>{{transactionType.creationDate | dateFormat:'DD/MM/YYYY'}}</b></label>
+                      <label *ngIf="transactionType.creationDate" class="control-label"> <b>{{transactionType.creationDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
                   </div>
                 </div>
                 <div class="row">
                   <div class="form-group col-md-6">
-                      <label class="control-label">Modificado por:</label>
+                      <label class="control-label">Última modificación por:</label>
                       <label *ngIf="transactionType.updateUser" class="control-label"><b>{{transactionType.updateUser.name}}</b></label>
                       <label *ngIf="!transactionType.updateUser" class="control-label"><b>-</b></label>
                   </div>
                   <div class="form-group col-md-6">
                       <label class="control-label">El día:</label>
-                      <label *ngIf="transactionType.updateDate" class="control-label"><b>{{transactionType.updateDate | dateFormat:'DD/MM/YYYY'}}</b></label>
+                      <label *ngIf="transactionType.updateDate" class="control-label"><b>{{transactionType.updateDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
                       <label *ngIf="!transactionType.updateDate" class="control-label"><b>-</b></label>
                   </div>
                 </div>
