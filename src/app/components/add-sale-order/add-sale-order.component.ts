@@ -107,6 +107,7 @@ export class AddSaleOrderComponent {
   public userType: string;
   public posType: string;
   public loading: boolean;
+  public isCharge: boolean;
   @ViewChild('contentPrinters', {static: true}) contentPrinters: ElementRef;
   @ViewChild('contentMessage', {static: true}) contentMessage: ElementRef;
   @ViewChild('contentChangeDate', {static: true}) contentChangeDate: ElementRef;
@@ -1561,7 +1562,7 @@ export class AddSaleOrderComponent {
         });
         break;
       case 'charge':
-        
+
         this.typeOfOperationToPrint = "charge";
 
         if (await this.isValidCharge() &&
@@ -2433,8 +2434,15 @@ export class AddSaleOrderComponent {
     });
   }
 
-  async close() {
+  async close(op?: string) {
 
+    if(op === 'charge'){
+      this.isCharge = true;
+    } else {
+      this.isCharge = false;
+    }
+
+    
     this.typeOfOperationToPrint = 'item';
 
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
@@ -2464,11 +2472,19 @@ export class AddSaleOrderComponent {
       await this.updateTable().then(table => {
         if(table) {
           this.transaction.table = table;
-          this.backFinal();
+          if(this.isCharge){
+            this.openModal('charge')
+          } else {
+            this.backFinal();
+          }
         }
       });
     } else {
-      this.backFinal();
+      if(this.isCharge){
+        this.openModal('charge')
+      } else {
+        this.backFinal();
+      }
     }
   }
 
@@ -2575,7 +2591,11 @@ export class AddSaleOrderComponent {
                         this.typeOfOperationToPrint = 'voucher';
                         this.distributeImpressions(null)
                       } else {
-                        this.backFinal();
+                        if(this.isCharge){
+                          this.openModal('charge')
+                        } else {
+                          this.backFinal();
+                        }
                       }
                     }
                   });
@@ -2587,7 +2607,11 @@ export class AddSaleOrderComponent {
                     this.typeOfOperationToPrint = 'voucher';
                     this.distributeImpressions(null)
                   } else {
-                    this.backFinal();
+                    if(this.isCharge){
+                      this.openModal('charge')
+                    } else {
+                      this.backFinal();
+                    }
                   }
                 }
               } else {
@@ -2595,7 +2619,11 @@ export class AddSaleOrderComponent {
                   this.typeOfOperationToPrint = 'kitchen';
                   this.distributeImpressions(null)
                 } else {
-                  this.backFinal();
+                  if(this.isCharge){
+                    this.openModal('charge')
+                  } else {
+                    this.backFinal();
+                  }
                 }
               }
             }
@@ -2633,7 +2661,11 @@ export class AddSaleOrderComponent {
                         this.typeOfOperationToPrint = 'voucher';
                         this.distributeImpressions(null)
                       } else {
-                        this.backFinal();
+                        if(this.isCharge){
+                          this.openModal('charge')
+                        } else {
+                          this.backFinal();
+                        }
                       }
                     }
                   });
@@ -2642,11 +2674,25 @@ export class AddSaleOrderComponent {
                     this.typeOfOperationToPrint = 'voucher';
                     this.distributeImpressions(null)
                   } else {
-                    this.backFinal();
+                    if(this.isCharge){
+                      this.openModal('charge')
+                    } else {
+                      this.backFinal();
+                    }
                   }
                 }
               } else {
-                this.backFinal();
+                if(this.voucherArticlesToPrint.length > 0) {
+                  this.typeOfOperationToPrint = 'voucher';
+                  this.distributeImpressions(null)
+                } else {
+                  if(this.isCharge){
+                    this.openModal('charge')
+                  } else {
+                    this.backFinal();
+                  }
+                }
+                
               }
             }
           }
@@ -2678,12 +2724,20 @@ export class AddSaleOrderComponent {
                 await this.updateTable().then(table => {
                   if(table) {
                     this.transaction.table = table;
-                    this.backFinal();
+                    if(this.isCharge){
+                      this.openModal('charge')
+                    } else {
+                      this.backFinal();
+                    }
                     
                   }
                 });
               } else {
-                this.backFinal();
+                if(this.isCharge){
+                  this.openModal('charge')
+                } else {
+                  this.backFinal();
+                }
               }
             }
           }
