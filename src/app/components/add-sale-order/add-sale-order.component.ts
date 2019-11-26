@@ -2442,22 +2442,23 @@ export class AddSaleOrderComponent {
       this.isCharge = false;
     }
 
-    
-    this.typeOfOperationToPrint = 'item';
-
-    if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
-      for (let movementOfArticle of this.movementsOfArticles) {
-        if (movementOfArticle.article && movementOfArticle.article.printIn === ArticlePrintIn.Bar && movementOfArticle.printed < movementOfArticle.amount) {
-          this.barArticlesToPrint.push(movementOfArticle);
-        }
-        if (movementOfArticle.article && movementOfArticle.article.printIn === ArticlePrintIn.Kitchen && movementOfArticle.printed < movementOfArticle.amount) {
-          this.kitchenArticlesToPrint.push(movementOfArticle);
-        }
-        if (movementOfArticle.article && movementOfArticle.article.printIn === ArticlePrintIn.Voucher && movementOfArticle.printed < movementOfArticle.amount) {
-          this.voucherArticlesToPrint.push(movementOfArticle);
+    if(this.transaction.type.posKitchen){
+      this.typeOfOperationToPrint = 'item';
+      if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
+        for (let movementOfArticle of this.movementsOfArticles) {
+          if (movementOfArticle.article && movementOfArticle.article.printIn === ArticlePrintIn.Bar && movementOfArticle.printed < movementOfArticle.amount) {
+            this.barArticlesToPrint.push(movementOfArticle);
+          }
+          if (movementOfArticle.article && movementOfArticle.article.printIn === ArticlePrintIn.Kitchen && movementOfArticle.printed < movementOfArticle.amount) {
+            this.kitchenArticlesToPrint.push(movementOfArticle);
+          }
+          if (movementOfArticle.article && movementOfArticle.article.printIn === ArticlePrintIn.Voucher && movementOfArticle.printed < movementOfArticle.amount) {
+            this.voucherArticlesToPrint.push(movementOfArticle);
+          }
         }
       }
     }
+
     if (this.barArticlesToPrint && this.barArticlesToPrint.length !== 0) {
       this.typeOfOperationToPrint = "bar";
       this.openModal('printers');
