@@ -2253,140 +2253,94 @@ export class AddSaleOrderComponent {
     return new Promise<boolean>(async(resolve, reject) => {
 
       let amountToModify;
-      let deposit: Deposit;
+      let deposit: Deposit = this.transaction.depositDestination;
 
-      if(movementOfArticle.article.deposits && movementOfArticle.article.deposits.length >0) {
+      if(movementOfArticle.article.deposits && movementOfArticle.article.deposits.length > 0) {
         for (const element of movementOfArticle.article.deposits) {
           if(element.deposit && element.deposit.branch && element.deposit.branch._id === this.transaction.branchDestination._id) {
             deposit = element.deposit;
           }
         }
-      } else {
-        deposit = this.transaction.depositDestination;
       }
 
       switch (this.transaction.type.stockMovement) {
         case StockMovement.Inflows:
             amountToModify = movementOfArticle.amount;
-            this._articleStockService.updateRealStock(
-              movementOfArticle.article,
-              deposit,
-              amountToModify, 
-              this.transaction.type.stockMovement.toString()
-            ).subscribe(
-              result => {
-                this.loading = false;
-                if (!result.articleStock) {
-                  if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                  resolve(null);
-                } else {
-                  resolve(result.articleStock);
-                }
-              },
-              error => {
-                this.loading = false;
-                this.showMessage(error._body, 'danger', false);
-                resolve(null);
-              }
-            );
-          
           break;
         case StockMovement.Inventory:
-          
             amountToModify = movementOfArticle.amount;
-            this._articleStockService.updateRealStock(
-              movementOfArticle.article,
-              deposit,
-              amountToModify, 
-              this.transaction.type.stockMovement.toString()
-            ).subscribe(
-              result => {
-                this.loading = false;
-                if (!result.articleStock) {
-                  if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                  resolve(null);
-                } else {
-                  resolve(result.articleStock);
-                }
-              },
-              error => {
-                this.loading = false;
-                this.showMessage(error._body, 'danger', false);
-                resolve(null);
-              }
-            );
-          
           break;
         case StockMovement.Outflows:
             amountToModify = this.roundNumber.transform(movementOfArticle.amount * -1);
-            this._articleStockService.updateRealStock(
-              movementOfArticle.article,
-              deposit,
-              amountToModify, 
-              this.transaction.type.stockMovement.toString()
-            ).subscribe(
-              result => {
-                this.loading = false;
-                if (!result.articleStock) {
-                  if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                  resolve(null);
-                } else {
-                  resolve(result.articleStock);
-                }
-              },
-              error => {
-                this.loading = false;
-                this.showMessage(error._body, 'danger', false);
-                resolve(null);
-              }
-            );
-          
-          break;
-        case StockMovement.Transfer:
-            this._articleStockService.updateRealStock(
-              movementOfArticle.article,
-              this.transaction.depositOrigin,
-              movementOfArticle.amount * -1,
-              this.transaction.type.stockMovement.toString()
-            ).subscribe(
-              result => {
-                this.loading = false;
-                if (!result.articleStock) {
-                  if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                  resolve(null);
-                } else {
-                  this._articleStockService.updateRealStock(
-                    movementOfArticle.article,
-                    this.transaction.depositDestination,
-                    movementOfArticle.amount,
-                    this.transaction.type.stockMovement.toString()
-                  ).subscribe(
-                    result => {
-                      this.loading = false;
-                      if (!result.articleStock) {
-                        if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                        resolve(null);
-                      } else {
-                        resolve(result.articleStock);
-                      }
-                    },
-                    error => {
-                      this.loading = false;
-                      this.showMessage(error._body, 'danger', false);
-                      resolve(null);
-                    }
-                  );
-                }
-              },
-              error => {
-                this.loading = false;
-                this.showMessage(error._body, 'danger', false);
-                resolve(null);
-              }
-            );
           break;
         default:
           break;
+      }
+
+      if(this.transaction.type.stockMovement === StockMovement.Transfer) {
+        this._articleStockService.updateRealStock(
+          movementOfArticle.article,
+          this.transaction.depositOrigin,
+          movementOfArticle.amount * -1,
+          this.transaction.type.stockMovement.toString()
+        ).subscribe(
+          result => {
+            this.loading = false;
+            if (!result.articleStock) {
+              if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+              resolve(null);
+            } else {
+              this._articleStockService.updateRealStock(
+                movementOfArticle.article,
+                this.transaction.depositDestination,
+                movementOfArticle.amount,
+                this.transaction.type.stockMovement.toString()
+              ).subscribe(
+                result => {
+                  this.loading = false;
+                  if (!result.articleStock) {
+                    if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+                    resolve(null);
+                  } else {
+                    resolve(result.articleStock);
+                  }
+                },
+                error => {
+                  this.loading = false;
+                  this.showMessage(error._body, 'danger', false);
+                  resolve(null);
+                }
+              );
+            }
+          },
+          error => {
+            this.loading = false;
+            this.showMessage(error._body, 'danger', false);
+            resolve(null);
+          }
+        );
+      } else {
+        this._articleStockService.updateRealStock(
+          movementOfArticle.article,
+          deposit,
+          amountToModify, 
+          this.transaction.type.stockMovement.toString()
+        ).subscribe(
+          result => {
+            this.loading = false;
+            if (!result.articleStock) {
+              if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+              resolve(null);
+            } else {
+              resolve(result.articleStock);
+            }
+          },
+          error => {
+            this.loading = false;
+            this.showMessage(error._body, 'danger', false);
+            resolve(null);
+          }
+        );
       }
     });
   }
