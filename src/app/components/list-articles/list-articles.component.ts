@@ -43,7 +43,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 export class ListArticlesComponent implements OnInit {
 
   public identity: User;
-  public title: string = "Listado de Productos";
+  public title: string;
   public articles: Article[] = new Array();
   public alertMessage: string = '';
   public userType: string = '';
@@ -123,11 +123,14 @@ export class ListArticlesComponent implements OnInit {
 
     if ('Variantes' === this.listTitle) {
       this.articleType = Type.Variant;
+      this.title = "Listado de Variantes";
     } else if ('Ingredientes' === this.listTitle) {
       this.articleType = Type.Ingredient;
+      this.title = "Listado de Ingredientes";
     } else {
       // ENTRA CUANDO SE HACE UNA TRANSACCIÓN O EN LA TABLA
       this.articleType = Type.Final;
+      this.title = "Listado de Productos";
     }
     this.getItems();
     this.initDragHorizontalScroll();
