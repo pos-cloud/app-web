@@ -2003,7 +2003,7 @@ export class PrintComponent implements OnInit {
 
         row += 8;
 
-        if(row > 240) {
+        if(row > 230) {
           this.doc.setFontType("bold");
           this.doc.text("TRANSPORTE:".toString(),25, row);
           this.doc.text(this.roundNumber.transform(transport).toString(), 185, row);
