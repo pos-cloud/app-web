@@ -590,6 +590,7 @@ export class AddSaleOrderComponent {
           this.movementsOfArticles = result.movementsOfArticles;
           this.lastMovementOfArticle = this.movementsOfArticles[this.movementsOfArticles.length - 1];
           this.containerMovementsOfArticles.nativeElement.scrollTop = this.containerMovementsOfArticles.nativeElement.scrollHeight;
+          this.updateQuantity();
           this.updatePrices();
         }
         this.loading = false;
@@ -599,6 +600,15 @@ export class AddSaleOrderComponent {
         this.loading = false;
       }
     );
+  }
+
+  public updateQuantity(): void {
+    this.quantity = 0;
+    if(this.movementsOfArticles && this.movementsOfArticles.length > 0) {
+      for (let movementOfArticle of this.movementsOfArticles) {
+        this.quantity += movementOfArticle.amount;
+      }
+    }
   }
 
   async addItem(itemData: MovementOfArticle) {
