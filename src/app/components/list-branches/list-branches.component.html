@@ -24,11 +24,13 @@
             </th>
             <th (click)="orderBy('number')">Número</th>
             <th (click)="orderBy('name')">Nombre</th>
+            <th (click)="orderBy('default')">Defecto</th>
           </tr>
           <tr class="filters">
             <th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (input)="getBranches()" placeholder="Número..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['name']" (input)="getBranches()" placeholder="Nombre..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['default']" (input)="getBranches()" placeholder="Defecto..."></th>
           </tr>
         </thead>
         <tbody>
@@ -59,6 +61,7 @@
             </td>
             <td>{{branch.number}}</td>
             <td>{{branch.name}}</td>
+            <td>{{branch.default}}</td>
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
             <td colspan="16">No se encontraron sucursales</td>

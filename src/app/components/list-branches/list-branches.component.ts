@@ -89,6 +89,7 @@ export class ListBranchComponent implements OnInit {
     let project = {
       number: { $toString: '$number' },
       name: 1,
+      default : 1,
       operationType: 1
     }
 

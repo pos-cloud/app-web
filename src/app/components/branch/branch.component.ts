@@ -33,6 +33,7 @@ export class BranchComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public userCountry: string;
   public orientation: string = 'horizontal';
+  public branches: Branch[];
 
   public formErrors = {
     'number': '',
@@ -57,6 +58,7 @@ export class BranchComponent implements OnInit {
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
   ) {
+    this.getBranches();
     if(window.screen.width < 1000) this.orientation = 'vertical';
     this.branch = new Branch();
   }
@@ -103,11 +105,13 @@ export class BranchComponent implements OnInit {
     if (!this.branch._id) { this.branch._id = ''; }
     if (!this.branch.number) { this.branch.number = 0; }
     if (!this.branch.name) { this.branch.name = ''; }
+    if (!this.branch.default) { this.branch.default = false };
 
     const values = {
       '_id': this.branch._id,
       'number': this.branch.number,
       'name': this.branch.name,
+      'default' : this.branch.default
     };
     this.branchForm.setValue(values);
   }
@@ -121,6 +125,10 @@ export class BranchComponent implements OnInit {
         ]
       ],
       'name': [this.branch.name, [
+        Validators.required
+        ]
+      ],
+      'default': [this.branch.default, [
         Validators.required
         ]
       ]
@@ -171,21 +179,25 @@ export class BranchComponent implements OnInit {
 
     this.branch = this.branchForm.value;
 
-    this._branchService.updateBranch(this.branch).subscribe(
-      result => {
-        if (!result.branch) {
+    if(this.isValid()){
+      this._branchService.updateBranch(this.branch).subscribe(
+        result => {
+          if (!result.branch) {
+            this.loading = false;
+            if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+          } else {
+            this.loading = false;
+            this.showMessage('La sucursal se ha actualizado con éxito.', 'success', false);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
-          if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
-        } else {
-          this.loading = false;
-          this.showMessage('La sucursal se ha actualizado con éxito.', 'success', false);
         }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    } else {
+      this.loading = false;
+    }
   }
 
   public saveBranch() {
@@ -194,23 +206,27 @@ export class BranchComponent implements OnInit {
 
     this.branch = this.branchForm.value;
 
-    this._branchService.saveBranch(this.branch).subscribe(
-      result => {
-        if (!result.branch) {
-          this.loading = false;
-          if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
-        } else {
+    if(this.isValid()){
+      this._branchService.saveBranch(this.branch).subscribe(
+        result => {
+          if (!result.branch) {
             this.loading = false;
-            this.showMessage('La sucursal se ha añadido con éxito.', 'success', false);
-            this.branch = new Branch();
-            this.buildForm();
+            if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+          } else {
+              this.loading = false;
+              this.showMessage('La sucursal se ha añadido con éxito.', 'success', false);
+              this.branch = new Branch();
+              this.buildForm();
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
         }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    } else {
+      this.loading = false;
+    }
   }
 
   public deleteBranch() {
@@ -224,6 +240,65 @@ export class BranchComponent implements OnInit {
           if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
         } else {
             this.activeModal.close();
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public isValid() : boolean {
+    
+    let valid = true;
+
+    if(this.branches && this.branches.length > 0 && this.branch.default !== null) {
+      for (const element of this.branches) {
+        if(this.branch.default === true && element.default === this.branch.default) {
+          this.showMessage("Solo puede existir una sucursal principal.", 'danger', true);
+          valid = false;
+        }
+      }
+    }
+    
+    return valid
+  }
+
+  public getBranches() : void {
+
+    this.loading = true;
+
+    let match = `{ "operationType": { "$ne": "D" } }`;
+
+    match = JSON.parse(match);
+
+    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+    let project = {
+      default : 1,
+      operationType: 1
+    }
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {
+        _id: null,
+        branches: { $push: "$$ROOT" }
+    };
+
+    this._branchService.getBranches(
+        project, // PROJECT
+        match, // MATCH
+        {}, // SORT
+        group, // GROUP
+        0, // LIMIT
+        0 // SKIP
+    ).subscribe(
+      result => {
+        this.loading = false;
+        if (result && result[0] && result[0].branches) {
+          this.branches = result[0].branches;
+        } else {
+          this.branches = new Array();
         }
       },
       error => {

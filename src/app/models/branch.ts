@@ -8,6 +8,7 @@ export class Branch {
     public _id: string;
     public number: number;
     public name : string;
+    public default : boolean = false;
     public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     public updateUser: User;
