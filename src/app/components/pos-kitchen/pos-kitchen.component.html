@@ -38,6 +38,42 @@
 							<div class="card-text" *ngIf="movementOfArticle">
 								{{movementOfArticle.notes}}
 							</div>
+							<div class="row" *ngIf="movementOfArticle">
+								<div class="col-md-6">
+									<div class="row">
+										<div class="col-md-12 center-content">
+											Pedido Nro {{movementOfArticle.transaction.number}} Realizado
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12 center-content" style="font-size: 25px;">
+											<b>{{getTime(movementOfArticle.transaction.endDate)}}</b>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12 center-content"  style="font-size: 20px;">
+											(<app-clock [startTime]="movementOfArticle.transaction.endDate" [format]="'HH:mm:ss'"></app-clock>)
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="row">
+										<div class="col-md-12 center-content">
+											Produciendo
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12 center-content" style="font-size: 25px;">
+											<b>{{getTime(startProductionDate)}}</b>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12 center-content" style="font-size: 20px;">
+											(<app-clock [startTime]="startProductionDate" [format]="'HH:mm:ss'"></app-clock>)
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 						<div class="col-md-4" *ngIf="movementsOfArticles && movementsOfArticles.length > 0">
 							<div class="row">
@@ -53,8 +89,9 @@
 									<img *ngIf="movementsOfArticles[0] && movementsOfArticles[0].article.picture && movementsOfArticles[0].article.picture !== 'default.jpg'" [src]="apiURL + 'get-image-article/'+movementsOfArticles[0].article.picture+'/'+database">
 								</div>
 								<div class="col-md-8">
-										<div class="card-title">
-										{{movementsOfArticles[0].description}}
+									<div class="card-title">
+										<span>{{movementsOfArticles[0].description}}</span><br>
+										<span style="font-size: 15px;" *ngIf="movementsOfArticles[0].transaction">Pedidido Nro {{movementsOfArticles[0].transaction.number}}</span>
 									</div>
 									<div class="card-text">
 										{{movementsOfArticles[0].notes}}
@@ -67,8 +104,9 @@
 									<img *ngIf="movementsOfArticles[1] && movementsOfArticles[1].article.picture && movementsOfArticles[1].article.picture !== 'default.jpg'" [src]="apiURL + 'get-image-article/'+movementsOfArticles[1].article.picture+'/'+database">
 								</div>
 								<div class="col-md-8">
-										<div class="card-title">
-										{{movementsOfArticles[1].description}}
+									<div class="card-title">
+										<span>{{movementsOfArticles[1].description}}</span><br>
+										<span style="font-size: 15px;" *ngIf="movementsOfArticles[1].transaction">Pedidido Nro {{movementsOfArticles[1].transaction.number}}</span>
 									</div>
 									<div class="card-text">
 										{{movementsOfArticles[1].notes}}
@@ -81,8 +119,9 @@
 									<img *ngIf="movementsOfArticles[2] && movementsOfArticles[2].article.picture && movementsOfArticles[2].article.picture !== 'default.jpg'" [src]="apiURL + 'get-image-article/'+movementsOfArticles[2].article.picture+'/'+database">
 								</div>
 								<div class="col-md-8">
-										<div class="card-title">
-										{{movementsOfArticles[2].description}}
+									<div class="card-title">
+										<span>{{movementsOfArticles[2].description}}</span><br>
+										<span style="font-size: 15px;" *ngIf="movementsOfArticles[2].transaction">Pedidido Nro {{movementsOfArticles[2].transaction.number}}</span>
 									</div>
 									<div class="card-text">
 										{{movementsOfArticles[2].notes}}

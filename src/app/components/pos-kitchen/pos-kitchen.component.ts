@@ -4,6 +4,8 @@ import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { MovementOfArticleService } from 'app/services/movement-of-article.service';
 import { MovementOfArticle, MovementOfArticleStatus } from 'app/models/movement-of-article';
 import { Config } from 'app/app.config';
+import * as moment from 'moment';
+import 'moment/locale/es';
 
 @Component({
   selector: 'app-pos-kitchen',
@@ -22,6 +24,7 @@ export class PosKitchenComponent {
   public database: string = Config.database;
   public apiURL = Config.apiURL;
   public productionStarted: boolean = false;
+  public startProductionDate: string;
 
   constructor(
     public _router: Router,
@@ -46,7 +49,10 @@ export class PosKitchenComponent {
     try {
       this.movementsOfArticles = JSON.parse(sessionStorage.getItem('kitchen_movementsOfArticles'));
       this.movementOfArticle = JSON.parse(localStorage.getItem('kitchen_movementOfArticle'));
-      if(this.movementOfArticle) this.productionStarted = true;
+      if(this.movementOfArticle) {
+        this.productionStarted = true;
+        this.startProductionDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+      };
     } catch(err) {}
   }
 
@@ -73,6 +79,7 @@ export class PosKitchenComponent {
         if(movementOfArticle) {
           if(movementOfArticle.printed === movementOfArticle.amount) {
             this.movementOfArticle = movementOfArticle;
+            this.startProductionDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
             await this.getMovementOfArticleToPreparing().then(
               movementOfArticle => {
                 if(movementOfArticle) {
@@ -83,6 +90,7 @@ export class PosKitchenComponent {
             );
           } else if(movementOfArticle.printed < movementOfArticle.amount) {
             this.movementOfArticle = movementOfArticle;
+            this.startProductionDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
             this.movementOfArticle.status = MovementOfArticleStatus.Preparing;
             await this.updateMovementOfArticle().then(
               async movementOfArticle => {
@@ -155,7 +163,9 @@ export class PosKitchenComponent {
         amount: 1,
         printed: 1,
         'article._id': 1,
-        'article.picture': 1
+        'article.picture': 1,
+        'transaction.endDate': 1,
+        'transaction.number': 1
       };
 
       let match = { _id: this.movementOfArticle._id };
@@ -184,6 +194,14 @@ export class PosKitchenComponent {
         }
       );
     });
+  }
+
+  public getTime(date: string): string {
+    let time: string;
+    if(date && moment(date).isValid()) {
+      time = moment(date).fromNow();  
+    }
+    return time;
   }
 
   public updateMovementOfArticleByWhere(where: {}, set: {}, sort: {}): Promise<MovementOfArticle> {
@@ -223,14 +241,23 @@ export class PosKitchenComponent {
       );
     }
     this.movementOfArticle = movementOfArticle;
+    this.startProductionDate = null;
   }
 
   public async changeStatusToPending() {
     return new Promise(async (resolve, reject) => {
       this.movementOfArticle.status = MovementOfArticleStatus.Pending;
-      await this.updateMovementOfArticle().then(
-        movementOfArticle => {
-          resolve(movementOfArticle);
+      await this.updateMovementOfArticleByWhere({
+        _id: this.movementOfArticle._id
+      }, {
+        status: MovementOfArticleStatus.Pending,
+        $inc: { printed: -1 }
+      },
+      {}).then(
+        async movementOfArticle => {
+          if(movementOfArticle) {
+            resolve(movementOfArticle);
+          }
         }
       );
     });
