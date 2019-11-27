@@ -2580,8 +2580,11 @@ export class AddSaleOrderComponent {
                   }
                 }
               } else {
-                if(this.barArticlesToPrint) {
+                if(this.kitchenArticlesToPrint.length > 0) {
                   this.typeOfOperationToPrint = 'kitchen';
+                  this.distributeImpressions(null)
+                } else if(this.voucherArticlesToPrint.length > 0) {
+                  this.typeOfOperationToPrint = 'voucher';
                   this.distributeImpressions(null)
                 } else {
                   if(this.isCharge){
@@ -2625,6 +2628,9 @@ export class AddSaleOrderComponent {
                       if(this.voucherArticlesToPrint.length > 0) {
                         this.typeOfOperationToPrint = 'voucher';
                         this.distributeImpressions(null)
+                      } else if (this.kitchenArticlesToPrint.length > 0) {
+                        this.typeOfOperationToPrint = 'kitchen';
+                        this.distributeImpressions(null)
                       } else {
                         if(this.isCharge){
                           this.openModal('charge')
@@ -2638,6 +2644,9 @@ export class AddSaleOrderComponent {
                   if(this.voucherArticlesToPrint.length > 0) {
                     this.typeOfOperationToPrint = 'voucher';
                     this.distributeImpressions(null)
+                  } else if (this.kitchenArticlesToPrint.length > 0) {
+                    this.typeOfOperationToPrint = 'kitchen';
+                    this.distributeImpressions(null)
                   } else {
                     if(this.isCharge){
                       this.openModal('charge')
@@ -2649,6 +2658,9 @@ export class AddSaleOrderComponent {
               } else {
                 if(this.voucherArticlesToPrint.length > 0) {
                   this.typeOfOperationToPrint = 'voucher';
+                  this.distributeImpressions(null)
+                } else if (this.kitchenArticlesToPrint.length > 0) {
+                  this.typeOfOperationToPrint = 'kitchen';
                   this.distributeImpressions(null)
                 } else {
                   if(this.isCharge){
