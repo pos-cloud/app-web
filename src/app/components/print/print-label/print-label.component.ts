@@ -83,14 +83,14 @@ export class PrintLabelComponent implements OnInit {
       this.doc.text(this.article.description.slice(19,38), 0 , 10);
       this.doc.text(this.article.description.slice(38,100), 0 , 15);      
       let imgdata = 'data:image/png;base64,' + this.barcode64;
-      this.doc.addImage(imgdata, 'PNG', 1, 15, (this.printer.pageHigh) -2, (this.printer.pageWidth) -15 );
+      this.doc.addImage(imgdata, 'PNG', 1, 15, (this.printer.pageHigh) -2, (this.printer.pageWidth) -17 );
       for (let index = 0; index < this.articleStock.realStock -1 ; index++) {
         this.doc.addPage();
         this.doc.text(this.article.description.slice(0,19), 0 , 5);
         this.doc.text(this.article.description.slice(19,38), 0 , 10);
         this.doc.text(this.article.description.slice(38,100), 0 , 15);        
         let imgdata = 'data:image/png;base64,' + this.barcode64;
-        this.doc.addImage(imgdata, 'PNG', 1, 15, (this.printer.pageHigh) -2, (this.printer.pageWidth) -15 );
+        this.doc.addImage(imgdata, 'PNG', 1, 15, (this.printer.pageHigh) -2, (this.printer.pageWidth) -17 );
       }
       this.finishImpression();
     }  else if (this.article) {
@@ -98,7 +98,7 @@ export class PrintLabelComponent implements OnInit {
       this.doc.text(this.article.description.slice(19,38), 0 , 10);
       this.doc.text(this.article.description.slice(38,100), 0 , 15);
       let imgdata = 'data:image/png;base64,' + this.barcode64;
-      this.doc.addImage(imgdata, 'PNG', 1, 15, (this.printer.pageHigh ) -2, (this.printer.pageWidth) -15 );
+      this.doc.addImage(imgdata, 'PNG', 1, 15, (this.printer.pageHigh ) -2, (this.printer.pageWidth) -17 );
       this.finishImpression();
     }
   }
