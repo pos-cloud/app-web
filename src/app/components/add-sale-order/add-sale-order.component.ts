@@ -2465,7 +2465,7 @@ export class AddSaleOrderComponent {
       } else {
         this._router.navigate(['/pos/resto']);
       }
-    } else if (this.posType === "mostrador") {
+    } else if (this.posType === "mostrador") { 
       if (this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
         if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
           this._router.navigate(['/pos/' + this.posType + '/compra/' + this.transaction.type._id]);
@@ -2628,9 +2628,6 @@ export class AddSaleOrderComponent {
                       if(this.voucherArticlesToPrint.length > 0) {
                         this.typeOfOperationToPrint = 'voucher';
                         this.distributeImpressions(null)
-                      } else if (this.kitchenArticlesToPrint.length > 0) {
-                        this.typeOfOperationToPrint = 'kitchen';
-                        this.distributeImpressions(null)
                       } else {
                         if(this.isCharge){
                           this.openModal('charge')
@@ -2644,9 +2641,6 @@ export class AddSaleOrderComponent {
                   if(this.voucherArticlesToPrint.length > 0) {
                     this.typeOfOperationToPrint = 'voucher';
                     this.distributeImpressions(null)
-                  } else if (this.kitchenArticlesToPrint.length > 0) {
-                    this.typeOfOperationToPrint = 'kitchen';
-                    this.distributeImpressions(null)
                   } else {
                     if(this.isCharge){
                       this.openModal('charge')
@@ -2658,9 +2652,6 @@ export class AddSaleOrderComponent {
               } else {
                 if(this.voucherArticlesToPrint.length > 0) {
                   this.typeOfOperationToPrint = 'voucher';
-                  this.distributeImpressions(null)
-                } else if (this.kitchenArticlesToPrint.length > 0) {
-                  this.typeOfOperationToPrint = 'kitchen';
                   this.distributeImpressions(null)
                 } else {
                   if(this.isCharge){
