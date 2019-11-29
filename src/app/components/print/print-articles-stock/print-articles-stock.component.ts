@@ -72,11 +72,11 @@ export class PrintArticlesStockComponent implements OnInit {
     let match = `{`;
 
     if(this.branch ) {
-      match += `"branchDestination.number": { "$regex": "${this.branch}", "$options": "i" }, `
+      match += `"branch.number": { "$regex": "${this.branch}", "$options": "i" }, `
 
     }
     if(this.deposit ) {
-      match += `"depositDestination.name": { "$regex": "${this.deposit}", "$options": "i" }, `
+      match += `"deposit.name": { "$regex": "${this.deposit}", "$options": "i" }, `
 
     }
     if(this.make ) {
@@ -113,8 +113,8 @@ export class PrintArticlesStockComponent implements OnInit {
       "article.make.description" : 1,
       "article.category.description" : 1,
       "article.operationType" : 1,
-      "branchDestination.number" : 1,
-      "depositDestination.name" : 1,
+      "branch.number" : { toString : "$branch.number"},
+      "deposit.name" : 1,
       "operationType" : 1,
     }
 
