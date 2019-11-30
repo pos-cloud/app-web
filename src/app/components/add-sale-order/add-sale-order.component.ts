@@ -622,8 +622,7 @@ export class AddSaleOrderComponent {
         let movementOfArticle: MovementOfArticle;
 
         if(!itemData.article.isWeigth || this.transaction.type.stockMovement == StockMovement.Inventory) {
-          if((this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*') ||
-          this.transaction.type.stockMovement == StockMovement.Inventory) {
+          if(this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*') {
             if(this.lastMovementOfArticle) {
               let query = `where="_id":"${this.lastMovementOfArticle._id}"`;
               await this.getMovementsOfArticles(query).then(
@@ -634,6 +633,15 @@ export class AddSaleOrderComponent {
                 }
               );
             }
+          } else if(this.transaction.type.stockMovement == StockMovement.Inventory) {
+            let query = `where="transaction":"${this.transactionId}","operationType":{"$ne":"D"},"article":"${itemData.article._id}"`;
+            await this.getMovementsOfArticles(query).then(
+              movementsOfArticles => {
+                if(movementsOfArticles && movementsOfArticles.length > 0) {
+                  movementOfArticle = movementsOfArticles[0];
+                }
+              }
+            );
           }
         }
         if (!movementOfArticle) {
