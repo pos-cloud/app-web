@@ -31,6 +31,8 @@ import { PrintLabelComponent } from '../print/print-label/print-label.component'
 import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
 import { CurrencyPipe } from '@angular/common';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
+import { UserService } from 'app/services/user.service';
 
 @Component({
   selector: 'app-list-articles',
@@ -86,6 +88,7 @@ export class ListArticlesComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     private _printerService: PrinterService,
+    private _userService : UserService,
     private _authService: AuthService,
     private _taxService: TaxService,
     private _configService: ConfigService,
@@ -416,31 +419,63 @@ export class ListArticlesComponent implements OnInit {
         break;
       case 'print-label':
 
-        await this.getPrinters().then(
-          printers => {
-            let labelPrinter: Printer;
-            if (printers && printers.length > 0) {
-              for (let printer of printers) {
-                if (printer.printIn === PrinterPrintIn.Label) {
-                  labelPrinter = printer;
-                }
-              }
-            }
-
-            if(labelPrinter) {
-              modalRef = this._modalService.open(PrintLabelComponent);
-              if(article) {
-                modalRef.componentInstance.article = article;
+        let identity: User = JSON.parse(sessionStorage.getItem('user'));
+        let printer : Printer;
+        let user;
+        if(identity) {
+          this._userService.getUser(identity._id).subscribe(
+            result =>{
+              if(result && result.user) {
+                user = result.user;
               } else {
-                modalRef.componentInstance.articles = this.articles;
+                this.showMessage("Debe volver a iniciar session", "danger", false);
               }
-              modalRef.componentInstance.typePrint = 'label';
-              modalRef.componentInstance.printer = labelPrinter;
-            } else {
-              this.showMessage('Debe definir un modelo de impresora como etiqueta en el menu Configuración->Impresoras', "info", true);
+            },
+            error =>{
+              this.showMessage(error._body, "danger", false);
+            }
+          )
+        }
+
+        if(user && user.printers && user.printers.length > 0) {
+          for (const element of user.printers) {
+            if(element && element.printer && element.printer.printIn === PrinterPrintIn.Label ) {
+              printer = element.printer;
             }
           }
-        );
+        } else {
+          await this.getPrinters().then(
+            printers => {
+              if (printers && printers.length > 0) {
+                for (let printerAux of printers) {
+                  if (printerAux.printIn === PrinterPrintIn.Label) {
+                    printer = printerAux;
+                  }
+                }
+              }
+          });
+        }
+
+        if(printer){
+          if(printer.fields && printer.fields.length > 0){
+            modalRef = this._modalService.open(PrintTransactionTypeComponent)
+            modalRef.componentInstance.articleId = article._id;
+            modalRef.componentInstance.printer = printer;
+          } else {
+            modalRef = this._modalService.open(PrintLabelComponent);
+            if(article) {
+              modalRef.componentInstance.article = article;
+            } else {
+              modalRef.componentInstance.articles = this.articles;
+            }
+            modalRef.componentInstance.typePrint = 'label';
+            modalRef.componentInstance.printer = printer;
+          }
+        } else {
+          this.showMessage("Debe crear una impresora de tipo etiqueta",'danger', false);
+        }
+
+         
         break;
       case 'print-list':
         modalRef = this._modalService.open(PrintPriceListComponent);

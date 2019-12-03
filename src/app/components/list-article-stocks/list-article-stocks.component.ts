@@ -14,6 +14,9 @@ import { PrinterService } from '../../services/printer.service';
 import { PrinterPrintIn, Printer } from '../../models/printer';
 import { PrintArticlesStockComponent } from '../print/print-articles-stock/print-articles-stock.component';
 import { PrintLabelComponent } from '../print/print-label/print-label.component';
+import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
+import { User } from 'app/models/user';
+import { UserService } from 'app/services/user.service';
 
 @Component({
   selector: 'app-list-article-stocks',
@@ -63,6 +66,7 @@ export class ListArticleStocksComponent implements OnInit {
     private _articleStockService: ArticleStockService,
     private _router: Router,
     public _modalService: NgbModal,
+    public _userService: UserService,
     public alertConfig: NgbAlertConfig,
     private _printerService: PrinterService
   ) {
@@ -76,36 +80,14 @@ export class ListArticleStocksComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.getPrinters();
     this.getArticleStocksV2();
-  }
-
-  public getPrinters(): void {
-
-    this.loading = true;
-
-    this._printerService.getPrinters().subscribe(
-      result => {
-        if (!result.printers) {
-          this.printers = new Array();
-        } else {
-          this.hideMessage();
-          this.printers = result.printers;
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
   }
 
   public refresh(): void {
     this.getArticleStocksV2();
   }
 
-  public openModal(op: string, articleStock: ArticleStock): void {
+  async openModal(op: string, articleStock: ArticleStock) {
     let modalRef;
     switch (op) {
       case 'view':
@@ -131,7 +113,7 @@ export class ListArticleStocksComponent implements OnInit {
         });
         break;
       case 'print-label':
-        modalRef = this._modalService.open(PrintLabelComponent);
+        /*modalRef = this._modalService.open(PrintLabelComponent);
         modalRef.componentInstance.articleStock = articleStock;
         modalRef.componentInstance.typePrint = 'label';
         if (this.printers && this.printers.length > 0) {
@@ -140,6 +122,60 @@ export class ListArticleStocksComponent implements OnInit {
               modalRef.componentInstance.printer = printer;
             }
           }
+        }*/
+        let identity: User = JSON.parse(sessionStorage.getItem('user'));
+        let printer : Printer;
+        let user;
+        if(identity) {
+          this._userService.getUser(identity._id).subscribe(
+            result =>{
+              if(result && result.user) {
+                user = result.user;
+              } else {
+                this.showMessage("Debe volver a iniciar session", "danger", false);
+              }
+            },
+            error =>{
+              this.showMessage(error._body, "danger", false);
+            }
+          )
+        }
+
+        if(user && user.printers && user.printers.length > 0) {
+          for (const element of user.printers) {
+            if(element && element.printer && element.printer.printIn === PrinterPrintIn.Label ) {
+              printer = element.printer;
+            }
+          }
+        } else {
+          await this.getPrinters().then(
+            printers => {
+              if (printers && printers.length > 0) {
+                for (let printerAux of printers) {
+                  if (printerAux.printIn === PrinterPrintIn.Label) {
+                    printer = printerAux;
+                  }
+                }
+              }
+          });
+        }
+
+        if(printer){
+          if(printer.fields && printer.fields.length > 0){
+            modalRef = this._modalService.open(PrintTransactionTypeComponent)
+            modalRef.componentInstance.articleId = articleStock.article._id;
+            modalRef.componentInstance.printer = printer;
+            modalRef.componentInstance.quantity = articleStock.realStock;
+          } else {
+            modalRef = this._modalService.open(PrintLabelComponent);
+            if(articleStock.article) {
+              modalRef.componentInstance.article = articleStock.article;
+            }
+            modalRef.componentInstance.typePrint = 'label';
+            modalRef.componentInstance.printer = printer;
+          }
+        } else {
+          this.showMessage("Debe crear una impresora de tipo etiqueta",'danger', false);
         }
         break;
       case 'print-inventario':
@@ -263,6 +299,31 @@ export class ListArticleStocksComponent implements OnInit {
       this.orderTerm[0] = term;
     }
     this.getArticleStocksV2();
+  }
+
+  public getPrinters(): Promise<Printer[]> {
+
+    return new Promise<Printer[]>( async (resolve, reject) => {
+
+      this.loading = true;
+
+      this._printerService.getPrinters().subscribe(
+        result => {
+          this.loading = false;
+          if (!result.printers) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
+          } else {
+            resolve(result.printers);
+          }
+        },
+        error => {
+          this.loading = false;
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

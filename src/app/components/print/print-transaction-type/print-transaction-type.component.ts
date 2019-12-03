@@ -19,6 +19,11 @@ import { Company } from 'app/models/company';
 import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
 import { Transaction } from 'app/models/transaction';
 import { PrintService } from 'app/services/print.service';
+import { runInThisContext } from 'vm';
+import { ArticleService } from 'app/services/article.service';
+import { async } from 'q';
+import { Article } from 'app/models/article';
+import { resolve } from 'url';
 
 
 @Component({
@@ -29,6 +34,8 @@ import { PrintService } from 'app/services/print.service';
 export class PrintTransactionTypeComponent implements OnInit {
 
   @Input() transactionId : string;
+  @Input() articleId : string;
+  @Input() quantity : number;
   @Input() origin : string;
   @Input() printer : Printer;
   @Input() source : string;
@@ -37,6 +44,7 @@ export class PrintTransactionTypeComponent implements OnInit {
   public movementOfCash : MovementOfCash[];
   public movementOfArticle : MovementOfArticle[];
   public movementOfCancellation : MovementOfCancellation [];
+  public article : Article;
   public company : Company;
   public config : Config;
   public doc;
@@ -48,6 +56,7 @@ export class PrintTransactionTypeComponent implements OnInit {
     public _movementOfCashService : MovementOfCashService,
     public _movementOfArticleService : MovementOfArticleService,
     public _movementOfCancellationService : MovementOfCancellationService,
+    public _articeService : ArticleService,
     public _printService : PrintService,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,   
@@ -67,6 +76,10 @@ export class PrintTransactionTypeComponent implements OnInit {
 
     if(this.transactionId) {
       this.getTransaction();
+    }
+
+    if(this.articleId){
+      this.getArticle();
     }
 
     if(this.origin === 'view') {
@@ -96,6 +109,20 @@ export class PrintTransactionTypeComponent implements OnInit {
         }
       );
     });
+  }
+
+  async getArticle(){
+    this._articeService.getArticle(this.articleId).subscribe(
+      async result =>{
+        if(result && result.article){
+          this.article = result.article
+          this.buildPrint();
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+      }
+    )
   }
 
   async getTransaction() {
@@ -272,6 +299,7 @@ export class PrintTransactionTypeComponent implements OnInit {
 
   async buildPrint() {
 
+
     let pageWidth = this.printer.pageWidth * 100 / 35.27751646284102;
     let pageHigh = this.printer.pageHigh * 100 / 35.27751646284102;
 
@@ -281,7 +309,14 @@ export class PrintTransactionTypeComponent implements OnInit {
       format: [pageWidth,pageHigh]
     })
 
-    await this.buildHeader();
+    if(this.quantity){
+      for (let index = 0; index < this.quantity; index++) {
+        await this.buildHeader();
+        this.doc.addPage();
+      }
+    } else {
+      await this.buildHeader();
+    }
 
     await this.buildBody();
 
@@ -289,96 +324,6 @@ export class PrintTransactionTypeComponent implements OnInit {
 
     this.finishImpression();
 
-  }
-
-  async buildFooter() : Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      for (const field of this.printer.fields) {
-        if(field.position === PositionPrint.Footer) {
-          switch (field.type) {
-            case 'label':
-              if(field.font !== 'default') {
-                this.doc.setFont(field.font)
-              }   
-              this.doc.setFontType(field.fontType)
-              this.doc.setFontSize(field.fontSize)
-              this.doc.text(field.positionStartX,field.positionStartY,field.value)
-              break;
-            case 'line':
-              this.doc.setLineWidth(field.fontSize)
-              this.doc.line(field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY)
-              break;
-            case 'data':
-              if(field.font !== 'default') {
-                this.doc.setFont(field.font)
-              }   
-              this.doc.setFontType(field.fontType)
-              this.doc.setFontSize(field.fontSize)
-              try {
-                this.doc.text(field.positionStartX,field.positionStartY,eval("this."+field.value).toString())
-              } catch (e) {
-                this.doc.text(field.positionStartX,field.positionStartY,field.value)
-              }
-              break;
-            case 'dataSum':
-              if(field.font !== 'default') {
-                this.doc.setFont(field.font)
-              }   
-              this.doc.setFontType(field.fontType)
-              this.doc.setFontSize(field.fontSize)
-              
-              if(field.value.split('.')[0] === "movementOfArticle" && this.movementOfArticle) {
-                this.movementOfArticle.forEach(async movementOfArticle => {
-                  let sum = 0;
-                  if(typeof eval("this."+field.value) === "number") {
-                    sum = sum + eval("this"+field.value);
-                  }
-                  try {
-                    this.doc.text(field.positionStartX,field.positionStartY,sum.toString())
-                  } catch (e) {
-                    this.doc.text(field.positionStartX,field.positionStartY,field.value)
-                  }
-                });
-              } else if(field.value.split('.')[0] === "movementOfCash" && this.movementOfCash) {
-                this.movementOfCash.forEach(async movementOfCash => {
-                  let sum = 0;
-                  if(typeof eval("this."+field.value) === "number") {
-                    sum = sum + eval("this"+field.value);
-                  }
-                  try {
-                    this.doc.text(field.positionStartX,field.positionStartY,sum.toString())
-                  } catch (e) {
-                    this.doc.text(field.positionStartX,field.positionStartY,field.value)
-                  }
-                });
-              } else if(field.value.split('.')[0] === "movementOfCancellation" && this.movementOfCancellation) {
-                this.movementOfCancellation.forEach(async movementOfCancellation => {
-                  let sum = 0;
-                  if(typeof eval("this."+field.value) === "number") {
-                    sum = sum + eval("this"+field.value);
-                  }
-                  try {
-                    this.doc.text(field.positionStartX,field.positionStartY,sum.toString())
-                  } catch (e) {
-                    this.doc.text(field.positionStartX,field.positionStartY,field.value)
-                  }
-                });
-              } else {
-                try {
-                  this.doc.text(field.positionStartX,field.positionStartY,eval(field.value))
-                } catch (error) {
-                  this.doc.text(field.positionStartX,field.positionStartY,'')
-                }
-              }
-              break;
-            default:
-              break;
-          }
-        }
-      }
-      resolve(true)
-    });
-   
   }
 
   async buildHeader() : Promise<boolean> {
@@ -409,10 +354,14 @@ export class PrintTransactionTypeComponent implements OnInit {
               this.doc.setFontType(field.fontType)
               this.doc.setFontSize(field.fontSize)
               try {
-                this.doc.text(field.positionStartX,field.positionStartY,eval("this."+field.value))
+                this.doc.text(field.positionStartX,field.positionStartY,eval("this."+field.value).toString())
               } catch (e) {
                 this.doc.text(field.positionStartX,field.positionStartY,field.value)
               }
+              break;
+            case 'barcode':
+                await this.getBarcode64('code128?value=' + eval("this."+field.value))
+                this.doc.addImage(this.imageURL, 'png', field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY);  
               break;
             default:
               break;
@@ -508,12 +457,99 @@ export class PrintTransactionTypeComponent implements OnInit {
     })
   }
 
-  public finishImpression(): void {
+  async buildFooter() : Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      for (const field of this.printer.fields) {
+        if(field.position === PositionPrint.Footer) {
+          switch (field.type) {
+            case 'label':
+              if(field.font !== 'default') {
+                this.doc.setFont(field.font)
+              }   
+              this.doc.setFontType(field.fontType)
+              this.doc.setFontSize(field.fontSize)
+              this.doc.text(field.positionStartX,field.positionStartY,field.value)
+              break;
+            case 'line':
+              this.doc.setLineWidth(field.fontSize)
+              this.doc.line(field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY)
+              break;
+            case 'data':
+              if(field.font !== 'default') {
+                this.doc.setFont(field.font)
+              }   
+              this.doc.setFontType(field.fontType)
+              this.doc.setFontSize(field.fontSize)
+              try {
+                this.doc.text(field.positionStartX,field.positionStartY,eval("this."+field.value).toString())
+              } catch (e) {
+                this.doc.text(field.positionStartX,field.positionStartY,field.value)
+              }
+              break;
+            case 'dataSum':
+              if(field.font !== 'default') {
+                this.doc.setFont(field.font)
+              }   
+              this.doc.setFontType(field.fontType)
+              this.doc.setFontSize(field.fontSize)
+              
+              if(field.value.split('.')[0] === "movementOfArticle" && this.movementOfArticle) {
+                this.movementOfArticle.forEach(async movementOfArticle => {
+                  let sum = 0;
+                  if(typeof eval("this."+field.value) === "number") {
+                    sum = sum + eval("this"+field.value);
+                  }
+                  try {
+                    this.doc.text(field.positionStartX,field.positionStartY,sum.toString())
+                  } catch (e) {
+                    this.doc.text(field.positionStartX,field.positionStartY,field.value)
+                  }
+                });
+              } else if(field.value.split('.')[0] === "movementOfCash" && this.movementOfCash) {
+                this.movementOfCash.forEach(async movementOfCash => {
+                  let sum = 0;
+                  if(typeof eval("this."+field.value) === "number") {
+                    sum = sum + eval("this"+field.value);
+                  }
+                  try {
+                    this.doc.text(field.positionStartX,field.positionStartY,sum.toString())
+                  } catch (e) {
+                    this.doc.text(field.positionStartX,field.positionStartY,field.value)
+                  }
+                });
+              } else if(field.value.split('.')[0] === "movementOfCancellation" && this.movementOfCancellation) {
+                this.movementOfCancellation.forEach(async movementOfCancellation => {
+                  let sum = 0;
+                  if(typeof eval("this."+field.value) === "number") {
+                    sum = sum + eval("this"+field.value);
+                  }
+                  try {
+                    this.doc.text(field.positionStartX,field.positionStartY,sum.toString())
+                  } catch (e) {
+                    this.doc.text(field.positionStartX,field.positionStartY,field.value)
+                  }
+                });
+              } else {
+                try {
+                  this.doc.text(field.positionStartX,field.positionStartY,eval(field.value))
+                } catch (error) {
+                  this.doc.text(field.positionStartX,field.positionStartY,'')
+                }
+              }
+              break;
+            default:
+              break;
+          }
+        }
+      }
+      resolve(true)
+    });
+   
+  }
 
-    if(this.transaction) {
-      this.doc.autoPrint();
-    }
+  public finishImpression(): void {
     
+    this.doc.autoPrint();
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
 
 
@@ -552,6 +588,24 @@ export class PrintTransactionTypeComponent implements OnInit {
     });
     
   }
+
+  async getBarcode64(barcode) {
+
+    return new Promise ((resolve, reject) => {
+      this._printService.getBarcode(barcode).subscribe(
+        result => {
+          if(!result.bc64){
+            resolve(false)
+          } else {
+            let barcode64 = result.bc64;
+            this.imageURL = 'data:image/png;base64,' + barcode64;
+            resolve(true)
+          }
+        }
+      );
+    });
+  }
+
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
