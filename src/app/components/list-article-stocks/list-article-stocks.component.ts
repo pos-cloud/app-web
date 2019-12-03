@@ -168,9 +168,7 @@ export class ListArticleStocksComponent implements OnInit {
             modalRef.componentInstance.quantity = articleStock.realStock;
           } else {
             modalRef = this._modalService.open(PrintLabelComponent);
-            if(articleStock.article) {
-              modalRef.componentInstance.article = articleStock.article;
-            }
+            modalRef.componentInstance.articleStock = articleStock;
             modalRef.componentInstance.typePrint = 'label';
             modalRef.componentInstance.printer = printer;
           }
