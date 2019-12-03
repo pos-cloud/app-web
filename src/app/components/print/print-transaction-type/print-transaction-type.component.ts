@@ -19,11 +19,8 @@ import { Company } from 'app/models/company';
 import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
 import { Transaction } from 'app/models/transaction';
 import { PrintService } from 'app/services/print.service';
-import { runInThisContext } from 'vm';
 import { ArticleService } from 'app/services/article.service';
-import { async } from 'q';
 import { Article } from 'app/models/article';
-import { resolve } from 'url';
 
 
 @Component({
