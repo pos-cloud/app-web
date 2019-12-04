@@ -103,21 +103,17 @@
       <span>Listado de Listas de Precio</span>
       <div class="pull-right">
         <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
-        <button class="btn" (click)="selectPriceList(null)" ><i class="fa fa-plus"></i><span>Cerrar</span></button>
+        <button class="btn" (click)="selectPriceList(null)" ><i class="fa fa-close"></i><span>Cerrar</span></button>
       </div>
     </div>
     <div class="card-block table-responsive">
       <table class="table table-striped">
         <thead>
           <tr>
-            <th>
-              <i class="fa fa-bars"></i>
-            </th>
             <th (click)="orderBy('name')">Nombre</th>
             <th (click)="orderBy('percentage')">Porcentaje</th>
           </tr>
           <tr class="filters">
-            <th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['name']" (input)="getTransports()" placeholder="Nombre..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['percentage']" (input)="getTransports()" placeholder="Porcentaje..."></th>
           </tr>
