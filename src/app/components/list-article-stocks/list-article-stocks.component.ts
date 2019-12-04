@@ -186,6 +186,9 @@ export class ListArticleStocksComponent implements OnInit {
             modalRef = this._modalService.open(PrintTransactionTypeComponent)
             modalRef.componentInstance.articleId = articleStock.article._id;
             modalRef.componentInstance.printer = printer;
+            if(this.priceListId){
+              modalRef.componentInstance.priceListId = this.priceListId;
+            }
             modalRef.componentInstance.quantity = articleStock.realStock;
           } else {
             modalRef = this._modalService.open(PrintLabelComponent);
@@ -197,15 +200,14 @@ export class ListArticleStocksComponent implements OnInit {
           this.showMessage("Debe crear una impresora de tipo etiqueta",'danger', false);
         }
         break;
-      case 'price-lists' :
-        console.log("entro")
+      case 'price-lists':
         modalRef = this._modalService.open(ListPriceListsComponent, { size: 'lg', backdrop: 'static' });
         modalRef.result.then((result) => {
           if(result && result.priceList){
             this.priceListId = result.priceList
             this.openModal('print-label',articleStock)
           } else {
-            this.getArticleStocksV2();
+            this.openModal('print-label',articleStock)
           }
         }, (reason) => {
           this.getArticleStocksV2();

@@ -468,7 +468,9 @@ export class ListArticlesComponent implements OnInit {
             modalRef = this._modalService.open(PrintTransactionTypeComponent)
             modalRef.componentInstance.articleId = article._id;
             modalRef.componentInstance.printer = printer;
-            modalRef.componentInstance.priceListId = this.priceListId;
+            if(this.priceListId){
+              modalRef.componentInstance.priceListId = this.priceListId;
+            }
           } else {
             modalRef = this._modalService.open(PrintLabelComponent);
             if(article) {
@@ -499,7 +501,7 @@ export class ListArticlesComponent implements OnInit {
             this.priceListId = result.priceList
             this.openModal('print-label',article)
           } else {
-            this.getItems();
+            this.openModal('print-label',article)
           }
         }, (reason) => {
           this.getItems();

@@ -162,7 +162,11 @@ export class ListPriceListsComponent implements OnInit {
   }
 
   public selectPriceList(priceList : PriceList) : void{
-    this.activeModal.close({ priceList: priceList._id });
+    if(priceList != null){
+      this.activeModal.close({ priceList: priceList._id });
+    } else {
+      this.activeModal.close({})
+    }
   }
 
   public openModal (op: string, priceList?: PriceList) : void {
