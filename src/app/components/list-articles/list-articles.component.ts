@@ -33,6 +33,9 @@ import { CurrencyPipe } from '@angular/common';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { UserService } from 'app/services/user.service';
+import { PriceList } from 'app/models/price-list';
+import { PriceListService } from 'app/services/price-list.service';
+import { ListPriceListsComponent } from '../list-price-lists/list-price-lists.component';
 
 @Component({
   selector: 'app-list-articles',
@@ -47,6 +50,8 @@ export class ListArticlesComponent implements OnInit {
   public identity: User;
   public title: string;
   public articles: Article[] = new Array();
+  public priceLists : PriceList[] = new Array();
+  public priceListId : string;
   public alertMessage: string = '';
   public userType: string = '';
   public propertyTerm: string;
@@ -88,6 +93,7 @@ export class ListArticlesComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     private _printerService: PrinterService,
+    private _priceList : PriceListService,
     private _userService : UserService,
     private _authService: AuthService,
     private _taxService: TaxService,
@@ -106,6 +112,7 @@ export class ListArticlesComponent implements OnInit {
 
   async ngOnInit() {
 
+    this.getPriceList()
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.listTitle = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
@@ -461,6 +468,7 @@ export class ListArticlesComponent implements OnInit {
             modalRef = this._modalService.open(PrintTransactionTypeComponent)
             modalRef.componentInstance.articleId = article._id;
             modalRef.componentInstance.printer = printer;
+            modalRef.componentInstance.priceListId = this.priceListId;
           } else {
             modalRef = this._modalService.open(PrintLabelComponent);
             if(article) {
@@ -474,13 +482,25 @@ export class ListArticlesComponent implements OnInit {
         } else {
           this.showMessage("Debe crear una impresora de tipo etiqueta",'danger', false);
         }
-
          
         break;
       case 'print-list':
         modalRef = this._modalService.open(PrintPriceListComponent);
         modalRef.result.then((result) => {
           this.getItems();
+        }, (reason) => {
+          this.getItems();
+        });
+        break;
+      case 'price-lists' :
+        modalRef = this._modalService.open(ListPriceListsComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.result.then((result) => {
+          if(result && result.priceList){
+            this.priceListId = result.priceList
+            this.openModal('print-label',article)
+          } else {
+            this.getItems();
+          }
         }, (reason) => {
           this.getItems();
         });
@@ -573,6 +593,21 @@ export class ListArticlesComponent implements OnInit {
         }
       );
     });
+  }
+
+  public getPriceList() : void {
+    this._priceList.getPriceLists().subscribe(
+      result =>{
+        if(result && result.priceLists){
+          this.priceLists = result.priceLists;
+        } else {
+          this.priceLists = new Array();
+        }
+      },
+      error =>{
+        this.showMessage(error._body, 'danger', false);
+      }
+    )
   }
 
   public padNumber(n, length) {

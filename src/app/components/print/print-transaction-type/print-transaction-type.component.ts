@@ -21,6 +21,10 @@ import { Transaction } from 'app/models/transaction';
 import { PrintService } from 'app/services/print.service';
 import { ArticleService } from 'app/services/article.service';
 import { Article } from 'app/models/article';
+import { PriceListService } from 'app/services/price-list.service';
+import { resource } from 'selenium-webdriver/http';
+import { PriceList } from 'app/models/price-list';
+import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
 
 
 @Component({
@@ -32,6 +36,7 @@ export class PrintTransactionTypeComponent implements OnInit {
 
   @Input() transactionId : string;
   @Input() articleId : string;
+  @Input() priceListId : string;
   @Input() quantity : number;
   @Input() origin : string;
   @Input() printer : Printer;
@@ -47,12 +52,14 @@ export class PrintTransactionTypeComponent implements OnInit {
   public doc;
   public pdfURL;
   public alertMessage: string;
+  public roundNumber = new RoundNumberPipe();
 
   constructor(
     public _transactionService : TransactionService,
     public _movementOfCashService : MovementOfCashService,
     public _movementOfArticleService : MovementOfArticleService,
     public _movementOfCancellationService : MovementOfCancellationService,
+    public _priceListService : PriceListService,
     public _articeService : ArticleService,
     public _printService : PrintService,
     public activeModal: NgbActiveModal,
@@ -113,7 +120,64 @@ export class PrintTransactionTypeComponent implements OnInit {
       async result =>{
         if(result && result.article){
           this.article = result.article
-          this.buildPrint();
+          if(this.priceListId){
+            this.getPriceList();
+          } else {
+            this.buildPrint();
+          }
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+      }
+    )
+  }
+
+  async getPriceList(){
+    this._priceListService.getPriceList(this.priceListId).subscribe(
+      result =>{
+        if(result && result.priceList){
+          let priceList : PriceList = result.priceList;
+          let increasePrice;
+          if(priceList) {
+            if(priceList.allowSpecialRules) {
+              priceList.rules.forEach(rule => {
+                if(rule) {
+                  if(rule.category && this.article.category && rule.make && this.article.make && rule.category._id === this.article.category._id && rule.make._id === this.article.make._id) {
+                    increasePrice = rule.percentage + priceList.percentage
+                  }
+                  if(rule.make && this.article.make && rule.category == null && rule.make._id === this.article.make._id) {
+                    increasePrice = rule.percentage + priceList.percentage
+                  }
+                  if(rule.category && this.article.category && rule.make == null && rule.category._id === this.article.category._id) {
+                    increasePrice = rule.percentage + priceList.percentage
+                  }
+                }
+              });
+              if(increasePrice === 0){
+                increasePrice = priceList.percentage;
+              }
+            } else {
+              increasePrice = priceList.percentage
+            }
+
+            if(priceList.exceptions && priceList.exceptions.length > 0) {
+              priceList.exceptions.forEach(exception =>{
+                if(exception) {
+                  if(this.article && exception.article && exception.article._id === this.article._id) {
+                    increasePrice = exception.percentage
+                  }
+                }
+              })
+            }
+          }
+
+          if(increasePrice != 0){
+            this.article.salePrice = this.roundNumber.transform(this.article.salePrice +(this.article.salePrice *increasePrice / 100));
+            this.buildPrint()
+          } else {
+            this.buildPrint()
+          }
         }
       },
       error => {

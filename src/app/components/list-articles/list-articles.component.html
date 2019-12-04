@@ -65,7 +65,8 @@
               <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', item)" title="Ver"><i class="fa fa-eye"></i></button>
               <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', item)" title="Editar"><i class="fa fa-pencil"></i></button>
               <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', item)" title="Eliminar" *ngIf="item && item.type && item.type.toString() !== 'Variante'" ><i class="fa fa-trash-o"></i></button>
-              <button type="button" class="btn btn-light btn-sm" (click)= "openModal('print-label', item)" title="Imprimir Etiqueta"><i class="fa fa-barcode"></i></button>
+              <button *ngIf="priceLists && priceLists.length > 0" type="button" class="btn btn-light btn-sm" (click)= "openModal('price-lists', item)" title="Imprimir Etiqueta"><i class="fa fa-barcode"></i></button>
+              <button *ngIf="priceLists && priceLists.length == 0" type="button" class="btn btn-light btn-sm" (click)= "openModal('print-label', item)" title="Imprimir Etiqueta"><i class="fa fa-barcode"></i></button>
               <button type="button" class="btn btn-light btn-sm" (click)= "openModal('copy', item)" title="Copiar"><i class="fa fa-copy"></i></button>
             </td>
             <ng-container *ngFor="let column of columns">

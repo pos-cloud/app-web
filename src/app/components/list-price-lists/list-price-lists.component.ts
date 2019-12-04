@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { PriceListService } from '../../services/price-list.service'
 import { PriceList } from '../../models/price-list'
 import { PriceListComponent } from '../price-list/price-list.component'
-import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
 
 
@@ -43,6 +43,7 @@ export class ListPriceListsComponent implements OnInit {
   constructor(
     public alertConfig: NgbAlertConfig,
     public _priceListService: PriceListService,
+    public activeModal: NgbActiveModal,
     public _router: Router,
     public _modalService: NgbModal,
   ) {
@@ -55,7 +56,7 @@ export class ListPriceListsComponent implements OnInit {
   ngOnInit() {
     this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
-    this.userType = pathLocation[1];
+    this.userType = pathLocation[2];
     this.getPriceLists()
   }
 
@@ -158,6 +159,10 @@ export class ListPriceListsComponent implements OnInit {
         this.orderTerm[0] = term;
       }
       this.getPriceLists();
+  }
+
+  public selectPriceList(priceList : PriceList) : void{
+    this.activeModal.close({ priceList: priceList._id });
   }
 
   public openModal (op: string, priceList?: PriceList) : void {
