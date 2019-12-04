@@ -6,8 +6,6 @@ import { ArticleStock } from 'app/models/article-stock';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Printer } from 'app/models/printer';
 import { Article } from 'app/models/article';
-import { ConfigService } from 'app/services/config.service';
-import { Config } from 'app/app.config';
 import { PrintService } from 'app/services/print.service';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
@@ -21,7 +19,6 @@ export class PrintLabelComponent implements OnInit {
   @Input() articleStock : ArticleStock;
   @Input() printer: Printer;
   @Input() article: Article;
-  public config: Config;
   public barcode64: string;
   public loading: boolean;
   public alertMessage: string = '';
@@ -30,7 +27,6 @@ export class PrintLabelComponent implements OnInit {
   
   constructor(
     private domSanitizer: DomSanitizer,
-    public _configService: ConfigService,
     public _printService : PrintService,
     public alertConfig: NgbAlertConfig,
   ) {}
@@ -44,18 +40,12 @@ export class PrintLabelComponent implements OnInit {
 
     this.doc = new jsPDF('l', units, [pageWidth, pageHigh]);
 
-    await this._configService.getConfig.subscribe(
-      config => {
-        this.config = config;
-      }
-    );
-
     let code;
-    if (this.articleStock && this.articleStock.article[this.config.article.printLabel.value]) {
-      code = this.articleStock.article[this.config.article.printLabel.value];
+    if (this.articleStock && this.articleStock.article.code) {
+      code = this.articleStock.article.code;
       this.getBarcode64('code128?value=' + code);
-    } else if (this.article && this.article[this.config.article.printLabel.value]) {
-      code = this.article[this.config.article.printLabel.value];
+    } else if (this.article && this.article.code) {
+      code = this.article.code;
       this.getBarcode64('code128?value=' + code);
     } else {
       this.showMessage('Debe completar el código del producto a imprimir.', 'info', true);
