@@ -9,7 +9,6 @@ import { ArticleStockService } from './../../services/article-stock.service';
 import { AddArticleStockComponent } from './../../components/add-article-stock/add-article-stock.component';
 import { UpdateArticleStockComponent } from './../../components/update-article-stock/update-article-stock.component';
 
-import { PrintComponent } from 'app/components/print/print/print.component';
 import { PrinterService } from '../../services/printer.service';
 import { PrinterPrintIn, Printer } from '../../models/printer';
 import { PrintArticlesStockComponent } from '../print/print-articles-stock/print-articles-stock.component';
@@ -17,6 +16,9 @@ import { PrintLabelComponent } from '../print/print-label/print-label.component'
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { User } from 'app/models/user';
 import { UserService } from 'app/services/user.service';
+import { PriceListService } from 'app/services/price-list.service';
+import { PriceList } from 'app/models/price-list';
+import { ListPriceListsComponent } from '../list-price-lists/list-price-lists.component';
 
 @Component({
   selector: 'app-list-article-stocks',
@@ -29,6 +31,8 @@ import { UserService } from 'app/services/user.service';
 export class ListArticleStocksComponent implements OnInit {
 
   public articleStocks: ArticleStock[] = new Array();
+  public priceLists : PriceList[] = new Array();
+  public priceListId : string;
   public alertMessage: string = '';
   public userType: string;
   public orderTerm: string[] = ['-realStock'];
@@ -64,6 +68,7 @@ export class ListArticleStocksComponent implements OnInit {
 
   constructor(
     private _articleStockService: ArticleStockService,
+    private _priceList : PriceListService,
     private _router: Router,
     public _modalService: NgbModal,
     public _userService: UserService,
@@ -78,6 +83,7 @@ export class ListArticleStocksComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.getPriceList()
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.getArticleStocksV2();
@@ -85,6 +91,21 @@ export class ListArticleStocksComponent implements OnInit {
 
   public refresh(): void {
     this.getArticleStocksV2();
+  }
+
+  public getPriceList() : void {
+    this._priceList.getPriceLists().subscribe(
+      result =>{
+        if(result && result.priceLists){
+          this.priceLists = result.priceLists;
+        } else {
+          this.priceLists = new Array();
+        }
+      },
+      error =>{
+        this.showMessage(error._body, 'danger', false);
+      }
+    )
   }
 
   async openModal(op: string, articleStock: ArticleStock) {
@@ -175,6 +196,20 @@ export class ListArticleStocksComponent implements OnInit {
         } else {
           this.showMessage("Debe crear una impresora de tipo etiqueta",'danger', false);
         }
+        break;
+      case 'price-lists' :
+        console.log("entro")
+        modalRef = this._modalService.open(ListPriceListsComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.result.then((result) => {
+          if(result && result.priceList){
+            this.priceListId = result.priceList
+            this.openModal('print-label',articleStock)
+          } else {
+            this.getArticleStocksV2();
+          }
+        }, (reason) => {
+          this.getArticleStocksV2();
+        });
         break;
       case 'print-inventario':
         modalRef = this._modalService.open(PrintArticlesStockComponent);

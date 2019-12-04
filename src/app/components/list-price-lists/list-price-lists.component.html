@@ -92,7 +92,7 @@
   </div>
 </section>
 
-<section class="container-fluid" *ngIf="userType == 'productos' ">
+<section class="container-fluid" *ngIf="userType == 'productos' || userType == 'stock-de-productos' ">
   <div class="center-content" *ngIf="alertMessage !== '' && totalItems > 0">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
