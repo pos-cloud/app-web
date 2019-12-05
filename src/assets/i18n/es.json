@@ -3,7 +3,7 @@
         "category": {
             "description": "Categoría"
         },
-        "code": "Código de Barras",
+        "code": "Código",
         "costPrice": "Precio de Costo",
         "description": "Descripción",
         "make": {
@@ -28,12 +28,21 @@
         "taxes[2]" : {
             "percentage" : "Porcentaje Imp",
             "amount" : "Monto Imp"
-        }
+        },
+        "barcode": "Código de Barras",
+        "operationType": "Auditoría"
+    },
+    "branch" : {
+        "name" : "Sucursal"
+    },
+    "deposit" : {
+        "name" : "Deposito"
     },
     "barcode": "Código de Barras",
     "category": {
         "description": "Categoría"
     },
+    "realStock" : "Stock",
     "code": "Código",
     "count": "Cantidad",
     "description": "Descripción",

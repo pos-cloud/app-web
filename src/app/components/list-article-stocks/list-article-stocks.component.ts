@@ -1,9 +1,9 @@
-import { Component, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
-import { ArticleStock } from './../../models/article-stock';
+import { ArticleStock, attributes } from './../../models/article-stock';
 import { ArticleStockService } from './../../services/article-stock.service';
 
 import { AddArticleStockComponent } from './../../components/add-article-stock/add-article-stock.component';
@@ -19,6 +19,10 @@ import { UserService } from 'app/services/user.service';
 import { PriceListService } from 'app/services/price-list.service';
 import { PriceList } from 'app/models/price-list';
 import { ListPriceListsComponent } from '../list-price-lists/list-price-lists.component';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
+import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-list-article-stocks',
@@ -30,25 +34,41 @@ import { ListPriceListsComponent } from '../list-price-lists/list-price-lists.co
 
 export class ListArticleStocksComponent implements OnInit {
 
+
+  // tabla 
+
+  public listTitle: string;
+  public orderTerm: string[] = ["-realStock"];
+  public totalItems: number = 0;
+  public items: any[] = new Array();
+  public itemsPerPage = 10;
+  public currentPage: number = 1;
+  public sort = {
+    "realStock": -1
+  };
+  public columns = attributes;
+  @ViewChild(ExportExcelComponent, {static: false}) exportExcelComponent: ExportExcelComponent;
+  private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
+  private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
+
+
   public articleStocks: ArticleStock[] = new Array();
   public priceLists : PriceList[] = new Array();
   public priceListId : string;
   public alertMessage: string = '';
   public userType: string;
-  public orderTerm: string[] = ['-realStock'];
+
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   @Output() eventAddItem: EventEmitter<ArticleStock> = new EventEmitter<ArticleStock>();
-  public itemsPerPage = 10;
-  public totalItems = 0;
+
   public printers: Printer[];
 
   public totalRealStock = 0;
   public totalCost = 0;
   public totalTotal = 0;
 
-  public currentPage: number = 0;
   public displayedColumns = [
     "realStock",
     "minStock",
@@ -86,26 +106,160 @@ export class ListArticleStocksComponent implements OnInit {
     this.getPriceList()
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.getArticleStocksV2();
+    this.getItems();
   }
 
   public refresh(): void {
-    this.getArticleStocksV2();
+    this.getItems();
   }
 
-  public getPriceList() : void {
-    this._priceList.getPriceLists().subscribe(
-      result =>{
-        if(result && result.priceLists){
-          this.priceLists = result.priceLists;
+  public drop(event: CdkDragDrop<string[]>): void {
+    moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
+  }
+
+  public exportItems(): void {
+    this.exportExcelComponent.items = this.items;
+    this.exportExcelComponent.export();
+  }
+
+  public getItems(): void {
+
+    this.loading = true;
+
+    // FILTRAMOS LA CONSULTA
+    let match = `{`;
+      for(let i = 0; i < this.columns.length; i++) {
+        if(this.columns[i].visible || this.columns[i].required) {
+          let value = this.filters[this.columns[i].name];
+          if (value && value != "" && value !== {}) {
+            if(this.columns[i].defaultFilter) {
+              match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
+            } else {
+              match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
+            }
+            if (i < this.columns.length - 1 ) {
+              match += ',';
+            }
+          }
+        }
+      }
+
+    if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
+
+    match += `}`;
+
+    match = JSON.parse(match);
+
+    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+    let project = `{`;
+    let j = 0;
+    for(let i = 0; i < this.columns.length; i++) {
+      if(this.columns[i].visible || this.columns[i].required) {
+        if(j > 0) {
+          project += `,`;
+        }
+        j++;
+        if(this.columns[i].project){
+          project += `"${this.columns[i].name}" : ${this.columns[i].project} `
         } else {
-          this.priceLists = new Array();
+          if(this.columns[i].datatype !== "string"){
+            project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
+          } else {
+            project += `"${this.columns[i].name}": 1`;
+          }
+        }
+      }
+    }
+    project += `}`;
+
+    project = JSON.parse(project);
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {
+        _id: null,
+        count: { $sum: 1 },
+        items: { $push: "$$ROOT" }
+    };
+
+    let page = 0;
+    if(this.currentPage != 0) {
+      page = this.currentPage - 1;
+    }
+    let skip = !isNaN(page * this.itemsPerPage) ?
+            (page * this.itemsPerPage) :
+            0 // SKIP
+    let limit = this.itemsPerPage;
+
+    this._articleStockService.getArticleStocksV2(
+      project, // PROJECT
+      match, // MATCH
+      this.sort, // SORT
+      group, // GROUP
+      limit, // LIMIT
+      skip // SKIP
+    ).subscribe(
+      result => {
+        this.loading = false;
+        if (result && result[0] && result[0].items) {
+          if(this.itemsPerPage === 0) {
+            this.exportExcelComponent.items = result[0].items;
+            this.exportExcelComponent.export();
+            this.itemsPerPage = 10;
+            this.getItems();
+          } else {
+            this.items = result[0].items;
+            this.totalItems = result[0].count;
+          }
+        } else {
+          this.items = new Array();
+          this.totalItems = 0;
         }
       },
-      error =>{
+      error => {
         this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+        this.totalItems = 0;
       }
-    )
+    );
+  }
+
+  public getValue(item, column): any {
+    let val: string = 'item';
+    let exists: boolean = true;
+    let value: any = '';
+    for(let a of column.name.split('.')) {
+      val += '.'+a;
+      if(exists && !eval(val)) {
+        exists = false;
+      }
+    }
+    if(exists) {
+      switch(column.datatype) {
+        case 'number':
+          value = this.roundNumberPipe.transform(eval(val));
+          break;
+        case 'currency':
+            value = this.currencyPipe.transform(this.roundNumberPipe.transform(eval(val)), 'USD', 'symbol-narrow', '1.2-2');
+          break;
+        case 'percent':
+            value = this.roundNumberPipe.transform(eval(val)) + '%';
+          break;
+        default:
+            value = eval(val);
+          break;
+      }
+    }
+    return value;
+  }
+
+  public getColumnsVisibles(): number {
+    let count: number = 0;
+    for (let column of this.columns) {
+      if(column.visible) {
+        count++;
+      }
+    }
+    return count;
   }
 
   async openModal(op: string, articleStock: ArticleStock) {
@@ -226,7 +380,7 @@ export class ListArticleStocksComponent implements OnInit {
       default:
         break;
     }
-  };
+  }
 
   public addItem(articleStockSelected) {
     this.eventAddItem.emit(articleStockSelected);
@@ -324,16 +478,18 @@ export class ListArticleStocksComponent implements OnInit {
 
   public pageChange(page): void {
     this.currentPage = page;
-    this.getArticleStocksV2();
+    this.getItems();
   }
 
   public orderBy(term: string): void {
-    if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-" + term;
+
+    if(this.sort[term]) {
+      this.sort[term] *= -1;
     } else {
-      this.orderTerm[0] = term;
+      this.sort = JSON.parse('{"' + term + '": 1 }');
     }
-    this.getArticleStocksV2();
+
+    this.getItems();
   }
 
   public getPrinters(): Promise<Printer[]> {
@@ -359,6 +515,21 @@ export class ListArticleStocksComponent implements OnInit {
         }
       );
     });
+  }
+
+  public getPriceList() : void {
+    this._priceList.getPriceLists().subscribe(
+      result =>{
+        if(result && result.priceLists){
+          this.priceLists = result.priceLists;
+        } else {
+          this.priceLists = new Array();
+        }
+      },
+      error =>{
+        this.showMessage(error._body, 'danger', false);
+      }
+    )
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
