@@ -506,7 +506,6 @@ export class PrintComponent implements OnInit {
     this.doc.text("Vencimiento",45,77);
     this.doc.text("Número",80,77);
     this.doc.text("Banco", 105,77);
-    this.doc.text("Entregado Por", 135,77);
     if (this.transaction.type && this.transaction.type.showPrices) {
       this.doc.text("Total", 185, 77);
       this.doc.setFontType('normal');
@@ -539,12 +538,6 @@ export class PrintComponent implements OnInit {
           this.doc.text(this.movementsOfCashes[i].bank.name, 105, row);
         } else {
           this.doc.text("-", 105, row);
-        }
-
-        if(this.movementsOfCashes[i].deliveredBy) {
-          this.doc.text(this.movementsOfCashes[i].deliveredBy, 135, row);
-        } else {
-          this.doc.text("-", 135, row);
         }
 
         if (this.movementsOfCashes[i].amountPaid) {
