@@ -188,6 +188,8 @@
                                                       }">
             <td align="left" width="50">
               <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', item)" title="Ver"><i class="fa fa-eye"></i></button>
+              <button *ngIf="priceLists && priceLists.length > 0" type="button" class="btn btn-light btn-sm" (click)= "openModal('price-lists', item)" title="Imprimir Etiqueta"><i class="fa fa-barcode"></i></button>
+              <button *ngIf="priceLists && priceLists.length == 0" type="button" class="btn btn-light btn-sm" (click)= "openModal('print-label', item)" title="Imprimir Etiqueta"><i class="fa fa-barcode"></i></button>
             </td>
             <ng-container *ngFor="let column of columns">
               <td *ngIf="column.visible" [attr.align]="column.align">{{getValue(item, column)}}</td>

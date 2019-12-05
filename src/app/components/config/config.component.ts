@@ -280,9 +280,6 @@ export class ConfigComponent implements OnInit {
       'article.code.validators.maxLength' : [ this.config.article.code.validators.maxLength, [
         ]
       ],
-      'article.printLabel.value' : [ this.config.article.printLabel.value, [
-        ]
-      ],
       'article.isWeigth.default' : [ this.config.article.isWeigth.default, [
         ]
       ],
@@ -635,7 +632,6 @@ export class ConfigComponent implements OnInit {
     }
 
     if (this.config.article.code.validators.maxLength === undefined) this.config.article.code.validators.maxLength = 10;
-    if (!this.config.article.printLabel.value) this.config.article.printLabel.value = 'code';
     if (this.config.article.isWeigth.default === undefined) this.config.article.isWeigth.default = false;
     if (this.config.company.allowCurrentAccount.default === undefined) this.config.company.allowCurrentAccount.default = false;
     if (this.config.cashBox.perUser === undefined) this.config.cashBox.perUser = false;
@@ -685,7 +681,6 @@ export class ConfigComponent implements OnInit {
     this.configFormSystem.setValue({
       '_id': this.config._id,
       'article.code.validators.maxLength': this.config.article.code.validators.maxLength,
-      'article.printLabel.value': this.config.article.printLabel.value,
       'article.isWeigth.default': this.config.article.isWeigth.default,
       'company.allowCurrentAccount.default': this.config.company.allowCurrentAccount.default,
       'company.vatCondition.default': vatConfitionDefault,

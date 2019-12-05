@@ -12,7 +12,6 @@ import { UpdateArticleStockComponent } from './../../components/update-article-s
 import { PrinterService } from '../../services/printer.service';
 import { PrinterPrintIn, Printer } from '../../models/printer';
 import { PrintArticlesStockComponent } from '../print/print-articles-stock/print-articles-stock.component';
-import { PrintLabelComponent } from '../print/print-label/print-label.component';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { User } from 'app/models/user';
 import { UserService } from 'app/services/user.service';
@@ -278,71 +277,55 @@ export class ListArticleStocksComponent implements OnInit {
         });
         break;
       case 'print-label':
-        /*modalRef = this._modalService.open(PrintLabelComponent);
-        modalRef.componentInstance.articleStock = articleStock;
-        modalRef.componentInstance.typePrint = 'label';
-        if (this.printers && this.printers.length > 0) {
-          for (let printer of this.printers) {
-            if (printer.printIn === PrinterPrintIn.Label) {
-              modalRef.componentInstance.printer = printer;
-            }
-          }
-        }*/
-        let identity: User = JSON.parse(sessionStorage.getItem('user'));
-        let printer : Printer;
-        let user;
-        if(identity) {
-          this._userService.getUser(identity._id).subscribe(
-            result =>{
-              if(result && result.user) {
-                user = result.user;
-              } else {
-                this.showMessage("Debe volver a iniciar session", "danger", false);
-              }
-            },
-            error =>{
-              this.showMessage(error._body, "danger", false);
-            }
-          )
-        }
-
-        if(user && user.printers && user.printers.length > 0) {
-          for (const element of user.printers) {
-            if(element && element.printer && element.printer.printIn === PrinterPrintIn.Label ) {
-              printer = element.printer;
-            }
-          }
-        } else {
-          await this.getPrinters().then(
-            printers => {
-              if (printers && printers.length > 0) {
-                for (let printerAux of printers) {
-                  if (printerAux.printIn === PrinterPrintIn.Label) {
-                    printer = printerAux;
+        
+          let identity: User = JSON.parse(sessionStorage.getItem('user'));
+          let printer : Printer;
+          if(identity) {
+            this._userService.getUser(identity._id).subscribe(
+              async result =>{
+                if(result && result.user && result.user.printers && result.user.printers.length > 0) {
+                  for (const element of result.user.printers) {
+                    if(element && element.printer && element.printer.printIn === PrinterPrintIn.Label ) {
+                      printer = element.printer;
+                    }
                   }
+                } else {
+                  await this.getPrinters().then(
+                    printers => {
+                      if (printers && printers.length > 0) {
+                        for (let printerAux of printers) {
+                          if (printerAux.printIn === PrinterPrintIn.Label) {
+                            printer = printerAux;
+                          }
+                        }
+                      }
+                  });
                 }
+                if(printer){
+                  if(printer.fields && printer.fields.length > 0){
+                    console.log(articleStock)
+                    modalRef = this._modalService.open(PrintTransactionTypeComponent)
+                    modalRef.componentInstance.articleId = articleStock.article._id;
+                    modalRef.componentInstance.quantity = articleStock.realStock;
+                    modalRef.componentInstance.printer = printer;
+                    if(this.priceListId){
+                      modalRef.componentInstance.priceListId = this.priceListId;
+                    }
+                  } else {
+                    this.showMessage("Crear una diseño en la impresora de tipo etiqueta",'danger', false);
+                  }
+                } else {
+                  this.showMessage("Debe crear una impresora de tipo etiqueta",'danger', false);
+                }
+              },
+              error =>{
+                this.showMessage(error._body, "danger", false);
               }
-          });
-        }
-
-        if(printer){
-          if(printer.fields && printer.fields.length > 0){
-            modalRef = this._modalService.open(PrintTransactionTypeComponent)
-            modalRef.componentInstance.articleId = articleStock.article._id;
-            modalRef.componentInstance.printer = printer;
-            if(this.priceListId){
-              modalRef.componentInstance.priceListId = this.priceListId;
-            }
-            modalRef.componentInstance.quantity = articleStock.realStock;
+            )
           } else {
-            modalRef = this._modalService.open(PrintLabelComponent);
-            modalRef.componentInstance.articleStock = articleStock;
-            modalRef.componentInstance.typePrint = 'label';
-            modalRef.componentInstance.printer = printer;
+            this.showMessage("Debe iniciar sesión",'danger', false);
           }
-        } else {
-          this.showMessage("Debe crear una impresora de tipo etiqueta",'danger', false);
-        }
+
         break;
       case 'price-lists':
         modalRef = this._modalService.open(ListPriceListsComponent, { size: 'lg', backdrop: 'static' });

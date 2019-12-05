@@ -252,7 +252,6 @@ import { ExportTransactionsComponent } from './components/export/export-transact
 import { SelectDepositComponent } from './components/select-deposit/select-deposit.component';
 import { EditCheckComponent } from './components/edit-check/edit-check.component';
 import { PrintVatBookComponent } from './components/print/print-vat-book/print-vat-book.component';
-import { PrintLabelComponent } from './components/print/print-label/print-label.component';
 import { PrintTransactionTypeComponent } from './components/print/print-transaction-type/print-transaction-type.component';
 import { ProgressbarComponent } from './components/progressbar/progressbar.component';
 import { ReportsList } from './components/reports-list/reports-list.component';
@@ -451,7 +450,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     SelectDepositComponent,
     EditCheckComponent,
     PrintVatBookComponent,
-    PrintLabelComponent,
     PrintTransactionTypeComponent,
     ProgressbarComponent,
     ReportsList,
@@ -624,7 +622,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     SelectDepositComponent,
     EditCheckComponent,
     PrintVatBookComponent,
-    PrintLabelComponent,
     PrintTransactionTypeComponent,
     ProgressbarComponent,
     ReportsList,

@@ -40,9 +40,6 @@ export class Config {
 				maxLength: number
 			}
 		},
-		printLabel: {
-			value: string
-		},
 		isWeigth: {
 			default: boolean
 		}

@@ -27,7 +27,6 @@ import { Tax } from 'app/models/tax';
 import { ConfigService } from 'app/services/config.service';
 import { Claim, ClaimPriority, ClaimType } from 'app/models/claim';
 import { ClaimService } from 'app/services/claim.service';
-import { PrintLabelComponent } from '../print/print-label/print-label.component';
 import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
 import { CurrencyPipe } from '@angular/common';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';

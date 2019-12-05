@@ -81,8 +81,10 @@ export class PrintTransactionTypeComponent implements OnInit {
     if(this.transactionId) {
       this.getTransaction();
     }
-
+    
     if(this.articleId){
+      console.log(this.articleId)
+
       this.getArticle();
     }
 

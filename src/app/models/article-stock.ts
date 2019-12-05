@@ -144,5 +144,14 @@ export let attributes = [
 		datatype: 'string',
 		align: 'left',
 		required : true,
+	},
+	{
+		name: 'article._id',
+		visible: false,
+		disabled: false,
+		filter: true,
+		datatype: 'string',
+		align: 'left',
+		required : true,
 	}
 ]

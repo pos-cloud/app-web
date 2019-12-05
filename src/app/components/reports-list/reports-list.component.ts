@@ -28,7 +28,6 @@ import { Tax } from 'app/models/tax';
 import { ConfigService } from 'app/services/config.service';
 import { Claim, ClaimPriority, ClaimType } from 'app/models/claim';
 import { ClaimService } from 'app/services/claim.service';
-import { PrintLabelComponent } from '../print/print-label/print-label.component';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
 import { CurrencyPipe } from '@angular/common';
@@ -329,34 +328,6 @@ export class ReportsList implements OnInit {
         }, (reason) => {
 
         });
-        break;
-      case 'print-label':
-
-        await this.getPrinters().then(
-          printers => {
-            let labelPrinter: Printer;
-            if (printers && printers.length > 0) {
-              for (let printer of printers) {
-                if (printer.printIn === PrinterPrintIn.Label) {
-                  labelPrinter = printer;
-                }
-              }
-            }
-
-            if(labelPrinter) {
-              modalRef = this._modalService.open(PrintLabelComponent);
-              if(item) {
-                modalRef.componentInstance.article = item;
-              } else {
-                modalRef.componentInstance.articles = this.items;
-              }
-              modalRef.componentInstance.typePrint = 'label';
-              modalRef.componentInstance.printer = labelPrinter;
-            } else {
-              this.showMessage('Debe definir un modelo de impresora como etiqueta en el menu Configuración->Impresoras', "info", true);
-            }
-          }
-        );
         break;
       case 'print-list':
         modalRef = this._modalService.open(PrintPriceListComponent);
