@@ -83,8 +83,6 @@ export class PrintTransactionTypeComponent implements OnInit {
     }
     
     if(this.articleId){
-      console.log(this.articleId)
-
       this.getArticle();
     }
 
@@ -407,8 +405,12 @@ export class PrintTransactionTypeComponent implements OnInit {
               this.doc.line(field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY)
               break;
             case 'image':
+              try{
                 await this.getCompanyPicture(eval("this."+field.value))
                 this.doc.addImage(this.imageURL, 'jpeg', field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY);   
+              } catch (e){
+
+              }
               break;
             case 'data':
               if(field.font !== 'default') {
@@ -427,8 +429,12 @@ export class PrintTransactionTypeComponent implements OnInit {
               }
               break;
             case 'barcode':
+              try {
                 await this.getBarcode64('code128?value=' + eval("this."+field.value))
                 this.doc.addImage(this.imageURL, 'png', field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY);  
+              } catch (error) {
+                
+              }
               break;
             default:
               break;
