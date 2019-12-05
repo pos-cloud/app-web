@@ -50,7 +50,7 @@ export class ListArticleStocksComponent implements OnInit {
   @ViewChild(ExportExcelComponent, {static: false}) exportExcelComponent: ExportExcelComponent;
   private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
   private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
-
+  public title = "Inventario";
 
   public articleStocks: ArticleStock[] = new Array();
   public priceLists : PriceList[] = new Array();
