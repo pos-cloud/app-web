@@ -100,20 +100,20 @@ export let attributes = [
 	{
 		name: 'realStock',
 		visible: true,
-		disabled: true,
+		disabled: false,
 		filter: true,
 		datatype: 'number',
 		align: 'right',
-		required : false,
+		required : true,
 	},
 	{
 		name: 'article.costPrice',
 		visible: true,
-		disabled: true,
+		disabled: false,
 		filter: true,
 		datatype: 'currency',
 		align: 'right',
-		required : false,
+		required : true,
 	},
 	{
 		name: 'total',
@@ -123,7 +123,7 @@ export let attributes = [
 		project : `{ "$multiply": [ "$article.costPrice", "$realStock" ] }`,
 		datatype: 'currency',
 		align: 'right',
-		required : false,
+		required : true,
 	},
 	{
 		name: 'article.operationType',

@@ -69,20 +69,6 @@ export class ListArticleStocksComponent implements OnInit {
   public totalCost = 0;
   public totalTotal = 0;
 
-  public displayedColumns = [
-    "realStock",
-    "minStock",
-    "article.code",
-    "article.barcode",
-    "article.description",
-    "article.costPrice",
-    "article.make.description",
-    "article.category.description",
-    "article.operationType",
-    "branch.number",
-    "deposit.name",
-    "operationType"
-  ];
   public filters: any[];
   public filterValue: string;
 
@@ -96,8 +82,12 @@ export class ListArticleStocksComponent implements OnInit {
     private _printerService: PrinterService
   ) {
     this.filters = new Array();
-    for(let field of this.displayedColumns) {
-      this.filters[field] = "";
+    for(let field of this.columns) {
+      if(field.defaultFilter) {
+        this.filters[field.name] = field.defaultFilter;
+      } else {
+        this.filters[field.name] = "";
+      }
     }
    }
 
@@ -270,9 +260,9 @@ export class ListArticleStocksComponent implements OnInit {
         break;
       case 'add':
         modalRef = this._modalService.open(AddArticleStockComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
-          this.getArticleStocksV2();
+          this.getItems();
         }, (reason) => {
-          this.getArticleStocksV2();
+          this.getItems();
         });
         break;
       case 'update':
@@ -281,7 +271,7 @@ export class ListArticleStocksComponent implements OnInit {
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
           if (result === 'save_close') {
-            this.getArticleStocksV2();
+            this.getItems();
           }
         }, (reason) => {
 
@@ -364,7 +354,7 @@ export class ListArticleStocksComponent implements OnInit {
             this.openModal('print-label',articleStock)
           }
         }, (reason) => {
-          this.getArticleStocksV2();
+          this.getItems();
         });
         break;
       case 'print-inventario':
@@ -384,96 +374,6 @@ export class ListArticleStocksComponent implements OnInit {
 
   public addItem(articleStockSelected) {
     this.eventAddItem.emit(articleStockSelected);
-  }
-
-  public getArticleStocksV2() : void {
-
-    this.loading = true;
-
-    /// ORDENAMOS LA CONSULTA
-    let sortAux;
-    if (this.orderTerm[0].charAt(0) === '-') {
-        sortAux = `{ "${this.orderTerm[0].split('-')[1]}" : -1 }`;
-    } else {
-        sortAux = `{ "${this.orderTerm[0]}" : 1 }`;
-    }
-    sortAux = JSON.parse(sortAux);
-
-    // FILTRAMOS LA CONSULTA
-
-    let match = `{`;
-    for(let i = 0; i < this.displayedColumns.length; i++) {
-      let value = this.filters[this.displayedColumns[i]];
-      if (value && value != "") {
-        match += `"${this.displayedColumns[i]}": { "$regex": "${value}", "$options": "i"}`;
-        match += ',';
-      }
-    }
-
-    match += `"operationType": { "$ne": "D" } , "article.containsVariants": false, "article.operationType": { "$ne": "D" } }`;
-
-    match = JSON.parse(match);
-
-    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-    let project = {
-      realStock : 1,
-      minStock : { $toString: '$minStock' },
-      operationType : 1,
-      'article._id' :1,
-      'article.code' : { $toString: '$article.code' },
-      'article.barcode' : 1,
-      'article.description' : 1,
-      'article.costPrice' : 1,
-      'article.make.description' : 1,
-      'article.category.description' : 1,
-      'article.operationType' : 1,
-      'article.quantityPerMeasure' :1,
-      'article.unitOfMeasurement.abbreviation' : 1,
-      'article.containsVariants' : 1,
-      'branch.number' : { $toString: '$branch.number' },
-      'deposit.name' : 1,
-    }
-
-    // AGRUPAMOS EL RESULTADO
-    let group = {
-        _id: null,
-        count: { $sum: 1 },
-        totalCostArticle : { $sum : "$article.costPrice" },
-        totalRealStock : { $sum : "$realStock" },
-        totalStockValued : { $sum : { $multiply: [ "$article.costPrice", "$realStock" ] } },
-        articleStocks: { $push: "$$ROOT" },
-    };
-
-    this._articleStockService.getArticleStocksV2(
-        project, // PROJECT
-        match, // MATCH
-        sortAux, // SORT
-        group, // GROUP
-        0, // LIMIT
-        0 // SKIP
-    ).subscribe(
-      result => {
-        this.loading = false;
-        if(result && result[0] && result[0].articleStocks) {
-          this.totalCost = result[0].totalCostArticle;
-          this.totalRealStock = result[0].totalRealStock;
-          this.totalTotal = result[0].totalStockValued;
-          this.articleStocks = result[0].articleStocks;
-          this.totalItems = result[0].count;
-        } else {
-          this.totalCost = 0;
-          this.totalRealStock = 0;
-          this.totalTotal = 0;
-          this.articleStocks = new Array();
-          this.totalItems = 0;
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-        this.totalItems = 0;
-      }
-    );
   }
 
   public pageChange(page): void {

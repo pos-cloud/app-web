@@ -149,7 +149,7 @@
                 *ngFor="let column of columns"
                 cdkDrag
                 [cdkDragDisabled]="column.disabled">
-                  <label for="column"><input type="checkbox" [id]="column.name" [(ngModel)]="column.visible" [disabled]="column.disabled">{{ column.name | translate}}</label>
+                  <label for="column"><input type="checkbox" [id]="column.name" (change)="getItems()" [(ngModel)]="column.visible" [disabled]="column.disabled">{{ column.name | translate}}</label>
                 </div>
             </div>
           </div>
