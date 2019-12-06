@@ -2119,7 +2119,7 @@ export class PrintComponent implements OnInit {
 
       this.doc.text("Descuento:", 140, rowTotals);
       this.doc.setFontType('normal');
-      if(this.transaction.discountAmount){
+      if(this.transaction.discountAmount && this.transaction.taxes && this.transaction.taxes.length > 0){
         this.doc.text("$ (" + this.roundNumber.transform(this.transaction.discountAmount / (1 + (this.transaction.taxes[0].percentage/100)),2) + ")", 173, rowTotals);
       } else {
         this.doc.text("$ (" + this.roundNumber.transform(this.transaction.discountAmount,2) + ")", 173, rowTotals);
@@ -2155,7 +2155,11 @@ export class PrintComponent implements OnInit {
       }
 
       if (this.transaction.discountAmount) {
-        subtotal += (this.transaction.discountAmount / (1 + (this.transaction.taxes[0].percentage/100)));
+        if(this.transaction.discountAmount && this.transaction.taxes && this.transaction.taxes.length > 0){
+          subtotal += (this.transaction.discountAmount / (1 + (this.transaction.taxes[0].percentage/100)));
+        } else {
+          subtotal += this.transaction.discountAmount;
+        }
       }
 
 
