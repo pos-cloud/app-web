@@ -372,98 +372,66 @@ export class PrintTransactionTypeComponent implements OnInit {
 
     if(this.quantity){
       for (let index = 0; index < this.quantity; index++) {
-        await this.buildHeader();
+        await this.buildLayout();
         this.doc.addPage();
       }
     } else {
-      await this.buildHeader();
+      await this.buildLayout();
     }
-
-    await this.buildBody();
-
-    await this.buildFooter();
 
     this.finishImpression();
 
   }
 
-  async buildHeader() : Promise<boolean> {
+  async buildLayout() : Promise<boolean> {
     return new Promise<boolean>(async (resolve, reject) => {
       for (const field of this.printer.fields) {
-        if(field.position === PositionPrint.Header) {
-          switch (field.type) {
-            case 'label':
-              if(field.font !== 'default') {
-                this.doc.setFont(field.font)
-              }              
-              this.doc.setFontType(field.fontType)
-              this.doc.setFontSize(field.fontSize)
-              this.doc.text(field.positionStartX,field.positionStartY,field.value)
-              break;
-            case 'line':
-              this.doc.setLineWidth(field.fontSize)
-              this.doc.line(field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY)
-              break;
-            case 'image':
-              try{
-                await this.getCompanyPicture(eval("this."+field.value))
-                this.doc.addImage(this.imageURL, 'jpeg', field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY);   
-              } catch (e){
+        switch (field.type) {
+          case 'label':
+            if(field.font !== 'default') {
+              this.doc.setFont(field.font)
+            }              
+            this.doc.setFontType(field.fontType)
+            this.doc.setFontSize(field.fontSize)
+            this.doc.text(field.positionStartX,field.positionStartY,field.value)
+            break;
+          case 'line':
+            this.doc.setLineWidth(field.fontSize)
+            this.doc.line(field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY)
+            break;
+          case 'image':
+            try{
+              await this.getCompanyPicture(eval("this."+field.value))
+              this.doc.addImage(this.imageURL, 'jpeg', field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY);   
+            } catch (e){
 
+            }
+            break;
+          case 'data':
+            if(field.font !== 'default') {
+              this.doc.setFont(field.font)
+            }   
+            this.doc.setFontType(field.fontType)
+            this.doc.setFontSize(field.fontSize)
+            try {
+              if(field.positionEndX || field.positionEndY){
+                this.doc.text(field.positionStartX,field.positionStartY,eval("this."+field.value).toString().slice(field.positionEndX , field.positionEndY))
+              } else {
+                this.doc.text(field.positionStartX,field.positionStartY,eval("this."+field.value).toString())
               }
-              break;
-            case 'data':
-              if(field.font !== 'default') {
-                this.doc.setFont(field.font)
-              }   
-              this.doc.setFontType(field.fontType)
-              this.doc.setFontSize(field.fontSize)
-              try {
-                if(field.positionEndX || field.positionEndY){
-                  this.doc.text(field.positionStartX,field.positionStartY,eval("this."+field.value).toString().slice(field.positionEndX , field.positionEndY))
-                } else {
-                  this.doc.text(field.positionStartX,field.positionStartY,eval("this."+field.value).toString())
-                }
-              } catch (e) {
-                this.doc.text(field.positionStartX,field.positionStartY,field.value)
-              }
-              break;
-            case 'barcode':
-              try {
-                await this.getBarcode64('code128?value=' + eval("this."+field.value))
-                this.doc.addImage(this.imageURL, 'png', field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY);  
-              } catch (error) {
-                
-              }
-              break;
-            default:
-              break;
-          }
-        }
-      }
-      resolve(true)
-    });
-    
-  }
-
-  async buildBody() : Promise<boolean>{
-    return new Promise<boolean>(async(resolve, reject)=>{
-      for (const field of this.printer.fields) {
-        if(field.position === PositionPrint.Body) {
-          switch (field.type) {
-            case 'label':
-              if(field.font !== 'default') {
-                this.doc.setFont(field.font)
-              }   
-              this.doc.setFontType(field.fontType)
-              this.doc.setFontSize(field.fontSize)
+            } catch (e) {
               this.doc.text(field.positionStartX,field.positionStartY,field.value)
-              break;
-            case 'line':
-              this.doc.setLineWidth(field.fontSize)
-              this.doc.line(field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY)
-              break;
-            case 'data':
+            }
+            break;
+          case 'barcode':
+            try {
+              await this.getBarcode64('code128?value=' + eval("this."+field.value))
+              this.doc.addImage(this.imageURL, 'png', field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY);  
+            } catch (error) {
+              
+            }
+            break;
+          case 'data':
               let row = field.positionStartY
               if(field.font !== 'default') {
                 this.doc.setFont(field.font)
@@ -481,7 +449,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                   row = row + this.printer.row;
                   if(row > this.printer.addPag) {
                     this.doc.addPag()
-                    await this.buildHeader()
+                    await this.buildLayout()
                     row = field.positionStartY
                   }
                 });
@@ -495,7 +463,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                   row = row + this.printer.row;
                   if(row > this.printer.addPag) {
                     this.doc.addPag()
-                    await this.buildHeader()
+                    await this.buildLayout()
                     row = field.positionStartY
                   }
                 });
@@ -509,122 +477,86 @@ export class PrintTransactionTypeComponent implements OnInit {
                   row = row + this.printer.row;
                   if(row > this.printer.addPag) {
                     this.doc.addPag()
-                    await this.buildHeader()
+                    await this.buildLayout()
                     row = field.positionStartY
                   }
                 });
               } else {
                 try {
-                  this.doc.text(field.positionStartX,field.positionStartY,eval(field.value))
-                } catch (error) {
-                  this.doc.text(field.positionStartX,field.positionStartY,'')
+                  if(field.positionEndX || field.positionEndY){
+                    this.doc.text(field.positionStartX,field.positionStartY,eval("this."+field.value).toString().slice(field.positionEndX , field.positionEndY))
+                  } else {
+                    this.doc.text(field.positionStartX,field.positionStartY,eval("this."+field.value).toString())
+                  }
+                } catch (e) {
+                  this.doc.text(field.positionStartX,field.positionStartY,field.value)
                 }
               }
               break;
-            default:
-              break;
-          }
-        }
-      }
-      resolve(true)
-    })
-  }
-
-  async buildFooter() : Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      for (const field of this.printer.fields) {
-        if(field.position === PositionPrint.Footer) {
-          switch (field.type) {
-            case 'label':
-              if(field.font !== 'default') {
-                this.doc.setFont(field.font)
-              }   
-              this.doc.setFontType(field.fontType)
-              this.doc.setFontSize(field.fontSize)
-              this.doc.text(field.positionStartX,field.positionStartY,field.value)
-              break;
-            case 'line':
-              this.doc.setLineWidth(field.fontSize)
-              this.doc.line(field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY)
-              break;
-            case 'data':
-              if(field.font !== 'default') {
-                this.doc.setFont(field.font)
-              }   
-              this.doc.setFontType(field.fontType)
-              this.doc.setFontSize(field.fontSize)
+          case 'dataSum':
+            if(field.font !== 'default') {
+              this.doc.setFont(field.font)
+            }   
+            this.doc.setFontType(field.fontType)
+            this.doc.setFontSize(field.fontSize)
+            
+            if(field.value.split('.')[0] === "movementOfArticle" && this.movementOfArticle) {
+              this.movementOfArticle.forEach(async movementOfArticle => {
+                let sum = 0;
+                if(typeof eval("this."+field.value) === "number") {
+                  sum = sum + eval("this"+field.value);
+                }
+                try {
+                  this.doc.text(field.positionStartX,field.positionStartY,sum.toString())
+                } catch (e) {
+                  this.doc.text(field.positionStartX,field.positionStartY,field.value)
+                }
+              });
+            } else if(field.value.split('.')[0] === "movementOfCash" && this.movementOfCash) {
+              this.movementOfCash.forEach(async movementOfCash => {
+                let sum = 0;
+                if(typeof eval("this."+field.value) === "number") {
+                  sum = sum + eval("this"+field.value);
+                }
+                try {
+                  this.doc.text(field.positionStartX,field.positionStartY,sum.toString())
+                } catch (e) {
+                  this.doc.text(field.positionStartX,field.positionStartY,field.value)
+                }
+              });
+            } else if(field.value.split('.')[0] === "movementOfCancellation" && this.movementOfCancellation) {
+              this.movementOfCancellation.forEach(async movementOfCancellation => {
+                let sum = 0;
+                if(typeof eval("this."+field.value) === "number") {
+                  sum = sum + eval("this"+field.value);
+                }
+                try {
+                  this.doc.text(field.positionStartX,field.positionStartY,sum.toString())
+                } catch (e) {
+                  this.doc.text(field.positionStartX,field.positionStartY,field.value)
+                }
+              });
+            } else {
               try {
-                this.doc.text(field.positionStartX,field.positionStartY,eval("this."+field.value).toString())
-              } catch (e) {
-                this.doc.text(field.positionStartX,field.positionStartY,field.value)
+                this.doc.text(field.positionStartX,field.positionStartY,eval(field.value))
+              } catch (error) {
+                this.doc.text(field.positionStartX,field.positionStartY,'')
               }
-              break;
-            case 'dataSum':
-              if(field.font !== 'default') {
-                this.doc.setFont(field.font)
-              }   
-              this.doc.setFontType(field.fontType)
-              this.doc.setFontSize(field.fontSize)
-              
-              if(field.value.split('.')[0] === "movementOfArticle" && this.movementOfArticle) {
-                this.movementOfArticle.forEach(async movementOfArticle => {
-                  let sum = 0;
-                  if(typeof eval("this."+field.value) === "number") {
-                    sum = sum + eval("this"+field.value);
-                  }
-                  try {
-                    this.doc.text(field.positionStartX,field.positionStartY,sum.toString())
-                  } catch (e) {
-                    this.doc.text(field.positionStartX,field.positionStartY,field.value)
-                  }
-                });
-              } else if(field.value.split('.')[0] === "movementOfCash" && this.movementOfCash) {
-                this.movementOfCash.forEach(async movementOfCash => {
-                  let sum = 0;
-                  if(typeof eval("this."+field.value) === "number") {
-                    sum = sum + eval("this"+field.value);
-                  }
-                  try {
-                    this.doc.text(field.positionStartX,field.positionStartY,sum.toString())
-                  } catch (e) {
-                    this.doc.text(field.positionStartX,field.positionStartY,field.value)
-                  }
-                });
-              } else if(field.value.split('.')[0] === "movementOfCancellation" && this.movementOfCancellation) {
-                this.movementOfCancellation.forEach(async movementOfCancellation => {
-                  let sum = 0;
-                  if(typeof eval("this."+field.value) === "number") {
-                    sum = sum + eval("this"+field.value);
-                  }
-                  try {
-                    this.doc.text(field.positionStartX,field.positionStartY,sum.toString())
-                  } catch (e) {
-                    this.doc.text(field.positionStartX,field.positionStartY,field.value)
-                  }
-                });
-              } else {
-                try {
-                  this.doc.text(field.positionStartX,field.positionStartY,eval(field.value))
-                } catch (error) {
-                  this.doc.text(field.positionStartX,field.positionStartY,'')
-                }
-              }
-              break;
-            default:
-              break;
-          }
+            }
+            break;
+          default:
+            break;
         }
       }
       resolve(true)
     });
-   
+    
   }
 
   public finishImpression(): void {
-    
+  
     this.doc.autoPrint();
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
-
 
     if(this.transaction && this.transaction.type && this.transaction.type.electronics) {
       this._printService.saveFile(this.doc.output('blob'),'invoice',this.transactionId).then(
@@ -678,7 +610,6 @@ export class PrintTransactionTypeComponent implements OnInit {
       );
     });
   }
-
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
