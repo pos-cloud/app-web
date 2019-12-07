@@ -371,9 +371,10 @@ export class PrintTransactionTypeComponent implements OnInit {
     })
 
     if(this.quantity){
-      for (let index = 0; index < this.quantity; index++) {
-        await this.buildLayout();
+      await this.buildLayout();
+      for (let index = 0; index < this.quantity -1; index++) {
         this.doc.addPage();
+        await this.buildLayout();
       }
     } else {
       await this.buildLayout();
