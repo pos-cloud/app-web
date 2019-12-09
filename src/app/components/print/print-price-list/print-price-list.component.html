@@ -59,7 +59,9 @@
 					<label for="articleFieldValue" class="control-label">Valores del campo:</label>
 					<select class="form-control" formControlName="articleFieldValue">
 						<option [ngValue]="null"></option>
-						<option *ngFor="let articleFieldValue of articleFieldsValues" [value]="articleFieldValue" [disabled]="readonly">{{articleFieldsValue}}</option>
+						<option *ngFor="let articleFieldValue of articleFieldsValues" [value]="articleFieldValue" [disabled]="readonly">
+							{{ articleFieldValue }}
+						</option>
 					</select>
 				</div>
 			</div>
@@ -72,7 +74,7 @@
 				<span *ngIf="loading">Espere por favor</span>
 			</button>
 		</div>
-</form>
+	</form>
 </section>
 
 <!--Print-->

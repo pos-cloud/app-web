@@ -26,6 +26,7 @@ import { ArticleField } from 'app/models/article-field';
 import { PriceListService } from 'app/services/price-list.service';
 import { PriceList } from 'app/models/price-list';
 import { ArticleStockService } from 'app/services/article-stock.service';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-print-price-list',
@@ -46,17 +47,17 @@ export class PrintPriceListComponent implements OnInit {
   public doc;
   public pdfURL;
   public articles : Article [];
-  public config;
+  public config: Config;
   public roundNumber = new RoundNumberPipe();
-  public pageWidth;
-  public pageHigh;
+  public pageWidth: number;
+  public pageHigh: number;
   public articleFieldId: string;
-  public withImage = false;
-  public articleFields : ArticleField [];
-  public priceLists : PriceList [];
+  public withImage: boolean = false;
+  public articleFields: ArticleField [];
+  public priceLists: PriceList [];
   public priceList;
-  public articleFieldsValues : []
-  public imageURL
+  public articleFieldsValues: string[];
+  public imageURL;
   public fontSizes = JSON.parse(`{"xsmall" : 5,
                                   "small" : 7,
                                   "normal" : 10,
