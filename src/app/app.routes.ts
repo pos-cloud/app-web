@@ -72,6 +72,7 @@ import { ListStructureComponent } from './components/list-structure/list-structu
 import { ListClassificationsComponent } from './components/list-classifications/list-classifications.component';
 import { ListMovementsOfArticlesComponent } from './components/list-movements-of-articles/list-movements-of-articles.component';
 import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.component';
+import { ListChecksComponent } from './components/list-checks/list-checks.component';
 
 export const _routes: Routes = [
   { 
@@ -482,7 +483,7 @@ export const _routes: Routes = [
   },
   {
     path : 'report/cartera-de-cheques',
-    component: ListMovementOfCashesComponent,
+    component: ListChecksComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.money' }
   },

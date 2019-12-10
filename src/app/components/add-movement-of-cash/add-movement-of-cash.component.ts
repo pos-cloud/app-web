@@ -32,6 +32,7 @@ import { RoundNumberPipe } from './../../pipes/round-number.pipe';
 // COMPONENTS
 import { ListMovementOfCashesComponent } from '../list-movements-of-cashes/list-movements-of-cashes.component';
 import { DeleteMovementOfCashComponent } from '../delete-movement-of-cash/delete-movement-of-cash.component';
+import { ListChecksComponent } from '../list-checks/list-checks.component';
 
 @Component({
   selector: 'app-add-movement-of-cash',
@@ -577,7 +578,7 @@ export class AddMovementOfCashComponent implements OnInit {
           });
         break;
       case 'list-movements-of-cashes':
-          modalRef = this._modalService.open(ListMovementOfCashesComponent, { size: 'lg', backdrop: 'static' });
+          modalRef = this._modalService.open(ListChecksComponent, { size: 'lg', backdrop: 'static' });
           // MANDAMOS LÍMITE DE MONTO A SELECCIONAR
           modalRef.componentInstance.transactionAmount = this.roundNumber.transform(this.transaction.totalPrice - this.movementOfCashForm.value.amountPaid);
           modalRef.componentInstance.paymentMethod = this.paymentMethodSelected;
