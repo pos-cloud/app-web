@@ -98,5 +98,6 @@
     },
     "expirationDate" : "Fecha de vencimiento",
     "quota" : "Cuota",
-    "deliveredBy" : "Entregado por"
+    "deliveredBy" : "Entregado por",
+    "unitPrice" : "Precio Unitario"
 }

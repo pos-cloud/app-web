@@ -14,7 +14,9 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { AddArticleComponent } from '../add-article/add-article.component';
 import { Config } from 'app/app.config';
 import { MovementOfArticleService } from 'app/services/movement-of-article.service';
-import { attributes } from 'app/models/movement-of-article'
+import { attributes, MovementOfArticle } from 'app/models/movement-of-article'
+import { MovementOfCashService } from 'app/services/movement-of-cash.service';
+import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
 
 @Component({
   selector: 'app-list-movements-of-articles',
@@ -28,7 +30,7 @@ export class ListMovementsOfArticlesComponent implements OnInit {
   public listTitle: string;
   public orderTerm: string[] = ["description"];
   public totalItems: number = 0;
-
+  public title : string = "Movimiento de Productos"
   public items: any[] = new Array();
   public areArticlesEmpty: boolean = true;
   public alertMessage: string = '';
@@ -54,12 +56,12 @@ export class ListMovementsOfArticlesComponent implements OnInit {
   @Input() branchSelectedId: String;
   public allowChangeBranch: boolean;
   public scrollY: number = 0;
-  public title: string;
   public timezone: string = "-03:00";
   private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
   private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
   @ViewChild(ExportExcelComponent, {static: false}) exportExcelComponent: ExportExcelComponent;
   public columns = attributes;
+  public pathLocation: string[]
 
   constructor(
     public _movementOfArticleService: MovementOfArticleService,
@@ -114,6 +116,8 @@ export class ListMovementsOfArticlesComponent implements OnInit {
       );
     }
 
+    this.pathLocation = this._router.url.split('/');
+    this.transactionMovement = this.pathLocation[2].charAt(0).toUpperCase() + this.pathLocation[2].slice(1);
     this.getItems();
   }
   
@@ -121,15 +125,20 @@ export class ListMovementsOfArticlesComponent implements OnInit {
     moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
   }
 
-  async openModal(op: string, item: any[]) {
+  async openModal(op: string, movementOfArticle: MovementOfArticle) {
 
     this.scrollY = window.scrollY;
     
     let modalRef;
     switch (op) {
-      case 'view':
+      case 'transaction':
+        modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.transactionId = movementOfArticle.transaction._id;
+        modalRef.componentInstance.readonly = true;
+        break;
+      case 'article':
         modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.articleId = item['article']._id;
+        modalRef.componentInstance.articleId = movementOfArticle.article._id;
         modalRef.componentInstance.readonly = true;
         modalRef.componentInstance.operation = "view";
         modalRef.result.then((result) => {
@@ -211,6 +220,7 @@ export class ListMovementsOfArticlesComponent implements OnInit {
         }
       }
 
+    match += `"transaction.type.transactionMovement": "${this.transactionMovement}"`;
     if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
     match += `}`;

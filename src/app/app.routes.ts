@@ -281,11 +281,6 @@ export const _routes: Routes = [
     data: { module: 'config.modules.sale.resto' }
   },
   {
-    path: 'admin/list-movements-of-articles',
-    component: ListMovementsOfArticlesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
     path: 'admin/marcas',
     component: ListMakesComponent,
     canActivate: [AuthGuard, LicenseGuard]
@@ -514,6 +509,24 @@ export const _routes: Routes = [
     component: ListMovementOfCashesComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.money' }
+  },
+  {
+    path: 'admin/venta/movimientos-de-productos',
+    component: ListMovementsOfArticlesComponent,
+    canActivate: [AuthGuard, LicenseGuard],
+    data: { module: 'config.modules.sale' }
+  },
+  {
+    path: 'admin/compra/movimientos-de-productos',
+    component: ListMovementsOfArticlesComponent,
+    canActivate: [AuthGuard, LicenseGuard],
+    data: { module: 'config.modules.purchase' }
+  },
+  {
+    path: 'admin/stock/movimientos-de-productos',
+    component: ListMovementsOfArticlesComponent,
+    canActivate: [AuthGuard, LicenseGuard],
+    data: { module: 'config.modules.stock' }
   },
   {
     path: 'admin/classifications',
