@@ -4,6 +4,7 @@ import { Make } from './make';
 import { Category } from './category';
 import { Taxes } from './taxes';
 import { ArticleFields } from './article-fields';
+import { Deposit } from './deposit';
 
 export class MovementOfArticle {
 
@@ -27,6 +28,7 @@ export class MovementOfArticle {
   public category: Category;
   public barcode: string;
   public amount: number = 1;
+  public deposit: Deposit;
   public quantityForStock: number = 0;
   public notes: string;
   public printIn: ArticlePrintIn;

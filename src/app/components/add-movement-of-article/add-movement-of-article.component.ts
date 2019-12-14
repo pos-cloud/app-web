@@ -447,7 +447,8 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     if( this.movementOfArticle.transaction.type &&
         this.movementOfArticle.transaction.type.stockMovement &&
-        this.movementOfArticle.transaction.type.stockMovement === StockMovement.Inventory) {
+        this.movementOfArticle.transaction.type.stockMovement === StockMovement.Inventory ||
+        this.movementOfArticle.transaction.type.stockMovement === StockMovement.Transfer) {
       if (this.movementOfArticleForm.value.amount > 0) {
         this.movementOfArticle.amount -= 1;
       } else {
