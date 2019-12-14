@@ -25,36 +25,19 @@ import { ViewTransactionComponent } from '../view-transaction/view-transaction.c
 })
 export class ListMovementsOfArticlesComponent implements OnInit {
 
-
-    // TABLA
-  public listTitle: string;
   public orderTerm: string[] = ["description"];
   public totalItems: number = 0;
   public title : string = "Movimiento de Productos"
   public items: any[] = new Array();
-  public areArticlesEmpty: boolean = true;
   public alertMessage: string = '';
-  public propertyTerm: string;
-  public areFiltersVisible: boolean = false;
   public loading: boolean = false;
-  @Input() startDate: string;
-  @Input() startTime: string;
-  @Input() endDate: string;
-  @Input() endTime: string;
-  @Input() limit: number = 0;
-
   public itemsPerPage = 10;
   public currentPage: number = 1;
   public sort = {
     "count": -1
   };
   public transactionMovement: string;
-  public totalAmount;
-  public totalItem;
   public filters: any[];
-  public branches: Branch[];
-  @Input() branchSelectedId: String;
-  public allowChangeBranch: boolean;
   public scrollY: number = 0;
   public timezone: string = "-03:00";
   private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
@@ -71,12 +54,6 @@ export class ListMovementsOfArticlesComponent implements OnInit {
     private _branchService: BranchService,
     private _authService: AuthService
   ) {
-    this.startDate = moment().format('YYYY-MM-DD');
-    this.startTime = moment('00:00', 'HH:mm').format('HH:mm');
-    this.endDate = moment().format('YYYY-MM-DD');
-    this.endTime = moment('23:59', 'HH:mm').format('HH:mm');
-    this.totalAmount = 0;
-    this.totalItem = 0;
 
     this.filters = new Array();
     for(let field of this.columns) {
@@ -94,28 +71,6 @@ export class ListMovementsOfArticlesComponent implements OnInit {
       this.timezone =  Config.timezone.split('UTC')[1];
     }
 
-    if(!this.branchSelectedId) {
-      await this.getBranches({ operationType: { $ne: 'D' } }).then(
-        branches => {
-          this.branches = branches;
-          if(this.branches && this.branches.length > 1) {
-            this.branchSelectedId = this.branches[0]._id;
-          }
-        }
-      );
-      this._authService.getIdentity.subscribe(
-        async identity => {
-          if(identity && identity.origin) {
-            this.allowChangeBranch = false;
-            this.branchSelectedId = identity.origin.branch._id;
-          } else {
-            this.allowChangeBranch = true;
-            this.branchSelectedId = null;
-          }
-        }
-      );
-    }
-
     this.pathLocation = this._router.url.split('/');
     this.transactionMovement = this.pathLocation[2].charAt(0).toUpperCase() + this.pathLocation[2].slice(1);
     this.getItems();
@@ -128,24 +83,13 @@ export class ListMovementsOfArticlesComponent implements OnInit {
   async openModal(op: string, movementOfArticle: MovementOfArticle) {
 
     this.scrollY = window.scrollY;
-    
+
     let modalRef;
     switch (op) {
       case 'transaction':
         modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.transactionId = movementOfArticle.transaction._id;
         modalRef.componentInstance.readonly = true;
-        break;
-      case 'article':
-        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.articleId = movementOfArticle.article._id;
-        modalRef.componentInstance.readonly = true;
-        modalRef.componentInstance.operation = "view";
-        modalRef.result.then((result) => {
-          window.scroll(0, this.scrollY);
-        }, (reason) => {
-          window.scroll(0, this.scrollY);
-        });
         break;
       default: ;
     }
@@ -155,33 +99,6 @@ export class ListMovementsOfArticlesComponent implements OnInit {
     this.currentPage = page;
     this.getItems();
 }
-
-  public getBranches(match: {} = {}): Promise<Branch[]> {
-
-    return new Promise<Branch[]>((resolve, reject) => {
-  
-      this._branchService.getBranches(
-          {}, // PROJECT
-          match, // MATCH
-          { number: 1 }, // SORT
-          {}, // GROUP
-          0, // LIMIT
-          0 // SKIP
-      ).subscribe(
-        result => {
-          if (result && result.branches) {
-            resolve(result.branches);
-          } else {
-            resolve(null);
-          }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
 
   public exportItems(): void {
     this.exportExcelComponent.items = this.items;
@@ -224,7 +141,7 @@ export class ListMovementsOfArticlesComponent implements OnInit {
     if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
     match += `}`;
-
+      console.log(match)
     match = JSON.parse(match);
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
@@ -352,18 +269,6 @@ export class ListMovementsOfArticlesComponent implements OnInit {
 
   public refresh(): void {
     this.getItems();
-  }
-
-  public calculateTotal() : void {
-
-    this.totalItem = 0;
-    this.totalAmount = 0;
-
-    for (let index = 0; index < this.items.length; index++) {
-      this.totalItem = this.totalItem + this.items[index]['count'];
-      this.totalAmount = this.totalAmount + this.items[index]['total'];
-
-    }
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

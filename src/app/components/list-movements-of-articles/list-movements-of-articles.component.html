@@ -57,7 +57,6 @@
                                                       }">
             <td align="left" width="50">
               <button type="button" class="btn btn-success  btn-sm" (click)="openModal('transaction', item)" title="Ver"><i class="fa fa-eye"></i></button>
-              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('article', item)" title="Ver"><i class="fa fa-shopping-basket"></i></button>
             </td>
             <ng-container *ngFor="let column of columns">
               <td *ngIf="column.visible" [attr.align]="column.align">{{getValue(item, column)}}</td>
