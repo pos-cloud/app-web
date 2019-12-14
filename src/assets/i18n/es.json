@@ -70,7 +70,6 @@
     "favourite" : "Destacado",
     "true": "Si",
     "total": "Total",
-    "type": "Tipo",
     "unitOfMeasurement": {
         "abbreviation": "Unidad de Medida",
         "name": "Unidad de Medida"
@@ -83,21 +82,24 @@
     "posKitchen" : "Aparece en POS Cocina",
     "transaction" : {
         "cashBox" : {
-            "number" : "Número"
+            "number" : "Caja"
         },
         "type" : {
-            "name" : "Nombre"
+            "name" : "Tipo de Transacción"
         },
-        "endDate" : "Fecha"
+        "endDate" : "Fecha de Transacción"
     },
     "amountPaid" : "Monto",
     "discount" : "Descuento",
     "number": "Número",
     "bank" : {
-        "name" : "Nombre"
+        "name" : "Banco"
     },
     "expirationDate" : "Fecha de vencimiento",
     "quota" : "Cuota",
     "deliveredBy" : "Entregado por",
-    "unitPrice" : "Precio Unitario"
+    "unitPrice" : "Precio Unitario",
+    "type" : {
+        "name" : "Forma de Pago"
+    }
 }

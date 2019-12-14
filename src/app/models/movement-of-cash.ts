@@ -154,27 +154,27 @@ export let attributes = [
         defaultFilter: `{ "$ne": "D" }`,
         align: 'left',
         required : true,
-    },
-    {
+      },
+      {
         name: 'transaction.operationType',
         visible: false,
         disabled: true,
-        filter: false,
-        datatype: 'string',
+        filter: true,
         defaultFilter: `{ "$ne": "D" }`,
+        datatype: 'string',
         align: 'left',
         required : true,
-    },
-    {
-        name: 'transaction._id',
-        visible: false,
+      },
+      {
+        name: 'transaction.endDate',
+        visible: true,
         disabled: true,
         filter: true,
-        datatype: 'string',
+        datatype: 'date',
         align: 'left',
-        required : true,
-    },
-    {
+        required : true
+      },
+      {
         name: 'transaction.type.transactionMovement',
         visible: false,
         disabled: true,
@@ -182,5 +182,14 @@ export let attributes = [
         datatype: 'string',
         align: 'left',
         required : true,
-    },
+      },
+      {
+        name: 'transaction._id',
+        visible: false,
+        disabled: true,
+        filter: true,
+        datatype: 'string',
+        align: 'left',
+        required : true,
+      }
   ];

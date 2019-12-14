@@ -352,6 +352,11 @@ export class ListChecksComponent implements OnInit {
     });
   }
 
+  public pageChange(page): void {
+    this.currentPage = page;
+    this.getMovementOfCashes();
+  }
+
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;

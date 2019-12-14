@@ -44,33 +44,6 @@ export class ListMovementOfCashesComponent implements OnInit {
   public totalAmount: number = 0;
   public title : string = "Movimiento de medios"
   public currentPage: number = 0;
-  public displayedColumns = [
-    "_id",
-    "transaction.endDate",
-    "transaction.cashBox.number",
-    "quota",
-    "discount",
-    "number",
-    "statusCheck",
-    "observation",
-    "bank._id",
-    "bank.name", 
-    "amountPaid",
-    "operationType",
-    "expirationDate",
-    "transaction._id",
-    "transaction.state",
-    "transaction.type.name",
-    "transaction.type.transactionMovement",
-    "date",
-    "titular",
-    "receiver",
-    "type._id",
-    "type.name",
-    "deliveredBy",
-    "CUIT",
-    "transaction.operationType"
-  ];
   public filters: any[];
   public filterValue: string;
 
@@ -94,11 +67,12 @@ export class ListMovementOfCashesComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
   ) { 
     this.filters = new Array();
-    for(let field of this.displayedColumns) {
-      this.filters[field] = "";
-    }
-    if(this.paymentMethod) {
-      this.filters['type._id'] = this.paymentMethod._id;
+    for(let field of this.columns) {
+      if(field.defaultFilter) {
+        this.filters[field.name] = field.defaultFilter;
+      } else {
+        this.filters[field.name] = "";
+      }
     }
   }
 
@@ -321,21 +295,12 @@ export class ListMovementOfCashesComponent implements OnInit {
   public openModal(op: string, movementOfCash: MovementOfCash): void {
 
     let modalRef;
+
     switch (op) {
       case 'view':
         modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.transactionId = movementOfCash.transaction._id;
         modalRef.componentInstance.readonly = true;
-        break;
-      case 'edit':
-        modalRef = this._modalService.open(EditCheckComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.movementOfCashId = movementOfCash._id;
-        modalRef.componentInstance.readonly = true;
-        modalRef.result.then((result) => {
-          this.getItems();
-        }, (reason) => {
-          this.getItems();
-        });
         break;
       default: ;
     }
