@@ -247,7 +247,7 @@ export class ReportKardexComponent implements OnInit {
         name: 'transaction.operationType',
         visible: false,
         disabled: true,
-        filter: true,
+        filter: false,
         defaultFilter: `{ "$ne": "D" }`,
     	  project: null,
         datatype: 'string',
@@ -544,7 +544,6 @@ export class ReportKardexComponent implements OnInit {
       }
     }
     project += `}`;
-      console.log(project);
     project = JSON.parse(project);
 
     // AGRUPAMOS EL RESULTADO
