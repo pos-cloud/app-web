@@ -4,62 +4,11 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <!--<div class="row container-filter">
-    <div class="col-md-2">
-      <label for="branch" class="control-label">
-        <b>Sucursal</b>
-      </label>
-      <select class="form-control" [(ngModel)]="branchSelectedId">
-        <option [ngValue]="null" [disabled]="!allowChangeBranch">
-          Todas
-        </option>
-        <option 
-          *ngFor="let branch of branches" 
-          [ngValue]="branch._id" 
-          [disabled]="!allowChangeBranch"
-          >
-          {{branch.number}} - {{branch.name}}
-        </option>
-      </select>
-    </div>
-    <div class="col-md-2">
-      <label for="startDate" class="control-label">
-        <b>Fecha Desde:</b>
-      </label>
-      <input type="date" class="form-control" name="startDate" min="2000-01-01" [(ngModel)]="startDate" />
-    </div>
-    <div class="col-md-2">
-      <label for="startTime" class="control-label">
-        <b>Hora Desde:</b>
-      </label>
-      <input type="time" class="form-control" name="startTime" [(ngModel)]="startTime" />
-    </div>
-    <div class="col-md-2">
-      <label for="endDate" class="control-label">
-        <b>Fecha Hasta:</b>
-      </label>
-      <input type="date" class="form-control" name="endDate" min="2000-01-01" [(ngModel)]="endDate" />
-    </div>
-    <div class="col-md-2">
-      <label for="endTime" class="control-label">
-        <b>Hora Hasta:</b>
-      </label>
-      <input type="time" class="form-control" name="endTime" [(ngModel)]="endTime" />
-    </div>
-    <div class="col-md-2" (click)="refresh()">
-        <label for="action" class="control-label">
-            <b>Acción:</b>
-          </label>
-      <span class="form-control btn-action center-content">
-        <i class="fa fa-refresh" [ngClass]="{'fa-spin':loading}"></i>Actualizar
-      </span>
-    </div>
-  </div>-->
   <div class="card  card-large">
     <div class="card-header">
       <span>{{title}}</span>
       <div class="pull-right">
-        <!--<app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems($event)"></app-export-excel>-->
+        <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems($event)"></app-export-excel>
         <div class="btn-group" ngbDropdown>
           <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Columnas"><i class="fa fa-columns"></i><span>Columnas</span></button>
           <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu>
@@ -107,7 +56,8 @@
                                                         totalItems: totalItems
                                                       }">
             <td align="left" width="50">
-              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', item)" title="Ver"><i class="fa fa-eye"></i></button>
+              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('transaction', item)" title="Ver"><i class="fa fa-eye"></i></button>
+              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('article', item)" title="Ver"><i class="fa fa-shopping-basket"></i></button>
             </td>
             <ng-container *ngFor="let column of columns">
               <td *ngIf="column.visible" [attr.align]="column.align">{{getValue(item, column)}}</td>

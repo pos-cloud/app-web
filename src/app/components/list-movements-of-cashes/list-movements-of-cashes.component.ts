@@ -1,14 +1,18 @@
-import { Component, OnInit, Output, EventEmitter, ViewEncapsulation, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewEncapsulation, Input, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { MovementOfCash, StatusCheck } from './../../models/movement-of-cash';
+import { MovementOfCash, StatusCheck, attributes } from './../../models/movement-of-cash';
 import { MovementOfCashService } from './../../services/movement-of-cash.service';
 import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
 import { TransactionState } from 'app/models/transaction';
 import { PaymentMethod } from 'app/models/payment-method';
 import { EditCheckComponent } from '../edit-check/edit-check.component';
+import { moveItemInArray, CdkDragDrop } from '@angular/cdk/drag-drop';
+import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
+import { CurrencyPipe } from '@angular/common';
+import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
 
 @Component({
   selector: 'app-list-movement-of-cash',
@@ -38,7 +42,7 @@ export class ListMovementOfCashesComponent implements OnInit {
   public pathLocation: string[]
   public totalAmountSelected: number = 0;
   public totalAmount: number = 0;
-
+  public title : string = "Movimiento de medios"
   public currentPage: number = 0;
   public displayedColumns = [
     "_id",
@@ -70,6 +74,18 @@ export class ListMovementOfCashesComponent implements OnInit {
   public filters: any[];
   public filterValue: string;
 
+
+  //columns
+  public columns = attributes;
+  private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
+  private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
+  public sort = {
+    "transaction.endDate": 1
+  };
+  public timezone = "-03:00";
+  @ViewChild(ExportExcelComponent, {static: false}) exportExcelComponent: ExportExcelComponent;
+  public items: any[] = new Array();
+
   constructor(
     public _movementOfCashService: MovementOfCashService,
     public _router: Router,
@@ -89,142 +105,134 @@ export class ListMovementOfCashesComponent implements OnInit {
   ngOnInit(): void {
 
     this.pathLocation = this._router.url.split('/');
-    this.userType = this.pathLocation[1];
     this.transactionMovement = this.pathLocation[2].charAt(0).toUpperCase() + this.pathLocation[2].slice(1);
-    this.getMovementOfCashes();
+    this.getItems();
+    this.initDragHorizontalScroll();
+
   }
 
-  public getMovementOfCashes(): void {
+  public initDragHorizontalScroll(): void {
+    const slider = document.querySelector('.table-responsive');
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    slider.addEventListener('mousedown', (e) => {
+      isDown = true;
+      slider.classList.add('active');
+      startX = e['pageX'] - slider['offsetLeft'];
+      scrollLeft = slider.scrollLeft;
+    });
+    slider.addEventListener('mouseleave', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('mouseup', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('mousemove', (e) => {
+      if(!isDown) return;
+      e.preventDefault();
+      const x = e['pageX'] - slider['offsetLeft'];
+      const walk = (x - startX) * 0.7; //scroll-fast
+      slider.scrollLeft = scrollLeft - walk;
+    });
+  }
+
+  public getItems() : void {
     
     this.loading = true;
 
-    // ORDENAMOS LA CONSULTA
-    let sortAux;
-    if (this.orderTerm[0].charAt(0) === '-') {
-        sortAux = `{ "${this.orderTerm[0].split('-')[1]}" : -1 }`;
-    } else {
-        sortAux = `{ "${this.orderTerm[0]}" : 1 }`;
-    }
-    sortAux = JSON.parse(sortAux);
-    
     // FILTRAMOS LA CONSULTA
     let match = `{`;
-    for(let i = 0; i < this.displayedColumns.length; i++) {
-      let value = this.filters[this.displayedColumns[i]];
-      if (value && value != "") {
-        match += `"${this.displayedColumns[i]}": { "$regex": "${value}", "$options": "i"},`;
+      for(let i = 0; i < this.columns.length; i++) {
+        if(this.columns[i].visible || this.columns[i].required) {
+          let value = this.filters[this.columns[i].name];
+          if (value && value != "" && value !== {}) {
+            if(this.columns[i].defaultFilter) {
+              match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
+            } else {
+              match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
+            }
+            if (i < this.columns.length - 1 ) {
+              match += ',';
+            }
+          }
+        }
+      }
+    
+    match += `"transaction.type.transactionMovement": "${this.transactionMovement}"`;
+    if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
+    
+    match += `}`;
+
+    match = JSON.parse(match);
+
+    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+    let project = `{`;
+    let j = 0;
+    for(let i = 0; i < this.columns.length; i++) {
+      if(this.columns[i].visible || this.columns[i].required) {
+        if(j > 0) {
+          project += `,`;
+        }
+        j++;
+        if(this.columns[i].datatype !== "string"){
+          if(this.columns[i].datatype === "date"){
+            project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`
+          } else {
+            project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
+          }
+        } else {
+          project += `"${this.columns[i].name}": 1`;
+        }
+        
       }
     }
+    project += `}`;
 
-    match += `"operationType": { "$ne": "D" },
-              "transaction.state": "${TransactionState.Closed}",
-              "transaction.operationType": { "$ne": "D" },`;
-    
-    if(this.userType === 'admin') {
-      match += `"transaction.type.transactionMovement": "${this.transactionMovement}" }`;
-    } else {
-      match += `"statusCheck": "${StatusCheck.Available}" }`;
-    }
-    
-    match = JSON.parse(match);
-    
-    let project = {};
-    // CAMPOS A TRAER
-    if(this.userType === 'admin') {
-      project = {
-        "_id": 1,
-        "transaction.endDate": { $dateToString: { date: "$transaction.endDate", format: "%d/%m/%Y", timezone: "-03:00"}},
-        "transaction.cashBox.number": { $toString: "$transaction.cashBox.number"},
-        "quota":1 ,
-        "discount": 1,
-        "number": 1,
-        "statusCheck": 1,
-        "observation": 1,
-        "bank._id": 1 ,
-        "bank.name": 1, 
-        "amountPaid": { $toString: '$amountPaid'},
-        "operationType": 1,
-        "expirationDate": { $dateToString: { date: "$expirationDate", format: "%d/%m/%Y", timezone: "-03:00" }},
-        "transaction._id":1,
-        "transaction.state": 1,
-        "transaction.type.name": 1,
-        "transaction.type.transactionMovement": 1,
-        "date": 1,
-        "titular": 1,
-        "receiver": 1,
-        "type._id": { $toString: '$type._id'},
-        "type.name": 1,
-        "deliveredBy": 1,
-        "CUIT": 1,
-        "transaction.operationType": 1
-      };
-    } else {
-      project = {
-        "_id": 1,
-        "number": 1,
-        "bank._id": 1 ,
-        "bank.name": 1,
-        "amountPaid":{ $toString: '$amountPaid'},
-        "operationType": 1,
-        "expirationDate": { $dateToString: { date: "$expirationDate", format: "%d/%m/%Y", timezone: "-03:00" }},
-        "transaction._id":1,
-        "transaction.state": 1,
-        "transaction.type.name": 1,
-        "transaction.type.transactionMovement": 1,
-        "date": 1,
-        "statusCheck": 1,
-        "titular": 1,
-        "receiver": 1,
-        "quota": 1,
-        "type._id": { $toString: '$type._id'},
-        "type.name": 1,
-        "deliveredBy": 1,
-        "CUIT": 1,
-        "observation": 1,
-        "transaction.operationType": 1
-      };
-    }
+    project = JSON.parse(project);
 
     // AGRUPAMOS EL RESULTADO
     let group = {
-      _id: null,
-      count: { $sum: 1 },
-      movementsOfCashes: { $push: '$$ROOT' }
+        _id: null,
+        count: { $sum: 1 },
+        items: { $push: "$$ROOT" }
     };
 
-    let limit = this.itemsPerPage;
     let page = 0;
     if(this.currentPage != 0) {
       page = this.currentPage - 1;
     }
     let skip = !isNaN(page * this.itemsPerPage) ?
-            (page * this.itemsPerPage):
-                0 // SKIP
-    
-    if(this.userType === 'pos') {
-      limit = 0;
-      skip = 0;
-    }
-    
+            (page * this.itemsPerPage) :
+            0 // SKIP
+    let limit = this.itemsPerPage;
+
     this._movementOfCashService.getMovementsOfCashesV2(
-        project, // PROJECT
-        match, // MATCH
-        sortAux, // SORT
-        group, // GROUP
-        limit, // LIMIT
-        skip // SKIP
+      project, // PROJECT
+      match, // MATCH
+      this.sort, // SORT
+      group, // GROUP
+      limit, // LIMIT
+      skip // SKIP
     ).subscribe(
       result => {
         this.loading = false;
-        if (result && result[0] && result[0].movementsOfCashes) {
-          this.movementsOfCashes = result[0].movementsOfCashes;
-          this.totalItems = result[0].count;
-          this.areMovementOfCashesEmpty = false;
-          this.calculateTotal();
+        if (result && result[0] && result[0].items) {
+          if(this.itemsPerPage === 0) {
+            this.exportExcelComponent.items = result[0].items;
+            this.exportExcelComponent.export();
+            this.itemsPerPage = 10;
+            this.getItems();
+          } else {
+            this.items = result[0].items;
+            this.totalItems = result[0].count;
+          }
         } else {
-          this.movementsOfCashes = new Array();
+          this.items = new Array();
           this.totalItems = 0;
-          this.areMovementOfCashesEmpty = true;
         }
       },
       error => {
@@ -235,9 +243,57 @@ export class ListMovementOfCashesComponent implements OnInit {
     );
   }
 
+  public exportItems(): void {
+    this.exportExcelComponent.items = this.items;
+    this.exportExcelComponent.export();
+  }
+
+  public getValue(item, column): any {
+    let val: string = 'item';
+    let exists: boolean = true;
+    let value: any = '';
+    for(let a of column.name.split('.')) {
+      val += '.'+a;
+      if(exists && !eval(val)) {
+        exists = false;
+      }
+    }
+    if(exists) {
+      switch(column.datatype) {
+        case 'number':
+          value = this.roundNumberPipe.transform(eval(val));
+          break;
+        case 'currency':
+            value = this.currencyPipe.transform(this.roundNumberPipe.transform(eval(val)), 'USD', 'symbol-narrow', '1.2-2');
+          break;
+        case 'percent':
+            value = this.roundNumberPipe.transform(eval(val)) + '%';
+          break;
+        default:
+            value = eval(val);
+          break;
+      }
+    }
+    return value;
+  }
+
+  public getColumnsVisibles(): number {
+    let count: number = 0;
+    for (let column of this.columns) {
+      if(column.visible) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  public drop(event: CdkDragDrop<string[]>): void {
+    moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
+  }
+
   public pageChange(page): void {
     this.currentPage = page;
-    this.getMovementOfCashes();
+    this.getItems();
   }
 
   public calculateTotal() :void {
@@ -247,95 +303,19 @@ export class ListMovementOfCashesComponent implements OnInit {
     }
   }
 
-  public async selectmovementOfCash(movementOfCashSelected: MovementOfCash) {
-    
-    let movementOfCash = await this.getMovementOfCashById(movementOfCashSelected._id);
-    if(this.isMovementOfCashSelected(movementOfCash)) {
-      this.deleteMovementOfCashSelected(movementOfCash);
-    } else {
-      if(this.transactionAmount === 0 || (this.transactionAmount >= (this.totalAmountSelected + movementOfCash.amountPaid))) {
-        this.totalAmountSelected += movementOfCash.amountPaid;
-        this.movementsOfCashesSelected.push(movementOfCash);
-      } else {
-        this.deleteMovementOfCashSelected(movementOfCash);
-        if(this.pathLocation[2] !== "fondos") {
-          this.showMessage("El monto $" + movementOfCashSelected.amountPaid + " es superior al de la transacción.", 'info', false);
-        }
-      }
-    }
-  }
-
-  public isMovementOfCashSelected(movementOfCash: MovementOfCash) {
-
-    let isSelected: boolean = false;
-
-    for(let mov of this.movementsOfCashesSelected) {
-      if(mov._id.toString() === movementOfCash._id.toString()) {
-        isSelected = true;
-      }
-    }
-
-    return isSelected;
-  }
-
-  public deleteMovementOfCashSelected(movementOfCash: MovementOfCash): void {
-
-    let movementToDelete: number;
-
-    for(let i=0; i < this.movementsOfCashesSelected.length; i++) {
-      if(this.movementsOfCashesSelected[i]._id.toString() === movementOfCash._id.toString()) {
-        movementToDelete = i;
-      }
-    }
-    if(movementToDelete !== undefined) {
-      this.totalAmountSelected -= this.movementsOfCashesSelected[movementToDelete].amountPaid;
-      this.movementsOfCashesSelected.splice(movementToDelete, 1);
-    }
-  }
-
-  public closeModal(): void {
-    this.activeModal.close(
-      {
-        movementsOfCashes: this.movementsOfCashesSelected
-      }
-    );
-  }
-
-  public getMovementOfCashById(id: string): Promise<MovementOfCash> {
-
-    return new Promise<MovementOfCash>((resolve, reject) => {
-
-      this._movementOfCashService.getMovementOfCash(id).subscribe(
-        async result => {
-          if (!result.movementOfCash) {
-            this.showMessage(result.message, 'danger', false);
-            resolve(null);
-          } else {
-            resolve(result.movementOfCash);
-          }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
-
   public orderBy (term: string): void {
 
-    if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = '-' + term;
+    if(this.sort[term]) {
+      this.sort[term] *= -1;
     } else {
-      this.orderTerm[0] = term;
+      this.sort = JSON.parse('{"' + term + '": 1 }');
     }
 
-    this.getMovementOfCashes();
+    this.getItems();
   }
 
   public refresh(): void {
-    this.getMovementOfCashes();
-    
+    this.getItems();
   }
 
   public openModal(op: string, movementOfCash: MovementOfCash): void {
@@ -352,9 +332,9 @@ export class ListMovementOfCashesComponent implements OnInit {
         modalRef.componentInstance.movementOfCashId = movementOfCash._id;
         modalRef.componentInstance.readonly = true;
         modalRef.result.then((result) => {
-          this.getMovementOfCashes();
+          this.getItems();
         }, (reason) => {
-          this.getMovementOfCashes();
+          this.getItems();
         });
         break;
       default: ;

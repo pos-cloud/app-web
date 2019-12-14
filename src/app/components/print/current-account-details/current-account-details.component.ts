@@ -21,7 +21,7 @@ import { map } from 'rxjs/operators';
 export class CurrentAccountDetailsComponent implements OnInit {
 
   @Input() companyType: CompanyType;
-
+  @Input() balance: boolean;
   @Input() employee: string;
   @Input() address : string;
   @Input() emails : string;
@@ -113,10 +113,14 @@ export class CurrentAccountDetailsComponent implements OnInit {
       match +=  `"endDate" : {  "$gte": {"$date": "${this.startDate}T00:00:00${timezone}"},
                                 "$lte": {"$date": "${this.endDate}T00:00:00${timezone}"}},`
     }
+
+    if(this.balance){
+      match += `"balance" : { "$gt" : 0 },`
+    }
     
     match += `"company.type" : "${this.companyType}",
               "state" : "Cerrado",
-              "balance" : { "$gt" : 0 },
+              
               "$or": [{"type.currentAccount" : "Si"}, {"type.currentAccount" : "Cobra"}] ,            
               "company.operationType" : { "$ne" : "D" },
               "operationType" : { "$ne" : "D" } }`;
@@ -415,7 +419,9 @@ export class CurrentAccountDetailsComponent implements OnInit {
       this.doc.setFontType("bold");
       this.doc.text(120,row,"Total");
       this.doc.text(155,row,"$" +this.roundNumber.transform(totalPrice).toString());
-      this.doc.text(180,row,"$" +this.roundNumber.transform(balance).toString());
+      if(balance){
+        this.doc.text(180,row,"$" +this.roundNumber.transform(balance).toString());
+      }
       this.doc.setFontType("normal");
       row += 5;
       if(row > 220) {

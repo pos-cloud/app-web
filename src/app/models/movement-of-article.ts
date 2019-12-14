@@ -152,5 +152,32 @@ export let attributes = [
     datatype: 'date',
     align: 'left',
     required : true
+  },
+  {
+    name: 'transaction.type.transactionMovement',
+    visible: false,
+    disabled: true,
+    filter: true,
+    datatype: 'string',
+    align: 'left',
+    required : true,
+  },
+  {
+    name: 'transaction._id',
+    visible: false,
+    disabled: true,
+    filter: true,
+    datatype: 'string',
+    align: 'left',
+    required : true,
+  },
+  {
+    name: 'article._id',
+    visible: false,
+    disabled: true,
+    filter: true,
+    datatype: 'string',
+    align: 'left',
+    required : true,
   }
 ];

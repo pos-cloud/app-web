@@ -2,8 +2,11 @@
     <div class="card ">
       <div class="card-header">Resúmenes de Cuentas
         <div class="pull-right">
+            <span (click)="openModal('print2')">
+                <i class="btn fa fa-print" data-toggle="tooltip" data-placement="top" title="Imprimir detalle"> Imprimir detalle sin saldo</i>
+            </span>
             <span (click)="openModal('print')">
-                <i class="btn fa fa-print" data-toggle="tooltip" data-placement="top" title="Imprimir detalle"> Imprimir detalle</i>
+                <i class="btn fa fa-print" data-toggle="tooltip" data-placement="top" title="Imprimir detalle"> Imprimir detalle con saldo</i>
             </span>
         </div>
       </div>

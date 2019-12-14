@@ -76,10 +76,28 @@
         "name": "Unidad de Medida"
     },
     "amount" : "Cantidad",
-    "transaction.endDate" : "Fecha",
     "currency" : {
         "name" : "Moneda"
     },
     "creationDate" : "Fecha de Alta",
-    "posKitchen" : "Aparece en POS Cocina"
+    "posKitchen" : "Aparece en POS Cocina",
+    "transaction" : {
+        "cashBox" : {
+            "number" : "Número"
+        },
+        "type" : {
+            "name" : "Nombre"
+        },
+        "endDate" : "Fecha"
+    },
+    "amountPaid" : "Monto",
+    "discount" : "Descuento",
+    "number": "Número",
+    "bank" : {
+        "name" : "Nombre"
+    },
+    "expirationDate" : "Fecha de vencimiento",
+    "quota" : "Cuota",
+    "deliveredBy" : "Entregado por",
+    "unitPrice" : "Precio Unitario"
 }

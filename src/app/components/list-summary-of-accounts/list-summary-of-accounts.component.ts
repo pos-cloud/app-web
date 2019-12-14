@@ -215,6 +215,21 @@ export class ListSummaryOfAccountsComponent implements OnInit {
         modalRef.componentInstance.filterCompanyType = this.filterCompanyType;
         modalRef.componentInstance.startDate = this.startDate;
         modalRef.componentInstance.endDate = this.endDate;
+        modalRef.balance = true;
+
+        break;
+      case 'print2':
+        modalRef = this._modalService.open(CurrentAccountDetailsComponent);
+        modalRef.componentInstance.companyType = this.filterCompanyType;
+        modalRef.componentInstance.employee = this.filterCompanyEmployee;
+        modalRef.componentInstance.address = this.filterCompanyAddress;
+        modalRef.componentInstance.emails = this.filterCompanyEmails;
+        modalRef.componentInstance.name = this.filterCompanyName;
+        modalRef.componentInstance.identification = this.filterIdentificationValue;
+        modalRef.componentInstance.filterCompanyType = this.filterCompanyType;
+        modalRef.componentInstance.startDate = this.startDate;
+        modalRef.componentInstance.endDate = this.endDate;
+        modalRef.balance = false;
         
         break;
     }

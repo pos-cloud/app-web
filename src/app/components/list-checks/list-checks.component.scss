@@ -1,0 +1,11 @@
+app-list-checks {
+    .row-active {
+        background-color: #0275D8 !important;
+        color: #fff !important;
+    }
+    
+    .row-inactive {
+        background-color: #fff !important;
+        color: #000 !important;
+    }
+}

@@ -154,7 +154,7 @@
           <div *ngIf="formErrors.notes" class="alert alert-danger">
             {{ formErrors.notes }}
           </div>
-          <div class="row" style="margin-top: 10px;" *ngIf="movementOfArticle.article.notes && movementOfArticle.article.notes.length > 0">
+          <div class="row" style="margin-top: 10px;" *ngIf="movementOfArticle.article && movementOfArticle.article.notes && movementOfArticle.article.notes.length > 0">
             <div class="form-group col-md-12">
               <div class="row">
                 <button type="button"
