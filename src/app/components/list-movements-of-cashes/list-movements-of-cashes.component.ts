@@ -3,12 +3,10 @@ import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { MovementOfCash, StatusCheck, attributes } from './../../models/movement-of-cash';
+import { MovementOfCash, attributes } from './../../models/movement-of-cash';
 import { MovementOfCashService } from './../../services/movement-of-cash.service';
 import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
-import { TransactionState } from 'app/models/transaction';
 import { PaymentMethod } from 'app/models/payment-method';
-import { EditCheckComponent } from '../edit-check/edit-check.component';
 import { moveItemInArray, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
 import { CurrencyPipe } from '@angular/common';

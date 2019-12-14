@@ -655,6 +655,11 @@ export class ReportKardexComponent implements OnInit {
     this.getItems();
   }
 
+  public pageChange(page): void {
+    this.currentPage = page;
+    this.getItems();
+  }
+
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;

@@ -3,7 +3,7 @@
     <div class="card-header">
       <span>{{title}}</span>
       <div class="pull-right">
-        <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems($event)"></app-export-excel>
+        <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems()"></app-export-excel>
         <div class="btn-group" ngbDropdown>
           <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Columnas"><i class="fa fa-columns"></i><span>Columnas</span></button>
           <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu>
