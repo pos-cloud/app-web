@@ -33,9 +33,7 @@ import { CurrencyPipe } from '@angular/common';
 
 export class ListArticleStocksComponent implements OnInit {
 
-
-  // tabla 
-
+  // TABLA 
   public listTitle: string;
   public orderTerm: string[] = ["-realStock"];
   public totalItems: number = 0;
@@ -148,10 +146,10 @@ export class ListArticleStocksComponent implements OnInit {
           project += `,`;
         }
         j++;
-        if(this.columns[i].project){
+        if(this.columns[i].project) {
           project += `"${this.columns[i].name}" : ${this.columns[i].project} `
         } else {
-          if(this.columns[i].datatype !== "string"){
+          if(this.columns[i].datatype !== "string") {
             project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
           } else {
             project += `"${this.columns[i].name}": 1`;
@@ -301,14 +299,13 @@ export class ListArticleStocksComponent implements OnInit {
                       }
                   });
                 }
-                if(printer){
-                  if(printer.fields && printer.fields.length > 0){
-                    console.log(articleStock)
+                if(printer) {
+                  if(printer.fields && printer.fields.length > 0) {
                     modalRef = this._modalService.open(PrintTransactionTypeComponent)
                     modalRef.componentInstance.articleId = articleStock.article._id;
                     modalRef.componentInstance.quantity = articleStock.realStock;
                     modalRef.componentInstance.printer = printer;
-                    if(this.priceListId){
+                    if(this.priceListId) {
                       modalRef.componentInstance.priceListId = this.priceListId;
                     }
                   } else {
@@ -330,7 +327,7 @@ export class ListArticleStocksComponent implements OnInit {
       case 'price-lists':
         modalRef = this._modalService.open(ListPriceListsComponent, { size: 'lg', backdrop: 'static' });
         modalRef.result.then((result) => {
-          if(result && result.priceList){
+          if(result && result.priceList) {
             this.priceListId = result.priceList
             this.openModal('print-label',articleStock)
           } else {
@@ -403,7 +400,7 @@ export class ListArticleStocksComponent implements OnInit {
   public getPriceList() : void {
     this._priceList.getPriceLists().subscribe(
       result =>{
-        if(result && result.priceLists){
+        if(result && result.priceLists) {
           this.priceLists = result.priceLists;
         } else {
           this.priceLists = new Array();

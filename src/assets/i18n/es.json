@@ -1,5 +1,10 @@
 {
+    "allowMeasure" : "¿Es pesable?",
+    "allowSaleWithoutStock" : "¿Se vende sin stock disponible?",
+    "allowSale" : "¿Habilitado para la venta?",
+    "allowPurchase" : "¿Habilitado para la compra?",
     "article": {
+        "_id": "Identificador Artículo",
         "category": {
             "description": "Categoría"
         },
@@ -32,20 +37,23 @@
         "barcode": "Código de Barras",
         "operationType": "Auditoría"
     },
+    "barcode": "Código de Barras",
+    "basePrice" : "Precio Base",
     "branch" : {
         "name" : "Sucursal"
     },
-    "deposit" : {
-        "name" : "Deposito"
-    },
-    "barcode": "Código de Barras",
     "category": {
         "description": "Categoría"
     },
-    "realStock" : "Stock",
     "code": "Código",
+    "costPrice": "Precio de Costo",
     "count": "Cantidad",
+    "deposit" : {
+        "_id": "Identificador Depósito",
+        "name" : "Deposito"
+    },
     "description": "Descripción",
+    "endDate": "Fecha",
     "false": "No",
     "make": {
         "description": "Marca"
@@ -55,16 +63,10 @@
     "posDescription": "Descripción Corta",
     "quantityPerMeasure": "Cant. de Un. de Medida",
     "salePrice": "Precio de Venta",
-    "costPrice": "Precio de Costo",
     "isWeigth" : "¿Pide medida?",
-    "allowMeasure" : "¿Es pesable?",
-    "allowSaleWithoutStock" : "¿Se vende sin stock disponible?",
-    "allowSale" : "¿Habilitado para la venta?",
-    "allowPurchase" : "¿Habilitado para la compra?",
     "printIn" : "Imprime en",
     "markupPrice" : "Utilidad",
     "markupPercentage" : "Margen",
-    "basePrice" : "Precio Base",
     "ecommerceEnabled" : "¿Habilitado para Ecommerce?",
     "picture" : "Imagen",
     "favourite" : "Destacado",
@@ -81,13 +83,17 @@
     "creationDate" : "Fecha de Alta",
     "posKitchen" : "Aparece en POS Cocina",
     "transaction" : {
+        "_id": "Identificador Transacción",
         "cashBox" : {
             "number" : "Caja"
         },
+        "endDate" : "Fecha",
+        "number": "Número",
+        "operationType": "Auditoría Transacción",
         "type" : {
-            "name" : "Tipo de Transacción"
-        },
-        "endDate" : "Fecha de Transacción"
+            "name" : "Tipo de Transacción",
+            "transactionMovement": "Movimiento"
+        }
     },
     "amountPaid" : "Monto",
     "discount" : "Descuento",
@@ -95,11 +101,13 @@
     "bank" : {
         "name" : "Banco"
     },
-    "expirationDate" : "Fecha de vencimiento",
+    "expirationDate" : "Vencimiento",
     "quota" : "Cuota",
+    "quantityForStock": "Movimiento de Stock",
     "deliveredBy" : "Entregado por",
     "unitPrice" : "Precio Unitario",
     "type" : {
-        "name" : "Forma de Pago"
-    }
+        "name" : "Tipo"
+    },
+    "realStock" : "Stock"
 }

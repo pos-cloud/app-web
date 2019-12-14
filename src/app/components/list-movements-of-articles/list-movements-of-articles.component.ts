@@ -1,21 +1,17 @@
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
 import { CurrencyPipe } from '@angular/common';
 import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
-import { Branch } from 'app/models/branch';
 import { Router } from '@angular/router';
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { BranchService } from 'app/services/branch.service';
 import { AuthService } from 'app/services/auth.service';
 
-import * as moment from 'moment';
 import 'moment/locale/es';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { AddArticleComponent } from '../add-article/add-article.component';
 import { Config } from 'app/app.config';
 import { MovementOfArticleService } from 'app/services/movement-of-article.service';
 import { attributes, MovementOfArticle } from 'app/models/movement-of-article'
-import { MovementOfCashService } from 'app/services/movement-of-cash.service';
 import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
 
 @Component({
@@ -141,7 +137,6 @@ export class ListMovementsOfArticlesComponent implements OnInit {
     if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
     match += `}`;
-      console.log(match)
     match = JSON.parse(match);
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS

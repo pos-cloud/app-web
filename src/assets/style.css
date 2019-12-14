@@ -29,7 +29,12 @@ body {
 .dropdown-menu {
       max-height: 90vh;
       overflow-y: auto !important;
-    }
+}
+
+.dropdown-menu-right {
+      left: auto !important;
+      right: 0 !important;
+}
 
 .container-fluid {
       background-color: #e4e9f2;
