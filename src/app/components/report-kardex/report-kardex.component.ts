@@ -582,6 +582,7 @@ export class ReportKardexComponent implements OnInit {
             this.items = result[0].items;
             this.totalItems = result[0].count;
           }
+          if(this.currentPage == 0 && this.totalItems > this.itemsPerPage) this.currentPage = parseFloat(this.roundNumber.transform(this.totalItems / this.itemsPerPage + 0.5, 0).toFixed(0));
           this.balance = 0;
           for(let mov of this.items) {
             this.balance += parseFloat(mov.quantityForStock);
@@ -590,6 +591,7 @@ export class ReportKardexComponent implements OnInit {
         } else {
           this.items = new Array();
           this.totalItems = 0;
+          this.currentPage = 0;
         }
       },
       error => {
