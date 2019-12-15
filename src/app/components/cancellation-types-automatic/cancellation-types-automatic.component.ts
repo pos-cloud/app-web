@@ -297,6 +297,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
       Object.assign(mov, movOfArt);
       delete mov._id;
       mov.transaction = transaction;
+      mov.quantityForStock = 0;
       if(transaction.type.stockMovement) {
         mov.stockMovement = transaction.type.stockMovement.toString();
       }
