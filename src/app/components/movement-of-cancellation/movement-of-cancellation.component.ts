@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TransactionMovement, Movements } from '../../models/transaction-type'
-import { Transaction, TransactionState } from '../../models/transaction'
+import { Transaction } from '../../models/transaction'
 
 //service
 import { CancellationTypeService } from "../../services/cancellation-type.service"
@@ -610,7 +610,7 @@ export class MovementOfCancellationComponent implements OnInit {
                 movementOfArticle.category = mov.category;
               }
               movementOfArticle.amount = mov.amount;
-              movementOfArticle.quantityForStock = mov.quantityForStock;
+              movementOfArticle.quantityForStock = 0;
               movementOfArticle.barcode = mov.barcode;
               movementOfArticle.notes = mov.notes;
               movementOfArticle.printed = mov.printed;
