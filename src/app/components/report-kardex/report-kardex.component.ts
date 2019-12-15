@@ -518,6 +518,7 @@ export class ReportKardexComponent implements OnInit {
     match = JSON.parse(match);
     if(this.depositSelectedId) match['deposit._id'] = { $oid: this.depositSelectedId };
     match['endDate'] = { $gte: { $date: this.startDate + 'T00:00:00' + timezone }, $lte: { $date: this.endDate +'T23:59:59' + timezone } };
+    match['article._id'] = { $oid: this.articleSelected._id };
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
     let project = `{`;
