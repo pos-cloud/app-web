@@ -277,7 +277,7 @@
 					<ng-template ngbTabContent>
                 <form #depositForm="ngForm" (ngSubmit)="addDeposit(depositForm)">
                     <div class="row">
-                        <div class="form-group col-md-12">
+                        <div class="form-group col-md-10">
                             <label for="deposit" class="control-label">Agregar Depósito:</label>
                             <select class="form-control" ngModel name="deposit">
                               <option *ngFor="let deposit of deposits" 
@@ -318,7 +318,7 @@
                   </table>
                   <form #locationForm="ngForm" (ngSubmit)="addLocation(locationForm)">
                       <div class="row">
-                          <div class="form-group col-md-12">
+                          <div class="form-group col-md-10">
                               <label for="location" class="control-label">Agregar Ubicación:</label>
                               <select class="form-control" ngModel name="location">
                                 <option *ngFor="let location of locations" 
