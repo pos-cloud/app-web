@@ -884,7 +884,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         !this.movementOfArticle.article.allowSaleWithoutStock) {
         await this.getArticleStock().then(
           articleStock => {
-            if (!articleStock || this.movementOfArticle.amount > articleStock.realStock) {
+            if (!articleStock || (this.movementOfArticle.amount + this.movementOfArticle.quantityForStock) > articleStock.realStock) {
               isValid = false;
               let realStock = 0;
               if(articleStock) {

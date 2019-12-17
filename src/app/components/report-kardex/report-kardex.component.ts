@@ -603,6 +603,7 @@ export class ReportKardexComponent implements OnInit {
           this.items = new Array();
           this.totalItems = 0;
           this.currentPage = 0;
+          this.balance = 0;
         }
       },
       error => {

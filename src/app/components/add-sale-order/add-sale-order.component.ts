@@ -788,7 +788,7 @@ export class AddSaleOrderComponent {
         !movementOfArticle.article.allowSaleWithoutStock) {
         await this.getArticleStock(movementOfArticle).then(
           articleStock => {
-            if (!articleStock || movementOfArticle.amount > articleStock.realStock) {
+            if (!articleStock || (movementOfArticle.amount + movementOfArticle.quantityForStock) > articleStock.realStock) {
               isValid = false;
               let realStock = 0;
               if(articleStock) {
@@ -2273,7 +2273,11 @@ export class AddSaleOrderComponent {
     return new Promise<boolean>(async(resolve, reject) => {
 
       if(!movementOfArticle.deposit) {
-        movementOfArticle.deposit = this.transaction.depositDestination;
+        if(this.transaction.type.stockMovement !== StockMovement.Transfer) {
+          movementOfArticle.deposit = this.transaction.depositDestination;
+        } else {
+          movementOfArticle.deposit = this.transaction.depositOrigin;
+        }
   
         if(movementOfArticle.article.deposits && movementOfArticle.article.deposits.length > 0) {
           for (const element of movementOfArticle.article.deposits) {
@@ -2283,7 +2287,6 @@ export class AddSaleOrderComponent {
           }
         }
       }
-
       this._articleStockService.updateRealStock(movementOfArticle).subscribe(
         result => {
           this.loading = false;
