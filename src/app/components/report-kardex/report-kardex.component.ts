@@ -294,6 +294,16 @@ export class ReportKardexComponent implements OnInit {
         align: 'left',
         required : true
       },
+      {
+        name: 'modifyStock',
+        visible: false,
+        disabled: true,
+        filter: true,
+        datatype: 'boolean',
+        project: null,
+        align: 'left',
+        required : true
+      }
     ];
   }
 
