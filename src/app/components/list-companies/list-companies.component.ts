@@ -14,6 +14,7 @@ import { SendEmailComponent } from './../../components/send-email/send-email.com
 import { ImportComponent } from '../import/import.component';
 import { User } from 'app/models/user';
 import { AuthService } from 'app/services/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-list-companies',
@@ -39,6 +40,7 @@ export class ListCompaniesComponent implements OnInit {
   public itemsPerPage = 10;
   public totalItems = 0;
   public userCountry: string;
+  private subscription: Subscription = new Subscription();
 
   constructor(
     public _companyService: CompanyService,
@@ -83,7 +85,7 @@ export class ListCompaniesComponent implements OnInit {
 
     let query = 'where="type":"' + this.type.toString() + '"';
 
-    this._companyService.getCompanies(query).subscribe(
+    this.subscription.add(this._companyService.getCompanies(query).subscribe(
         result => {
 					if (!result.companies) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
@@ -102,7 +104,7 @@ export class ListCompaniesComponent implements OnInit {
           this.showMessage(error._body, 'danger', false);
           this.loading = false;
 				}
-      );
+      ));
   }
 
   public orderBy (term: string, property?: string): void {
@@ -233,17 +235,7 @@ export class ListCompaniesComponent implements OnInit {
     this.activeModal.close({ company: companySelected });
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
-    this.alertMessage = message;
-    this.alertConfig.type = type;
-    this.alertConfig.dismissible = dismissible;
-  }
-
-  public hideMessage():void {
-    this.alertMessage = '';
-  }
-
-  exportAsXLSX():void {
+  public exportAsXLSX():void {
 
     let data = [] ;
 
@@ -273,6 +265,20 @@ export class ListCompaniesComponent implements OnInit {
       }
     }
     this._companyService.exportAsExcelFile(data, this.type.toString());
- }
+  }
+
+  public ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = '';
+  }
 
 }

@@ -4,8 +4,6 @@ import { CurrencyPipe } from '@angular/common';
 import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
 import { Router } from '@angular/router';
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { BranchService } from 'app/services/branch.service';
-import { AuthService } from 'app/services/auth.service';
 
 import 'moment/locale/es';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -13,6 +11,7 @@ import { Config } from 'app/app.config';
 import { MovementOfArticleService } from 'app/services/movement-of-article.service';
 import { attributes, MovementOfArticle } from 'app/models/movement-of-article'
 import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-list-movements-of-articles',
@@ -40,15 +39,14 @@ export class ListMovementsOfArticlesComponent implements OnInit {
   private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
   @ViewChild(ExportExcelComponent, {static: false}) exportExcelComponent: ExportExcelComponent;
   public columns = attributes;
-  public pathLocation: string[]
+  public pathLocation: string[];
+  private subscription: Subscription = new Subscription();
 
   constructor(
     public _movementOfArticleService: MovementOfArticleService,
     public _router: Router,
     public _modalService: NgbModal,
-    public alertConfig: NgbAlertConfig,
-    private _branchService: BranchService,
-    private _authService: AuthService
+    public alertConfig: NgbAlertConfig
   ) {
 
     this.filters = new Array();
@@ -179,7 +177,7 @@ export class ListMovementsOfArticlesComponent implements OnInit {
             0 // SKIP
     let limit = this.itemsPerPage;
 
-    this._movementOfArticleService.getMovementsOfArticlesV2(
+    this.subscription.add(this._movementOfArticleService.getMovementsOfArticlesV2(
       project, // PROJECT
       match, // MATCH
       sort, // SORT
@@ -209,7 +207,7 @@ export class ListMovementsOfArticlesComponent implements OnInit {
         this.loading = false;
         this.totalItems = 0;
       }
-    );
+    ));
   }
 
   public getValue(item, column): any {
@@ -265,6 +263,10 @@ export class ListMovementsOfArticlesComponent implements OnInit {
   public refresh(): void {
     this.getItems();
   }
+
+  public ngOnDestroy(): void {
+	  this.subscription.unsubscribe();
+	}
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;

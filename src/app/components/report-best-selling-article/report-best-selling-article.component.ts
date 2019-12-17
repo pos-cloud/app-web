@@ -19,6 +19,7 @@ import { ExportExcelComponent } from '../export/export-excel/export-excel.compon
 import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
 import { CurrencyPipe } from '@angular/common';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-report-best-selling-article',
@@ -44,9 +45,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
   public listType: string = 'statistics';
   public itemsPerPage: string = "5";
   public currentPage: number = 1;
-  public sort = {
-    "count": -1
-  };
+  public sort = { "count": -1 };
   public transactionMovement: string;
   public totalAmount;
   public totalItem;
@@ -59,6 +58,8 @@ export class ReportBestSellingArticleComponent implements OnInit {
   private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
   private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
   @ViewChild(ExportExcelComponent, {static: false}) exportExcelComponent: ExportExcelComponent;
+  private subscription: Subscription = new Subscription();
+  
   public columns = [
     {
       name: 'article.category.description',
@@ -328,7 +329,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
       branch: this.branchSelectedId
     }
 
-    this._articleService.getBestSellingArticle(JSON.stringify(query)).subscribe(
+    this.subscription.add(this._articleService.getBestSellingArticle(JSON.stringify(query)).subscribe(
       result => {
         if (!result || result.length <= 0) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
@@ -347,7 +348,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
-    );
+    ));
   }
 
   public getValue(item, column): any {
@@ -415,6 +416,10 @@ export class ReportBestSellingArticleComponent implements OnInit {
 
     }
   }
+
+  public ngOnDestroy(): void {
+	  this.subscription.unsubscribe();
+	}
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;

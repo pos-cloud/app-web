@@ -13,6 +13,7 @@ import { Config } from 'app/app.config';
 import { ConfigService } from 'app/services/config.service';
 import { TransactionMovement } from 'app/models/transaction-type';
 import { CurrentAccountDetailsComponent } from '../print/current-account-details/current-account-details.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-list-summary-of-accounts',
@@ -46,6 +47,7 @@ export class ListSummaryOfAccountsComponent implements OnInit {
   public filterCompanyName : string;
   public filterIdentificationValue : string;
   public filterCompanyAddress : string;
+  private subscription: Subscription = new Subscription();
 
   constructor(
     public _companyService: CompanyService,
@@ -138,25 +140,24 @@ export class ListSummaryOfAccountsComponent implements OnInit {
       dataSelect : this.dataSelect
     }
 
-
-    this._companyService.getSummaryOfAccounts(JSON.stringify(query)).subscribe(
-        result => {
-          if (!result) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            this.items = new Array();
-            this.totalItems = 0;
-          } else {
-            this.hideMessage();
-            this.items = result;
-            this.totalItems = this.items.length;
-          }
-          this.loading = false;
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
+    this.subscription.add(this._companyService.getSummaryOfAccounts(JSON.stringify(query)).subscribe(
+      result => {
+        if (!result) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.items = new Array();
+          this.totalItems = 0;
+        } else {
+          this.hideMessage();
+          this.items = result;
+          this.totalItems = this.items.length;
         }
-      );
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    ));
   }
 
   public viewDetailCureentAccount(companyId: string): void {
@@ -188,16 +189,6 @@ export class ListSummaryOfAccountsComponent implements OnInit {
       }
     }
     return this.roundNumber.transform(total);
-  }
-
-  public showMessage(message: string, type: string, dismissible: boolean): void {
-    this.alertMessage = message;
-    this.alertConfig.type = type;
-    this.alertConfig.dismissible = dismissible;
-  }
-
-  public hideMessage():void {
-    this.alertMessage = '';
   }
 
   public openModal(op : string) {
@@ -235,4 +226,17 @@ export class ListSummaryOfAccountsComponent implements OnInit {
     }
   }
 
+  public ngOnDestroy(): void {
+	  this.subscription.unsubscribe();
+	}
+
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = '';
+  }
 }

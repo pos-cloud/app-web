@@ -1,5 +1,5 @@
 
-import {of as observableOf,  Observable } from 'rxjs';
+import {of as observableOf,  Observable, Subscription } from 'rxjs';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -85,6 +85,7 @@ export class ListTransactionsComponent implements OnInit {
   public filters: any[];
   public filterValue: string;
   public userCountry: string;
+  private subscription: Subscription = new Subscription();
 
   constructor(
     public _transactionService: TransactionService,
@@ -277,7 +278,7 @@ export class ListTransactionsComponent implements OnInit {
             (page * this.itemsPerPage) :
                 0 // SKIP
     
-    this._transactionService.getTransactionsV2(
+    this.subscription.add(this._transactionService.getTransactionsV2(
         project, // PROJECT
         match, // MATCH
         sortAux, // SORT
@@ -300,7 +301,7 @@ export class ListTransactionsComponent implements OnInit {
         this.loading = false;
         this.totalItems = 0;
       }
-    );
+    ));
   }
 
   public pageChange(page): void {
@@ -479,6 +480,9 @@ export class ListTransactionsComponent implements OnInit {
     });
   }
 
+  public ngOnDestroy(): void {
+	  this.subscription.unsubscribe();
+	}
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;

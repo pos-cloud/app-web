@@ -10,6 +10,7 @@ import { Config } from 'app/app.config';
 import { Branch } from 'app/models/branch';
 import { BranchService } from 'app/services/branch.service';
 import { AuthService } from 'app/services/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-report-sales-by-make',
@@ -35,15 +36,14 @@ export class ReportSalesByMakeComponent implements OnInit {
   public itemsPerPage: string = "5";
   public currentPage: number = 1;
   public totalItems = 0;
-  public sort = {
-    "count": -1
-  };
+  public sort = { "count": -1 };
   public transactionMovement: string;
   public totalItem;
   public totalAmount;
   public branches: Branch[];
   @Input() branchSelectedId: String;
   public allowChangeBranch: boolean;
+  private subscription: Subscription = new Subscription();
 
   constructor(
     public _makeService: MakeService,
@@ -146,7 +146,7 @@ export class ReportSalesByMakeComponent implements OnInit {
       branch: this.branchSelectedId
     }
 
-    this._makeService.getSalesByMake(JSON.stringify(query)).subscribe(
+    this.subscription.add(this._makeService.getSalesByMake(JSON.stringify(query)).subscribe(
       result => {
         if (!result || result.length <= 0) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
@@ -165,7 +165,7 @@ export class ReportSalesByMakeComponent implements OnInit {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
-    );
+    ));
   }
 
   public calculateTotal() : void {
@@ -193,6 +193,10 @@ export class ReportSalesByMakeComponent implements OnInit {
   public refresh(): void {
     this.getSalesByMake();
   }
+
+  public ngOnDestroy(): void {
+	  this.subscription.unsubscribe();
+	}
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;

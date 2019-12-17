@@ -35,7 +35,7 @@ import { UserService } from 'app/services/user.service';
 import { PriceList } from 'app/models/price-list';
 import { PriceListService } from 'app/services/price-list.service';
 import { ListPriceListsComponent } from '../list-price-lists/list-price-lists.component';
-import { async } from 'q';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-list-articles',
@@ -68,6 +68,7 @@ export class ListArticlesComponent implements OnInit {
   public articleType: Type;
   public currentPage: number = 0;
   public database: string;
+  private subscription: Subscription = new Subscription();
 
   public filters: any[];
 
@@ -245,7 +246,7 @@ export class ListArticlesComponent implements OnInit {
             0 // SKIP
     let limit = this.itemsPerPage;
 
-    this._articleService.getArticlesV2(
+    this.subscription.add(this._articleService.getArticlesV2(
       project, // PROJECT
       match, // MATCH
       this.sort, // SORT
@@ -275,7 +276,7 @@ export class ListArticlesComponent implements OnInit {
         this.loading = false;
         this.totalItems = 0;
       }
-    );
+    ));
   }
 
   public exportItems(): void {
@@ -619,6 +620,10 @@ export class ListArticlesComponent implements OnInit {
 
     this._claimService.saveClaim(claim).subscribe();
   }
+
+  public ngOnDestroy(): void {
+	  this.subscription.unsubscribe();
+	}
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;

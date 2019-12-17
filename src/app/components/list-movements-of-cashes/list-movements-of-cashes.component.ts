@@ -11,6 +11,7 @@ import { moveItemInArray, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
 import { CurrencyPipe } from '@angular/common';
 import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-list-movement-of-cash',
@@ -44,7 +45,7 @@ export class ListMovementOfCashesComponent implements OnInit {
   public currentPage: number = 0;
   public filters: any[];
   public filterValue: string;
-
+  private subscription: Subscription = new Subscription();
 
   //columns
   public columns = attributes;
@@ -80,7 +81,6 @@ export class ListMovementOfCashesComponent implements OnInit {
     this.transactionMovement = this.pathLocation[2].charAt(0).toUpperCase() + this.pathLocation[2].slice(1);
     this.getItems();
     this.initDragHorizontalScroll();
-
   }
 
   public initDragHorizontalScroll(): void {
@@ -182,7 +182,7 @@ export class ListMovementOfCashesComponent implements OnInit {
             0 // SKIP
     let limit = this.itemsPerPage;
 
-    this._movementOfCashService.getMovementsOfCashesV2(
+    this.subscription.add(this._movementOfCashService.getMovementsOfCashesV2(
       project, // PROJECT
       match, // MATCH
       this.sort, // SORT
@@ -212,7 +212,7 @@ export class ListMovementOfCashesComponent implements OnInit {
         this.loading = false;
         this.totalItems = 0;
       }
-    );
+    ));
   }
 
   public exportItems(): void {
@@ -307,6 +307,10 @@ export class ListMovementOfCashesComponent implements OnInit {
   public addItem(movementOfCashSelected) {
     this.eventAddItem.emit(movementOfCashSelected);
   }
+
+  public ngOnDestroy(): void {
+	  this.subscription.unsubscribe();
+	}
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;

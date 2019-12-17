@@ -10,6 +10,7 @@ import { Config } from 'app/app.config';
 import { BranchService } from 'app/services/branch.service';
 import { AuthService } from 'app/services/auth.service';
 import { Branch } from 'app/models/branch';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-report-sales-by-payment-method',
@@ -34,15 +35,14 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
   public itemsPerPage: string = "5";
   public currentPage: number = 1;
   public totalItems = 0;
-  public sort = {
-    "count": -1
-  };
+  public sort = { "count": -1 };
   public transactionMovement: string;
   public totalItem;
   public totalAmount;
   public branches: Branch[];
   @Input() branchSelectedId: String;
   public allowChangeBranch: boolean;
+  private subscription: Subscription = new Subscription();
 
   constructor(
     public _paymentMethodService: PaymentMethodService,
@@ -143,7 +143,7 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
       branch: this.branchSelectedId
     }
 
-    this._paymentMethodService.getSalesByPaymentMethod(JSON.stringify(query)).subscribe(
+    this.subscription.add(this._paymentMethodService.getSalesByPaymentMethod(JSON.stringify(query)).subscribe(
       result => {
         if (!result || result.length <= 0) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
@@ -162,7 +162,7 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
-    );
+    ));
   }
 
   public calculateTotal() : void {
@@ -190,6 +190,10 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
   public refresh(): void {
     this.getSalesByPaymentMethod();
   }
+
+  public ngOnDestroy(): void {
+	  this.subscription.unsubscribe();
+	}
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;

@@ -11,6 +11,7 @@ import { ConfigService } from './../../services/config.service'
 import { Company, CompanyType } from 'app/models/company';
 import { Config } from './../../app.config';
 import { AddCompanyComponent } from '../add-company/add-company.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-report-birthday',
@@ -40,6 +41,7 @@ export class ReportBirthdayComponent implements OnInit {
   public currentPage: number = 1;
   public transactionMovement: string;
   public timezone;
+  private subscription: Subscription = new Subscription();
 
   constructor(
     public _companyService: CompanyService,
@@ -128,7 +130,7 @@ export class ReportBirthdayComponent implements OnInit {
       companies: { $push: "$$ROOT" }
     };
 
-    this._companyService.getCompaniesV2(
+    this.subscription.add(this._companyService.getCompaniesV2(
       project, // PROJECT
       match, // MATCH
       { birthday: 1 }, // SORT
@@ -148,7 +150,7 @@ export class ReportBirthdayComponent implements OnInit {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
-    );
+    ));
   }
 
   public openModal(op: string, companyId: string): void {
@@ -167,6 +169,10 @@ export class ReportBirthdayComponent implements OnInit {
   public refresh(): void {
     this.getBirthday();
   }
+
+  public ngOnDestroy(): void {
+	  this.subscription.unsubscribe();
+	}
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;

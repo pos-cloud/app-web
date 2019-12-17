@@ -22,6 +22,7 @@ import { CurrencyPipe } from '@angular/common';
 import { Deposit } from 'app/models/deposit';
 import { DepositService } from 'app/services/deposit.service';
 import { AuthService } from 'app/services/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-report-kardex',
@@ -40,6 +41,7 @@ export class ReportKardexComponent implements OnInit {
   public branches: Branch[];
   @Input() depositSelectedId: String;
   public deposits: Deposit[];
+  private subscription: Subscription = new Subscription();
 
   public title = 'Kardex de Producto';
   public columns = attributes;
@@ -50,9 +52,7 @@ export class ReportKardexComponent implements OnInit {
   public totalItems = 0;
   public items: any[];
   public balance: number = 0;
-  public sort = {
-    "endDate": -1
-  };
+  public sort = { "endDate": -1 };
   private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
   private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
 
@@ -573,7 +573,7 @@ export class ReportKardexComponent implements OnInit {
             0 // SKIP
     let limit = this.itemsPerPage;
 
-    this._movementOfArticleService.getMovementsOfArticlesV2(
+    this.subscription.add(this._movementOfArticleService.getMovementsOfArticlesV2(
       project, // PROJECT
       match, // MATCH
       sort, // SORT
@@ -611,7 +611,7 @@ export class ReportKardexComponent implements OnInit {
         this.loading = false;
         this.totalItems = 0;
       }
-    );
+    ));
   }
 
   public getColumnsVisibles(): number {
@@ -673,6 +673,10 @@ export class ReportKardexComponent implements OnInit {
     this.currentPage = page;
     this.getItems();
   }
+
+  public ngOnDestroy(): void {
+	  this.subscription.unsubscribe();
+	}
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;

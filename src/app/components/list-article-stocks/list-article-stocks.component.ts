@@ -22,6 +22,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
 import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
 import { CurrencyPipe } from '@angular/common';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-list-article-stocks',
@@ -40,26 +41,22 @@ export class ListArticleStocksComponent implements OnInit {
   public items: any[] = new Array();
   public itemsPerPage = 10;
   public currentPage: number = 1;
-  public sort = {
-    "realStock": -1
-  };
+  public sort = { "realStock": -1 };
   public columns = attributes;
   @ViewChild(ExportExcelComponent, {static: false}) exportExcelComponent: ExportExcelComponent;
   private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
   private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
   public title = "Inventario";
-
   public articleStocks: ArticleStock[] = new Array();
   public priceLists : PriceList[] = new Array();
   public priceListId : string;
   public alertMessage: string = '';
   public userType: string;
-
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   @Output() eventAddItem: EventEmitter<ArticleStock> = new EventEmitter<ArticleStock>();
-
+  private subscription: Subscription = new Subscription();
   public printers: Printer[];
 
   public totalRealStock = 0;
@@ -177,7 +174,7 @@ export class ListArticleStocksComponent implements OnInit {
             0 // SKIP
     let limit = this.itemsPerPage;
 
-    this._articleStockService.getArticleStocksV2(
+    this.subscription.add(this._articleStockService.getArticleStocksV2(
       project, // PROJECT
       match, // MATCH
       this.sort, // SORT
@@ -207,7 +204,7 @@ export class ListArticleStocksComponent implements OnInit {
         this.loading = false;
         this.totalItems = 0;
       }
-    );
+    ));
   }
 
   public getValue(item, column): any {
@@ -411,6 +408,10 @@ export class ListArticleStocksComponent implements OnInit {
       }
     )
   }
+
+  public ngOnDestroy(): void {
+	  this.subscription.unsubscribe();
+	}
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
