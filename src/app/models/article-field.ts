@@ -7,6 +7,7 @@ export class ArticleField {
 	public value: string;
   public modify: boolean = false;
   public modifyVAT: boolean = false;
+  public discriminateVAT : boolean = false;
 
 	constructor() { }
 }

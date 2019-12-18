@@ -89,6 +89,9 @@ export class AddArticleFieldComponent  implements OnInit {
       'modifyVAT': [this.articleField.modifyVAT, [
         ]
       ],
+      'discriminateVAT' : [this.articleField.discriminateVAT, [
+        ]
+      ]
     });
 
     this.articleFieldForm.valueChanges
