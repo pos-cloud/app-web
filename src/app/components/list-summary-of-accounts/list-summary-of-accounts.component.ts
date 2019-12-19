@@ -206,7 +206,7 @@ export class ListSummaryOfAccountsComponent implements OnInit {
         modalRef.componentInstance.filterCompanyType = this.filterCompanyType;
         modalRef.componentInstance.startDate = this.startDate;
         modalRef.componentInstance.endDate = this.endDate;
-        modalRef.balance = true;
+        modalRef.componentInstance.balance = true;
 
         break;
       case 'print2':
@@ -220,7 +220,7 @@ export class ListSummaryOfAccountsComponent implements OnInit {
         modalRef.componentInstance.filterCompanyType = this.filterCompanyType;
         modalRef.componentInstance.startDate = this.startDate;
         modalRef.componentInstance.endDate = this.endDate;
-        modalRef.balance = false;
+        modalRef.componentInstance.balance = false;
         
         break;
     }
