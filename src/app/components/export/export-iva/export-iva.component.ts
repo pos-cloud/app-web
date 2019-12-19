@@ -10,9 +10,6 @@ import { TransactionService } from '../../../services/transaction.service';
 import { UserService } from '../../../services/user.service';
 import { ConfigService } from '../../../services/config.service';
 import { CompanyService } from '../../../services/company.service';
-
-
-import { PrintComponent } from '../../print/print/print.component'
 import { DateFormatPipe } from 'app/pipes/date-format.pipe';
 import { Taxes } from 'app/models/taxes';
 import { TaxClassification } from 'app/models/tax';
@@ -25,7 +22,8 @@ import { ClassificationService } from 'app/services/classification.service';
 import { Classification } from 'app/models/classification';
 import { MovementOfArticle } from 'app/models/movement-of-article';
 import { MovementOfArticleService } from 'app/services/movement-of-article.service';
-import { async } from '@angular/core/testing';
+import { ArticleFieldService } from 'app/services/article-field.service';
+import { ArticleField, ArticleFieldType } from 'app/models/article-field';
 
 @Component({
   selector: 'app-export-iva',
@@ -40,6 +38,8 @@ export class ExportIvaComponent implements OnInit {
   public dataClassification : any = [];
   public vatConditions : VATCondition[];
   public classifications : Classification[];
+  public articleFields : ArticleField[];
+  public dataArticleFields : any = [];
   public alertMessage: string = "";
   public loading: boolean = false;
   public months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
@@ -80,15 +80,17 @@ export class ExportIvaComponent implements OnInit {
     public _configService: ConfigService,
     public _vatConditionService : VATConditionService,
     public _classificationService : ClassificationService,
+    public _articleFieldService : ArticleFieldService,
     public _userService: UserService,
     public _companyService: CompanyService,
-  ) { }
-
-  ngOnInit() {
-    let pathLocation: string[] = this._router.url.split('/');
-    this.buildForm();
+  ) {
     this.getVATConditions();
     this.getClassifications();
+    this.getArticleFields();
+   }
+
+  ngOnInit() {
+    this.buildForm();
   }
 
   public getVATConditions(): void {
@@ -157,6 +159,63 @@ export class ExportIvaComponent implements OnInit {
           }
         } else {
           this.dataClassification = new Array();
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getArticleFields(): void {
+    let match = `{"operationType": { "$ne": "D" }, "discriminateVAT" : true, "datatype": "${ArticleFieldType.Array}" }`;
+
+    match = JSON.parse(match);
+
+    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+    let project = {
+      "name": 1,
+      "operationType" : 1,
+      "discriminateVAT" : 1,
+      "value" : 1,
+      "datatype" : 1
+    };
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {
+        _id: null,
+        count: { $sum: 1 },
+        articlefields: { $push: "$$ROOT" }
+    };
+
+    this._articleFieldService.getArticleFieldsV2(
+        project, // PROJECT
+        match, // MATCH
+        {}, // SORT
+        group, // GROUP
+        0, // LIMIT
+        0 // SKIP
+    ).subscribe(
+      result => {
+        this.loading = false;
+        if (result && result[0] && result[0].articlefields) {
+          this.articleFields = result[0].articlefields;
+          for (let index = 0; index < this.articleFields.length; index++) {
+            this.dataArticleFields[index] = {};
+            this.dataArticleFields[index]['_id'] = this.articleFields[index]._id 
+            this.dataArticleFields[index]['name'] = this.articleFields[index].name
+            let valuesField = this.articleFields[index].value.split(';')
+            var value : any = [];
+            for (let index2 = 0; index2 < valuesField.length; index2++) {
+              value[index2] = {};
+              value[index2]['name'] = valuesField[index2]
+              value[index2]['total'] = 0;
+            }
+            this.dataArticleFields[index]['value'] = value
+          }
+        } else {
+          this.dataArticleFields = new Array();
         }
       },
       error => {
@@ -309,9 +368,41 @@ export class ExportIvaComponent implements OnInit {
                   this.dataIVA[index]['total'] = this.dataIVA[index]['total'] + partialTaxBase;
                 }
               }
+
+              var movementOfArticles : MovementOfArticle[] = await this.getMovementOfArticle(transaction._id)
+
+              for (const movementOfArticle of movementOfArticles) {
+                
+                //preguntamos si tiene la mierda de other fields tanto el movimiento como el data article fields jijiji
+                if(movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0 && this.dataArticleFields && this.dataArticleFields.length > 0){
+                  //si dice que si hay que recorrer para ver cuantos
+                  for (const otherField of movementOfArticle.otherFields) {
+                    //guardamos los dos datos que necesitamos id y valor
+                    var id = otherField.articleField._id;
+                    var valor = otherField.value;
+
+                    //ahora recorremos la mierda del data 
+                    for (let index = 0; index < this.dataArticleFields.length; index++) {
+                      //primero preguntamos si el id son iguales para entrar a los valores
+                      if(id === this.dataArticleFields[index]['_id']){
+                        //si entra solo tengo que recorrer los valores de ese id para comparar
+                        for (let index2 = 0; index2 < this.dataArticleFields[index]['value'].length; index2++ ) {
+                          //entonces preguntamos si los valores son iguales
+                          if(valor === this.dataArticleFields[index]['value'][index2]['name']){
+                            //perfecto si entra aca updateamos el data en su valor
+                            this.dataArticleFields[index]['value'][index2]['total'] = this.dataArticleFields[index]['value'][index2]['total'] + partialTaxBase;
+                          }
+                        }
+                      }
+                    }
+
+                  }
+                }
+                
+              }
+
     
               for (let index = 0; index < this.dataClassification.length; index++) {
-                let movementOfArticles : MovementOfArticle[] = await this.getMovementOfArticle(transaction._id)
                 if(movementOfArticles && movementOfArticles.length !== 0) {
                   for (const element of movementOfArticles) {
                     if(element.article && element.article.classification && this.dataClassification[index]['_id'] === element.article.classification._id){
@@ -385,6 +476,22 @@ export class ExportIvaComponent implements OnInit {
               data[i] = {};
               data[i]["IDENTIFICADOR"] = element['name']
               data[i]["TIPO COMP."] = element['total']
+            });
+
+            this.dataArticleFields.forEach(element => {
+              i += 5;
+              data[i] = {};
+              data[i]["RAZÓN SOCIAL"] = 'TOTALES POR '+element['name'] ;
+              i++;
+              data[i] = {};
+              data[i]["IDENTIFICADOR"] = 'CLASIFICACIÓN';
+              data[i]["TIPO COMP."] = 'MONTO';
+              element['value'].forEach(element2 => {
+                i++;
+                data[i] = {};
+                data[i]["IDENTIFICADOR"] = element2['name']
+                data[i]["TIPO COMP."] = element2['total']
+              });
             });
     
             this._companyService.exportAsExcelFile(data, this.type + '-'+ this.exportIVAForm.value.year+'-'+this.exportIVAForm.value.month);
