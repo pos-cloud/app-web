@@ -8,6 +8,7 @@ export class ArticleField {
   public modify: boolean = false;
   public modifyVAT: boolean = false;
   public discriminateVAT : boolean = false;
+  public ecommerceEnabled : boolean = false;
 
 	constructor() { }
 }

@@ -94,7 +94,10 @@ export class UpdateArticleFieldComponent implements OnInit {
       ],
       'discriminateVAT' : [this.articleField.discriminateVAT, [
         ]
+      ],
+      'ecommerceEnabled' : [this.articleField.ecommerceEnabled, [
       ]
+    ]
     });
 
     this.articleFieldForm.valueChanges
@@ -130,6 +133,7 @@ export class UpdateArticleFieldComponent implements OnInit {
     if(this.articleField.modify === undefined) { this.articleField.modify = false }
     if(this.articleField.modifyVAT === undefined) { this.articleField.modifyVAT = false }
     if(this.articleField.discriminateVAT === undefined) { this.articleField.discriminateVAT = false }
+    if(this.articleField.ecommerceEnabled === undefined) { this.articleField.ecommerceEnabled = false }
 
 
     this.articleFieldForm.setValue({
@@ -140,7 +144,9 @@ export class UpdateArticleFieldComponent implements OnInit {
       'value': this.articleField.value,
       'modify': this.articleField.modify,
       'modifyVAT': this.articleField.modifyVAT,
-      'discriminateVAT': this.articleField.discriminateVAT
+      'discriminateVAT': this.articleField.discriminateVAT,
+      'ecommerceEnabled': this.articleField.ecommerceEnabled
+
     });
   }
 

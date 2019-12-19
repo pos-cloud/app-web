@@ -91,7 +91,10 @@ export class AddArticleFieldComponent  implements OnInit {
       ],
       'discriminateVAT' : [this.articleField.discriminateVAT, [
         ]
+      ],
+      'ecommerceEnabled' : [this.articleField.ecommerceEnabled, [
       ]
+    ]
     });
 
     this.articleFieldForm.valueChanges
