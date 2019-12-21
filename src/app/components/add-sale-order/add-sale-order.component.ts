@@ -789,7 +789,7 @@ export class AddSaleOrderComponent {
         await this.getArticleStock(movementOfArticle).then(
           articleStock => {
             if (!articleStock || (movementOfArticle.amount + movementOfArticle.quantityForStock) > articleStock.realStock) {
-              if(this.transaction.type.stockMovement === StockMovement.Transfer && movementOfArticle.deposit._id.toString() === this.transaction.depositDestination._id.toString()) {
+              if(this.transaction.type.stockMovement === StockMovement.Transfer && movementOfArticle.deposit && movementOfArticle.deposit._id.toString() === this.transaction.depositDestination._id.toString()) {
               } else {
                 isValid = false;
                 let realStock = 0;
