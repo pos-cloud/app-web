@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">Agregar Producto</h4>
+  <h4 class="modal-title">{{movementOfArticle.article.description}}</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -12,7 +12,7 @@
   </div>
   <form [formGroup]="movementOfArticleForm" #formAddMovementOfArticle="ngForm" (ngSubmit)="addMovementOfArticle()" autocomplete="off">
     <div class="modal-body">
-      <div class="row">
+      <div class="row" *ngIf="(config$ | async) as config">
         <div class="form-group col-md-3">
           <label for="code" class="control-label">Código Interno:</label>
           <div class="input-group">
@@ -25,26 +25,16 @@
             <input type="text" class="form-control" formControlName="barcode" name="barcode" id="barcode" readonly/>
           </div>
         </div>
-        <div class="form-group col-md-6">
-          <label for="description" class="control-label">Descripción:</label>
+        <div class="form-group col-md-3" *ngIf="config && config.modules && config.modules.stock">
+          <label for="stock" class="control-label">Stock:</label>
           <div class="input-group">
-            <input type="text" class="form-control" formControlName="description" name="description" id="description" readonly/>
+            <input type="text" class="form-control" formControlName="stock" name="stock" id="stock" readonly/>
           </div>
         </div>
-      </div>
-      <div *ngIf="(config$ | async) as config">
-        <div class="row" *ngIf="config && config.modules && config.modules.stock">
-          <div class="form-group col-md-6">
-            <label for="stock" class="control-label">Stock:</label>
-            <div class="input-group">
-              <input type="text" class="form-control" formControlName="stock" name="stock" id="stock" readonly/>
-            </div>
-          </div>
-          <div class="form-group col-md-6">
-            <label for="position" class="control-label">Posición:</label>
-            <div class="input-group">
-              <input type="text" class="form-control" formControlName="position" name="position" id="position" readonly/>
-            </div>
+        <div class="form-group col-md-3" *ngIf="config && config.modules && config.modules.stock">
+          <label for="position" class="control-label">Posición:</label>
+          <div class="input-group">
+            <input type="text" class="form-control" formControlName="position" name="position" id="position" readonly/>
           </div>
         </div>
       </div>
@@ -55,7 +45,7 @@
             <input class="form-control"  formControlName="measure" name="measure" id="measure" step="1" (change)="calculateMeasure()" autofocus/>
           </div>
         </div>
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-3">
           <label class="control-label">Cantidad:</label>
           <div class="input-group">
             <input type="number" class="form-control" formControlName="quantityMeasure" name="quantityMeasure" id="quantityMeasure" step="1" (change)="calculateMeasure()"/>
@@ -72,12 +62,32 @@
         </div>
       </div>
       <div class="row" *ngIf="!movementOfArticle.article || !movementOfArticle.article.allowMeasure">
-        <div class="form-group col-md-12">
-          <label for="amount" class="control-label">Ingrese la Cantidad:</label>
+        <div class="form-group col-md-4">
+          <label for="unitPrice" class="control-label">Precio Unitario:</label>
+          <div class="input-group">
+            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
+            <input type="number" class="form-control" formControlName="unitPrice" name="unitPrice" id="unitPrice" step="1" [readOnly]="!movementOfArticle.transaction.type.modifyArticle"/>
+          </div>
+          <div *ngIf="formErrors.unitPrice" class="alert alert-danger">
+            {{ formErrors.unitPrice }}
+          </div>
         </div>
-      </div>
-      <div class="row" *ngIf="!movementOfArticle.article || !movementOfArticle.article.allowMeasure">
-        <div class="form-group col-md-10">
+        <div class="form-group col-md-2" 
+              *ngIf="movementOfArticle &&
+                    movementOfArticle.article &&
+                    !movementOfArticle.article.containsVariants &&
+                    movementOfArticle.article.type &&
+                    movementOfArticle.article.type.toString() === 'Final' &&
+                    movementOfArticle.transaction &&
+                    movementOfArticle.transaction.type &&
+                    movementOfArticle.transaction.type.updateArticle">
+              <label class="control-label">Editar</label>
+              <div class="input-group">
+                <button type="button" class="btn btn-primary" (click)="openModal('update')" title="Editar"><i class="fa fa-pencil"></i></button>
+              </div>
+        </div>
+        <div class="form-group col-md-3">
+          <label for="amount" class="control-label">Cantidad:</label>
           <div class="input-group">
             <input type="number" class="form-control" formControlName="amount" name="amount" autofocus/>
           </div>
@@ -85,9 +95,12 @@
             {{ formErrors.amount }}
           </div>
         </div>
-        <div class="col-md-2">
-          <button type="button" class="btn btn-danger" (click)="subtractAmount()">-</button>
-          <button type="button" class="btn btn-success" (click)="addAmount()">+</button>
+        <div class="form-group col-md-3">
+          <label for="amount" class="control-label">Acción:</label>
+          <div class="input-group">
+            <button type="button" class="btn btn-danger btn-big" (click)="subtractAmount()">-</button>
+            <button type="button" class="btn btn-success btn-big" (click)="addAmount()">+</button>
+          </div>
         </div>
       </div>
       <div class="row" *ngIf="variantTypes && variantTypes.length > 0">
@@ -114,32 +127,6 @@
       </div>
       <div *ngIf="errVariant" class="row alert alert-danger">
         {{ errVariant }}
-      </div>
-      <div class="row">
-        <div class="form-group col-md-10">
-          <label for="unitPrice" class="control-label">Precio Unitario:</label>
-          <div class="input-group">
-            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-            <input type="number" class="form-control" formControlName="unitPrice" name="unitPrice" id="unitPrice" step="1" [readOnly]="!movementOfArticle.transaction.type.modifyArticle"/>
-          </div>
-          <div *ngIf="formErrors.unitPrice" class="alert alert-danger">
-            {{ formErrors.unitPrice }}
-          </div>
-        </div>
-          <div class="form-group col-md-2" 
-              *ngIf="movementOfArticle &&
-                    movementOfArticle.article &&
-                    !movementOfArticle.article.containsVariants &&
-                    movementOfArticle.article.type &&
-                    movementOfArticle.article.type.toString() === 'Final' &&
-                    movementOfArticle.transaction &&
-                    movementOfArticle.transaction.type &&
-                    movementOfArticle.transaction.type.updateArticle">
-              <label class="control-label">Editar Producto:</label>
-              <div class="input-group">
-                <button type="button" class="btn btn-primary" (click)="openModal('update')" title="Editar"><i class="fa fa-pencil"></i></button>
-              </div>
-          </div>
       </div>
       <div class="row">
         <div class="col-md-12">
