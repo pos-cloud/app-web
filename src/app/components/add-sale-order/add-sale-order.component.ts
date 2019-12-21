@@ -789,12 +789,15 @@ export class AddSaleOrderComponent {
         await this.getArticleStock(movementOfArticle).then(
           articleStock => {
             if (!articleStock || (movementOfArticle.amount + movementOfArticle.quantityForStock) > articleStock.realStock) {
-              isValid = false;
-              let realStock = 0;
-              if(articleStock) {
-                realStock = articleStock.realStock;
+              if(this.transaction.type.stockMovement === StockMovement.Transfer && movementOfArticle.deposit._id.toString() === this.transaction.depositDestination._id.toString()) {
+              } else {
+                isValid = false;
+                let realStock = 0;
+                if(articleStock) {
+                  realStock = articleStock.realStock;
+                }
+                this.showMessage("No tiene el stock suficiente del producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + "). Stock Actual: " + realStock , 'info', true);
               }
-              this.showMessage("No tiene el stock suficiente del producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + "). Stock Actual: " + realStock , 'info', true);
             }
           }
         );
