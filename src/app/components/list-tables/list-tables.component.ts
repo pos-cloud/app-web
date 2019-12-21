@@ -40,6 +40,7 @@ export class ListTablesComponent implements OnInit {
   public itemsPerPage = 10;
   public totalItems = 0;
   public transactionTypeDefectOrder: TransactionType;
+  public interval;
 
   constructor(
     public _tableService: TableService,
@@ -63,7 +64,17 @@ export class ListTablesComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.getTables();
+
+    this.interval = setInterval(() => {
+      if(!this.loading) {
+        this.getTables();
+      }
+    }, 3000);
   }
+
+  public ngOnDestroy(): void {
+    if(this.interval) clearInterval(this.interval);
+	}
 
   public getTables(): void {
 
