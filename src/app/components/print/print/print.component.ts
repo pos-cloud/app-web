@@ -1956,21 +1956,20 @@ export class PrintComponent implements OnInit {
           if(this.transaction.type.requestTaxes  && 
             this.transaction.company &&
             this.transaction.company.vatCondition.discriminate) {
-              let prUnit = 0;
-              let taxesAmount = 0
+              
+              let taxesBase = 0
               let colum = 165;
             for(let tax of this.movementsOfArticles[i].taxes) {
-                prUnit = prUnit + (tax.taxBase /this.movementsOfArticles[i].amount)
                 if(tax.percentage != 0) {
-                  this.doc.text("%" + this.roundNumber.transform(tax.percentage,2), colum, row);
+                  this.doc.text("% " + this.roundNumber.transform(tax.percentage,2), colum, row);
                 } else {
-                  this.doc.text("$" + this.roundNumber.transform(tax.taxAmount,2), colum, row);
+                  this.doc.text("$ " + this.roundNumber.transform(tax.taxAmount,2), colum, row);
                 }
-                taxesAmount = taxesAmount + tax.taxAmount
+                taxesBase = taxesBase + tax.taxBase
                 colum = colum + 13;
             }
-            this.doc.text("$ " + this.roundNumber.transform(prUnit - this.movementsOfArticles[i].transactionDiscountAmount,2), 145, row);
-            this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice - this.movementsOfArticles[i].transactionDiscountAmount , 2), 192, row);
+            this.doc.text("$ " + this.roundNumber.transform(taxesBase / this.movementsOfArticles[i].amount,2), 145, row);
+            this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice, 2), 192, row);
           } else {
             this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice/this.movementsOfArticles[i].amount,2), 145, row);
             this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice,2), 192, row);
@@ -2112,9 +2111,7 @@ export class PrintComponent implements OnInit {
       let rowTotals = 247;
       this.doc.setFontType('bold');
       this.doc.text("Subtotal:", 140, rowTotals);
-      rowTotals +=space;
 
-      this.doc.text("Neto Gravado:", 140, rowTotals);
       rowTotals +=space;
 
       this.doc.text("Descuento:", 140, rowTotals);
@@ -2127,10 +2124,16 @@ export class PrintComponent implements OnInit {
       let subtotal = this.transaction.totalPrice;
       let neto = 0;
 
+      rowTotals +=space;
+      
+
       if (this.transaction.company &&
           this.transaction.company.vatCondition &&
           this.transaction.company.vatCondition.discriminate &&
           this.transaction.type.requestTaxes) {
+
+            this.doc.text("Neto Gravado:", 140, rowTotals);
+            
 
             if(this.transaction.taxes && this.transaction.taxes.length > 0) {
               for (let tax of this.transaction.taxes) {
@@ -2166,7 +2169,9 @@ export class PrintComponent implements OnInit {
       
 
       this.doc.text("$ " + this.roundNumber.transform((subtotal),2).toString(), 173, 247);
-      this.doc.text("$ " + this.roundNumber.transform((neto),2).toString(),173,253);
+      if(neto > 0){
+        this.doc.text("$ " + this.roundNumber.transform((neto),2).toString(),173,259);
+      }
       rowTotals += space;
       this.doc.setFontSize(this.fontSizes.extraLarge);
       this.doc.setFontType('bold');
