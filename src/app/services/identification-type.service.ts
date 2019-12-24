@@ -18,155 +18,155 @@ export class IdentificationTypeService {
 
 	public getIdentificationType(_id: string): Observable<any> {
 
-        const URL = `${Config.apiURL}identification-type`;
+		const URL = `${Config.apiURL}identification-type`;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-        const params = new HttpParams()
-            .set('id', _id);
+		const params = new HttpParams()
+			.set('id', _id);
 
-        return this._http.get(URL, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		return this._http.get(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 
 	public getIdentificationTypes(
-        query?: string
-    ): Observable<any> {
+		query?: string
+	): Observable<any> {
 
-        const URL = `${Config.apiURL}identification-types`;
+		const URL = `${Config.apiURL}identification-types`;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')           
-            .set('Authorization', this._authService.getToken());
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-        const params = new HttpParams()
-            .set('query', query);
+		const params = new HttpParams()
+			.set('query', query);
 
-        return this._http.get(URL, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		return this._http.get(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 
-    public getIdentificationTypesV2(
-        project: {},
-        match: {},
-        sort: {},
-        group: {},
-        limit: number = 0,
-        skip: number = 0
-    ): Observable<any> {
+	public getIdentificationTypesV2(
+		project: {},
+		match: {},
+		sort: {},
+		group: {},
+		limit: number = 0,
+		skip: number = 0
+	): Observable<any> {
 
-        const URL = `${Config.apiURL}v2/identification-types`;
+		const URL = `${Config.apiURL}v2/identification-types`;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')           
-            .set('Authorization', this._authService.getToken());
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-        const params = new HttpParams()
-            .set('project', JSON.stringify(project))
-            .set('match', JSON.stringify(match))
-            .set('sort', JSON.stringify(sort))
-            .set('group', JSON.stringify(group))
-            .set('limit', limit.toString())
-            .set('skip', skip.toString());
+		const params = new HttpParams()
+			.set('project', JSON.stringify(project))
+			.set('match', JSON.stringify(match))
+			.set('sort', JSON.stringify(sort))
+			.set('group', JSON.stringify(group))
+			.set('limit', limit.toString())
+			.set('skip', skip.toString());
 
-        return this._http.get(URL, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		return this._http.get(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 
-	public saveIdentificationType(identificationType : IdentificationType): Observable<any> {
+	public saveIdentificationType(identificationType: IdentificationType): Observable<any> {
 
-        const URL = `${Config.apiURL}identification-type`;
+		const URL = `${Config.apiURL}identification-type`;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-        return this._http.post(URL, identificationType, {
-            headers: headers
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		return this._http.post(URL, identificationType, {
+			headers: headers
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 
 	public updateIdentificationType(identificationType: IdentificationType): Observable<any> {
 
-        const URL = `${Config.apiURL}identification-type`;
+		const URL = `${Config.apiURL}identification-type`;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-        const params = new HttpParams()
-            .set('id', identificationType._id);
+		const params = new HttpParams()
+			.set('id', identificationType._id);
 
-        return this._http.put(URL, identificationType, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
+		return this._http.put(URL, identificationType, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
 	}
-	
+
 	public deleteIdentificationType(_id: string): Observable<any> {
 
-        const URL = `${Config.apiURL}identification-type`;
+		const URL = `${Config.apiURL}identification-type`;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-        const params = new HttpParams()
-            .set('id', _id);
+		const params = new HttpParams()
+			.set('id', _id);
 
-        return this._http.delete(URL, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		return this._http.delete(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 }

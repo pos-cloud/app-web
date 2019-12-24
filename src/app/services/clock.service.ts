@@ -9,13 +9,13 @@ import 'moment/locale/es';
 @Injectable()
 export class ClockService {
 
-  public clock: Observable<string>;
+	public clock: Observable<string>;
 
-  constructor() {
-    this.clock = observableInterval(1000).pipe(map(tick => moment().format('YYYY-MM-DDTHH:mm:ssZ')),share(),);
-  }
+	constructor() {
+		this.clock = observableInterval(1000).pipe(map(tick => moment().format('YYYY-MM-DDTHH:mm:ssZ')), share());
+	}
 
-  getClock(): Observable<string> {
-    return this.clock;
-  }
+	getClock(): Observable<string> {
+		return this.clock;
+	}
 }

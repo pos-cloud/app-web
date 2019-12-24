@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "pos-resto": {
+    "pos-cloud": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -56,18 +56,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "pos-resto:build"
+            "browserTarget": "pos-cloud:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "pos-resto:build:production"
+              "browserTarget": "pos-cloud:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "pos-resto:build"
+            "browserTarget": "pos-cloud:build"
           }
         },
         "test": {
@@ -104,7 +104,7 @@
         }
       }
     },
-    "pos-resto-e2e": {
+    "pos-cloud-e2e": {
       "root": "e2e",
       "sourceRoot": "e2e",
       "projectType": "application",
@@ -113,7 +113,7 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "./protractor.conf.js",
-            "devServerTarget": "pos-resto:serve"
+            "devServerTarget": "pos-cloud:serve"
           }
         },
         "lint": {
@@ -128,7 +128,7 @@
       }
     }
   },
-  "defaultProject": "pos-resto",
+  "defaultProject": "pos-cloud",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",

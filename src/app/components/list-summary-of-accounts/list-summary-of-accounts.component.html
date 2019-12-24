@@ -53,7 +53,6 @@
                 <tr>
                   <th></th>
                   <th class="align-center" (click)="orderBy('companyName')">Nombre</th>
-                  <th class="align-center" (click)="orderBy('companyType')">Tipo</th>
                   <th class="align-center" (click)="orderBy('identificationValue')">Identificador</th>
                   <th class="align-center" (click)="orderBy('companyAddress')">Dirección</th>
                   <th class="align-center" (click)="orderBy('companyPhones')">Teléfono</th>
@@ -64,7 +63,6 @@
                 <tr class="filters">
                   <th></th>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterCompanyName" placeholder="Nombre..." ></th>
-                  <th><input type="text" class="form-control" [(ngModel)]= "filterCompanyType" placeholder="Tipo..." ></th>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterIdentificationValue" placeholder="Identificador..." ></th>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterCompanyAddress" placeholder="Dirección..." ></th>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterCompanyPhones" placeholder="Teléfono..." ></th>

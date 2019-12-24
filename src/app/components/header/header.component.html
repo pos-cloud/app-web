@@ -268,12 +268,14 @@
             </button>
             <div>
               <button class="dropdown-item"
-                      [routerLink]="['admin','resumenes-de-cuentas','cliente']"
+					  [routerLink]="['admin','resumenes-de-cuentas']"
+					  [queryParams]="{companyType:'Cliente'}"
                       [routerLinkActive]="['active']">
                   Resúmenes de Cuentas
               </button>
               <button class="dropdown-item"
-                      [routerLink]="['admin','cuentas-corrientes','cliente']"
+					  [routerLink]="['admin','cuentas-corrientes']"
+					  [queryParams]="{companyType:'Cliente'}"
                       [routerLinkActive]="['active']">
                 Cuentas Corrientes
               </button>
@@ -288,12 +290,14 @@
             </button>
             <div>
               <button class="dropdown-item"
-                      [routerLink]="['admin','resumenes-de-cuentas','proveedor']"
+                      [routerLink]="['admin','resumenes-de-cuentas']"
+					  [queryParams]="{companyType:'Proveedor'}"
                       [routerLinkActive]="['active']">
                   Resúmenes de Cuentas
               </button>
               <button class="dropdown-item"
-                      [routerLink]="['admin','cuentas-corrientes','proveedor']"
+                      [routerLink]="['admin','cuentas-corrientes']"
+					  [queryParams]="{companyType:'Proveedor'}"
                       [routerLinkActive]="['active']">
                 Cuentas Corrientes
               </button>

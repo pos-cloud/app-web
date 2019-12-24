@@ -18,24 +18,24 @@ export class ClaimService {
 
 	public saveClaim(claim: Claim): Observable<any> {
 
-        const URL = `${Config.apiURL}claim`;
+		const URL = `${Config.apiURL}claim`;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
-        return this._http.post(URL, { claim: claim }, {
-            headers: headers
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
+		return this._http.post(URL, { claim: claim }, {
+			headers: headers
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 
-    public makeFileRequest(files: Array<File>) {
+	public makeFileRequest(files: Array<File>) {
 
 		let xhr: XMLHttpRequest = new XMLHttpRequest();
 		xhr.open('POST', Config.apiURL + 'upload-file-claim/', true);
@@ -44,7 +44,7 @@ export class ClaimService {
 		return new Promise((resolve, reject) => {
 			let formData: any = new FormData();
 
-			if(files && files.length > 0) {
+			if (files && files.length > 0) {
 				for (let i: number = 0; i < files.length; i++) {
 					formData.append('file', files[i], files[i].name);
 				}
@@ -62,24 +62,24 @@ export class ClaimService {
 
 			xhr.send(formData);
 		});
-    }
+	}
 
-    public deleteFile(file : String): Observable<any> {
+	public deleteFile(file: String): Observable<any> {
 
-        const URL = `${Config.apiURL}file-claim/`+file;
+		const URL = `${Config.apiURL}file-claim/` + file;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
-        return this._http.delete(URL, {
-            headers: headers
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
+		return this._http.delete(URL, {
+			headers: headers
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 }

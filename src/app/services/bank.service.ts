@@ -12,132 +12,132 @@ import { AuthService } from './auth.service';
 export class BankService {
 
 	constructor(
-        private _http: HttpClient,
+		private _http: HttpClient,
 		private _authService: AuthService
 	) { }
 
-    public getBank(_id: string): Observable<any> {
-        
-        const URL = `${Config.apiURL}bank`;
+	public getBank(_id: string): Observable<any> {
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
-        
-        const params = new HttpParams()
-            .set('id', _id);
+		const URL = `${Config.apiURL}bank`;
 
-        return this._http.get(URL , {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-    public getBanks(
-        project: {},
-        match: {},
-        sort: {},
-        group: {},
-        limit: number = 0,
-        skip: number = 0
-    ): Observable<any> {
+		const params = new HttpParams()
+			.set('id', _id);
 
-        const URL = `${Config.apiURL}banks`;
+		return this._http.get(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 
-        const headers = new HttpHeaders()
-        .set('Content-Type', 'application/json')
-        .set('Authorization', this._authService.getToken());
+	public getBanks(
+		project: {},
+		match: {},
+		sort: {},
+		group: {},
+		limit: number = 0,
+		skip: number = 0
+	): Observable<any> {
 
-        const params = new HttpParams()
-        .set('project', JSON.stringify(project))
-        .set('match', JSON.stringify(match))
-        .set('sort', JSON.stringify(sort))
-        .set('group', JSON.stringify(group))
-        .set('limit', limit.toString())
-        .set('skip', skip.toString());
+		const URL = `${Config.apiURL}banks`;
 
-        return this._http.get(URL, {
-        headers: headers,
-        params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-    public saveBank(bank: Bank): Observable<any> {
+		const params = new HttpParams()
+			.set('project', JSON.stringify(project))
+			.set('match', JSON.stringify(match))
+			.set('sort', JSON.stringify(sort))
+			.set('group', JSON.stringify(group))
+			.set('limit', limit.toString())
+			.set('skip', skip.toString());
 
-        const URL = `${Config.apiURL}bank`;
+		return this._http.get(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
+	public saveBank(bank: Bank): Observable<any> {
 
-        return this._http.post(URL, bank, {
-            headers: headers
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		const URL = `${Config.apiURL}bank`;
 
-    public updateBank(bank: Bank): Observable<any> {
-        
-        const URL = `${Config.apiURL}bank`;
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken())
-        
-        const params = new HttpParams()
-            .set('id', bank._id);
+		return this._http.post(URL, bank, {
+			headers: headers
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 
-        return this._http.put(URL, bank, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+	public updateBank(bank: Bank): Observable<any> {
 
-    public deleteBank(_id: string): Observable<any> {
-        
-        const URL = `${Config.apiURL}bank`;
+		const URL = `${Config.apiURL}bank`;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
-        
-        const params = new HttpParams()
-            .set('id', _id);
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken())
 
-        return this._http.delete(URL, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-        );
-    }
+		const params = new HttpParams()
+			.set('id', bank._id);
+
+		return this._http.put(URL, bank, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
+
+	public deleteBank(_id: string): Observable<any> {
+
+		const URL = `${Config.apiURL}bank`;
+
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
+
+		const params = new HttpParams()
+			.set('id', _id);
+
+		return this._http.delete(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+		);
+	}
 }

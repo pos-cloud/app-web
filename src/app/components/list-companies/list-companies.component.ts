@@ -54,7 +54,7 @@ export class ListCompaniesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
+	console.log(this.type);
     this._authService.getIdentity.subscribe(
       identity => {
         this.identity = identity;

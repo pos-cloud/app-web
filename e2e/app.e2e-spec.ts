@@ -1,6 +1,6 @@
 import { PosRestoPage } from './app.po';
 
-describe('pos-resto App', () => {
+describe('pos-cloud App', () => {
   let page: PosRestoPage;
 
   beforeEach(() => {

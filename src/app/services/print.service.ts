@@ -18,81 +18,81 @@ export class PrintService {
 
 	public toPrint(print: Print): Observable<any> {
 
-        const URL = `${Config.apiURL}to-print`;
+		const URL = `${Config.apiURL}to-print`;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-        return this._http.post(URL, print, {
-            headers: headers
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		return this._http.post(URL, print, {
+			headers: headers
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 
-    
-	public toPrintURL(url : string , file : string): Observable<any> {
 
-        const URL = `${Config.apiURL}printURL`;
+	public toPrintURL(url: string, file: string): Observable<any> {
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
-        
-        const params = new HttpParams()
-            .set('file', file)
-            .set('url', url);
+		const URL = `${Config.apiURL}printURL`;
 
-        return this._http.get(URL, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-	public getBarcode(barcode : string): Observable<any> {
+		const params = new HttpParams()
+			.set('file', file)
+			.set('url', url);
 
-        const URL = `${Config.apiURL}barcode/${barcode}`;
+		return this._http.get(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
+	public getBarcode(barcode: string): Observable<any> {
 
-        return this._http.get(URL, {
-            headers: headers
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		const URL = `${Config.apiURL}barcode/${barcode}`;
 
-    public saveFile(file,folder,name) {
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
+
+		return this._http.get(URL, {
+			headers: headers
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
+
+	public saveFile(file, folder, name) {
 
 		return new Promise((resolve, reject) => {
-            var data = new FormData();
-            data.append('file' , file);
-            var xhr = new XMLHttpRequest();
-          
-            xhr.open('POST', Config.apiURL + 'upload-file/'+folder+'/'+name, true);
-            xhr.setRequestHeader('Authorization', this._authService.getToken());
+			var data = new FormData();
+			data.append('file', file);
+			var xhr = new XMLHttpRequest();
 
-            xhr.onreadystatechange = function () {
+			xhr.open('POST', Config.apiURL + 'upload-file/' + folder + '/' + name, true);
+			xhr.setRequestHeader('Authorization', this._authService.getToken());
+
+			xhr.onreadystatechange = function () {
 				if (xhr.readyState == 4) {
 					if (xhr.status == 200) {
 						resolve(JSON.parse(xhr.response));
@@ -100,50 +100,50 @@ export class PrintService {
 						reject(xhr.response);
 					}
 				}
-            }
-            
-            xhr.send(data);    
-            
+			}
+
+			xhr.send(data);
+
 		});
-    }
+	}
 
-    public generateVoucher(voucher: {}): Observable<any> {
+	public generateVoucher(voucher: {}): Observable<any> {
 
-        const URL = `${Config.apiURL}generate-voucher`;
-    
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
+		const URL = `${Config.apiURL}generate-voucher`;
 
-        return this._http.post(URL, { voucher: voucher}, {
-            headers: headers
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-    public verifyVoucher(voucher: string): Observable<any> {
+		return this._http.post(URL, { voucher: voucher }, {
+			headers: headers
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 
-        const URL = `${Config.apiURL}verify-voucher`;
-    
-        const headers = new HttpHeaders()
-        .set('Content-Type', 'application/json')
-        .set('Authorization', this._authService.getToken());
+	public verifyVoucher(voucher: string): Observable<any> {
 
-        return this._http.post(URL, { voucher: voucher }, {
-            headers: headers
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		const URL = `${Config.apiURL}verify-voucher`;
+
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
+
+		return this._http.post(URL, { voucher: voucher }, {
+			headers: headers
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 }

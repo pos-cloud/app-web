@@ -10,51 +10,51 @@ import { AuthService } from './auth.service';
 @Injectable()
 export class ImportService {
 
-  constructor(
+	constructor(
 		private _http: HttpClient,
 		private _authService: AuthService
-  ) { }
+	) { }
 
-  public import(objectToImport: {}): Observable<any> {
+	public import(objectToImport: {}): Observable<any> {
 
-    const URL = `${Config.apiURL}import-xlsx`;
+		const URL = `${Config.apiURL}import-xlsx`;
 
-    const headers = new HttpHeaders()
-        .set('Content-Type', 'application/json')
-        .set('Authorization', this._authService.getToken());
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-    return this._http.post(URL, objectToImport, {
-        headers: headers
-    }).pipe(
-        map(res => {
-            return res;
-        }),
-        catchError((err) => {
-            return of(err);
-        })
-    );
-  }
-  
-  public importMovement(objectToImport: {}, transaccionId: string): Observable<any> {
+		return this._http.post(URL, objectToImport, {
+			headers: headers
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 
-    const URL = `${Config.apiURL}import-movement`;
+	public importMovement(objectToImport: {}, transaccionId: string): Observable<any> {
 
-    const headers = new HttpHeaders()
-        .set('Content-Type', 'application/json')
-        .set('Authorization', this._authService.getToken());
+		const URL = `${Config.apiURL}import-movement`;
 
-    const params = new HttpParams()
-        .set('transaccion', transaccionId);
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-    return this._http.post(URL, objectToImport, {
-        headers: headers
-    }).pipe(
-        map(res => {
-            return res;
-        }),
-        catchError((err) => {
-            return of(err);
-        })
-    );
-  }
+		const params = new HttpParams()
+			.set('transaccion', transaccionId);
+
+		return this._http.post(URL, objectToImport, {
+			headers: headers
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 }

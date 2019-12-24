@@ -263,16 +263,9 @@ export const _routes: Routes = [
     data: { module: 'config.modules.money' }
   },
   {
-    path: 'admin/resumenes-de-cuentas/cliente',
+    path: 'admin/resumenes-de-cuentas',
     component: ListSummaryOfAccountsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale' }
-  },
-  {
-    path: 'admin/resumenes-de-cuentas/proveedor',
-    component: ListSummaryOfAccountsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.purchase' }
+    canActivate: [AuthGuard, LicenseGuard]
   },
   {
     path: 'admin/salones',
@@ -365,7 +358,7 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard]
   },
   {
-    path: 'admin/cuentas-corrientes/cliente',
+    path: 'admin/cuentas-corrientes',
     component: CurrentAccountComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.sale' }
@@ -381,24 +374,6 @@ export const _routes: Routes = [
     component : ListCashBoxComponent,
     canActivate : [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.money' }
-  },
-  {
-    path: 'admin/cuentas-corrientes/cliente/:id',
-    component: CurrentAccountComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale' }
-  },
-  {
-    path: 'admin/cuentas-corrientes/proveedor',
-    component: CurrentAccountComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.purchase' }
-  },
-  {
-    path: 'admin/cuentas-corrientes/proveedor/:id',
-    component: CurrentAccountComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.purchase' }
   },
   {
     path: 'admin/send-email',
@@ -582,13 +557,13 @@ export const _routes: Routes = [
     data: { module: 'config.modules.sale.resto' }
   },
   {
-    path: 'pos/resto/salones/:id/mesas/:id/editar-transaccion/:id',
+    path: 'pos/resto/salones/:id/mesas/:id/editar-transaccion',
     component: AddSaleOrderComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.sale.resto' }
   },
   {
-    path: 'pos/resto/editar-transaccion/:id',
+    path: 'pos/resto/editar-transaccion',
     component: AddSaleOrderComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.sale.resto' }
@@ -629,7 +604,7 @@ export const _routes: Routes = [
     data: { module: 'config.modules.sale.delivery' }
   },
   {
-    path: 'pos/delivery/editar-transaccion/:id',
+    path: 'pos/delivery/editar-transaccion',
     component: AddSaleOrderComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.sale.delivery' }
@@ -695,7 +670,7 @@ export const _routes: Routes = [
     data: { module: 'config.modules.sale.counter' }
   },
   {
-    path: 'pos/mostrador/editar-transaccion/:id',
+    path: 'pos/mostrador/editar-transaccion',
     component: AddSaleOrderComponent,
     canActivate: [AuthGuard, LicenseGuard]
   },

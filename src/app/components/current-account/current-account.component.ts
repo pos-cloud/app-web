@@ -1,6 +1,6 @@
 //Paquetes Angular
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 //Paquetes de terceros
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -32,305 +32,311 @@ import { CompanyType } from 'app/models/payment-method';
 import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
 
 @Component({
-  selector: 'app-current-account',
-  templateUrl: './current-account.component.html',
-  styleUrls: ['./current-account.component.css'],
-  providers: [NgbAlertConfig]
+	selector: 'app-current-account',
+	templateUrl: './current-account.component.html',
+	styleUrls: ['./current-account.component.css'],
+	providers: [NgbAlertConfig]
 })
 
 export class CurrentAccountComponent implements OnInit {
 
-  public transactions: Transaction[];
-  public companySelected: Company;
-  public movementsOfCashes: MovementOfCash[];
-  public areTransactionsEmpty: boolean = true;
-  public alertMessage: string = '';
-  public userType: string;
-  public propertyTerm: string;
-  public areFiltersVisible: boolean = false;
-  public loading: boolean = false;
-  public itemsPerPage = 10;
-  public totalItems = 0;
-  public items: any[] = new Array();
-  public balance: number = 0;
-  public currentPage: number = 1;
-  public roundNumber: RoundNumberPipe;
-  public startDate: string;
-  public endDate: string;
-  public userCountry: string;
-  public detailsPaymentMethod: boolean = false;
-  public showPaymentMethod: boolean = false;
-  public config: Config;
-  public invertedView: boolean = false;
-  public transactionMovement: TransactionMovement;
+	public transactions: Transaction[];
+	public companySelected: Company;
+	public companyType: CompanyType;
+	public movementsOfCashes: MovementOfCash[];
+	public areTransactionsEmpty: boolean = true;
+	public alertMessage: string = '';
+	public userType: string;
+	public propertyTerm: string;
+	public areFiltersVisible: boolean = false;
+	public loading: boolean = false;
+	public itemsPerPage = 10;
+	public totalItems = 0;
+	public items: any[] = new Array();
+	public balance: number = 0;
+	public currentPage: number = 1;
+	public roundNumber: RoundNumberPipe;
+	public startDate: string;
+	public endDate: string;
+	public userCountry: string;
+	public detailsPaymentMethod: boolean = false;
+	public showPaymentMethod: boolean = false;
+	public config: Config;
+	public invertedView: boolean = false;
+	public transactionMovement: TransactionMovement;
 
-  constructor(
-    public _transactionService: TransactionService,
-    public _transactionTypeService: TransactionTypeService,
-    public _movementOfCashService: MovementOfCashService,
-    public _companyService: CompanyService,
-    public _configService : ConfigService,
-    public _router: Router,
-    public _modalService: NgbModal,
-    public alertConfig: NgbAlertConfig,
-    public _printerService: PrinterService
-  ) {
-    this.movementsOfCashes = new Array();
-    this.roundNumber = new RoundNumberPipe();
-    this.startDate = moment('1990-01-01').format('YYYY-MM-DD');
-    this.endDate = moment().format('YYYY-MM-DD');
-  }
+	constructor(
+		public _transactionService: TransactionService,
+		public _transactionTypeService: TransactionTypeService,
+		public _movementOfCashService: MovementOfCashService,
+		public _companyService: CompanyService,
+		public _configService: ConfigService,
+		public _router: Router,
+		private _route: ActivatedRoute,
+		public _modalService: NgbModal,
+		public alertConfig: NgbAlertConfig,
+		public _printerService: PrinterService
+	) {
+		this.movementsOfCashes = new Array();
+		this.roundNumber = new RoundNumberPipe();
+		this.startDate = moment('1990-01-01').format('YYYY-MM-DD');
+		this.endDate = moment().format('YYYY-MM-DD');
+		this.processParams();
+	}
 
-  async ngOnInit() {
+	private processParams(): void {
+		this._route.queryParams.subscribe(params => {
+			this.companyType = params['companyType'];
+			if(params['companyId']) {
+				this.getCompany(params['companyId']);
+			} else {
+				this.openModal('company');
+			}
+		});
+	}
 
-    this.userCountry = Config.country;
-    let pathLocation: string[] = this._router.url.split('/');
-    this.userType = pathLocation[1];
+	async ngOnInit() {
 
-    await this._configService.getConfig.subscribe(
-      config => {
-        this.config = config;
-        this.detailsPaymentMethod = this.config.reports.summaryOfAccounts.detailsPaymentMethod;
-        if (pathLocation[3] === 'cliente') {
-          this.invertedView = this.config.reports.summaryOfAccounts.invertedViewClient;
-        } else {
-          this.invertedView = this.config.reports.summaryOfAccounts.invertedViewProvider
-        }
-      }
-    );
+		this.userCountry = Config.country;
+		let pathLocation: string[] = this._router.url.split('/');
+		this.userType = pathLocation[1];
 
-    if (pathLocation[4]) {
-      this.getCompany(pathLocation[4]);
-    } else {
-      this.openModal('company');
-    }
-  }
+		await this._configService.getConfig.subscribe(
+			config => {
+				this.config = config;
+				this.detailsPaymentMethod = this.config.reports.summaryOfAccounts.detailsPaymentMethod;
+				if (this.companyType === CompanyType.Client) {
+					this.invertedView = this.config.reports.summaryOfAccounts.invertedViewClient;
+				} else {
+					this.invertedView = this.config.reports.summaryOfAccounts.invertedViewProvider
+				}
+			}
+		);
+	}
 
-  public getSummary(): void {
+	public getSummary(): void {
 
-    this.loading = true;
+		this.loading = true;
 
-    let timezone = "-03:00";
-    if(Config.timezone && Config.timezone !== '') {
-      timezone =  Config.timezone.split('UTC')[1];
-    }
+		let timezone = "-03:00";
+		if (Config.timezone && Config.timezone !== '') {
+			timezone = Config.timezone.split('UTC')[1];
+		}
 
-    if(typeof this.detailsPaymentMethod !== 'boolean') {
-      this.detailsPaymentMethod = Boolean(JSON.parse(this.detailsPaymentMethod));
-    }
-    
-    let query = {
-      company: this.companySelected._id,
-      startDate: this.startDate + " 00:00:00" + timezone,
-      endDate:  this.endDate + " 23:59:59" + timezone,
-      detailsPaymentMethod: this.detailsPaymentMethod,
-      transactionMovement: this.transactionMovement,
-      invertedView: this.invertedView
-    }
+		if (typeof this.detailsPaymentMethod !== 'boolean') {
+			this.detailsPaymentMethod = Boolean(JSON.parse(this.detailsPaymentMethod));
+		}
 
-    this._companyService.getSummaryOfAccountsByCompany(JSON.stringify(query)).subscribe(
-      result => {
-        if (!result) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.items = new Array();
-          this.totalItems = 0;
-        } else {
-          this.hideMessage();
-          this.items = result;
-          this.totalItems = this.items.length;
-          this.currentPage = parseFloat(this.roundNumber.transform(this.totalItems / this.itemsPerPage + 0.5, 0).toFixed(0));
-          this.getBalance();
-          this.showPaymentMethod = this.detailsPaymentMethod;
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
+		let query = {
+			company: this.companySelected._id,
+			startDate: this.startDate + " 00:00:00" + timezone,
+			endDate: this.endDate + " 23:59:59" + timezone,
+			detailsPaymentMethod: this.detailsPaymentMethod,
+			transactionMovement: this.transactionMovement,
+			invertedView: this.invertedView
+		}
 
-  public getCompany(companyId: string): void {
+		this._companyService.getSummaryOfAccountsByCompany(JSON.stringify(query)).subscribe(
+			result => {
+				if (!result) {
+					if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+					this.items = new Array();
+					this.totalItems = 0;
+				} else {
+					this.hideMessage();
+					this.items = result;
+					this.totalItems = this.items.length;
+					this.currentPage = parseFloat(this.roundNumber.transform(this.totalItems / this.itemsPerPage + 0.5, 0).toFixed(0));
+					this.getBalance();
+					this.showPaymentMethod = this.detailsPaymentMethod;
+				}
+				this.loading = false;
+			},
+			error => {
+				this.showMessage(error._body, 'danger', false);
+				this.loading = false;
+			}
+		);
+	}
 
-    this.loading = true;
+	public getCompany(companyId: string): void {
 
-    this._companyService.getCompany(companyId).subscribe(
-      result => {
-        if (!result.company) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.companySelected = result.company;
-          if(this.companySelected.type === CompanyType.Client) {
-            this.transactionMovement = TransactionMovement.Sale;
-          } else {
-            this.transactionMovement = TransactionMovement.Purchase;
-          }
-          this.getSummary();
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
+		this.loading = true;
 
-  public refresh(): void {
-    if (this.companySelected) {
-      this.getSummary();
-    } else {
-      this.showMessage("Debe seleccionar una empresa.", 'info', true);
-    }
-  }
+		this._companyService.getCompany(companyId).subscribe(
+			result => {
+				if (!result.company) {
+					if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+				} else {
+					this.companySelected = result.company;
+					if (this.companySelected.type === CompanyType.Client) {
+						this.transactionMovement = TransactionMovement.Sale;
+					} else {
+						this.transactionMovement = TransactionMovement.Purchase;
+					}
+					this.getSummary();
+				}
+				this.loading = false;
+			},
+			error => {
+				this.showMessage(error._body, 'danger', false);
+				this.loading = false;
+			}
+		);
+	}
 
-  public getBalance(): void {
+	public refresh(): void {
+		if (this.companySelected) {
+			this.getSummary();
+		} else {
+			this.showMessage("Debe seleccionar una empresa.", 'info', true);
+		}
+	}
 
-    this.balance = 0;
+	public getBalance(): void {
 
-    for(let i = 0; i < this.items.length; i++) {
-      if (this.items[i].isCurrentAccount || this.items[i].typeCurrentAccount !== "No") {
-        this.balance += this.items[i].debe;
-        this.balance -= this.items[i].haber;
-        this.items[i].balance = (this.items[i].debe - this.items[i].haber);
-        if(this.items[i-1]) {
-          this.items[i].balance += this.items[i-1].balance;
-        }
-      }
-    }
-  }
+		this.balance = 0;
 
-  async openModal(op: string, transactionId?: string) {
+		for (let i = 0; i < this.items.length; i++) {
+			if (this.items[i].isCurrentAccount || this.items[i].typeCurrentAccount !== "No") {
+				this.balance += this.items[i].debe;
+				this.balance -= this.items[i].haber;
+				this.items[i].balance = (this.items[i].debe - this.items[i].haber);
+				if (this.items[i - 1]) {
+					this.items[i].balance += this.items[i - 1].balance;
+				}
+			}
+		}
+	}
 
-    let modalRef;
-    switch (op) {
-      case 'view-transaction':
-        modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.transactionId = transactionId;
-        break;
-      case 'edit-transaction':
-        modalRef = this._modalService.open(AddTransactionComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.transactionId = transactionId;
-        modalRef.result.then((result) => {
-          if (result.transaction) {
-            // this.refresh();
-          }
-        }, (reason) => {
+	async openModal(op: string, transactionId?: string) {
 
-        });
-        break;
-      case 'company':
-        modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg', backdrop: 'static' });
-        let pathLocation: string[] = this._router.url.split('/');
-        let companyType = pathLocation[3].charAt(0).toUpperCase() + pathLocation[3].slice(1);
-        modalRef.componentInstance.type = companyType;
-        modalRef.componentInstance.selectionView = true;
-        modalRef.result.then(
-          (result) => {
-            if (result.company) {
-              this.companySelected = result.company;
-              if(this.companySelected.type === CompanyType.Client) {
-                this.transactionMovement = TransactionMovement.Sale;
-              } else {
-                this.transactionMovement = TransactionMovement.Purchase;
-              }
-              this.getSummary();
-            }
-          }, (reason) => {
-          }
-        );
-        break;
-      case 'print':
-        if (this.companySelected) {
-          modalRef = this._modalService.open(PrintComponent);
-          modalRef.componentInstance.items = this.items;
-          modalRef.componentInstance.company = this.companySelected;
-          modalRef.componentInstance.params = { detailsPaymentMethod: this.detailsPaymentMethod };
-          modalRef.componentInstance.typePrint = 'current-account';
-          modalRef.componentInstance.balance = this.balance;
-        } else {
-          this.showMessage("Debe seleccionar una empresa.",'info', true);
-        }
-        break;
-      case 'print-transaction':
-        modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.transactionId = transactionId;
-        modalRef.componentInstance.company = this.companySelected;
-        modalRef.componentInstance.typePrint = 'invoice';
-        await this.getTransaction(transactionId).then(
-          async transaction => {
-            if (transaction) {
-              if (transaction.type.defectPrinter) {
-                modalRef.componentInstance.printer = transaction.type.defectPrinter;
-              } else {
-                await this.getPrinters().then(
-                  printers => {
-                    if (printers) {
-                      for (let printer of printers) {
-                        if (printer.printIn === PrinterPrintIn.Counter) {
-                          modalRef.componentInstance.printer = printer;
-                        }
-                      }
-                    }
-                  }
-                );
-              }
-            }
-          }
-        );
-       break;
-      default: ;
-    }
-  }
+		let modalRef;
+		switch (op) {
+			case 'view-transaction':
+				modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg', backdrop: 'static' });
+				modalRef.componentInstance.transactionId = transactionId;
+				break;
+			case 'edit-transaction':
+				modalRef = this._modalService.open(AddTransactionComponent, { size: 'lg', backdrop: 'static' });
+				modalRef.componentInstance.transactionId = transactionId;
+				modalRef.result.then((result) => {
+					if (result.transaction) {
+						// this.refresh();
+					}
+				}, (reason) => {
 
-  public getTransaction(transactionId: string): Promise<Transaction> {
+				});
+				break;
+			case 'company':
+				modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg', backdrop: 'static' });
+				console.log(this.companyType);
+				modalRef.componentInstance.type = this.companyType;
+				modalRef.componentInstance.selectionView = true;
+				modalRef.result.then(
+					(result) => {
+						if (result.company) {
+							this.companySelected = result.company;
+							if (this.companyType === CompanyType.Client) {
+								this._router.navigate(['admin/cuentas-corrientes'], { queryParams: { companyId: this.companySelected._id, companyType: this.companySelected.type } });
+							} else {
+								this._router.navigate(['admin/cuentas-corrientes'], { queryParams: { companyId: this.companySelected._id, companyType: this.companySelected.type } });
+							}
+						}
+					}, (reason) => {
+					}
+				);
+				break;
+			case 'print':
+				if (this.companySelected) {
+					modalRef = this._modalService.open(PrintComponent);
+					modalRef.componentInstance.items = this.items;
+					modalRef.componentInstance.company = this.companySelected;
+					modalRef.componentInstance.params = { detailsPaymentMethod: this.detailsPaymentMethod };
+					modalRef.componentInstance.typePrint = 'current-account';
+					modalRef.componentInstance.balance = this.balance;
+				} else {
+					this.showMessage("Debe seleccionar una empresa.", 'info', true);
+				}
+				break;
+			case 'print-transaction':
+				modalRef = this._modalService.open(PrintComponent);
+				modalRef.componentInstance.transactionId = transactionId;
+				modalRef.componentInstance.company = this.companySelected;
+				modalRef.componentInstance.typePrint = 'invoice';
+				await this.getTransaction(transactionId).then(
+					async transaction => {
+						if (transaction) {
+							if (transaction.type.defectPrinter) {
+								modalRef.componentInstance.printer = transaction.type.defectPrinter;
+							} else {
+								await this.getPrinters().then(
+									printers => {
+										if (printers) {
+											for (let printer of printers) {
+												if (printer.printIn === PrinterPrintIn.Counter) {
+													modalRef.componentInstance.printer = printer;
+												}
+											}
+										}
+									}
+								);
+							}
+						}
+					}
+				);
+				break;
+			default: ;
+		}
+	}
 
-    return new Promise<Transaction>((resolve, reject) => {
+	public getTransaction(transactionId: string): Promise<Transaction> {
 
-      this._transactionService.getTransaction(transactionId).subscribe(
-        async result => {
-          if (!result.transaction) {
-            this.showMessage(result.message, 'danger', false);
-            resolve(null);
-          } else {
-            resolve(result.transaction);
-          }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
+		return new Promise<Transaction>((resolve, reject) => {
 
-  public getPrinters(): Promise<Printer[]> {
+			this._transactionService.getTransaction(transactionId).subscribe(
+				async result => {
+					if (!result.transaction) {
+						this.showMessage(result.message, 'danger', false);
+						resolve(null);
+					} else {
+						resolve(result.transaction);
+					}
+				},
+				error => {
+					this.showMessage(error._body, 'danger', false);
+					resolve(null);
+				}
+			);
+		});
+	}
 
-    return new Promise<Printer[]>(async (resolve, reject) => {
+	public getPrinters(): Promise<Printer[]> {
 
-      this._printerService.getPrinters().subscribe(
-        result => {
-          if (!result.printers) {
-            resolve(null);
-          } else {
-            resolve(result.printers);
-          }
-        },
-        error => {
-          resolve(null);
-        }
-      );
-    });
-  }
+		return new Promise<Printer[]>(async (resolve, reject) => {
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
-    this.alertMessage = message;
-    this.alertConfig.type = type;
-    this.alertConfig.dismissible = dismissible;
-  }
+			this._printerService.getPrinters().subscribe(
+				result => {
+					if (!result.printers) {
+						resolve(null);
+					} else {
+						resolve(result.printers);
+					}
+				},
+				error => {
+					resolve(null);
+				}
+			);
+		});
+	}
 
-  public hideMessage(): void {
-    this.alertMessage = '';
-  }
+	public showMessage(message: string, type: string, dismissible: boolean): void {
+		this.alertMessage = message;
+		this.alertConfig.type = type;
+		this.alertConfig.dismissible = dismissible;
+	}
+
+	public hideMessage(): void {
+		this.alertMessage = '';
+	}
 }

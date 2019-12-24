@@ -10,266 +10,266 @@ import { AuthService } from './auth.service';
 @Injectable()
 export class ConfigService {
 
-    private config: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+	private config: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
-    constructor(
-        public _http: HttpClient,
-        public _authService: AuthService
-    ) { }
+	constructor(
+		public _http: HttpClient,
+		public _authService: AuthService
+	) { }
 
-    public setConfig(config: any) {
-        this.config.next(config);
-    }
+	public setConfig(config: any) {
+		this.config.next(config);
+	}
 
-    get getConfig() {
-        return this.config.asObservable();
-    }
-  
-    public getConfigApi(): Observable<any> {
+	get getConfig() {
+		return this.config.asObservable();
+	}
 
-        const URL = `${Config.apiURL}config`;
+	public getConfigApi(): Observable<any> {
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')           
-            .set('Authorization', this._authService.getToken());
+		const URL = `${Config.apiURL}config`;
 
-        return this._http.get(URL, {
-            headers: headers
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-    public getCompanyPicture(picture: string): Observable<any> {
+		return this._http.get(URL, {
+			headers: headers
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 
-        const URL = `${Config.apiURL}get-image-base64-company`;
+	public getCompanyPicture(picture: string): Observable<any> {
 
-        const params = new HttpParams()
-                .set('picture', picture);
+		const URL = `${Config.apiURL}get-image-base64-company`;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')           
-            .set('Authorization', this._authService.getToken());
+		const params = new HttpParams()
+			.set('picture', picture);
 
-        return this._http.get(URL, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-    public generateLicensePayment(
-        payment: number
-    ): Observable<any> {
+		return this._http.get(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 
-        const URL = `${Config.apiURL}generar-licencia-payment`;
+	public generateLicensePayment(
+		payment: number
+	): Observable<any> {
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')           
-            .set('Authorization', this._authService.getToken());
+		const URL = `${Config.apiURL}generar-licencia-payment`;
 
-        const params = new HttpParams()
-            .set('payment', payment.toString());
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-        return this._http.get(URL, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
-	
+		const params = new HttpParams()
+			.set('payment', payment.toString());
+
+		return this._http.get(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
+
 	public getCountry() {
 		return this._http.get("https://restcountries.eu/rest/v2/all?fields=name;alpha2Code;timezones;alpha3Code;flag;callingCodes")
 	}
 
-	public getTimeZone(country : string) {
-		return this._http.get("https://restcountries.eu/rest/v2/alpha/"+country)
+	public getTimeZone(country: string) {
+		return this._http.get("https://restcountries.eu/rest/v2/alpha/" + country)
 	}
 
-    public saveConfig(config: Config): Observable<any> {
+	public saveConfig(config: Config): Observable<any> {
 
-        const URL = `${Config.apiURL}config`;
+		const URL = `${Config.apiURL}config`;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-        return this._http.post(URL, config, {
-            headers: headers
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		return this._http.post(URL, config, {
+			headers: headers
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 
-    public generateCRS(config: Config): Observable<any> {
+	public generateCRS(config: Config): Observable<any> {
 
-        const URL = `${Config.apiURL}generate-crs`;
+		const URL = `${Config.apiURL}generate-crs`;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-        return this._http.post(URL, config, {
-            headers: headers
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
-    
-    public updateConfig(config: Config): Observable<any> {
+		return this._http.post(URL, config, {
+			headers: headers
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 
-        const URL = `${Config.apiURL}config`;
+	public updateConfig(config: Config): Observable<any> {
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
+		const URL = `${Config.apiURL}config`;
 
-        const params = new HttpParams()
-            .set('id', config._id);
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-        return this._http.put(URL, config, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		const params = new HttpParams()
+			.set('id', config._id);
 
-    public makeFileRequest(config, files: Array<File>) {
+		return this._http.put(URL, config, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 
-        let xhr: XMLHttpRequest = new XMLHttpRequest();
-        xhr.open('POST', Config.apiURL + 'upload-image-company/' + config._id, true);
-        xhr.setRequestHeader('Authorization', this._authService.getToken());
+	public makeFileRequest(config, files: Array<File>) {
 
-        return new Promise((resolve, reject) => {
-        let formData: any = new FormData();
+		let xhr: XMLHttpRequest = new XMLHttpRequest();
+		xhr.open('POST', Config.apiURL + 'upload-image-company/' + config._id, true);
+		xhr.setRequestHeader('Authorization', this._authService.getToken());
 
-        if (files && files.length > 0) {
-            for (let i: number = 0; i < files.length; i++) {
-            formData.append('image', files[i], files[i].name);
-            }
-        }
+		return new Promise((resolve, reject) => {
+			let formData: any = new FormData();
 
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4) {
-            if (xhr.status == 200) {
-                resolve(JSON.parse(xhr.response));
-            } else {
-                reject(xhr.response);
-            }
-            }
-        }
+			if (files && files.length > 0) {
+				for (let i: number = 0; i < files.length; i++) {
+					formData.append('image', files[i], files[i].name);
+				}
+			}
 
-        xhr.send(formData);
-        });
-    }
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState == 4) {
+					if (xhr.status == 200) {
+						resolve(JSON.parse(xhr.response));
+					} else {
+						reject(xhr.response);
+					}
+				}
+			}
 
-    public updloadFile(files: Array<File>) {
+			xhr.send(formData);
+		});
+	}
 
-        let xhr: XMLHttpRequest = new XMLHttpRequest();
-        xhr.open('POST', Config.apiURL + 'upload-crt', true);
-        xhr.setRequestHeader('Authorization', this._authService.getToken());
+	public updloadFile(files: Array<File>) {
 
-        return new Promise((resolve, reject) => {
-            let formData: any = new FormData();
+		let xhr: XMLHttpRequest = new XMLHttpRequest();
+		xhr.open('POST', Config.apiURL + 'upload-crt', true);
+		xhr.setRequestHeader('Authorization', this._authService.getToken());
 
-            if (files && files.length > 0) {
-                for (let i: number = 0; i < files.length; i++) {
-                formData.append('file', files[i], files[i].name);
-                }
-            }
+		return new Promise((resolve, reject) => {
+			let formData: any = new FormData();
 
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4) {
-                if (xhr.status == 200) {
-                    resolve(JSON.parse(xhr.response));
-                } else {
-                    reject(xhr.response);
-                }
-                }
-            }
+			if (files && files.length > 0) {
+				for (let i: number = 0; i < files.length; i++) {
+					formData.append('file', files[i], files[i].name);
+				}
+			}
 
-            xhr.send(formData);
-        });
-    }
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState == 4) {
+					if (xhr.status == 200) {
+						resolve(JSON.parse(xhr.response));
+					} else {
+						reject(xhr.response);
+					}
+				}
+			}
 
-    public deletePicture(_id: string): Observable<any> {
+			xhr.send(formData);
+		});
+	}
 
-        const URL = `${Config.apiURL}delete-image-company`;
+	public deletePicture(_id: string): Observable<any> {
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
+		const URL = `${Config.apiURL}delete-image-company`;
 
-        const params = new HttpParams()
-            .set('id', _id);
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-        return this._http.delete(URL, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		const params = new HttpParams()
+			.set('id', _id);
 
-    public getModel(model : string): Observable<any> {
+		return this._http.delete(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 
-        const URL = `${Config.apiURL}model`;
-        
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')           
-            .set('Authorization', this._authService.getToken());
+	public getModel(model: string): Observable<any> {
 
-        const params = new HttpParams()
-            .set('model', model);
+		const URL = `${Config.apiURL}model`;
 
-        return this._http.get(URL, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
+
+		const params = new HttpParams()
+			.set('model', model);
+
+		return this._http.get(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 }

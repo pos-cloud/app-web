@@ -78,7 +78,7 @@ export class HeaderComponent {
 
     this._router.events.forEach((event: NavigationEvent) => {
       if (event instanceof NavigationStart) {
-        let pathLocation: string[] = event.url.split('/');
+		let pathLocation: string[] = event.url.split('?')[0].split('/');
         if (pathLocation[1] === "login" ||
             pathLocation[1] === "registrar" ||
             pathLocation[3] === "agregar-transaccion" ||

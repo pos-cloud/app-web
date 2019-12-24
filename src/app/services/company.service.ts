@@ -23,262 +23,262 @@ export class CompanyService {
 
 	public getCompany(_id: string): Observable<any> {
 
-        const URL = `${Config.apiURL}company`;
+		const URL = `${Config.apiURL}company`;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-        const params = new HttpParams()
-            .set('id', _id);
+		const params = new HttpParams()
+			.set('id', _id);
 
-        return this._http.get(URL, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
-	  
-	public getCompanies(
-        query?: string
-    ): Observable<any> {
-
-        const URL = `${Config.apiURL}companies`;
-
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')           
-            .set('Authorization', this._authService.getToken());
-
-        const params = new HttpParams()
-            .set('query', query);
-
-        return this._http.get(URL, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
+		return this._http.get(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
 	}
-	
+
+	public getCompanies(
+		query?: string
+	): Observable<any> {
+
+		const URL = `${Config.apiURL}companies`;
+
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
+
+		const params = new HttpParams()
+			.set('query', query);
+
+		return this._http.get(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
+
 	public getCompaniesV2(
-        project: {},
-        match: {},
-        sort: {},
-        group: {},
-        limit: number = 0,
-        skip: number = 0
-    ): Observable<any> {
+		project: {},
+		match: {},
+		sort: {},
+		group: {},
+		limit: number = 0,
+		skip: number = 0
+	): Observable<any> {
 
-        const URL = `${Config.apiURL}v2/companies`;
+		const URL = `${Config.apiURL}v2/companies`;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')           
-            .set('Authorization', this._authService.getToken());
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-        const params = new HttpParams()
-            .set('project', JSON.stringify(project))
-            .set('match', JSON.stringify(match))
-            .set('sort', JSON.stringify(sort))
-            .set('group', JSON.stringify(group))
-            .set('limit', limit.toString())
-            .set('skip', skip.toString());
+		const params = new HttpParams()
+			.set('project', JSON.stringify(project))
+			.set('match', JSON.stringify(match))
+			.set('sort', JSON.stringify(sort))
+			.set('group', JSON.stringify(group))
+			.set('limit', limit.toString())
+			.set('skip', skip.toString());
 
-        return this._http.get(URL, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		return this._http.get(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 
-	public saveCompany(company : Company): Observable<any> {
+	public saveCompany(company: Company): Observable<any> {
 
-        const URL = `${Config.apiURL}company`;
+		const URL = `${Config.apiURL}company`;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-        return this._http.post(URL, company, {
-            headers: headers
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		return this._http.post(URL, company, {
+			headers: headers
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 
-	public updateCompany (company: Company): Observable<any> {
+	public updateCompany(company: Company): Observable<any> {
 
-        const URL = `${Config.apiURL}company`;
+		const URL = `${Config.apiURL}company`;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-        const params = new HttpParams()
-            .set('id', company._id);
+		const params = new HttpParams()
+			.set('id', company._id);
 
-        return this._http.put(URL, company, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+		return this._http.put(URL, company, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
 
 	public deleteCompany(_id: string): Observable<any> {
 
-        const URL = `${Config.apiURL}company`;
+		const URL = `${Config.apiURL}company`;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-        const params = new HttpParams()
-            .set('id', _id);
+		const params = new HttpParams()
+			.set('id', _id);
 
-        return this._http.delete(URL, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
+		return this._http.delete(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
 	}
-	
-	public getQuantityOfCompaniesByType(
-        type: string, startDate: string, endDate: string
-    ): Observable<any> {
 
-		var query = '{"type":"' + type +'","startDate":"' + startDate + '", "endDate":"' + endDate + '"}';
+	public getQuantityOfCompaniesByType(
+		type: string, startDate: string, endDate: string
+	): Observable<any> {
+
+		var query = '{"type":"' + type + '","startDate":"' + startDate + '", "endDate":"' + endDate + '"}';
 
 		const URL = `${Config.apiURL}quantity-of-companies-by-type`;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')           
-            .set('Authorization', this._authService.getToken());
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-        const params = new HttpParams()
-            .set('query', query);
+		const params = new HttpParams()
+			.set('query', query);
 
-        return this._http.get(URL, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
+		return this._http.get(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
 	}
 
 	public getSalesByCompany(
-        query: string
-    ): Observable<any> {
+		query: string
+	): Observable<any> {
 
 		const URL = `${Config.apiURL}sales-by-company`;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')           
-            .set('Authorization', this._authService.getToken());
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-        const params = new HttpParams()
-            .set('query', query);
+		const params = new HttpParams()
+			.set('query', query);
 
-        return this._http.get(URL, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
+		return this._http.get(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
 	}
 
 	public getSummaryOfAccountsByCompany(
-        query: string
-    ): Observable<any> {
+		query: string
+	): Observable<any> {
 
 		const URL = `${Config.apiURL}summary-of-accounts-by-company`;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')           
-            .set('Authorization', this._authService.getToken());
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-        const params = new HttpParams()
-            .set('query', query);
+		const params = new HttpParams()
+			.set('query', query);
 
-        return this._http.get(URL, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
+		return this._http.get(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
 	}
 
 	public getSummaryOfAccounts(
-        query: string
-    ): Observable<any> {
+		query: string
+	): Observable<any> {
 
 		const URL = `${Config.apiURL}summary-of-accounts`;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')           
-            .set('Authorization', this._authService.getToken());
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-        const params = new HttpParams()
-            .set('query', query);
+		const params = new HttpParams()
+			.set('query', query);
 
-        return this._http.get(URL, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
+		return this._http.get(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
 	}
 
 	public exportAsExcelFile(json: any[], excelFileName: string): void {
@@ -289,7 +289,7 @@ export class CompanyService {
 	}
 
 	private saveAsExcelFile(buffer: any, fileName: string): void {
-		const data: Blob = new Blob([buffer], {type: EXCEL_TYPE});
+		const data: Blob = new Blob([buffer], { type: EXCEL_TYPE });
 		FileSaver.saveAs(data, fileName + EXCEL_EXTENSION);
 	}
 }

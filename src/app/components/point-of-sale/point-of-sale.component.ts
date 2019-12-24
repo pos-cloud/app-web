@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, ViewEncapsulation, Input, EventEmitter, Output } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
@@ -30,7 +30,7 @@ import { CurrencyService } from 'app/services/currency.service';
 import { Config } from 'app/app.config';
 import { CashBox, CashBoxState } from 'app/models/cash-box';
 import { CashBoxService } from 'app/services/cash-box.service';
-import { Company } from 'app/models/company';
+import { Company, CompanyType } from 'app/models/company';
 import { Table, TableState } from 'app/models/table';
 import { TableService } from 'app/services/table.service';
 import { AuthService } from 'app/services/auth.service';
@@ -48,1419 +48,1460 @@ import { PrintTransactionTypeComponent } from '../print/print-transaction-type/p
 import { first } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-point-of-sale',
-  templateUrl: './point-of-sale.component.html',
-  styleUrls: ['./point-of-sale.component.scss'],
-  providers: [NgbAlertConfig],
-  encapsulation: ViewEncapsulation.None
+	selector: 'app-point-of-sale',
+	templateUrl: './point-of-sale.component.html',
+	styleUrls: ['./point-of-sale.component.scss'],
+	providers: [NgbAlertConfig],
+	encapsulation: ViewEncapsulation.None
 })
 
 export class PointOfSaleComponent implements OnInit {
 
-  public rooms: Room[] = new Array();
-  public roomSelected: Room;
-  public transactions: Transaction[] = new Array();
-  public areTransactionsEmpty: boolean = true;
-  public transactionTypes: TransactionType[];
-  public transactionMovement: TransactionMovement;
-  public userType: string;
-  public propertyTerm: string;
-  public orderTerm: string[] = ['startDate'];
-  public posType: string;
-  public alertMessage: string = '';
-  public areFiltersVisible: boolean = false;
-  public loading: boolean = false;
-  public itemsPerPage = 10;
-  public totalItems = 0;
-  public printers: Printer[];
-  @ViewChild('contentPrinters', {static: true}) contentPrinters: ElementRef;
-  @Output() eventRefreshCurrentAccount: EventEmitter<any> = new EventEmitter<any>();
-  public transaction: Transaction;
-  public printerSelected: Printer;
-  public employeeTypeSelected: EmployeeType;
-  public tableSelected: Table;
-  public config: Config;
-  public transactionTypeId: string;
+	public rooms: Room[] = new Array();
+	public roomSelected: Room;
+	public transactions: Transaction[] = new Array();
+	public transactionStates: string[];
+	public validTransactionStates: string[] = [
+		TransactionState.Delivered.toString(),
+		TransactionState.Open.toString(),
+		TransactionState.Pending.toString(),
+		TransactionState.Sent.toString()
+	];
+	public areTransactionsEmpty: boolean = true;
+	public transactionTypes: TransactionType[];
+	public transactionMovement: TransactionMovement;
+	public userType: string;
+	public propertyTerm: string;
+	public orderTerm: string[] = ['startDate'];
+	public posType: string;
+	public alertMessage: string = '';
+	public areFiltersVisible: boolean = false;
+	public loading: boolean = false;
+	public itemsPerPage = 10;
+	public totalItems = 0;
+	public printers: Printer[];
+	@ViewChild('contentPrinters', { static: true }) contentPrinters: ElementRef;
+	@Output() eventRefreshCurrentAccount: EventEmitter<any> = new EventEmitter<any>();
+	public transaction: Transaction;
+	public printerSelected: Printer;
+	public employeeTypeSelected: EmployeeType;
+	public tableSelected: Table;
+	public config: Config;
+	public transactionTypeId: string;
 
-  // CAMPOS TRAIDOS DE LA CUENTA CTE.
-  @Input() company: Company;
-  @Input() totalPrice: number;
+	// CAMPOS TRAIDOS DE LA CUENTA CTE.
+	@Input() company: Company;
+	public companyType: CompanyType;
+	@Input() totalPrice: number;
 
-  constructor(
-    private _roomService: RoomService,
-    private _transactionService: TransactionService,
-    private _transactionTypeService: TransactionTypeService,
-    private _printerService: PrinterService,
-    private _employeeTypeService: EmployeeTypeService,
-    private _depositService: DepositService,
-    private _branchService: BranchService,
-    private _router: Router,
-    private _modalService: NgbModal,
-    public alertConfig: NgbAlertConfig,
-    private _currencyService: CurrencyService,
-    private _cashBoxService: CashBoxService,
-    private _tableService: TableService,
-    private _authService: AuthService,
-    private _originService: OriginService,
-    private _configService: ConfigService
-  ) {
-    this.roomSelected = new Room();
-    this.transactionTypes = new Array();
-    this.getPrinters();
-  }
+	constructor(
+		public alertConfig: NgbAlertConfig,
+		private _roomService: RoomService,
+		private _transactionService: TransactionService,
+		private _transactionTypeService: TransactionTypeService,
+		private _printerService: PrinterService,
+		private _employeeTypeService: EmployeeTypeService,
+		private _depositService: DepositService,
+		private _branchService: BranchService,
+		private _router: Router,
+		private _route: ActivatedRoute,
+		private _modalService: NgbModal,
+		private _currencyService: CurrencyService,
+		private _cashBoxService: CashBoxService,
+		private _tableService: TableService,
+		private _authService: AuthService,
+		private _originService: OriginService,
+		private _configService: ConfigService
+	) {
+		this.roomSelected = new Room();
+		this.transactionTypes = new Array();
+		this.getPrinters();
+	}
 
-  async ngOnInit() {
+	async ngOnInit() {
 
-    let pathLocation: string[] = this._router.url.split('/');
-    this.userType = pathLocation[1];
-    this.posType = pathLocation[2];
+		let pathLocation: string[] = this._router.url.split('/');
+		this.userType = pathLocation[1].split('?')[0];
+		this.posType = pathLocation[2].split('?')[0];
 
-    await this._configService.getConfig.subscribe(
-      config => {
-        this.config = config;
-      }
-    );
-    
-    this.refresh();
-  }
+		await this._configService.getConfig.subscribe(
+			config => {
+				this.config = config;
+			}
+		);
+		this.processParams();
+		this.refresh();
+	}
 
-  public getBranches(match: {} = {}): Promise<Branch[]> {
+	private processParams(): void {
+		this._route.queryParams.subscribe(params => {
+			this.companyType = params['companyType'];
+			this.transactionStates = new Array();
+			Object.keys(params).map(key => {
+				if (this.posType === 'delivery') {
+					for (const s of params[key].split(',')) {
+						if (this.validTransactionStates.includes(s)) {
+							this.transactionStates.push(s);
 
-    return new Promise<Branch[]>((resolve, reject) => {
-  
-      this._branchService.getBranches(
-          {}, // PROJECT
-          match, // MATCH
-          { number: 1 }, // SORT
-          {}, // GROUP
-          0, // LIMIT
-          0 // SKIP
-      ).subscribe(
-        result => {
-          if (result && result.branches) {
-            resolve(result.branches);
-          } else {
-            resolve(null);
-          }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
+						}
+					}
+					this.refresh();
+				}
+			});
+			if (this.posType === 'delivery' && this.transactionStates.length === 0) {
+				this.transactionStates.push(TransactionState.Open.toString());
+				this.refresh();
+			}
+		});
+	}
 
-  public getDeposits(match: {} = {}): Promise<Deposit[]> {
+	public getBranches(match: {} = {}): Promise<Branch[]> {
 
-    return new Promise<Deposit[]>((resolve, reject) => {
-      
-      this._depositService.getDepositsV2(
-          { }, // PROJECT
-          match, // MATCH
-          { name: 1 }, // SORT
-          {}, // GROUP
-          0, // LIMIT
-          0 // SKIP
-      ).subscribe(
-        result => {
-          if (result.deposits) {
-            resolve(result.deposits);
-          } else {
-            resolve(null);
-          }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
+		return new Promise<Branch[]>((resolve, reject) => {
 
-  public getOrigins(match: {} = {}): Promise<Origin[]> {
+			this._branchService.getBranches(
+				{}, // PROJECT
+				match, // MATCH
+				{ number: 1 }, // SORT
+				{}, // GROUP
+				0, // LIMIT
+				0 // SKIP
+			).subscribe(
+				result => {
+					if (result && result.branches) {
+						resolve(result.branches);
+					} else {
+						resolve(null);
+					}
+				},
+				error => {
+					this.showMessage(error._body, 'danger', false);
+					resolve(null);
+				}
+			);
+		});
+	}
 
-    return new Promise<Origin[]>((resolve, reject) => {
-  
-      this._originService.getOrigins(
-          {}, // PROJECT
-          match, // MATCH
-          { number: 1 }, // SORT
-          {}, // GROUP
-          0, // LIMIT
-          0 // SKIP
-      ).subscribe(
-        result => {
-          if (result.origins) {
-            resolve(result.origins);
-          } else {
-            resolve(null);
-          }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
+	public getDeposits(match: {} = {}): Promise<Deposit[]> {
 
-  public getCurrencies(): Promise<Currency[]> {
+		return new Promise<Deposit[]>((resolve, reject) => {
 
-    return new Promise<Currency[]>((resolve, reject) => {
+			this._depositService.getDepositsV2(
+				{}, // PROJECT
+				match, // MATCH
+				{ name: 1 }, // SORT
+				{}, // GROUP
+				0, // LIMIT
+				0 // SKIP
+			).subscribe(
+				result => {
+					if (result.deposits) {
+						resolve(result.deposits);
+					} else {
+						resolve(null);
+					}
+				},
+				error => {
+					this.showMessage(error._body, 'danger', false);
+					resolve(null);
+				}
+			);
+		});
+	}
 
-      this._currencyService.getCurrencies('sort="name":1').subscribe(
-        result => {
-          if (!result.currencies) {
-            resolve(null);
-          } else {
-            resolve(result.currencies);
-          }
-        },
-        error => {
-          this.showMessage(error._body, "danger", false);
-          resolve(null);
-        }
-      );
-    });
-  }
+	public getOrigins(match: {} = {}): Promise<Origin[]> {
 
-  public getPrinters(): void {
+		return new Promise<Origin[]>((resolve, reject) => {
 
-    this._printerService.getPrinters().subscribe(
-      result => {
-        if (!result.printers) {
-          this.printers = undefined;
-        } else {
-          this.printers = result.printers;
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-      }
-    );
-  }
+			this._originService.getOrigins(
+				{}, // PROJECT
+				match, // MATCH
+				{ number: 1 }, // SORT
+				{}, // GROUP
+				0, // LIMIT
+				0 // SKIP
+			).subscribe(
+				result => {
+					if (result.origins) {
+						resolve(result.origins);
+					} else {
+						resolve(null);
+					}
+				},
+				error => {
+					this.showMessage(error._body, 'danger', false);
+					resolve(null);
+				}
+			);
+		});
+	}
 
-  public getTransactionTypes(query?: string): Promise<TransactionType[]> {
+	public getCurrencies(): Promise<Currency[]> {
 
-    return new Promise<TransactionType[]>((resolve, reject) => {
+		return new Promise<Currency[]>((resolve, reject) => {
 
-      this.loading = true;
+			this._currencyService.getCurrencies('sort="name":1').subscribe(
+				result => {
+					if (!result.currencies) {
+						resolve(null);
+					} else {
+						resolve(result.currencies);
+					}
+				},
+				error => {
+					this.showMessage(error._body, "danger", false);
+					resolve(null);
+				}
+			);
+		});
+	}
 
-      this._transactionTypeService.getTransactionTypes(query).subscribe(
-        result => {
-          this.loading = false;
-          if (!result.transactionTypes) {
-            resolve(null);
-          } else {
-            resolve(result.transactionTypes);
-          }
-        },
-        error => {
-          this.loading = false;
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
+	public getPrinters(): void {
 
-  public getRooms(): void {
+		this._printerService.getPrinters().subscribe(
+			result => {
+				if (!result.printers) {
+					this.printers = undefined;
+				} else {
+					this.printers = result.printers;
+				}
+			},
+			error => {
+				this.showMessage(error._body, 'danger', false);
+			}
+		);
+	}
 
-    this.loading = true;
+	public getTransactionTypes(query?: string): Promise<TransactionType[]> {
 
-    this._roomService.getRooms().subscribe(
-        result => {
-          if (!result.rooms) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            this.loading = false;
-          } else {
-            this.hideMessage();
-            this.loading = false;
-            this.rooms = result.rooms;
+		return new Promise<TransactionType[]>((resolve, reject) => {
 
-            if (this.roomSelected._id === undefined) {
-              this.roomSelected = this.rooms[0];
-            } else {
-              for(let room of this.rooms) {
-                if (this.roomSelected._id === room._id) {
-                  this.roomSelected = room;
-                }
-              }
-            }
-          }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
-        }
-      );
-  }
+			this.loading = true;
 
-  public getOpenTransactionsByMovement(transactionMovement: TransactionMovement, query: string): void {
+			this._transactionTypeService.getTransactionTypes(query).subscribe(
+				result => {
+					this.loading = false;
+					if (!result.transactionTypes) {
+						resolve(null);
+					} else {
+						resolve(result.transactionTypes);
+					}
+				},
+				error => {
+					this.loading = false;
+					this.showMessage(error._body, 'danger', false);
+					resolve(null);
+				}
+			);
+		});
+	}
 
-    this.loading = true;
+	public getRooms(): void {
 
-    this._transactionService.getTransactionsByMovement(transactionMovement, query).subscribe(
-      result => {
-        if (!result.transactions) {
-          this.loading = false;
-          this.transactions = new Array();
-          this.areTransactionsEmpty = true;
-        } else {
-          this.hideMessage();
-          this.loading = false;
-          this.transactions = result.transactions;
-          this.totalItems = this.transactions.length;
-          this.areTransactionsEmpty = false;
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
+		this.loading = true;
 
-  async refresh() {
+		this._roomService.getRooms().subscribe(
+			result => {
+				if (!result.rooms) {
+					if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+					this.loading = false;
+				} else {
+					this.hideMessage();
+					this.loading = false;
+					this.rooms = result.rooms;
 
-    let pathLocation: string[] = this._router.url.split('/');
-    if (this.posType === 'resto') {
-      this.roomSelected._id = pathLocation[4];
-      this.getRooms();
-    } else if (this.posType === "delivery") {
-      await this.getTransactionTypes('where="$or":[{"cashOpening":true},{"cashClosing":true}]').then(
-        transactionTypes => {
-          if (transactionTypes) {
-            this.transactionTypes = transactionTypes;
-          }
-        }
-      );
+					if (this.roomSelected._id === undefined) {
+						this.roomSelected = this.rooms[0];
+					} else {
+						for (let room of this.rooms) {
+							if (this.roomSelected._id === room._id) {
+								this.roomSelected = room;
+							}
+						}
+					}
+				}
+			},
+			error => {
+				this.showMessage(error._body, 'danger', false);
+				this.loading = false;
+			}
+		);
+	}
 
-      let query = `where="$and":[{"state":{"$ne": "${TransactionState.Closed}"}},{"state":{"$ne":"${TransactionState.Canceled}"}},`
-          
-      this._authService.getIdentity.subscribe(
-        identity => {
-          if(identity && identity.origin) {
-            query += `{"branch":"${identity.origin.branch._id}"},`;
-          }
-        }
-      );
+	public getOpenTransactionsByMovement(transactionMovement: TransactionMovement, query: string): void {
 
-      query += `{"madein":"${this.posType}"}]`;
+		this.loading = true;
 
-      await this.getTransactions(query).then(
-        transactions => {
-          this.hideMessage();
-          if (!transactions) {
-            this.transactions = null;
-            this.areTransactionsEmpty = true;
-          } else {
-            this.hideMessage();
-            this.transactions = transactions;
-            this.totalItems = this.transactions.length;
-            this.areTransactionsEmpty = false;
-          }
-        }
-      );
-    } else if (this.posType === "pedidos-web") {
-      this.transactionMovement = TransactionMovement.Sale;
-      let query = `where="state":"${TransactionState.Closed}","madein":"${this.posType}","balance":{"$gt":0}&sort="startDate":-1`;
-      this.getOpenTransactionsByMovement(this.transactionMovement, query);
-    } else if (this.posType === "mostrador") {
-      if (pathLocation[3] === "venta") {
-        this.transactionMovement = TransactionMovement.Sale;
-      } else if (pathLocation[3] === "compra") {
-        this.transactionMovement = TransactionMovement.Purchase;
-      } else if (pathLocation[3] === "stock") {
-        this.transactionMovement = TransactionMovement.Stock;
-      } else if (pathLocation[3] === "fondo") {
-        this.transactionMovement = TransactionMovement.Money;
-      }
+		this._transactionService.getTransactionsByMovement(transactionMovement, query).subscribe(
+			result => {
+				if (!result.transactions) {
+					this.loading = false;
+					this.transactions = new Array();
+					this.areTransactionsEmpty = true;
+				} else {
+					this.hideMessage();
+					this.loading = false;
+					this.transactions = result.transactions;
+					this.totalItems = this.transactions.length;
+					this.areTransactionsEmpty = false;
+				}
+			},
+			error => {
+				this.showMessage(error._body, 'danger', false);
+				this.loading = false;
+			}
+		);
+	}
 
-      // VALIDAMOS QUE SEA POR PRIMERA VEZ
-      if(!this.transactionTypeId) {
-        this.transactionTypeId = pathLocation[4];
-      }
+	async refresh() {
 
-      if(!this.transaction && this.transactionTypeId && this.transactionTypeId !== '') {
-        this.getTransactionTypes(`where="_id":"${this.transactionTypeId}"`).then(
-          transactionTypes => {
-            if(transactionTypes) {
-              this.addTransaction(transactionTypes[0]);
-            }
-          }
-        );
-      } else {
-        await this.getTransactionTypes('where="transactionMovement":"' + this.transactionMovement + '","allowAPP":false').then(
-          transactionTypes => {
-            if (transactionTypes) {
-              this.transactionTypes = transactionTypes;
-            }
-          }
-        );
-  
-        let query = `where="$and":[{"state":{"$ne": "${TransactionState.Closed}"}},{"state":{"$ne": "${TransactionState.Canceled}"}},`;
-        
-        this._authService.getIdentity.subscribe(
-          identity => {
-            if(identity && identity.origin) {
-              query += `{"branchDestination":"${identity.origin.branch._id}"},`;
-            }
-          }
-        );
-    
-        if(this.posType === 'mostrador') {
-          query += `{"$or":[{"madein":"${this.posType}"},{"madein":"cuentas-corrientes"}]}]&sort="startDate":-1`;
-        } else {
-          query += `{"madein":"${this.posType}"}]&sort="startDate":-1`;
-        }
-  
-        this.getOpenTransactionsByMovement(this.transactionMovement, query);
-      }
-    } else if (this.posType === "cuentas-corrientes") {
-      if (pathLocation[3] === "cliente") {
-        this.transactionMovement = TransactionMovement.Sale;
-      } else if (pathLocation[3] === "proveedor") {
-        this.transactionMovement = TransactionMovement.Purchase;
-      }
-      await this.getTransactionTypes('where="currentAccount":"Cobra","transactionMovement":"' + this.transactionMovement + '"').then(
-        transactionTypes => {
-          if (transactionTypes) {
-            this.transactionTypes = transactionTypes;
-          }
-        }
-      );
-      this.eventRefreshCurrentAccount.emit();
-    }
-  }
+		let pathLocation: string[] = this._router.url.split('/');
+		
+		if (this.posType === 'resto') {
+			this.roomSelected._id = pathLocation[4];
+			this.getRooms();
+		} else if (this.posType === "delivery") {
+			await this.getTransactionTypes('where="$or":[{"cashOpening":true},{"cashClosing":true}]').then(
+				transactionTypes => {
+					if (transactionTypes) {
+						this.transactionTypes = transactionTypes;
+					}
+				}
+			);
+			let query = `where="$and":[`;
 
-  public async initTransactionByType(op: string, openPending: boolean = false) {
-    
-    let query = `where="${op}":true`;
+			this._authService.getIdentity.subscribe(
+				identity => {
+					if (identity && identity.origin) {
+						query += `{"branch":"${identity.origin.branch._id}"},`;
+					}
+				}
+			);
 
-    await this.getTransactionTypes(query).then(
-      async transactionTypes => {
-        if(transactionTypes && transactionTypes.length > 0) {
-          if(openPending) {
-            let query = `where="$and":[{"state":{"$ne": "${TransactionState.Closed}"}},{"state":{"$ne":"${TransactionState.Canceled}"}},`
-          
-            this._authService.getIdentity.subscribe(
-              identity => {
-                if(identity && identity.origin) {
-                  query += `{"branch":"${identity.origin.branch._id}"},`;
-                }
-              }
-            );
+			if (this.transactionStates.length > 0) {
+				query += `{"$or":[`;
+				let i: number = 0;
+				for (const state of this.transactionStates) {
+					query += `{"state":"${state}"}`;
+					if (i < (this.transactionStates.length - 1)) {
+						query += ',';
+					} else {
+						query += ']},';
+					};
+					i++;
+				}
+			} else {
+				query += `{"state":{"$ne": "${TransactionState.Closed}"}},{"state":{"$ne":"${TransactionState.Canceled}"}},`;
+			}
 
-            query += `{"madein":"${this.posType}"},{"type":"${transactionTypes[0]._id}"},{"$or":[{"table":{"$exists":false}},{"table":null}]}]&limit=1`;
-            await this.getTransactions(query).then(
-              transactions => {
-                if(transactions && transactions.length > 0) {
-                  this.transaction = transactions[0];
-                  this.tableSelected = this.transaction.table;
-                  this.nextStepTransaction();
-                } else {
-                  this.addTransaction(transactionTypes[0]);
-                }
-              }
-            );
-          } else {
-            this.addTransaction(transactionTypes[0]);
-          }
-        } else {
-          this.showMessage('Es necesario configurar el tipo de transacción.', 'info', true);
-        }
-      }
-    );
-  }
 
-  async addTransaction(type: TransactionType) {
+			query += `{"madein":"${this.posType}"}]`;
+			await this.getTransactions(query).then(
+				transactions => {
+					this.hideMessage();
+					if (!transactions) {
+						this.transactions = null;
+						this.areTransactionsEmpty = true;
+					} else {
+						this.hideMessage();
+						this.transactions = transactions;
+						this.totalItems = this.transactions.length;
+						this.areTransactionsEmpty = false;
+					}
+				}
+			);
+		} else if (this.posType === "pedidos-web") {
+			this.transactionMovement = TransactionMovement.Sale;
+			let query = `where="state":"${TransactionState.Closed}","madein":"${this.posType}","balance":{"$gt":0}&sort="startDate":-1`;
+			this.getOpenTransactionsByMovement(this.transactionMovement, query);
+		} else if (this.posType === "mostrador") {
+			if (pathLocation[3] === "venta") {
+				this.transactionMovement = TransactionMovement.Sale;
+			} else if (pathLocation[3] === "compra") {
+				this.transactionMovement = TransactionMovement.Purchase;
+			} else if (pathLocation[3] === "stock") {
+				this.transactionMovement = TransactionMovement.Stock;
+			} else if (pathLocation[3] === "fondo") {
+				this.transactionMovement = TransactionMovement.Money;
+			}
 
-    this.transaction = new Transaction();
-    this.transaction.type = type;
-    this.transaction.table = this.tableSelected;
+			// VALIDAMOS QUE SEA POR PRIMERA VEZ
+			if (!this.transactionTypeId) {
+				this.transactionTypeId = pathLocation[4];
+			}
 
-    if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
-      this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
-    }
+			if (!this.transaction && this.transactionTypeId && this.transactionTypeId !== '') {
+				this.getTransactionTypes(`where="_id":"${this.transactionTypeId}"`).then(
+					transactionTypes => {
+						if (transactionTypes) {
+							this.addTransaction(transactionTypes[0]);
+						}
+					}
+				);
+			} else {
+				await this.getTransactionTypes('where="transactionMovement":"' + this.transactionMovement + '","allowAPP":false').then(
+					transactionTypes => {
+						if (transactionTypes) {
+							this.transactionTypes = transactionTypes;
+						}
+					}
+				);
 
-    if(this.posType === 'cuentas-corrientes') {
-      if(this.transactionMovement === TransactionMovement.Sale) {
-        this.totalPrice *= -1;
-      }
+				let query = `where="$and":[{"state":{"$ne": "${TransactionState.Closed}"}},{"state":{"$ne": "${TransactionState.Canceled}"}},`;
 
-      if(this.totalPrice < 0) {
-        this.totalPrice = 0;
-      }
+				this._authService.getIdentity.subscribe(
+					identity => {
+						if (identity && identity.origin) {
+							query += `{"branchDestination":"${identity.origin.branch._id}"},`;
+						}
+					}
+				);
 
-      this.transaction.totalPrice = this.totalPrice;
-    }
+				if (this.posType === 'mostrador') {
+					query += `{"$or":[{"madein":"${this.posType}"},{"madein":"cuentas-corrientes"}]}]&sort="startDate":-1`;
+				} else {
+					query += `{"madein":"${this.posType}"}]&sort="startDate":-1`;
+				}
 
-    if(!type.cashOpening && !type.cashClosing) {
+				this.getOpenTransactionsByMovement(this.transactionMovement, query);
+			}
+		} else if (this.posType === "cuentas-corrientes") {
+			if (this.companyType === CompanyType.Client) {
+				this.transactionMovement = TransactionMovement.Sale;
+			} else {
+				this.transactionMovement = TransactionMovement.Purchase;
+			}
+			await this.getTransactionTypes('where="transactionMovement":"' + this.transactionMovement + '"').then(
+				transactionTypes => {
+					if (transactionTypes) {
+						this.transactionTypes = transactionTypes;
+					}
+				}
+			);
+			this.eventRefreshCurrentAccount.emit();
+		}
+	}
 
-      if(Config.modules.money && this.transaction.type.cashBoxImpact) {
-        let query = 'where="state":"' + CashBoxState.Open + '"';
-        if(this.config.cashBox.perUser) {
-          await this._authService.getIdentity.subscribe(
-            identity => {
-              if(identity && identity.employee) {
-                query += ',"employee":"' + identity.employee._id + '"';
-              }
-            }
-          );
-        }
-        query += '&sort="number":-1&limit=1';
-        await this.getCashBoxes(query).then(
-          async cashBoxes => {
-            if(cashBoxes) {
-              this.transaction.cashBox = cashBoxes[0];
-              this.nextStepTransaction();
-            } else {
-              await this.getTransactionTypes('where="cashOpening":true').then(
-                transactionTypes => {
-                  if(transactionTypes && transactionTypes.length > 0) {
-                    this.transaction.type = transactionTypes[0];
-                    this.openModal('cash-box');
-                  } else {
-                    this.showMessage("Debe configurar un tipo de transacción para realizar la apertura de caja.", "info", true);
-                  }
-                }
-              );
-            }
-          }
-        );
-      } else {
-        this.nextStepTransaction();
-      }
-    } else {
-      this.openModal('cash-box');
-    }
-  }
+	public async initTransactionByType(op: string, openPending: boolean = false) {
 
-  public getCashBoxes(query?: string): Promise<CashBox[]> {
+		let query = `where="${op}":true`;
 
-    return new Promise<CashBox[]>((resolve, reject) => {
+		await this.getTransactionTypes(query).then(
+			async transactionTypes => {
+				if (transactionTypes && transactionTypes.length > 0) {
+					if (openPending) {
+						let query = `where="$and":[{"state":{"$ne": "${TransactionState.Closed}"}},{"state":{"$ne":"${TransactionState.Canceled}"}},`
 
-      this._cashBoxService.getCashBoxes(query).subscribe(
-        result => {
-          if (!result.cashBoxes) {
-            resolve(null);
-          } else {
-            resolve(result.cashBoxes);
-          }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
+						this._authService.getIdentity.subscribe(
+							identity => {
+								if (identity && identity.origin) {
+									query += `{"branch":"${identity.origin.branch._id}"},`;
+								}
+							}
+						);
 
-  async assignCurrency(): Promise<boolean> {
+						query += `{"madein":"${this.posType}"},{"type":"${transactionTypes[0]._id}"},{"$or":[{"table":{"$exists":false}},{"table":null}]}]&limit=1`;
+						await this.getTransactions(query).then(
+							transactions => {
+								if (transactions && transactions.length > 0) {
+									this.transaction = transactions[0];
+									this.tableSelected = this.transaction.table;
+									this.nextStepTransaction();
+								} else {
+									this.addTransaction(transactionTypes[0]);
+								}
+							}
+						);
+					} else {
+						this.addTransaction(transactionTypes[0]);
+					}
+				} else {
+					this.showMessage('Es necesario configurar el tipo de transacción.', 'info', true);
+				}
+			}
+		);
+	}
 
-    return new Promise<boolean>(async (resolve, reject) => {
+	async addTransaction(type: TransactionType) {
 
-      await this.getCurrencies().then(
-        currencies => {
-          if(currencies && Config.currency) {
-            this.transaction.currency = Config.currency;
-          }
-          if(this.transaction.quotation === undefined ||
-            this.transaction.quotation === null) {
-            if(currencies && currencies.length > 0) {
-              for(let currency of currencies) {
-                if(Config.currency && currency._id !== Config.currency._id) {
-                  this.transaction.quotation = currency.quotation;
-                }
-              }
-            } else {
-              this.transaction.quotation = 1;
-            }
-          }
-          resolve(true);
-        }
-      );
-    });
-  }
+		this.transaction = new Transaction();
+		this.transaction.type = type;
+		this.transaction.table = this.tableSelected;
 
-  async assignBranch(): Promise<boolean> {
+		if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
+			this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
+		}
 
-    return new Promise<boolean>(async (resolve, reject) => {
-      
-      if(!this.transaction.branchDestination || !this.transaction.branchOrigin) {
-        this._authService.getIdentity.pipe(first()).subscribe(
-          async identity => {
-            // CONSULTAMOS SI TIENE PUNTO DE VENTA ASIGNADO AL USUARIO
-            if(identity && identity.origin) {
-              // PREDOMINIA PUNTO DE VENTA DEL TIPO DE TRANSACCION
-              if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
-                this.transaction.origin = this.transaction.type.fixedOrigin;
-              } else {
-                if(this.transaction.type.transactionMovement !== TransactionMovement.Purchase) {
-                  this.transaction.origin = identity.origin.number;
-                }
-              }
-              // ASIGNAMOS A LA TRANSACCIÓN LA SUCURSAL DEL PV DEL USUARIO
-              this.transaction.branchOrigin = identity.origin.branch;
-              this.transaction.branchDestination = identity.origin.branch;
-              if (!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0) {
-                let originAssigned = await this.assignOrigin();
-                resolve(originAssigned);
-              } else {
-                resolve(true);
-              }
-              let depositAssigned = await this.assignDeposit();
-              if(depositAssigned) {
-                if (!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0) {
-                  let originAssigned = await this.assignOrigin();
-                  resolve(originAssigned);
-                } else {
-                  resolve(depositAssigned);
-                }
-              } else {
-                resolve(depositAssigned);
-              }
-            } else {
-              // SI NO TIENE ASIGNADO PV
-              if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
-                this.transaction.origin = this.transaction.type.fixedOrigin;
-              }
-  
-              // CONSULTAMOS LAS SUCURSALES
-              if(!this.transaction.branchDestination || !this.transaction.branchOrigin) {
-                await this.getBranches({ operationType: { $ne: 'D' } }).then(
-                  async branches => {
-                    if(branches && branches.length > 0) {
-                      if(branches.length > 1) {
-                        // SOLICITAR SUCURSAL
-                        this.openModal('select-branch');
-                      } else {
-                        // ASIGNAR ÚNICA SUCURSAL
-                        let defaultBranch = branches[0];
-                        this.transaction.branchOrigin = defaultBranch;
-                        this.transaction.branchDestination = defaultBranch;
-                        if (!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0) {
-                          let originAssigned = await this.assignOrigin();
-                          resolve(originAssigned);
-                        } else {
-                          resolve(true);
-                        }
-                        let depositAssigned = await this.assignDeposit();
-                        if(depositAssigned) {
-                          if (!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0) {
-                            let originAssigned = await this.assignOrigin();
-                            resolve(originAssigned);
-                          } else {
-                            resolve(depositAssigned);
-                          }
-                        } else {
-                          resolve(depositAssigned);
-                        }
-                      }
-                    } else {
-                      this.showMessage("Debe crear un sucursal para poder poder crear una transacción", "info", true);
-                      resolve(false);
-                    }
-                  }
-                );
-              }
-            }
-          }
-        );
-      } else if (!this.transaction.depositDestination || !this.transaction.depositOrigin) {
-        let depositAssigned = await this.assignDeposit();
-        if(depositAssigned) {
-          if (!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0) {
-            let originAssigned = await this.assignOrigin();
-            resolve(originAssigned);
-          } else {
-            resolve(depositAssigned);
-          }
-        } else {
-          resolve(depositAssigned);
-        }
-      } else if (!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0) {
-        let originAssigned = await this.assignOrigin();
-        resolve(originAssigned);
-      } else {
-        resolve(true);
-      }
-    });
-  }
+		if (this.posType === 'cuentas-corrientes') {
+			if (this.transactionMovement === TransactionMovement.Sale) {
+				this.totalPrice *= -1;
+			}
 
-  async assignDeposit(): Promise<boolean> {
-    return new Promise<boolean>(async (resolve, reject) => {
-      if(!this.transaction.depositDestination || !this.transaction.depositOrigin) {
-          await this.getDeposits({ branch: { $oid: this.transaction.branchOrigin._id }, operationType: { $ne: 'D' } }).then(
-            deposits => {
-              if(deposits && deposits.length > 0) {
-                if(deposits.length === 1) {
-                  this.transaction.depositOrigin = deposits[0];
-                  this.transaction.depositDestination = deposits[0];                 
-                  resolve(true);
-                } else {
-                  let depositDefault: Deposit;
-                  deposits.forEach(element => {
-                    if(element && element.default) {
-                      depositDefault = element;
-                    }
-                  });
-                  if(depositDefault) {
-                    this.transaction.depositOrigin = depositDefault;
-                    this.transaction.depositDestination = depositDefault;       
-                    resolve(true);
-                  } else {
-                    this.showMessage("Debe asignar un depósito principal para la sucursal " + this.transaction.branchDestination.name, "info", true);
-                    resolve(false);
-                  }
-                }
-              } else {
-                this.showMessage("Debe crear un depósito para la sucursal " + this.transaction.branchDestination.name, "info", true);
-                resolve(false);
-              }
-            }
-          );
-        } else {
-          resolve(true);
-        }
-    });
-  }
+			if (this.totalPrice < 0) {
+				this.totalPrice = 0;
+			}
 
-  async assignOrigin(): Promise<boolean> {
-    
-    return new Promise<boolean>(async (resolve, reject) => {
+			this.transaction.totalPrice = this.totalPrice;
+		}
 
-      if(this.transaction.origin === 0) {
-        // ASIGNAMOS EL ÚNICO DEPOSITO DE LA LA SUCURSAL
-        await this.getOrigins({ branch: { $oid: this.transaction.branchDestination._id }, operationType: { $ne: 'D' } }).then(
-          origins => {
-            if(origins && origins.length > 0) {
-              if(origins.length > 1) {
-                this.openModal('select-origin');
-              } else {
-                this.transaction.origin = origins[0].number;
-                resolve(true);
-              }
-            } else {
-              this.showMessage("Debe crear un punto de venta defecto para la sucursal " + this.transaction.branchDestination.name, "info", true);
-              resolve(false);
-            }
-          }
-        );
-      } else {
-        resolve(true);
-      }
-    });
-  }
+		if (!type.cashOpening && !type.cashClosing) {
 
-  async nextStepTransaction() {
+			if (Config.modules.money && this.transaction.type.cashBoxImpact) {
+				let query = 'where="state":"' + CashBoxState.Open + '"';
+				if (this.config.cashBox.perUser) {
+					await this._authService.getIdentity.subscribe(
+						identity => {
+							if (identity && identity.employee) {
+								query += ',"employee":"' + identity.employee._id + '"';
+							}
+						}
+					);
+				}
+				query += '&sort="number":-1&limit=1';
+				await this.getCashBoxes(query).then(
+					async cashBoxes => {
+						if (cashBoxes) {
+							this.transaction.cashBox = cashBoxes[0];
+							this.nextStepTransaction();
+						} else {
+							await this.getTransactionTypes('where="cashOpening":true').then(
+								transactionTypes => {
+									if (transactionTypes && transactionTypes.length > 0) {
+										this.transaction.type = transactionTypes[0];
+										this.openModal('cash-box');
+									} else {
+										this.showMessage("Debe configurar un tipo de transacción para realizar la apertura de caja.", "info", true);
+									}
+								}
+							);
+						}
+					}
+				);
+			} else {
+				this.nextStepTransaction();
+			}
+		} else {
+			this.openModal('cash-box');
+		}
+	}
 
-    if(this.transaction && (!this.transaction._id || this.transaction._id === "")) {
-      let result;
-      if(this.transaction.type.transactionMovement === TransactionMovement.Stock && 
-          this.transaction.type.stockMovement === StockMovement.Transfer &&
-          (!this.transaction.depositDestination || !this.transaction.depositOrigin)) {
-        this.openModal('transfer');
-      } else {
-        result = await this.assignBranch();
-      }
-      if(result) {
-        // CONSULTAR ULTIMA TRANSACCIÓN PARA ENUMARAR LA SIGUIENTE
-        let query = `where= "type":"${this.transaction.type._id}",
+	public getCashBoxes(query?: string): Promise<CashBox[]> {
+
+		return new Promise<CashBox[]>((resolve, reject) => {
+
+			this._cashBoxService.getCashBoxes(query).subscribe(
+				result => {
+					if (!result.cashBoxes) {
+						resolve(null);
+					} else {
+						resolve(result.cashBoxes);
+					}
+				},
+				error => {
+					this.showMessage(error._body, 'danger', false);
+					resolve(null);
+				}
+			);
+		});
+	}
+
+	async assignCurrency(): Promise<boolean> {
+
+		return new Promise<boolean>(async (resolve, reject) => {
+
+			await this.getCurrencies().then(
+				currencies => {
+					if (currencies && Config.currency) {
+						this.transaction.currency = Config.currency;
+					}
+					if (this.transaction.quotation === undefined ||
+						this.transaction.quotation === null) {
+						if (currencies && currencies.length > 0) {
+							for (let currency of currencies) {
+								if (Config.currency && currency._id !== Config.currency._id) {
+									this.transaction.quotation = currency.quotation;
+								}
+							}
+						} else {
+							this.transaction.quotation = 1;
+						}
+					}
+					resolve(true);
+				}
+			);
+		});
+	}
+
+	async assignBranch(): Promise<boolean> {
+
+		return new Promise<boolean>(async (resolve, reject) => {
+
+			if (!this.transaction.branchDestination || !this.transaction.branchOrigin) {
+				this._authService.getIdentity.pipe(first()).subscribe(
+					async identity => {
+						// CONSULTAMOS SI TIENE PUNTO DE VENTA ASIGNADO AL USUARIO
+						if (identity && identity.origin) {
+							// PREDOMINIA PUNTO DE VENTA DEL TIPO DE TRANSACCION
+							if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
+								this.transaction.origin = this.transaction.type.fixedOrigin;
+							} else {
+								if (this.transaction.type.transactionMovement !== TransactionMovement.Purchase) {
+									this.transaction.origin = identity.origin.number;
+								}
+							}
+							// ASIGNAMOS A LA TRANSACCIÓN LA SUCURSAL DEL PV DEL USUARIO
+							this.transaction.branchOrigin = identity.origin.branch;
+							this.transaction.branchDestination = identity.origin.branch;
+							if (!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0) {
+								let originAssigned = await this.assignOrigin();
+								resolve(originAssigned);
+							} else {
+								resolve(true);
+							}
+							let depositAssigned = await this.assignDeposit();
+							if (depositAssigned) {
+								if (!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0) {
+									let originAssigned = await this.assignOrigin();
+									resolve(originAssigned);
+								} else {
+									resolve(depositAssigned);
+								}
+							} else {
+								resolve(depositAssigned);
+							}
+						} else {
+							// SI NO TIENE ASIGNADO PV
+							if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
+								this.transaction.origin = this.transaction.type.fixedOrigin;
+							}
+
+							// CONSULTAMOS LAS SUCURSALES
+							if (!this.transaction.branchDestination || !this.transaction.branchOrigin) {
+								await this.getBranches({ operationType: { $ne: 'D' } }).then(
+									async branches => {
+										if (branches && branches.length > 0) {
+											if (branches.length > 1) {
+												// SOLICITAR SUCURSAL
+												this.openModal('select-branch');
+											} else {
+												// ASIGNAR ÚNICA SUCURSAL
+												let defaultBranch = branches[0];
+												this.transaction.branchOrigin = defaultBranch;
+												this.transaction.branchDestination = defaultBranch;
+												if (!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0) {
+													let originAssigned = await this.assignOrigin();
+													resolve(originAssigned);
+												} else {
+													resolve(true);
+												}
+												let depositAssigned = await this.assignDeposit();
+												if (depositAssigned) {
+													if (!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0) {
+														let originAssigned = await this.assignOrigin();
+														resolve(originAssigned);
+													} else {
+														resolve(depositAssigned);
+													}
+												} else {
+													resolve(depositAssigned);
+												}
+											}
+										} else {
+											this.showMessage("Debe crear un sucursal para poder poder crear una transacción", "info", true);
+											resolve(false);
+										}
+									}
+								);
+							}
+						}
+					}
+				);
+			} else if (!this.transaction.depositDestination || !this.transaction.depositOrigin) {
+				let depositAssigned = await this.assignDeposit();
+				if (depositAssigned) {
+					if (!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0) {
+						let originAssigned = await this.assignOrigin();
+						resolve(originAssigned);
+					} else {
+						resolve(depositAssigned);
+					}
+				} else {
+					resolve(depositAssigned);
+				}
+			} else if (!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0) {
+				let originAssigned = await this.assignOrigin();
+				resolve(originAssigned);
+			} else {
+				resolve(true);
+			}
+		});
+	}
+
+	async assignDeposit(): Promise<boolean> {
+		return new Promise<boolean>(async (resolve, reject) => {
+			if (!this.transaction.depositDestination || !this.transaction.depositOrigin) {
+				await this.getDeposits({ branch: { $oid: this.transaction.branchOrigin._id }, operationType: { $ne: 'D' } }).then(
+					deposits => {
+						if (deposits && deposits.length > 0) {
+							if (deposits.length === 1) {
+								this.transaction.depositOrigin = deposits[0];
+								this.transaction.depositDestination = deposits[0];
+								resolve(true);
+							} else {
+								let depositDefault: Deposit;
+								deposits.forEach(element => {
+									if (element && element.default) {
+										depositDefault = element;
+									}
+								});
+								if (depositDefault) {
+									this.transaction.depositOrigin = depositDefault;
+									this.transaction.depositDestination = depositDefault;
+									resolve(true);
+								} else {
+									this.showMessage("Debe asignar un depósito principal para la sucursal " + this.transaction.branchDestination.name, "info", true);
+									resolve(false);
+								}
+							}
+						} else {
+							this.showMessage("Debe crear un depósito para la sucursal " + this.transaction.branchDestination.name, "info", true);
+							resolve(false);
+						}
+					}
+				);
+			} else {
+				resolve(true);
+			}
+		});
+	}
+
+	async assignOrigin(): Promise<boolean> {
+
+		return new Promise<boolean>(async (resolve, reject) => {
+
+			if (this.transaction.origin === 0) {
+				// ASIGNAMOS EL ÚNICO DEPOSITO DE LA LA SUCURSAL
+				await this.getOrigins({ branch: { $oid: this.transaction.branchDestination._id }, operationType: { $ne: 'D' } }).then(
+					origins => {
+						if (origins && origins.length > 0) {
+							if (origins.length > 1) {
+								this.openModal('select-origin');
+							} else {
+								this.transaction.origin = origins[0].number;
+								resolve(true);
+							}
+						} else {
+							this.showMessage("Debe crear un punto de venta defecto para la sucursal " + this.transaction.branchDestination.name, "info", true);
+							resolve(false);
+						}
+					}
+				);
+			} else {
+				resolve(true);
+			}
+		});
+	}
+
+	async nextStepTransaction() {
+
+		if (this.transaction && (!this.transaction._id || this.transaction._id === "")) {
+			let result;
+			if (this.transaction.type.transactionMovement === TransactionMovement.Stock &&
+				this.transaction.type.stockMovement === StockMovement.Transfer &&
+				(!this.transaction.depositDestination || !this.transaction.depositOrigin)) {
+				this.openModal('transfer');
+			} else {
+				result = await this.assignBranch();
+			}
+			if (result) {
+				// CONSULTAR ULTIMA TRANSACCIÓN PARA ENUMARAR LA SIGUIENTE
+				let query = `where= "type":"${this.transaction.type._id}",
                           "origin":${this.transaction.origin},
                           "letter":"${this.transaction.letter}"
                   &sort="number":-1
                   &limit=1`;
-        await this.getTransactions(query).then(
-          async transactions => {
-            if(transactions && transactions.length > 0) {
-              this.transaction.number = transactions[0].number + 1;
-            } else {
-              this.transaction.number = 1;
-            }
-            await this.assignCurrency().then(
-              async result => {
-                if(result) {
-                  await this.saveTransaction().then(
-                    async transaction => {
-                      if(transaction) {
-                        this.transaction = transaction;
-                        if(this.posType === 'resto' && this.tableSelected) {
-                          this.tableSelected.lastTransaction = this.transaction;
-                          this.tableSelected.state = TableState.Busy;
-                          await this.updateTable().then(
-                            table => {
-                              if(table) {
-                                this.tableSelected = table;
-                              }
-                            }
-                          );
-                        }
-                      }
-                    }
-                  );
-                }
-              }
-            );
-          }
-        );
-      }
-    }
+				await this.getTransactions(query).then(
+					async transactions => {
+						if (transactions && transactions.length > 0) {
+							this.transaction.number = transactions[0].number + 1;
+						} else {
+							this.transaction.number = 1;
+						}
+						await this.assignCurrency().then(
+							async result => {
+								if (result) {
+									await this.saveTransaction().then(
+										async transaction => {
+											if (transaction) {
+												this.transaction = transaction;
+												if (this.posType === 'resto' && this.tableSelected) {
+													this.tableSelected.lastTransaction = this.transaction;
+													this.tableSelected.state = TableState.Busy;
+													await this.updateTable().then(
+														table => {
+															if (table) {
+																this.tableSelected = table;
+															}
+														}
+													);
+												}
+											}
+										}
+									);
+								}
+							}
+						);
+					}
+				);
+			}
+		}
 
-    if(this.transaction && this.transaction._id && this.transaction._id !== "") {
-      await this.updateTransaction().then(
-        transaction => {
-          if(transaction) {
-            this.transaction = transaction;
-          }
-        }
-      );
-      if( !this.transaction.branchDestination || 
-          !this.transaction.branchOrigin ||
-          !this.transaction.depositDestination ||
-          !this.transaction.depositOrigin) {
-            let branchAssigned = await this.assignBranch();
-            if(branchAssigned) {
-              this.nextStepTransaction();
-            }
-      } else if (!this.transaction.employeeClosing &&
-          this.transaction.type.requestEmployee &&
-          this.transaction.type.requestArticles &&
-          (this.posType === 'mostrador' ||
-          (this.posType === 'resto' && this.transaction.table))) {
-        this.openModal('select-employee');
-      } else if (!this.transaction.company &&
-                  this.transaction.type.requestCompany) {
-        if(!this.company) {
-          this.openModal('company');
-        } else {
-          this.transaction.company = this.company;
-          this.nextStepTransaction();
-        }
-      } else if (this.transaction.type.automaticNumbering && this.transaction.type.requestArticles) {
-        if (this.posType === 'resto') {
-          if(this.tableSelected) {
-            this._router.navigate(['/pos/resto/salones/' + this.tableSelected.room._id + '/mesas/' + this.tableSelected._id + '/editar-transaccion/' + this.tableSelected.lastTransaction._id]);
-          } else {
-            this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + this.transaction._id]);
-          }
-        } else if (this.posType === 'pedidos-web') {
-          this._router.navigate(['/pos/' + this.posType ]);
-        } else {
-          this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + this.transaction._id]);
-        }
-      } else {
-        this.openModal('transaction');
-      }
-    }
-  }
+		if (this.transaction && this.transaction._id && this.transaction._id !== "") {
+			await this.updateTransaction().then(
+				transaction => {
+					if (transaction) {
+						this.transaction = transaction;
+					}
+				}
+			);
+			if (!this.transaction.branchDestination ||
+				!this.transaction.branchOrigin ||
+				!this.transaction.depositDestination ||
+				!this.transaction.depositOrigin) {
+				let branchAssigned = await this.assignBranch();
+				if (branchAssigned) {
+					this.nextStepTransaction();
+				}
+			} else if (!this.transaction.employeeClosing &&
+				this.transaction.type.requestEmployee &&
+				this.transaction.type.requestArticles &&
+				(this.posType === 'mostrador' ||
+					(this.posType === 'resto' && this.transaction.table))) {
+				this.openModal('select-employee');
+			} else if (!this.transaction.company &&
+				(this.transaction.type.requestCompany || (this.transaction.type.requestArticles && this.posType === 'cuentas-corrientes'))) {
+				if (!this.company) {
+					this.openModal('company');
+				} else {
+					this.transaction.company = this.company;
+					this.nextStepTransaction();
+				}
+			} else if (this.transaction.type.automaticNumbering && this.transaction.type.requestArticles) {
+				let route = '/pos/' + this.posType + '/editar-transaccion';
+				if(this.posType === "cuentas-corrientes") {
+					route = '/pos/mostrador/editar-transaccion';
+				}
+				this._router.navigate([route], { queryParams: { transactionId: this.transaction._id, returnURL: this._router.url } });
+			} else {
+				this.openModal('transaction');
+			}
+		}
+	}
 
-  public cancelTransaction(transaction: Transaction): void {
-    this.transaction = transaction;
-    this.openModal('cancel-transaction');
-  }
+	public cancelTransaction(transaction: Transaction): void {
+		this.transaction = transaction;
+		this.openModal('cancel-transaction');
+	}
 
-  public viewTransaction(transaction: Transaction): void {
-    this.transaction = transaction;
-    this.openModal('view-transaction');
-  }
+	public viewTransaction(transaction: Transaction): void {
+		this.transaction = transaction;
+		this.openModal('view-transaction');
+	}
 
-  public chargeTransaction(transaction: Transaction): void {
-    this.transaction = transaction;
-    this.openModal('charge');
-  }
+	public chargeTransaction(transaction: Transaction): void {
+		this.transaction = transaction;
+		this.openModal('charge');
+	}
 
-  public chargeCompany(transaction: Transaction): void {
-    this.transaction = transaction;
-    this.openModal('company');
-  }
+	public chargeCompany(transaction: Transaction): void {
+		this.transaction = transaction;
+		this.openModal('company');
+	}
 
-  public printTransaction(transaction: Transaction): void {
-    this.transaction = transaction;
-    this.openModal('print');
-  }
+	public printTransaction(transaction: Transaction): void {
+		this.transaction = transaction;
+		this.openModal('print');
+	}
 
-  public openTransaction(transaction: Transaction): void {
+	public openTransaction(transaction: Transaction): void {
 
-    this.transaction = transaction;
-    this.nextStepTransaction();
-  }
+		this.transaction = transaction;
+		this.nextStepTransaction();
+	}
 
-  async openModal(op: string) {
+	async openModal(op: string) {
 
-    let modalRef;
+		let modalRef;
 
-    switch (op) {
-      case 'company':
-        modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.type = this.transaction.type.requestCompany
-        modalRef.componentInstance.selectionView = true;
-        modalRef.result.then(
-          async (result) => {
-            if(result.company) {
-              this.transaction.company = result.company;
-              this.nextStepTransaction();
-            } else {
-              this.refresh();
-            }
-          }, (reason) => {
-            this.refresh();
-          }
-        );
-        break;
-      case 'transaction':
+		switch (op) {
+			case 'company':
+				modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg', backdrop: 'static' });
+				modalRef.componentInstance.type = this.transaction.type.requestCompany;
+				modalRef.componentInstance.selectionView = true;
+				modalRef.result.then(
+					async (result) => {
+						if (result.company) {
+							this.transaction.company = result.company;
+							this.nextStepTransaction();
+						} else {
+							this.refresh();
+						}
+					}, (reason) => {
+						this.refresh();
+					}
+				);
+				break;
+			case 'transaction':
 
-        modalRef = this._modalService.open(AddTransactionComponent , { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.transactionId = this.transaction._id;
-        modalRef.result.then(
-          async (result) => {
-            this.transaction = result.transaction;
-            if (this.transaction) {
-              if (this.transaction.type && this.transaction.type.requestArticles) {
-                this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + this.transaction._id]);
-              } else if (this.transaction.type.requestPaymentMethods) {
-                this.openModal('charge');
-              } else {
-                this.finishTransaction();
-              }
-            } else if (result === "change-company") {
-              this.openModal('company');
-            } else {
-              this.refresh();
-            }
-          }, (reason) => {
-            this.refresh();
-          }
-        );
-        break;
-      case 'charge':
+				modalRef = this._modalService.open(AddTransactionComponent, { size: 'lg', backdrop: 'static' });
+				modalRef.componentInstance.transactionId = this.transaction._id;
+				modalRef.result.then(
+					async (result) => {
+						this.transaction = result.transaction;
+						if (this.transaction) {
+							if (this.transaction.type && this.transaction.type.requestArticles) {
+								this._router.navigate(['/pos/' + this.posType + '/editar-transaccion?transactionId=' + this.transaction._id]);
+							} else if (this.transaction.type.requestPaymentMethods) {
+								this.openModal('charge');
+							} else {
+								this.finishTransaction();
+							}
+						} else if (result === "change-company") {
+							this.openModal('company');
+						} else {
+							this.refresh();
+						}
+					}, (reason) => {
+						this.refresh();
+					}
+				);
+				break;
+			case 'charge':
 
-      if (await this.isValidCharge()) {
-        modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.transaction = this.transaction;
-        modalRef.result.then((result) => {
-          if (result.movementsOfCashes) {
-            this.finishTransaction();
-          } else {
-            this.refresh();
-          }
-        }, (reason) => {
-          this.refresh();
-        });
-        break;
-      }
-      case 'print':
-        if(this.transaction.type.readLayout) {
-          modalRef = this._modalService.open(PrintTransactionTypeComponent)
-          modalRef.componentInstance.transactionId = this.transaction._id;
-        } else {
-          modalRef = this._modalService.open(PrintComponent);
-          modalRef.componentInstance.company = this.transaction.company;
-          modalRef.componentInstance.transactionId = this.transaction._id;
-          modalRef.componentInstance.typePrint = 'invoice';
-          if (this.transaction.type.defectPrinter) {
-            modalRef.componentInstance.printer = this.transaction.type.defectPrinter;
-          } else {
-            if (this.printers && this.printers.length > 0) {
-              for(let printer of this.printers) {
-                if (printer.printIn === PrinterPrintIn.Counter) {
-                  modalRef.componentInstance.printer = printer;
-                }
-              }
-            }
-          }
-        }
-        break;
-      case 'printers':
-        if (this.countPrinters() > 1) {
-          modalRef = this._modalService.open(this.contentPrinters, { size: 'lg', backdrop: 'static' }).result.then((result) => {
-            if (result !== "cancel" && result !== '') {
-              this.printerSelected = result;
-              this.openModal("print");
-            } else {
-              if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
-                this.transactionTypeId = this.transaction.type._id;
-                this.transaction = undefined;
-              }
-              this.refresh();
-            }
-          }, (reason) => {
-            if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
-              this.transactionTypeId = this.transaction.type._id;
-              this.transaction = undefined;
-            }
-            this.refresh();
-          });
-        } else if (this.countPrinters() === 1) {
-          this.printerSelected = this.printers[0];
-          this.openModal("print");
-        }
-        break;
-      case 'view-transaction':
-        modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.transactionId = this.transaction._id;
-        break;
-      case 'cancel-transaction':
-        modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.transactionId = this.transaction._id;
-        modalRef.result.then((result) => {
-          if (result === "delete_close") {
-            this.refresh();
-          }
-        }, (reason) => {
+				if (await this.isValidCharge()) {
+					modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg', backdrop: 'static' });
+					modalRef.componentInstance.transaction = this.transaction;
+					modalRef.result.then((result) => {
+						if (result.movementsOfCashes) {
+							this.finishTransaction();
+						} else {
+							this.refresh();
+						}
+					}, (reason) => {
+						this.refresh();
+					});
+					break;
+				}
+			case 'print':
+				if (this.transaction.type.readLayout) {
+					modalRef = this._modalService.open(PrintTransactionTypeComponent)
+					modalRef.componentInstance.transactionId = this.transaction._id;
+				} else {
+					modalRef = this._modalService.open(PrintComponent);
+					modalRef.componentInstance.company = this.transaction.company;
+					modalRef.componentInstance.transactionId = this.transaction._id;
+					modalRef.componentInstance.typePrint = 'invoice';
+					if (this.transaction.type.defectPrinter) {
+						modalRef.componentInstance.printer = this.transaction.type.defectPrinter;
+					} else {
+						if (this.printers && this.printers.length > 0) {
+							for (let printer of this.printers) {
+								if (printer.printIn === PrinterPrintIn.Counter) {
+									modalRef.componentInstance.printer = printer;
+								}
+							}
+						}
+					}
+				}
+				break;
+			case 'printers':
+				if (this.countPrinters() > 1) {
+					modalRef = this._modalService.open(this.contentPrinters, { size: 'lg', backdrop: 'static' }).result.then((result) => {
+						if (result !== "cancel" && result !== '') {
+							this.printerSelected = result;
+							this.openModal("print");
+						} else {
+							if (this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+								this.transactionTypeId = this.transaction.type._id;
+								this.transaction = undefined;
+							}
+							this.refresh();
+						}
+					}, (reason) => {
+						if (this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+							this.transactionTypeId = this.transaction.type._id;
+							this.transaction = undefined;
+						}
+						this.refresh();
+					});
+				} else if (this.countPrinters() === 1) {
+					this.printerSelected = this.printers[0];
+					this.openModal("print");
+				}
+				break;
+			case 'view-transaction':
+				modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg', backdrop: 'static' });
+				modalRef.componentInstance.transactionId = this.transaction._id;
+				break;
+			case 'cancel-transaction':
+				modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg', backdrop: 'static' });
+				modalRef.componentInstance.transactionId = this.transaction._id;
+				modalRef.result.then((result) => {
+					if (result === "delete_close") {
+						this.refresh();
+					}
+				}, (reason) => {
 
-        });
-        break;
-      case 'open-turn':
-        modalRef = this._modalService.open(SelectEmployeeComponent);
-        modalRef.componentInstance.requireLogin = false;
-        modalRef.componentInstance.typeEmployee = this.employeeTypeSelected;
-        modalRef.componentInstance.op = 'open-turn';
-        modalRef.result.then((result) => {
-          if (result.turn) {
-            this.showMessage("El turno se ha abierto correctamente", 'success', true);
-          }
-        }, (reason) => {
+				});
+				break;
+			case 'open-turn':
+				modalRef = this._modalService.open(SelectEmployeeComponent);
+				modalRef.componentInstance.requireLogin = false;
+				modalRef.componentInstance.typeEmployee = this.employeeTypeSelected;
+				modalRef.componentInstance.op = 'open-turn';
+				modalRef.result.then((result) => {
+					if (result.turn) {
+						this.showMessage("El turno se ha abierto correctamente", 'success', true);
+					}
+				}, (reason) => {
 
-        });
-        break;
-      case 'close-turn':
-        modalRef = this._modalService.open(SelectEmployeeComponent);
-        modalRef.componentInstance.requireLogin = false;
-        modalRef.componentInstance.typeEmployee = this.employeeTypeSelected;
-        modalRef.componentInstance.op = 'close-turn';
-        modalRef.result.then((result) => {
-          if (result.turn) {
-            this.showMessage("El turno se ha cerrado correctamente", 'success', true);
-          }
-        }, (reason) => {
+				});
+				break;
+			case 'close-turn':
+				modalRef = this._modalService.open(SelectEmployeeComponent);
+				modalRef.componentInstance.requireLogin = false;
+				modalRef.componentInstance.typeEmployee = this.employeeTypeSelected;
+				modalRef.componentInstance.op = 'close-turn';
+				modalRef.result.then((result) => {
+					if (result.turn) {
+						this.showMessage("El turno se ha cerrado correctamente", 'success', true);
+					}
+				}, (reason) => {
 
-        });
-        break;
-      case 'cash-box':
-        modalRef = this._modalService.open(CashBoxComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.transactionType = this.transaction.type;
-        modalRef.result.then((result) => {
-          if (result && result.cashBox) {
-          } else {
-            this.hideMessage();
-          }
-        }, (reason) => {
-          this.hideMessage();
-        });
-        break;
-      case 'select-branch':
-        modalRef = this._modalService.open(SelectBranchComponent);
-        modalRef.result.then((result) => {
-          if (result && result.branch) {
-            this.transaction.branchOrigin = result.branch;
-            this.transaction.branchDestination = result.branch;
-            this.nextStepTransaction();
-          } else {
-            this.hideMessage();
-          }
-        }, (reason) => {
-          this.hideMessage();
-        });
-        break;
-      case 'select-origin':
-        modalRef = this._modalService.open(SelectOriginComponent);
-        modalRef.componentInstance.branchId = this.transaction.branchDestination._id;
-        modalRef.result.then((result) => {
-          if (result && result.origin) {
-            this.transaction.origin = result.origin.number;
-            this.nextStepTransaction();
-          } else {
-            this.hideMessage();
-          }
-        }, (reason) => {
-          this.hideMessage();
-        });
-        break;
-      case 'select-employee':
-        modalRef = this._modalService.open(SelectEmployeeComponent);
-        modalRef.componentInstance.requireLogin = false;
-        if(this.posType === 'resto' && this.tableSelected) {
-          modalRef.componentInstance.op = 'open-table';
-          modalRef.componentInstance.table = this.tableSelected;
-        } else {
-          modalRef.componentInstance.op = 'select-employee';
-        }
-        modalRef.componentInstance.typeEmployee = this.transaction.type.requestEmployee;
-        modalRef.result.then(
-          async (result) => {
-            if (result.employee) {
-              this.transaction.employeeOpening = result.employee;
-              this.transaction.employeeClosing = result.employee;
-              if (this.posType === "delivery") {
-                this.transaction.state = TransactionState.Sent;
-                await this.updateTransaction().then(
-                  transaction => {
-                    if(transaction) {
-                      this.transaction = transaction;
-                      this.refresh();
-                    }
-                  }
-                );
-              } else if (this.posType === 'resto' && this.tableSelected) {
-                this.tableSelected.employee = result.employee;
-                this.tableSelected.diners = result.diners;
-                await this.updateTable().then(
-                  table => {
-                    if(table) {
-                      this.tableSelected = table;
-                      this.transaction.diners = this.tableSelected.diners;
-                      this.nextStepTransaction();
-                    }
-                  }
-                );
-              } else {
-                this.nextStepTransaction();
-              }
-            } else {
-              this.refresh();
-            }
-        }, (reason) => {
-          this.refresh();
-        });
-        break;
-        case 'transfer':
-          modalRef = this._modalService.open(SelectDepositComponent);
-          modalRef.componentInstance.op = op
-          modalRef.result.then(
-            async (result) => {
-              if (result && result.origin && result.destination) {
-                let depositOrigin = await this.getDeposits({ _id: { $oid: result.origin }, operationType: { $ne: 'D' } });
-                this.transaction.depositOrigin = depositOrigin[0]
-                let branchO = await this.getBranches({ _id : { $oid : depositOrigin[0].branch},operationType: { $ne: 'D' }});
-                this.transaction.branchOrigin = branchO[0];
-                let depositDestination = await this.getDeposits({ _id: { $oid: result.destination }, operationType: { $ne: 'D' } });
-                let branchD = await this.getBranches({ _id : { $oid : depositDestination[0].branch},operationType: { $ne: 'D' }});
-                this.transaction.branchDestination = branchD[0]
-                this.transaction.depositDestination = depositDestination[0]
-                this.nextStepTransaction();
-              } else {
-                this.hideMessage();
-              }
-            }, (reason) => {
-              this.hideMessage();
-            });
-        break;
-        
+				});
+				break;
+			case 'cash-box':
+				modalRef = this._modalService.open(CashBoxComponent, { size: 'lg', backdrop: 'static' });
+				modalRef.componentInstance.transactionType = this.transaction.type;
+				modalRef.result.then((result) => {
+					if (result && result.cashBox) {
+					} else {
+						this.hideMessage();
+					}
+				}, (reason) => {
+					this.hideMessage();
+				});
+				break;
+			case 'select-branch':
+				modalRef = this._modalService.open(SelectBranchComponent);
+				modalRef.result.then((result) => {
+					if (result && result.branch) {
+						this.transaction.branchOrigin = result.branch;
+						this.transaction.branchDestination = result.branch;
+						this.nextStepTransaction();
+					} else {
+						this.hideMessage();
+					}
+				}, (reason) => {
+					this.hideMessage();
+				});
+				break;
+			case 'select-origin':
+				modalRef = this._modalService.open(SelectOriginComponent);
+				modalRef.componentInstance.branchId = this.transaction.branchDestination._id;
+				modalRef.result.then((result) => {
+					if (result && result.origin) {
+						this.transaction.origin = result.origin.number;
+						this.nextStepTransaction();
+					} else {
+						this.hideMessage();
+					}
+				}, (reason) => {
+					this.hideMessage();
+				});
+				break;
+			case 'select-employee':
+				modalRef = this._modalService.open(SelectEmployeeComponent);
+				modalRef.componentInstance.requireLogin = false;
+				if (this.posType === 'resto' && this.tableSelected) {
+					modalRef.componentInstance.op = 'open-table';
+					modalRef.componentInstance.table = this.tableSelected;
+				} else {
+					modalRef.componentInstance.op = 'select-employee';
+				}
+				modalRef.componentInstance.typeEmployee = this.transaction.type.requestEmployee;
+				modalRef.result.then(
+					async (result) => {
+						if (result.employee) {
+							this.transaction.employeeOpening = result.employee;
+							this.transaction.employeeClosing = result.employee;
+							if (this.posType === "delivery") {
+								this.transaction.state = TransactionState.Sent;
+								await this.updateTransaction().then(
+									transaction => {
+										if (transaction) {
+											this.transaction = transaction;
+											this.refresh();
+										}
+									}
+								);
+							} else if (this.posType === 'resto' && this.tableSelected) {
+								this.tableSelected.employee = result.employee;
+								this.tableSelected.diners = result.diners;
+								await this.updateTable().then(
+									table => {
+										if (table) {
+											this.tableSelected = table;
+											this.transaction.diners = this.tableSelected.diners;
+											this.nextStepTransaction();
+										}
+									}
+								);
+							} else {
+								this.nextStepTransaction();
+							}
+						} else {
+							this.refresh();
+						}
+					}, (reason) => {
+						this.refresh();
+					});
+				break;
+			case 'transfer':
+				modalRef = this._modalService.open(SelectDepositComponent);
+				modalRef.componentInstance.op = op
+				modalRef.result.then(
+					async (result) => {
+						if (result && result.origin && result.destination) {
+							let depositOrigin = await this.getDeposits({ _id: { $oid: result.origin }, operationType: { $ne: 'D' } });
+							this.transaction.depositOrigin = depositOrigin[0]
+							let branchO = await this.getBranches({ _id: { $oid: depositOrigin[0].branch }, operationType: { $ne: 'D' } });
+							this.transaction.branchOrigin = branchO[0];
+							let depositDestination = await this.getDeposits({ _id: { $oid: result.destination }, operationType: { $ne: 'D' } });
+							let branchD = await this.getBranches({ _id: { $oid: depositDestination[0].branch }, operationType: { $ne: 'D' } });
+							this.transaction.branchDestination = branchD[0]
+							this.transaction.depositDestination = depositDestination[0]
+							this.nextStepTransaction();
+						} else {
+							this.hideMessage();
+						}
+					}, (reason) => {
+						this.hideMessage();
+					});
+				break;
 
-      default: ;
-    }
-  }
 
-  public updateTable(): Promise<Table> {
+			default: ;
+		}
+	}
 
-    return new Promise<Table>((resolve, reject) => {
+	public updateTable(): Promise<Table> {
 
-      this._tableService.updateTable(this.tableSelected).subscribe(
-        result => {
-          if (!result.table) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            resolve(null);
-          } else {
-            resolve(result.table);
-          }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
+		return new Promise<Table>((resolve, reject) => {
 
-  async isValidCharge(): Promise<boolean> {
+			this._tableService.updateTable(this.tableSelected).subscribe(
+				result => {
+					if (!result.table) {
+						if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+						resolve(null);
+					} else {
+						resolve(result.table);
+					}
+				},
+				error => {
+					this.showMessage(error._body, 'danger', false);
+					resolve(null);
+				}
+			);
+		});
+	}
 
-    let isValid = true;
+	async isValidCharge(): Promise<boolean> {
 
-    if (isValid &&
-      this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
-      !this.transaction.company) {
-      isValid = false;
-      this.showMessage("Debe seleccionar un proveedor para la transacción.", 'info', true);
-    }
+		let isValid = true;
 
-    if (isValid &&
-      this.transaction.type.electronics &&
-      this.transaction.totalPrice >= 5000 &&
-      !this.transaction.company &&
-      Config.country === 'AR') {
-      isValid = false;
-      this.showMessage("Debe indentificar al cliente para transacciones electrónicos con monto mayor a $5.000,00.", 'info', true);
-    }
+		if (isValid &&
+			this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
+			!this.transaction.company) {
+			isValid = false;
+			this.showMessage("Debe seleccionar un proveedor para la transacción.", 'info', true);
+		}
 
-    if (isValid &&
-        this.transaction.type.electronics &&
-        this.transaction.company && (
-        !this.transaction.company.identificationType ||
-        !this.transaction.company.identificationValue ||
-        this.transaction.company.identificationValue === '')
-      ) {
-      isValid = false;
-      this.showMessage("El cliente ingresado no tiene nro de identificación", 'info', true);
-      this.loading = false;
-    }
+		if (isValid &&
+			this.transaction.type.electronics &&
+			this.transaction.totalPrice >= 5000 &&
+			!this.transaction.company &&
+			Config.country === 'AR') {
+			isValid = false;
+			this.showMessage("Debe indentificar al cliente para transacciones electrónicos con monto mayor a $5.000,00.", 'info', true);
+		}
 
-    if (isValid &&
-      this.transaction.type.fixedOrigin &&
-      this.transaction.type.fixedOrigin === 0 &&
-      this.transaction.type.electronics &&
-      Config.country === 'MX') {
-      isValid = false;
-      this.showMessage("Debe configurar un punto de venta para transacciones electrónicos. Lo puede hacer en /Configuración/Tipos de Transacción.", 'info', true);
-      this.loading = false;
-    }
+		if (isValid &&
+			this.transaction.type.electronics &&
+			this.transaction.company && (
+				!this.transaction.company.identificationType ||
+				!this.transaction.company.identificationValue ||
+				this.transaction.company.identificationValue === '')
+		) {
+			isValid = false;
+			this.showMessage("El cliente ingresado no tiene nro de identificación", 'info', true);
+			this.loading = false;
+		}
 
-    return isValid;
-  }
+		if (isValid &&
+			this.transaction.type.fixedOrigin &&
+			this.transaction.type.fixedOrigin === 0 &&
+			this.transaction.type.electronics &&
+			Config.country === 'MX') {
+			isValid = false;
+			this.showMessage("Debe configurar un punto de venta para transacciones electrónicos. Lo puede hacer en /Configuración/Tipos de Transacción.", 'info', true);
+			this.loading = false;
+		}
 
-  async finishTransaction() {
+		return isValid;
+	}
 
-    await this.updateBalance().then(
-      async balance => {
-        if(balance !== null) {
-          this.transaction.balance = balance;
-          if (this.posType === 'resto' || this.posType === "delivery") {
-            this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-            this.transaction.VATPeriod = moment().format('YYYYMM');
-          } else {
-            if (!this.transaction.endDate) {
-              this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-            }
-            if (this.transaction.type.transactionMovement !== TransactionMovement.Purchase || !this.transaction.VATPeriod) {
-              this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
-            }
-          }
-          this.transaction.expirationDate = this.transaction.endDate;
-          this.transaction.state = TransactionState.Closed;
-          await this.updateTransaction().then(
-            transaction => {
-              if(transaction) {
-                this.transaction = transaction;
-                if (this.transaction.type.printable) {
-                  if (this.transaction.type.defectPrinter) {
-                    this.printerSelected = this.printerSelected;
-                    this.openModal("print");
-                  } else {
-                    this.openModal("printers");
-                  }
-                } else {
-                  if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
-                    this.transactionTypeId = this.transaction.type._id;
-                    this.transaction = undefined;
-                  }
-                  this.refresh();
-                }
-              }
-            }
-          );
-        }
-    });
-  }
+	async finishTransaction() {
 
-  public getTransactions(query: string): Promise<Transaction[]> {
+		await this.updateBalance().then(
+			async balance => {
+				if (balance !== null) {
+					this.transaction.balance = balance;
+					if (this.posType === 'resto' || this.posType === "delivery") {
+						this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+						this.transaction.VATPeriod = moment().format('YYYYMM');
+					} else {
+						if (!this.transaction.endDate) {
+							this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+						}
+						if (this.transaction.type.transactionMovement !== TransactionMovement.Purchase || !this.transaction.VATPeriod) {
+							this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
+						}
+					}
+					this.transaction.expirationDate = this.transaction.endDate;
+					this.transaction.state = TransactionState.Closed;
+					await this.updateTransaction().then(
+						transaction => {
+							if (transaction) {
+								this.transaction = transaction;
+								if (this.transaction.type.printable) {
+									if (this.transaction.type.defectPrinter) {
+										this.printerSelected = this.printerSelected;
+										this.openModal("print");
+									} else {
+										this.openModal("printers");
+									}
+								} else {
+									if (this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+										this.transactionTypeId = this.transaction.type._id;
+										this.transaction = undefined;
+									}
+									this.refresh();
+								}
+							}
+						}
+					);
+				}
+			});
+	}
 
-    return new Promise<Transaction[]>((resolve, reject) => {
+	public getTransactions(query: string): Promise<Transaction[]> {
 
-      this._transactionService.getTransactions(query).subscribe(
-        result => {
-          if (!result.transactions) {
-            resolve(null);
-          } else {
-            resolve(result.transactions);
-          }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
+		return new Promise<Transaction[]>((resolve, reject) => {
 
-  public updateBalance(): Promise<number> {
+			this._transactionService.getTransactions(query).subscribe(
+				result => {
+					if (!result.transactions) {
+						resolve(null);
+					} else {
+						resolve(result.transactions);
+					}
+				},
+				error => {
+					this.showMessage(error._body, 'danger', false);
+					resolve(null);
+				}
+			);
+		});
+	}
 
-    return new Promise<number>((resolve, reject) => {
-      this._transactionService.updateBalance(this.transaction).subscribe(
-        async result => {
-          if (!result.transaction) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            resolve(null);
-          } else {
-            resolve(result.transaction.balance);
-          }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          reject(null);
-        }
-      )
-    });
-  }
+	public updateBalance(): Promise<number> {
 
-  public saveTransaction(): Promise<Transaction> {
+		return new Promise<number>((resolve, reject) => {
+			this._transactionService.updateBalance(this.transaction).subscribe(
+				async result => {
+					if (!result.transaction) {
+						if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+						resolve(null);
+					} else {
+						resolve(result.transaction.balance);
+					}
+				},
+				error => {
+					this.showMessage(error._body, 'danger', false);
+					reject(null);
+				}
+			)
+		});
+	}
 
-    return new Promise<Transaction>((resolve, reject) => {
+	public saveTransaction(): Promise<Transaction> {
 
-      this.transaction.madein = this.posType;
+		return new Promise<Transaction>((resolve, reject) => {
 
-      this._transactionService.saveTransaction(this.transaction).subscribe(
-        result => {
-          if (!result.transaction) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            resolve(null);
-          } else {
-            this.hideMessage();
-            resolve(result.transaction);
-          }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
+			(this.posType === 'cuentas-corrientes') ? this.transaction.madein = 'mostrador' : this.transaction.madein = this.posType;
 
-  public countPrinters(): number {
+			this._transactionService.saveTransaction(this.transaction).subscribe(
+				result => {
+					if (!result.transaction) {
+						if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+						resolve(null);
+					} else {
+						this.hideMessage();
+						resolve(result.transaction);
+					}
+				},
+				error => {
+					this.showMessage(error._body, 'danger', false);
+					resolve(null);
+				}
+			);
+		});
+	}
 
-    let numberOfPrinters: number = 0;
-    let printersAux = new Array();
+	public countPrinters(): number {
 
-    if (this.printers && this.printers.length > 0) {
-      for (let printer of this.printers) {
-        if (printer.printIn === PrinterPrintIn.Counter) {
-          printersAux.push(printer);
-          numberOfPrinters++;
-        }
-      }
-    } else {
-      numberOfPrinters = 0;
-    }
+		let numberOfPrinters: number = 0;
+		let printersAux = new Array();
 
-    this.printers = printersAux;
+		if (this.printers && this.printers.length > 0) {
+			for (let printer of this.printers) {
+				if (printer.printIn === PrinterPrintIn.Counter) {
+					printersAux.push(printer);
+					numberOfPrinters++;
+				}
+			}
+		} else {
+			numberOfPrinters = 0;
+		}
 
-    return numberOfPrinters;
-  }
+		this.printers = printersAux;
 
-  public updateTransaction(): Promise<Transaction> {
+		return numberOfPrinters;
+	}
 
-    return new Promise<Transaction>((resolve, reject) => {
+	public updateTransaction(): Promise<Transaction> {
 
-      this._transactionService.updateTransaction(this.transaction).subscribe(
-        result => {
-          if (!result.transaction) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            resolve(null);
-          } else {
-            resolve(result.transaction);
-          }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
+		return new Promise<Transaction>((resolve, reject) => {
 
-  async selectTable(table: Table) {
+			this._transactionService.updateTransaction(this.transaction).subscribe(
+				result => {
+					if (!result.transaction) {
+						if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+						resolve(null);
+					} else {
+						resolve(result.transaction);
+					}
+				},
+				error => {
+					this.showMessage(error._body, 'danger', false);
+					resolve(null);
+				}
+			);
+		});
+	}
 
-    this.tableSelected = table;
+	async selectTable(table: Table) {
 
-    if (this.tableSelected.state !== TableState.Disabled &&
-        this.tableSelected.state !== TableState.Reserved) {
-      if(this.tableSelected.state === TableState.Busy ||
-         this.tableSelected.state === TableState.Pending) {
-        this.transaction = this.tableSelected.lastTransaction;
-        this.nextStepTransaction();
-      } else {
-        this.initTransactionByType('defectOrders');
-      }
-    } else {
-      this.showMessage("La mesa seleccionada se encuentra " + this.tableSelected.state, 'info', true);
-    }
-  }
+		this.tableSelected = table;
 
-  async changeStateOfTransaction(transaction: Transaction, state: string) {
+		if (this.tableSelected.state !== TableState.Disabled &&
+			this.tableSelected.state !== TableState.Reserved) {
+			if (this.tableSelected.state === TableState.Busy ||
+				this.tableSelected.state === TableState.Pending) {
+				this.transaction = this.tableSelected.lastTransaction;
+				this.nextStepTransaction();
+			} else {
+				this.initTransactionByType('defectOrders');
+			}
+		} else {
+			this.showMessage("La mesa seleccionada se encuentra " + this.tableSelected.state, 'info', true);
+		}
+	}
 
-    this.transaction = transaction;
+	async changeStateOfTransaction(transaction: Transaction, state: string) {
 
-    if(this.transaction.totalPrice > 0) {
-      if (state === "Enviado") {
-        if(this.transaction.type.requestEmployee) {
-          this.openModal('select-employee');
-        } else {
-          this.transaction.state = TransactionState.Sent;
-        }
-      } else if (state === "Entregado") {
-        this.transaction.state = TransactionState.Delivered;
-      }
+		this.transaction = transaction;
 
-      this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-      this.transaction.VATPeriod = moment().format('YYYYMM');
-      this.transaction.expirationDate = this.transaction.endDate;
+		if (this.transaction.totalPrice > 0) {
+			if (state === "Enviado") {
+				if (this.transaction.type.requestEmployee) {
+					this.openModal('select-employee');
+				} else {
+					this.transaction.state = TransactionState.Sent;
+				}
+			} else if (state === "Entregado") {
+				this.transaction.state = TransactionState.Delivered;
+			}
 
-      await this.updateTransaction().then(
-        transaction => {
-          if(this.transaction) {
-            this.transaction = transaction;
-            this.refresh();
-          }
-        }
-      );
-    } else {
-      this.showMessage("No se puede cambiar de estado una transacción con monto menor o igual $0,00.", "info", true);
-    }
-  }
+			this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+			this.transaction.VATPeriod = moment().format('YYYYMM');
+			this.transaction.expirationDate = this.transaction.endDate;
 
-  public getEmployeeType(op: string, employeeType: string): void {
+			await this.updateTransaction().then(
+				transaction => {
+					if (this.transaction) {
+						this.transaction = transaction;
+						this.refresh();
+					}
+				}
+			);
+		} else {
+			this.showMessage("No se puede cambiar de estado una transacción con monto menor o igual $0,00.", "info", true);
+		}
+	}
 
-    let query = 'where="description":"' + employeeType + '"';
+	public getEmployeeType(op: string, employeeType: string): void {
 
-    this._employeeTypeService.getEmployeeTypes(query).subscribe(
-      result => {
-        if (!result.employeeTypes) {
-          this.showMessage("No existen empleados de tipo " + employeeType, "info", true);
-        } else {
-          this.hideMessage();
-          this.employeeTypeSelected = result.employeeTypes[0];
-          this.openModal(op);
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-      }
-    );
-  }
+		let query = 'where="description":"' + employeeType + '"';
 
-  public changeRoom(room: Room): void {
-    this.roomSelected = room;
-  }
+		this._employeeTypeService.getEmployeeTypes(query).subscribe(
+			result => {
+				if (!result.employeeTypes) {
+					this.showMessage("No existen empleados de tipo " + employeeType, "info", true);
+				} else {
+					this.hideMessage();
+					this.employeeTypeSelected = result.employeeTypes[0];
+					this.openModal(op);
+				}
+			},
+			error => {
+				this.showMessage(error._body, 'danger', false);
+			}
+		);
+	}
 
-  public orderBy(term: string, property?: string): void {
+	public changeRoom(room: Room): void {
+		this.roomSelected = room;
+	}
 
-    if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-" + term;
-    } else {
-      this.orderTerm[0] = term;
-    }
-    this.propertyTerm = property;
-  }
+	public orderBy(term: string, property?: string): void {
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
-    this.alertMessage = message;
-    this.alertConfig.type = type;
-    this.alertConfig.dismissible = dismissible;
-  }
+		if (this.orderTerm[0] === term) {
+			this.orderTerm[0] = "-" + term;
+		} else {
+			this.orderTerm[0] = term;
+		}
+		this.propertyTerm = property;
+	}
 
-  public hideMessage():void {
-    this.alertMessage = '';
-  }
+	public showMessage(message: string, type: string, dismissible: boolean): void {
+		this.alertMessage = message;
+		this.alertConfig.type = type;
+		this.alertConfig.dismissible = dismissible;
+	}
+
+	public hideMessage(): void {
+		this.alertMessage = '';
+	}
 }
