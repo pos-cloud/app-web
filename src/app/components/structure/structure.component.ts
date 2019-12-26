@@ -131,6 +131,9 @@ export class StructureComponent implements OnInit {
     if (!this.structure._id) { this.structure._id = ''; }
     if (!this.structure.quantity) { this.structure.quantity = 0; }    
     if (!this.structure.utilization) { this.structure.utilization = Utilization.Sale; }
+    if (!this.structure.increasePrice) { this.structure.increasePrice = 0 }
+    if (!this.structure.optional) { this.structure.optional = false }
+
 
 
     const values = {
@@ -138,7 +141,9 @@ export class StructureComponent implements OnInit {
       'parent': this.structure.parent,
       'child': this.structure.child,
       'quantity' : this.structure.quantity,
-      'utilization' : this.structure.utilization
+      'utilization' : this.structure.utilization,
+      'optional' : this.structure.optional,
+      'increasePrice' : this.structure.increasePrice
 
     };
 
@@ -162,6 +167,14 @@ export class StructureComponent implements OnInit {
         ]
       ],
       'utilization': [this.structure.utilization, [
+        Validators.required
+        ]
+      ],
+      'optional': [this.structure.optional, [
+        Validators.required
+        ]
+      ],
+      'increasePrice': [this.structure.increasePrice, [
         Validators.required
         ]
       ]

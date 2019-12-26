@@ -55,7 +55,7 @@
                   <hr>
                 </div>
                 <div class = "row">
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-3">
                       <label for="name" class="control-label">Cantidad</label>
                       <div class="input-group">
                         <input type="quantity" class="form-control" formControlName="quantity" name="quantity" id="quantity" [readonly]="readonly"/>
@@ -64,13 +64,31 @@
                         {{ formErrors.quantity }}
                       </div>
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-3">
                       <label for="utilization" class="control-label">Se utiliza en:</label>
                       <select class="form-control" formControlName="utilization">
                         <option *ngFor="let utilization of utilizations"
                                 [ngValue]="utilization"
                                 [disabled]="readonly">{{utilization}}</option>
                       </select>
+                    </div>
+                    <div class="form-group col-md-3">
+                      <label for="name" class="control-label">Aumenta Precio</label>
+                      <div class="input-group">
+                        <input type="increasePrice" class="form-control" formControlName="increasePrice" name="increasePrice" id="increasePrice" [readonly]="readonly"/>
+                      </div>
+                      <div *ngIf="formErrors.increasePrice" class="alert alert-danger">
+                        {{ formErrors.increasePrice }}
+                      </div>
+                    </div>
+                    <div class="form-group col-md-3 center-content">
+                      <label class="form-check-label"
+                              for="Opcional">
+                        Opcional
+                      </label>
+                      <div class="form-check input-group center-content">
+                        <input class="form-check-input big-checkbox" type="checkbox" formControlName="optional" value="" id="optional" name="optional" [disabled]="readonly">
+                      </div>
                     </div>
                 </div>
               </div>

@@ -1,3 +1,10 @@
 ngb-typeahead-window {
     display: block!important;
    }
+
+
+   .big-checkbox {
+       width: 30px; 
+       height: 30px;     
+    margin-top: -8px;
+   }
