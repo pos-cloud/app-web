@@ -84,7 +84,7 @@
                     <div *ngIf="checkboxModel" class="form-group col-md-3">
                       <label for="name" class="control-label">Aumenta Precio</label>
                       <div class="input-group">
-                        <input type="increasePrice" class="form-control" formControlName="increasePrice" name="increasePrice" id="increasePrice" [readonly]="readonly"/>
+                        <input type="number" class="form-control" formControlName="increasePrice" name="increasePrice" id="increasePrice" [readonly]="readonly"/>
                       </div>
                       <div *ngIf="formErrors.increasePrice" class="alert alert-danger">
                         {{ formErrors.increasePrice }}
