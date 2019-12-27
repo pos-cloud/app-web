@@ -31,6 +31,8 @@ export class ListStructureComponent implements OnInit {
     "parent.description",
     "child.description",
     "quantity",
+    "optional",
+    "increasePrice",
     "operationType"
   ];
   public filters: any[];
@@ -94,6 +96,9 @@ export class ListStructureComponent implements OnInit {
       "_id" : 1,
       "parent.description" : 1,
       "child.description" : 1,
+      "optional" : 1,
+      "quantity" : 1,
+      "increasePrice" :1,
       operationType : 1
     }
 
