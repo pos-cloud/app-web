@@ -534,25 +534,8 @@ export const _routes: Routes = [
     component : PrintComponent
   },
   { 
-    path: 'pos', 
-    component: PointOfSaleComponent,
-    canActivate: [AuthGuard, LicenseGuard]
-  },
-  { 
-    path: 'pos/resto', 
-    component: PointOfSaleComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale.resto' }
-  },
-  { 
     path: 'pos/resto/salones/:id/mesas', 
     component: PointOfSaleComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale.resto' }
-  },
-  {
-    path: 'pos/resto/salones/:id/mesas/:id/agregar-transaccion/:type',
-    component: AddSaleOrderComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.sale.resto' }
   },
@@ -561,23 +544,6 @@ export const _routes: Routes = [
     component: AddSaleOrderComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.sale.resto' }
-  },
-  {
-    path: 'pos/resto/editar-transaccion',
-    component: AddSaleOrderComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale.resto' }
-  },
-  { 
-    path: 'pos/articles', 
-    component: ListArticlesPosComponent,
-    canActivate: [AuthGuard, LicenseGuard]
-  },
-  { 
-    path: 'pos/delivery', 
-    component: PointOfSaleComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale.delivery' }
   },
   { 
     path: 'report/compra/compras-por-tipo-de-transacción', 
@@ -597,17 +563,10 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.money' }
   },
-  {
-    path: 'pos/delivery/agregar-transaccion/:type',
-    component: AddSaleOrderComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale.delivery' }
-  },
-  {
-    path: 'pos/delivery/editar-transaccion',
-    component: AddSaleOrderComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale.delivery' }
+  { 
+    path: 'pos', 
+    component: PointOfSaleComponent,
+    canActivate: [AuthGuard, LicenseGuard]
   },
   { 
     path: 'pos/pedidos-web', 
@@ -639,40 +598,34 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.stock' }
   },
-  { 
-    path: 'pos/mostrador/venta/:type', 
-    component: PointOfSaleComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale.counter' }
-  },
-  { 
-    path: 'pos/mostrador/compra/:type', 
-    component: PointOfSaleComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.purchase' }
-  },
-  { 
-    path: 'pos/mostrador/fondo/:type', 
-    component: PointOfSaleComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.money' }
-  },
-  { 
-    path: 'pos/mostrador/stock/:type', 
-    component: PointOfSaleComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.stock' }
-  },
-  {
-    path: 'pos/mostrador/agregar-transaccion/:type',
-    component: AddSaleOrderComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale.counter' }
-  },
   {
     path: 'pos/mostrador/editar-transaccion',
     component: AddSaleOrderComponent,
     canActivate: [AuthGuard, LicenseGuard]
+  },
+  { 
+    path: 'pos/delivery', 
+    component: PointOfSaleComponent,
+    canActivate: [AuthGuard, LicenseGuard],
+    data: { module: 'config.modules.sale.delivery' }
+  },
+  {
+    path: 'pos/delivery/editar-transaccion',
+    component: AddSaleOrderComponent,
+    canActivate: [AuthGuard, LicenseGuard],
+    data: { module: 'config.modules.sale.delivery' }
+  },
+  { 
+    path: 'pos/resto', 
+    component: PointOfSaleComponent,
+    canActivate: [AuthGuard, LicenseGuard],
+    data: { module: 'config.modules.sale.resto' }
+  },
+  {
+    path: 'pos/resto/editar-transaccion',
+    component: AddSaleOrderComponent,
+    canActivate: [AuthGuard, LicenseGuard],
+    data: { module: 'config.modules.sale.resto' }
   },
   {
     path: 'pos/lector-de-vouchers',

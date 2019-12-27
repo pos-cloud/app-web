@@ -164,8 +164,8 @@
 							</button>
 						</td>
 					</tr>
-					<tr align="center" *ngIf="areTransactionsEmpty">
-						<td colspan="9">Aún no hay pedidos</td>
+					<tr align="center" *ngIf="transactions.length === 0">
+						<td colspan="9">Aún no hay pedidos con estado {{state}}</td>
 					</tr>
 				</tbody>
 			</table>
@@ -252,7 +252,7 @@
                                                         | orderBy: orderTerm: propertyTerm
                                                         | paginate: { itemsPerPage: itemsPerPage,
                                                                       currentPage: p,
-                                                                      totalItems: totalItems
+                                                                      totalItems: transactions.length
                                                                     }">
 						<td align="left" width="150">
 							<button type="button" class="btn btn-success" (click)="viewTransaction(transaction)"
@@ -282,17 +282,16 @@
 						<td *ngIf="transactionMovement !== 'Stock'">
 							{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
 						<td
-							*ngIf="transactionMovement === 'Stock' && transaction.type.stockMovement !== 'Transferencia' && transaction.depositOrigin">
+							*ngIf="transactionMovement === 'Stock' && transaction.type.stockMovement.toString() !== 'Transferencia' && transaction.depositOrigin">
 							{{transaction.depositOrigin.name}}</td>
 						<td
-							*ngIf="transactionMovement === 'Stock' && transaction.type.stockMovement === 'Transferencia' && transaction.depositOrigin && transaction.depositDestination">
+							*ngIf="transactionMovement === 'Stock' && transaction.type.stockMovement.toString() === 'Transferencia' && transaction.depositOrigin && transaction.depositDestination">
 							{{transaction.depositOrigin.name}} -> {{transaction.depositDestination.name}}</td>
 						<td
 							*ngIf="transactionMovement === 'Stock' && !transaction.depositOrigin || !transaction.depositDestination">
 						</td>
-
 					</tr>
-					<tr align="center" *ngIf="areTransactionsEmpty">
+					<tr align="center" *ngIf="transactions.length === 0">
 						<td colspan="7">Aún no hay transacciones pendientes</td>
 					</tr>
 				</tbody>
@@ -376,7 +375,7 @@
                                                         | orderBy: orderTerm: propertyTerm
                                                         | paginate: { itemsPerPage: itemsPerPage,
                                                                       currentPage: p,
-                                                                      totalItems: totalItems
+                                                                      totalItems: transactions.length
                                                                     }">
 						<td align="left" width="150">
 							<button type="button" class="btn btn-success" (click)="viewTransaction(transaction)"
@@ -398,7 +397,7 @@
 						<td>{{transaction.observation}}</td>
 						<td>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
 					</tr>
-					<tr align="center" *ngIf="areTransactionsEmpty">
+					<tr align="center" *ngIf="transactions.length === 0">
 						<td colspan="8">Aún no hay transacciones pendientes</td>
 					</tr>
 				</tbody>

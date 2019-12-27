@@ -230,7 +230,6 @@ export class CurrentAccountComponent implements OnInit {
 				break;
 			case 'company':
 				modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg', backdrop: 'static' });
-				console.log(this.companyType);
 				modalRef.componentInstance.type = this.companyType;
 				modalRef.componentInstance.selectionView = true;
 				modalRef.result.then(
