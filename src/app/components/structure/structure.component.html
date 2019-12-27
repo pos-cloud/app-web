@@ -72,7 +72,16 @@
                                 [disabled]="readonly">{{utilization}}</option>
                       </select>
                     </div>
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-3 center-content">
+                      <label class="form-check-label"
+                              for="Opcional">
+                        Opcional
+                      </label>
+                      <div class="form-check input-group center-content">
+                        <input [(ngModel)]="checkboxModel" class="form-check-input big-checkbox" type="checkbox" formControlName="optional" value="" id="optional" name="optional" [disabled]="readonly">
+                      </div>
+                    </div>
+                    <div *ngIf="checkboxModel" class="form-group col-md-3">
                       <label for="name" class="control-label">Aumenta Precio</label>
                       <div class="input-group">
                         <input type="increasePrice" class="form-control" formControlName="increasePrice" name="increasePrice" id="increasePrice" [readonly]="readonly"/>
@@ -81,15 +90,7 @@
                         {{ formErrors.increasePrice }}
                       </div>
                     </div>
-                    <div class="form-group col-md-3 center-content">
-                      <label class="form-check-label"
-                              for="Opcional">
-                        Opcional
-                      </label>
-                      <div class="form-check input-group center-content">
-                        <input class="form-check-input big-checkbox" type="checkbox" formControlName="optional" value="" id="optional" name="optional" [disabled]="readonly">
-                      </div>
-                    </div>
+                    
                 </div>
               </div>
             </div>
