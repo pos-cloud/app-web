@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Transaction, attributes } from './../../models/transaction';
-import { TransactionMovement, Movements } from './../../models/transaction-type';
+import { TransactionMovement } from './../../models/transaction-type';
 import { Config } from './../../app.config';
 
 import { TransactionService } from './../../services/transaction.service';
@@ -25,7 +25,6 @@ import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
 import { AuthService } from 'app/services/auth.service';
 import { SendEmailComponent } from '../send-email/send-email.component';
-import { ExportTransactionsComponent } from '../export/export-transactions/export-transactions.component';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { CurrencyPipe } from '@angular/common';
 import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
@@ -49,21 +48,19 @@ export class ListTransactionsComponent implements OnInit {
 
 	public orderTerm: string[] = ["description"];
 	public totalItems: number = 0;
-	public title : string = "Listado de Transacciones"
+	public title: string = "Listado de Transacciones"
 	public items: any[] = new Array();
 	public alertMessage: string = '';
 	public loading: boolean = false;
 	public itemsPerPage = 10;
 	public currentPage: number = 1;
-	public sort = {
-	  "count": -1
-	};
+	public sort = { "count": -1 };
 	public filters: any[];
 	public scrollY: number = 0;
 	public timezone: string = "-03:00";
 	private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
 	private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
-	@ViewChild(ExportExcelComponent, {static: false}) exportExcelComponent: ExportExcelComponent;
+	@ViewChild(ExportExcelComponent, { static: false }) exportExcelComponent: ExportExcelComponent;
 	public columns = attributes;
 	public pathLocation: string[];
 	private subscription: Subscription = new Subscription();
@@ -79,16 +76,16 @@ export class ListTransactionsComponent implements OnInit {
 		private _authService: AuthService
 	) {
 		this.filters = new Array();
-		for(let field of this.columns) {
-		  if(field.defaultFilter) {
-			this.filters[field.name] = field.defaultFilter;
-		  } else {
-			this.filters[field.name] = "";
-		  }
+		for (let field of this.columns) {
+			if (field.defaultFilter) {
+				this.filters[field.name] = field.defaultFilter;
+			} else {
+				this.filters[field.name] = "";
+			}
 		}
 	}
 
-	ngOnInit(): void {
+	public ngOnInit(): void {
 
 		this.userCountry = Config.country;
 
@@ -110,7 +107,7 @@ export class ListTransactionsComponent implements OnInit {
 			async identity => {
 				if (identity && identity.origin) {
 					for (let index = 0; index < this.columns.length; index++) {
-						if(this.columns[index].name === "branchDestination"){
+						if (this.columns[index].name === "branchDestination") {
 							this.columns[index].defaultFilter = `{ "${identity.origin.branch._id}" }`;
 						}
 					}
@@ -176,150 +173,150 @@ export class ListTransactionsComponent implements OnInit {
 	public getItems(): void {
 
 		this.loading = true;
-	
+
 		/// ORDENAMOS LA CONSULTA
 		let sort = {};
 		let sortAux;
-		  if (this.orderTerm[0].charAt(0) === '-') {
-			  sortAux = `{ "${this.orderTerm[0].split('-')[1]}" : -1 }`;
-		  } else {
-			  sortAux = `{ "${this.orderTerm[0]}" : 1 }`;
-		  }
+		if (this.orderTerm[0].charAt(0) === '-') {
+			sortAux = `{ "${this.orderTerm[0].split('-')[1]}" : -1 }`;
+		} else {
+			sortAux = `{ "${this.orderTerm[0]}" : 1 }`;
+		}
 		sort = JSON.parse(sortAux);
-	
+
 		// FILTRAMOS LA CONSULTA
 		let match = `{`;
-		  for(let i = 0; i < this.columns.length; i++) {
-			if(this.columns[i].visible || this.columns[i].required) {
-			  let value = this.filters[this.columns[i].name];
-			  if (value && value != "" && value !== {}) {
-				if(this.columns[i].defaultFilter) {
-				  match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
-				} else {
-				  match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
+		for (let i = 0; i < this.columns.length; i++) {
+			if (this.columns[i].visible || this.columns[i].required) {
+				let value = this.filters[this.columns[i].name];
+				if (value && value != "" && value !== {}) {
+					if (this.columns[i].defaultFilter) {
+						match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
+					} else {
+						match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
+					}
+					if (i < this.columns.length - 1) {
+						match += ',';
+					}
 				}
-				if (i < this.columns.length - 1 ) {
-				  match += ',';
-				}
-			  }
 			}
-		  }
-	
+		}
+
 		match += `,"type.transactionMovement": "${this.transactionMovement}"`;
 		if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
-	
+
 		match += `}`;
 
 		match = JSON.parse(match);
-	
+
 		// ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
 		let project = `{`;
 		let j = 0;
-		for(let i = 0; i < this.columns.length; i++) {
-		  if(this.columns[i].visible || this.columns[i].required) {
-			if(j > 0) {
-			  project += `,`;
+		for (let i = 0; i < this.columns.length; i++) {
+			if (this.columns[i].visible || this.columns[i].required) {
+				if (j > 0) {
+					project += `,`;
+				}
+				j++;
+				if (this.columns[i].datatype !== "string") {
+					if (this.columns[i].datatype === "date") {
+						project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`
+					} else {
+						project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
+					}
+				} else {
+					project += `"${this.columns[i].name}": 1`;
+				}
 			}
-			j++;
-			if(this.columns[i].datatype !== "string"){
-			  if(this.columns[i].datatype === "date"){
-				project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`
-			  } else {
-				project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
-			  }
-			} else {
-			  project += `"${this.columns[i].name}": 1`;
-			}
-		  }
 		}
 		project += `}`;
-	
+
 		project = JSON.parse(project);
-	
+
 		// AGRUPAMOS EL RESULTADO
 		let group = {
 			_id: null,
 			count: { $sum: 1 },
 			items: { $push: "$$ROOT" }
 		};
-	
+
 		let page = 0;
-		if(this.currentPage != 0) {
-		  page = this.currentPage - 1;
+		if (this.currentPage != 0) {
+			page = this.currentPage - 1;
 		}
 		let skip = !isNaN(page * this.itemsPerPage) ?
-				(page * this.itemsPerPage) :
-				0 // SKIP
+			(page * this.itemsPerPage) :
+			0 // SKIP
 		let limit = this.itemsPerPage;
-	
+
 		this.subscription.add(this._transactionService.getTransactionsV2(
-		  project, // PROJECT
-		  match, // MATCH
-		  sort, // SORT
-		  group, // GROUP
-		  limit, // LIMIT
-		  skip // SKIP
+			project, // PROJECT
+			match, // MATCH
+			sort, // SORT
+			group, // GROUP
+			limit, // LIMIT
+			skip // SKIP
 		).subscribe(
-		  result => {
-			this.loading = false;
-			if (result && result[0] && result[0].items) {
-			  if(this.itemsPerPage === 0) {
-				this.exportExcelComponent.items = result[0].items;
-				this.exportExcelComponent.export();
-				this.itemsPerPage = 10;
-				this.getItems();
-			  } else {
-				this.items = result[0].items;
-				this.totalItems = result[0].count;
-			  }
-			} else {
-			  this.items = new Array();
-			  this.totalItems = 0;
+			result => {
+				this.loading = false;
+				if (result && result[0] && result[0].items) {
+					if (this.itemsPerPage === 0) {
+						this.exportExcelComponent.items = result[0].items;
+						this.exportExcelComponent.export();
+						this.itemsPerPage = 10;
+						this.getItems();
+					} else {
+						this.items = result[0].items;
+						this.totalItems = result[0].count;
+					}
+				} else {
+					this.items = new Array();
+					this.totalItems = 0;
+				}
+			},
+			error => {
+				this.showMessage(error._body, 'danger', false);
+				this.loading = false;
+				this.totalItems = 0;
 			}
-		  },
-		  error => {
-			this.showMessage(error._body, 'danger', false);
-			this.loading = false;
-			this.totalItems = 0;
-		  }
 		));
 	}
-	
+
 	public getValue(item, column): any {
 		let val: string = 'item';
 		let exists: boolean = true;
 		let value: any = '';
-		for(let a of column.name.split('.')) {
-		  val += '.'+a;
-		  if(exists && !eval(val)) {
-			exists = false;
-		  }
+		for (let a of column.name.split('.')) {
+			val += '.' + a;
+			if (exists && !eval(val)) {
+				exists = false;
+			}
 		}
-		if(exists) {
-		  switch(column.datatype) {
-			case 'number':
-			  value = this.roundNumberPipe.transform(eval(val));
-			  break;
-			case 'currency':
-				value = this.currencyPipe.transform(this.roundNumberPipe.transform(eval(val)), 'USD', 'symbol-narrow', '1.2-2');
-			  break;
-			case 'percent':
-				value = this.roundNumberPipe.transform(eval(val)) + '%';
-			  break;
-			default:
-				value = eval(val);
-			  break;
-		  }
+		if (exists) {
+			switch (column.datatype) {
+				case 'number':
+					value = this.roundNumberPipe.transform(eval(val));
+					break;
+				case 'currency':
+					value = this.currencyPipe.transform(this.roundNumberPipe.transform(eval(val)), 'USD', 'symbol-narrow', '1.2-2');
+					break;
+				case 'percent':
+					value = this.roundNumberPipe.transform(eval(val)) + '%';
+					break;
+				default:
+					value = eval(val);
+					break;
+			}
 		}
 		return value;
 	}
-	
+
 	public getColumnsVisibles(): number {
 		let count: number = 0;
 		for (let column of this.columns) {
-		  if(column.visible) {
-			count++;
-		  }
+			if (column.visible) {
+				count++;
+			}
 		}
 		return count;
 	}
@@ -331,12 +328,12 @@ export class ListTransactionsComponent implements OnInit {
 
 	public orderBy(term: string): void {
 
-		if(this.sort[term]) {
-		  this.sort[term] *= -1;
+		if (this.sort[term]) {
+			this.sort[term] *= -1;
 		} else {
-		  this.sort = JSON.parse('{"' + term + '": 1 }');
+			this.sort = JSON.parse('{"' + term + '": 1 }');
 		}
-	
+
 		this.getItems();
 	}
 
