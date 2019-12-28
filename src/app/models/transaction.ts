@@ -73,11 +73,13 @@ export class Transaction {
 
 export enum TransactionState {
 	Open = <any> "Abierto",
+	Canceled = <any> "Anulado",
+	Packing = <any> "Armando",
+	Closed = <any> "Cerrado",
 	Delivered = <any> "Entregado",
 	Sent = <any> "Enviado",
-	Canceled = <any> "Anulado",
-	Closed = <any> "Cerrado",
-	Pending = <any> "Pendiente"
+	Preparing = <any> "Preparando",
+	Pending = <any> "Pendiente",
 }
 
 export let attributes = [

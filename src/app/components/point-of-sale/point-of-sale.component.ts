@@ -66,7 +66,9 @@ export class PointOfSaleComponent implements OnInit {
 		TransactionState.Delivered.toString(),
 		TransactionState.Open.toString(),
 		TransactionState.Pending.toString(),
-		TransactionState.Sent.toString()
+		TransactionState.Sent.toString(),
+		TransactionState.Preparing.toString(),
+		TransactionState.Packing.toString()
 	];
 	public transactionTypes: TransactionType[];
 	public transactionMovement: TransactionMovement;
@@ -340,7 +342,6 @@ export class PointOfSaleComponent implements OnInit {
 	}
 
 	async refresh() {
-
 		let pathLocation: string[] = this._router.url.split('/');
 
 		if (this.posType === 'mostrador') {
@@ -1018,7 +1019,7 @@ export class PointOfSaleComponent implements OnInit {
 				break;
 			case 'print':
 				if (this.transaction.type.readLayout) {
-					modalRef = this._modalService.open(PrintTransactionTypeComponent)
+					modalRef = this._modalService.open(PrintTransactionTypeComponent);
 					modalRef.componentInstance.transactionId = this.transaction._id;
 				} else {
 					await this.getPrinters().then(
@@ -1322,6 +1323,7 @@ export class PointOfSaleComponent implements OnInit {
 							if (transaction) {
 								this.transaction = transaction;
 								if (this.transaction.type.printable) {
+									this.refresh();
 									if (this.transaction.type.defectPrinter) {
 										this.printerSelected = this.printerSelected;
 										this.openModal("print");
