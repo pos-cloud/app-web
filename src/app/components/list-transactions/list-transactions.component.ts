@@ -1,11 +1,11 @@
 
 import { of as observableOf, Observable, Subscription } from 'rxjs';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Transaction } from './../../models/transaction';
+import { Transaction, attributes } from './../../models/transaction';
 import { TransactionMovement, Movements } from './../../models/transaction-type';
 import { Config } from './../../app.config';
 
@@ -27,6 +27,8 @@ import { AuthService } from 'app/services/auth.service';
 import { SendEmailComponent } from '../send-email/send-email.component';
 import { ExportTransactionsComponent } from '../export/export-transactions/export-transactions.component';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
+import { CurrencyPipe } from '@angular/common';
+import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
 
 @Component({
 	selector: 'app-list-transactions',
@@ -38,7 +40,7 @@ import { PrintTransactionTypeComponent } from '../print/print-transaction-type/p
 
 export class ListTransactionsComponent implements OnInit {
 
-	public transactions: Transaction[] = new Array();
+	/*public transactions: Transaction[] = new Array();
 	public config: Config;
 	public areTransactionsEmpty: boolean = true;
 	public alertMessage: string = '';
@@ -85,6 +87,35 @@ export class ListTransactionsComponent implements OnInit {
 	public filters: any[];
 	public filterValue: string;
 	public userCountry: string;
+	private subscription: Subscription = new Subscription();*/
+
+
+	public userCountry: string;
+	public transactionMovement: TransactionMovement;
+	public listType: string = 'statistics';
+	public modules: Observable<{}>;
+	public printers: Printer[];
+
+
+	public orderTerm: string[] = ["description"];
+	public totalItems: number = 0;
+	public title : string = "Listado de Transacciones"
+	public items: any[] = new Array();
+	public alertMessage: string = '';
+	public loading: boolean = false;
+	public itemsPerPage = 10;
+	public currentPage: number = 1;
+	public sort = {
+	  "count": -1
+	};
+	public filters: any[];
+	public scrollY: number = 0;
+	public timezone: string = "-03:00";
+	private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
+	private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
+	@ViewChild(ExportExcelComponent, {static: false}) exportExcelComponent: ExportExcelComponent;
+	public columns = attributes;
+	public pathLocation: string[];
 	private subscription: Subscription = new Subscription();
 
 	constructor(
@@ -98,24 +129,20 @@ export class ListTransactionsComponent implements OnInit {
 		private _authService: AuthService
 	) {
 		this.filters = new Array();
-		for (let field of this.displayedColumns) {
-			this.filters[field] = "";
+		for(let field of this.columns) {
+		  if(field.defaultFilter) {
+			this.filters[field.name] = field.defaultFilter;
+		  } else {
+			this.filters[field.name] = "";
+		  }
 		}
 	}
 
 	ngOnInit(): void {
 
 		this.userCountry = Config.country;
-		this._configService.getConfig.subscribe(
-			config => {
-				if (config && config.modules) {
-					this.allowResto = config.modules.sale.resto;
-				}
-			}
-		);
 
 		let pathLocation: string[] = this._router.url.split('/');
-		this.userType = pathLocation[1];
 		this.listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
 		this.modules = observableOf(Config.modules);
 		this.getPrinters();
@@ -132,12 +159,16 @@ export class ListTransactionsComponent implements OnInit {
 		this._authService.getIdentity.subscribe(
 			async identity => {
 				if (identity && identity.origin) {
-					this.filters['branchDestination._id'] = identity.origin.branch._id;
+					for (let index = 0; index < this.columns.length; index++) {
+						if(this.columns[index].name === "branchDestination"){
+							this.columns[index].defaultFilter = `{ "${identity.origin.branch._id}" }`;
+						}
+					}
 				}
 			}
 		);
 
-		this.getTransactions();
+		this.getItems();
 
 		this.initDragHorizontalScroll();
 	}
@@ -192,136 +223,175 @@ export class ListTransactionsComponent implements OnInit {
 		);
 	}
 
-	public getTransactions(): void {
+	public getItems(): void {
 
 		this.loading = true;
-
+	
 		/// ORDENAMOS LA CONSULTA
+		let sort = {};
 		let sortAux;
-		if (this.orderTerm[0].charAt(0) === '-') {
-			sortAux = `{ "${this.orderTerm[0].split('-')[1]}" : -1 }`;
-		} else {
-			sortAux = `{ "${this.orderTerm[0]}" : 1 }`;
-		}
-		sortAux = JSON.parse(sortAux);
-
+		  if (this.orderTerm[0].charAt(0) === '-') {
+			  sortAux = `{ "${this.orderTerm[0].split('-')[1]}" : -1 }`;
+		  } else {
+			  sortAux = `{ "${this.orderTerm[0]}" : 1 }`;
+		  }
+		sort = JSON.parse(sortAux);
+	
 		// FILTRAMOS LA CONSULTA
 		let match = `{`;
-		for (let i = 0; i < this.displayedColumns.length; i++) {
-			let value = this.filters[this.displayedColumns[i]];
-			if (value && value != "") {
-				match += `"${this.displayedColumns[i]}": { "$regex": "${value}", "$options": "i"}`;
-				if (i < this.displayedColumns.length - 1) {
-					match += ',';
+		  for(let i = 0; i < this.columns.length; i++) {
+			if(this.columns[i].visible || this.columns[i].required) {
+			  let value = this.filters[this.columns[i].name];
+			  if (value && value != "" && value !== {}) {
+				if(this.columns[i].defaultFilter) {
+				  match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
+				} else {
+				  match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
 				}
+				if (i < this.columns.length - 1 ) {
+				  match += ',';
+				}
+			  }
 			}
-		}
+		  }
+	
+		match += `"type.transactionMovement": "${this.transactionMovement}"`;
+		if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
+	
+		match += `}`;
 
-		if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}') {
-			match += `,"type.transactionMovement": "${this.transactionMovement}", "operationType": { "$ne": "D" } }`;
-		} else {
-			match += `"type.transactionMovement": "${this.transactionMovement}", "operationType": { "$ne": "D" } }`;
-		}
 		match = JSON.parse(match);
-
-		let timezone = "-03:00";
-		if (Config.timezone && Config.timezone !== '') {
-			timezone = Config.timezone.split('UTC')[1];
-		}
-
+	
 		// ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-		let project = {
-			"_id": 1,
-			origin: { $toString: "$origin" },
-			letter: 1,
-			number: { $toString: "$number" },
-			endDate: { $dateToString: { date: "$endDate", format: "%d/%m/%Y", timezone: timezone } },
-			madein: 1,
-			state: 1,
-			observation: 1,
-			discountAmount: { $toString: '$discountAmount' },
-			totalPrice: { $toString: '$totalPrice' },
-			operationType: 1,
-			CAE: 1,
-			balance: 1,
-			'table.description': 1,
-			'diners': { $toString: '$diners' },
-			'company.name': 1,
-			'company.emails': 1,
-			'employeeClosing.name': 1,
-			'cashBox.number': { $toString: "$cashBox.number" },
-			'type.transactionMovement': 1,
-			'type.name': 1,
-			'type.labelPrint': 1,
-			'type.requestArticles': 1,
-			'type.allowEdit': 1,
-			'type.readLayout': 1,
-			'type.allowDelete': 1,
-			'type.electronics': 1,
-			'type.defectPrinter': 1,
-			'branchDestination._id': { $toString: '$branchDestination._id' },
-			'branchDestination.number': 1
+		let project = `{`;
+		let j = 0;
+		for(let i = 0; i < this.columns.length; i++) {
+		  if(this.columns[i].visible || this.columns[i].required) {
+			if(j > 0) {
+			  project += `,`;
+			}
+			j++;
+			if(this.columns[i].datatype !== "string"){
+			  if(this.columns[i].datatype === "date"){
+				project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`
+			  } else {
+				project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
+			  }
+			} else {
+			  project += `"${this.columns[i].name}": 1`;
+			}
+		  }
 		}
-
+		project += `}`;
+	
+		project = JSON.parse(project);
+	
 		// AGRUPAMOS EL RESULTADO
 		let group = {
 			_id: null,
 			count: { $sum: 1 },
-			transactions: { $push: '$$ROOT' }
+			items: { $push: "$$ROOT" }
 		};
-
+	
 		let page = 0;
-		if (this.currentPage != 0) {
-			page = this.currentPage - 1;
+		if(this.currentPage != 0) {
+		  page = this.currentPage - 1;
 		}
 		let skip = !isNaN(page * this.itemsPerPage) ?
-			(page * this.itemsPerPage) :
-			0 // SKIP
-
+				(page * this.itemsPerPage) :
+				0 // SKIP
+		let limit = this.itemsPerPage;
+	
 		this.subscription.add(this._transactionService.getTransactionsV2(
-			project, // PROJECT
-			match, // MATCH
-			sortAux, // SORT
-			group, // GROUP
-			this.itemsPerPage, // LIMIT
-			skip // SKIP
+		  project, // PROJECT
+		  match, // MATCH
+		  sort, // SORT
+		  group, // GROUP
+		  limit, // LIMIT
+		  skip // SKIP
 		).subscribe(
-			result => {
-				this.loading = false;
-				if (result && result[0] && result[0].transactions) {
-					this.transactions = result[0].transactions;
-					this.totalItems = result[0].count;
-				} else {
-					this.transactions = new Array();
-					this.totalItems = 0;
-				}
-			},
-			error => {
-				this.showMessage(error._body, 'danger', false);
-				this.loading = false;
-				this.totalItems = 0;
+		  result => {
+			this.loading = false;
+			if (result && result[0] && result[0].items) {
+			  if(this.itemsPerPage === 0) {
+				this.exportExcelComponent.items = result[0].items;
+				this.exportExcelComponent.export();
+				this.itemsPerPage = 10;
+				this.getItems();
+			  } else {
+				this.items = result[0].items;
+				this.totalItems = result[0].count;
+			  }
+			} else {
+			  this.items = new Array();
+			  this.totalItems = 0;
 			}
+		  },
+		  error => {
+			this.showMessage(error._body, 'danger', false);
+			this.loading = false;
+			this.totalItems = 0;
+		  }
 		));
+	}
+	
+	public getValue(item, column): any {
+		let val: string = 'item';
+		let exists: boolean = true;
+		let value: any = '';
+		for(let a of column.name.split('.')) {
+		  val += '.'+a;
+		  if(exists && !eval(val)) {
+			exists = false;
+		  }
+		}
+		if(exists) {
+		  switch(column.datatype) {
+			case 'number':
+			  value = this.roundNumberPipe.transform(eval(val));
+			  break;
+			case 'currency':
+				value = this.currencyPipe.transform(this.roundNumberPipe.transform(eval(val)), 'USD', 'symbol-narrow', '1.2-2');
+			  break;
+			case 'percent':
+				value = this.roundNumberPipe.transform(eval(val)) + '%';
+			  break;
+			default:
+				value = eval(val);
+			  break;
+		  }
+		}
+		return value;
+	}
+	
+	public getColumnsVisibles(): number {
+		let count: number = 0;
+		for (let column of this.columns) {
+		  if(column.visible) {
+			count++;
+		  }
+		}
+		return count;
 	}
 
 	public pageChange(page): void {
 		this.currentPage = page;
-		this.getTransactions();
+		this.getItems();
 	}
 
 	public orderBy(term: string): void {
 
-		if (this.orderTerm[0] === term) {
-			this.orderTerm[0] = "-" + term;
+		if(this.sort[term]) {
+		  this.sort[term] *= -1;
 		} else {
-			this.orderTerm[0] = term;
+		  this.sort = JSON.parse('{"' + term + '": 1 }');
 		}
-
-		this.getTransactions();
+	
+		this.getItems();
 	}
 
 	public refresh(): void {
-		this.getTransactions();
+		this.getItems();
 	}
 
 	public openModal(op: string, transaction: Transaction): void {
@@ -337,7 +407,7 @@ export class ListTransactionsComponent implements OnInit {
 				modalRef.componentInstance.transactionId = transaction._id;
 				modalRef.result.then((result) => {
 					if (result.transaction) {
-						this.getTransactions();
+						this.getItems();
 					}
 				}, (reason) => {
 
@@ -372,7 +442,7 @@ export class ListTransactionsComponent implements OnInit {
 				modalRef.componentInstance.transactionId = transaction._id;
 				modalRef.result.then((result) => {
 					if (result === 'delete_close') {
-						this.getTransactions();
+						this.getItems();
 					}
 				}, (reason) => {
 
@@ -423,7 +493,6 @@ export class ListTransactionsComponent implements OnInit {
 
 				break;
 			case "export":
-
 				modalRef = this._modalService.open(ExportTransactionsComponent, { size: 'lg', backdrop: 'static' });
 				modalRef.componentInstance.transactionMovement = this.transactionMovement
 				break;
@@ -437,24 +506,6 @@ export class ListTransactionsComponent implements OnInit {
 		while (n.length < length)
 			n = "0" + n;
 		return n;
-	}
-
-	public calculateTotal(transactions: Transaction[], col, format): string {
-
-		let total = 0;
-		if (transactions) {
-			for (let transaction of transactions) {
-				if (transaction[col]) {
-					if (transaction.type.movement === Movements.Outflows) {
-						total -= transaction[col];
-					} else {
-						total += transaction[col];
-					}
-				}
-			}
-		}
-
-		return this.roundNumber.transform(total);
 	}
 
 	public exportCiti(): void {
@@ -478,6 +529,11 @@ export class ListTransactionsComponent implements OnInit {
 		}, (reason) => {
 
 		});
+	}
+
+	public exportItems(): void {
+		this.exportExcelComponent.items = this.items;
+		this.exportExcelComponent.export();
 	}
 
 	public ngOnDestroy(): void {
