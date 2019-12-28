@@ -80,6 +80,9 @@
     "discountPercent" : "Porcentaje de Descuento",
     "description": "Descripción",
     "deliveredBy" : "Entregado por",
+    "depositDestination" : {
+        "name" : "Depósito"
+    },
     "endDate": "Fecha",
     "exempt" : "Exento",
     "ecommerceEnabled" : "¿Habilitado para Ecommerce?",
