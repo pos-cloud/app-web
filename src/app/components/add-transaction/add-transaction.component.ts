@@ -146,7 +146,7 @@ export class AddTransactionComponent implements OnInit {
 		this.userCountry = Config.country;
 		let pathLocation: string[] = this._router.url.split('/');
 		this.userType = pathLocation[1];
-		this.posType = pathLocation[2];
+		this.posType = pathLocation[2].split('?')[0];
 		this.buildForm();
 
 		if (this.transactionId) {
