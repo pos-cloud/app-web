@@ -62,7 +62,7 @@
     "company" : {
         "name" : "Empresa",
         "employee":{
-            "name" : "Empleado"
+            "name" : "Empleado de Empresa"
         }
     },
     "count": "Cantidad",
@@ -83,6 +83,9 @@
     "endDate": "Fecha",
     "exempt" : "Exento",
     "ecommerceEnabled" : "¿Habilitado para Ecommerce?",
+    "employeeClosing" : {
+        "name" : "Empleado"
+    },
     "state" : "Estado",
     "expirationDate" : "Vencimiento",
     "false": "No",

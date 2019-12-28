@@ -91,7 +91,7 @@ export let attributes = [
                 datatype: 'string',
                 project: null,
                 align: 'left',
-                required : true,
+                required : false,
         },
         {
                 name: 'origin',
@@ -101,7 +101,7 @@ export let attributes = [
                 datatype: 'number',
                 project: null,
                 align: 'center',
-                required : true,
+                required : false,
 	},
 	{
                 name: 'letter',
@@ -111,7 +111,7 @@ export let attributes = [
                 datatype: 'string',
                 project: null,
                 align: 'center',
-                required : true,
+                required : false,
 	},
 	{
                 name: 'number',
@@ -121,7 +121,7 @@ export let attributes = [
                 datatype: 'number',
                 project: null,
                 align: 'right',
-                required : true,
+                required : false,
 	},
 	{
                 name: 'endDate',
@@ -131,7 +131,7 @@ export let attributes = [
                 datatype: 'date',
                 project: null,
                 align: 'right',
-                required : true,
+                required : false,
 	},
 	{
                 name: 'company.name',
@@ -141,7 +141,7 @@ export let attributes = [
                 datatype: 'string',
                 project: null,
                 align: 'left',
-                required : true,
+                required : false,
 	},
 	{
                 name: 'company.employee.name',
@@ -171,7 +171,7 @@ export let attributes = [
                 datatype: 'string',
                 project: null,
                 align: 'left',
-                required : true,
+                required : false,
         },
         {
                 name: 'state',
@@ -181,7 +181,7 @@ export let attributes = [
                 datatype: 'string',
                 project: null,
                 align: 'left',
-                required : true,
+                required : false,
 	},
 	{
                 name: 'observation',
@@ -191,7 +191,7 @@ export let attributes = [
                 datatype: 'string',
                 project: null,
                 align: 'left',
-                required : true,
+                required : false,
 	},
 	{
                 name: 'balance',
@@ -201,7 +201,7 @@ export let attributes = [
                 datatype: 'currency',
                 project: null,
                 align: 'right',
-                required : true,
+                required : false,
 	},
 	{
                 name: 'totalPrice',
@@ -211,7 +211,7 @@ export let attributes = [
                 datatype: 'currency',
                 project: null,
                 align: 'right',
-                required : true,
+                required : false,
         },
         {
                 name: 'table',
@@ -221,7 +221,7 @@ export let attributes = [
                 datatype: 'number',
                 project: null,
                 align: 'right',
-                required : true,
+                required : false,
         },
         {
                 name: 'diners',
@@ -231,7 +231,7 @@ export let attributes = [
                 datatype: 'number',
                 project: null,
                 align: 'right',
-                required : true,
+                required : false,
         },
         {
                 name: 'transport.name',
@@ -251,7 +251,7 @@ export let attributes = [
                 datatype: 'string',
                 project: null,
                 align: 'right',
-                required : true,
+                required : false,
         },
         {
                 name: 'cashBox.number',
@@ -271,7 +271,7 @@ export let attributes = [
                 datatype: 'currency',
                 project: null,
                 align: 'left',
-                required : true,
+                required : false,
         },
         {
                 name: 'exempt',
@@ -281,7 +281,7 @@ export let attributes = [
                 datatype: 'currency',
                 project: null,
                 align: 'left',
-                required : true,
+                required : false,
         },
         {
                 name: 'discountAmount',
@@ -291,7 +291,7 @@ export let attributes = [
                 datatype: 'currency',
                 project: null,
                 align: 'left',
-                required : true,
+                required : false,
         },
         {
                 name: 'discountPercent',
@@ -301,10 +301,20 @@ export let attributes = [
                 datatype: 'percent',
                 project: null,
                 align: 'left',
-                required : true,
+                required : false,
         },
         {
                 name: 'branchDestination.name',
+                visible: false,
+                disabled: false,
+                filter: true,
+                datatype: 'string',
+                project: null,
+                align: 'left',
+                required : false,
+        },
+        {
+                name: 'depositDestination.name',
                 visible: false,
                 disabled: false,
                 filter: true,
