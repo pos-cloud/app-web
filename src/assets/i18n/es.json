@@ -42,10 +42,13 @@
     "bank" : {
         "name" : "Banco"
     },
-    "balance" : "Balance",
+    "balance" : "Saldo",
     "barcode": "Código de Barras",
     "basePrice" : "Precio Base",
     "branch" : {
+        "name" : "Sucursal"
+    },
+    "branchDestination" : {
         "name" : "Sucursal"
     },
     "category": {
@@ -57,7 +60,7 @@
     "code": "Código",
     "costPrice": "Precio de Costo",
     "company" : {
-        "name" : "Nombre",
+        "name" : "Empresa",
         "employee":{
             "name" : "Empleado"
         }
@@ -102,7 +105,7 @@
     "isWeigth" : "¿Pide medida?",
     "markupPrice" : "Utilidad",
     "markupPercentage" : "Margen",
-    "madein" : "Origen",
+    "madein" : "Canal",
     "table" : "Mesa",
     "true": "Si",
     "total": "Total",
@@ -123,7 +126,8 @@
         "name" : "Nombre de Transporte"
     },
     "type" : {
-        "name" : "Tipo"
+        "name" : "Tipo",
+        "transactionMovement" : "Movimiento"
     },
     "totalPrice" : "Precio Total",
     "unitOfMeasurement": {

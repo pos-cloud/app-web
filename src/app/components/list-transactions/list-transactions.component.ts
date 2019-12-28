@@ -40,56 +40,6 @@ import { ExportExcelComponent } from '../export/export-excel/export-excel.compon
 
 export class ListTransactionsComponent implements OnInit {
 
-	/*public transactions: Transaction[] = new Array();
-	public config: Config;
-	public areTransactionsEmpty: boolean = true;
-	public alertMessage: string = '';
-	public userType: string;
-	public listType: string = 'statistics';
-	public orderTerm: string[] = ['-endDate'];
-	public areFiltersVisible: boolean = false;
-	public loading: boolean = false;
-	public itemsPerPage: number = 10;
-	public totalItems: number = -1;
-	public modules: Observable<{}>;
-	public printers: Printer[];
-	public roundNumber = new RoundNumberPipe();
-	public transactionMovement: TransactionMovement;
-	public allowResto: boolean;
-	public currentPage: number = 0;
-	public displayedColumns = [
-		'type.transactionMovement',
-		'type.name',
-		'type.requestArticles',
-		'type.allowEdit',
-		'type.allowDelete',
-		'type.electronics',
-		'type.labelPrint',
-		'origin',
-		'letter',
-		'number',
-		'endDate',
-		'company.name',
-		'employeeClosing.name',
-		'turnClosing.endDate',
-		'cashBox.number',
-		'madein',
-		'state',
-		'observation',
-		'discountAmount',
-		'totalPrice',
-		'operationType',
-		'CAE',
-		'balance',
-		'branchDestination._id',
-		'branchDestination.number'
-	];
-	public filters: any[];
-	public filterValue: string;
-	public userCountry: string;
-	private subscription: Subscription = new Subscription();*/
-
-
 	public userCountry: string;
 	public transactionMovement: TransactionMovement;
 	public listType: string = 'statistics';
@@ -255,7 +205,7 @@ export class ListTransactionsComponent implements OnInit {
 			}
 		  }
 	
-		match += `"type.transactionMovement": "${this.transactionMovement}"`;
+		match += `,"type.transactionMovement": "${this.transactionMovement}"`;
 		if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 	
 		match += `}`;
@@ -491,10 +441,6 @@ export class ListTransactionsComponent implements OnInit {
 					modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}.poscloud.com.ar:300/api/print/xml/CFDI-33_Factura_` + transaction.number;
 				}
 
-				break;
-			case "export":
-				modalRef = this._modalService.open(ExportTransactionsComponent, { size: 'lg', backdrop: 'static' });
-				modalRef.componentInstance.transactionMovement = this.transactionMovement
 				break;
 			default: ;
 		}
