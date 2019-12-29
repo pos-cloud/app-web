@@ -16,6 +16,7 @@ import { DeleteTransactionComponent } from './../../components/delete-transactio
 import { ViewTransactionComponent } from './../../components/view-transaction/view-transaction.component';
 import { ExportCitiComponent } from '../export/export-citi/export-citi.component';
 import { ExportIvaComponent } from '../export/export-iva/export-iva.component';
+import { moveItemInArray, CdkDragDrop } from '@angular/cdk/drag-drop';
 
 //Pipes
 import { PrintComponent } from 'app/components/print/print/print.component';
@@ -118,6 +119,10 @@ export class ListTransactionsComponent implements OnInit {
 		this.getItems();
 
 		this.initDragHorizontalScroll();
+	}
+
+	public drop(event: CdkDragDrop<string[]>): void {
+		moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
 	}
 
 	public initDragHorizontalScroll(): void {
