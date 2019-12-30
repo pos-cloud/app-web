@@ -212,15 +212,18 @@ export class ListTransactionsComponent implements OnInit {
 					project += `,`;
 				}
 				j++;
-				if (this.columns[i].datatype !== "string") {
+				
+
+				if (this.columns[i].datatype === "string" || this.columns[i].datatype === "boolean") {
+					project += `"${this.columns[i].name}": 1`;
+				} else {
 					if (this.columns[i].datatype === "date") {
 						project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`
 					} else {
 						project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
 					}
-				} else {
-					project += `"${this.columns[i].name}": 1`;
 				}
+
 			}
 		}
 		project += `}`;
