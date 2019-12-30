@@ -1810,8 +1810,8 @@ export class AddSaleOrderComponent {
 				break;
 			case 'print':
 				if (this.transaction.type.readLayout) {
-					modalRef = this._modalService.open(PrintTransactionTypeComponent)
-					modalRef.componentInstance.transactionId = this.transaction._id
+					modalRef = this._modalService.open(PrintTransactionTypeComponent);
+					modalRef.componentInstance.transactionId = this.transaction._id;
 					modalRef.result.then((result) => {
 					}, (reason) => {
 						this.backFinal();
@@ -2407,9 +2407,40 @@ export class AddSaleOrderComponent {
 
 		this._route.queryParams.subscribe(params => {
 			if(params['returnURL']) {
-				this._router.navigateByUrl(params['returnURL']);
+				if(params['automaticCreation']) {
+					if(this.transaction.state === TransactionState.Closed) {
+						let route = params['returnURL'].split('?')[0];
+						let paramsFromRoute = params['returnURL'].split('?')[1];
+						if(paramsFromRoute && paramsFromRoute !== '') {
+							paramsFromRoute = this.removeParam(paramsFromRoute, 'automaticCreation');
+							route += '?'+paramsFromRoute+'&automaticCreation='+params['automaticCreation'];
+						} else {
+							route += '?' + 'automaticCreation='+params['automaticCreation'];
+						}
+						this._router.navigateByUrl(route);
+					} else {
+						this._router.navigateByUrl(this.removeParam(params['returnURL'], 'automaticCreation'));
+					}
+				} else {
+					this._router.navigateByUrl(params['returnURL']);
+				}
 			}
 		});		
+	}
+
+	private removeParam(sourceURL: string, key: string) {
+		let rtn = sourceURL.split("?")[0], param, params_arr = [], queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
+		if (queryString !== "") {
+			params_arr = queryString.split("&");
+			for (let i = params_arr.length - 1; i >= 0; i -= 1) {
+				param = params_arr[i].split("=")[0];
+				if (param === key) {
+					params_arr.splice(i, 1);
+				}
+			}
+			rtn = rtn + "?" + params_arr.join("&");
+		}
+		return rtn;
 	}
 
 	async getTaxVAT(movementOfArticle: MovementOfArticle) {

@@ -6,336 +6,433 @@ import { MovementOfArticle, MovementOfArticleStatus } from 'app/models/movement-
 import { Config } from 'app/app.config';
 import * as moment from 'moment';
 import 'moment/locale/es';
+import { Transaction, TransactionState } from 'app/models/transaction';
+import { TransactionService } from 'app/services/transaction.service';
 
 @Component({
-  selector: 'app-pos-kitchen',
-  templateUrl: './pos-kitchen.component.html',
-  styleUrls: ['./pos-kitchen.component.scss'],
-  providers: [NgbAlertConfig],
-  encapsulation: ViewEncapsulation.None
+	selector: 'app-pos-kitchen',
+	templateUrl: './pos-kitchen.component.html',
+	styleUrls: ['./pos-kitchen.component.scss'],
+	providers: [NgbAlertConfig],
+	encapsulation: ViewEncapsulation.None
 })
 
 export class PosKitchenComponent {
 
-  public alertMessage: string = '';
-  public loading: boolean = false;
-  public movementsOfArticles: MovementOfArticle[];
-  public movementOfArticle: MovementOfArticle;
-  public database: string = Config.database;
-  public apiURL = Config.apiURL;
-  public productionStarted: boolean = false;
-  public startProductionDate: string;
+	public alertMessage: string = '';
+	public loading: boolean = false;
+	public movementsOfArticles: MovementOfArticle[];
+	public movementOfArticle: MovementOfArticle;
+	public database: string = Config.database;
+	public apiURL = Config.apiURL;
+	public productionStarted: boolean = false;
+	public startProductionDate: string;
 
-  constructor(
-    public _router: Router,
-    public alertConfig: NgbAlertConfig,
-    private _movementOfArticleService: MovementOfArticleService,
-  ) { }
+	constructor(
+		public _router: Router,
+		public alertConfig: NgbAlertConfig,
+		private _movementOfArticleService: MovementOfArticleService,
+		private _transactionService: TransactionService
+	) { }
 
-  public async ngOnInit() {
-    this.getMovementOfArticleReady();
-    this.initInterval();
-  }
+	public async ngOnInit() {
+		this.getMovementOfArticleReady();
+		this.initInterval();
+	}
 
-  public initInterval(): void {
-    setInterval(() => {
-      if(this.productionStarted && !this.movementOfArticle && !this.loading) {
-        this.startProduction();
-      }
-    }, 5000);
-  }
+	public initInterval(): void {
+		setInterval(() => {
+			if (this.productionStarted && !this.movementOfArticle && !this.loading) {
+				this.startProduction();
+			}
+		}, 5000);
+	}
 
-  public getMovementOfArticleReady(): void {
-    try {
-      this.movementsOfArticles = JSON.parse(sessionStorage.getItem('kitchen_movementsOfArticles'));
-      this.movementOfArticle = JSON.parse(localStorage.getItem('kitchen_movementOfArticle'));
-      if(this.movementOfArticle) {
-        this.productionStarted = true;
-        this.startProductionDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-      };
-    } catch(err) {}
-  }
+	public getMovementOfArticleReady(): void {
+		try {
+			this.movementsOfArticles = JSON.parse(sessionStorage.getItem('kitchen_movementsOfArticles'));
+			this.movementOfArticle = JSON.parse(localStorage.getItem('kitchen_movementOfArticle'));
+			if (this.movementOfArticle) {
+				this.productionStarted = true;
+				this.startProductionDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+			};
+		} catch (err) { }
+	}
 
-  public async startProduction() {
+	public async startProduction() {
 
-    this.productionStarted = true;
+		this.productionStarted = true;
 
-    this.searchOrderToPreparing();
-  }
+		this.searchOrderToPreparing();
+	}
 
-  public async searchOrderToPreparing() {
+	public async searchOrderToPreparing() {
 
-    await this.updateMovementOfArticleByWhere({
-      $or: [ { status: MovementOfArticleStatus.Pending }, { status: MovementOfArticleStatus.Preparing } ],
-      operationType: { $ne: 'D' }
-    }, {
-      status: MovementOfArticleStatus.LastOrder,
-      $inc: { printed: 1 }
-    },
-    {
-      creationDate: 1
-    }).then(
-      async movementOfArticle => {
-        if(movementOfArticle) {
-          if(movementOfArticle.printed === movementOfArticle.amount) {
-            this.movementOfArticle = movementOfArticle;
-            this.startProductionDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-            await this.getMovementOfArticleToPreparing().then(
-              movementOfArticle => {
-                if(movementOfArticle) {
-                  this.movementOfArticle = movementOfArticle;
-                  localStorage.setItem('kitchen_movementOfArticle', JSON.stringify(this.movementOfArticle));
-                }
-              }
-            );
-          } else if(movementOfArticle.printed < movementOfArticle.amount) {
-            this.movementOfArticle = movementOfArticle;
-            this.startProductionDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-            this.movementOfArticle.status = MovementOfArticleStatus.Preparing;
-            await this.updateMovementOfArticle().then(
-              async movementOfArticle => {
-                if(movementOfArticle) {
-                  this.movementOfArticle = movementOfArticle;
-                  await this.getMovementOfArticleToPreparing().then(
-                    movementOfArticle => {
-                      if(movementOfArticle) {
-                        this.movementOfArticle = movementOfArticle;
-                        localStorage.setItem('kitchen_movementOfArticle', JSON.stringify(this.movementOfArticle));
-                      }
-                    }
-                  );
-                }
-              }
-            );
-          } else {
-            this.movementOfArticle.status = MovementOfArticleStatus.Ready;
-            await this.updateMovementOfArticle().then(
-              movementOfArticle => {
-                if(movementOfArticle) {
-                  this.startProduction();
-                }
-              }
-            );
-          }
-        }
-      }
-    );
-  }
+		await this.updateMovementOfArticleByWhere({
+			$or: [{ status: MovementOfArticleStatus.Pending }, { status: MovementOfArticleStatus.Preparing }],
+			operationType: { $ne: 'D' }
+		}, {
+			status: MovementOfArticleStatus.LastOrder,
+			$inc: { printed: 1 }
+		},
+			{
+				creationDate: 1
+			}).then(
+				async movementOfArticle => {
+					if (movementOfArticle) {
+						if (movementOfArticle.printed === movementOfArticle.amount) {
+							this.movementOfArticle = movementOfArticle;
+							this.startProductionDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+							await this.getMovementOfArticleToPreparing().then(
+								async movementOfArticle => {
+									if (movementOfArticle) {
+										this.movementOfArticle = movementOfArticle;
+										localStorage.setItem('kitchen_movementOfArticle', JSON.stringify(this.movementOfArticle));
+										// PONEMOS LA TRANSACCION EN ESTADO EN PREPARACION
+										await this.getTransaction(this.movementOfArticle.transaction._id).then(
+											async transaction => {
+												if(transaction) {
+													transaction.state = TransactionState.Preparing;
+													await this.updateTransaction(transaction).then(
+														async transaction => {
+															if (transaction) {
+															}
+														}
+													);
+												}
+											}
+										);
+									}
+								}
+							);
+						} else if (movementOfArticle.printed < movementOfArticle.amount) {
+							this.movementOfArticle = movementOfArticle;
+							this.startProductionDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+							this.movementOfArticle.status = MovementOfArticleStatus.Preparing;
+							await this.updateMovementOfArticle().then(
+								async movementOfArticle => {
+									if (movementOfArticle) {
+										this.movementOfArticle = movementOfArticle;
+										await this.getMovementOfArticleToPreparing().then(
+											async movementOfArticle => {
+												if (movementOfArticle) {
+													this.movementOfArticle = movementOfArticle;
+													localStorage.setItem('kitchen_movementOfArticle', JSON.stringify(this.movementOfArticle));
+													// PONEMOS LA TRANSACCION EN ESTADO EN PREPARACION
+													await this.getTransaction(this.movementOfArticle.transaction._id).then(
+														async transaction => {
+															if(transaction) {
+																transaction.state = TransactionState.Preparing;
+																await this.updateTransaction(transaction).then(
+																	async transaction => {
+																		if (transaction) {
+																		}
+																	}
+																);
+															}
+														}
+													);
+												}
+											}
+										);
+									}
+								}
+							);
+						} else {
+							this.movementOfArticle.status = MovementOfArticleStatus.Ready;
+							await this.updateMovementOfArticle().then(
+								movementOfArticle => {
+									if (movementOfArticle) {
+										this.startProduction();
+									}
+								}
+							);
+						}
+					}
+				}
+			);
+	}
 
-  public async stopProduction() {
-    if(this.movementOfArticle) {
-      await this.changeStatusToPending().then(
-        movementOfArticle => {
-          if(movementOfArticle) {
-            this.movementOfArticle = null;
-            localStorage.removeItem('kitchen_movementOfArticle');
-          }
-        }
-      );
-    } else {
-      this.loading = false;
-    }
-    this.productionStarted = false;
-  }
+	public getTransaction(transactionId: string): Promise<Transaction> {
 
-  public finishOrder(): void {
-    
-    if(!this.movementsOfArticles) this.movementsOfArticles = new Array();
-    // AGREGAMOS AL PRINCIPIO DEL LISTADO DE PRODUCIDOS Y SOLO GUARDAMOS LOS 3 PRIMEROS
-    this.movementsOfArticles.unshift(this.movementOfArticle);
-    this.movementsOfArticles = this.movementsOfArticles.slice(0, 3);
-    sessionStorage.setItem('kitchen_movementsOfArticles', JSON.stringify(this.movementsOfArticles));
-    this.movementOfArticle = null;
-    localStorage.removeItem('kitchen_movementOfArticle');
-    this.startProduction();
-  }
+		return new Promise<Transaction>((resolve, reject) => {
 
-  public getMovementOfArticleToPreparing(): Promise<MovementOfArticle> {
+			this._transactionService.getTransaction(transactionId).subscribe(
+				async result => {
+					if (!result.transaction) {
+						this.showMessage(result.message, 'danger', false);
+						resolve(null);
+					} else {
+						resolve(result.transaction);
+					}
+				},
+				error => {
+					this.showMessage(error._body, 'danger', false);
+					resolve(null);
+				}
+			);
+		});
+	}
 
-    return new Promise<MovementOfArticle>((resolve, reject) => {
-      
-      this.loading = true;
+	public updateTransaction(transaction: Transaction): Promise<Transaction> {
 
-      let project = {
-        description: 1,
-        notes: 1,
-        status: 1,
-        amount: 1,
-        printed: 1,
-        'article._id': 1,
-        'article.picture': 1,
-        'transaction.endDate': 1,
-        'transaction.number': 1
-      };
+		return new Promise<Transaction>((resolve, reject) => {
 
-      let match = { _id: this.movementOfArticle._id };
-                  
-      this._movementOfArticleService.getMovementsOfArticlesV2(
-          project, // PROJECT
-          match, // MATCH
-          {}, // SORT
-          {}, // GROUP
-          1, // LIMIT
-          0 // SKIP
-      ).subscribe(
-        result => {
-          this.loading = false;
-          if(!result.movementsOfArticles) {
-            if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
-            resolve(null);
-          } else {
-            resolve(result.movementsOfArticles[0]);
-          }
-        },
-        error => {
-          this.loading = false;
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
+			this._transactionService.updateTransaction(transaction).subscribe(
+				result => {
+					if (!result.transaction) {
+						if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+						resolve(null);
+					} else {
+						resolve(result.transaction);
+					}
+				},
+				error => {
+					this.showMessage(error._body, 'danger', false);
+					resolve(null);
+				}
+			);
+		});
+	}
 
-  public getTime(date: string): string {
-    let time: string;
-    if(date && moment(date).isValid()) {
-      time = moment(date).fromNow();  
-    }
-    return time;
-  }
+	public async stopProduction() {
+		if (this.movementOfArticle) {
+			await this.changeStatusToPending().then(
+				movementOfArticle => {
+					if (movementOfArticle) {
+						this.movementOfArticle = null;
+						localStorage.removeItem('kitchen_movementOfArticle');
+					}
+				}
+			);
+		} else {
+			this.loading = false;
+		}
+		this.productionStarted = false;
+	}
 
-  public updateMovementOfArticleByWhere(where: {}, set: {}, sort: {}): Promise<MovementOfArticle> {
+	public finishOrder(): void {
 
-    return new Promise<MovementOfArticle>((resolve, reject) => {
-      
-      this.loading = true;
+		if (!this.movementsOfArticles) this.movementsOfArticles = new Array();
+		// AGREGAMOS AL PRINCIPIO DEL LISTADO DE PRODUCIDOS Y SOLO GUARDAMOS LOS 3 PRIMEROS
+		this.movementsOfArticles.unshift(this.movementOfArticle);
+		this.movementsOfArticles = this.movementsOfArticles.slice(0, 3);
+		sessionStorage.setItem('kitchen_movementsOfArticles', JSON.stringify(this.movementsOfArticles));
+		this.movementOfArticle = null;
+		localStorage.removeItem('kitchen_movementOfArticle');
+		this.startProduction();
+	}
 
-      this._movementOfArticleService.updateMovementOfArticleByWhere(where, set, sort).subscribe(
-        result => {
-          this.loading = false;
-          if (!result.movementOfArticle) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            resolve(null);
-          } else {
-            resolve(result.movementOfArticle);
-          }
-        },
-        error => {
-          this.loading = false;
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
+	public getMovementOfArticleToPreparing(): Promise<MovementOfArticle> {
 
-  public async viewArticle(movementOfArticle: MovementOfArticle) {
-    if(this.movementOfArticle) {
-      await this.changeStatusToPending().then(
-        movementOfArticle => {
-          if(movementOfArticle) {
-            this.movementOfArticle = null;
-            localStorage.removeItem('kitchen_movementOfArticle');
-          }
-        }
-      );
-    }
-    this.movementOfArticle = movementOfArticle;
-    this.startProductionDate = null;
-  }
+		return new Promise<MovementOfArticle>((resolve, reject) => {
 
-  public async changeStatusToPending() {
-    return new Promise(async (resolve, reject) => {
-      this.movementOfArticle.status = MovementOfArticleStatus.Pending;
-      await this.updateMovementOfArticleByWhere({
-        _id: this.movementOfArticle._id
-      }, {
-        status: MovementOfArticleStatus.Pending,
-        $inc: { printed: -1 }
-      },
-      {}).then(
-        async movementOfArticle => {
-          if(movementOfArticle) {
-            resolve(movementOfArticle);
-          }
-        }
-      );
-    });
-  }
+			this.loading = true;
 
-  public async changeStatusToReady() {
-    
-    return new Promise(async (resolve, reject) => {
+			let project = {
+				_id: 1,
+				description: 1,
+				notes: 1,
+				status: 1,
+				amount: 1,
+				printed: 1,
+				'article._id': 1,
+				'article.picture': 1,
+				'transaction._id': 1,
+				'transaction.endDate': 1,
+				'transaction.number': 1
+			};
 
-      if(!this.loading) {
+			let match = { _id: { $oid: this.movementOfArticle._id } };
 
-        if(this.movementOfArticle.status !== MovementOfArticleStatus.Ready) {
-          // PASAMOS A ÚLTIMA ORDEN PARA RESERVAR POSIBLE LA INFORMACIÓN Y OBTENER EL ÚLTIMO ESTADO
-          await this.updateMovementOfArticleByWhere({ _id: this.movementOfArticle._id }, { status: MovementOfArticleStatus.LastOrder }, {}).then(
-            async movementOfArticle => {
-              if(movementOfArticle) {
-                this.movementOfArticle = movementOfArticle;
-                // SI LA CANTIDAD PRODUCIDA ES IGUAL A LA CANTIDAD DE ARTICULOS PASA A ESTAR LISTO
-                if(this.movementOfArticle.printed >= this.movementOfArticle.amount) {
-                  this.movementOfArticle.status = MovementOfArticleStatus.Ready;
-                } else {
-                  this.movementOfArticle.status = MovementOfArticleStatus.Preparing;
-                }
-                this.updateMovementOfArticle().then(
-                  movementOfArticle => {
-                    if(movementOfArticle) {
-                      this.movementOfArticle = movementOfArticle;
-                      this.finishOrder();
-                    }
-                  }
-                );
-              }
-            }
-          );
-        } else {
-          this.movementOfArticle = null;
-          localStorage.removeItem('kitchen_movementOfArticle');
-          this.startProduction();
-          resolve(this.movementOfArticle);
-        }
-      } else {
-        resolve(null);
-      }
-    });
-  }
+			this._movementOfArticleService.getMovementsOfArticlesV2(
+				project, // PROJECT
+				match, // MATCH
+				{}, // SORT
+				{}, // GROUP
+				1, // LIMIT
+				0 // SKIP
+			).subscribe(
+				result => {
+					this.loading = false;
+					if (!result.movementsOfArticles) {
+						if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+						resolve(null);
+					} else {
+						resolve(result.movementsOfArticles[0]);
+					}
+				},
+				error => {
+					this.loading = false;
+					this.showMessage(error._body, 'danger', false);
+					resolve(null);
+				}
+			);
+		});
+	}
 
-  public updateMovementOfArticle(): Promise<MovementOfArticle> {
+	public getTime(date: string): string {
+		let time: string;
+		if (date && moment(date).isValid()) {
+			time = moment(date).fromNow();
+		}
+		return time;
+	}
 
-    return new Promise<MovementOfArticle>((resolve, reject) => {
-      
-      this.loading = true;
+	public updateMovementOfArticleByWhere(where: {}, set: {}, sort: {}): Promise<MovementOfArticle> {
 
-      this._movementOfArticleService.updateMovementOfArticle(this.movementOfArticle).subscribe(
-        result => {
-          this.loading = false;
-          if (!result.movementOfArticle) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            resolve(null);
-          } else {
-            resolve(result.movementOfArticle);
-          }
-        },
-        error => {
-          this.loading = false;
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
+		return new Promise<MovementOfArticle>((resolve, reject) => {
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
-    this.alertMessage = message;
-    this.alertConfig.type = type;
-    this.alertConfig.dismissible = dismissible;
-  }
+			this.loading = true;
 
-  public hideMessage():void {
-    this.alertMessage = '';
-  }
+			this._movementOfArticleService.updateMovementOfArticleByWhere(where, set, sort).subscribe(
+				result => {
+					this.loading = false;
+					if (!result.movementOfArticle) {
+						if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+						resolve(null);
+					} else {
+						resolve(result.movementOfArticle);
+					}
+				},
+				error => {
+					this.loading = false;
+					this.showMessage(error._body, 'danger', false);
+					resolve(null);
+				}
+			);
+		});
+	}
+
+	public async viewArticle(movementOfArticle: MovementOfArticle) {
+		if (this.movementOfArticle) {
+			await this.changeStatusToPending().then(
+				movementOfArticle => {
+					if (movementOfArticle) {
+						this.movementOfArticle = null;
+						localStorage.removeItem('kitchen_movementOfArticle');
+					}
+				}
+			);
+		}
+		this.movementOfArticle = movementOfArticle;
+		this.startProductionDate = null;
+	}
+
+	public async changeStatusToPending() {
+		return new Promise(async (resolve, reject) => {
+			this.movementOfArticle.status = MovementOfArticleStatus.Pending;
+			await this.updateMovementOfArticleByWhere({
+				_id: this.movementOfArticle._id
+			}, {
+				status: MovementOfArticleStatus.Pending,
+				$inc: { printed: -1 }
+			},
+				{}).then(
+					async movementOfArticle => {
+						if (movementOfArticle) {
+							resolve(movementOfArticle);
+						}
+					}
+				);
+		});
+	}
+
+	public async changeStatusToReady() {
+
+		return new Promise(async (resolve, reject) => {
+
+			if (!this.loading) {
+				console.log(this.movementOfArticle);
+				if (this.movementOfArticle.status !== MovementOfArticleStatus.Ready) {
+					// PASAMOS A ÚLTIMA ORDEN PARA RESERVAR POSIBLE LA INFORMACIÓN Y OBTENER EL ÚLTIMO ESTADO
+					await this.updateMovementOfArticleByWhere({ _id: this.movementOfArticle._id }, { status: MovementOfArticleStatus.LastOrder }, {}).then(
+						async movementOfArticle => {
+							if (movementOfArticle) {
+								console.log("updateMovementOfArticleByWhere");
+								this.movementOfArticle = movementOfArticle;
+								// SI LA CANTIDAD PRODUCIDA ES IGUAL A LA CANTIDAD DE ARTICULOS PASA A ESTAR LISTO
+								if (this.movementOfArticle.printed >= this.movementOfArticle.amount) {
+									this.movementOfArticle.status = MovementOfArticleStatus.Ready;
+								} else {
+									this.movementOfArticle.status = MovementOfArticleStatus.Preparing;
+								}
+								this.updateMovementOfArticle().then(
+									async movementOfArticle => {
+										if (movementOfArticle) {
+											console.log("updateMovementOfArticle",movementOfArticle);
+											this.movementOfArticle = movementOfArticle;
+											if(this.movementOfArticle.status === MovementOfArticleStatus.Ready) {
+												await this.getTransaction(this.movementOfArticle.transaction._id).then(
+													async transaction => {
+														console.log(transaction);
+														if(transaction) {
+															console.log("getTransaction");
+															transaction.state = TransactionState.Packing;
+															await this.updateTransaction(transaction).then(
+																async transaction => {
+																	if (transaction) {
+																		console.log("updateTransaction");
+																		this.finishOrder();
+																	}
+																}
+															);
+														}
+													}
+												);
+											} else {
+												this.finishOrder();
+											}
+										}
+									}
+								);
+							}
+						}
+					);
+				} else {
+					this.movementOfArticle = null;
+					localStorage.removeItem('kitchen_movementOfArticle');
+					this.startProduction();
+					resolve(this.movementOfArticle);
+				}
+			} else {
+				resolve(null);
+			}
+		});
+	}
+
+	public updateMovementOfArticle(): Promise<MovementOfArticle> {
+
+		return new Promise<MovementOfArticle>((resolve, reject) => {
+
+			this.loading = true;
+
+			this._movementOfArticleService.updateMovementOfArticle(this.movementOfArticle).subscribe(
+				result => {
+					this.loading = false;
+					if (!result.movementOfArticle) {
+						if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+						resolve(null);
+					} else {
+						resolve(result.movementOfArticle);
+					}
+				},
+				error => {
+					this.loading = false;
+					this.showMessage(error._body, 'danger', false);
+					resolve(null);
+				}
+			);
+		});
+	}
+
+	public showMessage(message: string, type: string, dismissible: boolean): void {
+		this.alertMessage = message;
+		this.alertConfig.type = type;
+		this.alertConfig.dismissible = dismissible;
+	}
+
+	public hideMessage(): void {
+		this.alertMessage = '';
+	}
 }

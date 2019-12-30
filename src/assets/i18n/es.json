@@ -3,6 +3,8 @@
     "allowSaleWithoutStock" : "¿Se vende sin stock disponible?",
     "allowSale" : "¿Habilitado para la venta?",
     "allowPurchase" : "¿Habilitado para la compra?",
+    "amountPaid" : "Monto",
+    "amount" : "Cantidad",
     "article": {
         "_id": "Identificador Artículo",
         "category": {
@@ -37,51 +39,87 @@
         "barcode": "Código de Barras",
         "operationType": "Auditoría"
     },
+    "bank" : {
+        "name" : "Banco"
+    },
+    "balance" : "Saldo",
     "barcode": "Código de Barras",
     "basePrice" : "Precio Base",
     "branch" : {
         "name" : "Sucursal"
     },
+    "branchDestination" : {
+        "name" : "Sucursal"
+    },
     "category": {
         "description": "Categoría"
     },
+    "cashBox": {
+        "number": "Número de caja"
+    },
     "code": "Código",
     "costPrice": "Precio de Costo",
+    "company" : {
+        "name" : "Empresa",
+        "employee":{
+            "name" : "Empleado de Empresa"
+        },
+        "group" : {
+            "description" : "Grupo de Empresa"
+        }
+    },
     "count": "Cantidad",
+    "currency" : {
+        "name" : "Moneda"
+    },
+    "creationDate" : "Fecha de Alta",
     "deposit" : {
         "_id": "Identificador Depósito",
         "name" : "Deposito"
     },
+    "diners" : "Comensales",
+    "discount" : "Descuento",
+    "discountAmount" : "Monto de Descuento",
+    "discountPercent" : "Porcentaje de Descuento",
     "description": "Descripción",
+    "deliveredBy" : "Entregado por",
+    "depositDestination" : {
+        "name" : "Depósito"
+    },
     "endDate": "Fecha",
+    "exempt" : "Exento",
+    "ecommerceEnabled" : "¿Habilitado para Ecommerce?",
+    "employeeClosing" : {
+        "name" : "Empleado"
+    },
+    "state" : "Estado",
+    "expirationDate" : "Vencimiento",
     "false": "No",
+    "favourite" : "Destacado",
+    "letter": "Letra",
     "make": {
         "description": "Marca"
     },
     "observation" : "Observación",
     "operationType": "Auditoría",
+    "origin" : "Punto de Venta",
+    "posKitchen" : "Aparece en POS Cocina",
     "posDescription": "Descripción Corta",
+    "printIn" : "Imprime en",
+    "picture" : "Imagen",
     "quantityPerMeasure": "Cant. de Un. de Medida",
+    "quota" : "Cuota",
+    "quantityForStock": "Movimiento de Stock",
     "salePrice": "Precio de Venta",
     "isWeigth" : "¿Pide medida?",
-    "printIn" : "Imprime en",
     "markupPrice" : "Utilidad",
     "markupPercentage" : "Margen",
-    "ecommerceEnabled" : "¿Habilitado para Ecommerce?",
-    "picture" : "Imagen",
-    "favourite" : "Destacado",
+    "madein" : "Canal",
+    "table" : {
+        "description" : "Mesa"
+    },
     "true": "Si",
     "total": "Total",
-    "unitOfMeasurement": {
-        "abbreviation": "Unidad de Medida",
-        "name": "Unidad de Medida"
-    },
-    "amount" : "Cantidad",
-    "currency" : {
-        "name" : "Moneda"
-    },
-    "creationDate" : "Fecha de Alta",
-    "posKitchen" : "Aparece en POS Cocina",
     "transaction" : {
         "_id": "Identificador Transacción",
         "cashBox" : {
@@ -95,19 +133,23 @@
             "transactionMovement": "Movimiento"
         }
     },
-    "amountPaid" : "Monto",
-    "discount" : "Descuento",
-    "number": "Número",
-    "bank" : {
-        "name" : "Banco"
+    "transport" : {
+        "name" : "Nombre de Transporte"
     },
-    "expirationDate" : "Vencimiento",
-    "quota" : "Cuota",
-    "quantityForStock": "Movimiento de Stock",
-    "deliveredBy" : "Entregado por",
-    "unitPrice" : "Precio Unitario",
     "type" : {
-        "name" : "Tipo"
+        "name" : "Tipo",
+        "transactionMovement" : "Movimiento",
+        "allowEdit" : "Permite Editar",
+        "allowDelete" : "Permite Eliminar",
+        "electronics" : "Es Electrónica"
     },
+    "totalPrice" : "Precio Total",
+    "unitOfMeasurement": {
+        "abbreviation": "Unidad de Medida",
+        "name": "Unidad de Medida"
+    },
+    "number": "Número",
+    "unitPrice" : "Precio Unitario",
+    
     "realStock" : "Stock"
 }

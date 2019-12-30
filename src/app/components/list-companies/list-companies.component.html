@@ -178,7 +178,7 @@
               <th (click)="orderBy('phones')">Teléfonos </th>
             </tr>
             <tr>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." [focus]="focusEvent"></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterFantasyName" placeholder="Nombre de Fantasía..." ></th>
                 <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Condición IVA..." ></th>
                 <th *ngIf="userCountry !== 'AR'"><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Régimen Fiscal..."></th>
