@@ -47,7 +47,6 @@ export class ListTransactionsComponent implements OnInit {
 	public printers: Printer[];
 
 
-	public orderTerm: string[] = ["description"];
 	public totalItems: number = 0;
 	public title: string = "Listado de Transacciones"
 	public items: any[] = new Array();
@@ -55,7 +54,7 @@ export class ListTransactionsComponent implements OnInit {
 	public loading: boolean = false;
 	public itemsPerPage = 10;
 	public currentPage: number = 1;
-	public sort = { "count": -1 };
+	public sort = { "endDate": -1 };
 	public filters: any[];
 	public scrollY: number = 0;
 	public timezone: string = "-03:00";
@@ -178,16 +177,6 @@ export class ListTransactionsComponent implements OnInit {
 	public getItems(): void {
 
 		this.loading = true;
-
-		/// ORDENAMOS LA CONSULTA
-		let sort = {};
-		let sortAux;
-		if (this.orderTerm[0].charAt(0) === '-') {
-			sortAux = `{ "${this.orderTerm[0].split('-')[1]}" : -1 }`;
-		} else {
-			sortAux = `{ "${this.orderTerm[0]}" : 1 }`;
-		}
-		sort = JSON.parse(sortAux);
 
 		// FILTRAMOS LA CONSULTA
 		let match = `{`;
