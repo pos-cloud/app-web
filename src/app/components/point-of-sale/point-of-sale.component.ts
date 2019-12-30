@@ -406,6 +406,7 @@ export class PointOfSaleComponent implements OnInit {
 				);
 
 				query['state'] = { $in: this.transactionStates };
+				query['operationType'] = { $ne: 'D' };
 				// query['madein'] = this.posType;
 
 				await this.getTransactionsV2(query).then(
@@ -451,6 +452,8 @@ export class PointOfSaleComponent implements OnInit {
 						}
 					}
 				);
+
+				query['operationType'] = { $ne: 'D' };
 
 				await this.getTransactionsV2(query).then(
 					transactions => {
@@ -1427,6 +1430,7 @@ export class PointOfSaleComponent implements OnInit {
 				balance: 1,
 				state: 1,
 				madein: 1,
+				operationType: 1,
 				"type._id": 1,
 				"type.name": 1,
 				"type.transactionMovement": 1,
