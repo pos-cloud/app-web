@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -41,6 +41,7 @@ export class ListCompaniesComponent implements OnInit {
 	public totalItems = 0;
 	public userCountry: string;
 	private subscription: Subscription = new Subscription();
+	public focusEvent = new EventEmitter<boolean>();
 
 	constructor(
 		public _companyService: CompanyService,
@@ -66,6 +67,10 @@ export class ListCompaniesComponent implements OnInit {
 			this.userType = pathLocation[1];
 		}
 		this.getCompaniesByType();
+	}
+
+	ngAfterViewInit() {
+		this.focusEvent.emit(true);
 	}
 
 	public getCompaniesByType(): void {
