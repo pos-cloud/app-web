@@ -207,7 +207,7 @@ export class ListTransactionsComponent implements OnInit {
 			}
 		}
 
-		match += `,"type.transactionMovement": "${this.transactionMovement}"`;
+		match += `"type.transactionMovement": "${this.transactionMovement}"`;
 		if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
 		match += `}`;

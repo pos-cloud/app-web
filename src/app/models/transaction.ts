@@ -343,6 +343,36 @@ export let attributes = [
 		project: null,
 		align: 'left',
 		required: true,
+	},
+	{
+		name: 'type.allowEdit',
+		visible: false,
+		disabled: true,
+		filter: false,
+		datatype: 'boolean',
+		project: null,
+		align: 'left',
+		required: true,
+	},
+	{
+		name: 'type.allowDelete',
+		visible: false,
+		disabled: true,
+		filter: false,
+		datatype: 'boolean',
+		project: null,
+		align: 'left',
+		required: true,
+	},
+	{
+		name: 'type.electronics',
+		visible: false,
+		disabled: true,
+		filter: false,
+		datatype: 'boolean',
+		project: null,
+		align: 'left',
+		required: true,
 	}
 ];
 
