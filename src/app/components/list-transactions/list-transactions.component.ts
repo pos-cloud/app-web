@@ -257,7 +257,7 @@ export class ListTransactionsComponent implements OnInit {
 		this.subscription.add(this._transactionService.getTransactionsV2(
 			project, // PROJECT
 			match, // MATCH
-			sort, // SORT
+			this.sort, // SORT
 			group, // GROUP
 			limit, // LIMIT
 			skip // SKIP
