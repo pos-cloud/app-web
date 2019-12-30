@@ -440,7 +440,7 @@ export class PointOfSaleComponent implements OnInit {
 				);
 
 				let query = {
-					state: { $nin: [TransactionState.Closed, TransactionState.Canceled] },
+					state: { $in: [TransactionState.Open, TransactionState.Pending] },
 					madein: this.posType,
 					"type.transactionMovement": this.transactionMovement,
 				};

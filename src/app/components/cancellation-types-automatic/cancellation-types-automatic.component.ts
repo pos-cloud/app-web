@@ -12,7 +12,7 @@ import { TransactionService } from 'app/services/transaction.service';
 import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
 import { MovementOfArticleService } from 'app/services/movement-of-article.service';
 import { MovementOfCashService } from 'app/services/movement-of-cash.service';
-import { MovementOfArticle } from 'app/models/movement-of-article';
+import { MovementOfArticle, MovementOfArticleStatus } from 'app/models/movement-of-article';
 import { MovementOfCash } from 'app/models/movement-of-cash';
 import { TransactionTypeService } from 'app/services/transaction-type.service';
 import { TransactionType, TransactionMovement } from 'app/models/transaction-type';
@@ -297,7 +297,8 @@ export class CancellationTypeAutomaticComponent implements OnInit {
       Object.assign(mov, movOfArt);
       delete mov._id;
       mov.transaction = transaction;
-      mov.quantityForStock = 0;
+	  mov.quantityForStock = 0;
+	  mov.status = MovementOfArticleStatus.Ready;
       if(transaction.type.stockMovement) {
         mov.stockMovement = transaction.type.stockMovement.toString();
       }

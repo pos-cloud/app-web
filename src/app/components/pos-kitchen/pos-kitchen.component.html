@@ -16,7 +16,19 @@
 			<div class="card">
 				<div class="card-body">
 					<div class="row">
-						<div class="col-md-8">
+						<div class="col-md-2">
+							<div class="card-title">
+								Notas
+							</div>
+							<div class="card-text notes" *ngIf="movementOfArticle && movementOfArticle.notes">
+								<div class="row" *ngFor="let note of movementOfArticle.notes.split('; ')">
+									<div class="col-md-12">
+										{{ note }}
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
 							<div *ngIf="movementOfArticle" class="card-title" style="font-size: 30px;">
 								{{movementOfArticle.description}}
 							</div>
@@ -34,9 +46,6 @@
 									<img *ngIf="movementOfArticle && movementOfArticle.article && (!movementOfArticle.article.picture || movementOfArticle.article.picture == 'default.jpg')" src="./../../../assets/img/default.jpg">
 									<img *ngIf="movementOfArticle && movementOfArticle.article.picture && movementOfArticle.article.picture !== 'default.jpg'" [src]="apiURL + 'get-image-article/'+movementOfArticle.article.picture+'/'+database">
 								</div>
-							</div>
-							<div class="card-text" *ngIf="movementOfArticle">
-								{{movementOfArticle.notes}}
 							</div>
 							<div class="row" *ngIf="movementOfArticle && movementOfArticle.transaction">
 								<div class="col-md-6">
