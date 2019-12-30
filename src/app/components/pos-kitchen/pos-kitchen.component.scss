@@ -5,9 +5,9 @@ app-pos-kitchen {
             font-size: 25px;
         }
         .card-text {
-            font-size: 20px;;
+			font-size: 20px;
         }
-        .col-md-8 {
+        .col-md-6 {
             img {
                 width: 50%;
                 cursor: pointer !important; 
@@ -25,7 +25,15 @@ app-pos-kitchen {
                 margin: auto;
             }
         }
-    }
+	}
+	
+	.notes {
+		.row {
+			background-color: #FA5858;
+			color: white;
+			margin: 5px;
+		}
+	}
 
     .btn-production {
         font-size: 20px !important;
