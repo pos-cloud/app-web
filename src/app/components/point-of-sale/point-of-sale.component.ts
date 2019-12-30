@@ -131,6 +131,15 @@ export class PointOfSaleComponent implements OnInit {
 			}
 		);
 		this.processParams();
+		this.initInterval();
+	}
+
+	public initInterval(): void {
+		setInterval(() => {
+			if(this.posType === 'delivery') {
+				this.refresh();
+			}
+		}, 5000);
 	}
 
 	private processParams(): void {
@@ -157,7 +166,7 @@ export class PointOfSaleComponent implements OnInit {
 				this.refresh();
 			}
 
-			if(!isLoadRefresh) {
+			if (!isLoadRefresh) {
 				this.refresh();
 			}
 		});
@@ -397,7 +406,7 @@ export class PointOfSaleComponent implements OnInit {
 				);
 
 				query['state'] = { $in: this.transactionStates };
-				query['madein'] = this.posType;
+				// query['madein'] = this.posType;
 
 				await this.getTransactionsV2(query).then(
 					transactions => {
@@ -837,7 +846,7 @@ export class PointOfSaleComponent implements OnInit {
 		}
 
 		if (this.transaction && this.transaction._id && this.transaction._id !== "") {
-			await this.updateTransaction().then(
+			await this.updateTransaction(this.transaction).then(
 				transaction => {
 					if (transaction) {
 						this.transaction = transaction;
@@ -912,7 +921,7 @@ export class PointOfSaleComponent implements OnInit {
 		}
 	}
 
-	public async chargeCompany(transaction: Transaction) {
+	public async changeCompany(transaction: Transaction) {
 		this.transaction = await this.getTransaction(transaction._id);
 		if (this.transaction) {
 			this.openModal('company');
@@ -1021,6 +1030,26 @@ export class PointOfSaleComponent implements OnInit {
 				if (this.transaction.type.readLayout) {
 					modalRef = this._modalService.open(PrintTransactionTypeComponent);
 					modalRef.componentInstance.transactionId = this.transaction._id;
+					modalRef.result.then(async (result) => {
+					}, async (reason) => {
+						if (this.transaction.state === TransactionState.Packing) {
+							// PONEMOS LA TRANSACCION EN ESTADO EN ENTREGADO
+							await this.getTransaction(this.transaction._id).then(
+								async transaction => {
+									if (transaction) {
+										transaction.state = TransactionState.Delivered;
+										await this.updateTransaction(transaction).then(
+											async transaction => {
+												if (transaction) {
+													this.refresh();
+												}
+											}
+										);
+									}
+								}
+							);
+						}
+					});
 				} else {
 					await this.getPrinters().then(
 						printers => {
@@ -1042,6 +1071,26 @@ export class PointOfSaleComponent implements OnInit {
 							}
 						}
 					}
+					modalRef.result.then(async (result) => {
+					}, async (reason) => {
+						if (this.transaction.state === TransactionState.Packing) {
+							// PONEMOS LA TRANSACCION EN ESTADO EN ENTREGADO
+							await this.getTransaction(this.transaction._id).then(
+								async transaction => {
+									if (transaction) {
+										transaction.state = TransactionState.Delivered;
+										await this.updateTransaction(transaction).then(
+											async transaction => {
+												if (transaction) {
+													this.refresh();
+												}
+											}
+										);
+									}
+								}
+							);
+						}
+					});
 				}
 				break;
 			case 'printers':
@@ -1056,14 +1105,14 @@ export class PointOfSaleComponent implements OnInit {
 							this.printerSelected = result;
 							this.openModal("print");
 						} else {
-							if (this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+							if (this.posType !== 'delivery' && this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
 								this.transactionTypeId = this.transaction.type._id;
 								this.transaction = undefined;
 							}
 							this.refresh();
 						}
 					}, (reason) => {
-						if (this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+						if (this.posType !== 'delivery' && this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
 							this.transactionTypeId = this.transaction.type._id;
 							this.transaction = undefined;
 						}
@@ -1172,7 +1221,7 @@ export class PointOfSaleComponent implements OnInit {
 							this.transaction.employeeClosing = result.employee;
 							if (this.posType === "delivery") {
 								this.transaction.state = TransactionState.Sent;
-								await this.updateTransaction().then(
+								await this.updateTransaction(this.transaction).then(
 									transaction => {
 										if (transaction) {
 											this.transaction = transaction;
@@ -1300,7 +1349,6 @@ export class PointOfSaleComponent implements OnInit {
 	}
 
 	async finishTransaction() {
-
 		await this.updateBalance().then(
 			async balance => {
 				if (balance !== null) {
@@ -1318,7 +1366,7 @@ export class PointOfSaleComponent implements OnInit {
 					}
 					this.transaction.expirationDate = this.transaction.endDate;
 					this.transaction.state = TransactionState.Closed;
-					await this.updateTransaction().then(
+					await this.updateTransaction(this.transaction).then(
 						transaction => {
 							if (transaction) {
 								this.transaction = transaction;
@@ -1331,7 +1379,7 @@ export class PointOfSaleComponent implements OnInit {
 										this.openModal("printers");
 									}
 								} else {
-									if (this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+									if (this.posType !== 'delivery' && this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
 										this.transactionTypeId = this.transaction.type._id;
 										this.transaction = undefined;
 									}
@@ -1490,11 +1538,11 @@ export class PointOfSaleComponent implements OnInit {
 		return numberOfPrinters;
 	}
 
-	public updateTransaction(): Promise<Transaction> {
+	public updateTransaction(transaction: Transaction): Promise<Transaction> {
 
 		return new Promise<Transaction>((resolve, reject) => {
 
-			this._transactionService.updateTransaction(this.transaction).subscribe(
+			this._transactionService.updateTransaction(transaction).subscribe(
 				result => {
 					if (!result.transaction) {
 						if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
@@ -1586,7 +1634,7 @@ export class PointOfSaleComponent implements OnInit {
 				this.transaction.VATPeriod = moment().format('YYYYMM');
 				this.transaction.expirationDate = this.transaction.endDate;
 
-				await this.updateTransaction().then(
+				await this.updateTransaction(this.transaction).then(
 					transaction => {
 						if (this.transaction) {
 							this.transaction = transaction;

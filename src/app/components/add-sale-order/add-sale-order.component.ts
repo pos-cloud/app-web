@@ -1810,8 +1810,8 @@ export class AddSaleOrderComponent {
 				break;
 			case 'print':
 				if (this.transaction.type.readLayout) {
-					modalRef = this._modalService.open(PrintTransactionTypeComponent)
-					modalRef.componentInstance.transactionId = this.transaction._id
+					modalRef = this._modalService.open(PrintTransactionTypeComponent);
+					modalRef.componentInstance.transactionId = this.transaction._id;
 					modalRef.result.then((result) => {
 					}, (reason) => {
 						this.backFinal();
