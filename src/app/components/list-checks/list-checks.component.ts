@@ -120,7 +120,7 @@ export class ListChecksComponent implements OnInit {
     if(this.userType === 'admin') {
       match += `"transaction.type.transactionMovement": "${this.transactionMovement}" }`;
     } else {
-      match += `"statusCheck": "${StatusCheck.Available}" }`;
+      match += `"statusCheck": "${StatusCheck.Available}","type.inputAndOuput" : true }`;
     }
     
     match = JSON.parse(match);
@@ -175,6 +175,7 @@ export class ListChecksComponent implements OnInit {
         "quota": 1,
         "type._id": { $toString: '$type._id'},
         "type.name": 1,
+        "type.inputAndOuput" : 1,
         "deliveredBy": 1,
         "CUIT": 1,
         "observation": 1,
