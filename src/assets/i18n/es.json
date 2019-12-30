@@ -63,6 +63,9 @@
         "name" : "Empresa",
         "employee":{
             "name" : "Empleado de Empresa"
+        },
+        "group" : {
+            "description" : "Grupo de Empresa"
         }
     },
     "count": "Cantidad",
@@ -112,7 +115,9 @@
     "markupPrice" : "Utilidad",
     "markupPercentage" : "Margen",
     "madein" : "Canal",
-    "table" : "Mesa",
+    "table" : {
+        "description" : "Mesa"
+    },
     "true": "Si",
     "total": "Total",
     "transaction" : {
@@ -133,7 +138,10 @@
     },
     "type" : {
         "name" : "Tipo",
-        "transactionMovement" : "Movimiento"
+        "transactionMovement" : "Movimiento",
+        "allowEdit" : "Permite Editar",
+        "allowDelete" : "Permite Eliminar",
+        "electronics" : "Es Electrónica"
     },
     "totalPrice" : "Precio Total",
     "unitOfMeasurement": {
