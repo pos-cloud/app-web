@@ -105,33 +105,6 @@ export class TransactionService {
 		);
 	}
 
-	public getTransactionsByMovement(
-		transactionMovement: TransactionMovement,
-		query?: string
-	): Observable<any> {
-
-		const URL = `${Config.apiURL}transactions-by-movement/${transactionMovement}`;
-
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
-
-		const params = new HttpParams()
-			.set('query', query);
-
-		return this._http.get(URL, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
-
 	public getTotalTransactionsBetweenDates(
 		query?: string
 	): Observable<any> {
