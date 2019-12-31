@@ -343,13 +343,11 @@ export class PosKitchenComponent {
 		return new Promise(async (resolve, reject) => {
 
 			if (!this.loading) {
-				console.log(this.movementOfArticle);
 				if (this.movementOfArticle.status !== MovementOfArticleStatus.Ready) {
 					// PASAMOS A ÚLTIMA ORDEN PARA RESERVAR POSIBLE LA INFORMACIÓN Y OBTENER EL ÚLTIMO ESTADO
 					await this.updateMovementOfArticleByWhere({ _id: this.movementOfArticle._id }, { status: MovementOfArticleStatus.LastOrder }, {}).then(
 						async movementOfArticle => {
 							if (movementOfArticle) {
-								console.log("updateMovementOfArticleByWhere");
 								this.movementOfArticle = movementOfArticle;
 								// SI LA CANTIDAD PRODUCIDA ES IGUAL A LA CANTIDAD DE ARTICULOS PASA A ESTAR LISTO
 								if (this.movementOfArticle.printed >= this.movementOfArticle.amount) {
@@ -360,19 +358,15 @@ export class PosKitchenComponent {
 								this.updateMovementOfArticle().then(
 									async movementOfArticle => {
 										if (movementOfArticle) {
-											console.log("updateMovementOfArticle",movementOfArticle);
 											this.movementOfArticle = movementOfArticle;
 											if(this.movementOfArticle.status === MovementOfArticleStatus.Ready) {
 												await this.getTransaction(this.movementOfArticle.transaction._id).then(
 													async transaction => {
-														console.log(transaction);
 														if(transaction) {
-															console.log("getTransaction");
 															transaction.state = TransactionState.Packing;
 															await this.updateTransaction(transaction).then(
 																async transaction => {
 																	if (transaction) {
-																		console.log("updateTransaction");
 																		this.finishOrder();
 																	}
 																}

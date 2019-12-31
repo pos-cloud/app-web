@@ -1,135 +1,137 @@
 app-add-sale-order {
-      .container-message {
-        background-color: white;
-      }
+  .container-message {
+    background-color: white;
+  }
 
-      .totals {
-            font-size: 15px;
-      }
-      
+  .totals {
+    font-size: 15px;
+  }
+
+  .table-container {
+    .articles-container {
+      height: 44vh;
+      margin: 0px;
+      padding: 0px;
+      font-size: 15px;
+    }
+    .row {
+      margin: 0px;
+      padding: 0px;
+    }
+  }
+
+  .header-transaction,
+  .header-mx {
+    padding: 15px;
+    background: #292b2c;
+    color: white;
+    margin: 0px;
+    z-index: 99;
+    min-width: 100%;
+    top: 0px;
+  }
+
+  .container-transaction {
+    margin-right: 0px;
+    background-color: white;
+  }
+
+  .container-fluid {
+    background-color: white;
+    margin-top: 0px !important;
+    padding: 0px !important;
+  }
+
+  table {
+    table-layout: fixed;
+    width: 33.33333%;
+  }
+
+  th,
+  td {
+    word-wrap: break-word !important;
+    white-space: normal;
+  }
+
+  .breadcrumb {
+    cursor: pointer;
+  }
+
+  .negro {
+    border: 1px solid black;
+  }
+
+  .ticket {
+    height: 400px;
+  }
+
+  .btn-large {
+    height: 70px;
+    font-size: 20px;
+    font-weight: 400;
+  }
+
+  .color-default {
+    background: #ffffff;
+    border: 1px solid #292b2c;
+  }
+
+  .color-default:hover {
+    background: #e6e6e6;
+  }
+
+  .color-red {
+    background: #d9534f;
+  }
+
+  .color-red:hover {
+    background: #c9302c;
+  }
+
+  .list-group-item {
+    width: 400px;
+  }
+
+  .filterArticle {
+    margin-bottom: 10px;
+    margin-right: 10px;
+  }
+
+  .number-amount {
+    height: 20px;
+    position: absolute;
+    right: 0px;
+  }
+
+  thead {
+    max-width: 100%;
+    background-color: white;
+    width: 100%;
+  }
+
+  .table thead th {
+    font-weight: 600;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 767px) {
+    .btn-large {
+      height: 50px;
+      font-size: 15px;
+      font-weight: 400;
+    }
+
+    .container-transaction {
       .table-container {
-            .articles-container {
-                  height:44vh;
-                  margin: 0px;
-                  padding: 0px;
-                  font-size: 15px;
-            }
-            .row {
-                  margin: 0px;
-                  padding: 0px;
-            }
+        padding-right: 0px;
       }
-      
-      .header-transaction, .header-mx {
-            padding: 15px;
-            background: #292B2C;
-            color: white;
-            margin: 0px;
-            z-index: 99;
-            min-width: 100%;
-            top: 0px;
+      .col-md-7,
+      .col-md-11 {
+        padding-right: 0px !important;
+        .filterArticle {
+          margin-right: 0px;
+        }
       }
-      
-      .container-transaction {
-        margin-right: 0px;
-        background-color: white;
-      }
-
-      .container-fluid {
-            background-color: white;
-            margin-top: 0px !important;
-            padding: 0px !important;
-      }
-
-      table{
-            table-layout: fixed;
-            width: 33.33333%;
-      }
-        
-      th, td {
-            word-wrap: break-word !important;
-            white-space: normal;
-      }
-      
-      .breadcrumb {
-            cursor: pointer;
-      }
-      
-      .negro {
-            border: 1px solid black;
-      }
-      
-      .ticket {
-            height: 400px;
-      }
-      
-      .btn-large {
-            height: 70px;
-            font-size: 20px;
-            font-weight: 400;
-      }
-      
-      .color-default {
-            background: #ffffff;
-            border: 1px solid #292b2c;
-      }
-      
-      .color-default:hover {
-            background: #e6e6e6;
-      }
-      
-      .color-red {
-            background: #d9534f;
-      }
-      
-      .color-red:hover {
-            background: #c9302c;
-      }
-      
-      .list-group-item {
-            width: 400px;
-      }
-      
-      .filterArticle {
-            margin-bottom: 10px;
-            margin-right: 10px;
-      }
-      
-      .number-amount {
-            height: 20px;
-            position: absolute;
-            right: 0px;
-      }
-
-      thead {
-            max-width: 100%;
-            background-color: white;
-            width: 100%;
-      }
-      
-      .table thead th {
-            font-weight: 600;
-      }
-
-            
-      /* RESPONSIVE */
-      @media (max-width: 767px) {
-            .btn-large {
-                  height: 50px;
-                  font-size: 15px;
-                  font-weight: 400;
-            }
-
-            .container-transaction {
-                  .table-container {
-                        padding-right: 0px;
-                  }
-                  .col-md-7, .col-md-11 {
-                        padding-right: 0px !important;
-                        .filterArticle {
-                              margin-right: 0px;
-                        }
-                  }
-            }
-      }
+    }
+  }
 }

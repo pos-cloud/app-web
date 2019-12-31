@@ -232,6 +232,8 @@ export class AddSaleOrderComponent {
 
 	public async initComponent() {
 
+		this.loading = true;
+
 		if (this.transactionId) {
 			await this.getTransaction().then(
 				async transaction => {
@@ -279,6 +281,8 @@ export class AddSaleOrderComponent {
 				}
 			);
 		}
+
+		this.loading = false;
 	}
 
 	ngAfterViewInit() {
@@ -358,8 +362,11 @@ export class AddSaleOrderComponent {
 
 		return new Promise<UseOfCFDI[]>((resolve, reject) => {
 
+			this.loading = true;
+
 			this._useOfCFDIService.getUsesOfCFDI().subscribe(
 				result => {
+					this.loading = false;
 					if (!result.usesOfCFDI) {
 						resolve(null);
 					} else {
@@ -367,6 +374,7 @@ export class AddSaleOrderComponent {
 					}
 				},
 				error => {
+					this.loading = false;
 					this.showMessage(error._body, 'danger', false);
 					resolve(null);
 				}
@@ -406,10 +414,12 @@ export class AddSaleOrderComponent {
 
 		return new Promise<RelationType[]>((resolve, reject) => {
 
+			this.loading = true;
 			let query = 'sort="description":1';
 
 			this._relationTypeService.getRelationTypes(query).subscribe(
 				result => {
+					this.loading = false;
 					if (!result.relationTypes) {
 						resolve(null);
 					} else {
@@ -417,6 +427,7 @@ export class AddSaleOrderComponent {
 					}
 				},
 				error => {
+					this.loading = false;
 					this.showMessage(error._body, 'danger', false);
 					resolve(null);
 				}
@@ -428,8 +439,11 @@ export class AddSaleOrderComponent {
 
 		return new Promise<Transaction>((resolve, reject) => {
 
+			this.loading = true;
+
 			this._transactionService.getTransaction(this.transactionId).subscribe(
 				async result => {
+					this.loading = false;
 					if (!result.transaction) {
 						this.showMessage(result.message, 'danger', false);
 						resolve(null);
@@ -438,6 +452,7 @@ export class AddSaleOrderComponent {
 					}
 				},
 				error => {
+					this.loading = false;
 					this.showMessage(error._body, 'danger', false);
 					resolve(null);
 				}
@@ -449,12 +464,15 @@ export class AddSaleOrderComponent {
 
 		return new Promise<Transaction>((resolve, reject) => {
 
+			this.loading = true;
+
 			this.transaction.exempt = this.roundNumber.transform(this.transaction.exempt);
 			this.transaction.discountAmount = this.roundNumber.transform(this.transaction.discountAmount);
 			this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
 
 			this._transactionService.updateTransaction(this.transaction).subscribe(
 				result => {
+					this.loading = false;
 					if (!result.transaction) {
 						if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
 						resolve(null);
@@ -463,6 +481,7 @@ export class AddSaleOrderComponent {
 					}
 				},
 				error => {
+					this.loading = false;
 					this.showMessage(error._body, 'danger', false);
 					resolve(null);
 				}
@@ -483,8 +502,11 @@ export class AddSaleOrderComponent {
 
 		return new Promise<MovementOfCancellation[]>((resolve, reject) => {
 
+			this.loading = true;
+
 			this._movementOfCancellationService.saveMovementsOfCancellations(movementsOfCancellations).subscribe(
 				async result => {
+					this.loading = false;
 					if (!result.movementsOfCancellations) {
 						if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
 						resolve(null);
@@ -493,6 +515,7 @@ export class AddSaleOrderComponent {
 					}
 				},
 				error => {
+					this.loading = false;
 					this.showMessage(error._body, 'danger', false);
 					resolve(null);
 				}
@@ -504,8 +527,11 @@ export class AddSaleOrderComponent {
 
 		return new Promise((resolve, reject) => {
 
+			this.loading = true;
+
 			this._movementOfCancellationService.deleteMovementsOfCancellations(query).subscribe(
 				async result => {
+					this.loading = false;
 					if (!result.movementsOfCancellations) {
 						if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
 						resolve(null);
@@ -514,6 +540,7 @@ export class AddSaleOrderComponent {
 					}
 				},
 				error => {
+					this.loading = false;
 					this.showMessage(error._body, 'danger', false);
 					resolve(null);
 				}
@@ -551,8 +578,11 @@ export class AddSaleOrderComponent {
 
 		return new Promise<Table>((resolve, reject) => {
 
+			this.loading = true;
+
 			this._tableService.updateTable(this.transaction.table).subscribe(
 				result => {
+					this.loading = false;
 					if (!result.table) {
 						if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
 						resolve(null);
@@ -561,6 +591,7 @@ export class AddSaleOrderComponent {
 					}
 				},
 				error => {
+					this.loading = false;
 					this.showMessage(error._body, 'danger', false);
 					reject(null);
 				}
@@ -733,12 +764,15 @@ export class AddSaleOrderComponent {
 
 		return new Promise<MovementOfArticle>((resolve, reject) => {
 
+			this.loading = true;
+
 			movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice);
 			movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice);
 			movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice);
 
 			this._movementOfArticleService.saveMovementOfArticle(movementOfArticle).subscribe(
 				result => {
+					this.loading = false;
 					if (!result.movementOfArticle) {
 						if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
 						resolve(null);
@@ -749,6 +783,7 @@ export class AddSaleOrderComponent {
 					}
 				},
 				error => {
+					this.loading = false;
 					this.showMessage(error._body, 'danger', false);
 					resolve(null);
 				}
@@ -758,6 +793,7 @@ export class AddSaleOrderComponent {
 
 	async isValidMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<boolean> {
 
+		this.loading = true;
 		let isValid = true;
 
 		if (this.transaction.type &&
@@ -798,12 +834,15 @@ export class AddSaleOrderComponent {
 				}
 			);
 		}
+		this.loading = false;
 		return isValid;
 	}
 
 	public getArticleStock(movementOfArticle: MovementOfArticle): Promise<ArticleStock> {
 
 		return new Promise<ArticleStock>((resolve, reject) => {
+
+			this.loading = true;
 
 			let depositID;
 			let query;
@@ -828,6 +867,7 @@ export class AddSaleOrderComponent {
 
 			this._articleStockService.getArticleStocks(query).subscribe(
 				result => {
+					this.loading = false;
 					if (!result.articleStocks || result.articleStocks.length <= 0) {
 						resolve(null);
 					} else {
@@ -835,6 +875,7 @@ export class AddSaleOrderComponent {
 					}
 				},
 				error => {
+					this.loading = false;
 					this.showMessage(error._body, 'danger', false);
 					resolve(null);
 				}
@@ -920,6 +961,8 @@ export class AddSaleOrderComponent {
 	public recalculateSalePrice(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
 
 		return new Promise<MovementOfArticle>(async (resolve, reject) => {
+
+			this.loading = true;
 
 			let quotation = 1;
 
@@ -1088,6 +1131,7 @@ export class AddSaleOrderComponent {
 				}
 				movementOfArticle.taxes = taxes;
 			}
+			this.loading = false;
 			resolve(movementOfArticle);
 		});
 	}
@@ -1110,6 +1154,8 @@ export class AddSaleOrderComponent {
 	public updateMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
 
 		return new Promise<MovementOfArticle>(async (resolve, reject) => {
+			
+			this.loading = true;
 
 			movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice);
 			movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice);
@@ -1117,6 +1163,7 @@ export class AddSaleOrderComponent {
 
 			this._movementOfArticleService.updateMovementOfArticle(movementOfArticle).subscribe(
 				result => {
+					this.loading = false;
 					if (!result.movementOfArticle) {
 						if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
 						resolve(null);
@@ -1126,6 +1173,7 @@ export class AddSaleOrderComponent {
 					}
 				},
 				error => {
+					this.loading = false;
 					this.showMessage(error._body, 'danger', false);
 					resolve(null);
 				}
@@ -1139,6 +1187,8 @@ export class AddSaleOrderComponent {
 	}
 
 	async updatePrices(discountPercent?: number) {
+
+		this.loading = true;
 
 		let totalPriceAux = 0;
 		let discountAmountAux = 0;
@@ -1182,18 +1232,21 @@ export class AddSaleOrderComponent {
 			this.transaction.totalPrice = totalPriceAux;
 			this.transaction.discountAmount = discountAmountAux;
 			if (this.transaction.type.requestTaxes) {
+				this.loading = false;
 				await this.updateTaxes();
 			} else {
 				this.transaction.exempt = this.transaction.totalPrice;
 				await this.updateTransaction().then(
 					async transaction => {
 						if (transaction) {
+							this.loading = false;
 							this.transaction = transaction;
 							this.lastQuotation = this.transaction.quotation;
 							if (this.isCancellationAutomatic) {
 								this.openModal('charge');
 							}
 						} else {
+							this.loading = false;
 							this.hideMessage();
 							this.getMovementsOfTransaction();
 						}
@@ -1201,11 +1254,14 @@ export class AddSaleOrderComponent {
 				);
 			}
 		} else {
+			this.loading = false;
 			this.getMovementsOfTransaction(); // EN CASO DE QUE DE ERROR DE ACTUALIZAR ALGÚN PRODUCTO.
 		}
 	}
 
 	async updateTaxes() {
+
+		this.loading = true;
 
 		let oldTaxes: Taxes[] = this.transaction.taxes;
 		let totalPriceAux = 0;
@@ -1277,12 +1333,14 @@ export class AddSaleOrderComponent {
 		await this.updateTransaction().then(
 			async transaction => {
 				if (transaction) {
+					this.loading = false;
 					this.transaction = transaction;
 					this.lastQuotation = this.transaction.quotation;
 					if (this.isCancellationAutomatic) {
 						this.openModal('charge');
 					}
 				} else {
+					this.loading = false;
 					this.hideMessage();
 					this.getMovementsOfTransaction();
 				}
@@ -1293,6 +1351,7 @@ export class AddSaleOrderComponent {
 	public validateElectronicTransactionAR(): void {
 
 		this.showMessage("Validando comprobante con AFIP...", 'info', false);
+		this.loading = true;
 
 		this._transactionService.validateElectronicTransactionAR(this.transaction).subscribe(
 			result => {
@@ -1935,6 +1994,8 @@ export class AddSaleOrderComponent {
 	async updateArticleCostPrice(article: Article, basePrice: number): Promise<boolean> {
 
 		return new Promise<boolean>(async (resolve, reject) => {
+			
+			this.loading = true;
 
 			if (basePrice && article) {
 				let taxedAmount = 0;
@@ -1977,17 +2038,20 @@ export class AddSaleOrderComponent {
 
 				this._articleService.updateArticle(article, null).subscribe(
 					result => {
+						this.loading = false;
 						if (result && result.article) {
 							resolve(true);
 						}
 					},
 					error => {
+						this.loading = false;
 						this.showMessage(error._body, 'danger', false);
 						resolve(null);
 					}
 				)
 			} else {
-				resolve(false)
+				this.loading = false;
+				resolve(false);
 			}
 		});
 	}
@@ -2066,9 +2130,12 @@ export class AddSaleOrderComponent {
 	public getPrinters(): Promise<Printer[]> {
 
 		return new Promise<Printer[]>(async (resolve, reject) => {
+			
+			this.loading = true;
 
 			this._printerService.getPrinters().subscribe(
 				result => {
+					this.loading = false;
 					if (!result.printers) {
 						if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
 						resolve(null);
@@ -2077,6 +2144,7 @@ export class AddSaleOrderComponent {
 					}
 				},
 				error => {
+					this.loading = false;
 					this.showMessage(error._body, 'danger', false);
 					resolve(null);
 				}
@@ -2088,6 +2156,8 @@ export class AddSaleOrderComponent {
 
 		return new Promise<boolean>(async (resolve, reject) => {
 
+			this.loading = true;
+
 			let areValid: boolean = true;
 
 			for (let movementOfArticle of this.movementsOfArticles) {
@@ -2097,11 +2167,14 @@ export class AddSaleOrderComponent {
 				}
 			}
 
+			this.loading = false;
 			resolve(areValid);
 		});
 	}
 
 	async finish() {
+
+		this.loading = true;
 
 		let isValid: boolean = true;
 
@@ -2180,6 +2253,7 @@ export class AddSaleOrderComponent {
 				}
 			});
 		}
+		this.loading = false;
 	}
 
 	public async changeArticlesStatusToPending(): Promise<boolean> {
@@ -2226,8 +2300,12 @@ export class AddSaleOrderComponent {
 	public updateBalance(): Promise<number> {
 
 		return new Promise<number>((resolve, reject) => {
+			
+			this.loading = true;
+
 			this._transactionService.updateBalance(this.transaction).subscribe(
 				async result => {
+					this.loading = false;
 					if (!result.transaction) {
 						if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
 						resolve(null);
@@ -2236,6 +2314,7 @@ export class AddSaleOrderComponent {
 					}
 				},
 				error => {
+					this.loading = false;
 					this.showMessage(error._body, 'danger', false);
 					reject(null);
 				}
@@ -2270,6 +2349,8 @@ export class AddSaleOrderComponent {
 	public updateRealStock(movementOfArticle: MovementOfArticle): Promise<boolean> {
 
 		return new Promise<boolean>(async (resolve, reject) => {
+
+			this.loading = true;
 
 			if (!movementOfArticle.deposit) {
 				if (this.transaction.type.stockMovement !== StockMovement.Transfer) {
@@ -2455,8 +2536,8 @@ export class AddSaleOrderComponent {
 
 		this._taxService.getTaxes('where="name":"IVA"').subscribe(
 			async result => {
+				this.loading = false;
 				if (!result.taxes) {
-					this.loading = false;
 					this.showMessage("Debe configurar el impuesto IVA para el realizar el recargo de la tarjeta", 'info', true);
 				} else {
 					this.hideMessage();
@@ -2474,8 +2555,8 @@ export class AddSaleOrderComponent {
 				}
 			},
 			error => {
-				this.showMessage(error._body, 'danger', false);
 				this.loading = false;
+				this.showMessage(error._body, 'danger', false);
 			}
 		);
 	}
@@ -2487,6 +2568,7 @@ export class AddSaleOrderComponent {
 		this.barArticlesToPrint[this.barArticlesPrinted].printed = this.barArticlesToPrint[this.barArticlesPrinted].amount;
 		this._movementOfArticleService.updateMovementOfArticle(this.barArticlesToPrint[this.barArticlesPrinted]).subscribe(
 			async result => {
+				this.loading = false;
 				if (!result.movementOfArticle) {
 					if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
 				} else {
@@ -2547,11 +2629,10 @@ export class AddSaleOrderComponent {
 						}
 					}
 				}
-				this.loading = false;
 			},
 			error => {
-				this.showMessage(error._body, 'danger', false);
 				this.loading = false;
+				this.showMessage(error._body, 'danger', false);
 			}
 		);
 	}
@@ -2821,6 +2902,8 @@ export class AddSaleOrderComponent {
 
 	public assignTransactionNumber() {
 
+		this.loading = true;
+
 		let query = `where= "type":"${this.transaction.type._id}",
                     "origin":${this.transaction.origin},
                     "letter":"${this.transaction.letter}",
@@ -2830,6 +2913,7 @@ export class AddSaleOrderComponent {
 
 		this._transactionService.getTransactions(query).subscribe(
 			result => {
+				this.loading = false;
 				if (!result.transactions) {
 					this.transaction.number = 1;
 				} else {
@@ -2838,8 +2922,8 @@ export class AddSaleOrderComponent {
 				this.finish();
 			},
 			error => {
-				this.showMessage(error._body, 'danger', false);
 				this.loading = false;
+				this.showMessage(error._body, 'danger', false);
 			}
 		);
 	}
