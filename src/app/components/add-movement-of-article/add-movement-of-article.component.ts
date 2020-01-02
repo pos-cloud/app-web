@@ -1504,7 +1504,7 @@ export class AddMovementOfArticleComponent implements OnInit {
           let impInt: number = 0;
           for (let taxAux of movementOfArticle.article.taxes) {
             if (taxAux.percentage === 0) {
-              impInt = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount);
+              impInt = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount, 4);
             }
           }
           for (let taxAux of movementOfArticle.taxes) {
@@ -1515,9 +1515,9 @@ export class AddMovementOfArticleComponent implements OnInit {
               tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice - impInt) / ((tax.percentage / 100) + 1));
             }
             if (tax.percentage === 0) {
-              tax.taxAmount = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount);
+              tax.taxAmount = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount, 4);
             } else {
-              tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100));
+              tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100), 4);
             }
             taxes.push(tax);
           }

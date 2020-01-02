@@ -1,6 +1,6 @@
 //Paquetes Angular
 import { Component, ElementRef, ViewChild, EventEmitter, ViewEncapsulation } from '@angular/core';
-import { Router, ActivatedRoute, ChildrenOutletContexts } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 //Paquetes de terceros
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -74,6 +74,7 @@ import { ArticleService } from 'app/services/article.service';
 import { ToastrService } from 'ngx-toastr';
 import { User } from 'app/models/user';
 import { CancellationTypeAutomaticComponent } from '../cancellation-types-automatic/cancellation-types-automatic.component';
+import { resolve } from 'url';
 import { StructureService } from 'app/services/structure.service';
 
 @Component({
@@ -169,7 +170,7 @@ export class AddSaleOrderComponent {
 		private _priceListService: PriceListService,
 		private _toastr: ToastrService,
 		private _configService: ConfigService,
-		private _structureService : StructureService
+		private _structureService: StructureService
 	) {
 		this.initVariables();
 		this.processParams();
@@ -686,10 +687,8 @@ export class AddSaleOrderComponent {
 						movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
 					}
 					movementOfArticle.printed = 0;
-
-
 					if (child && child.length === 0) {
-						if(await this.isValidMovementOfArticle(movementOfArticle)){
+						if (await this.isValidMovementOfArticle(movementOfArticle)) {
 							await this.saveMovementOfArticle(movementOfArticle).then(
 								movementOfArticle => {
 									if (movementOfArticle) {
@@ -701,9 +700,8 @@ export class AddSaleOrderComponent {
 					} else {
 
 						var movsArticle: MovementOfArticle[] = new Array();
-							
+
 						for (const movArticle of child) {
-						
 							if (await this.isValidMovementOfArticle(movArticle)) {
 								movsArticle.push(movArticle)
 							}
@@ -717,7 +715,7 @@ export class AddSaleOrderComponent {
 											movArticle.movementParent = movementOfArticle._id
 											movsArticle.push(movArticle)
 										}
-										await this.saveMovementsOfArticle(movsArticle).then(
+										await this.saveMovementsOfArticles(movsArticle).then(
 											result => {
 												if (result) {
 													this.getMovementsOfTransaction();
@@ -727,7 +725,6 @@ export class AddSaleOrderComponent {
 								});
 						}
 					}
-
 				} else {
 					if (this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*') {
 						movementOfArticle.amount = itemData.amount;
@@ -775,66 +772,59 @@ export class AddSaleOrderComponent {
 		}
 	}
 
-	public getStructure(idArticle : string) {
+	private getStructure(articleId: string): Promise<boolean> {
 
-		return new Promise<Boolean>((resolve, reject) =>{
-		  this.loading = true;
-	
-		  /// ORDENAMOS LA CONSULTA
-		  let sortAux = {}
-	
-		  // FILTRAMOS LA CONSULTA
-	
-		  let match = `{
+		return new Promise<boolean>((resolve, reject) => {
+			this.loading = true;
+
+			let match = `{
 			"operationType": { "$ne": "D" }, 
-			"parent._id": { "$oid" : "${idArticle}"},
+			"parent._id": { "$oid" : "${articleId}"},
 			"optional" : true
 		  }`;
-	
-		  match = JSON.parse(match);
-	
-		  // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-		  let project = {
-			"_id" : 1,
-			"parent._id" : 1,
-			"parent.description" : 1,
-			"child._id" : 1,
-			"child.description" : 1,
-			"optional" :1 ,
-			operationType : 1
-		  }
-	
-		  // AGRUPAMOS EL RESULTADO
-		  let group = {
-			  _id: null,
-			  count: { $sum: 1 },
-			  structures: { $push: "$$ROOT" }
-		  };
-	
-		  this._structureService.getStructures(
-			  project, // PROJECT
-			  match, // MATCH
-			  sortAux, // SORT
-			  group, // GROUP
-			  0, // LIMIT
-			  0 // SKIP
-		  ).subscribe(
-			result => {
-			  this.loading = false;
-			  if (result && result[0] && result[0].structures) {
-				resolve(true)
-			  } else {
-				resolve(false)
-			  }
-			},
-			error => {
-			  this.showMessage(error._body, 'danger', false);
-			  this.loading = false;
+
+			match = JSON.parse(match);
+
+			let project = {
+				"_id": 1,
+				"parent._id": 1,
+				"parent.description": 1,
+				"child._id": 1,
+				"child.description": 1,
+				"optional": 1,
+				operationType: 1
 			}
-		  );
+
+			let group = {
+				_id: null,
+				count: { $sum: 1 },
+				structures: { $push: "$$ROOT" }
+			};
+
+			this._structureService.getStructures(
+				project, // PROJECT
+				match, // MATCH
+				{}, // SORT
+				group, // GROUP
+				0, // LIMIT
+				0 // SKIP
+			).subscribe(
+				result => {
+					this.loading = false;
+					if (result && result[0] && result[0].structures) {
+						resolve(true);
+					} else {
+						resolve(false);
+					}
+				},
+				error => {
+					this.showMessage(error._body, 'danger', false);
+					this.loading = false;
+					resolve(false);
+				}
+			);
 		})
-		
-	  }
+	}
 
 	public getMovementsOfArticles(query?: string): Promise<MovementOfArticle[]> {
 
@@ -883,7 +873,7 @@ export class AddSaleOrderComponent {
 					}
 				},
 				error => {
-
+					this.loading = false;
 					this.showMessage(error._body, 'danger', false);
 					resolve(null);
 				}
@@ -891,33 +881,37 @@ export class AddSaleOrderComponent {
 		});
 	}
 
-	public saveMovementsOfArticle(movementOfArticle: MovementOfArticle[]): Promise<boolean> {
+	private saveMovementsOfArticles(movementsOfArticles: MovementOfArticle[]): Promise<MovementOfArticle[]> {
 
-		return new Promise<boolean>((resolve, reject) => {
+		return new Promise<MovementOfArticle[]>((resolve, reject) => {
 
-			var movsArticle: MovementOfArticle[] = new Array();
+			this.loading = true;
 
-			for (const movArticle of movementOfArticle) {
+			var movsArticles: MovementOfArticle[] = new Array();
+
+			for (const movArticle of movementsOfArticles) {
 
 				movArticle.basePrice = 0
 				movArticle.costPrice = 0
 				movArticle.salePrice = 0
 				movArticle.status = MovementOfArticleStatus.Ready;
 
-				movsArticle.push(movArticle)
+				movsArticles.push(movArticle)
 			}
 
-			this._movementOfArticleService.saveMovementsOfArticles(movsArticle).subscribe(
+			this._movementOfArticleService.saveMovementsOfArticles(movsArticles).subscribe(
 				result => {
+					this.loading = false;
 					if (!result.movementsOfArticles) {
 						if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
 						resolve(null);
 					} else {
 						this.hideMessage();
-						resolve(true);
+						resolve(result.movementsOfArticles);
 					}
 				},
 				error => {
+					this.loading = false;
 					this.showMessage(error._body, 'danger', false);
 					resolve(null);
 				}
@@ -927,53 +921,56 @@ export class AddSaleOrderComponent {
 
 	async isValidMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<boolean> {
 
-		return new Promise<boolean>((resolve, reject) => {
+		return new Promise<boolean>(async (resolve, reject) => {
+
+			this.loading = true;
+
+			let isValid = true;
 
 			if (this.transaction.type &&
 				this.transaction.type.transactionMovement === TransactionMovement.Sale &&
 				movementOfArticle.article &&
 				!movementOfArticle.article.allowSale) {
+				isValid = false;
 				this.showMessage("El producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + ") no esta habilitado para la venta", 'info', true);
-				resolve(false)
-			} else if (this.transaction.type &&
+			}
+
+			if (this.transaction.type &&
 				this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
 				movementOfArticle.article &&
 				!movementOfArticle.article.allowPurchase) {
+				isValid = false;
 				this.showMessage("El producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + ") no esta habilitado para la compra", 'info', true);
-				resolve(false)
-			} else if (movementOfArticle.article &&
+			}
+
+			if (movementOfArticle.article &&
 				this.config['modules'].stock &&
 				this.transaction.type &&
 				this.transaction.type.modifyStock &&
 				(this.transaction.type.stockMovement === StockMovement.Outflows || this.transaction.type.stockMovement === StockMovement.Transfer) &&
 				!movementOfArticle.article.allowSaleWithoutStock) {
-					
-					
-				this.getArticleStock(movementOfArticle).then(
+				await this.getArticleStock(movementOfArticle).then(
 					articleStock => {
 						if (!articleStock || (movementOfArticle.amount + movementOfArticle.quantityForStock) > articleStock.realStock) {
 							if (this.transaction.type.stockMovement === StockMovement.Transfer && movementOfArticle.deposit && movementOfArticle.deposit._id.toString() === this.transaction.depositDestination._id.toString()) {
 							} else {
+								isValid = false;
 								let realStock = 0;
 								if (articleStock) {
 									realStock = articleStock.realStock;
 								}
 								this.showMessage("No tiene el stock suficiente del producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + "). Stock Actual: " + realStock, 'info', true);
-								resolve(false)
 							}
-						} else {
-							resolve(true)
 						}
 					}
 				);
-			} else {
-				resolve(true)
 			}
-
+			this.loading = false;
+			resolve(isValid);
 		});
 	}
 
-	async getArticleStock(movementOfArticle: MovementOfArticle): Promise<ArticleStock> {
+	public getArticleStock(movementOfArticle: MovementOfArticle): Promise<ArticleStock> {
 
 		return new Promise<ArticleStock>((resolve, reject) => {
 
@@ -1236,7 +1233,7 @@ export class AddSaleOrderComponent {
 					let impInt: number = 0;
 					for (let taxAux of movementOfArticle.article.taxes) {
 						if (taxAux.percentage === 0) {
-							impInt = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount);
+							impInt = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount, 4);
 						}
 					}
 					for (let taxAux of movementOfArticle.taxes) {
@@ -1249,11 +1246,11 @@ export class AddSaleOrderComponent {
 						if (taxAux.percentage === 0) {
 							for (let artTax of movementOfArticle.article.taxes) {
 								if (artTax.tax._id === tax.tax._id) {
-									tax.taxAmount = this.roundNumber.transform((artTax.taxAmount * movementOfArticle.amount), 3);
+									tax.taxAmount = this.roundNumber.transform((artTax.taxAmount * movementOfArticle.amount), 4);
 								}
 							}
 						} else {
-							tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100), 3);
+							tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100), 4);
 						}
 						taxes.push(tax);
 					}
@@ -1348,7 +1345,6 @@ export class AddSaleOrderComponent {
 						break;
 					}
 				}
-
 			}
 		} else {
 			isUpdateValid = true;
@@ -1413,7 +1409,7 @@ export class AddSaleOrderComponent {
 						transactionTax.percentage = this.roundNumber.transform(taxesAux.percentage);
 						transactionTax.tax = taxesAux.tax;
 						transactionTax.taxBase = this.roundNumber.transform(taxesAux.taxBase);
-						transactionTax.taxAmount = taxesAux.taxAmount;
+						transactionTax.taxAmount = this.roundNumber.transform(taxesAux.taxAmount, 4);
 						transactionTaxesAUX.push(transactionTax);
 						this.transaction.basePrice += this.roundNumber.transform(transactionTax.taxBase);
 						taxBaseTotal += this.roundNumber.transform(transactionTax.taxBase);
@@ -1425,7 +1421,6 @@ export class AddSaleOrderComponent {
 				} else {
 					this.transaction.exempt += this.roundNumber.transform(movementOfArticle.salePrice);
 				}
-
 				totalPriceAux += this.roundNumber.transform(movementOfArticle.salePrice);
 			}
 		}
@@ -1435,7 +1430,7 @@ export class AddSaleOrderComponent {
 				let exists: boolean = false;
 				for (let transactionTax of transactionTaxes) {
 					if (transactionTaxAux.tax._id.toString() === transactionTax.tax._id.toString()) {
-						transactionTax.taxAmount += transactionTaxAux.taxAmount;
+						transactionTax.taxAmount += this.roundNumber.transform(transactionTaxAux.taxAmount, 4);
 						transactionTax.taxBase += transactionTaxAux.taxBase;
 						exists = true;
 					}
@@ -1496,7 +1491,7 @@ export class AddSaleOrderComponent {
 		this._transactionService.validateElectronicTransactionAR(this.transaction).subscribe(
 			result => {
 				let msn = '';
-				if (result) {
+				if (result && result.status != 0) {
 					if (result.status === 'err') {
 						if (result.code && result.code !== '') {
 							msn += result.code + " - ";
@@ -2984,8 +2979,6 @@ export class AddSaleOrderComponent {
 			}
 		);
 
-
-
 	}
 
 	public getUser(): Promise<User> {
@@ -3008,11 +3001,7 @@ export class AddSaleOrderComponent {
 					}
 				)
 			}
-
 		});
-
-
-
 	}
 
 	public assignLetter() {

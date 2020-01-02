@@ -512,7 +512,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         let impInt: number = 0;
         for (let taxAux of movementOfArticle.article.taxes) {
           if(taxAux.percentage === 0) {
-            impInt = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount);
+            impInt = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount, 4);
           }
         }
         for (let taxAux of movementOfArticle.article.taxes) {
@@ -524,7 +524,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
             tax.taxBase = 0;
           } else {
             tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice - impInt) / ((tax.percentage / 100) + 1));
-            tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+            tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100), 4);
           }
           taxes.push(tax);
         }

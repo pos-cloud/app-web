@@ -72,6 +72,7 @@ import { ListMovementsOfArticlesComponent } from './components/list-movements-of
 import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.component';
 import { ListChecksComponent } from './components/list-checks/list-checks.component';
 import { PosClientViewComponent } from './components/pos-client-view/pos-client-view.component';
+import { PosPackingComponent } from './components/pos-packing/pos-packing.component';
 
 export const _routes: Routes = [
   { 
@@ -612,7 +613,13 @@ export const _routes: Routes = [
     path: 'pos/retiro-de-pedidos', 
     component: PosClientViewComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale.delivery' }
+    data: { module: 'config.modules.sale' }
+  },
+  { 
+    path: 'pos/armado-de-pedidos', 
+    component: PosPackingComponent,
+    canActivate: [AuthGuard, LicenseGuard],
+    data: { module: 'config.modules.sale' }
   },
   {
     path: 'pos/delivery/editar-transaccion',

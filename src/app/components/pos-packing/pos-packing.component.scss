@@ -1,0 +1,22 @@
+app-pos-packing {
+  .card {
+    min-height: 200px !important;
+    .card-title {
+      background-color: #fe2e2e;
+      color: white;
+      font-size: 20px;
+      font-weight: 900px;
+      padding-left: 20px;
+    }
+  }
+  .card-big {
+    min-height: 94vh !important;
+  }
+
+  .card-transaction {
+    width: 30%;
+    margin: 20px;
+	float: left;
+	padding: 10px;
+  }
+}
