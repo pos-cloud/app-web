@@ -887,6 +887,7 @@ export class AddSaleOrderComponent {
 					}
 				},
 				error => {
+
 					this.showMessage(error._body, 'danger', false);
 					resolve(null);
 				}
