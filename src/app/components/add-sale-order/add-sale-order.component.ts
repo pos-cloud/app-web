@@ -190,7 +190,7 @@ export class AddSaleOrderComponent {
 	private processParams(): void {
 		this._route.queryParams.subscribe(params => {
 			this.transactionId = params['transactionId'];
-			if(!this.transactionId) {
+			if (!this.transactionId) {
 				this.backFinal();
 			}
 		});
@@ -1027,9 +1027,6 @@ export class AddSaleOrderComponent {
 							if (rule.category && movementOfArticle.category && rule.make == null && rule.category._id === movementOfArticle.category._id) {
 								increasePrice = this.roundNumber.transform(rule.percentage + this.priceList.percentage);
 							}
-							/*if(rule.make !== movementOfArticle.make && rule.category !== movementOfArticle.category) {
-							  increasePrice = this.roundNumber.transform(this.priceList.percentage);
-							}*/
 						}
 					});
 					if (increasePrice === 0) {
@@ -1068,9 +1065,6 @@ export class AddSaleOrderComponent {
 							if (rule.category && movementOfArticle.category && rule.make == null && rule.category._id === movementOfArticle.category._id) {
 								increasePrice = this.roundNumber.transform(rule.percentage + this.newPriceList.percentage);
 							}
-							/* if(rule.make !== movementOfArticle.make && rule.category !== movementOfArticle.category) {
-							   increasePrice = this.roundNumber.transform(this.newPriceList.percentage);
-							 }*/
 						}
 					});
 					if (increasePrice === 0) {
@@ -1101,7 +1095,7 @@ export class AddSaleOrderComponent {
 			movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
 			movementOfArticle.markupPercentage = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.costPrice * 100), 3);
 
-			if (movementOfArticle.transaction.type.requestTaxes) {
+			if (this.transaction.type.requestTaxes) {
 				let taxes: Taxes[] = new Array();
 				if (movementOfArticle.taxes) {
 					let impInt: number = 0;
@@ -1120,11 +1114,11 @@ export class AddSaleOrderComponent {
 						if (taxAux.percentage === 0) {
 							for (let artTax of movementOfArticle.article.taxes) {
 								if (artTax.tax._id === tax.tax._id) {
-									tax.taxAmount = this.roundNumber.transform(artTax.taxAmount * movementOfArticle.amount);
+									tax.taxAmount = this.roundNumber.transform((artTax.taxAmount * movementOfArticle.amount), 3);
 								}
 							}
 						} else {
-							tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+							tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100), 3);
 						}
 						taxes.push(tax);
 					}
@@ -1154,7 +1148,7 @@ export class AddSaleOrderComponent {
 	public updateMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
 
 		return new Promise<MovementOfArticle>(async (resolve, reject) => {
-			
+
 			this.loading = true;
 
 			movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice);
@@ -1270,7 +1264,6 @@ export class AddSaleOrderComponent {
 		let transactionTaxesAUX: Taxes[] = new Array();
 
 		this.transaction.exempt = 0;
-		this.totalTaxesAmount = 0;
 		this.transaction.basePrice = 0;
 		if (this.movementsOfArticles) {
 			for (let movementOfArticle of this.movementsOfArticles) {
@@ -1282,7 +1275,7 @@ export class AddSaleOrderComponent {
 						transactionTax.percentage = this.roundNumber.transform(taxesAux.percentage);
 						transactionTax.tax = taxesAux.tax;
 						transactionTax.taxBase = this.roundNumber.transform(taxesAux.taxBase);
-						transactionTax.taxAmount = this.roundNumber.transform(taxesAux.taxAmount);
+						transactionTax.taxAmount = taxesAux.taxAmount;
 						transactionTaxesAUX.push(transactionTax);
 						this.transaction.basePrice += this.roundNumber.transform(transactionTax.taxBase);
 						taxBaseTotal += this.roundNumber.transform(transactionTax.taxBase);
@@ -1303,16 +1296,24 @@ export class AddSaleOrderComponent {
 				let exists: boolean = false;
 				for (let transactionTax of transactionTaxes) {
 					if (transactionTaxAux.tax._id.toString() === transactionTax.tax._id.toString()) {
-						transactionTax.taxAmount += this.roundNumber.transform(transactionTaxAux.taxAmount);
-						transactionTax.taxBase += this.roundNumber.transform(transactionTaxAux.taxBase);
+						transactionTax.taxAmount += transactionTaxAux.taxAmount;
+						transactionTax.taxBase += transactionTaxAux.taxBase;
 						exists = true;
 					}
 				}
-				this.totalTaxesAmount += this.roundNumber.transform(transactionTaxAux.taxAmount);
 				if (!exists) {
 					transactionTaxes.push(transactionTaxAux);
 				}
 			}
+		}
+
+		this.totalTaxesAmount = 0;
+
+		// REDONDEAMOS IMPUESTO
+		for (let taxes of transactionTaxes) {
+			taxes.taxBase = this.roundNumber.transform(taxes.taxBase);
+			taxes.taxAmount = this.roundNumber.transform(taxes.taxAmount);
+			this.totalTaxesAmount += taxes.taxAmount;
 		}
 
 		this.transaction.taxes = transactionTaxes;
@@ -1327,7 +1328,7 @@ export class AddSaleOrderComponent {
 				}
 			}
 		}
-
+		this.totalTaxesAmount = this.roundNumber.transform(this.totalTaxesAmount);
 		this.transaction.totalPrice = this.roundNumber.transform(totalPriceAux);
 
 		await this.updateTransaction().then(
@@ -1994,7 +1995,7 @@ export class AddSaleOrderComponent {
 	async updateArticleCostPrice(article: Article, basePrice: number): Promise<boolean> {
 
 		return new Promise<boolean>(async (resolve, reject) => {
-			
+
 			this.loading = true;
 
 			if (basePrice && article) {
@@ -2130,7 +2131,7 @@ export class AddSaleOrderComponent {
 	public getPrinters(): Promise<Printer[]> {
 
 		return new Promise<Printer[]>(async (resolve, reject) => {
-			
+
 			this.loading = true;
 
 			this._printerService.getPrinters().subscribe(
@@ -2300,7 +2301,7 @@ export class AddSaleOrderComponent {
 	public updateBalance(): Promise<number> {
 
 		return new Promise<number>((resolve, reject) => {
-			
+
 			this.loading = true;
 
 			this._transactionService.updateBalance(this.transaction).subscribe(
@@ -2487,16 +2488,16 @@ export class AddSaleOrderComponent {
 	public backFinal(): void {
 
 		this._route.queryParams.subscribe(params => {
-			if(params['returnURL']) {
-				if(params['automaticCreation']) {
-					if(this.transaction.state === TransactionState.Closed) {
+			if (params['returnURL']) {
+				if (params['automaticCreation']) {
+					if (this.transaction.state === TransactionState.Closed) {
 						let route = params['returnURL'].split('?')[0];
 						let paramsFromRoute = params['returnURL'].split('?')[1];
-						if(paramsFromRoute && paramsFromRoute !== '') {
+						if (paramsFromRoute && paramsFromRoute !== '') {
 							paramsFromRoute = this.removeParam(paramsFromRoute, 'automaticCreation');
-							route += '?'+paramsFromRoute+'&automaticCreation='+params['automaticCreation'];
+							route += '?' + paramsFromRoute + '&automaticCreation=' + params['automaticCreation'];
 						} else {
-							route += '?' + 'automaticCreation='+params['automaticCreation'];
+							route += '?' + 'automaticCreation=' + params['automaticCreation'];
 						}
 						this._router.navigateByUrl(route);
 					} else {
@@ -2506,7 +2507,7 @@ export class AddSaleOrderComponent {
 					this._router.navigateByUrl(params['returnURL']);
 				}
 			}
-		});		
+		});
 	}
 
 	private removeParam(sourceURL: string, key: string) {
