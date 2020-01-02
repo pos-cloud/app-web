@@ -9,6 +9,7 @@ import { Branch } from '../../models/branch';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
+import { ConfigService } from 'app/services/config.service';
 
 @Component({
   selector: 'app-branch',
@@ -34,6 +35,9 @@ export class BranchComponent implements OnInit {
   public userCountry: string;
   public orientation: string = 'horizontal';
   public branches: Branch[];
+  public filesToUpload;
+  public imageURL;
+  public config : Config;
 
   public formErrors = {
     'number': '',
@@ -57,14 +61,22 @@ export class BranchComponent implements OnInit {
     public _router: Router,
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
+    public _configService : ConfigService
   ) {
     this.getBranches();
     if(window.screen.width < 1000) this.orientation = 'vertical';
     this.branch = new Branch();
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.userCountry = Config.country;
+
+    await this._configService.getConfig.subscribe(
+      config => {
+        this.config = config;
+      }
+    );
+
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];;
     this.buildForm();
@@ -89,6 +101,11 @@ export class BranchComponent implements OnInit {
         } else {
           this.hideMessage();
           this.branch = result.branch;
+          if (this.branch.image && this.branch.image !== 'default.jpg') {
+            this.imageURL = Config.apiURL + 'get-image-branch/'+ this.branch.image +"/"+ Config.database;
+          } else {
+            this.imageURL = './../../../assets/img/default.jpg';
+          }
           this.setValueForm();
         }
         this.loading = false;
@@ -106,12 +123,14 @@ export class BranchComponent implements OnInit {
     if (!this.branch.number) { this.branch.number = 0; }
     if (!this.branch.name) { this.branch.name = ''; }
     if (!this.branch.default) { this.branch.default = false };
+    if (!this.branch.image) { this.branch.image = ''; }
 
     const values = {
       '_id': this.branch._id,
       'number': this.branch.number,
       'name': this.branch.name,
-      'default' : this.branch.default
+      'default' : this.branch.default,
+      'image' : this.branch.image
     };
     this.branchForm.setValue(values);
   }
@@ -130,6 +149,9 @@ export class BranchComponent implements OnInit {
       ],
       'default': [this.branch.default, [
         Validators.required
+        ]
+      ],
+      'image': [this.branch.image, [
         ]
       ]
     });
@@ -186,8 +208,27 @@ export class BranchComponent implements OnInit {
             this.loading = false;
             if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
           } else {
-            this.loading = false;
-            this.showMessage('La sucursal se ha actualizado con éxito.', 'success', false);
+            if (this.filesToUpload) {
+              this._branchService.makeFileRequest(result.branch, this.filesToUpload)
+                .then(
+                  (result) => {
+                    this.branch.image = result["filename"];
+                    this.showMessage('La sucursal se ha añadido con éxito.', 'success', false);
+                    this.loading = false;
+                    this.branch = new Branch();
+                    this.buildForm();
+                  },
+                  (error) => {
+                    this.showMessage(error, 'danger', false);
+                    this.loading = false;
+                  }
+                );
+            } else {
+              this.showMessage('La sucursal se ha añadido con éxito.', 'success', false);
+              this.loading = false;
+              this.branch = new Branch();
+              this.buildForm();
+            }
           }
         },
         error => {
@@ -206,17 +247,35 @@ export class BranchComponent implements OnInit {
 
     this.branch = this.branchForm.value;
 
-    if(this.isValid()){
+    if(true){
       this._branchService.saveBranch(this.branch).subscribe(
         result => {
           if (!result.branch) {
             this.loading = false;
             if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
           } else {
-              this.loading = false;
-              this.showMessage('La sucursal se ha añadido con éxito.', 'success', false);
-              this.branch = new Branch();
-              this.buildForm();
+            
+              if (this.filesToUpload) {
+                this._branchService.makeFileRequest(result.branch, this.filesToUpload)
+                  .then(
+                    (result) => {
+                      this.branch.image = result["filename"];
+                      this.showMessage('La sucursal se ha añadido con éxito.', 'success', false);
+                      this.loading = false;
+                      this.branch = new Branch();
+                      this.buildForm();
+                    },
+                    (error) => {
+                      this.showMessage(error, 'danger', false);
+                      this.loading = false;
+                    }
+                  );
+              } else {
+                this.showMessage('La sucursal se ha añadido con éxito.', 'success', false);
+                this.loading = false;
+                this.branch = new Branch();
+                this.buildForm();
+              }
           }
         },
         error => {
@@ -306,6 +365,32 @@ export class BranchComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public deletePicture(): void {
+
+    this.loading = true;
+
+    this._branchService.deletePicture(this.branch._id).subscribe(
+      result => {
+        if (!result.branch) {
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+        } else {
+          this.branch = result.branch[0];
+          this.showMessage("Los cambios fueron guardados con éxito.", "success", false);
+          this.getBranch();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    )
+  }
+
+  public fileChangeEvent(fileInput: any) {
+    this.filesToUpload = <Array<File>> fileInput.target.files;
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
