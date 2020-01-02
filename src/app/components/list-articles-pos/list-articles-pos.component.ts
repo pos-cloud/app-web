@@ -1,4 +1,3 @@
-
 import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -29,7 +28,8 @@ import { PriceList } from 'app/models/price-list';
 import { PriceListService } from 'app/services/price-list.service';
 import { CompanyType } from 'app/models/company';
 import { TransactionService } from 'app/services/transaction.service';
-
+import { Structure } from 'app/models/structure';
+import { StructureService } from 'app/services/structure.service';
 
 @Component({
   selector: 'app-list-articles-pos',
@@ -38,6 +38,7 @@ import { TransactionService } from 'app/services/transaction.service';
   providers: [NgbAlertConfig, RoundNumberPipe],
   encapsulation: ViewEncapsulation.None,
 })
+
 export class ListArticlesPosComponent implements OnInit {
 
   public identity: User;
@@ -48,7 +49,7 @@ export class ListArticlesPosComponent implements OnInit {
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
-  @Output() eventAddItem: EventEmitter<MovementOfArticle> = new EventEmitter<MovementOfArticle>();
+  @Output() eventAddItem = new EventEmitter<{parent : MovementOfArticle, child :MovementOfArticle[]}>();
   @Input() areArticlesVisible: boolean = false;
   @Input() filterArticle: string = '';
   @Input() transactionId: string;
@@ -74,7 +75,8 @@ export class ListArticlesPosComponent implements OnInit {
     private _configService: ConfigService,
     private _claimService: ClaimService,
     private _priceListService : PriceListService,
-    private _transactionService: TransactionService
+    private _transactionService: TransactionService,
+    public _structureService : StructureService
   ) {
     this.articles = new Array();
     this.filteredArticles = new Array();
@@ -260,6 +262,8 @@ export class ListArticlesPosComponent implements OnInit {
   async addItem(articleSelected: Article, amount?: number, salePrice?: number) {
     
     let err: boolean = false;
+
+    return new Promise<MovementOfArticle>(async(resolve, reject) => {
 
     await this.getArticle(articleSelected._id).then(
       async article => {
@@ -470,11 +474,85 @@ export class ListArticlesPosComponent implements OnInit {
           }
           this.areArticlesVisible = true;
           if(!err) {
-            this.eventAddItem.emit(movementOfArticle);
+            resolve(movementOfArticle)
           }
         }
       }
     );
+
+    })
+  }
+
+  async getStructureForStock(articleSelected: Article, amount?: number, salePrice?: number) {
+
+      this.loading = true;
+
+      /// ORDENAMOS LA CONSULTA
+      let sortAux = {}
+
+      // FILTRAMOS LA CONSULTA
+
+      let match = `{
+        "operationType": { "$ne": "D" }, 
+        "parent._id": { "$oid" : "${articleSelected._id}"},
+        "optional" : false
+      }`;
+
+      match = JSON.parse(match);
+
+      // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+      let project = {
+        "_id" : 1,
+        "parent._id" : 1,
+        "child._id" : 1,
+        "optional" :1 ,
+        "quantity" : 1,
+        operationType : 1
+      }
+
+      // AGRUPAMOS EL RESULTADO
+      let group = {
+          _id: null,
+          count: { $sum: 1 },
+          structures: { $push: "$$ROOT" }
+      };
+
+      this._structureService.getStructures(
+          project, // PROJECT
+          match, // MATCH
+          sortAux, // SORT
+          group, // GROUP
+          0, // LIMIT
+          0 // SKIP
+      ).subscribe(
+        async result => {
+          this.loading = false;
+
+          var parent : MovementOfArticle;
+          var child : MovementOfArticle[] = new Array();
+          if (result && result[0] && result[0].structures) {
+            var structures : Structure[] = result[0].structures
+            if(structures.length > 0 ){
+              parent = await this.addItem(articleSelected,amount,salePrice)
+              for (const iterator of structures) {
+                child.push(await this.addItem(iterator.child,iterator.quantity))
+              }
+            } else {
+              parent = await this.addItem(articleSelected,amount,salePrice)
+            }
+            
+            this.eventAddItem.emit({parent,child});
+          } else {
+            parent = await this.addItem(articleSelected,amount,salePrice)
+            this.eventAddItem.emit({parent,child});
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
+        }
+      );
+    
   }
 
   public getTaxes(query?: string): Promise<Tax[]> {
@@ -519,7 +597,7 @@ export class ListArticlesPosComponent implements OnInit {
     });
   }
 
-  public filterItem(article?: Article, category?: Category) {
+  async filterItem(article?: Article, category?: Category) {
 
     let isCodePrefix: boolean = false;
 
@@ -546,7 +624,7 @@ export class ListArticlesPosComponent implements OnInit {
       if(this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*') {
         amount = parseFloat(this.filterArticle.slice(1, this.filterArticle.length));
       }
-      this.addItem(article, amount);
+      await this.getStructureForStock(article, amount);
     } else if(category) {
       this.filteredArticles = this.filterPipe.transform(this.articles, category._id, 'category');
       this.filteredArticles = this.filterPipe.transform(this.filteredArticles, Type.Final.toString(), 'type');
@@ -558,7 +636,7 @@ export class ListArticlesPosComponent implements OnInit {
       this.filteredArticles = this.filterPipe.transform(this.articles, this.filterArticle);
 
       if (this.filteredArticles && this.filteredArticles.length > 0 && this.articles && this.articles.length >= 2) {
-
+        
         this.hideMessage();
 
         var count = 1;
@@ -580,7 +658,6 @@ export class ListArticlesPosComponent implements OnInit {
             }
           }
         }
-
         if (  count === 1 &&
               this.filterArticle &&
             ( article &&
@@ -607,9 +684,9 @@ export class ListArticlesPosComponent implements OnInit {
                     amount = parseInt(originalFilter.slice(this.config.tradeBalance.codePrefix.toString().length, 
                                                             this.config.tradeBalance.codePrefix.toString().length + this.config.tradeBalance.numberOfQuantity));
                   }
-                  this.addItem(article, amount, salePrice);
+                  await this.getStructureForStock(article, amount, salePrice);
                 } else {
-                  this.addItem(article);
+                  await this.getStructureForStock(article);
                 }
         } else {
           this.filteredArticles = this.filterPipe.transform(this.filteredArticles, Type.Final.toString(), 'type');
@@ -621,6 +698,7 @@ export class ListArticlesPosComponent implements OnInit {
       }
     }
   }
+
 
   public padNumber(n, length) {
     var n = n.toString();

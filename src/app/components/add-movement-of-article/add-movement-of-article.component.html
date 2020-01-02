@@ -125,8 +125,20 @@
           </span>
         </div>
       </div>
-      <div *ngIf="errVariant" class="row alert alert-danger">
-        {{ errVariant }}
+      <div class="row" *ngIf="grouped && grouped.length > 0">
+        <div class="form-group col-md-12">
+          <label for="variants" class="control-label"><b>Seleccione las Opciones:</b></label>
+          <div *ngFor="let group of grouped">
+            <label for="variants" class="control-label"><b>{{group.name}}</b></label>
+                <button type="button"
+                        class="btn btn-variant"
+                        *ngFor="let child of group.names"
+                        [style.background-color]="child.color"
+                        (click)="changeOptional(child.name,group.name)">
+                        {{ child.name }}
+                </button>
+          </div>
+        </div>
       </div>
       <div class="row">
         <div class="col-md-12">

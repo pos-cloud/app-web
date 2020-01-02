@@ -24,11 +24,19 @@
             </th>
             <th (click)="orderBy('parent.description')">Padre</th>
             <th (click)="orderBy('child.description')">Hijo</th>
+            <th (click)="orderBy('quantity')">Cantidad</th>
+            <th (click)="orderBy('optional')">Opcional</th>
+            <th (click)="orderBy('increasePrice')">Aumenta Precio</th>
+
           </tr>
           <tr class="filters">
             <th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['parent.description']" (input)="getStructures()" placeholder="Número..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['parent.description']" (input)="getStructures()" placeholder="Nombre..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['child.description']" (input)="getStructures()" placeholder="Nombre..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['quantity']" (input)="getStructures()" placeholder="Cantidad..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['optional']" (input)="getStructures()" placeholder="Opcional..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['increasePrice']" (input)="getStructures()" placeholder="Aumenta Precio..."></th>
+
           </tr>
         </thead>
         <tbody>
@@ -59,6 +67,10 @@
             </td>
             <td>{{structure.parent.description}}</td>
             <td>{{structure.child.description}}</td>
+            <td>{{structure.quantity}}</td>
+            <td>{{structure.optional}}</td>
+            <td>{{structure.increasePrice}}</td>
+
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
             <td colspan="16">No se encontraron estructuras</td>

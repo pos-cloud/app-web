@@ -1,6 +1,6 @@
 //Paquetes Angular
 import { Component, ElementRef, ViewChild, EventEmitter, ViewEncapsulation } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, ChildrenOutletContexts } from '@angular/router';
 
 //Paquetes de terceros
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -74,6 +74,7 @@ import { ArticleService } from 'app/services/article.service';
 import { ToastrService } from 'ngx-toastr';
 import { User } from 'app/models/user';
 import { CancellationTypeAutomaticComponent } from '../cancellation-types-automatic/cancellation-types-automatic.component';
+import { StructureService } from 'app/services/structure.service';
 
 @Component({
 	selector: 'app-add-sale-order',
@@ -167,7 +168,8 @@ export class AddSaleOrderComponent {
 		private _transportService: TransportService,
 		private _priceListService: PriceListService,
 		private _toastr: ToastrService,
-		private _configService: ConfigService
+		private _configService: ConfigService,
+		private _structureService : StructureService
 	) {
 		this.initVariables();
 		this.processParams();
@@ -190,7 +192,7 @@ export class AddSaleOrderComponent {
 	private processParams(): void {
 		this._route.queryParams.subscribe(params => {
 			this.transactionId = params['transactionId'];
-			if(!this.transactionId) {
+			if (!this.transactionId) {
 				this.backFinal();
 			}
 		});
@@ -633,18 +635,22 @@ export class AddSaleOrderComponent {
 		this.quantity = 0;
 		if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
 			for (let movementOfArticle of this.movementsOfArticles) {
-				this.quantity += movementOfArticle.amount;
+				if (!movementOfArticle.movementParent) {
+					this.quantity += movementOfArticle.amount;
+				}
 			}
 		}
 	}
 
-	async addItem(itemData: MovementOfArticle) {
+	async addItem(event) {
 
-		if (itemData) {
+		if (event && event['parent']) {
+			var itemData: MovementOfArticle = event['parent'];
+			var child: MovementOfArticle[] = event['child']
 
 			this.showCategories();
 
-			if (!itemData.article.containsVariants && !itemData.article.allowMeasure) {
+			if (!itemData.article.containsVariants && !itemData.article.allowMeasure && !await this.getStructure(itemData.article._id)) {
 
 				let movementOfArticle: MovementOfArticle;
 
@@ -680,15 +686,52 @@ export class AddSaleOrderComponent {
 						movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
 					}
 					movementOfArticle.printed = 0;
-					if (await this.isValidMovementOfArticle(movementOfArticle)) {
-						await this.saveMovementOfArticle(movementOfArticle).then(
-							movementOfArticle => {
-								if (movementOfArticle) {
-									this.getMovementsOfTransaction();
+
+
+					if (child && child.length === 0) {
+						if(await this.isValidMovementOfArticle(movementOfArticle)){
+							await this.saveMovementOfArticle(movementOfArticle).then(
+								movementOfArticle => {
+									if (movementOfArticle) {
+										this.getMovementsOfTransaction();
+									}
 								}
+							);
+						}
+					} else {
+
+						var movsArticle: MovementOfArticle[] = new Array();
+							
+						for (const movArticle of child) {
+						
+							if (await this.isValidMovementOfArticle(movArticle)) {
+								movsArticle.push(movArticle)
+							} else {
+								this.showArticles();
 							}
-						);
+						}
+						if (movsArticle.length === child.length) {
+							await this.saveMovementOfArticle(movementOfArticle).then(
+								async movementOfArticle => {
+									if (movementOfArticle) {
+										movsArticle = new Array();
+										for (const movArticle of child) {
+											movArticle.movementParent = movementOfArticle._id
+											movsArticle.push(movArticle)
+										}
+										await this.saveMovementsOfArticle(movsArticle).then(
+											result => {
+												if (result) {
+													this.getMovementsOfTransaction();
+												}
+											});
+									}
+								});
+						} else {
+							this.showArticles();
+						}
 					}
+
 				} else {
 					if (this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*') {
 						movementOfArticle.amount = itemData.amount;
@@ -735,6 +778,67 @@ export class AddSaleOrderComponent {
 			this.showArticles();
 		}
 	}
+
+	public getStructure(idArticle : string) {
+
+		return new Promise<Boolean>((resolve, reject) =>{
+		  this.loading = true;
+	
+		  /// ORDENAMOS LA CONSULTA
+		  let sortAux = {}
+	
+		  // FILTRAMOS LA CONSULTA
+	
+		  let match = `{
+			"operationType": { "$ne": "D" }, 
+			"parent._id": { "$oid" : "${idArticle}"},
+			"optional" : true
+		  }`;
+	
+		  match = JSON.parse(match);
+	
+		  // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+		  let project = {
+			"_id" : 1,
+			"parent._id" : 1,
+			"parent.description" : 1,
+			"child._id" : 1,
+			"child.description" : 1,
+			"optional" :1 ,
+			operationType : 1
+		  }
+	
+		  // AGRUPAMOS EL RESULTADO
+		  let group = {
+			  _id: null,
+			  count: { $sum: 1 },
+			  structures: { $push: "$$ROOT" }
+		  };
+	
+		  this._structureService.getStructures(
+			  project, // PROJECT
+			  match, // MATCH
+			  sortAux, // SORT
+			  group, // GROUP
+			  0, // LIMIT
+			  0 // SKIP
+		  ).subscribe(
+			result => {
+			  this.loading = false;
+			  if (result && result[0] && result[0].structures) {
+				resolve(true)
+			  } else {
+				resolve(false)
+			  }
+			},
+			error => {
+			  this.showMessage(error._body, 'danger', false);
+			  this.loading = false;
+			}
+		  );
+		})
+		
+	  }
 
 	public getMovementsOfArticles(query?: string): Promise<MovementOfArticle[]> {
 
@@ -783,7 +887,40 @@ export class AddSaleOrderComponent {
 					}
 				},
 				error => {
-					this.loading = false;
+					this.showMessage(error._body, 'danger', false);
+					resolve(null);
+				}
+			);
+		});
+	}
+
+	public saveMovementsOfArticle(movementOfArticle: MovementOfArticle[]): Promise<boolean> {
+
+		return new Promise<boolean>((resolve, reject) => {
+
+			var movsArticle: MovementOfArticle[] = new Array();
+
+			for (const movArticle of movementOfArticle) {
+
+				movArticle.basePrice = 0
+				movArticle.costPrice = 0
+				movArticle.salePrice = 0
+				movArticle.status = MovementOfArticleStatus.Ready;
+
+				movsArticle.push(movArticle)
+			}
+
+			this._movementOfArticleService.saveMovementsOfArticles(movsArticle).subscribe(
+				result => {
+					if (!result.movementsOfArticles) {
+						if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+						resolve(null);
+					} else {
+						this.hideMessage();
+						resolve(true);
+					}
+				},
+				error => {
 					this.showMessage(error._body, 'danger', false);
 					resolve(null);
 				}
@@ -793,52 +930,53 @@ export class AddSaleOrderComponent {
 
 	async isValidMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<boolean> {
 
-		this.loading = true;
-		let isValid = true;
+		return new Promise<boolean>((resolve, reject) => {
 
-		if (this.transaction.type &&
-			this.transaction.type.transactionMovement === TransactionMovement.Sale &&
-			movementOfArticle.article &&
-			!movementOfArticle.article.allowSale) {
-			isValid = false;
-			this.showMessage("El producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + ") no esta habilitado para la venta", 'info', true);
-		}
-
-		if (this.transaction.type &&
-			this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
-			movementOfArticle.article &&
-			!movementOfArticle.article.allowPurchase) {
-			isValid = false;
-			this.showMessage("El producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + ") no esta habilitado para la compra", 'info', true);
-		}
-
-		if (movementOfArticle.article &&
-			this.config['modules'].stock &&
-			this.transaction.type &&
-			this.transaction.type.modifyStock &&
-			(this.transaction.type.stockMovement === StockMovement.Outflows || this.transaction.type.stockMovement === StockMovement.Transfer) &&
-			!movementOfArticle.article.allowSaleWithoutStock) {
-			await this.getArticleStock(movementOfArticle).then(
-				articleStock => {
-					if (!articleStock || (movementOfArticle.amount + movementOfArticle.quantityForStock) > articleStock.realStock) {
-						if (this.transaction.type.stockMovement === StockMovement.Transfer && movementOfArticle.deposit && movementOfArticle.deposit._id.toString() === this.transaction.depositDestination._id.toString()) {
-						} else {
-							isValid = false;
-							let realStock = 0;
-							if (articleStock) {
-								realStock = articleStock.realStock;
+			if (this.transaction.type &&
+				this.transaction.type.transactionMovement === TransactionMovement.Sale &&
+				movementOfArticle.article &&
+				!movementOfArticle.article.allowSale) {
+				this.showMessage("El producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + ") no esta habilitado para la venta", 'info', true);
+				resolve(false)
+			} else if (this.transaction.type &&
+				this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
+				movementOfArticle.article &&
+				!movementOfArticle.article.allowPurchase) {
+				this.showMessage("El producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + ") no esta habilitado para la compra", 'info', true);
+				resolve(false)
+			} else if (movementOfArticle.article &&
+				this.config['modules'].stock &&
+				this.transaction.type &&
+				this.transaction.type.modifyStock &&
+				(this.transaction.type.stockMovement === StockMovement.Outflows || this.transaction.type.stockMovement === StockMovement.Transfer) &&
+				!movementOfArticle.article.allowSaleWithoutStock) {
+					
+					
+				this.getArticleStock(movementOfArticle).then(
+					articleStock => {
+						if (!articleStock || (movementOfArticle.amount + movementOfArticle.quantityForStock) > articleStock.realStock) {
+							if (this.transaction.type.stockMovement === StockMovement.Transfer && movementOfArticle.deposit && movementOfArticle.deposit._id.toString() === this.transaction.depositDestination._id.toString()) {
+							} else {
+								let realStock = 0;
+								if (articleStock) {
+									realStock = articleStock.realStock;
+								}
+								this.showMessage("No tiene el stock suficiente del producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + "). Stock Actual: " + realStock, 'info', true);
+								resolve(false)
 							}
-							this.showMessage("No tiene el stock suficiente del producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + "). Stock Actual: " + realStock, 'info', true);
+						} else {
+							resolve(true)
 						}
 					}
-				}
-			);
-		}
-		this.loading = false;
-		return isValid;
+				);
+			} else {
+				resolve(true)
+			}
+
+		});
 	}
 
-	public getArticleStock(movementOfArticle: MovementOfArticle): Promise<ArticleStock> {
+	async getArticleStock(movementOfArticle: MovementOfArticle): Promise<ArticleStock> {
 
 		return new Promise<ArticleStock>((resolve, reject) => {
 
@@ -1204,19 +1342,22 @@ export class AddSaleOrderComponent {
 
 		if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
 			for (let movementOfArticle of this.movementsOfArticles) {
-				movementOfArticle.transaction.discountPercent = this.roundNumber.transform(this.transaction.discountPercent);
-				if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-					movementOfArticle = await this.recalculateSalePrice(movementOfArticle);
-				} else {
-					movementOfArticle = this.recalculateCostPrice(movementOfArticle);
+				if (!movementOfArticle.movementParent) {
+					movementOfArticle.transaction.discountPercent = this.roundNumber.transform(this.transaction.discountPercent);
+					if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+						movementOfArticle = await this.recalculateSalePrice(movementOfArticle);
+					} else {
+						movementOfArticle = this.recalculateCostPrice(movementOfArticle);
+					}
+					totalPriceAux += this.roundNumber.transform(movementOfArticle.salePrice);
+					discountAmountAux += this.roundNumber.transform(movementOfArticle.transactionDiscountAmount * movementOfArticle.amount);
+					let result = await this.updateMovementOfArticle(movementOfArticle);
+					if (!result) {
+						isUpdateValid = false;
+						break;
+					}
 				}
-				totalPriceAux += this.roundNumber.transform(movementOfArticle.salePrice);
-				discountAmountAux += this.roundNumber.transform(movementOfArticle.transactionDiscountAmount * movementOfArticle.amount);
-				let result = await this.updateMovementOfArticle(movementOfArticle);
-				if (!result) {
-					isUpdateValid = false;
-					break;
-				}
+
 			}
 		} else {
 			isUpdateValid = true;
@@ -1294,6 +1435,7 @@ export class AddSaleOrderComponent {
 				} else {
 					this.transaction.exempt += this.roundNumber.transform(movementOfArticle.salePrice);
 				}
+
 				totalPriceAux += this.roundNumber.transform(movementOfArticle.salePrice);
 			}
 		}
@@ -1869,8 +2011,8 @@ export class AddSaleOrderComponent {
 				break;
 			case 'print':
 				if (this.transaction.type.readLayout) {
-					modalRef = this._modalService.open(PrintTransactionTypeComponent);
-					modalRef.componentInstance.transactionId = this.transaction._id;
+					modalRef = this._modalService.open(PrintTransactionTypeComponent)
+					modalRef.componentInstance.transactionId = this.transaction._id
 					modalRef.result.then((result) => {
 					}, (reason) => {
 						this.backFinal();
@@ -2487,41 +2629,10 @@ export class AddSaleOrderComponent {
 	public backFinal(): void {
 
 		this._route.queryParams.subscribe(params => {
-			if(params['returnURL']) {
-				if(params['automaticCreation']) {
-					if(this.transaction.state === TransactionState.Closed) {
-						let route = params['returnURL'].split('?')[0];
-						let paramsFromRoute = params['returnURL'].split('?')[1];
-						if(paramsFromRoute && paramsFromRoute !== '') {
-							paramsFromRoute = this.removeParam(paramsFromRoute, 'automaticCreation');
-							route += '?'+paramsFromRoute+'&automaticCreation='+params['automaticCreation'];
-						} else {
-							route += '?' + 'automaticCreation='+params['automaticCreation'];
-						}
-						this._router.navigateByUrl(route);
-					} else {
-						this._router.navigateByUrl(this.removeParam(params['returnURL'], 'automaticCreation'));
-					}
-				} else {
-					this._router.navigateByUrl(params['returnURL']);
-				}
+			if (params['returnURL']) {
+				this._router.navigateByUrl(params['returnURL']);
 			}
-		});		
-	}
-
-	private removeParam(sourceURL: string, key: string) {
-		let rtn = sourceURL.split("?")[0], param, params_arr = [], queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
-		if (queryString !== "") {
-			params_arr = queryString.split("&");
-			for (let i = params_arr.length - 1; i >= 0; i -= 1) {
-				param = params_arr[i].split("=")[0];
-				if (param === key) {
-					params_arr.splice(i, 1);
-				}
-			}
-			rtn = rtn + "?" + params_arr.join("&");
-		}
-		return rtn;
+		});
 	}
 
 	async getTaxVAT(movementOfArticle: MovementOfArticle) {
@@ -2781,74 +2892,98 @@ export class AddSaleOrderComponent {
 		return numberOfPrinters;
 	}
 
-	public distributeImpressions(printer?: Printer) {
+	async distributeImpressions(printer?: Printer) {
 
 		this.printerSelected = printer;
 
-		if (!this.printSelected && this.printers) {
-			for (const element of this.printers) {
-				if (element && element.printIn === PrinterPrintIn.Bar && this.typeOfOperationToPrint === 'bar') {
-					this.printerSelected = element;
-				}
-				if (element && element.printIn === PrinterPrintIn.Kitchen && this.typeOfOperationToPrint === 'kitchen') {
-					this.printerSelected = element;
-				}
-				if (element && element.printIn === PrinterPrintIn.Voucher && this.typeOfOperationToPrint === 'voucher') {
-					this.printerSelected = element;
-				}
-			}
-		}
-
-		let identity: User = JSON.parse(sessionStorage.getItem('user'));
-		let user;
-		if (identity) {
-			this._userService.getUser(identity._id).subscribe(
-				result => {
-					if (result && result.user) {
-						user = result.user;
+		await this.getUser().then(
+			user => {
+				if (user) {
+					if (user.printers && user.printers.length > 0) {
+						for (const element of user.printers) {
+							if (element && element.printer && element.printer.printIn === PrinterPrintIn.Bar && this.typeOfOperationToPrint === 'bar') {
+								this.printerSelected = element.printer;
+							}
+							if (element && element.printer && element.printer.printIn === PrinterPrintIn.Counter && (this.typeOfOperationToPrint === 'charge' || this.typeOfOperationToPrint === 'bill')) {
+								this.printerSelected = element.printer;
+							}
+							if (element && element.printer && element.printer.printIn === PrinterPrintIn.Kitchen && this.typeOfOperationToPrint === 'kitchen') {
+								this.printerSelected = element.printer;
+							}
+							if (element && element.printer && element.printer.printIn === PrinterPrintIn.Voucher && this.typeOfOperationToPrint === 'voucher') {
+								this.printerSelected = element.printer;
+							}
+						}
 					} else {
-						this.showMessage("Debe volver a iniciar session", "danger", false);
+						if (!this.printSelected && this.printers) {
+							for (const element of this.printers) {
+								if (element && element.printIn === PrinterPrintIn.Bar && this.typeOfOperationToPrint === 'bar') {
+									this.printerSelected = element;
+								}
+								if (element && element.printIn === PrinterPrintIn.Kitchen && this.typeOfOperationToPrint === 'kitchen') {
+									this.printerSelected = element;
+								}
+								if (element && element.printIn === PrinterPrintIn.Voucher && this.typeOfOperationToPrint === 'voucher') {
+									this.printerSelected = element;
+								}
+							}
+						}
 					}
-				},
-				error => {
-					this.showMessage(error._body, "danger", false);
+				} else {
+					this.showToast("Debe iniciar seccion", "info")
 				}
-			)
-		}
 
-		if (user && user.printers && user.printers.length > 0) {
-			for (const element of user.printers) {
-				if (element && element.printer && element.printer.printIn === PrinterPrintIn.Bar && this.typeOfOperationToPrint === 'bar') {
-					this.printerSelected = element.printer;
-				}
-				if (element && element.printer && element.printer.printIn === PrinterPrintIn.Kitchen && this.typeOfOperationToPrint === 'kitchen') {
-					this.printerSelected = element.printer;
-				}
-				if (element && element.printer && element.printer.printIn === PrinterPrintIn.Voucher && this.typeOfOperationToPrint === 'voucher') {
-					this.printerSelected = element.printer;
+				switch (this.typeOfOperationToPrint) {
+					case 'charge':
+						if (printer.type === PrinterType.PDF) {
+							this.openModal("print");
+						}
+						break;
+					case 'kitchen':
+						this.openModal("printKitchen");
+						break;
+					case 'bar':
+						this.openModal("printBar");
+						break;
+					case 'voucher':
+						this.openModal("printVoucher");
+						break;
+					default:
+						this.showMessage("No se reconoce la operación de impresión.", 'danger', false);
+						break;
 				}
 			}
-		}
+		);
 
-		switch (this.typeOfOperationToPrint) {
-			case 'charge':
-				if (printer.type === PrinterType.PDF) {
-					this.openModal("print");
-				}
-				break;
-			case 'kitchen':
-				this.openModal("printKitchen");
-				break;
-			case 'bar':
-				this.openModal("printBar");
-				break;
-			case 'voucher':
-				this.openModal("printVoucher");
-				break;
-			default:
-				this.showMessage("No se reconoce la operación de impresión.", 'danger', false);
-				break;
-		}
+
+
+	}
+
+	public getUser(): Promise<User> {
+
+		return new Promise<User>((resolve, reject) => {
+
+			var identity: User = JSON.parse(sessionStorage.getItem('user'));
+			var user;
+			if (identity) {
+				this._userService.getUser(identity._id).subscribe(
+					result => {
+						if (result && result.user) {
+							resolve(result.user)
+						} else {
+							this.showMessage("Debe volver a iniciar session", "danger", false);
+						}
+					},
+					error => {
+						this.showMessage(error._body, "danger", false);
+					}
+				)
+			}
+
+		});
+
+
+
 	}
 
 	public assignLetter() {

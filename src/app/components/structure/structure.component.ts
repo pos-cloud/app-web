@@ -60,6 +60,7 @@ export class StructureComponent implements OnInit {
   public result;
   public structureForm: FormGroup;
   public searching: boolean = false;
+  public checkboxModel;
 
   public formErrors = {
     'parent': '',
