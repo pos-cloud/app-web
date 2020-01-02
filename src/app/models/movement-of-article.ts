@@ -39,7 +39,8 @@ export class MovementOfArticle {
   public measure: string ;
   public quantityMeasure : number = 1;
   public modifyStock : boolean;
-	public stockMovement: string;
+  public stockMovement: string;
+  public movementParent : string;
 
 	constructor () {}
 }
