@@ -383,6 +383,36 @@ export let attributes = [
 		project: null,
 		align: 'left',
 		required: true,
+	},
+	{
+		name: 'type.defectPrinter._id',
+		visible: false,
+		disabled: true,
+		filter: false,
+		datatype: 'string',
+		project: null,
+		align: 'left',
+		required: true,
+	},
+	{
+		name: 'type.defectPrinter.pageHigh',
+		visible: false,
+		disabled: true,
+		filter: false,
+		datatype: 'string',
+		project: null,
+		align: 'left',
+		required: true,
+	},
+	{
+		name: 'type.defectPrinter.pageWidth',
+		visible: false,
+		disabled: true,
+		filter: false,
+		datatype: 'string',
+		project: null,
+		align: 'left',
+		required: true,
 	}
 ];
 
