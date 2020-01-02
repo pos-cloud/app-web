@@ -32,8 +32,10 @@ export class PosClientViewComponent {
 
 	public async initInterval() {
 		setInterval(async () => {
-			this.transactionsToRemove = await this.getTransactions({ state: TransactionState.Delivered, operationType: { $ne: "D" } });
-			this.transactionsInPreparation = await this.getTransactions({ state: TransactionState.Preparing, operationType: { $ne: "D" } });
+			if(!this.loading) {
+				this.transactionsToRemove = await this.getTransactions({ state: TransactionState.Delivered, operationType: { $ne: "D" } });
+				this.transactionsInPreparation = await this.getTransactions({ state: TransactionState.Preparing, operationType: { $ne: "D" } });
+			}
 		}, 5000);
 	}
 
@@ -55,7 +57,7 @@ export class PosClientViewComponent {
 				match, // MATCH
 				{ startDate: -1 }, // SORT
 				{}, // GROUP
-				0, // LIMIT
+				9, // LIMIT
 				0 // SKIP
 			).subscribe(
 				result => {
@@ -65,25 +67,6 @@ export class PosClientViewComponent {
 				error => {
 					this.loading = false;
 					resolve([]);
-				}
-			);
-		});
-	}
-
-	public updateTransaction(transaction: Transaction): Promise<Transaction> {
-
-		return new Promise<Transaction>((resolve, reject) => {
-
-			this._transactionService.updateTransaction(transaction).subscribe(
-				result => {
-					if (!result.transaction) {
-						resolve(null);
-					} else {
-						resolve(result.transaction);
-					}
-				},
-				error => {
-					resolve(null);
 				}
 			);
 		});
