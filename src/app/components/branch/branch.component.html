@@ -57,6 +57,22 @@
                     </div>
                   </div>
                 </div>
+                <div class="row">
+                  <div class="form-group col-md-2">
+                    <img [src]="imageURL" height="150" width="300">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-3">
+                    <div class="custom-file">
+                      <label class="custom-file-label btn btn-action" for="customFileLang">Cambiar Imagen</label>
+                      <input type="file" class="custom-file-input" lang="es" accept="image/*" id="customFileLang" (change)="fileChangeEvent($event)" />
+                    </div>
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label class="btn btn-primary" (click)="deletePicture()">Eliminar Imagen</label>
+                  </div>
+                </div>
               </div>
             </div>
           </ng-template>

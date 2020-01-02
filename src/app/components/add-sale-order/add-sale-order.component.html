@@ -153,33 +153,35 @@
           </thead>
           <tbody>
             <tr *ngFor="let movementOfArticle of movementsOfArticles" (click)="openModal('movement_of_article', movementOfArticle)">
-              <td>
-                <span class="badge badge-info">
-                  <b>{{ movementOfArticle.amount}}</b>
-                </span>
-                <img *ngIf="movementOfArticle.article && (movementOfArticle.article.picture !== 'default.jpg' && movementOfArticle.article.picture !== undefined)" [src]="apiURL + 'get-image-article/'+movementOfArticle.article.picture + '/' + database" height="50" width="50">
-              </td>
-              <td>
-                <span *ngIf="transaction.type && transaction.type.showDescriptionType === 'Descripción'">{{movementOfArticle.description}}</span>
-                <span *ngIf="transaction.type && transaction.type.showDescriptionType === 'Descripción Corta'">{{movementOfArticle.article.posDescription}}</span>
-                <span *ngIf="transaction.type && transaction.type.showDescriptionType === 'Código'">{{movementOfArticle.code}}</span>
-                <div *ngIf="movementOfArticle.make && movementOfArticle.make.visibleSale" style="font-size: 13px">{{movementOfArticle.make.description}}</div>
-                <div *ngIf="movementOfArticle.notes">
-                  <strong>{{movementOfArticle.notes}}</strong>
-                </div>
-              </td>
-              <td align="right">
-                <div>
-                  <span *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Final'">{{movementOfArticle.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
-                  <span *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Base'">{{movementOfArticle.basePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
-                  <span *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Sin Impuestos'">{{movementOfArticle.salePrice - movementOfArticle.taxes[0].taxAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
-                </div>
-                <div *ngIf="movementOfArticle.transactionDiscountAmount !== 0">
-                  <span style="text-decoration:line-through;"*ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Final'">{{movementOfArticle.salePrice + movementOfArticle.transactionDiscountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
-                  <span style="text-decoration:line-through;"*ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Base'">{{movementOfArticle.basePrice + movementOfArticle.transactionDiscountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
-                  <span style="text-decoration:line-through;" *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Sin Impuestos'">{{movementOfArticle.salePrice - movementOfArticle.taxes[0].taxAmount + movementOfArticle.transactionDiscountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
-                </div>
-              </td>
+              <ng-container *ngIf="movementOfArticle.salePrice > 0">
+                <td>
+                  <span class="badge badge-info">
+                    <b>{{ movementOfArticle.amount}}</b>
+                  </span>
+                  <img *ngIf="movementOfArticle.article && (movementOfArticle.article.picture !== 'default.jpg' && movementOfArticle.article.picture !== undefined)" [src]="apiURL + 'get-image-article/'+movementOfArticle.article.picture + '/' + database" height="50" width="50">
+                </td>
+                <td>
+                  <span *ngIf="transaction.type && transaction.type.showDescriptionType === 'Descripción'">{{movementOfArticle.description}}</span>
+                  <span *ngIf="transaction.type && transaction.type.showDescriptionType === 'Descripción Corta'">{{movementOfArticle.article.posDescription}}</span>
+                  <span *ngIf="transaction.type && transaction.type.showDescriptionType === 'Código'">{{movementOfArticle.code}}</span>
+                  <div *ngIf="movementOfArticle.make && movementOfArticle.make.visibleSale" style="font-size: 13px">{{movementOfArticle.make.description}}</div>
+                  <div *ngIf="movementOfArticle.notes">
+                    <strong>{{movementOfArticle.notes}}</strong>
+                  </div>
+                </td>
+                <td align="right">
+                  <div>
+                    <span *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Final'">{{movementOfArticle.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                    <span *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Base'">{{movementOfArticle.basePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                    <span *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Sin Impuestos'">{{movementOfArticle.salePrice - movementOfArticle.taxes[0].taxAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                  </div>
+                  <div *ngIf="movementOfArticle.transactionDiscountAmount !== 0">
+                    <span style="text-decoration:line-through;"*ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Final'">{{movementOfArticle.salePrice + movementOfArticle.transactionDiscountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                    <span style="text-decoration:line-through;"*ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Base'">{{movementOfArticle.basePrice + movementOfArticle.transactionDiscountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                    <span style="text-decoration:line-through;" *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Sin Impuestos'">{{movementOfArticle.salePrice - movementOfArticle.taxes[0].taxAmount + movementOfArticle.transactionDiscountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                  </div>
+                </td>
+              </ng-container>
             </tr>
             <tr align="center " *ngIf="areMovementsOfArticlesEmpty ">
               <td colspan="10 ">Todavía no se cargaron productos al pedido</td>
