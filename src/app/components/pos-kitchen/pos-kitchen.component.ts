@@ -157,8 +157,11 @@ export class PosKitchenComponent {
 
 		return new Promise<Transaction>((resolve, reject) => {
 
+			this.loading = true;
+
 			this._transactionService.getTransaction(transactionId).subscribe(
 				async result => {
+					this.loading = false;
 					if (!result.transaction) {
 						this.showMessage(result.message, 'danger', false);
 						resolve(null);
@@ -167,6 +170,7 @@ export class PosKitchenComponent {
 					}
 				},
 				error => {
+					this.loading = false;
 					this.showMessage(error._body, 'danger', false);
 					resolve(null);
 				}
@@ -178,8 +182,11 @@ export class PosKitchenComponent {
 
 		return new Promise<Transaction>((resolve, reject) => {
 
+			this.loading = true;
+			
 			this._transactionService.updateTransaction(transaction).subscribe(
 				result => {
+					this.loading = false;
 					if (!result.transaction) {
 						if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
 						resolve(null);
@@ -188,6 +195,7 @@ export class PosKitchenComponent {
 					}
 				},
 				error => {
+					this.loading = false;
 					this.showMessage(error._body, 'danger', false);
 					resolve(null);
 				}
