@@ -21,18 +21,24 @@
               <th (click)="orderBy('order')">Orden </th>
               <th (click)="orderBy('name')">Nombre </th>
               <th (click)="orderBy('datatype')">Tipo de dato </th>
-              <th (click)="orderBy('value')">Valor </th>
               <th (click)="orderBy('modify')">Modifica </th>
               <th (click)="orderBy('modifyVAT')">Modifica IVA</th>
+              <th (click)="orderBy('discriminateVAT')">Discrimina libro IVA</th>
+              <th (click)="orderBy('ecommerceEnabled')">Habilitado para E-Commerce</th>
+              <th (click)="orderBy('value')">Valor </th>
+
             </tr>
             <tr class="filters">
               <th></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterOrder" placeholder="Orden..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterDatatype" placeholder="Tipo de dato..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterValue" placeholder="Valor..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterModify" placeholder="Modifica..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterModifyVAT" placeholder="Modifica IVA..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterDiscriminateVAT" placeholder="Discrimina libro IVA..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterEcommerceEnabled" placeholder="Habilitado para E-Commerce..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterValue" placeholder="Valor..." ></th>
+
             </tr>
           </thead>
           <tbody>
@@ -47,6 +53,8 @@
                                                           | filter: filterValue:'value'
                                                           | filter: filterModify:'modify'
                                                           | filter: filterModifyVAT:'modifyVAT'
+                                                          | filter: filterDiscriminateVAT:'discriminateVAT'
+                                                          | filter: filterEcommerceEnabled:'ecommerceEnabled'
                                                           | orderBy: orderTerm: propertyTerm
                                                           | paginate: { itemsPerPage: itemsPerPage,
                                                                         currentPage: p,
@@ -60,9 +68,12 @@
               <td class="flat">{{articleField.order}}</td>
               <td class="flat">{{articleField.name}}</td>
               <td class="flat">{{articleField.datatype}}</td>
-              <td class="flat">{{articleField.value}}</td>
               <td class="flat">{{articleField.modify}}</td>
               <td class="flat">{{articleField.modifyVAT}}</td>
+              <td class="flat">{{articleField.discriminateVAT}}</td>
+              <td class="flat">{{articleField.ecommerceEnabled}}</td>
+              <td style="width:50px" class="flat">{{articleField.value}}</td>
+
             </tr>
             <tr align="center" *ngIf="articleFields.length === 0 && !loading">
               <td colspan="6">No se encontraron campos de producto</td>
