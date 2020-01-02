@@ -37,14 +37,7 @@ import { PriceList } from 'app/models/price-list';
 import { AddArticleComponent } from '../add-article/add-article.component';
 import { StructureService } from 'app/services/structure.service';
 import { Structure } from 'app/models/structure';
-<<<<<<< HEAD
-import { isTemplateExpression, updateConstructSignature } from 'typescript';
-=======
-import { isTemplateExpression } from 'typescript';
->>>>>>> franco
 import { ArticleService } from 'app/services/article.service';
-import { async } from '@angular/core/testing';
-import { removeSummaryDuplicates } from '@angular/compiler';
 
 @Component({
   selector: 'app-add-movement-of-article',
