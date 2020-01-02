@@ -706,8 +706,6 @@ export class AddSaleOrderComponent {
 						
 							if (await this.isValidMovementOfArticle(movArticle)) {
 								movsArticle.push(movArticle)
-							} else {
-								this.showArticles();
 							}
 						}
 						if (movsArticle.length === child.length) {
@@ -727,8 +725,6 @@ export class AddSaleOrderComponent {
 											});
 									}
 								});
-						} else {
-							this.showArticles();
 						}
 					}
 
