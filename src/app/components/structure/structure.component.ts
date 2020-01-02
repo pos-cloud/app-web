@@ -86,6 +86,7 @@ export class StructureComponent implements OnInit {
     public _router: Router,
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
+
   ) {
     if(window.screen.width < 1000) this.orientation = 'vertical';
     this.structure = new Structure();
@@ -172,11 +173,9 @@ export class StructureComponent implements OnInit {
         ]
       ],
       'optional': [this.structure.optional, [
-        Validators.required
         ]
       ],
       'increasePrice': [this.structure.increasePrice, [
-        Validators.required
         ]
       ]
     });
@@ -309,6 +308,11 @@ export class StructureComponent implements OnInit {
 
     if(this.structure.quantity === 0 || this.structure.quantity < 0 || this.structure.quantity === null){
       this.showMessage("La cantidad tiene que ser mayor a 0.", "info", true);
+      valid = false;
+    }
+
+    if(this.structure.optional && this.structure.increasePrice === null){
+      this.showMessage("El incremento de precio no puede ser vacio", "info", true);
       valid = false;
     }
     

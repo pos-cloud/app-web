@@ -32,6 +32,7 @@ export class ListStructureComponent implements OnInit {
     "child.description",
     "quantity",
     "optional",
+    "utilization",
     "increasePrice",
     "operationType"
   ];
@@ -98,6 +99,7 @@ export class ListStructureComponent implements OnInit {
       "child.description" : 1,
       "optional" : 1,
       "quantity" : 1,
+      "utilization" : 1,
       "increasePrice" :1,
       operationType : 1
     }
