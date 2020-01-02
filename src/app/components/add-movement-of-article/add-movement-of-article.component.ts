@@ -996,7 +996,6 @@ export class AddMovementOfArticleComponent implements OnInit {
         movArticle.article &&
         !movArticle.article.allowSale) {
         this.showMessage("El producto " + movArticle.article.description + " (" + movArticle.article.code + ") no esta habilitado para la venta", 'info', true);
-        console.log(movArticle)
         resolve(false)
       } else if (
         movArticle.transaction.type &&
@@ -1004,7 +1003,6 @@ export class AddMovementOfArticleComponent implements OnInit {
         movArticle.article &&
         !movArticle.article.allowPurchase) {
         this.showMessage("El producto " + movArticle.article.description + " (" + movArticle.article.code + ") no esta habilitado para la compra", 'info', true);
-        console.log(movArticle)
         resolve(false)
       } else if (
         movArticle.article &&
@@ -1021,7 +1019,6 @@ export class AddMovementOfArticleComponent implements OnInit {
         }
         if (taxAmount > this.movementOfArticleForm.value.unitPrice) {
           this.showMessage("El precio unitario del producto no puede ser menor a la suma de impuestos con monto fijo.", 'info', true);
-          console.log(movArticle)
           resolve(false)
         }
       } else if (
@@ -1039,16 +1036,13 @@ export class AddMovementOfArticleComponent implements OnInit {
                 realStock = articleStock.realStock;
               }
               this.showMessage("No tiene el stock suficiente del producto " + movArticle.article.description + " (" + movArticle.article.code + "). Stock Actual: " + realStock, 'info', true);
-              console.log(movArticle)
               resolve(false)
             } else {
-              console.log("devuelve tru")
               resolve(true)
             }
           }
         );
       } else {
-        console.log("devuelve tru")
         resolve(true)
       }
     });
@@ -1245,12 +1239,10 @@ export class AddMovementOfArticleComponent implements OnInit {
     return new Promise<boolean>(async (resolve, reject) => {
       this.loading = true;
 
-      console.log(this.structures)
 
       var isFinish: boolean = false;
       for (const iterator of this.structures) {
         if(!iterator.optional){
-          console.log(iterator.child.description)
           if (!isFinish) {
             if(!await this.buildMovsArticle(iterator.child._id, iterator.quantity, iterator.increasePrice)){
               isFinish = true;
@@ -1287,10 +1279,6 @@ export class AddMovementOfArticleComponent implements OnInit {
   }
 
   async buildMovsArticle(articleId: string, quantity: number, salePrice?: number) {
-
-    console.log(articleId)
-    console.log(quantity)
-    console.log(salePrice)
 
     return new Promise<boolean>((resolve, reject) => {
 
@@ -1340,7 +1328,6 @@ export class AddMovementOfArticleComponent implements OnInit {
             }
 
             if (await this.isValidMovementOfArticle(movArticle)) {
-              console.log(movArticle)
               this.movChild.push(movArticle)
               resolve(true)
             } else {
@@ -1557,7 +1544,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.salePrice);
 
     this.movChild = new Array();
-    
+
     //pregunto si tiene  estructura 
     if (this.structures && this.structures.length > 0) {
 
