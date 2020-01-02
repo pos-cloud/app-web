@@ -40,6 +40,9 @@ import { MovementOfCancellationService } from 'app/services/movement-of-cancella
 
 import * as moment from 'moment';
 import 'moment/locale/es';
+import { BranchService } from 'app/services/branch.service';
+import { User } from 'app/models/user';
+import { UserService } from 'app/services/user.service';
 
 @Component({
   selector: 'app-print',
@@ -69,6 +72,7 @@ export class PrintComponent implements OnInit {
   public loading: boolean;
   public pathLocation: string[];
   public alertMessage: string = '';
+  public branchImagen;
   public shiftClosingTransaction;
   public shiftClosingMovementOfArticle;
   public shiftClosingMovementOfCash;
@@ -107,11 +111,13 @@ export class PrintComponent implements OnInit {
     public _claimService : ClaimService,
     public activeModal: NgbActiveModal,
     public _modalService: NgbModal,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    public _branchService : BranchService,
+    public _userService : UserService
   ) {
   }
 
-  ngOnInit() {
+  async ngOnInit() {
 
     
     if (!this.printer) {
@@ -143,7 +149,33 @@ export class PrintComponent implements OnInit {
     this.doc = new jsPDF(orientation, units, [pageWidth, pageHigh]);
 
 
+    await this.getBranch()
     this.getConfig();
+  }
+
+  public getBranch() {
+    
+
+			var identity : User = JSON.parse(sessionStorage.getItem('user'));
+			var user : User;
+			if (identity) {
+				this._userService.getUser(identity._id).subscribe(
+					result => {
+						if (result && result.user) {
+              user = result.user;
+              if(user && user.origin && user.origin.branch && user.origin.branch.image){
+                this.branchImagen = user.origin.branch.image;
+              }
+
+						} else {
+							this.showMessage("Debe volver a iniciar session", "danger", false);
+						}
+					},
+					error => {
+						this.showMessage(error._body, "danger", false);
+					}
+				)
+			}
   }
 
   public getConfig(): void {
@@ -686,7 +718,11 @@ export class PrintComponent implements OnInit {
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.finishImpression();
     } else {
-      this.getCompanyPicture(10, 5, 80, 40, true);
+      if(this.branchImagen && this.branchImagen !== 'default.jpg'){
+        await this.getBranchPicture(10,5,80,40,true);
+      } else {
+        await this.getCompanyPicture(10, 5, 80, 40,true);
+      }
     }
   }
 
@@ -1451,7 +1487,11 @@ export class PrintComponent implements OnInit {
         if (!logoPrint || !this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
           this.getCompanyData();
         } else {
-          await this.getCompanyPicture(10, 5, 80, 40);
+          if(this.branchImagen && this.branchImagen !== 'default.jpg'){
+            await this.getBranchPicture(10,5,80,40);
+          } else {
+            await this.getCompanyPicture(10, 5, 80, 40);
+          }
         }
       }
       this.doc.setFontSize(this.fontSizes.normal);
@@ -1517,6 +1557,34 @@ export class PrintComponent implements OnInit {
     if (this.config[0].companyVatCondition) {
       this.doc.text(this.config[0].companyVatCondition.description.slice(0, 31), 36, 45);
     }
+  }
+
+  async getBranchPicture(lmargin, rmargin, width, height, finish: boolean = false) {
+
+    return new Promise ((resolve, reject) => {
+      this.loading = true;
+      this._branchService.getPicture(this.branchImagen).subscribe(
+        result => {
+          if (!result.imageBase64) {
+            this.getCompanyData();
+            if (finish) {
+              this.finishImpression();
+            }
+            this.loading = false;
+            resolve(true);
+          } else {
+            this.hideMessage();
+            let imageURL = 'data:image/jpeg;base64,' + result.imageBase64;
+            this.doc.addImage(imageURL, 'jpeg', lmargin, rmargin, width, height);
+            if (finish) {
+              this.finishImpression();
+            }
+            resolve(true);
+          }
+          this.loading = false;
+        }
+      );
+    });
   }
 
   async getCompanyPicture(lmargin, rmargin, width, height, finish: boolean = false) {
@@ -1756,7 +1824,11 @@ export class PrintComponent implements OnInit {
 
 
       if(this.config[0].companyPicture && this.config[0].companyPicture !== 'default.jpg') {
-        await this.getCompanyPicture(10, 5, 80, 40);
+        if(this.branchImagen && this.branchImagen !== 'default.jpg'){
+          await this.getBranchPicture(10,5,80,40);
+        } else {
+          await this.getCompanyPicture(10, 5, 80, 40);
+        }
       } else {
         this.getCompanyData()
       }
@@ -2334,11 +2406,15 @@ export class PrintComponent implements OnInit {
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.finishImpression();
     } else {
-      this.getCompanyPicture(10, 5, 80, 40, true);
+      if(this.branchImagen && this.branchImagen !== 'default.jpg'){
+        await this.getBranchPicture(10,5,80,40,true);
+      } else {
+        await this.getCompanyPicture(10, 5, 80, 40,true);
+      }
     }
   }
 
-  public toPrintInvoiceRoll(): void {
+  async toPrintInvoiceRoll() {
 
      //Cabecera del ticket
     var margin = 5;
@@ -2601,7 +2677,11 @@ export class PrintComponent implements OnInit {
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.finishImpression();
     } else {
-      this.getCompanyPicture(1, 1, width - 2, 18, true);
+      if(this.branchImagen && this.branchImagen !== 'default.jpg'){
+        await this.getBranchPicture(1, 1, width - 2, 18, true);
+      } else {
+        await this.getCompanyPicture(1, 1, width - 2, 18, true);
+      }
     }
   }
 
@@ -2787,7 +2867,11 @@ export class PrintComponent implements OnInit {
       row += 30;
       this.doc.setFontType('normal');
       this.doc.setFontSize(this.fontSizes.normal);
-      this.getCompanyPicture(3, 3, this.printer.pageWidth - 5, 26, true);
+      if(this.branchImagen && this.branchImagen !== 'default.jpg'){
+        await this.getBranchPicture(3, 3, this.printer.pageWidth - 5, 26, true);
+      } else {
+        await this.getCompanyPicture(3, 3, this.printer.pageWidth - 5, 26, true);
+      }
     }
 
     row += 8;
@@ -2877,7 +2961,7 @@ export class PrintComponent implements OnInit {
     );
   }
 
-  public toPrintRoll() {
+  async toPrintRoll() {
 
     //Cabecera del ticket
     var margin = 5;
@@ -3026,7 +3110,13 @@ export class PrintComponent implements OnInit {
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.finishImpression();
     } else {
-      this.getCompanyPicture(3, 3, this.printer.pageWidth - 5, 26, true);
+
+      if(this.branchImagen && this.branchImagen !== 'default.jpg'){
+        await this.getBranchPicture(3, 3, this.printer.pageWidth - 5, 26, true);
+      } else {
+        await this.getCompanyPicture(3, 3, this.printer.pageWidth - 5, 26, true);
+      }
+      
     }
   }
 

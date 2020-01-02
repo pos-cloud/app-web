@@ -9,6 +9,7 @@ export class Branch {
     public number: number;
     public name : string;
     public default : boolean = false;
+    public image: string;
     public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     public updateUser: User;
