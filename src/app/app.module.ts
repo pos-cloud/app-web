@@ -269,6 +269,7 @@ import { CancellationTypeAutomaticComponent } from './components/cancellation-ty
 import { VoucherReaderComponent } from './components/voucher-reader/voucher-reader.component';
 import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.component';
 import { ListChecksComponent } from './components/list-checks/list-checks.component';
+import { PosClientViewComponent } from './components/pos-client-view/pos-client-view.component';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -463,7 +464,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     ListClassificationsComponent,
     ListMovementsOfArticlesComponent,
     VoucherReaderComponent,
-    PosKitchenComponent,
+	PosKitchenComponent,
+	PosClientViewComponent,
     ListChecksComponent
   ],
   entryComponents: [
@@ -634,7 +636,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     CancellationTypeAutomaticComponent,
     ListMovementsOfArticlesComponent,
     VoucherReaderComponent,
-    PosKitchenComponent
+	PosKitchenComponent,
+	PosClientViewComponent
   ],
   imports: [
     BrowserModule,

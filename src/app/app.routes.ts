@@ -64,15 +64,14 @@ import { ListTransportComponent } from './components/list-transports/list-transp
 import { PrintComponent } from './components/print/print/print.component';
 import { ListCashBoxComponent } from './components/list-cash-box/list-cash-box.component';
 import { ListPriceListsComponent } from './components/list-price-lists/list-price-lists.component';
-import { ListArticlesPosComponent } from './components/list-articles-pos/list-articles-pos.component';
 import { ReportsList } from './components/reports-list/reports-list.component';
 import { LicenseGuard } from './guards/license.guard';
-import { Config } from './app.config';
 import { ListStructureComponent } from './components/list-structure/list-structure.component';
 import { ListClassificationsComponent } from './components/list-classifications/list-classifications.component';
 import { ListMovementsOfArticlesComponent } from './components/list-movements-of-articles/list-movements-of-articles.component';
 import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.component';
 import { ListChecksComponent } from './components/list-checks/list-checks.component';
+import { PosClientViewComponent } from './components/pos-client-view/pos-client-view.component';
 
 export const _routes: Routes = [
   { 
@@ -606,6 +605,12 @@ export const _routes: Routes = [
   { 
     path: 'pos/delivery', 
     component: PointOfSaleComponent,
+    canActivate: [AuthGuard, LicenseGuard],
+    data: { module: 'config.modules.sale.delivery' }
+  },
+  { 
+    path: 'pos/retiro-de-pedidos', 
+    component: PosClientViewComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.sale.delivery' }
   },

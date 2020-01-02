@@ -1,0 +1,21 @@
+app-pos-client-view {
+	.card {
+		min-height: 95vh !important;
+		.card-title {
+			font-size: 60px;
+			font-weight: 900px;
+			padding-left: 20px;
+		}
+	}
+
+	.order-number {
+		font-size: 100px;
+		font-weight: 900px;
+		border-radius: 50%;
+		float: left;
+		padding: 0px 25px;
+		margin: 25px;
+		min-width: 150px;
+		min-height: 150px;
+	}
+}

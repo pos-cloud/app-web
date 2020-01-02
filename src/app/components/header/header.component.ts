@@ -1,8 +1,8 @@
 // ANGULAR
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { Router, NavigationStart, Event as NavigationEvent } from '@angular/router';
-import {fromEvent as observableFromEvent, of as observableOf, merge as observableMerge,  Observable } from 'rxjs';
-import {mapTo} from 'rxjs/operators';
+import { fromEvent as observableFromEvent, of as observableOf, merge as observableMerge, Observable } from 'rxjs';
+import { mapTo } from 'rxjs/operators';
 
 // DE TERCEROS
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -21,208 +21,208 @@ import { Config } from 'app/app.config';
 import { Socket } from 'ngx-socket-io';
 
 @Component({
-  selector: 'app-header',
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+	selector: 'app-header',
+	templateUrl: './header.component.html',
+	styleUrls: ['./header.component.scss']
 })
 
 export class HeaderComponent {
 
-  public config$: any;
-  public identity$: Observable<User>;
-  public online$: Observable<boolean>;
-  public hideMenu: boolean;
-  public sessionTimer: any;
-  public pathLocation: string[];
-  public isReportVisible: boolean;  
-  public licenseDays: number;
-  public readedNotification: boolean = false;
-  public intervalSocket;
+	public config$: any;
+	public identity$: Observable<User>;
+	public online$: Observable<boolean>;
+	public hideMenu: boolean;
+	public sessionTimer: any;
+	public pathLocation: string[];
+	public isReportVisible: boolean;
+	public licenseDays: number;
+	public readedNotification: boolean = false;
+	public intervalSocket;
 
-  constructor(
-    private _authService: AuthService,
-    public _configService: ConfigService,
-    public _router: Router,
-    public elementRef: ElementRef,
-    public renderer: Renderer2,
-    public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
-    public _modalService: NgbModal,
-    private socket: Socket,
+	constructor(
+		private _authService: AuthService,
+		public _configService: ConfigService,
+		public _router: Router,
+		public elementRef: ElementRef,
+		public renderer: Renderer2,
+		public activeModal: NgbActiveModal,
+		public alertConfig: NgbAlertConfig,
+		public _modalService: NgbModal,
+		private socket: Socket,
 		private _toastr: ToastrService,
-  ) {
-    // OCULTAR MENU REPORTE
-    this.isReportVisible = false;
+	) {
+		// OCULTAR MENU REPORTE
+		this.isReportVisible = false;
 
-    // REVISAR INTERNET
-    this.online$ = observableMerge(
-      observableOf(navigator.onLine),
-      observableFromEvent(window, 'online').pipe(mapTo(true)),
-      observableFromEvent(window, 'offline').pipe(mapTo(false))
-    );
+		// REVISAR INTERNET
+		this.online$ = observableMerge(
+			observableOf(navigator.onLine),
+			observableFromEvent(window, 'online').pipe(mapTo(true)),
+			observableFromEvent(window, 'offline').pipe(mapTo(false))
+		);
 
-    // REVISAR NOTIFICACION LICENCIA
-    this.licenseDays = 10 - new Date().getDate();
-    if(this.licenseDays.toString() !== localStorage.getItem('licenseDays')) {
-      this.readedNotification = false;
-      localStorage.setItem('readedNotification', this.readedNotification.toString());
-      localStorage.setItem('licenseDays', this.licenseDays.toString());
-    }
-    if(localStorage.getItem('readedNotification')) {
-      this.readedNotification = (localStorage.getItem('readedNotification') === "true");
-    }
+		// REVISAR NOTIFICACION LICENCIA
+		this.licenseDays = 10 - new Date().getDate();
+		if (this.licenseDays.toString() !== localStorage.getItem('licenseDays')) {
+			this.readedNotification = false;
+			localStorage.setItem('readedNotification', this.readedNotification.toString());
+			localStorage.setItem('licenseDays', this.licenseDays.toString());
+		}
+		if (localStorage.getItem('readedNotification')) {
+			this.readedNotification = (localStorage.getItem('readedNotification') === "true");
+		}
 
-    // VERIFICAR LOGUEO Y CARGAR DATOS DE USUARIO
-    this.config$ = this._configService.getConfig;
-    this.identity$ = this._authService.getIdentity;
+		// VERIFICAR LOGUEO Y CARGAR DATOS DE USUARIO
+		this.config$ = this._configService.getConfig;
+		this.identity$ = this._authService.getIdentity;
 
-    this._router.events.forEach((event: NavigationEvent) => {
-      if (event instanceof NavigationStart) {
-		let pathLocation: string[] = event.url.split('?')[0].split('/');
-        if (pathLocation[1] === "login" ||
-            pathLocation[1] === "registrar" ||
-            pathLocation[3] === "agregar-transaccion" ||
-            pathLocation[3] === "editar-transaccion" ||
-            pathLocation[7] === "agregar-transaccion" ||
-            pathLocation[7] === "editar-transaccion" ||
-            pathLocation[8] === "agregar-transaccion" ||
-            pathLocation[8] === "editar-transaccion") {
-          this.hideMenu = true;
-          this.makeVisibleReport(false);
-        } else {
-          this.hideMenu = false;
-        }
-      }
-    });
+		this._router.events.forEach((event: NavigationEvent) => {
+			if (event instanceof NavigationStart) {
+				let pathLocation: string[] = event.url.split('?')[0].split('/');
+				if (pathLocation[1] === "login" ||
+					pathLocation[1] === "registrar" ||
+					pathLocation[2] === "retiro-de-pedidos" ||
+					pathLocation[3] === "agregar-transaccion" ||
+					pathLocation[3] === "editar-transaccion" ||
+					pathLocation[7] === "agregar-transaccion" ||
+					pathLocation[7] === "editar-transaccion" ||
+					pathLocation[8] === "agregar-transaccion") {
+					this.hideMenu = true;
+					this.makeVisibleReport(false);
+				} else {
+					this.hideMenu = false;
+				}
+			}
+		});
 
-    // this.renderer.listen(this.elementRef.nativeElement, 'click', (event) => {
-    // });
+		// this.renderer.listen(this.elementRef.nativeElement, 'click', (event) => {
+		// });
 
-    this.initSocket();
-  }
+		this.initSocket();
+	}
 
-  private initSocket(): void {
-    
-    let identity: User = JSON.parse(sessionStorage.getItem('user'));
+	private initSocket(): void {
 
-    if(identity && Config.database && Config.database !== '') {
+		let identity: User = JSON.parse(sessionStorage.getItem('user'));
 
-      if(!this.socket.ioSocket.connected) {
-        // INICIAMOS SOCKET
-        this.socket.emit('start', {
-          database: Config.database,
-          clientType: 'pos'
-        });
-        
-        // ESCUCHAMOS SOCKET
-        this.socket.on('message', (mnj) => {
-          this.showToast(mnj);
-        });
+		if (identity && Config.database && Config.database !== '') {
 
-        if(this.intervalSocket) {
-          clearInterval(this.intervalSocket);
-        }
-      }
+			if (!this.socket.ioSocket.connected) {
+				// INICIAMOS SOCKET
+				this.socket.emit('start', {
+					database: Config.database,
+					clientType: 'pos'
+				});
 
-      // INICIAR CONTADOR PARA VERIFICAR CONEXION DE SOCKET
-      this.intervalSocket = setInterval(() => {
-        if(!this.socket.ioSocket.connected) {
-          this.initSocket();
-        }
-      }, 5000);
-    }
-  }
+				// ESCUCHAMOS SOCKET
+				this.socket.on('message', (mnj) => {
+					this.showToast(mnj);
+				});
 
-  public readNotification(): void {
-    this.readedNotification = true;
-    localStorage.setItem('readedNotification', this.readedNotification.toString());
-  }
+				if (this.intervalSocket) {
+					clearInterval(this.intervalSocket);
+				}
+			}
 
-  public openModal(op: string): void {
+			// INICIAR CONTADOR PARA VERIFICAR CONEXION DE SOCKET
+			this.intervalSocket = setInterval(() => {
+				if (!this.socket.ioSocket.connected) {
+					this.initSocket();
+				}
+			}, 5000);
+		}
+	}
 
-    this.makeVisibleReport(false);
-    let modalRef;
-    switch (op) {
-      case 'view-user':
-        modalRef = this._modalService.open(AddUserComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.operation = 'view';
-        modalRef.componentInstance.readonly = true;
-        this._authService.getIdentity.subscribe(
-          identity => {
-            if(modalRef != null && modalRef.componentInstance) {
-              modalRef.componentInstance.userId = identity._id;
-            }
-          },
-        );
-        modalRef.result.then((result) => {
+	public readNotification(): void {
+		this.readedNotification = true;
+		localStorage.setItem('readedNotification', this.readedNotification.toString());
+	}
 
-        }, (reason) => {
+	public openModal(op: string): void {
 
-        });
-        break;
-      case 'update-user':
-        modalRef = this._modalService.open(AddUserComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.operation = 'update';
-        modalRef.componentInstance.readonly = false;
-        this._authService.getIdentity.subscribe(
-          identity => {
-            if(modalRef != null && modalRef.componentInstance) {
-              modalRef.componentInstance.userId = identity._id;
-            }
-          },
-        );
-        modalRef.result.then((result) => {
+		this.makeVisibleReport(false);
+		let modalRef;
+		switch (op) {
+			case 'view-user':
+				modalRef = this._modalService.open(AddUserComponent, { size: 'lg', backdrop: 'static' });
+				modalRef.componentInstance.operation = 'view';
+				modalRef.componentInstance.readonly = true;
+				this._authService.getIdentity.subscribe(
+					identity => {
+						if (modalRef != null && modalRef.componentInstance) {
+							modalRef.componentInstance.userId = identity._id;
+						}
+					},
+				);
+				modalRef.result.then((result) => {
 
-        }, (reason) => {
+				}, (reason) => {
 
-        });
-        break;
-      case 'pay-license':
-        modalRef = this._modalService.open(LicensePaymentComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.result.then((result) => {
+				});
+				break;
+			case 'update-user':
+				modalRef = this._modalService.open(AddUserComponent, { size: 'lg', backdrop: 'static' });
+				modalRef.componentInstance.operation = 'update';
+				modalRef.componentInstance.readonly = false;
+				this._authService.getIdentity.subscribe(
+					identity => {
+						if (modalRef != null && modalRef.componentInstance) {
+							modalRef.componentInstance.userId = identity._id;
+						}
+					},
+				);
+				modalRef.result.then((result) => {
 
-        }, (reason) => {
+				}, (reason) => {
 
-        });
-        break;
-      case 'claim':
-        modalRef = this._modalService.open(ClaimComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.result.then((result) => {
+				});
+				break;
+			case 'pay-license':
+				modalRef = this._modalService.open(LicensePaymentComponent, { size: 'lg', backdrop: 'static' });
+				modalRef.result.then((result) => {
 
-        }, (reason) => {
+				}, (reason) => {
 
-        });
-        break;
-      default: 
-        break;
-    }
-  }
+				});
+				break;
+			case 'claim':
+				modalRef = this._modalService.open(ClaimComponent, { size: 'lg', backdrop: 'static' });
+				modalRef.result.then((result) => {
 
-  public goToHome(): void {
-    this._router.navigate(['/']);
-  }
+				}, (reason) => {
 
-  public makeVisibleReport(visible: boolean): void {
-    if(visible) {
-      this.isReportVisible = !this.isReportVisible;
-    } else {
-      this.isReportVisible = false;
-    }
-  }
+				});
+				break;
+			default:
+				break;
+		}
+	}
 
-  public openReport(link: string): void {
-    this.isReportVisible = false;
-    this._router.navigate([link]);
-  }
+	public goToHome(): void {
+		this._router.navigate(['/']);
+	}
 
-  public logout(): void {
-    this.makeVisibleReport(false);
-    this.socket.emit('finish');
-    this._authService.logoutStorage();
-  }
-  
-  public showToast(message: string, type: string = 'success'): void {
-		switch(type) {
+	public makeVisibleReport(visible: boolean): void {
+		if (visible) {
+			this.isReportVisible = !this.isReportVisible;
+		} else {
+			this.isReportVisible = false;
+		}
+	}
+
+	public openReport(link: string): void {
+		this.isReportVisible = false;
+		this._router.navigate([link]);
+	}
+
+	public logout(): void {
+		this.makeVisibleReport(false);
+		this.socket.emit('finish');
+		this._authService.logoutStorage();
+	}
+
+	public showToast(message: string, type: string = 'success'): void {
+		switch (type) {
 			case 'success':
 				this._toastr.success('', message);
 				break;

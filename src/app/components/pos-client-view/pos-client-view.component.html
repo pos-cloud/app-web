@@ -1,0 +1,30 @@
+<section style="margin: 20px;">
+	<div class="row">
+		<div class="col-md-6">
+			<div class="card">
+				<div class="card-title" style="background-color: #FF8000; color: white;">
+					En Preparación
+				</div>
+				<div class="card-body">
+					<div class="order-number" style="background-color: #FF8000; color: white;"
+						*ngFor="let transaction of transactionsInPreparation">
+						{{transaction.number}}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="card">
+				<div class="card-title" style="background-color: green; color: white;">
+					Para Retirar
+				</div>
+				<div class="card-body">
+					<div class="order-number" style="background-color: green; color: white;"
+						*ngFor="let transaction of transactionsToRemove">
+						{{transaction.number}}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
