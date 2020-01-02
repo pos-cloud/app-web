@@ -37,7 +37,7 @@ import { PriceList } from 'app/models/price-list';
 import { AddArticleComponent } from '../add-article/add-article.component';
 import { StructureService } from 'app/services/structure.service';
 import { Structure } from 'app/models/structure';
-import { isTemplateExpression } from 'typescript';
+import { isTemplateExpression, updateConstructSignature } from 'typescript';
 import { ArticleService } from 'app/services/article.service';
 import { async } from '@angular/core/testing';
 import { removeSummaryDuplicates } from '@angular/compiler';
@@ -1189,6 +1189,9 @@ export class AddMovementOfArticleComponent implements OnInit {
               this.verifyStructure();
             }
           } else {
+
+            await this.deleteMovementOfStructure();
+
             let movementFound = result.movementsOfArticles[0];
 
             this.movementOfArticle.article = movementFound.article;
@@ -1200,8 +1203,7 @@ export class AddMovementOfArticleComponent implements OnInit {
                 this.movementOfArticle.amount += movementFound.amount;
             }
            
-
-            //aca no entra jamas
+            
             if (this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
               this.movementOfArticle = this.recalculateSalePrice(this.movementOfArticle);
             } else {
@@ -1209,8 +1211,9 @@ export class AddMovementOfArticleComponent implements OnInit {
             }
 
             if (await this.isValidMovementOfArticle(this.movementOfArticle)) {
-              this.updateMovementOfArticle();
+              this.verifyStructure()
             }
+
           }
           this.loading = false;
         },
@@ -1553,6 +1556,8 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.movementOfArticle.unitPrice = this.roundNumber.transform(this.movementOfArticle.unitPrice, 4);
     this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.salePrice);
 
+    this.movChild = new Array();
+    
     //pregunto si tiene  estructura 
     if (this.structures && this.structures.length > 0) {
 
@@ -1563,23 +1568,36 @@ export class AddMovementOfArticleComponent implements OnInit {
               await this.getMovsWithOptional().then(
                 async result =>{
                   if(result){
-                    this.saveMovementOfArticle()
+                    if(!this.movementOfArticle._id){
+                      this.saveMovementOfArticle()
+                    } else {
+                      this.updateMovementOfArticle()
+                    }
                   }
                 }
               )
             } else {
-              this.saveMovementOfArticle()
+              if(!this.movementOfArticle._id){
+                this.saveMovementOfArticle()
+              } else {
+                this.updateMovementOfArticle()
+              }
             }
           }
         }
       )
     } else {
-      this.saveMovementOfArticle()
+      if(!this.movementOfArticle._id){
+        this.saveMovementOfArticle()
+      } else {
+        this.updateMovementOfArticle()
+      }
     }
 
   }
 
   async saveMovementOfArticle() {
+
     this._movementOfArticleService.saveMovementOfArticle(this.movementOfArticle).subscribe(
       async result => {
         if (!result.movementOfArticle) {
@@ -1592,8 +1610,6 @@ export class AddMovementOfArticleComponent implements OnInit {
             for (let index = 0; index < this.movChild.length; index++) {
               this.movChild[index].movementParent = result.movementOfArticle._id
             }
-
-            console.log(this.movChild)
 
             //guardo todas las estrcturas
             if (await this.saveMovementsOfArticle(this.movChild)) {
@@ -1611,6 +1627,23 @@ export class AddMovementOfArticleComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  async deleteMovementOfStructure() {
+
+    return new Promise<boolean>(async (resolve, reject) => {
+
+      let query = '{"movementParent":"' + this.movementOfArticle._id + '"}';
+            this._movementOfArticleService.deleteMovementsOfArticles(query).subscribe(
+              result => {
+                if (result && result.movementsOfArticles) {
+                  resolve(true)
+                } else {
+                  resolve(false)
+                }
+              }
+            )
+    })
   }
 
   public deleteMovementOfArticle(): void {
@@ -1642,7 +1675,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     );
   }
 
-  public updateMovementOfArticle() {
+  async updateMovementOfArticle() {
 
     this.loading = true;
 
@@ -1652,11 +1685,27 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.salePrice);
 
     this._movementOfArticleService.updateMovementOfArticle(this.movementOfArticle).subscribe(
-      result => {
+      async result => {
         if (!result.movementOfArticle) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
-          this.activeModal.close('update');
+          if (this.movChild && this.movChild.length > 0) {
+
+            //le meto a todos el movimiento del padre
+            for (let index = 0; index < this.movChild.length; index++) {
+              this.movChild[index].movementParent = result.movementOfArticle._id
+            }
+
+            //guardo todas las estrcturas
+            if (await this.saveMovementsOfArticle(this.movChild)) {
+              this.activeModal.close('update');
+            }
+
+          } else {
+            this.activeModal.close('update');
+
+          }
+
         }
         this.loading = false;
       },
