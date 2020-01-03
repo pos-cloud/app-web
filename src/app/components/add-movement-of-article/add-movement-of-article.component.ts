@@ -193,7 +193,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         "child.category.description": 1,
         "child.description": 1,
         "optional": 1,
-        "utilization" : 1,
+        "utilization": 1,
         "quantity": 1,
         "increasePrice": 1,
         operationType: 1
@@ -234,15 +234,15 @@ export class AddMovementOfArticleComponent implements OnInit {
 
             });
 
-            if(this.movementOfArticle._id && this.movementOfArticle._id !== "" && this.movementOfArticle !== null){
+            if (this.movementOfArticle._id && this.movementOfArticle._id !== "" && this.movementOfArticle !== null) {
 
               await this.getOptional().then(
-                result =>{
-                  if(result){
-                    var movementsOfArticles : MovementOfArticle[] = result;
+                result => {
+                  if (result) {
+                    var movementsOfArticles: MovementOfArticle[] = result;
 
                     for (const movArticle of movementsOfArticles) {
-                      
+
                       for (let x = 0; x < this.grouped.length; x++) {
                         if (this.grouped[x].name === movArticle.category.description) {
                           for (let y = 0; y < this.grouped[x].names.length; y++) {
@@ -254,7 +254,7 @@ export class AddMovementOfArticleComponent implements OnInit {
                           }
                         }
                       }
-                      
+
                     }
                     resolve(true)
                   }
@@ -279,31 +279,31 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   }
 
-  async getOptional() : Promise <MovementOfArticle[]>{
+  async getOptional(): Promise<MovementOfArticle[]> {
 
     return new Promise<MovementOfArticle[]>((resolve, reject) => {
 
       this._movementOfArticleService.getMovementsOfArticlesV2(
-        { movementParent : 1, description : 1, "category.description" : 1 },
-        { movementParent : { $oid : this.movementOfArticle._id }},
+        { movementParent: 1, description: 1, "category.description": 1 },
+        { movementParent: { $oid: this.movementOfArticle._id } },
         {},
         {}
       ).subscribe(
         result => {
-          if(result && result.movementsOfArticles){
+          if (result && result.movementsOfArticles) {
             resolve(result.movementsOfArticles)
           } else {
             resolve(null)
           }
         },
-        error =>{
+        error => {
           resolve(null)
         }
-        
+
       )
 
     })
-    
+
   }
 
   public addNote(note: string): void {
@@ -1019,32 +1019,31 @@ export class AddMovementOfArticleComponent implements OnInit {
         if (taxAmount > this.movementOfArticleForm.value.unitPrice) {
           this.showMessage("El precio unitario del producto no puede ser menor a la suma de impuestos con monto fijo.", 'info', true);
           resolve(false)
-        }
-      } else if (
-        movArticle.article &&
-        Config.modules.stock &&
-        movArticle.transaction.type &&
-        movArticle.transaction.type.modifyStock &&
-        movArticle.transaction.type.stockMovement === StockMovement.Outflows &&
-        !movArticle.article.allowSaleWithoutStock) {
-          console.log(movArticle)
-        this.getArticleStock(movArticle).then(
-          articleStock => {
-            if (!articleStock || (movArticle.amount + movArticle.quantityForStock) > articleStock.realStock) {
-              console.log(articleStock)
-              let realStock = 0;
-              if (articleStock) {
-                realStock = articleStock.realStock;
+        } else if (
+          movArticle.article &&
+          Config.modules.stock &&
+          movArticle.transaction.type &&
+          movArticle.transaction.type.modifyStock &&
+          movArticle.transaction.type.stockMovement === StockMovement.Outflows &&
+          !movArticle.article.allowSaleWithoutStock) {
+          this.getArticleStock(movArticle).then(
+            articleStock => {
+              if (!articleStock || (movArticle.amount + movArticle.quantityForStock) > articleStock.realStock) {
+                let realStock = 0;
+                if (articleStock) {
+                  realStock = articleStock.realStock;
+                }
+                this.showMessage("No tiene el stock suficiente del producto " + movArticle.article.description + " (" + movArticle.article.code + "). Stock Actual: " + realStock, 'info', true);
+
+                resolve(false)
+              } else {
+                resolve(true)
               }
-              this.showMessage("No tiene el stock suficiente del producto " + movArticle.article.description + " (" + movArticle.article.code + "). Stock Actual: " + realStock, 'info', true);
-              resolve(false)
-            } else {
-              resolve(true)
             }
-          }
-        );
-      } else {
-        resolve(true)
+          );
+        } else {
+          resolve(true)
+        }
       }
     });
   }
@@ -1068,7 +1067,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     }
   };
 
-  public getArticleStock(movArticle : MovementOfArticle): Promise<ArticleStock> {
+  public getArticleStock(movArticle: MovementOfArticle): Promise<ArticleStock> {
 
     return new Promise<ArticleStock>((resolve, reject) => {
 
@@ -1093,9 +1092,6 @@ export class AddMovementOfArticleComponent implements OnInit {
                         "branch": "${movArticle.transaction.branchOrigin.toString()}",
                         "deposit": "${movArticle.transaction.depositOrigin.toString()}"`;
       }
-
-
-      console.log(query)
 
       this._articleStockService.getArticleStocks(query).subscribe(
         result => {
@@ -1190,16 +1186,13 @@ export class AddMovementOfArticleComponent implements OnInit {
 
             this.movementOfArticle = result.movementsOfArticles[0];
 
-            console.log(this.movementOfArticle)
-
             this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
             this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
-            if ( this.movementOfArticle.measure === this.movementOfArticleForm.value.measure) {
-                this.movementOfArticle._id =  this.movementOfArticle._id;
-                this.movementOfArticle.amount +=  this.movementOfArticle.amount;
+            if (this.movementOfArticle.measure === this.movementOfArticleForm.value.measure) {
+              this.movementOfArticle._id = this.movementOfArticle._id;
+              this.movementOfArticle.amount += this.movementOfArticle.amount;
             }
-           
-            console.log(this.movementOfArticle)
+
             if (this.movementOfArticle.transaction && this.movementOfArticle.transaction.type && this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
               this.movementOfArticle = this.recalculateSalePrice(this.movementOfArticle);
             } else {
@@ -1244,9 +1237,9 @@ export class AddMovementOfArticleComponent implements OnInit {
 
       var isFinish: boolean = false;
       for (const iterator of this.structures) {
-        if(!iterator.optional){
+        if (!iterator.optional) {
           if (!isFinish) {
-            if(!await this.buildMovsArticle(iterator.child._id, iterator.quantity, iterator.increasePrice)){
+            if (!await this.buildMovsArticle(iterator.child._id, iterator.quantity, iterator.increasePrice)) {
               isFinish = true;
             }
           }
@@ -1270,7 +1263,7 @@ export class AddMovementOfArticleComponent implements OnInit {
           for (const names of name.names) {
             if (names.color === "blue") {
               if (!isFinish) {
-                if(!await this.buildMovsArticle(names.id, names.quantity, names.increasePrice)){
+                if (!await this.buildMovsArticle(names.id, names.quantity, names.increasePrice)) {
                   isFinish = true;
                 }
               }
@@ -1562,11 +1555,11 @@ export class AddMovementOfArticleComponent implements OnInit {
       await this.getMovsWithoutOptional().then(
         async result => {
           if (result) {
-            if(this.grouped && this.grouped.length > 0){
+            if (this.grouped && this.grouped.length > 0) {
               await this.getMovsWithOptional().then(
-                async result =>{
-                  if(result){
-                    if(!this.movementOfArticle._id){
+                async result => {
+                  if (result) {
+                    if (!this.movementOfArticle._id) {
                       this.saveMovementOfArticle()
                     } else {
                       this.updateMovementOfArticle()
@@ -1575,7 +1568,7 @@ export class AddMovementOfArticleComponent implements OnInit {
                 }
               )
             } else {
-              if(!this.movementOfArticle._id){
+              if (!this.movementOfArticle._id) {
                 this.saveMovementOfArticle()
               } else {
                 this.updateMovementOfArticle()
@@ -1585,7 +1578,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         }
       )
     } else {
-      if(!this.movementOfArticle._id){
+      if (!this.movementOfArticle._id) {
         this.saveMovementOfArticle()
       } else {
         this.updateMovementOfArticle()
@@ -1631,15 +1624,15 @@ export class AddMovementOfArticleComponent implements OnInit {
     return new Promise<boolean>(async (resolve, reject) => {
 
       let query = '{"movementParent":"' + this.movementOfArticle._id + '"}';
-            this._movementOfArticleService.deleteMovementsOfArticles(query).subscribe(
-              result => {
-                if (result && result.movementsOfArticles) {
-                  resolve(true)
-                } else {
-                  resolve(false)
-                }
-              }
-            )
+      this._movementOfArticleService.deleteMovementsOfArticles(query).subscribe(
+        result => {
+          if (result && result.movementsOfArticles) {
+            resolve(true)
+          } else {
+            resolve(false)
+          }
+        }
+      )
     })
   }
 
