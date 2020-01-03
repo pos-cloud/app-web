@@ -145,7 +145,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         });
       }
       if (Config.modules && Config.modules.stock && this.movementOfArticle.transaction.type.modifyStock) {
-        await this.getArticleStock().then(
+        await this.getArticleStock(this.movementOfArticle).then(
           articleStock => {
             if (articleStock) {
               this.stock = articleStock.realStock;
@@ -178,7 +178,8 @@ export class AddMovementOfArticleComponent implements OnInit {
 
       let match = `{
         "operationType": { "$ne": "D" }, 
-        "parent._id": { "$oid" : "${idArticle}"}
+        "parent._id": { "$oid" : "${idArticle}"},
+        "utilization" : "Venta"
       }`;
 
       match = JSON.parse(match);
@@ -192,6 +193,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         "child.category.description": 1,
         "child.description": 1,
         "optional": 1,
+        "utilization" : 1,
         "quantity": 1,
         "increasePrice": 1,
         operationType: 1
@@ -1025,9 +1027,11 @@ export class AddMovementOfArticleComponent implements OnInit {
         movArticle.transaction.type.modifyStock &&
         movArticle.transaction.type.stockMovement === StockMovement.Outflows &&
         !movArticle.article.allowSaleWithoutStock) {
-        this.getArticleStock().then(
+          console.log(movArticle)
+        this.getArticleStock(movArticle).then(
           articleStock => {
             if (!articleStock || (movArticle.amount + movArticle.quantityForStock) > articleStock.realStock) {
+              console.log(articleStock)
               let realStock = 0;
               if (articleStock) {
                 realStock = articleStock.realStock;
@@ -1064,33 +1068,34 @@ export class AddMovementOfArticleComponent implements OnInit {
     }
   };
 
-  public getArticleStock(): Promise<ArticleStock> {
+  public getArticleStock(movArticle : MovementOfArticle): Promise<ArticleStock> {
 
     return new Promise<ArticleStock>((resolve, reject) => {
 
       let depositID;
       let query;
 
-      if (this.movementOfArticle.article.deposits && this.movementOfArticle.article.deposits.length > 0) {
-        this.movementOfArticle.article.deposits.forEach(async element => {
-          if (element.deposit && element.deposit.branch && element.deposit.branch._id === this.movementOfArticle.transaction.branchOrigin._id) {
+      if (movArticle.article.deposits && movArticle.article.deposits.length > 0) {
+        movArticle.article.deposits.forEach(async element => {
+          if (element.deposit && element.deposit.branch && element.deposit.branch._id === movArticle.transaction.branchOrigin._id) {
             depositID = element.deposit._id;
           }
         });
       }
 
       if (depositID) {
-        query = `where= "article": "${this.movementOfArticle.article._id}",
-                        "branch": "${this.movementOfArticle.transaction.branchOrigin._id}",
+        query = `where= "article": "${movArticle.article._id}",
+                        "branch": "${movArticle.transaction.branchOrigin._id}",
                         "deposit": "${depositID}"`;
 
       } else {
-        query = `where= "article": "${this.movementOfArticle.article._id}",
-                        "branch": "${this.movementOfArticle.transaction.branchOrigin._id}",
-                        "deposit": "${this.movementOfArticle.transaction.depositOrigin._id}"`;
+        query = `where= "article": "${movArticle.article._id}",
+                        "branch": "${movArticle.transaction.branchOrigin.toString()}",
+                        "deposit": "${movArticle.transaction.depositOrigin.toString()}"`;
       }
 
 
+      console.log(query)
 
       this._articleStockService.getArticleStocks(query).subscribe(
         result => {
@@ -1183,19 +1188,19 @@ export class AddMovementOfArticleComponent implements OnInit {
 
             await this.deleteMovementOfStructure();
 
-            let movementFound = result.movementsOfArticles[0];
+            this.movementOfArticle = result.movementsOfArticles[0];
 
-            this.movementOfArticle.article = movementFound.article;
+            console.log(this.movementOfArticle)
 
             this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
             this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
-            if (movementFound.measure === this.movementOfArticleForm.value.measure) {
-                this.movementOfArticle._id = movementFound._id;
-                this.movementOfArticle.amount += movementFound.amount;
+            if ( this.movementOfArticle.measure === this.movementOfArticleForm.value.measure) {
+                this.movementOfArticle._id =  this.movementOfArticle._id;
+                this.movementOfArticle.amount +=  this.movementOfArticle.amount;
             }
            
-            
-            if (this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
+            console.log(this.movementOfArticle)
+            if (this.movementOfArticle.transaction && this.movementOfArticle.transaction.type && this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
               this.movementOfArticle = this.recalculateSalePrice(this.movementOfArticle);
             } else {
               this.movementOfArticle = this.recalculateCostPrice(this.movementOfArticle);
