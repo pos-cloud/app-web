@@ -1259,19 +1259,28 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     return new Promise<Boolean>(async (resolve, reject) => {
 
+      var isFinish: boolean = false;
       if (this.grouped && this.grouped.length > 0) {
         for (const name of this.grouped) {
           for (const names of name.names) {
             if (names.color === "blue") {
-              await this.buildMovsArticle(names.id, names.quantity, names.increasePrice)
+              if (!isFinish) {
+                if(!await this.buildMovsArticle(names.id, names.quantity, names.increasePrice)){
+                  isFinish = true;
+                }
+              }
             }
           }
         }
-        resolve(true)
       } else {
         resolve(false)
       }
 
+      if (isFinish) {
+        resolve(false)
+      } else {
+        resolve(true)
+      }
     })
   }
 
