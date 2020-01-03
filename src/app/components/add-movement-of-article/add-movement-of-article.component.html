@@ -133,7 +133,8 @@
                 <button type="button"
                         class="btn btn-variant"
                         *ngFor="let child of group.names"
-                        [style.background-color]="child.color"
+                        [ngClass]="{'btn-primary': child.color === 'blue',
+                                    'btn-light': child.color === 'white' }"
                         (click)="changeOptional(child.name,group.name)">
                         {{ child.name }}
                 </button>
