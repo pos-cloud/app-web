@@ -267,10 +267,17 @@
                 </div>
                 <div class="row">
                   <div class="form-group col-md-12">
-                    <label for="group" class="control-label">Grupo</label>
-                    <select class="form-control" formControlName="group">
-                      <option *ngFor="let companyGroup of companiesGroups" [ngValue]="companyGroup">{{companyGroup.description}}</option>
-                    </select>
+                    <label for="group" class="control-label">Grupo asignado</label>
+                    <select class="form-control" formControlName="group" name="group" id="group" >
+                        <option [ngValue]="null" [selected]="!company || !company.group" [disabled]="readonly"></option>
+                              <option *ngFor="let group of companiesGroups"
+                                      [selected]="(company.group && company.group._id && group._id===company.group._id) ||
+                                                  (company.group && group._id===company.group)"
+                                      [value]="group._id"
+                                      [disabled]="readonly">
+                                      {{group.description}}</option>
+  
+                      </select>
                     <div *ngIf="formErrors.group" class="alert alert-danger">
                       {{ formErrors.group }}
                     </div>
