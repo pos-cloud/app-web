@@ -16,7 +16,17 @@ app-pos-packing {
   .card-transaction {
     width: 30%;
     margin: 20px;
-	float: left;
-	padding: 10px;
+    float: left;
+    padding: 10px;
+  }
+
+  .notes {
+    float: left;
+	font-size: 20px;
+	border: 1px solid #fe2e2e;
+	border-radius: 5px;
+	padding: 6px;
+    margin-right: 15px;
+    margin-bottom: 5px;
   }
 }

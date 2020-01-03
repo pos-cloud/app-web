@@ -23,8 +23,9 @@ export class PosPackingComponent {
 	public alertMessage: string = '';
 	public loading: boolean = false;
 	public transactionsToPacking: Transaction[];
-	public colors: string[] = ["red:white", "green:white", "yellow:black", "gray:black", "black:white"];
+	public colors: string[] = ["teal:white", "midnightblue:white", "black:white", "black:white", "chocolate:white"];
 	public printers: Printer[];
+	public colorNumber: number = 0;
 
 	constructor(
 		public alertConfig: NgbAlertConfig,
@@ -61,14 +62,41 @@ export class PosPackingComponent {
 
 	private async loadPacking() {
 		this.loading = true;
+		let packingColors = [];
 		this.transactionsToPacking = await this.getTransactions({ state: TransactionState.Packing, operationType: { $ne: "D" } });
-		let colorNumber = 0;
+		let i = 0;
 		for (let transaction of this.transactionsToPacking) {
 			transaction['movementsOfArticles'] = await this.getMovementsOfArticles({ transaction: { $oid: transaction._id }, operationType: { $ne: "D" } });
-			transaction['color'] = this.colors[colorNumber];
-			(colorNumber === this.colors.length - 1) ? colorNumber = 0 : colorNumber++;
+			let color: string = this.getColor(transaction._id);
+			if (color) {
+				this.colorNumber = this.colors.indexOf(color);
+			}
+			transaction['color'] = this.colors[this.colorNumber];
+			packingColors.push({
+				transactionId: transaction._id,
+				color: transaction['color']
+			});
+			(this.colorNumber === this.colors.length - 1) ? this.colorNumber = 0 : this.colorNumber++;
+			i++;
 		}
+		localStorage.setItem('packingColors', JSON.stringify(packingColors));
 		this.loading = false;
+	}
+
+	private getColor(transactionId: string): string {
+		let color: string = null;
+		let packingColors = localStorage.getItem('packingColors');
+		if (packingColors) {
+			try {
+				packingColors = JSON.parse(packingColors);
+				for (let pack of packingColors) {
+					if (pack['transactionId'] === transactionId) {
+						color = pack['color'];
+					}
+				}
+			} catch (err) { }
+		}
+		return color;
 	}
 
 	public async initInterval() {
@@ -97,7 +125,7 @@ export class PosPackingComponent {
 				match, // MATCH
 				{ startDate: 1 }, // SORT
 				{}, // GROUP
-				8, // LIMIT
+				6, // LIMIT
 				0 // SKIP
 			).subscribe(
 				result => {
@@ -131,7 +159,7 @@ export class PosPackingComponent {
 				match, // MATCH
 				{}, // SORT
 				{}, // GROUP
-				1, // LIMIT
+				0, // LIMIT
 				0 // SKIP
 			).subscribe(
 				result => {

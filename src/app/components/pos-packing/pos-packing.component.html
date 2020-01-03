@@ -9,6 +9,9 @@
 			Armado de pedidos
 		</div>
 		<div class="card-body">
+			<div *ngIf="(!transactionsToPacking || transactionsToPacking.length === 0) && !loading">
+				<span style="font-size: 30px;">Esperando nuevos pedidos...</span>
+			</div>
 			<div class="card card-transaction" *ngFor="let transaction of transactionsToPacking"
 				[style.backgroundColor]="(transaction.color && transaction.color.split(':')[0]) ? transaction.color.split(':')[0] : 'white'"
 				[style.color]="(transaction.color && transaction.color.split(':')[1]) ? transaction.color.split(':')[1] : 'black'">
@@ -20,12 +23,21 @@
 						<div class="col-md-12">
 							<table>
 								<tbody>
-									<tr *ngFor="let mov of transaction['movementsOfArticles']">
+									<tr *ngFor="let mov of transaction['movementsOfArticles']" style="font-size: 30px;">
 										<td style="padding: 0px 10px;">
 											{{mov.amount}}
 										</td>
 										<td>
-											{{mov.description}}
+											<div class="row">
+												<div class="col-md-12">
+													{{mov.description}}
+												</div>
+											</div>
+											<div class="card-text" *ngIf="mov && mov.notes">
+												<div class="notes" *ngFor="let note of mov.notes.split('; ')">
+													{{ note }}
+												</div>
+											</div>
 										</td>
 									</tr>
 								</tbody>
@@ -34,8 +46,7 @@
 					</div>
 					<div class="row">
 						<div class="col-md-12 center-content">
-							<button class="btn"
-								(click)="openModal('print', transaction)"
+							<button class="btn" (click)="openModal('print', transaction)"
 								style="width: 100%; margin-top: 20px; background-color: #fe2e2e; color: white;">Imprimir</button>
 						</div>
 					</div>
