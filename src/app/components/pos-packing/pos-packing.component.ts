@@ -57,7 +57,7 @@ export class PosPackingComponent {
 			}
 		);
 		this.loadPacking();
-		this.initInterval();
+		// this.initInterval();
 	}
 
 	private async loadPacking() {
