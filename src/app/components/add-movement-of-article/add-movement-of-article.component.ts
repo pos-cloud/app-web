@@ -1704,7 +1704,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     for (let x = 0; x < this.grouped.length; x++) {
       if (this.grouped[x].name === group) {
         for (let y = 0; y < this.grouped[x].names.length; y++) {
-          if (child === this.grouped[x].names[y].name) {
+          if (child === this.grouped[x].names[y].name && this.grouped[x].names[y].color === "white") {
             this.grouped[x].names[y].color = "blue";
           } else {
             this.grouped[x].names[y].color = "white";
