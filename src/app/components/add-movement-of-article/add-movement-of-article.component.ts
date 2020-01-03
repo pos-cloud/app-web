@@ -178,7 +178,8 @@ export class AddMovementOfArticleComponent implements OnInit {
 
       let match = `{
         "operationType": { "$ne": "D" }, 
-        "parent._id": { "$oid" : "${idArticle}"}
+        "parent._id": { "$oid" : "${idArticle}"},
+        "child.operationType": { "$ne": "D" }
       }`;
 
       match = JSON.parse(match);
@@ -189,6 +190,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         "parent._id": 1,
         "parent.description": 1,
         "child._id": 1,
+        "child.operationType": 1,
         "child.category.description": 1,
         "child.description": 1,
         "optional": 1,
@@ -656,6 +658,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   async addMovementOfArticle() {
 
+
     if (this.movementOfArticleForm.value.amount >= 0) {
       if (this.movementOfArticleForm.value.measure) {
         this.movementOfArticle.measure = this.movementOfArticleForm.value.measure;
@@ -1010,39 +1013,39 @@ export class AddMovementOfArticleComponent implements OnInit {
         movArticle.taxes.length > 0) {
         let taxAmount = 0;
         for (let tax of movArticle.article.taxes) {
-          if (tax.percentage === 0 &&
-            tax.taxAmount > 0) {
+          if (tax.percentage === 0 && tax.taxAmount > 0) {
             taxAmount += tax.taxAmount;
           }
         }
         if (taxAmount > this.movementOfArticleForm.value.unitPrice) {
+
           this.showMessage("El precio unitario del producto no puede ser menor a la suma de impuestos con monto fijo.", 'info', true);
           resolve(false)
-        } else if (
-          movArticle.article &&
-          Config.modules.stock &&
-          movArticle.transaction.type &&
-          movArticle.transaction.type.modifyStock &&
-          movArticle.transaction.type.stockMovement === StockMovement.Outflows &&
-          !movArticle.article.allowSaleWithoutStock) {
-          this.getArticleStock(movArticle).then(
-            articleStock => {
-              if (!articleStock || (movArticle.amount + movArticle.quantityForStock) > articleStock.realStock) {
-                let realStock = 0;
-                if (articleStock) {
-                  realStock = articleStock.realStock;
-                }
-                this.showMessage("No tiene el stock suficiente del producto " + movArticle.article.description + " (" + movArticle.article.code + "). Stock Actual: " + realStock, 'info', true);
-
-                resolve(false)
-              } else {
-                resolve(true)
-              }
-            }
-          );
-        } else {
-          resolve(true)
         }
+      } else if (
+        movArticle.article &&
+        Config.modules.stock &&
+        movArticle.transaction.type &&
+        movArticle.transaction.type.modifyStock &&
+        movArticle.transaction.type.stockMovement === StockMovement.Outflows &&
+        !movArticle.article.allowSaleWithoutStock) {
+        this.getArticleStock(movArticle).then(
+          articleStock => {
+            if (!articleStock || (movArticle.amount + movArticle.quantityForStock) > articleStock.realStock) {
+              let realStock = 0;
+              if (articleStock) {
+                realStock = articleStock.realStock;
+              }
+
+              this.showMessage("No tiene el stock suficiente del producto " + movArticle.article.description + " (" + movArticle.article.code + "). Stock Actual: " + realStock, 'info', true);
+              resolve(false)
+            } else {
+              resolve(true)
+            }
+          }
+        );
+      } else {
+        resolve(true)
       }
     });
   }
@@ -1181,7 +1184,7 @@ export class AddMovementOfArticleComponent implements OnInit {
             }
           } else {
 
-            if(this.structures && this.structures.length > 0){
+            if (this.structures && this.structures.length > 0) {
               await this.deleteMovementOfStructure();
             }
 
@@ -1318,7 +1321,7 @@ export class AddMovementOfArticleComponent implements OnInit {
               movArticle.costPrice = article.costPrice;
               movArticle.markupPercentage = article.markupPercentage;
               movArticle.markupPrice = article.markupPrice;
-              movArticle.unitPrice = salePrice ;
+              movArticle.unitPrice = salePrice;
               movArticle = await this.recalculateSalePrice(movArticle)
             } else {
               movArticle.salePrice = 0;
