@@ -178,8 +178,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
       let match = `{
         "operationType": { "$ne": "D" }, 
-        "parent._id": { "$oid" : "${idArticle}"},
-        "utilization" : "Venta"
+        "parent._id": { "$oid" : "${idArticle}"}
       }`;
 
       match = JSON.parse(match);
@@ -1314,12 +1313,12 @@ export class AddMovementOfArticleComponent implements OnInit {
             //todo en 0 para que no sume nada
 
             if (salePrice && salePrice > 0) {
-              movArticle.salePrice = salePrice * movArticle.amount;
-              movArticle.basePrice = article.basePrice * movArticle.amount;
-              movArticle.costPrice = article.costPrice * movArticle.amount;
+              movArticle.salePrice = salePrice;
+              movArticle.basePrice = article.basePrice;
+              movArticle.costPrice = article.costPrice;
               movArticle.markupPercentage = article.markupPercentage;
               movArticle.markupPrice = article.markupPrice;
-              movArticle.unitPrice = salePrice * movArticle.amount;
+              movArticle.unitPrice = salePrice ;
               movArticle = await this.recalculateSalePrice(movArticle)
             } else {
               movArticle.salePrice = 0;
