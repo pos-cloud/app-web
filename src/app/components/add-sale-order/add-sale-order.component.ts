@@ -9,7 +9,7 @@ import 'moment/locale/es';
 
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionMovement, StockMovement } from './../../models/transaction-type';
+import { TransactionMovement, StockMovement, TransactionType } from './../../models/transaction-type';
 import { Taxes } from './../../models/taxes';
 import { ArticlePrintIn, Article } from './../../models/article';
 import { ArticleStock } from './../../models/article-stock';
@@ -74,7 +74,6 @@ import { ArticleService } from 'app/services/article.service';
 import { ToastrService } from 'ngx-toastr';
 import { User } from 'app/models/user';
 import { CancellationTypeAutomaticComponent } from '../cancellation-types-automatic/cancellation-types-automatic.component';
-import { resolve } from 'url';
 import { StructureService } from 'app/services/structure.service';
 
 @Component({
@@ -178,6 +177,7 @@ export class AddSaleOrderComponent {
 
 	public initVariables(): void {
 		this.transaction = new Transaction();
+		this.transaction.type = new TransactionType();
 		this.movementsOfArticles = new Array();
 		this.printers = new Array();
 		this.printersAux = new Array();

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -58,6 +58,12 @@ export class ListCategoriesComponent implements OnInit {
 			this.orderTerm = ['order'];
 		}
 		this.getCategories();
+	}
+
+	public ngOnChanges(changes: SimpleChanges): void {
+		if(changes.transactionMovement.currentValue) {
+		  this.getCategories();
+		}
 	}
 
 	public getBadge(term: string): boolean {
