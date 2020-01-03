@@ -65,8 +65,10 @@ export class AddTransactionComponent implements OnInit {
 		TransactionState.Open,
 		TransactionState.Canceled,
 		TransactionState.Closed,
+		TransactionState.Packing,
 		TransactionState.Delivered,
 		TransactionState.Sent,
+		TransactionState.Preparing,
 		TransactionState.Pending
 	];
 	public companyName: string = "Consumidor Final";
