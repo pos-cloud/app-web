@@ -1724,11 +1724,6 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   }
 
-  public selectOptional() {
-    return { background: 'black', 'border': '2px solid black' };
-
-  }
-
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
