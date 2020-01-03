@@ -29,19 +29,11 @@ export class AddCategoryComponent  implements OnInit {
   public imageURL: string;
   public orientation: string = 'horizontal';
 
-  public formErrors = {
-    'order': '',
-    'description': '',
-    'visibleInvoice': ''
-  };
+  public formErrors = { 'order': '', 'description': '' };
 
   public validationMessages = {
-    'order': {
-      'required': 'Este campo es requerido.'
-    },
-    'description': {
-      'required':       'Este campo es requerido.'
-    }
+    'order': { 'required': 'Este campo es requerido.' },
+    'description': { 'required':       'Este campo es requerido.' }
   };
 
   constructor(
@@ -80,6 +72,12 @@ export class AddCategoryComponent  implements OnInit {
         ]
       ],
       'visibleInvoice' : [this.category.visibleInvoice, [
+        ]
+      ],
+      'visibleOnSale' : [this.category.visibleOnSale, [
+        ]
+      ],
+      'visibleOnPurchase' : [this.category.visibleOnPurchase, [
         ]
       ],
       'ecommerceEnabled' : [this.category.ecommerceEnabled, [
@@ -143,6 +141,8 @@ export class AddCategoryComponent  implements OnInit {
       'order': this.category.order,
       'description': this.category.description,
       'visibleInvoice': this.category.visibleInvoice,
+      'visibleOnSale': this.category.visibleOnSale,
+      'visibleOnPurchase': this.category.visibleOnPurchase,
       'ecommerceEnabled': this.category.ecommerceEnabled
     });
   }
