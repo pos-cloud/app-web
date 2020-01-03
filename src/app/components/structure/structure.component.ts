@@ -205,6 +205,13 @@ export class StructureComponent implements OnInit {
 
   public addStructure() {
 
+    this.structure = this.structureForm.value;
+
+    if(!this.structure.optional){
+      this.structure.increasePrice = null;
+    }
+
+
     switch (this.operation) {
       case 'add':
         this.saveStructure();
@@ -222,8 +229,6 @@ export class StructureComponent implements OnInit {
   public updateStructure() {
 
     this.loading = true;
-
-    this.structure = this.structureForm.value;
 
     if(this.isValid()){
       this._structureService.updateStructure(this.structure).subscribe(
@@ -249,8 +254,6 @@ export class StructureComponent implements OnInit {
   public saveStructure() {
 
     this.loading = true;
-
-    this.structure = this.structureForm.value;
 
     if(this.isValid()){
       this._structureService.saveStructure(this.structure).subscribe(
