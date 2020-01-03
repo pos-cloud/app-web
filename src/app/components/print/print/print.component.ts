@@ -43,6 +43,7 @@ import 'moment/locale/es';
 import { BranchService } from 'app/services/branch.service';
 import { User } from 'app/models/user';
 import { UserService } from 'app/services/user.service';
+import { async } from '@angular/core/testing';
 
 @Component({
   selector: 'app-print',
@@ -149,33 +150,23 @@ export class PrintComponent implements OnInit {
     this.doc = new jsPDF(orientation, units, [pageWidth, pageHigh]);
 
 
-    await this.getBranch()
     this.getConfig();
   }
 
-  public getBranch() {
-    
+  async getBranch(branchID : string) {
 
-			var identity : User = JSON.parse(sessionStorage.getItem('user'));
-			var user : User;
-			if (identity) {
-				this._userService.getUser(identity._id).subscribe(
-					result => {
-						if (result && result.user) {
-              user = result.user;
-              if(user && user.origin && user.origin.branch && user.origin.branch.image){
-                this.branchImagen = user.origin.branch.image;
-              }
+    this._branchService.getBranch(branchID).subscribe(
+      result =>{
+        if(result && result.branch && result.branch.image){
+          this.branchImagen = result.branch.image;
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    )
 
-						} else {
-							this.showMessage("Debe volver a iniciar session", "danger", false);
-						}
-					},
-					error => {
-						this.showMessage(error._body, "danger", false);
-					}
-				)
-			}
   }
 
   public getConfig(): void {
@@ -228,9 +219,10 @@ export class PrintComponent implements OnInit {
     this.loading = true;
 
     this._transactionService.getTransaction(transactionId).subscribe(
-      result => {
+      async result => {
         if (result && result.transaction) {
             this.transaction = result.transaction;
+            await this.getBranch(this.transaction.branchOrigin._id)
             if(this.transaction && this.transaction.type && this.transaction.type.defectPrinter && !this.printer) {
               this.printer = this.transaction.type.defectPrinter;
             }
