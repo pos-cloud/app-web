@@ -57,7 +57,7 @@ export class PosPackingComponent {
 			}
 		);
 		this.loadPacking();
-		// this.initInterval();
+		this.initInterval();
 	}
 
 	private async loadPacking() {
@@ -68,7 +68,7 @@ export class PosPackingComponent {
 		for (let transaction of this.transactionsToPacking) {
 			transaction['movementsOfArticles'] = await this.getMovementsOfArticles({ transaction: { $oid: transaction._id }, operationType: { $ne: "D" } });
 			let color: string = this.getColor(transaction._id);
-			if(color) {
+			if (color) {
 				this.colorNumber = this.colors.indexOf(color);
 			}
 			transaction['color'] = this.colors[this.colorNumber];
@@ -84,17 +84,17 @@ export class PosPackingComponent {
 	}
 
 	private getColor(transactionId: string): string {
-		let color: string = null; 
+		let color: string = null;
 		let packingColors = localStorage.getItem('packingColors');
-		if(packingColors) {
+		if (packingColors) {
 			try {
 				packingColors = JSON.parse(packingColors);
-				for(let pack of packingColors) {
-					if(pack['transactionId'] === transactionId) {
+				for (let pack of packingColors) {
+					if (pack['transactionId'] === transactionId) {
 						color = pack['color'];
 					}
 				}
-			} catch(err) {}
+			} catch (err) { }
 		}
 		return color;
 	}
@@ -159,7 +159,7 @@ export class PosPackingComponent {
 				match, // MATCH
 				{}, // SORT
 				{}, // GROUP
-				1, // LIMIT
+				0, // LIMIT
 				0 // SKIP
 			).subscribe(
 				result => {
