@@ -1182,16 +1182,15 @@ export class AddMovementOfArticleComponent implements OnInit {
             }
           } else {
 
-            await this.deleteMovementOfStructure();
+            if(this.structures && this.structures.length > 0){
+              await this.deleteMovementOfStructure();
+            }
 
             this.movementOfArticle = result.movementsOfArticles[0];
 
             this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
             this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
-            if (this.movementOfArticle.measure === this.movementOfArticleForm.value.measure) {
-              this.movementOfArticle._id = this.movementOfArticle._id;
-              this.movementOfArticle.amount += this.movementOfArticle.amount;
-            }
+            this.movementOfArticle.unitPrice = this.movementOfArticleForm.value.unitPrice;
 
             if (this.movementOfArticle.transaction && this.movementOfArticle.transaction.type && this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
               this.movementOfArticle = this.recalculateSalePrice(this.movementOfArticle);
@@ -1690,7 +1689,6 @@ export class AddMovementOfArticleComponent implements OnInit {
             if (await this.saveMovementsOfArticle(this.movChild)) {
               this.activeModal.close('update');
             }
-
           } else {
             this.activeModal.close('update');
 
