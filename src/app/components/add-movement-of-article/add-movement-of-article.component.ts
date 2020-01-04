@@ -1171,6 +1171,7 @@ export class AddMovementOfArticleComponent implements OnInit {
       this._movementOfArticleService.getMovementsOfArticles(query).subscribe(
         async result => {
           if (!result.movementsOfArticles) {
+            console.log("entro")
             // Si no existe ningún movimiento del producto guardamos uno nuevo
 
             this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
@@ -1188,25 +1189,43 @@ export class AddMovementOfArticleComponent implements OnInit {
             }
           } else {
 
-            if (this.structures && this.structures.length > 0) {
-              await this.deleteMovementOfStructure();
-            }
+            if(this.movementOfArticle._id === null || this.movementOfArticle._id === ""){
+              this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
+              this.movementOfArticle.description = this.movementOfArticleForm.value.description;
+              this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
 
-            this.movementOfArticle = result.movementsOfArticles[0];
+              if (this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
+                this.movementOfArticle = this.recalculateSalePrice(this.movementOfArticle);
+              } else {
+                this.movementOfArticle = this.recalculateCostPrice(this.movementOfArticle);
+              }
 
-            this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
-            this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
-            this.movementOfArticle.unitPrice = this.movementOfArticleForm.value.unitPrice;
-
-            if (this.movementOfArticle.transaction && this.movementOfArticle.transaction.type && this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
-              this.movementOfArticle = this.recalculateSalePrice(this.movementOfArticle);
+              if (await this.isValidMovementOfArticle(this.movementOfArticle)) {
+                this.verifyStructure();
+              }
             } else {
-              this.movementOfArticle = this.recalculateCostPrice(this.movementOfArticle);
+
+              if (this.structures && this.structures.length > 0) {
+                await this.deleteMovementOfStructure();
+              }
+  
+              this.movementOfArticle = result.movementsOfArticles[0];
+  
+              this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
+              this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
+              this.movementOfArticle.unitPrice = this.movementOfArticleForm.value.unitPrice;
+  
+              if (this.movementOfArticle.transaction && this.movementOfArticle.transaction.type && this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
+                this.movementOfArticle = this.recalculateSalePrice(this.movementOfArticle);
+              } else {
+                this.movementOfArticle = this.recalculateCostPrice(this.movementOfArticle);
+              }
+  
+              if (await this.isValidMovementOfArticle(this.movementOfArticle)) {
+                this.verifyStructure()
+              }
             }
 
-            if (await this.isValidMovementOfArticle(this.movementOfArticle)) {
-              this.verifyStructure()
-            }
 
           }
           this.loading = false;
