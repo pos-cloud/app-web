@@ -780,7 +780,8 @@ export class AddSaleOrderComponent {
 			let match = `{
 			"operationType": { "$ne": "D" }, 
 			"parent._id": { "$oid" : "${articleId}"},
-			"optional" : true
+			"optional" : true,
+			"child.operationType": { "$ne": "D" }
 		  }`;
 
 			match = JSON.parse(match);
@@ -791,6 +792,7 @@ export class AddSaleOrderComponent {
 				"parent.description": 1,
 				"child._id": 1,
 				"child.description": 1,
+				"child.operationType" : 1,
 				"optional": 1,
 				"utilization" : 1,
 				operationType: 1

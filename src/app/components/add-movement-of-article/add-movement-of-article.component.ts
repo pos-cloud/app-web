@@ -1011,18 +1011,20 @@ export class AddMovementOfArticleComponent implements OnInit {
         movArticle.article.taxes.length > 0 &&
         movArticle.taxes &&
         movArticle.taxes.length > 0) {
-        let taxAmount = 0;
+        var taxAmount = 0;
         for (let tax of movArticle.article.taxes) {
           if (tax.percentage === 0 && tax.taxAmount > 0) {
             taxAmount += tax.taxAmount;
           }
         }
-        if (taxAmount > this.movementOfArticleForm.value.unitPrice) {
-
-          this.showMessage("El precio unitario del producto no puede ser menor a la suma de impuestos con monto fijo.", 'info', true);
-          resolve(false)
-        }
-      } else if (
+      }
+          if (taxAmount > this.movementOfArticleForm.value.unitPrice) {
+            this.showMessage("El precio unitario del producto no puede ser menor a la suma de impuestos con monto fijo.", 'info', true);
+            resolve(false)
+          } else 
+      
+      
+      if (
         movArticle.article &&
         Config.modules.stock &&
         movArticle.transaction.type &&
@@ -1047,6 +1049,8 @@ export class AddMovementOfArticleComponent implements OnInit {
       } else {
         resolve(true)
       }
+    
+    
     });
   }
 
@@ -1312,6 +1316,8 @@ export class AddMovementOfArticleComponent implements OnInit {
             //para stock y cocina
             movArticle.amount = quantity * this.movementOfArticle.amount;
             movArticle.status = MovementOfArticleStatus.Ready;
+
+            movArticle.notes = "";
 
             //todo en 0 para que no sume nada
 
