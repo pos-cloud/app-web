@@ -702,7 +702,8 @@ export class AddSaleOrderComponent {
 						var movsArticle: MovementOfArticle[] = new Array();
 
 						for (const movArticle of child) {
-							if (await this.isValidMovementOfArticle(movArticle)) {
+							var stock : boolean = await this.getUtilization(movementOfArticle.article._id,movArticle.article._id)
+							if (await this.isValidMovementOfArticle(movArticle, stock)) {
 								movsArticle.push(movArticle)
 							}
 						}
@@ -829,6 +830,65 @@ export class AddSaleOrderComponent {
 		})
 	}
 
+	private getUtilization(parent: string, child: string): Promise<boolean> {
+
+		return new Promise<boolean>((resolve, reject) => {
+			this.loading = true;
+
+			let match = `{
+			"operationType": { "$ne": "D" }, 
+			"parent._id": { "$oid" : "${parent}"},
+			"child._id" : { "$oid" : "${child}"},
+			"child.operationType": { "$ne": "D" },
+			"utilization" : "Venta"
+		  }`;
+
+			match = JSON.parse(match);
+
+			let project = {
+				"_id": 1,
+				"parent._id": 1,
+				"parent.description": 1,
+				"child._id": 1,
+				"child.description": 1,
+				"child.operationType" : 1,
+				"optional": 1,
+				"utilization" : 1,
+				operationType: 1
+			}
+
+			let group = {
+				_id: null,
+				count: { $sum: 1 },
+				structures: { $push: "$$ROOT" }
+			};
+
+			this._structureService.getStructures(
+				project, // PROJECT
+				match, // MATCH
+				{}, // SORT
+				group, // GROUP
+				0, // LIMIT
+				0 // SKIP
+			).subscribe(
+				result => {
+					this.loading = false;
+					if (result && result[0] && result[0].structures) {
+						resolve(true);
+					} else {
+						resolve(false);
+					}
+				},
+				error => {
+					this.showMessage(error._body, 'danger', false);
+					this.loading = false;
+					resolve(false);
+				}
+			);
+		})
+	}
+
+
 	public getMovementsOfArticles(query?: string): Promise<MovementOfArticle[]> {
 
 		return new Promise<MovementOfArticle[]>((resolve, reject) => {
@@ -922,7 +982,7 @@ export class AddSaleOrderComponent {
 		});
 	}
 
-	async isValidMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<boolean> {
+	async isValidMovementOfArticle(movementOfArticle: MovementOfArticle, verificaStock : boolean = true): Promise<boolean> {
 
 		return new Promise<boolean>(async (resolve, reject) => {
 
@@ -946,7 +1006,8 @@ export class AddSaleOrderComponent {
 				this.showMessage("El producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + ") no esta habilitado para la compra", 'info', true);
 			}
 
-			if (movementOfArticle.article &&
+			if (verificaStock &&
+				movementOfArticle.article &&
 				this.config['modules'].stock &&
 				this.transaction.type &&
 				this.transaction.type.modifyStock &&

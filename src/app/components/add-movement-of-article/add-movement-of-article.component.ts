@@ -36,7 +36,7 @@ import { PriceListService } from 'app/services/price-list.service';
 import { PriceList } from 'app/models/price-list';
 import { AddArticleComponent } from '../add-article/add-article.component';
 import { StructureService } from 'app/services/structure.service';
-import { Structure } from 'app/models/structure';
+import { Structure, Utilization } from 'app/models/structure';
 import { ArticleService } from 'app/services/article.service';
 
 @Component({
@@ -70,7 +70,7 @@ export class AddMovementOfArticleComponent implements OnInit {
   public position: string = '';
   public notes: string[];
   public structures: Structure[];
-  public grouped: { name: string, names: [{ id: string, name: string, color: string, quantity: number, increasePrice: number }] }[] = [];
+  public grouped: { name: string, names: [{ id: string, name: string, color: string, quantity: number, increasePrice: number, utilization: Utilization }] }[] = [];
   public movChild: MovementOfArticle[]
 
   public formErrors = {
@@ -226,9 +226,9 @@ export class AddMovementOfArticleComponent implements OnInit {
                 });
               if (structure.optional) {
                 if (groupIndex !== -1) {
-                  this.grouped[groupIndex].names.push({ id: structure.child._id, name: structure.child.description, color: "white", quantity: structure.quantity, increasePrice: structure.increasePrice })
+                  this.grouped[groupIndex].names.push({ id: structure.child._id, name: structure.child.description, color: "white", quantity: structure.quantity, increasePrice: structure.increasePrice, utilization: structure.utilization })
                 } else {
-                  this.grouped.push({ name: structure.child.category.description, names: [{ id: structure.child._id, name: structure.child.description, color: "white", quantity: structure.quantity, increasePrice: structure.increasePrice }] });
+                  this.grouped.push({ name: structure.child.category.description, names: [{ id: structure.child._id, name: structure.child.description, color: "white", quantity: structure.quantity, increasePrice: structure.increasePrice, utilization: structure.utilization }] });
                 }
               }
 
@@ -657,7 +657,6 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   async addMovementOfArticle() {
 
-
     if (this.movementOfArticleForm.value.amount >= 0) {
       if (this.movementOfArticleForm.value.measure) {
         this.movementOfArticle.measure = this.movementOfArticleForm.value.measure;
@@ -986,7 +985,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.setValueForm();
   }
 
-  async isValidMovementOfArticle(movArticle: MovementOfArticle) {
+  async isValidMovementOfArticle(movArticle: MovementOfArticle, verificaStock : boolean = true) {
 
 
     return new Promise<boolean>((resolve, reject) => {
@@ -1024,6 +1023,7 @@ export class AddMovementOfArticleComponent implements OnInit {
       
       
       if (
+        verificaStock &&
         movArticle.article &&
         Config.modules.stock &&
         movArticle.transaction.type &&
@@ -1261,7 +1261,7 @@ export class AddMovementOfArticleComponent implements OnInit {
       for (const iterator of this.structures) {
         if (!iterator.optional) {
           if (!isFinish) {
-            if (!await this.buildMovsArticle(iterator.child._id, iterator.quantity, iterator.increasePrice)) {
+            if (!await this.buildMovsArticle(iterator.child._id, iterator.quantity, iterator.increasePrice, iterator.utilization)) {
               isFinish = true;
             }
           }
@@ -1285,7 +1285,7 @@ export class AddMovementOfArticleComponent implements OnInit {
           for (const names of name.names) {
             if (names.color === "blue") {
               if (!isFinish) {
-                if (!await this.buildMovsArticle(names.id, names.quantity, names.increasePrice)) {
+                if (!await this.buildMovsArticle(names.id, names.quantity, names.increasePrice, names.utilization)) {
                   isFinish = true;
                 }
               }
@@ -1304,7 +1304,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     })
   }
 
-  async buildMovsArticle(articleId: string, quantity: number, salePrice?: number) {
+  async buildMovsArticle(articleId: string, quantity: number, salePrice?: number, utilization?: Utilization) {
 
     return new Promise<boolean>((resolve, reject) => {
 
@@ -1355,7 +1355,14 @@ export class AddMovementOfArticleComponent implements OnInit {
               movArticle.unitPrice = 0
             }
 
-            if (await this.isValidMovementOfArticle(movArticle)) {
+            var stock
+            if(utilization && utilization === Utilization.Sale){
+              stock = true
+            } else {
+              stock = false
+            }
+
+            if (await this.isValidMovementOfArticle(movArticle,stock)) {
               this.movChild.push(movArticle)
               resolve(true)
             } else {
