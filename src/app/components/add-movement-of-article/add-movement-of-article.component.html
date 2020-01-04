@@ -108,6 +108,9 @@
           <label for="variants" class="control-label"><b>Seleccione las variantes:</b></label>
         </div>
       </div>
+      <div *ngIf="errVariant" class="alert alert-danger">
+        {{ errVariant }}
+      </div>
       <div class="row" *ngIf="variantTypes && variantTypes.length > 0">
         <div class="form-group col-md-12">
           <span *ngFor="let variantType of variantTypes">
@@ -116,8 +119,8 @@
               <button type="button"
                       class="btn btn-variant"
                       *ngFor="let variant of getVariantsByType(variantType)"
-                      [ngClass]="{'btn-primary': selectedVariants[variant.type.name] !== null && selectedVariants[variant.type.name] === variant.value.description,
-                                  'btn-light': selectedVariants[variant.type.name] === null  || selectedVariants[variant.type.name] !== variant.value.description}"
+                      [ngClass]="{'btn-primary': variant && variant.value && selectedVariants[variant.type.name] !== null && selectedVariants[variant.type.name] === variant.value.description,
+                                  'btn-light': variant && variant.value && selectedVariants[variant.type.name] === null  || selectedVariants[variant.type.name] !== variant.value.description}"
                       (click)="selectVariant(variant.type, variant.value)" >
                       {{ variant.value.description }}
               </button>
@@ -127,9 +130,9 @@
       </div>
       <div class="row" *ngIf="grouped && grouped.length > 0">
         <div class="form-group col-md-12">
-          <label for="variants" class="control-label"><b>Seleccione las Opciones:</b></label>
+          <label for="groups" class="control-label"><b>Seleccione las Opciones:</b></label>
           <div *ngFor="let group of grouped">
-            <label for="variants" class="control-label"><b>{{group.name}}</b></label>
+            <label for="groups" class="control-label"><b>{{group.name}}</b></label>
                 <button type="button"
                         class="btn btn-variant"
                         *ngFor="let child of group.names"

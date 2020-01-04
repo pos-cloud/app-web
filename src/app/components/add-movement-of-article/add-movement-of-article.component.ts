@@ -1095,8 +1095,8 @@ export class AddMovementOfArticleComponent implements OnInit {
 
       } else {
         query = `where= "article": "${movArticle.article._id}",
-                        "branch": "${movArticle.transaction.branchOrigin.toString()}",
-                        "deposit": "${movArticle.transaction.depositOrigin.toString()}"`;
+                        "branch": "${movArticle.transaction.branchOrigin._id}",
+                        "deposit": "${movArticle.transaction.depositOrigin._id}"`;
       }
 
       this._articleStockService.getArticleStocks(query).subscribe(
