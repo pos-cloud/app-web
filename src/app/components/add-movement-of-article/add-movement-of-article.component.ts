@@ -218,7 +218,6 @@ export class AddMovementOfArticleComponent implements OnInit {
         async result => {
           this.loading = false;
           if (result && result[0] && result[0].structures) {
-
             this.structures = result[0].structures;
             this.structures.forEach((structure: Structure) => {
               const groupIndex = this.grouped.findIndex(
@@ -247,7 +246,7 @@ export class AddMovementOfArticleComponent implements OnInit {
                       for (let x = 0; x < this.grouped.length; x++) {
                         if (this.grouped[x].name === movArticle.category.description) {
                           for (let y = 0; y < this.grouped[x].names.length; y++) {
-                            if (movArticle.description === this.grouped[x].names[y].name) {
+                            if (movArticle.description === this.grouped[x].names[y].name && this.grouped[x].names[y].color === "white") {
                               this.grouped[x].names[y].color = "blue";
                             } else {
                               this.grouped[x].names[y].color = "white";
@@ -285,8 +284,8 @@ export class AddMovementOfArticleComponent implements OnInit {
     return new Promise<MovementOfArticle[]>((resolve, reject) => {
 
       this._movementOfArticleService.getMovementsOfArticlesV2(
-        { movementParent: 1, description: 1, "category.description": 1 },
-        { movementParent: { $oid: this.movementOfArticle._id } },
+        { movementParent: 1, description: 1, "category.description": 1, operationType: 1},
+        { movementParent: { $oid: this.movementOfArticle._id }, "operationType": { "$ne": "D" }  },
         {},
         {}
       ).subscribe(
@@ -1171,7 +1170,6 @@ export class AddMovementOfArticleComponent implements OnInit {
       this._movementOfArticleService.getMovementsOfArticles(query).subscribe(
         async result => {
           if (!result.movementsOfArticles) {
-            console.log("entro")
             // Si no existe ningún movimiento del producto guardamos uno nuevo
 
             this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
