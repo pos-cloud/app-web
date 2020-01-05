@@ -60,7 +60,6 @@
           <div class="row">
             <div class="col-md-12" align="right">
               <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid || loading">
-                <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
                 <span *ngIf="!loading">Iniciar</span>
                 <span *ngIf="loading">Espere por favor</span>
               </button>
