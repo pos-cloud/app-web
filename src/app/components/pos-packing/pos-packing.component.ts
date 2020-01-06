@@ -164,7 +164,8 @@ export class PosPackingComponent {
 				description: 1,
 				amount: 1,
 				notes: 1,
-				transaction: 1
+				transaction: 1,
+				operationType: 1,
 			};
 
 			this._movementOfArticleService.getMovementsOfArticlesV2(
