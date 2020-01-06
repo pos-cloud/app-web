@@ -26,6 +26,7 @@ export class PosPackingComponent {
 	public colors: string[] = ["teal:white", "midnightblue:white", "black:white", "black:white", "chocolate:white"];
 	public printers: Printer[];
 	public colorNumber: number = 0;
+	public limit: number = 3;
 
 	constructor(
 		public alertConfig: NgbAlertConfig,
@@ -41,6 +42,7 @@ export class PosPackingComponent {
 
 	private processParams(): void {
 		this._route.queryParams.subscribe(params => {
+			if(params['limit'] && !isNaN(params['limit'])) this.limit = params['limit'];
 			if (params['colors']) {
 				this.colors = new Array();
 				for (const color of params['colors'].split(',')) {
@@ -125,7 +127,7 @@ export class PosPackingComponent {
 				match, // MATCH
 				{ startDate: 1 }, // SORT
 				{}, // GROUP
-				6, // LIMIT
+				this.limit, // LIMIT
 				0 // SKIP
 			).subscribe(
 				result => {
