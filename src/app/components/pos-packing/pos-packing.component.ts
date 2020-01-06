@@ -27,6 +27,8 @@ export class PosPackingComponent {
 	public printers: Printer[];
 	public colorNumber: number = 0;
 	public limit: number = 3;
+	public fontSize: number = 30;
+	public column: number = 4;
 
 	constructor(
 		public alertConfig: NgbAlertConfig,
@@ -42,7 +44,16 @@ export class PosPackingComponent {
 
 	private processParams(): void {
 		this._route.queryParams.subscribe(params => {
-			if(params['limit'] && !isNaN(params['limit'])) this.limit = params['limit'];
+			if(params['column'] && !isNaN(params['column'])) this.column = params['column'];
+			if(params['fontSize'] && !isNaN(params['fontSize'])) this.fontSize = params['fontSize'];
+			if(params['limit'] && !isNaN(params['limit'])) {
+				if(params['limit'] !== this.limit) {
+					this.limit = params['limit'];
+					this.loadPacking();
+				} else {
+					this.limit = params['limit'];
+				}
+			}
 			if (params['colors']) {
 				this.colors = new Array();
 				for (const color of params['colors'].split(',')) {
@@ -103,7 +114,7 @@ export class PosPackingComponent {
 
 	public async initInterval() {
 		setInterval(async () => {
-			if (!this.loading) {
+			if (!this.loading && this.transactionsToPacking.length < this.limit) {
 				this.loadPacking();
 			}
 		}, 10000);

@@ -12,42 +12,48 @@
 			<div *ngIf="(!transactionsToPacking || transactionsToPacking.length === 0) && !loading">
 				<span style="font-size: 30px;">Esperando nuevos pedidos...</span>
 			</div>
-			<div class="card card-transaction" *ngFor="let transaction of transactionsToPacking"
-				[style.backgroundColor]="(transaction.color && transaction.color.split(':')[0]) ? transaction.color.split(':')[0] : 'white'"
-				[style.color]="(transaction.color && transaction.color.split(':')[1]) ? transaction.color.split(':')[1] : 'black'">
-				<div class="card-title">
-					Pedido Nro {{transaction.number}}
-				</div>
-				<div class="card-body" style="padding: 0px;">
-					<div class="row" style="min-height: 130px;">
-						<div class="col-md-12">
-							<table>
-								<tbody>
-									<tr *ngFor="let mov of transaction['movementsOfArticles']" style="font-size: 30px;">
-										<td style="padding: 0px 10px;">
-											{{mov.amount}}
-										</td>
-										<td>
-											<div class="row">
-												<div class="col-md-12">
-													{{mov.description}}
-												</div>
-											</div>
-											<div class="card-text" *ngIf="mov && mov.notes">
-												<div class="notes" *ngFor="let note of mov.notes.split('; ')">
-													{{ note }}
-												</div>
-											</div>
-										</td>
-									</tr>
-								</tbody>
-							</table>
+			<div class="row">
+				<div [className]="'card card-transaction col-md-' + column" *ngFor="let transaction of transactionsToPacking">
+					<div class="card-body" style="padding: 0px;"
+						[style.backgroundColor]="(transaction.color && transaction.color.split(':')[0]) ? transaction.color.split(':')[0] : 'white'"
+						[style.color]="(transaction.color && transaction.color.split(':')[1]) ? transaction.color.split(':')[1] : 'black'">
+						<div class="row" style="position: absolute; top: 18px; width: 100%; margin: 0px; padding: 0px; left: 0px;">
+							<div class="col-md-12 center-content">
+								<button class="btn" style="width: 100%; background-color: #fe2e2e; color: white;">
+									Pedido Nro {{transaction.number}}
+								</button>
+							</div>
 						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12 center-content">
-							<button class="btn" (click)="openModal('print', transaction)"
-								style="width: 100%; margin-top: 20px; background-color: #fe2e2e; color: white;">Imprimir</button>
+						<div class="row" style="min-height: 130px;">
+							<div class="col-md-12" style="padding-top: 65px; padding-bottom: 65px;">
+								<table>
+									<tbody>
+										<tr *ngFor="let mov of transaction['movementsOfArticles']" [style.font-size.px]="fontSize">
+											<td style="padding: 0px 10px;">
+												{{mov.amount}}
+											</td>
+											<td>
+												<div class="row">
+													<div class="col-md-12">
+														{{mov.description}}
+													</div>
+												</div>
+												<div class="card-text" *ngIf="mov && mov.notes">
+													<div class="notes" *ngFor="let note of mov.notes.split('; ')" [style.font-size.px]="fontSize">
+														{{ note }}
+													</div>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="row content-button-print">
+							<div class="col-md-12 center-content">
+								<button class="btn" (click)="openModal('print', transaction)"
+									style="width: 100%; margin-top: 20px; background-color: #fe2e2e; color: white;">Imprimir</button>
+							</div>
 						</div>
 					</div>
 				</div>
