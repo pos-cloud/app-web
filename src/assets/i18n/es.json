@@ -131,7 +131,8 @@
         "type" : {
             "name" : "Tipo de Transacción",
             "transactionMovement": "Movimiento"
-        }
+        },
+        "origin" : "Punto de Venta"
     },
     "transport" : {
         "name" : "Nombre de Transporte"

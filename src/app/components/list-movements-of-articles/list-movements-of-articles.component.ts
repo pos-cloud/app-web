@@ -20,7 +20,6 @@ import { Subscription } from 'rxjs';
 })
 export class ListMovementsOfArticlesComponent implements OnInit {
 
-  public orderTerm: string[] = ["description"];
   public totalItems: number = 0;
   public title : string = "Movimiento de Productos"
   public items: any[] = new Array();
@@ -28,9 +27,7 @@ export class ListMovementsOfArticlesComponent implements OnInit {
   public loading: boolean = false;
   public itemsPerPage = 10;
   public currentPage: number = 1;
-  public sort = {
-    "count": -1
-  };
+  public sort = {"transaction.endDate": -1 };
   public transactionMovement: string;
   public filters: any[];
   public scrollY: number = 0;
@@ -103,16 +100,6 @@ export class ListMovementsOfArticlesComponent implements OnInit {
 
     this.loading = true;
 
-    /// ORDENAMOS LA CONSULTA
-    let sort = {};
-    let sortAux;
-      if (this.orderTerm[0].charAt(0) === '-') {
-          sortAux = `{ "${this.orderTerm[0].split('-')[1]}" : -1 }`;
-      } else {
-          sortAux = `{ "${this.orderTerm[0]}" : 1 }`;
-      }
-    sort = JSON.parse(sortAux);
-
     // FILTRAMOS LA CONSULTA
     let match = `{`;
       for(let i = 0; i < this.columns.length; i++) {
@@ -180,7 +167,7 @@ export class ListMovementsOfArticlesComponent implements OnInit {
     this.subscription.add(this._movementOfArticleService.getMovementsOfArticlesV2(
       project, // PROJECT
       match, // MATCH
-      sort, // SORT
+      this.sort, // SORT
       group, // GROUP
       limit, // LIMIT
       skip // SKIP
