@@ -45,6 +45,54 @@ import { User } from 'app/models/user';
 import { UserService } from 'app/services/user.service';
 import { async } from '@angular/core/testing';
 
+var splitRegex = /\r\n|\r|\n/g;
+jsPDF.API.textEx = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
+    var fontSize = this.internal.getFontSize() / this.internal.scaleFactor;
+
+    // As defined in jsPDF source code
+    var lineHeightProportion = 1.15;
+
+    var splittedText: string[];
+    var lineCount: number = 1;
+    if (vAlign === 'middle' || vAlign === 'bottom'
+        || hAlign === 'center' || hAlign === 'right') {
+
+        splittedText = typeof text === 'string'
+        ? text.split(splitRegex)
+        : text;
+
+        lineCount = splittedText.length || 1;
+    }
+
+    // Align the top
+    y += fontSize * (2 - lineHeightProportion);
+
+    if (vAlign === 'middle') y -= (lineCount / 2) * fontSize;
+    else if (vAlign === 'bottom') y -= lineCount * fontSize;
+
+
+    if (hAlign === 'center'
+        || hAlign === 'right') {
+
+        var alignSize = fontSize;
+        if (hAlign === 'center') alignSize *= 0.5;
+
+        if (lineCount > 1) {
+            for (var iLine = 0; iLine < splittedText.length; iLine++) {
+                this.text(splittedText[iLine],
+                    x - this.getStringUnitWidth(splittedText[iLine]) * alignSize,
+                    y);
+                y += fontSize;
+            }
+            return this;
+        }
+        x -= this.getStringUnitWidth(text) * alignSize;
+    }
+
+    this.text(text, x, y);
+    return this;
+};
+
 @Component({
   selector: 'app-print',
   templateUrl: './print.component.html',
@@ -565,7 +613,8 @@ export class PrintComponent implements OnInit {
         }
 
         if (this.movementsOfCashes[i].amountPaid) {
-          this.doc.text("$ " + this.roundNumber.transform(this.movementsOfCashes[i].amountPaid), 185, row);
+          this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfCashes[i].amountPaid).toFixed(2), 200, row, 'right', 'middle');
+          //this.doc.text("$ " + this.roundNumber.transform(this.movementsOfCashes[i].amountPaid), 185, row);
         }
 
         if (this.movementsOfCashes[i].observation) {
@@ -694,7 +743,9 @@ export class PrintComponent implements OnInit {
       for (let index = 0; index < this.transactions.length; index++) {
         this.doc.setFontType('normal');
         this.doc.text(this.transactions[index].type.name +"   "+ this.padString(this.transactions[index].origin, 4) + "-" + this.padString(this.transactions[index].number, 8), 10, row);
-        this.doc.text("$ " + this.roundNumber.transform(this.transactions[index].totalPrice), 80, row);
+        //this.doc.text("$ " + this.roundNumber.transform(this.transactions[index].totalPrice), 80, row);
+        this.doc.textEx("$ " + this.roundNumber.transform(this.transactions[index].totalPrice).toFixed(2), 95, row, 'right', 'middle');
+
         row += 8;
       }
     }
@@ -2032,11 +2083,17 @@ export class PrintComponent implements OnInit {
                 taxesBase = taxesBase + tax.taxBase
                 colum = colum + 13;
             }
-            this.doc.text("$ " + this.roundNumber.transform(taxesBase / this.movementsOfArticles[i].amount,2), 145, row);
-            this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice, 2), 192, row);
+            //this.doc.text("$ " + this.roundNumber.transform(taxesBase / this.movementsOfArticles[i].amount,2), 145, row);
+            //this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice, 2), 192, row);
+            this.doc.textEx("$ " + this.roundNumber.transform(taxesBase / this.movementsOfArticles[i].amount,2).toFixed(2), 160, row, 'right', 'middle');
+            this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice, 2).toFixed(2), 207, row, 'right', 'middle');
+
           } else {
-            this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice/this.movementsOfArticles[i].amount,2), 145, row);
-            this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice,2), 192, row);
+            this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice/this.movementsOfArticles[i].amount,2).toFixed(2), 160, row, 'right', 'middle');
+            this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice,2).toFixed(2), 207, row, 'right', 'middle');
+
+            //this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice/this.movementsOfArticles[i].amount,2), 145, row);
+            //this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice,2), 192, row);
           }
           
         }
@@ -3203,4 +3260,6 @@ export class PrintComponent implements OnInit {
   public hideMessage(): void {
     this.alertMessage = '';
   }
+
+  
 }

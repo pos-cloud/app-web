@@ -259,7 +259,7 @@
 							</th>
 							<th>Método</th>
 							<th>Cuota</th>
-							<th>Monto</th>
+							<th align="right">Monto</th>
 							<th>Vencimiento</th>
 							<th>Comprobante</th>
 						</tr>
@@ -274,7 +274,7 @@
 							</td>
 							<td class="flat" width="430">{{ movement.type.name }}</td>
 							<td class="flat" width="430">{{ movement.quota }}</td>
-							<td class="flat" width="430">{{ movement.amountPaid }}</td>
+							<td align="right" class="flat" width="430">{{ movement.amountPaid | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
 							<td class="flat" width="430">{{ movement.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
 							<td class="flat" width="430">{{ movement.number }}</td>
 						</tr>
