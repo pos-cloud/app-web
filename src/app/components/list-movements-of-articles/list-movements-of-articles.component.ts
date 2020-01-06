@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
 import { CurrencyPipe } from '@angular/common';
 import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
@@ -16,7 +16,9 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-list-movements-of-articles',
   templateUrl: './list-movements-of-articles.component.html',
-  styleUrls: ['./list-movements-of-articles.component.css']
+  styleUrls: ['./list-movements-of-articles.component.scss'],
+  encapsulation: ViewEncapsulation.None
+
 })
 export class ListMovementsOfArticlesComponent implements OnInit {
 

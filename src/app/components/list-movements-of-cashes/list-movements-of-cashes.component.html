@@ -10,20 +10,23 @@
       <span>{{title}}</span>
       <div class="pull-right">
         <div class="btn-group" ngbDropdown>
-          <button class="btn" ngbDropdownToggle data-toggle="tooltip" placement="buttom-left" title="Columnas"><i class="fa fa-columns"></i><span>Columnas</span></button>
-          <div class="dropdown-menu dropdown-menu-left" ngbDropdownMenu>
-            <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
-              <div
-                class="example-box"
-                *ngFor="let column of columns"
-                cdkDrag
-                [cdkDragDisabled]="column.disabled">
-                  <label for="column"><input type="checkbox" [id]="column.name" (change)="getItems()" [(ngModel)]="column.visible" [disabled]="column.disabled">{{ column.name | translate}}</label>
-                </div>
+          <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
+          <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems()"></app-export-excel>
+          <div class="btn-group" ngbDropdown>
+            <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Columnas"><i class="fa fa-columns"></i><span>Columnas</span></button>
+            <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu>
+              <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+                <div
+                  class="example-box"
+                  *ngFor="let column of columns"
+                  cdkDrag
+                  [cdkDragDisabled]="column.disabled">
+                    <label for="column"><input type="checkbox" [id]="column.name" [(ngModel)]="column.visible" [disabled]="column.disabled">{{ column.name | translate}}</label>
+                  </div>
+              </div>
             </div>
           </div>
         </div>
-        <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems()"></app-export-excel>
       </div>
     </div>
     <div class="card-block table-responsive">
