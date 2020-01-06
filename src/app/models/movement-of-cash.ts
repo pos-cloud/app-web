@@ -148,6 +148,16 @@ export let attributes = [
         required : false,
     },
     {
+        name: 'transaction.company.name',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required : false,
+    },
+    {
         name: 'deliveredBy',
         visible: false,
         disabled: false,

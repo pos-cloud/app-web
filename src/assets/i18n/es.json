@@ -132,7 +132,10 @@
             "name" : "Tipo de Transacción",
             "transactionMovement": "Movimiento"
         },
-        "origin" : "Punto de Venta"
+        "origin" : "Punto de Venta",
+        "company" : {
+            "name" : "Razón Social"
+        }
     },
     "transport" : {
         "name" : "Nombre de Transporte"
