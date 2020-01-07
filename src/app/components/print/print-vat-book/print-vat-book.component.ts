@@ -205,8 +205,9 @@ export class PrintVatBookComponent implements OnInit {
     var folio = 1;
 
     if (this.params.split("&")[2] && !isNaN(this.params.split("&")[2])) {
-      parseInt(this.params.split("&")[2]);
+      folio = parseInt(this.params.split("&")[2]);
     }
+
 
     var row = 10;
     this.doc.setFontType('bold');
