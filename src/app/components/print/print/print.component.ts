@@ -613,7 +613,7 @@ export class PrintComponent implements OnInit {
         }
 
         if (this.movementsOfCashes[i].amountPaid) {
-          this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfCashes[i].amountPaid).toFixed(2), 200, row, 'right', 'middle');
+          this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfCashes[i].amountPaid), 200, row, 'right', 'middle');
           //this.doc.text("$ " + this.roundNumber.transform(this.movementsOfCashes[i].amountPaid), 185, row);
         }
 
@@ -744,7 +744,7 @@ export class PrintComponent implements OnInit {
         this.doc.setFontType('normal');
         this.doc.text(this.transactions[index].type.name +"   "+ this.padString(this.transactions[index].origin, 4) + "-" + this.padString(this.transactions[index].number, 8), 10, row);
         //this.doc.text("$ " + this.roundNumber.transform(this.transactions[index].totalPrice), 80, row);
-        this.doc.textEx("$ " + this.roundNumber.transform(this.transactions[index].totalPrice).toFixed(2), 95, row, 'right', 'middle');
+        this.doc.textEx("$ " + this.roundNumber.transform(this.transactions[index].totalPrice), 95, row, 'right', 'middle');
 
         row += 8;
       }
@@ -2085,11 +2085,15 @@ export class PrintComponent implements OnInit {
             }
             //this.doc.text("$ " + this.roundNumber.transform(taxesBase / this.movementsOfArticles[i].amount,2), 145, row);
             //this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice, 2), 192, row);
-            this.doc.textEx("$ " + this.roundNumber.transform(taxesBase / this.movementsOfArticles[i].amount,2).toFixed(2), 160, row, 'right', 'middle');
+            try {
+              this.doc.textEx("$ " + this.roundNumber.transform(taxesBase / this.movementsOfArticles[i].amount,2).toFixed(2), 160, row, 'right', 'middle');
+            } catch (error) {
+              this.doc.textEx("$ 0.00", 160, row, 'right', 'middle');
+            }
+            
             this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice, 2).toFixed(2), 207, row, 'right', 'middle');
-
           } else {
-            this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice/this.movementsOfArticles[i].amount,2).toFixed(2), 160, row, 'right', 'middle');
+            this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice/this.movementsOfArticles[i].amount,2), 160, row, 'right', 'middle');
             this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice,2).toFixed(2), 207, row, 'right', 'middle');
 
             //this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice/this.movementsOfArticles[i].amount,2), 145, row);
@@ -2299,7 +2303,7 @@ export class PrintComponent implements OnInit {
       this.doc.setFontSize(this.fontSizes.large);
       this.doc.text("Total:", 140, rowTotals);
       this.doc.setFontType('normal');
-      this.doc.text("$ " + parseFloat(this.roundNumber.transform(this.transaction.totalPrice,2)).toFixed(2), 173, rowTotals);
+      this.doc.text("$ " + parseFloat(this.roundNumber.transform(this.transaction.totalPrice,2)), 173, rowTotals);
       this.doc.setFontSize(this.fontSizes.normal);
     }
 
@@ -2319,7 +2323,7 @@ export class PrintComponent implements OnInit {
           row += 5;
 
           for(let movementOfCash of this.movementsOfCashes) {
-            this.doc.text(`$ ${parseFloat(this.roundNumber.transform(movementOfCash.amountPaid)).toFixed(2)}`, 35, row);
+            this.doc.text(`$ ${parseFloat(this.roundNumber.transform(movementOfCash.amountPaid))}`, 35, row);
             this.doc.text(`${movementOfCash.type.name}.`, 65, row);
             row += 5;
           }
@@ -2331,7 +2335,7 @@ export class PrintComponent implements OnInit {
         row += 5;
 
         for(let movementOfCash of this.movementsOfCashes) {
-          this.doc.text(`$ ${parseFloat(this.roundNumber.transform(movementOfCash.amountPaid)).toFixed(2)}`, margin, row);
+          this.doc.text(`$ ${parseFloat(this.roundNumber.transform(movementOfCash.amountPaid))}`, margin, row);
           this.doc.text(`${movementOfCash.type.name}.`, 28, row);
           row += 5;
         }
@@ -2341,7 +2345,7 @@ export class PrintComponent implements OnInit {
     // FIN FORMA DE PAGO
     if(totalArticle > 0) {
       this.doc.setFontType('bold');
-      this.doc.text("Total de Productos: " + (this.roundNumber.transform(totalArticle)).toFixed(2), margin + 70, 246);
+      this.doc.text("Total de Productos: " + (this.roundNumber.transform(totalArticle)), margin + 70, 246);
       this.doc.setFontType('normal');
     }
 
@@ -2649,7 +2653,7 @@ export class PrintComponent implements OnInit {
           row += 5;
 
           for(let movementOfCash of this.movementsOfCashes) {
-            this.doc.text(`$ ${parseFloat(this.roundNumber.transform(movementOfCash.amountPaid)).toFixed(2)}`, 5, row);
+            this.doc.text(`$ ${parseFloat(this.roundNumber.transform(movementOfCash.amountPaid))}`, 5, row);
             this.doc.text(`${movementOfCash.type.name}.`, 5, row);
             row += 5;
           }
@@ -2660,7 +2664,7 @@ export class PrintComponent implements OnInit {
         row += 5;
 
         for(let movementOfCash of this.movementsOfCashes) {
-          this.doc.text(`$ ${parseFloat(this.roundNumber.transform(movementOfCash.amountPaid)).toFixed(2)}`, margin, row);
+          this.doc.text(`$ ${parseFloat(this.roundNumber.transform(movementOfCash.amountPaid))}`, margin, row);
           this.doc.text(`${movementOfCash.type.name}.`, 28, row);
           row += 5;
         }
