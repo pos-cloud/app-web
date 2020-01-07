@@ -147,6 +147,16 @@ export let attributes = [
     required : false,
   },
   {
+    name: 'taxesPercentage',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    project: `{"$reduce":{"input":"$taxes.percentage","initialValue":"","in":{"$concat":["$$value",{"$cond":{"if":{"$eq":["$$value",""]},"then":"","else":"; "}},{"$concat":[{"$toString":"$$this"},"%"]}]}}}`,
+    align: 'left',
+    required : false,
+  },
+  {
     name: 'currency.name',
     visible: true,
     disabled: false,

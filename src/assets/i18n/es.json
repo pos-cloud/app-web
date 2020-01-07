@@ -118,6 +118,7 @@
     "table" : {
         "description" : "Mesa"
     },
+    "taxesPercentage": "Porcentajes de Impuestos",
     "true": "Si",
     "total": "Total",
     "transaction" : {

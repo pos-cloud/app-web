@@ -113,7 +113,7 @@ export class ListArticlesComponent implements OnInit {
 
 	async ngOnInit() {
 
-		this.getPriceList()
+		this.getPriceList();
 		let pathLocation: string[] = this._router.url.split('/');
 		this.userType = pathLocation[1];
 		this.listTitle = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
@@ -214,14 +214,18 @@ export class ListArticlesComponent implements OnInit {
 					project += `,`;
 				}
 				j++;
-				if (this.columns[i].datatype !== "string") {
-					if (this.columns[i].datatype === "date") {
-						project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`
+				if(!this.columns[i].project) {
+					if (this.columns[i].datatype !== "string") {
+						if (this.columns[i].datatype === "date") {
+							project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`
+						} else {
+							project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
+						}
 					} else {
-						project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
+						project += `"${this.columns[i].name}": 1`;
 					}
 				} else {
-					project += `"${this.columns[i].name}": 1`;
+					project += `"${this.columns[i].name}": ${this.columns[i].project}`;
 				}
 
 			}
