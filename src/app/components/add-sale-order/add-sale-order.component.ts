@@ -604,6 +604,8 @@ export class AddSaleOrderComponent {
 
 	public getMovementsOfTransaction(): void {
 
+		this.hideMessage();
+		
 		this.loading = true;
 
 		let query = 'where="transaction":"' + this.transaction._id + '"';
