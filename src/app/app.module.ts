@@ -271,6 +271,9 @@ import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.compon
 import { ListChecksComponent } from './components/list-checks/list-checks.component';
 import { PosClientViewComponent } from './components/pos-client-view/pos-client-view.component';
 import { PosPackingComponent } from './components/pos-packing/pos-packing.component';
+import { CurrencyValueComponent } from './components/currency-value/currency-value.component';
+import { ListCurrencyValuesComponent } from './components/list-currency-values/list-currency-values.component';
+import { CurrencyValueService } from './services/currency-value.service';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -465,10 +468,12 @@ export function HttpLoaderFactory(http: HttpClient) {
     ListClassificationsComponent,
     ListMovementsOfArticlesComponent,
     VoucherReaderComponent,
-	PosKitchenComponent,
-	PosClientViewComponent,
-	PosPackingComponent,
-    ListChecksComponent
+    PosKitchenComponent,
+    PosClientViewComponent,
+    PosPackingComponent,
+    ListChecksComponent,
+    CurrencyValueComponent,
+    ListCurrencyValuesComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -638,9 +643,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     CancellationTypeAutomaticComponent,
     ListMovementsOfArticlesComponent,
     VoucherReaderComponent,
-	PosKitchenComponent,
-	PosClientViewComponent,
-	PosPackingComponent
+    PosKitchenComponent,
+    PosClientViewComponent,
+    PosPackingComponent,
+    CurrencyValueComponent
   ],
   imports: [
     BrowserModule,
@@ -721,7 +727,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     TransportService,
     PriceListService,
     StructureService,
-    ClassificationService
+    ClassificationService,
+    CurrencyValueService
   ],
   bootstrap: [AppComponent]
 })

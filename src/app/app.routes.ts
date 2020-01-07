@@ -73,6 +73,7 @@ import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.compon
 import { ListChecksComponent } from './components/list-checks/list-checks.component';
 import { PosClientViewComponent } from './components/pos-client-view/pos-client-view.component';
 import { PosPackingComponent } from './components/pos-packing/pos-packing.component';
+import { ListCurrencyValuesComponent } from './components/list-currency-values/list-currency-values.component';
 
 export const _routes: Routes = [
   { 
@@ -522,6 +523,11 @@ export const _routes: Routes = [
   {
     path : 'admin/structures',
     component : ListStructureComponent,
+    canActivate: [AuthGuard, LicenseGuard]
+  },
+  {
+    path : 'admin/currency-values',
+    component : ListCurrencyValuesComponent,
     canActivate: [AuthGuard, LicenseGuard]
   },
   {
