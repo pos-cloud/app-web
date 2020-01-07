@@ -353,7 +353,6 @@ export class AddMovementOfArticleComponent implements OnInit {
 
 		this.movementOfArticle.unitPrice = this.roundNumber.transform(this.movementOfArticle.unitPrice);
 
-		console.log(this.movementOfArticle.notes);
 		this.movementOfArticleForm = this._fb.group({
 			'_id': [this.movementOfArticle._id, []],
 			'code': [this.movementOfArticle.code, []],
@@ -554,7 +553,6 @@ export class AddMovementOfArticleComponent implements OnInit {
 
 	public setValueForm(): void {
 
-		console.log(this.movementOfArticle.notes);
 		if (!this.movementOfArticle._id) this.movementOfArticle._id = '';
 		if (!this.movementOfArticle.description) this.movementOfArticle.description = '';
 		if (this.movementOfArticle.amount === undefined) this.movementOfArticle.amount = 1;
@@ -565,7 +563,6 @@ export class AddMovementOfArticleComponent implements OnInit {
 		if (!this.movementOfArticle.code) this.movementOfArticle.code = "";
 		if (!this.movementOfArticle.barcode) this.movementOfArticle.barcode = "";
 
-		console.log(this.movementOfArticle.notes);
 		let values = {
 			'_id': this.movementOfArticle._id,
 			'code': this.movementOfArticle.code,
@@ -606,7 +603,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 				this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
 				this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
 			}
-			console.log(this.movementOfArticle.notes);
+
 			if (this.notes && this.notes.length > 0) {
 				for (let i = 0; i < this.notes.length; i++) {
 					if (i == 0 && this.movementOfArticle.notes && this.movementOfArticle.notes !== '') {
