@@ -6,7 +6,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
-import { diffString, diff } from 'json-diff';
 
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
@@ -1413,13 +1412,12 @@ export class AddSaleOrderComponent {
 					totalPriceAux += this.roundNumber.transform(movementOfArticle.salePrice);
 					discountAmountAux += this.roundNumber.transform(movementOfArticle.transactionDiscountAmount * movementOfArticle.amount);
 					// COMPARAMOS JSON -- SI CAMBIO ACTUALIZAMOS
-					if(diff(oldMovementOfArticle, movementOfArticle)) {
 						let result = await this.updateMovementOfArticle(movementOfArticle);
 						if (!result) {
 							isUpdateValid = false;
 							break;
 						}
-					}
+					
 				}
 			}
 		} else {

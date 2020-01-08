@@ -28,6 +28,8 @@
               <th (click)="orderBy('cardDetail')">Detalle de tarjeta </th>
               <th (click)="orderBy('allowToFinance')">Permite financiar </th>
               <th (click)="orderBy('cashBoxImpact')">Afecta caja diaria </th>
+              <th (click)="orderBy('allowCurrencyValue')">Afecta caja diaria </th>
+
             </tr>
             <tr class="filters">
               <th></th>
@@ -42,6 +44,8 @@
               <th><input type="text" class="form-control" [(ngModel)]= "filterCardDetail" placeholder="Detalle de tarjeta..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterAllowToFinance" placeholder="Permite financiar..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterCashBoxImpact" placeholder="Afecta caja diaria..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterAllowCurrencyValue" placeholder="Valores de moneda..." ></th>
+
             </tr>
           </thead>
           <tbody>
@@ -56,6 +60,7 @@
                                                             | filter: filterAllowToFinance:'allowToFinance'
                                                             | filter: filterCardDetail:'cardDetail'
                                                             | filter: filterCashBoxImpact:'cashBoxImpact'
+                                                            | filter: filterAllowCurrencyValue:'allowCurrencyValue'
                                                             | orderBy: orderTerm: propertyTerm
                                                             | paginate: { itemsPerPage: itemsPerPage,
                                                                           currentPage: p,
@@ -77,6 +82,8 @@
               <td class="flat">{{paymentMethod.cardDetail}}</td>
               <td class="flat">{{paymentMethod.allowToFinance}}</td>
               <td class="flat">{{paymentMethod.cashBoxImpact}}</td>
+              <td class="flat">{{paymentMethod.allowCurrencyValue}}</td>
+
             </tr>
             <tr align="center" *ngIf="arePaymentMethodsEmpty && !loading">
               <td colspan="2">No se encontraron métodos de pagos</td>

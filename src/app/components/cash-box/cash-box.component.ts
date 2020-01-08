@@ -25,6 +25,8 @@ import { PrintComponent } from '../print/print/print.component';
 import { TransactionType } from 'app/models/transaction-type';
 import { Config } from 'app/app.config';
 import { ConfigService } from 'app/services/config.service';
+import { CurrencyValueService } from 'app/services/currency-value.service';
+import { CurrencyValue } from 'app/models/currency-value';
 
 @Component({
 	selector: 'app-cash-box',
@@ -36,7 +38,10 @@ export class CashBoxComponent implements OnInit {
 
 	public cashBoxForm: FormGroup;
 	public paymentMethods: PaymentMethod[];
+	public currencyValues : CurrencyValue[];
 	public transaction: Transaction;
+	public currencyValuesForm : [{value : number, quantity : number }] = [{ value : null , quantity : null}]
+	public totalCurrencyValue = 0;
 	public cashBox: CashBox;
 	public movementOfCash: MovementOfCash;
 	public loading: boolean = false;
@@ -56,6 +61,7 @@ export class CashBoxComponent implements OnInit {
 		private _cashBoxService: CashBoxService,
 		private _authService: AuthService,
 		private _transactionService: TransactionService,
+		private _currencyValueService : CurrencyValueService,
 		private _configService: ConfigService,
 		public activeModal: NgbActiveModal,
 		public alertConfig: NgbAlertConfig,
@@ -74,6 +80,7 @@ export class CashBoxComponent implements OnInit {
 		this.userType = pathLocation[1];
 		this.posType = pathLocation[2];
 		this.transaction.type = this.transactionType;
+		this.getCurrencyValues();
 		this.buildForm();
 		await this._configService.getConfig.subscribe(
 			config => {
@@ -159,6 +166,12 @@ export class CashBoxComponent implements OnInit {
 			'amount': [0, [
 			]
 			],
+			'currencyValue': [null, [
+			]
+			],
+			'currencyAmount': [0, [
+			]
+			],
 		});
 
 		this.cashBoxForm.valueChanges
@@ -197,6 +210,8 @@ export class CashBoxComponent implements OnInit {
 		let values = {
 			'paymentMethod': paymentMethod,
 			'amount': 0,
+			'currencyValue' : null,
+			'currencyAmount' : 0
 		};
 
 		this.cashBoxForm.setValue(values);
@@ -398,6 +413,43 @@ export class CashBoxComponent implements OnInit {
 		});
 	}
 
+	public getCurrencyValues(): void {
+
+		this._currencyValueService.getCurrencyValues(
+			{ value: 1, name: 1, operationType: 1 },
+			{ "operationType": { "$ne": "D" } },
+			{},
+			{},
+			).subscribe(
+				result => {
+					if (result && result.currencyValues) {
+						this.currencyValues = result.currencyValues
+						console.log(this.currencyValues)
+					}
+				},
+				error => {
+					this.showMessage(error._body, 'danger', false);
+				}
+			)
+		
+	}
+
+	public addCurrencyValue(e): void{
+		this.currencyValuesForm.push({ value : parseInt(e.currencyValue) , quantity : e.currencyAmount})
+		this.totalCurrencyValue = 0;
+		for (const iterator of this.currencyValuesForm) {
+			this.totalCurrencyValue = this.totalCurrencyValue + ( iterator.quantity * iterator.value)
+		}	
+	}
+
+	public deleteCurrencyValue(e) : void {
+		this.currencyValuesForm.splice( e, 1 );
+		this.totalCurrencyValue = 0;
+		for (const iterator of this.currencyValuesForm) {
+			this.totalCurrencyValue = this.totalCurrencyValue + ( iterator.quantity * iterator.value)
+		}
+	}
+	
 	public addMovementOfCash(): void {
 
 		this.movementOfCash.type = this.cashBoxForm.value.paymentMethod;
@@ -409,7 +461,17 @@ export class CashBoxComponent implements OnInit {
 			mov.expirationDate = this.movementOfCash.expirationDate;
 			mov.discount = this.movementOfCash.discount;
 			mov.surcharge = this.movementOfCash.surcharge;
-			mov.amountPaid = this.movementOfCash.amountPaid;
+
+			if(this.movementOfCash.type.allowCurrencyValue && this.currencyValuesForm && this.currencyValuesForm.length >0){
+				mov.currencyValue = this.currencyValuesForm
+				mov.amountPaid = 0;
+				mov.currencyValue.forEach(element => {
+					mov.amountPaid = mov.amountPaid + (element.quantity*element.value)
+				});
+			} else {
+				mov.amountPaid = this.movementOfCash.amountPaid;
+			}
+
 			mov.observation = this.movementOfCash.observation;
 			mov.type = this.movementOfCash.type;
 			mov.transaction = this.movementOfCash.transaction;

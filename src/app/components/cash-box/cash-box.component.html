@@ -12,10 +12,10 @@
   </div>
   <form [formGroup]="cashBoxForm" #formAddMovementOfCash="ngForm" autocomplete="off" (ngSubmit)="addMovementOfCash()">
     <div class="modal-body">
-      <div class="row">
-        <div class="form-group col-md-6">
+      <div class="row form-group col-md-12">
+        <div class="form-group col-md-4">
           <label for="paymentMethod" class="control-label">Medio de pago:</label>
-          <select class="form-control" formControlName="paymentMethod" name="paymentMethod">
+          <select class="form-control" formControlName="paymentMethod" name="paymentMethod" [(ngModel)]="selectPayment">
             <option *ngFor="let paymentMethod of paymentMethods" [ngValue]="paymentMethod">
               {{paymentMethod.name}}
             </option>
@@ -24,20 +24,79 @@
             {{ formErrors.paymentMethod }}
           </div>
         </div>
-        <div class="form-group col-md-4">
+        <div *ngIf="selectPayment && !selectPayment.allowCurrencyValue" class="form-group col-md-6">
           <label for="amount" class="control-label">Monto:</label>
           <div class="input-group">
             <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-            <input type="number" class="form-control" formControlName="amount" name="amount" min="0" step="1" [focus]="focusEvent" />
+            <input type="number" class="form-control" formControlName="amount" name="amount" min="0" step="1"
+              [focus]="focusEvent" />
           </div>
           <div *ngIf="formErrors.amount" class="alert alert-danger">
             {{ formErrors.amount }}
           </div>
         </div>
-        <div class="form-group col-md-2">
-          <label for="value" class="control-label">Acción:</label>
-          <div class="input-group">
-            <button type="submit" class="btn btn-success">Confirmar</button>
+        <div *ngIf="selectPayment && selectPayment.allowCurrencyValue">
+          <form #fieldForm="ngForm" (ngSubmit)="addCurrencyValue(fieldForm.value)">
+            <div class="row">
+              <div class="col-md-5">
+                <label class="control-label">Valor de Moneda:</label>
+                <select class="form-control" [(ngModel)]="currencyValue" name="currencyValue">
+                  <option *ngFor="let currencyValue of currencyValues">
+                    {{currencyValue.value}}
+                  </option>
+                </select>
+              </div>
+              <div class="col-md-5">
+                <label for="amount" class="control-label">Cantidad:</label>
+                <div class="input-group">
+                  <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
+                  <input type="number" class="form-control" [(ngModel)]="currencyAmount" name="currencyAmount"
+                    min="0" />
+                </div>
+              </div>
+              <div class="form-group col-md-2">
+                <label for="value" class="control-label">Acción:</label>
+                <div class="input-group">
+                  <button type="summit" class="btn btn-success btn">
+                    <i class="fa fa-plus"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="row" *ngIf="currencyValuesForm && currencyValuesForm.length >0">
+          <div class="form-group col-md-12">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th width="600">Valor de Moneda</th>
+                  <th width="600">Cantidad</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let field of currencyValuesForm; let i = index;">
+                  <td  width="600" *ngIf="field ">{{field.value}}</td>
+                  <td  width="600" *ngIf="field ">{{field.quantity}}</td>
+                  <td align="right" width="10">
+                    <button type="button" class="btn btn-danger btn-sm" (click)="deleteCurrencyValue(i)">
+                      <i class="fa fa-trash-o"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <th class="align-right"> <strong> Total : $ {{totalCurrencyValue | number:'1.2-2'}}</strong></th>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-2">
+            <label for="value" class="control-label">Acción:</label>
+            <div class="input-group">
+              <button type="submit" class="btn btn-success">Confirmar</button>
+            </div>
           </div>
         </div>
       </div>
@@ -55,7 +114,8 @@
           <tbody>
             <tr *ngFor="let movement of movementsOfCashes">
               <td align="left" width="130">
-                <button type="button" class="btn btn-danger btn-sm" title="Eliminar" (click)="openModal('delete', movement)">
+                <button type="button" class="btn btn-danger btn-sm" title="Eliminar"
+                  (click)="openModal('delete', movement)">
                   <i class="fa fa-trash-o"></i>
                 </button>
               </td>
@@ -67,12 +127,14 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button"  *ngIf="transactionType.cashOpening" class="btn btn-primary" [disabled]="!cashBoxForm.valid || loading" (click)="openCashBox()">
+      <button type="button" *ngIf="transactionType.cashOpening" class="btn btn-primary"
+        [disabled]="!cashBoxForm.valid || loading" (click)="openCashBox()">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading && transactionType.cashOpening">Abrir Caja</span>
         <span *ngIf="loading">Espere por favor</span>
       </button>
-      <button type="button" *ngIf="transactionType.cashClosing" class="btn btn-primary" [disabled]="!cashBoxForm.valid || loading" (click)="closeCashBox()">
+      <button type="button" *ngIf="transactionType.cashClosing" class="btn btn-primary"
+        [disabled]="!cashBoxForm.valid || loading" (click)="closeCashBox()">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Cerrar Caja</span>
         <span *ngIf="loading">Espere por favor</span>

@@ -45,16 +45,14 @@
         </div>
       </div>
       <div class="row">
-        <div class="form-group col-md-12">
+        <div class="form-group col-md-6">
           <label for="isCurrentAccount" class="control-label">¿Es de tipo cuenta corriente?</label>
           <select class="form-control" formControlName="isCurrentAccount">
             <option [disabled]="readonly" value="true">Si</option>
             <option [disabled]="readonly" value="false" selected>No</option>
           </select>
         </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
+        <div class="form-group col-md-6">
           <label for="acceptReturned" class="control-label">¿Acepta vuelto?</label>
           <select class="form-control" formControlName="acceptReturned">
             <option [disabled]="readonly" value="true">Si</option>
@@ -63,16 +61,14 @@
         </div>
       </div>
       <div class="row">
-        <div class="form-group col-md-12">
+        <div class="form-group col-md-6">
           <label for="inputAndOuput" class="control-label">¿Es un método de entrada/salida?</label>
           <select class="form-control" formControlName="inputAndOuput">
             <option [disabled]="readonly" value="true">Si</option>
             <option [disabled]="readonly" value="false" selected>No</option>
           </select>
         </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
+        <div class="form-group col-md-6">
           <label for="checkDetail" class="control-label">¿Pide detalle de cheque?</label>
           <select class="form-control" formControlName="checkDetail">
             <option [disabled]="readonly" value="true">Si</option>
@@ -81,16 +77,14 @@
         </div>
       </div>
       <div class="row">
-        <div class="form-group col-md-12">
+        <div class="form-group col-md-6">
           <label for="cardDetail" class="control-label">¿Pide detalle de tarjeta?</label>
           <select class="form-control" formControlName="cardDetail">
             <option [disabled]="readonly" value="true">Si</option>
             <option [disabled]="readonly" value="false" selected>No</option>
           </select>
         </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
+        <div class="form-group col-md-6">
           <label for="allowToFinance" class="control-label">¿Permite financiar?</label>
           <select class="form-control" formControlName="allowToFinance" >
             <option  [disabled]="readonly" value="true">Si</option>
@@ -99,14 +93,13 @@
         </div>
       </div>
       <div class="row">
-        <div class="form-group col-md-12">
+        <div class="form-group col-md-4">
           <label for="cashBoxImpact" class="control-label">¿Afecta la caja diaria?</label>
           <select class="form-control" formControlName="cashBoxImpact" >
             <option [disabled]="readonly" value="true">Si</option>
             <option [disabled]="readonly" value="false" selected>No</option>
           </select>
         </div>
-      </div>
       <!--<div class="row">
           <div class="form-group col-md-12">
             <label for="company" class="control-label">Pide empresa</label>
@@ -121,14 +114,20 @@
               </div>
           </div>
       </div>-->
-      <div class="row">
-            <div class="form-group col-md-12">
+            <div class="form-group col-md-4">
               <label for="bankReconciliation" class="control-label">¿Tiene conciliación?</label>
               <select class="form-control" formControlName="bankReconciliation">
                 <option [disabled]="readonly" value="true">Si</option>
                 <option [disabled]="readonly" value="false" selected>No</option>
               </select>
           </div>
+          <div class="form-group col-md-4">
+            <label for="allowCurrencyValue" class="control-label">¿Pide valores de moneda?</label>
+            <select class="form-control" formControlName="allowCurrencyValue">
+              <option [disabled]="readonly" value="true">Si</option>
+              <option [disabled]="readonly" value="false" selected>No</option>
+            </select>
+        </div>
       </div>
       <div class="row">
         <div class="form-group col-md-12">
