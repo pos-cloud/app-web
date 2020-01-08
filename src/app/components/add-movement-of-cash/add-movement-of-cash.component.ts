@@ -30,14 +30,19 @@ import { BankService } from 'app/services/bank.service';
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
 
 // COMPONENTS
-import { ListMovementOfCashesComponent } from '../list-movements-of-cashes/list-movements-of-cashes.component';
 import { DeleteMovementOfCashComponent } from '../delete-movement-of-cash/delete-movement-of-cash.component';
 import { ListChecksComponent } from '../list-checks/list-checks.component';
+
+import Keyboard from "simple-keyboard";
+
 
 @Component({
 	selector: 'app-add-movement-of-cash',
 	templateUrl: './add-movement-of-cash.component.html',
-	styleUrls: ['./add-movement-of-cash.component.scss'],
+	styleUrls: [
+		"./../../../../node_modules/simple-keyboard/build/css/index.css",
+		"./add-movement-of-cash.component.scss"
+	],
 	providers: [NgbAlertConfig, RoundNumberPipe],
 	encapsulation: ViewEncapsulation.None
 })
@@ -67,16 +72,10 @@ export class AddMovementOfCashComponent implements OnInit {
 	public propertyTerm: string;
 	public banks: Bank[];
 	public movementOfArticle: MovementOfArticle;
+	public keyboard: Keyboard;
 
 	public formErrors = {
-		'paymentMethod': '',
-		'amountToPay': '',
-		'amountPaid': '',
-		'paymentChange': '',
-		'observation': '',
-		'surcharge': '',
-		'CUIT': '',
-		'number': ''
+		'paymentMethod': '', 'amountToPay': '', 'amountPaid': '', 'paymentChange': '', 'observation': '', 'surcharge': '', 'CUIT': '', 'number': ''
 	};
 
 	public validationMessages = {
@@ -84,23 +83,16 @@ export class AddMovementOfCashComponent implements OnInit {
 			'required': 'Este campo es requerido.',
 			'payValid': 'El monto ingresado es incorrecto para este medio de pago.'
 		},
-		'amountToPay': {
-		},
+		'amountToPay': {},
 		'amountPaid': {
 			'required': 'Este campo es requerido.',
 			'payValid': 'El monto ingresado es incorrecto.'
 		},
-		'paymentChange': {
-		},
-		'observation': {
-		},
-		'surcharge': {
-		},
-		'CUIT': {
-		},
-		'number': {
-			'pattern': ' Ingrese solo números '
-		}
+		'paymentChange': {},
+		'observation': {},
+		'surcharge': {},
+		'CUIT': {},
+		'number': { 'pattern': ' Ingrese solo números ' }
 	};
 
 	constructor(
@@ -129,6 +121,30 @@ export class AddMovementOfCashComponent implements OnInit {
 	ngOnInit() {
 		this.transactionAmount = this.transaction.totalPrice;
 		this.buildForm();
+		this.keyboard = new Keyboard({
+			onChange: input => this.onChange(input),
+			onKeyPress: button => this.onKeyPress(button),
+			layout: {
+				default: ["7 8 9", "4 5 6", "1 2 3", "0 . {bksp}", "{enter}"],
+				shift: []
+			},
+			buttonTheme: [
+				{
+					class: "hg-blue",
+					buttons: "{enter}"
+				},
+				{
+					class: "hg-red",
+					buttons: "{bksp}"
+				}
+			],
+			theme: "hg-theme-default hg-layout-numeric numeric-theme",
+			display: {
+				"{bksp}": "Borrar ⌫",
+				"{enter}": "Enter ↵"
+			}
+		});
+
 		this.getPaymentMethods();
 		this.getBanks();
 	}
@@ -137,66 +153,59 @@ export class AddMovementOfCashComponent implements OnInit {
 		this.focusEvent.emit(true);
 	}
 
+	onChange = (input: string) => {
+		(!isNaN(parseFloat(input))) ?
+			this.movementOfCashForm.value.amountToPay = this.roundNumber.transform(parseFloat(input)) :
+			this.movementOfCashForm.value.amountToPay = 0;
+		this.updateAmounts('amountToPay');
+	};
+
+	onKeyPress = (button: string) => {
+		if (button === "{enter}") this.addMovementOfCash();
+		if (button === "{bksp}") {
+			if (this.movementOfCashForm.value.amountToPay.toString().length > 1) {
+				this.movementOfCashForm.value.amountToPay =
+					parseFloat(this.movementOfCashForm.value.amountToPay.toString().slice(0, this.movementOfCashForm.value.amountToPay.toString().length - 1));
+			} else {
+				this.movementOfCashForm.value.amountToPay = 0;
+			}
+			this.updateAmounts('amountToPay');
+		}
+	};
+
+	onInputChange = (event: any) => {
+		this.keyboard.setInput(event.target.value);
+	};
+
+	handleShift = () => {
+		let currentLayout = this.keyboard.options.layoutName;
+		let shiftToggle = currentLayout === "default" ? "shift" : "default";
+		this.keyboard.setOptions({
+			layoutName: shiftToggle
+		});
+	};
+
 	public buildForm(): void {
 
 		this.movementOfCashForm = this._fb.group({
-			'transactionAmount': [parseFloat(this.roundNumber.transform(this.transactionAmount)).toFixed(2), [
-				Validators.required
-			]
-			],
-			'paymentMethod': [this.movementOfCash.type, [
-				Validators.required
-			]
-			],
-			'amountToPay': [this.amountToPay, [
-			]
-			],
-			'amountPaid': [this.amountPaid, [
-			]
-			],
-			'amountDiscount': [this.amountDiscount, [
-			]
-			],
-			'paymentChange': [this.movementOfCash.paymentChange, [
-			]
-			],
-			'observation': [this.movementOfCash.observation, [
-			]
-			],
-			'discount': [this.movementOfCash.type.discount, [
-			]
-			],
-			'surcharge': [this.movementOfCash.type.surcharge, [
-			]
-			],
-			'expirationDate': [moment(this.movementOfCash.expirationDate).format('YYYY-MM-DD'), [
-			]
-			],
-			'receiver': [this.movementOfCash.receiver, [
-			]
-			],
-			'number': [this.movementOfCash.number, [
-				Validators.pattern("^[0-9]*$")
-			]
-			],
-			'bank': [this.movementOfCash.bank, [
-			]
-			],
-			'titular': [this.movementOfCash.titular, [
-			]
-			],
-			'CUIT': [this.movementOfCash.CUIT, [
-			]
-			],
-			'deliveredBy': [this.movementOfCash.deliveredBy, [
-			]
-			],
-			'quotas': [this.quotas, [
-			]
-			],
-			'days': [this.days, [
-			]
-			]
+			'transactionAmount': [parseFloat(this.roundNumber.transform(this.transactionAmount)).toFixed(2), [Validators.required]],
+			'paymentMethod': [this.movementOfCash.type, [Validators.required]],
+			'amountToPay': [this.amountToPay, []],
+			'amountPaid': [this.amountPaid, []],
+			'amountDiscount': [this.amountDiscount, []],
+			'paymentChange': [this.movementOfCash.paymentChange, []],
+			'observation': [this.movementOfCash.observation, []],
+			'discount': [this.movementOfCash.type.discount, []],
+			'surcharge': [this.movementOfCash.type.surcharge, []],
+			'expirationDate': [moment(this.movementOfCash.expirationDate).format('YYYY-MM-DD'), []],
+			'receiver': [this.movementOfCash.receiver, []],
+			'number': [this.movementOfCash.number, [Validators.pattern("^[0-9]*$")]],
+			'bank': [this.movementOfCash.bank, []],
+			'titular': [this.movementOfCash.titular, []],
+			'CUIT': [this.movementOfCash.CUIT, []],
+			'deliveredBy': [this.movementOfCash.deliveredBy, []],
+			'quotas': [this.quotas, []],
+			'days': [this.days, []]
 		});
 
 		this.movementOfCashForm.valueChanges
@@ -298,8 +307,6 @@ export class AddMovementOfCashComponent implements OnInit {
 
 		this.movementOfCash.expirationDate = this.movementOfCashForm.value.expirationDate;
 	}
-
-
 
 	public getBanks() {
 
@@ -439,12 +446,14 @@ export class AddMovementOfCashComponent implements OnInit {
 					this.movementOfCash.amountPaid = this.transactionAmount;
 					this.paymentChange = '0.00';
 					this.amountPaid = 0;
-					this.updateAmounts();
+					this.updateAmounts('init');
 					if (this.fastPayment) {
 						this.addMovementOfCash();
 					}
 					this.loading = false;
 				} else {
+					let op;
+					if (!this.movementsOfCashes || this.movementsOfCashes.length === 0) op = 'init';
 					this.movementsOfCashes = result.movementsOfCashes;
 					if (this.isChargedFinished()) {
 						if (await this.areValidAmounts()) {
@@ -456,7 +465,7 @@ export class AddMovementOfCashComponent implements OnInit {
 						}
 					} else {
 						this.cleanForm();
-						this.updateAmounts();
+						this.updateAmounts(op);
 					}
 					this.loading = false;
 				}
@@ -520,6 +529,7 @@ export class AddMovementOfCashComponent implements OnInit {
 															transaction => {
 																if (transaction) {
 																	this.transaction = transaction;
+																	this.keyboard.setInput('');
 																	this.getMovementOfCashesByTransaction();
 																}
 															}
@@ -615,7 +625,7 @@ export class AddMovementOfCashComponent implements OnInit {
 												mov.statusCheck = StatusCheck.Closed;
 												mov.amount = mov.amountPaid;
 
-												// ACTUALIZAMOS ESTADO METODO DE PAGO RELACIONADO EJ. CHEQUE
+												// ACTUALIZAMOS ESTADO METODO DE PAGO RELACIONADO EJ. CHEQUEUALIZAMOS ESTADO METODO DE PAGO RELACIONADO EJ. CHEQUE
 												await this.updateMovementOfCash(mov).then(
 													async movementOfCash => {
 														if (!movementOfCash) {
@@ -808,9 +818,15 @@ export class AddMovementOfCashComponent implements OnInit {
 		);
 	}
 
+	public changeAmountToPay(): void {
+		this.keyboard.setInput(this.movementOfCashForm.value.amountToPay.toString());
+		this.updateAmounts('amountToPay');
+	}
+
 	public updateAmounts(op?: string): void {
 
 		if (op === 'amountToPay') {
+			if (typeof this.movementOfCashForm.value.amountToPay === 'string') this.movementOfCashForm.value.amountToPay = parseFloat(this.movementOfCashForm.value.amountToPay);
 			this.amountToPay = this.movementOfCashForm.value.amountToPay;
 		} else {
 			this.amountPaid = 0;
@@ -853,6 +869,10 @@ export class AddMovementOfCashComponent implements OnInit {
 
 		if (this.paymentMethodSelected.allowToFinance) {
 			this.calculateQuotas('quotas');
+		}
+
+		if (op === 'init') {
+			this.keyboard.setInput('');
 		}
 
 		this.movementOfCash.observation = this.movementOfCashForm.value.observation;
@@ -1076,6 +1096,7 @@ export class AddMovementOfCashComponent implements OnInit {
 											transaction => {
 												if (transaction) {
 													this.transaction = transaction;
+													this.keyboard.setInput('');
 													this.getMovementOfCashesByTransaction();
 												}
 											}

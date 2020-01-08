@@ -27,10 +27,9 @@
 				<div class="form-group col-md-3">
 					<label for="paymentMethod" class="control-label">Medio de pago:</label>
 					<div class="btn-group-vertical">
-						<button type="button"
-								*ngFor="let paymentMethod of paymentMethods" class="btn btn-select"
-								[ngClass]="{'btn-primary':paymentMethod._id===paymentMethodSelected._id, 'btn-outline-primary':paymentMethod._id!==paymentMethodSelected._id}"
-								(click)="changePaymentMethod(paymentMethod)">
+						<button type="button" *ngFor="let paymentMethod of paymentMethods" class="btn btn-select"
+							[ngClass]="{'btn-primary':paymentMethod._id===paymentMethodSelected._id, 'btn-outline-primary':paymentMethod._id!==paymentMethodSelected._id}"
+							(click)="changePaymentMethod(paymentMethod)">
 							{{ paymentMethod.name }}
 						</button>
 					</div>
@@ -40,39 +39,50 @@
 				</div>
 				<div class="form-group col-md-9">
 					<div class="row">
-						<div class="form-group col-md-12">
-							<label for="amountToPay" class="control-label">Importe a pagar:</label>
-							<div class="input-group">
-								<div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-								<input type="number" class="form-control" formControlName="amountToPay" name="amountToPay"
-									min="0" step="1" [focus]="focusEvent" (change)="updateAmounts('amountToPay')" />
+						<div class="col-md-6">
+							<div class="row">
+								<div class="form-group col-md-12">
+									<label for="amountToPay" class="control-label">Importe a pagar:</label>
+									<div class="input-group">
+										<div class="input-group-prepend"><span class="input-group-text"
+												id="basic-addon1">$</span></div>
+										<input (input)="onInputChange($event)" class="form-control input"
+											formControlName="amountToPay" name="amountToPay" min="0" step="1"
+											[focus]="focusEvent" (change)="changeAmountToPay()" />
+									</div>
+									<div *ngIf="formErrors.amountToPay" class="alert alert-danger">
+										{{ formErrors.amountToPay }}
+									</div>
+								</div>
 							</div>
-							<div *ngIf="formErrors.amountToPay" class="alert alert-danger">
-								{{ formErrors.amountToPay }}
+							<div class="row">
+								<div class="form-group col-md-12">
+									<label for="amountPaid" class="control-label">Importe abonado:</label>
+									<div class="input-group">
+										<div class="input-group-prepend"><span class="input-group-text"
+												id="basic-addon1">$</span></div>
+										<input type="number" class="form-control" formControlName="amountPaid"
+											name="amountPaid" min="0" step="1" readonly />
+									</div>
+									<div *ngIf="formErrors.amountPaid" class="alert alert-danger">
+										{{ formErrors.amountPaid }}
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="form-group col-md-12">
+									<label for="paymentChange" class="control-label">Su vuelto es:</label>
+									<div class="input-group">
+										<div class="input-group-prepend"><span class="input-group-text"
+												id="basic-addon1">$</span></div>
+										<input type="number" class="form-control" name="paymentChange"
+											formControlName="paymentChange" min="0" step="1" readonly />
+									</div>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div class="row">
-						<div class="form-group col-md-12">
-							<label for="amountPaid" class="control-label">Importe abonado:</label>
-							<div class="input-group">
-								<div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-								<input type="number" class="form-control" formControlName="amountPaid" name="amountPaid" min="0"
-									step="1" readonly />
-							</div>
-							<div *ngIf="formErrors.amountPaid" class="alert alert-danger">
-								{{ formErrors.amountPaid }}
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="form-group col-md-12">
-							<label for="paymentChange" class="control-label">Su vuelto es:</label>
-							<div class="input-group">
-								<div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-								<input type="number" class="form-control" name="paymentChange" formControlName="paymentChange"
-									min="0" step="1" readonly />
-							</div>
+						<div class="col-md-6">
+							<div class="simple-keyboard"></div>
 						</div>
 					</div>
 				</div>
@@ -259,7 +269,7 @@
 							</th>
 							<th>Método</th>
 							<th>Cuota</th>
-							<th align="right">Monto</th>
+							<th>Monto</th>
 							<th>Vencimiento</th>
 							<th>Comprobante</th>
 						</tr>
@@ -274,7 +284,8 @@
 							</td>
 							<td class="flat" width="430">{{ movement.type.name }}</td>
 							<td class="flat" width="430">{{ movement.quota }}</td>
-							<td align="right" class="flat" width="430">{{ movement.amountPaid | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
+							<td align="right" class="flat" width="430">
+								{{ movement.amountPaid | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
 							<td class="flat" width="430">{{ movement.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
 							<td class="flat" width="430">{{ movement.number }}</td>
 						</tr>
