@@ -25,6 +25,10 @@ export class MovementOfCash {
     public CUIT: string;
     public deliveredBy: string;
     public paymentChange: number = 0.00;
+    public currencyValue: [{
+        value : number,
+        quantity : number;	
+    }];
 
     constructor() { }
 }

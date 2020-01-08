@@ -1520,7 +1520,6 @@ export class AddMovementOfArticleComponent implements OnInit {
 
 		//pregunto si tiene  estructura 
 		if (this.structures && this.structures.length > 0) {
-
 			await this.getMovsWithoutOptional().then(
 				async result => {
 					if (result) {

@@ -1420,7 +1420,8 @@ export class AddSaleOrderComponent {
 							isUpdateValid = false;
 							break;
 						}
-					}
+					
+				}
 				}
 			}
 		} else {

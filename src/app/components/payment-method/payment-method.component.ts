@@ -112,8 +112,10 @@ export class PaymentMethodComponent implements OnInit {
         ]
       ],'company': [this.paymentMethod.company, [
         ]
-      ],'observation': [this.paymentMethod.observation, [
+      ],'allowCurrencyValue': [this.paymentMethod.allowCurrencyValue, [
         ]
+      ],'observation': [this.paymentMethod.observation, [
+        ],
       ],'bankReconciliation': [this.paymentMethod.bankReconciliation, [
       ]]
     });
@@ -169,6 +171,7 @@ export class PaymentMethodComponent implements OnInit {
     if (this.paymentMethod.allowToFinance === undefined) this.paymentMethod.allowToFinance = false;
     if (this.paymentMethod.cashBoxImpact === undefined) this.paymentMethod.cashBoxImpact = false;
     if (this.paymentMethod.bankReconciliation === undefined) this.paymentMethod.bankReconciliation = false;
+    if (this.paymentMethod.allowCurrencyValue === undefined) this.paymentMethod.allowCurrencyValue = false;
     if (!this.paymentMethod.company) this.paymentMethod.company = null;
     if (!this.paymentMethod.observation) this.paymentMethod.observation = '';
 
@@ -187,7 +190,9 @@ export class PaymentMethodComponent implements OnInit {
       'cashBoxImpact': this.paymentMethod.cashBoxImpact,
       'bankReconciliation':this.paymentMethod.bankReconciliation,
       'company': this.paymentMethod.company,
-      'observation': this.paymentMethod.observation
+      'observation': this.paymentMethod.observation,
+      'allowCurrencyValue': this.paymentMethod.allowCurrencyValue
+
     });
   }
 
