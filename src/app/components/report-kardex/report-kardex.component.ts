@@ -133,6 +133,16 @@ export class ReportKardexComponent implements OnInit {
         required : false,
       },
       {
+        name: 'transaction.company.name',
+        visible: false,
+        disabled: false,
+        filter: true,
+		project: null,
+        datatype: 'string',
+        align: 'left',
+        required : false,
+      },
+      {
         name: 'quantityForStock',
         visible: true,
         disabled: true,

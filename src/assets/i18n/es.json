@@ -37,7 +37,7 @@
             "amount" : "Monto Imp"
         },
         "barcode": "Código de Barras",
-        "operationType": "Auditoría"
+        "operationType": "Última Operación Proucto"
     },
     "bank" : {
         "name" : "Banco"
@@ -99,9 +99,10 @@
     "letter": "Letra",
     "make": {
         "description": "Marca"
-    },
+	},
+	"modifyStock": "Modifica stock",
     "observation" : "Observación",
-    "operationType": "Auditoría",
+    "operationType": "Última Operación",
     "origin" : "Punto de Venta",
     "posKitchen" : "Aparece en POS Cocina",
     "posDescription": "Descripción Corta",
@@ -128,7 +129,7 @@
         },
         "endDate" : "Fecha",
         "number": "Número",
-        "operationType": "Auditoría Transacción",
+        "operationType": "Última Operación Transacción",
         "type" : {
             "name" : "Tipo de Transacción",
             "transactionMovement": "Movimiento"
