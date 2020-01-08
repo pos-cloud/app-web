@@ -81,26 +81,27 @@
             </div>
           </div>
           <div class="row">
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-4">
               <label for="totalPrice" class="control-label">Importe Total:</label>
               <div class="input-group">
                 <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
                 <input type="number" class="form-control" name="totalPrice" min="0" step="1" value="{{transaction.totalPrice}}" readonly/>
               </div>
             </div>
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-4">
               <label for="balance" class="control-label">Saldo:</label>
               <div class="input-group">
                 <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
                 <input type="number" class="form-control" name="balance" min="0" step="1" value="{{transaction.balance}}" readonly/>
               </div>
             </div>
-            <!--<div class="form-group col-md-3">
-              <label for="action" class="control-label">Acción:</label>
+            <div class="form-group col-md-4">
+              <label for="balance" class="control-label">Cotización:</label>
               <div class="input-group">
-                <button type="button" class="btn btn-light" (click)="updateBalance()">Corregir Saldo</button>
+                <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
+                <input type="number" class="form-control" name="balance" min="0" step="1" value="{{transaction.quotation}}" readonly/>
               </div>
-            </div>-->
+            </div>
           </div>
           <div class="row">
             <div class="form-group col-md-12">
