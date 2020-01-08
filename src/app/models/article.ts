@@ -227,6 +227,16 @@ export let attributes = [
     required : false,
   },
   {
+    name: 'otherFieldsValues',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    project: `{"$reduce":{"input":"$otherFields.value","initialValue":"","in":{"$concat":["$$value",{"$cond":{"if":{"$eq":["$$value",""]},"then":"","else":"; "}},{"$concat":[{"$toString":"$$this"},""]}]}}}`,
+    align: 'left',
+    required : false,
+  },
+  {
     name: 'printIn',
     visible: false,
     disabled: false,

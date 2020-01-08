@@ -115,7 +115,8 @@
     "isWeigth" : "¿Pide medida?",
     "markupPrice" : "Utilidad",
     "markupPercentage" : "Margen",
-    "madein" : "Canal",
+	"madein": "Canal",
+	"otherFieldsValues": "Campos Personalizados",
     "table" : {
         "description" : "Mesa"
     },
