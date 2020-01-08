@@ -24,19 +24,22 @@ export class PosClientViewComponent {
 		this.transactionsToRemove = new Array();
 	}
 
-	public async ngOnInit() {
-		this.transactionsToRemove = await this.getTransactions({ state: TransactionState.Delivered, operationType: { $ne: "D" } });
-		this.transactionsInPreparation = await this.getTransactions({ state: TransactionState.Preparing, operationType: { $ne: "D" } });
+	public ngOnInit() {
+		this.loadTransactions();
 		this.initInterval();
 	}
 
-	public async initInterval() {
-		setInterval(async () => {
+	public initInterval() {
+		setInterval(() => {
 			if(!this.loading) {
-				this.transactionsToRemove = await this.getTransactions({ state: TransactionState.Delivered, operationType: { $ne: "D" } });
-				this.transactionsInPreparation = await this.getTransactions({ state: TransactionState.Preparing, operationType: { $ne: "D" } });
+				this.loadTransactions();
 			}
 		}, 5000);
+	}
+
+	public async loadTransactions() {
+		this.transactionsToRemove = await this.getTransactions({ state: TransactionState.Delivered, operationType: { $ne: "D" } });
+		this.transactionsInPreparation = await this.getTransactions({ state: { $in: [TransactionState.Preparing, TransactionState.Packing] }, operationType: { $ne: "D" } });
 	}
 
 	public getTransactions(match: {}): Promise<Transaction[]> {
