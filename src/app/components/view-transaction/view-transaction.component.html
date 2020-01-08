@@ -125,6 +125,7 @@
                       <th>Marca</th>
                       <th>Código</th>
                       <th>Descripción</th>
+                      <th>Desc. Corta</th>
                       <th>Precio Total</th>
                       <th>Depósito</th>
                     </tr>
@@ -150,6 +151,7 @@
                             {{movementOfArticle.notes}}
                           </strong>
                       </td>
+                      <td>{{movementOfArticle.article.posDescription}}</td>
                       <td>{{movementOfArticle.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                       <td *ngIf="movementOfArticle.deposit">{{movementOfArticle.deposit.name}}</td>
                       <td *ngIf="!movementOfArticle.deposit"></td>
