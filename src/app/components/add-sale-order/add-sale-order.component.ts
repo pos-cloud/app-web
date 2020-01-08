@@ -6,7 +6,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
-import { diffString, diff } from 'json-diff';
 
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
@@ -76,6 +75,7 @@ import { ToastrService } from 'ngx-toastr';
 import { User } from 'app/models/user';
 import { CancellationTypeAutomaticComponent } from '../cancellation-types-automatic/cancellation-types-automatic.component';
 import { StructureService } from 'app/services/structure.service';
+import { JsonDiffPipe } from 'app/pipes/json-diff';
 
 @Component({
 	selector: 'app-add-sale-order',
@@ -170,7 +170,8 @@ export class AddSaleOrderComponent {
 		private _priceListService: PriceListService,
 		private _toastr: ToastrService,
 		private _configService: ConfigService,
-		private _structureService: StructureService
+		private _structureService: StructureService,
+		private _jsonDiffPipe: JsonDiffPipe
 	) {
 		this.initVariables();
 		this.processParams();
@@ -606,7 +607,7 @@ export class AddSaleOrderComponent {
 	public getMovementsOfTransaction(): void {
 
 		this.hideMessage();
-		
+
 		this.loading = true;
 
 		let query = 'where="transaction":"' + this.transaction._id + '"';
@@ -705,7 +706,7 @@ export class AddSaleOrderComponent {
 						var movsArticle: MovementOfArticle[] = new Array();
 
 						for (const movArticle of child) {
-							var stock : boolean = await this.getUtilization(movementOfArticle.article._id,movArticle.article._id)
+							var stock: boolean = await this.getUtilization(movementOfArticle.article._id, movArticle.article._id)
 							if (await this.isValidMovementOfArticle(movArticle, stock)) {
 								movsArticle.push(movArticle)
 							}
@@ -796,9 +797,9 @@ export class AddSaleOrderComponent {
 				"parent.description": 1,
 				"child._id": 1,
 				"child.description": 1,
-				"child.operationType" : 1,
+				"child.operationType": 1,
 				"optional": 1,
-				"utilization" : 1,
+				"utilization": 1,
 				operationType: 1
 			}
 
@@ -854,9 +855,9 @@ export class AddSaleOrderComponent {
 				"parent.description": 1,
 				"child._id": 1,
 				"child.description": 1,
-				"child.operationType" : 1,
+				"child.operationType": 1,
 				"optional": 1,
-				"utilization" : 1,
+				"utilization": 1,
 				operationType: 1
 			}
 
@@ -985,7 +986,7 @@ export class AddSaleOrderComponent {
 		});
 	}
 
-	async isValidMovementOfArticle(movementOfArticle: MovementOfArticle, verificaStock : boolean = true): Promise<boolean> {
+	async isValidMovementOfArticle(movementOfArticle: MovementOfArticle, verificaStock: boolean = true): Promise<boolean> {
 
 		return new Promise<boolean>(async (resolve, reject) => {
 
@@ -1398,7 +1399,7 @@ export class AddSaleOrderComponent {
 		if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
 			for (let movementOfArticle of this.movementsOfArticles) {
 				// BORRAMOS TAXES ID PARA COMPARAR
-				for(let taxes of movementOfArticle.taxes) {
+				for (let taxes of movementOfArticle.taxes) {
 					delete taxes._id;
 				}
 				let oldMovementOfArticle: {} = {};
@@ -1413,7 +1414,7 @@ export class AddSaleOrderComponent {
 					totalPriceAux += this.roundNumber.transform(movementOfArticle.salePrice);
 					discountAmountAux += this.roundNumber.transform(movementOfArticle.transactionDiscountAmount * movementOfArticle.amount);
 					// COMPARAMOS JSON -- SI CAMBIO ACTUALIZAMOS
-					if(diff(oldMovementOfArticle, movementOfArticle)) {
+					if (this._jsonDiffPipe.transform(oldMovementOfArticle, movementOfArticle)) {
 						let result = await this.updateMovementOfArticle(movementOfArticle);
 						if (!result) {
 							isUpdateValid = false;
