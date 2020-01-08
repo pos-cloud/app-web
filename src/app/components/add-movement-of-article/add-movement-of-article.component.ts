@@ -1141,7 +1141,15 @@ export class AddMovementOfArticleComponent implements OnInit {
 								await this.deleteMovementOfStructure();
 							}
 
-							this.movementOfArticle = result.movementsOfArticles[0];
+							if(result.movementsOfArticles && result.movementsOfArticles.length > 0){
+								for (const mov of  result.movementsOfArticles) {
+									if(mov['_id'] === this.movementOfArticle._id){
+										this.movementOfArticle = mov;
+									}
+								}
+							} else {
+								this.movementOfArticle = result.movementsOfArticles[0];
+							}
 
 							this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
 							this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
@@ -1511,7 +1519,6 @@ export class AddMovementOfArticleComponent implements OnInit {
 
 		//pregunto si tiene  estructura 
 		if (this.structures && this.structures.length > 0) {
-
 			await this.getMovsWithoutOptional().then(
 				async result => {
 					if (result) {
