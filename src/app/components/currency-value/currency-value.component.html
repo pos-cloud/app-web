@@ -23,7 +23,7 @@
                     <div class="form-group col-md-6">
                       <label for="name" class="control-label">Nombre</label>
                       <div class="input-group">
-                        <input type="text" class="form-control" formControlName="name" name="name" id="name" [readonly]="readonly" />
+                        <input type="text" class="form-control" formControlName="name" name="name" id="name" [readonly]="readonly" [focus]="focusEvent" />
                       </div>
                       <div *ngIf="formErrors.name" class="alert alert-danger">
                         {{ formErrors.name }}
