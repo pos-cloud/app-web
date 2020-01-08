@@ -6,6 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
+import { diffString, diff } from 'json-diff';
 
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
@@ -1396,6 +1397,12 @@ export class AddSaleOrderComponent {
 
 		if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
 			for (let movementOfArticle of this.movementsOfArticles) {
+				// BORRAMOS TAXES ID PARA COMPARAR
+				for(let taxes of movementOfArticle.taxes) {
+					delete taxes._id;
+				}
+				let oldMovementOfArticle: {} = {};
+				oldMovementOfArticle = Object.assign(oldMovementOfArticle, movementOfArticle);
 				if (!movementOfArticle.movementParent) {
 					movementOfArticle.transaction.discountPercent = this.roundNumber.transform(this.transaction.discountPercent);
 					if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
@@ -1405,10 +1412,13 @@ export class AddSaleOrderComponent {
 					}
 					totalPriceAux += this.roundNumber.transform(movementOfArticle.salePrice);
 					discountAmountAux += this.roundNumber.transform(movementOfArticle.transactionDiscountAmount * movementOfArticle.amount);
-					let result = await this.updateMovementOfArticle(movementOfArticle);
-					if (!result) {
-						isUpdateValid = false;
-						break;
+					// COMPARAMOS JSON -- SI CAMBIO ACTUALIZAMOS
+					if(diff(oldMovementOfArticle, movementOfArticle)) {
+						let result = await this.updateMovementOfArticle(movementOfArticle);
+						if (!result) {
+							isUpdateValid = false;
+							break;
+						}
 					}
 				}
 			}

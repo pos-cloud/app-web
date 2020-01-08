@@ -4,6 +4,7 @@ import { Tax } from './tax';
 
 export class Taxes {
 
+	public _id: string;
 	public tax: Tax;
 	public percentage: number = 0.00;
 	public taxBase: number = 0.00;
