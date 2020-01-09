@@ -10,7 +10,54 @@ import { Config } from './../../../app.config';
 import { CompanyType } from 'app/models/company';
 import { ConfigService } from 'app/services/config.service';
 import { CurrentAccount, Movements } from 'app/models/transaction-type';
-import { map } from 'rxjs/operators';
+
+var splitRegex = /\r\n|\r|\n/g;
+jsPDF.API.textEx = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
+    var fontSize = this.internal.getFontSize() / this.internal.scaleFactor;
+
+    // As defined in jsPDF source code
+    var lineHeightProportion = 1.5;
+
+    var splittedText: string[];
+    var lineCount: number = 1;
+    if (vAlign === 'middle' || vAlign === 'bottom'
+        || hAlign === 'center' || hAlign === 'right') {
+
+        splittedText = typeof text === 'string'
+        ? text.split(splitRegex)
+        : text;
+
+        lineCount = splittedText.length || 1;
+    }
+
+    // Align the top
+    y += fontSize * (2 - lineHeightProportion);
+
+    if (vAlign === 'middle') y -= (lineCount / 2) * fontSize;
+    else if (vAlign === 'bottom') y -= lineCount * fontSize;
+
+
+    if (hAlign === 'center'
+        || hAlign === 'right') {
+
+        var alignSize = fontSize;
+        if (hAlign === 'center') alignSize *= 0.5;
+
+        if (lineCount > 1) {
+            for (var iLine = 0; iLine < splittedText.length; iLine++) {
+                this.text(splittedText[iLine],
+                    x - this.getStringUnitWidth(splittedText[iLine]) * alignSize,
+                    y);
+                y += fontSize;
+            }
+            return this;
+        }
+        x -= this.getStringUnitWidth(text) * alignSize;
+    }
+
+    this.text(text, x, y);
+    return this;
+};
 
 @Component({
   selector: 'app-current-account-details',
@@ -251,15 +298,18 @@ export class CurrentAccountDetailsComponent implements OnInit {
       this.doc.text(5,row,"Fecha");
       this.doc.text(30,row,"Tipo");
       this.doc.text(75,row,"Comprobante");
-      this.doc.text(120,row,"Fecha Vencimiento");
-      this.doc.text(155,row,"Importe");
-      this.doc.text(180,row,"Saldo");
+      this.doc.text(110,row,"Vencimiento");
+      this.doc.text(140,row,"Importe");
+      this.doc.text(165,row,"Saldo");
+      this.doc.text(190,row,"Acumulado");
+
       row += 3;
       this.doc.setLineWidth(0.5)
       this.doc.line(0, row, 1000, row)
       row += 5
       let totalPrice = 0;
       let balance = 0;
+      let acumulado = 0;
       let total;
       for(let transaction of this.items[i].transactions) {
         this.doc.text(5,row,transaction['endDate2']);
@@ -270,7 +320,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
         }
         this.doc.text(75,row,this.padString(transaction.origin, 4) + "-" + transaction.letter + "-" + this.padString(transaction.number, 8));
         if(transaction.expirationDate) {
-          this.doc.text(120,row,transaction.expirationDate);
+          this.doc.text(110,row,transaction.expirationDate);
         }
 
         var signo;
@@ -393,17 +443,28 @@ export class CurrentAccountDetailsComponent implements OnInit {
         }
 
         if(signo){
-          this.doc.text(155,row, "$ " + this.roundNumber.transform(transaction.totalPrice).toString());
+
+          this.doc.textEx("$ " + this.roundNumber.transform(transaction.totalPrice).toFixed(2).toString(), 155, row, 'right', 'middle');
           if(!transaction.balance) transaction.balance = 0;
-          this.doc.text(180,row, "$ " + this.roundNumber.transform(transaction.balance).toString());
-          row += 5;
+          this.doc.textEx("$ " + this.roundNumber.transform(transaction.balance).toFixed(2).toString(), 180, row, 'right', 'middle');
+    
+          acumulado = acumulado + transaction.balance;
+
+          //this.doc.text(155,row, "$ " + this.roundNumber.transform(transaction.totalPrice).toString());
+          //this.doc.text(180,row, "$ " + this.roundNumber.transform(transaction.balance).toString());
         } else {
-          this.doc.text(155,row, "$ -" + this.roundNumber.transform(transaction.totalPrice).toString());
+          this.doc.textEx("$ -" + this.roundNumber.transform(transaction.totalPrice).toFixed(2).toString(), 155, row, 'right', 'middle');
+         // this.doc.text(155,row, "$ -" + this.roundNumber.transform(transaction.totalPrice).toString());
           if(!transaction.balance) transaction.balance = 0;
-          this.doc.text(180,row, "$ " + this.roundNumber.transform(transaction.balance).toString());
-          row += 5;
+          this.doc.textEx("$ " + this.roundNumber.transform(transaction.balance).toFixed(2).toString(), 180, row, 'right', 'middle');
+         //this.doc.text(180,row, "$ " + this.roundNumber.transform(transaction.balance).toString());
+         acumulado = acumulado - transaction.balance;
+
         }
 
+        this.doc.textEx("$ " + this.roundNumber.transform(acumulado).toFixed(2).toString(), 205, row, 'right', 'middle');
+
+        row += 5;
 
         if(row > 220) {
           page += 1;
@@ -418,9 +479,13 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
       this.doc.setFontType("bold");
       this.doc.text(120,row,"Total");
-      this.doc.text(155,row,"$" +this.roundNumber.transform(totalPrice).toString());
+      //this.doc.text(155,row,"$" +this.roundNumber.transform(totalPrice).toString());
+      this.doc.textEx("$ " +this.roundNumber.transform(totalPrice).toFixed(2).toString(), 155, row, 'right', 'middle');
+
       if(balance){
-        this.doc.text(180,row,"$" +this.roundNumber.transform(balance).toString());
+        //this.doc.text(180,row,"$" +this.roundNumber.transform(balance).toString());
+        this.doc.textEx("$ " +this.roundNumber.transform(balance).toFixed(2).toString(), 180, row, 'right', 'middle');
+
       }
       this.doc.setFontType("normal");
       row += 5;
