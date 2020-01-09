@@ -483,7 +483,6 @@ export class CashBoxComponent implements OnInit {
 			mov.CUIT = this.movementOfCash.CUIT;
 			mov.deliveredBy = this.movementOfCash.deliveredBy;
 			this.movementsOfCashes.push(mov);
-			console.log(mov)
 		} else {
 			this.showMessage('El método de pago ' + this.movementOfCash.type.name + ' no impacta en la caja.', 'info', true);
 		}

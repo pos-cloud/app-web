@@ -37,7 +37,8 @@
             "amount" : "Monto Imp"
         },
         "barcode": "Código de Barras",
-        "operationType": "Última Operación Proucto"
+        "operationType": "Última Operación Proucto",
+        "otherFieldsValues" : "Campos Personalizados"
     },
     "bank" : {
         "name" : "Banco"
