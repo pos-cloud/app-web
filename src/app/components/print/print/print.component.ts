@@ -2345,7 +2345,7 @@ export class PrintComponent implements OnInit {
     // FIN FORMA DE PAGO
     if(totalArticle > 0) {
       this.doc.setFontType('bold');
-      this.doc.text("Total de Productos: " + (this.roundNumber.transform(totalArticle)), margin + 70, 246);
+      this.doc.text("Total de Productos: " + (this.roundNumber.transform(totalArticle)), margin + 70, 250);
       this.doc.setFontType('normal');
     }
 
@@ -2394,9 +2394,9 @@ export class PrintComponent implements OnInit {
         this.doc.text("CUIT:", margin, row + 12);
         this.doc.text("CANTIDAD DE BULTOS:", margin, row + 16);
         this.doc.setFontType('normal');
-        this.doc.text(this.transaction.transport.name, margin +30, row);
-        this.doc.text(this.transaction.transport.address, margin+30, row + 4);
-        this.doc.text(this.transaction.transport.city, margin+30, row + 8);
+        this.doc.text(this.transaction.transport.name, margin +25, row);
+        this.doc.text(this.transaction.transport.address, margin+20, row + 4);
+        this.doc.text(this.transaction.transport.city, margin+20, row + 8);
         this.doc.text(this.transaction.transport.identificationValue, margin+30, row + 12);
         row += 16; 
       }
