@@ -37,6 +37,8 @@ export class ViewTransactionComponent implements OnInit {
 	public areMovementsOfCashesEmpty = true;
 	public roundNumber = new RoundNumberPipe();
 	public orderTerm: string[] = ['expirationDate'];
+	public currencyValue : []
+	public showDetails = false;
 	public propertyTerm: string;
 	public userCountry: string = 'AR';
 	public orientation: string = 'horizontal';
@@ -74,6 +76,7 @@ export class ViewTransactionComponent implements OnInit {
 				} else {
 					this.hideMessage();
 					this.transaction = result.transaction;
+					console.log(this.transaction)
 					this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
 					this.getMovementsOfArticlesByTransaction();
 					this.getMovementsOfCashesByTransaction();
@@ -185,6 +188,11 @@ export class ViewTransactionComponent implements OnInit {
 			this.orderTerm[0] = term;
 		}
 		this.propertyTerm = property;
+	}
+
+	public pushCurrencyValue(e) : void {
+		this.currencyValue = e['currencyValue']
+		this.showDetails = !this.showDetails
 	}
 
 	public ngOnDestroy(): void {
