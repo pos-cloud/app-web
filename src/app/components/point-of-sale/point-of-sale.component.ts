@@ -47,6 +47,7 @@ import { ConfigService } from 'app/services/config.service';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { first } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
+import { SelectCompanyComponent } from '../select-company/select-company.component';
 
 @Component({
 	selector: 'app-point-of-sale',
@@ -987,9 +988,8 @@ export class PointOfSaleComponent implements OnInit {
 
 		switch (op) {
 			case 'company':
-				modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg', backdrop: 'static' });
+				modalRef = this._modalService.open(SelectCompanyComponent, { size: 'lg', backdrop: 'static' });
 				modalRef.componentInstance.type = this.transaction.type.requestCompany;
-				modalRef.componentInstance.selectionView = true;
 				modalRef.result.then(
 					async (result) => {
 						if (result.company) {

@@ -1,9 +1,9 @@
-import { Component, OnInit, Input, ViewEncapsulation, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, EventEmitter, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
-import { Company, CompanyType } from './../../models/company';
+import { Company, CompanyType, attributes } from './../../models/company';
 import { Config } from './../../app.config';
 
 import { CompanyService } from './../../services/company.service';
@@ -15,6 +15,10 @@ import { ImportComponent } from '../import/import.component';
 import { User } from 'app/models/user';
 import { AuthService } from 'app/services/auth.service';
 import { Subscription } from 'rxjs';
+import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
+import { CurrencyPipe } from '@angular/common';
+import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
 	selector: 'app-list-companies',
@@ -43,6 +47,20 @@ export class ListCompaniesComponent implements OnInit {
 	private subscription: Subscription = new Subscription();
 	public focusEvent = new EventEmitter<boolean>();
 
+	//
+	public title : string = "Empresas"
+	public currentPage: number = 0;
+	public columns = attributes;
+	private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
+	private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
+	public sort = {
+		"name": 1
+	};
+	public timezone = "-03:00";
+	@ViewChild(ExportExcelComponent, { static: false }) exportExcelComponent: ExportExcelComponent;
+	public items: any[] = new Array();
+	public filters: any[];
+
 	constructor(
 		public _companyService: CompanyService,
 		public _router: Router,
@@ -51,7 +69,14 @@ export class ListCompaniesComponent implements OnInit {
 		public alertConfig: NgbAlertConfig,
 		public _authService: AuthService
 	) {
-		this.companies = new Array();
+		this.filters = new Array();
+		for (let field of this.columns) {
+			if (field.defaultFilter) {
+				this.filters[field.name] = field.defaultFilter;
+			} else {
+				this.filters[field.name] = "";
+			}
+		}
 	}
 
 	ngOnInit(): void {
@@ -62,68 +87,193 @@ export class ListCompaniesComponent implements OnInit {
 		);
 		this.userCountry = Config.country;
 		let pathLocation: string[] = this._router.url.split('/');
+		if (pathLocation[2] === "clientes") {
+			this.type = CompanyType.Client;
+		} else if (pathLocation[2] === "proveedores") {
+			this.type = CompanyType.Provider;
+		}
 
 		if (!this.userType) {
 			this.userType = pathLocation[1];
 		}
-		this.getCompaniesByType();
+		this.getItems();
 	}
 
 	ngAfterViewInit() {
 		this.focusEvent.emit(true);
 	}
 
-	public getCompaniesByType(): void {
+	public getItems(): void {
 
 		this.loading = true;
 
-		let pathLocation: string[] = this._router.url.split('/');
-
-		if (!this.type) {
-			if (pathLocation[2] === "clientes") {
-				this.type = CompanyType.Client;
-			} else if (pathLocation[2] === "proveedores") {
-				this.type = CompanyType.Provider;
+		// FILTRAMOS LA CONSULTA
+		let match = `{`;
+		for (let i = 0; i < this.columns.length; i++) {
+			if (this.columns[i].visible || this.columns[i].required) {
+				let value = this.filters[this.columns[i].name];
+				if (value && value != "" && value !== {}) {
+					if (this.columns[i].defaultFilter) {
+						match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
+					} else {
+						match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
+					}
+					if (i < this.columns.length - 1) {
+						match += ',';
+					}
+				}
 			}
 		}
 
-		let query = 'where="type":"' + this.type.toString() + '"';
+		match += `,"type": "${this.type}"`;
+		if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
-		this.subscription.add(this._companyService.getCompanies(query).subscribe(
-			result => {
-				if (!result.companies) {
-					if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-					this.loading = false;
-					this.companies = new Array();
-					this.areCompaniesEmpty = true;
+		match += `}`;
+
+		match = JSON.parse(match);
+
+		// ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+		let project = `{`;
+		let j = 0;
+		for (let i = 0; i < this.columns.length; i++) {
+			if (this.columns[i].visible || this.columns[i].required) {
+				if (j > 0) {
+					project += `,`;
+				}
+				j++;
+				if (this.columns[i].datatype !== "string") {
+					if (this.columns[i].datatype === "date") {
+						project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`
+					} else {
+						project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
+					}
 				} else {
-					this.hideMessage();
-					this.loading = false;
-					this.companies = result.companies;
-					this.totalItems = this.companies.length;
-					this.areCompaniesEmpty = false;
+					project += `"${this.columns[i].name}": 1`;
+				}
+
+			}
+		}
+		project += `}`;
+
+		project = JSON.parse(project);
+
+		// AGRUPAMOS EL RESULTADO
+		let group = {
+			_id: null,
+			count: { $sum: 1 },
+			items: { $push: "$$ROOT" }
+		};
+
+		let page = 0;
+		if (this.currentPage != 0) {
+			page = this.currentPage - 1;
+		}
+		let skip = !isNaN(page * this.itemsPerPage) ?
+			(page * this.itemsPerPage) :
+			0 // SKIP
+		let limit = this.itemsPerPage;
+
+		this.subscription.add(this._companyService.getCompaniesV2(
+			project, // PROJECT
+			match, // MATCH
+			this.sort, // SORT
+			group, // GROUP
+			limit, // LIMIT
+			skip // SKIP
+		).subscribe(
+			result => {
+				this.loading = false;
+				if (result && result[0] && result[0].items) {
+					if (this.itemsPerPage === 0) {
+						this.exportExcelComponent.items = result[0].items;
+						this.exportExcelComponent.export();
+						this.itemsPerPage = 10;
+						this.getItems();
+					} else {
+						this.items = result[0].items;
+						this.totalItems = result[0].count;
+					}
+				} else {
+					this.items = new Array();
+					this.totalItems = 0;
 				}
 			},
 			error => {
 				this.showMessage(error._body, 'danger', false);
 				this.loading = false;
+				this.totalItems = 0;
 			}
 		));
 	}
 
-	public orderBy(term: string, property?: string): void {
+	public exportItems(): void {
+		this.exportExcelComponent.items = this.items;
+		this.exportExcelComponent.export();
+	}
 
-		if (this.orderTerm[0] === term) {
-			this.orderTerm[0] = "-" + term;
-		} else {
-			this.orderTerm[0] = term;
+	public getValue(item, column): any {
+		let val: string = 'item';
+		let exists: boolean = true;
+		let value: any = '';
+		for(let a of column.name.split('.')) {
+		  val += '.'+a;
+		  if(exists && !eval(val)) {
+			exists = false;
+		  }
 		}
-		this.propertyTerm = property;
-	}
+		if(exists) {
+		  switch(column.datatype) {
+			case 'number':
+			  value = this.roundNumberPipe.transform(eval(val));
+			  break;
+			case 'currency':
+				value = this.currencyPipe.transform(this.roundNumberPipe.transform(eval(val)), 'USD', 'symbol-narrow', '1.2-2');
+			  break;
+			case 'percent':
+				value = this.roundNumberPipe.transform(eval(val)) + '%';
+			  break;
+			default:
+				value = eval(val);
+			  break;
+		  }
+		}
+		return value;
+	  }
 
-	public refresh(): void {
-		this.getCompaniesByType();
-	}
+	  public getColumnsVisibles(): number {
+		let count: number = 0;
+		for (let column of this.columns) {
+		  if(column.visible) {
+			count++;
+		  }
+		}
+		return count;
+	  }
+
+	  public drop(event: CdkDragDrop<string[]>): void {
+		moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
+	  }
+	
+
+	  public pageChange(page): void {
+		this.currentPage = page;
+		this.getItems();
+	  }
+
+  public orderBy (term: string): void {
+
+    if(this.sort[term]) {
+      this.sort[term] *= -1;
+    } else {
+      this.sort = JSON.parse('{"' + term + '": 1 }');
+    }
+
+    this.getItems();
+  }
+
+  public refresh(): void {
+    this.getItems();
+  }
 
 	public openModal(op: string, company: Company): void {
 
@@ -140,13 +290,9 @@ export class ListCompaniesComponent implements OnInit {
 				modalRef.componentInstance.operation = 'add';
 				modalRef.componentInstance.companyType = this.type;
 				modalRef.result.then((result) => {
-					if (this.userType === 'pos') {
-						this.selectCompany(result.company);
-					} else {
-						this.getCompaniesByType();
-					}
+					this.getItems();
 				}, (reason) => {
-					this.getCompaniesByType();
+					this.getItems();
 				});
 				break;
 			case 'update':
@@ -155,9 +301,9 @@ export class ListCompaniesComponent implements OnInit {
 				modalRef.componentInstance.readonly = false;
 				modalRef.componentInstance.operation = 'update';
 				modalRef.result.then((result) => {
-					this.getCompaniesByType();
+					this.getItems();
 				}, (reason) => {
-					this.getCompaniesByType();
+					this.getItems();
 				});
 				break;
 			case 'delete':
@@ -165,7 +311,7 @@ export class ListCompaniesComponent implements OnInit {
 				modalRef.componentInstance.company = company;
 				modalRef.result.then((result) => {
 					if (result === 'delete_close') {
-						this.getCompaniesByType();
+						this.getItems();
 					}
 				}, (reason) => {
 
@@ -197,7 +343,7 @@ export class ListCompaniesComponent implements OnInit {
 				modalRef.componentInstance.model = model;
 				modalRef.result.then((result) => {
 					if (result === 'import_close') {
-						this.getCompaniesByType();
+						this.getItems();
 					}
 				}, (reason) => {
 
@@ -206,70 +352,6 @@ export class ListCompaniesComponent implements OnInit {
 			default: ;
 		}
 	};
-
-	public openEmail(): void {
-
-		if (Config.emailAccount) {
-			if (this.companies && this.companies.length !== 0) {
-				let modalRef;
-				let emails = '';
-
-				modalRef = this._modalService.open(SendEmailComponent, { size: 'lg', backdrop: 'static' });
-				if (this.companies && this.companies.length > 0) {
-					for (let i = 0; i < this.companies.length; i++) {
-						emails += this.companies[i].emails;
-						if ((i - this.companies.length) <= -2) {
-							emails += ",";
-						}
-					}
-				}
-				modalRef.componentInstance.emails = emails;
-				modalRef.result.then((result) => {
-				}, (reason) => {
-				});
-			} else {
-				this.showMessage("No se encontraron empresas.", 'info', true);
-			}
-		} else {
-			this.showMessage("Debe primero configurar la cuenta de correo.", 'info', true);
-		}
-	}
-
-	public selectCompany(companySelected: Company): void {
-		this.activeModal.close({ company: companySelected });
-	}
-
-	public exportAsXLSX(): void {
-
-		let data = [];
-
-		for (let index = 0; index < this.companies.length; index++) {
-
-			data[index] = {};
-			data[index]['Nombre'] = this.companies[index].name;
-			data[index]['Nombre de Fantasía'] = this.companies[index].fantasyName;
-
-			if (this.companies[index].vatCondition) {
-				data[index]['CondiciónDeIVA'] = this.companies[index].vatCondition.description;
-			} else {
-				data[index]['CondiciónDeIVA'] = 'Consumidor Final';
-			}
-			data[index]['Identificador'] = this.companies[index].identificationValue;
-			data[index]['Teléfono'] = this.companies[index].phones;
-			data[index]['Dirección'] = this.companies[index].address;
-			data[index]['Ciudad'] = this.companies[index].city;
-			data[index]['Cumpleaños'] = this.companies[index].birthday;
-			data[index]['Género'] = this.companies[index].gender;
-			data[index]['Observación'] = this.companies[index].observation;
-
-			if (this.companies[index].group) {
-				data[index]['Grupo'] = this.companies[index].group.description;
-			} else {
-				data[index]['Grupo'] = '';
-			}
-		}
-		this._companyService.exportAsExcelFile(data, this.type.toString());
-	}
 
 	public ngOnDestroy(): void {
 		this.subscription.unsubscribe();

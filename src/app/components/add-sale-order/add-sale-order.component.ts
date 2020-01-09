@@ -76,6 +76,7 @@ import { User } from 'app/models/user';
 import { CancellationTypeAutomaticComponent } from '../cancellation-types-automatic/cancellation-types-automatic.component';
 import { StructureService } from 'app/services/structure.service';
 import { JsonDiffPipe } from 'app/pipes/json-diff';
+import { SelectCompanyComponent } from '../select-company/select-company.component';
 
 @Component({
 	selector: 'app-add-sale-order',
@@ -1808,13 +1809,12 @@ export class AddSaleOrderComponent {
 				break;
 			case 'add_client':
 
-				modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg', backdrop: 'static' });
+				modalRef = this._modalService.open(SelectCompanyComponent, { size: 'lg', backdrop: 'static' });
 				if (this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
 					modalRef.componentInstance.type = CompanyType.Provider;
 				} else if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
 					modalRef.componentInstance.type = CompanyType.Client;
 				}
-				modalRef.componentInstance.selectionView = true;
 				modalRef.result.then(async (result) => {
 					if (result.company) {
 

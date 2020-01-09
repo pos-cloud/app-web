@@ -30,6 +30,7 @@ import { ConfigService } from 'app/services/config.service';
 import { TransactionMovement } from 'app/models/transaction-type';
 import { CompanyType } from 'app/models/payment-method';
 import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
+import { SelectCompanyComponent } from '../select-company/select-company.component';
 
 @Component({
 	selector: 'app-current-account',
@@ -229,9 +230,8 @@ export class CurrentAccountComponent implements OnInit {
 				});
 				break;
 			case 'company':
-				modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg', backdrop: 'static' });
+				modalRef = this._modalService.open(SelectCompanyComponent, { size: 'lg', backdrop: 'static' });
 				modalRef.componentInstance.type = this.companyType;
-				modalRef.componentInstance.selectionView = true;
 				modalRef.result.then(
 					(result) => {
 						if (result.company) {

@@ -33,6 +33,7 @@ import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
 import { MovementOfCancellationService } from 'app/services/movement-of-cancellation.service';
 import { CancellationTypeService } from 'app/services/cancellation-type.service';
 import { TaxClassification } from 'app/models/tax';
+import { SelectCompanyComponent } from '../select-company/select-company.component';
 
 @Component({
 	selector: 'app-add-transaction',
@@ -425,13 +426,12 @@ export class AddTransactionComponent implements OnInit {
 				});
 				break;
 			case 'change-company':
-				modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg', backdrop: 'static' });
+				modalRef = this._modalService.open(SelectCompanyComponent, { size: 'lg', backdrop: 'static' });
 				if (this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
 					modalRef.componentInstance.type = CompanyType.Provider;
 				} else if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
 					modalRef.componentInstance.type = CompanyType.Client;
 				}
-				modalRef.componentInstance.selectionView = true;
 				modalRef.result.then(
 					async (result) => {
 						if (result.company) {

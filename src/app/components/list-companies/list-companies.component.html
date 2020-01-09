@@ -1,251 +1,109 @@
-<section class="container-fluid" *ngIf="!selectionView">
-  <div class="center-content" *ngIf="alertMessage !== '' && !areCompaniesEmpty">
+<section class="container-fluid" *ngIf="userType==='admin'" >
+  <div class="center-content" *ngIf="alertMessage !== ''">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <div class="card ">
-    <div class="card-header">Listado de {{type}}
+  <div class="card  card-large">
+    <div class="card-header">
+      <span>{{title}}</span>
       <div class="pull-right">
-        <!-- <button class="btn" (click)="openEmail()"> Enviar Email </button> -->
-        <button class="btn" (click)="openModal('add', null)"><i class="fa fa-plus"></i><span>Agregar</span></button>
-        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
-        <button class="btn" *ngIf="identity.name === 'soporte'" (click)="openModal('import', null)"><i class="fa fa-cloud-upload"></i><span>Importar</span></button>
-        <button class="btn" (click)="exportAsXLSX()"><i class="fa fa-cloud-download"></i>Exportar</button>
-      </div>
-    </div>
-      <div class="card-block table-responsive">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th><i class="fa fa-bars"></i></th>
-              <th (click)="orderBy('name')">Nombre</th>
-              <th (click)="orderBy('fantasyName')">Nombre de Fantasía</th>
-              <th (click)="orderBy('vatCondition','description')" *ngIf="userCountry === 'AR'">Condición de IVA</th>
-              <th (click)="orderBy('vatCondition','description')" *ngIf="userCountry !== 'AR'">Régimen Fiscal</th>
-              <th (click)="orderBy('identificationType','name')">Tipo Identificación</th>
-              <th (click)="orderBy('identificationValue')">Nro Identificación</th>
-              <th (click)="orderBy('address')">Dirección</th>
-              <th (click)="orderBy('addressNumber')">Número</th>
-              <th (click)="orderBy('city')">Ciudad</th>
-              <th (click)="orderBy('phones')">Teléfonos</th>
-              <th (click)="orderBy('emails')">Emails</th>
-              <th (click)="orderBy('birthday')">Cumpleaños</th>
-              <th (click)="orderBy('allowCurrentAccount')">Cta. Cte.</th>
-              <th (click)="orderBy('priceList.name')">Lista de Precio</th>
-              <th (click)="orderBy('observation')">Observación</th>
-            </tr>
-            <tr class="filters">
-              <th></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterFantasyName" placeholder="Nombre de Fantasía..." ></th>
-              <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Condición de IVA..."></th>
-              <th *ngIf="userCountry !== 'AR'"><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Régimen Fiscal..."></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterIdentificationType" placeholder="Tipo Identificación..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterIdentificationValue" placeholder="Nro Identificación..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterAddress" placeholder="Dirección..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterAddressNumber" placeholder="Número..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterCity" placeholder="Ciudad..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterPhones" placeholder="Teléfonos..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterEmails" placeholder="Emails..." ></th>
-              <th><input type="date" class="form-control" [(ngModel)]= "filterBirthday" placeholder="Cumpleaños..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterAllowCurrentAccount" placeholder="Cta. Cte..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterPriceList" placeholder="Lista de Precio..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterObservation" placeholder="Observación..." ></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td colspan="99" style="padding: 0px">
-                <app-progressbar [loading]="loading"></app-progressbar>
-              </td>
-            </tr>
-            <tr *ngFor="let company of companies  | filter: filterName:'name'
-                                                  | filter: filterFantasyName:'fantasyName'
-                                                  | filter: filterVATCondition:'description':'vatCondition'
-                                                  | filter: filterIdentificationType:'name':'identificationType'
-                                                  | filter: filterIdentificationValue:'identificationValue'
-                                                  | filter: filterAddress:'address'
-                                                  | filter: filterAddressNumber:'addressNumber'
-                                                  | filter: filterCity:'city'
-                                                  | filter: filterPhones:'phones'
-                                                  | filter: filterEmails:'emails'
-                                                  | filter: filterBirthday:'birthday'
-                                                  | filter: filterAllowCurrentAccount:'allowCurrentAccount'
-                                                  | filter: filterPriceList:'name':'priceList'
-                                                  | filter: filterObservation:'observation'
-                                                  | orderBy: orderTerm: propertyTerm
-                                                  | paginate: { itemsPerPage: itemsPerPage,
-                                                                currentPage: p,
-                                                                totalItems: totalItems
-                                                              }">
-              <td nowrap align="left" width="130">
-                <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', company)" title="Ver"><i class="fa fa-eye"></i></button>
-                <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', company)" title="Modificar"><i class="fa fa-pencil"></i></button>
-                <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', company)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
-              </td>
-              <td>{{company.name}}</td>
-              <td>{{company.fantasyName}}</td>
-              <td *ngIf="company.vatCondition">{{company.vatCondition.description}}</td>
-              <td *ngIf="!company.vatCondition">Consumidor Final</td>
-              <td  align="center" *ngIf="company.identificationType">{{company.identificationType.name}}</td>
-              <td align="center" *ngIf="!company.identificationType"></td>
-              <td nowrap >{{company.identificationValue}}</td>
-              <td>{{company.address}}</td>
-              <td>{{company.addressNumber}}</td>
-              <td>{{company.city}}</td>
-              <td>{{company.phones}}</td>
-              <td>{{company.emails}}</td>
-              <td>{{company.birthday | dateFormat:'DD/MM/YYYY'}}</td>
-              <td>{{company.allowCurrentAccount}}</td>
-              <td *ngIf="company.priceList">{{company.priceList.name}}</td>
-              <td *ngIf="!company.priceList"></td>
-              <td>{{company.observation | slice:0:10}}</td>
-            </tr>
-            <tr align="center" *ngIf="areCompaniesEmpty && !loading">
-              <td colspan="15">No se encontraron empresas</td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <td><b>CANTIDAD</b></td>
-            <td>{{totalItems}}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tfoot>
-        </table>
-      </div>
-      <div class="card-footer">
-        <div class="row">
-          <div class="col-md-10">
-            <pagination-controls
-                      class="my-pagination"
-                      (pageChange)="p=$event"
-                      #api
-                      previousLabel="Ant."
-                      nextLabel="Sig."
-                      autoHide="true">
-            </pagination-controls>
-          </div>
-          <div class="form-group col-md-2">
-            <select class="form-control" [(ngModel)]="itemsPerPage">
-              <option [value]="5">Mostrar 5 Registros</option>
-              <option [value]="10">Mostrar 10 Registros</option>
-              <option [value]="15">Mostrar 15 Registros</option>
-              <option [value]="20">Mostrar 20 Registros</option>
-              <option [value]="50">Mostrar 50 Registros</option>
-              <option [value]="100">Mostrar 100 Registros</option>
-            </select>
+        <div class="btn-group" ngbDropdown>
+          <button class="btn" ngbDropdownToggle data-toggle="tooltip" placement="buttom-left" title="Columnas"><i class="fa fa-columns"></i><span>Columnas</span></button>
+          <div class="dropdown-menu dropdown-menu-left" ngbDropdownMenu>
+            <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+              <div
+                class="example-box"
+                *ngFor="let column of columns"
+                cdkDrag
+                [cdkDragDisabled]="column.disabled">
+                  <label for="column"><input type="checkbox" [id]="column.name" (change)="getItems()" [(ngModel)]="column.visible" [disabled]="column.disabled">{{ column.name | translate}}</label>
+                </div>
+            </div>
           </div>
         </div>
-      </div>
-  </div>
-</section>
-
-<section class="container-fluid" *ngIf="selectionView">
-  <div class="center-content" *ngIf="alertMessage !== '' && !areCompaniesEmpty">
-    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-      {{alertMessage}}
-    </ngb-alert>
-  </div>
-  <div class="card ">
-    <div class="card-header">Listado de Empresas
-      <div class="pull-right">
-        <button class="btn" (click)="openModal('add', null)"><i class="fa fa-plus"></i><span>Agregar</span></button>
+        <button class="btn" (click)="openModal('add', null)" *ngIf="articleType && articleType.toString() === 'Final'"><i class="fa fa-plus"></i><span>Agregar</span></button>
         <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
-        <button class="btn fa fa-close" (click)="activeModal.dismiss('close_click')"><span>Cerrar</span></button>
+        <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems($event)"></app-export-excel>
+        
       </div>
     </div>
-      <div class="card-block table-responsive">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th (click)="orderBy('name')">Nombre</th>
-              <th (click)="orderBy('fantasyName')">Nombre de Fantasía</th>
-              <th (click)="orderBy('name')" *ngIf="userCountry === 'AR'">Condición IVA </th>
-              <th (click)="orderBy('name')" *ngIf="userCountry !== 'AR'">Régimen Fiscal </th>
-              <th (click)="orderBy('identificationValue')">Identificador</th>
-              <th (click)="orderBy('address')">Dirección </th>
-              <th (click)="orderBy('addressNumber')">Número </th>
-              <th (click)="orderBy('phones')">Teléfonos </th>
-            </tr>
-            <tr>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." [focus]="focusEvent"></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterFantasyName" placeholder="Nombre de Fantasía..." ></th>
-                <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Condición IVA..." ></th>
-                <th *ngIf="userCountry !== 'AR'"><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Régimen Fiscal..."></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterIdentificationValue" placeholder="Identificador" ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterAddress" placeholder="Dirección..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterAddressNumber" placeholder="Número..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterPhones" placeholder="Teléfonos..." ></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td colspan="99" style="padding: 0px">
-                <app-progressbar [loading]="loading"></app-progressbar>
-              </td>
-            </tr>
-            <tr *ngFor="let company of companies  | orderBy: orderTerm: propertyTerm
-                                                  | filter: filterCode:'code'
-                                                  | filter: filterName:'name'
-                                                  | filter: filterFantasyName:'fantasyName'
-                                                  | filter: filterVATCondition:'description':'vatCondition'
-                                                  | filter: filterIdentificationValue:'identificationValue'
-                                                  | filter: filterAddress:'address'
-                                                  | filter: filterAddressNumber:'addressNumber'
-                                                  | filter: filterPhones:'phones'
-                                                  | paginate: { itemsPerPage: itemsPerPage,
-                                                                currentPage: p,
-                                                                totalItems: totalItems
-                                                              }"
-                (click)="selectCompany(company)">
-              <td>{{company.name}}</td>
-              <td>{{company.fantasyName}}</td>
-              <td *ngIf="company.vatCondition">{{company.vatCondition.description}}</td>
-              <td *ngIf="!company.vatCondition">Consumidor Final</td>
-              <td>{{company.identificationValue}}</td>
-              <td>{{company.address}}</td>
-              <td>{{company.addressNumber}}</td>
-              <td>{{company.phones}}</td>
-            </tr>
-            <tr align="center" *ngIf="areCompaniesEmpty && !loading">
-              <td colspan="8">No se encontraron empresas</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="card-footer">
-        <div class="row">
-          <div class="col-md-10">
-            <pagination-controls
-                    class="my-pagination"
-                    (pageChange)="p=$event"
-                    #api
-                    previousLabel="Ant."
-                    nextLabel="Sig."
-                    autoHide="true">
-            </pagination-controls>
-          </div>
-          <div class="form-group col-md-2">
-            <select class="form-control" [(ngModel)]="itemsPerPage">
-              <option [value]="5">Mostrar 5 Registros</option>
-              <option [value]="10">Mostrar 10 Registros</option>
-              <option [value]="15">Mostrar 15 Registros</option>
-              <option [value]="20">Mostrar 20 Registros</option>
-              <option [value]="50">Mostrar 50 Registros</option>
-              <option [value]="100">Mostrar 100 Registros</option>
-            </select>
-          </div>
+    <div class="card-block table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>
+              <i class="fa fa-bars"></i>
+            </th>
+            <ng-container *ngFor="let column of columns">
+              <th *ngIf="column.visible" (click)="orderBy(column.name)">{{ column.name | translate }}</th>
+            </ng-container>
+          </tr>
+          <tr class="filters">
+            <th></th>
+            <ng-container *ngFor="let column of columns">
+              <th *ngIf="column.visible">
+                <input type="text" class="form-control" [(ngModel)]="filters[column.name]" (keydown.enter)="getItems()" placeholder="{{ column.name | translate }}" [disabled]="!column.filter">
+              </th>
+            </ng-container>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td [attr.colspan]="getColumnsVisibles() + 1" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
+          </tr>
+          <tr *ngFor="let item of items | paginate: { itemsPerPage: itemsPerPage,
+                                                        currentPage: currentPage,
+                                                        totalItems: totalItems
+                                                      }">
+            <td align="left" width="100">
+              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', item)" title="Ver"><i class="fa fa-eye"></i></button>
+              <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', item)" title="Editar"><i class="fa fa-pencil"></i></button>
+              <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', item)" title="Eliminar" ><i class="fa fa-trash-o"></i></button>
+            </td>
+            <ng-container *ngFor="let column of columns">
+              <td *ngIf="column.visible" [attr.align]="column.align">{{getValue(item, column)}}</td>
+            </ng-container>
+          </tr>
+          <tr align="center" *ngIf="totalItems === 0 && !loading">
+            <td [attr.colspan]="getColumnsVisibles() + 1">No se encontraron empresas</td>
+          </tr>
+        </tbody>
+        <tfoot>
+        <!--<tr>
+            <th [attr.colspan]="getColumnsVisibles() - 2"></th>
+            <th class="align-right"> <strong>Total</strong></th>
+            <th class="align-right"><strong>{{totalItem | number:'1.2-2'}}</strong></th>
+            <th class="align-right"><strong>{{totalAmount | currency:'USD':'symbol-narrow':'1.2-2' }}</strong></th>
+          </tr>-->
+        </tfoot>
+      </table>
+    </div>
+    <div class="card-footer">
+      <div class="row">
+        <div class="col-md-10">
+          <pagination-controls
+            class="my-pagination"
+            (pageChange)="pageChange($event)"
+            #api
+            previousLabel="Ant."
+            nextLabel="Sig."
+            autoHide="true">
+          </pagination-controls>
+        </div>
+        <div class="form-group col-md-2">
+          <select class="form-control"  [(ngModel)]="itemsPerPage" (change)="getItems()">
+            <option [value]="5">Mostrar 5 Registros</option>
+            <option [value]="10">Mostrar 10 Registros</option>
+            <option [value]="15">Mostrar 15 Registros</option>
+            <option [value]="20">Mostrar 20 Registros</option>
+            <option [value]="50">Mostrar 50 Registros</option>
+            <option [value]="100">Mostrar 100 Registros</option>
+          </select>
         </div>
       </div>
+    </div>
   </div>
 </section>

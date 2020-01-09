@@ -1,6 +1,9 @@
 {
+    "address" : "Dirección",
+    "addressNumber" : "Número",
     "allowMeasure" : "¿Es pesable?",
     "allowSaleWithoutStock" : "¿Se vende sin stock disponible?",
+    "allowCurrentAccount" : "¿Permite Cuenta Corriente?",
     "allowSale" : "¿Habilitado para la venta?",
     "allowPurchase" : "¿Habilitado para la compra?",
     "amountPaid" : "Monto",
@@ -52,6 +55,7 @@
     "branchDestination" : {
         "name" : "Sucursal"
     },
+    "birthday" : "Cumpleaños",
     "category": {
         "description": "Categoría"
     },
@@ -73,6 +77,7 @@
     "currency" : {
         "name" : "Moneda"
     },
+    "city" : "Ciudad",
     "creationDate" : "Fecha de Alta",
     "deposit" : {
         "_id": "Identificador Depósito",
@@ -89,14 +94,27 @@
     },
     "endDate": "Fecha",
     "exempt" : "Exento",
+    "email" : "Email",
     "ecommerceEnabled" : "¿Habilitado para Ecommerce?",
     "employeeClosing" : {
         "name" : "Empleado"
+    },
+    "employee" : {
+        "name" : "Empleado asignado"
     },
     "state" : "Estado",
     "expirationDate" : "Vencimiento",
     "false": "No",
     "favourite" : "Destacado",
+    "fantasyName" : "Nombre de Fantasía",
+    "grossIncome" : "Ingresos Brutos",
+    "group" : {
+        "description" : "Grupo"
+    },
+    "identificationValue" : "Nro Identificación",
+    "identificationType" : {
+        "name" : "Tipo de Identificación"
+    },
     "letter": "Letra",
     "make": {
         "description": "Marca"
@@ -109,6 +127,10 @@
     "posDescription": "Descripción Corta",
     "printIn" : "Imprime en",
     "picture" : "Imagen",
+    "phone" : "Teléfono",
+    "priceList" : {
+        "name" : "Lista de Precio"
+    },
     "quantityPerMeasure": "Cant. de Un. de Medida",
     "quota" : "Cuota",
     "quantityForStock": "Movimiento de Stock",
@@ -116,7 +138,8 @@
     "isWeigth" : "¿Pide medida?",
     "markupPrice" : "Utilidad",
     "markupPercentage" : "Margen",
-	"madein": "Canal",
+    "madein": "Canal",
+    "name" : "Nombre",
 	"otherFieldsValues": "Campos Personalizados",
     "table" : {
         "description" : "Mesa"
@@ -155,6 +178,9 @@
     "unitOfMeasurement": {
         "abbreviation": "Unidad de Medida",
         "name": "Unidad de Medida"
+    },
+    "vatCondition" : {
+        "description" : "Condición de IVA"
     },
     "number": "Número",
     "unitPrice" : "Precio Unitario",

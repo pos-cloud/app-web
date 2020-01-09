@@ -1,0 +1,99 @@
+<section class="container-fluid">
+  <div class="center-content" *ngIf="alertMessage !== '' && !areCompaniesEmpty">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <div class="card ">
+    <div class="card-header">Listado de Empresas
+      <div class="pull-right">
+        <button class="btn" (click)="openModal('add', null)"><i class="fa fa-plus"></i><span>Agregar</span></button>
+        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
+        <button class="btn fa fa-close" (click)="activeModal.dismiss('close_click')"><span>Cerrar</span></button>
+      </div>
+    </div>
+      <div class="card-block table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th (click)="orderBy('name')">Nombre</th>
+              <th (click)="orderBy('fantasyName')">Nombre de Fantasía</th>
+              <th (click)="orderBy('name')" *ngIf="userCountry === 'AR'">Condición IVA </th>
+              <th (click)="orderBy('name')" *ngIf="userCountry !== 'AR'">Régimen Fiscal </th>
+              <th (click)="orderBy('identificationValue')">Identificador</th>
+              <th (click)="orderBy('address')">Dirección </th>
+              <th (click)="orderBy('addressNumber')">Número </th>
+              <th (click)="orderBy('phones')">Teléfonos </th>
+            </tr>
+            <tr>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." [focus]="focusEvent"></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterFantasyName" placeholder="Nombre de Fantasía..." ></th>
+                <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Condición IVA..." ></th>
+                <th *ngIf="userCountry !== 'AR'"><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Régimen Fiscal..."></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterIdentificationValue" placeholder="Identificador" ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterAddress" placeholder="Dirección..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterAddressNumber" placeholder="Número..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterPhones" placeholder="Teléfonos..." ></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="99" style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
+            <tr *ngFor="let company of companies  | orderBy: orderTerm: propertyTerm
+                                                  | filter: filterCode:'code'
+                                                  | filter: filterName:'name'
+                                                  | filter: filterFantasyName:'fantasyName'
+                                                  | filter: filterVATCondition:'description':'vatCondition'
+                                                  | filter: filterIdentificationValue:'identificationValue'
+                                                  | filter: filterAddress:'address'
+                                                  | filter: filterAddressNumber:'addressNumber'
+                                                  | filter: filterPhones:'phones'
+                                                  | paginate: { itemsPerPage: itemsPerPage,
+                                                                currentPage: p,
+                                                                totalItems: totalItems
+                                                              }"
+                (click)="selectCompany(company)">
+              <td>{{company.name}}</td>
+              <td>{{company.fantasyName}}</td>
+              <td *ngIf="company.vatCondition">{{company.vatCondition.description}}</td>
+              <td *ngIf="!company.vatCondition">Consumidor Final</td>
+              <td>{{company.identificationValue}}</td>
+              <td>{{company.address}}</td>
+              <td>{{company.addressNumber}}</td>
+              <td>{{company.phones}}</td>
+            </tr>
+            <tr align="center" *ngIf="areCompaniesEmpty && !loading">
+              <td colspan="8">No se encontraron empresas</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer">
+        <div class="row">
+          <div class="col-md-10">
+            <pagination-controls
+                    class="my-pagination"
+                    (pageChange)="p=$event"
+                    #api
+                    previousLabel="Ant."
+                    nextLabel="Sig."
+                    autoHide="true">
+            </pagination-controls>
+          </div>
+          <div class="form-group col-md-2">
+            <select class="form-control" [(ngModel)]="itemsPerPage">
+              <option [value]="5">Mostrar 5 Registros</option>
+              <option [value]="10">Mostrar 10 Registros</option>
+              <option [value]="15">Mostrar 15 Registros</option>
+              <option [value]="20">Mostrar 20 Registros</option>
+              <option [value]="50">Mostrar 50 Registros</option>
+              <option [value]="100">Mostrar 100 Registros</option>
+            </select>
+          </div>
+        </div>
+      </div>
+  </div>
+</section>
