@@ -28,6 +28,11 @@ import { ConfigService } from 'app/services/config.service';
 import { CurrencyValueService } from 'app/services/currency-value.service';
 import { CurrencyValue } from 'app/models/currency-value';
 
+interface currencyValue {
+    value: number;
+    quantity: number;
+}
+
 @Component({
 	selector: 'app-cash-box',
 	templateUrl: './cash-box.component.html',
@@ -40,7 +45,10 @@ export class CashBoxComponent implements OnInit {
 	public paymentMethods: PaymentMethod[];
 	public currencyValues: CurrencyValue[];
 	public transaction: Transaction;
-	public currencyValuesForm: { value: number, quantity: number }[];
+	public currencyValuesForm:  {
+        value : number,
+        quantity : number;	
+    } [];
 	public totalCurrencyValue = 0;
 	public cashBox: CashBox;
 	public movementOfCash: MovementOfCash;
@@ -436,7 +444,7 @@ export class CashBoxComponent implements OnInit {
 
 	public addCurrencyValue(e): void {
 		if(!this.currencyValuesForm) this.currencyValuesForm = new Array();
-		this.currencyValuesForm.push({ value: parseInt(e.currencyValue), quantity: e.currencyAmount })
+		this.currencyValuesForm.push({ value: parseInt(e.currencyValue), quantity: e.currencyAmount });
 		this.totalCurrencyValue = 0;
 		for (const iterator of this.currencyValuesForm) {
 			this.totalCurrencyValue = this.totalCurrencyValue + (iterator.quantity * iterator.value)
@@ -445,7 +453,8 @@ export class CashBoxComponent implements OnInit {
 
 	public deleteCurrencyValue(e): void {
 		this.totalCurrencyValue = 0;
-		for (const iterator of this.currencyValuesForm.splice(e, 1)) {
+		this.currencyValuesForm.splice( e, 1 );
+		for (const iterator of this.currencyValuesForm) {
 			this.totalCurrencyValue = this.totalCurrencyValue + (iterator.quantity * iterator.value)
 		}
 	}
@@ -463,7 +472,11 @@ export class CashBoxComponent implements OnInit {
 			mov.surcharge = this.movementOfCash.surcharge;
 
 			if (this.movementOfCash.type.allowCurrencyValue && this.currencyValuesForm && this.currencyValuesForm.length > 0) {
-				mov.currencyValue = this.currencyValuesForm
+				mov.currencyValue = [{value : null,quantity:null}]
+				for (const iterator of this.currencyValuesForm) {
+					mov.currencyValue.push({value : iterator.value , quantity : iterator.quantity})
+				}
+				mov.currencyValue.splice( 0, 1 );
 				mov.amountPaid = 0;
 				mov.currencyValue.forEach(element => {
 					mov.amountPaid = mov.amountPaid + (element.quantity * element.value)
@@ -482,6 +495,7 @@ export class CashBoxComponent implements OnInit {
 			mov.CUIT = this.movementOfCash.CUIT;
 			mov.deliveredBy = this.movementOfCash.deliveredBy;
 			this.movementsOfCashes.push(mov);
+			console.log(mov)
 		} else {
 			this.showMessage('El método de pago ' + this.movementOfCash.type.name + ' no impacta en la caja.', 'info', true);
 		}
