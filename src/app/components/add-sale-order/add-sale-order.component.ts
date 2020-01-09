@@ -245,6 +245,11 @@ export class AddSaleOrderComponent {
 				async transaction => {
 					if (transaction) {
 						this.transaction = transaction;
+						if(this.transaction &&
+							this.transaction.company &&
+							this.transaction.company.transport){
+							this.transaction.transport = this.transaction.company.transport
+						}
 						if (this.transaction.state === TransactionState.Closed ||
 							this.transaction.state === TransactionState.Canceled) {
 							if (this.posType === 'resto' && this.transaction.table) {
@@ -1817,6 +1822,10 @@ export class AddSaleOrderComponent {
 				}
 				modalRef.result.then(async (result) => {
 					if (result.company) {
+
+						if(this.transaction.type.requestTransport && result.company['transport']){
+							this.transaction.transport = result.company['transport'];
+						}
 
 						if (!this.transaction.company && result.company.priceList) {
 							this.priceList = undefined
