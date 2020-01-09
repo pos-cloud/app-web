@@ -11,7 +11,7 @@ import 'moment/locale/es';
 import { CashBox, CashBoxState } from './../../models/cash-box';
 import { PaymentMethod } from './../../models/payment-method';
 import { Transaction, TransactionState } from './../../models/transaction';
-import { MovementOfCash } from './../../models/movement-of-cash';
+import { MovementOfCash,currencyValue } from './../../models/movement-of-cash';
 
 //Servicios
 import { PaymentMethodService } from './../../services/payment-method.service';
@@ -28,11 +28,6 @@ import { ConfigService } from 'app/services/config.service';
 import { CurrencyValueService } from 'app/services/currency-value.service';
 import { CurrencyValue } from 'app/models/currency-value';
 
-interface currencyValue {
-    value: number;
-    quantity: number;
-}
-
 @Component({
 	selector: 'app-cash-box',
 	templateUrl: './cash-box.component.html',
@@ -45,10 +40,7 @@ export class CashBoxComponent implements OnInit {
 	public paymentMethods: PaymentMethod[];
 	public currencyValues: CurrencyValue[];
 	public transaction: Transaction;
-	public currencyValuesForm:  {
-        value : number,
-        quantity : number;	
-    } [];
+	public currencyValuesForm : currencyValue[]
 	public totalCurrencyValue = 0;
 	public cashBox: CashBox;
 	public movementOfCash: MovementOfCash;
@@ -472,11 +464,7 @@ export class CashBoxComponent implements OnInit {
 			mov.surcharge = this.movementOfCash.surcharge;
 
 			if (this.movementOfCash.type.allowCurrencyValue && this.currencyValuesForm && this.currencyValuesForm.length > 0) {
-				mov.currencyValue = [{value : null,quantity:null}]
-				for (const iterator of this.currencyValuesForm) {
-					mov.currencyValue.push({value : iterator.value , quantity : iterator.quantity})
-				}
-				mov.currencyValue.splice( 0, 1 );
+				mov.currencyValue = this.currencyValuesForm
 				mov.amountPaid = 0;
 				mov.currencyValue.forEach(element => {
 					mov.amountPaid = mov.amountPaid + (element.quantity * element.value)

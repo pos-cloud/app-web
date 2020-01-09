@@ -5,6 +5,11 @@ import { Bank } from './bank';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
+export interface currencyValue {
+    value: number;
+    quantity: number;
+}
+
 export class MovementOfCash {
 
     public _id: string;
@@ -25,10 +30,7 @@ export class MovementOfCash {
     public CUIT: string;
     public deliveredBy: string;
     public paymentChange: number = 0.00;
-    public currencyValue: [{
-        value : number,
-        quantity : number;	
-    }];
+    public currencyValue: currencyValue[]
 
     constructor() { }
 }
