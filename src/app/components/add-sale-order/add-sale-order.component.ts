@@ -730,6 +730,8 @@ export class AddSaleOrderComponent {
 											result => {
 												if (result) {
 													this.getMovementsOfTransaction();
+												} else {
+													this.showMessage("No se pudo crear la estructura de producto", 'info', false);
 												}
 											});
 									}
@@ -954,9 +956,9 @@ export class AddSaleOrderComponent {
 		});
 	}
 
-	private saveMovementsOfArticles(movementsOfArticles: MovementOfArticle[]): Promise<MovementOfArticle[]> {
+	private saveMovementsOfArticles(movementsOfArticles: MovementOfArticle[]): Promise<boolean> {
 
-		return new Promise<MovementOfArticle[]>((resolve, reject) => {
+		return new Promise<boolean>( async (resolve, reject) => {
 
 			this.loading = true;
 
@@ -969,7 +971,12 @@ export class AddSaleOrderComponent {
 				movArticle.salePrice = 0
 				movArticle.status = MovementOfArticleStatus.Ready;
 
-				movsArticles.push(movArticle)
+				if(await this.recalculateSalePrice(movArticle)){
+					movsArticles.push(movArticle)
+				} else {
+					resolve(false)
+				}
+
 			}
 
 			this._movementOfArticleService.saveMovementsOfArticles(movsArticles).subscribe(
@@ -977,16 +984,16 @@ export class AddSaleOrderComponent {
 					this.loading = false;
 					if (!result.movementsOfArticles) {
 						if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-						resolve(null);
+						resolve(false);
 					} else {
 						this.hideMessage();
-						resolve(result.movementsOfArticles);
+						resolve(true);
 					}
 				},
 				error => {
 					this.loading = false;
 					this.showMessage(error._body, 'danger', false);
-					resolve(null);
+					resolve(false);
 				}
 			);
 		});
