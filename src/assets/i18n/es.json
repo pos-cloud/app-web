@@ -82,7 +82,10 @@
     "creationDate" : "Fecha de Alta",
     "deposit" : {
         "_id": "Identificador Depósito",
-        "name" : "Deposito"
+        "name" : "Deposito",
+        "branch": {
+			"name": "Sucursal"
+		}
     },
     "diners" : "Comensales",
     "discount" : "Descuento",
@@ -153,7 +156,8 @@
         "cashBox" : {
             "number" : "Caja"
         },
-        "endDate" : "Fecha",
+		"endDate" : "Fecha",
+		"letter": "Letra",
         "number": "Número",
         "operationType": "Última Operación Transacción",
         "type" : {
