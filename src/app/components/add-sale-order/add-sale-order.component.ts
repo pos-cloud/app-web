@@ -245,9 +245,9 @@ export class AddSaleOrderComponent {
 				async transaction => {
 					if (transaction) {
 						this.transaction = transaction;
-						if(this.transaction &&
+						if (this.transaction &&
 							this.transaction.company &&
-							this.transaction.company.transport){
+							this.transaction.company.transport) {
 							this.transaction.transport = this.transaction.company.transport
 						}
 						if (this.transaction.state === TransactionState.Closed ||
@@ -958,7 +958,7 @@ export class AddSaleOrderComponent {
 
 	private saveMovementsOfArticles(movementsOfArticles: MovementOfArticle[]): Promise<boolean> {
 
-		return new Promise<boolean>( async (resolve, reject) => {
+		return new Promise<boolean>(async (resolve, reject) => {
 
 			this.loading = true;
 
@@ -966,17 +966,16 @@ export class AddSaleOrderComponent {
 
 			for (const movArticle of movementsOfArticles) {
 
-				movArticle.basePrice = 0
-				movArticle.costPrice = 0
-				movArticle.salePrice = 0
+				movArticle.basePrice = 0;
+				movArticle.costPrice = 0;
+				movArticle.salePrice = 0;
 				movArticle.status = MovementOfArticleStatus.Ready;
 
-				if(await this.recalculateSalePrice(movArticle)){
-					movsArticles.push(movArticle)
+				if (await this.recalculateSalePrice(movArticle)) {
+					movsArticles.push(movArticle);
 				} else {
-					resolve(false)
+					resolve(false);
 				}
-
 			}
 
 			this._movementOfArticleService.saveMovementsOfArticles(movsArticles).subscribe(
@@ -1433,8 +1432,8 @@ export class AddSaleOrderComponent {
 							isUpdateValid = false;
 							break;
 						}
-					
-				}
+
+					}
 				}
 			}
 		} else {
@@ -1830,7 +1829,7 @@ export class AddSaleOrderComponent {
 				modalRef.result.then(async (result) => {
 					if (result.company) {
 
-						if(this.transaction.type.requestTransport && result.company['transport']){
+						if (this.transaction.type.requestTransport && result.company['transport']) {
 							this.transaction.transport = result.company['transport'];
 						}
 
