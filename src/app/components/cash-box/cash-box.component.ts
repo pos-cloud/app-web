@@ -273,7 +273,7 @@ export class CashBoxComponent implements OnInit {
 						async cashBox => {
 							if (cashBox) {
 								this.cashBox = cashBox;
-								if (this.cashBoxForm.value.amount && this.cashBoxForm.value.amount > 0) {
+								if (this.cashBox) {
 									if (this.transactionType.fixedOrigin) {
 										this.transaction.origin = this.transactionType.fixedOrigin;
 									} else {
