@@ -2396,11 +2396,30 @@ export class PrintComponent implements OnInit {
         this.doc.text("LOCAIDAD:", margin, row + 8);
         this.doc.text("CUIT:", margin, row + 12);
         this.doc.text("CANTIDAD DE BULTOS:", margin, row + 16);
+        this.doc.text("VALOR DECLARADO:", margin, row + 20);
         this.doc.setFontType('normal');
-        this.doc.text(this.transaction.transport.name, margin +25, row);
-        this.doc.text(this.transaction.transport.address, margin+20, row + 4);
-        this.doc.text(this.transaction.transport.city, margin+20, row + 8);
-        this.doc.text(this.transaction.transport.identificationValue, margin+30, row + 12);
+        if(this.transaction.transport.name){
+          this.doc.text(this.transaction.transport.name, margin +25, row);
+        }
+        if(this.transaction.transport.address){
+          this.doc.text(this.transaction.transport.address, margin+20, row + 4);
+        }
+        if(this.transaction.transport.city){
+          this.doc.text(this.transaction.transport.city, margin+20, row + 8);
+        }
+        if(this.transaction.transport.identificationValue){
+          this.doc.text(this.transaction.transport.identificationValue, margin+30, row + 12);
+        }
+        if(this.transaction.taxes){
+          let priceWhitoutTaxes
+          for (const iterator of this.transaction.taxes) {
+            priceWhitoutTaxes = iterator.taxBase
+          }
+          this.doc.text("$" + parseFloat(this.roundNumber.transform(priceWhitoutTaxes,2)), margin+40, row + 20);
+
+        } else {
+          this.doc.text("$" + parseFloat(this.roundNumber.transform(this.transaction.totalPrice,2)), margin+40, row + 20);
+        }
         row += 16; 
       }
     }
