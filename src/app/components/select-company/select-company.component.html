@@ -71,7 +71,7 @@
           </tbody>
         </table>
       </div>
-      <div class="card-footer">
+      <!--<div class="card-footer">
         <div class="row">
           <div class="col-md-10">
             <pagination-controls
@@ -84,7 +84,7 @@
             </pagination-controls>
           </div>
           <div class="form-group col-md-2">
-            <select class="form-control" [(ngModel)]="itemsPerPage">
+            <select class="form-control" [(ngModel)]="itemsPerPage" (change)="getCompaniesByType()">
               <option [value]="5">Mostrar 5 Registros</option>
               <option [value]="10">Mostrar 10 Registros</option>
               <option [value]="15">Mostrar 15 Registros</option>
@@ -94,6 +94,6 @@
             </select>
           </div>
         </div>
-      </div>
+      </div>-->
   </div>
 </section>
