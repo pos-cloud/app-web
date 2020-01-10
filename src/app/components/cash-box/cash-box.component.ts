@@ -424,7 +424,6 @@ export class CashBoxComponent implements OnInit {
 			result => {
 				if (result && result.currencyValues) {
 					this.currencyValues = result.currencyValues
-					console.log(this.currencyValues)
 				}
 			},
 			error => {
@@ -435,11 +434,15 @@ export class CashBoxComponent implements OnInit {
 	}
 
 	public addCurrencyValue(e): void {
-		if(!this.currencyValuesForm) this.currencyValuesForm = new Array();
-		this.currencyValuesForm.push({ value: parseInt(e.currencyValue), quantity: e.currencyAmount });
-		this.totalCurrencyValue = 0;
-		for (const iterator of this.currencyValuesForm) {
-			this.totalCurrencyValue = this.totalCurrencyValue + (iterator.quantity * iterator.value)
+		if(e && parseInt(e.currencyValue) && e.currencyAmount){
+			if(!this.currencyValuesForm) this.currencyValuesForm = new Array();
+			this.currencyValuesForm.push({ value: parseInt(e.currencyValue), quantity: e.currencyAmount });
+			this.totalCurrencyValue = 0;
+			for (const iterator of this.currencyValuesForm) {
+				this.totalCurrencyValue = this.totalCurrencyValue + (iterator.quantity * iterator.value)
+			}
+		} else {
+			this.showMessage("Debe completar todos los campos", 'info', true);
 		}
 	}
 
@@ -464,9 +467,9 @@ export class CashBoxComponent implements OnInit {
 			mov.surcharge = this.movementOfCash.surcharge;
 
 			if (this.movementOfCash.type.allowCurrencyValue && this.currencyValuesForm && this.currencyValuesForm.length > 0) {
-				mov.currencyValue = this.currencyValuesForm
+				mov.currencyValues = this.currencyValuesForm
 				mov.amountPaid = 0;
-				mov.currencyValue.forEach(element => {
+				mov.currencyValues.forEach(element => {
 					mov.amountPaid = mov.amountPaid + (element.quantity * element.value)
 				});
 			} else {
@@ -483,6 +486,7 @@ export class CashBoxComponent implements OnInit {
 			mov.CUIT = this.movementOfCash.CUIT;
 			mov.deliveredBy = this.movementOfCash.deliveredBy;
 			this.movementsOfCashes.push(mov);
+			this.currencyValuesForm  = null;
 		} else {
 			this.showMessage('El método de pago ' + this.movementOfCash.type.name + ' no impacta en la caja.', 'info', true);
 		}
