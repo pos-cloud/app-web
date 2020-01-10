@@ -105,29 +105,29 @@ export class ListCompaniesComponent implements OnInit {
 		let isDown = false;
 		let startX;
 		let scrollLeft;
-	
+
 		slider.addEventListener('mousedown', (e) => {
-		  isDown = true;
-		  slider.classList.add('active');
-		  startX = e['pageX'] - slider['offsetLeft'];
-		  scrollLeft = slider.scrollLeft;
+			isDown = true;
+			slider.classList.add('active');
+			startX = e['pageX'] - slider['offsetLeft'];
+			scrollLeft = slider.scrollLeft;
 		});
 		slider.addEventListener('mouseleave', () => {
-		  isDown = false;
-		  slider.classList.remove('active');
+			isDown = false;
+			slider.classList.remove('active');
 		});
 		slider.addEventListener('mouseup', () => {
-		  isDown = false;
-		  slider.classList.remove('active');
+			isDown = false;
+			slider.classList.remove('active');
 		});
 		slider.addEventListener('mousemove', (e) => {
-		  if(!isDown) return;
-		  e.preventDefault();
-		  const x = e['pageX'] - slider['offsetLeft'];
-		  const walk = (x - startX) * 0.7; //scroll-fast
-		  slider.scrollLeft = scrollLeft - walk;
+			if (!isDown) return;
+			e.preventDefault();
+			const x = e['pageX'] - slider['offsetLeft'];
+			const walk = (x - startX) * 0.7; //scroll-fast
+			slider.scrollLeft = scrollLeft - walk;
 		});
-	  }
+	}
 
 	ngAfterViewInit() {
 		this.focusEvent.emit(true);
@@ -155,7 +155,7 @@ export class ListCompaniesComponent implements OnInit {
 			}
 		}
 
-		match += `,"type": "${this.type}"`;
+		match += `,"companyType": "${this.type}"`;
 		if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
 		match += `}`;
@@ -171,14 +171,18 @@ export class ListCompaniesComponent implements OnInit {
 					project += `,`;
 				}
 				j++;
-				if (this.columns[i].datatype !== "string") {
-					if (this.columns[i].datatype === "date") {
-						project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`
-					} else {
-						project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
-					}
+				if(this.columns[i].project){
+					project += `"${this.columns[i].name}" : ${this.columns[i].project}`
 				} else {
-					project += `"${this.columns[i].name}": 1`;
+					if (this.columns[i].datatype !== "string") {
+						if (this.columns[i].datatype === "date") {
+							project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`
+						} else {
+							project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
+						}
+					} else {
+						project += `"${this.columns[i].name}": 1`;
+					}
 				}
 
 			}

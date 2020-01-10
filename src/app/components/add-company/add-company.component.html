@@ -50,7 +50,8 @@
                     <label for="identificationType" class="control-label">Tipo de Identificación</label>
                     <select class="form-control" formControlName="identificationType">
                       <option *ngFor="let identificationType of identificationTypes"
-                              [ngValue]="identificationType._id">
+                              [ngValue]="identificationType._id"
+                              [disabled]="readonly">
                         {{identificationType.name}}
                       </option>
                     </select>
@@ -61,7 +62,7 @@
                   <div class="form-group col-md-6">
                     <label for="identificationValue" class="control-label">Nro. de identificación</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="identificationValue" name="identificationValue" id="identificationValue" [focus]="focusEvent"/>
+                      <input type="text" class="form-control" formControlName="identificationValue" name="identificationValue" id="identificationValue" [focus]="focusEvent" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.identificationValue" class="alert alert-danger">
                       {{ formErrors.identificationValue }}
@@ -72,7 +73,7 @@
                   <div class="form-group col-md-12">
                     <label for="grossIncome" class="control-label">Ingresos Brutos:</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="grossIncome" name="grossIncome" id="grossIncome" />
+                      <input type="text" class="form-control" formControlName="grossIncome" name="grossIncome" id="grossIncome" [readonly]="readonly"/>
                     </div>
                   </div>
                 </div>
@@ -80,7 +81,7 @@
                   <div class="form-group col-md-6">
                     <label for="name" class="control-label">Nombre:</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="name" name="name" id="name"/>
+                      <input type="text" class="form-control" formControlName="name" name="name" id="name" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.name" class="alert alert-danger">
                       {{ formErrors.name }}
@@ -89,7 +90,7 @@
                   <div class="form-group col-md-6">
                     <label for="fantasyName" class="control-label">Nombre de Fantasía:</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="fantasyName" name="fantasyName" id="fantasyName"/>
+                      <input type="text" class="form-control" formControlName="fantasyName" name="fantasyName" id="fantasyName" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.fantasyName" class="alert alert-danger">
                       {{ formErrors.fantasyName }}
@@ -100,7 +101,7 @@
                   <div class="form-group col-md-6">
                     <label for="address" class="control-label">Dirección:</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="address" name="address" id="address"/>
+                      <input type="text" class="form-control" formControlName="address" name="address" id="address" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.address" class="alert alert-danger">
                       {{ formErrors.address }}
@@ -109,7 +110,7 @@
                   <div class="form-group col-md-2">
                     <label for="addressNumber" class="control-label">Número:</label>
                     <div class="input-group">
-                      <input type="number" class="form-control" formControlName="addressNumber" name="addressNumber" id="addressNumber"/>
+                      <input type="number" class="form-control" formControlName="addressNumber" name="addressNumber" id="addressNumber" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.addressNumber" class="alert alert-danger">
                       {{ formErrors.addressNumber }}
@@ -118,7 +119,7 @@
                   <div class="form-group col-md-2">
                     <label for="floorNumber" class="control-label">Piso:</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="floorNumber" name="floorNumber" id="floorNumber"/>
+                      <input type="text" class="form-control" formControlName="floorNumber" name="floorNumber" id="floorNumber" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.floorNumber" class="alert alert-danger">
                       {{ formErrors.floorNumber }}
@@ -127,7 +128,7 @@
                   <div class="form-group col-md-2">
                     <label for="flat" class="control-label">Dpto:</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="flat" name="flat" id="flat"/>
+                      <input type="text" class="form-control" formControlName="flat" name="flat" id="flat" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.flat" class="alert alert-danger">
                       {{ formErrors.flat }}
@@ -171,7 +172,7 @@
                   <div class="form-group col-md-4">
                     <label for="city" class="control-label">Ciudad:</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="city" name="city" id="city"/>
+                      <input type="text" class="form-control" formControlName="city" name="city" id="city" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.city" class="alert alert-danger">
                       {{ formErrors.city }}
@@ -182,7 +183,7 @@
                   <div class="form-group col-md-6">
                     <label for="phones" class="control-label">Teléfonos:</label>
                     <div class="input-group">
-                      <input type="number" class="form-control" formControlName="phones" name="phones" id="phones"/>
+                      <input type="number" class="form-control" formControlName="phones" name="phones" id="phones" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.phones" class="alert alert-danger">
                       {{ formErrors.phones }}
@@ -191,7 +192,7 @@
                   <div class="form-group col-md-6">
                     <label for="emails" class="control-label">Emails:</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="emails" name="emails" id="emails"/>
+                      <input type="text" class="form-control" formControlName="emails" name="emails" id="emails" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.emails" class="alert alert-danger">
                       {{ formErrors.emails }}
@@ -202,7 +203,7 @@
                   <div class="form-group col-md-8">
                     <label for="gender" class="control-label">Género:</label>
                     <select class="form-control" formControlName="gender">
-                      <option *ngFor="let gender of genders" [ngValue]="gender">{{gender}}</option>
+                      <option *ngFor="let gender of genders" [ngValue]="gender" [disabled]="readonly" >{{gender}} </option>
                     </select>
                     <div *ngIf="formErrors.gender" class="alert alert-danger">
                       {{ formErrors.gender }}
@@ -210,7 +211,7 @@
                   </div>
                   <div class="form-group col-md-4">
                     <label for="birthday" class="control-label">Cumpleaños:</label>
-                    <input type="date" class="form-control" formControlName="birthday" name="birthday" id="birthday"/>
+                    <input type="date" class="form-control" formControlName="birthday" name="birthday" id="birthday" [readonly]="readonly"/>
                     <div *ngIf="formErrors.birthday" class="alert alert-danger">
                       {{ formErrors.birthday }}
                     </div>
@@ -219,7 +220,7 @@
                 <div class = "row">
                   <div class="form-group col-md-12">
                     <label for="observation" class="control-label">Observación:</label>
-                    <textarea class="form-control" formControlName="observation" name="observation" id="observation"></textarea>
+                    <textarea class="form-control" formControlName="observation" name="observation" id="observation" [readonly]="readonly"></textarea>
                     <div *ngIf="formErrors.observation" class="alert alert-danger">
                       {{ formErrors.observation }}
                     </div>
@@ -259,9 +260,9 @@
                 <div class="row">
                   <div class="form-group col-md-12">
                     <label for="allowCurrentAccount" class="control-label">¿Habilitado para comprar en cuenta corriente?</label>
-                    <select class="form-control" formControlName="allowCurrentAccount">
-                      <option value="true" [selected]="company.allowCurrentAccount">Si</option>
-                      <option value="false" [selected]="!company.allowCurrentAccount">No</option>
+                    <select class="form-control" formControlName="allowCurrentAccount" >
+                      <option value="true" [selected]="company.allowCurrentAccount" [disabled]="readonly">Si</option>
+                      <option value="false" [selected]="!company.allowCurrentAccount" [disabled]="readonly">No</option>
                     </select>
                   </div>
                 </div>

@@ -256,12 +256,12 @@ export let attributes = [
   },
  
   {
-    name: 'type',
+    name: 'companyType',
     visible: false,
     disabled: true,
     filter: false,
     datatype: 'string',
-    project: null,
+    project: `"$type"`,
     align: 'left',
     required : true,
   },

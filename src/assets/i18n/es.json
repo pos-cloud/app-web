@@ -78,6 +78,7 @@
         "name" : "Moneda"
     },
     "city" : "Ciudad",
+    "companyType" : "Tipo de Empresa",
     "creationDate" : "Fecha de Alta",
     "deposit" : {
         "_id": "Identificador Depósito",
