@@ -723,7 +723,7 @@ export class AddSaleOrderComponent {
 									if (movementOfArticle) {
 										movsArticle = new Array();
 										for (const movArticle of child) {
-											movArticle.movementParent = movementOfArticle._id
+											movArticle.movementParent = movementOfArticle
 											movsArticle.push(movArticle)
 										}
 										await this.saveMovementsOfArticles(movsArticle).then(

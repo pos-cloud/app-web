@@ -232,13 +232,18 @@ export class StructureComponent implements OnInit {
 
 		if (this.isValid()) {
 			this._structureService.updateStructure(this.structure).subscribe(
-				result => {
+				async result => {
 					if (!result.structure) {
 						this.loading = false;
 						if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
 					} else {
-						this.loading = false;
-						this.showMessage('La estructura se ha actualizado con éxito.', 'success', false);
+						if(await this.updateArticle()){
+							this.loading = false;
+							this.showMessage('La estructura se ha actualizado con éxito.', 'success', false);
+						} else {
+							this.showMessage('No se pudo actualizar el producto padre.', 'danger', false);
+
+						}
 					}
 				},
 				error => {
@@ -257,17 +262,21 @@ export class StructureComponent implements OnInit {
 
 		if (this.isValid()) {
 			this._structureService.saveStructure(this.structure).subscribe(
-				result => {
+				async result => {
 					if (!result.structure) {
 						this.loading = false;
 						if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
 					} else {
 						this.loading = false;
-						this.showMessage('La estructura se ha añadido con éxito.', 'success', false);
-						this.structure = new Structure();
-						this.structure.parent = this.structureForm.value.parent;
-						this.buildForm();
-						this.focusEvent.emit(true);
+						if (await this.updateArticle()){
+							this.showMessage('La estructura se ha añadido con éxito.', 'success', false);
+							this.structure = new Structure();
+							this.structure.parent = this.structureForm.value.parent;
+							this.buildForm();
+							this.focusEvent.emit(true);
+						} else {
+							this.showMessage('No se pudo actualizar el producto padre.', 'danger', false);
+						}
 					}
 				},
 				error => {
@@ -285,12 +294,14 @@ export class StructureComponent implements OnInit {
 		this.loading = true;
 
 		this._structureService.deleteStructure(this.structure._id).subscribe(
-			result => {
+			async result => {
 				this.loading = false;
 				if (!result.structure) {
 					if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
 				} else {
-					this.activeModal.close();
+					if(await this.updateArticle()){
+						this.activeModal.close();
+					}
 				}
 			},
 			error => {
@@ -298,6 +309,29 @@ export class StructureComponent implements OnInit {
 				this.loading = false;
 			}
 		);
+	}
+
+	public updateArticle() {
+		
+		return new Promise((resolve, reject) =>{
+			if(this.operation === "delete"){
+				this.structure.parent.containsStructure = false;
+			} else {
+				this.structure.parent.containsStructure = true;
+			}
+			this._articleService.updateArticle(this.structure.parent,null).subscribe(
+				result =>{
+					if(result && result.article){
+						resolve(true)
+					}
+				},
+				error =>{
+					resolve(false)
+					this.showMessage(error._body, 'danger', false);
+					this.loading = false;
+				}
+			)
+		})
 	}
 
 	public isValid(): boolean {

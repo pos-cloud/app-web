@@ -144,7 +144,9 @@ export class AddMovementOfArticleComponent implements OnInit {
 			this.getVariantsByArticleParent();
 		}
 		this.buildForm();
-		this.getStructure(this.movementOfArticle.article._id);
+		if(this.movementOfArticle.article.containsStructure){
+			this.getStructure(this.movementOfArticle.article._id);
+		}
 	}
 
 	ngAfterViewInit() {
@@ -1275,8 +1277,6 @@ export class AddMovementOfArticleComponent implements OnInit {
 
 						movArticle.notes = "";
 
-						//todo en 0 para que no sume nada
-
 						if (salePrice && salePrice > 0) {
 							movArticle.salePrice = salePrice;
 							movArticle.basePrice = article.basePrice;
@@ -1566,7 +1566,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
 						//le meto a todos el movimiento del padre
 						for (let index = 0; index < this.movChild.length; index++) {
-							this.movChild[index].movementParent = result.movementOfArticle._id
+							this.movChild[index].movementParent = result.movementOfArticle
 						}
 
 						//guardo todas las estrcturas
@@ -1651,7 +1651,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
 						//le meto a todos el movimiento del padre
 						for (let index = 0; index < this.movChild.length; index++) {
-							this.movChild[index].movementParent = result.movementOfArticle._id
+							this.movChild[index].movementParent = result.movementOfArticle
 						}
 
 						//guardo todas las estrcturas
@@ -1678,10 +1678,12 @@ export class AddMovementOfArticleComponent implements OnInit {
 		for (let x = 0; x < this.grouped.length; x++) {
 			if (this.grouped[x].name === group) {
 				for (let y = 0; y < this.grouped[x].names.length; y++) {
-					if (child === this.grouped[x].names[y].name && this.grouped[x].names[y].color === "white") {
-						this.grouped[x].names[y].color = "blue";
-					} else {
-						this.grouped[x].names[y].color = "white";
+					if (child === this.grouped[x].names[y].name) {
+						if(this.grouped[x].names[y].color === "white"){
+							this.grouped[x].names[y].color = "blue";
+						} else {
+							this.grouped[x].names[y].color = "white";
+						}
 					}
 				}
 			}
