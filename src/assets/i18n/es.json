@@ -169,11 +169,16 @@
         "name" : "Nombre de Transporte"
     },
     "type" : {
-        "name" : "Tipo",
-        "transactionMovement" : "Movimiento",
-        "allowEdit" : "Permite Editar",
         "allowDelete" : "Permite Eliminar",
-        "electronics" : "Es Electrónica"
+		"allowEdit" : "Permite Editar",
+		"defectPrinter": {
+			"_id": "Identificador de impresión",
+			"pageHigh": "Alto de página",
+			"pageWidth": "Ancho de página"
+		},
+        "name" : "Tipo",
+        "electronics" : "Es Electrónica",
+        "transactionMovement" : "Movimiento"
     },
     "totalPrice" : "Precio Total",
     "unitOfMeasurement": {
@@ -185,6 +190,6 @@
     },
     "number": "Número",
     "unitPrice" : "Precio Unitario",
-    
+    "updateDate" : "Fecha de Modificación",
     "realStock" : "Stock"
 }
