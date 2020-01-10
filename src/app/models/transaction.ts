@@ -181,7 +181,7 @@ export let attributes = [
 		datatype: 'string',
 		project: null,
 		align: 'left',
-		required: false,
+		required: true,
 	},
 	{
 		name: 'observation',
