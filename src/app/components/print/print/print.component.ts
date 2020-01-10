@@ -1992,235 +1992,238 @@ export class PrintComponent implements OnInit {
 
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (var i = 0; i < this.movementsOfArticles.length; i++) {
-        if (this.movementsOfArticles[i].amount) {
-          totalArticle = totalArticle + this.movementsOfArticles[i].amount;
-          this.doc.text((this.movementsOfArticles[i].amount).toString(), 6, row);
-        }
-        if (this.movementsOfArticles[i].code) {
-          this.doc.text((this.movementsOfArticles[i].code).toString().slice(0,15), 15, row);
-        }
+        if(this.movementsOfArticles[i].amount > 0){
 
-        let detalle = '';
-
-        if(this.transaction && this.transaction.type && this.transaction.type.printDescriptionType && this.transaction.type.printDescriptionType === DescriptionType.Description) {
-          if (this.movementsOfArticles[i].description) {
-            if( this.movementsOfArticles[i].category &&
-                this.movementsOfArticles[i].category.visibleInvoice &&
-                this.movementsOfArticles[i].make &&
-                this.movementsOfArticles[i].make.visibleSale) {
-              if (this.movementsOfArticles[i].category.visibleInvoice &&
-                  this.movementsOfArticles[i].make.visibleSale) {
-                detalle = this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description + ' - ' + this.movementsOfArticles[i].make.description
-              } else if ( this.movementsOfArticles[i].category.visibleInvoice &&
-                          !this.movementsOfArticles[i].make.visibleSale) {
-                detalle = this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description;
-              } else if (this.movementsOfArticles[i].make.visibleSale && !this.movementsOfArticles[i].category.visibleInvoice) {
-                detalle = this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].make.description;
-              }
-            } else {
-              if (this.movementsOfArticles[i].category &&
+          if (this.movementsOfArticles[i].amount) {
+            totalArticle = totalArticle + this.movementsOfArticles[i].amount;
+            this.doc.text((this.movementsOfArticles[i].amount).toString(), 6, row);
+          }
+          if (this.movementsOfArticles[i].code) {
+            this.doc.text((this.movementsOfArticles[i].code).toString().slice(0,15), 15, row);
+          }
+  
+          let detalle = '';
+  
+          if(this.transaction && this.transaction.type && this.transaction.type.printDescriptionType && this.transaction.type.printDescriptionType === DescriptionType.Description) {
+            if (this.movementsOfArticles[i].description) {
+              if( this.movementsOfArticles[i].category &&
                   this.movementsOfArticles[i].category.visibleInvoice &&
-                  this.movementsOfArticles[i].category.visibleInvoice) {
-                detalle = this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description;
-              }else if (this.movementsOfArticles[i].make && this.movementsOfArticles[i].make.visibleSale && this.movementsOfArticles[i].make.visibleSale) {
-                detalle = this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].make.description;
-              } else
-                detalle = this.movementsOfArticles[i].description;
-            }
-  
-          }
-        } else {
-          if (this.movementsOfArticles[i].article.posDescription) {
-            if( this.movementsOfArticles[i].category &&
-                this.movementsOfArticles[i].category.visibleInvoice &&
-                this.movementsOfArticles[i].make &&
-                this.movementsOfArticles[i].make.visibleSale) {
-              if (this.movementsOfArticles[i].category.visibleInvoice &&
+                  this.movementsOfArticles[i].make &&
                   this.movementsOfArticles[i].make.visibleSale) {
-                detalle = this.movementsOfArticles[i].article.posDescription + ' - ' +
-                              this.movementsOfArticles[i].category.description + ' - ' +
-                              this.movementsOfArticles[i].make.description;
-              } else if ( this.movementsOfArticles[i].category.visibleInvoice &&
-                          !this.movementsOfArticles[i].make.visibleSale) {
-                detalle = this.movementsOfArticles[i].article.posDescription + ' - ' + this.movementsOfArticles[i].category.description;
-              } else if (this.movementsOfArticles[i].make.visibleSale && !this.movementsOfArticles[i].category.visibleInvoice) {
-                detalle = this.movementsOfArticles[i].article.posDescription + ' - ' + this.movementsOfArticles[i].make.description;
-              }
-            } else {
-              if (this.movementsOfArticles[i].category &&
-                  this.movementsOfArticles[i].category.visibleInvoice ) {
-                detalle = this.movementsOfArticles[i].article.posDescription + ' - ' + this.movementsOfArticles[i].category.description;
-              }else if (this.movementsOfArticles[i].make && 
-                        this.movementsOfArticles[i].make.visibleSale ) {
-                detalle = this.movementsOfArticles[i].article.posDescription + ' - ' + this.movementsOfArticles[i].make.description;
-              } else
-                detalle = this.movementsOfArticles[i].article.posDescription;
-            }
-  
-          }
-        }
-
-        if(this.movementsOfArticles[i].otherFields && this.movementsOfArticles[i].otherFields !== null && this.transaction.type.printDescriptionType === DescriptionType.PosDescription) {
-          let temp = this.movementsOfArticles[i].article.description.split(' ');
-          detalle += " Talle:" + temp.pop();
-        }
-        
-        this.doc.text(detalle.slice(0, 45), 46, row);
-
-        if (this.transaction.type && this.transaction.type.showPrices) {
-          if(this.transaction.type.requestTaxes  && 
-            this.transaction.company &&
-            this.transaction.company.vatCondition.discriminate) {
-              
-              let taxesBase = 0
-              let colum = 165;
-            for(let tax of this.movementsOfArticles[i].taxes) {
-                if(tax.percentage != 0) {
-                  this.doc.text("% " + this.roundNumber.transform(tax.percentage,2), colum, row);
-                } else {
-                  this.doc.text("$ " + this.roundNumber.transform(tax.taxAmount,2), colum, row);
+                if (this.movementsOfArticles[i].category.visibleInvoice &&
+                    this.movementsOfArticles[i].make.visibleSale) {
+                  detalle = this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description + ' - ' + this.movementsOfArticles[i].make.description
+                } else if ( this.movementsOfArticles[i].category.visibleInvoice &&
+                            !this.movementsOfArticles[i].make.visibleSale) {
+                  detalle = this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description;
+                } else if (this.movementsOfArticles[i].make.visibleSale && !this.movementsOfArticles[i].category.visibleInvoice) {
+                  detalle = this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].make.description;
                 }
-                taxesBase = taxesBase + tax.taxBase
-                colum = colum + 13;
+              } else {
+                if (this.movementsOfArticles[i].category &&
+                    this.movementsOfArticles[i].category.visibleInvoice &&
+                    this.movementsOfArticles[i].category.visibleInvoice) {
+                  detalle = this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description;
+                }else if (this.movementsOfArticles[i].make && this.movementsOfArticles[i].make.visibleSale && this.movementsOfArticles[i].make.visibleSale) {
+                  detalle = this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].make.description;
+                } else
+                  detalle = this.movementsOfArticles[i].description;
+              }
+    
             }
-            //this.doc.text("$ " + this.roundNumber.transform(taxesBase / this.movementsOfArticles[i].amount,2), 145, row);
-            //this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice, 2), 192, row);
-            try {
-              this.doc.textEx("$ " + this.roundNumber.transform(taxesBase / this.movementsOfArticles[i].amount,2).toFixed(2), 160, row, 'right', 'middle');
-            } catch (error) {
-              this.doc.textEx("$ 0.00", 160, row, 'right', 'middle');
-            }
-            
-            this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice, 2).toFixed(2), 207, row, 'right', 'middle');
           } else {
-            this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice/this.movementsOfArticles[i].amount,2), 160, row, 'right', 'middle');
-            this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice,2).toFixed(2), 207, row, 'right', 'middle');
-
-            //this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice/this.movementsOfArticles[i].amount,2), 145, row);
-            //this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice,2), 192, row);
-          }
-          
-        }
-        if (this.movementsOfArticles[i].notes) {
-          this.doc.setFontStyle("italic");
-          this.doc.text(this.movementsOfArticles[i].notes.slice(0, 55), 46, row + 5);
-          if(this.movementsOfArticles[i].notes.slice(55, 110) != '') {
-            row += 5;
-            this.doc.text(this.movementsOfArticles[i].notes.slice(55, 110), 46, row + 5);
-          }
-          if(this.movementsOfArticles[i].notes.slice(110, 165) != '') {
-            row += 5;
-            this.doc.text(this.movementsOfArticles[i].notes.slice(110, 165), 46, row + 5);
-          }
-          this.doc.setFontStyle("normal");
-          row += 5;
-        }
-
-        transport = transport + this.movementsOfArticles[i].salePrice;
-
-        row += 8;
-
-        if(row > 240) {
-          this.doc.setFontType("bold");
-          this.doc.text("TRANSPORTE:".toString(),25, row);
-          this.doc.text(this.roundNumber.transform(transport).toString(), 185, row);
-          row = 95;
-          this.doc.addPage();
-
-          this.doc.setFontType("bold");
-
-          this.doc.text("TRANSPORTE:".toString(),25,85);
-          this.doc.text(this.roundNumber.transform(transport).toString(), 185, 85);
-
-          if(!this.transaction.type.isPreprinted) {
-
-            //this.getHeader(true);
-          
-            // Detalle Emisor
-            this.doc.setDrawColor(110, 110, 110);
-
-            // Dibujar lineas horizontales
-            this.doc.line(0, 50, 240, 50);
-            if (this.config && this.config[0]) {
-              this.doc.setFontSize(this.fontSizes.normal);
-
-              if (this.config[0].companyIdentificationType) {
-                this.doc.setFontType('bold');
-                this.doc.text(this.config[0].companyIdentificationType.name + ":", 110, 35);
-                this.doc.setFontType('normal');
-                this.doc.text(this.config[0].companyIdentificationValue, 122, 35);
-              }
-
-              if(this.config[0].country === 'AR') {
-                this.doc.setFontType('bold');
-                this.doc.text("Ingresos Brutos:", 110, 40);
-                this.doc.setFontType('normal');
-                if (this.config[0].companyGrossIncome) {
-                  this.doc.text(this.config[0].companyGrossIncome, 140, 40);
+            if (this.movementsOfArticles[i].article.posDescription) {
+              if( this.movementsOfArticles[i].category &&
+                  this.movementsOfArticles[i].category.visibleInvoice &&
+                  this.movementsOfArticles[i].make &&
+                  this.movementsOfArticles[i].make.visibleSale) {
+                if (this.movementsOfArticles[i].category.visibleInvoice &&
+                    this.movementsOfArticles[i].make.visibleSale) {
+                  detalle = this.movementsOfArticles[i].article.posDescription + ' - ' +
+                                this.movementsOfArticles[i].category.description + ' - ' +
+                                this.movementsOfArticles[i].make.description;
+                } else if ( this.movementsOfArticles[i].category.visibleInvoice &&
+                            !this.movementsOfArticles[i].make.visibleSale) {
+                  detalle = this.movementsOfArticles[i].article.posDescription + ' - ' + this.movementsOfArticles[i].category.description;
+                } else if (this.movementsOfArticles[i].make.visibleSale && !this.movementsOfArticles[i].category.visibleInvoice) {
+                  detalle = this.movementsOfArticles[i].article.posDescription + ' - ' + this.movementsOfArticles[i].make.description;
                 }
+              } else {
+                if (this.movementsOfArticles[i].category &&
+                    this.movementsOfArticles[i].category.visibleInvoice ) {
+                  detalle = this.movementsOfArticles[i].article.posDescription + ' - ' + this.movementsOfArticles[i].category.description;
+                }else if (this.movementsOfArticles[i].make && 
+                          this.movementsOfArticles[i].make.visibleSale ) {
+                  detalle = this.movementsOfArticles[i].article.posDescription + ' - ' + this.movementsOfArticles[i].make.description;
+                } else
+                  detalle = this.movementsOfArticles[i].article.posDescription;
               }
-
-              this.doc.setFontType('bold');
-              this.doc.text("Inicio de Actividades:", 110, 45);
-              this.doc.setFontType('normal');
-              if (this.config[0].companyStartOfActivity) {
-                this.doc.text(this.dateFormat.transform(this.config[0].companyStartOfActivity, 'DD/MM/YYYY'), 149, 45);
+    
+            }
+          }
+  
+          if(this.movementsOfArticles[i].otherFields && this.movementsOfArticles[i].otherFields !== null && this.transaction.type.printDescriptionType === DescriptionType.PosDescription) {
+            let temp = this.movementsOfArticles[i].article.description.split(' ');
+            detalle += " Talle:" + temp.pop();
+          }
+          
+          this.doc.text(detalle.slice(0, 45), 46, row);
+  
+          if (this.transaction.type && this.transaction.type.showPrices) {
+            if(this.transaction.type.requestTaxes  && 
+              this.transaction.company &&
+              this.transaction.company.vatCondition.discriminate) {
+                
+                let taxesBase = 0
+                let colum = 165;
+              for(let tax of this.movementsOfArticles[i].taxes) {
+                  if(tax.percentage != 0) {
+                    this.doc.text("% " + this.roundNumber.transform(tax.percentage,2), colum, row);
+                  } else {
+                    this.doc.text("$ " + this.roundNumber.transform(tax.taxAmount,2), colum, row);
+                  }
+                  taxesBase = taxesBase + tax.taxBase
+                  colum = colum + 13;
               }
+              //this.doc.text("$ " + this.roundNumber.transform(taxesBase / this.movementsOfArticles[i].amount,2), 145, row);
+              //this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice, 2), 192, row);
+              try {
+                this.doc.textEx("$ " + this.roundNumber.transform(taxesBase / this.movementsOfArticles[i].amount,2).toFixed(2), 160, row, 'right', 'middle');
+              } catch (error) {
+                this.doc.textEx("$ 0.00", 160, row, 'right', 'middle');
+              }
+              
+              this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice, 2).toFixed(2), 207, row, 'right', 'middle');
+            } else {
+              this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice/this.movementsOfArticles[i].amount,2), 160, row, 'right', 'middle');
+              this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice,2).toFixed(2), 207, row, 'right', 'middle');
+  
+              //this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice/this.movementsOfArticles[i].amount,2), 145, row);
+              //this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice,2), 192, row);
             }
             
-            this.doc.setFontSize(this.fontSizes.normal);
-            this.doc.setFontType('normal');
-
-            // Dibujar la linea cortada para la letra
-            this.doc.line(105, 13, 105, 50); //vertical letra
-  
-            // Numeración de la transacción
-            this.doc.setFontSize(this.fontSizes.extraLarge);
-  
-            if (this.transaction.type.labelPrint &&
-              this.transaction.type.labelPrint !== '') {
-              this.centerText(5, 5, 105, 105, 10, this.transaction.type.labelPrint);
-            } else {
-              this.centerText(5, 5, 105, 105, 10, this.transaction.type.name);
-            }
-            this.doc.setFontSize(this.fontSizes.normal);
-            this.doc.setFontType('bold');
-            this.doc.text("Comp. Nº:", 110, 20);
-            this.doc.setFontType('normal');
-            if (Config.country === 'AR') {
-              this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 10), 130, 20);
-            } else {
-              this.doc.text(this.padString(this.transaction.number, 10), 130, 20);
-            }
-            this.doc.setFontType('bold');
-            this.doc.text("Fecha:", 110, 25);
-            this.doc.setFontType('normal');
-            if (this.transaction.endDate) {
-              this.doc.text(this.dateFormat.transform(this.transaction.endDate, 'DD/MM/YYYY'), 125, 25);
-            } else {
-              this.doc.text(this.dateFormat.transform(this.transaction.startDate, 'DD/MM/YYYY'), 125, 25);
-            }
-  
-            // Letra de transacción
-            this.doc.setFontSize(this.fontSizes.extraLarge);
-            this.doc.setFontType('bold');
-            this.doc.setDrawColor("Black");
-            this.doc.rect(100, 3, 10, 10);
-            this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
-            this.doc.setFontType('normal');
-  
-            // Encabezado de la tabla de Detalle de Productos
-            this.doc.setFontType('bold');
-            this.doc.setFontSize(this.fontSizes.normal);
-            this.doc.text("Cant", 5, 77);
-            this.doc.text("Detalle", 25, 77);
-            if (this.transaction.type && this.transaction.type.showPrices) {
-              this.doc.text("Precio", 155, 77);
-              this.doc.text("Total", 185, 77);
-              this.doc.setFontType('normal');
-            }
           }
-          this.getClient();
+          if (this.movementsOfArticles[i].notes) {
+            this.doc.setFontStyle("italic");
+            this.doc.text(this.movementsOfArticles[i].notes.slice(0, 55), 46, row + 5);
+            if(this.movementsOfArticles[i].notes.slice(55, 110) != '') {
+              row += 5;
+              this.doc.text(this.movementsOfArticles[i].notes.slice(55, 110), 46, row + 5);
+            }
+            if(this.movementsOfArticles[i].notes.slice(110, 165) != '') {
+              row += 5;
+              this.doc.text(this.movementsOfArticles[i].notes.slice(110, 165), 46, row + 5);
+            }
+            this.doc.setFontStyle("normal");
+            row += 5;
+          }
+  
+          transport = transport + this.movementsOfArticles[i].salePrice;
+  
+          row += 8;
+  
+          if(row > 240) {
+            this.doc.setFontType("bold");
+            this.doc.text("TRANSPORTE:".toString(),25, row);
+            this.doc.text(this.roundNumber.transform(transport).toString(), 185, row);
+            row = 95;
+            this.doc.addPage();
+  
+            this.doc.setFontType("bold");
+  
+            this.doc.text("TRANSPORTE:".toString(),25,85);
+            this.doc.text(this.roundNumber.transform(transport).toString(), 185, 85);
+  
+            if(!this.transaction.type.isPreprinted) {
+  
+              //this.getHeader(true);
+            
+              // Detalle Emisor
+              this.doc.setDrawColor(110, 110, 110);
+  
+              // Dibujar lineas horizontales
+              this.doc.line(0, 50, 240, 50);
+              if (this.config && this.config[0]) {
+                this.doc.setFontSize(this.fontSizes.normal);
+  
+                if (this.config[0].companyIdentificationType) {
+                  this.doc.setFontType('bold');
+                  this.doc.text(this.config[0].companyIdentificationType.name + ":", 110, 35);
+                  this.doc.setFontType('normal');
+                  this.doc.text(this.config[0].companyIdentificationValue, 122, 35);
+                }
+  
+                if(this.config[0].country === 'AR') {
+                  this.doc.setFontType('bold');
+                  this.doc.text("Ingresos Brutos:", 110, 40);
+                  this.doc.setFontType('normal');
+                  if (this.config[0].companyGrossIncome) {
+                    this.doc.text(this.config[0].companyGrossIncome, 140, 40);
+                  }
+                }
+  
+                this.doc.setFontType('bold');
+                this.doc.text("Inicio de Actividades:", 110, 45);
+                this.doc.setFontType('normal');
+                if (this.config[0].companyStartOfActivity) {
+                  this.doc.text(this.dateFormat.transform(this.config[0].companyStartOfActivity, 'DD/MM/YYYY'), 149, 45);
+                }
+              }
+              
+              this.doc.setFontSize(this.fontSizes.normal);
+              this.doc.setFontType('normal');
+  
+              // Dibujar la linea cortada para la letra
+              this.doc.line(105, 13, 105, 50); //vertical letra
+    
+              // Numeración de la transacción
+              this.doc.setFontSize(this.fontSizes.extraLarge);
+    
+              if (this.transaction.type.labelPrint &&
+                this.transaction.type.labelPrint !== '') {
+                this.centerText(5, 5, 105, 105, 10, this.transaction.type.labelPrint);
+              } else {
+                this.centerText(5, 5, 105, 105, 10, this.transaction.type.name);
+              }
+              this.doc.setFontSize(this.fontSizes.normal);
+              this.doc.setFontType('bold');
+              this.doc.text("Comp. Nº:", 110, 20);
+              this.doc.setFontType('normal');
+              if (Config.country === 'AR') {
+                this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 10), 130, 20);
+              } else {
+                this.doc.text(this.padString(this.transaction.number, 10), 130, 20);
+              }
+              this.doc.setFontType('bold');
+              this.doc.text("Fecha:", 110, 25);
+              this.doc.setFontType('normal');
+              if (this.transaction.endDate) {
+                this.doc.text(this.dateFormat.transform(this.transaction.endDate, 'DD/MM/YYYY'), 125, 25);
+              } else {
+                this.doc.text(this.dateFormat.transform(this.transaction.startDate, 'DD/MM/YYYY'), 125, 25);
+              }
+    
+              // Letra de transacción
+              this.doc.setFontSize(this.fontSizes.extraLarge);
+              this.doc.setFontType('bold');
+              this.doc.setDrawColor("Black");
+              this.doc.rect(100, 3, 10, 10);
+              this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
+              this.doc.setFontType('normal');
+    
+              // Encabezado de la tabla de Detalle de Productos
+              this.doc.setFontType('bold');
+              this.doc.setFontSize(this.fontSizes.normal);
+              this.doc.text("Cant", 5, 77);
+              this.doc.text("Detalle", 25, 77);
+              if (this.transaction.type && this.transaction.type.showPrices) {
+                this.doc.text("Precio", 155, 77);
+                this.doc.text("Total", 185, 77);
+                this.doc.setFontType('normal');
+              }
+            }
+            this.getClient();
+          }
         }
       }
     }
