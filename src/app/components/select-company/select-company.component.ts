@@ -37,6 +37,15 @@ export class SelectCompanyComponent implements OnInit {
 	public userCountry: string;
 	private subscription: Subscription = new Subscription();
 	public focusEvent = new EventEmitter<boolean>();
+	public filterName;
+	public filterFantasyName;
+	public filterIdentificationValue;
+	public filterAddress;
+	public filterAddressNumber;
+	public filterPhones;
+	public filterCode;
+	public p;
+	public filterVATCondition;
 
 	constructor(
 		public _companyService: CompanyService,

@@ -52,6 +52,7 @@ export class CashBoxComponent implements OnInit {
 	public focusEvent = new EventEmitter<boolean>();
 	@Input() transactionType: TransactionType;
 	private config: Config;
+	public selectPayment;
 
 	constructor(
 		private _fb: FormBuilder,
@@ -165,13 +166,7 @@ export class CashBoxComponent implements OnInit {
 			],
 			'amount': [0, [
 			]
-			],
-			'currencyValue': [null, [
 			]
-			],
-			'currencyAmount': [0, [
-			]
-			],
 		});
 
 		this.cashBoxForm.valueChanges
@@ -210,8 +205,6 @@ export class CashBoxComponent implements OnInit {
 		let values = {
 			'paymentMethod': paymentMethod,
 			'amount': 0,
-			'currencyValue': null,
-			'currencyAmount': 0
 		};
 
 		this.cashBoxForm.setValue(values);
