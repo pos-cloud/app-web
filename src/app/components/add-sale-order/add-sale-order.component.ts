@@ -971,11 +971,8 @@ export class AddSaleOrderComponent {
 				movArticle.salePrice = 0;
 				movArticle.status = MovementOfArticleStatus.Ready;
 
-				if (await this.recalculateSalePrice(movArticle)) {
-					movsArticles.push(movArticle);
-				} else {
-					resolve(false);
-				}
+				movsArticles.push(movArticle);
+
 			}
 
 			this._movementOfArticleService.saveMovementsOfArticles(movsArticles).subscribe(
