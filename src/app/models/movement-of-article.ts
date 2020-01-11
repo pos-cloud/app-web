@@ -54,6 +54,16 @@ export enum MovementOfArticleStatus {
 
 export let attributes = [
 	{
+		name: 'transaction.endDate',
+		visible: true,
+		disabled: true,
+		filter: true,
+		datatype: 'date',
+		project: null,
+		align: 'left',
+		required: true
+	},
+	{
 		name: 'transaction.type.name',
 		visible: true,
 		disabled: false,
@@ -64,7 +74,7 @@ export let attributes = [
 		required: false,
 	},
 	{
-		name: 'transaction.number',
+		name: 'transaction.origin',
 		visible: true,
 		disabled: false,
 		filter: true,
@@ -74,7 +84,17 @@ export let attributes = [
 		required: false,
 	},
 	{
-		name: 'transaction.origin',
+		name: 'transaction.letter',
+		visible: true,
+		disabled: false,
+		filter: true,
+		datatype: 'string',
+		project: null,
+		align: 'center',
+		required: false,
+	},
+	{
+		name: 'transaction.number',
 		visible: true,
 		disabled: false,
 		filter: true,
@@ -165,7 +185,7 @@ export let attributes = [
 	},
 	{
 		name: 'markupPercentage',
-		visible: true,
+		visible: false,
 		disabled: false,
 		filter: true,
 		datatype: 'percent',
@@ -194,6 +214,36 @@ export let attributes = [
 		required: false,
 	},
 	{
+		name: 'deposit.name',
+		visible: false,
+		disabled: false,
+		filter: true,
+		datatype: 'string',
+		project: null,
+		align: 'left',
+		required: false,
+	},
+	{
+		name: 'deposit.branch.name',
+		visible: false,
+		disabled: false,
+		filter: true,
+		datatype: 'string',
+		project: null,
+		align: 'left',
+		required: false,
+	},
+	{
+		name: 'quantityForStock',
+		visible: false,
+		disabled: false,
+		filter: true,
+		datatype: 'number',
+		project: null,
+		align: 'right',
+		required: false,
+	},
+	{
 		name: 'operationType',
 		visible: false,
 		disabled: true,
@@ -214,16 +264,6 @@ export let attributes = [
 		project: null,
 		align: 'left',
 		required: true,
-	},
-	{
-		name: 'transaction.endDate',
-		visible: true,
-		disabled: true,
-		filter: true,
-		datatype: 'date',
-		project: null,
-		align: 'left',
-		required: true
 	},
 	{
 		name: 'transaction.type.transactionMovement',
