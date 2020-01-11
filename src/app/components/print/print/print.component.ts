@@ -2389,7 +2389,7 @@ export class PrintComponent implements OnInit {
         this.doc.text(observation.slice(60, 140) + "-", margin, row += 4);
       }
     } else {
-      if(this.transaction.transport) {
+      if(this.transaction.type.requestTransport && this.transaction.transport) {
         this.doc.setFontType('bold');
         this.doc.text("TRANSPORTE:", margin, row);
         this.doc.text("DOMICILIO:", margin, row + 4);
