@@ -170,7 +170,7 @@
 								title="Imprimir"><i class="fa fa-print"></i></button>
 						</td>
 					</tr>
-					<tr align="center" *ngIf="transactions.length === 0">
+					<tr align="center" *ngIf="!transactions || transactions.length === 0">
 						<td colspan="9">Aún no hay pedidos con estado {{state}}</td>
 					</tr>
 				</tbody>
@@ -297,7 +297,7 @@
 							*ngIf="transactionMovement === 'Stock' && !transaction.depositOrigin || !transaction.depositDestination">
 						</td>
 					</tr>
-					<tr align="center" *ngIf="transactions.length === 0">
+					<tr align="center" *ngIf="!transactions || transactions.length === 0">
 						<td colspan="7">Aún no hay transacciones pendientes</td>
 					</tr>
 				</tbody>
@@ -403,7 +403,7 @@
 						<td>{{transaction.observation}}</td>
 						<td>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
 					</tr>
-					<tr align="center" *ngIf="transactions.length === 0">
+					<tr align="center" *ngIf="!transactions || transactions.length === 0">
 						<td colspan="8">Aún no hay transacciones pendientes</td>
 					</tr>
 				</tbody>

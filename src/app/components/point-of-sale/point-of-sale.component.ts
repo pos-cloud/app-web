@@ -20,7 +20,6 @@ import { PrintComponent } from '../print/print/print.component';
 import { DeleteTransactionComponent } from './../delete-transaction/delete-transaction.component';
 import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-movement-of-cash.component';
 import { SelectEmployeeComponent } from './../select-employee/select-employee.component';
-import { ListCompaniesComponent } from 'app/components/list-companies/list-companies.component';
 import { ViewTransactionComponent } from './../../components/view-transaction/view-transaction.component';
 import { CashBoxComponent } from '../cash-box/cash-box.component';
 import { EmployeeType } from 'app/models/employee-type';
@@ -71,6 +70,7 @@ export class PointOfSaleComponent implements OnInit {
 		TransactionState.Preparing.toString(),
 		TransactionState.Packing.toString()
 	];
+	public originsToFilter: number[];
 	public transactionTypes: TransactionType[];
 	public transactionMovement: TransactionMovement;
 	public userType: string;
@@ -118,6 +118,7 @@ export class PointOfSaleComponent implements OnInit {
 	) {
 		this.roomSelected = new Room();
 		this.transactionTypes = new Array();
+		this.originsToFilter = new Array();
 	}
 
 	async ngOnInit() {
@@ -149,6 +150,13 @@ export class PointOfSaleComponent implements OnInit {
 			this.companyType = params['companyType'];
 			this.transactionTypeId = params['automaticCreation'];
 			this.transactionStates = new Array();
+			// RECORRER POS INSERTADOS
+			if(params['origins']) {
+				for(let origin of params['origins'].split(',')) {
+					this.originsToFilter.push(parseInt(origin));
+				}
+			}
+			// RECORRER ESTADOS INSERTADOS
 			Object.keys(params).map(key => {
 				if (this.posType === 'delivery') {
 					for (const s of params[key].split(',')) {
@@ -398,17 +406,11 @@ export class PointOfSaleComponent implements OnInit {
 				);
 				let query = {};
 
-				this._authService.getIdentity.subscribe(
-					identity => {
-						if (identity && identity.origin) {
-							query['branch'] = { $oid: identity.origin.branch._id };
-						}
-					}
-				);
-
+				if(this.originsToFilter && this.originsToFilter.length > 0) {
+					query['origin'] = { $in: this.originsToFilter };
+				}
 				query['state'] = { $in: this.transactionStates };
 				query['operationType'] = { $ne: 'D' };
-				// query['madein'] = this.posType;
 
 				await this.getTransactionsV2(query).then(
 					transactions => {
@@ -1440,6 +1442,7 @@ export class PointOfSaleComponent implements OnInit {
 			let project = {
 				startDate: 1,
 				endDate: 1,
+				origin: 1,
 				number: 1,
 				observation: 1,
 				totalPrice: 1,
@@ -1487,7 +1490,7 @@ export class PointOfSaleComponent implements OnInit {
 				error => {
 					this.showMessage(error._body, 'danger', false);
 					this.loading = false;
-					resolve([]);
+					resolve(new Array());
 				}
 			));
 		});
