@@ -270,7 +270,9 @@ export class PrintComponent implements OnInit {
       async result => {
         if (result && result.transaction) {
             this.transaction = result.transaction;
-            await this.getBranch(this.transaction.branchOrigin._id)
+            if(this.transaction.branchOrigin){
+              await this.getBranch(this.transaction.branchOrigin._id)
+            }
             if(this.transaction && this.transaction.type && this.transaction.type.defectPrinter && !this.printer) {
               this.printer = this.transaction.type.defectPrinter;
             }
