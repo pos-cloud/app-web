@@ -1433,7 +1433,6 @@ export class AddSaleOrderComponent {
                     totalPriceAux += this.roundNumber.transform(movementOfArticle.salePrice);
                     discountAmountAux += this.roundNumber.transform(movementOfArticle.transactionDiscountAmount * movementOfArticle.amount);
 					// COMPARAMOS JSON -- SI CAMBIO ACTUALIZAMOS
-					console.log(this._jsonDiffPipe.transform(oldMovementOfArticle, movementOfArticle));
                     if (this._jsonDiffPipe.transform(oldMovementOfArticle, movementOfArticle)) {
                         let result = await this.updateMovementOfArticle(movementOfArticle);
                         if (!result) {

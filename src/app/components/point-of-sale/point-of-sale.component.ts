@@ -995,7 +995,6 @@ export class PointOfSaleComponent implements OnInit {
 				modalRef.result.then(
 					async (result) => {
 						if (result.company) {
-							console.log(result.company)
 							this.transaction.company = result.company;
 							this.nextStepTransaction();
 						} else {
