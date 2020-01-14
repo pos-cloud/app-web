@@ -290,7 +290,7 @@ export let attributes = [
 		filter: true,
 		datatype: 'currency',
 		project: null,
-		align: 'left',
+		align: 'right',
 		required: false,
 	},
 	{
