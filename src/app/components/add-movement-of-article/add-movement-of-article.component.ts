@@ -50,11 +50,11 @@ import { ArticleService } from 'app/services/article.service';
 export class AddMovementOfArticleComponent implements OnInit {
 
 	@Input() movementOfArticle: MovementOfArticle;
+	@Input() transaction: Transaction;
 	public containsVariants: Boolean;
 	public articleStock: ArticleStock;
 	public variants: Variant[];
 	public variantTypes: VariantType[];
-	public transaction: Transaction;
 	public selectedVariants;
 	public areVariantsEmpty: boolean = true;
 	public movementOfArticleForm: FormGroup;
@@ -106,46 +106,17 @@ export class AddMovementOfArticleComponent implements OnInit {
 		this.userType = pathLocation[1];
 		this.config$ = this._configService.getConfig;
 
-		let depositArticle: Deposit;
+
 		if (this.movementOfArticle.article) {
 			this.containsVariants = this.movementOfArticle.article.containsVariants;
-
-			if (this.movementOfArticle.article.deposits && this.movementOfArticle.article.deposits.length > 0) {
-				this.movementOfArticle.article.deposits.forEach(element => {
-					if (element.deposit.branch._id === this.movementOfArticle.transaction.depositDestination.branch._id) {
-						this.position += `Dep. ${element.deposit.name} - `;
-						depositArticle = element.deposit;
-					} else {
-						depositArticle = this.movementOfArticle.transaction.depositDestination;
-					}
-				});
-			} else {
-				depositArticle = this.movementOfArticle.transaction.depositDestination;
+			this.loadLocationAndStock();
+			if (this.containsVariants) {
+				this.getVariantsByArticleParent();
 			}
-
-			if (this.movementOfArticle.article.locations && this.movementOfArticle.article.locations.length > 0) {
-				this.movementOfArticle.article.locations.forEach(element => {
-					if (element.location && element.location.deposit && element.location.deposit._id === depositArticle._id) {
-						this.position += `Ubic. ${element.location.description} - ${element.location.positionX} - ${element.location.positionY} - ${element.location.positionZ}`;
-					}
-				});
-			}
-			if (Config.modules && Config.modules.stock && this.movementOfArticle.transaction.type.modifyStock) {
-				await this.getArticleStock(this.movementOfArticle).then(
-					articleStock => {
-						if (articleStock) {
-							this.stock = articleStock.realStock;
-						}
-					}
-				);
-			}
-		}
-		if (this.movementOfArticle.article && this.containsVariants) {
-			this.getVariantsByArticleParent();
 		}
 		this.buildForm();
 		if (this.movementOfArticle.article.containsStructure) {
-			this.getStructure(this.movementOfArticle.article._id);
+			this.loadStructure();
 		}
 	}
 
@@ -153,7 +124,40 @@ export class AddMovementOfArticleComponent implements OnInit {
 		this.focusEvent.emit(true);
 	}
 
-	public getStructure(idArticle: string) {
+	public loadLocationAndStock(): void {
+		let depositArticle: Deposit;
+		if (this.movementOfArticle.article.deposits && this.movementOfArticle.article.deposits.length > 0) {
+			this.movementOfArticle.article.deposits.forEach(element => {
+				if (element.deposit.branch._id === this.transaction.depositDestination.branch._id) {
+					this.position += `Dep. ${element.deposit.name} - `;
+					depositArticle = element.deposit;
+				} else {
+					depositArticle = this.transaction.depositDestination;
+				}
+			});
+		} else {
+			depositArticle = this.transaction.depositDestination;
+		}
+
+		if (this.movementOfArticle.article.locations && this.movementOfArticle.article.locations.length > 0) {
+			this.movementOfArticle.article.locations.forEach(element => {
+				if (element.location && element.location.deposit && element.location.deposit._id === depositArticle._id) {
+					this.position += `Ubic. ${element.location.description} - ${element.location.positionX} - ${element.location.positionY} - ${element.location.positionZ}`;
+				}
+			});
+		}
+		if (Config.modules && Config.modules.stock && this.transaction.type.modifyStock) {
+			this.getArticleStock(this.movementOfArticle).then(
+				articleStock => {
+					if (articleStock) {
+						this.stock = articleStock.realStock;
+					}
+				}
+			);
+		}
+	}
+
+	public loadStructure() {
 
 		return new Promise<Boolean>((resolve, reject) => {
 
@@ -161,7 +165,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
 			let match = {
 				operationType: { $ne: 'D' },
-				'parent._id': { $oid: idArticle },
+				'parent._id': { $oid: this.movementOfArticle.article._id },
 				'child.operationType': { $ne: 'D' }
 			};
 
@@ -315,8 +319,8 @@ export class AddMovementOfArticleComponent implements OnInit {
 	}
 
 	async buildForm() {
-		if (this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
-			if (this.movementOfArticle.transaction.type.entryAmount === EntryAmount.SaleWithoutVAT) {
+		if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+			if (this.transaction.type.entryAmount === EntryAmount.SaleWithoutVAT) {
 				if (this.movementOfArticle.taxes && this.movementOfArticle.taxes.length > 0) {
 					let unitPrice = this.movementOfArticle.unitPrice;
 					for (const articleTax of this.movementOfArticle.taxes) {
@@ -333,7 +337,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 				}
 			}
 		} else {
-			if (this.movementOfArticle.transaction.type.entryAmount === EntryAmount.CostWithVAT) {
+			if (this.transaction.type.entryAmount === EntryAmount.CostWithVAT) {
 				if (this.movementOfArticle.taxes && this.movementOfArticle.taxes.length > 0) {
 					let unitPrice = this.movementOfArticle.unitPrice;
 					for (const articleTax of this.movementOfArticle.taxes) {
@@ -534,10 +538,10 @@ export class AddMovementOfArticleComponent implements OnInit {
 
 	public subtractAmount(): void {
 
-		if (this.movementOfArticle.transaction.type &&
-			this.movementOfArticle.transaction.type.stockMovement &&
-			this.movementOfArticle.transaction.type.stockMovement === StockMovement.Inventory ||
-			this.movementOfArticle.transaction.type.stockMovement === StockMovement.Transfer) {
+		if (this.transaction.type &&
+			this.transaction.type.stockMovement &&
+			this.transaction.type.stockMovement === StockMovement.Inventory ||
+			this.transaction.type.stockMovement === StockMovement.Transfer) {
 			if (this.movementOfArticleForm.value.amount > 0) {
 				this.movementOfArticle.amount -= 1;
 			} else {
@@ -652,13 +656,114 @@ export class AddMovementOfArticleComponent implements OnInit {
 		}
 	}
 
+	async movementOfArticleExists() {
+
+		this.loading = true;
+
+		if (this.movementOfArticle.article) {
+
+			let query = 'where="article":"' + this.movementOfArticle.article._id + '","transaction":"' + this.transaction._id + '"';
+
+			this._movementOfArticleService.getMovementsOfArticles(query).subscribe(
+				async result => {
+					if (!result.movementsOfArticles) {
+						// Si no existe ningún movimiento del producto guardamos uno nuevo
+
+						this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
+						this.movementOfArticle.description = this.movementOfArticleForm.value.description;
+						this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
+
+						if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+							this.movementOfArticle = this.recalculateSalePrice(this.movementOfArticle);
+						} else {
+							this.movementOfArticle = this.recalculateCostPrice(this.movementOfArticle);
+						}
+
+						if (await this.isValidMovementOfArticle(this.movementOfArticle)) {
+							this.verifyStructure();
+						}
+					} else {
+
+						if (this.movementOfArticle._id === null || this.movementOfArticle._id === "") {
+							this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
+							this.movementOfArticle.description = this.movementOfArticleForm.value.description;
+							this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
+
+							if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+								this.movementOfArticle = this.recalculateSalePrice(this.movementOfArticle);
+							} else {
+								this.movementOfArticle = this.recalculateCostPrice(this.movementOfArticle);
+							}
+
+							if (await this.isValidMovementOfArticle(this.movementOfArticle)) {
+								this.verifyStructure();
+							}
+						} else {
+
+							if (this.structures && this.structures.length > 0) {
+								await this.deleteMovementOfStructure();
+							}
+
+							let oldUnitPrice = this.movementOfArticle.unitPrice;
+							if (result.movementsOfArticles && result.movementsOfArticles.length > 0) {
+								for (const mov of result.movementsOfArticles) {
+									if (mov['_id'] === this.movementOfArticle._id) {
+										this.movementOfArticle = mov;
+									}
+								}
+							} else {
+								this.movementOfArticle = result.movementsOfArticles[0];
+							}
+							this.movementOfArticle.unitPrice = oldUnitPrice;
+
+							this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
+							this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
+
+							if (this.transaction && this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+								this.movementOfArticle = this.recalculateSalePrice(this.movementOfArticle);
+							} else {
+								this.movementOfArticle = this.recalculateCostPrice(this.movementOfArticle);
+							}
+
+							if (await this.isValidMovementOfArticle(this.movementOfArticle)) {
+								this.verifyStructure()
+							}
+						}
+
+
+					}
+					this.loading = false;
+				},
+				error => {
+					this.showMessage(error._body, 'danger', false);
+					this.loading = false;
+				}
+			);
+		} else {
+			this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
+			if (this.movementOfArticle._id && this.movementOfArticle._id !== '') {
+				this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
+			}
+
+			if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+				this.movementOfArticle = this.recalculateSalePrice(this.movementOfArticle);
+			} else {
+				this.movementOfArticle = this.recalculateCostPrice(this.movementOfArticle);
+			}
+
+			if (await this.isValidMovementOfArticle(this.movementOfArticle)) {
+				this.updateMovementOfArticle();
+			}
+		}
+	}
+
 	async calculateUnitPrice() {
 
-		if (this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
-			if (this.movementOfArticle.transaction.type.entryAmount === EntryAmount.SaleWithVAT) {
+		if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+			if (this.transaction.type.entryAmount === EntryAmount.SaleWithVAT) {
 				this.movementOfArticle.unitPrice = this.movementOfArticleForm.value.unitPrice;
-			} else if (this.movementOfArticle.transaction.type.entryAmount === EntryAmount.SaleWithoutVAT) {
-				if (this.movementOfArticle.transaction.type.requestTaxes) {
+			} else if (this.transaction.type.entryAmount === EntryAmount.SaleWithoutVAT) {
+				if (this.transaction.type.requestTaxes) {
 					if (this.movementOfArticle.taxes && this.movementOfArticle.taxes.length > 0) {
 						this.movementOfArticle.unitPrice = 0;
 						for (const articleTax of this.movementOfArticle.taxes) {
@@ -681,8 +786,8 @@ export class AddMovementOfArticleComponent implements OnInit {
 				this.movementOfArticle.unitPrice = this.movementOfArticleForm.value.unitPrice;
 			}
 		} else {
-			if (this.movementOfArticle.transaction.type.entryAmount === EntryAmount.CostWithVAT) {
-				if (this.movementOfArticle.transaction.type.requestTaxes) {
+			if (this.transaction.type.entryAmount === EntryAmount.CostWithVAT) {
+				if (this.transaction.type.requestTaxes) {
 					if (this.movementOfArticle.taxes && this.movementOfArticle.taxes.length > 0) {
 						let unitPrice = this.movementOfArticleForm.value.unitPrice;
 						this.movementOfArticle.unitPrice = unitPrice;
@@ -711,7 +816,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 				} else {
 					this.movementOfArticle.unitPrice = this.movementOfArticleForm.value.unitPrice;
 				}
-			} else if (this.movementOfArticle.transaction.type.entryAmount === EntryAmount.CostWithoutVAT) {
+			} else if (this.transaction.type.entryAmount === EntryAmount.CostWithoutVAT) {
 				this.movementOfArticle.unitPrice = this.movementOfArticleForm.value.unitPrice;
 			} else {
 				this.movementOfArticle.unitPrice = this.movementOfArticleForm.value.unitPrice;
@@ -721,12 +826,11 @@ export class AddMovementOfArticleComponent implements OnInit {
 
 	async changeArticleByVariants(articleSelected: Article) {
 
-		let transaction = this.movementOfArticle.transaction;
 		this.movementOfArticle = new MovementOfArticle();
-		this.movementOfArticle.transaction = transaction;
-		this.movementOfArticle.modifyStock = transaction.type.modifyStock;
-		if (transaction.type.stockMovement) {
-			this.movementOfArticle.stockMovement = transaction.type.stockMovement.toString();
+		this.movementOfArticle.transaction = this.transaction;
+		this.movementOfArticle.modifyStock = this.transaction.type.modifyStock;
+		if (this.transaction.type.stockMovement) {
+			this.movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
 		}
 		this.movementOfArticle.article = articleSelected;
 		this.movementOfArticle.code = articleSelected.code;
@@ -739,8 +843,8 @@ export class AddMovementOfArticleComponent implements OnInit {
 		this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
 
 		let quotation = 1;
-		if (this.movementOfArticle.transaction.quotation) {
-			quotation = this.movementOfArticle.transaction.quotation;
+		if (this.transaction.quotation) {
+			quotation = this.transaction.quotation;
 		}
 
 		this.movementOfArticle.basePrice = this.roundNumber.transform(articleSelected.basePrice);
@@ -753,9 +857,9 @@ export class AddMovementOfArticleComponent implements OnInit {
 
 		this.movementOfArticle.otherFields = articleSelected.otherFields;
 		this.movementOfArticle.costPrice = articleSelected.costPrice;
-		if (this.movementOfArticle.transaction &&
-			this.movementOfArticle.transaction.type &&
-			this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
+		if (this.transaction &&
+			this.transaction.type &&
+			this.transaction.type.transactionMovement === TransactionMovement.Sale) {
 			let fields: ArticleFields[] = new Array();
 			if (this.movementOfArticle.otherFields && this.movementOfArticle.otherFields.length > 0) {
 				for (const field of this.movementOfArticle.otherFields) {
@@ -784,7 +888,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 				this.movementOfArticle.unitPrice = this.roundNumber.transform(this.movementOfArticle.salePrice * quotation);
 				this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.salePrice * quotation);
 			}
-			if (this.movementOfArticle.transaction.type.requestTaxes) {
+			if (this.transaction.type.requestTaxes) {
 				let taxes: Taxes[] = new Array();
 				if (articleSelected.taxes) {
 					for (let taxAux of articleSelected.taxes) {
@@ -808,12 +912,12 @@ export class AddMovementOfArticleComponent implements OnInit {
 			let increasePrice = 0;
 
 			if (this.movementOfArticle &&
-				this.movementOfArticle.transaction &&
-				this.movementOfArticle.transaction.company &&
-				this.movementOfArticle.transaction.company.priceList &&
-				this.movementOfArticle.transaction.company.priceList != null &&
-				this.movementOfArticle.transaction.company.type === CompanyType.Client) {
-				let priceList = await this.getPriceList(this.movementOfArticle.transaction.company.priceList._id)
+				this.transaction &&
+				this.transaction.company &&
+				this.transaction.company.priceList &&
+				this.transaction.company.priceList != null &&
+				this.transaction.company.type === CompanyType.Client) {
+				let priceList = await this.getPriceList(this.transaction.company.priceList._id)
 				if (priceList) {
 					if (priceList.allowSpecialRules) {
 						priceList.rules.forEach(rule => {
@@ -898,7 +1002,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 				}
 			}
 			this.movementOfArticle.otherFields = fields;
-			if (this.movementOfArticle.transaction.type.requestTaxes) {
+			if (this.transaction.type.requestTaxes) {
 				let taxes: Taxes[] = new Array();
 				if (articleSelected.taxes) {
 					for (let taxAux of articleSelected.taxes) {
@@ -923,19 +1027,19 @@ export class AddMovementOfArticleComponent implements OnInit {
 		this.setValueForm();
 	}
 
-	async isValidMovementOfArticle(movArticle: MovementOfArticle, verificaStock: boolean = true) {
+	async isValidMovementOfArticle(movArticle: MovementOfArticle, verifyStock: boolean = true) {
 
 		return new Promise<boolean>((resolve, reject) => {
 
-			if (movArticle.transaction.type &&
-				movArticle.transaction.type.transactionMovement === TransactionMovement.Sale &&
+			if (this.transaction.type &&
+				this.transaction.type.transactionMovement === TransactionMovement.Sale &&
 				movArticle.article &&
 				!movArticle.article.allowSale) {
 				this.showMessage("El producto " + movArticle.article.description + " (" + movArticle.article.code + ") no esta habilitado para la venta", 'info', true);
 				resolve(false)
 			} else if (
-				movArticle.transaction.type &&
-				movArticle.transaction.type.transactionMovement === TransactionMovement.Purchase &&
+				this.transaction.type &&
+				this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
 				movArticle.article &&
 				!movArticle.article.allowPurchase) {
 				this.showMessage("El producto " + movArticle.article.description + " (" + movArticle.article.code + ") no esta habilitado para la compra", 'info', true);
@@ -957,14 +1061,12 @@ export class AddMovementOfArticleComponent implements OnInit {
 				this.showMessage("El precio unitario del producto no puede ser menor a la suma de impuestos con monto fijo.", 'info', true);
 				resolve(false)
 			} else
-
-
-				if (verificaStock &&
+				if (verifyStock &&
 					movArticle.article &&
 					Config.modules.stock &&
-					movArticle.transaction.type &&
-					movArticle.transaction.type.modifyStock &&
-					movArticle.transaction.type.stockMovement === StockMovement.Outflows &&
+					this.transaction.type &&
+					this.transaction.type.modifyStock &&
+					this.transaction.type.stockMovement === StockMovement.Outflows &&
 					!movArticle.article.allowSaleWithoutStock) {
 					this.getArticleStock(movArticle).then(
 						articleStock => {
@@ -973,19 +1075,16 @@ export class AddMovementOfArticleComponent implements OnInit {
 								if (articleStock) {
 									realStock = articleStock.realStock;
 								}
-
 								this.showMessage("No tiene el stock suficiente del producto " + movArticle.article.description + " (" + movArticle.article.code + "). Stock Actual: " + realStock, 'info', true);
-								resolve(false)
+								resolve(false);
 							} else {
-								resolve(true)
+								resolve(true);
 							}
 						}
 					);
 				} else {
-					resolve(true)
+					resolve(true);
 				}
-
-
 		});
 	}
 
@@ -998,12 +1097,9 @@ export class AddMovementOfArticleComponent implements OnInit {
 				modalRef.componentInstance.articleId = this.movementOfArticle.article._id;
 				modalRef.componentInstance.operation = "update";
 				modalRef.result.then((result) => {
-
 				}, (reason) => {
-
 				});
 				break;
-
 			default: ;
 		}
 	};
@@ -1017,7 +1113,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
 			if (movArticle.article.deposits && movArticle.article.deposits.length > 0) {
 				movArticle.article.deposits.forEach(async element => {
-					if (element.deposit && element.deposit.branch && element.deposit.branch._id === movArticle.transaction.branchOrigin._id) {
+					if (element.deposit && element.deposit.branch && element.deposit.branch._id === this.transaction.branchOrigin._id) {
 						depositID = element.deposit._id;
 					}
 				});
@@ -1025,13 +1121,13 @@ export class AddMovementOfArticleComponent implements OnInit {
 
 			if (depositID) {
 				query = `where= "article": "${movArticle.article._id}",
-                        "branch": "${movArticle.transaction.branchOrigin._id}",
+                        "branch": "${this.transaction.branchOrigin._id}",
                         "deposit": "${depositID}"`;
 
 			} else {
 				query = `where= "article": "${movArticle.article._id}",
-                        "branch": "${movArticle.transaction.branchOrigin._id}",
-                        "deposit": "${movArticle.transaction.depositOrigin._id}"`;
+                        "branch": "${this.transaction.branchOrigin._id}",
+                        "deposit": "${this.transaction.depositOrigin._id}"`;
 			}
 
 			this._articleStockService.getArticleStocks(query).subscribe(
@@ -1095,107 +1191,6 @@ export class AddMovementOfArticleComponent implements OnInit {
 		return variantsToReturn;
 	}
 
-	async movementOfArticleExists() {
-
-		this.loading = true;
-
-		if (this.movementOfArticle.article) {
-
-			let query = 'where="article":"' + this.movementOfArticle.article._id + '","transaction":"' + this.movementOfArticle.transaction._id + '"';
-
-			this._movementOfArticleService.getMovementsOfArticles(query).subscribe(
-				async result => {
-					if (!result.movementsOfArticles) {
-						// Si no existe ningún movimiento del producto guardamos uno nuevo
-
-						this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
-						this.movementOfArticle.description = this.movementOfArticleForm.value.description;
-						this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
-
-						if (this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
-							this.movementOfArticle = this.recalculateSalePrice(this.movementOfArticle);
-						} else {
-							this.movementOfArticle = this.recalculateCostPrice(this.movementOfArticle);
-						}
-
-						if (await this.isValidMovementOfArticle(this.movementOfArticle)) {
-							this.verifyStructure();
-						}
-					} else {
-
-						if (this.movementOfArticle._id === null || this.movementOfArticle._id === "") {
-							this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
-							this.movementOfArticle.description = this.movementOfArticleForm.value.description;
-							this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
-
-							if (this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
-								this.movementOfArticle = this.recalculateSalePrice(this.movementOfArticle);
-							} else {
-								this.movementOfArticle = this.recalculateCostPrice(this.movementOfArticle);
-							}
-
-							if (await this.isValidMovementOfArticle(this.movementOfArticle)) {
-								this.verifyStructure();
-							}
-						} else {
-
-							if (this.structures && this.structures.length > 0) {
-								await this.deleteMovementOfStructure();
-							}
-
-							if (result.movementsOfArticles && result.movementsOfArticles.length > 0) {
-								for (const mov of result.movementsOfArticles) {
-									if (mov['_id'] === this.movementOfArticle._id) {
-										this.movementOfArticle = mov;
-									}
-								}
-							} else {
-								this.movementOfArticle = result.movementsOfArticles[0];
-							}
-
-
-							this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
-							this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
-							this.movementOfArticle.unitPrice = this.movementOfArticleForm.value.unitPrice;
-
-							if (this.movementOfArticle.transaction && this.movementOfArticle.transaction.type && this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
-								this.movementOfArticle = this.recalculateSalePrice(this.movementOfArticle);
-							} else {
-								this.movementOfArticle = this.recalculateCostPrice(this.movementOfArticle);
-							}
-
-							if (await this.isValidMovementOfArticle(this.movementOfArticle)) {
-								this.verifyStructure()
-							}
-						}
-
-
-					}
-					this.loading = false;
-				},
-				error => {
-					this.showMessage(error._body, 'danger', false);
-					this.loading = false;
-				}
-			);
-		} else {
-			this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
-			if (this.movementOfArticle._id && this.movementOfArticle._id !== '') {
-				this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
-			}
-
-			if (this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
-				this.movementOfArticle = this.recalculateSalePrice(this.movementOfArticle);
-			} else {
-				this.movementOfArticle = this.recalculateCostPrice(this.movementOfArticle);
-			}
-
-			if (await this.isValidMovementOfArticle(this.movementOfArticle)) {
-				this.updateMovementOfArticle();
-			}
-		}
-	}
-
 	async getMovsWithoutOptional() {
 
 		return new Promise<boolean>(async (resolve, reject) => {
@@ -1246,7 +1241,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 		})
 	}
 
-	async buildMovsArticle(articleId: string, quantity: number, salePrice?: number, utilization?: Utilization, isOptional : boolean = false) {
+	async buildMovsArticle(articleId: string, quantity: number, salePrice?: number, utilization?: Utilization, isOptional: boolean = false) {
 
 		return new Promise<boolean>((resolve, reject) => {
 
@@ -1369,7 +1364,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
 		movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount);
 
-		movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
+		movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * this.transaction.discountPercent / 100), 3);
 		movementOfArticle.unitPrice -= this.roundNumber.transform(movementOfArticle.transactionDiscountAmount);
 		movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
 		movementOfArticle.markupPrice = 0.00;
@@ -1397,7 +1392,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 			}
 		}
 		movementOfArticle.otherFields = fields;
-		if (movementOfArticle.transaction.type.requestTaxes) {
+		if (this.transaction.type.requestTaxes) {
 			if (movementOfArticle.taxes && movementOfArticle.taxes.length > 0) {
 				let taxes: Taxes[] = new Array();
 				for (let articleTax of movementOfArticle.taxes) {
@@ -1432,8 +1427,8 @@ export class AddMovementOfArticleComponent implements OnInit {
 		if (movementOfArticle.article) {
 
 			let quotation = 1;
-			if (this.movementOfArticle.transaction.quotation) {
-				quotation = this.movementOfArticle.transaction.quotation;
+			if (this.transaction.quotation) {
+				quotation = this.transaction.quotation;
 			}
 
 			movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.article.basePrice * movementOfArticle.amount);
@@ -1470,13 +1465,13 @@ export class AddMovementOfArticleComponent implements OnInit {
 			}
 
 			movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount);
-			movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
+			movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * this.transaction.discountPercent / 100), 3);
 			movementOfArticle.unitPrice -= movementOfArticle.transactionDiscountAmount;
 			movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
 			movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
 			movementOfArticle.markupPercentage = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.costPrice * 100), 3);
 
-			if (movementOfArticle.transaction.type.requestTaxes) {
+			if (this.transaction.type.requestTaxes) {
 				let taxes: Taxes[] = new Array();
 				if (movementOfArticle.taxes) {
 					let impInt: number = 0;
@@ -1512,11 +1507,6 @@ export class AddMovementOfArticleComponent implements OnInit {
 	async verifyStructure() {
 
 		this.loading = true;
-
-		this.movementOfArticle.basePrice = this.roundNumber.transform(this.movementOfArticle.basePrice);
-		this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.costPrice);
-		this.movementOfArticle.unitPrice = this.roundNumber.transform(this.movementOfArticle.unitPrice, 4);
-		this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.salePrice);
 
 		this.movChild = new Array();
 
@@ -1558,6 +1548,12 @@ export class AddMovementOfArticleComponent implements OnInit {
 	}
 
 	async saveMovementOfArticle() {
+		
+		this.movementOfArticle.basePrice = this.roundNumber.transform(this.movementOfArticle.basePrice);
+		this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.costPrice);
+		this.movementOfArticle.unitPrice = this.roundNumber.transform(this.movementOfArticle.unitPrice, 4);
+		this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.salePrice);
+
 		this._movementOfArticleService.saveMovementOfArticle(this.movementOfArticle).subscribe(
 			async result => {
 				if (!result.movementOfArticle) {

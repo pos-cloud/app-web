@@ -244,7 +244,6 @@ export class AddSaleOrderComponent {
             await this.getTransaction().then(
                 async transaction => {
                     if (transaction) {
-                        console.log(transaction);
                         this.transaction = transaction;
                         if (this.transaction &&
                             this.transaction.company &&
@@ -747,7 +746,7 @@ export class AddSaleOrderComponent {
                         movementOfArticle.amount += 1;
                     }
                     if (await this.isValidMovementOfArticle(movementOfArticle)) {
-                        if (movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
+                        if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
                             await this.updateMovementOfArticle(await this.recalculateSalePrice(movementOfArticle)).then(
                                 movementOfArticle => {
                                     if (movementOfArticle) {
@@ -1115,7 +1114,7 @@ export class AddSaleOrderComponent {
             movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice / this.lastQuotation) * quotation);
         }
 
-        movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
+        movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * this.transaction.discountPercent / 100), 3);
         movementOfArticle.unitPrice -= this.roundNumber.transform(movementOfArticle.transactionDiscountAmount);
         movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
         movementOfArticle.markupPrice = 0.00;
@@ -1143,7 +1142,7 @@ export class AddSaleOrderComponent {
             }
         }
         movementOfArticle.otherFields = fields;
-        if (movementOfArticle.transaction.type.requestTaxes) {
+        if (this.transaction.type.requestTaxes) {
             if (movementOfArticle.taxes && movementOfArticle.taxes.length > 0) {
                 let taxes: Taxes[] = new Array();
                 for (let articleTax of movementOfArticle.taxes) {
@@ -1168,8 +1167,8 @@ export class AddSaleOrderComponent {
             }
         }
         movementOfArticle.costPrice += this.roundNumber.transform(taxedAmount);
+        movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice);
         movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.costPrice + movementOfArticle.roundingAmount);
-
         return movementOfArticle;
     }
 
@@ -1304,7 +1303,7 @@ export class AddSaleOrderComponent {
                 }
             }
 
-            movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
+            movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * this.transaction.discountPercent / 100), 3);
             movementOfArticle.unitPrice -= this.roundNumber.transform(movementOfArticle.transactionDiscountAmount);
             movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
             movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
@@ -1368,7 +1367,12 @@ export class AddSaleOrderComponent {
 
             movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice);
             movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice);
-            movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice);
+			movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice);
+			
+			// LIMPIAR UN POCO LA RELACIÓN
+			movementOfArticle.transaction = new Transaction();
+			movementOfArticle.transaction._id = this.transaction._id;
+			// FIN DE LIMPIADO
 
             this._movementOfArticleService.updateMovementOfArticle(movementOfArticle).subscribe(
                 result => {
@@ -1420,7 +1424,7 @@ export class AddSaleOrderComponent {
                 let oldMovementOfArticle: {} = {};
                 oldMovementOfArticle = Object.assign(oldMovementOfArticle, movementOfArticle);
                 if (!movementOfArticle.movementParent) {
-                    movementOfArticle.transaction.discountPercent = this.roundNumber.transform(this.transaction.discountPercent);
+                    this.transaction.discountPercent = this.roundNumber.transform(this.transaction.discountPercent);
                     if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
                         movementOfArticle = await this.recalculateSalePrice(movementOfArticle);
                     } else {
@@ -1428,7 +1432,8 @@ export class AddSaleOrderComponent {
                     }
                     totalPriceAux += this.roundNumber.transform(movementOfArticle.salePrice);
                     discountAmountAux += this.roundNumber.transform(movementOfArticle.transactionDiscountAmount * movementOfArticle.amount);
-                    // COMPARAMOS JSON -- SI CAMBIO ACTUALIZAMOS
+					// COMPARAMOS JSON -- SI CAMBIO ACTUALIZAMOS
+					console.log(this._jsonDiffPipe.transform(oldMovementOfArticle, movementOfArticle));
                     if (this._jsonDiffPipe.transform(oldMovementOfArticle, movementOfArticle)) {
                         let result = await this.updateMovementOfArticle(movementOfArticle);
                         if (!result) {
@@ -1773,6 +1778,7 @@ export class AddSaleOrderComponent {
                 }
                 modalRef = this._modalService.open(AddMovementOfArticleComponent, { size: 'lg', backdrop: 'static' });
                 modalRef.componentInstance.movementOfArticle = movementOfArticle;
+                modalRef.componentInstance.transaction = this.transaction;
                 modalRef.result.then((result) => {
                     this.focusEvent.emit(true);
                     this.getMovementsOfTransaction();
