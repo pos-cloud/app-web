@@ -4,10 +4,10 @@
             <div class="row">
                 <div class="col-md-2" *ngIf="transaction.table">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-outline-secondary" (click)="openModal('change-table')">
+                        <button type="button" class="btn btn-outline-light" (click)="openModal('change-table')">
                             <b>Mesa:</b> {{transaction.table.description}}
                         </button>
-                        <button type="button" class="btn btn-outline-secondary fa fa-exchange"
+                        <button type="button" class="btn btn-outline-light fa fa-exchange"
                             (click)="openModal('change-table')">
                         </button>
                     </div>
@@ -15,11 +15,17 @@
                 <div class="col-md-2" *ngIf="posType==='mostrador' && transaction.type"
                     (click)="openModal('observation')">
                     <b>{{transaction.type.name}} {{ transaction.number }}</b>
-                </div>
+				</div>
                 <div class="col-md-2"
                     *ngIf="transaction.type && transaction.type.requestEmployee && transaction.employeeClosing">
-                    <b>{{ transaction.type.requestEmployee.description }}:</b>
-                    <span *ngIf="transaction.employeeClosing">{{transaction.employeeClosing.name}}</span>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-light" (click)="openModal('change-employee')">
+                            {{ transaction.type.requestEmployee.description }}: {{transaction.employeeClosing.name}}
+                        </button>
+                        <button type="button" class="btn btn-outline-light fa fa-exchange"
+                            (click)="openModal('change-employee')">
+                        </button>
+                    </div>
                 </div>
                 <div class="col-md-2"
                     *ngIf="transaction && transaction.company && transaction.type && transaction.type.requestTransport">
@@ -48,17 +54,6 @@
                     <b>Fecha:</b>
                     {{transaction.endDate | dateFormat:'DD/MM/YYYY'}}
                 </div>
-                <div class="col-md-2"
-                    *ngIf="transaction.type && transaction.type.requestEmployee && transaction.employeeClosing">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-outline-secondary" (click)="openModal('change-employee')">
-                            Cambiar {{ transaction.type.requestEmployee.description }}
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary fa fa-exchange"
-                            (click)="openModal('change-employee')">
-                        </button>
-                    </div>
-                </div>
                 <!-- <div class="col-md-2" *ngIf="transaction && transaction.type && transaction.type.requestCurrency">
           <select class="form-control" [(ngModel)]="transaction.currency" (change)="updateTransaction()">
             <option [ngValue]="null" [selected]="!transaction || !transaction.currency">Seleccionar Moneda</option>
@@ -73,7 +68,7 @@
         </div> -->
                 <div class="col-md-2" *ngIf="transaction && transaction.type && transaction.type.requestCurrency">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-outline-secondary" (click)="openModal('change-quotation')">
+                        <button type="button" class="btn btn-outline-light" (click)="openModal('change-quotation')">
                             Cotización: {{ transaction.quotation | currency:'USD':'symbol-narrow':'1.2-2' }}
                         </button>
                         <button type="button" class="btn btn-light fa fa-pencil"
@@ -84,7 +79,7 @@
                 <div class="col-md-2"
                     *ngIf="transaction && transaction.company && transaction.type && transaction.type.requestTransport">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-outline-secondary" (click)="openModal('change-transport')">
+                        <button type="button" class="btn btn-outline-light" (click)="openModal('change-transport')">
                             Transporte
                         </button>
                         <button type="button" class="btn btn-light fa fa-exchange"
@@ -94,7 +89,7 @@
                 </div>
                 <!--<div class="col-md-2" >
           <div class="btn-group">
-            <button type="button" class="btn btn-outline-secondary" (click)="openModal('import')">
+            <button type="button" class="btn btn-outline-light" (click)="openModal('import')">
               Importar Productos
             </button>
           </div>
@@ -125,11 +120,11 @@
                                       transaction.company &&
                                       transaction.totalPrice === 0">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-outline-secondary"
+                        <button type="button" class="btn btn-outline-light"
                             (click)="openModal('list-cancellations')">
                             Buscar Transacciones a Cancelar
                         </button>
-                        <button type="button" class="btn btn-outline-secondary fa fa-exchange"
+                        <button type="button" class="btn btn-outline-light fa fa-exchange"
                             (click)="openModal('list-cancellations')">
                         </button>
                     </div>
@@ -331,7 +326,7 @@
                             (keydown.enter)="filterArticles()"
                             placeholder="Filtrar Productos por Cód. de Barras, Cód. Interno o Descripción y luego presione Enter."
                             [focus]="focusEvent">
-                        <button type="button" class="btn btn-outline-secondary mr-2" placement="left"
+                        <button type="button" class="btn btn-outline-light mr-2" placement="left"
                             popoverClass="popover-class"
                             ngbPopover="Ingresar texto y luego presionar enter para filtrar. 
                     Ingresar * y a continuación el número para indicar la cantidad del último producto ingresado (Ej: *2 = 2 productos).">
