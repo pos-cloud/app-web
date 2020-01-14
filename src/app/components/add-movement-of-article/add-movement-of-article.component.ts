@@ -1203,7 +1203,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 			for (const iterator of this.structures) {
 				if (!iterator.optional) {
 					if (!isFinish) {
-						if (!await this.buildMovsArticle(iterator.child._id, iterator.quantity, iterator.increasePrice, iterator.utilization)) {
+						if (!await this.buildMovsArticle(iterator.child._id, iterator.quantity, iterator.increasePrice, iterator.utilization, false)) {
 							isFinish = true;
 						}
 					}
@@ -1227,7 +1227,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 					for (const names of name.names) {
 						if (names.color === "blue") {
 							if (!isFinish) {
-								if (!await this.buildMovsArticle(names.id, names.quantity, names.increasePrice, names.utilization)) {
+								if (!await this.buildMovsArticle(names.id, names.quantity, names.increasePrice, names.utilization, true)) {
 									isFinish = true;
 								}
 							}
@@ -1246,7 +1246,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 		})
 	}
 
-	async buildMovsArticle(articleId: string, quantity: number, salePrice?: number, utilization?: Utilization) {
+	async buildMovsArticle(articleId: string, quantity: number, salePrice?: number, utilization?: Utilization, isOptional : boolean = false) {
 
 		return new Promise<boolean>((resolve, reject) => {
 
@@ -1270,6 +1270,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 						movArticle.make = article.make;
 						movArticle.category = article.category;
 						movArticle.barcode = article.barcode;
+						movArticle.isOptional = isOptional;
 
 						//para stock y cocina
 						movArticle.amount = quantity * this.movementOfArticle.amount;

@@ -41,6 +41,7 @@ export class MovementOfArticle {
   public modifyStock : boolean;
   public stockMovement: string;
   public movementParent : MovementOfArticle;
+  public isOptional : boolean = false;
 
 	constructor() { }
 }
