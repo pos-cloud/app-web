@@ -27,16 +27,19 @@ export class PosKitchenComponent {
 	public apiURL = Config.apiURL;
 	public productionStarted: boolean = false;
 	public startProductionDate: string;
+	public movementsOfArticlesChildren: MovementOfArticle[];
 
 	constructor(
 		public _router: Router,
 		public alertConfig: NgbAlertConfig,
 		private _movementOfArticleService: MovementOfArticleService,
 		private _transactionService: TransactionService
-	) { }
+	) {
+		this.movementsOfArticlesChildren = new Array();
+	}
 
 	public async ngOnInit() {
-		this.getMovementOfArticleReady();
+		await this.loadMovementOfArticleReady();
 		this.initInterval();
 	}
 
@@ -48,13 +51,14 @@ export class PosKitchenComponent {
 		}, 5000);
 	}
 
-	public getMovementOfArticleReady(): void {
+	public async loadMovementOfArticleReady() {
 		try {
 			this.movementsOfArticles = JSON.parse(sessionStorage.getItem('kitchen_movementsOfArticles'));
 			this.movementOfArticle = JSON.parse(localStorage.getItem('kitchen_movementOfArticle'));
 			if (this.movementOfArticle) {
 				this.productionStarted = true;
 				this.startProductionDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+				await this.loadMovementsOfArticlesChildren();
 			};
 		} catch (err) { }
 	}
@@ -83,15 +87,16 @@ export class PosKitchenComponent {
 						if (movementOfArticle.printed === movementOfArticle.amount) {
 							this.movementOfArticle = movementOfArticle;
 							this.startProductionDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-							await this.getMovementOfArticleToPreparing().then(
-								async movementOfArticle => {
-									if (movementOfArticle) {
-										this.movementOfArticle = movementOfArticle;
+							await this.getMovementsOfArticles({ _id: { $oid: this.movementOfArticle._id } }).then(
+								async movementsOfArticles => {
+									if (movementsOfArticles && movementsOfArticles.length > 0) {
+										this.movementOfArticle = movementsOfArticles[0];
 										localStorage.setItem('kitchen_movementOfArticle', JSON.stringify(this.movementOfArticle));
+										await this.loadMovementsOfArticlesChildren();
 										// PONEMOS LA TRANSACCION EN ESTADO EN PREPARACION
 										await this.getTransaction(this.movementOfArticle.transaction._id).then(
 											async transaction => {
-												if(transaction) {
+												if (transaction) {
 													transaction.state = TransactionState.Preparing;
 													await this.updateTransaction(transaction).then(
 														async transaction => {
@@ -113,15 +118,16 @@ export class PosKitchenComponent {
 								async movementOfArticle => {
 									if (movementOfArticle) {
 										this.movementOfArticle = movementOfArticle;
-										await this.getMovementOfArticleToPreparing().then(
-											async movementOfArticle => {
-												if (movementOfArticle) {
-													this.movementOfArticle = movementOfArticle;
+										await this.getMovementsOfArticles({ _id: { $oid: this.movementOfArticle._id } }).then(
+											async movementsOfArticles => {
+												if (movementsOfArticles && movementsOfArticles.length > 0) {
+													this.movementOfArticle = movementsOfArticles[0];
 													localStorage.setItem('kitchen_movementOfArticle', JSON.stringify(this.movementOfArticle));
+													await this.loadMovementsOfArticlesChildren();
 													// PONEMOS LA TRANSACCION EN ESTADO EN PREPARACION
 													await this.getTransaction(this.movementOfArticle.transaction._id).then(
 														async transaction => {
-															if(transaction) {
+															if (transaction) {
 																transaction.state = TransactionState.Preparing;
 																await this.updateTransaction(transaction).then(
 																	async transaction => {
@@ -149,6 +155,24 @@ export class PosKitchenComponent {
 							);
 						}
 					}
+				}
+			);
+	}
+
+	public async loadMovementsOfArticlesChildren() {
+		await this.getMovementsOfArticles(
+			{
+				isOptional: true,
+				movementParent: { $oid: this.movementOfArticle._id },
+				operationType: { $ne: 'D' }
+			}).then(
+				movementsOfArticles => {
+					console.log(movementsOfArticles);
+					this.movementsOfArticlesChildren = movementsOfArticles;
+				}
+			).catch(
+				err => {
+					this.movementsOfArticlesChildren = new Array();
 				}
 			);
 	}
@@ -183,7 +207,7 @@ export class PosKitchenComponent {
 		return new Promise<Transaction>((resolve, reject) => {
 
 			this.loading = true;
-			
+
 			this._transactionService.updateTransaction(transaction).subscribe(
 				result => {
 					this.loading = false;
@@ -209,6 +233,7 @@ export class PosKitchenComponent {
 				movementOfArticle => {
 					if (movementOfArticle) {
 						this.movementOfArticle = null;
+						this.movementsOfArticlesChildren = new Array();
 						localStorage.removeItem('kitchen_movementOfArticle');
 					}
 				}
@@ -227,13 +252,14 @@ export class PosKitchenComponent {
 		this.movementsOfArticles = this.movementsOfArticles.slice(0, 3);
 		sessionStorage.setItem('kitchen_movementsOfArticles', JSON.stringify(this.movementsOfArticles));
 		this.movementOfArticle = null;
+		this.movementsOfArticlesChildren = new Array();
 		localStorage.removeItem('kitchen_movementOfArticle');
 		this.startProduction();
 	}
 
-	public getMovementOfArticleToPreparing(): Promise<MovementOfArticle> {
+	public getMovementsOfArticles(match: {}): Promise<MovementOfArticle[]> {
 
-		return new Promise<MovementOfArticle>((resolve, reject) => {
+		return new Promise<MovementOfArticle[]>((resolve, reject) => {
 
 			this.loading = true;
 
@@ -244,6 +270,8 @@ export class PosKitchenComponent {
 				status: 1,
 				amount: 1,
 				printed: 1,
+				movementParent: 1,
+				isOptional: 1,
 				'article._id': 1,
 				'article.picture': 1,
 				'transaction._id': 1,
@@ -251,29 +279,27 @@ export class PosKitchenComponent {
 				'transaction.number': 1
 			};
 
-			let match = { _id: { $oid: this.movementOfArticle._id } };
-
 			this._movementOfArticleService.getMovementsOfArticlesV2(
 				project, // PROJECT
 				match, // MATCH
 				{}, // SORT
 				{}, // GROUP
-				1, // LIMIT
+				0, // LIMIT
 				0 // SKIP
 			).subscribe(
 				result => {
 					this.loading = false;
 					if (!result.movementsOfArticles) {
 						if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
-						resolve(null);
+						resolve([]);
 					} else {
-						resolve(result.movementsOfArticles[0]);
+						resolve(result.movementsOfArticles);
 					}
 				},
 				error => {
 					this.loading = false;
 					this.showMessage(error._body, 'danger', false);
-					resolve(null);
+					resolve([]);
 				}
 			);
 		});
@@ -318,12 +344,14 @@ export class PosKitchenComponent {
 				movementOfArticle => {
 					if (movementOfArticle) {
 						this.movementOfArticle = null;
+						this.movementsOfArticlesChildren = new Array();
 						localStorage.removeItem('kitchen_movementOfArticle');
 					}
 				}
 			);
 		}
 		this.movementOfArticle = movementOfArticle;
+		this.loadMovementsOfArticlesChildren();
 		this.startProductionDate = null;
 	}
 
@@ -367,10 +395,10 @@ export class PosKitchenComponent {
 									async movementOfArticle => {
 										if (movementOfArticle) {
 											this.movementOfArticle = movementOfArticle;
-											if(this.movementOfArticle.status === MovementOfArticleStatus.Ready) {
+											if (this.movementOfArticle.status === MovementOfArticleStatus.Ready) {
 												await this.getTransaction(this.movementOfArticle.transaction._id).then(
 													async transaction => {
-														if(transaction) {
+														if (transaction) {
 															transaction.state = TransactionState.Packing;
 															await this.updateTransaction(transaction).then(
 																async transaction => {
@@ -393,6 +421,7 @@ export class PosKitchenComponent {
 					);
 				} else {
 					this.movementOfArticle = null;
+					this.movementsOfArticlesChildren = new Array();
 					localStorage.removeItem('kitchen_movementOfArticle');
 					this.startProduction();
 					resolve(this.movementOfArticle);
