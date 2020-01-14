@@ -276,6 +276,7 @@ import { ListCurrencyValuesComponent } from './components/list-currency-values/l
 import { CurrencyValueService } from './services/currency-value.service';
 import { JsonDiffPipe } from './pipes/json-diff';
 import { SelectCompanyComponent } from './components/select-company/select-company.component';
+import { SelectTableComponent } from './components/select-table/select-table.component';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -477,7 +478,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     ListChecksComponent,
     CurrencyValueComponent,
     ListCurrencyValuesComponent,
-    SelectCompanyComponent
+    SelectCompanyComponent,
+    SelectTableComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -651,7 +653,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     PosClientViewComponent,
     PosPackingComponent,
     CurrencyValueComponent,
-    SelectCompanyComponent
+    SelectCompanyComponent,
+    SelectTableComponent
   ],
   imports: [
     BrowserModule,
