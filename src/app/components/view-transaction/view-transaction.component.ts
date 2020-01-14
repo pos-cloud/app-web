@@ -76,7 +76,6 @@ export class ViewTransactionComponent implements OnInit {
 				} else {
 					this.hideMessage();
 					this.transaction = result.transaction;
-					console.log(this.transaction)
 					this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
 					this.getMovementsOfArticlesByTransaction();
 					this.getMovementsOfCashesByTransaction();
