@@ -1,4 +1,4 @@
-<section style="margin-top: 60px;">
+<section>
 	<div class="center-content" *ngIf="alertMessage !== ''">
 		<ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
 			{{alertMessage}}
@@ -6,13 +6,14 @@
 	</div>
 	<div class="row">
 		<div class="col-md-12 center-content">
-			<button type="button" class="btn btn-success btn-production" (click)="startProduction()" [disabled]="productionStarted">INICIAR PRODUCCIÓN</button>
-			<button type="button" class="btn btn-danger btn-production" (click)="stopProduction()" [disabled]="!productionStarted">PARAR PRODUCCIÓN</button>
+			<button type="button" class="btn btn-success btn-production" (click)="startProduction()"
+				[disabled]="productionStarted">INICIAR PRODUCCIÓN</button>
+			<button type="button" class="btn btn-danger btn-production" (click)="stopProduction()"
+				[disabled]="!productionStarted">PARAR PRODUCCIÓN</button>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-md-1"></div>
-		<div class="col-md-10">
+	<div class="row" style="margin: 0px;">
+		<div class="col-md-12">
 			<div class="card">
 				<div class="card-body">
 					<div class="row">
@@ -28,7 +29,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-md-6">
+						<div class="col-md-5">
 							<div *ngIf="movementOfArticle" class="card-title" style="font-size: 30px;">
 								{{movementOfArticle.description}}
 							</div>
@@ -43,8 +44,10 @@
 							</div>
 							<div class="row" (click)="changeStatusToReady()">
 								<div class="col-md-12 center-content" style="padding: 20px;">
-									<img *ngIf="movementOfArticle && movementOfArticle.article && (!movementOfArticle.article.picture || movementOfArticle.article.picture == 'default.jpg')" src="./../../../assets/img/default.jpg">
-									<img *ngIf="movementOfArticle && movementOfArticle.article.picture && movementOfArticle.article.picture !== 'default.jpg'" [src]="apiURL + 'get-image-article/'+movementOfArticle.article.picture+'/'+database">
+									<img *ngIf="movementOfArticle && movementOfArticle.article && (!movementOfArticle.article.picture || movementOfArticle.article.picture == 'default.jpg')"
+										src="./../../../assets/img/default.jpg">
+									<img *ngIf="movementOfArticle && movementOfArticle.article.picture && movementOfArticle.article.picture !== 'default.jpg'"
+										[src]="apiURL + 'get-image-article/'+movementOfArticle.article.picture+'/'+database">
 								</div>
 							</div>
 							<div class="row" *ngIf="movementOfArticle && movementOfArticle.transaction">
@@ -60,8 +63,9 @@
 										</div>
 									</div>
 									<div class="row">
-										<div class="col-md-12 center-content"  style="font-size: 20px;">
-											(<app-clock [startTime]="movementOfArticle.transaction.endDate" [format]="'HH:mm:ss'"></app-clock>)
+										<div class="col-md-12 center-content" style="font-size: 20px;">
+											(<app-clock [startTime]="movementOfArticle.transaction.endDate"
+												[format]="'HH:mm:ss'"></app-clock>)
 										</div>
 									</div>
 								</div>
@@ -76,15 +80,28 @@
 											<b>{{getTime(startProductionDate)}}</b>
 										</div>
 									</div>
-									<div class="row">
+									<div class="row" *ngIf="startProductionDate">
 										<div class="col-md-12 center-content" style="font-size: 20px;">
-											(<app-clock [startTime]="startProductionDate" [format]="'HH:mm:ss'"></app-clock>)
+											(<app-clock [startTime]="startProductionDate" [format]="'HH:mm:ss'">
+											</app-clock>)
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-						<div class="col-md-4" *ngIf="movementsOfArticles && movementsOfArticles.length > 0">
+						<div class="col-md-2">
+							<div class="card-title">
+								Estructura
+							</div>
+							<div class="card-text notes">
+								<div class="row" *ngFor="let mov of movementsOfArticlesChildren">
+									<div class="col-md-12">
+										{{ mov.description }}
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3" *ngIf="movementsOfArticles && movementsOfArticles.length > 0">
 							<div class="row">
 								<div class="col-md-12">
 									<div class="card-title" style="padding: 10px;">
@@ -93,14 +110,19 @@
 								</div>
 							</div>
 							<div class="row" *ngIf="movementsOfArticles[0]">
-								<div class="col-md-4 center-content" style="padding: 20px;" (click)="viewArticle(movementsOfArticles[0])">
-									<img *ngIf="!movementsOfArticles[0] || !movementsOfArticles[0].article.picture || movementsOfArticles[0].article.picture == 'default.jpg'" src="./../../../assets/img/default.jpg">
-									<img *ngIf="movementsOfArticles[0] && movementsOfArticles[0].article.picture && movementsOfArticles[0].article.picture !== 'default.jpg'" [src]="apiURL + 'get-image-article/'+movementsOfArticles[0].article.picture+'/'+database">
+								<div class="col-md-4 center-content" style="padding: 20px;"
+									(click)="viewArticle(movementsOfArticles[0])">
+									<img *ngIf="!movementsOfArticles[0] || !movementsOfArticles[0].article.picture || movementsOfArticles[0].article.picture == 'default.jpg'"
+										src="./../../../assets/img/default.jpg">
+									<img *ngIf="movementsOfArticles[0] && movementsOfArticles[0].article.picture && movementsOfArticles[0].article.picture !== 'default.jpg'"
+										[src]="apiURL + 'get-image-article/'+movementsOfArticles[0].article.picture+'/'+database">
 								</div>
 								<div class="col-md-8">
 									<div class="card-title">
 										<span>{{movementsOfArticles[0].description}}</span><br>
-										<span style="font-size: 15px;" *ngIf="movementsOfArticles[0].transaction">Pedidido Nro {{movementsOfArticles[0].transaction.number}}</span>
+										<span style="font-size: 15px;"
+											*ngIf="movementsOfArticles[0].transaction">Pedidido Nro
+											{{movementsOfArticles[0].transaction.number}}</span>
 									</div>
 									<div class="card-text">
 										{{movementsOfArticles[0].notes}}
@@ -108,14 +130,19 @@
 								</div>
 							</div>
 							<div class="row" *ngIf="movementsOfArticles[1]">
-								<div class="col-md-4 center-content" style="padding: 20px;" (click)="viewArticle(movementsOfArticles[1])">
-									<img *ngIf="!movementsOfArticles[1] || !movementsOfArticles[1].article.picture || movementsOfArticles[1].article.picture == 'default.jpg'" src="./../../../assets/img/default.jpg">
-									<img *ngIf="movementsOfArticles[1] && movementsOfArticles[1].article.picture && movementsOfArticles[1].article.picture !== 'default.jpg'" [src]="apiURL + 'get-image-article/'+movementsOfArticles[1].article.picture+'/'+database">
+								<div class="col-md-4 center-content" style="padding: 20px;"
+									(click)="viewArticle(movementsOfArticles[1])">
+									<img *ngIf="!movementsOfArticles[1] || !movementsOfArticles[1].article.picture || movementsOfArticles[1].article.picture == 'default.jpg'"
+										src="./../../../assets/img/default.jpg">
+									<img *ngIf="movementsOfArticles[1] && movementsOfArticles[1].article.picture && movementsOfArticles[1].article.picture !== 'default.jpg'"
+										[src]="apiURL + 'get-image-article/'+movementsOfArticles[1].article.picture+'/'+database">
 								</div>
 								<div class="col-md-8">
 									<div class="card-title">
 										<span>{{movementsOfArticles[1].description}}</span><br>
-										<span style="font-size: 15px;" *ngIf="movementsOfArticles[1].transaction">Pedidido Nro {{movementsOfArticles[1].transaction.number}}</span>
+										<span style="font-size: 15px;"
+											*ngIf="movementsOfArticles[1].transaction">Pedidido Nro
+											{{movementsOfArticles[1].transaction.number}}</span>
 									</div>
 									<div class="card-text">
 										{{movementsOfArticles[1].notes}}
@@ -123,14 +150,19 @@
 								</div>
 							</div>
 							<div class="row" *ngIf="movementsOfArticles[2]">
-								<div class="col-md-4 center-content" style="padding: 20px;" (click)="viewArticle(movementsOfArticles[2])">
-									<img *ngIf="!movementsOfArticles[2] || !movementsOfArticles[2].article.picture || movementsOfArticles[2].article.picture == 'default.jpg'" src="./../../../assets/img/default.jpg">
-									<img *ngIf="movementsOfArticles[2] && movementsOfArticles[2].article.picture && movementsOfArticles[2].article.picture !== 'default.jpg'" [src]="apiURL + 'get-image-article/'+movementsOfArticles[2].article.picture+'/'+database">
+								<div class="col-md-4 center-content" style="padding: 20px;"
+									(click)="viewArticle(movementsOfArticles[2])">
+									<img *ngIf="!movementsOfArticles[2] || !movementsOfArticles[2].article.picture || movementsOfArticles[2].article.picture == 'default.jpg'"
+										src="./../../../assets/img/default.jpg">
+									<img *ngIf="movementsOfArticles[2] && movementsOfArticles[2].article.picture && movementsOfArticles[2].article.picture !== 'default.jpg'"
+										[src]="apiURL + 'get-image-article/'+movementsOfArticles[2].article.picture+'/'+database">
 								</div>
 								<div class="col-md-8">
 									<div class="card-title">
 										<span>{{movementsOfArticles[2].description}}</span><br>
-										<span style="font-size: 15px;" *ngIf="movementsOfArticles[2].transaction">Pedidido Nro {{movementsOfArticles[2].transaction.number}}</span>
+										<span style="font-size: 15px;"
+											*ngIf="movementsOfArticles[2].transaction">Pedidido Nro
+											{{movementsOfArticles[2].transaction.number}}</span>
 									</div>
 									<div class="card-text">
 										{{movementsOfArticles[2].notes}}
@@ -142,6 +174,5 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-md-1"></div>
 	</div>
 </section>
