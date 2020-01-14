@@ -337,12 +337,15 @@
             </div>
             <div class="row filterArticle">
                 <div class="col-md-11">
-                    <nav class="breadcrumb">
+                    <nav class="breadcrumb" style="padding: 0px;">
                         <span class="breadcrumb-item" [ngClass]="{'active':'areCategoriesVisible'}"
-                            (click)="showCategories()">Rubros</span>
-                        <span class="breadcrumb-item active"
+							(click)="showCategories()"
+							style="padding: 10px;">Rubros</span>
+						<span class="breadcrumb-item active"
+							style="padding: 10px;"
                             *ngIf="categorySelected && categorySelected.description">{{ categorySelected.description }}</span>
-                        <span class="breadcrumb-item active"
+						<span class="breadcrumb-item active"
+							style="padding: 10px;"
                             *ngIf="filterArticle && filterArticle !== '' && !categorySelected">{{ filterArticle }}</span>
                     </nav>
                 </div>
