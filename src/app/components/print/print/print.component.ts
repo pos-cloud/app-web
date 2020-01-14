@@ -270,7 +270,9 @@ export class PrintComponent implements OnInit {
       async result => {
         if (result && result.transaction) {
             this.transaction = result.transaction;
-            await this.getBranch(this.transaction.branchOrigin._id)
+            if(this.transaction.branchOrigin){
+              await this.getBranch(this.transaction.branchOrigin._id)
+            }
             if(this.transaction && this.transaction.type && this.transaction.type.defectPrinter && !this.printer) {
               this.printer = this.transaction.type.defectPrinter;
             }
@@ -2389,7 +2391,7 @@ export class PrintComponent implements OnInit {
         this.doc.text(observation.slice(60, 140) + "-", margin, row += 4);
       }
     } else {
-      if(this.transaction.transport) {
+      if(this.transaction.type.requestTransport && this.transaction.transport) {
         this.doc.setFontType('bold');
         this.doc.text("TRANSPORTE:", margin, row);
         this.doc.text("DOMICILIO:", margin, row + 4);

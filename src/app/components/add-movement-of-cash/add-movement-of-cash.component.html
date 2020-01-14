@@ -42,7 +42,8 @@
 						<div class="col-md-6">
 							<div class="row">
 								<div class="form-group col-md-12">
-									<label for="amountToPay" class="control-label">Importe a pagar:</label>
+									<label *ngIf="transaction && transaction.type && transaction.type.movement.toString() === 'Entrada'" for="amountToPay" class="control-label">Importe a cobrar:</label>
+									<label *ngIf="transaction && transaction.type && transaction.type.movement.toString() === 'Salida'" for="amountToPay" class="control-label">Importe a pagar:</label>
 									<div class="input-group">
 										<div class="input-group-prepend"><span class="input-group-text"
 												id="basic-addon1">$</span></div>

@@ -144,7 +144,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 			this.getVariantsByArticleParent();
 		}
 		this.buildForm();
-		if(this.movementOfArticle.article.containsStructure){
+		if (this.movementOfArticle.article.containsStructure) {
 			this.getStructure(this.movementOfArticle.article._id);
 		}
 	}
@@ -923,7 +923,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 		this.setValueForm();
 	}
 
-	async isValidMovementOfArticle(movArticle: MovementOfArticle, verificaStock : boolean = true) {
+	async isValidMovementOfArticle(movArticle: MovementOfArticle, verificaStock: boolean = true) {
 
 		return new Promise<boolean>((resolve, reject) => {
 
@@ -1143,16 +1143,16 @@ export class AddMovementOfArticleComponent implements OnInit {
 								await this.deleteMovementOfStructure();
 							}
 
-							if(result.movementsOfArticles && result.movementsOfArticles.length > 0){
-								for (const mov of  result.movementsOfArticles) {
-									if(mov['_id'] === this.movementOfArticle._id){
+							if (result.movementsOfArticles && result.movementsOfArticles.length > 0) {
+								for (const mov of result.movementsOfArticles) {
+									if (mov['_id'] === this.movementOfArticle._id) {
 										this.movementOfArticle = mov;
 									}
 								}
 							} else {
 								this.movementOfArticle = result.movementsOfArticles[0];
 							}
-							
+
 
 							this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
 							this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
@@ -1203,7 +1203,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 			for (const iterator of this.structures) {
 				if (!iterator.optional) {
 					if (!isFinish) {
-						if (!await this.buildMovsArticle(iterator.child._id, iterator.quantity, iterator.increasePrice, iterator.utilization)) {
+						if (!await this.buildMovsArticle(iterator.child._id, iterator.quantity, iterator.increasePrice, iterator.utilization, false)) {
 							isFinish = true;
 						}
 					}
@@ -1227,7 +1227,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 					for (const names of name.names) {
 						if (names.color === "blue") {
 							if (!isFinish) {
-								if (!await this.buildMovsArticle(names.id, names.quantity, names.increasePrice, names.utilization)) {
+								if (!await this.buildMovsArticle(names.id, names.quantity, names.increasePrice, names.utilization, true)) {
 									isFinish = true;
 								}
 							}
@@ -1246,7 +1246,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 		})
 	}
 
-	async buildMovsArticle(articleId: string, quantity: number, salePrice?: number, utilization?: Utilization) {
+	async buildMovsArticle(articleId: string, quantity: number, salePrice?: number, utilization?: Utilization, isOptional : boolean = false) {
 
 		return new Promise<boolean>((resolve, reject) => {
 
@@ -1270,6 +1270,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 						movArticle.make = article.make;
 						movArticle.category = article.category;
 						movArticle.barcode = article.barcode;
+						movArticle.isOptional = isOptional;
 
 						//para stock y cocina
 						movArticle.amount = quantity * this.movementOfArticle.amount;
@@ -1284,36 +1285,37 @@ export class AddMovementOfArticleComponent implements OnInit {
 							movArticle.markupPercentage = article.markupPercentage;
 							movArticle.markupPrice = article.markupPrice;
 							movArticle.unitPrice = salePrice;
-							movArticle = await this.recalculateSalePrice(movArticle)
 						} else {
 							movArticle.salePrice = 0;
-							movArticle.basePrice = 0
-							movArticle.costPrice = 0
-							movArticle.markupPercentage = 0
-							movArticle.markupPrice = 0
-							movArticle.unitPrice = 0
+							movArticle.basePrice = 0;
+							movArticle.costPrice = 0;
+							movArticle.markupPercentage = 0;
+							movArticle.markupPrice = 0;
+							movArticle.unitPrice = 0;
 						}
 
+						movArticle = await this.recalculateSalePrice(movArticle);
+
 						var stock;
-						if(utilization && utilization === Utilization.Sale){
+						if (utilization && utilization === Utilization.Sale) {
 							stock = true;
 						} else {
 							stock = false;
 						}
-						if (await this.isValidMovementOfArticle(movArticle,stock)) {
-							this.movChild.push(movArticle)
-							resolve(true)
+						if (await this.isValidMovementOfArticle(movArticle, stock)) {
+							this.movChild.push(movArticle);
+							resolve(true);
 						} else {
-							resolve(false)
+							resolve(false);
 						}
 
 					} else {
-						resolve(false)
+						resolve(false);
 					}
 				},
 				error => {
 					this.showMessage(error._body, 'danger', false);
-					resolve(false)
+					resolve(false);
 				}
 			);
 		})
@@ -1679,7 +1681,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 			if (this.grouped[x].name === group) {
 				for (let y = 0; y < this.grouped[x].names.length; y++) {
 					if (child === this.grouped[x].names[y].name) {
-						if(this.grouped[x].names[y].color === "white"){
+						if (this.grouped[x].names[y].color === "white") {
 							this.grouped[x].names[y].color = "blue";
 						} else {
 							this.grouped[x].names[y].color = "white";

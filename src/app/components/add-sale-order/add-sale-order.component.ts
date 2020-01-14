@@ -967,9 +967,10 @@ export class AddSaleOrderComponent {
 
             for (const movArticle of movementsOfArticles) {
 
-                movArticle.basePrice = 0
-                movArticle.costPrice = 0
-                movArticle.salePrice = 0
+                movArticle.basePrice = 0;
+                movArticle.costPrice = 0;
+                movArticle.salePrice = 0;
+                movArticle.unitPrice = 0;
                 movArticle.status = MovementOfArticleStatus.Ready;
 
                 if (await this.recalculateSalePrice(movArticle)) {
