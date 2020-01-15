@@ -24,7 +24,8 @@
 						<th (click)="orderBy('description')">Description </th>
 						<th (click)="orderBy('visibleInvoice')">Visible en la factura </th>
 						<th (click)="orderBy('visibleOnSale')">Visible en la venta </th>
-						<th (click)="orderBy('visibleOnPurchase')">Visible en la compra </th>
+                        <th (click)="orderBy('visibleOnPurchase')">Visible en la compra </th>
+                        <th (click)="orderBy('isRequiredOptional')">Obligatorio para opcional </th>
 					</tr>
 					<tr class="filters">
 						<th></th>
@@ -37,7 +38,9 @@
 						<th><input type="text" class="form-control" [(ngModel)]="filterVisibleOnSale"
 								placeholder="Visible en la venta..."></th>
 						<th><input type="text" class="form-control" [(ngModel)]="filterVisibleOnPurchase"
-								placeholder="Visible en la compra..."></th>
+                                placeholder="Visible en la compra..."></th>
+                                <th><input type="text" class="form-control" [(ngModel)]="filterIsRequiredOptional"
+                                    placeholder="Visible en la compra..."></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -50,7 +53,8 @@
 															| filter: filterDescription:'description'
 															| filter: filterVisibleInvoice:'visibleInvoice'
 															| filter: filterVisibleOnSale:'visibleOnSale'
-															| filter: filterVisibleOnPurchase:'visibleOnPurchase'
+                                                            | filter: filterVisibleOnPurchase:'visibleOnPurchase'
+                                                            | filter : filterIsRequiredOptional : 'isRequiredOptional'
 															| orderBy: orderTerm: propertyTerm
 															| paginate: { itemsPerPage: itemsPerPage,
                                                                   currentPage: p,
@@ -69,7 +73,9 @@
 						<td class="flat">{{category.description}}</td>
 						<td class="flat">{{category.visibleInvoice}}</td>
 						<td class="flat">{{category.visibleOnSale}}</td>
-						<td class="flat">{{category.visibleOnPurchase}}</td>
+                        <td class="flat">{{category.visibleOnPurchase}}</td>
+                        <td class="flat">{{category.isRequiredOptional}}</td>
+
 					</tr>
 					<tr align="center" *ngIf="areCategoriesEmpty && !loading">
 						<td colspan="5">No se encontraron rubros</td>
