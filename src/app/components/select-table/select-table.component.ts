@@ -34,7 +34,6 @@ export class SelectTableComponent implements OnInit {
 
         this.buildForm()
         this.getRooms()
-
     }
 
     public buildForm(): void {
@@ -77,6 +76,7 @@ export class SelectTableComponent implements OnInit {
                     this.tables = result.tables
                 } else {
                     this.showMessage("No se encontratos mesas disponibles", 'danger', false);
+                    this.tables = new Array();
                 }
             },
             error => {
