@@ -2,6 +2,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Transaction, TransactionState } from 'app/models/transaction';
 import { TransactionService } from 'app/services/transaction.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
 	selector: 'app-pos-client-view',
@@ -14,18 +15,31 @@ import { TransactionService } from 'app/services/transaction.service';
 export class PosClientViewComponent {
 
 	public loading: boolean = false;
-	public transactionsInPreparation: Transaction[];
-	public transactionsToRemove: Transaction[];
+	public transactions: Transaction[];
+	public transactionStates: string[];
+	public validTransactionStates: string[] = [
+		TransactionState.Delivered.toString(),
+		TransactionState.Pending.toString(),
+		TransactionState.Sent.toString(),
+		TransactionState.Preparing.toString(),
+	];
+
+	// DISEÑO
+	public colors: string[] = ["orange:white", "green:white"];
+	public colorNumber: number = 0;
+	public limit: number = 3;
+	public fontSize: number = 100;
+	public column: number = 6;
 
 	constructor(
+		private _route: ActivatedRoute,
 		private _transactionService: TransactionService
 	) {
-		this.transactionsInPreparation = new Array();
-		this.transactionsToRemove = new Array();
+		this.transactions = new Array();
 	}
 
 	public ngOnInit() {
-		this.loadTransactions();
+		this.processParams();
 		this.initInterval();
 	}
 
@@ -37,10 +51,118 @@ export class PosClientViewComponent {
 		}, 5000);
 	}
 
-	public async loadTransactions() {
-		this.transactionsToRemove = await this.getTransactions({ state: TransactionState.Delivered, operationType: { $ne: "D" } });
-		this.transactionsInPreparation = await this.getTransactions({ state: { $in: [TransactionState.Preparing, TransactionState.Packing] }, operationType: { $ne: "D" } });
+	private processParams(): void {
+		this._route.queryParams.subscribe(params => {
+			if(!this.loading) {
+				if(params['column'] && !isNaN(params['column'])) this.column = params['column'];
+				if(params['fontSize'] && !isNaN(params['fontSize'])) this.fontSize = params['fontSize'];
+				if(params['limit'] && !isNaN(params['limit'])) {
+					if(params['limit'] !== this.limit) {
+						this.limit = params['limit'];
+						this.loadTransactions();
+					} else {
+						this.limit = params['limit'];
+					}
+				}
+				if (params['colors']) {
+					this.colors = new Array();
+					for (const color of params['colors'].split(',')) {
+						this.colors.push(color);
+					}
+				}
+
+				this.transactionStates = new Array();
+				// RECORRER ESTADOS INSERTADOS
+				Object.keys(params).map(key => {
+						for (const s of params[key].split(',')) {
+							if (this.validTransactionStates.includes(s)) {
+								this.transactionStates.push(s);
+	
+							}
+						}
+						this.loadTransactions();
+				});
+			}
+		});
 	}
+
+	public async loadTransactions() {
+		if(this.transactionStates.includes(TransactionState.Preparing.toString()) &&
+		!this.transactionStates.includes(TransactionState.Packing.toString())) {
+			this.transactionStates.push(TransactionState.Packing.toString());
+		}
+		this.transactions = await this.getTransactions({ state: { $in: this.transactionStates }, operationType: { $ne: "D" } });
+		// CHANGE STATES PACKING TO PREPARING FOR VIEW
+		for(let trans of this.transactions) {
+			if(trans.state === TransactionState.Packing) trans.state = TransactionState.Preparing;
+		}
+	}
+
+	public async finishTransaction(transaction: Transaction) {
+		if(transaction.state === TransactionState.Delivered) {
+			await this.getTransaction(transaction._id).then(
+				async result => {
+					if (result) {
+						transaction = result;
+					}
+				}
+			);
+			transaction.state = TransactionState.Closed;
+			this.updateTransaction(transaction).then(
+				async transaction => {
+					if (transaction) {
+						this.loadTransactions();
+					}
+				}
+			);
+		}
+	}
+
+	public updateTransaction(transaction: Transaction): Promise<Transaction> {
+
+		return new Promise<Transaction>((resolve, reject) => {
+
+			this.loading = true;
+
+			this._transactionService.updateTransaction(transaction).subscribe(
+				result => {
+					this.loading = false;
+					if (!result.transaction) {
+						resolve(null);
+					} else {
+						resolve(result.transaction);
+					}
+				},
+				error => {
+					this.loading = false;
+					resolve(null);
+				}
+			);
+		});
+	}
+
+	public getTransaction(transactionId: string): Promise<Transaction> {
+
+        return new Promise<Transaction>((resolve, reject) => {
+
+            this.loading = true;
+
+            this._transactionService.getTransaction(transactionId).subscribe(
+                async result => {
+                    this.loading = false;
+                    if (!result.transaction) {
+                        resolve(null);
+                    } else {
+                        resolve(result.transaction);
+                    }
+                },
+                error => {
+                    this.loading = false;
+                    resolve(null);
+                }
+            );
+        });
+    }
 
 	public getTransactions(match: {}): Promise<Transaction[]> {
 

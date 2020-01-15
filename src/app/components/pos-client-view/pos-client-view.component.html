@@ -1,30 +1,25 @@
 <section style="margin: 20px;">
 	<div class="row">
-		<div class="col-md-6">
-			<div class="card">
-				<div class="card-title" style="background-color: #FF8000; color: white;">
-					En Preparación
-				</div>
-				<div class="card-body">
-					<div class="order-number" style="background-color: #FF8000; color: white;"
-						*ngFor="let transaction of transactionsInPreparation">
-						{{transaction.number}}
+		<ng-container *ngFor="let state of transactionStates; let i = index">
+			<div [className]="'col-md-' + column" *ngIf="state !== 'Armando'">
+				<div class="card">
+					<div class="card-title"
+						[style.backgroundColor]="(this.colors && this.colors[i].split(':')[0]) ? this.colors[i].split(':')[0] : 'white'"
+						[style.color]="(this.colors && this.colors[i].split(':')[1]) ? (this.colors[i].split(':')[1]) : 'black'">
+						{{ state | translate }}
+					</div>
+					<div class="card-body">
+						<div class="order-number rounded-circle"
+							[style.backgroundColor]="(this.colors && this.colors[i].split(':')[0]) ? this.colors[i].split(':')[0] : 'white'"
+							[style.color]="(this.colors && this.colors[i].split(':')[1]) ? (this.colors[i].split(':')[1]) : 'black'"
+							[style.font-size.px]="fontSize"
+							*ngFor="let transaction of transactions | filter: state:'state'"
+							(click)="finishTransaction(transaction)">
+							{{ transaction.number }}
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="col-md-6">
-			<div class="card">
-				<div class="card-title" style="background-color: green; color: white;">
-					Para Retirar
-				</div>
-				<div class="card-body">
-					<div class="order-number" style="background-color: green; color: white;"
-						*ngFor="let transaction of transactionsToRemove">
-						{{transaction.number}}
-					</div>
-				</div>
-			</div>
-		</div>
+		</ng-container>
 	</div>
 </section>

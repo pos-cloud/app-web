@@ -1,199 +1,201 @@
 {
-    "address" : "Dirección",
-    "addressNumber" : "Número",
-    "allowMeasure" : "¿Es pesable?",
-    "allowSaleWithoutStock" : "¿Se vende sin stock disponible?",
-    "allowCurrentAccount" : "¿Permite Cuenta Corriente?",
-    "allowSale" : "¿Habilitado para la venta?",
-    "allowPurchase" : "¿Habilitado para la compra?",
-    "amountPaid" : "Monto",
-    "amount" : "Cantidad",
-    "article": {
-        "_id": "Identificador Artículo",
-        "category": {
-            "description": "Categoría"
-        },
-        "code": "Código",
-        "costPrice": "Precio de Costo",
-        "description": "Descripción",
-        "make": {
-            "description": "Marca"
-        },
-        "markupPercentage": "Margen",
-        "markupPrice": "Utilidad",
-        "posDescription": "Descripción Corta",
-        "quantityPerMeasure": "Cant. de Un. de Medida",
-        "salePrice": "Precio de Venta",
-        "unitOfMeasurement": {
-            "abbreviation": "Un. de Medida"
-        },
-        "taxes[0]" : {
-            "percentage" : "Porcentaje Imp",
-            "amount" : "Monto Imp"
-        },
-        "taxes[1]" : {
-            "percentage" : "Porcentaje Imp",
-            "amount" : "Monto Imp"
-        },
-        "taxes[2]" : {
-            "percentage" : "Porcentaje Imp",
-            "amount" : "Monto Imp"
-        },
-        "barcode": "Código de Barras",
-        "operationType": "Última Operación Proucto",
-        "otherFieldsValues" : "Campos Personalizados"
-    },
-    "bank" : {
-        "name" : "Banco"
-    },
-    "balance" : "Saldo",
-    "barcode": "Código de Barras",
-    "basePrice" : "Precio Base",
-    "branch" : {
-        "name" : "Sucursal"
-    },
-    "branchDestination" : {
-        "name" : "Sucursal"
-    },
-    "birthday" : "Cumpleaños",
-    "category": {
-        "description": "Categoría"
-    },
-    "cashBox": {
-        "number": "Número de caja"
-    },
-    "code": "Código",
-    "costPrice": "Precio de Costo",
-    "company" : {
-        "name" : "Empresa",
-        "employee":{
-            "name" : "Empleado de Empresa"
-        },
-        "group" : {
-            "description" : "Grupo de Empresa"
-        }
-    },
-    "count": "Cantidad",
-    "currency" : {
-        "name" : "Moneda"
-    },
-    "city" : "Ciudad",
-    "companyType" : "Tipo de Empresa",
-    "creationDate" : "Fecha de Alta",
-    "deposit" : {
-        "_id": "Identificador Depósito",
-        "name" : "Deposito",
-        "branch": {
+	"address": "Dirección",
+	"addressNumber": "Número",
+	"allowMeasure": "¿Es pesable?",
+	"allowSaleWithoutStock": "¿Se vende sin stock disponible?",
+	"allowCurrentAccount": "¿Permite Cuenta Corriente?",
+	"allowSale": "¿Habilitado para la venta?",
+	"allowPurchase": "¿Habilitado para la compra?",
+	"amountPaid": "Monto",
+	"amount": "Cantidad",
+	"article": {
+		"_id": "Identificador Artículo",
+		"category": {
+			"description": "Categoría"
+		},
+		"code": "Código",
+		"costPrice": "Precio de Costo",
+		"description": "Descripción",
+		"make": {
+			"description": "Marca"
+		},
+		"markupPercentage": "Margen",
+		"markupPrice": "Utilidad",
+		"posDescription": "Descripción Corta",
+		"quantityPerMeasure": "Cant. de Un. de Medida",
+		"salePrice": "Precio de Venta",
+		"unitOfMeasurement": {
+			"abbreviation": "Un. de Medida"
+		},
+		"taxes[0]": {
+			"percentage": "Porcentaje Imp",
+			"amount": "Monto Imp"
+		},
+		"taxes[1]": {
+			"percentage": "Porcentaje Imp",
+			"amount": "Monto Imp"
+		},
+		"taxes[2]": {
+			"percentage": "Porcentaje Imp",
+			"amount": "Monto Imp"
+		},
+		"barcode": "Código de Barras",
+		"operationType": "Última Operación Proucto",
+		"otherFieldsValues": "Campos Personalizados"
+	},
+	"bank": {
+		"name": "Banco"
+	},
+	"balance": "Saldo",
+	"barcode": "Código de Barras",
+	"basePrice": "Precio Base",
+	"branch": {
+		"name": "Sucursal"
+	},
+	"branchDestination": {
+		"name": "Sucursal"
+	},
+	"birthday": "Cumpleaños",
+	"category": {
+		"description": "Categoría"
+	},
+	"cashBox": {
+		"number": "Número de caja"
+	},
+	"code": "Código",
+	"costPrice": "Precio de Costo",
+	"company": {
+		"name": "Empresa",
+		"employee": {
+			"name": "Empleado de Empresa"
+		},
+		"group": {
+			"description": "Grupo de Empresa"
+		}
+	},
+	"count": "Cantidad",
+	"currency": {
+		"name": "Moneda"
+	},
+	"city": "Ciudad",
+	"companyType": "Tipo de Empresa",
+	"creationDate": "Fecha de Alta",
+	"deposit": {
+		"_id": "Identificador Depósito",
+		"name": "Deposito",
+		"branch": {
 			"name": "Sucursal"
 		}
-    },
-    "diners" : "Comensales",
-    "discount" : "Descuento",
-    "discountAmount" : "Monto de Descuento",
-    "discountPercent" : "Porcentaje de Descuento",
-    "description": "Descripción",
-    "deliveredBy" : "Entregado por",
-    "depositDestination" : {
-        "name" : "Depósito"
-    },
-    "endDate": "Fecha",
-    "exempt" : "Exento",
-    "email" : "Email",
-    "ecommerceEnabled" : "¿Habilitado para Ecommerce?",
-    "employeeClosing" : {
-        "name" : "Empleado"
-    },
-    "employee" : {
-        "name" : "Empleado asignado"
-    },
-    "state" : "Estado",
-    "expirationDate" : "Vencimiento",
-    "false": "No",
-    "favourite" : "Destacado",
-    "fantasyName" : "Nombre de Fantasía",
-    "grossIncome" : "Ingresos Brutos",
-    "group" : {
-        "description" : "Grupo"
-    },
-    "identificationValue" : "Nro Identificación",
-    "identificationType" : {
-        "name" : "Tipo de Identificación"
-    },
-    "letter": "Letra",
-    "make": {
-        "description": "Marca"
+	},
+	"diners": "Comensales",
+	"discount": "Descuento",
+	"discountAmount": "Monto de Descuento",
+	"discountPercent": "Porcentaje de Descuento",
+	"description": "Descripción",
+	"deliveredBy": "Entregado por",
+	"depositDestination": {
+		"name": "Depósito"
+	},
+	"endDate": "Fecha",
+	"exempt": "Exento",
+	"email": "Email",
+	"ecommerceEnabled": "¿Habilitado para Ecommerce?",
+	"employeeClosing": {
+		"name": "Empleado"
+	},
+	"employee": {
+		"name": "Empleado asignado"
+	},
+	"state": "Estado",
+	"expirationDate": "Vencimiento",
+	"false": "No",
+	"favourite": "Destacado",
+	"fantasyName": "Nombre de Fantasía",
+	"grossIncome": "Ingresos Brutos",
+	"group": {
+		"description": "Grupo"
+	},
+	"identificationValue": "Nro Identificación",
+	"identificationType": {
+		"name": "Tipo de Identificación"
+	},
+	"letter": "Letra",
+	"make": {
+		"description": "Marca"
 	},
 	"modifyStock": "Modifica stock",
-    "observation" : "Observación",
-    "operationType": "Última Operación",
-    "origin" : "Punto de Venta",
-    "posKitchen" : "Aparece en POS Cocina",
-    "posDescription": "Descripción Corta",
-    "printIn" : "Imprime en",
-    "picture" : "Imagen",
-    "phone" : "Teléfono",
-    "priceList" : {
-        "name" : "Lista de Precio"
-    },
-    "quantityPerMeasure": "Cant. de Un. de Medida",
-    "quota" : "Cuota",
-    "quantityForStock": "Movimiento de Stock",
-    "salePrice": "Precio de Venta",
-    "isWeigth" : "¿Pide medida?",
-    "markupPrice" : "Utilidad",
-    "markupPercentage" : "Margen",
-    "madein": "Canal",
-    "name" : "Nombre",
+	"observation": "Observación",
+	"operationType": "Última Operación",
+	"origin": "Punto de Venta",
+	"posKitchen": "Aparece en POS Cocina",
+	"posDescription": "Descripción Corta",
+	"printIn": "Imprime en",
+	"picture": "Imagen",
+	"phone": "Teléfono",
+	"priceList": {
+		"name": "Lista de Precio"
+	},
+	"quantityPerMeasure": "Cant. de Un. de Medida",
+	"quota": "Cuota",
+	"quantityForStock": "Movimiento de Stock",
+	"salePrice": "Precio de Venta",
+	"isWeigth": "¿Pide medida?",
+	"markupPrice": "Utilidad",
+	"markupPercentage": "Margen",
+	"madein": "Canal",
+	"name": "Nombre",
 	"otherFieldsValues": "Campos Personalizados",
-    "table" : {
-        "description" : "Mesa"
-    },
-    "taxesPercentage": "Porcentajes de Impuestos",
-    "true": "Si",
-    "total": "Total",
-    "transaction" : {
-        "_id": "Identificador Transacción",
-        "cashBox" : {
-            "number" : "Caja"
-        },
-		"endDate" : "Fecha",
+	"table": {
+		"description": "Mesa"
+	},
+	"taxesPercentage": "Porcentajes de Impuestos",
+	"true": "Si",
+	"total": "Total",
+	"transaction": {
+		"_id": "Identificador Transacción",
+		"cashBox": {
+			"number": "Caja"
+		},
+		"endDate": "Fecha",
 		"letter": "Letra",
-        "number": "Número",
-        "operationType": "Última Operación Transacción",
-        "type" : {
-            "name" : "Tipo de Transacción",
-            "transactionMovement": "Movimiento"
-        },
-        "origin" : "Punto de Venta",
-        "company" : {
-            "name" : "Razón Social"
-        }
-    },
-    "transport" : {
-        "name" : "Nombre de Transporte"
-    },
-    "type" : {
-        "allowDelete" : "Permite Eliminar",
-		"allowEdit" : "Permite Editar",
+		"number": "Número",
+		"operationType": "Última Operación Transacción",
+		"type": {
+			"name": "Tipo de Transacción",
+			"transactionMovement": "Movimiento"
+		},
+		"origin": "Punto de Venta",
+		"company": {
+			"name": "Razón Social"
+		}
+	},
+	"transport": {
+		"name": "Nombre de Transporte"
+	},
+	"type": {
+		"allowDelete": "Permite Eliminar",
+		"allowEdit": "Permite Editar",
 		"defectPrinter": {
 			"_id": "Identificador de impresión",
 			"pageHigh": "Alto de página",
 			"pageWidth": "Ancho de página"
 		},
-        "name" : "Tipo",
-        "electronics" : "Es Electrónica",
-        "transactionMovement" : "Movimiento"
-    },
-    "totalPrice" : "Precio Total",
-    "unitOfMeasurement": {
-        "abbreviation": "Unidad de Medida",
-        "name": "Unidad de Medida"
-    },
-    "vatCondition" : {
-        "description" : "Condición de IVA"
-    },
-    "number": "Número",
-    "unitPrice" : "Precio Unitario",
-    "updateDate" : "Fecha de Modificación",
-    "realStock" : "Stock"
+		"name": "Tipo",
+		"electronics": "Es Electrónica",
+		"transactionMovement": "Movimiento"
+	},
+	"totalPrice": "Precio Total",
+	"unitOfMeasurement": {
+		"abbreviation": "Unidad de Medida",
+		"name": "Unidad de Medida"
+	},
+	"vatCondition": {
+		"description": "Condición de IVA"
+	},
+	"number": "Número",
+	"unitPrice": "Precio Unitario",
+	"updateDate": "Fecha de Modificación",
+	"realStock": "Stock",
+	"Preparando": "En Preparación",
+	"Entregado": "Para Retirar"
 }
