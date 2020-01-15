@@ -1,249 +1,267 @@
 <div class="modal-header">
-	<h4 class="modal-title">Lista de Precios</h4>
-	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
-	<span aria-hidden="true">&times;</span>
-	</button>
+    <h4 class="modal-title">Lista de Precios</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
 </div>
 <section class="container-fluid">
-	<div class="center-content"  *ngIf="alertMessage !== ''">
-		<ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-			{{alertMessage}}
-		</ngb-alert>
-	</div>
-	<form [formGroup]="priceListForm" #addPriceListForm="ngForm" (ngSubmit)="addPriceList()" autocomplete="off">
-		<div class="modal-body">
-			<ngb-tabset [orientation]="orientation">
-				<ngb-tab title="Datos principales">
-					<ng-template ngbTabContent>
-            <div class="row tab-content">
-              <div class="form-group col-md-12">
-                <div class="row">
-                  <div class="form-group col-md-12">
-                    <label for="name" class="control-label">Nombre:</label>
-                    <div class="input-group">
-                      <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent" [readonly]="readonly"/>
-                    </div>
-                    <div *ngIf="formErrors.name" class="alert alert-danger">
-                      {{ formErrors.name }}
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group col-md-6">
-                    <label for="percentage" class="control-label">Porcentaje:</label>
-                    <div class="input-group">
-                      <input type="number" class="form-control" formControlName="percentage" name="percentage" id="percentage" [readonly]="readonly"/>
-                    </div>
-                    <div *ngIf="formErrors.percentage" class="alert alert-danger">
-                      {{ formErrors.percentage }}
-                    </div>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="allowSpecialRules" class="control-label">Permite reglas especiales?</label>
-                    <div class="input-group" >
-                      <select class="form-control" formControlName="allowSpecialRules" [(ngModel)]="viewRules">
-                        <option value="true" [disabled]="readonly">Si</option>
-                        <option value="false" [disabled]="readonly">No</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-					</ng-template>
-        </ngb-tab>
-        <ngb-tab [disabled]="!viewRules" title="Reglas Especiales">
-					<ng-template ngbTabContent>
-            <div class="row tab-content">
-              <form #ruleForm="ngForm" (ngSubmit)="addRule(ruleForm)">
-                  <div class="row">
-                      <div class="form-group col-md-4">
-                        <label class="control-label">Rubro:</label>
-                        <select  ngModel name="category" class="form-control">
-                          <option [ngValue]="null" [disabled]="readonly">Todos los rubros</option>
-                          <option *ngFor="let category of categories"
-                                  [ngValue]="category._id"
-                                  [disabled]="readonly">
-                                  {{category.description}}
-                          </option>
-                        </select>
-                      </div>
-                      <div class="form-group col-md-4">
-                        <label for="make" class="control-label">Marca</label>
-                        <select class="form-control" ngModel name="make">
-                          <option [ngValue]="null" [disabled]="readonly"> Todas las marcas</option>
-                          <option *ngFor="let make of makes"
-                                  [ngValue]="make._id"
-                                  [disabled]="readonly">
-                                  {{make.description}}</option>
-                        </select>
-                      </div>
-                      <div class="form-group col-md-3">
-                        <label for="percentage" class="control-label">Porcentaje:</label>
-                        <div class="input-group">
-                          <input type="number" class="form-control" ngModel name="percentage" [readonly]="readonly"/>
-                        </div>
-                      </div>
-                      <div class="form-group col-md-1">                      
-                          <label class="control-label">Acción:</label>
-                          <button type="summit" class="btn btn-success btn-sm">
-                              <i class="fa fa-plus"></i>
-                          </button>
-                          {{percentageSelected}}
-                      </div>
-                    </div>
-              </form>  
-              
-              <div formArrayName="rules" *ngFor="let rule of priceListForm.get('rules').controls; let i = index;">
-                <div [formGroupName]="i">
-                  <div class="row">
-                    <div class="form-group col-md-4">
-                      <select class="form-control" formControlName="category">
-                        <option [ngValue]="null" [selected]="!priceListForm.controls.rules.controls[i].controls.category.value" [disabled]="readonly">Todos los rubros</option>
-                        <option *ngFor="let category of categories"
-                                [value]="category._id"
-                                [disabled]="readonly">
-                                {{category.description}}
-                        </option>
-                      </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                      <select class="form-control" formControlName="make">
-                        <option [ngValue]="null" [selected]="!priceListForm.controls.rules.controls[i].controls.make.value" [disabled]="readonly">Todos las marcas</option>
-                        <option *ngFor="let make of makes"
-                                [value]="make._id"
-                                [disabled]="readonly">
-                                {{make.description}}</option>
-                      </select>
-                    </div>
-                    <div class="form-group col-md-3">
-                      <div class="input-group">
-                        <input type="number" class="form-control" formControlName="percentage" name="percentage" id="percentage" [readonly]="readonly"/>
-                      </div>
-                    </div>
-                    <div class="form-group col-md-1">        
-                        <button type="button" class="btn btn-danger btn-sm" (click)="deleteRule(i)">
-                            <i class="fa fa-trash-o"></i>
-                        </button>
-                    </div>
-                  </div>
-                </div> 
-              </div>
-            </div>
-					</ng-template>
-        </ngb-tab>
-        <ngb-tab title="Excepciones">
-					<ng-template ngbTabContent>
-            <div class="row tab-content">
-              <div class="col-md-12">
-
-                <form #exceptionForm="ngForm" (ngSubmit)="addException(exceptionForm)">
-                    <div class="row">
-                        <div class="form-group col-md-8">
-                          <ng-template #rtArticles let-r="result" let-t="term">
-                            <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
-                          </ng-template>
-                          <label for="article">Producto:</label>
-                          <input id="article"
-                                type="text"
-                                ngModel
-                                class="form-control"
-                                name="article"
-                                [ngbTypeahead]="searchArticles"
-                                [resultTemplate]="rtArticles"
-                                [inputFormatter]="formatterArticles"
-                                [focus]="focusEvent" />
-                        </div>
-                        <div class="form-group col-md-3">
-                          <label for="percentage" class="control-label">Porcentaje:</label>
-                          <div class="input-group">
-                            <input type="number" class="form-control" ngModel name="percentage" [readonly]="readonly"/>
-                          </div>
-                        </div>
-                        <div class="form-group col-md-1">                      
-                            <label class="control-label">Acción:</label>
-                            <button type="summit" class="btn btn-success btn-sm">
-                                <i class="fa fa-plus"></i>
-                            </button>
-                            {{percentageSelected}}
-                        </div>
-                      </div>
-                </form>  
-              </div>
-              <div class="col-md-12">
-                  <table class="table table-striped">
-                      <thead>
-                        <tr>
-                          <th>Producto</th>
-                          <th>Porcentaje</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let exception of priceListForm.get('exceptions').controls; let i = index;">
-                          <div *ngFor="let article of articles; let i = index">
-                            <td *ngIf="exception && exception.value && exception.value.article && (exception.value.article === article._id || exception.value.article._id === article._id)">{{article.description}}</td>
-                          </div>
-                          <td>{{exception.value.percentage}}</td>
-                          <td align="right" width="10">
-                              <button type="button" class="btn btn-danger btn-sm" (click)="deleteException(i)">
-                                  <i class="fa fa-trash-o"></i>
-                              </button>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-              </div>
-            </div>
-					</ng-template>
-        </ngb-tab>
-        <ngb-tab *ngIf="this.operation !== 'add'" title="Auditoría">
-            <ng-template ngbTabContent>
-              <div class="row tab-content">
-                <div class="form-group col-md-12">
-                  <div class="row">
-                    <div class="form-group col-md-6">
-                        <label class="control-label">Creado por:</label>
-                        <label *ngIf="priceList.creationUser" class="control-label"><b>{{priceList.creationUser.name}}</b></label>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label class="control-label">El día:</label>
-                        <label *ngIf="priceList.creationDate" class="control-label"> <b>{{priceList.creationDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="form-group col-md-6">
-                        <label class="control-label">Última modificación por:</label>
-                        <label *ngIf="priceList.updateUser" class="control-label"><b>{{priceList.updateUser.name}}</b></label>
-                        <label *ngIf="!priceList.updateUser" class="control-label"><b>-</b></label>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label class="control-label">El día:</label>
-                        <label *ngIf="priceList.updateDate" class="control-label"><b>{{priceList.updateDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
-                        <label *ngIf="!priceList.updateDate" class="control-label"><b>-</b></label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </ng-template>
-        </ngb-tab>
-      </ngb-tabset>
+    <div class="center-content" *ngIf="alertMessage !== ''">
+        <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+            {{alertMessage}}
+        </ngb-alert>
     </div>
-    <div class="modal-footer" *ngIf="operation !== 'view'">
-        <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
-        <button type="submit" class="btn btn-primary" [disabled]="!priceListForm.valid || loading" *ngIf="operation !== 'delete'">
-          <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
-          <span *ngIf="!loading">Guardar</span>
-          <span *ngIf="loading">Espere por favor</span>
-        </button>
-        <button type="button" 
-                class="btn btn-danger" 
-                *ngIf="operation === 'delete'" 
-                [disabled]="!priceListForm.valid || loading" 
-                (click)="deletePriceList()">
-          <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
-          <span *ngIf="!loading">Eliminar</span>
-          <span *ngIf="loading">Espere por favor</span>
-        </button>
-      </div>
-	</form>
+    <form [formGroup]="priceListForm" #addPriceListForm="ngForm" (ngSubmit)="addPriceList()" autocomplete="off">
+        <div class="modal-body">
+            <ngb-tabset [orientation]="orientation">
+                <ngb-tab title="Datos principales">
+                    <ng-template ngbTabContent>
+                        <div class="row tab-content">
+                            <div class="form-group col-md-12">
+                                <div class="row">
+                                    <div class="form-group col-md-12">
+                                        <label for="name" class="control-label">Nombre:</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" formControlName="name" name="name"
+                                                id="name" [focus]="focusEvent" [readonly]="readonly" />
+                                        </div>
+                                        <div *ngIf="formErrors.name" class="alert alert-danger">
+                                            {{ formErrors.name }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-3">
+                                        <label for="percentage" class="control-label">Porcentaje:</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" formControlName="percentage"
+                                                name="percentage" id="percentage" [readonly]="readonly" />
+                                        </div>
+                                        <div *ngIf="formErrors.percentage" class="alert alert-danger">
+                                            {{ formErrors.percentage }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label for="allowSpecialRules" class="control-label">Permite reglas
+                                            especiales?</label>
+                                        <div class="input-group">
+                                            <select class="form-control" formControlName="allowSpecialRules"
+                                                [(ngModel)]="viewRules">
+                                                <option value="true" [disabled]="readonly">Si</option>
+                                                <option value="false" [disabled]="readonly">No</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-3 center-content">
+										<label class="form-check-label" for="Opcional">
+											¿Es Defecto?
+										</label>
+										<div class="form-check input-group center-content">
+											<input [(ngModel)]="checkboxModel" class="form-check-input big-checkbox"
+												type="checkbox" formControlName="default" value="" id="default"
+												name="default" [disabled]="readonly">
+										</div>
+									</div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab [disabled]="!viewRules" title="Reglas Especiales">
+                    <ng-template ngbTabContent>
+                        <div class="row tab-content">
+                            <form #ruleForm="ngForm" (ngSubmit)="addRule(ruleForm)">
+                                <div class="row">
+                                    <div class="form-group col-md-4">
+                                        <label class="control-label">Rubro:</label>
+                                        <select ngModel name="category" class="form-control">
+                                            <option [ngValue]="null" [disabled]="readonly">Todos los rubros</option>
+                                            <option *ngFor="let category of categories" [ngValue]="category._id"
+                                                [disabled]="readonly">
+                                                {{category.description}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="make" class="control-label">Marca</label>
+                                        <select class="form-control" ngModel name="make">
+                                            <option [ngValue]="null" [disabled]="readonly"> Todas las marcas</option>
+                                            <option *ngFor="let make of makes" [ngValue]="make._id"
+                                                [disabled]="readonly">
+                                                {{make.description}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label for="percentage" class="control-label">Porcentaje:</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" ngModel name="percentage"
+                                                [readonly]="readonly" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-1">
+                                        <label class="control-label">Acción:</label>
+                                        <button type="summit" class="btn btn-success btn-sm">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                        {{percentageSelected}}
+                                    </div>
+                                </div>
+                            </form>
+
+                            <div formArrayName="rules"
+                                *ngFor="let rule of priceListForm.get('rules').controls; let i = index;">
+                                <div [formGroupName]="i">
+                                    <div class="row">
+                                        <div class="form-group col-md-4">
+                                            <select class="form-control" formControlName="category">
+                                                <option [ngValue]="null"
+                                                    [selected]="!priceListForm.controls.rules.controls[i].controls.category.value"
+                                                    [disabled]="readonly">Todos los rubros</option>
+                                                <option *ngFor="let category of categories" [value]="category._id"
+                                                    [disabled]="readonly">
+                                                    {{category.description}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <select class="form-control" formControlName="make">
+                                                <option [ngValue]="null"
+                                                    [selected]="!priceListForm.controls.rules.controls[i].controls.make.value"
+                                                    [disabled]="readonly">Todos las marcas</option>
+                                                <option *ngFor="let make of makes" [value]="make._id"
+                                                    [disabled]="readonly">
+                                                    {{make.description}}</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-3">
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" formControlName="percentage"
+                                                    name="percentage" id="percentage" [readonly]="readonly" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-1">
+                                            <button type="button" class="btn btn-danger btn-sm" (click)="deleteRule(i)">
+                                                <i class="fa fa-trash-o"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab title="Excepciones">
+                    <ng-template ngbTabContent>
+                        <div class="row tab-content">
+                            <div class="col-md-12">
+
+                                <form #exceptionForm="ngForm" (ngSubmit)="addException(exceptionForm)">
+                                    <div class="row">
+                                        <div class="form-group col-md-8">
+                                            <ng-template #rtArticles let-r="result" let-t="term">
+                                                <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+                                            </ng-template>
+                                            <label for="article">Producto:</label>
+                                            <input id="article" type="text" ngModel class="form-control" name="article"
+                                                [ngbTypeahead]="searchArticles" [resultTemplate]="rtArticles"
+                                                [inputFormatter]="formatterArticles" [focus]="focusEvent" />
+                                        </div>
+                                        <div class="form-group col-md-3">
+                                            <label for="percentage" class="control-label">Porcentaje:</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" ngModel name="percentage"
+                                                    [readonly]="readonly" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-1">
+                                            <label class="control-label">Acción:</label>
+                                            <button type="summit" class="btn btn-success btn-sm">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                            {{percentageSelected}}
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-md-12">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Porcentaje</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr
+                                            *ngFor="let exception of priceListForm.get('exceptions').controls; let i = index;">
+                                            <div *ngFor="let article of articles; let i = index">
+                                                <td
+                                                    *ngIf="exception && exception.value && exception.value.article && (exception.value.article === article._id || exception.value.article._id === article._id)">
+                                                    {{article.description}}</td>
+                                            </div>
+                                            <td>{{exception.value.percentage}}</td>
+                                            <td align="right" width="10">
+                                                <button type="button" class="btn btn-danger btn-sm"
+                                                    (click)="deleteException(i)">
+                                                    <i class="fa fa-trash-o"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab *ngIf="this.operation !== 'add'" title="Auditoría">
+                    <ng-template ngbTabContent>
+                        <div class="row tab-content">
+                            <div class="form-group col-md-12">
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">Creado por:</label>
+                                        <label *ngIf="priceList.creationUser"
+                                            class="control-label"><b>{{priceList.creationUser.name}}</b></label>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">El día:</label>
+                                        <label *ngIf="priceList.creationDate" class="control-label">
+                                            <b>{{priceList.creationDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">Última modificación por:</label>
+                                        <label *ngIf="priceList.updateUser"
+                                            class="control-label"><b>{{priceList.updateUser.name}}</b></label>
+                                        <label *ngIf="!priceList.updateUser" class="control-label"><b>-</b></label>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">El día:</label>
+                                        <label *ngIf="priceList.updateDate"
+                                            class="control-label"><b>{{priceList.updateDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
+                                        <label *ngIf="!priceList.updateDate" class="control-label"><b>-</b></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </div>
+        <div class="modal-footer" *ngIf="operation !== 'view'">
+            <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
+            <button type="submit" class="btn btn-primary" [disabled]="!priceListForm.valid || loading"
+                *ngIf="operation !== 'delete'">
+                <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+                <span *ngIf="!loading">Guardar</span>
+                <span *ngIf="loading">Espere por favor</span>
+            </button>
+            <button type="button" class="btn btn-danger" *ngIf="operation === 'delete'"
+                [disabled]="!priceListForm.valid || loading" (click)="deletePriceList()">
+                <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
+                <span *ngIf="!loading">Eliminar</span>
+                <span *ngIf="loading">Espere por favor</span>
+            </button>
+        </div>
+    </form>
 </section>
