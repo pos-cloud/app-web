@@ -631,7 +631,7 @@ export class AddCompanyComponent implements OnInit {
                     }
                 }
 
-                if(this.priceLists && this.priceLists.length > 0 ){
+                if(this.priceLists && this.priceLists.length > 0 && this.company.type === CompanyType.Client){
                     this.priceLists.forEach(element => {
                         if (element.default) {
                             this.company.priceList = element
