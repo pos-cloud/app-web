@@ -185,6 +185,7 @@ export class DepositComponent implements OnInit {
       result =>{
         if(result && result.deposits) {
           this.deposits = result.deposits
+          console.log(this.deposits)
         }
       },
       error => {
@@ -194,7 +195,7 @@ export class DepositComponent implements OnInit {
     )
   }
 
-  public isValid() : boolean {
+  /*public isValid() : boolean {
     
     let valid = true;
 
@@ -213,7 +214,38 @@ export class DepositComponent implements OnInit {
     }
     
     return valid
-  }
+  }*/
+
+  public isValid(): Promise<boolean> {
+
+    return new Promise((resolve, reject) => {
+
+        if (this.deposits && this.deposits.length > 0 && this.deposit.default !== null) {
+            for (const element of this.deposits) {
+                if (this.operation === "add" && 
+                        this.deposit.default && 
+                        element.default === this.deposit.default &&
+                        element.branch._id === this.deposit.branch.toString()) {
+                    this.showMessage("Solo puede existir un depósito principal por sucursal.", 'danger', true);
+                            resolve(false)
+                }
+
+                if (this.operation === "update" && 
+                        this.deposit.default && 
+                        element.default === this.deposit.default && 
+                        element.branch._id === this.deposit.branch.toString() &&
+                        element._id !== this.deposit._id){
+                            this.showMessage("Solo puede existir un depósito principal por sucursal.", 'danger', true);
+                            resolve(false)
+                }
+            }
+            resolve(true)
+        } else {
+            resolve(true)
+        }
+
+    })
+}
 
   public addDeposit(): void {
 
@@ -256,14 +288,14 @@ export class DepositComponent implements OnInit {
     });
   }
 
-  public updateDeposit(): void {
+  async updateDeposit() {
 
 
     this.deposit = this.depositForm.value;
 
     this.loading = true;
 
-    if(this.isValid()) {
+    if(await this.isValid()) {
       this._depositService.updateDeposit(this.deposit).subscribe(
         result => {
           if (!result.deposit) {
@@ -285,13 +317,13 @@ export class DepositComponent implements OnInit {
     }
   }
 
-  public saveDeposit(): void {
+  async saveDeposit() {
 
     this.deposit = this.depositForm.value;
 
     this.loading = true;
 
-    if(this.isValid()) {
+    if(await this.isValid()) {
       this._depositService.saveDeposit(this.deposit).subscribe(
         result => {
           if (!result.deposit) {
