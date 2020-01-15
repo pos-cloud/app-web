@@ -2198,13 +2198,13 @@ export class AddSaleOrderComponent {
                 modalRef.result.then(async (result) => {
                     if (result && result.table) {
                         result.table.employee = this.transaction.table.employee;
+                        result.table.lastTransaction = this.transaction._id;
                         this.transaction.table.state = TableState.Available;
                         this.transaction.table.employee = null;
                         this.transaction.table.lastTransaction = null;
                         await this.updateTable();
                         this.transaction.table = result.table
                         this.transaction.table.state = TableState.Busy;
-                        this.transaction.table.lastTransaction._id = this.transaction._id;
                         await this.updateTable();
                         await this.updateTransaction().then(
                             async transaction => {

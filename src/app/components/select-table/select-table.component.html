@@ -16,8 +16,10 @@
                 <div class="form-group col-md-6">
                     <label for="room" class="control-label">Salón:</label>
                     <select class="form-control" formControlName="room" (change)="getTables(selectRoom.value)"
-                        #selectRoom>
-                        <option *ngFor="let room of rooms" [value]="room._id">
+                    #selectRoom>
+                        <option *ngFor="let room of rooms" 
+                                [value]="room._id"
+                                [selected]="roomId">
                             {{room.description}}</option>
                     </select>
                 </div>
