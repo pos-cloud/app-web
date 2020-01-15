@@ -21,11 +21,17 @@
             </th>
             <th (click)="orderBy('name')">Nombre</th>
             <th (click)="orderBy('percentage')">Porcentaje</th>
+            <th (click)="orderBy('allowSpecialRules')">¿Permite reglas especiales?</th>
+            <th (click)="orderBy('default')">¿Es defecto en alta de cliente?</th>
+
           </tr>
           <tr class="filters">
             <th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['name']" (input)="getTransports()" placeholder="Nombre..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['percentage']" (input)="getTransports()" placeholder="Porcentaje..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['name']" (input)="getPriceLists()" placeholder="Nombre..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['percentage']" (input)="getPriceLists()" placeholder="Porcentaje..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['allowSpecialRules']" (input)="getPriceLists()" placeholder="¿Permite reglas especiales?..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['default']" (input)="getPriceLists()" placeholder="¿Es defecto en alta de clientes?..."></th>
+
           </tr>
         </thead>
         <tbody>
@@ -57,6 +63,9 @@
             </td>
             <td>{{priceList.name}}</td>
             <td>{{priceList.percentage}}</td>
+            <td>{{priceList.allowSpecialRules}}</td>
+            <td>{{priceList.default}}</td>
+
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
             <td colspan="16">No se encontraron Listas de Precios</td>
@@ -114,8 +123,8 @@
             <th (click)="orderBy('percentage')">Porcentaje</th>
           </tr>
           <tr class="filters">
-            <th><input type="text" class="form-control" [(ngModel)]="filters['name']" (input)="getTransports()" placeholder="Nombre..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['percentage']" (input)="getTransports()" placeholder="Porcentaje..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['name']" (input)="getPriceLists()" placeholder="Nombre..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['percentage']" (input)="getPriceLists()" placeholder="Porcentaje..."></th>
           </tr>
         </thead>
         <tbody>
