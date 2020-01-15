@@ -23,6 +23,7 @@ export class PosClientViewComponent {
 		TransactionState.Sent.toString(),
 		TransactionState.Preparing.toString(),
 	];
+	public originsToFilter: number[];
 
 	// DISEÑO
 	public colors: string[] = ["orange:white", "green:white"];
@@ -71,6 +72,13 @@ export class PosClientViewComponent {
 					}
 				}
 
+				// RECORRER POS INSERTADOS
+				this.originsToFilter = new Array();
+				if(params['origins']) {
+					for(let origin of params['origins'].split(',')) {
+						this.originsToFilter.push(parseInt(origin));
+					}
+				}
 				this.transactionStates = new Array();
 				// RECORRER ESTADOS INSERTADOS
 				Object.keys(params).map(key => {
@@ -91,7 +99,11 @@ export class PosClientViewComponent {
 		!this.transactionStates.includes(TransactionState.Packing.toString())) {
 			this.transactionStates.push(TransactionState.Packing.toString());
 		}
-		this.transactions = await this.getTransactions({ state: { $in: this.transactionStates }, operationType: { $ne: "D" } });
+		let query = { state: { $in: this.transactionStates }, operationType: { $ne: "D" } };
+		if(this.originsToFilter && this.originsToFilter.length > 0) {
+			query['origin'] = { $in: this.originsToFilter };
+		}
+		this.transactions = await this.getTransactions(query);
 		// CHANGE STATES PACKING TO PREPARING FOR VIEW
 		for(let trans of this.transactions) {
 			if(trans.state === TransactionState.Packing) trans.state = TransactionState.Preparing;
@@ -172,6 +184,7 @@ export class PosClientViewComponent {
 
 			let project = {
 				endDate: 1,
+				origin: 1,
 				number: 1,
 				state: 1,
 				operationType: 1,
