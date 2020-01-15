@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { NgbModal, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TableService } from 'app/services/table.service';
 import { RoomService } from 'app/services/room.service';
@@ -13,6 +13,7 @@ import { Table } from 'app/models/table';
 })
 export class SelectTableComponent implements OnInit {
 
+    @Input() roomId : string;
     public tableForm: FormGroup;
     public rooms: Room[];
     public tables: Table[];
@@ -57,6 +58,14 @@ export class SelectTableComponent implements OnInit {
                     this.hideMessage();
                     this.loading = false;
                     this.rooms = result.rooms;
+
+                    if (this.roomId){
+                        this.tableForm.patchValue({
+                            'room': this.roomId
+                        });
+
+                        this.getTables(this.roomId)
+                    }
                 }
             },
             error => {

@@ -2195,6 +2195,7 @@ export class AddSaleOrderComponent {
                 break;
             case 'change-table':
                 modalRef = this._modalService.open(SelectTableComponent);
+                modalRef.componentInstance.roomId = this.transaction.table.room;
                 modalRef.result.then(async (result) => {
                     if (result && result.table) {
                         result.table.employee = this.transaction.table.employee;

@@ -18,8 +18,7 @@
                     <select class="form-control" formControlName="room" (change)="getTables(selectRoom.value)"
                     #selectRoom>
                         <option *ngFor="let room of rooms" 
-                                [value]="room._id"
-                                [selected]="roomId">
+                                [value]="room._id">
                             {{room.description}}</option>
                     </select>
                 </div>
