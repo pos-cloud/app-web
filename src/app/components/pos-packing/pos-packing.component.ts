@@ -46,10 +46,10 @@ export class PosPackingComponent {
 
 	private processParams(): void {
 		this._route.queryParams.subscribe(params => {
-			if(params['column'] && !isNaN(params['column'])) this.column = params['column'];
-			if(params['fontSize'] && !isNaN(params['fontSize'])) this.fontSize = params['fontSize'];
-			if(params['limit'] && !isNaN(params['limit'])) {
-				if(params['limit'] !== this.limit) {
+			if (params['column'] && !isNaN(params['column'])) this.column = params['column'];
+			if (params['fontSize'] && !isNaN(params['fontSize'])) this.fontSize = params['fontSize'];
+			if (params['limit'] && !isNaN(params['limit'])) {
+				if (params['limit'] !== this.limit) {
 					this.limit = params['limit'];
 					this.loadPacking();
 				} else {
@@ -81,7 +81,30 @@ export class PosPackingComponent {
 		this.transactionsToPacking = await this.getTransactions({ state: TransactionState.Packing, operationType: { $ne: "D" } });
 		let i = 0;
 		for (let transaction of this.transactionsToPacking) {
-			transaction['movementsOfArticles'] = await this.getMovementsOfArticles({ transaction: { $oid: transaction._id }, operationType: { $ne: "D" } });
+			transaction['movementsOfArticles'] = await this.getMovementsOfArticles(
+				{
+					transaction: { $oid: transaction._id },
+					operationType: { $ne: "D" },
+					$or: [
+						{
+							$and: [
+								{
+									movementParent: { $exists: true, $ne: null },
+									isOptional: true
+								}
+							]
+						},
+						{
+							$and: [
+								{
+									movementParent: { $exists: false, $eq: null },
+									isOptional: false
+								}
+							]
+						}
+					]
+				}
+			);
 			let color: string = this.getColor(transaction._id);
 			if (color) {
 				this.colorNumber = this.colors.indexOf(color);
@@ -168,6 +191,8 @@ export class PosPackingComponent {
 				notes: 1,
 				transaction: 1,
 				operationType: 1,
+				isOptional: 1,
+				movementParent: 1,
 			};
 
 			this._movementOfArticleService.getMovementsOfArticlesV2(
