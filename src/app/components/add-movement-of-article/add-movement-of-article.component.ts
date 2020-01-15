@@ -70,7 +70,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     public position: string = '';
     public notes: string[];
     public structures: Structure[];
-    public grouped: { name: string, names: [{ id: string, name: string, color: string, quantity: number, increasePrice: number, utilization: Utilization, isRequired: boolean }] }[] = [];
+    public grouped: { name: string, isRequired: boolean, names: [{ id: string, name: string, color: string, quantity: number, increasePrice: number, utilization: Utilization }] }[] = [];
     public movChild: MovementOfArticle[]
 
     public formErrors = { 'description': '', 'amount': '', 'unitPrice': '', 'notes': '' };
@@ -210,9 +210,9 @@ export class AddMovementOfArticleComponent implements OnInit {
                                 });
                             if (structure.optional) {
                                 if (groupIndex !== -1) {
-                                    this.grouped[groupIndex].names.push({ id: structure.child._id, name: structure.child.description, color: "white", quantity: structure.quantity, increasePrice: structure.increasePrice, utilization: structure.utilization, isRequired : structure.child.category.isRequiredOptional });
+                                    this.grouped[groupIndex].names.push({ id: structure.child._id, name: structure.child.description, color: "white", quantity: structure.quantity, increasePrice: structure.increasePrice, utilization: structure.utilization });
                                 } else {
-                                    this.grouped.push({ name: structure.child.category.description, names: [{ id: structure.child._id, name: structure.child.description, color: "white", quantity: structure.quantity, increasePrice: structure.increasePrice, utilization: structure.utilization, isRequired : structure.child.category.isRequiredOptional }] });
+                                    this.grouped.push({ name: structure.child.category.description, isRequired: structure.child.category.isRequiredOptional, names: [{ id: structure.child._id, name: structure.child.description, color: "white", quantity: structure.quantity, increasePrice: structure.increasePrice, utilization: structure.utilization }] });
                                 }
                             }
                         });
@@ -1032,23 +1032,25 @@ export class AddMovementOfArticleComponent implements OnInit {
 
         return new Promise<boolean>((resolve, reject) => {
 
-            if(this.grouped && this.grouped.length > 0){
-                let count = 0;
+            if (this.grouped && this.grouped.length > 0) {
+                var count = 0;
                 for (const group of this.grouped) {
-                    for (const name of group.names) {
-                        if(name.color === 'blue' && name.isRequired){
-                            count ++;
+                    if (group.isRequired) {
+                        for (const name of group.names) {
+                            if (name.color === 'blue') {
+                                count++;
+                            }
                         }
-                        if(count > 1){
+                        if (count > 1) {
                             this.showMessage(`Solo puede seleccionar un opcional de ${group.name}`, 'info', true);
-                            count = 0;
+                            resolve(false)
+                        }
+                        if (count == 0) {
+                            this.showMessage(`Debe seleccionar un opcional de ${group.name}`, 'info', true);
                             resolve(false)
                         }
                     }
-                    if(count != 1){
-                        this.showMessage(`Debe seleccionar un opcional`, 'info', true);
-                        resolve(false)
-                    }
+
                 }
             } else if (this.transaction.type &&
                 this.transaction.type.transactionMovement === TransactionMovement.Sale &&
