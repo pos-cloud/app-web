@@ -35,6 +35,7 @@ export class ListPriceListsComponent implements OnInit {
     "name",
     "percentage",
     "allowSpecialRules",
+    "default",
     "operationType"
   ];
   public filters: any[];

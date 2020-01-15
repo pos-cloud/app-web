@@ -86,9 +86,7 @@ import { AddMakeComponent } from './components/add-make/add-make.component';
 import { DeleteMakeComponent } from './components/delete-make/delete-make.component';
 import { UpdateMakeComponent } from './components/update-make/update-make.component';
 import { ListCategoriesComponent } from './components/list-categories/list-categories.component';
-import { AddCategoryComponent } from './components/add-category/add-category.component';
-import { UpdateCategoryComponent } from './components/update-category/update-category.component';
-import { DeleteCategoryComponent } from './components/delete-category/delete-category.component';
+import { CategoryComponent } from './components/category/category.component';
 import { AddUserComponent } from './components/add-user/add-user.component';
 import { ListUsersComponent } from './components/list-users/list-users.component';
 import { DeleteUserComponent } from './components/delete-user/delete-user.component';
@@ -316,9 +314,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     DeleteMakeComponent,
     UpdateMakeComponent,
     ListCategoriesComponent,
-    AddCategoryComponent,
-    UpdateCategoryComponent,
-    DeleteCategoryComponent,
+    CategoryComponent,
     PointOfSaleComponent,
     LoginComponent,
     FilterPipe,
@@ -509,9 +505,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     DeleteMakeComponent,
     UpdateMakeComponent,
     ListCategoriesComponent,
-    AddCategoryComponent,
-    UpdateCategoryComponent,
-    DeleteCategoryComponent,
+    CategoryComponent,
     PointOfSaleComponent,
     LoginComponent,
     AddUserComponent,

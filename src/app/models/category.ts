@@ -12,7 +12,8 @@ export class Category {
 	public visibleInvoice: boolean = false;
 	public visibleOnSale: boolean = true;
 	public visibleOnPurchase: boolean = true;
-	public ecommerceEnabled: boolean = false;
+    public ecommerceEnabled: boolean = false;
+    public isRequiredOptional: boolean = false;
 	public creationUser: User;
 	public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 	public updateUser: User;

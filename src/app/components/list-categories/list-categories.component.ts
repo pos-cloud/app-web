@@ -6,9 +6,7 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Category } from './../../models/category';
 import { CategoryService } from './../../services/category.service';
 
-import { AddCategoryComponent } from './../../components/add-category/add-category.component';
-import { UpdateCategoryComponent } from './../../components/update-category/update-category.component';
-import { DeleteCategoryComponent } from './../../components/delete-category/delete-category.component';
+import { CategoryComponent } from '../category/category.component';
 import { ImportComponent } from './../../components/import/import.component';
 
 import { Config } from './../../app.config';
@@ -75,7 +73,7 @@ export class ListCategoriesComponent implements OnInit {
 
 		this.loading = true;
 
-		let query = 'sort="description":1';
+		let query = 'sort="order":-1';
 
 		if(this.transactionMovement === TransactionMovement.Sale) {
 			query += `&where="visibleOnSale":true`;
@@ -126,20 +124,26 @@ export class ListCategoriesComponent implements OnInit {
 		let modalRef;
 		switch (op) {
 			case 'view':
-				modalRef = this._modalService.open(UpdateCategoryComponent, { size: 'lg', backdrop: 'static' });
-				modalRef.componentInstance.category = category;
+                modalRef = this._modalService.open(CategoryComponent, { size: 'lg', backdrop: 'static' });
+                modalRef.componentInstance.operation = "view";
+				modalRef.componentInstance.categoryId = category._id;
 				modalRef.componentInstance.readonly = true;
 				break;
 			case 'add':
-				modalRef = this._modalService.open(AddCategoryComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
+                modalRef = this._modalService.open(CategoryComponent, { size: 'lg', backdrop: 'static' })
+                modalRef.componentInstance.operation = "add";
+				modalRef.componentInstance.readonly = false;
+                modalRef.result.then((result) => {
 					this.getCategories();
 				}, (reason) => {
 					this.getCategories();
 				});
 				break;
 			case 'update':
-				modalRef = this._modalService.open(UpdateCategoryComponent, { size: 'lg', backdrop: 'static' });
-				modalRef.componentInstance.category = category;
+                modalRef = this._modalService.open(CategoryComponent, { size: 'lg', backdrop: 'static' });
+                modalRef.componentInstance.operation = "update";
+                modalRef.componentInstance.readonly = false;
+				modalRef.componentInstance.categoryId = category._id;
 				modalRef.result.then((result) => {
 					this.getCategories();
 				}, (reason) => {
@@ -147,9 +151,10 @@ export class ListCategoriesComponent implements OnInit {
 				});
 				break;
 			case 'delete':
-				modalRef = this._modalService.open(DeleteCategoryComponent, { size: 'lg', backdrop: 'static' })
-				modalRef.componentInstance.category = category;
-				modalRef.componentInstance.readonly = false;
+                modalRef = this._modalService.open(CategoryComponent, { size: 'lg', backdrop: 'static' })
+                modalRef.componentInstance.operation = "delete";
+				modalRef.componentInstance.categoryId = category._id;
+				modalRef.componentInstance.readonly = true;
 				modalRef.result.then((result) => {
 					if (result === 'delete_close') {
 						this.getCategories();
