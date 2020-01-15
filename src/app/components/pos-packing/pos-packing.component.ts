@@ -23,8 +23,10 @@ export class PosPackingComponent {
 	public alertMessage: string = '';
 	public loading: boolean = false;
 	public transactionsToPacking: Transaction[];
-	public colors: string[] = ["teal:white", "midnightblue:white", "black:white", "black:white", "chocolate:white"];
 	public printers: Printer[];
+
+	// DISEÑO
+	public colors: string[] = ["teal:white", "midnightblue:white", "black:white", "black:white", "chocolate:white"];
 	public colorNumber: number = 0;
 	public limit: number = 3;
 	public fontSize: number = 30;
