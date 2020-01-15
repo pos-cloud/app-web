@@ -544,25 +544,30 @@ export class PriceListComponent implements OnInit {
     }
 
     public isValid(): Promise<boolean>{
+
         return new Promise((resolve, reject) => {
-            let result = true;
-            this.priceLists.forEach(priceList => {
-                if(this.operation === "add" && priceList.default && this.priceList.default){
-                    this.showMessage("Solo puede existir una lista de precios por defecto","danger",false)
-                    resolve(false)
-                }
 
-                if(this.operation === "edit" && 
-                    this.priceList &&
-                    priceList.default && 
-                    this.priceList.default && 
-                    priceList._id !== this.priceList._id){
-                    this.showMessage("Solo puede existir una lista de precios por defecto","danger",false)
-                    resolve(false)
-                }
-            });
-
-            resolve(true)
+            if(this.priceLists && this.priceLists.length > 0){
+                this.priceLists.forEach(priceList => {
+                    if(this.operation === "add" && priceList.default && this.priceList.default){
+                        this.showMessage("Solo puede existir una lista de precios por defecto","danger",false)
+                        resolve(false)
+                    }
+    
+                    if(this.operation === "edit" && 
+                        this.priceList &&
+                        priceList.default && 
+                        this.priceList.default && 
+                        priceList._id !== this.priceList._id){
+                        this.showMessage("Solo puede existir una lista de precios por defecto","danger",false)
+                        resolve(false)
+                    }
+                });
+    
+                resolve(true)
+            } else {
+                resolve(true)
+            }
         })
     }
 
