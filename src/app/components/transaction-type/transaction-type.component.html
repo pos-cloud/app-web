@@ -416,6 +416,15 @@
                     </div>
                   </div> -->
                 </div>
+                <div class="row">
+                    <div class="form-group col-md-4">
+                        <label for="expirationDate" class="control-label">Vencimiento:</label>
+                        <input type="date" class="form-control" formControlName="expirationDate" name="expirationDate" id="expirationDate" [readonly]="readonly"/>
+                        <div *ngIf="formErrors.expirationDate" class="alert alert-danger">
+                          {{ formErrors.expirationDate }}
+                        </div>
+                      </div>
+                </div>
               </div>
             </div>
           </ng-template>
@@ -890,13 +899,22 @@
         </ngb-tab>
       </ngb-tabset>
     </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="!transactionTypeForm.valid || loading">
-        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
-        <span *ngIf="!loading">Guardar</span>
-        <span *ngIf="loading">Espere por favor</span>
-      </button>
-    </div>
+    <div class="modal-footer" *ngIf="operation !== 'view'">
+        <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="!transactionTypeForm.valid || loading" *ngIf="operation !== 'delete'">
+          <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+          <span *ngIf="!loading">Guardar</span>
+          <span *ngIf="loading">Espere por favor</span>
+        </button>
+        <button type="button" 
+                class="btn btn-danger" 
+                *ngIf="operation === 'delete'" 
+                [disabled]="!transactionTypeForm.valid || loading" 
+                (click)="deleteTransactionType()">
+          <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
+          <span *ngIf="!loading">Eliminar</span>
+          <span *ngIf="loading">Espere por favor</span>
+        </button>
+      </div>
   </form>
 </section>

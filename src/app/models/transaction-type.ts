@@ -58,7 +58,8 @@ export class TransactionType {
 	public posKitchen: boolean = false;
 	public readLayout: boolean = false;
 	public updatePrice: boolean = false;
-	public updateArticle: boolean = false;
+    public updateArticle: boolean = false;
+    public expirationDate : string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 	public creationUser: User;
 	public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 	public updateUser: User;
