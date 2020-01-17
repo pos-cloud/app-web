@@ -110,8 +110,7 @@ import { PrintComponent } from './components/print/print/print.component';
 import { ViewTransactionComponent } from './components/view-transaction/view-transaction.component';
 import { ListTurnsComponent } from './components/list-turns/list-turns.component';
 import { ListTransactionTypesComponent } from './components/list-transaction-types/list-transaction-types.component';
-import { AddTransactionTypeComponent } from './components/add-transaction-type/add-transaction-type.component';
-import { DeleteTransactionTypeComponent } from './components/delete-transaction-type/delete-transaction-type.component';
+import { TransactionTypeComponent } from './components/transaction-type/transaction-type.component';
 import { ExportCitiComponent } from './components/export/export-citi/export-citi.component';
 import { UpdateArticleStockComponent } from './components/update-article-stock/update-article-stock.component';
 import { ListArticleStocksComponent } from './components/list-article-stocks/list-article-stocks.component';
@@ -348,8 +347,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ViewTransactionComponent,
     ListTurnsComponent,
     ListTransactionTypesComponent,
-    AddTransactionTypeComponent,
-    DeleteTransactionTypeComponent,
+    TransactionTypeComponent,
     RegisterComponent,
     ExportCitiComponent,
     AddArticleStockComponent,
@@ -532,8 +530,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ViewTransactionComponent,
     ListTurnsComponent,
     ListTransactionTypesComponent,
-    AddTransactionTypeComponent,
-    DeleteTransactionTypeComponent,
+    TransactionTypeComponent,
     RegisterComponent,
     ExportCitiComponent,
     AddArticleStockComponent,

@@ -2,15 +2,19 @@ import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
+//Terceros de mierda
+import * as moment from 'moment';
+import 'moment/locale/es';
+
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { TransactionType, Movements, CurrentAccount, CodeAFIP, TransactionMovement, StockMovement, EntryAmount, PriceType, DescriptionType } from './../../models/transaction-type';
-import { Printer } from './../../models/printer';
-import { EmployeeType } from './../../models/employee-type';
+import { TransactionType, Movements, CurrentAccount, CodeAFIP, TransactionMovement, StockMovement, EntryAmount, PriceType, DescriptionType } from '../../models/transaction-type';
+import { Printer } from '../../models/printer';
+import { EmployeeType } from '../../models/employee-type';
 
-import { TransactionTypeService } from './../../services/transaction-type.service';
-import { PrinterService } from './../../services/printer.service';
-import { EmployeeTypeService } from './../../services/employee-type.service';
+import { TransactionTypeService } from '../../services/transaction-type.service';
+import { PrinterService } from '../../services/printer.service';
+import { EmployeeTypeService } from '../../services/employee-type.service';
 import { PaymentMethodService } from 'app/services/payment-method.service';
 import { PaymentMethod } from 'app/models/payment-method';
 import { CompanyType } from 'app/models/company';
@@ -21,13 +25,13 @@ import { UseOfCFDI } from 'app/models/use-of-CFDI';
 import { UseOfCFDIService } from 'app/services/use-of-CFDI.service';
 
 @Component({
-  selector: 'app-add-transaction-type',
-  templateUrl: './add-transaction-type.component.html',
-  styleUrls: ['./add-transaction-type.component.css'],
+  selector: 'app-transaction-type',
+  templateUrl: './transaction-type.component.html',
+  styleUrls: ['./transaction-type.component.css'],
   providers: [NgbAlertConfig]
 })
 
-export class AddTransactionTypeComponent implements OnInit {
+export class TransactionTypeComponent implements OnInit {
 
   @Input() transactionType: TransactionType;
   public transactionMovements: any[] = [TransactionMovement.Sale, TransactionMovement.Purchase, TransactionMovement.Stock, TransactionMovement.Money];
@@ -327,7 +331,8 @@ export class AddTransactionTypeComponent implements OnInit {
       'automaticCreation' : [this.transactionType.automaticCreation,[]],
       'readLayout' : [this.transactionType.readLayout,[]],
       'updatePrice' : [this.transactionType.updatePrice,[]],
-      'updateArticle' : [this.transactionType.updateArticle,[]]
+      'updateArticle' : [this.transactionType.updateArticle,[]],
+      'expirationDate' : [this.transactionType.expirationDate,[]]
 
     });
 
@@ -493,6 +498,11 @@ export class AddTransactionTypeComponent implements OnInit {
     if (this.transactionType.updatePrice === undefined) this.transactionType.updatePrice = false;
     if (this.transactionType.updateArticle === undefined) this.transactionType.updateArticle = false;
 
+    if (this.transactionType.expirationDate) {
+        this.transactionType.expirationDate = moment(this.transactionType.expirationDate).format('YYYY-MM-DD');
+    } else {
+        this.transactionType.expirationDate = null;
+    }
 
     this.transactionTypeForm.setValue({
       '_id': this.transactionType._id,
@@ -545,7 +555,8 @@ export class AddTransactionTypeComponent implements OnInit {
       'posKitchen' : this.transactionType.posKitchen,
       'readLayout' : this.transactionType.readLayout,
       'updatePrice' : this.transactionType.updatePrice,
-      'updateArticle' : this.transactionType.updateArticle
+      'updateArticle' : this.transactionType.updateArticle,
+      'expirationDate' : this.transactionType.expirationDate
 
     });
   }
@@ -616,6 +627,22 @@ export class AddTransactionTypeComponent implements OnInit {
           this.transactionType = new TransactionType();
           this.buildForm();
         }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public deleteTransactionType(): void {
+
+    this.loading = true;
+
+    this._transactionTypeService.deleteTransactionType(this.transactionType._id).subscribe(
+      result => {
+        this.activeModal.close('delete_close');
         this.loading = false;
       },
       error => {

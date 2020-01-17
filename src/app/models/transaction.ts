@@ -443,6 +443,16 @@ export let attributes = [
 		project: null,
 		align: 'left',
 		required: true,
+    },
+    {
+		name: 'type.expirationDate',
+		visible: false,
+		disabled: true,
+		filter: false,
+		datatype: 'date',
+		project: null,
+		align: 'left',
+		required: true,
 	}
 ];
 

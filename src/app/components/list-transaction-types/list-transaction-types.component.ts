@@ -7,8 +7,7 @@ import { TransactionType, TransactionMovement } from './../../models/transaction
 import { Transaction } from './../../models/transaction'
 import { TransactionTypeService } from './../../services/transaction-type.service';
 
-import { AddTransactionTypeComponent } from './../../components/add-transaction-type/add-transaction-type.component';
-import { DeleteTransactionTypeComponent } from './../../components/delete-transaction-type/delete-transaction-type.component';
+import { TransactionTypeComponent } from '../transaction-type/transaction-type.component';
 import { Config } from 'app/app.config';
 import { TransactionService } from 'app/services/transaction.service';
 
@@ -309,13 +308,13 @@ export class ListTransactionTypesComponent implements OnInit {
 		let modalRef;
 		switch (op) {
 			case 'view':
-				modalRef = this._modalService.open(AddTransactionTypeComponent, { size: 'lg', backdrop: 'static' });
+				modalRef = this._modalService.open(TransactionTypeComponent, { size: 'lg', backdrop: 'static' });
 				modalRef.componentInstance.operation = 'view';
 				modalRef.componentInstance.transactionType = transactionType;
 				modalRef.componentInstance.readonly = true;
 				break;
 			case 'add':
-				modalRef = this._modalService.open(AddTransactionTypeComponent, { size: 'lg', backdrop: 'static' });
+				modalRef = this._modalService.open(TransactionTypeComponent, { size: 'lg', backdrop: 'static' });
 				modalRef.componentInstance.operation = 'add';
 				modalRef.result.then((result) => {
 					this.getTransactionTypes();
@@ -324,7 +323,7 @@ export class ListTransactionTypesComponent implements OnInit {
 				});
 				break;
 			case 'update':
-				modalRef = this._modalService.open(AddTransactionTypeComponent, { size: 'lg', backdrop: 'static' });
+				modalRef = this._modalService.open(TransactionTypeComponent, { size: 'lg', backdrop: 'static' });
 				modalRef.componentInstance.operation = 'update';
 				modalRef.componentInstance.transactionType = transactionType;
 				modalRef.componentInstance.readonly = false;
@@ -335,8 +334,10 @@ export class ListTransactionTypesComponent implements OnInit {
 				});
 				break;
 			case 'delete':
-				modalRef = this._modalService.open(DeleteTransactionTypeComponent, { size: 'lg', backdrop: 'static' })
-				modalRef.componentInstance.transactionType = transactionType;
+				modalRef = this._modalService.open(TransactionTypeComponent, { size: 'lg', backdrop: 'static' })
+                modalRef.componentInstance.transactionType = transactionType;
+                modalRef.componentInstance.readonly = true;
+                modalRef.componentInstance.operation = "delete"
 				modalRef.result.then((result) => {
 					if (result === 'delete_close') {
 						this.getTransactionTypes();
