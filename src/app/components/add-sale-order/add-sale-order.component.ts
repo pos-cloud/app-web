@@ -2719,13 +2719,13 @@ export class AddSaleOrderComponent {
 
         if (this.barArticlesToPrint && this.barArticlesToPrint.length !== 0) {
             this.typeOfOperationToPrint = "bar";
-            this.openModal('printers');
+            this.distributeImpressions();
         } else if (this.kitchenArticlesToPrint && this.kitchenArticlesToPrint.length !== 0) {
             this.typeOfOperationToPrint = "kitchen";
-            this.openModal('printers');
+            this.distributeImpressions();
         } else if (this.voucherArticlesToPrint && this.voucherArticlesToPrint.length !== 0) {
             this.typeOfOperationToPrint = "voucher";
-            this.openModal('printers');
+            this.distributeImpressions();
         } else if (this.posType === 'resto' && this.transaction.table) {
             this.transaction.table.state = TableState.Busy;
             await this.updateTable().then(table => {
