@@ -3078,6 +3078,9 @@ export class AddSaleOrderComponent {
                                 if (element && element.printIn === PrinterPrintIn.Voucher && this.typeOfOperationToPrint === 'voucher') {
                                     this.printerSelected = element;
                                 }
+                                if (element && element.printIn === PrinterPrintIn.Counter && (this.typeOfOperationToPrint === 'charge' || this.typeOfOperationToPrint === 'bill')) {
+                                    this.printerSelected = element;
+                                }
                             }
                         }
                     }
