@@ -188,8 +188,8 @@ export class PosPackingComponent {
 				_id: 1,
 				description: 1,
 				amount: 1,
-				notes: 1,
-				transaction: 1,
+                notes: 1,
+                transaction: 1,
 				operationType: 1,
 				isOptional: 1,
 				movementParent: 1,
@@ -198,7 +198,7 @@ export class PosPackingComponent {
 			this._movementOfArticleService.getMovementsOfArticlesV2(
 				project, // PROJECT
 				match, // MATCH
-				{}, // SORT
+				{"article.category.order" : -1}, // SORT
 				{}, // GROUP
 				0, // LIMIT
 				0 // SKIP
