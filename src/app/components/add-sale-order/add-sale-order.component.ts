@@ -1367,12 +1367,12 @@ export class AddSaleOrderComponent {
 
             movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice);
             movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice);
-			movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice);
-			
-			// LIMPIAR UN POCO LA RELACIÓN
-			movementOfArticle.transaction = new Transaction();
-			movementOfArticle.transaction._id = this.transaction._id;
-			// FIN DE LIMPIADO
+            movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice);
+
+            // LIMPIAR UN POCO LA RELACIÓN
+            movementOfArticle.transaction = new Transaction();
+            movementOfArticle.transaction._id = this.transaction._id;
+            // FIN DE LIMPIADO
 
             this._movementOfArticleService.updateMovementOfArticle(movementOfArticle).subscribe(
                 result => {
@@ -1432,7 +1432,7 @@ export class AddSaleOrderComponent {
                     }
                     totalPriceAux += this.roundNumber.transform(movementOfArticle.salePrice);
                     discountAmountAux += this.roundNumber.transform(movementOfArticle.transactionDiscountAmount * movementOfArticle.amount);
-					// COMPARAMOS JSON -- SI CAMBIO ACTUALIZAMOS
+                    // COMPARAMOS JSON -- SI CAMBIO ACTUALIZAMOS
                     if (this._jsonDiffPipe.transform(oldMovementOfArticle, movementOfArticle)) {
                         let result = await this.updateMovementOfArticle(movementOfArticle);
                         if (!result) {
@@ -2719,13 +2719,13 @@ export class AddSaleOrderComponent {
 
         if (this.barArticlesToPrint && this.barArticlesToPrint.length !== 0) {
             this.typeOfOperationToPrint = "bar";
-            this.distributeImpressions();
+            this.distributeImpressions()
         } else if (this.kitchenArticlesToPrint && this.kitchenArticlesToPrint.length !== 0) {
             this.typeOfOperationToPrint = "kitchen";
-            this.distributeImpressions();
+            this.distributeImpressions()
         } else if (this.voucherArticlesToPrint && this.voucherArticlesToPrint.length !== 0) {
             this.typeOfOperationToPrint = "voucher";
-            this.distributeImpressions();
+            this.distributeImpressions()
         } else if (this.posType === 'resto' && this.transaction.table) {
             this.transaction.table.state = TableState.Busy;
             await this.updateTable().then(table => {
@@ -3049,7 +3049,7 @@ export class AddSaleOrderComponent {
         this.printerSelected = printer;
 
         await this.getUser().then(
-            user => {
+            async user => {
                 if (user) {
                     if (user.printers && user.printers.length > 0) {
                         for (const element of user.printers) {
@@ -3067,21 +3067,28 @@ export class AddSaleOrderComponent {
                             }
                         }
                     } else {
-                        if (!this.printSelected && this.printers) {
-                            for (const element of this.printers) {
-                                if (element && element.printIn === PrinterPrintIn.Bar && this.typeOfOperationToPrint === 'bar') {
-                                    this.printerSelected = element;
+                        if (!this.printSelected) {
+                            await this.getPrinters().then(
+                                printers => {
+                                    if (printers) {
+                                        this.printers = printers;
+                                        for (const element of this.printers) {
+                                            if (element && element.printIn === PrinterPrintIn.Bar && this.typeOfOperationToPrint === 'bar') {
+                                                this.printerSelected = element;
+                                            }
+                                            if (element && element.printIn === PrinterPrintIn.Kitchen && this.typeOfOperationToPrint === 'kitchen') {
+                                                this.printerSelected = element;
+                                            }
+                                            if (element && element.printIn === PrinterPrintIn.Voucher && this.typeOfOperationToPrint === 'voucher') {
+                                                this.printerSelected = element;
+                                            }
+                                            if (element && element.printIn === PrinterPrintIn.Counter && (this.typeOfOperationToPrint === 'charge' || this.typeOfOperationToPrint === 'bill')) {
+                                                this.printerSelected = element;
+                                            }
+                                        }
+                                    }
                                 }
-                                if (element && element.printIn === PrinterPrintIn.Kitchen && this.typeOfOperationToPrint === 'kitchen') {
-                                    this.printerSelected = element;
-                                }
-                                if (element && element.printIn === PrinterPrintIn.Voucher && this.typeOfOperationToPrint === 'voucher') {
-                                    this.printerSelected = element;
-                                }
-                                if (element && element.printIn === PrinterPrintIn.Counter && (this.typeOfOperationToPrint === 'charge' || this.typeOfOperationToPrint === 'bill')) {
-                                    this.printerSelected = element;
-                                }
-                            }
+                            );
                         }
                     }
                 } else {
