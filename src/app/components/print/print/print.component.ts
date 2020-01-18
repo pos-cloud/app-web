@@ -1978,9 +1978,12 @@ export class PrintComponent implements OnInit {
                 this.transaction.company &&
                 this.transaction.company.vatCondition.discriminate) {
                 let col = 165
+                this.doc.text("IVA", col, 77);
                 this.transaction.taxes.forEach(element => {
-                    this.doc.text(element.tax.name, col, 77);
-                    col = col + 10;
+                    if(element.tax.code === "04"){
+                        col = col + 10;
+                        this.doc.text("Imp Int", col, 77);
+                    }
                 });
             }
             this.doc.text("Total", 192, 77);
