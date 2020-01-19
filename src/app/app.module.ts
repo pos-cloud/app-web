@@ -275,7 +275,8 @@ import { JsonDiffPipe } from './pipes/json-diff';
 import { SelectCompanyComponent } from './components/select-company/select-company.component';
 import { SelectTableComponent } from './components/select-table/select-table.component';
 
-const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} };
+// const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
+const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
