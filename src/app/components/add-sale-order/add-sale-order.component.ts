@@ -3050,6 +3050,9 @@ export class AddSaleOrderComponent {
 
 	async distributeImpressions(printer?: Printer) {
 
+        console.log(printer);
+
+
 		this.printerSelected = printer;
 
 		await this.getUser().then(
@@ -3071,7 +3074,7 @@ export class AddSaleOrderComponent {
 							}
 						}
 					} else {
-						if (!this.printSelected) {
+						if (!this.printerSelected) {
 							await this.getPrinters().then(
 								printers => {
 									if (printers) {
