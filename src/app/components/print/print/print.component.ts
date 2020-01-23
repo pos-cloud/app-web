@@ -1660,6 +1660,27 @@ export class PrintComponent implements OnInit {
         });
     }
 
+    public getEmployee() {
+        
+        let margin = 5;
+
+        // Lineas divisorias horizontales para el receptor
+        this.doc.line(0, 67, 240, 67);
+        //this.doc.line(0, 80, 240, 80);
+
+        // Detalle receptor
+        this.doc.setFontSize(this.fontSizes.normal);
+        this.doc.setFontType('bold');
+        this.doc.text("Empleado:", margin, 71);
+
+        this.doc.setFontType('normal');
+
+        this.doc.text(this.transaction.employeeClosing.name, 42, 71);
+       
+        this.doc.setFontSize(this.fontSizes.normal);
+        this.doc.setFontType('normal');
+    }
+
     public getClient() {
 
         let margin = 5;
@@ -1963,6 +1984,9 @@ export class PrintComponent implements OnInit {
             }
         }
         this.getClient();
+        if(this.transaction.type.requestEmployee && this.transaction.employeeClosing){
+            this.getEmployee()
+        }
 
         this.doc.setFontType('normal');
         this.doc.setFontSize('normal');
