@@ -2149,7 +2149,7 @@ export class PrintComponent implements OnInit {
 
                     transport = transport + this.movementsOfArticles[i].salePrice;
 
-                    row += 8;
+                    row += 5;
 
                     if (row > 240) {
                         this.doc.setFontType("bold");
