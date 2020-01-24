@@ -122,12 +122,12 @@
 							<b>{{transaction.number}}</b>
 						</td>
 						<td (click)="openTransaction(transaction)" *ngIf="transaction.endDate">
-							{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}
-							<b>{{transaction.endDate | dateFormat:'HH:mm:ss' }}</b>
+							{{transaction.endDate }}
+							<b>{{transaction.endDate }}</b>
 						</td>
 						<td (click)="openTransaction(transaction)" *ngIf="!transaction.endDate">
-							{{transaction.startDate | dateFormat:'DD/MM/YYYY' }}
-							<b>{{transaction.startDate | dateFormat:'HH:mm:ss' }}</b>
+							{{transaction.startDate }}
+							<b>{{transaction.startDate }}</b>
 						</td>
 						<td (click)="openTransaction(transaction)" *ngIf="transaction.company">
 							{{transaction.company.name}}</td>
@@ -268,9 +268,9 @@
 						</td>
 						<td (click)="openTransaction(transaction)">{{transaction.type.name}}</td>
 						<td *ngIf="transaction.endDate" (click)="openTransaction(transaction)">
-							{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}</td>
+							{{transaction.endDate }}</td>
 						<td *ngIf="!transaction.endDate" (click)="openTransaction(transaction)">
-							{{transaction.startDate | dateFormat:'DD/MM/YYYY hh:mm:ss' }}</td>
+							{{transaction.startDate }}</td>
 						<td (click)="openTransaction(transaction)">
 							<b>{{transaction.number}}</b>
 						</td>
@@ -394,8 +394,8 @@
 							<button type="button" class="btn btn-light" (click)="printTransaction(transaction)"
 								title="Imprimir"><i class="fa fa-print"></i></button>
 						</td>
-						<td *ngIf="transaction.endDate">{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}</td>
-						<td *ngIf="!transaction.endDate">{{transaction.startDate | dateFormat:'DD/MM/YYYY hh:mm:ss' }}
+						<td *ngIf="transaction.endDate">{{transaction.endDate}}</td>
+						<td *ngIf="!transaction.endDate">{{transaction.startDate}}
 						</td>
 						<td><b>{{transaction.number}}</b></td>
 						<td *ngIf="transaction.company">{{transaction.company.name}}</td>

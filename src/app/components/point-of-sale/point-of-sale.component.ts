@@ -91,6 +91,7 @@ export class PointOfSaleComponent implements OnInit {
 	public config: Config;
 	public transactionTypeId: string;
 	private subscription: Subscription = new Subscription();
+	public timezone: string = "-03:00";
 
 	// CAMPOS TRAIDOS DE LA CUENTA CTE.
 	@Input() company: Company;
@@ -1439,16 +1440,16 @@ export class PointOfSaleComponent implements OnInit {
 			this.loading = true;
 
 			let project = {
-				startDate: 1,
-				endDate: 1,
-				origin: 1,
-				number: 1,
-				observation: 1,
-				totalPrice: 1,
-				balance: 1,
-				state: 1,
-				madein: 1,
-				operationType: 1,
+				"startDate": { "$dateToString": { "date": "$startDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" }},
+				"endDate": { "$dateToString": { "date": "$endDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" }},
+				"origin": 1,
+				"number": 1,
+				"observation": 1,
+				"totalPrice": 1,
+				"balance": 1,
+				"state": 1,
+				"madein": 1,
+				"operationType": 1,
 				"type._id": 1,
 				"type.name": 1,
 				"type.transactionMovement": 1,
@@ -1471,7 +1472,8 @@ export class PointOfSaleComponent implements OnInit {
 			if (this.transactionMovement === TransactionMovement.Sale) {
 				project["employeeClosing._id"] = 1;
 				project["employeeClosing.name"] = 1;
-			}
+            }
+            
 
 			this.subscription.add(this._transactionService.getTransactionsV2(
 				project, // PROJECT
