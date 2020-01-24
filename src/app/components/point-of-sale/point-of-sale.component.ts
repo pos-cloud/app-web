@@ -1453,9 +1453,11 @@ export class PointOfSaleComponent implements OnInit {
 
 			this.loading = true;
 
-			let project = {
-				"startDate": { "$dateToString": { "date": "$startDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" }},
-				"endDate": { "$dateToString": { "date": "$endDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" }},
+            let project = `{`;
+
+			project += `
+				"startDate": { "$dateToString": { "date": "$startDate", "format": "%d/%m/%Y %H:%M", "timezone": "${Config.timezone.substring(3,9) }" }},
+				"endDate": { "$dateToString": { "date": "$endDate", "format": "%d/%m/%Y %H:%M", "timezone":  "${Config.timezone.substring(3,9) }" }},
 				"origin": 1,
 				"number": 1,
 				"observation": 1,
@@ -1468,26 +1470,43 @@ export class PointOfSaleComponent implements OnInit {
                 "type.allowEdit" : 1,
 				"type.name": 1,
 				"type.transactionMovement": 1,
-				"branchOrigin": 1,
-			}
+				"branchOrigin": 1
+			`
 
 			if (this.transactionMovement === TransactionMovement.Stock) {
-				project["type.stockMovement"] = 1;
-				project["depositOrigin._id"] = 1;
-				project["depositOrigin.name"] = 1;
-				project["depositDestination._id"] = 1;
-				project["depositDestination.name"] = 1;
+
+                project += `
+				    ,"type.stockMovement" : 1,
+                    "depositOrigin._id" : 1,
+                    "depositOrigin.name" : 1,
+                    "depositDestination._id" : 1,
+                    "depositDestination.name" : 1
+                `
+				
 			}
 
 			if (this.transactionMovement !== TransactionMovement.Stock) {
-				project["company._id"] = 1;
-				project["company.name"] = 1;
+
+                project += `
+                
+                ,"company._id": 1,
+				"company.name": 1
+                `
+				
 			}
 
 			if (this.transactionMovement === TransactionMovement.Sale) {
-				project["employeeClosing._id"] = 1;
-				project["employeeClosing.name"] = 1;
+
+                project += `
+                    ,"employeeClosing._id" : 1,
+                    "employeeClosing.name" : 1
+                `
+				
             }
+
+            project += `}`;
+
+		    project = JSON.parse(project);
             
 
 			this.subscription.add(this._transactionService.getTransactionsV2(
