@@ -946,7 +946,7 @@ export class PointOfSaleComponent implements OnInit {
 	public async changeCompany(transaction: Transaction) {
 		this.transaction = await this.getTransaction(transaction._id);
 		if (this.transaction) {
-			this.openModal('company');
+			this.openModal('edit');
 		}
 	}
 
@@ -1294,7 +1294,21 @@ export class PointOfSaleComponent implements OnInit {
 						this.hideMessage();
 					});
 				break;
-
+                case 'edit':
+                    modalRef = this._modalService.open(AddTransactionComponent, { size: 'lg', backdrop: 'static' });
+                    modalRef.componentInstance.transactionId = this.transaction._id;
+                    modalRef.result.then(
+                        async (result) => {
+                            if (result && result.transaction) {
+                                this.updateTransaction(result.transaction)
+                                this.refresh();
+                            } else {
+                                this.refresh();
+                            }
+                        }, (reason) => {
+                            this.refresh();
+                        });
+                    break;
 
 			default: ;
 		}
@@ -1450,7 +1464,8 @@ export class PointOfSaleComponent implements OnInit {
 				"state": 1,
 				"madein": 1,
 				"operationType": 1,
-				"type._id": 1,
+                "type._id": 1,
+                "type.allowEdit" : 1,
 				"type.name": 1,
 				"type.transactionMovement": 1,
 				"branchOrigin": 1,
