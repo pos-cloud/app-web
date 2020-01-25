@@ -39,7 +39,8 @@
             <li class="nav-item" *ngIf="identity.employee &&
             identity.employee.type.description !== 'Administrador' &&
             config.modules.app" (click)="makeVisibleReport(false)">
-                <a class="nav-link btn" [routerLink]="['pos','lector-de-vouchers']" [routerLinkActive]="['active-primary']">
+                <a class="nav-link btn" [routerLink]="['pos','lector-de-vouchers']"
+                    [routerLinkActive]="['active-primary']">
                     <i class="fa fa-qrcode"></i> Lector de Vouchers</a>
             </li>
 
@@ -264,6 +265,26 @@
                     <button class="dropdown-item" [routerLink]="['admin','salones']" [routerLinkActive]="['active']">
                         Salones
                     </button>
+                </div>
+            </li>
+            <li class="nav-item" ngbDropdown
+                *ngIf="(identity.employee && identity.employee.type.description === 'Administrador')"
+                (click)="makeVisibleReport(false)">
+                <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
+                    <i class="fa fa-image"></i> Contenido</a>
+                <div class="dropdown-menu" ngbDropdownMenu>
+                    <div>
+                        <button class="dropdown-item" [routerLink]="['admin','resources']"
+                            [routerLinkActive]="['active']">
+                            Recursos
+                        </button>
+                    </div>
+                    <div>
+                        <button class="dropdown-item" [routerLink]="['admin','galleries']"
+                            [routerLinkActive]="['active']">
+                            Galerías
+                        </button>
+                    </div>
                 </div>
             </li>
             <li class="nav-item" ngbDropdown *ngIf="(identity.employee &&
