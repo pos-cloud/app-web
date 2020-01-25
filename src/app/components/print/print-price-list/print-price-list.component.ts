@@ -264,6 +264,8 @@ export class PrintPriceListComponent implements OnInit {
 
     this.loading = true;
 
+    console.log(this.printPriceListForm.value)
+
     let match = `{`;
 
     if(this.printPriceListForm.value.make) {
@@ -274,8 +276,8 @@ export class PrintPriceListComponent implements OnInit {
       match += `"category._id" :  { "$oid" : "${this.printPriceListForm.value.category}" },`
     }
 
-    if(this.printPriceListForm.value.otherFields && this.printPriceListForm.value.articleFieldsValue) {
-      match += `"otherFields.value" : "${this.printPriceListForm.value.articleFieldsValue}",`
+    if(this.printPriceListForm.value.articleField && this.printPriceListForm.value.articleFieldValue) {
+      match += `"otherFields" : { "$elemMatch" : { "$and": [ { "value" :  "${this.printPriceListForm.value.articleFieldValue}" } ] }},`
     }
 
     match += `"type" : "Final", "allowSale": true , "operationType" : { "$ne" : "D" } }`;
@@ -294,7 +296,7 @@ export class PrintPriceListComponent implements OnInit {
       "make.description": 1,
       "picture": 1,
       operationType: 1,
-      "otherFields": 1,
+      "otherFields" : 1,
       "allowSale" : 1,
       "containsVariants" : 1
     }
@@ -311,7 +313,7 @@ export class PrintPriceListComponent implements OnInit {
         this.loading = false;
         if (result && result.articles) {
           this.articles = result.articles;
-          if(this.printPriceListForm.value.withImage == true) {
+          if(this.printPriceListForm.value.withImage == "true") {
             this.printPriceListWithImagen();
           } else {
             this.printPriceListWithoutImagen();

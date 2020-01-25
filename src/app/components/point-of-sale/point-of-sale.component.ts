@@ -91,6 +91,7 @@ export class PointOfSaleComponent implements OnInit {
 	public config: Config;
 	public transactionTypeId: string;
 	private subscription: Subscription = new Subscription();
+	public timezone: string = "-03:00";
 
 	// CAMPOS TRAIDOS DE LA CUENTA CTE.
 	@Input() company: Company;
@@ -945,7 +946,7 @@ export class PointOfSaleComponent implements OnInit {
 	public async changeCompany(transaction: Transaction) {
 		this.transaction = await this.getTransaction(transaction._id);
 		if (this.transaction) {
-			this.openModal('company');
+			this.openModal('edit');
 		}
 	}
 
@@ -1293,7 +1294,21 @@ export class PointOfSaleComponent implements OnInit {
 						this.hideMessage();
 					});
 				break;
-
+                case 'edit':
+                    modalRef = this._modalService.open(AddTransactionComponent, { size: 'lg', backdrop: 'static' });
+                    modalRef.componentInstance.transactionId = this.transaction._id;
+                    modalRef.result.then(
+                        async (result) => {
+                            if (result && result.transaction) {
+                                this.updateTransaction(result.transaction)
+                                this.refresh();
+                            } else {
+                                this.refresh();
+                            }
+                        }, (reason) => {
+                            this.refresh();
+                        });
+                    break;
 
 			default: ;
 		}
@@ -1438,40 +1453,61 @@ export class PointOfSaleComponent implements OnInit {
 
 			this.loading = true;
 
-			let project = {
-				startDate: 1,
-				endDate: 1,
-				origin: 1,
-				number: 1,
-				observation: 1,
-				totalPrice: 1,
-				balance: 1,
-				state: 1,
-				madein: 1,
-				operationType: 1,
-				"type._id": 1,
+            let project = `{`;
+
+			project += `
+				"startDate": { "$dateToString": { "date": "$startDate", "format": "%d/%m/%Y %H:%M", "timezone": "${Config.timezone.substring(3,9) }" }},
+				"endDate": { "$dateToString": { "date": "$endDate", "format": "%d/%m/%Y %H:%M", "timezone":  "${Config.timezone.substring(3,9) }" }},
+				"origin": 1,
+				"number": 1,
+				"observation": 1,
+				"totalPrice": 1,
+				"balance": 1,
+				"state": 1,
+				"madein": 1,
+				"operationType": 1,
+                "type._id": 1,
+                "type.allowEdit" : 1,
 				"type.name": 1,
 				"type.transactionMovement": 1,
-				"branchOrigin": 1,
-			}
+				"branchOrigin": 1
+			`
 
 			if (this.transactionMovement === TransactionMovement.Stock) {
-				project["type.stockMovement"] = 1;
-				project["depositOrigin._id"] = 1;
-				project["depositOrigin.name"] = 1;
-				project["depositDestination._id"] = 1;
-				project["depositDestination.name"] = 1;
+
+                project += `
+				    ,"type.stockMovement" : 1,
+                    "depositOrigin._id" : 1,
+                    "depositOrigin.name" : 1,
+                    "depositDestination._id" : 1,
+                    "depositDestination.name" : 1
+                `
+				
 			}
 
 			if (this.transactionMovement !== TransactionMovement.Stock) {
-				project["company._id"] = 1;
-				project["company.name"] = 1;
+
+                project += `
+                
+                ,"company._id": 1,
+				"company.name": 1
+                `
+				
 			}
 
 			if (this.transactionMovement === TransactionMovement.Sale) {
-				project["employeeClosing._id"] = 1;
-				project["employeeClosing.name"] = 1;
-			}
+
+                project += `
+                    ,"employeeClosing._id" : 1,
+                    "employeeClosing.name" : 1
+                `
+				
+            }
+
+            project += `}`;
+
+		    project = JSON.parse(project);
+            
 
 			this.subscription.add(this._transactionService.getTransactionsV2(
 				project, // PROJECT

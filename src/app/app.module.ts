@@ -282,10 +282,9 @@ import { ListGalleriesComponent } from './components/list-galleries/list-galleri
 import { GalleryService } from './services/gallery.service';
 import { ViewGalleryComponent } from './components/view-gallery/view-gallery.component';
 
-const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} };
-import { GalleryModule } from '@ngx-gallery/core';
-import { NgxGalleryModule } from 'ngx-gallery';
 import { NguCarouselModule } from '@ngu/carousel';
+// const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
+const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http);

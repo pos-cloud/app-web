@@ -272,6 +272,7 @@ export class PosKitchenComponent {
 				printed: 1,
 				movementParent: 1,
 				isOptional: 1,
+				operationType: 1,
 				'article._id': 1,
 				'article.picture': 1,
 				'transaction._id': 1,

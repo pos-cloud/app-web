@@ -156,7 +156,7 @@ export class ListClassificationsComponent implements OnInit {
       this.getClassifications();
   }
 
-  public openModal (op: string, bank?: Classification) : void {
+  public openModal (op: string, classification?: Classification) : void {
 
     let modalRef
     switch (op) {
@@ -173,7 +173,7 @@ export class ListClassificationsComponent implements OnInit {
       case 'edit':
         modalRef = this._modalService.open(ClassificationComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "edit";
-        modalRef.componentInstance.bankId = bank._id;
+        modalRef.componentInstance.classificationId = classification._id;
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
           this.getClassifications();
@@ -184,7 +184,7 @@ export class ListClassificationsComponent implements OnInit {
       case 'delete':
         modalRef = this._modalService.open(ClassificationComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "delete";
-        modalRef.componentInstance.bankId = bank._id;
+        modalRef.componentInstance.classificationId = classification._id;
         modalRef.componentInstance.readonly = true;
         modalRef.result.then((result) => {
           this.getClassifications();
@@ -195,7 +195,7 @@ export class ListClassificationsComponent implements OnInit {
       case 'view':
         modalRef = this._modalService.open(ClassificationComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "view";
-        modalRef.componentInstance.bankId = bank._id;
+        modalRef.componentInstance.classificationId = classification._id;
         modalRef.componentInstance.readonly = true;
         modalRef.result.then((result) => {
         }, (reason) => {
