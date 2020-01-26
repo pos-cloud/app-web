@@ -9,6 +9,7 @@ import { PrintTransactionTypeComponent } from '../print/print-transaction-type/p
 import { Printer, PrinterPrintIn } from 'app/models/printer';
 import { PrintComponent } from '../print/print/print.component';
 import { PrinterService } from 'app/services/printer.service';
+import { JsonDiffPipe } from 'app/pipes/json-diff';
 
 @Component({
 	selector: 'app-pos-packing',
@@ -28,6 +29,7 @@ export class PosPackingComponent {
 	// DISEÑO
 	public colors: string[] = ["teal:white", "midnightblue:white", "black:white", "black:white", "chocolate:white"];
 	public colorNumber: number = 0;
+	public positionNumber: number = 0;
 	public limit: number = 3;
 	public fontSize: number = 30;
 	public column: number = 4;
@@ -38,7 +40,8 @@ export class PosPackingComponent {
 		private _route: ActivatedRoute,
 		private _transactionService: TransactionService,
 		private _movementOfArticleService: MovementOfArticleService,
-		private _printerService: PrinterService
+		private _printerService: PrinterService,
+		private _jsonDiffPipe: JsonDiffPipe
 	) {
 		this.transactionsToPacking = new Array();
 		this.processParams();
@@ -77,53 +80,95 @@ export class PosPackingComponent {
 
 	private async loadPacking() {
 		this.loading = true;
-		let packingColors = [];
-		this.transactionsToPacking = await this.getTransactions({ state: TransactionState.Packing, operationType: { $ne: "D" } });
-		let i = 0;
-		for (let transaction of this.transactionsToPacking) {
-			transaction['movementsOfArticles'] = await this.getMovementsOfArticles(
-				{
-					transaction: { $oid: transaction._id },
-					operationType: { $ne: "D" },
-					$or: [
-						{
-							$and: [
-								{
-									movementParent: { $exists: true, $ne: null },
-									isOptional: true
-								}
-							]
-						},
-						{
-							$and: [
-								{
-									movementParent: { $exists: false, $eq: null },
-									isOptional: false
-								}
-							]
+		let transactions: Transaction[] = await this.getTransactions({ state: TransactionState.Packing, operationType: { $ne: "D" } });
+		let count = 0;
+		let change: boolean = false;
+		for (const transactionToPacking of this.transactionsToPacking) {
+			if (transactionToPacking && transactionToPacking._id && transactionToPacking._id !== '') {
+				if (transactions && transactions.length > 0) {
+					for (const transaction of transactions) {
+						if (transaction._id && transactionToPacking._id) {
+							count++;
+							if (this._jsonDiffPipe.transform(transaction, transactionToPacking)) {
+								change = true;
+							}
 						}
-					]
+					}
+				} else {
+					change = true;
 				}
-			);
-			let color: string = this.getColor(transaction._id);
-			if (color) {
-				this.colorNumber = this.colors.indexOf(color);
 			}
-			transaction['color'] = this.colors[this.colorNumber];
-			packingColors.push({
-				transactionId: transaction._id,
-				color: transaction['color']
-			});
-			(this.colorNumber === this.colors.length - 1) ? this.colorNumber = 0 : this.colorNumber++;
-			i++;
 		}
-		localStorage.setItem('packingColors', JSON.stringify(packingColors));
+		if (count != transactions.length || change) {
+			let packingTransactions = [];
+			this.transactionsToPacking = transactions;
+			if (this.transactionsToPacking.length < this.limit) {
+				let toCreate = (this.limit - this.transactionsToPacking.length);
+				for (let i = 0; i < toCreate; i++) {
+					this.transactionsToPacking.push(new Transaction());
+				}
+			}
+			let i = 0;
+			for (let transaction of this.transactionsToPacking) {
+				transaction['movementsOfArticles'] = await this.getMovementsOfArticles(
+					{
+						transaction: { $oid: transaction._id },
+						operationType: { $ne: "D" },
+						$or: [
+							{
+								$and: [
+									{
+										movementParent: { $exists: true, $ne: null },
+										isOptional: true
+									}
+								]
+							},
+							{
+								$and: [
+									{
+										movementParent: { $exists: false, $eq: null },
+										isOptional: false
+									}
+								]
+							}
+						]
+					}
+				);
+				let color: string = this.getColor(transaction._id);
+				if (color) {
+					this.colorNumber = this.colors.indexOf(color);
+				}
+				transaction['color'] = this.colors[this.colorNumber];
+				transaction['position'] = this.getPosition(transaction._id);
+				this.positionNumber = transaction['position'];
+				if (transaction && transaction._id && transaction._id !== '') {
+					packingTransactions.push({
+						transactionId: transaction._id,
+						color: transaction['color'],
+						position: transaction['position'],
+
+					});
+				}
+				(this.colorNumber === this.colors.length - 1) ? this.colorNumber = 0 : this.colorNumber++;
+				i++;
+			}
+			this.transactionsToPacking.sort((a, b) => {
+				let comparison = 0;
+				if (a['position'] > b['position']) {
+					comparison = 1;
+				} else if (a['position'] < b['position']) {
+					comparison = -1;
+				}
+				return comparison;
+			});
+			localStorage.setItem('packingTransactions', JSON.stringify(packingTransactions));
+		}
 		this.loading = false;
 	}
 
 	private getColor(transactionId: string): string {
 		let color: string = null;
-		let packingColors = localStorage.getItem('packingColors');
+		let packingColors = localStorage.getItem('packingTransactions');
 		if (packingColors) {
 			try {
 				packingColors = JSON.parse(packingColors);
@@ -137,12 +182,69 @@ export class PosPackingComponent {
 		return color;
 	}
 
+	private getPosition(transactionId: string): number {
+		let position: number = null;
+		let packingPositions = localStorage.getItem('packingTransactions');
+		if (packingPositions) {
+			try {
+				packingPositions = JSON.parse(packingPositions);
+				for (let pack of packingPositions) {
+					if (pack['transactionId'] === transactionId) {
+						position = pack['position'];
+					}
+				}
+			} catch (err) { }
+		}
+		if (position === null) position = this.getFreePosition();
+		return position;
+	}
+
+	private getFreePosition(): number {
+		let position: number = null;
+		if (localStorage.getItem('packingTransactions')) {
+			try {
+				this.transactionsToPacking.sort((a, b) => {
+					let comparison = 0;
+					if (a['position'] > b['position']) {
+						comparison = 1;
+					} else if (a['position'] < b['position']) {
+						comparison = -1;
+					}
+					return comparison;
+				});
+				for (let i = 1; i <= this.limit; i++) {
+					if (position === null) {
+						let exists: boolean = false;
+						for (let pack of this.transactionsToPacking) {
+							if (pack['position'] === i) {
+								exists = true;
+							}
+						}
+						if (!exists) position = i;
+					}
+				}
+			} catch (err) { }
+		} else {
+			position = 1;
+		}
+		if (position === null) position = this.positionNumber + 1;
+		return position;
+	}
+
 	public async initInterval() {
 		setInterval(async () => {
-			if (!this.loading && this.transactionsToPacking.length < this.limit) {
-				this.loadPacking();
+			if (!this.loading) {
+				let count = 0;
+				for (const transaction of this.transactionsToPacking) {
+					if (transaction && transaction._id && transaction._id !== '') {
+						count++;
+					}
+				}
+				if (count < this.limit) {
+					this.loadPacking();
+				}
 			}
-		}, 10000);
+		}, 5000);
 	}
 
 	public getTransactions(match: {}): Promise<Transaction[]> {
@@ -188,17 +290,18 @@ export class PosPackingComponent {
 				_id: 1,
 				description: 1,
 				amount: 1,
-                notes: 1,
-                transaction: 1,
+				notes: 1,
+				transaction: 1,
 				operationType: 1,
 				isOptional: 1,
 				movementParent: 1,
+				"category.order": 1,
 			};
 
 			this._movementOfArticleService.getMovementsOfArticlesV2(
 				project, // PROJECT
 				match, // MATCH
-				{"article.category.order" : -1}, // SORT
+				{ "category.order": -1 }, // SORT
 				{}, // GROUP
 				0, // LIMIT
 				0 // SKIP

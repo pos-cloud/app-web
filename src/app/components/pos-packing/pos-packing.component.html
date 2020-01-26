@@ -18,7 +18,7 @@
 						[style.backgroundColor]="(transaction.color && transaction.color.split(':')[0]) ? transaction.color.split(':')[0] : 'white'"
 						[style.color]="(transaction.color && transaction.color.split(':')[1]) ? transaction.color.split(':')[1] : 'black'">
 						<div class="row" style="position: absolute; top: 18px; width: 100%; margin: 0px; padding: 0px; left: 0px;">
-							<div class="col-md-12 center-content">
+							<div class="col-md-12 center-content"  *ngIf="transaction && transaction._id && transaction._id !== ''">
 								<button class="btn" style="width: 100%; background-color: #fe2e2e; color: white;">
 									Pedido Nro {{transaction.number}}
 								</button>
@@ -26,7 +26,10 @@
 						</div>
 						<div class="row" style="min-height: 130px;">
 							<div class="col-md-12" style="padding-top: 65px; padding-bottom: 65px;">
-								<table>
+								<ng-template #loading_order>
+									<span style="padding-left: 65px; font-size: 20px;">Esperando pedido...</span>
+								</ng-template>
+								<table *ngIf="transaction && transaction._id && transaction._id !== ''; else loading_order">
 									<tbody>
 										<tr *ngFor="let mov of transaction['movementsOfArticles']" [style.font-size.px]="fontSize">
 											<td style="padding: 0px 10px;">
@@ -49,7 +52,7 @@
 								</table>
 							</div>
 						</div>
-						<div class="row content-button-print">
+						<div class="row content-button-print" *ngIf="transaction && transaction._id && transaction._id !== ''">
 							<div class="col-md-12 center-content">
 								<button class="btn" (click)="openModal('print', transaction)"
 									style="width: 100%; margin-top: 20px; background-color: #fe2e2e; color: white;">Imprimir</button>

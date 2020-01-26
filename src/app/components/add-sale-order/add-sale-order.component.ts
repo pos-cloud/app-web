@@ -3050,9 +3050,6 @@ export class AddSaleOrderComponent {
 
 	async distributeImpressions(printer?: Printer) {
 
-        console.log(printer);
-
-
 		this.printerSelected = printer;
 
 		await this.getUser().then(
