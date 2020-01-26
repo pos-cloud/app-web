@@ -27,6 +27,7 @@ import { Config } from 'app/app.config';
 import { ConfigService } from 'app/services/config.service';
 import { CurrencyValueService } from 'app/services/currency-value.service';
 import { CurrencyValue } from 'app/models/currency-value';
+import { User } from 'app/models/user';
 
 @Component({
 	selector: 'app-cash-box',
@@ -52,6 +53,7 @@ export class CashBoxComponent implements OnInit {
 	public focusEvent = new EventEmitter<boolean>();
 	@Input() transactionType: TransactionType;
 	private config: Config;
+	private identity: User;
 	public selectPayment;
 
 	constructor(
@@ -88,21 +90,30 @@ export class CashBoxComponent implements OnInit {
 				this.config = config;
 			}
 		);
+		await this._authService.getIdentity.subscribe(
+			identity => {
+				this.identity = identity; 
+			}
+		);
 		await this.getPaymentMethods('where="cashBoxImpact":true').then(
 			async paymentMethods => {
 				if (paymentMethods) {
 					this.paymentMethods = paymentMethods;
 					this.setValueForm();
 					let query = 'where="state":"' + CashBoxState.Open + '"';
-					if (this.config.cashBox.perUser) {
-						await this._authService.getIdentity.subscribe(
-							identity => {
-								if (identity && identity.employee) {
-									query += ',"employee":"' + identity.employee._id + '"';
-								}
+					
+					if(this.identity) {
+						if (this.config.cashBox.perUser) {
+							if (this.identity.employee) {
+								query += ',"employee":"' + this.identity.employee._id + '"';
 							}
-						);
+						} else if(this.identity.cashBoxType) {
+							query += ',"type":"' + this.identity.cashBoxType._id + '"';
+						} else {
+							query += ',"type":null';
+						}
 					}
+					
 					query += '&sort="number":-1&limit=1';
 					await this.getCashBoxes(query).then(
 						async cashBoxes => {
@@ -122,13 +133,9 @@ export class CashBoxComponent implements OnInit {
 								}
 							} else {
 								if (this.transactionType.cashOpening) {
-									this._authService.getIdentity.subscribe(
-										identity => {
-											if (identity && identity.employee) {
-												this.cashBox.employee = identity.employee;
-											}
-										}
-									);
+									if (this.identity && this.identity.employee) {
+										this.cashBox.employee = this.identity.employee;
+									}
 								} else if (this.transactionType.cashClosing) {
 									this.showMessage("No se encuentran cajas abiertas.", 'info', true);
 								}
@@ -262,6 +269,13 @@ export class CashBoxComponent implements OnInit {
 					} else {
 						this.cashBox.number = 1;
 					}
+					this._authService.getIdentity.subscribe(
+						identity => {
+							if(identity.cashBoxType) {
+								this.cashBox.type = identity.cashBoxType;
+							}
+						},
+					);
 					await this.saveCashBox().then(
 						async cashBox => {
 							if (cashBox) {

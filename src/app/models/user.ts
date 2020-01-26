@@ -2,6 +2,7 @@ import { Employee } from './employee';
 import { Company } from './company';
 import { Origin } from './origin';
 import { Printer } from './printer';
+import { CashBoxType } from './cash-box-type';
 
 export class User {
 
@@ -11,23 +12,24 @@ export class User {
 	public password: string;
 	public state: UserState;
 	public token: string;
-  	public tokenExpiration: number = 9999;
+	public tokenExpiration: number = 9999;
 	public employee: Employee = null;
+	public cashBoxType: CashBoxType = null;
 	public company: Company = null;
 	public origin: Origin = null;
 	public shortcuts: [{
 		name: string,
 		url: string
 	}];
-	public printers : [{
+	public printers: [{
 		_id: string;
-		printer : Printer
+		printer: Printer
 	}]
 
-	constructor () {}
+	constructor() { }
 }
 
 export enum UserState {
-	Enabled = <any> "Habilitado",
-	Disabled = <any> "No Habilitado",
+	Enabled = <any>"Habilitado",
+	Disabled = <any>"No Habilitado",
 }

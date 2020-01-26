@@ -2,6 +2,7 @@ import { Employee } from './employee';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
+import { CashBoxType } from './cash-box-type';
 
 export class CashBox {
     
@@ -11,6 +12,7 @@ export class CashBox {
     public closingDate: string;
     public state: CashBoxState = CashBoxState.Open;
     public employee: Employee = null;
+    public type: CashBoxType = null;
 
 	constructor () {}
 }

@@ -98,7 +98,6 @@ export class ListCashBoxTypesComponent implements OnInit {
 				break;
 			case 'add':
 				modalRef = this._modalService.open(CashBoxTypeComponent, { size: 'lg', backdrop: 'static' });
-				modalRef.componentInstance.cashBoxTypeId = cashBoxType._id;
 				modalRef.componentInstance.operation = "add";
 				modalRef.componentInstance.readonly = false;
 				modalRef.result.then((result) => {
