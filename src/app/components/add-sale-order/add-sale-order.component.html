@@ -158,7 +158,7 @@
                         <tr *ngFor="let movementOfArticle of movementsOfArticles"
                             (click)="!loading ? openModal('movement_of_article', movementOfArticle) : $event.stopPropagation()"
                             [ngClass]="{'disabled': loading, 'enabled': !loading }">
-                            <ng-container *ngIf="movementOfArticle.salePrice > 0">
+                            <ng-container *ngIf="!movementOfArticle.movementParent || (movementOfArticle.isOptional && movementOfArticle.salePrice > 0)">
                                 <td>
                                     <span class="badge badge-info">
                                         <b>{{ movementOfArticle.amount}}</b>
