@@ -174,13 +174,14 @@ export class GalleryComponent implements OnInit {
 
         if (!this.gallery._id) { this.gallery._id = ''; }
         if (!this.gallery.name) { this.gallery.name = ''; }
+        if (!this.gallery.colddown) { this.gallery.colddown = 6000; }
+        if (!this.gallery.speed) { this.gallery.speed = 400; }
 
         const values = {
             '_id': this.gallery._id,
             'name': this.gallery.name,
             'colddown': this.gallery.colddown,
             'speed': this.gallery.speed
-
 
         };
 
