@@ -146,6 +146,7 @@ export class MovementOfCancellationComponent implements OnInit {
 						transaction = await this.getTransaction(result.movementsOfCancellations[index].transactionOrigin)
 					}
 					if (transaction) {
+						transaction.balance = result.movementsOfCancellations[index].balance;
 						this.transactions.push(transaction);
 					} else {
 						this.showMessage("No se encontraron transactiones relacionadas", 'danger', false);
@@ -324,6 +325,9 @@ export class MovementOfCancellationComponent implements OnInit {
 								await this.getMovementsOfCancellations().then(
 									movementsOfCancellations => {
 										this.movementsOfCancellations = movementsOfCancellations;
+										for(let mov of this.movementsOfCancellations) {
+											mov['saved'] = true;
+										}
 									}
 								);
 							}
@@ -870,9 +874,9 @@ export class MovementOfCancellationComponent implements OnInit {
 		let areValid: boolean = true;
 		let totalBalance = 0;
 		for(let mov of this.movementsOfCancellations) {
-			totalBalance += mov.balance;
+			if(!mov['saved']) totalBalance += mov.balance;
 		}
-		if(this.totalPrice !== 0 && this.totalPrice !== totalBalance) {
+		if(this.totalPrice !== 0 && this.totalPrice < totalBalance) {
 			areValid = false;
 			this.showMessage("El saldo seleccionado de las transacciones no puede ser distinto del monto de la transacción ($ "+this.totalPrice+")", "info", true);
 		}
