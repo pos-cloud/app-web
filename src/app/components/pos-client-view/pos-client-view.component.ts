@@ -183,7 +183,8 @@ export class PosClientViewComponent {
 			this.loading = true;
 
 			let project = {
-				endDate: 1,
+                endDate: 1,
+                startDate : 1,
 				origin: 1,
 				number: 1,
 				state: 1,
@@ -193,9 +194,9 @@ export class PosClientViewComponent {
 			this._transactionService.getTransactionsV2(
 				project, // PROJECT
 				match, // MATCH
-				{ startDate: -1 }, // SORT
+				{ startDate: 1 }, // SORT
 				{}, // GROUP
-				9, // LIMIT
+				this.limit, // LIMIT
 				0 // SKIP
 			).subscribe(
 				result => {
