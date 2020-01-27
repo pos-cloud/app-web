@@ -32,15 +32,25 @@
 								<table *ngIf="transaction && transaction._id && transaction._id !== ''; else loading_order">
 									<tbody>
 										<tr *ngFor="let mov of transaction['movementsOfArticles']" [style.font-size.px]="fontSize">
-											<td style="padding: 0px 10px;">
-												{{mov.amount}}
-											</td>
+											
 											<td>
-												<div class="row">
+												<div class="row" *ngIf="!mov.movementParent">
 													<div class="col-md-12">
-														{{mov.description}}
-													</div>
-												</div>
+														{{mov.amount}} - {{mov.description}}
+                                                    </div>
+                                                    <table>
+                                                        <tbody>
+                                                            <tr *ngFor="let mov2 of transaction['movementsOfArticles']" [style.font-size.px]="fontSize">
+                                                                
+                                                                <td *ngIf="mov._id === mov2.movementParent">
+                                                                    <div class="col-md-12">
+                                                                        .....{{mov2.description}}
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
 												<div class="card-text" *ngIf="mov && mov.notes">
 													<div class="notes" *ngFor="let note of mov.notes.split('; ')" [style.font-size.px]="fontSize">
 														{{ note }}

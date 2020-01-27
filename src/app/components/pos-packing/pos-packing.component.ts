@@ -10,6 +10,8 @@ import { Printer, PrinterPrintIn } from 'app/models/printer';
 import { PrintComponent } from '../print/print/print.component';
 import { PrinterService } from 'app/services/printer.service';
 import { JsonDiffPipe } from 'app/pipes/json-diff';
+import { User } from 'app/models/user';
+import { UserService } from 'app/services/user.service';
 
 @Component({
 	selector: 'app-pos-packing',
@@ -40,7 +42,8 @@ export class PosPackingComponent {
 		private _route: ActivatedRoute,
 		private _transactionService: TransactionService,
 		private _movementOfArticleService: MovementOfArticleService,
-		private _printerService: PrinterService,
+        private _printerService: PrinterService,
+        private _userService : UserService,
 		private _jsonDiffPipe: JsonDiffPipe
 	) {
 		this.transactionsToPacking = new Array();
@@ -301,7 +304,7 @@ export class PosPackingComponent {
 			this._movementOfArticleService.getMovementsOfArticlesV2(
 				project, // PROJECT
 				match, // MATCH
-				{ "category.order": -1 }, // SORT
+				{ "category.order": 1 , movementParent: -1}, // SORT
 				{}, // GROUP
 				0, // LIMIT
 				0 // SKIP
@@ -327,6 +330,7 @@ export class PosPackingComponent {
 	async openModal(op: string, transaction: Transaction) {
 
 		let modalRef;
+        let printerSelect : Printer;
 
 		switch (op) {
 			case 'print':
@@ -362,13 +366,44 @@ export class PosPackingComponent {
 					if (transaction.type.defectPrinter) {
 						modalRef.componentInstance.printer = transaction.type.defectPrinter;
 					} else {
-						if (this.printers && this.printers.length > 0) {
-							for (let printer of this.printers) {
-								if (printer.printIn === PrinterPrintIn.Counter) {
-									modalRef.componentInstance.printer = printer;
-								}
-							}
-						}
+                        await this.getUser().then(
+                            async user => {
+                                if (user) {
+                                    if (user.printers && user.printers.length > 0) {
+                                        for (const element of user.printers) {
+                                            if (element && element.printer && element.printer.printIn === PrinterPrintIn.Bar) {
+                                                printerSelect = element.printer;
+                                            }
+                                            if (element && element.printer && element.printer.printIn === PrinterPrintIn.Counter) {
+                                                printerSelect = element.printer;
+                                            }
+                                            if (element && element.printer && element.printer.printIn === PrinterPrintIn.Kitchen) {
+                                                printerSelect = element.printer;
+                                            }
+                                            if (element && element.printer && element.printer.printIn === PrinterPrintIn.Voucher) {
+                                                printerSelect = element.printer;
+                                            }
+                                        }
+                                    } else {
+                                        if (!printerSelect) {
+                                            if (this.printers && this.printers.length > 0) {
+                                                for (let printer of this.printers) {
+                                                    //traer usuario y la impresora seteada y asignar
+                                                    if (printer.printIn === PrinterPrintIn.Counter) {
+                                                        printerSelect = printer;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    modalRef.componentInstance.printer = printerSelect;
+                                } else {
+                                    this.showMessage("Debe iniciar sesión", 'danger', false);
+                                }
+                            }
+                        );
+
+						
 					}
 					modalRef.result.then(async (result) => {
 					}, async (reason) => {
@@ -453,6 +488,29 @@ export class PosPackingComponent {
 					resolve(null);
 				}
 			);
+		});
+    }
+    
+    public getUser(): Promise<User> {
+
+		return new Promise<User>((resolve, reject) => {
+
+			var identity: User = JSON.parse(sessionStorage.getItem('user'));
+			var user;
+			if (identity) {
+				this._userService.getUser(identity._id).subscribe(
+					result => {
+						if (result && result.user) {
+							resolve(result.user)
+						} else {
+							this.showMessage("Debe volver a iniciar session", "danger", false);
+						}
+					},
+					error => {
+						this.showMessage(error._body, "danger", false);
+					}
+				)
+			}
 		});
 	}
 
