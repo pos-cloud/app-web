@@ -73,7 +73,7 @@
 						<td>
 							<input type="number" class="form-control" [(ngModel)]="transaction['balanceSelected']"
 								(blur)="updateBalanceOrigin(transaction)"
-								[readonly]="!isTransactionSelected(transaction) || transactionDestination.type.requestArticles">
+								[readonly]="!isTransactionSelected(transaction)">
 						</td>
 					</tr>
 					<tr align="center" *ngIf="totalItems === 0 && !loading">
