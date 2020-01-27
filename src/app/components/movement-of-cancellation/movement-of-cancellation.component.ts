@@ -453,12 +453,18 @@ export class MovementOfCancellationComponent implements OnInit {
 			movementOfCancellation.transactionOrigin = transactionSelected;
 			movementOfCancellation.transactionDestination = this.transactionDestination;
 			if (this.modifyBalance(transactionSelected)) {
-				let transBalance = transactionSelected.balance;
+				let transBalance = 0;
 				if ((transactionSelected.type.transactionMovement === TransactionMovement.Sale &&
 					transactionSelected.type.movement === Movements.Outflows) ||
 					(transactionSelected.type.transactionMovement === TransactionMovement.Purchase &&
 						transactionSelected.type.movement === Movements.Inflows)) {
-					transBalance *= -1;
+					transBalance = transactionSelected.balance * -1;
+				} else {
+					if(transactionSelected.balance > this.totalPrice && this.totalPrice !== 0) {
+						transBalance = this.totalPrice;
+					} else {
+						transBalance = transactionSelected.balance;
+					}
 				}
 				if (automatic && (this.totalPrice < ((transBalance) + this.balanceSelected))) {
 					if (this.totalPrice === 0) {
@@ -466,16 +472,16 @@ export class MovementOfCancellationComponent implements OnInit {
 					} else {
 						movementOfCancellation.balance = this.roundNumber.transform(this.totalPrice - this.balanceSelected);
 					}
-					for (let t of this.transactions) {
-						if (t._id.toString() == transactionSelected._id.toString()) {
-							t['balanceSelected'] = movementOfCancellation.balance;
-						}
-					}
 				} else {
-					movementOfCancellation.balance = transactionSelected.balance;
+					movementOfCancellation.balance = transBalance;
 				}
 			} else {
 				movementOfCancellation.balance = 0;
+			}
+			for (let t of this.transactions) {
+				if (t._id.toString() == transactionSelected._id.toString()) {
+					t['balanceSelected'] = movementOfCancellation.balance;
+				}
 			}
 			this.movementsOfCancellations.push(movementOfCancellation);
 		}
