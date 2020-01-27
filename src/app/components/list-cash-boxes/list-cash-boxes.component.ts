@@ -30,7 +30,7 @@ export class ListCashBoxesComponent implements OnInit {
 	public loading: boolean = false;
 	public itemsPerPage = 10;
 	public totalItems = 0;
-	public filterNumber; filterOpeningDate; filterClosingDate; filterState; filterEmployee; p;
+	public filterNumber; filterOpeningDate; filterClosingDate; filterState; filterEmployee; p;filterType;
 
 	constructor(
 		public _cashBoxService: CashBoxService,
