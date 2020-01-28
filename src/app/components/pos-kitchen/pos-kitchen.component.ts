@@ -167,7 +167,6 @@ export class PosKitchenComponent {
 				operationType: { $ne: 'D' }
 			}).then(
 				movementsOfArticles => {
-					console.log(movementsOfArticles);
 					this.movementsOfArticlesChildren = movementsOfArticles;
 				}
 			).catch(

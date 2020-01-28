@@ -24,7 +24,6 @@ import { EmployeeService } from './../../services/employee.service';
 //Pipes
 import { DateFormatPipe } from './../../pipes/date-format.pipe';
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
-import { ListCompaniesComponent } from '../list-companies/list-companies.component';
 import { CashBoxService } from 'app/services/cash-box.service';
 import { UserService } from 'app/services/user.service';
 import { Config } from 'app/app.config';

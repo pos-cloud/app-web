@@ -839,6 +839,7 @@ export class AddMovementOfCashComponent implements OnInit {
 
 		if (op !== 'amountToPay' && this.transaction.totalPrice !== 0) {
 			this.amountToPay = this.transactionAmount - this.amountPaid - this.amountDiscount;
+			this.keyboard.setInput('');
 		}
 
 		this.movementOfCash.discount = this.paymentMethodSelected.discount;

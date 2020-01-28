@@ -3050,9 +3050,6 @@ export class AddSaleOrderComponent {
 
 	async distributeImpressions(printer?: Printer) {
 
-        console.log(printer);
-
-
 		this.printerSelected = printer;
 
 		await this.getUser().then(
@@ -3138,7 +3135,7 @@ export class AddSaleOrderComponent {
 						if (result && result.user) {
 							resolve(result.user)
 						} else {
-							this.showMessage("Debe volver a iniciar session", "danger", false);
+							this.showMessage("Debe volver a iniciar sesión", "danger", false);
 						}
 					},
 					error => {

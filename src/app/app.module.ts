@@ -160,6 +160,7 @@ import { ReportSalesByClientComponent } from './components/report-sales-by-clien
 import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
 import { ReportSalesByCategoryComponent } from './components/report-sales-by-category/report-sales-by-category.component';
 import { CashBoxComponent } from './components/cash-box/cash-box.component';
+import { CashBoxTypeComponent } from './components/cash-box-type/cash-box-type.component';
 import { LocationComponent } from './components/location/location.component';
 import { ListLocationsComponent } from './components/list-locations/list-locations.component';
 import { CompanyNewsComponent } from './components/company-news/company-news.component';
@@ -283,6 +284,8 @@ import { GalleryService } from './services/gallery.service';
 import { ViewGalleryComponent } from './components/view-gallery/view-gallery.component';
 
 import { NguCarouselModule } from '@ngu/carousel';
+import { ListCashBoxTypesComponent } from './components/list-cash-box-types/list-cash-box-types.component';
+import { CashBoxTypeService } from './services/cash-box-type.service';
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
 
@@ -303,7 +306,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         UpdateEmployeeComponent,
         DeleteEmployeeComponent,
         ListTablesComponent,
-        TableComponent,
+		TableComponent,
+		ListCashBoxTypesComponent,
         ListCashBoxesComponent,
         DeleteCashBoxComponent,
         ListTransactionsComponent,
@@ -392,7 +396,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         ReportSalesByCategoryComponent,
         ReportBirthdayComponent,
         ReportSalesByEmployeeComponent,
-        CashBoxComponent,
+		CashBoxComponent,
+		CashBoxTypeComponent,
         LocationComponent,
         ListLocationsComponent,
         CompanyNewsComponent,
@@ -499,7 +504,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         UpdateEmployeeComponent,
         DeleteEmployeeComponent,
         ListTablesComponent,
-        TableComponent,
+		TableComponent,
+		ListCashBoxTypesComponent,
         ListCashBoxesComponent,
         DeleteCashBoxComponent,
         ListTransactionsComponent,
@@ -580,7 +586,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         ReportSalesByCategoryComponent,
         ReportBirthdayComponent,
         ReportSalesByEmployeeComponent,
-        CashBoxComponent,
+		CashBoxComponent,
+		CashBoxTypeComponent,
         LocationComponent,
         ListLocationsComponent,
         CompanyNewsComponent,
@@ -692,6 +699,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         EmployeeTypeService,
         TableService,
         CashBoxService,
+        CashBoxTypeService,
         TransactionService,
         TransactionTypeService,
         MovementOfArticleService,

@@ -77,6 +77,7 @@ import { ListCurrencyValuesComponent } from './components/list-currency-values/l
 import { ListResourcesComponent } from './components/list-resources/list-resources.component';
 import { ListGalleriesComponent } from './components/list-galleries/list-galleries.component';
 import { ViewGalleryComponent } from './components/view-gallery/view-gallery.component';
+import { ListCashBoxTypesComponent } from './components/list-cash-box-types/list-cash-box-types.component';
 
 export const _routes: Routes = [
     {
@@ -403,6 +404,11 @@ export const _routes: Routes = [
     {
         path: 'admin/impuestos',
         component: ListTaxesComponent,
+        canActivate: [AuthGuard, LicenseGuard]
+    },
+    {
+        path: 'admin/tipos-de-caja',
+        component: ListCashBoxTypesComponent,
         canActivate: [AuthGuard, LicenseGuard]
     },
     {

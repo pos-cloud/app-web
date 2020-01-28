@@ -21,6 +21,7 @@
               <th (click)="orderBy('closingDate')">Fecha Cierre</th>
               <th (click)="orderBy('state')">Estado</th>
               <th (click)="orderBy('employee','name')">Empleado</th>
+              <th (click)="orderBy('type','name')">Tipo</th>
             </tr>
             <tr class="filters">
               <th></th>
@@ -30,6 +31,7 @@
               <th><input type="date" class="form-control" [(ngModel)]= "filterClosingDate" placeholder="Fecha Cierre..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterState" placeholder="Estado..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterEmployee" placeholder="Empleado..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Tipo..." ></th>
             </tr>
           </thead>
           <tbody>
@@ -43,6 +45,7 @@
                                                   | filter: filterClosingDate:'closingDate'
                                                   | filter: filterState:'state'
                                                   | filter: filterEmployee:'name':'employee'
+                                                  | filter: filterType:'name':'type'
                                                   | orderBy: orderTerm: propertyTerm
                                                   | paginate: { itemsPerPage: itemsPerPage,
                                                                 currentPage: p,
@@ -68,9 +71,11 @@
               </td>
               <td *ngIf="cashBox.employee">{{cashBox.employee.name}}</td>
               <td *ngIf="!cashBox.employee"></td>
+              <td *ngIf="cashBox.type">{{cashBox.type.name}}</td>
+              <td *ngIf="!cashBox.type"></td>
             </tr>
             <tr align="center" *ngIf="areCashBoxesEmpty && !loading">
-              <td colspan="6">No se encontraron cajas</td>
+              <td colspan="10">No se encontraron cajas</td>
             </tr>
           </tbody>
         </table>
