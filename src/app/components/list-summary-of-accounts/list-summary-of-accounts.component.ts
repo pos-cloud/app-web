@@ -94,7 +94,12 @@ export class ListSummaryOfAccountsComponent implements OnInit {
 				}
 			}
 		);
-		this.getSummary();
+		this.showAlert();
+		//this.getSummary();
+	}
+
+	private showAlert(): void {
+		alert("Esta función se encuentra deshabilitada por el momento.");
 	}
 
 	public initDragHorizontalScroll(): void {
@@ -169,7 +174,8 @@ export class ListSummaryOfAccountsComponent implements OnInit {
 	};
 
 	public refresh(): void {
-		this.getSummary();
+		//this.getSummary();
+		this.showAlert();
 	}
 
 	public orderBy(term: string, property?: string): void {
