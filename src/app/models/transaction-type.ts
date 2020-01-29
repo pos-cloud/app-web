@@ -59,6 +59,7 @@ export class TransactionType {
 	public readLayout: boolean = false;
 	public updatePrice: boolean = false;
     public updateArticle: boolean = false;
+    public finishCharge : boolean = true;
     public expirationDate : string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 	public creationUser: User;
 	public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');

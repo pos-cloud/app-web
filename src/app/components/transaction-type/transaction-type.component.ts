@@ -332,7 +332,8 @@ export class TransactionTypeComponent implements OnInit {
       'readLayout' : [this.transactionType.readLayout,[]],
       'updatePrice' : [this.transactionType.updatePrice,[]],
       'updateArticle' : [this.transactionType.updateArticle,[]],
-      'expirationDate' : [this.transactionType.expirationDate,[]]
+      'expirationDate' : [this.transactionType.expirationDate,[]],
+      'finishCharge' : [this.transactionType.finishCharge,[]]
 
     });
 
@@ -497,6 +498,7 @@ export class TransactionTypeComponent implements OnInit {
     if (this.transactionType.posKitchen === undefined) this.transactionType.posKitchen = false;
     if (this.transactionType.updatePrice === undefined) this.transactionType.updatePrice = false;
     if (this.transactionType.updateArticle === undefined) this.transactionType.updateArticle = false;
+    if (this.transactionType.finishCharge === undefined) this.transactionType.finishCharge = true;
 
     if (this.transactionType.expirationDate) {
         this.transactionType.expirationDate = moment(this.transactionType.expirationDate).format('YYYY-MM-DD');
@@ -556,7 +558,8 @@ export class TransactionTypeComponent implements OnInit {
       'readLayout' : this.transactionType.readLayout,
       'updatePrice' : this.transactionType.updatePrice,
       'updateArticle' : this.transactionType.updateArticle,
-      'expirationDate' : this.transactionType.expirationDate
+      'expirationDate' : this.transactionType.expirationDate,
+      'finishCharge' : this.transactionType.finishCharge
 
     });
   }

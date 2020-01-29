@@ -635,6 +635,24 @@
                     </div>
                   </div>
                 </div>
+                <div class="row">
+                    <div class="form-group col-md-4">
+                        <label for="finishCharge" class="control-label">¿Finaliza al cobro/pago?</label>
+                        <div class="input-group">
+                          <select class="form-control" formControlName="finishCharge">
+                            <option value="true" [selected]="transactionType.finishCharge" [disabled]="readonly">Si</option>
+                            <option value="false" [selected]="!transactionType.finishCharge" [disabled]="readonly">No</option>
+                          </select>
+                          <button type="button"
+                                  class="btn btn-light"
+                                  placement="right"
+                                  popoverClass="popover-class"
+                                  ngbPopover="Al finalizar la transacción, ¿Desea que se finalize?">
+                            <b>?</b>
+                          </button>
+                        </div>
+                      </div>
+                </div>
               </div>
             </div>
           </ng-template>
