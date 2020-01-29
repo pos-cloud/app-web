@@ -30,7 +30,7 @@ export class TransactionType {
 	public fiscalCode: string;
 	public fixedOrigin: number;
 	public fixedLetter: string;
-	public resetNumber: boolean = false;
+	public maxOrderNumber: number = 0;
 	public showPrices: boolean = true;
 	public printable: boolean = false;
 	public defectPrinter: Printer;

@@ -126,6 +126,7 @@
 	"modifyStock": "Modifica stock",
 	"observation": "Observación",
 	"operationType": "Última Operación",
+	"orderNumber": "Número de Pedido",
 	"origin": "Punto de Venta",
 	"posKitchen": "Aparece en POS Cocina",
 	"posDescription": "Descripción Corta",
