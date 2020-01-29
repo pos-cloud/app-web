@@ -677,7 +677,7 @@ export const _routes: Routes = [
         data: { module: 'config.modules.production.kitchen' }
     },
     {
-        path: 'pos/view-gallery/:name',
+        path: 'pos/ver-galeria/:name',
         component: ViewGalleryComponent,
         canActivate: [AuthGuard, LicenseGuard],
     },
