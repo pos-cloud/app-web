@@ -38,16 +38,6 @@
 			<br>
 			<strong>Cierre<br>Caja</strong>
 		</div>
-		<!-- <div class="quick-btn" (click)="changeTable()">
-        <i class="fa fa-exchange"></i>
-        <br>
-        <strong>Cambiar<br>Mesa</strong>
-      </div>
-      <div class="quick-btn" (click)="joinTables()">
-        <i class="fa fa-th-large"></i>
-        <br>
-        <strong>Unir<br>Mesas</strong>
-      </div> -->
 	</div>
 </section>
 
@@ -267,10 +257,14 @@
 								title="Anular"><i class="fa fa-close"></i></button>
 						</td>
 						<td (click)="openTransaction(transaction)">{{transaction.type.name}}</td>
-						<td *ngIf="transaction.endDate" (click)="openTransaction(transaction)">
-							{{transaction.endDate }}</td>
-						<td *ngIf="!transaction.endDate" (click)="openTransaction(transaction)">
-							{{transaction.startDate }}</td>
+						<td (click)="openTransaction(transaction)" *ngIf="transaction.endDate">
+							{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}
+							<b>{{transaction.endDate | dateFormat:'HH:mm:ss' }}</b>
+						</td>
+						<td (click)="openTransaction(transaction)" *ngIf="!transaction.endDate">
+							{{transaction.startDate | dateFormat:'DD/MM/YYYY' }}
+							<b>{{transaction.startDate | dateFormat:'HH:mm:ss' }}</b>
+						</td>
 						<td (click)="openTransaction(transaction)">
 							<b>{{transaction.number}}</b>
 						</td>
@@ -347,7 +341,7 @@
 				<thead>
 					<tr>
 						<th></th>
-						<th (click)="orderBy('startDate')">Fecha</th>
+						<th (click)="orderBy('endDate')">Fecha</th>
 						<th (click)="orderBy('number')">Número</th>
 						<th (click)="orderBy('company','name')">Cliente</th>
 						<th (click)="orderBy('observation')">Observación</th>
@@ -355,7 +349,7 @@
 					</tr>
 					<tr class="filters">
 						<th></th>
-						<th><input type="date" class="form-control" [(ngModel)]="filterStartDate"
+						<th><input type="date" class="form-control" [(ngModel)]="filterEndDate"
 								placeholder="Fecha..."></th>
 						<th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número...">
 						</th>
@@ -373,7 +367,7 @@
 							<app-progressbar [loading]="loading"></app-progressbar>
 						</td>
 					</tr>
-					<tr *ngFor="let transaction of transactions | filter: filterStartDate:'startDate'
+					<tr *ngFor="let transaction of transactions | filter: filterEndDate:'endDate'
                                                         | filter: filterNumber:'number'
                                                         | filter: filterCompany:'name':'company'
                                                         | filter: filterTotalPrice:'totalPrice'
@@ -394,8 +388,13 @@
 							<button type="button" class="btn btn-light" (click)="printTransaction(transaction)"
 								title="Imprimir"><i class="fa fa-print"></i></button>
 						</td>
-						<td *ngIf="transaction.endDate">{{transaction.endDate}}</td>
-						<td *ngIf="!transaction.endDate">{{transaction.startDate}}
+						<td (click)="openTransaction(transaction)" *ngIf="transaction.endDate">
+							{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}
+							<b>{{transaction.endDate | dateFormat:'HH:mm:ss' }}</b>
+						</td>
+						<td (click)="openTransaction(transaction)" *ngIf="!transaction.endDate">
+							{{transaction.startDate | dateFormat:'DD/MM/YYYY' }}
+							<b>{{transaction.startDate | dateFormat:'HH:mm:ss' }}</b>
 						</td>
 						<td><b>{{transaction.number}}</b></td>
 						<td *ngIf="transaction.company">{{transaction.company.name}}</td>
