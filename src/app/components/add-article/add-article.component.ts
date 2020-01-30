@@ -36,7 +36,7 @@ import { UnitOfMeasurementService } from 'app/services/unit-of-measurement.servi
 import { DecimalPipe } from '@angular/common';
 import { SlicePipe } from '@angular/common';
 import { ArticleFields } from '../../models/article-fields';
-import { ArticleFieldType } from '../../models/article-field';
+import { ArticleFieldType, ArticleField } from '../../models/article-field';
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 import { TaxClassification } from 'app/models/tax';
 import { ConfigService } from 'app/services/config.service';
@@ -97,6 +97,9 @@ export class AddArticleComponent implements OnInit {
 	public notes: string[];
 	public formErrorsNote: string;
 
+    public articleFieldSelected : ArticleField;
+    public articleFields : ArticleField[];
+    public articleFieldValues;
 	public formErrors = {
 		'code': '',
 		'make': '',
@@ -307,7 +310,10 @@ export class AddArticleComponent implements OnInit {
 		this._articleFields.getArticleFields().subscribe(
 			result => {
 				if (result && result.articleFields) {
-					for (let x = 0; x < result.articleFields.length; x++) {
+
+                    this.articleFields = result.articleFields;
+                    console.log(this.articleFields)
+					/*for (let x = 0; x < result.articleFields.length; x++) {
 
 						if (result.articleFields[x]['datatype'] === ArticleFieldType.String ||
 							result.articleFields[x]['datatype'] === ArticleFieldType.Array) {
@@ -318,7 +324,7 @@ export class AddArticleComponent implements OnInit {
 							this.otherFieldsNumber = true;
 						}
 
-					}
+					}*/
 				}
 			},
 			error => {
@@ -326,7 +332,13 @@ export class AddArticleComponent implements OnInit {
 				this.loading = false;
 			}
 		);
-	}
+    }
+    
+    public buildListArticleField(articleField : ArticleField) {
+        if(articleField && articleField.datatype ===  ArticleFieldType.Array){
+            this.articleFieldValues = articleField.value.split(';')
+        }
+    }
 
 	ngAfterViewInit() {
 		this.focusEvent.emit(true);
@@ -389,7 +401,8 @@ export class AddArticleComponent implements OnInit {
 			]
 			],
 			'deposits': this._fb.array([]),
-			'locations': this._fb.array([]),
+            'locations': this._fb.array([]),
+            'otherFields': this._fb.array([]),
 			'children': this._fb.array([]),
 			'observation': [this.article.observation, []],
 			'barcode': [this.article.barcode, [
@@ -533,6 +546,54 @@ export class AddArticleComponent implements OnInit {
 			depositForm.resetForm();
 		}
 
+    }
+    
+    async addOtherField(otherFieldsForm: NgForm) {
+
+        let valid = true;
+        
+		const otherFields = this.articleForm.controls.otherFields as FormArray;
+
+        console.log(otherFieldsForm.value)
+
+		//let deposit = await this.getDeposit(depositForm.value.deposit)
+
+		/*for (const element of this.articleForm.controls.deposits.value) {
+
+			let depositAux = await this.getDeposit(element.deposit);
+
+			if (depositAux.branch._id === deposit.branch._id) {
+				valid = false;
+				this.showMessage("Solo puede tener un depósito por sucursal.", "info", true);
+			}
+		}*/
+
+		/*this.articleForm.controls.deposits.value.forEach(element => {
+
+			if (otherFieldsForm.value.deposit == element.deposit) {
+				valid = false;
+				this.showMessage("El depósito ya existe", "info", true);
+			}
+
+		});
+
+		if (depositForm.value.deposit == '' || depositForm.value.deposit == 0 || depositForm.value.deposit == null) {
+			this.showMessage("Debe seleccionar un depósito", "info", true);
+			valid = false;
+		}*/
+
+		if (valid) {
+			otherFields.push(
+				this._fb.group({
+					_id: null,
+					value: otherFieldsForm.value.value,
+                    articleField: otherFieldsForm.value.articleField._id,
+                    amount : otherFieldsForm.value.amount
+				})
+			);
+			otherFieldsForm.resetForm();
+		}
+
 	}
 
 	async addLocation(locationForm: NgForm) {
@@ -566,6 +627,11 @@ export class AddArticleComponent implements OnInit {
 
 	public deleteDeposit(index): void {
 		let control = <FormArray>this.articleForm.controls.deposits;
+		control.removeAt(index)
+    }
+    
+    public deleteArticleField(index): void {
+		let control = <FormArray>this.articleForm.controls.articleFields;
 		control.removeAt(index)
 	}
 
@@ -659,6 +725,24 @@ export class AddArticleComponent implements OnInit {
 					locations.push(this._fb.group({
 						'_id': null,
 						'location': locationId
+					}))
+				}
+
+			})
+        }
+        
+        if (this.article.otherFields && this.article.otherFields.length > 0) {
+			let otherFields = this.articleForm.controls.otherFields as FormArray;
+			this.article.otherFields.forEach(x => {
+
+				let articleFieldId;
+				if (x.articleField && x.articleField._id && x.articleField.operationType != 'D') {
+					articleFieldId = x.articleField._id;
+					otherFields.push(this._fb.group({
+						'_id': null,
+                        'articleField': articleFieldId,
+                        'amount' : x.amount,
+                        'value' : x.value
 					}))
 				}
 

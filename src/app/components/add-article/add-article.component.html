@@ -403,13 +403,73 @@
                 </ngb-tab>
                 <ngb-tab title="Campos Personalizados">
                     <ng-template ngbTabContent>
-                        <div class="row tab-content">
-                            <div class="form-group col-md-12">
-                                <app-add-article-fields *ngIf="otherFieldsAlfabetico"
-                                    (eventAddArticleFields)="addArticleFields($event)" [fields]="otherFields"
-                                    [location]="'Custom'"></app-add-article-fields>
+                        <form #otherFieldForm="ngForm" (ngSubmit)="addOtherField(otherFieldForm)">
+                            <div class="row">
+                                <div class="form-group col-md-5">
+                                    <label for="articleField" class="control-label">Campo</label>
+                                    <select class="form-control" name="articleField"  [(ngModel)]="articleFieldSelected" (change)="buildListArticleField(articleFieldSelected)">
+                                        <option *ngFor="let articleField of articleFields" [ngValue]="articleField"
+                                            [disabled]="readonly">{{articleField.name}} </option>
+                                    </select>
+                                    <div *ngIf="formErrors.articleField" class="alert alert-danger">
+                                        {{ formErrors.articleField }}
+                                    </div>     
+                                </div>
+                                <div *ngIf="articleFieldSelected && articleFieldSelected.datatype === 'Lista'" class="form-group col-md-3">
+                                    <label for="value" class="control-label">Valor</label>
+                                    <select class="form-control" ngModel name="value">
+                                        <option *ngFor="let value of articleFieldValues" [value]="value"
+                                            [disabled]="readonly">{{value}}</option>
+                                    </select>
+                                </div>
+                                <div *ngIf="articleFieldSelected && articleFieldSelected.datatype === 'Alfabético'" class="form-group col-md-3">
+                                    <label for="value" class="control-label">Valor:</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" ngModel name="value"
+                                            [readonly]="readonly" />
+                                    </div>
+                                </div>
+                                <div *ngIf="articleFieldSelected && articleFieldSelected.datatype === 'Número' || articleFieldSelected.datatype === 'Porcentaje'" class="form-group col-md-3">
+                                    <label for="value" class="control-label">Valor:</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" ngModel name="value"
+                                            [readonly]="readonly" />
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <button type="summit" class="btn btn-success btn-sm especial">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
+                        </form>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr class="separation">
+                                    <th>Campo</th>
+                                    <th>Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="separation"
+                                    *ngFor="let otherField of articleForm.get('otherFields').controls; let i = index;">
+                                    <div *ngFor="let articleField of articleFields; let i = index">
+                                        <td
+                                            *ngIf="otherField && otherField.value && otherField.value.articleField && otherField.value.articleField === articleField._id">
+                                            {{articleField.name}}</td>
+                                    </div>
+                                    <td>{{otherField.value.value}}</td>
+
+                                    <td align="right" width="10">
+                                        <button type="button" class="btn btn-danger btn-sm" (click)="deleteDeposit(i)">
+                                            <i class="fa fa-trash-o"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                            </tfoot>
+                        </table>
                     </ng-template>
                 </ngb-tab>
                 <ngb-tab title="Configuraciones">
