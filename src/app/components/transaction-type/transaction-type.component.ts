@@ -25,10 +25,10 @@ import { UseOfCFDI } from 'app/models/use-of-CFDI';
 import { UseOfCFDIService } from 'app/services/use-of-CFDI.service';
 
 @Component({
-  selector: 'app-transaction-type',
-  templateUrl: './transaction-type.component.html',
-  styleUrls: ['./transaction-type.component.css'],
-  providers: [NgbAlertConfig]
+	selector: 'app-transaction-type',
+	templateUrl: './transaction-type.component.html',
+	styleUrls: ['./transaction-type.component.css'],
+	providers: [NgbAlertConfig]
 })
 
 export class TransactionTypeComponent implements OnInit {

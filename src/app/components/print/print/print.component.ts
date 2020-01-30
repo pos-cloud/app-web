@@ -41,9 +41,7 @@ import { MovementOfCancellationService } from 'app/services/movement-of-cancella
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { BranchService } from 'app/services/branch.service';
-import { User } from 'app/models/user';
 import { UserService } from 'app/services/user.service';
-import { async } from '@angular/core/testing';
 
 var splitRegex = /\r\n|\r|\n/g;
 jsPDF.API.textEx = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {

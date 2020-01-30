@@ -28,7 +28,7 @@ export class PosClientViewComponent {
 	// DISEÑO
 	public colors: string[] = ["orange:white", "green:white"];
 	public colorNumber: number = 0;
-	public limit: number = 3;
+	public limit: number = 9;
 	public fontSize: number = 100;
 	public column: number = 6;
 
@@ -187,6 +187,7 @@ export class PosClientViewComponent {
                 startDate : 1,
 				origin: 1,
 				number: 1,
+				orderNumber: 1,
 				state: 1,
 				operationType: 1,
 			}

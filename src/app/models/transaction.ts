@@ -36,6 +36,7 @@ export class Transaction {
 	public totalPrice: number = 0.00;
 	public roundingAmount: number = 0.00;
 	public diners: number = 0;
+	public orderNumber: number = 0;
 	public observation: string;
 	public madein: string;
 	public balance: number = 0.00;
@@ -225,6 +226,16 @@ export let attributes = [
 	},
 	{
 		name: 'diners',
+		visible: false,
+		disabled: false,
+		filter: true,
+		datatype: 'number',
+		project: null,
+		align: 'right',
+		required: false,
+	},
+	{
+		name: 'orderNumber',
 		visible: false,
 		disabled: false,
 		filter: true,

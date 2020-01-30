@@ -15,7 +15,8 @@
 							[style.font-size.px]="fontSize"
 							*ngFor="let transaction of transactions | filter: state:'state'"
 							(click)="finishTransaction(transaction)">
-							{{ transaction.number }}
+							<span *ngIf="transaction.orderNumber > 0">{{ transaction.orderNumber }}</span>
+							<span *ngIf="!transaction.orderNumber">{{ transaction.number }}</span>
 						</div>
 					</div>
 				</div>

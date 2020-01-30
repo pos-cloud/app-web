@@ -259,6 +259,7 @@ export class PosPackingComponent {
 			let project = {
 				endDate: 1,
 				number: 1,
+				orderNumber: 1,
 				state: 1,
 				operationType: 1,
 			}

@@ -2489,6 +2489,26 @@ export class AddSaleOrderComponent {
 					this.transaction.expirationDate = this.transaction.endDate;
 					this.transaction.state = TransactionState.Closed;
 
+					if (this.transaction.type.maxOrderNumber > 0) {
+						await this.getTransactionsV2(
+							{
+								type: { $oid: this.transaction.type._id },
+								operationType: { $ne: 'D' },
+								state: "Cerrado"
+							}, { endDate: -1 }, {}, 1).then(
+								transactions => {
+									let orderNumber = 1;
+									if (transactions && transactions.length > 0) {
+										orderNumber = transactions[0].orderNumber + 1;
+										if(orderNumber > this.transaction.type.maxOrderNumber) {
+											orderNumber = 1;
+										}
+									}
+									this.transaction.orderNumber = orderNumber;
+								}
+							);
+					}
+
 					await this.updateTransaction().then(
 						async transaction => {
 							if (transaction) {
@@ -2521,11 +2541,53 @@ export class AddSaleOrderComponent {
 									this.openModal('cancelation-type-automatic');
 								}
 							}
-						});
+						}
+					);
 				}
 			});
 		}
 		this.loading = false;
+	}
+
+	public getTransactionsV2(
+		match: {},
+		sort: {} = { endDate: -1 },
+		group: {} = {},
+		limit: number = 0
+	): Promise<Transaction[]> {
+
+		return new Promise<Transaction[]>((resolve, reject) => {
+
+			this.loading = true;
+
+			let project = {
+				type: 1,
+				endDate: 1,
+				orderNumber: 1,
+				operationType: 1,
+				state: 1,
+			}
+
+			this._transactionService.getTransactionsV2(
+				project, // PROJECT
+				match, // MATCH
+				sort, // SORT
+				group, // GROUP
+				limit, // LIMIT
+				0 // SKIP
+			).subscribe(
+				result => {
+					this.loading = false;
+					this.hideMessage();
+					resolve(result.transactions);
+				},
+				error => {
+					this.showMessage(error._body, 'danger', false);
+					this.loading = false;
+					resolve(new Array());
+				}
+			);
+		});
 	}
 
 	public async changeArticlesStatusToPending(): Promise<boolean> {
