@@ -544,7 +544,6 @@ export class PrintComponent implements OnInit {
 		}
 
 		// Letra de transacción
-		// Letra de transacción
 		if (this.transaction.letter && this.transaction.letter !== "") {
 			// Dibujar la linea cortada para la letra
 			this.doc.line(105, 16, 105, 50); //vertical letra
@@ -624,7 +623,6 @@ export class PrintComponent implements OnInit {
 
 				transport = transport + this.movementsOfCashes[i].amountPaid;
 
-
 				if (i % 21 == 0 && i != 0) {
 
 					this.doc.setFontType("bold");
@@ -664,7 +662,6 @@ export class PrintComponent implements OnInit {
 						this.doc.text(this.dateFormat.transform(this.transaction.startDate, 'DD/MM/YYYY'), 125, 25);
 					}
 
-					// Letra de transacción
 					// Letra de transacción
 					if (this.transaction.letter && this.transaction.letter !== "") {
 						// Dibujar la linea cortada para la letra
@@ -723,7 +720,6 @@ export class PrintComponent implements OnInit {
 		this.doc.text("$ " + this.roundNumber.transform(this.transaction.totalPrice), 180, row);
 		this.doc.setFontSize(this.fontSizes.normal);
 		row += 5;
-
 
 		await this.getCancellationsOfMovements(this.transactionId)
 
@@ -2719,9 +2715,8 @@ export class PrintComponent implements OnInit {
 				}
 			}
 		}
-
+			
 		// FIN FORMA DE PAGO
-
 		row += 3;
 		this.doc.line(0, row, width, row);
 		row += 4;
@@ -3093,7 +3088,7 @@ export class PrintComponent implements OnInit {
 		}
 
 		this.doc.setFontType('bold');
-		this.doc.text("Pedido Nº: " + this.transaction.number, margin, row);
+		this.doc.text("Ticket Nº: " + this.transaction.number, margin, row);
 		this.doc.setFontType('normal');
 		this.doc.text(this.dateFormat.transform(this.transaction.startDate, 'DD/MM hh:ss'), (width / 1.6), row);
 		this.doc.setFontType('normal');
@@ -3194,23 +3189,21 @@ export class PrintComponent implements OnInit {
 
 		this.doc.setFontStyle('bold');
 		row += 5;
-
 		this.doc.setFontSize(15);
 		this.centerText(margin, margin, width, 2, row, "TOTAL $ " + this.transaction.totalPrice);
-		//this.doc.text("$ " + this.transaction.totalPrice, width/1.4, row);
 		this.doc.setFontStyle("normal");
-
-		// if (this.config[0].footerInvoice) {
-		//   this.doc.setFontStyle("italic");
-		//   row += 10;
-		//   this.centerText(margin, margin, width, 0, row, this.config[0].footerInvoice);
-		//   this.doc.setFontStyle("normal");
-		// }
+		
+		if (this.transaction.type.maxOrderNumber > 0) {
+			this.doc.setFontStyle('bold');
+			this.doc.setFontSize(10);
+			this.centerText(margin, margin, width, 2, row+8, "Nro de Pedido " + this.transaction.orderNumber);
+			this.doc.setFontStyle("small");
+		}
 
 		//Pie del ticket
 		this.doc.setFontSize(this.fontSizes.xsmall);
 		row += 5;
-		this.centerText(margin, margin, width, 0, row, "Generado en POSCLOUD.com.ar");
+		this.centerText(margin, margin, width, 0, row+8, "Generado en POSCLOUD.com.ar");
 		this.doc.setTextColor(0, 0, 0);
 		if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
 			this.finishImpression();
