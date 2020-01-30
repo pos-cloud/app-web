@@ -199,49 +199,19 @@ export class AddTransactionComponent implements OnInit {
 	public buildForm(): void {
 
 		this.transactionForm = this._fb.group({
-			'company': [this.companyName, [
-				Validators.required
-			]
-			],
-			'date': [moment(this.transactionDate).format('YYYY-MM-DD'), [
-				Validators.required
-			]
-			],
-			'letter': [this.transaction.letter, [
-			]
-			],
-			'origin': [this.transaction.origin, [
-			]
-			],
-			'number': [this.transaction.number, [
-				Validators.required
-			]
-			],
-			'basePrice': [this.transaction.basePrice, [
-			]
-			],
-			'exempt': [this.transaction.exempt, [
-			]
-			],
-			'totalPrice': [this.transaction.totalPrice, [
-				Validators.required
-			]
-			],
-			'observation': [this.transaction.observation, [
-			]
-			],
-			'employeeOpening': [this.transaction.employeeOpening, [
-			]
-			],
-			'state': [this.transaction.state, [
-			]
-			],
-			'VATPeriod': [this.transaction.VATPeriod, [
-			]
-			],
-			'balance': [this.transaction.balance, [
-			]
-			],
+			'company': [this.companyName, [Validators.required]],
+			'date': [moment(this.transactionDate).format('YYYY-MM-DD'), [Validators.required]],
+			'letter': [this.transaction.letter, []],
+			'origin': [this.transaction.origin, []],
+			'number': [this.transaction.number, [Validators.required]],
+			'basePrice': [this.transaction.basePrice, []],
+			'exempt': [this.transaction.exempt, []],
+			'totalPrice': [this.transaction.totalPrice, [Validators.required]],
+			'observation': [this.transaction.observation, []],
+			'employeeOpening': [this.transaction.employeeOpening, []],
+			'state': [this.transaction.state, []],
+			'VATPeriod': [this.transaction.VATPeriod, []],
+			'balance': [this.transaction.balance, []],
 		});
 
 		this.transactionForm.valueChanges

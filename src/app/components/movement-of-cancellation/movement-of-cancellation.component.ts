@@ -492,14 +492,7 @@ export class MovementOfCancellationComponent implements OnInit {
 		this.balanceSelected = 0;
 		for (let mov of this.movementsOfCancellations) {
 			if (!this.isMovementClosed(mov.transactionOrigin)) {
-				if ((mov.transactionOrigin.type.transactionMovement === TransactionMovement.Sale &&
-					mov.transactionOrigin.type.movement === Movements.Outflows) ||
-					(mov.transactionOrigin.type.transactionMovement === TransactionMovement.Purchase &&
-						mov.transactionOrigin.type.movement === Movements.Inflows)) {
-					this.balanceSelected -= mov.balance;
-				} else {
-					this.balanceSelected += mov.balance;
-				}
+				this.balanceSelected += mov.balance;
 			}
 		}
 		this.roundNumber.transform(this.balanceSelected);
