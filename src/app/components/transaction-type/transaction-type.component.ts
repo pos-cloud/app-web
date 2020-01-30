@@ -333,7 +333,8 @@ export class TransactionTypeComponent implements OnInit {
       'updatePrice' : [this.transactionType.updatePrice,[]],
       'updateArticle' : [this.transactionType.updateArticle,[]],
       'expirationDate' : [this.transactionType.expirationDate,[]],
-      'finishCharge' : [this.transactionType.finishCharge,[]]
+      'finishCharge' : [this.transactionType.finishCharge,[]],
+      'maxOrderNumber': [this.transactionType.maxOrderNumber, []]
 
     });
 
@@ -506,6 +507,9 @@ export class TransactionTypeComponent implements OnInit {
         this.transactionType.expirationDate = null;
     }
 
+    if (!this.transactionType.maxOrderNumber) this.transactionType.maxOrderNumber = 0;
+
+
     this.transactionTypeForm.setValue({
       '_id': this.transactionType._id,
       'transactionMovement': this.transactionType.transactionMovement,
@@ -559,7 +563,9 @@ export class TransactionTypeComponent implements OnInit {
       'updatePrice' : this.transactionType.updatePrice,
       'updateArticle' : this.transactionType.updateArticle,
       'expirationDate' : this.transactionType.expirationDate,
-      'finishCharge' : this.transactionType.finishCharge
+      'finishCharge' : this.transactionType.finishCharge,
+      'maxOrderNumber': this.transactionType.maxOrderNumber
+
 
     });
   }
