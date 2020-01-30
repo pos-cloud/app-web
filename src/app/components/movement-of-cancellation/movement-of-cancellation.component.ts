@@ -567,31 +567,26 @@ export class MovementOfCancellationComponent implements OnInit {
 		if (this.balanceSelected >= 0) {
 			if (this.movementsOfCancellations.length > 0) {
 				for (let mov of this.movementsOfCancellations) {
-					if (mov.balance > 0 || !this.modifyBalance(mov.transactionOrigin)) {
-						if ((mov.balance <= mov.transactionOrigin.balance) || !this.modifyBalance(mov.transactionOrigin)) {
-							if (mov.transactionDestination.type && mov.transactionDestination.type.requestArticles) {
-								await this.getMovementOfArticles(mov.transactionOrigin).then(
-									async movementsOfArticles => {
-										if (movementsOfArticles && movementsOfArticles.length > 0) {
-											await this.saveMovementsOfArticles(movementsOfArticles).then(
-												movementsOfArticlesSaved => {
-													if (movementsOfArticlesSaved && movementsOfArticlesSaved.length > 0) {
-													} else {
-														endedProcess = false;
-													}
+					if ((mov.balance <= mov.transactionOrigin.balance) || !this.modifyBalance(mov.transactionOrigin)) {
+						if (mov.transactionDestination.type && mov.transactionDestination.type.requestArticles) {
+							await this.getMovementOfArticles(mov.transactionOrigin).then(
+								async movementsOfArticles => {
+									if (movementsOfArticles && movementsOfArticles.length > 0) {
+										await this.saveMovementsOfArticles(movementsOfArticles).then(
+											movementsOfArticlesSaved => {
+												if (movementsOfArticlesSaved && movementsOfArticlesSaved.length > 0) {
+												} else {
+													endedProcess = false;
 												}
-											);
-										}
+											}
+										);
 									}
-								);
-							}
-						} else {
-							endedProcess = false;
-							this.showMessage("El saldo ingresado en la transacción " + mov.transactionOrigin.type.name + " " + mov.transactionOrigin.number + " no puede ser mayor que el saldo restante de la misma.", "info", true);
+								}
+							);
 						}
 					} else {
 						endedProcess = false;
-						this.showMessage("El saldo ingresado en la transacción " + mov.transactionOrigin.type.name + " " + mov.transactionOrigin.number + " debe ser mayor a 0.", "info", true);
+						this.showMessage("El saldo ingresado en la transacción " + mov.transactionOrigin.type.name + " " + mov.transactionOrigin.number + " no puede ser mayor que el saldo restante de la misma.", "info", true);
 					}
 				}
 				if (endedProcess) {

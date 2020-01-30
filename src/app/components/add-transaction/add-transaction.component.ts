@@ -375,14 +375,7 @@ export class AddTransactionComponent implements OnInit {
 
 						this.balanceTotal = 0;
 						for (let mov of this.movementsOfCancellations) {
-							if ((mov.transactionOrigin.type.transactionMovement === TransactionMovement.Sale &&
-								mov.transactionOrigin.type.movement === Movements.Outflows) ||
-								(mov.transactionOrigin.type.transactionMovement === TransactionMovement.Purchase &&
-									mov.transactionOrigin.type.movement === Movements.Inflows)) {
-								this.balanceTotal -= mov.balance;
-							} else {
-								this.balanceTotal += mov.balance;
-							}
+							this.balanceTotal += mov.balance;
 						}
 						this.balanceTotal = this.roundNumber.transform(this.balanceTotal);
 						if (this.transaction.totalPrice === 0) {
