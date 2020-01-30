@@ -41,9 +41,7 @@ import { MovementOfCancellationService } from 'app/services/movement-of-cancella
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { BranchService } from 'app/services/branch.service';
-import { User } from 'app/models/user';
 import { UserService } from 'app/services/user.service';
-import { async } from '@angular/core/testing';
 
 var splitRegex = /\r\n|\r|\n/g;
 jsPDF.API.textEx = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
@@ -736,7 +734,6 @@ export class PrintComponent implements OnInit {
 			for (let index = 0; index < this.transactions.length; index++) {
 				this.doc.setFontType('normal');
 				this.doc.text(this.transactions[index].type.name + "   " + this.padString(this.transactions[index].origin, 4) + "-" + this.padString(this.transactions[index].number, 8), 10, row);
-				//this.doc.text("$ " + this.roundNumber.transform(this.transactions[index].totalPrice), 80, row);
 				this.doc.textEx("$ " + this.roundNumber.transform(this.transactions[index].totalPrice), 95, row, 'right', 'middle');
 
 				row += 8;
@@ -768,12 +765,6 @@ export class PrintComponent implements OnInit {
 
 			this.loading = true;
 
-			let match;
-
-			match = { "transactionDestination": { $oid: transactionDestinationViewId }, "operationType": { "$ne": "D" } };
-
-
-			// CAMPOS A TRAER
 			let project = {
 				"transactionOrigin": 1,
 				"transactionDestination": 1,
@@ -782,35 +773,37 @@ export class PrintComponent implements OnInit {
 
 			this._movementOfCancellation.getMovementsOfCancellations(
 				project, // PROJECT
-				match, // MATCH
+				{ "transactionDestination": { $oid: transactionDestinationViewId }, "operationType": { "$ne": "D" } }, // MATCH
 				{ order: 1 }, // SORT
 				{}, // GROUP
 				0, // LIMIT
 				0 // SKIP
-			).subscribe(async result => {
-				if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
-					this.transactions = new Array();
-					for (let index = 0; index < result.movementsOfCancellations.length; index++) {
-						let transaction = new Transaction;
-						transaction = await this.getTransaction2(result.movementsOfCancellations[index].transactionOrigin)
+			).subscribe(
+				async result => {
+					this.loading = false;
+					if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
+						this.transactions = new Array();
+						for (let index = 0; index < result.movementsOfCancellations.length; index++) {
+							let transaction = new Transaction;
+							transaction = await this.getTransaction2(result.movementsOfCancellations[index].transactionOrigin)
 
-						if (transaction) {
-							this.transactions.push(transaction);
-						} else {
-							resolve(null)
+							if (transaction) {
+								this.transactions.push(transaction);
+							} else {
+								resolve(null);
+							}
 						}
+						resolve(true);
+					} else {
+						resolve(null);
 					}
-					resolve(true)
-				} else {
-					resolve(null)
-					this.loading = false;
-				}
-				this.loading = false;
-			},
+				},
 				error => {
-					this.showMessage(error._body, 'danger', false);
 					this.loading = false;
-				});
+					this.showMessage(error._body, 'danger', false);
+					resolve(null);
+				}
+			);
 		});
 
 
@@ -2715,7 +2708,7 @@ export class PrintComponent implements OnInit {
 				}
 			}
 		}
-			
+
 		// FIN FORMA DE PAGO
 		row += 3;
 		this.doc.line(0, row, width, row);
@@ -3192,18 +3185,19 @@ export class PrintComponent implements OnInit {
 		this.doc.setFontSize(15);
 		this.centerText(margin, margin, width, 2, row, "TOTAL $ " + this.transaction.totalPrice);
 		this.doc.setFontStyle("normal");
-		
-		if (this.transaction.type.maxOrderNumber > 0) {
+
+		if (this.transaction.type.maxOrderNumber > 0 && this.transaction.orderNumber > 0) {
+			row += 8;
 			this.doc.setFontStyle('bold');
 			this.doc.setFontSize(10);
-			this.centerText(margin, margin, width, 2, row+8, "Nro de Pedido " + this.transaction.orderNumber);
+			this.centerText(margin, margin, width, 2, row, "Nro de Pedido " + this.transaction.orderNumber);
 			this.doc.setFontStyle("small");
 		}
 
 		//Pie del ticket
 		this.doc.setFontSize(this.fontSizes.xsmall);
 		row += 5;
-		this.centerText(margin, margin, width, 0, row+8, "Generado en POSCLOUD.com.ar");
+		this.centerText(margin, margin, width, 0, row, "Generado en POSCLOUD.com.ar");
 		this.doc.setTextColor(0, 0, 0);
 		if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
 			this.finishImpression();

@@ -54,7 +54,10 @@
 								<div class="col-md-6">
 									<div class="row">
 										<div class="col-md-12 center-content">
-											Pedido Nro {{movementOfArticle.transaction.number}} Realizado
+											<span *ngIf="movementOfArticle.transaction.orderNumber > 0">Pedido Nro
+												{{movementOfArticle.transaction.orderNumber}} Realizado</span>
+											<span *ngIf="!movementOfArticle.transaction.orderNumber">Pedido Nro
+												{{movementOfArticle.transaction.number}} Realizado</span>
 										</div>
 									</div>
 									<div class="row">
@@ -109,7 +112,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="row" *ngIf="movementsOfArticles[0]">
+							<div class="row" *ngIf="movementsOfArticles && movementsOfArticles[0]">
 								<div class="col-md-4 center-content" style="padding: 20px;"
 									(click)="viewArticle(movementsOfArticles[0])">
 									<img *ngIf="!movementsOfArticles[0] || !movementsOfArticles[0].article.picture || movementsOfArticles[0].article.picture == 'default.jpg'"
@@ -120,16 +123,19 @@
 								<div class="col-md-8">
 									<div class="card-title">
 										<span>{{movementsOfArticles[0].description}}</span><br>
-										<span style="font-size: 15px;"
-											*ngIf="movementsOfArticles[0].transaction">Pedidido Nro
-											{{movementsOfArticles[0].transaction.number}}</span>
+										<span style="font-size: 15px;" *ngIf="movementsOfArticles[0].transaction">
+											<span *ngIf="movementsOfArticles[0].transaction.orderNumber > 0">Pedido Nro
+												{{movementsOfArticles[0].transaction.orderNumber}} Realizado</span>
+											<span *ngIf="!movementsOfArticles[0].transaction.orderNumber">Pedido Nro
+												{{movementsOfArticles[0].transaction.number}} Realizado</span>
+										</span>
 									</div>
 									<div class="card-text">
 										{{movementsOfArticles[0].notes}}
 									</div>
 								</div>
 							</div>
-							<div class="row" *ngIf="movementsOfArticles[1]">
+							<div class="row" *ngIf="movementsOfArticles && movementsOfArticles[1]">
 								<div class="col-md-4 center-content" style="padding: 20px;"
 									(click)="viewArticle(movementsOfArticles[1])">
 									<img *ngIf="!movementsOfArticles[1] || !movementsOfArticles[1].article.picture || movementsOfArticles[1].article.picture == 'default.jpg'"
@@ -140,16 +146,19 @@
 								<div class="col-md-8">
 									<div class="card-title">
 										<span>{{movementsOfArticles[1].description}}</span><br>
-										<span style="font-size: 15px;"
-											*ngIf="movementsOfArticles[1].transaction">Pedidido Nro
-											{{movementsOfArticles[1].transaction.number}}</span>
+										<span style="font-size: 15px;" *ngIf="movementsOfArticles[1].transaction">
+											<span *ngIf="movementsOfArticles[1].transaction.orderNumber > 0">Pedido Nro
+												{{movementsOfArticles[1].transaction.orderNumber}} Realizado</span>
+											<span *ngIf="!movementsOfArticles[1].transaction.orderNumber">Pedido Nro
+												{{movementsOfArticles[1].transaction.number}} Realizado</span>
+										</span>
 									</div>
 									<div class="card-text">
 										{{movementsOfArticles[1].notes}}
 									</div>
 								</div>
 							</div>
-							<div class="row" *ngIf="movementsOfArticles[2]">
+							<div class="row" *ngIf="movementsOfArticles && movementsOfArticles[2]">
 								<div class="col-md-4 center-content" style="padding: 20px;"
 									(click)="viewArticle(movementsOfArticles[2])">
 									<img *ngIf="!movementsOfArticles[2] || !movementsOfArticles[2].article.picture || movementsOfArticles[2].article.picture == 'default.jpg'"
@@ -160,9 +169,12 @@
 								<div class="col-md-8">
 									<div class="card-title">
 										<span>{{movementsOfArticles[2].description}}</span><br>
-										<span style="font-size: 15px;"
-											*ngIf="movementsOfArticles[2].transaction">Pedidido Nro
-											{{movementsOfArticles[2].transaction.number}}</span>
+										<span style="font-size: 15px;" *ngIf="movementsOfArticles[2].transaction">
+											<span *ngIf="movementsOfArticles[1].transaction.orderNumber > 0">Pedido Nro
+												{{movementsOfArticles[1].transaction.orderNumber}} Realizado</span>
+											<span *ngIf="!movementsOfArticles[1].transaction.orderNumber">Pedido Nro
+												{{movementsOfArticles[1].transaction.number}} Realizado</span>
+										</span>
 									</div>
 									<div class="card-text">
 										{{movementsOfArticles[2].notes}}

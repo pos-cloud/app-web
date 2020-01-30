@@ -276,7 +276,8 @@ export class PosKitchenComponent {
 				'article.picture': 1,
 				'transaction._id': 1,
 				'transaction.endDate': 1,
-				'transaction.number': 1
+				'transaction.number': 1,
+				'transaction.orderNumber': 1
 			};
 
 			this._movementOfArticleService.getMovementsOfArticlesV2(
