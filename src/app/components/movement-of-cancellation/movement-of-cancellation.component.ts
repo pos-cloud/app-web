@@ -116,9 +116,9 @@ export class MovementOfCancellationComponent implements OnInit {
 		let match;
 		// FILTRAMOS LA CONSULTA
 		if (this.transactionOriginViewId) {
-			match = { "transactionOrigin": { $oid: this.transactionOriginViewId }, "operationType": { "$ne": "D" }, "balance": { $gt: 0 } };
+			match = { "transactionOrigin": { $oid: this.transactionOriginViewId }, "operationType": { "$ne": "D" } };
 		} else {
-			match = { "transactionDestination": { $oid: this.transactionDestinationViewId }, "operationType": { "$ne": "D" }, "balance": { $gt: 0 } };
+			match = { "transactionDestination": { $oid: this.transactionDestinationViewId }, "operationType": { "$ne": "D" } };
 		}
 
 		// CAMPOS A TRAER
