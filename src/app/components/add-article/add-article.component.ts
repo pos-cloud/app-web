@@ -583,6 +583,7 @@ export class AddArticleComponent implements OnInit {
 				})
 			);
             otherFieldsForm.resetForm();
+            this.value = '';
 		}
 
 	}

@@ -407,22 +407,28 @@
                             <div class="row">
                                 <div class="form-group col-md-5">
                                     <label for="articleField" class="control-label">Campo</label>
-                                    <select class="form-control" name="articleField"  [(ngModel)]="articleFieldSelected" (change)="buildListArticleField(articleFieldSelected)">
+                                    <select class="form-control" name="articleField" [(ngModel)]="articleFieldSelected"
+                                        (change)="buildListArticleField(articleFieldSelected)">
                                         <option *ngFor="let articleField of articleFields" [ngValue]="articleField"
                                             [disabled]="readonly">{{articleField.name}} </option>
                                     </select>
                                     <div *ngIf="formErrors.articleField" class="alert alert-danger">
                                         {{ formErrors.articleField }}
-                                    </div>     
+                                    </div>
                                 </div>
                                 <div *ngIf="articleFieldSelected" class="form-group col-md-3">
                                     <label for="value" class="control-label">Valor</label>
-                                    <select *ngIf="articleFieldSelected.datatype === 'Lista' && articleFieldValues.length > 0" class="form-control" [(ngModel)]="value" name="value">
-                                        <option *ngFor="let value of articleFieldValues"
-                                            [disabled]="readonly">{{value}}</option>
+                                    <select
+                                        *ngIf="articleFieldSelected.datatype === 'Lista' && articleFieldValues.length > 0"
+                                        class="form-control" [(ngModel)]="value" name="value">
+                                        <option *ngFor="let value of articleFieldValues" [disabled]="readonly">{{value}}
+                                        </option>
                                     </select>
-                                    <input class="form-control" type="number" *ngIf="articleFieldSelected.datatype === 'Porcentaje' || articleFieldSelected.datatype === 'Número'" [(ngModel)]="value" name="value">
-                                    <input class="form-control" *ngIf="articleFieldSelected.datatype === 'Alfabético'" type="text" [(ngModel)]="value" name="value">
+                                    <input class="form-control" type="number"
+                                        *ngIf="articleFieldSelected.datatype === 'Porcentaje' || articleFieldSelected.datatype === 'Número'"
+                                        [(ngModel)]="value" name="value">
+                                    <input class="form-control" *ngIf="articleFieldSelected.datatype === 'Alfabético'"
+                                        type="text" [(ngModel)]="value" name="value">
                                 </div>
                                 <div class="form-group col-md-2">
                                     <button type="summit" class="btn btn-success btn-sm especial">
@@ -449,7 +455,8 @@
                                     <td>{{otherField.value.value}}</td>
 
                                     <td align="right" width="10">
-                                        <button type="button" class="btn btn-danger btn-sm" (click)="deleteOtherField(i)">
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                            (click)="deleteOtherField(i)">
                                             <i class="fa fa-trash-o"></i>
                                         </button>
                                     </td>
