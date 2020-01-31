@@ -1,3 +1,7 @@
+import { User } from './user';
+import * as moment from 'moment';
+import 'moment/locale/es';
+
 export class ArticleField {
 
 	public _id: string;
@@ -5,10 +9,16 @@ export class ArticleField {
 	public name: string;
 	public datatype: ArticleFieldType = ArticleFieldType.Percentage;
 	public value: string;
-  public modify: boolean = false;
-  public modifyVAT: boolean = false;
-  public discriminateVAT : boolean = false;
-  public ecommerceEnabled : boolean = false;
+    public modify: boolean = false;
+    public modifyVAT: boolean = false;
+    public discriminateVAT : boolean = false;
+    public ecommerceEnabled : boolean = false;
+    public operationType: string;
+	public creationUser: User;
+	public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+	public updateUser: User;
+	public updateDate: string;
+	
 
 	constructor() { }
 }

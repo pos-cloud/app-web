@@ -36,7 +36,7 @@ import { UnitOfMeasurementService } from 'app/services/unit-of-measurement.servi
 import { DecimalPipe } from '@angular/common';
 import { SlicePipe } from '@angular/common';
 import { ArticleFields } from '../../models/article-fields';
-import { ArticleFieldType } from '../../models/article-field';
+import { ArticleFieldType, ArticleField } from '../../models/article-field';
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 import { TaxClassification } from 'app/models/tax';
 import { ConfigService } from 'app/services/config.service';
@@ -97,6 +97,10 @@ export class AddArticleComponent implements OnInit {
 	public notes: string[];
 	public formErrorsNote: string;
 
+    public value;
+    public articleFieldSelected : ArticleField;
+    public articleFields : ArticleField[];
+    public articleFieldValues = [];
 	public formErrors = {
 		'code': '',
 		'make': '',
@@ -307,7 +311,9 @@ export class AddArticleComponent implements OnInit {
 		this._articleFields.getArticleFields().subscribe(
 			result => {
 				if (result && result.articleFields) {
-					for (let x = 0; x < result.articleFields.length; x++) {
+
+                    this.articleFields = result.articleFields;
+					/*for (let x = 0; x < result.articleFields.length; x++) {
 
 						if (result.articleFields[x]['datatype'] === ArticleFieldType.String ||
 							result.articleFields[x]['datatype'] === ArticleFieldType.Array) {
@@ -318,7 +324,7 @@ export class AddArticleComponent implements OnInit {
 							this.otherFieldsNumber = true;
 						}
 
-					}
+					}*/
 				}
 			},
 			error => {
@@ -326,7 +332,16 @@ export class AddArticleComponent implements OnInit {
 				this.loading = false;
 			}
 		);
-	}
+    }
+    
+    public buildListArticleField(articleField : ArticleField) {
+        this.articleFieldValues = [];
+        this.value = '';
+
+        if(articleField && articleField.datatype ===  ArticleFieldType.Array){
+            this.articleFieldValues = articleField.value.split(';')
+        }
+    }
 
 	ngAfterViewInit() {
 		this.focusEvent.emit(true);
@@ -389,7 +404,8 @@ export class AddArticleComponent implements OnInit {
 			]
 			],
 			'deposits': this._fb.array([]),
-			'locations': this._fb.array([]),
+            'locations': this._fb.array([]),
+            'otherFields': this._fb.array([]),
 			'children': this._fb.array([]),
 			'observation': [this.article.observation, []],
 			'barcode': [this.article.barcode, [
@@ -533,6 +549,42 @@ export class AddArticleComponent implements OnInit {
 			depositForm.resetForm();
 		}
 
+    }
+    
+    async addOtherField(otherFieldsForm: NgForm) {
+
+        let valid = true;
+        
+		const otherFields = this.articleForm.controls.otherFields as FormArray;
+
+
+		this.articleForm.controls.otherFields.value.forEach(element => {
+
+
+			if (otherFieldsForm.value.articleField._id == element.articleField) {
+				valid = false;
+				this.showMessage("El campo ya existe", "info", true);
+			}
+
+		});
+
+		if (otherFieldsForm.value.value == '' || otherFieldsForm.value.value == null) {
+			this.showMessage("Debe ingresar un valor", "info", true);
+			valid = false;
+		}
+
+		if (valid) {
+			otherFields.push(
+				this._fb.group({
+					_id: null,
+					value: otherFieldsForm.value.value,
+                    articleField: otherFieldsForm.value.articleField._id,
+                    amount : otherFieldsForm.value.amount
+				})
+			);
+            otherFieldsForm.resetForm();
+		}
+
 	}
 
 	async addLocation(locationForm: NgForm) {
@@ -566,6 +618,11 @@ export class AddArticleComponent implements OnInit {
 
 	public deleteDeposit(index): void {
 		let control = <FormArray>this.articleForm.controls.deposits;
+		control.removeAt(index)
+    }
+    
+    public deleteOtherField(index): void {
+		let control = <FormArray>this.articleForm.controls.otherFields;
 		control.removeAt(index)
 	}
 
@@ -604,10 +661,9 @@ export class AddArticleComponent implements OnInit {
 					this.loading = false;
 				} else {
 					this.hideMessage();
-					this.article = result.article;
+                    this.article = result.article;
 					this.notes = this.article.notes;
 					this.taxes = this.article.taxes;
-					this.otherFields = this.article.otherFields;
 					if (this.article.picture && this.article.picture !== 'default.jpg') {
 						this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture + "/" + Config.database;
 					} else {
@@ -663,7 +719,25 @@ export class AddArticleComponent implements OnInit {
 				}
 
 			})
-		}
+        }
+        
+        if (this.article.otherFields && this.article.otherFields.length > 0) {
+			let otherFields = this.articleForm.controls.otherFields as FormArray;
+			this.article.otherFields.forEach(x => {
+
+				let articleFieldId;
+				if (x.articleField && x.articleField._id && x.articleField.operationType != 'D') {
+					articleFieldId = x.articleField._id;
+					otherFields.push(this._fb.group({
+						'_id': null,
+                        'articleField': articleFieldId,
+                        'value' : x.value
+					}))
+				}
+
+			})
+        }
+        
 	}
 
 	public getVariantsByArticleParent(): void {
@@ -1311,8 +1385,8 @@ export class AddArticleComponent implements OnInit {
 
 		if (!this.readonly) {
 			this.loading = true;
-			this.loadPosDescription();
-			this.article = this.articleForm.value;
+            this.loadPosDescription();
+            this.article = this.articleForm.value;
 			this.article.notes = this.notes;
 			this.autocompleteCode();
 			if (this.variants && this.variants.length > 0) {
@@ -1320,7 +1394,7 @@ export class AddArticleComponent implements OnInit {
 			} else {
 				this.article.containsVariants = false;
 			}
-			this.article.otherFields = this.otherFields;
+			
 			this.article.taxes = this.taxes;
 
 			const pathLocation: string[] = this._router.url.split('/');

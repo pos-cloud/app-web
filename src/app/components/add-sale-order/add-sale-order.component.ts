@@ -253,7 +253,7 @@ export class AddSaleOrderComponent {
 						if (this.transaction.state === TransactionState.Closed ||
 							this.transaction.state === TransactionState.Canceled) {
 							if (this.posType === 'resto' && this.transaction.table) {
-								this.transaction.table.employee = null;
+                                this.transaction.table.employee = null;
 								this.transaction.table.state = TableState.Available;
 								await this.updateTable().then(table => {
 									if (table) {
@@ -2515,8 +2515,13 @@ export class AddSaleOrderComponent {
 								this.transaction = transaction;
 
 								if (this.transaction.table) {
-									this.transaction.table.employee = null;
-									this.transaction.table.state = TableState.Available;
+
+                                    if(this.transaction.type.finishCharge){
+                                        this.transaction.table.employee = null;
+                                        this.transaction.table.state = TableState.Available;
+                                    } else {
+                                        this.transaction.table.state = TableState.Pending;
+                                    }
 									await this.updateTable().then(table => {
 										if (table) {
 											this.transaction.table = table;

@@ -118,6 +118,9 @@ export class ListGalleriesComponent implements OnInit {
                     this.getGalleries();
                 });
                 break;
+            case 'navigate':
+                this._router.navigate(["/ver-galeria/", gallery.name])
+                break;
             default: ;
         }
     };
