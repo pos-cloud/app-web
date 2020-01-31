@@ -97,9 +97,10 @@ export class AddArticleComponent implements OnInit {
 	public notes: string[];
 	public formErrorsNote: string;
 
+    public value;
     public articleFieldSelected : ArticleField;
     public articleFields : ArticleField[];
-    public articleFieldValues;
+    public articleFieldValues = [];
 	public formErrors = {
 		'code': '',
 		'make': '',
@@ -312,7 +313,6 @@ export class AddArticleComponent implements OnInit {
 				if (result && result.articleFields) {
 
                     this.articleFields = result.articleFields;
-                    console.log(this.articleFields)
 					/*for (let x = 0; x < result.articleFields.length; x++) {
 
 						if (result.articleFields[x]['datatype'] === ArticleFieldType.String ||
@@ -335,6 +335,9 @@ export class AddArticleComponent implements OnInit {
     }
     
     public buildListArticleField(articleField : ArticleField) {
+        this.articleFieldValues = [];
+        this.value = '';
+
         if(articleField && articleField.datatype ===  ArticleFieldType.Array){
             this.articleFieldValues = articleField.value.split(';')
         }
@@ -554,33 +557,21 @@ export class AddArticleComponent implements OnInit {
         
 		const otherFields = this.articleForm.controls.otherFields as FormArray;
 
-        console.log(otherFieldsForm.value)
 
-		//let deposit = await this.getDeposit(depositForm.value.deposit)
+		this.articleForm.controls.otherFields.value.forEach(element => {
 
-		/*for (const element of this.articleForm.controls.deposits.value) {
 
-			let depositAux = await this.getDeposit(element.deposit);
-
-			if (depositAux.branch._id === deposit.branch._id) {
+			if (otherFieldsForm.value.articleField._id == element.articleField) {
 				valid = false;
-				this.showMessage("Solo puede tener un depósito por sucursal.", "info", true);
-			}
-		}*/
-
-		/*this.articleForm.controls.deposits.value.forEach(element => {
-
-			if (otherFieldsForm.value.deposit == element.deposit) {
-				valid = false;
-				this.showMessage("El depósito ya existe", "info", true);
+				this.showMessage("El campo ya existe", "info", true);
 			}
 
 		});
 
-		if (depositForm.value.deposit == '' || depositForm.value.deposit == 0 || depositForm.value.deposit == null) {
-			this.showMessage("Debe seleccionar un depósito", "info", true);
+		if (otherFieldsForm.value.value == '' || otherFieldsForm.value.value == null) {
+			this.showMessage("Debe ingresar un valor", "info", true);
 			valid = false;
-		}*/
+		}
 
 		if (valid) {
 			otherFields.push(
@@ -591,7 +582,7 @@ export class AddArticleComponent implements OnInit {
                     amount : otherFieldsForm.value.amount
 				})
 			);
-			otherFieldsForm.resetForm();
+            otherFieldsForm.resetForm();
 		}
 
 	}
@@ -630,8 +621,8 @@ export class AddArticleComponent implements OnInit {
 		control.removeAt(index)
     }
     
-    public deleteArticleField(index): void {
-		let control = <FormArray>this.articleForm.controls.articleFields;
+    public deleteOtherField(index): void {
+		let control = <FormArray>this.articleForm.controls.otherFields;
 		control.removeAt(index)
 	}
 
@@ -670,10 +661,9 @@ export class AddArticleComponent implements OnInit {
 					this.loading = false;
 				} else {
 					this.hideMessage();
-					this.article = result.article;
+                    this.article = result.article;
 					this.notes = this.article.notes;
 					this.taxes = this.article.taxes;
-					this.otherFields = this.article.otherFields;
 					if (this.article.picture && this.article.picture !== 'default.jpg') {
 						this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture + "/" + Config.database;
 					} else {
@@ -741,13 +731,13 @@ export class AddArticleComponent implements OnInit {
 					otherFields.push(this._fb.group({
 						'_id': null,
                         'articleField': articleFieldId,
-                        'amount' : x.amount,
                         'value' : x.value
 					}))
 				}
 
 			})
-		}
+        }
+        
 	}
 
 	public getVariantsByArticleParent(): void {
@@ -1395,8 +1385,8 @@ export class AddArticleComponent implements OnInit {
 
 		if (!this.readonly) {
 			this.loading = true;
-			this.loadPosDescription();
-			this.article = this.articleForm.value;
+            this.loadPosDescription();
+            this.article = this.articleForm.value;
 			this.article.notes = this.notes;
 			this.autocompleteCode();
 			if (this.variants && this.variants.length > 0) {
@@ -1404,7 +1394,7 @@ export class AddArticleComponent implements OnInit {
 			} else {
 				this.article.containsVariants = false;
 			}
-			this.article.otherFields = this.otherFields;
+			
 			this.article.taxes = this.taxes;
 
 			const pathLocation: string[] = this._router.url.split('/');
