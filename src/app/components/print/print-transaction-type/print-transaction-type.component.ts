@@ -408,22 +408,6 @@ export class PrintTransactionTypeComponent implements OnInit {
 
             }
             break;
-          case 'data':
-            if(field.font !== 'default') {
-              this.doc.setFont(field.font)
-            }   
-            this.doc.setFontType(field.fontType)
-            this.doc.setFontSize(field.fontSize)
-            try {
-              if(field.positionEndX || field.positionEndY){
-                this.doc.text(field.positionStartX,field.positionStartY,eval("this."+field.value).toString().slice(field.positionEndX , field.positionEndY))
-              } else {
-                this.doc.text(field.positionStartX,field.positionStartY,eval("this."+field.value).toString())
-              }
-            } catch (e) {
-              this.doc.text(field.positionStartX,field.positionStartY,field.value)
-            }
-            break;
           case 'barcode':
             try {
               await this.getBarcode64('code128?value=' + eval("this."+field.value))
@@ -440,7 +424,7 @@ export class PrintTransactionTypeComponent implements OnInit {
               this.doc.setFontType(field.fontType)
               this.doc.setFontSize(field.fontSize)
   
-              if(field.value.split('.')[0] === "movementOfArticle" && this.movementOfArticle) {
+              if(field.value.split('.')[0] === "movementOfArticle" && this.movementOfArticle) { 
                 this.movementOfArticle.forEach(async movementOfArticle => {
                   try {
                     this.doc.text(field.positionStartX,row,(eval(field.value)).toString())

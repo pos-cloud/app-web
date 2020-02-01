@@ -361,12 +361,14 @@ export class PrinterComponent implements OnInit {
 			})
 		}
 
-		this.printerForm.patchValue(values);
+        this.printerForm.patchValue(values);
+        
 
 	}
 
 	public addPrinter(): void {
 
+        this.printer = this.printerForm.value;
 		switch (this.operation) {
 			case 'add':
 				this.savePrinter();
@@ -384,7 +386,6 @@ export class PrinterComponent implements OnInit {
 	public savePrinter(): void {
 
 		this.loading = true;
-		this.printer = this.printerForm.value;
 
 		this._printerService.savePrinter(this.printer).subscribe(
 			result => {
@@ -408,7 +409,6 @@ export class PrinterComponent implements OnInit {
 	public updatePrinter(): void {
 
 		this.loading = true;
-		this.printer = this.printerForm.value;
 
 		this._printerService.updatePrinter(this.printer).subscribe(
 			result => {

@@ -444,6 +444,16 @@ export let attributes = [
 		project: null,
 		align: 'left',
 		required: true,
+    },
+    {
+		name: 'type.readLayout',
+		visible: false,
+		disabled: true,
+		filter: false,
+		datatype: 'string',
+		project: null,
+		align: 'left',
+		required: true,
 	},
 	{
 		name: 'company.emails',

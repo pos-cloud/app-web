@@ -1,284 +1,293 @@
 <div class="modal-header">
-  <h4 class="modal-title">Agregar Impresora</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
-    <span aria-hidden="true">&times;</span>
-  </button>
+    <h4 class="modal-title">Agregar Impresora</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
 </div>
 <section class="container-fluid">
-  <div class="center-content" *ngIf="alertMessage !== ''">
-    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-      {{alertMessage}}
-    </ngb-alert>
-  </div>
-  <form [formGroup]="printerForm" #formAddPrinter="ngForm" (ngSubmit)="addPrinter()" autocomplete="off">
-    <div class="modal-body">
-      <ngb-tabset>
-        <ngb-tab title="Datos principales">
-          <ng-template ngbTabContent>
-            <div class="row">
-                <div class="form-group col-md-6">
-                  <label for="name" class="control-label">Nombre:</label>
-                  <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent" />
-                  <div *ngIf="formErrors.name" class="alert alert-danger">
-                    {{ formErrors.name }}
-                  </div>
-                </div>
-                <div class="form-group col-md-6">
-                  <label for="type" class="control-label">Tipo:</label>
-                  <select class="form-control" formControlName="type">
-                    <option *ngFor="let type of types" [ngValue]="type">{{type}}</option>
-                  </select>
-                </div>
-            </div>
-            <div class = "row">
-              <div class="form-group col-md-4">
-                <label for="orientation" class="control-label">Orientacion:</label>
-                <select class="form-control" formControlName="orientation">
-                    <option value="l" [selected] = "printer.orientation === 'l'">Horizontal</option>
-                    <option value="p" [selected] = "printer.orientation === 'p'">Vertical</option>
-                </select>
-                <div *ngIf="formErrors.orientation" class="alert alert-danger">
-                  {{ formErrors.orientation }}
-                </div>
-              </div>
-              <div class="form-group col-md-4">
-                <label for="row" class="control-label">Interlineado:</label>
-                <input type="number" class="form-control" formControlName="row" name="row" id="row" />
-                <div *ngIf="formErrors.row" class="alert alert-danger">
-                  {{ formErrors.row }}
-                </div>
-              </div>
-              <div class="form-group col-md-4">
-                <label for="addPag" class="control-label">Salto de página:</label>
-                <input type="number" class="form-control" formControlName="addPag" name="addPag" id="addPag" />
-                <div *ngIf="formErrors.addPag" class="alert alert-danger">
-                  {{ formErrors.addPag }}
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="form-group col-md-4">
-                <label for="pageSize" class="control-label">Tamaño:</label>
-                <select class="form-control" formControlName="pageSize" (change)="updatePageSize()">
-                  <option *ngFor="let pageSize of pageSizes" [ngValue]="pageSize">{{pageSize}}</option>
-                </select>
-              </div>
-              <div class="form-group col-md-4">
-                <label for="pageWidth" class="control-label">Ancho de página:</label>
-                <div class="input-group">
-                  <input type="number" class="form-control" formControlName="pageWidth" name="pageWidth" id="pageWidth" aria-describedby="basic-addon1"/>
-                  <span class="input-group-addon" id="basic-addon1">mm</span>
-                </div>
-              </div>
-              <div class="form-group col-md-4">
-                <label for="pageHigh" class="control-label">Alto de página:</label>
-                <div class="input-group">
-                  <input type="number" class="form-control" formControlName="pageHigh" name="pageHigh" id="pageHigh" aria-describedby="basic-addon1"/>
-                  <span class="input-group-addon" id="basic-addon1">mm</span>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="form-group col-md-6">
-                <label for="printIn" class="control-label">Imprime en</label>
-                <select class="form-control" formControlName="printIn">
-                  <option *ngFor="let printIn of printsIn" [ngValue]="printIn">{{printIn}}</option>
-                </select>
-              </div>
-              <div class="form-group col-md-6">
-                <label for="url" class="control-label">URL:</label>
-                <div class="input-group">
-                  <input type="text" class="form-control" formControlName="url" name="url" id="url" aria-describedby="basic-addon1"/>
-                </div>
-              </div>
-            </div>
-          </ng-template>
-        </ngb-tab>
-        <ngb-tab title="Diseño">
-          <ng-template ngbTabContent>
-            <div class = "row">
-                <div class="col-md-6">
-                    <form #fieldForm="ngForm" (ngSubmit)="addField(fieldForm)">
+    <div class="center-content" *ngIf="alertMessage !== ''">
+        <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+            {{alertMessage}}
+        </ngb-alert>
+    </div>
+    <form [formGroup]="printerForm" #formAddPrinter="ngForm" (ngSubmit)="addPrinter()" autocomplete="off">
+        <div class="modal-body">
+            <ngb-tabset>
+                <ngb-tab title="Datos principales">
+                    <ng-template ngbTabContent>
                         <div class="row">
-                          <div class="form-group col-md-3">
-                            <label for="type" class="control-label">Tipo:</label>
-                            <select class="form-control" [(ngModel)]="type" name="type" required>
-                              <option value="label"   [selected]="label">Etiqueta</option>
-                              <option value="data"    [selected]="data">Dato</option>
-                              <option value="dataSum" [selected]="dataSum" >Dato Sumalizado</option>
-                              <option value="line"    [selected]="line">Linea</option>
-                              <option value="image"   [selected]="image">Imagen</option>
-                              <option value="barcode" [selected]="barcode">Código de barra</option>
-                            </select>
-                          </div>
-                          <div class="form-group col-md-3" *ngIf="type ==='data' || type === 'image' || type === 'barcode' || type === 'dataSum'">
-                            <label for="collection" class="control-label">Colección:</label>
-                            <select class="form-control" [(ngModel)]="collection" name="collection" (change)="getDocuments()">
-                              <option value="company" [selected]="company">Empresa</option>
-                              <option value="article" [selected]="article">Producto</option>
-                              <option value="config" [selected]="config">Config</option>
-                              <option value="transaction" [selected]="transaction">Transaccion</option>
-                              <option *ngIf="position == 'Cuerpo'" value="movementOfCash" [selected]="movementOfCash">Mov de Dinero</option>
-                              <option *ngIf="position == 'Cuerpo'" value="movementOfArticle" [selected]="movementOfArticle">Mov de Articulo</option>
-                              <option *ngIf="position == 'Cuerpo'" value="movementOfCancellation" [selected]="movementOfCancellation">Mov de Cancelacion</option>
-                            </select>
-                          </div>
-                          <div class="form-group col-md-3" *ngIf="type === 'data' || type === 'image' || type === 'barcode' || type === 'dataSum'">
-                            <label for="value" class="control-label">Valor:</label>
-                            <select class="form-control" [(ngModel)]="value" name="value">
-                              <option *ngFor="let document of documents"
-                                      [ngValue]="collection+'.'+document">
-                                      {{document}}
-                              </option>
-                            </select>
-                          </div>
-                          <div class="form-group col-md-3" *ngIf="type ==='label'">
-                            <label for="value" class="control-label">Valor:</label>
-                            <div class="input-group">
-                              <input type="text" class="form-control" [(ngModel)]="value" name="value"/>
+                            <div class="form-group col-md-6">
+                                <label for="name" class="control-label">Nombre:</label>
+                                <input type="text" class="form-control" formControlName="name" name="name" id="name"
+                                    [focus]="focusEvent" />
+                                <div *ngIf="formErrors.name" class="alert alert-danger">
+                                    {{ formErrors.name }}
+                                </div>
                             </div>
-                          </div>
+                            <div class="form-group col-md-6">
+                                <label for="type" class="control-label">Tipo:</label>
+                                <select class="form-control" formControlName="type">
+                                    <option *ngFor="let type of types" [ngValue]="type">{{type}}</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class = "row" *ngIf="type === 'data' || type === 'dataSum' || type === 'label'">
-                          <div class="form-group col-md-4">
-                              <label for="font" class="control-label">Fuente:</label>
-                              <select class="form-control" [(ngModel)]="font" name="font">
-                                <option value="default" [selected]="default">Default</option>
-                                <option value="courier" [selected]="courier">Courier</option>
-                                <option value="times" [selected]="times">Times</option>
-                                <option value="helvetica" [selected]="helvetica">Helvetica</option>
-                              </select>
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label for="orientation" class="control-label">Orientacion:</label>
+                                <select class="form-control" formControlName="orientation">
+                                    <option value="l" [selected]="printer.orientation === 'l'">Horizontal</option>
+                                    <option value="p" [selected]="printer.orientation === 'p'">Vertical</option>
+                                </select>
+                                <div *ngIf="formErrors.orientation" class="alert alert-danger">
+                                    {{ formErrors.orientation }}
+                                </div>
                             </div>
                             <div class="form-group col-md-4">
-                              <label for="fontType" class="control-label">Letra:</label>
-                                <select class="form-control" [(ngModel)]="fontType" name="fontType"  required>
-                                  <option value="normal" [selected]="normal">Normal</option>
-                                  <option value="italic" [selected]="italic">Italic</option>
-                                  <option value="bold" [selected]="bold">Bold</option>                            
-                                  <option value="bolditalic" [selected]="bolditalic">Bolditalic</option>
-                                </select>
-                              </div>
-                              <div class="form-group col-md-4">
-                                <label for="fontSize" class="control-label">Tamaño:</label>
-                                <div class="input-group">
-                                  <input type="number" class="form-control"  [(ngModel)]="fontSize" name="fontSize" required/>
+                                <label for="row" class="control-label">Interlineado:</label>
+                                <input type="number" class="form-control" formControlName="row" name="row" id="row" />
+                                <div *ngIf="formErrors.row" class="alert alert-danger">
+                                    {{ formErrors.row }}
                                 </div>
-                              </div>
-                        </div>                             
-                        <div class="row">
-                          <div class="form-group col-md-3">
-                            <label for="positionStartX" class="control-label">X ini (mm):</label>
-                            <div class="input-group">
-                              <input type="number" class="form-control" [(ngModel)]="positionStartX" name="positionStartX" required/>
                             </div>
-                          </div>
-                          <div class="form-group col-md-3">
-                            <label for="positionStartY" class="control-label">Y ini (mm):</label>
-                            <div class="input-group">
-                              <input type="number" class="form-control" [(ngModel)]="positionStartY" name="positionStartY" required/>
-                            </div>
-                          </div>
-                          <div class="form-group col-md-3" *ngIf="type === 'data' || type === 'barcode' || type === 'imagen'">
-                              <label for="positionEndX" class="control-label">X fin (mm):</label>
-                              <div class="input-group">
-                                <input type="number" class="form-control" [(ngModel)]="positionEndX" name="positionEndX" required/>
-                              </div>
-                          </div>
-                          <div class="form-group col-md-3" *ngIf="type === 'data' || type === 'barcode' || type === 'imagen'">
-                              <label for="positionEndY" class="control-label">Y fin (mm):</label>
-                            <div class="input-group">
-                              <input type="number" class="form-control" [(ngModel)]="positionEndY" name="positionEndY" required/>
-                            </div>
-                          </div>
-                          <div class="form-group col-md-3" *ngIf="type === 'data' || type === 'dataSum' || type === 'label'" >
-                              <label for="splitting" class="control-label">Ancho:</label>
-                              <div class="input-group">
-                                <input type="number" class="form-control" [(ngModel)]="splitting" ng-pattern="^[0-9]+" name="splitting" />
-                              </div>
-                          </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md-5">      
-                              <button type="summit" [disabled]="!fieldForm.valid" class="btn btn-success btn">
-                                  <i class="fa fa-plus"></i>
-                              </button>
+                            <div class="form-group col-md-4">
+                                <label for="addPag" class="control-label">Salto de página:</label>
+                                <input type="number" class="form-control" formControlName="addPag" name="addPag"
+                                    id="addPag" />
+                                <div *ngIf="formErrors.addPag" class="alert alert-danger">
+                                    {{ formErrors.addPag }}
+                                </div>
                             </div>
                         </div>
-                    </form>
-                </div>
-                <div class="col-md-6">
-                  <app-print-transaction-type [printer]="printer" [origin]="view"></app-print-transaction-type>
-                </div>
-            </div>
-            <div class = "row">
-                <div class="col-md-12">
-                    <table width="100%" class="table table-striped">
-                      <thead>
-                        <tr>
-                          <th>Tipo</th>
-                          <th>Valor</th>
-                          <th>Posicion</th>
-                          <th>Fuente</th>
-                          <th>Letra</th>
-                          <th>Tamaño</th>
-                          <th>X ini</th>
-                          <th>Y ini</th>
-                          <th>X fin</th>
-                          <th>Y fin</th>
-                          <th>Ancho</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let field of printerForm.get('fields').controls; let i = index;">
-                            
-                              <td *ngIf="field && field.value">{{field.value.type}}</td>
-                              <td *ngIf="field && field.value">{{field.value.value | slice:0:10}}</td>
-                              <td *ngIf="field && field.value">{{field.value.position}}</td>
-                              <td *ngIf="field && field.value">{{field.value.font}}</td>
-                              <td *ngIf="field && field.value">{{field.value.fontType}}</td>
-                              <td *ngIf="field && field.value">{{field.value.fontSize}}</td>
-                              <td *ngIf="field && field.value">{{field.value.positionStartX}}</td>
-                              <td *ngIf="field && field.value">{{field.value.positionStartY}}</td>
-                              <td *ngIf="field && field.value">{{field.value.positionEndX}}</td>
-                              <td *ngIf="field && field.value">{{field.value.positionEndY}}</td>
-                              <td *ngIf="field && field.value">{{field.value.splitting}}</td>
-                              <td align="right" width="10">
-                                  <button type="button" class="btn btn-primary btn-sm" (click)="editField(field,i)">
-                                      <i class="fa fa-pencil"></i>
-                                  </button>
-                                  <button type="button" class="btn btn-danger btn-sm" (click)="deleteField(i)">
-                                      <i class="fa fa-trash-o"></i>
-                                  </button>
-                              </td>
-                          
-                        </tr>
-                      </tbody>
-                      <tfoot>
-                      </tfoot>
-                    </table>
-                </div>
-            </div>
-          </ng-template>
-        </ngb-tab>
-      </ngb-tabset>
-    </div>
-    <div class="modal-footer" *ngIf="operation !== 'view'">
-      <button type="button" class="btn btn-light" (click)="buildPDF()"><i class="fa fa-eye"></i></button>
-      <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="!printerForm.valid || loading" *ngIf="operation !== 'delete'">
-        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
-        <span *ngIf="!loading">Guardar</span>
-        <span *ngIf="loading">Espere por favor</span>
-      </button>
-      <button type="button" 
-              class="btn btn-danger" 
-              *ngIf="operation === 'delete'" 
-              [disabled]="!printerForm.valid || loading" 
-              (click)="deletePrinter()">
-        <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
-        <span *ngIf="!loading">Eliminar</span>
-        <span *ngIf="loading">Espere por favor</span>
-      </button>
-    </div>
-  </form>
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label for="pageSize" class="control-label">Tamaño:</label>
+                                <select class="form-control" formControlName="pageSize" (change)="updatePageSize()">
+                                    <option *ngFor="let pageSize of pageSizes" [ngValue]="pageSize">{{pageSize}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="pageWidth" class="control-label">Ancho de página:</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" formControlName="pageWidth"
+                                        name="pageWidth" id="pageWidth" aria-describedby="basic-addon1" />
+                                    <span class="input-group-addon" id="basic-addon1">mm</span>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="pageHigh" class="control-label">Alto de página:</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" formControlName="pageHigh" name="pageHigh"
+                                        id="pageHigh" aria-describedby="basic-addon1" />
+                                    <span class="input-group-addon" id="basic-addon1">mm</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="printIn" class="control-label">Imprime en</label>
+                                <select class="form-control" formControlName="printIn">
+                                    <option *ngFor="let printIn of printsIn" [ngValue]="printIn">{{printIn}}</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="url" class="control-label">URL:</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" formControlName="url" name="url" id="url"
+                                        aria-describedby="basic-addon1" />
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab title="Diseño">
+                    <ng-template ngbTabContent>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form #fieldForm="ngForm" (ngSubmit)="addField(fieldForm)">
+                                    <div class="row">
+                                        <div class="form-group col-md-3">
+                                            <label for="type" class="control-label">Tipo:</label>
+                                            <select class="form-control" [(ngModel)]="type" name="type" required>
+                                                <option value="label" [selected]="label">Etiqueta</option>
+                                                <option value="data" [selected]="data">Dato</option>
+                                                <option value="dataSum" [selected]="dataSum">Dato Sumalizado</option>
+                                                <option value="line" [selected]="line">Linea</option>
+                                                <option value="image" [selected]="image">Imagen</option>
+                                                <option value="barcode" [selected]="barcode">Código de barra</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-3"
+                                            *ngIf="type ==='data' || type === 'image' || type === 'barcode' || type === 'dataSum'">
+                                            <label for="collection" class="control-label">Colección:</label>
+                                            <select class="form-control" [(ngModel)]="collection" name="collection"
+                                                (change)="getDocuments()">
+                                                <option value="company" [selected]="company">Empresa</option>
+                                                <option value="article" [selected]="article">Producto</option>
+                                                <option value="config" [selected]="config">Config</option>
+                                                <option value="transaction" [selected]="transaction">Transaccion
+                                                </option>
+                                                <option value="movementOfCash" [selected]="movementOfCash">Mov de Dinero
+                                                </option>
+                                                <option value="movementOfArticle" [selected]="movementOfArticle">Mov de
+                                                    Articulo</option>
+                                                <option value="movementOfCancellation"
+                                                    [selected]="movementOfCancellation">Mov de Cancelacion</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-3"
+                                            *ngIf="type === 'data' || type === 'image' || type === 'barcode' || type === 'dataSum'">
+                                            <label for="value" class="control-label">Valor:</label>
+                                            <select class="form-control" [(ngModel)]="value" name="value">
+                                                <option *ngFor="let document of documents"
+                                                    [ngValue]="collection+'.'+document">
+                                                    {{document}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-3" *ngIf="type ==='label'">
+                                            <label for="value" class="control-label">Valor:</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" [(ngModel)]="value"
+                                                    name="value" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row" *ngIf="type === 'data' || type === 'dataSum' || type === 'label'">
+                                        <div class="form-group col-md-4">
+                                            <label for="font" class="control-label">Fuente:</label>
+                                            <select class="form-control" [(ngModel)]="font" name="font">
+                                                <option value="default" [selected]="default">Default</option>
+                                                <option value="courier" [selected]="courier">Courier</option>
+                                                <option value="times" [selected]="times">Times</option>
+                                                <option value="helvetica" [selected]="helvetica">Helvetica</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="fontType" class="control-label">Letra:</label>
+                                            <select class="form-control" [(ngModel)]="fontType" name="fontType"
+                                                required>
+                                                <option value="normal" [selected]="normal">Normal</option>
+                                                <option value="italic" [selected]="italic">Italic</option>
+                                                <option value="bold" [selected]="bold">Bold</option>
+                                                <option value="bolditalic" [selected]="bolditalic">Bolditalic</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="fontSize" class="control-label">Tamaño:</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" [(ngModel)]="fontSize"
+                                                    name="fontSize" required />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group col-md-3">
+                                            <label for="positionStartX" class="control-label">X ini (mm):</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" [(ngModel)]="positionStartX"
+                                                    name="positionStartX" required />
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-3">
+                                            <label for="positionStartY" class="control-label">Y ini (mm):</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" [(ngModel)]="positionStartY"
+                                                    name="positionStartY" required />
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-3"
+                                            *ngIf="type === 'data' || type === 'barcode' || type === 'imagen'">
+                                            <label for="positionEndX" class="control-label">X fin (mm):</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" [(ngModel)]="positionEndX"
+                                                    name="positionEndX" required />
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-3"
+                                            *ngIf="type === 'data' || type === 'barcode' || type === 'imagen'">
+                                            <label for="positionEndY" class="control-label">Y fin (mm):</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" [(ngModel)]="positionEndY"
+                                                    name="positionEndY" required />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group col-md-5">
+                                            <button type="summit" [disabled]="!fieldForm.valid"
+                                                class="btn btn-success btn">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table width="100%" class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Tipo</th>
+                                            <th>Valor</th>
+                                            <th>Fuente</th>
+                                            <th>Letra</th>
+                                            <th>Tamaño</th>
+                                            <th>X ini</th>
+                                            <th>Y ini</th>
+                                            <th>X fin</th>
+                                            <th>Y fin</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let field of printerForm.get('fields').controls; let i = index;">
+
+                                            <td *ngIf="field && field.value">{{field.value.type}}</td>
+                                            <td *ngIf="field && field.value">{{field.value.value}}</td>
+                                            <td *ngIf="field && field.value">{{field.value.font}}</td>
+                                            <td *ngIf="field && field.value">{{field.value.fontType}}</td>
+                                            <td *ngIf="field && field.value">{{field.value.fontSize}}</td>
+                                            <td *ngIf="field && field.value">{{field.value.positionStartX}}</td>
+                                            <td *ngIf="field && field.value">{{field.value.positionStartY}}</td>
+                                            <td *ngIf="field && field.value">{{field.value.positionEndX}}</td>
+                                            <td *ngIf="field && field.value">{{field.value.positionEndY}}</td>
+                                            <td align="right" width="10">
+                                                <button type="button" class="btn btn-primary btn-sm"
+                                                    (click)="editField(field,i)">
+                                                    <i class="fa fa-pencil"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-danger btn-sm"
+                                                    (click)="deleteField(i)">
+                                                    <i class="fa fa-trash-o"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </div>
+        <div class="modal-footer" *ngIf="operation !== 'view'">
+            <button type="button" class="btn btn-light" (click)="buildPDF()"><i class="fa fa-eye"></i></button>
+            <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
+            <button type="submit" class="btn btn-primary" [disabled]="!printerForm.valid || loading"
+                *ngIf="operation !== 'delete'">
+                <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+                <span *ngIf="!loading">Guardar</span>
+                <span *ngIf="loading">Espere por favor</span>
+            </button>
+            <button type="button" class="btn btn-danger" *ngIf="operation === 'delete'"
+                [disabled]="!printerForm.valid || loading" (click)="deletePrinter()">
+                <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
+                <span *ngIf="!loading">Eliminar</span>
+                <span *ngIf="loading">Espere por favor</span>
+            </button>
+        </div>
+    </form>
 </section>
