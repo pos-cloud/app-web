@@ -199,22 +199,6 @@ export class PrintComponent implements OnInit {
         this.getConfig();
     }
 
-    async getBranch(branchID: string) {
-
-        this._branchService.getBranch(branchID).subscribe(
-            result => {
-                if (result && result.branch && result.branch.image) {
-                    this.branchImagen = result.branch.image;
-                }
-            },
-            error => {
-                this.showMessage(error._body, 'danger', false);
-                this.loading = false;
-            }
-        )
-
-    }
-
     public getConfig(): void {
 
         this.loading = true;
@@ -285,6 +269,7 @@ export class PrintComponent implements OnInit {
             "CFDStamp" : 1,
             "observation" : 1,
             "branchOrigin" : 1,
+            "branchDestination.image" : 1,
 
             "transport.name" :1,
             "transport.address" : 1,
@@ -331,15 +316,14 @@ export class PrintComponent implements OnInit {
             0 // SKIP
         ).subscribe(
             async result => {
-                console.log(result)
                 if (result && result.transactions && result.transactions.length === 1) {
                     this.transaction = result.transactions[0];
-                    if (this.transaction.branchOrigin) {
-                        await this.getBranch(this.transaction.branchOrigin._id)
+                    if (this.transaction.branchDestination && this.transaction.branchDestination.image) {
+                        this.branchImagen = this.transaction.branchDestination.image
                     }
-                    if (this.transaction && this.transaction.type && this.transaction.type.defectPrinter && !this.printer) {
+                    /*if (this.transaction && this.transaction.type && this.transaction.type.defectPrinter && !this.printer) {
                         this.printer = this.transaction.type.defectPrinter;
-                    }
+                    }*/
                     this.company = this.transaction.company;
                     if (this.typePrint === "turn") {
                         this.getShiftClosingByTransaction();
@@ -2060,6 +2044,7 @@ export class PrintComponent implements OnInit {
             this.doc.text("Precio U.", 145, 77);
             if (this.transaction.type.requestTaxes &&
                 this.transaction.company &&
+                this.transaction.company.vatCondition &&
                 this.transaction.company.vatCondition.discriminate) {
                 let col = 165
                 this.doc.text("IVA", col, 77);
@@ -2161,6 +2146,7 @@ export class PrintComponent implements OnInit {
                     if (this.transaction.type && this.transaction.type.showPrices) {
                         if (this.transaction.type.requestTaxes &&
                             this.transaction.company &&
+                            this.transaction.company.vatCondition &&
                             this.transaction.company.vatCondition.discriminate) {
 
                             let taxesBase = 0
@@ -2287,9 +2273,9 @@ export class PrintComponent implements OnInit {
                             this.doc.text("Fecha:", 110, 25);
                             this.doc.setFontType('normal');
                             if (this.transaction.endDate) {
-                                this.doc.text(this.dateFormat.transform(this.transaction.endDate, 'DD/MM/YYYY'), 125, 25);
+                                this.doc.text(this.transaction.endDate.split(' ')[0], 125, 25);
                             } else {
-                                this.doc.text(this.dateFormat.transform(this.transaction.startDate, 'DD/MM/YYYY'), 125, 25);
+                                this.doc.text(this.transaction.startDate.split(' ')[0], 125, 25);
                             }
 
                             // Letra de transacción
@@ -2528,7 +2514,7 @@ export class PrintComponent implements OnInit {
             this.doc.text("Fecha Vto:", 10, 287);
             this.doc.setFontType('normal');
             this.doc.text(this.transaction.CAE, 20, 282);
-            this.doc.text(this.dateFormat.transform(this.transaction.CAEExpirationDate, "DD/MM/YYYY"), 32, 287);
+            this.doc.text(this.transaction.CAEExpirationDate.split('T')[0], 32, 287);
 
             let imgdata = 'data:image/png;base64,' + this.barcode64;
 
@@ -2571,9 +2557,9 @@ export class PrintComponent implements OnInit {
             this.finishImpression();
         } else {
             if (this.branchImagen && this.branchImagen !== 'default.jpg') {
-                await this.getBranchPicture(10, 5, 80, 40, true);
+               // await this.getBranchPicture(10, 5, 80, 40, true);
             } else {
-                await this.getCompanyPicture(10, 5, 80, 40, true);
+              //  await this.getCompanyPicture(10, 5, 80, 40, true);
             }
         }
     }
@@ -2643,7 +2629,7 @@ export class PrintComponent implements OnInit {
         } else {
             this.doc.text("N°:" + this.padString(this.transaction.number, 8), 45, 30);
         }
-        this.doc.text("Fecha:" + this.dateFormat.transform(this.transaction.endDate, 'DD/MM/YYYY'), 45, 35);
+        this.doc.text(this.transaction.endDate.split(' ')[0],45,35)
 
         row += 3;
         this.doc.line(0, row, width, row);
@@ -2798,7 +2784,7 @@ export class PrintComponent implements OnInit {
             this.doc.setFontType('bold');
             this.doc.text("CAE: " + this.transaction.CAE, margin, row);
             row += 4;
-            this.doc.text("Fecha Vto: " + this.dateFormat.transform(this.transaction.CAEExpirationDate, "DD/MM/YYYY"), margin, row);
+            this.doc.text("Fecha Vto: " + this.transaction.CAEExpirationDate.split('T')[0],margin,row)
             let imgdata = 'data:image/png;base64,' + this.barcode64;
             row += 4;
             this.doc.addImage(imgdata, 'PNG', margin, row, width - 10, 10);
@@ -2959,7 +2945,7 @@ export class PrintComponent implements OnInit {
         this.doc.setFontType('bold');
         this.doc.text("Pedido Nº: " + this.transaction.number, margin, row);
         this.doc.setFontType('normal');
-        this.doc.text("Fecha: " + this.dateFormat.transform(this.transaction.startDate, 'DD/MM hh:ss'), 40, row);
+        this.doc.text("Fecha: " + this.transaction.startDate.substring(11,13) + ":" + this.transaction.startDate.substring(15,17), 40, row);
 
         if (this.transaction.table) {
             row += 5;
@@ -3045,7 +3031,7 @@ export class PrintComponent implements OnInit {
         this.doc.setFontType('bold');
         this.doc.text("Pedido Nº: " + this.transaction.number, margin, row);
         this.doc.setFontType('normal');
-        this.doc.text("Fecha: " + this.dateFormat.transform(this.transaction.startDate, 'DD/MM hh:ss'), 40, row);
+        this.doc.text("Hora: " + this.transaction.startDate.substring(11,13) + ":" + this.transaction.startDate.substring(15,17), 40, row);
 
         if (this.transaction.table) {
             row += 5;
@@ -3160,8 +3146,8 @@ export class PrintComponent implements OnInit {
         this.doc.setFontType('bold');
         this.doc.text("Pedido Nº: " + this.transaction.number, margin, row);
         this.doc.setFontType('normal');
-        //this.doc.text(this.dateFormat.transform(this.transaction.startDate, 'DD/MM hh:ss'), (width / 1.6), row);
-        this.doc.text(moment().format('DD/MM hh:mm'), (width / 1.6), row);
+
+        this.doc.text("Fecha: " + this.transaction.startDate.substring(11,13) + ":" + this.transaction.startDate.substring(15,17), (width /1.6), row);
 
         this.doc.setFontType('normal');
 
