@@ -107,6 +107,15 @@
                                 <form #fieldForm="ngForm" (ngSubmit)="addField(fieldForm)">
                                     <div class="row">
                                         <div class="form-group col-md-3">
+                                            <label for="position" class="control-label">Posicion:</label>
+                                            <select class="form-control" [(ngModel)]="position" name="position" required>
+                                              <option *ngFor="let position of positions"
+                                                    [ngValue]="position">
+                                                    {{position}}
+                                            </option>
+                                          </select>
+                                        </div>
+                                        <div class="form-group col-md-3">
                                             <label for="type" class="control-label">Tipo:</label>
                                             <select class="form-control" [(ngModel)]="type" name="type" required>
                                                 <option value="label" [selected]="label">Etiqueta</option>
@@ -229,6 +238,7 @@
                                 <table width="100%" class="table table-striped">
                                     <thead>
                                         <tr>
+                                            <th>Posicion</th>
                                             <th>Tipo</th>
                                             <th>Valor</th>
                                             <th>Fuente</th>
@@ -242,7 +252,7 @@
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let field of printerForm.get('fields').controls; let i = index;">
-
+                                            <td *ngIf="field && field.value">{{field.value.position}}</td>
                                             <td *ngIf="field && field.value">{{field.value.type}}</td>
                                             <td *ngIf="field && field.value">{{field.value.value}}</td>
                                             <td *ngIf="field && field.value">{{field.value.font}}</td>
