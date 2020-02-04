@@ -318,6 +318,7 @@ export class PrintComponent implements OnInit {
             async result => {
                 if (result && result.transactions && result.transactions.length === 1) {
                     this.transaction = result.transactions[0];
+                    console.log(this.transaction)
                     if (this.transaction.branchDestination && this.transaction.branchDestination.image) {
                         this.branchImagen = this.transaction.branchDestination.image
                     }
@@ -497,6 +498,7 @@ export class PrintComponent implements OnInit {
                             if (this.printer.pageWidth < 150) {
                                 this.toPrintRoll();
                             } else if (this.printer.pageHigh > 150) {
+                                console.log("entro ")
                                 this.toPrintInvoice();
                             } else {
                                 this.toPrintInvoice();
@@ -2016,7 +2018,7 @@ export class PrintComponent implements OnInit {
                     for (let i = 0; i < this.transaction.type.codes.length; i++) {
                         if (this.transaction.letter === this.transaction.type.codes[i].letter) {
                             this.doc.setFontSize('8');
-                            this.doc.text("Cod:" + this.padString((this.transaction.type.codes[i].code).toString(), 2), 101, 16);
+                            this.doc.text("Cod:" + this.transaction.type.codes[i].code, 101, 16);
                         }
                     }
                 }
@@ -2557,9 +2559,9 @@ export class PrintComponent implements OnInit {
             this.finishImpression();
         } else {
             if (this.branchImagen && this.branchImagen !== 'default.jpg') {
-               // await this.getBranchPicture(10, 5, 80, 40, true);
+                await this.getBranchPicture(10, 5, 80, 40, true);
             } else {
-              //  await this.getCompanyPicture(10, 5, 80, 40, true);
+                await this.getCompanyPicture(10, 5, 80, 40, true);
             }
         }
     }
@@ -2607,7 +2609,7 @@ export class PrintComponent implements OnInit {
         if (this.transaction.type.codes && Config.country === 'AR') {
             for (let i = 0; i < this.transaction.type.codes.length; i++) {
                 if (this.transaction.letter === this.transaction.type.codes[i].letter) {
-                    this.doc.text("Cod:" + this.padString((this.transaction.type.codes[i].code).toString(), 2), 20, row);
+                    this.doc.text("Cod:" + this.transaction.type.codes[i].code , 20, row);
                 }
             }
         }
