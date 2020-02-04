@@ -667,7 +667,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         SelectCompanyComponent,
         SelectTableComponent,
         ResourceComponent,
-        GalleryComponent
+        GalleryComponent,
+        CurrentAccountDetailsComponent
     ],
     imports: [
         BrowserModule,

@@ -1,2 +1,63 @@
+<!--Modal-->
+<div class="modal-header">
+	<h4 class="modal-title">Imprimir Lista de Precios</h4>
+	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+	<span aria-hidden="true">&times;</span>
+	</button>
+</div>
+<section class="container-fluid">
+	<div class="center-content" *ngIf="alertMessage !== ''">
+	  <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+		{{alertMessage}}
+	  </ngb-alert>
+	</div>
+	<form [formGroup]="companyForm" #formPriceListPrint="ngForm" (ngSubmit)="getTransactions()" autocomplete="off">	
+		<div class="modal-body">
+			<div class="row">
+				<div class = "form-group col-md-6">
+					<label for="withBalance" class="control-label">Con Saldo:</label>
+					<select class="form-control" formControlName="withBalance" >
+						<option [value]="true">Si</option>
+						<option [value]="false" selected>No</option>
+					</select>
+                </div>
+                <div class = "form-group col-md-6">
+					<label for="companyType" class="control-label">Tipo de Empresa:</label>
+                    <select class="form-control" formControlName="companyType">
+						<option [value]="Client">Cliente</option>
+						<option [value]="Provider">Proveedor</option>
+					</select>
+				</div>
+            </div>
+            <div class="row">
+                        <div class = "form-group col-md-6">
+                            <label for="employee" class="control-label">Empleado:</label>
+                            <select class="form-control" formControlName="employee" >
+                                <option [ngValue]="null"></option>
+                                <option *ngFor="let employee of employees" [value]="employee._id" [disabled]="readonly">{{employee.name}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <ng-template #rtCompanies let-r="result" let-t="term">
+                                <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+                            </ng-template>
+                            <label for="company">Empresa:</label>
+                            <input id="company" type="text" class="form-control" formControlName="company"
+                                name="company" [ngbTypeahead]="searchCompanies" [resultTemplate]="rtCompanies"
+                                [inputFormatter]="formatterCompanies" />
+                        </div>
+            </div>
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
+			<button type="submit" class="btn btn-primary" [disabled]="!companyForm.valid || loading" >
+				<i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+				<span *ngIf="!loading">Imprimir</span>
+				<span *ngIf="loading">Espere por favor</span>
+			</button>
+		</div>
+	</form>
+</section>
+
 <!--Print-->
 <iframe [src]="pdfURL" class="full-screen" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen type='application/pdf' *ngIf="pdfURL"></iframe>

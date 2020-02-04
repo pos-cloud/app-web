@@ -78,6 +78,7 @@ import { ListResourcesComponent } from './components/list-resources/list-resourc
 import { ListGalleriesComponent } from './components/list-galleries/list-galleries.component';
 import { ViewGalleryComponent } from './components/view-gallery/view-gallery.component';
 import { ListCashBoxTypesComponent } from './components/list-cash-box-types/list-cash-box-types.component';
+import { CurrentAccountDetailsComponent } from './components/print/current-account-details/current-account-details.component';
 
 export const _routes: Routes = [
     {
@@ -587,6 +588,11 @@ export const _routes: Routes = [
         component: ListTransactionTypesComponent,
         canActivate: [AuthGuard, LicenseGuard],
         data: { module: 'config.modules.money' }
+    },
+    {
+        path: 'report/current-account',
+        component: CurrentAccountDetailsComponent,
+        canActivate: [AuthGuard, LicenseGuard]
     },
     {
         path: 'pos',

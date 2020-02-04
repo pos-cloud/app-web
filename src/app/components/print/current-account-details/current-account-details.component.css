@@ -1,0 +1,21 @@
+.card {
+    margin-top: 20px;
+  }
+  
+  .card-large {
+    height:75vh;
+  }
+  
+  .btn, thead {
+      cursor: pointer;
+  }
+  
+  .container-filter {
+    margin-top: 20px;
+  }
+  
+  .icon-ws {
+    background-color: #01E675;
+    color: white;
+  }
+  
