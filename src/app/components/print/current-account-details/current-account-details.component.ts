@@ -114,6 +114,8 @@ export class CurrentAccountDetailsComponent implements OnInit {
     public withImage: boolean = false;
     public items = [];
     public employees : Employee[];
+    public Client
+    public Provider
 
     public fontSizes = JSON.parse(`{"xsmall" : 5,
                                   "small" : 7,
