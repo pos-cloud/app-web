@@ -107,6 +107,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
     public doc;
     public pdfURL;
     public config;
+    public hasChanged = false;
     public roundNumber = new RoundNumberPipe();
     public pageWidth: number;
     public pageHigh: number;
