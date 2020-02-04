@@ -17,6 +17,7 @@ import { EmployeeService } from 'app/services/employee.service';
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { CompanyService } from 'app/services/company.service';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 var splitRegex = /\r\n|\r|\n/g;
 jsPDF.API.textEx = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
@@ -135,6 +136,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
         public _fb: FormBuilder,
         public _router: Router,
         public _companyService : CompanyService,
+        public activeModal: NgbActiveModal,
         private domSanitizer: DomSanitizer
     ) {
         this.pageWidth = 210 * 100 / 35.27751646284102;
@@ -589,6 +591,10 @@ export class CurrentAccountDetailsComponent implements OnInit {
             }
         }
     }
+
+    public closeModal() {
+		this.activeModal.close(this.hasChanged);
+	}
 
     public padString(n, length) {
         var n = n.toString();

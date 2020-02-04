@@ -19,6 +19,7 @@ import { ClaimComponent } from '../claim/claim.component';
 import { ToastrService } from 'ngx-toastr';
 import { Config } from 'app/app.config';
 import { Socket } from 'ngx-socket-io';
+import { CurrentAccountDetailsComponent } from '../print/current-account-details/current-account-details.component';
 
 @Component({
 	selector: 'app-header',
@@ -199,7 +200,16 @@ export class HeaderComponent {
 				}, (reason) => {
 
 				});
-				break;
+                break;
+            case 'current' : 
+                
+            modalRef = this._modalService.open(CurrentAccountDetailsComponent,{ size: 'lg', backdrop: 'static' });
+            modalRef.result.then((result) => {
+
+            }, (reason) => {
+
+            });
+                break;
 			default:
 				break;
 		}
