@@ -2029,7 +2029,7 @@ export class PrintComponent implements OnInit {
         if(this.transaction.company){
             this.getClient();
         }
-        if (this.transaction.type.requestEmployee && this.transaction.employeeClosing) {
+        if (this.transaction.type.requestEmployee && this.transaction.employeeClosing && this.transaction.employeeClosing._id) {
             this.getEmployee()
         }
 
