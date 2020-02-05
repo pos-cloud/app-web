@@ -3028,9 +3028,9 @@ export class PrintComponent implements OnInit {
             this.doc.setFontType('normal');
             this.doc.setFontSize(this.fontSizes.normal);
             if (this.branchImagen && this.branchImagen !== 'default.jpg') {
-                await this.getBranchPicture(3, 3, this.printer.pageWidth - 5, 26, true);
+                await this.getBranchPicture(3, 3, this.printer.pageWidth - 5, 26, false);
             } else {
-                await this.getCompanyPicture(3, 3, this.printer.pageWidth - 5, 26, true);
+                await this.getCompanyPicture(3, 3, this.printer.pageWidth - 5, 26, false);
             }
         }
 
