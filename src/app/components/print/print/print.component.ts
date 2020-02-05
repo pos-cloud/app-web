@@ -270,6 +270,7 @@ export class PrintComponent implements OnInit {
             "observation" : 1,
             "branchOrigin" : 1,
             "branchDestination.image" : 1,
+            "madein" : 1,
 
             "transport.name" :1,
             "transport.address" : 1,
@@ -318,7 +319,6 @@ export class PrintComponent implements OnInit {
             async result => {
                 if (result && result.transactions && result.transactions.length === 1) {
                     this.transaction = result.transactions[0];
-                    console.log(this.transaction)
                     if (this.transaction.branchDestination && this.transaction.branchDestination.image) {
                         this.branchImagen = this.transaction.branchDestination.image
                     }
