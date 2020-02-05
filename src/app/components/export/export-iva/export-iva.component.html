@@ -13,8 +13,8 @@
     <form [formGroup]="exportIVAForm" #formExportIVA="ngForm" (ngSubmit)="exportPDF()" autocomplete="off">
       <div class="modal-body">
         <div class = "row">
-          <div class="form-group col-md-4">
-            <label for="month" class="control-label">Mes:</label>
+          <div class="form-group col-md-6">
+            <label for="month" class="control-label">Mes (*)</label>
             <select class="form-control" formControlName="month">
               <option *ngFor="let month of months" [ngValue]="month">{{month}}</option>
             </select>
@@ -22,8 +22,8 @@
               {{ formErrors.month }}
             </div>
           </div>
-          <div class="form-group col-md-4">
-              <label for="year" class="control-label">Año:</label>
+          <div class="form-group col-md-6">
+              <label for="year" class="control-label">Año (*)</label>
               <select class="form-control" formControlName="year">
                 <option *ngFor="let year of years" [ngValue]="year">{{year}}</option>
               </select>
@@ -33,13 +33,25 @@
           </div>
         </div>
         <div class = row>
-          <div class="form-group col-md-4">
+          <div class="form-group col-md-6">
             <label for="folioNumber" class="control-label">Folio:</label>
             <div class="input-group">
-              <input type="text" class="form-control" formControlName="folioNumber" folioNumber="folioNumber" id="folioNumber"/>
+              <input type="text" class="form-control" formControlName="folioNumber" name="folioNumber" id="folioNumber"/>
             </div>
             <div *ngIf="formErrors.folioNumber" class="alert alert-danger">
               {{ formErrors.folioNumber }}
+            </div>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="otherFields" class="control-label">Discrimina por Campos Personalizados? (*)</label>
+            <div class="input-group">
+                <select class="form-control" formControlName="otherFields">
+                    <option value="true">Si</option>
+                    <option value="false" selected="selected" >No</option>
+                </select>            
+            </div>
+            <div *ngIf="formErrors.otherFields" class="alert alert-danger">
+              {{ formErrors.otherFields }}
             </div>
           </div>
         </div>

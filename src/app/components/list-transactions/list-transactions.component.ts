@@ -450,7 +450,7 @@ export class ListTransactionsComponent implements OnInit {
 
 	public exportCiti(): void {
 
-		let modalRef = this._modalService.open(ExportCitiComponent);
+		let modalRef = this._modalService.open(ExportCitiComponent, { size: 'lg', backdrop: 'static' });
 		modalRef.componentInstance.transactionMovement = this.transactionMovement;
 		modalRef.result.then((result) => {
 
@@ -461,7 +461,7 @@ export class ListTransactionsComponent implements OnInit {
 
 	public exportIVA(): void {
 
-		let modalRef = this._modalService.open(ExportIvaComponent);
+		let modalRef = this._modalService.open(ExportIvaComponent, { size: 'lg', backdrop: 'static' });
 		modalRef.componentInstance.type = this.listType;
 		modalRef.result.then((result) => {
 			if (result === 'export') {

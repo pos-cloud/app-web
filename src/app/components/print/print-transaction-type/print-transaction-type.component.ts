@@ -542,30 +542,9 @@ export class PrintTransactionTypeComponent implements OnInit {
 
     }
 
-    async buildBody() : Promise <boolean> {
+    async buildBody(): Promise<boolean> {
         return new Promise<boolean>(async (resolve, reject) => {
-            if(this.movementOfArticle && this.movementOfArticle.length > 0){
-                this.movementOfArticle.forEach(movArt => {
-                    console.log(Object.keys(movArt))
-                    this.printer.fields.forEach(field => {
-                        if( field.position === PositionPrint.Body && 
-                            field.value.split('.')[0] === "movementOfArticle"){
-                            let row = field.positionStartY
-                            if (field.font !== 'default') {
-                                this.doc.setFont(field.font)
-                            }
-                            this.doc.setFontType(field.fontType)
-                            this.doc.setFontSize(field.fontSize)
-
-                            try {
-                                this.doc.text(field.positionStartX, row, (eval(field.value)).toString())
-                            } catch (e) {
-                                this.doc.text(field.positionStartX, row, field.value)
-                            }
-                        }
-                    });
-                });
-            }
+            
         });
     }
 
