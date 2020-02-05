@@ -144,7 +144,7 @@ export let attributes = [
     required : false,
   },
   {
-    name: 'phone',
+    name: 'phones',
     visible: true,
     disabled: false,
     filter: true,
@@ -154,7 +154,7 @@ export let attributes = [
     required : false,
   },
   {
-    name: 'email',
+    name: 'emails',
     visible: true,
     disabled: false,
     filter: true,
