@@ -498,7 +498,6 @@ export class PrintComponent implements OnInit {
                             if (this.printer.pageWidth < 150) {
                                 this.toPrintRoll();
                             } else if (this.printer.pageHigh > 150) {
-                                console.log("entro ")
                                 this.toPrintInvoice();
                             } else {
                                 this.toPrintInvoice();
@@ -2637,7 +2636,7 @@ export class PrintComponent implements OnInit {
         this.doc.line(0, row, width, row);
         row += 3;
 
-        if (this.transaction.company) {
+        if (this.transaction.company && this.transaction.company._id) {
             this.doc.setFontType('bold');
             this.doc.text("Razón Social : " + this.transaction.company.name, margin, row);
             row += 3;
@@ -2690,6 +2689,7 @@ export class PrintComponent implements OnInit {
                     if (this.transaction.type && this.transaction.type.showPrices) {
                         if (this.transaction.type.requestTaxes &&
                             this.transaction.company &&
+                            this.transaction.company._id &&
                             this.transaction.company.vatCondition.discriminate) {
                             let prUnit = 0;
                             for (let tax of movementOfArticle.taxes) {
