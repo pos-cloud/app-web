@@ -427,7 +427,6 @@ export class AddUserComponent implements OnInit {
 		this._cashBoxTypeService.getCashBoxTypes().subscribe(
 			result => {
 				if (!result.cashBoxTypes) {
-					if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
 					this.loading = false;
 					this.cashBoxTypes = new Array();
 				} else {
