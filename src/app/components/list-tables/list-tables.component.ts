@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewEncapsulation, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -41,7 +41,11 @@ export class ListTablesComponent implements OnInit {
   public totalItems = 0;
   public transactionTypeDefectOrder: TransactionType;
   public interval;
+  public table: Table;
 
+  @ViewChild('contentChangeState', { static: true }) contentChangeState: ElementRef;
+
+  
   constructor(
     public _tableService: TableService,
     public _transactionService: TransactionService,
@@ -108,8 +112,13 @@ export class ListTablesComponent implements OnInit {
   }
 
   public selectTable(table: Table): void {
-    this.eventTableSelected.emit(table);
+    if(table.state === TableState.Pending){
+        this.openModal('change-state',table)
+    } else {
+        this.eventTableSelected.emit(table);
+    }
   }
+
 
   public calculateAmountOfDiners() {
 
@@ -182,9 +191,40 @@ export class ListTablesComponent implements OnInit {
           this.getTables();
         });
         break;
+        case 'change-state':
+                modalRef = this._modalService.open(this.contentChangeState);
+                this.table = table;
+                modalRef.result.then(async (result) => {
+					if (result !== "cancel" && result !== '') {
+                        this.table.state = TableState.Available;
+                        this.table.lastTransaction = null;
+                        this.updateTable();
+					}
+				}, (reason) => {
+				});
       default: ;
     }
   };
+
+  public updateTable() {
+
+    this.loading = true;
+
+    this._tableService.updateTable(this.table).subscribe(
+        result => {
+            if (!result.table) {
+                this.loading = false;
+                if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+            } else {
+                this.loading = false;
+            }
+        },
+        error => {
+            this.showMessage(error._body, 'danger', false);
+            this.loading = false;
+        }
+    );
+}
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
