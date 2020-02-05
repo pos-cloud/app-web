@@ -537,6 +537,11 @@
                         Ventas por tipo de transacciones
                     </a>
                 </li>
+                <li>
+                    <a (click)="openModal('current','Cliente')">
+                        Detalle de cuentas corrientes
+                    </a>
+                </li>
             </ul>
         </div>
         <div class="col-md-3" style="width: 300px" *ngIf="!config.modules.sale ||
@@ -611,6 +616,11 @@
                 <li>
                     <a (click)="openReport('report/compra/compras-por-tipo-de-transacción')">
                         Compras por tipo de transacción
+                    </a>
+                </li>
+                <li>
+                    <a (click)="openModal('current','Proveedor')">
+                        Detalle de cuentas corrientes
                     </a>
                 </li>
             </ul>
@@ -712,11 +722,6 @@
                 <li>
                     <a (click)="openReport('admin/cumpleaños')">
                         Cumpleaños
-                    </a>
-                </li>
-                <li>
-                    <a (click)="openModal('current')">
-                        Detalle de cuentas corrientes
                     </a>
                 </li>
             </ul>

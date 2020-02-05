@@ -146,7 +146,7 @@ export class HeaderComponent {
 		localStorage.setItem('readedNotification', this.readedNotification.toString());
 	}
 
-	public openModal(op: string): void {
+	public openModal(op: string, origin?:string): void {
 
 		this.makeVisibleReport(false);
 		let modalRef;
@@ -204,6 +204,7 @@ export class HeaderComponent {
             case 'current' : 
                 
             modalRef = this._modalService.open(CurrentAccountDetailsComponent,{ size: 'lg', backdrop: 'static' });
+            modalRef.componentInstance.companyType = origin
             modalRef.result.then((result) => {
 
             }, (reason) => {

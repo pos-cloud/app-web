@@ -125,7 +125,6 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
 
     public formErrors = {
-        'companyType': 'Seleccione un tipo de empresa',
         'withBalance': 'Seleccione Con saldo',
     };
 
@@ -172,9 +171,6 @@ export class CurrentAccountDetailsComponent implements OnInit {
             'emails': ['', []],
             'company': ['', []],
             'employee': ['', []],
-            'companyType' : ['',[
-                Validators.required
-            ]],
             'withBalance' : ['',[
                 Validators.required
             ]]
@@ -235,7 +231,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
             match += `"balance" : { "$gt" : 0 },`
         }
 
-        match += `  "company.type" : "${this.companyForm.value.companyType}",
+        match += `  "company.type" : "${this.companyType}",
                     "state" : "Cerrado",
                     "$or": [{"type.currentAccount" : "Si"}, {"type.currentAccount" : "Cobra"}] ,            
                     "company.operationType" : { "$ne" : "D" },
@@ -632,7 +628,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
         let match = 
         `{
             "name" : { "$regex": "${term}", "$options": "i" },
-            "type" : "${this.companyForm.value.companyType}",
+            "type" : "${this.companyType}",
             "operationType" : { "$ne": "D" }
         }`
 
