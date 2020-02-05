@@ -653,7 +653,7 @@ export class ReportKardexComponent implements OnInit {
         break;
       case 'article':
         modalRef = this._modalService.open(ListArticlesComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.userType = 'kardex';
+        modalRef.componentInstance.userType = 'report';
         modalRef.result.then(
           (result) => {
             if (result.article) {

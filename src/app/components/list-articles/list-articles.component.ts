@@ -198,12 +198,13 @@ export class ListArticlesComponent implements OnInit {
 			}
 		}
 
-		match += `,"type": "${this.articleType}"`;
 		if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
-
 		match += `}`;
-
 		match = JSON.parse(match);
+
+		if(this.userType === 'admin') {
+			match['type'] = this.articleType;
+		}
 
 		// ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
 		let project = `{`;
@@ -347,6 +348,7 @@ export class ListArticlesComponent implements OnInit {
 	}
 
 	public pageChange(page): void {
+		console.log(page);
 		this.currentPage = page;
 		this.getItems();
 	}
