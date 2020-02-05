@@ -291,6 +291,7 @@ export class PrintComponent implements OnInit {
             "type.requestTransport" : 1,
             "type.printSign" : 1,
 
+            "company._id" : 1,
             "company.name" : 1,
             "company.vatCondition.discriminate" :1,
             "company.identificationValue" :1,
@@ -300,7 +301,11 @@ export class PrintComponent implements OnInit {
             "company.phones" :1,
             "company.city" :1,
 
-            "table.description" : 1
+            "table.description" : 1,
+
+
+            "employeeClosing._id" : 1,
+            "employeeClosing.name" : 1
 
 
             
