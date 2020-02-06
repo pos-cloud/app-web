@@ -325,8 +325,10 @@ export class MovementOfCancellationComponent implements OnInit {
 								await this.getMovementsOfCancellations().then(
 									movementsOfCancellations => {
 										this.movementsOfCancellations = movementsOfCancellations;
-										for(let mov of this.movementsOfCancellations) {
-											mov['saved'] = true;
+										if(this.movementsOfCancellations && this.movementsOfCancellations.length > 0) {
+											for(let mov of this.movementsOfCancellations) {
+												mov['saved'] = true;
+											}
 										}
 									}
 								);
@@ -532,7 +534,7 @@ export class MovementOfCancellationComponent implements OnInit {
 	}
 
 	public deleteTransactionSelected(transaction: Transaction): void {
-
+		console.log("entro a borrar");
 		let movementToDelete: number;
 
 		for (let i = 0; i < this.movementsOfCancellations.length; i++) {
