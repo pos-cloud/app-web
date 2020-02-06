@@ -2494,7 +2494,7 @@ export class AddSaleOrderComponent {
 							{
 								type: { $oid: this.transaction.type._id },
 								operationType: { $ne: 'D' },
-								state: "Cerrado"
+								orderNumber: { $gte: 0 }
 							}, { endDate: -1 }, {}, 1).then(
 								transactions => {
 									let orderNumber = 1;
