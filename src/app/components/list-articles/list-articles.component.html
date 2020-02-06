@@ -190,9 +190,6 @@
 		<div class="card-footer">
 			<div class="row">
 				<div class="col-md-10">
-					<pagination-controls class="my-pagination" (pageChange)="pageChange($event)" #api
-						previousLabel="Ant." nextLabel="Sig." autoHide="true">
-					</pagination-controls>
 				</div>
 				<div class="form-group col-md-2">
 					<select class="form-control" [(ngModel)]="itemsPerPage" (change)="getItems()">
