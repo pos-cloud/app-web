@@ -43,7 +43,13 @@
 												<div class="row" *ngIf="!mov.movementParent">
 													<div class="col-md-12">
 														{{mov.amount}} - {{mov.description}}
-													</div>
+                                                    </div>
+                                                    <div class="card-text" *ngIf="mov && mov.notes">
+                                                        <div class="notes" *ngFor="let note of mov.notes.split('; ')"
+                                                            [style.font-size.px]="fontSize">
+                                                            {{ note }}
+                                                        </div>
+                                                    </div>
 													<table>
 														<tbody>
 															<tr *ngFor="let mov2 of transaction['movementsOfArticles']"
@@ -58,12 +64,7 @@
 														</tbody>
 													</table>
 												</div>
-												<div class="card-text" *ngIf="mov && mov.notes">
-													<div class="notes" *ngFor="let note of mov.notes.split('; ')"
-														[style.font-size.px]="fontSize">
-														{{ note }}
-													</div>
-												</div>
+												
 											</td>
 										</tr>
 									</tbody>
