@@ -14,21 +14,27 @@
 	<form [formGroup]="companyForm" #formPriceListPrint="ngForm" (ngSubmit)="getTransactions()" autocomplete="off">	
 		<div class="modal-body">
 			<div class="row">
-				<div class = "form-group col-md-5">
+				<div class = "form-group col-md-4">
 					<label for="withBalance" class="control-label">Con Saldo:</label>
 					<select class="form-control" formControlName="withBalance" >
 						<option [value]="true">Si</option>
 						<option [value]="false" selected>No</option>
 					</select>
                 </div>
-                <div class = "form-group col-md-7">
+                <div class = "form-group col-md-4">
+					<label for="withDetails" class="control-label">Detalle:</label>
+					<select class="form-control" formControlName="withDetails" >
+						<option [value]="true">Si</option>
+						<option [value]="false" selected>No</option>
+					</select>
+                </div>
+                <div class = "form-group col-md-4">
                     <label for="employee" class="control-label">Empleado:</label>
                     <select class="form-control" formControlName="employee" >
                         <option [ngValue]="null"></option>
                         <option *ngFor="let employee of employees" [value]="employee._id" [disabled]="readonly">{{employee.name}}</option>
                     </select>
                 </div>
-                
             </div>
             <div class="row">
                 <div class="form-group col-md-12">

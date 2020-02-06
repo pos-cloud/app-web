@@ -173,6 +173,9 @@ export class CurrentAccountDetailsComponent implements OnInit {
             'employee': ['', []],
             'withBalance' : ['',[
                 Validators.required
+            ]],
+            'withDetails' : ['',[
+                Validators.required
             ]]
 
         });
@@ -361,32 +364,38 @@ export class CurrentAccountDetailsComponent implements OnInit {
             this.doc.setLineWidth(0.5);
             this.doc.line(0, row, 1000, row);
             row += 5;
-            this.doc.text(5, row, "Fecha");
-            this.doc.text(30, row, "Tipo");
-            this.doc.text(75, row, "Comprobante");
-            this.doc.text(110, row, "Vencimiento");
-            this.doc.text(140, row, "Importe");
-            this.doc.text(165, row, "Saldo");
-            this.doc.text(190, row, "Acumulado");
+            if(this.companyForm.value.withDetails === 'true'){
 
-            row += 3;
-            this.doc.setLineWidth(0.5)
-            this.doc.line(0, row, 1000, row)
-            row += 5
+                this.doc.text(5, row, "Fecha");
+                this.doc.text(30, row, "Tipo");
+                this.doc.text(75, row, "Comprobante");
+                this.doc.text(110, row, "Vencimiento");
+                this.doc.text(140, row, "Importe");
+                this.doc.text(165, row, "Saldo");
+                this.doc.text(190, row, "Acumulado");
+                row += 3;
+                this.doc.setLineWidth(0.5)
+                this.doc.line(0, row, 1000, row)
+                row += 5
+            }
+
             let totalPrice = 0;
             let balance = 0;
             let acumulado = 0;
             let total;
             for (let transaction of this.items[i].transactions) {
-                this.doc.text(5, row, transaction['endDate2']);
-                if (transaction.type.labelPrint) {
-                    this.doc.text(30, row, transaction.type.labelPrint);
-                } else {
-                    this.doc.text(30, row, transaction.type.name);
-                }
-                this.doc.text(75, row, this.padString(transaction.origin, 4) + "-" + transaction.letter + "-" + this.padString(transaction.number, 8));
-                if (transaction.expirationDate) {
-                    this.doc.text(110, row, transaction.expirationDate);
+
+                if(this.companyForm.value.withDetails === 'true'){
+                    this.doc.text(5, row, transaction['endDate2']);
+                    if (transaction.type.labelPrint) {
+                        this.doc.text(30, row, transaction.type.labelPrint);
+                    } else {
+                        this.doc.text(30, row, transaction.type.name);
+                    }
+                    this.doc.text(75, row, this.padString(transaction.origin, 4) + "-" + transaction.letter + "-" + this.padString(transaction.number, 8));
+                    if (transaction.expirationDate) {
+                        this.doc.text(110, row, transaction.expirationDate);
+                    }
                 }
 
                 var signo;
@@ -510,27 +519,36 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
                 if (signo) {
 
-                    this.doc.textEx("$ " + this.roundNumber.transform(transaction.totalPrice).toFixed(2).toString(), 155, row, 'right', 'middle');
-                    if (!transaction.balance) transaction.balance = 0;
-                    this.doc.textEx("$ " + this.roundNumber.transform(transaction.balance).toFixed(2).toString(), 180, row, 'right', 'middle');
+                    if (!transaction.balance) {
+                        transaction.balance = 0;
+                    }
+
+                    if(this.companyForm.value.withDetails === 'true'){
+                        this.doc.textEx("$ " + this.roundNumber.transform(transaction.totalPrice).toFixed(2).toString(), 155, row, 'right', 'middle');
+                        this.doc.textEx("$ " + this.roundNumber.transform(transaction.balance).toFixed(2).toString(), 180, row, 'right', 'middle');
+                    }
 
                     acumulado = acumulado + transaction.balance;
 
-                    //this.doc.text(155,row, "$ " + this.roundNumber.transform(transaction.totalPrice).toString());
-                    //this.doc.text(180,row, "$ " + this.roundNumber.transform(transaction.balance).toString());
                 } else {
-                    this.doc.textEx("$ -" + this.roundNumber.transform(transaction.totalPrice).toFixed(2).toString(), 155, row, 'right', 'middle');
-                    // this.doc.text(155,row, "$ -" + this.roundNumber.transform(transaction.totalPrice).toString());
-                    if (!transaction.balance) transaction.balance = 0;
-                    this.doc.textEx("$ " + this.roundNumber.transform(transaction.balance).toFixed(2).toString(), 180, row, 'right', 'middle');
-                    //this.doc.text(180,row, "$ " + this.roundNumber.transform(transaction.balance).toString());
+
+                    if (!transaction.balance) {
+                        transaction.balance = 0;
+                    }
+                    if(this.companyForm.value.withDetails === 'true'){
+                        this.doc.textEx("$ -" + this.roundNumber.transform(transaction.totalPrice).toFixed(2).toString(), 155, row, 'right', 'middle');
+                        this.doc.textEx("$ " + this.roundNumber.transform(transaction.balance).toFixed(2).toString(), 180, row, 'right', 'middle');
+                    }
+                    
                     acumulado = acumulado - transaction.balance;
 
                 }
 
-                this.doc.textEx("$ " + this.roundNumber.transform(acumulado).toFixed(2).toString(), 205, row, 'right', 'middle');
+                if(this.companyForm.value.withDetails === 'true'){
+                    this.doc.textEx("$ " + this.roundNumber.transform(acumulado).toFixed(2).toString(), 205, row, 'right', 'middle');
+                    row += 5;
+                }
 
-                row += 5;
 
                 if (row > 220) {
                     page += 1;
@@ -545,11 +563,9 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
             this.doc.setFontType("bold");
             this.doc.text(120, row, "Total");
-            //this.doc.text(155,row,"$" +this.roundNumber.transform(totalPrice).toString());
             this.doc.textEx("$ " + this.roundNumber.transform(totalPrice).toFixed(2).toString(), 155, row, 'right', 'middle');
 
             if (balance) {
-                //this.doc.text(180,row,"$" +this.roundNumber.transform(balance).toString());
                 this.doc.textEx("$ " + this.roundNumber.transform(balance).toFixed(2).toString(), 180, row, 'right', 'middle');
 
             }
