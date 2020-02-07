@@ -6,10 +6,7 @@
 <div class="row">
 	<div class="col-md-12">
 		<div class="input-group">
-			<input  type="text"
-				class="form-control text"
-				[(ngModel)]="text"
-				(keydown.enter)="readVoucher()" 
+			<input type="text" class="form-control text" [(ngModel)]="text" (keydown.enter)="readVoucher()"
 				placeholder="Ingresar el cupón." [focus]="focusEvent">
 			<div class="input-group-prepend pointer" (click)="clearText()">
 				<span class="input-group-text" id="basic-addon1">
@@ -26,7 +23,7 @@
 				Activa la cámara web para leer códigos QR y enfoca el código del voucher
 			</div>
 			<div class="card-body">
-				<blockquote class="blockquote blockquote-img mb-0"  *ngIf="showCamera">
+				<blockquote class="blockquote blockquote-img mb-0" *ngIf="showCamera">
 					<div class="row">
 						<div class="col-md-12 center-content">
 							<i class="fa fa-barcode"></i>
@@ -42,8 +39,10 @@
 				</blockquote>
 			</div>
 			<div class="card-footer center-content">
-				<button class="btn btn-outline-success pointer" (click)="initScanner()"><i class="fa fa-check-circle"></i><strong>ACTIVAR</strong></button>
-				<button class="btn btn-outline-danger pointer" (click)="stopScanner()"><i class="fa fa-times-circle"></i><strong>DESACTIVAR</strong></button>
+				<button class="btn btn-outline-success pointer" (click)="initScanner()"><i
+						class="fa fa-check-circle"></i><strong>ACTIVAR</strong></button>
+				<button class="btn btn-outline-danger pointer" (click)="stopScanner()"><i
+						class="fa fa-times-circle"></i><strong>DESACTIVAR</strong></button>
 			</div>
 		</div>
 	</div>
@@ -54,21 +53,21 @@
 	<div class="modal-header">
 		<h4 class="modal-title">Detalle del voucher</h4>
 		<button type="button" class="close" aria-label="Close" (click)="d('close_click')">
-		<span aria-hidden="true">&times;</span>
+			<span aria-hidden="true">&times;</span>
 		</button>
 	</div>
 	<div class="modal-body container-fluid">
-			<div class="row">
-				<div class="col-md-12 center-content">
-					<strong style="color: green;">Lectura realizada {{ timeOfReading }}</strong>
-				</div>
+		<div class="row">
+			<div class="col-md-12 center-content">
+				<strong style="color: green;">Lectura realizada {{ timeOfReading }}</strong>
 			</div>
-			<div class="row">
-				<div class="col-md-12 center-content">
-					<strong style="font-size: 13px;">Voucher generado {{ timeGenerate }}</strong>
-				</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12 center-content">
+				<strong style="font-size: 13px;">Voucher generado {{ timeGenerate }}</strong>
 			</div>
-		<div class="row" *ngIf="voucher && voucher.movementsOfArticles">
+		</div>
+		<div class="row" *ngIf="movementsOfArticles && movementsOfArticles.length">
 			<div class="col-md-12">
 				<table>
 					<thead>
@@ -76,13 +75,18 @@
 						<th style="font-size: 20px; padding: 5px 20px;"><b>Producto</b></th>
 					</thead>
 					<tbody>
-						<tr *ngFor="let mov of voucher.movementsOfArticles">
+						<tr *ngFor="let mov of movementsOfArticles">
 							<td style="font-size: 20px; padding: 5px 20px;">{{mov.amount}}</td>
 							<td style="font-size: 20px; padding: 5px 20px;">{{mov.description}}</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
+		</div>
+		<div class="row center-content" *ngIf="alertMessage !== ''">
+			<ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+				{{ alertMessage }}
+			</ngb-alert>
 		</div>
 	</div>
 	<div class="modal-footer">

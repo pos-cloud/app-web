@@ -3068,7 +3068,6 @@ export class PrintComponent implements OnInit {
         qr['type'] = 'articles';
         qr['time'] = moment();
         qr['transaction'] = this.transactionId;
-        qr['movementsOfArticles'] = new Array();
 
         //Cuerpo de la tabla de productos
         row + 5;
@@ -3090,12 +3089,6 @@ export class PrintComponent implements OnInit {
                     this.doc.text(movementOfArticle.notes, 20, row);
                     this.doc.setFontStyle("normal");
                 }
-
-                qr['movementsOfArticles'].push({
-                    _id: movementOfArticle._id,
-                    //description: movementOfArticle.description,
-                    //amount: this.roundNumber.transform(movementOfArticle.amount - movementOfArticle.printed)
-                });
             }
         }
 
