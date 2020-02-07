@@ -271,6 +271,7 @@ export class PrintComponent implements OnInit {
             "branchOrigin" : 1,
             "branchDestination.image" : 1,
             "madein" : 1,
+            "orderNumber" : 1,
 
             "transport.name" :1,
             "transport.address" : 1,
@@ -324,6 +325,7 @@ export class PrintComponent implements OnInit {
             async result => {
                 if (result && result.transactions && result.transactions.length === 1) {
                     this.transaction = result.transactions[0];
+
                     if (this.transaction.branchDestination && this.transaction.branchDestination.image) {
                         this.branchImagen = this.transaction.branchDestination.image
                     }
@@ -3036,7 +3038,11 @@ export class PrintComponent implements OnInit {
 
         row += 8;
         this.doc.setFontType('bold');
-        this.doc.text("Pedido Nº: " + this.transaction.number, margin, row);
+        if(this.transaction.orderNumber > 0){
+            this.doc.text("Pedido Nº: " + this.transaction.orderNumber, margin, row);
+        } else {
+            this.doc.text("Pedido Nº: " + this.transaction.number, margin, row);
+        }
         this.doc.setFontType('normal');
         this.doc.text("Hora: " + this.transaction.startDate.substring(11,13) + ":" + this.transaction.startDate.substring(15,17), 40, row);
 
@@ -3144,7 +3150,11 @@ export class PrintComponent implements OnInit {
         }
 
         this.doc.setFontType('bold');
-        this.doc.text("Pedido Nº: " + this.transaction.number, margin, row);
+        if(this.transaction.orderNumber > 0){
+            this.doc.text("Pedido Nº: " + this.transaction.orderNumber, margin, row);
+        } else {
+            this.doc.text("Pedido Nº: " + this.transaction.number, margin, row);
+        }
         this.doc.setFontType('normal');
 
         this.doc.text("Fecha: " + this.transaction.startDate.substring(11,13) + ":" + this.transaction.startDate.substring(15,17), (width /1.6), row);
