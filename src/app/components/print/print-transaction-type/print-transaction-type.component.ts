@@ -544,7 +544,68 @@ export class PrintTransactionTypeComponent implements OnInit {
 
     async buildBody(): Promise<boolean> {
         return new Promise<boolean>(async (resolve, reject) => {
-            
+            var row = 0;
+            if(this.movementOfArticle && this.movementOfArticle.length > 0){
+                for (const movementOfArticle of this.movementOfArticle) {
+                    
+                    for (const field of this.printer.fields) {
+                        if(field.position === PositionPrint.Body){
+                            
+                            if (field.font !== 'default') {
+                                this.doc.setFont(field.font)
+                            }
+                            this.doc.setFontType(field.fontType)
+                            this.doc.setFontSize(field.fontSize)
+                            if(row < field.positionStartY){
+                                row = field.positionStartY
+                            }
+    
+                            try {
+                                this.doc.text(field.positionStartX, row  , (eval(field.value)).toString())
+                            } catch (e) {
+                                this.doc.text(field.positionStartX, row , field.value)
+                            }
+                        }
+                    }
+                    row = row  + this.printer.row;
+                    if(row > this.printer.addPag){
+                        await this.buildLayout(PositionPrint.Header);
+                        this.doc.addPage()
+                        row = 0;
+                    }
+                }
+            } 
+            if(this.movementOfCash && this.movementOfCash.length > 0){
+                for (const movementOfCash of this.movementOfCash) {
+                    
+                    for (const field of this.printer.fields) {
+                        if(field.position === PositionPrint.Body){
+                            
+                            if (field.font !== 'default') {
+                                this.doc.setFont(field.font)
+                            }
+                            this.doc.setFontType(field.fontType)
+                            this.doc.setFontSize(field.fontSize)
+                            if(row < field.positionStartY){
+                                row = field.positionStartY
+                            }
+    
+                            try {
+                                this.doc.text(field.positionStartX, row  , (eval(field.value)).toString())
+                            } catch (e) {
+                                this.doc.text(field.positionStartX, row , field.value)
+                            }
+                        }
+                    }
+                    row = row  + this.printer.row;
+                    if(row > this.printer.addPag){
+                        await this.buildLayout(PositionPrint.Header);
+                        this.doc.addPage()
+                        row = 0;
+                    }
+                }
+            }
+            resolve(true)
         });
     }
 
