@@ -98,7 +98,7 @@
 	},
 	"endDate": "Fecha",
 	"exempt": "Exento",
-	"email": "Email",
+	"emails": "Correo Electrónico",
 	"ecommerceEnabled": "¿Habilitado para Ecommerce?",
 	"employeeClosing": {
 		"name": "Empleado"
@@ -132,7 +132,7 @@
 	"posDescription": "Descripción Corta",
 	"printIn": "Imprime en",
 	"picture": "Imagen",
-	"phone": "Teléfono",
+	"phones": "Teléfono",
 	"priceList": {
 		"name": "Lista de Precio"
 	},
