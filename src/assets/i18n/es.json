@@ -71,7 +71,8 @@
 		},
 		"group": {
 			"description": "Grupo de Empresa"
-		}
+        },
+        "emails": "Correo Electrónico"
 	},
 	"count": "Cantidad",
 	"currency": {
@@ -183,7 +184,10 @@
 		},
 		"name": "Tipo",
 		"electronics": "Es Electrónica",
-		"transactionMovement": "Movimiento"
+        "transactionMovement": "Movimiento",
+        "readLayout" : "Lee Diseño",
+        "expirationDate" : "Fecha de vencimiento",
+        "tax" : "Afecta libro IVA"
 	},
 	"totalPrice": "Precio Total",
 	"unitOfMeasurement": {
