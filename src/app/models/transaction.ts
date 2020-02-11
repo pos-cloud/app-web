@@ -132,7 +132,7 @@ export let attributes = [
 		datatype: 'date',
 		project: null,
 		align: 'right',
-		required: false,
+		required: true,
 	},
 	{
 		name: 'company.name',
@@ -352,7 +352,7 @@ export let attributes = [
 		datatype: 'date',
 		project: null,
 		align: 'left',
-		required: false,
+		required: true,
 	},
 	{
 		name: 'updateDate',
@@ -362,7 +362,7 @@ export let attributes = [
 		datatype: 'date',
 		project: null,
 		align: 'left',
-		required: false,
+		required: true,
     },
     {
 		name: 'type.tax',

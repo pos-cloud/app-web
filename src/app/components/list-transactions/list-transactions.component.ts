@@ -29,6 +29,9 @@ import { SendEmailComponent } from '../send-email/send-email.component';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { CurrencyPipe } from '@angular/common';
 import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
+import { DateFormatPipe } from 'app/pipes/date-format.pipe';
+import * as moment from 'moment';
+import 'moment/locale/es';
 
 @Component({
 	selector: 'app-list-transactions',
@@ -63,7 +66,15 @@ export class ListTransactionsComponent implements OnInit {
 	@ViewChild(ExportExcelComponent, { static: false }) exportExcelComponent: ExportExcelComponent;
 	public columns = attributes;
 	public pathLocation: string[];
-	private subscription: Subscription = new Subscription();
+    private subscription: Subscription = new Subscription();
+    
+    
+    public dateFormat = new DateFormatPipe();
+    
+    //cabecera
+    public startDate: string;	
+	public endDate: string;
+	public dateSelect: string;
 
 	constructor(
 		public _transactionService: TransactionService,
@@ -72,7 +83,8 @@ export class ListTransactionsComponent implements OnInit {
 		public _modalService: NgbModal,
 		public activeModal: NgbActiveModal,
 		public alertConfig: NgbAlertConfig,
-		public _printerService: PrinterService,
+        public _printerService: PrinterService,
+        
 		private _authService: AuthService
 	) {
 		this.filters = new Array();
@@ -82,7 +94,11 @@ export class ListTransactionsComponent implements OnInit {
 			} else {
 				this.filters[field.name] = "";
 			}
-		}
+        }
+        this.startDate = moment().format('YYYY-MM-DD');
+        this.endDate = moment().format('YYYY-MM-DD');
+        this.dateSelect = "creationDate";
+
 	}
 
 	public ngOnInit(): void {
@@ -196,10 +212,18 @@ export class ListTransactionsComponent implements OnInit {
 			}
 		}
 
-		match += `"type.transactionMovement": "${this.transactionMovement}"`;
+        match += `"type.transactionMovement": "${this.transactionMovement}",`;
+        
+        match += `"${this.dateSelect}" : {
+            "$gte" : { "$date" : "${this.startDate}T00:00:00${this.timezone}" },
+            "$lte" : { "$date" : "${this.endDate}T23:59:59${this.timezone}" }
+        }`
+
+
 		if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
-		match += `}`;
+        match += `}`;
+        
 
 		match = JSON.parse(match);
 
@@ -212,12 +236,13 @@ export class ListTransactionsComponent implements OnInit {
 					project += `,`;
 				}
 				j++;
-				
 
 				if(!this.columns[i].project) {
 					if (this.columns[i].datatype !== "string") {
 						if (this.columns[i].datatype === "date") {
-							project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`
+                            project += `"${this.columns[i].name}": 1`;
+
+							//project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`
 						} else {
 							project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
 						}
@@ -230,7 +255,7 @@ export class ListTransactionsComponent implements OnInit {
 
 			}
 		}
-		project += `}`;
+        project += `}`;
 
 		project = JSON.parse(project);
 
@@ -303,6 +328,9 @@ export class ListTransactionsComponent implements OnInit {
 					break;
 				case 'percent':
 					value = this.roundNumberPipe.transform(eval(val)) + '%';
+                    break;
+                case 'date':
+					value = this.dateFormat.transform(eval(val),"DD/MM/YYYY")
 					break;
 				default:
 					value = eval(val);
