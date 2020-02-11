@@ -23,6 +23,9 @@ import { ExportExcelComponent } from '../export/export-excel/export-excel.compon
 import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
 import { CurrencyPipe } from '@angular/common';
 import { Subscription } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
+import { Config } from './../../app.config';
+import { ConfigService } from 'app/services/config.service';
 
 @Component({
   selector: 'app-list-article-stocks',
@@ -58,6 +61,7 @@ export class ListArticleStocksComponent implements OnInit {
   @Output() eventAddItem: EventEmitter<ArticleStock> = new EventEmitter<ArticleStock>();
   private subscription: Subscription = new Subscription();
   public printers: Printer[];
+  public database: string;
 
   public totalRealStock = 0;
   public totalCost = 0;
@@ -73,6 +77,8 @@ export class ListArticleStocksComponent implements OnInit {
     public _modalService: NgbModal,
     public _userService: UserService,
     public alertConfig: NgbAlertConfig,
+    private _toastr: ToastrService,
+    private _configService: ConfigService,
     private _printerService: PrinterService
   ) {
     this.filters = new Array();
@@ -85,7 +91,10 @@ export class ListArticleStocksComponent implements OnInit {
     }
    }
 
-  ngOnInit(): void {
+  ngOnInit() : void {
+
+    this.database = Config.database;
+
 
     this.getPriceList()
     let pathLocation: string[] = this._router.url.split('/');
@@ -344,6 +353,21 @@ export class ListArticleStocksComponent implements OnInit {
         modalRef.componentInstance.barcode = this.filters['article.barcode'];
         modalRef.componentInstance.description = this.filters['article.description'];
         break;
+        case 'updateArticle' :
+            this.loading = true;
+            this._articleStockService.updateArticle().subscribe(
+                result =>{
+                    if(result && result.message){
+                        this.showToast(result.message,'success')
+                        this.loading = false
+                    } 
+                },
+                error => {
+                    this.showToast(error._body, 'danger');
+                    this.loading = false;
+                    this.totalItems = 0;
+                  }
+            )
       default:
         break;
     }
@@ -422,4 +446,24 @@ export class ListArticleStocksComponent implements OnInit {
   public hideMessage(): void {
     this.alertMessage = '';
   }
+
+  public showToast(message: string, type: string = 'success'): void {
+    switch (type) {
+        case 'success':
+            this._toastr.success('', message);
+            break;
+        case 'info':
+            this._toastr.info('', message);
+            break;
+        case 'warning':
+            this._toastr.warning('', message);
+            break;
+        case 'danger':
+            this._toastr.error('', message);
+            break;
+        default:
+            this._toastr.success('', message);
+            break;
+    }
+}
 }
