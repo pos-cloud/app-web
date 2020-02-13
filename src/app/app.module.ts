@@ -13,6 +13,7 @@ import { PushNotificationComponent } from './../app/components/notification/noti
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { ToastrModule } from 'ngx-toastr';
+import { NgxTinymceModule } from 'ngx-tinymce';
 
 // rutas
 import { _routes } from './app.routes';
@@ -286,6 +287,9 @@ import { ViewGalleryComponent } from './components/view-gallery/view-gallery.com
 import { NguCarouselModule } from '@ngu/carousel';
 import { ListCashBoxTypesComponent } from './components/list-cash-box-types/list-cash-box-types.component';
 import { CashBoxTypeService } from './services/cash-box-type.service';
+import { EmailTemplateComponent } from './components/email-template/email-template.component';
+import { ListEmailTemplatesComponent } from './components/list-email-templates/list-email-templates.component';
+import { EmailTemplateService } from './services/email-template.service';
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
 
@@ -491,7 +495,9 @@ export function HttpLoaderFactory(http: HttpClient) {
         ListResourcesComponent,
         GalleryComponent,
         ListGalleriesComponent,
-        ViewGalleryComponent
+        ViewGalleryComponent,
+        EmailTemplateComponent,
+        ListEmailTemplatesComponent
     ],
     entryComponents: [
         HomeComponent,
@@ -668,7 +674,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         SelectTableComponent,
         ResourceComponent,
         GalleryComponent,
-        CurrentAccountDetailsComponent
+        CurrentAccountDetailsComponent,
+        EmailTemplateComponent
     ],
     imports: [
         BrowserModule,
@@ -690,7 +697,11 @@ export function HttpLoaderFactory(http: HttpClient) {
         }),
         SocketIoModule.forRoot(configSocket),
         ToastrModule.forRoot(),
-        NguCarouselModule
+        NguCarouselModule,
+        NgxTinymceModule.forRoot({
+            //baseURL: '//cdn.bootcss.com/tinymce/4.7.13/',
+            baseURL: '//cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.0/',
+          })
     ],
     providers: [
         NgbActiveModal,
@@ -755,7 +766,9 @@ export function HttpLoaderFactory(http: HttpClient) {
         ClassificationService,
         CurrencyValueService,
         ResourceService,
-        GalleryService
+        GalleryService,
+        EmailTemplateService,
+        
     ],
     bootstrap: [AppComponent]
 })

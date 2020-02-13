@@ -7,6 +7,7 @@ import { UseOfCFDI } from './use-of-CFDI';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
+import { EmailTemplate } from './email-template';
 
 export class TransactionType {
 
@@ -61,6 +62,8 @@ export class TransactionType {
     public resetNumber : boolean = false;
     public updateArticle: boolean = false;
     public finishCharge : boolean = true;
+    public requestEmailTemplate : boolean = false;
+    public defectEmailTemplate : EmailTemplate;
     public expirationDate : string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 	public creationUser: User;
 	public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');

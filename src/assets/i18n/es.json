@@ -96,7 +96,8 @@
 	"deliveredBy": "Entregado por",
 	"depositDestination": {
 		"name": "Depósito"
-	},
+    },
+    "design" : "Diseño",
 	"endDate": "Fecha",
 	"exempt": "Exento",
 	"emails": "Correo Electrónico",
