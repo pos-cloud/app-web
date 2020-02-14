@@ -72,7 +72,10 @@
 		"group": {
 			"description": "Grupo de Empresa"
         },
-        "emails": "Correo Electrónico"
+        "emails": "Correo Electrónico",
+        "state" : {
+            "name" : "Provincia"
+        }
 	},
 	"count": "Cantidad",
 	"currency": {

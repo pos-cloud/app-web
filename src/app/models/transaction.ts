@@ -343,6 +343,16 @@ export let attributes = [
 		project: null,
 		align: 'left',
 		required: false,
+    },
+    {
+		name: 'company.state.name',
+		visible: false,
+		disabled: false,
+		filter: true,
+		datatype: 'string',
+		project: null,
+		align: 'left',
+		required: false,
 	},
 	{
 		name: 'creationDate',
