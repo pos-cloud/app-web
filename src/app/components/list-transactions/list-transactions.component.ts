@@ -274,7 +274,7 @@ export class ListTransactionsComponent implements OnInit {
 			skip // SKIP
 		).subscribe(
 			result => {
-				this.loading = false;
+                this.loading = false;
 				if (result && result[0] && result[0].items) {
 					if (this.itemsPerPage === 0) {
 						this.exportExcelComponent.items = result[0].items;
