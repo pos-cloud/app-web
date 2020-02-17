@@ -26,7 +26,7 @@ export class ListTablesComponent implements OnInit {
 
     public tableSelected: Table;
     public tables: Table[];
-    public state: string[];
+    public states: string[];
     public areTablesEmpty: boolean = true;
     public alertMessage: string = '';
     public userType: string;
@@ -70,12 +70,9 @@ export class ListTablesComponent implements OnInit {
         this.tables = new Array();
         let pathLocation: string[] = this._router.url.split('/');
         this.userType = pathLocation[1];
-
         this.getTables();
 
-
         this.interval = setInterval(() => {
-
             if (!this.loading) {
                 this.getTables();
             }
@@ -89,7 +86,7 @@ export class ListTablesComponent implements OnInit {
     private processParams(): void {
         this._route.queryParams.subscribe(params => {
             if (params['state']) {
-                this.state = params['state'].split(',');
+                this.states = params['state'].split(',');
             }
         });
     }
@@ -98,11 +95,6 @@ export class ListTablesComponent implements OnInit {
 
         this.loading = true;
 
-        var query;
-        if (this.state) {
-            query = 'where="state":"' + this.state + '"';
-        }
-
         let project = {
             description : 1,
             "room._id" : 1,
@@ -110,14 +102,17 @@ export class ListTablesComponent implements OnInit {
             chair : 1,
             diners : 1,
             state : 1,
-            employee : 1,
+            "employee._id" : 1,
+            "employee.name" : 1,
+            "employee.type._id" : 1,
+            "employee.type.description" : 1,
             lastTransaction : 1
         }
 
         let match = {}
 
-        if(this.state){
-            match = { state : { $in : this.state }}
+        if(this.states){
+            match = { state : { $in : this.states }}
         }
 
 
@@ -131,7 +126,6 @@ export class ListTablesComponent implements OnInit {
                 this.hideMessage();
                 this.loading = false;
                 this.tables = result.tables;
-                console.log(this.tables)
                 this.totalItems = this.tables.length;
                 this.areTablesEmpty = false;
                 this.calculateAmountOfDiners();
@@ -147,33 +141,6 @@ export class ListTablesComponent implements OnInit {
             }
         );
 
-
-        /*this._tableService.getTables(query).subscribe(
-            result => {
-                if (!result.tables) {
-                    if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                    this.loading = false;
-                    this.tables = new Array();
-                    this.areTablesEmpty = true;
-                } else {
-                    this.hideMessage();
-                    this.loading = false;
-                    this.tables = result.tables;
-                    console.log(this.tables)
-                    this.totalItems = this.tables.length;
-                    this.areTablesEmpty = false;
-                    this.calculateAmountOfDiners();
-                }
-            },
-            error => {
-                if (error.status === 0) {
-                    this.showMessage("Error al conectar con el servidor. Corroborar que este encendido.", 'danger', false);
-                } else {
-                    this.showMessage(error._body, 'danger', false);
-                    this.loading = false;
-                }
-            }
-        );*/
     }
 
     public selectTable(table: Table): void {
