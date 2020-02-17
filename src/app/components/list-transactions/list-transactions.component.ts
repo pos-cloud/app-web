@@ -461,11 +461,18 @@ export class ListTransactionsComponent implements OnInit {
 					modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente http://${Config.database}.poscloud.com.ar:300/api/print/invoice/` + transaction._id;
 				} else {
 					modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente http://${Config.database}.poscloud.com.ar:300/api/print/others/` + transaction._id;
-				}
+                }
 
-				if (Config.country === 'MX') {
+                if (Config.country === 'MX') {
 					modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}.poscloud.com.ar:300/api/print/xml/CFDI-33_Factura_` + transaction.number;
 				}
+                
+                if(transaction.type.defectEmailTemplate){
+                    modalRef.componentInstance.body = transaction.type.defectEmailTemplate + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/others/ + ${transaction._id}">Link</a>`
+                    if (Config.country === 'MX') {
+                        modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}.poscloud.com.ar:300/api/print/xml/CFDI-33_Factura_` + transaction.number;
+                    }
+                }
 
 				break;
 			default: ;

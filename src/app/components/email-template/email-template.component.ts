@@ -203,6 +203,9 @@ export class EmailTemplateComponent implements OnInit {
 
     public addEmailTemplate() {
 
+        this.emailTemplate = this.emailTemplateForm.value;
+
+
         switch (this.operation) {
             case 'add':
                 this.saveEmailTemplate();
@@ -246,7 +249,6 @@ export class EmailTemplateComponent implements OnInit {
 
         this.emailTemplate = this.emailTemplateForm.value;
 
-        console.log(this.emailTemplate)
         this._emailTemplateService.saveEmailTemplate(this.emailTemplate).subscribe(
             result => {
                 if (!result.emailTemplate) {
@@ -274,7 +276,7 @@ export class EmailTemplateComponent implements OnInit {
             result => {
                 this.loading = false;
                 if (!result.emailTemplate) {
-                    if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+                    if (result.message && result.message !== '') { this.showMessage(result.message, 'danger', true); }
                 } else {
                     this.activeModal.close();
                 }

@@ -67,10 +67,7 @@ export class ListEmailTemplatesComponent implements OnInit {
     }
 
     public ngOnInit(): void {
-
-
         this.getItems();
-
         this.initDragHorizontalScroll();
     }
 
@@ -280,16 +277,21 @@ export class ListEmailTemplatesComponent implements OnInit {
                 modalRef = this._modalService.open(EmailTemplateComponent, { size: 'lg', backdrop: 'static' });
                 modalRef.componentInstance.operation = "add";
                 modalRef.result.then((result) => {
-                    this.getItems();
-                }, (reason) => {
-                    this.getItems();
-                });
+					this.getItems();
+				}, (reason) => {
+					this.getItems();
+				});
                 break;
             case 'view':
                 modalRef = this._modalService.open(EmailTemplateComponent, { size: 'lg', backdrop: 'static' });
                 modalRef.componentInstance.emailTemplateId = emailTemplate._id;
                 modalRef.componentInstance.operation = "view";
                 modalRef.componentInstance.readonly = true;
+                modalRef.result.then((result) => {
+					this.getItems();
+				}, (reason) => {
+					this.getItems();
+				});
                 break;
             case 'edit':
                 modalRef = this._modalService.open(EmailTemplateComponent, { size: 'lg', backdrop: 'static' });
@@ -297,25 +299,21 @@ export class ListEmailTemplatesComponent implements OnInit {
                 modalRef.componentInstance.operation = "edit";
                 modalRef.componentInstance.readonly = false;
                 modalRef.result.then((result) => {
-                    if (result.emailTemplate) {
-                        this.getItems();
-                    }
-                }, (reason) => {
-
-                });
+					this.getItems();
+				}, (reason) => {
+					this.getItems();
+				});
                 break;
             case 'delete':
                 modalRef = this._modalService.open(EmailTemplateComponent, { size: 'lg', backdrop: 'static' });
-                modalRef.componentInstance.op = "delete";
+                modalRef.componentInstance.operation = "delete";
                 modalRef.componentInstance.readonly = true;
                 modalRef.componentInstance.emailTemplateId = emailTemplate._id;
                 modalRef.result.then((result) => {
-                    if (result === 'delete_close') {
-                        this.getItems();
-                    }
-                }, (reason) => {
-
-                });
+					this.getItems();
+				}, (reason) => {
+					this.getItems();
+				});
                 break;
             default: ;
         }

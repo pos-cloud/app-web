@@ -546,7 +546,17 @@ export class TransactionTypeComponent implements OnInit {
     if (!this.transactionType.maxOrderNumber) this.transactionType.maxOrderNumber = 0;
 
     if (!this.transactionType.requestEmailTemplate) this.transactionType.requestEmailTemplate = false;
-    if (!this.transactionType.defectEmailTemplate) this.transactionType.defectEmailTemplate = null;
+
+    let defectEmailTemplate;
+    if (!this.transactionType.defectEmailTemplate) {
+      defectEmailTemplate = null;
+    } else {
+      if (this.transactionType.defectEmailTemplate._id) {
+        defectEmailTemplate = this.transactionType.defectEmailTemplate._id;
+      } else {
+        defectEmailTemplate = this.transactionType.defectEmailTemplate;
+      }
+    }
 
 
     this.transactionTypeForm.setValue({
@@ -605,7 +615,7 @@ export class TransactionTypeComponent implements OnInit {
       'finishCharge' : this.transactionType.finishCharge,
       'maxOrderNumber': this.transactionType.maxOrderNumber,
       'requestEmailTemplate': this.transactionType.requestEmailTemplate,
-      'defectEmailTemplate': this.transactionType.defectEmailTemplate
+      'defectEmailTemplate': defectEmailTemplate
 
 
     });

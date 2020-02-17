@@ -4,10 +4,10 @@ import { PaymentMethod } from './payment-method';
 import { CompanyType } from './company';
 import { User } from './user';
 import { UseOfCFDI } from './use-of-CFDI';
+import { EmailTemplate } from './email-template';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
-import { EmailTemplate } from './email-template';
 
 export class TransactionType {
 

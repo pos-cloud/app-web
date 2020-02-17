@@ -75,7 +75,7 @@ export class EmailTemplateService {
 
 	public updateEmailTemplate(emailTemplate: EmailTemplate): Observable<any> {
 
-		const URL = `${Config.apiURL}emailTemplate`;
+		const URL = `${Config.apiURL}email-template`;
 
 		const headers = new HttpHeaders()
 			.set('Content-Type', 'application/json')
