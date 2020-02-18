@@ -183,7 +183,7 @@
                   <div class="form-group col-md-6">
                     <label for="phones" class="control-label">Teléfonos:</label>
                     <div class="input-group">
-                      <input type="number" class="form-control" formControlName="phones" name="phones" id="phones" [readonly]="readonly"/>
+                      <input type="text" class="form-control" formControlName="phones" name="phones" id="phones" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.phones" class="alert alert-danger">
                       {{ formErrors.phones }}
