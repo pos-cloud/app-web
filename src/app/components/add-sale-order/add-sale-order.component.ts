@@ -791,7 +791,7 @@ export class AddSaleOrderComponent {
 			this.loading = true;
 
 			let match = `{
-			"operationType": { "$ne": "D" }, 
+			"operationType": { "$ne": "D" },
 			"parent._id": { "$oid" : "${articleId}"},
 			"optional" : true,
 			"child.operationType": { "$ne": "D" }
@@ -848,7 +848,7 @@ export class AddSaleOrderComponent {
 			this.loading = true;
 
 			let match = `{
-			"operationType": { "$ne": "D" }, 
+			"operationType": { "$ne": "D" },
 			"parent._id": { "$oid" : "${parent}"},
 			"child._id" : { "$oid" : "${child}"},
 			"child.operationType": { "$ne": "D" },
@@ -1323,7 +1323,7 @@ export class AddSaleOrderComponent {
 						tax.tax = taxAux.tax;
 						tax.percentage = this.roundNumber.transform(taxAux.percentage);
 						if (tax.tax.taxBase == TaxBase.Neto) {
-							tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice - impInt) / ((tax.percentage / 100) + 1));
+              tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice - impInt) / ((tax.percentage / 100) + 1), 4);
 						}
 						if (taxAux.percentage === 0) {
 							for (let artTax of movementOfArticle.article.taxes) {
@@ -1509,10 +1509,10 @@ export class AddSaleOrderComponent {
 						let transactionTax: Taxes = new Taxes();
 						transactionTax.percentage = this.roundNumber.transform(taxesAux.percentage);
 						transactionTax.tax = taxesAux.tax;
-						transactionTax.taxBase = this.roundNumber.transform(taxesAux.taxBase);
+            transactionTax.taxBase = this.roundNumber.transform(taxesAux.taxBase, 4);
 						transactionTax.taxAmount = this.roundNumber.transform(taxesAux.taxAmount, 4);
 						transactionTaxesAUX.push(transactionTax);
-						this.transaction.basePrice += this.roundNumber.transform(transactionTax.taxBase);
+            this.transaction.basePrice += this.roundNumber.transform(transactionTax.taxBase);
 						taxBaseTotal += this.roundNumber.transform(transactionTax.taxBase);
 						taxAmountTotal += this.roundNumber.transform(transactionTax.taxAmount);
 					}
@@ -1524,7 +1524,9 @@ export class AddSaleOrderComponent {
 				}
 				totalPriceAux += this.roundNumber.transform(movementOfArticle.salePrice);
 			}
-		}
+    }
+
+    this.transaction.basePrice = this.roundNumber.transform(this.transaction.basePrice);
 
 		if (transactionTaxesAUX) {
 			for (let transactionTaxAux of transactionTaxesAUX) {
@@ -1532,7 +1534,7 @@ export class AddSaleOrderComponent {
 				for (let transactionTax of transactionTaxes) {
 					if (transactionTaxAux.tax._id.toString() === transactionTax.tax._id.toString()) {
 						transactionTax.taxAmount += this.roundNumber.transform(transactionTaxAux.taxAmount, 4);
-						transactionTax.taxBase += transactionTaxAux.taxBase;
+            transactionTax.taxBase += this.roundNumber.transform(transactionTaxAux.taxBase, 4);
 						exists = true;
 					}
 				}
@@ -1588,10 +1590,9 @@ export class AddSaleOrderComponent {
 
 		this.showMessage("Validando comprobante con AFIP...", 'info', false);
 		this.loading = true;
-
 		this._transactionService.validateElectronicTransactionAR(this.transaction).subscribe(
 			result => {
-				let msn = '';
+        let msn = '';
 				if (result && result.status != 0) {
 					if (result.status === 'err') {
 						if (result.code && result.code !== '') {
@@ -1641,8 +1642,8 @@ export class AddSaleOrderComponent {
 						this.saveClaim('ERROR FE AR' + moment().format('DD/MM/YYYY HH:mm') + " : " + msn, JSON.stringify(body));
 					} else {
 						this.transaction.number = result.number;
-						this.transaction.CAE = result.CAE;
-						this.transaction.CAEExpirationDate = moment(result.CAEExpirationDate, 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DDTHH:mm:ssZ");
+            this.transaction.CAE = result.CAE;
+            this.transaction.CAEExpirationDate = moment(result.CAEExpirationDate, 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DDTHH:mm:ssZ");
 						this.transaction.state = TransactionState.Closed;
 						this.finish();
 					}
