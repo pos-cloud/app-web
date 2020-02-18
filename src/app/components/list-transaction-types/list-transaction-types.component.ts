@@ -172,7 +172,7 @@ export class ListTransactionTypesComponent implements OnInit {
 				} else {
 					this.hideMessage();
 					this.loading = false;
-					this.transactionTypes = result.transactionTypes;
+                    this.transactionTypes = result.transactionTypes;
 					this.totalItems = this.transactionTypes.length;
 					this.areTransactionTypesEmpty = false;
 				}
@@ -305,7 +305,7 @@ export class ListTransactionTypesComponent implements OnInit {
 
 	public openModal(op: string, transactionType: TransactionType): void {
 
-		let modalRef;
+        let modalRef;
 		switch (op) {
 			case 'view':
 				modalRef = this._modalService.open(TransactionTypeComponent, { size: 'lg', backdrop: 'static' });

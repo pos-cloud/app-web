@@ -79,6 +79,7 @@ import { ListGalleriesComponent } from './components/list-galleries/list-galleri
 import { ViewGalleryComponent } from './components/view-gallery/view-gallery.component';
 import { ListCashBoxTypesComponent } from './components/list-cash-box-types/list-cash-box-types.component';
 import { CurrentAccountDetailsComponent } from './components/print/current-account-details/current-account-details.component';
+import { ListEmailTemplatesComponent } from './components/list-email-templates/list-email-templates.component';
 
 export const _routes: Routes = [
     {
@@ -533,6 +534,11 @@ export const _routes: Routes = [
     {
         path: 'admin/structures',
         component: ListStructureComponent,
+        canActivate: [AuthGuard, LicenseGuard]
+    },
+    {
+        path: 'admin/template-emails',
+        component: ListEmailTemplatesComponent,
         canActivate: [AuthGuard, LicenseGuard]
     },
     {

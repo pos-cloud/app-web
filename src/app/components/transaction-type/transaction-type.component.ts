@@ -23,6 +23,8 @@ import { CurrencyService } from 'app/services/currency.service';
 import { Currency } from 'app/models/currency';
 import { UseOfCFDI } from 'app/models/use-of-CFDI';
 import { UseOfCFDIService } from 'app/services/use-of-CFDI.service';
+import { EmailTemplateService } from 'app/services/email-template.service';
+import { EmailTemplate } from 'app/models/email-template';
 
 @Component({
 	selector: 'app-transaction-type',
@@ -54,7 +56,7 @@ export class TransactionTypeComponent implements OnInit {
   @Input() operation: string;
   public userCountry: string = 'AR';
   public orientation: string = 'horizontal';
-
+  public emailTemplates : EmailTemplate[];
   public formErrors = {
     'transactionMovement': '',
     'abbreviation': '',
@@ -83,7 +85,8 @@ export class TransactionTypeComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _printerService: PrinterService,
     public _currencyService: CurrencyService,
-    public _useOfCFDIService: UseOfCFDIService
+    public _useOfCFDIService: UseOfCFDIService,
+    public _emailTemplateService : EmailTemplateService
   ) {
     if(window.screen.width < 1000) this.orientation = 'vertical';
     this.getCurrencies();
@@ -91,6 +94,7 @@ export class TransactionTypeComponent implements OnInit {
     this.getEmployeeTypes();
     this.getPrinters();
     this.getUsesOfCFDI();
+    this.getEmailTemplates();
   }
 
   ngOnInit(): void {
@@ -334,7 +338,9 @@ export class TransactionTypeComponent implements OnInit {
       'updateArticle' : [this.transactionType.updateArticle,[]],
       'expirationDate' : [this.transactionType.expirationDate,[]],
       'finishCharge' : [this.transactionType.finishCharge,[]],
-      'maxOrderNumber': [this.transactionType.maxOrderNumber, []]
+      'maxOrderNumber': [this.transactionType.maxOrderNumber, []],
+      'requestEmailTemplate': [this.transactionType.requestEmailTemplate, []],
+      'defectEmailTemplate': [this.transactionType.defectEmailTemplate, []]
 
     });
 
@@ -361,6 +367,36 @@ export class TransactionTypeComponent implements OnInit {
         }
       }
     }
+  }
+
+  public getEmailTemplates(){
+
+    let match = {
+        operationType: { $ne: "D" }
+    }
+
+
+    let project = {
+        name: 1,
+        operationType : 1,
+        creationDate : 1,
+        updateUser : 1,
+        updateDate : 1
+    }
+
+    this._emailTemplateService.getEmailTemplates(project,match,{},{}).subscribe(
+        result =>{
+            if(result && result.emailTemplates){
+                this.emailTemplates = result.emailTemplates
+            } else {
+                this.emailTemplates = null;
+            }
+        },
+        error =>{
+            this.showMessage(error._body, 'danger', false);
+            this.loading = false;
+        }
+    )
   }
   
   public getUsesOfCFDI(): void {
@@ -509,6 +545,19 @@ export class TransactionTypeComponent implements OnInit {
 
     if (!this.transactionType.maxOrderNumber) this.transactionType.maxOrderNumber = 0;
 
+    if (!this.transactionType.requestEmailTemplate) this.transactionType.requestEmailTemplate = false;
+
+    let defectEmailTemplate;
+    if (!this.transactionType.defectEmailTemplate) {
+      defectEmailTemplate = null;
+    } else {
+      if (this.transactionType.defectEmailTemplate._id) {
+        defectEmailTemplate = this.transactionType.defectEmailTemplate._id;
+      } else {
+        defectEmailTemplate = this.transactionType.defectEmailTemplate;
+      }
+    }
+
 
     this.transactionTypeForm.setValue({
       '_id': this.transactionType._id,
@@ -564,7 +613,9 @@ export class TransactionTypeComponent implements OnInit {
       'updateArticle' : this.transactionType.updateArticle,
       'expirationDate' : this.transactionType.expirationDate,
       'finishCharge' : this.transactionType.finishCharge,
-      'maxOrderNumber': this.transactionType.maxOrderNumber
+      'maxOrderNumber': this.transactionType.maxOrderNumber,
+      'requestEmailTemplate': this.transactionType.requestEmailTemplate,
+      'defectEmailTemplate': defectEmailTemplate
 
 
     });

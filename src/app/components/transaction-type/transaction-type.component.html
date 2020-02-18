@@ -931,7 +931,51 @@
 							</div>
 						</div>
 					</ng-template>
-				</ngb-tab>
+                </ngb-tab>  
+                <ngb-tab title="Correo">
+                    <ng-template ngbTabContent>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="requestEmailTemplate" class="control-label">Envia correo?</label>
+                            <div class="input-group">
+                                <select class="form-control" formControlName="requestEmailTemplate">
+                                    <option value="true" [selected]="transactionType.requestEmailTemplate"
+                                        [disabled]="readonly">Si</option>
+                                    <option value="false" [selected]="!transactionType.requestEmailTemplate">No
+                                    </option>
+                                </select>
+                                <button type="button" class="btn btn-light" placement="right"
+                                    popoverClass="popover-class"
+                                    ngbPopover="Si pide correo al finalizar?">
+                                    <b>?</b>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="defectEmailTemplate" class="control-label">Template defecto</label>
+                            <div class="input-group">
+                                <select class="form-control" formControlName="defectEmailTemplate">
+                                    <option [ngValue]="null"
+                                        [selected]="!transactionType || !transactionType.defectEmailTemplate"
+                                        [disabled]="readonly"></option>
+                                    <option *ngFor="let emailTemplate of emailTemplates"
+                                        [selected]="transactionType.defectEmailTemplate && transactionType.defectEmailTemplate._id === emailTemplate._id"
+                                        [ngValue]="emailTemplate._id" [disabled]="readonly">
+                                        {{emailTemplate.name}}</option>
+                                </select>
+                                <button type="button" class="btn btn-light" placement="right"
+                                    popoverClass="popover-class"
+                                    ngbPopover="Al imprimir la transacción, se emitirá por la impresora seleccionada como defecto.">
+                                    <b>?</b>
+                                </button>
+                            </div>
+                        </div>
+                        
+
+                    </div>
+                </ng-template>
+
+                </ngb-tab>
 				<ngb-tab *ngIf="transactionType" title="Auditoría">
 					<ng-template ngbTabContent>
 						<div class="row tab-content">

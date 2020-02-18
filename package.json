@@ -42,6 +42,7 @@
     "moment": "^2.24.0",
     "ngx-pagination": "^3.3.0",
     "ngx-socket-io": "^2.1.1",
+    "ngx-tinymce": "^7.0.0",
     "ngx-toastr": "^11.0.0",
     "node-sass": "^4.11.0",
     "nodemailer": "^4.6.5",

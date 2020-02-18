@@ -77,6 +77,7 @@ import { StructureService } from 'app/services/structure.service';
 import { JsonDiffPipe } from 'app/pipes/json-diff';
 import { SelectCompanyComponent } from '../select-company/select-company.component';
 import { SelectTableComponent } from 'app/components/select-table/select-table.component';
+import { SendEmailComponent } from '../send-email/send-email.component';
 
 @Component({
 	selector: 'app-add-sale-order',
@@ -1807,6 +1808,69 @@ export class AddSaleOrderComponent {
 				} else {
 					this.showMessage("No se ingresaron productos a la transacción.", 'info', true);
 				}
+                break;
+            case 'send-email':
+				if (this.transaction.type.readLayout) {
+					modalRef = this._modalService.open(PrintTransactionTypeComponent)
+					modalRef.componentInstance.transactionId = this.transaction._id;
+					modalRef.componentInstance.source = "mail";
+				} else {
+					modalRef = this._modalService.open(PrintComponent);
+					modalRef.componentInstance.company = this.transaction.company;
+					modalRef.componentInstance.transactionId = this.transaction._id;
+					modalRef.componentInstance.typePrint = 'invoice';
+					modalRef.componentInstance.source = "mail";
+				}
+				if (this.transaction.type.defectPrinter) {
+					modalRef.componentInstance.printer = this.transaction.type.defectPrinter;
+				} else {
+					if (this.printers && this.printers.length > 0) {
+						for (let printer of this.printers) {
+							if (printer.printIn === PrinterPrintIn.Counter) {
+								modalRef.componentInstance.printer = printer;
+							}
+						}
+					}
+				}
+
+				modalRef = this._modalService.open(SendEmailComponent, { size: 'lg', backdrop: 'static' });
+				if (this.transaction.company && this.transaction.company.emails) {
+					modalRef.componentInstance.emails = this.transaction.company.emails;
+				}
+				let labelPrint = this.transaction.type.name;
+				if (this.transaction.type.labelPrint) {
+					labelPrint = this.transaction.type.labelPrint;
+				}
+				modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(this.transaction.origin, 4)}-${this.transaction.letter}-${this.padNumber(this.transaction.number, 8)}`;
+				if (this.transaction.type.electronics) {
+					modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente http://${Config.database}.poscloud.com.ar:300/api/print/invoice/` + this.transaction._id;
+				} else {
+					modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente http://${Config.database}.poscloud.com.ar:300/api/print/others/` + this.transaction._id;
+                }
+
+                if (Config.country === 'MX') {
+					modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}.poscloud.com.ar:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number;
+                }
+                
+                if(this.transaction.type.defectEmailTemplate){
+
+                    if (this.transaction.type.electronics) {
+                        modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/invoice/ + ${this.transaction._id}">Su comprobante</a>`
+                    } else {
+                        modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/others/ + ${this.transaction._id}">Su comprobante</a>`
+                    }
+
+                    if (Config.country === 'MX') {
+                        modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}.poscloud.com.ar:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number;
+                    }
+                }
+
+                modalRef.result.then((result) => {
+                    this.backFinal();
+                }, (reason) => {
+                    this.backFinal();
+                });
+
 				break;
 			case 'cancel':
 				modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg', backdrop: 'static' });
@@ -2534,9 +2598,11 @@ export class AddSaleOrderComponent {
 								if (!cancellationTypesAutomatic || cancellationTypesAutomatic.length == 0) {
 									if (this.transaction && this.transaction.type.printable) {
 										this.print();
-									} else {
+									} else if(this.transaction && this.transaction.type.requestEmailTemplate) {
+                                        this.openModal('send-email');
+                                    } else {
 										this.backFinal();
-									}
+                                    }
 								} else {
 									this.openModal('cancelation-type-automatic');
 								}
@@ -3369,5 +3435,14 @@ export class AddSaleOrderComponent {
 				this._toastr.success('', message);
 				break;
 		}
+    }
+    
+    
+	public padNumber(n, length): string {
+
+		var n = n.toString();
+		while (n.length < length)
+			n = "0" + n;
+		return n;
 	}
 }
