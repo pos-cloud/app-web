@@ -85,8 +85,8 @@ export class ListTablesComponent implements OnInit {
 
     private processParams(): void {
         this._route.queryParams.subscribe(params => {
-            if (params['state']) {
-                this.states = params['state'].split(',');
+            if (params['states']) {
+                this.states = params['states'].split(',');
             }
         });
     }
