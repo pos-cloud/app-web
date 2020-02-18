@@ -55,7 +55,7 @@
                                     <div class="form-group col-md-6">
                                         <label class="control-label">El día:</label>
                                         <label *ngIf="emailTemplate.creationDate" class="control-label">
-                                            <b>{{emailTemplate.creationDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
+                                            <b>{{emailTemplate.creationDate}}</b></label>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -68,7 +68,7 @@
                                     <div class="form-group col-md-6">
                                         <label class="control-label">El día:</label>
                                         <label *ngIf="emailTemplate.updateDate"
-                                            class="control-label"><b>{{emailTemplate.updateDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
+                                            class="control-label"><b>{{emailTemplate.updateDate}}</b></label>
                                         <label *ngIf="!emailTemplate.updateDate" class="control-label"><b>-</b></label>
                                     </div>
                                 </div>

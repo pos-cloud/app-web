@@ -131,15 +131,16 @@ export class EmailTemplateComponent implements OnInit {
             name: 1,
             design : 1,
             operationType : 1,
-            creationDate : 1,
-            updateUser : 1,
-            updateDate : 1
+            creationDate : { "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y %HH%MM", "timezone": "-03:00" } },
+            "updateUser.name" : 1,
+            "creationUser.name" : 1,
+            updateDate : { "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }
         }
 
         this._emailTemplateService.getEmailTemplates(project,match,{},{},1,0).subscribe(
             result => {
                 if (!result.emailTemplates) {
-                    if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+                    if (result.message && result.message !== '') this.showMessage(result.message, 'susses', true);
                 } else {
                     this.hideMessage();
                     this.emailTemplate = result.emailTemplates[0];
@@ -253,7 +254,7 @@ export class EmailTemplateComponent implements OnInit {
             result => {
                 if (!result.emailTemplate) {
                     this.loading = false;
-                    if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+                    if (result.message && result.message !== '') { this.showMessage(result.message, 'success', true); }
                 } else {
                     this.loading = false;
                     this.showMessage('El template se ha añadido con éxito.', 'success', false);
