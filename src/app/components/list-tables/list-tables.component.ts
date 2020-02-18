@@ -106,17 +106,21 @@ export class ListTablesComponent implements OnInit {
             "employee.name" : 1,
             "employee.type._id" : 1,
             "employee.type.description" : 1,
-            lastTransaction : 1
+            lastTransaction : 1,
+            operationType : 1
         }
 
         let match = {}
 
         if(this.states){
-            match = { state : { $in : this.states }}
+            match = { state : { $in : this.states } , operationType : { $ne : "D"} }
+        } else {
+            match = { operationType : { $ne : "D"} }
         }
 
 
         this._tableService.getTablesV2(project,match,{description : 1},{}).subscribe(result => {
+            console.log(result)
             if (!result.tables) {
                 if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
                 this.loading = false;
