@@ -1505,7 +1505,7 @@ export class AddMovementOfArticleComponent implements OnInit {
                         tax.tax = taxAux.tax;
                         tax.percentage = this.roundNumber.transform(taxAux.percentage);
                         if (tax.tax.taxBase == TaxBase.Neto) {
-                            tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice - impInt) / ((tax.percentage / 100) + 1));
+                          tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice - impInt) / ((tax.percentage / 100) + 1), 4);
                         }
                         if (tax.percentage === 0) {
                             tax.taxAmount = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount, 4);
@@ -1530,7 +1530,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
         this.movChild = new Array();
 
-        //pregunto si tiene  estructura 
+        //pregunto si tiene  estructura
         if (this.structures && this.structures.length > 0) {
             await this.getMovsWithoutOptional().then(
                 async result => {
