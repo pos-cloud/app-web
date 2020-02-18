@@ -120,7 +120,6 @@ export class ListTablesComponent implements OnInit {
 
 
         this._tableService.getTablesV2(project,match,{description : 1},{}).subscribe(result => {
-            console.log(result)
             if (!result.tables) {
                 if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
                 this.loading = false;
