@@ -484,6 +484,26 @@ export let attributes = [
 		project: null,
 		align: 'left',
 		required: true,
-	}
+    },
+    {
+		name: 'type.defectEmailTemplate._id',
+		visible: false,
+		disabled: true,
+		filter: false,
+		datatype: 'string',
+		project: null,
+		align: 'left',
+		required: true,
+    },
+    {
+		name: 'type.defectEmailTemplate.design',
+		visible: false,
+		disabled: true,
+		filter: false,
+		datatype: 'string',
+		project: null,
+		align: 'left',
+		required: true,
+	},
 ];
 

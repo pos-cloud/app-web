@@ -372,6 +372,9 @@ export class ListTransactionsComponent implements OnInit {
 
 	public openModal(op: string, transaction: Transaction): void {
 
+        console.log(transaction)
+
+
 		let modalRef;
 		switch (op) {
 			case 'view':
@@ -448,7 +451,7 @@ export class ListTransactionsComponent implements OnInit {
 					}
 				}
 
-				modalRef = this._modalService.open(SendEmailComponent);
+				modalRef = this._modalService.open(SendEmailComponent, { size: 'lg', backdrop: 'static' });
 				if (transaction.company && transaction.company.emails) {
 					modalRef.componentInstance.emails = transaction.company.emails;
 				}
@@ -465,10 +468,16 @@ export class ListTransactionsComponent implements OnInit {
 
                 if (Config.country === 'MX') {
 					modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}.poscloud.com.ar:300/api/print/xml/CFDI-33_Factura_` + transaction.number;
-				}
+                }
                 
                 if(transaction.type.defectEmailTemplate){
-                    modalRef.componentInstance.body = transaction.type.defectEmailTemplate + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/others/ + ${transaction._id}">Link</a>`
+
+                    if (transaction.type.electronics) {
+                        modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/invoice/ + ${transaction._id}">Su comprobante</a>`
+                    } else {
+                        modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/others/ + ${transaction._id}">Su comprobante</a>`
+                    }
+
                     if (Config.country === 'MX') {
                         modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}.poscloud.com.ar:300/api/print/xml/CFDI-33_Factura_` + transaction.number;
                     }

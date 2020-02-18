@@ -26,14 +26,24 @@
 					{{ formErrors.subject }}
 				</div>
 			</div>
-			<div class = "row">
+			<!--<div class = "row">
 				<label for="body" class="control-label">Texto:</label>
 				<textarea rows="4" cols="50" class="form-control" formControlName="body" name="body" id="body" >
 				</textarea>
 				<div *ngIf="formErrors.body" class="alert alert-danger">
 					{{ formErrors.body }}
-				</div>
-			</div>
+                </div>
+            </div>-->
+            <div class="row">
+                <div class="form-group col-md-12">
+                    <label for="design" class="control-label">Texto:</label>
+                    <tinymce formControlName="body" [config]="tinyMCEConfigBody">
+                    </tinymce>
+                </div>
+                <div *ngIf="formErrors.body" class="alert alert-danger">
+					{{ formErrors.body }}
+                </div>
+            </div>
 		</div>
 		<div class="modal-footer">
 			<button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>

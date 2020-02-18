@@ -6,6 +6,7 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { EmailService } from './../../services/send-email.service';
 import { CompanyService } from './../../services/company.service';
+import * as $ from 'jquery';
 
 @Component({
   selector: 'app-send-email',
@@ -43,6 +44,60 @@ export class SendEmailComponent implements OnInit {
       'required':       'Este campo es requerido.'
     }
   };
+
+  
+    //tiny
+    public html = '';
+
+    public tinyMCEConfigBody = {
+        selector: "textarea",
+        theme: "modern",
+        paste_data_images: true,
+        plugins: [
+            "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+            "searchreplace wordcount visualblocks visualchars code fullscreen",
+            "insertdatetime media nonbreaking table contextmenu directionality",
+            "emoticons template paste textcolor colorpicker textpattern"
+        ],
+        toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | forecolor backcolor emoticons | print preview fullscreen",
+        image_advtab: true,
+        height: 250,
+        file_picker_types: 'file image media',
+        images_dataimg_filter: function(img) {
+            return img.hasAttribute('internal-blob');
+          },
+        /*file_picker_callback: function (callback, value, meta) {
+            if (meta.filetype == 'image') {
+                $('#upload').trigger('click');
+                $('#upload').on('change', function () {
+                    var file = this.files[0];
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        callback(e.target['result'], {
+                            alt: ''
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        },*/
+        file_picker_callback: function(callback, value, meta) {
+            if (meta.filetype == 'image') {
+              $('#upload').trigger('click');
+              $('#upload').on('change', function() {
+                var file = this.files[0];
+                var reader = new FileReader();
+                reader.onload = function(e) {
+            
+                  callback(e.target['result'], {
+                    alt: ''
+                  });
+                };
+                reader.readAsDataURL(file);
+              });
+            }
+          },
+    }
   
   constructor(
     public _companyService: CompanyService,
