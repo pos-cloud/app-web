@@ -3,10 +3,12 @@ import { ActivatedRoute } from '@angular/router';
 import { GalleryService } from 'app/services/gallery.service';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
+import { Socket } from 'ngx-socket-io';
 
 import { NguCarousel, NguCarouselConfig } from '@ngu/carousel';
 import 'hammerjs';
 import { Gallery } from 'app/models/gallery';
+import { User } from 'app/models/user';
 
 
 @Component({
@@ -24,12 +26,17 @@ export class ViewGalleryComponent implements OnInit {
     public loading = false;
     public images = [];
     public carouselBanner;
+    public intervalSocket;
 
     constructor(
         private _route: ActivatedRoute,
         private _galleryService: GalleryService,
         public alertConfig: NgbAlertConfig,
-    ) { }
+        private socket: Socket,
+
+    ) {
+        this.initSocket();
+    }
 
     ngOnInit() {
         this._route.params.subscribe(params => {
@@ -37,6 +44,48 @@ export class ViewGalleryComponent implements OnInit {
                 this.getGallery(params['name']);
             }
         });
+
+    }
+
+    private initSocket(): void {
+
+        let identity: User = JSON.parse(sessionStorage.getItem('user'));
+
+        if (identity && Config.database && Config.database !== '') {
+            if (!this.socket.ioSocket.connected) {
+
+                // INICIAMOS SOCKET
+                this.socket.emit('start', {
+                    database: Config.database,
+                    clientType: 'pos'
+                });
+
+                // ESCUCHAMOS SOCKET
+                this.socket.on('gallery', (mnj) => {
+                    switch (mnj) {
+                        case 'start':
+                            this.loading = true;
+                            break;
+                        case 'stop':
+                            this.loading = false;
+                            break;
+                        default:
+                            break;
+                    }
+                });
+
+                if (this.intervalSocket) {
+                    clearInterval(this.intervalSocket);
+                }
+            }
+
+            // INICIAR CONTADOR PARA VERIFICAR CONEXION DE SOCKET
+            this.intervalSocket = setInterval(() => {
+                if (!this.socket.ioSocket.connected) {
+                    this.initSocket();
+                }
+            }, 5000);
+        }
     }
 
     public getGallery(name: string): void {
@@ -95,8 +144,6 @@ export class ViewGalleryComponent implements OnInit {
                         loop: true,
                         touch: true
                     };
-
-                    this.loading = true;
 
                 } else {
                     this.showMessage("No se encontro la galeria", 'danger', false);
