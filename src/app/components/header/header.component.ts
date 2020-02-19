@@ -90,7 +90,7 @@ export class HeaderComponent {
 					pathLocation[7] === "agregar-transaccion" ||
 					pathLocation[7] === "editar-transaccion" ||
                     pathLocation[8] === "agregar-transaccion" ||
-                    pathLocation[2] === "view-gallery" ) {
+                    pathLocation[2] === "ver-galeria" ) {
 					this.hideMenu = true;
 					this.makeVisibleReport(false);
 				} else {
