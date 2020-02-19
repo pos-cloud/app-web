@@ -123,14 +123,13 @@ export class ListGalleriesComponent implements OnInit {
                 });
                 break;
             case 'navigate':
-                this._router.navigate(["/ver-galeria/", gallery.name])
+                this._router.navigateByUrl("pos/ver-galeria/"+ gallery.name)
                 break;
             default: ;
         }
     };
 
     public sendSocket(message): void {
-        console.log("entro")
 		this.socket.emit('start', {
 			database: Config.database,
 			clientType: 'app'
