@@ -359,12 +359,14 @@ export class PosKitchenComponent {
 	public async changeStatusToPending() {
 		return new Promise(async (resolve, reject) => {
 			this.movementOfArticle.status = MovementOfArticleStatus.Pending;
-			await this.updateMovementOfArticleByWhere({
-				_id: this.movementOfArticle._id
-			}, {
-				status: MovementOfArticleStatus.Pending,
-				$inc: { printed: -1 }
-			},
+			await this.updateMovementOfArticleByWhere(
+				{
+					_id: this.movementOfArticle._id
+				},
+				{
+					status: MovementOfArticleStatus.Pending,
+					$inc: { printed: -1 }
+				},
 				{}).then(
 					async movementOfArticle => {
 						if (movementOfArticle) {

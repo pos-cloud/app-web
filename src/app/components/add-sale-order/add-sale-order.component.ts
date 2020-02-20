@@ -254,7 +254,7 @@ export class AddSaleOrderComponent {
 						if (this.transaction.state === TransactionState.Closed ||
 							this.transaction.state === TransactionState.Canceled) {
 							if (this.posType === 'resto' && this.transaction.table) {
-                                this.transaction.table.employee = null;
+								this.transaction.table.employee = null;
 								this.transaction.table.state = TableState.Available;
 								await this.updateTable().then(table => {
 									if (table) {
@@ -1324,7 +1324,7 @@ export class AddSaleOrderComponent {
 						tax.tax = taxAux.tax;
 						tax.percentage = this.roundNumber.transform(taxAux.percentage);
 						if (tax.tax.taxBase == TaxBase.Neto) {
-              tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice - impInt) / ((tax.percentage / 100) + 1), 4);
+							tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice - impInt) / ((tax.percentage / 100) + 1), 4);
 						}
 						if (taxAux.percentage === 0) {
 							for (let artTax of movementOfArticle.article.taxes) {
@@ -1510,10 +1510,10 @@ export class AddSaleOrderComponent {
 						let transactionTax: Taxes = new Taxes();
 						transactionTax.percentage = this.roundNumber.transform(taxesAux.percentage);
 						transactionTax.tax = taxesAux.tax;
-            transactionTax.taxBase = this.roundNumber.transform(taxesAux.taxBase, 4);
+						transactionTax.taxBase = this.roundNumber.transform(taxesAux.taxBase, 4);
 						transactionTax.taxAmount = this.roundNumber.transform(taxesAux.taxAmount, 4);
 						transactionTaxesAUX.push(transactionTax);
-            this.transaction.basePrice += this.roundNumber.transform(transactionTax.taxBase);
+						this.transaction.basePrice += this.roundNumber.transform(transactionTax.taxBase);
 						taxBaseTotal += this.roundNumber.transform(transactionTax.taxBase);
 						taxAmountTotal += this.roundNumber.transform(transactionTax.taxAmount);
 					}
@@ -1525,9 +1525,9 @@ export class AddSaleOrderComponent {
 				}
 				totalPriceAux += this.roundNumber.transform(movementOfArticle.salePrice);
 			}
-    }
+		}
 
-    this.transaction.basePrice = this.roundNumber.transform(this.transaction.basePrice);
+		this.transaction.basePrice = this.roundNumber.transform(this.transaction.basePrice);
 
 		if (transactionTaxesAUX) {
 			for (let transactionTaxAux of transactionTaxesAUX) {
@@ -1535,7 +1535,7 @@ export class AddSaleOrderComponent {
 				for (let transactionTax of transactionTaxes) {
 					if (transactionTaxAux.tax._id.toString() === transactionTax.tax._id.toString()) {
 						transactionTax.taxAmount += this.roundNumber.transform(transactionTaxAux.taxAmount, 4);
-            transactionTax.taxBase += this.roundNumber.transform(transactionTaxAux.taxBase, 4);
+						transactionTax.taxBase += this.roundNumber.transform(transactionTaxAux.taxBase, 4);
 						exists = true;
 					}
 				}
@@ -1593,7 +1593,7 @@ export class AddSaleOrderComponent {
 		this.loading = true;
 		this._transactionService.validateElectronicTransactionAR(this.transaction).subscribe(
 			result => {
-        let msn = '';
+				let msn = '';
 				if (result && result.status != 0) {
 					if (result.status === 'err') {
 						if (result.code && result.code !== '') {
@@ -1643,8 +1643,8 @@ export class AddSaleOrderComponent {
 						this.saveClaim('ERROR FE AR' + moment().format('DD/MM/YYYY HH:mm') + " : " + msn, JSON.stringify(body));
 					} else {
 						this.transaction.number = result.number;
-            this.transaction.CAE = result.CAE;
-            this.transaction.CAEExpirationDate = moment(result.CAEExpirationDate, 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DDTHH:mm:ssZ");
+						this.transaction.CAE = result.CAE;
+						this.transaction.CAEExpirationDate = moment(result.CAEExpirationDate, 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DDTHH:mm:ssZ");
 						this.transaction.state = TransactionState.Closed;
 						this.finish();
 					}
@@ -1809,8 +1809,8 @@ export class AddSaleOrderComponent {
 				} else {
 					this.showMessage("No se ingresaron productos a la transacción.", 'info', true);
 				}
-                break;
-            case 'send-email':
+				break;
+			case 'send-email':
 				if (this.transaction.type.readLayout) {
 					modalRef = this._modalService.open(PrintTransactionTypeComponent)
 					modalRef.componentInstance.transactionId = this.transaction._id;
@@ -1847,30 +1847,30 @@ export class AddSaleOrderComponent {
 					modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente http://${Config.database}.poscloud.com.ar:300/api/print/invoice/` + this.transaction._id;
 				} else {
 					modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente http://${Config.database}.poscloud.com.ar:300/api/print/others/` + this.transaction._id;
-                }
+				}
 
-                if (Config.country === 'MX') {
+				if (Config.country === 'MX') {
 					modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}.poscloud.com.ar:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number;
-                }
-                
-                if(this.transaction.type.defectEmailTemplate){
+				}
 
-                    if (this.transaction.type.electronics) {
-                        modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/invoice/ + ${this.transaction._id}">Su comprobante</a>`
-                    } else {
-                        modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/others/ + ${this.transaction._id}">Su comprobante</a>`
-                    }
+				if (this.transaction.type.defectEmailTemplate) {
 
-                    if (Config.country === 'MX') {
-                        modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}.poscloud.com.ar:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number;
-                    }
-                }
+					if (this.transaction.type.electronics) {
+						modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/invoice/ + ${this.transaction._id}">Su comprobante</a>`
+					} else {
+						modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/others/ + ${this.transaction._id}">Su comprobante</a>`
+					}
 
-                modalRef.result.then((result) => {
-                    this.backFinal();
-                }, (reason) => {
-                    this.backFinal();
-                });
+					if (Config.country === 'MX') {
+						modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}.poscloud.com.ar:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number;
+					}
+				}
+
+				modalRef.result.then((result) => {
+					this.backFinal();
+				}, (reason) => {
+					this.backFinal();
+				});
 
 				break;
 			case 'cancel':
@@ -2554,26 +2554,6 @@ export class AddSaleOrderComponent {
 					this.transaction.expirationDate = this.transaction.endDate;
 					this.transaction.state = TransactionState.Closed;
 
-					if (this.transaction.type.maxOrderNumber > 0) {
-						await this.getTransactionsV2(
-							{
-								type: { $oid: this.transaction.type._id },
-								operationType: { $ne: 'D' },
-								orderNumber: { $gte: 0 }
-							}, { endDate: -1 }, {}, 1).then(
-								transactions => {
-									let orderNumber = 1;
-									if (transactions && transactions.length > 0) {
-										orderNumber = transactions[0].orderNumber + 1;
-										if(orderNumber > this.transaction.type.maxOrderNumber) {
-											orderNumber = 1;
-										}
-									}
-									this.transaction.orderNumber = orderNumber;
-								}
-							);
-					}
-
 					await this.updateTransaction().then(
 						async transaction => {
 							if (transaction) {
@@ -2581,12 +2561,12 @@ export class AddSaleOrderComponent {
 
 								if (this.transaction.table) {
 
-                                    if(this.transaction.type.finishCharge){
-                                        this.transaction.table.employee = null;
-                                        this.transaction.table.state = TableState.Available;
-                                    } else {
-                                        this.transaction.table.state = TableState.Pending;
-                                    }
+									if (this.transaction.type.finishCharge) {
+										this.transaction.table.employee = null;
+										this.transaction.table.state = TableState.Available;
+									} else {
+										this.transaction.table.state = TableState.Pending;
+									}
 									await this.updateTable().then(table => {
 										if (table) {
 											this.transaction.table = table;
@@ -2599,11 +2579,11 @@ export class AddSaleOrderComponent {
 								if (!cancellationTypesAutomatic || cancellationTypesAutomatic.length == 0) {
 									if (this.transaction && this.transaction.type.printable) {
 										this.print();
-									} else if(this.transaction && this.transaction.type.requestEmailTemplate) {
-                                        this.openModal('send-email');
-                                    } else {
+									} else if (this.transaction && this.transaction.type.requestEmailTemplate) {
+										this.openModal('send-email');
+									} else {
 										this.backFinal();
-                                    }
+									}
 								} else {
 									this.openModal('cancelation-type-automatic');
 								}
@@ -3436,9 +3416,9 @@ export class AddSaleOrderComponent {
 				this._toastr.success('', message);
 				break;
 		}
-    }
-    
-    
+	}
+
+
 	public padNumber(n, length): string {
 
 		var n = n.toString();
