@@ -66,13 +66,13 @@ export class ListTransactionsComponent implements OnInit {
 	@ViewChild(ExportExcelComponent, { static: false }) exportExcelComponent: ExportExcelComponent;
 	public columns = attributes;
 	public pathLocation: string[];
-    private subscription: Subscription = new Subscription();
-    
-    
-    public dateFormat = new DateFormatPipe();
-    
-    //cabecera
-    public startDate: string;	
+	private subscription: Subscription = new Subscription();
+
+
+	public dateFormat = new DateFormatPipe();
+
+	//cabecera
+	public startDate: string;
 	public endDate: string;
 	public dateSelect: string;
 
@@ -83,8 +83,8 @@ export class ListTransactionsComponent implements OnInit {
 		public _modalService: NgbModal,
 		public activeModal: NgbActiveModal,
 		public alertConfig: NgbAlertConfig,
-        public _printerService: PrinterService,
-        
+		public _printerService: PrinterService,
+
 		private _authService: AuthService
 	) {
 		this.filters = new Array();
@@ -94,10 +94,10 @@ export class ListTransactionsComponent implements OnInit {
 			} else {
 				this.filters[field.name] = "";
 			}
-        }
-        this.startDate = moment().format('YYYY-MM-DD');
-        this.endDate = moment().format('YYYY-MM-DD');
-        this.dateSelect = "creationDate";
+		}
+		this.startDate = moment().format('YYYY-MM-DD');
+		this.endDate = moment().format('YYYY-MM-DD');
+		this.dateSelect = "creationDate";
 
 	}
 
@@ -212,9 +212,9 @@ export class ListTransactionsComponent implements OnInit {
 			}
 		}
 
-        match += `"type.transactionMovement": "${this.transactionMovement}",`;
-        
-        match += `"${this.dateSelect}" : {
+		match += `"type.transactionMovement": "${this.transactionMovement}",`;
+
+		match += `"${this.dateSelect}" : {
             "$gte" : { "$date" : "${this.startDate}T00:00:00${this.timezone}" },
             "$lte" : { "$date" : "${this.endDate}T23:59:59${this.timezone}" }
         }`
@@ -222,8 +222,8 @@ export class ListTransactionsComponent implements OnInit {
 
 		if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
-        match += `}`;
-        
+		match += `}`;
+
 
 		match = JSON.parse(match);
 
@@ -237,15 +237,15 @@ export class ListTransactionsComponent implements OnInit {
 				}
 				j++;
 
-				if(this.columns[i].project === null) {
-                    project += `"${this.columns[i].name}": 1`;
+				if (this.columns[i].project === null) {
+					project += `"${this.columns[i].name}": 1`;
 				} else {
 					project += `"${this.columns[i].name}": ${this.columns[i].project}`;
 				}
 
 			}
 		}
-        project += `}`;
+		project += `}`;
 
 		project = JSON.parse(project);
 
@@ -274,7 +274,7 @@ export class ListTransactionsComponent implements OnInit {
 			skip // SKIP
 		).subscribe(
 			result => {
-                this.loading = false;
+				this.loading = false;
 				if (result && result[0] && result[0].items) {
 					if (this.itemsPerPage === 0) {
 						this.exportExcelComponent.items = result[0].items;
@@ -318,9 +318,9 @@ export class ListTransactionsComponent implements OnInit {
 					break;
 				case 'percent':
 					value = this.roundNumberPipe.transform(eval(val)) + '%';
-                    break;
-                case 'date':
-					value = this.dateFormat.transform(eval(val),"DD/MM/YYYY")
+					break;
+				case 'date':
+					value = this.dateFormat.transform(eval(val), "DD/MM/YYYY")
 					break;
 				default:
 					value = eval(val);
@@ -362,7 +362,7 @@ export class ListTransactionsComponent implements OnInit {
 
 	public openModal(op: string, transaction: Transaction): void {
 
-        console.log(transaction)
+		console.log(transaction)
 
 
 		let modalRef;
@@ -454,24 +454,24 @@ export class ListTransactionsComponent implements OnInit {
 					modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente http://${Config.database}.poscloud.com.ar:300/api/print/invoice/` + transaction._id;
 				} else {
 					modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente http://${Config.database}.poscloud.com.ar:300/api/print/others/` + transaction._id;
-                }
+				}
 
-                if (Config.country === 'MX') {
+				if (Config.country === 'MX') {
 					modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}.poscloud.com.ar:300/api/print/xml/CFDI-33_Factura_` + transaction.number;
-                }
-                
-                if(transaction.type.defectEmailTemplate){
+				}
 
-                    if (transaction.type.electronics) {
-                        modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/invoice/ + ${transaction._id}">Su comprobante</a>`
-                    } else {
-                        modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/others/ + ${transaction._id}">Su comprobante</a>`
-                    }
+				if (transaction.type.defectEmailTemplate) {
 
-                    if (Config.country === 'MX') {
-                        modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}.poscloud.com.ar:300/api/print/xml/CFDI-33_Factura_` + transaction.number;
-                    }
-                }
+					if (transaction.type.electronics) {
+						modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/invoice/ + ${transaction._id}">Su comprobante</a>`
+					} else {
+						modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/others/ + ${transaction._id}">Su comprobante</a>`
+					}
+
+					if (Config.country === 'MX') {
+						modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}.poscloud.com.ar:300/api/print/xml/CFDI-33_Factura_` + transaction.number;
+					}
+				}
 
 				break;
 			default: ;
@@ -510,8 +510,8 @@ export class ListTransactionsComponent implements OnInit {
 	}
 
 	public exportItems(): void {
-		this.exportExcelComponent.items = this.items;
-		this.exportExcelComponent.export();
+		this.itemsPerPage = 0;
+		this.getItems();
 	}
 
 	public ngOnDestroy(): void {

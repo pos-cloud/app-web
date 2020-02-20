@@ -48,7 +48,7 @@ export class ListCompaniesComponent implements OnInit {
 	public focusEvent = new EventEmitter<boolean>();
 
 	//
-	public title : string = "Empresas"
+	public title: string = "Empresas"
 	public currentPage: number = 0;
 	public columns = attributes;
 	private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
@@ -171,7 +171,7 @@ export class ListCompaniesComponent implements OnInit {
 					project += `,`;
 				}
 				j++;
-				if(this.columns[i].project){
+				if (this.columns[i].project) {
 					project += `"${this.columns[i].name}" : ${this.columns[i].project}`
 				} else {
 					if (this.columns[i].datatype !== "string") {
@@ -241,73 +241,73 @@ export class ListCompaniesComponent implements OnInit {
 	}
 
 	public exportItems(): void {
-		this.exportExcelComponent.items = this.items;
-		this.exportExcelComponent.export();
+		this.itemsPerPage = 0;
+		this.getItems();
 	}
 
 	public getValue(item, column): any {
 		let val: string = 'item';
 		let exists: boolean = true;
 		let value: any = '';
-		for(let a of column.name.split('.')) {
-		  val += '.'+a;
-		  if(exists && !eval(val)) {
-			exists = false;
-		  }
+		for (let a of column.name.split('.')) {
+			val += '.' + a;
+			if (exists && !eval(val)) {
+				exists = false;
+			}
 		}
-		if(exists) {
-		  switch(column.datatype) {
-			case 'number':
-			  value = this.roundNumberPipe.transform(eval(val));
-			  break;
-			case 'currency':
-				value = this.currencyPipe.transform(this.roundNumberPipe.transform(eval(val)), 'USD', 'symbol-narrow', '1.2-2');
-			  break;
-			case 'percent':
-				value = this.roundNumberPipe.transform(eval(val)) + '%';
-			  break;
-			default:
-				value = eval(val);
-			  break;
-		  }
+		if (exists) {
+			switch (column.datatype) {
+				case 'number':
+					value = this.roundNumberPipe.transform(eval(val));
+					break;
+				case 'currency':
+					value = this.currencyPipe.transform(this.roundNumberPipe.transform(eval(val)), 'USD', 'symbol-narrow', '1.2-2');
+					break;
+				case 'percent':
+					value = this.roundNumberPipe.transform(eval(val)) + '%';
+					break;
+				default:
+					value = eval(val);
+					break;
+			}
 		}
 		return value;
-	  }
+	}
 
-	  public getColumnsVisibles(): number {
+	public getColumnsVisibles(): number {
 		let count: number = 0;
 		for (let column of this.columns) {
-		  if(column.visible) {
-			count++;
-		  }
+			if (column.visible) {
+				count++;
+			}
 		}
 		return count;
-	  }
+	}
 
-	  public drop(event: CdkDragDrop<string[]>): void {
+	public drop(event: CdkDragDrop<string[]>): void {
 		moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
-	  }
-	
+	}
 
-	  public pageChange(page): void {
+
+	public pageChange(page): void {
 		this.currentPage = page;
 		this.getItems();
-	  }
+	}
 
-  public orderBy (term: string): void {
+	public orderBy(term: string): void {
 
-    if(this.sort[term]) {
-      this.sort[term] *= -1;
-    } else {
-      this.sort = JSON.parse('{"' + term + '": 1 }');
-    }
+		if (this.sort[term]) {
+			this.sort[term] *= -1;
+		} else {
+			this.sort = JSON.parse('{"' + term + '": 1 }');
+		}
 
-    this.getItems();
-  }
+		this.getItems();
+	}
 
-  public refresh(): void {
-    this.getItems();
-  }
+	public refresh(): void {
+		this.getItems();
+	}
 
 	public openModal(op: string, company: Company): void {
 
