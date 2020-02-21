@@ -131,7 +131,7 @@ export class EmailTemplateComponent implements OnInit {
             name: 1,
             design : 1,
             operationType : 1,
-            creationDate : { "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y %HH%MM", "timezone": "-03:00" } },
+            creationDate : { "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } },
             "updateUser.name" : 1,
             "creationUser.name" : 1,
             updateDate : { "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }

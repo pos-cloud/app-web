@@ -24,7 +24,7 @@ export class ListEmailTemplatesComponent implements OnInit {
     public userCountry: string;
 
     public totalItems: number = 0;
-    public title: string = "Listado de Templates"
+    public title: string = "Listado de plantillas para correo"
     public items: any[] = new Array();
     public alertMessage: string = '';
     public loading: boolean = false;
