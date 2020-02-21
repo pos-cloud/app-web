@@ -292,6 +292,7 @@ import { ListEmailTemplatesComponent } from './components/list-email-templates/l
 import { EmailTemplateService } from './services/email-template.service';
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
+//const configSocket: SocketIoConfig = { url: "http://192.168.0.88:300", options: {transports: ['websocket']} }; // PROD
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http);
