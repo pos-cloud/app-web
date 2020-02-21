@@ -124,8 +124,8 @@ export class ListMovementsOfArticlesComponent implements OnInit {
 	}
 
 	public exportItems(): void {
-		this.exportExcelComponent.items = this.items;
-		this.exportExcelComponent.export();
+		this.itemsPerPage = 0;
+		this.getItems();
 	}
 
 	public getItems(): void {

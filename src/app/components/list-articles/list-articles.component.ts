@@ -202,7 +202,7 @@ export class ListArticlesComponent implements OnInit {
 		match += `}`;
 		match = JSON.parse(match);
 
-		if(this.userType === 'admin') {
+		if (this.userType === 'admin') {
 			match['type'] = this.articleType;
 		}
 
@@ -215,7 +215,7 @@ export class ListArticlesComponent implements OnInit {
 					project += `,`;
 				}
 				j++;
-				if(!this.columns[i].project) {
+				if (!this.columns[i].project) {
 					if (this.columns[i].datatype !== "string") {
 						if (this.columns[i].datatype === "date") {
 							project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`
@@ -285,8 +285,8 @@ export class ListArticlesComponent implements OnInit {
 	}
 
 	public exportItems(): void {
-		this.exportExcelComponent.items = this.items;
-		this.exportExcelComponent.export();
+		this.itemsPerPage = 0;
+		this.getItems();
 	}
 
 	public getValue(item, column): any {

@@ -327,10 +327,10 @@ export class ListEmailTemplatesComponent implements OnInit {
         return n;
     }
 
-    public exportItems(): void {
-        this.exportExcelComponent.items = this.items;
-        this.exportExcelComponent.export();
-    }
+	public exportItems(): void {
+		this.itemsPerPage = 0;
+		this.getItems();
+	}
 
     public ngOnDestroy(): void {
         this.subscription.unsubscribe();
