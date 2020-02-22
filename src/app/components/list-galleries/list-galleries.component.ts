@@ -123,19 +123,21 @@ export class ListGalleriesComponent implements OnInit {
                 });
                 break;
             case 'navigate':
-                this._router.navigateByUrl("pos/ver-galeria/"+ gallery.name)
+                this._router.navigateByUrl("pos/ver-galeria/" + gallery.name)
                 break;
             default: ;
         }
     };
 
     public sendSocket(message): void {
-		this.socket.emit('start', {
-			database: Config.database,
-			clientType: 'app'
-		});
-		this.socket.emit('sync_gallery', message);
-	}
+
+        this.socket.emit('start', {
+            database: Config.database,
+            clientType: 'pos'
+        });
+
+        this.socket.emit('sync_gallery', message);
+    }
 
 
     public addItem(gallerySelected) {
