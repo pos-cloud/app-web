@@ -21,6 +21,7 @@ import { User } from 'app/models/user';
 
 export class ViewGalleryComponent implements OnInit {
 
+
     public alertMessage: string = '';
     public src: string;
     public gallery: Gallery;
@@ -28,7 +29,8 @@ export class ViewGalleryComponent implements OnInit {
     public images = [];
     public carouselBanner;
     public intervalSocket;
-    elem;
+    public viewBotton = true;
+    public elem;
     constructor(
         private _route: ActivatedRoute,
         private _galleryService: GalleryService,
@@ -52,17 +54,16 @@ export class ViewGalleryComponent implements OnInit {
 
     private initSocket(): void {
 
-        let identity: User = JSON.parse(sessionStorage.getItem('user'));
+      /*  let identity: User = JSON.parse(sessionStorage.getItem('user'));
 
         if (identity && Config.database && Config.database !== '') {
-            if (!this.socket.ioSocket.connected) {
+            if (!this.socket.ioSocket.connected) {*/
 
                 // INICIAMOS SOCKET
                 this.socket.emit('start', {
                     database: Config.database,
                     clientType: 'pos'
                 });
-
                 // ESCUCHAMOS SOCKET
                 this.socket.on('gallery', (mnj) => {
                     switch (mnj) {
@@ -77,7 +78,7 @@ export class ViewGalleryComponent implements OnInit {
                     }
                 });
 
-                if (this.intervalSocket) {
+             /*   if (this.intervalSocket) {
                     clearInterval(this.intervalSocket);
                 }
             }
@@ -88,7 +89,7 @@ export class ViewGalleryComponent implements OnInit {
                     this.initSocket();
                 }
             }, 5000);
-        }
+        }*/
     }
 
     public getGallery(name: string): void {
@@ -148,7 +149,10 @@ export class ViewGalleryComponent implements OnInit {
                         touch: true
                     };
 
-                    this.openFullscreen()
+                    this.loading = true;
+
+                    //this.openFullscreen();
+
                 } else {
                     this.showMessage("No se encontro la galeria", 'danger', false);
                 }
@@ -161,18 +165,20 @@ export class ViewGalleryComponent implements OnInit {
 
     openFullscreen() {
         if (this.elem.requestFullscreen) {
-          this.elem.requestFullscreen();
+            this.elem.requestFullscreen();
         } else if (this.elem.mozRequestFullScreen) {
-          /* Firefox */
-          this.elem.mozRequestFullScreen();
+            /* Firefox */
+            this.elem.mozRequestFullScreen();
         } else if (this.elem.webkitRequestFullscreen) {
-          /* Chrome, Safari and Opera */
-          this.elem.webkitRequestFullscreen();
+            /* Chrome, Safari and Opera */
+            this.elem.webkitRequestFullscreen();
         } else if (this.elem.msRequestFullscreen) {
-          /* IE/Edge */
-          this.elem.msRequestFullscreen();
+            /* IE/Edge */
+            this.elem.msRequestFullscreen();
         }
-      }
+
+        this.viewBotton = false;
+    }
 
     public showMessage(message: string, type: string, dismissible: boolean): void {
         this.alertMessage = message;
