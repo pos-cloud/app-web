@@ -336,7 +336,7 @@
                 </div>
             </div>
             <div class="row filterArticle">
-                <div class="col-md-11">
+                <div class="col-md-10">
                     <nav class="breadcrumb" style="padding: 0px;">
                         <span class="breadcrumb-item" [ngClass]="{'active':'areCategoriesVisible'}"
 							(click)="showCategories()"
@@ -349,19 +349,24 @@
                             *ngIf="filterArticle && filterArticle !== '' && !categorySelected">{{ filterArticle }}</span>
                     </nav>
                 </div>
+                <div *ngIf="transaction && transaction.type && ((transaction.type.transactionMovement === 'Stock' && (transaction.type.stockMovement === 'Inventario' || transaction.type.stockMovement === 'Entrada')) || (transaction.type.transactionMovement === 'Compra' && transaction.type.stockMovement === 'Entrada'))" class="col-md-1 btn-action btn-large center-content"
+                    (click)="!loading ? openModal('add-article') : $event.stopPropagation()"
+                    [ngClass]="{'disabled': loading, 'enabled': !loading }">
+                    + Art.
+                </div>
                 <div class="col-md-1 btn-action btn-large center-content"
                     (click)="!loading ? close() : $event.stopPropagation()"
                     [ngClass]="{'disabled': loading, 'enabled': !loading }">
                     Cerrar
                 </div>
             </div>
-            <div class="row">
+            <div class="row" *ngIf="display">
                 <div class="col-md-12">
                     <app-list-articles-pos (eventAddItem)="addItem($event)" [transaction]="transaction"
                         [transactionId]="transactionId"></app-list-articles-pos>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" *ngIf="display">
                 <div class="col-md-12">
                     <app-list-categories (eventSelectCategory)="showArticles($event)"
                         [transactionMovement]="transaction.type.transactionMovement"></app-list-categories>

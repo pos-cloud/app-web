@@ -599,7 +599,7 @@
             </ngb-tabset>
         </div>
         <div class="modal-footer" *ngIf="!readonly">
-            <button type="button" class="btn btn-light" (click)="closeModal()">Cancelar</button>
+            <button type="button" class="btn btn-light" (click)="activeModal.dismiss('close_click')">Cancelar</button>
             <button type="button" class="btn btn-light" (click)="cleanForm()" *ngIf="hasChanged">Nuevo</button>
             <button type="submit" class="btn btn-primary" [disabled]="!articleForm.valid || loading">
                 <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>

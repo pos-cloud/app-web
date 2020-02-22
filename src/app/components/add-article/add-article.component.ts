@@ -1451,7 +1451,8 @@ export class AddArticleComponent implements OnInit {
 							);
 					} else {
 						this.loading = false;
-						this.showMessage('El producto se ha añadido con éxito.', 'success', false);
+                        this.showMessage('El producto se ha añadido con éxito.', 'success', false);
+                        this.activeModal.close({article : this.article});
 					}
 				}
 			},
