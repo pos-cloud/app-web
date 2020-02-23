@@ -2194,23 +2194,28 @@ export class AddSaleOrderComponent {
                 });
                 break;
             case 'print':
-                if (this.transaction.type.readLayout) {
-                    modalRef = this._modalService.open(PrintTransactionTypeComponent)
-                    modalRef.componentInstance.transactionId = this.transaction._id
-                    modalRef.result.then((result) => {
-                    }, (reason) => {
-                        this.backFinal();
-                    });
+                if(this.transaction.type.expirationDate && moment(this.transaction.type.expirationDate).format('DD/MM/YYYY') < moment().format('DD/MM/YYYY')){
+                    this.showToast("El documento esta vencido no se puede imprimir","danger")
+                    this.backFinal();
                 } else {
-                    modalRef = this._modalService.open(PrintComponent);
-                    modalRef.componentInstance.transactionId = this.transaction._id;
-                    modalRef.componentInstance.company = this.transaction.company;
-                    modalRef.componentInstance.printer = this.printerSelected;
-                    modalRef.componentInstance.typePrint = 'invoice';
-                    modalRef.result.then((result) => {
-                    }, (reason) => {
-                        this.backFinal();
-                    });
+                    if (this.transaction.type.readLayout) {
+                        modalRef = this._modalService.open(PrintTransactionTypeComponent)
+                        modalRef.componentInstance.transactionId = this.transaction._id
+                        modalRef.result.then((result) => {
+                        }, (reason) => {
+                            this.backFinal();
+                        });
+                    } else {
+                        modalRef = this._modalService.open(PrintComponent);
+                        modalRef.componentInstance.transactionId = this.transaction._id;
+                        modalRef.componentInstance.company = this.transaction.company;
+                        modalRef.componentInstance.printer = this.printerSelected;
+                        modalRef.componentInstance.typePrint = 'invoice';
+                        modalRef.result.then((result) => {
+                        }, (reason) => {
+                            this.backFinal();
+                        });
+                    }
                 }
                 break;
             case 'printKitchen':

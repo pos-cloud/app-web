@@ -362,9 +362,6 @@ export class ListTransactionsComponent implements OnInit {
 
 	public openModal(op: string, transaction: Transaction): void {
 
-		console.log(transaction)
-
-
 		let modalRef;
 		switch (op) {
 			case 'view':
@@ -383,26 +380,30 @@ export class ListTransactionsComponent implements OnInit {
 				});
 				break;
 			case 'print':
-				if (transaction.type.readLayout) {
-					modalRef = this._modalService.open(PrintTransactionTypeComponent)
-					modalRef.componentInstance.transactionId = transaction._id;
-				} else {
-					modalRef = this._modalService.open(PrintComponent);
-					modalRef.componentInstance.company = transaction.company;
-					modalRef.componentInstance.transactionId = transaction._id;
-					modalRef.componentInstance.typePrint = 'invoice';
-					if (transaction.type.defectPrinter) {
-						modalRef.componentInstance.printer = transaction.type.defectPrinter;
-					} else {
-						if (this.printers && this.printers.length > 0) {
-							for (let printer of this.printers) {
-								if (printer.printIn === PrinterPrintIn.Counter) {
-									modalRef.componentInstance.printer = printer;
-								}
-							}
-						}
-					}
-				}
+                if(transaction.type.expirationDate && transaction.type.expirationDate < moment().format('DD/MM/YYYY')){
+                    this.showMessage("El documento esta vencido","danger",true)
+                } else {
+                    if (transaction.type.readLayout) {
+                        modalRef = this._modalService.open(PrintTransactionTypeComponent)
+                        modalRef.componentInstance.transactionId = transaction._id;
+                    } else {
+                        modalRef = this._modalService.open(PrintComponent);
+                        modalRef.componentInstance.company = transaction.company;
+                        modalRef.componentInstance.transactionId = transaction._id;
+                        modalRef.componentInstance.typePrint = 'invoice';
+                        if (transaction.type.defectPrinter) {
+                            modalRef.componentInstance.printer = transaction.type.defectPrinter;
+                        } else {
+                            if (this.printers && this.printers.length > 0) {
+                                for (let printer of this.printers) {
+                                    if (printer.printIn === PrinterPrintIn.Counter) {
+                                        modalRef.componentInstance.printer = printer;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
 
 				break;
 			case 'delete':
