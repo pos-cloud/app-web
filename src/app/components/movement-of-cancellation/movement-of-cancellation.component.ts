@@ -325,8 +325,8 @@ export class MovementOfCancellationComponent implements OnInit {
 								await this.getMovementsOfCancellations().then(
 									movementsOfCancellations => {
 										this.movementsOfCancellations = movementsOfCancellations;
-										if(this.movementsOfCancellations && this.movementsOfCancellations.length > 0) {
-											for(let mov of this.movementsOfCancellations) {
+										if (this.movementsOfCancellations && this.movementsOfCancellations.length > 0) {
+											for (let mov of this.movementsOfCancellations) {
 												mov['saved'] = true;
 											}
 										}
@@ -462,7 +462,7 @@ export class MovementOfCancellationComponent implements OnInit {
 						transactionSelected.type.movement === Movements.Inflows)) {
 					transBalance = transactionSelected.balance * -1;
 				} else {
-					if(transactionSelected.balance > this.totalPrice && this.totalPrice !== 0) {
+					if (transactionSelected.balance > this.totalPrice && this.totalPrice !== 0) {
 						transBalance = this.totalPrice;
 					} else {
 						transBalance = transactionSelected.balance;
@@ -527,14 +527,14 @@ export class MovementOfCancellationComponent implements OnInit {
 	}
 
 	public deleteAllMovements(): void {
-		for(let trans of this.transactions) {
+		for (let trans of this.transactions) {
 			this.deleteTransactionSelected(trans);
 		}
 		this.recalculateBalanceSelected();
 	}
 
 	public deleteTransactionSelected(transaction: Transaction): void {
-		console.log("entro a borrar");
+
 		let movementToDelete: number;
 
 		for (let i = 0; i < this.movementsOfCancellations.length; i++) {
@@ -857,7 +857,7 @@ export class MovementOfCancellationComponent implements OnInit {
 	}
 
 	public closeModal(): void {
-		if(this.areValidMovements()) {
+		if (this.areValidMovements()) {
 			this.activeModal.close(
 				{
 					movementsOfCancellations: this.movementsOfCancellations
@@ -869,12 +869,12 @@ export class MovementOfCancellationComponent implements OnInit {
 	public areValidMovements(): boolean {
 		let areValid: boolean = true;
 		let totalBalance = 0;
-		for(let mov of this.movementsOfCancellations) {
-			if(!mov['saved']) totalBalance += mov.balance;
+		for (let mov of this.movementsOfCancellations) {
+			if (!mov['saved']) totalBalance += mov.balance;
 		}
-		if(this.totalPrice !== 0 && this.totalPrice < totalBalance) {
+		if (this.totalPrice !== 0 && this.totalPrice < totalBalance) {
 			areValid = false;
-			this.showMessage("El saldo seleccionado de las transacciones no puede ser distinto del monto de la transacción ($ "+this.totalPrice+")", "info", true);
+			this.showMessage("El saldo seleccionado de las transacciones no puede ser distinto del monto de la transacción ($ " + this.totalPrice + ")", "info", true);
 		}
 		return areValid;
 	}

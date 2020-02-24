@@ -3102,7 +3102,7 @@ export class PrintComponent implements OnInit {
 		}
 
 		qr['iat'] = moment().unix();
-		qr['exp'] = moment().add(12, "hours").unix();
+		qr['exp'] = moment().add(this.config[0].voucher.minutesOfExpiration, "minutes").unix();
 
 		// Encrypt
 		this._voucherService.generateVoucher(qr).subscribe(
@@ -3112,7 +3112,7 @@ export class PrintComponent implements OnInit {
 				} else {
 					let voucher: Voucher = new Voucher();
 					voucher.token = result.voucher.toString();
-					voucher.expirationDate = qr['exp'];
+					voucher.expirationDate = moment().add(this.config[0].voucher.minutesOfExpiration, "minutes").format('YYYY-MM-DDTHH:mm:ssZ');
 					await this.saveVoucher(voucher).then(
 						async voucher => {
 							if (voucher) {
