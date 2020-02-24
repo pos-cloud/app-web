@@ -348,7 +348,6 @@ export class ListArticlesComponent implements OnInit {
 	}
 
 	public pageChange(page): void {
-		console.log(page);
 		this.currentPage = page;
 		this.getItems();
 	}
