@@ -25,6 +25,8 @@ import { UseOfCFDI } from 'app/models/use-of-CFDI';
 import { UseOfCFDIService } from 'app/services/use-of-CFDI.service';
 import { EmailTemplateService } from 'app/services/email-template.service';
 import { EmailTemplate } from 'app/models/email-template';
+import { BranchService } from 'app/services/branch.service';
+import { Branch } from 'app/models/branch';
 
 @Component({
 	selector: 'app-transaction-type',
@@ -57,6 +59,8 @@ export class TransactionTypeComponent implements OnInit {
   public userCountry: string = 'AR';
   public orientation: string = 'horizontal';
   public emailTemplates : EmailTemplate[];
+  public branches : Branch[];
+
   public formErrors = {
     'transactionMovement': '',
     'abbreviation': '',
@@ -86,7 +90,8 @@ export class TransactionTypeComponent implements OnInit {
     public _printerService: PrinterService,
     public _currencyService: CurrencyService,
     public _useOfCFDIService: UseOfCFDIService,
-    public _emailTemplateService : EmailTemplateService
+    public _emailTemplateService : EmailTemplateService,
+    public _branchService : BranchService
   ) {
     if(window.screen.width < 1000) this.orientation = 'vertical';
     this.getCurrencies();
@@ -95,6 +100,7 @@ export class TransactionTypeComponent implements OnInit {
     this.getPrinters();
     this.getUsesOfCFDI();
     this.getEmailTemplates();
+    this.getBranches();
   }
 
   ngOnInit(): void {
@@ -193,6 +199,33 @@ export class TransactionTypeComponent implements OnInit {
       }
     );
   }
+
+  public getBranches(): void {
+
+    this.loading = true;
+
+    this._branchService.getBranches(
+        { name: 1, operationType: 1 }, // PROJECT
+        { operationType: { $ne: 'D' } }, // MATCH
+        { name: 1 }, // SORT
+        {}, // GROUP
+        0, // LIMIT
+        0 // SKIP
+    ).subscribe(
+        result => {
+            if (result && result.branches) {
+                this.branches = result.branches;
+            } else {
+                this.branches = new Array();
+            }
+            this.loading = false;
+        },
+        error => {
+            this.showMessage(error._body, 'danger', false);
+            this.loading = false;
+        }
+    );
+}
 
   public buildForm(): void {
 
@@ -340,7 +373,8 @@ export class TransactionTypeComponent implements OnInit {
       'finishCharge' : [this.transactionType.finishCharge,[]],
       'maxOrderNumber': [this.transactionType.maxOrderNumber, []],
       'requestEmailTemplate': [this.transactionType.requestEmailTemplate, []],
-      'defectEmailTemplate': [this.transactionType.defectEmailTemplate, []]
+      'defectEmailTemplate': [this.transactionType.defectEmailTemplate, []],
+      'branch': [this.transactionType.branch, []]
 
     });
 
@@ -558,6 +592,17 @@ export class TransactionTypeComponent implements OnInit {
       }
     }
 
+    let branch;
+    if (!this.transactionType.branch) {
+      branch = null;
+    } else {
+      if (this.transactionType.branch._id) {
+        branch = this.transactionType.branch._id;
+      } else {
+        branch = this.transactionType.branch;
+      }
+    }
+
 
     this.transactionTypeForm.setValue({
       '_id': this.transactionType._id,
@@ -615,7 +660,9 @@ export class TransactionTypeComponent implements OnInit {
       'finishCharge' : this.transactionType.finishCharge,
       'maxOrderNumber': this.transactionType.maxOrderNumber,
       'requestEmailTemplate': this.transactionType.requestEmailTemplate,
-      'defectEmailTemplate': defectEmailTemplate
+      'defectEmailTemplate': defectEmailTemplate,
+      'branch': branch
+
 
 
     });

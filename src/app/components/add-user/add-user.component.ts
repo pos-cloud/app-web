@@ -21,6 +21,8 @@ import { Printer } from 'app/models/printer';
 import { PrinterService } from 'app/services/printer.service';
 import { CashBoxType } from 'app/models/cash-box-type';
 import { CashBoxTypeService } from 'app/services/cash-box-type.service';
+import { BranchService } from 'app/services/branch.service';
+import { Branch } from 'app/models/branch';
 
 @Component({
 	selector: 'app-add-user',
@@ -46,7 +48,8 @@ export class AddUserComponent implements OnInit {
 	public origins: Origin[] = new Array();
 	public cashBoxTypes: CashBoxType[] = new Array();
 	public focusEvent = new EventEmitter<boolean>();
-	public AuxPrinters: Printer[] = new Array();
+    public AuxPrinters: Printer[] = new Array();
+    public branches : Branch[];
 
 	public formErrors = {
 		'name': '',
@@ -94,7 +97,8 @@ export class AddUserComponent implements OnInit {
 		private _originService: OriginService,
 		private _authService: AuthService,
 		private _printerService: PrinterService,
-		private _cashBoxTypeService: CashBoxTypeService,
+        private _cashBoxTypeService: CashBoxTypeService,
+        public _branchService : BranchService,
 		public _fb: FormBuilder,
 		public _router: Router,
 		public activeModal: NgbActiveModal,
@@ -103,7 +107,8 @@ export class AddUserComponent implements OnInit {
 		this.getEmployees();
 		this.getOrigins();
 		this.getPrinters();
-		this.getCashBoxTypes();
+        this.getCashBoxTypes();
+        this.getBranches();
 	}
 
 	ngOnInit(): void {
@@ -141,7 +146,8 @@ export class AddUserComponent implements OnInit {
 			'employee': [this.user.employee, []],
 			'company': [this.user.company, []],
 			'printers': this._fb.array([]),
-			'cashBoxType': [this.user.cashBoxType, []],
+            'cashBoxType': [this.user.cashBoxType, []],
+            'branch': [this.user.branch, []]
 		});
 
 		this.userForm.valueChanges
@@ -234,6 +240,17 @@ export class AddUserComponent implements OnInit {
 			} else {
 				cashBoxType = this.user.cashBoxType;
 			}
+        }
+        
+        let branch;
+		if (!this.user.branch) {
+			branch = null;
+		} else {
+			if (this.user.branch._id) {
+				branch = this.user.branch._id;
+			} else {
+				branch = this.user.branch;
+			}
 		}
 
 		const values = {
@@ -245,7 +262,9 @@ export class AddUserComponent implements OnInit {
 			'employee': employee,
 			'company': this.user.company,
 			'origin': origin,
-			'cashBoxType': cashBoxType
+            'cashBoxType': cashBoxType,
+            'branch': branch
+
 		};
 
 		if (this.user.printers && this.user.printers.length > 0) {
@@ -419,7 +438,34 @@ export class AddUserComponent implements OnInit {
 				this.loading = false;
 			}
 		);
-	}
+    }
+    
+    public getBranches(): void {
+
+        this.loading = true;
+    
+        this._branchService.getBranches(
+            { name: 1, operationType: 1 }, // PROJECT
+            { operationType: { $ne: 'D' } }, // MATCH
+            { name: 1 }, // SORT
+            {}, // GROUP
+            0, // LIMIT
+            0 // SKIP
+        ).subscribe(
+            result => {
+                if (result && result.branches) {
+                    this.branches = result.branches;
+                } else {
+                    this.branches = new Array();
+                }
+                this.loading = false;
+            },
+            error => {
+                this.showMessage(error._body, 'danger', false);
+                this.loading = false;
+            }
+        );
+    }
 
 	public getCashBoxTypes(): void {
 		this.loading = true;

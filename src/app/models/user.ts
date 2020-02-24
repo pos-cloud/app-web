@@ -3,6 +3,7 @@ import { Company } from './company';
 import { Origin } from './origin';
 import { Printer } from './printer';
 import { CashBoxType } from './cash-box-type';
+import { Branch } from './branch';
 
 export class User {
 
@@ -16,7 +17,8 @@ export class User {
 	public employee: Employee = null;
 	public cashBoxType: CashBoxType = null;
 	public company: Company = null;
-	public origin: Origin = null;
+    public origin: Origin = null;
+    public branch : Branch;
 	public shortcuts: [{
 		name: string,
 		url: string
