@@ -77,20 +77,27 @@
         </div>
       </div>
       <div class="row">
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-4">
           <label for="cardDetail" class="control-label">¿Pide detalle de tarjeta?</label>
           <select class="form-control" formControlName="cardDetail">
             <option [disabled]="readonly" value="true">Si</option>
             <option [disabled]="readonly" value="false" selected>No</option>
           </select>
         </div>
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-4">
           <label for="allowToFinance" class="control-label">¿Permite financiar?</label>
           <select class="form-control" formControlName="allowToFinance" >
             <option  [disabled]="readonly" value="true">Si</option>
             <option   [disabled]="readonly" value="false" selected>No</option>
           </select>
         </div>
+        <div class="form-group col-md-4">
+            <label for="allowBank" class="control-label">Pide banco?</label>
+            <select class="form-control" formControlName="allowBank" >
+              <option  [disabled]="readonly" value="true">Si</option>
+              <option   [disabled]="readonly" value="false" selected>No</option>
+            </select>
+          </div>
       </div>
       <div class="row">
         <div class="form-group col-md-4">
