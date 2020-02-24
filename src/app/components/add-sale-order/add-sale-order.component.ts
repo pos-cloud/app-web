@@ -2061,6 +2061,8 @@ export class AddSaleOrderComponent {
                     } else {
                         if (this.transaction && this.transaction.type.printable) {
                             this.print();
+                        } else if (this.transaction && this.transaction.type.requestEmailTemplate) {
+                            this.openModal('send-email');
                         } else {
                             this.backFinal();
                         }
@@ -2068,6 +2070,8 @@ export class AddSaleOrderComponent {
                 }, (reason) => {
                     if (this.transaction && this.transaction.type.printable) {
                         this.print();
+                    } else if (this.transaction && this.transaction.type.requestEmailTemplate) {
+                        this.openModal('send-email');
                     } else {
                         this.backFinal();
                     }
