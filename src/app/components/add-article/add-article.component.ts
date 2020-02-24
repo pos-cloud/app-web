@@ -1442,7 +1442,10 @@ export class AddArticleComponent implements OnInit {
 										this.imageURL = './../../../assets/img/default.jpg';
 									}
 									this.loading = false;
-									this.showMessage('El producto se ha añadido con éxito.', 'success', false);
+                                    this.showMessage('El producto se ha añadido con éxito.', 'success', false);
+                                    if(this.userType === 'pos'){
+                                        this.activeModal.close({article : this.article});
+                                    }
 								},
 								(error) => {
 									this.loading = false;
@@ -1452,7 +1455,9 @@ export class AddArticleComponent implements OnInit {
 					} else {
 						this.loading = false;
                         this.showMessage('El producto se ha añadido con éxito.', 'success', false);
-                        this.activeModal.close({article : this.article});
+                        if(this.userType === 'pos'){
+                            this.activeModal.close({article : this.article});
+                        }
 					}
 				}
 			},
