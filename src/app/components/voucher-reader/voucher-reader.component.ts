@@ -3,12 +3,13 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
-import { PrintService } from 'app/services/print.service';
 import { Transaction } from 'app/models/transaction';
 import { TransactionService } from 'app/services/transaction.service';
 import { MovementOfArticle } from 'app/models/movement-of-article';
 import { MovementOfArticleService } from 'app/services/movement-of-article.service';
 import { ArticlePrintIn } from 'app/models/article';
+import { VoucherService } from 'app/services/voucher.service';
+import { Voucher } from 'app/models/voucher';
 
 declare const Instascan: any;
 
@@ -40,7 +41,7 @@ export class VoucherReaderComponent implements OnInit {
 		public alertConfig: NgbAlertConfig,
 		public _router: Router,
 		public _modalService: NgbModal,
-		private _printService: PrintService,
+		private _voucherService: VoucherService,
 		private _transactionService: TransactionService,
 		private _movementOfArticleService: MovementOfArticleService
 	) { }
@@ -78,7 +79,7 @@ export class VoucherReaderComponent implements OnInit {
 		if (this.text && this.text !== '') {
 			try {
 				// Decrypt
-				this._printService.verifyVoucher(this.text).subscribe(
+				this._voucherService.verifyVoucher(this.text).subscribe(
 					async result => {
 						if (!result.voucher) {
 							this.available = true;
@@ -94,7 +95,7 @@ export class VoucherReaderComponent implements OnInit {
 									operationType: { $ne: 'D' }
 								}).then(
 									async transactions => {
-										if(transactions && transactions.length > 0) {
+										if (transactions && transactions.length > 0) {
 											await this.getMovementsOfArticles({
 												operationType: { $ne: 'D' },
 												transaction: { $oid: this.voucher.transaction },
@@ -106,7 +107,7 @@ export class VoucherReaderComponent implements OnInit {
 													}
 												}
 											);
-										} else {	
+										} else {
 											this.showMessage('La transacción ya no se encuentra disponible', 'info', true);
 										}
 									}
@@ -202,6 +203,31 @@ export class VoucherReaderComponent implements OnInit {
 					this.loading = false;
 					this.showMessage(error._body, 'danger', false);
 					resolve([]);
+				}
+			);
+		});
+	}
+
+	public updateVoucher(): Promise<Voucher> {
+
+		return new Promise<Voucher>((resolve, reject) => {
+
+			this.loading = true;
+
+			this._voucherService.updateVoucher(this.voucher).subscribe(
+				result => {
+					this.loading = false;
+					if (!result.voucher) {
+						if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+						resolve(null);
+					} else {
+						resolve(result.voucher);
+					}
+				},
+				error => {
+					this.loading = false;
+					this.showMessage(error._body, 'danger', false);
+					resolve(null);
 				}
 			);
 		});
