@@ -45,7 +45,7 @@ export class EditCheckComponent implements OnInit {
     public _movementOfCashService : MovementOfCashService,
     public _bankService : BankService
 
-  ) { 
+  ) {
     this.getBanks();
     this.movementOfCash = new MovementOfCash();
     this.banks = new Array;
@@ -63,7 +63,7 @@ export class EditCheckComponent implements OnInit {
   ngAfterViewInit() {
     this.focusEvent.emit(true);
   }
-  
+
   public getMovementOfCash() : void {
     this._movementOfCashService.getMovementOfCash(this.movementOfCashId).subscribe(
       result => {
@@ -83,7 +83,7 @@ export class EditCheckComponent implements OnInit {
   }
 
   public setValueForm() : void {
-    
+
     if (!this.movementOfCash.expirationDate) { this.movementOfCash.expirationDate = ''; }
     if (!this.movementOfCash.statusCheck) { this.movementOfCash.statusCheck = StatusCheck.Available; }
     if (!this.movementOfCash.bank) { this.movementOfCash.bank = null; }
@@ -92,7 +92,7 @@ export class EditCheckComponent implements OnInit {
     if (!this.movementOfCash.titular) { this.movementOfCash.titular = '' }
     if (!this.movementOfCash.CUIT) { this.movementOfCash.CUIT = '' }
 
-    
+
     this.checkForm.setValue({
       'expirationDate': moment(this.movementOfCash.expirationDate).format('YYYY-MM-DD'),
       'statusCheck': this.movementOfCash.statusCheck,
@@ -164,7 +164,7 @@ export class EditCheckComponent implements OnInit {
             this.loading = false;
           } else {
             this.movementOfCash = result.movementOfCash;
-            this.showMessage("Se actualizo con exito", 'success', true);
+            this.showMessage("Se actualizo con éxito", 'success', true);
           }
           this.loading = false;
         },
@@ -174,11 +174,11 @@ export class EditCheckComponent implements OnInit {
         }
       )
   }
-  
+
   public getBanks() {
-    
+
     this.loading = true;
-    
+
     let project = {
       "_id" : 1,
       "name": 1,
