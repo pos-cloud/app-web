@@ -1419,95 +1419,128 @@ export class AddArticleComponent implements OnInit {
 
 	public saveArticle(): void {
 
-		this.loading = true;
-
-		this._articleService.saveArticle(this.article, this.variants).subscribe(
-			result => {
-				if (!result.article) {
-					this.loading = false;
-					if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
-				} else {
-					this.hasChanged = true;
-					this.article = result.article;
-					if (this.filesToUpload) {
-						this._articleService.makeFileRequest(this.article._id, this.filesToUpload)
-							.then(
-								(result) => {
-									let resultUpload;
-									resultUpload = result;
-									this.article.picture = resultUpload.article.picture;
-									if (this.article.picture && this.article.picture !== 'default.jpg') {
-										this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
-									} else {
-										this.imageURL = './../../../assets/img/default.jpg';
-									}
-									this.loading = false;
-									this.showMessage('El producto se ha añadido con éxito.', 'success', false);
-								},
-								(error) => {
-									this.loading = false;
-									this.showMessage(error, 'danger', false);
-								}
-							);
-					} else {
-						this.loading = false;
-                        this.showMessage('El producto se ha añadido con éxito.', 'success', false);
-                        this.activeModal.close({article : this.article});
-					}
-				}
-			},
-			error => {
-				this.showMessage(error._body, 'danger', false);
-				this.loading = false;
-			}
-		);
+        this.loading = true;
+        
+        
+        if(this.isValid()){
+            this._articleService.saveArticle(this.article, this.variants).subscribe(
+                result => {
+                    if (!result.article) {
+                        this.loading = false;
+                        if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+                    } else {
+                        this.hasChanged = true;
+                        this.article = result.article;
+                        if (this.filesToUpload) {
+                            this._articleService.makeFileRequest(this.article._id, this.filesToUpload)
+                                .then(
+                                    (result) => {
+                                        let resultUpload;
+                                        resultUpload = result;
+                                        this.article.picture = resultUpload.article.picture;
+                                        if (this.article.picture && this.article.picture !== 'default.jpg') {
+                                            this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
+                                        } else {
+                                            this.imageURL = './../../../assets/img/default.jpg';
+                                        }
+                                        this.loading = false;
+                                        this.showMessage('El producto se ha añadido con éxito.', 'success', false);
+                                        if(this.userType === 'pos'){
+                                            this.activeModal.close({article : this.article});
+                                        }
+                                    },
+                                    (error) => {
+                                        this.loading = false;
+                                        this.showMessage(error, 'danger', false);
+                                    }
+                                );
+                        } else {
+                            this.loading = false;
+                            this.showMessage('El producto se ha añadido con éxito.', 'success', false);
+                            if(this.userType === 'pos'){
+                                this.activeModal.close({article : this.article});
+                            }
+                        }
+                    }
+                },
+                error => {
+                    this.showMessage(error._body, 'danger', false);
+                    this.loading = false;
+                }
+            );
+        } else {
+            this.loading = false;
+        }
 	}
 
 	public updateArticle(): void {
 
 		this.loading = true;
 
-		this._articleService.updateArticle(this.article, this.variants).subscribe(
-			result => {
-				if (!result.article) {
-					if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
-				} else {
-					this.hasChanged = true;
-					this.article = result.article;
-					if (this.filesToUpload) {
-						this._articleService.makeFileRequest(this.article._id, this.filesToUpload)
-							.then(
-								(result) => {
-									let resultUpload;
-									resultUpload = result;
-									this.article.picture = resultUpload.article.picture;
-									if (this.article.picture && this.article.picture !== 'default.jpg') {
-										this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture + "/" + Config.database;
-									} else {
-										this.imageURL = './../../../assets/img/default.jpg';
-									}
-									this.filesToUpload = null;
-									this.loading = false;
-									this.showMessage('El producto se ha actualizado con éxito.', 'success', false);
-								},
-								(error) => {
-									this.showMessage(error, 'danger', false);
-								}
-							);
-					} else {
-						this.filesToUpload = null;
-						this.loading = false;
-						this.showMessage('El producto se ha actualizado con éxito.', 'success', false);
-					}
-				}
-				this.loading = false;
-			},
-			error => {
-				this.showMessage(error._body, 'danger', false);
-				this.loading = false;
-			}
-		);
-	}
+        if(this.isValid()){
+
+            this._articleService.updateArticle(this.article, this.variants).subscribe(
+                result => {
+                    if (!result.article) {
+                        if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+                    } else {
+                        this.hasChanged = true;
+                        this.article = result.article;
+                        if (this.filesToUpload) {
+                            this._articleService.makeFileRequest(this.article._id, this.filesToUpload)
+                                .then(
+                                    (result) => {
+                                        let resultUpload;
+                                        resultUpload = result;
+                                        this.article.picture = resultUpload.article.picture;
+                                        if (this.article.picture && this.article.picture !== 'default.jpg') {
+                                            this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture + "/" + Config.database;
+                                        } else {
+                                            this.imageURL = './../../../assets/img/default.jpg';
+                                        }
+                                        this.filesToUpload = null;
+                                        this.loading = false;
+                                        this.showMessage('El producto se ha actualizado con éxito.', 'success', false);
+                                    },
+                                    (error) => {
+                                        this.showMessage(error, 'danger', false);
+                                    }
+                                );
+                        } else {
+                            this.filesToUpload = null;
+                            this.loading = false;
+                            this.showMessage('El producto se ha actualizado con éxito.', 'success', false);
+                        }
+                    }
+                    this.loading = false;
+                },
+                error => {
+                    this.showMessage(error._body, 'danger', false);
+                    this.loading = false;
+                }
+            );
+        } else {
+            this.loading = false;
+        }
+    }
+    
+    public isValid(): boolean {
+
+        let valid: boolean = true;
+
+        if(typeof this.article.make !== 'object'){
+            this.showMessage("Debe seleccionar una marca valida","danger",true)
+            this.articleForm.value.make = null;
+            valid = false
+        }
+
+        if(typeof this.article.category !== 'object'){
+            this.showMessage("Debe seleccionar una categoría valida","danger",true)
+            valid = false
+        }
+
+		return valid;
+    }
 
 	public cleanForm() {
 		this.article = new Article();

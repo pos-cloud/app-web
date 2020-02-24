@@ -3,12 +3,15 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
-import { PrintService } from 'app/services/print.service';
 import { Transaction } from 'app/models/transaction';
 import { TransactionService } from 'app/services/transaction.service';
 import { MovementOfArticle } from 'app/models/movement-of-article';
 import { MovementOfArticleService } from 'app/services/movement-of-article.service';
 import { ArticlePrintIn } from 'app/models/article';
+import { VoucherService } from 'app/services/voucher.service';
+import { Voucher } from 'app/models/voucher';
+import { Config } from 'app/app.config';
+import { ConfigService } from 'app/services/config.service';
 
 declare const Instascan: any;
 
@@ -32,20 +35,27 @@ export class VoucherReaderComponent implements OnInit {
 	public scanner;
 	public timeOfReading: string;
 	public timeGenerate: string;
-	public voucher;
+	public voucherRead;
 	public movementsOfArticles: MovementOfArticle[];
+	public config: Config;
 
 	constructor(
 		public activeModal: NgbActiveModal,
 		public alertConfig: NgbAlertConfig,
 		public _router: Router,
 		public _modalService: NgbModal,
-		private _printService: PrintService,
+		private _voucherService: VoucherService,
 		private _transactionService: TransactionService,
-		private _movementOfArticleService: MovementOfArticleService
+		private _movementOfArticleService: MovementOfArticleService,
+		public _configService: ConfigService,
 	) { }
 
-	ngOnInit(): void {
+	public async ngOnInit() {
+		await this._configService.getConfig.subscribe(
+			config => {
+				this.config = config;
+			}
+		);
 	}
 
 	ngAfterViewInit() {
@@ -76,60 +86,106 @@ export class VoucherReaderComponent implements OnInit {
 	public async readVoucher() {
 		this.available = false;
 		if (this.text && this.text !== '') {
-			try {
-				// Decrypt
-				this._printService.verifyVoucher(this.text).subscribe(
-					async result => {
-						if (!result.voucher) {
-							this.available = true;
-							this.focusEvent.emit(true);
-							if (result.message && result.message !== '') this.showMessage(result.message, 'danger', true);
-						} else {
-							this.hideMessage();
-							this.voucher = result.voucher;
-							if (this.voucher.transaction) {
-								await this.getTransactions({
-									_id: { $oid: this.voucher.transaction },
-									state: { $ne: 'Anulado' },
-									operationType: { $ne: 'D' }
-								}).then(
-									async transactions => {
-										if(transactions && transactions.length > 0) {
-											await this.getMovementsOfArticles({
-												operationType: { $ne: 'D' },
-												transaction: { $oid: this.voucher.transaction },
-												'article.printIn': ArticlePrintIn.Voucher
-											}).then(
-												movementsOfArticles => {
-													if (movementsOfArticles && movementsOfArticles.length > 0) {
-														this.movementsOfArticles = movementsOfArticles;
+			await this.getVouchers({ token: this.text }).then(
+				vouchers => {
+					if (vouchers && vouchers.length > 0) {
+            if (this.config.voucher.readingLimit === 0 || vouchers[0].readings < this.config.voucher.readingLimit) {
+							try {
+								// Decrypt
+								this._voucherService.verifyVoucher(this.text).subscribe(
+									async result => {
+										if (!result.voucher) {
+											this.available = true;
+											this.focusEvent.emit(true);
+											if (result.message && result.message !== '') this.showMessage(result.message, 'danger', true);
+										} else {
+											this.hideMessage();
+											this.voucherRead = result.voucher;
+											if (this.voucherRead.transaction) {
+												await this.getTransactions({
+													_id: { $oid: this.voucherRead.transaction },
+													state: { $ne: 'Anulado' },
+													operationType: { $ne: 'D' }
+												}).then(
+													async transactions => {
+														if (transactions && transactions.length > 0) {
+															await this.getMovementsOfArticles({
+																operationType: { $ne: 'D' },
+																transaction: { $oid: this.voucherRead.transaction },
+																'article.printIn': ArticlePrintIn.Voucher
+															}).then(
+																async movementsOfArticles => {
+																	if (movementsOfArticles && movementsOfArticles.length > 0) {
+																		this.movementsOfArticles = movementsOfArticles;
+																		let voucher = vouchers[0];
+																		voucher.readings += 1;
+																		await this.updateVoucher(voucher);
+																	}
+																}
+															);
+														} else {
+															this.showMessage('La transacción ya no se encuentra disponible', 'info', true);
+														}
 													}
-												}
-											);
-										} else {	
-											this.showMessage('La transacción ya no se encuentra disponible', 'info', true);
+												);
+											}
+											this.timeOfReading = moment().calendar();
+											this.timeGenerate = moment(this.voucherRead.time).calendar();
+											if (this.voucherRead.type === 'articles') {
+												this.openModal('articles');
+											}
 										}
 									}
 								);
+							} catch (err) {
+								this.available = true;
+								this.focusEvent.emit(true);
+								this.showMessage('Error al intentar leer el voucher.', 'info', true);
 							}
-							this.timeOfReading = moment().calendar();
-							this.timeGenerate = moment(this.voucher.time).calendar();
-							if (this.voucher.type === 'articles') {
-								this.openModal('articles');
-							}
+						} else {
+							this.available = true;
+							this.focusEvent.emit(true);
+							this.showMessage('El voucher superó la cantidad de lecturas disponibles.', 'info', true);
 						}
+					} else {
+						this.available = true;
+						this.focusEvent.emit(true);
+						this.showMessage('El voucher no se encuentra generado en el sistema.', 'info', true);
 					}
-				);
-			} catch (err) {
-				this.available = true;
-				this.focusEvent.emit(true);
-				this.showMessage('Error al intentar leer el voucher.', 'info', true);
-			}
+				}
+			);
 		} else {
 			this.available = true;
 			this.focusEvent.emit(true);
 			this.showMessage('Debe ingresar un código de voucher válido.', 'info', true);
 		}
+	}
+
+	public getVouchers(match: {} = {}): Promise<Voucher[]> {
+
+		return new Promise<Voucher[]>((resolve, reject) => {
+
+			this._voucherService.getVouchersV2(
+				{}, // PROJECT
+				match, // MATCH
+				{}, // SORT
+				{}, // GROUP
+				0, // LIMIT
+				0 // SKIP
+			).subscribe(
+				result => {
+					if (result && result.vouchers) {
+						resolve(result.vouchers);
+					} else {
+						resolve(null);
+					}
+				},
+				error => {
+					this.showMessage(error._body, 'danger', false);
+					resolve(null);
+				}
+			);
+		});
 	}
 
 	public getTransactions(match: {}): Promise<Transaction[]> {
@@ -202,6 +258,31 @@ export class VoucherReaderComponent implements OnInit {
 					this.loading = false;
 					this.showMessage(error._body, 'danger', false);
 					resolve([]);
+				}
+			);
+		});
+	}
+
+	public updateVoucher(voucher: Voucher): Promise<Voucher> {
+
+		return new Promise<Voucher>((resolve, reject) => {
+
+			this.loading = true;
+
+			this._voucherService.updateVoucher(voucher).subscribe(
+				result => {
+					this.loading = false;
+					if (!result.voucher) {
+						if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+						resolve(null);
+					} else {
+						resolve(result.voucher);
+					}
+				},
+				error => {
+					this.loading = false;
+					this.showMessage(error._body, 'danger', false);
+					resolve(null);
 				}
 			);
 		});

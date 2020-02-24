@@ -213,7 +213,7 @@
                             Clientes
                         </button>
                         <div>
-                            <button class="dropdown-item" (click)="showAlert()">
+                            <button class="dropdown-item" (click)="openModal('current','Cliente')">
                                 Resúmenes de Cuentas
                             </button>
                             <button class="dropdown-item" [routerLink]="['admin','cuentas-corrientes']"
@@ -229,7 +229,7 @@
                             Proveedores
                         </button>
                         <div>
-                            <button class="dropdown-item" (click)="showAlert()">
+                            <button class="dropdown-item" (click)="openModal('current','Proveedor')">
                                 Resúmenes de Cuentas
                             </button>
                             <button class="dropdown-item" [routerLink]="['admin','cuentas-corrientes']"
