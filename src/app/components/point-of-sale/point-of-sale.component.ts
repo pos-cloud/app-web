@@ -48,6 +48,7 @@ import { first } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 import { SelectCompanyComponent } from '../select-company/select-company.component';
 import { User } from 'app/models/user';
+import { UserService } from 'app/services/user.service';
 
 @Component({
 	selector: 'app-point-of-sale',
@@ -92,7 +93,8 @@ export class PointOfSaleComponent implements OnInit {
 	public config: Config;
 	public transactionTypeId: string;
 	private subscription: Subscription = new Subscription();
-	public identity: User;
+    public identity: User;
+    public user: User;
 
 	// CAMPOS TRAIDOS DE LA CUENTA CTE.
 	@Input() company: Company;
@@ -116,7 +118,8 @@ export class PointOfSaleComponent implements OnInit {
 		private _tableService: TableService,
 		private _authService: AuthService,
 		private _originService: OriginService,
-		private _configService: ConfigService
+        private _configService: ConfigService,
+        private _userService : UserService
 	) {
 		this.roomSelected = new Room();
 		this.transactionTypes = new Array();
@@ -136,9 +139,18 @@ export class PointOfSaleComponent implements OnInit {
 		);
 		await this._authService.getIdentity.subscribe(
 			identity => {
-				this.identity = identity;
+                this.identity = identity;
 			}
-		);
+        );
+        await this.getUser().then(
+            async user => {
+                if (user) {
+                    this.user = user;
+                } else {
+                    this.showMessage("Debe volver a iniciar sesión", "danger", false);
+                }
+            }
+        );
 		this.processParams();
 		this.initInterval();
 	}
@@ -186,7 +198,30 @@ export class PointOfSaleComponent implements OnInit {
 				this.refresh();
 			}
 		});
-	}
+    }
+    
+    public getUser(): Promise<User> {
+
+        return new Promise<User>((resolve, reject) => {
+
+            var identity: User = JSON.parse(sessionStorage.getItem('user'));
+            var user;
+            if (identity) {
+                this._userService.getUser(identity._id).subscribe(
+                    result => {
+                        if (result && result.user) {
+                            resolve(result.user)
+                        } else {
+                            this.showMessage("Debe volver a iniciar sesión", "danger", false);
+                        }
+                    },
+                    error => {
+                        this.showMessage(error._body, "danger", false);
+                    }
+                )
+            }
+        });
+    }
 
 	public getBranches(match: {} = {}): Promise<Branch[]> {
 
@@ -441,7 +476,16 @@ export class PointOfSaleComponent implements OnInit {
 				);
 			} else if (this.posType === 'mostrador') {
 
-				await this.getTransactionTypes('where="transactionMovement":"' + this.transactionMovement + '","allowAPP":false').then(
+
+                let where
+
+                if(this.user.branch && this.user.branch._id){
+                    where = 'where="$or":[{"branch":null},{"branch":"'+this.user.branch._id+'"}],"transactionMovement":"' + this.transactionMovement + '","allowAPP":false'
+                } else {
+                    where = 'where="$or":[{"branch":null}],"transactionMovement":"' + this.transactionMovement + '","allowAPP":false'
+                }
+
+				await this.getTransactionTypes(where).then(
 					transactionTypes => {
 						if (transactionTypes) {
 							this.transactionTypes = transactionTypes;
@@ -468,7 +512,16 @@ export class PointOfSaleComponent implements OnInit {
 					}
 				);
 			} else if (this.posType === "cuentas-corrientes") {
-				await this.getTransactionTypes('where="transactionMovement":"' + this.transactionMovement + '"').then(
+
+                let where
+
+                if(this.user.branch && this.user.branch._id){
+                    where = 'where="$or":[{"branch":null},{"branch":"'+this.user.branch._id+'"}],"transactionMovement":"' + this.transactionMovement + '"'
+                } else {
+                    where = 'where="$or":[{"branch":null}],"transactionMovement":"' + this.transactionMovement + '"'
+                }
+
+				await this.getTransactionTypes(where).then(
 					transactionTypes => {
 						if (transactionTypes) {
 							this.transactionTypes = transactionTypes;
