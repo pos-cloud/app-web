@@ -46,7 +46,6 @@ import { ClassificationService } from 'app/services/classification.service';
 import { Classification } from 'app/models/classification';
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { type } from 'os';
 
 @Component({
 	selector: 'app-add-article',
