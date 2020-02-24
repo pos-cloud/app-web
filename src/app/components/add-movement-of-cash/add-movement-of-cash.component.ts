@@ -34,6 +34,7 @@ import { DeleteMovementOfCashComponent } from '../delete-movement-of-cash/delete
 import { ListChecksComponent } from '../list-checks/list-checks.component';
 
 import Keyboard from "simple-keyboard";
+import { SelectChecksComponent } from '../select-checks/select-checks.component';
 
 
 @Component({
@@ -584,7 +585,7 @@ export class AddMovementOfCashComponent implements OnInit {
 				});
 				break;
 			case 'list-movements-of-cashes':
-				modalRef = this._modalService.open(ListChecksComponent, { size: 'lg', backdrop: 'static' });
+				modalRef = this._modalService.open(SelectChecksComponent, { size: 'lg', backdrop: 'static' });
 				// MANDAMOS LÍMITE DE MONTO A SELECCIONAR
 				modalRef.componentInstance.transactionAmount = this.roundNumber.transform(this.transaction.totalPrice - this.movementOfCashForm.value.amountPaid);
 				modalRef.componentInstance.paymentMethod = this.paymentMethodSelected;

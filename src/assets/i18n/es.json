@@ -193,7 +193,8 @@
         "expirationDate" : "Fecha de vencimiento",
         "tax" : "Afecta libro IVA"
 	},
-	"totalPrice": "Precio Total",
+    "totalPrice": "Precio Total",
+    "titular" : "Titular",
 	"unitOfMeasurement": {
 		"abbreviation": "Unidad de Medida",
 		"name": "Unidad de Medida"
@@ -204,7 +205,8 @@
 	"number": "Número",
 	"unitPrice": "Precio Unitario",
 	"updateDate": "Fecha de Modificación",
-	"realStock": "Stock",
+    "realStock": "Stock",
+    "receiver" : "Destinatario",
 	"Preparando": "En Preparación",
 	"Entregado": "Para Retirar"
 }

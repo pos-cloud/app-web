@@ -290,6 +290,7 @@ import { CashBoxTypeService } from './services/cash-box-type.service';
 import { EmailTemplateComponent } from './components/email-template/email-template.component';
 import { ListEmailTemplatesComponent } from './components/list-email-templates/list-email-templates.component';
 import { EmailTemplateService } from './services/email-template.service';
+import { SelectChecksComponent } from './components/select-checks/select-checks.component';
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
 //const configSocket: SocketIoConfig = { url: "http://192.168.0.88:300", options: {transports: ['websocket']} }; // PROD
@@ -498,7 +499,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         ListGalleriesComponent,
         ViewGalleryComponent,
         EmailTemplateComponent,
-        ListEmailTemplatesComponent
+        ListEmailTemplatesComponent,
+        SelectChecksComponent
     ],
     entryComponents: [
         HomeComponent,
@@ -676,7 +678,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         ResourceComponent,
         GalleryComponent,
         CurrentAccountDetailsComponent,
-        EmailTemplateComponent
+        EmailTemplateComponent,
+        SelectChecksComponent
     ],
     imports: [
         BrowserModule,
