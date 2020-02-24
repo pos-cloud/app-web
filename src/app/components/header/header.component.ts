@@ -105,10 +105,6 @@ export class HeaderComponent {
 		this.initSocket();
 	}
 
-	private showAlert(): void {
-		alert("Esta función se encuentra deshabilitada por el momento.");
-	}
-
 	private initSocket(): void {
 
 		let identity: User = JSON.parse(sessionStorage.getItem('user'));
