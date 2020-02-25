@@ -480,7 +480,7 @@ export class PointOfSaleComponent implements OnInit {
                 let where
 
                 if(this.user.branch && this.user.branch._id){
-                    where = 'where="$or":[{"branch":{ "$exists": false}},{"branch":"'+this.user.branch._id+'"}],"transactionMovement":"' + this.transactionMovement + '","allowAPP":false'
+                    where = 'where="$or":[{"branch":{ "$exists": false}},{"branch":null},{"branch":"'+this.user.branch._id+'"}],"transactionMovement":"' + this.transactionMovement + '","allowAPP":false'
                 } else {
                     where = 'where="transactionMovement":"' + this.transactionMovement + '","allowAPP":false'
                 }
@@ -516,7 +516,7 @@ export class PointOfSaleComponent implements OnInit {
                 let where
 
                 if(this.user.branch && this.user.branch._id){
-                    where = 'where="$or":[{"branch":{ "$exists": false}},{"branch":"'+this.user.branch._id+'"}],"transactionMovement":"' + this.transactionMovement + '"'
+                    where = 'where="$or":[{"branch":{ "$exists": false}},{"branch":null},{"branch":"'+this.user.branch._id+'"}],"transactionMovement":"' + this.transactionMovement + '"'
                 } else {
                     where = 'where="transactionMovement":"' + this.transactionMovement + '"'
                 }
