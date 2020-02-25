@@ -1528,8 +1528,6 @@ export class AddArticleComponent implements OnInit {
 
         let valid: boolean = true;
 
-        console.log(this.article.make)
-
         if(this.article.make && typeof this.article.make !== 'object'){
             this.showMessage("Debe seleccionar una marca valida","danger",true)
             this.articleForm.value.make = null;
