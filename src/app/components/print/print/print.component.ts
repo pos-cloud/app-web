@@ -3254,8 +3254,8 @@ export class PrintComponent implements OnInit {
 
 					row += 6;
 					this.doc.text(movementOfArticle.description.slice(0, 20), margin, row);
-					this.doc.text(this.roundNumber.transform(movementOfArticle.amount) + " x " + this.roundNumber.transform((movementOfArticle.salePrice + this.transaction.discountAmount) / movementOfArticle.amount).toString(), margin, row + 3);
-					this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice + this.transaction.discountAmount).toString(), width - 15, row);
+					this.doc.text(this.roundNumber.transform(movementOfArticle.amount) + " x " + this.roundNumber.transform((movementOfArticle.salePrice + (movementOfArticle.transactionDiscountAmount * movementOfArticle.amount)) / movementOfArticle.amount).toString(), margin, row + 3);
+					this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice + (movementOfArticle.transactionDiscountAmount * movementOfArticle.amount)).toString(), width - 15, row);
 
 					if (movementOfArticle.notes && movementOfArticle.notes !== "") {
 						row += 5;
