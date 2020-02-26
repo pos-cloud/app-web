@@ -464,14 +464,16 @@
 								</div>
 								<div class="row">
 									<div class="form-group col-md-4">
-										<label for="expirationDate" class="control-label">Vencimiento:</label>
-										<input type="date" class="form-control" formControlName="expirationDate"
-											name="expirationDate" id="expirationDate" [readonly]="readonly" />
-                                        <button type="button" class="btn btn-light" placement="right"
-                                            popoverClass="popover-class"
-                                            ngbPopover="Solo funciona de alerta para cuando se quiere imprimir el documento te avisa que esta vencido es utilizado para los documentos pre impresos que traen el vencimiento.">
-                                            <b>?</b>
-                                        </button>
+                                        <label for="expirationDate" class="control-label">Vencimiento:</label>
+                                        <div class="input-group">
+                                            <input type="date" class="form-control" formControlName="expirationDate"
+                                                name="expirationDate" id="expirationDate" [readonly]="readonly" />
+                                            <button type="button" class="btn btn-light" placement="right"
+                                                popoverClass="popover-class"
+                                                ngbPopover="Solo funciona de alerta para cuando se quiere imprimir el documento te avisa que esta vencido es utilizado para los documentos pre impresos que traen el vencimiento.">
+                                                <b>?</b>
+                                            </button>
+                                        </div>
 									</div>
 									<div class="form-group col-md-4">
 										<label for="maxOrderNumber">Máximo número de pedido</label>

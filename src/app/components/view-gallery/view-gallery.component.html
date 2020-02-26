@@ -1,5 +1,5 @@
-<!--<button *ngIf="viewBotton" (click)="openFullscreen()" > fullscreen </button>-->
-<ngu-carousel *ngIf="loading" #myCarousel [inputs]="carouselBanner" [dataSource]="images" >
+<button *ngIf="viewBotton" (click)="openFullscreen()" > fullscreen </button>
+<ngu-carousel *ngIf="loading" #myCarousel [inputs]="carouselBanner" id="mygallery" [dataSource]="images" >
 	<div *nguCarouselDef="let item;" class="item">
 		<div class="tile" [style.background-image]="'url('+ item +')'"></div>
 	</div>

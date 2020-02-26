@@ -179,7 +179,6 @@ export class SendEmailComponent implements OnInit {
         } else {
           this.showMessage(result, 'info', true);
         }
-        this.activeModal.close();
       },
       err => {
         this.loading = false;

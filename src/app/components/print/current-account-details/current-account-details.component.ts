@@ -315,7 +315,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
         let page = 1;
         let row = 15;
         this.doc.setFontSize(this.fontSizes.extraLarge)
-        this.doc.text(5, row, 'Resumen de cuenta de ' + this.companyForm.value.companyType)
+        this.doc.text(5, row, 'Resumen de cuenta de ' + this.companyType)
         row += 5;
         this.doc.setFontSize(this.fontSizes.large)
         this.doc.text(180, 280, "Hoja:" + page)

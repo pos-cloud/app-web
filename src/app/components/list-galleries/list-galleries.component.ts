@@ -131,11 +131,6 @@ export class ListGalleriesComponent implements OnInit {
 
     public sendSocket(message): void {
 
-        this.socket.emit('start', {
-            database: Config.database,
-            clientType: 'pos'
-        });
-
         this.socket.emit('sync_gallery', message);
     }
 
