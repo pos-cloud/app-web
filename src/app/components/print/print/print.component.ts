@@ -2938,7 +2938,8 @@ export class PrintComponent implements OnInit {
 				}
 
 			}
-		}
+        }
+        this.getFooter()
 		this.finishImpression();
 	}
 
