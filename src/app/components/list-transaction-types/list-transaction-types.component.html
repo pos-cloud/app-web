@@ -57,6 +57,7 @@
             <th (click)="orderBy('allowAPP')">APP</th>
             <th (click)="orderBy('requestEmailTemplate')">¿Envia correo?</th>
             <th (click)="orderBy('defectEmailTemplate','name')">Template defecto</th>
+            <th (click)="orderBy('level')">Nivel</th>
 
           </tr>
           <tr class="filters">
@@ -101,6 +102,7 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterAllowAPP" placeholder="APP..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterRequestEmailTemplate" placeholder="¿Envia correo?"></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterDefectEmailTemplate" placeholder="Template defecto..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterLevel" placeholder="Nivel..."></th>
 
           </tr>
         </thead>
@@ -142,6 +144,7 @@
                                                               | filter: filterAllowAPP:'allowAPP'
                                                               | filter: filterRequestEmailTemplate:'requestEmailTemplate'
                                                               | filter: filterDefectEmailTemplate:'name': 'defectEmailTemplate'
+                                                              | filter: filterLevel:'level'
                                                               | orderBy: orderTerm: propertyTerm
                                                               | paginate: { itemsPerPage: itemsPerPage,
                                                                             currentPage: p,
@@ -197,6 +200,7 @@
             <td class="flat">{{transactionType.requestEmailTemplate}}</td>
             <td class="flat" *ngIf="transactionType.defectEmailTemplate">{{transactionType.defectEmailTemplate.name}}</td>
             <td class="flat" *ngIf="!transactionType.defectEmailTemplate"></td>
+            <td class="flat">{{transactionType.level}}</td>
 
           </tr>
           <tr align="center" *ngIf="areTransactionTypesEmpty && !loading">

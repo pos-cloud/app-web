@@ -25,7 +25,8 @@
 						<th (click)="orderBy('employee','name')">Empleado</th>
 						<th (click)="orderBy('origin','number')">Punto de venta</th>
 						<th (click)="orderBy('company','name')">Empresa</th>
-						<th (click)="orderBy('cashBoxType','name')">Tipo de Caja</th>
+                        <th (click)="orderBy('cashBoxType','name')">Tipo de Caja</th>
+                        <th (click)="orderBy('level')">Nivel</th>
 					</tr>
 					<tr class="filters">
 						<th></th>
@@ -44,7 +45,9 @@
 						<th><input type="text" class="form-control" [(ngModel)]="filterCompany"
 								placeholder="Empresa..."></th>
 						<th><input type="text" class="form-control" [(ngModel)]="filterCashBoxType"
-								placeholder="Tipo de Caja..."></th>
+                                placeholder="Tipo de Caja..."></th>
+                                <th><input type="text" class="form-control" [(ngModel)]="filterLevel"
+                                    placeholder="Nivel..."></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -56,6 +59,7 @@
                                           | filter: filterOrigin:'number':'origin'
                                           | filter: filterCompany:'name':'company'
                                           | filter: filterCashBoxType:'name':'cashBoxType'
+                                          | filter: filterLevel:'level'
                                           | orderBy: orderTerm: propertyTerm
                                           | paginate: { itemsPerPage: itemsPerPage,
                                                         currentPage: p,
@@ -87,7 +91,8 @@
 						<td *ngIf="user.company">{{user.company.name}}</td>
 						<td *ngIf="!user.company"></td>
 						<td *ngIf="user.cashBoxType">{{user.cashBoxType.name}}</td>
-						<td *ngIf="!user.cashBoxType"></td>
+                        <td *ngIf="!user.cashBoxType"></td>
+                        <td>{{user.level}}</td>
 					</tr>
 					<tr align="center" *ngIf="areUsersEmpty && !loading">
 						<td colspan="7">No se encontraron usuarios</td>
