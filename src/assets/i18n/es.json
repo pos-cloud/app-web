@@ -75,7 +75,8 @@
         "emails": "Correo Electrónico",
         "state" : {
             "name" : "Provincia"
-        }
+        },
+        "fantasyName" :"Nombre de Fantasía"
 	},
 	"count": "Cantidad",
 	"currency": {
