@@ -66,6 +66,7 @@ export class TransactionType {
     public requestEmailTemplate : boolean = false;
     public defectEmailTemplate : EmailTemplate;
     public branch : Branch;
+    public level : number = 0;
     public expirationDate : string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 	public creationUser: User;
 	public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');

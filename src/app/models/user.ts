@@ -27,6 +27,7 @@ export class User {
 		_id: string;
 		printer: Printer
 	}]
+	public level : number = 99;
 
 	constructor() { }
 }

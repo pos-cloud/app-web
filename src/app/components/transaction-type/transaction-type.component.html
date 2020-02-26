@@ -261,7 +261,7 @@
 								<b>PERMISOS</b>
 								<hr>
 								<div class="row">
-									<div class="form-group col-md-3">
+									<div class="form-group col-md-2">
 										<label for="allowEdit" class="control-label">Permite editar</label>
 										<div class="input-group">
 											<select class="form-control" formControlName="allowEdit">
@@ -277,7 +277,7 @@
 											</button>
 										</div>
 									</div>
-									<div class="form-group col-md-3">
+									<div class="form-group col-md-2">
 										<label for="allowDelete" class="control-label">Permite borrar</label>
 										<div class="input-group">
 											<select class="form-control" formControlName="allowDelete">
@@ -293,7 +293,7 @@
 											</button>
 										</div>
 									</div>
-									<div class="form-group col-md-3">
+									<div class="form-group col-md-2">
 										<label for="allowAPP">Permite APP</label>
 										<div class="input-group">
 											<select class="form-control" formControlName="allowAPP">
@@ -309,7 +309,7 @@
 											</button>
 										</div>
 									</div>
-									<div class="form-group col-md-3">
+									<div class="form-group col-md-2">
 										<label for="requestTransport">Pide Transporte</label>
 										<div class="input-group">
 											<select class="form-control" formControlName="requestTransport">
@@ -323,6 +323,17 @@
 												<b>?</b>
 											</button>
 										</div>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="level">Nivel</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" formControlName="level" name="level"
+                                                id="level" [readonly]="readonly" />
+                                            <button type="button" class="btn btn-light" placement="right"
+												popoverClass="popover-class" ngbPopover="El valor se compara con el del usuario si este es menor al del usuario se mostrara">
+												<b>?</b>
+											</button>
+                                        </div>
 									</div>
 								</div>
 								<b>PERSONALIZADO</b>

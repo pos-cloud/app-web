@@ -59,7 +59,8 @@ export class AddUserComponent implements OnInit {
 		'origin': '',
 		'employee': '',
 		'company': '',
-		'cashBoxType': ''
+        'cashBoxType': '',
+        'level': ''
 	};
 
 	public validationMessages = {
@@ -70,7 +71,9 @@ export class AddUserComponent implements OnInit {
 		'origin': {},
 		'employee': {},
 		'company': {},
-		'cashBoxType': {}
+        'cashBoxType': {},
+        'level': {}
+
 	};
 
 	public searchCompanies = (text$: Observable<string>) =>
@@ -147,7 +150,8 @@ export class AddUserComponent implements OnInit {
 			'company': [this.user.company, []],
 			'printers': this._fb.array([]),
             'cashBoxType': [this.user.cashBoxType, []],
-            'branch': [this.user.branch, []]
+            'branch': [this.user.branch, []],
+            'level': [this.user.level, []]
 		});
 
 		this.userForm.valueChanges
@@ -208,6 +212,7 @@ export class AddUserComponent implements OnInit {
 		if (!this.user.password) this.user.password = "";
 		if (!this.user.state) this.user.state = UserState.Enabled;
 		if (!this.user.company) this.user.company = null;
+		if (!this.user.level) this.user.level = 99;
 
 		let employee;
 		if (!this.user.employee) {
@@ -263,7 +268,8 @@ export class AddUserComponent implements OnInit {
 			'company': this.user.company,
 			'origin': origin,
             'cashBoxType': cashBoxType,
-            'branch': branch
+            'branch': branch,
+            'level' : this.user.level
 
 		};
 

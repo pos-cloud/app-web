@@ -47,7 +47,7 @@
 											{{ formErrors.name }}
 										</div>
 									</div>
-									<div class="form-group col-md-5">
+									<div class="form-group col-md-3">
 										<label for="state" class="control-label">Habilitado</label>
 										<select class="form-control" formControlName="state">
 											<option *ngFor="let state of states" [value]="state"
@@ -56,6 +56,16 @@
 										</select>
 										<div *ngIf="formErrors.state" class="alert alert-danger">
 											{{ formErrors.state }}
+										</div>
+                                    </div>
+                                    <div class="form-group col-md-2">
+										<label for="level" class="control-label">Nivel:</label>
+										<div class="input-group">
+											<input type="text" class="form-control" formControlName="level" name="level"
+												id="level" [readonly]="readonly" />
+										</div>
+										<div *ngIf="formErrors.level" class="alert alert-danger">
+											{{ formErrors.level }}
 										</div>
 									</div>
 								</div>
