@@ -169,16 +169,19 @@ export class SendEmailComponent implements OnInit {
 
     this._serviceEmail.sendEmail(this.sendEmailForm.value).subscribe(
       result => {
+
         this.loading = false;
         if(result.accepted && result.accepted.length > 0) {
           this.showMessage("El email se ha enviado correctamente.", 'success', false);
-        } else if (!result.ok) {
-          this.showMessage(result.error.response, 'info', true);
-        } else if (result.message && result.message !== '') {
-          this.showMessage(result.message, 'info', true);
-        } else {
-          this.showMessage(result, 'info', true);
+        } 
+        if (result.message && result.message !== '') {
+            this.showMessage(result.message, 'info', true);
         }
+
+        if(result.error){
+            this.showMessage(result.error.response, 'info', true);
+        }
+
       },
       err => {
         this.loading = false;
