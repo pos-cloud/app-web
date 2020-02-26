@@ -1387,7 +1387,11 @@ export class AddArticleComponent implements OnInit {
 		if (!this.readonly) {
 			this.loading = true;
             this.loadPosDescription();
+
             this.article = this.articleForm.value;
+            if(this.articleForm.value.make === ''){
+                this.article.make = null
+            }
 			this.article.notes = this.notes;
 			this.autocompleteCode();
 			if (this.variants && this.variants.length > 0) {
@@ -1527,7 +1531,7 @@ export class AddArticleComponent implements OnInit {
     public isValid(): boolean {
 
         let valid: boolean = true;
-
+        
         if(this.article.make && typeof this.article.make !== 'object'){
             this.showMessage("Debe seleccionar una marca valida","danger",true)
             this.articleForm.value.make = null;
