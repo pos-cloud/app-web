@@ -503,11 +503,12 @@ export class PointOfSaleComponent implements OnInit {
 					query['branchOrigin'] = { $oid: this.identity.origin.branch._id };
 				}
 
-				query['operationType'] = { $ne: 'D' };
-
+                query['type.level'] = { $lt : this.user.level };
+                query['operationType'] = { $ne: 'D' };
+                
 				await this.getTransactionsV2(query).then(
 					transactions => {
-						this.hideMessage();
+                        this.hideMessage();
 						this.transactions = transactions;
 					}
 				);
@@ -1533,7 +1534,8 @@ export class PointOfSaleComponent implements OnInit {
 				operationType: 1,
 				"type._id": 1,
 				"type.allowEdit": 1,
-				"type.name": 1,
+                "type.name": 1,
+                "type.level" : 1,
 				"type.transactionMovement": 1,
 				"branchOrigin": 1,
 			}
