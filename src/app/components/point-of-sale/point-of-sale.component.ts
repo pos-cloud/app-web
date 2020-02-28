@@ -93,8 +93,8 @@ export class PointOfSaleComponent implements OnInit {
 	public config: Config;
 	public transactionTypeId: string;
 	private subscription: Subscription = new Subscription();
-    public identity: User;
-    public user: User;
+	public identity: User;
+	public user: User;
 
 	// CAMPOS TRAIDOS DE LA CUENTA CTE.
 	@Input() company: Company;
@@ -118,8 +118,8 @@ export class PointOfSaleComponent implements OnInit {
 		private _tableService: TableService,
 		private _authService: AuthService,
 		private _originService: OriginService,
-        private _configService: ConfigService,
-        private _userService : UserService
+		private _configService: ConfigService,
+		private _userService: UserService
 	) {
 		this.roomSelected = new Room();
 		this.transactionTypes = new Array();
@@ -139,18 +139,18 @@ export class PointOfSaleComponent implements OnInit {
 		);
 		await this._authService.getIdentity.subscribe(
 			identity => {
-                this.identity = identity;
+				this.identity = identity;
 			}
-        );
-        await this.getUser().then(
-            async user => {
-                if (user) {
-                    this.user = user;
-                } else {
-                    this.showMessage("Debe volver a iniciar sesión", "danger", false);
-                }
-            }
-        );
+		);
+		await this.getUser().then(
+			async user => {
+				if (user) {
+					this.user = user;
+				} else {
+					this.showMessage("Debe volver a iniciar sesión", "danger", false);
+				}
+			}
+		);
 		this.processParams();
 		this.initInterval();
 	}
@@ -198,30 +198,30 @@ export class PointOfSaleComponent implements OnInit {
 				this.refresh();
 			}
 		});
-    }
-    
-    public getUser(): Promise<User> {
+	}
 
-        return new Promise<User>((resolve, reject) => {
+	public getUser(): Promise<User> {
 
-            var identity: User = JSON.parse(sessionStorage.getItem('user'));
-            var user;
-            if (identity) {
-                this._userService.getUser(identity._id).subscribe(
-                    result => {
-                        if (result && result.user) {
-                            resolve(result.user)
-                        } else {
-                            this.showMessage("Debe volver a iniciar sesión", "danger", false);
-                        }
-                    },
-                    error => {
-                        this.showMessage(error._body, "danger", false);
-                    }
-                )
-            }
-        });
-    }
+		return new Promise<User>((resolve, reject) => {
+
+			var identity: User = JSON.parse(sessionStorage.getItem('user'));
+			var user;
+			if (identity) {
+				this._userService.getUser(identity._id).subscribe(
+					result => {
+						if (result && result.user) {
+							resolve(result.user)
+						} else {
+							this.showMessage("Debe volver a iniciar sesión", "danger", false);
+						}
+					},
+					error => {
+						this.showMessage(error._body, "danger", false);
+					}
+				)
+			}
+		});
+	}
 
 	public getBranches(match: {} = {}): Promise<Branch[]> {
 
@@ -477,13 +477,13 @@ export class PointOfSaleComponent implements OnInit {
 			} else if (this.posType === 'mostrador') {
 
 
-                let where
+				let where
 
-                if(this.user.branch && this.user.branch._id){
-                    where = 'where="level":{ "$lt" : "'+this.user.level+'"},"$or":[{"branch":{ "$exists": false}},{"branch":null},{"branch":"'+this.user.branch._id+'"}],"transactionMovement":"' + this.transactionMovement + '","allowAPP":false'
-                } else {
-                    where = 'where="level":{ "$lt" : "'+this.user.level+'"},"transactionMovement":"' + this.transactionMovement + '","allowAPP":false'
-                }
+				if (this.user.branch && this.user.branch._id) {
+					where = 'where="level":{ "$lt" : "' + this.user.level + '"},"$or":[{"branch":{ "$exists": false}},{"branch":null},{"branch":"' + this.user.branch._id + '"}],"transactionMovement":"' + this.transactionMovement + '","allowAPP":false'
+				} else {
+					where = 'where="level":{ "$lt" : "' + this.user.level + '"},"transactionMovement":"' + this.transactionMovement + '","allowAPP":false'
+				}
 
 				await this.getTransactionTypes(where).then(
 					transactionTypes => {
@@ -503,24 +503,24 @@ export class PointOfSaleComponent implements OnInit {
 					query['branchOrigin'] = { $oid: this.identity.origin.branch._id };
 				}
 
-                query['type.level'] = { $lt : this.user.level };
-                query['operationType'] = { $ne: 'D' };
-                
+				query['type.level'] = { $lt: this.user.level };
+				query['operationType'] = { $ne: 'D' };
+
 				await this.getTransactionsV2(query).then(
 					transactions => {
-                        this.hideMessage();
+						this.hideMessage();
 						this.transactions = transactions;
 					}
 				);
 			} else if (this.posType === "cuentas-corrientes") {
 
-                let where
+				let where
 
-                if(this.user.branch && this.user.branch._id){
-                    where = 'where="level":{ "$lt" : "'+this.user.level+'"},"$or":[{"branch":{ "$exists": false}},{"branch":null},{"branch":"'+this.user.branch._id+'"}],"transactionMovement":"' + this.transactionMovement + '"'
-                } else {
-                    where = 'where="level":{ "$lt" : "'+this.user.level+'"},"transactionMovement":"' + this.transactionMovement + '"'
-                }
+				if (this.user.branch && this.user.branch._id) {
+					where = 'where="level":{ "$lt" : "' + this.user.level + '"},"$or":[{"branch":{ "$exists": false}},{"branch":null},{"branch":"' + this.user.branch._id + '"}],"transactionMovement":"' + this.transactionMovement + '"'
+				} else {
+					where = 'where="level":{ "$lt" : "' + this.user.level + '"},"transactionMovement":"' + this.transactionMovement + '"'
+				}
 
 				await this.getTransactionTypes(where).then(
 					transactionTypes => {
@@ -876,21 +876,22 @@ export class PointOfSaleComponent implements OnInit {
 						await this.assignCurrency().then(
 							async result => {
 								if (result) {
-                  // CONSULTAR ULTIMO NÚMERO DE PEDIDO PARA ENUMARAR EL SIGUIENTE
+									// CONSULTAR ULTIMO NÚMERO DE PEDIDO PARA ENUMARAR EL SIGUIENTE
 									if (this.transaction.type.maxOrderNumber > 0) {
-										let query = `where= "type":"${this.transaction.type._id}"
+										let query = `where= "type":"${this.transaction.type._id}","origin":${this.transaction.origin}
 													&sort="startDate":-1
 													&limit=1`;
 										await this.getTransactions(query).then(
 											async transactions => {
-												let orderNumber = 1;
+												let orderNumber: string = '1';
 												if (transactions && transactions.length > 0) {
-													orderNumber = transactions[0].orderNumber + 1;
-													if (orderNumber > this.transaction.type.maxOrderNumber) {
-														orderNumber = 1;
+													let word = transactions[0].orderNumber.toString();
+													orderNumber = (parseInt(word.toString().substr(1, word.length)) + 1).toString();
+													if ((parseInt(word.toString().substr(1, word.length)) + 1) > this.transaction.type.maxOrderNumber) {
+														orderNumber = '1';
 													}
 												}
-												this.transaction.orderNumber = orderNumber;
+												this.transaction.orderNumber = parseFloat(this.transaction.origin + orderNumber);
 											}
 										);
 									}
@@ -1534,8 +1535,8 @@ export class PointOfSaleComponent implements OnInit {
 				operationType: 1,
 				"type._id": 1,
 				"type.allowEdit": 1,
-                "type.name": 1,
-                "type.level" : 1,
+				"type.name": 1,
+				"type.level": 1,
 				"type.transactionMovement": 1,
 				"branchOrigin": 1,
 			}
