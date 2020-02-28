@@ -1684,23 +1684,43 @@ export class PointOfSaleComponent implements OnInit {
 					this.transaction = await this.getTransaction(this.tableSelected.lastTransaction._id);
 					if (this.transaction) {
 						this.nextStepTransaction();
+					} else {
+						this.hideMessage();
+						this.checkFreeTable();
 					}
 				} else {
-					this.tableSelected.state = TableState.Available;
-					await this.updateTable().then(
-						table => {
-							if (table) {
-								this.selectTable(table);
-							}
-						}
-					);
+					this.checkFreeTable();
 				}
 			} else {
-				this.initTransactionByType('defectOrders');
+				this.checkFreeTable();
 			}
 		} else {
 			this.showMessage("La mesa seleccionada se encuentra " + this.tableSelected.state, 'info', true);
 		}
+	}
+
+	public checkFreeTable(): void {
+
+		// Consultamos si existen transacciones abiertas por si perdio la relación.
+		this.getTransactions(`where="table":"${this.tableSelected._id}","state":"Abierto"`).then(
+			async transactions => {
+				if (transactions && transactions.length > 0) {
+					this.tableSelected.state = TableState.Busy;
+					this.tableSelected.lastTransaction = transactions[0];
+				} else {
+					this.tableSelected.state = TableState.Available;
+				}
+				await this.updateTable().then(
+					table => {
+						if (table && table.state === TableState.Available) {
+							this.initTransactionByType('defectOrders');
+						} else {
+							this.selectTable(table);
+						}
+					}
+				);
+			}
+		);
 	}
 
 	public getTable(tableId: string) {
