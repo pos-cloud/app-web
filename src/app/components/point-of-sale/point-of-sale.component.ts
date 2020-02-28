@@ -878,20 +878,19 @@ export class PointOfSaleComponent implements OnInit {
 								if (result) {
 									// CONSULTAR ULTIMO NÚMERO DE PEDIDO PARA ENUMARAR EL SIGUIENTE
 									if (this.transaction.type.maxOrderNumber > 0) {
-										let query = `where= "type":"${this.transaction.type._id}","origin":${this.transaction.origin}
+										let query = `where= "type":"${this.transaction.type._id}"
 													&sort="startDate":-1
 													&limit=1`;
 										await this.getTransactions(query).then(
 											async transactions => {
-												let orderNumber: string = '1';
+												let orderNumber = 1;
 												if (transactions && transactions.length > 0) {
-													let word = transactions[0].orderNumber.toString();
-													orderNumber = (parseInt(word.toString().substr(1, word.length)) + 1).toString();
-													if ((parseInt(word.toString().substr(1, word.length)) + 1) > this.transaction.type.maxOrderNumber) {
-														orderNumber = '1';
+													orderNumber = transactions[0].orderNumber + 1;
+													if (orderNumber > this.transaction.type.maxOrderNumber) {
+														orderNumber = 1;
 													}
 												}
-												this.transaction.orderNumber = parseFloat(this.transaction.origin + orderNumber);
+												this.transaction.orderNumber = orderNumber;
 											}
 										);
 									}
