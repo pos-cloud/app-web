@@ -2943,7 +2943,12 @@ export class PrintComponent implements OnInit {
 
 			}
         }
-        this.getFooter()
+
+        row += 3;
+        this.doc.line(0, row, 80, row);
+        row += 3;
+		this.doc.line(0, row, 80, row);
+
 		this.finishImpression();
 	}
 
@@ -3014,7 +3019,12 @@ export class PrintComponent implements OnInit {
 				}
 			}
         }
-        this.getFooter();
+
+        row += 3;
+        this.doc.line(0, row, 80, row);
+        row += 3;
+        this.doc.line(0, row, 80, row);
+        
 		this.finishImpression();
 	}
 
@@ -3139,7 +3149,6 @@ export class PrintComponent implements OnInit {
 								margin = this.roundNumber.transform((this.printer.pageWidth - imgWidth) / 2);
 								this.doc.addImage(imgdata, 'PNG', margin, row + 5, imgWidth, imgWidth);
 
-                                this.getFooter();
 								this.finishImpression();
 							}
 						}
