@@ -2932,9 +2932,13 @@ export class PrintComponent implements OnInit {
 
 				if (movementOfArticle.notes && movementOfArticle.notes !== '') {
 					row += 5;
-					this.doc.setFontStyle("italic");
-					this.doc.text(movementOfArticle.notes, 20, row);
-					this.doc.setFontStyle("normal");
+                    this.doc.setFontStyle("italic");
+                    var slice = 0;
+                    while (movementOfArticle.notes.length > slice) {
+                        this.doc.text(movementOfArticle.notes.slice(slice, this.printer.pageWidth - 30 + slice) + "-", 5, row);
+                        row += 4
+                        slice = slice + this.printer.pageWidth - 30
+                    }
 				}
 
 			}
@@ -2998,13 +3002,19 @@ export class PrintComponent implements OnInit {
 				}
 
 				if (movementOfArticle.notes && movementOfArticle.notes !== '') {
+                    //aca logica de nota
 					row += 5;
-					this.doc.setFontStyle("italic");
-					this.doc.text(movementOfArticle.notes, 20, row);
-					this.doc.setFontStyle("normal");
+                    this.doc.setFontStyle("italic");
+                    var slice = 0
+					while (movementOfArticle.notes.length > slice) {
+                        this.doc.text(movementOfArticle.notes.slice(slice, this.printer.pageWidth - 30 + slice) + "-", 5, row);
+                        row += 4
+                        slice = slice + this.printer.pageWidth - 30
+                    }
 				}
 			}
-		}
+        }
+        this.getFooter();
 		this.finishImpression();
 	}
 
@@ -3096,7 +3106,12 @@ export class PrintComponent implements OnInit {
 				if (movementOfArticle.notes && movementOfArticle.notes !== '') {
 					row += 5;
 					this.doc.setFontStyle("italic");
-					this.doc.text(movementOfArticle.notes, 20, row);
+                    var slice = 0
+					while (movementOfArticle.notes.length > slice) {
+                        this.doc.text(movementOfArticle.notes.slice(slice, this.printer.pageWidth - 30 + slice) + "-", 5, row);
+                        row += 4
+                        slice = slice + this.printer.pageWidth - 30
+                    }
 					this.doc.setFontStyle("normal");
 				}
 			}
@@ -3124,6 +3139,7 @@ export class PrintComponent implements OnInit {
 								margin = this.roundNumber.transform((this.printer.pageWidth - imgWidth) / 2);
 								this.doc.addImage(imgdata, 'PNG', margin, row + 5, imgWidth, imgWidth);
 
+                                this.getFooter();
 								this.finishImpression();
 							}
 						}
@@ -3202,8 +3218,12 @@ export class PrintComponent implements OnInit {
 		if (this.transaction.company) {
 			if (this.transaction.madein == 'resto' || this.transaction.madein == 'mostrador') {
 				row += 5;
-				this.doc.setFontType('bold');
-				this.doc.text("Cliente : " + this.transaction.company.name, margin, row);
+                this.doc.setFontType('bold');
+                if(this.transaction.company.name !== undefined){
+                    this.doc.text("Cliente : " + this.transaction.company.name, margin, row);
+                } else {
+                    this.doc.text("Cliente : Consumidor Final", margin, row);
+                }
 				this.doc.setFontType('normal');
 			}
 			if (this.transaction.madein == 'delivery') {
@@ -3259,10 +3279,15 @@ export class PrintComponent implements OnInit {
 					this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice + (movementOfArticle.transactionDiscountAmount * movementOfArticle.amount)).toString(), width - 15, row);
 
 					if (movementOfArticle.notes && movementOfArticle.notes !== "") {
-						row += 5;
+						row += 6;
 						this.doc.setFontStyle("italic");
 						this.doc.setTextColor(90, 90, 90);
-						this.doc.text(movementOfArticle.notes, 20, row);
+                        var slice = 0
+                        while (movementOfArticle.notes.length > slice) {
+                            this.doc.text(movementOfArticle.notes.slice(slice, this.printer.pageWidth - 30 + slice) + "-", 5, row);
+                            row += 4
+                            slice = slice + this.printer.pageWidth - 30
+                        }
 						this.doc.setFontStyle("normal");
 						this.doc.setTextColor(0, 0, 0);
 					}
