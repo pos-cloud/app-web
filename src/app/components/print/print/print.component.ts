@@ -2932,21 +2932,21 @@ export class PrintComponent implements OnInit {
 
 				if (movementOfArticle.notes && movementOfArticle.notes !== '') {
 					row += 5;
-                    this.doc.setFontStyle("italic");
-                    var slice = 0;
-                    while (movementOfArticle.notes.length > slice) {
-                        this.doc.text(movementOfArticle.notes.slice(slice, this.printer.pageWidth - 30 + slice) + "-", 5, row);
-                        row += 4
-                        slice = slice + this.printer.pageWidth - 30
-                    }
+					this.doc.setFontStyle("italic");
+					var slice = 0;
+					while (movementOfArticle.notes.length > slice) {
+						this.doc.text(movementOfArticle.notes.slice(slice, this.printer.pageWidth - 30 + slice) + "-", 5, row);
+						row += 4
+						slice = slice + this.printer.pageWidth - 30
+					}
 				}
 
 			}
-        }
+		}
 
-        row += 3;
-        this.doc.line(0, row, 80, row);
-        row += 3;
+		row += 3;
+		this.doc.line(0, row, 80, row);
+		row += 3;
 		this.doc.line(0, row, 80, row);
 
 		this.finishImpression();
@@ -3007,24 +3007,24 @@ export class PrintComponent implements OnInit {
 				}
 
 				if (movementOfArticle.notes && movementOfArticle.notes !== '') {
-                    //aca logica de nota
+					//aca logica de nota
 					row += 5;
-                    this.doc.setFontStyle("italic");
-                    var slice = 0
+					this.doc.setFontStyle("italic");
+					var slice = 0
 					while (movementOfArticle.notes.length > slice) {
-                        this.doc.text(movementOfArticle.notes.slice(slice, this.printer.pageWidth - 30 + slice) + "-", 5, row);
-                        row += 4
-                        slice = slice + this.printer.pageWidth - 30
-                    }
+						this.doc.text(movementOfArticle.notes.slice(slice, this.printer.pageWidth - 30 + slice) + "-", 5, row);
+						row += 4
+						slice = slice + this.printer.pageWidth - 30
+					}
 				}
 			}
-        }
+		}
 
-        row += 3;
-        this.doc.line(0, row, 80, row);
-        row += 3;
-        this.doc.line(0, row, 80, row);
-        
+		row += 3;
+		this.doc.line(0, row, 80, row);
+		row += 3;
+		this.doc.line(0, row, 80, row);
+
 		this.finishImpression();
 	}
 
@@ -3094,11 +3094,6 @@ export class PrintComponent implements OnInit {
 		row += 3;
 		this.doc.line(0, row, 80, row);
 
-		let qr: {} = {};
-		qr['type'] = 'articles';
-		qr['time'] = moment();
-		qr['transaction'] = this.transactionId;
-
 		//Cuerpo de la tabla de productos
 		row + 5;
 		this.doc.setFontSize(this.fontSizes.normal);
@@ -3116,46 +3111,55 @@ export class PrintComponent implements OnInit {
 				if (movementOfArticle.notes && movementOfArticle.notes !== '') {
 					row += 5;
 					this.doc.setFontStyle("italic");
-                    var slice = 0
+					var slice = 0;
 					while (movementOfArticle.notes.length > slice) {
-                        this.doc.text(movementOfArticle.notes.slice(slice, this.printer.pageWidth - 30 + slice) + "-", 5, row);
-                        row += 4
-                        slice = slice + this.printer.pageWidth - 30
-                    }
+						this.doc.text(movementOfArticle.notes.slice(slice, this.printer.pageWidth - 30 + slice) + "-", 5, row);
+						row += 4;
+						slice = slice + this.printer.pageWidth - 30;
+					}
 					this.doc.setFontStyle("normal");
 				}
 			}
 		}
 
-		qr['iat'] = moment().unix();
-		qr['exp'] = moment().add(this.config[0].voucher.minutesOfExpiration, "minutes").unix();
+
+		// let qr: {} = {};
+		// qr['type'] = 'articles';
+		// qr['time'] = moment();
+		// qr['transaction'] = this.transactionId;
+		// qr['iat'] = moment().unix();
+		// qr['exp'] = moment().add(this.config[0].voucher.minutesOfExpiration, "minutes").unix();
 
 		// Encrypt
-		this._voucherService.generateVoucher(qr).subscribe(
-			async result => {
-				if (!result.voucher) {
-					if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-				} else {
-					let voucher: Voucher = new Voucher();
-					voucher.token = result.voucher.toString();
-					voucher.expirationDate = moment().add(this.config[0].voucher.minutesOfExpiration, "minutes").format('YYYY-MM-DDTHH:mm:ssZ');
-					await this.saveVoucher(voucher).then(
-						async voucher => {
-							if (voucher) {
-								this.barcode64 = await this.getBarcode('qr?value=' + result.voucher.toString());
+		// this._voucherService.generateVoucher(qr).subscribe(
+		// 	async result => {
+		// 		if (!result.voucher) {
+		// 			if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+		// 		} else {
+		let voucher: Voucher = new Voucher();
+		voucher.token = this.transactionId;
+		voucher.date = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+		voucher.expirationDate = moment().add(this.config[0].voucher.minutesOfExpiration, "minutes").format('YYYY-MM-DDTHH:mm:ssZ');
+		await this.saveVoucher(voucher).then(
+			async voucher => {
+				if (voucher) {
+					this.barcode64 = await this.getBarcode('qr?value=' + this.transactionId);
 
-								let imgdata = 'data:image/png;base64,' + this.barcode64;
-								let imgWidth = 50;
-								margin = this.roundNumber.transform((this.printer.pageWidth - imgWidth) / 2);
-								this.doc.addImage(imgdata, 'PNG', margin, row + 5, imgWidth, imgWidth);
-
-								this.finishImpression();
-							}
-						}
-					);
+					let imgdata = 'data:image/png;base64,' + this.barcode64;
+					let imgWidth = 50;
+					margin = this.roundNumber.transform((this.printer.pageWidth - imgWidth) / 2);
+          this.doc.addImage(imgdata, 'PNG', margin, row + 5, imgWidth, imgWidth);
+          row += 60;
+          this.doc.setFontType('bold');
+          this.centerText(margin, margin, this.printer.pageWidth, 0, row, this.transactionId);
+          this.doc.setFontType('normal');
+					this.finishImpression();
 				}
 			}
 		);
+		// 		}
+		// 	}
+		// );
 	}
 
 	public saveVoucher(voucher: Voucher): Promise<Voucher> {
@@ -3227,12 +3231,12 @@ export class PrintComponent implements OnInit {
 		if (this.transaction.company) {
 			if (this.transaction.madein == 'resto' || this.transaction.madein == 'mostrador') {
 				row += 5;
-                this.doc.setFontType('bold');
-                if(this.transaction.company.name !== undefined){
-                    this.doc.text("Cliente : " + this.transaction.company.name, margin, row);
-                } else {
-                    this.doc.text("Cliente : Consumidor Final", margin, row);
-                }
+				this.doc.setFontType('bold');
+				if (this.transaction.company.name !== undefined) {
+					this.doc.text("Cliente : " + this.transaction.company.name, margin, row);
+				} else {
+					this.doc.text("Cliente : Consumidor Final", margin, row);
+				}
 				this.doc.setFontType('normal');
 			}
 			if (this.transaction.madein == 'delivery') {
@@ -3291,12 +3295,12 @@ export class PrintComponent implements OnInit {
 						row += 6;
 						this.doc.setFontStyle("italic");
 						this.doc.setTextColor(90, 90, 90);
-                        var slice = 0
-                        while (movementOfArticle.notes.length > slice) {
-                            this.doc.text(movementOfArticle.notes.slice(slice, this.printer.pageWidth - 30 + slice) + "-", 5, row);
-                            row += 4
-                            slice = slice + this.printer.pageWidth - 30
-                        }
+						var slice = 0
+						while (movementOfArticle.notes.length > slice) {
+							this.doc.text(movementOfArticle.notes.slice(slice, this.printer.pageWidth - 30 + slice) + "-", 5, row);
+							row += 4
+							slice = slice + this.printer.pageWidth - 30
+						}
 						this.doc.setFontStyle("normal");
 						this.doc.setTextColor(0, 0, 0);
 					}

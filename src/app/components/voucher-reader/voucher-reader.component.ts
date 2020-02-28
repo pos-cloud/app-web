@@ -35,7 +35,7 @@ export class VoucherReaderComponent implements OnInit {
 	public scanner;
 	public timeOfReading: string;
 	public timeGenerate: string;
-	public voucherRead;
+	public voucher: Voucher;
 	public movementsOfArticles: MovementOfArticle[];
 	public config: Config;
 
@@ -87,61 +87,39 @@ export class VoucherReaderComponent implements OnInit {
 		this.available = false;
 		if (this.text && this.text !== '') {
 			await this.getVouchers({ token: this.text }).then(
-				vouchers => {
+				async vouchers => {
 					if (vouchers && vouchers.length > 0) {
-            if (this.config.voucher.readingLimit === 0 || vouchers[0].readings < this.config.voucher.readingLimit) {
-							try {
-								// Decrypt
-								this._voucherService.verifyVoucher(this.text).subscribe(
-									async result => {
-										if (!result.voucher) {
-											this.available = true;
-											this.focusEvent.emit(true);
-											if (result.message && result.message !== '') this.showMessage(result.message, 'danger', true);
-										} else {
-											this.hideMessage();
-											this.voucherRead = result.voucher;
-											if (this.voucherRead.transaction) {
-												await this.getTransactions({
-													_id: { $oid: this.voucherRead.transaction },
-													state: { $ne: 'Anulado' },
-													operationType: { $ne: 'D' }
-												}).then(
-													async transactions => {
-														if (transactions && transactions.length > 0) {
-															await this.getMovementsOfArticles({
-																operationType: { $ne: 'D' },
-																transaction: { $oid: this.voucherRead.transaction },
-																'article.printIn': ArticlePrintIn.Voucher
-															}).then(
-																async movementsOfArticles => {
-																	if (movementsOfArticles && movementsOfArticles.length > 0) {
-																		this.movementsOfArticles = movementsOfArticles;
-																		let voucher = vouchers[0];
-																		voucher.readings += 1;
-																		await this.updateVoucher(voucher);
-																	}
-																}
-															);
-														} else {
-															this.showMessage('La transacción ya no se encuentra disponible', 'info', true);
-														}
-													}
-												);
+						this.voucher = vouchers[0];
+						if (this.config.voucher.readingLimit === 0 || vouchers[0].readings < this.config.voucher.readingLimit) {
+							await this.getTransactions({
+								_id: { $oid: this.voucher.token },
+								state: { $ne: 'Anulado' },
+								operationType: { $ne: 'D' }
+							}).then(
+								async transactions => {
+									if (transactions && transactions.length > 0) {
+										await this.getMovementsOfArticles({
+											operationType: { $ne: 'D' },
+											transaction: { $oid: this.voucher.token },
+											'article.printIn': ArticlePrintIn.Voucher
+										}).then(
+											async movementsOfArticles => {
+												if (movementsOfArticles && movementsOfArticles.length > 0) {
+													this.movementsOfArticles = movementsOfArticles;
+													let voucher = vouchers[0];
+													voucher.readings += 1;
+													await this.updateVoucher(voucher);
+													this.timeOfReading = moment().calendar();
+													this.timeGenerate = moment(this.voucher.date).calendar();
+													this.openModal('articles');
+												}
 											}
-											this.timeOfReading = moment().calendar();
-											this.timeGenerate = moment(this.voucherRead.time).calendar();
-											if (this.voucherRead.type === 'articles') {
-												this.openModal('articles');
-											}
-										}
+										);
+									} else {
+										this.showMessage('La transacción ya no se encuentra disponible', 'info', true);
 									}
-								);
-							} catch (err) {
-								this.available = true;
-								this.focusEvent.emit(true);
-								this.showMessage('Error al intentar leer el voucher.', 'info', true);
-							}
+								}
+							);
 						} else {
 							this.available = true;
 							this.focusEvent.emit(true);
@@ -168,7 +146,7 @@ export class VoucherReaderComponent implements OnInit {
 			this._voucherService.getVouchersV2(
 				{}, // PROJECT
 				match, // MATCH
-				{}, // SORT
+				{ readings: 1 }, // SORT
 				{}, // GROUP
 				0, // LIMIT
 				0 // SKIP

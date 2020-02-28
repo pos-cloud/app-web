@@ -5,7 +5,8 @@ import 'moment/locale/es';
 
 export class Voucher {
 
-	public _id: string;
+  public _id: string;
+  public date: string;
   public token: string;
   public readings: number = 0;
   public expirationDate: string;

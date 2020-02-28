@@ -347,10 +347,12 @@
 					</nav>
 				</div>
 				<div *ngIf="transaction &&
-					transaction.type &&
-					((transaction.type.transactionMovement.toString() === 'Stock' &&
+          transaction.type &&
+          transaction.type.transactionMovement &&
+          transaction.type.stockMovement &&
+					(((transaction.type.transactionMovement.toString() === 'Stock' &&
 					(transaction.type.stockMovement.toString() === 'Inventario' || transaction.type.stockMovement.toString() === 'Entrada')) ||
-					(transaction.type.transactionMovement.toString() === 'Compra' && transaction.type.stockMovement.toString() === 'Entrada'))"
+					(transaction.type.transactionMovement.toString() === 'Compra' && transaction.type.stockMovement.toString() === 'Entrada')))"
 					class="col-lg-2 col-md-3 btn-action btn-large center-content"
 					(click)="!loading ? openModal('add-article') : $event.stopPropagation()"
 					[ngClass]="{'disabled': loading, 'enabled': !loading }">
