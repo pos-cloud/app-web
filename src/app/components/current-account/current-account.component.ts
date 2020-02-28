@@ -19,7 +19,6 @@ import { TransactionTypeService } from './../../services/transaction-type.servic
 import { MovementOfCashService } from './../../services/movement-of-cash.service';
 
 //Componentes
-import { ListCompaniesComponent } from 'app/components/list-companies/list-companies.component';
 import { PrintComponent } from 'app/components/print/print/print.component';
 import { Printer, PrinterPrintIn } from '../../models/printer';
 import { PrinterService } from '../../services/printer.service';
@@ -31,6 +30,8 @@ import { TransactionMovement } from 'app/models/transaction-type';
 import { CompanyType } from 'app/models/payment-method';
 import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
 import { SelectCompanyComponent } from '../select-company/select-company.component';
+import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
+import { SendEmailComponent } from '../send-email/send-email.component';
 
 @Component({
 	selector: 'app-current-account',
@@ -88,7 +89,7 @@ export class CurrentAccountComponent implements OnInit {
 	private processParams(): void {
 		this._route.queryParams.subscribe(params => {
 			this.companyType = params['companyType'];
-			if(params['companyId']) {
+			if (params['companyId']) {
 				this.getCompany(params['companyId']);
 			} else {
 				this.openModal('company');
@@ -285,8 +286,84 @@ export class CurrentAccountComponent implements OnInit {
 					}
 				);
 				break;
+			case 'send-email':
+				let transaction: Transaction;
+				await this.getTransaction(transactionId).then(
+					async result => {
+						transaction = result;
+					}
+				);
+				if (transaction.type.readLayout) {
+					modalRef = this._modalService.open(PrintTransactionTypeComponent)
+					modalRef.componentInstance.transactionId = transactionId;
+					modalRef.componentInstance.source = "mail";
+				} else {
+					modalRef = this._modalService.open(PrintComponent);
+					modalRef.componentInstance.company = transaction.company;
+					modalRef.componentInstance.transactionId = transactionId;
+					modalRef.componentInstance.typePrint = 'invoice';
+					modalRef.componentInstance.source = "mail";
+				}
+				if (transaction.type.defectPrinter) {
+					modalRef.componentInstance.printer = transaction.type.defectPrinter;
+				} else {
+					await this.getPrinters().then(
+						printers => {
+							if (printers && printers.length > 0) {
+								for (let printer of printers) {
+									if (printer.printIn === PrinterPrintIn.Counter) {
+										modalRef.componentInstance.printer = printer;
+									}
+								}
+							}
+						}
+					);
+
+				}
+
+				modalRef = this._modalService.open(SendEmailComponent, { size: 'lg', backdrop: 'static' });
+				if (transaction.company && transaction.company.emails) {
+					modalRef.componentInstance.emails = transaction.company.emails;
+				}
+				let labelPrint = transaction.type.name;
+				if (transaction.type.labelPrint) {
+					labelPrint = transaction.type.labelPrint;
+				}
+				modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(transaction.origin, 4)}-${transaction.letter}-${this.padNumber(transaction.number, 8)}`;
+				if (transaction.type.electronics) {
+					modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente` + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/invoice/${transaction._id}">Su comprobante</a>`
+				} else {
+					modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/others/${transaction._id}">Su comprobante</a>`
+				}
+
+				if (Config.country === 'MX') {
+					modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}.poscloud.com.ar:300/api/print/xml/CFDI-33_Factura_` + transaction.number;
+				}
+
+				if (transaction.type.defectEmailTemplate) {
+
+					if (transaction.type.electronics) {
+						modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/invoice/ + ${transaction._id}">Su comprobante</a>`
+					} else {
+						modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/others/ + ${transaction._id}">Su comprobante</a>`
+					}
+
+					if (Config.country === 'MX') {
+						modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}.poscloud.com.ar:300/api/print/xml/CFDI-33_Factura_` + transaction.number;
+					}
+				}
+
+				break;
 			default: ;
 		}
+	}
+
+	public padNumber(n, length): string {
+
+		var n = n.toString();
+		while (n.length < length)
+			n = "0" + n;
+		return n;
 	}
 
 	public getTransaction(transactionId: string): Promise<Transaction> {
