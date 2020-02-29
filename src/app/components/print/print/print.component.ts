@@ -2908,6 +2908,7 @@ export class PrintComponent implements OnInit {
             this.doc.setFontType('bold');
             if (this.transaction.employeeOpening) {
                 this.doc.text("Mozo: " + this.transaction.employeeOpening.name, margin, row);
+                row += 5;
             }
             this.doc.text("Mesa: " + this.transaction.table.description, margin, row);
             this.doc.setFontType('normal');
@@ -2929,8 +2930,8 @@ export class PrintComponent implements OnInit {
 
         //Cuerpo de la tabla de productos
         row + 5;
-        this.doc.setFontType('bold');
-        this.doc.setFontSize(this.fontSizes.large);
+        this.doc.setFontType('normal');
+		this.doc.setFontSize(this.fontSizes.normal);
         if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
             for (let movementOfArticle of this.movementsOfArticles) {
                 row += 5;
