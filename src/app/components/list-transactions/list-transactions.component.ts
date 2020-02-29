@@ -380,7 +380,7 @@ export class ListTransactionsComponent implements OnInit {
 				});
 				break;
 			case 'print':
-                if(transaction.type.expirationDate && transaction.type.expirationDate < moment().format('DD/MM/YYYY')){
+                if(transaction.type.expirationDate && moment(transaction.type.expirationDate).diff(moment(),'days') <= 0){
                     this.showMessage("El documento esta vencido","danger",true)
                 } else {
                     if (transaction.type.readLayout) {

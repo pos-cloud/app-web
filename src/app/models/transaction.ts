@@ -501,7 +501,7 @@ export let attributes = [
 		disabled: true,
 		filter: false,
 		datatype: 'string',
-		project: `{ "$dateToString": { "date": "$type.expirationDate", "format": "%d/%m/%Y", "timezone": "-03:00" } }`,
+		project: null,
 		align: 'left',
 		required: true,
 	},

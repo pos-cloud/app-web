@@ -2197,7 +2197,7 @@ export class AddSaleOrderComponent {
 				});
 				break;
 			case 'print':
-				if (this.transaction.type.expirationDate && moment(this.transaction.type.expirationDate).format('DD/MM/YYYY') < moment().format('DD/MM/YYYY')) {
+				if (this.transaction.type.expirationDate && moment(this.transaction.type.expirationDate).diff(moment(),'days') <= 0) {
 					this.showToast("El documento esta vencido no se puede imprimir", "danger")
 					this.backFinal();
 				} else {
