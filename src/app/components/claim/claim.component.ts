@@ -194,7 +194,7 @@ export class ClaimComponent  implements OnInit {
       result =>{
         if(result) {
           this.file = result['file'];
-          this.showMessage("El archivo se guardo correstamente", 'info', false);
+          this.showMessage("El archivo se guardo correctamente", 'info', false);
         }
       },
       error =>{
