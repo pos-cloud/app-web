@@ -2874,83 +2874,97 @@ export class PrintComponent implements OnInit {
 		}
 	}
 
-	public toPrintKitchen() {
+    public toPrintKitchen() {
 
-		//Cabecera del ticket
-		var margin = 5;
-		var row = 5;
-		this.doc.setFontType('bold');
-		this.doc.setFontSize(this.fontSizes.large);
-		this.centerText(3, 5, 60, 0, row, "COCINA");
-		this.doc.setFontType('normal');
-		this.doc.setFontSize(this.fontSizes.normal);
+        //Cabecera del ticket
+        var margin = 5;
+        var row = 5;
 
-		row += 8;
-		this.doc.setFontType('bold');
-		this.doc.text("Pedido Nº: " + this.transaction.number, margin, row);
-		this.doc.setFontType('normal');
-		this.doc.text("Fecha: " + this.transaction.startDate.substring(0, 5), 30, row);
-		row += 5;
-		this.doc.text("Hora: " + this.transaction.startDate.substring(11, 13) + ":" + this.transaction.startDate.substring(15, 17), 30, row);
 
-		if (this.transaction.table) {
-			row += 5;
-			this.doc.setFontType('bold');
-			if (this.transaction.employeeOpening) {
-				this.doc.text("Mozo: " + this.transaction.employeeOpening.name, margin, row);
-			}
-			this.doc.text("Mesa: " + this.transaction.table.description, 30, row);
-			this.doc.setFontType('normal');
-		} else if (this.transaction.employeeOpening) {
-			row += 5;
-			this.doc.setFontType('bold');
-			this.doc.text("Empleado: " + this.transaction.employeeOpening.name, margin, row);
-			this.doc.setFontType('normal');
-		}
+        //jackson
+        /*this.doc.line(0, row, 80, row);
+        row += 40
+        this.doc.line(0, row, 80, row);*/
 
-		//Cabecera de la tala de productos
-		row += 3;
-		this.doc.line(0, row, 80, row);
-		row += 5;
-		this.doc.text("Cant.", 5, row);
-		this.doc.text("Desc.", 30, row);
-		row += 3;
-		this.doc.line(0, row, 80, row);
+        this.doc.setFontType('bold');
+        this.doc.setFontSize(this.fontSizes.large);
+        this.centerText(3, 5, 60, 0, row, "COCINA");
+        this.doc.setFontType('normal');
+        this.doc.setFontSize(this.fontSizes.large);
 
-		//Cuerpo de la tabla de productos
-		row + 5;
-		this.doc.setFontSize(this.fontSizes.normal);
-		if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
-			for (let movementOfArticle of this.movementsOfArticles) {
-				row += 5;
-				this.centerText(3, 5, 15, 0, row, this.roundNumber.transform(movementOfArticle.amount - movementOfArticle.printed).toString());
-				if (movementOfArticle.article) {
-					this.doc.text(movementOfArticle.article.posDescription, 20, row);
-				} else {
-					this.doc.text(movementOfArticle.description, 20, row);
-				}
+        row += 8;
+        this.doc.setFontType('bold');
+        this.doc.text("Pedido Nº: " + this.transaction.number, margin, row);
+        row += 5;
+        this.doc.setFontType('normal');
+        this.doc.text("Fecha: " + this.transaction.startDate.substring(0, 5), margin, row);
+        row += 5;
+        this.doc.text("Hora: " + this.transaction.startDate.substring(11, 13) + ":" + this.transaction.startDate.substring(15, 17), margin, row);
 
-				if (movementOfArticle.notes && movementOfArticle.notes !== '') {
-					row += 5;
-					this.doc.setFontStyle("italic");
-					var slice = 0;
-					while (movementOfArticle.notes.length > slice) {
-						this.doc.text(movementOfArticle.notes.slice(slice, this.printer.pageWidth - 30 + slice) + "-", 5, row);
-						row += 4
-						slice = slice + this.printer.pageWidth - 30
-					}
-				}
+        if (this.transaction.table) {
+            row += 5;
+            this.doc.setFontType('bold');
+            if (this.transaction.employeeOpening) {
+                this.doc.text("Mozo: " + this.transaction.employeeOpening.name, margin, row);
+            }
+            this.doc.text("Mesa: " + this.transaction.table.description, margin, row);
+            this.doc.setFontType('normal');
+        } else if (this.transaction.employeeOpening) {
+            row += 5;
+            this.doc.setFontType('bold');
+            this.doc.text("Empleado: " + this.transaction.employeeOpening.name, margin, row);
+            this.doc.setFontType('normal');
+        }
 
-			}
-		}
+        //Cabecera de la tala de productos
+        row += 3;
+        this.doc.line(0, row, 80, row);
+        row += 5;
+        this.doc.text("Cant.", 5, row);
+        this.doc.text("Desc.", 30, row);
+        row += 3;
+        this.doc.line(0, row, 80, row);
 
-		row += 3;
-		this.doc.line(0, row, 80, row);
-		row += 3;
-		this.doc.line(0, row, 80, row);
+        //Cuerpo de la tabla de productos
+        row + 5;
+        this.doc.setFontType('bold');
+        this.doc.setFontSize(this.fontSizes.large);
+        if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
+            for (let movementOfArticle of this.movementsOfArticles) {
+                row += 5;
+                this.centerText(3, 5, 15, 0, row, this.roundNumber.transform(movementOfArticle.amount - movementOfArticle.printed).toString());
+                if (movementOfArticle.article) {
+                    this.doc.text(movementOfArticle.article.posDescription, 15, row);
+                } else {
+                    this.doc.text(movementOfArticle.description, 15, row);
+                }
 
-		this.finishImpression();
-	}
+                if (movementOfArticle.notes && movementOfArticle.notes !== '') {
+                    row += 5;
+                    this.doc.setFontStyle("italic");
+                    var slice = 0;
+
+                    var note = movementOfArticle.notes.split(';')
+
+                    if (note && note.length > 0) {
+                        for (const iterator of note) {
+                            this.doc.text(iterator, 5, row);
+                            row += 5
+                        }
+                    } else {
+                        while (movementOfArticle.notes.length > slice) {
+                            this.doc.text(movementOfArticle.notes.slice(slice, this.printer.pageWidth - 40 + slice) + "-", 5, row);
+                            row += 5
+                            slice = slice + this.printer.pageWidth - 40
+                        }
+                    }
+                }
+
+            }
+        }
+
+        this.finishImpression();
+    }
 
 	public toPrintBar() {
 
@@ -3294,16 +3308,38 @@ export class PrintComponent implements OnInit {
 					if (movementOfArticle.notes && movementOfArticle.notes !== "") {
 						row += 6;
 						this.doc.setFontStyle("italic");
-						this.doc.setTextColor(90, 90, 90);
-						var slice = 0
-						while (movementOfArticle.notes.length > slice) {
-							this.doc.text(movementOfArticle.notes.slice(slice, this.printer.pageWidth - 30 + slice) + "-", 5, row);
-							row += 4
-							slice = slice + this.printer.pageWidth - 30
-						}
-						this.doc.setFontStyle("normal");
-						this.doc.setTextColor(0, 0, 0);
-					}
+                        this.doc.setTextColor(0, 0, 0);
+                        var slice = 0
+                        
+                        var note = movementOfArticle.notes.split(';')
+
+                    if (note && note.length > 0) {
+                        for (const iterator of note) {
+                            this.doc.text(iterator, 5, row);
+                            row += 5
+                        }
+                    } else {
+
+                            while (movementOfArticle.notes.length > slice) {
+                                this.doc.text(movementOfArticle.notes.slice(slice, this.printer.pageWidth - 30 + slice) + "-", 5, row);
+                                row += 4
+                                slice = slice + this.printer.pageWidth - 30
+                            }
+                            this.doc.setFontStyle("normal");
+                            this.doc.setTextColor(0, 0, 0);
+                        }
+                    }
+                    if(movementOfArticle.article.containsStructure){
+                        var movArticle : MovementOfArticle[] = await this.getMovArticleChild(movementOfArticle._id)   
+                        
+                        if(movArticle && movArticle.length > 0){
+                            this.doc.setFontStyle("italic");
+                            for (const iterator of movArticle) {
+                                row += 6
+                                this.doc.text(iterator.description, 5, row);
+                            }
+                        }
+                    }
 				}
 			}
 		}
@@ -3362,7 +3398,36 @@ export class PrintComponent implements OnInit {
 			}
 
 		}
-	}
+    }
+    
+    public getMovArticleChild(movementOfArticleId) {
+        return new Promise<MovementOfArticle[]>((resolve, reject) => {
+            let project = {
+                _id : 1,
+                movementParent : 1,
+                description : 1,
+                "category._id" : 1,
+                "category.isRequiredOptional" : 1
+            }
+
+            let match = {
+                movementParent : { $oid : movementOfArticleId},
+                "category.isRequiredOptional" : true
+            }
+            this._movementOfArticleService.getMovementsOfArticlesV2(project,match,{ description : 1},{}).subscribe(
+                result => {
+                    if(result && result.movementsOfArticles ){
+                        resolve(result.movementsOfArticles)
+                    } else {
+                        resolve(null)
+                    }
+                },
+                error => {
+                    resolve(null)
+                }
+            )
+        })
+    }
 
 
 
