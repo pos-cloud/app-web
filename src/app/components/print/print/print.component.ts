@@ -309,8 +309,10 @@ export class PrintComponent implements OnInit {
 
 
             "employeeClosing._id" : 1,
-            "employeeClosing.name" : 1
+            "employeeClosing.name" : 1,
 
+            "employeeOpening._id" : 1,
+            "employeeOpening.name" : 1
 
 
         }`;
