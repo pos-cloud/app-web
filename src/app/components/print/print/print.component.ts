@@ -3410,7 +3410,8 @@ export class PrintComponent implements OnInit {
                 movementParent : 1,
                 description : 1,
                 "category._id" : 1,
-                "category.isRequiredOptional" : 1
+                "category.isRequiredOptional" : 1,
+                operationType : 1
             }
 
             let match = {
