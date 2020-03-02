@@ -134,6 +134,11 @@
         <span *ngIf="!loading && transactionType.cashOpening">Abrir Caja</span>
         <span *ngIf="loading">Espere por favor</span>
       </button>
+      <button type="button" *ngIf="transactionType.cashClosing" class="btn btn-secundary"
+        [disabled]="!cashBoxForm.valid || loading" (click)="openModal('print')">
+        <i class="fa fa-print"></i>
+        <span>Imprimir</span>
+      </button>
       <button type="button" *ngIf="transactionType.cashClosing" class="btn btn-primary"
         [disabled]="!cashBoxForm.valid || loading" (click)="closeCashBox()">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
