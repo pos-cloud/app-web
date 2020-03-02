@@ -3415,7 +3415,8 @@ export class PrintComponent implements OnInit {
 
             let match = {
                 movementParent : { $oid : movementOfArticleId},
-                "category.isRequiredOptional" : true
+                "category.isRequiredOptional" : true,
+                operationType : { $ne :  'D' }
             }
             this._movementOfArticleService.getMovementsOfArticlesV2(project,match,{ description : 1},{}).subscribe(
                 result => {
