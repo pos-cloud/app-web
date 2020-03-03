@@ -481,7 +481,7 @@ export class AddSaleOrderComponent {
 			this.loading = true;
 
 			this.transaction.exempt = this.roundNumber.transform(this.transaction.exempt);
-			this.transaction.discountAmount = this.roundNumber.transform(this.transaction.discountAmount);
+			this.transaction.discountAmount = this.roundNumber.transform(this.transaction.discountAmount, 6);
 			this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
 
 			this._transactionService.updateTransaction(this.transaction).subscribe(
@@ -1117,7 +1117,7 @@ export class AddSaleOrderComponent {
 			movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice / this.lastQuotation) * quotation);
 		}
 
-		movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * this.transaction.discountPercent / 100), 3);
+		movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * this.transaction.discountPercent / 100), 6);
 		movementOfArticle.unitPrice -= this.roundNumber.transform(movementOfArticle.transactionDiscountAmount);
 		movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
 		movementOfArticle.markupPrice = 0.00;
@@ -1306,7 +1306,7 @@ export class AddSaleOrderComponent {
 				}
 			}
 
-			movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * this.transaction.discountPercent / 100), 3);
+			movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * this.transaction.discountPercent / 100), 6);
 			movementOfArticle.unitPrice -= this.roundNumber.transform(movementOfArticle.transactionDiscountAmount);
 			movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
 			movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
@@ -1410,13 +1410,13 @@ export class AddSaleOrderComponent {
 		let discountAmountAux = 0;
 
 		if (discountPercent !== undefined) {
-			this.transaction.discountPercent = this.roundNumber.transform(discountPercent, 3);
+			this.transaction.discountPercent = this.roundNumber.transform(discountPercent, 6);
 		} else if (!this.transaction.discountPercent) {
 			this.transaction.discountPercent = 0;
 			discountAmountAux = 0;
 		}
 
-		let isUpdateValid: boolean = true;
+    let isUpdateValid: boolean = true;
 
 		if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
 			for (let movementOfArticle of this.movementsOfArticles) {
@@ -1427,14 +1427,14 @@ export class AddSaleOrderComponent {
 				let oldMovementOfArticle: {} = {};
 				oldMovementOfArticle = Object.assign(oldMovementOfArticle, movementOfArticle);
 				if (!movementOfArticle.movementParent) {
-					this.transaction.discountPercent = this.roundNumber.transform(this.transaction.discountPercent);
+					this.transaction.discountPercent = this.roundNumber.transform(this.transaction.discountPercent, 6);
 					if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
 						movementOfArticle = await this.recalculateSalePrice(movementOfArticle);
 					} else {
 						movementOfArticle = this.recalculateCostPrice(movementOfArticle);
 					}
 					totalPriceAux += this.roundNumber.transform(movementOfArticle.salePrice);
-					discountAmountAux += this.roundNumber.transform(movementOfArticle.transactionDiscountAmount * movementOfArticle.amount);
+					discountAmountAux += this.roundNumber.transform(movementOfArticle.transactionDiscountAmount * movementOfArticle.amount, 6);
 					// COMPARAMOS JSON -- SI CAMBIO ACTUALIZAMOS
 					if (this._jsonDiffPipe.transform(oldMovementOfArticle, movementOfArticle) ||
 						(oldMovementOfArticle['taxes'] && oldMovementOfArticle['taxes'].length > 0 &&
