@@ -2931,7 +2931,10 @@ export class PrintComponent implements OnInit {
         //Cuerpo de la tabla de productos
         row + 5;
         this.doc.setFontType('normal');
-		this.doc.setFontSize(this.fontSizes.normal);
+        this.doc.setFontSize(this.fontSizes.normal);
+        //jacksonburgs
+        //this.doc.setFontType('bold');
+        //this.doc.setFontSize(this.fontSizes.large);
         if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
             for (let movementOfArticle of this.movementsOfArticles) {
                 row += 5;
