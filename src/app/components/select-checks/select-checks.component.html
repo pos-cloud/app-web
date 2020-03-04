@@ -1,4 +1,4 @@
-<section class="container-fluid" *ngIf="userType==='pos'">
+<section class="container-fluid">
     <div class="center-content" *ngIf="alertMessage !== '' && !areMovementOfCashesEmpty">
       <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
         {{alertMessage}}

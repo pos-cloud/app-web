@@ -117,45 +117,15 @@ export class SelectChecksComponent implements OnInit {
                 "transaction.state": "${TransactionState.Closed}",
                 "transaction.operationType": { "$ne": "D" },`;
       
-      if(this.userType === 'admin') {
-        match += `"transaction.type.transactionMovement": "${this.transactionMovement}" }`;
-      } else {
-        match += `"statusCheck": "${StatusCheck.Available}","type.inputAndOuput" : true }`;
-      }
+      
+    match += `"statusCheck": "${StatusCheck.Available}","type.inputAndOuput" : true }`;
+      
       
       match = JSON.parse(match);
       
       let project = {};
       // CAMPOS A TRAER
-      if(this.userType === 'admin') {
-        project = {
-          "_id": 1,
-          "transaction.endDate": { $dateToString: { date: "$transaction.endDate", format: "%d/%m/%Y", timezone: "-03:00"}},
-          "transaction.cashBox.number": { $toString: "$transaction.cashBox.number"},
-          "quota":1 ,
-          "discount": 1,
-          "number": 1,
-          "statusCheck": 1,
-          "observation": 1,
-          "bank._id": 1 ,
-          "bank.name": 1, 
-          "amountPaid": { $toString: '$amountPaid'},
-          "operationType": 1,
-          "expirationDate": { $dateToString: { date: "$expirationDate", format: "%d/%m/%Y", timezone: "-03:00" }},
-          "transaction._id":1,
-          "transaction.state": 1,
-          "transaction.type.name": 1,
-          "transaction.type.transactionMovement": 1,
-          "date": 1,
-          "titular": 1,
-          "receiver": 1,
-          "type._id": { $toString: '$type._id'},
-          "type.name": 1,
-          "deliveredBy": 1,
-          "CUIT": 1,
-          "transaction.operationType": 1
-        };
-      } else {
+      
         project = {
           "_id": 1,
           "number": 1,
@@ -180,7 +150,6 @@ export class SelectChecksComponent implements OnInit {
           "CUIT": 1,
           "observation": 1,
           "transaction.operationType": 1
-        };
       }
   
       // AGRUPAMOS EL RESULTADO
