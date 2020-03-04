@@ -8,7 +8,7 @@ import 'moment/locale/es';
 import { Room } from './../../models/room';
 import { Printer, PrinterPrintIn } from './../../models/printer';
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType, TransactionMovement, StockMovement } from './../../models/transaction-type';
+import { TransactionType, TransactionMovement, StockMovement, CurrentAccount } from './../../models/transaction-type';
 
 import { RoomService } from './../../services/room.service';
 import { TransactionService } from './../../services/transaction.service';
@@ -44,7 +44,6 @@ import { SelectOriginComponent } from '../select-origin/select-origin.component'
 import { SelectDepositComponent } from '../select-deposit/select-deposit.component';
 import { ConfigService } from 'app/services/config.service';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
-import { first } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 import { SelectCompanyComponent } from '../select-company/select-company.component';
 import { User } from 'app/models/user';
@@ -580,7 +579,7 @@ export class PointOfSaleComponent implements OnInit {
 			this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
 		}
 
-		if (this.posType === 'cuentas-corrientes') {
+		if (this.posType === 'cuentas-corrientes' && this.transaction.type.currentAccount === CurrentAccount.Charge) {
 			if (this.transactionMovement === TransactionMovement.Sale) {
 				this.totalPrice *= -1;
 			}
@@ -1083,7 +1082,7 @@ export class PointOfSaleComponent implements OnInit {
 						this.transaction = result.transaction;
 						if (this.transaction) {
 							if (this.transaction.type && this.transaction.type.requestArticles) {
-								let route = '/pos/' + this.posType + '/editar-transaccion';
+								let route = '/pos/mostrador/editar-transaccion';
 								this._router.navigate([route], { queryParams: { transactionId: this.transaction._id, returnURL: this._router.url } });
 							} else if (this.transaction.type.requestPaymentMethods) {
 								this.openModal('charge');
