@@ -805,8 +805,23 @@ export class PrintComponent implements OnInit {
 				//this.doc.text("$ " + this.roundNumber.transform(this.transactions[index].totalPrice), 80, row);
 				this.doc.textEx("$ " + this.roundNumber.transform(this.transactions[index].totalPrice), 95, row, 'right', 'middle');
 
-				row += 8;
-			}
+                row += 8;
+                
+                if(row > 280){
+                    this.doc.addPage();
+                    var row = 30;
+                    this.doc.setFontType('bold');
+                    this.doc.setFontSize(this.fontSizes.normal);
+                    this.doc.line(0, row, 100, row)
+                    row += 5
+                    this.doc.text("Comprobantes cancelados", 10, row);
+                    this.doc.text("Total", 80, row);
+                    row += 3
+                    this.doc.line(0, row, 100, row)
+                    row += 5
+                }
+            }
+            
 		}
 
 		this.doc.setFontType('bold');
