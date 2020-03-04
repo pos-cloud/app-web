@@ -305,6 +305,7 @@ export class PrintComponent implements OnInit {
             "company.address" :1,
             "company.phones" :1,
             "company.city" :1,
+            "company.fantasyName" : 1,
 
             "table.description" : 1,
 
@@ -1728,10 +1729,14 @@ export class PrintComponent implements OnInit {
 		this.doc.setFontSize(this.fontSizes.normal);
 		this.doc.setFontType('bold');
 		this.doc.text("Empleado:", margin, 71);
+		this.doc.text("Nombre de Fantasía:", 110, 71);
 
 		this.doc.setFontType('normal');
 
-		this.doc.text(this.transaction.employeeClosing.name, 42, 71);
+        this.doc.text(this.transaction.employeeClosing.name, 42, 71);
+        if(this.transaction.company.fantasyName){
+            this.doc.text(this.transaction.company.fantasyName, 150, 71);
+        }
 
 		this.doc.setFontSize(this.fontSizes.normal);
 		this.doc.setFontType('normal');
