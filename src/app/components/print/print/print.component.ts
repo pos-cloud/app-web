@@ -787,9 +787,9 @@ export class PrintComponent implements OnInit {
 		row += 5;
 
 
-		await this.getCancellationsOfMovements(this.transactionId)
+		let transactions : Transaction[] = await this.getCancellationsOfMovements(this.transactionId)
 
-		if (this.transactions) {
+		if (transactions) {
 			this.doc.setFontType('bold');
 			this.doc.setFontSize(this.fontSizes.normal);
 			this.doc.line(0, row, 100, row)
@@ -799,17 +799,76 @@ export class PrintComponent implements OnInit {
 			row += 3
 			this.doc.line(0, row, 100, row)
 			row += 5
-			for (let index = 0; index < this.transactions.length; index++) {
+			for (let index = 0; index < transactions.length; index++) {
 				this.doc.setFontType('normal');
-				this.doc.text(this.transactions[index].type.name + "   " + this.padString(this.transactions[index].origin, 4) + "-" + this.padString(this.transactions[index].number, 8), 10, row);
+				this.doc.text(transactions[index].type.name + "   " + this.padString(transactions[index].origin, 4) + "-" + this.padString(transactions[index].number, 8), 10, row);
 				//this.doc.text("$ " + this.roundNumber.transform(this.transactions[index].totalPrice), 80, row);
-				this.doc.textEx("$ " + this.roundNumber.transform(this.transactions[index].totalPrice), 95, row, 'right', 'middle');
+				this.doc.textEx("$ " + this.roundNumber.transform(transactions[index].totalPrice), 95, row, 'right', 'middle');
 
                 row += 8;
                 
                 if(row > 280){
                     this.doc.addPage();
-                    var row = 30;
+
+                    // Encabezado de la transacción
+					this.getHeader(true);
+					this.getClient();
+
+					// Numeración de la transacción
+					this.doc.setFontSize(this.fontSizes.extraLarge);
+
+					if (this.transaction.type.labelPrint &&
+						this.transaction.type.labelPrint !== '') {
+						this.centerText(5, 5, 105, 105, 10, this.transaction.type.labelPrint);
+					} else {
+						this.centerText(5, 5, 105, 105, 10, this.transaction.type.name);
+					}
+					this.doc.setFontSize(this.fontSizes.normal);
+					this.doc.setFontType('bold');
+					this.doc.text("Comp. Nº:", 110, 20);
+					this.doc.setFontType('normal');
+					if (Config.country === 'AR') {
+						this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 10), 130, 20);
+					} else {
+						this.doc.text(this.padString(this.transaction.number, 10), 130, 20);
+					}
+					this.doc.setFontType('bold');
+					this.doc.text("Fecha:", 110, 25);
+					this.doc.setFontType('normal');
+					if (this.transaction.endDate) {
+						this.doc.text(this.transaction.endDate, 125, 25);
+					} else {
+						this.doc.text(this.transaction.startDate, 125, 25);
+					}
+
+					// Letra de transacción
+					// Letra de transacción
+					if (this.transaction.letter && this.transaction.letter !== "") {
+						// Dibujar la linea cortada para la letra
+						this.doc.line(105, 16, 105, 50); //vertical letra
+						this.doc.setFontSize(this.fontSizes.extraLarge);
+						this.doc.setFontType('bold');
+						this.doc.setDrawColor("Black");
+						this.doc.rect(100, 3, 10, 10);
+						this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
+						if (this.transaction.type.codes && Config.country === 'AR') {
+							for (let i = 0; i < this.transaction.type.codes.length; i++) {
+								if (this.transaction.letter === this.transaction.type.codes[i].letter) {
+									this.doc.setFontSize('8');
+									this.doc.text("Cod:" + this.padString((this.transaction.type.codes[i].code).toString(), 2), 101, 16);
+								}
+							}
+						}
+					} else {
+						// Dibujar la linea cortada para la letra
+						this.doc.line(105, 0, 105, 50); //vertical letra
+					}
+					this.doc.setFontType('normal');
+                    this.doc.setFontSize(this.fontSizes.normal);
+                    
+
+
+                    row = 72
                     this.doc.setFontType('bold');
                     this.doc.setFontSize(this.fontSizes.normal);
                     this.doc.line(0, row, 100, row)
@@ -843,9 +902,9 @@ export class PrintComponent implements OnInit {
 		}
 	}
 
-	async getCancellationsOfMovements(transactionDestinationViewId) {
+	async getCancellationsOfMovements(transactionDestinationViewId): Promise<Transaction[]> {
 
-		return new Promise((resolve, reject) => {
+		return new Promise <Transaction[]>((resolve, reject) => {
 
 			this.loading = true;
 
@@ -870,18 +929,18 @@ export class PrintComponent implements OnInit {
 				0 // SKIP
 			).subscribe(async result => {
 				if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
-					this.transactions = new Array();
+					let transactions = new Array();
 					for (let index = 0; index < result.movementsOfCancellations.length; index++) {
 						let transaction = new Transaction;
 						transaction = await this.getTransaction2(result.movementsOfCancellations[index].transactionOrigin)
 
 						if (transaction) {
-							this.transactions.push(transaction);
+							transactions.push(transaction);
 						} else {
 							resolve(null)
 						}
 					}
-					resolve(true)
+					resolve(transactions)
 				} else {
 					resolve(null)
 					this.loading = false;
