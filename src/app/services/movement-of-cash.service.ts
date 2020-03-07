@@ -100,6 +100,32 @@ export class MovementOfCashService {
 				return of(err);
 			})
 		);
+    }
+    
+    public getMovementsOfCashesFullQuery(
+		query : {} 
+	): Observable<any> {
+
+		const URL = `${Config.apiURL}v2/movements-of-cashes`;
+
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
+
+		const params = new HttpParams()
+			.set('fullQuery', JSON.stringify(query));
+
+		return this._http.get(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
 	}
 
 	public getMovementsOfCashesByMovement(
