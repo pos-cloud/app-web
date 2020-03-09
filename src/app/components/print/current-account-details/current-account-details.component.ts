@@ -139,7 +139,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
         public _router: Router,
         public _companyService: CompanyService,
         public activeModal: NgbActiveModal,
-		public alertConfig: NgbAlertConfig,
+        public alertConfig: NgbAlertConfig,
         private domSanitizer: DomSanitizer
     ) {
         this.pageWidth = 210 * 100 / 35.27751646284102;
@@ -500,12 +500,8 @@ export class CurrentAccountDetailsComponent implements OnInit {
         ).subscribe(
             result => {
                 if (result) {
-                    if(result.count > 0){
-                        this.items = result;
-                        this.print();
-                    } else {
-                        this.showMessage("No se encontraron transacciones", 'info', true);
-                    }
+                    this.items = result;
+                    this.print();
                     this.loading = false;
                 }
             },
