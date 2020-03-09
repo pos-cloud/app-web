@@ -371,7 +371,7 @@ export const _routes: Routes = [
         data: { module: 'config.modules.sale' }
     },
     {
-        path: 'report/kardex-de-productos/:id',
+        path: 'report/kardex-de-productos',
         component: ReportKardexComponent,
         canActivate: [AuthGuard, LicenseGuard],
         data: { module: 'config.modules.stock' }

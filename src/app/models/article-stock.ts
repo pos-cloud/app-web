@@ -25,7 +25,7 @@ export let attributes = [
     	project: null,
 		align: 'left',
 		required : false,
-	},
+    },
 	{
 		name: 'deposit.name',
 		visible: true,
@@ -177,5 +177,25 @@ export let attributes = [
     	project: null,
 		align: 'left',
 		required : true,
-	}
+    },
+    {
+		name: 'branch._id',
+		visible: false,
+		disabled: false,
+		filter: true,
+		datatype: 'string',
+    	project: null,
+		align: 'left',
+		required : true,
+	},
+    {
+		name: 'deposit._id',
+		visible: false,
+		disabled: false,
+		filter: true,
+		datatype: 'string',
+    	project: null,
+		align: 'left',
+		required : true,
+	},
 ]
