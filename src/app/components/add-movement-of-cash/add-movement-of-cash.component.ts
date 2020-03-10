@@ -1145,7 +1145,9 @@ export class AddMovementOfCashComponent implements OnInit {
 			this.movementOfCash.statusCheck == StatusCheck.Closed;
 			this.movementOfCash.discount = this.movementOfCash.type.discount;
 			this.movementOfCash.surcharge = this.movementOfCash.type.surcharge;
-
+            if(this.fastPayment.observation){
+                this.movementOfCash.observation = this.fastPayment.observation;
+            }
 			if (this.movementOfCash.discount &&
 				this.movementOfCash.discount !== 0) {
 				this.amountDiscount = -this.roundNumber.transform(this.transaction.totalPrice * this.movementOfCash.discount / 100);
