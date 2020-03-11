@@ -103,6 +103,16 @@ export let attributes = [
 		project: null,
 		align: 'center',
 		required: false,
+    },
+    {
+		name: 'transaction.company.name',
+		visible: false,
+		disabled: false,
+		filter: true,
+		datatype: 'string',
+		project: null,
+		align: 'center',
+		required: false,
 	},
 	{
 		name: 'code',
@@ -136,6 +146,16 @@ export let attributes = [
 	},
 	{
 		name: 'article.posDescription',
+		visible: false,
+		disabled: false,
+		filter: true,
+		datatype: 'string',
+		project: null,
+		align: 'left',
+		required: false,
+    },
+    {
+		name: 'notes',
 		visible: false,
 		disabled: false,
 		filter: true,

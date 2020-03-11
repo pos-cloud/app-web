@@ -203,7 +203,8 @@
 	"vatCondition": {
 		"description": "Condición de IVA"
 	},
-	"number": "Número",
+    "number": "Número",
+    "notes" : "Notas",
 	"unitPrice": "Precio Unitario",
 	"updateDate": "Fecha de Modificación",
     "realStock": "Stock",
