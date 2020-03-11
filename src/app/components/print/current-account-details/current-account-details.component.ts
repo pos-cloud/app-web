@@ -1041,6 +1041,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
         row += 5;
         this.doc.setFontSize(this.fontSizes.large)
         this.doc.text(180, 280, "Hoja:" + page)
+        var total = 0;
         for (var i = 0; i < this.items.length; i++) {
             if (this.items[i].price !== 0) {
 
@@ -1136,7 +1137,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 this.doc.setFontType("bold");
                 this.doc.text(120, row, "Total");
                 this.doc.textEx("$ " + this.roundNumber.transform(this.items[i].price).toFixed(2).toString(), 155, row, 'right', 'middle');
-
+                total = total + this.items[i].price
 
                 this.doc.setFontType("normal");
                 row += 5;
@@ -1151,6 +1152,11 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 }
             }
         }
+
+        row += 8;
+        this.doc.setFontSize(this.fontSizes.extraLarge)
+        this.doc.text(120, row, "Total : $ " + this.roundNumber.transform(total).toFixed(2).toString());
+
         this.finishImpression();
 
 
