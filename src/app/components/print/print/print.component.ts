@@ -807,7 +807,7 @@ export class PrintComponent implements OnInit {
 
                 row += 8;
                 
-                if(row > 280){
+                if(row > 260){
                     this.doc.addPage();
 
                     // Encabezado de la transacción
