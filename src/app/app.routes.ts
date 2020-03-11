@@ -80,6 +80,7 @@ import { ViewGalleryComponent } from './components/view-gallery/view-gallery.com
 import { ListCashBoxTypesComponent } from './components/list-cash-box-types/list-cash-box-types.component';
 import { CurrentAccountDetailsComponent } from './components/print/current-account-details/current-account-details.component';
 import { ListEmailTemplatesComponent } from './components/list-email-templates/list-email-templates.component';
+import { ListShipmentMethodComponent } from './components/list-shipment-method/list-shipment-method.component';
 
 export const _routes: Routes = [
     {
@@ -421,6 +422,11 @@ export const _routes: Routes = [
     {
         path: 'admin/sucursales',
         component: ListBranchComponent,
+        canActivate: [AuthGuard, LicenseGuard]
+    },
+    {
+        path: 'admin/shipment-methods',
+        component: ListShipmentMethodComponent,
         canActivate: [AuthGuard, LicenseGuard]
     },
     {

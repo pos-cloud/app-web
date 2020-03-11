@@ -55,7 +55,8 @@ import { CompanyGroupService } from "./services/company-group.service";
 import { CompanyContactService } from "./services/company-contact.service";
 import { CompanyFieldService } from './services/company-field.service';
 import { BankService } from './services/bank.service';
-import { PriceListService } from './services/price-list.service'
+import { PriceListService } from './services/price-list.service';
+import { ShipmentMethodService } from './services/shipment-method.service';
 
 // guards
 import { AuthGuard } from './guards/auth.guard';
@@ -292,6 +293,8 @@ import { ListEmailTemplatesComponent } from './components/list-email-templates/l
 import { EmailTemplateService } from './services/email-template.service';
 import { VoucherService } from './services/voucher.service';
 import { SelectChecksComponent } from './components/select-checks/select-checks.component';
+import { ShipmentMethodComponent } from './components/shipment-method/shipment-method.component';
+import { ListShipmentMethodComponent } from './components/list-shipment-method/list-shipment-method.component';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -502,7 +505,9 @@ export function HttpLoaderFactory(http: HttpClient) {
 		ViewGalleryComponent,
 		EmailTemplateComponent,
         ListEmailTemplatesComponent,
-        SelectChecksComponent
+        SelectChecksComponent,
+        ShipmentMethodComponent,
+        ListShipmentMethodComponent
 	],
 	entryComponents: [
 		HomeComponent,
@@ -681,7 +686,8 @@ export function HttpLoaderFactory(http: HttpClient) {
 		GalleryComponent,
 		CurrentAccountDetailsComponent,
         EmailTemplateComponent,
-        SelectChecksComponent
+        SelectChecksComponent,
+        ShipmentMethodComponent
 	],
 	imports: [
 		BrowserModule,
@@ -775,7 +781,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 		ResourceService,
 		GalleryService,
 		EmailTemplateService,
-
+        ShipmentMethodService
 	],
 	bootstrap: [AppComponent]
 })
