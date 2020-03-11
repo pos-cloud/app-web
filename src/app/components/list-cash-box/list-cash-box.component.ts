@@ -172,6 +172,7 @@ export class ListCashBoxComponent implements OnInit {
     match += `"operationType": { "$ne": "D" },
               "transaction.state": "${TransactionState.Closed}",
               "transaction.operationType": { "$ne": "D" },
+              "type.cashBoxImpact" : true,
               "transaction.cashBox._id" : { "$oid" : "${this.cashBoxSelected._id}"}}`;
     
     
@@ -203,6 +204,7 @@ export class ListCashBoxComponent implements OnInit {
       "receiver": 1,
       "type._id": { $toString: '$type._id'},
       "type.name": 1,
+      "type.cashBoxImpact" : 1,
       "deliveredBy": 1,
       "CUIT": 1,
       "transaction.operationType": 1
