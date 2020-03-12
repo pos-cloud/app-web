@@ -143,7 +143,7 @@ export class AddTransactionComponent implements OnInit {
 		this.movementsOfCancellations = new Array();
 	}
 
-	ngOnInit(): void {
+	async ngOnInit() {
 
 		this.userCountry = Config.country;
 		let pathLocation: string[] = this._router.url.split('/');
@@ -152,44 +152,30 @@ export class AddTransactionComponent implements OnInit {
 		this.buildForm();
 
 		if (this.transactionId) {
-			this.getTransaction();
+			await this.getTransaction(this.transactionId).then(
+				async transaction => {
+					if (transaction) {
+						this.transaction = transaction;
+						this.getCancellationTypes();
+						if (this.transaction.endDate) {
+							this.transactionDate = this.transaction.endDate;
+						} else {
+							this.transactionDate = this.transaction.startDate;
+						}
+						this.transactionMovement = this.transaction.type.transactionMovement.toString();
+						this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
+						this.transaction.balance = this.roundNumber.transform(this.transaction.balance);
+						if (this.transaction.company) {
+							this.companyName = this.transaction.company.name;
+						}
+						this.setValuesForm();
+						if (this.transaction.type.requestEmployee) {
+							this.getEmployees('where="type":"' + this.transaction.type.requestEmployee._id + '"');
+						}
+						this.getCancellationsOfMovements()
+					}
+				});
 		}
-	}
-
-	public getTransaction(): void {
-
-		this.loading = true;
-
-		this._transactionService.getTransaction(this.transactionId).subscribe(
-			result => {
-				if (!result.transaction) {
-					if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-				} else {
-					this.transaction = result.transaction;
-					this.getCancellationTypes();
-					if (this.transaction.endDate) {
-						this.transactionDate = this.transaction.endDate;
-					} else {
-						this.transactionDate = this.transaction.startDate;
-					}
-					this.transactionMovement = this.transaction.type.transactionMovement.toString();
-					this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
-					this.transaction.balance = this.roundNumber.transform(this.transaction.balance);
-					if (this.transaction.company) {
-						this.companyName = this.transaction.company.name;
-					}
-					this.setValuesForm();
-					if (this.transaction.type.requestEmployee) {
-						this.getEmployees('where="type":"' + this.transaction.type.requestEmployee._id + '"');
-					}
-					this.getCancellationsOfMovements()
-				}
-				this.loading = false;
-			},
-			error => {
-				this.showMessage(error._body, 'danger', false);
-				this.loading = false;
-			});
 	}
 
 	ngAfterViewInit() {
@@ -370,12 +356,20 @@ export class AddTransactionComponent implements OnInit {
 				modalRef.componentInstance.selectionView = true;
 				modalRef.componentInstance.movementsOfCancellations = this.movementsOfCancellations;
 				modalRef.result.then(async (result) => {
-					if (result && result.movementsOfCancellations) {
+					if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
 						this.movementsOfCancellations = result.movementsOfCancellations;
 
 						this.balanceTotal = 0;
 						for (let mov of this.movementsOfCancellations) {
-							this.balanceTotal += mov.balance;
+							let transOrigin: Transaction = await this.getTransaction(mov.transactionOrigin._id);
+							if ((transOrigin.type.transactionMovement === TransactionMovement.Sale &&
+								transOrigin.type.movement === Movements.Outflows) ||
+								(transOrigin.type.transactionMovement === TransactionMovement.Purchase &&
+									transOrigin.type.movement === Movements.Inflows)) {
+								this.balanceTotal -= mov.balance;
+							} else {
+								this.balanceTotal += mov.balance;
+							}
 						}
 						this.balanceTotal = this.roundNumber.transform(this.balanceTotal);
 						if (this.transaction.totalPrice === 0) {
@@ -416,6 +410,31 @@ export class AddTransactionComponent implements OnInit {
 			default:
 				break;
 		}
+	}
+
+	public getTransaction(transactionId: string): Promise<Transaction> {
+
+		return new Promise<Transaction>((resolve, reject) => {
+
+			this.loading = true;
+
+			this._transactionService.getTransaction(transactionId).subscribe(
+				async result => {
+					this.loading = false;
+					if (!result.transaction) {
+						this.showMessage(result.message, 'danger', false);
+						resolve(null);
+					} else {
+						resolve(result.transaction);
+					}
+				},
+				error => {
+					this.loading = false;
+					this.showMessage(error._body, 'danger', false);
+					resolve(null);
+				}
+			);
+		});
 	}
 
 	async finishTransaction() {
