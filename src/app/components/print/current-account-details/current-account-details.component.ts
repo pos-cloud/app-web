@@ -381,7 +381,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                 $and:
                                     [
                                         { $eq: [this.companyType, "Proveedor"] },
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false] },
+                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false] },
                                         { $eq: ["$type.movement", "Entrada"] },
                                         { $eq: ["$type.currentAccount", "Si"] }
 
@@ -394,7 +394,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                 $and:
                                     [
                                         { $eq: [this.companyType, "Proveedor"] },
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false] },
+                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false] },
                                         { $eq: ["$type.movement", "Salida"] },
                                         { $eq: ["$type.currentAccount", "Si"] }
 
@@ -405,7 +405,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                             case: {
                                 $and:
                                     [
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false] },
+                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false] },
                                         { $eq: [this.companyType, "Proveedor"] },
                                         { $eq: ["$type.movement", "Entrada"] },
                                         { $eq: ["$type.currentAccount", "Cobra"] }
@@ -417,7 +417,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                             case: {
                                 $and:
                                     [
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false] },
+                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false] },
                                         { $eq: [this.companyType, "Proveedor"] },
                                         { $eq: ["$type.movement", "Salida"] },
                                         { $eq: ["$type.currentAccount", "Cobra"] }
@@ -431,7 +431,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                 $and:
                                     [
                                         { $eq: [this.companyType, "Proveedor"] },
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true] },
+                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true] },
                                         { $eq: ["$type.movement", "Entrada"] },
                                         { $eq: ["$type.currentAccount", "Si"] }
 
@@ -444,7 +444,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                 $and:
                                     [
                                         { $eq: [this.companyType, "Proveedor"] },
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true] },
+                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true] },
                                         { $eq: ["$type.movement", "Salida"] },
                                         { $eq: ["$type.currentAccount", "Si"] }
 
@@ -455,7 +455,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                             case: {
                                 $and:
                                     [
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true] },
+                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true] },
                                         { $eq: [this.companyType, "Proveedor"] },
                                         { $eq: ["$type.movement", "Entrada"] },
                                         { $eq: ["$type.currentAccount", "Cobra"] }
@@ -467,7 +467,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                             case: {
                                 $and:
                                     [
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true] },
+                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true] },
                                         { $eq: [this.companyType, "Proveedor"] },
                                         { $eq: ["$type.movement", "Salida"] },
                                         { $eq: ["$type.currentAccount", "Cobra"] }
@@ -898,7 +898,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                                 case: {
                                                     $and:
                                                         [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false] },
+                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false] },
                                                             { $eq: ["$transaction.type.movement", "Entrada"] },
                                                             { $eq: ["$transaction.type.currentAccount", "Si"] }
 
@@ -910,7 +910,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                                 case: {
                                                     $and:
                                                         [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false] },
+                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false] },
                                                             { $eq: ["$transaction.type.movement", "Salida"] },
                                                             { $eq: ["$transaction.type.currentAccount", "Si"] }
 
@@ -921,7 +921,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                                 case: {
                                                     $and:
                                                         [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false] },
+                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false] },
                                                             { $eq: ["$transaction.type.movement", "Entrada"] },
                                                             { $eq: ["$transaction.type.currentAccount", "Cobra"] }
 
@@ -932,7 +932,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                                 case: {
                                                     $and:
                                                         [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false] },
+                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false] },
                                                             { $eq: ["$transaction.type.movement", "Salida"] },
                                                             { $eq: ["$transaction.type.currentAccount", "Cobra"] }
 
@@ -944,7 +944,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                                 case: {
                                                     $and:
                                                         [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true] },
+                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true] },
                                                             { $eq: ["$transaction.type.movement", "Entrada"] },
                                                             { $eq: ["$transaction.type.currentAccount", "Si"] }
 
@@ -956,7 +956,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                                 case: {
                                                     $and:
                                                         [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true] },
+                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true] },
                                                             { $eq: ["$transaction.type.movement", "Salida"] },
                                                             { $eq: ["$transaction.type.currentAccount", "Si"] }
 
@@ -967,7 +967,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                                 case: {
                                                     $and:
                                                         [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true] },
+                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true] },
                                                             { $eq: ["$transaction.type.movement", "Entrada"] },
                                                             { $eq: ["$transaction.type.currentAccount", "Cobra"] }
 
@@ -978,7 +978,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                                 case: {
                                                     $and:
                                                         [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true] },
+                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true] },
                                                             { $eq: ["$transaction.type.movement", "Salida"] },
                                                             { $eq: ["$transaction.type.currentAccount", "Cobra"] }
 
