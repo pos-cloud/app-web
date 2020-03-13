@@ -591,7 +591,17 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     } else {
                         this.doc.text(30, row, transaction.type.name);
                     }
-                    this.doc.text(75, row, this.padString(transaction.origin, 4) + "-" + transaction.letter + "-" + this.padString(transaction.number, 8));
+                    let comprobante = '';
+                    if (transaction.origin) {
+                        comprobante += this.padString(transaction.origin, 4) + "-"
+                    }
+                    if (transaction.letter) {
+                        comprobante += transaction.letter + "-"
+                    }
+                    if (transaction.number) {
+                        comprobante += this.padString(transaction.number, 8)
+                    }
+                    this.doc.text(75, row, comprobante);
                     if (transaction.expirationDate) {
                         this.doc.text(110, row, transaction.expirationDate);
                     }
@@ -1113,7 +1123,17 @@ export class CurrentAccountDetailsComponent implements OnInit {
                             } else {
                                 this.doc.text(30, row, transaction.type.name);
                             }
-                            this.doc.text(75, row, this.padString(transaction.origin, 4) + "-" + transaction.letter + "-" + this.padString(transaction.number, 8));
+                            let comprobante = '';
+                            if (transaction.origin) {
+                                comprobante += this.padString(transaction.origin, 4) + "-"
+                            }
+                            if (transaction.letter) {
+                                comprobante += transaction.letter + "-"
+                            }
+                            if (transaction.number) {
+                                comprobante += this.padString(transaction.number, 8)
+                            }
+                            this.doc.text(75, row, comprobante);
                             if (transaction.expirationDate) {
                                 this.doc.text(110, row, transaction.expirationDate);
                             }
