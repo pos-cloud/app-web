@@ -192,46 +192,14 @@ export class SelectCompanyComponent implements OnInit {
 
 		let modalRef;
 		switch (op) {
-			case 'view':
-				modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg', backdrop: 'static' });
-				modalRef.componentInstance.companyId = company._id;
-				modalRef.componentInstance.readonly = true;
-				modalRef.componentInstance.operation = 'view';
-				break;
 			case 'add':
 				modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg', backdrop: 'static' });
 				modalRef.componentInstance.operation = 'add';
 				modalRef.componentInstance.companyType = this.type;
 				modalRef.result.then((result) => {
-					if (this.userType === 'pos') {
-						this.selectCompany(result.company);
-					} else {
-						this.getCompaniesByType();
-					}
+					this.selectCompany(result.company);
 				}, (reason) => {
 					this.getCompaniesByType();
-				});
-				break;
-			case 'update':
-				modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg', backdrop: 'static' });
-				modalRef.componentInstance.companyId = company._id;
-				modalRef.componentInstance.readonly = false;
-				modalRef.componentInstance.operation = 'update';
-				modalRef.result.then((result) => {
-					this.getCompaniesByType();
-				}, (reason) => {
-					this.getCompaniesByType();
-				});
-				break;
-			case 'delete':
-				modalRef = this._modalService.open(DeleteCompanyComponent, { size: 'lg', backdrop: 'static' });
-				modalRef.componentInstance.company = company;
-				modalRef.result.then((result) => {
-					if (result === 'delete_close') {
-						this.getCompaniesByType();
-					}
-				}, (reason) => {
-
 				});
 				break;
 			default: ;
@@ -239,7 +207,17 @@ export class SelectCompanyComponent implements OnInit {
 	};
 
 	public selectCompany(companySelected: Company): void {
-		this.activeModal.close({ company: companySelected });
+        this._companyService.getCompany(companySelected._id).subscribe(
+            result =>{
+                if(result && result.company){
+                    this.activeModal.close({ company: result.company });
+                }
+            },
+            error =>{
+                this.showMessage(error._body, 'danger', false);
+				this.loading = false;
+            }
+        )
 	}
 
 	public ngOnDestroy(): void {
