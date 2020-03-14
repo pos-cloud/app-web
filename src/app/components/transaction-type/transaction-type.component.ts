@@ -27,6 +27,8 @@ import { EmailTemplateService } from 'app/services/email-template.service';
 import { EmailTemplate } from 'app/models/email-template';
 import { BranchService } from 'app/services/branch.service';
 import { Branch } from 'app/models/branch';
+import { ShipmentMethodService } from 'app/services/shipment-method.service';
+import { ShipmentMethod } from 'app/models/shipment-method';
 
 @Component({
     selector: 'app-transaction-type',
@@ -60,7 +62,7 @@ export class TransactionTypeComponent implements OnInit {
     public orientation: string = 'horizontal';
     public emailTemplates: EmailTemplate[];
     public branches: Branch[];
-
+    public shipmentMethods : ShipmentMethod[];
     public formErrors = {
         'transactionMovement': '',
         'abbreviation': '',
@@ -91,6 +93,7 @@ export class TransactionTypeComponent implements OnInit {
         public _currencyService: CurrencyService,
         public _useOfCFDIService: UseOfCFDIService,
         public _emailTemplateService: EmailTemplateService,
+        public _shipmentMethodService: ShipmentMethodService,
         public _branchService: BranchService
     ) {
         if (window.screen.width < 1000) this.orientation = 'vertical';
@@ -100,6 +103,7 @@ export class TransactionTypeComponent implements OnInit {
         this.getPrinters();
         this.getUsesOfCFDI();
         this.getEmailTemplates();
+        this.getShipmentMethod();
         this.getBranches();
     }
 
@@ -374,6 +378,8 @@ export class TransactionTypeComponent implements OnInit {
             'maxOrderNumber': [this.transactionType.maxOrderNumber, []],
             'requestEmailTemplate': [this.transactionType.requestEmailTemplate, []],
             'defectEmailTemplate': [this.transactionType.defectEmailTemplate, []],
+            'requestShipmentMethod': [this.transactionType.requestShipmentMethod, []],
+            'defectShipmentMethod': [this.transactionType.defectShipmentMethod, []],
             'branch': [this.transactionType.branch, []],
             'level': [this.transactionType.level, []]
 
@@ -425,6 +431,36 @@ export class TransactionTypeComponent implements OnInit {
                     this.emailTemplates = result.emailTemplates
                 } else {
                     this.emailTemplates = null;
+                }
+            },
+            error => {
+                this.showMessage(error._body, 'danger', false);
+                this.loading = false;
+            }
+        )
+    }
+
+    public getShipmentMethod() {
+
+        let match = {
+            operationType: { $ne: "D" }
+        }
+
+
+        let project = {
+            name: 1,
+            operationType: 1,
+            creationDate: 1,
+            updateUser: 1,
+            updateDate: 1
+        }
+
+        this._shipmentMethodService.getShipmentMethods(project, match, {}, {}).subscribe(
+            result => {
+                if (result && result.shipmentMethods) {
+                    this.shipmentMethods = result.shipmentMethods
+                } else {
+                    this.shipmentMethods = null;
                 }
             },
             error => {
@@ -594,6 +630,17 @@ export class TransactionTypeComponent implements OnInit {
             }
         }
 
+        let defectShipmentMethod;
+        if (!this.transactionType.defectShipmentMethod) {
+            defectShipmentMethod = null;
+        } else {
+            if (this.transactionType.defectShipmentMethod._id) {
+                defectShipmentMethod = this.transactionType.defectShipmentMethod._id;
+            } else {
+                defectShipmentMethod = this.transactionType.defectShipmentMethod;
+            }
+        }
+
         let branch;
         if (!this.transactionType.branch) {
             branch = null;
@@ -663,6 +710,8 @@ export class TransactionTypeComponent implements OnInit {
             'maxOrderNumber': this.transactionType.maxOrderNumber,
             'requestEmailTemplate': this.transactionType.requestEmailTemplate,
             'defectEmailTemplate': defectEmailTemplate,
+            'requestShipmentMethod': this.transactionType.requestShipmentMethod,
+            'defectShipmentMethod': defectShipmentMethod,
             'branch': branch,
             'level': this.transactionType.level
 

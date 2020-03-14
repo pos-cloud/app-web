@@ -9,6 +9,7 @@ import { Branch } from './branch';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
+import { ShipmentMethod } from './shipment-method';
 
 export class TransactionType {
 
@@ -65,6 +66,8 @@ export class TransactionType {
     public finishCharge : boolean = true;
     public requestEmailTemplate : boolean = false;
     public defectEmailTemplate : EmailTemplate;
+    public requestShipmentMethod : boolean = false;
+    public defectShipmentMethod : ShipmentMethod;
     public branch : Branch;
     public level : number = 0;
     public expirationDate : string = moment().format('YYYY-MM-DDTHH:mm:ssZ');

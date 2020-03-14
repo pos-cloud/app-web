@@ -79,6 +79,7 @@ import { SelectCompanyComponent } from '../select-company/select-company.compone
 import { SelectTableComponent } from 'app/components/select-table/select-table.component';
 import { SendEmailComponent } from '../send-email/send-email.component';
 import { AddArticleComponent } from '../add-article/add-article.component';
+import { SelectShipmentMethodComponent } from '../select-shipment-method/select-shipment-method.component';
 
 @Component({
 	selector: 'app-add-sale-order',
@@ -252,7 +253,7 @@ export class AddSaleOrderComponent {
 							this.transaction.company &&
 							this.transaction.company.transport) {
 							this.transaction.transport = this.transaction.company.transport
-						}
+                        }
 						if (this.transaction.state === TransactionState.Closed ||
 							this.transaction.state === TransactionState.Canceled) {
 							if (this.posType === 'resto' && this.transaction.table) {
@@ -2290,7 +2291,24 @@ export class AddSaleOrderComponent {
 					}
 				}, (reason) => {
 				});
-				break;
+                break;
+            case 'change-shipment-method':
+                    modalRef = this._modalService.open(SelectShipmentMethodComponent);
+                    modalRef.result.then(async (result) => {
+                        if (result && result.shipmentMethod) {
+                            this.transaction.shipmentMethod = result.shipmentMethod
+                            await this.updateTransaction().then(
+                                async transaction => {
+                                    if (transaction) {
+                                        this.transaction = transaction;
+                                        this.lastQuotation = this.transaction.quotation;
+                                    }
+                                }
+                            );
+                        }
+                    }, (reason) => {
+                    });
+                    break;
 			case 'change-table':
 				modalRef = this._modalService.open(SelectTableComponent);
 				modalRef.componentInstance.roomId = this.transaction.table.room;

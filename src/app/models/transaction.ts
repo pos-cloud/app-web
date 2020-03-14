@@ -16,6 +16,7 @@ import { Branch } from './branch';
 import { Deposit } from './deposit';
 import { Transport } from './transport';
 import { PriceList } from './price-list';
+import { ShipmentMethod } from './shipment-method';
 
 export class Transaction {
 
@@ -60,7 +61,8 @@ export class Transaction {
 	public branchDestination: Branch;
 	public depositOrigin: Deposit;
 	public depositDestination: Deposit;
-	public transport: Transport;
+    public transport: Transport;
+    public shipmentMethod : ShipmentMethod;
 	public turnOpening: Turn;
 	public turnClosing: Turn;
 	public priceList: PriceList;

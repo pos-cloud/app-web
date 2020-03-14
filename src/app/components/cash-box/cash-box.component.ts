@@ -385,7 +385,6 @@ export class CashBoxComponent implements OnInit {
                         if (user) {
                             if (user.printers && user.printers.length > 0) {
                                 for (const element of user.printers) {
-                                    console.log(element)
                                     if (element && element.printer && element.printer.printIn === PrinterPrintIn.Counter) {
                                         this.printerSelected = element.printer;
                                     }

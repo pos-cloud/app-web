@@ -1010,6 +1010,50 @@
                 </ng-template>
 
                 </ngb-tab>
+                <ngb-tab title="Método de envío">
+                    <ng-template ngbTabContent>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="requestShipmentMethod" class="control-label">¿Pide Metodo de envio?</label>
+                            <div class="input-group">
+                                <select class="form-control" formControlName="requestShipmentMethod">
+                                    <option value="true" [selected]="transactionType.requestShipmentMethod"
+                                        [disabled]="readonly">Si</option>
+                                    <option value="false" [selected]="!transactionType.requestShipmentMethod">No
+                                    </option>
+                                </select>
+                                <button type="button" class="btn btn-light" placement="right"
+                                    popoverClass="popover-class"
+                                    ngbPopover="Si pide metodo de envio?">
+                                    <b>?</b>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="defectShipmentMethod" class="control-label">Metodo defecto</label>
+                            <div class="input-group">
+                                <select class="form-control" formControlName="defectShipmentMethod">
+                                    <option [ngValue]="null"
+                                        [selected]="!transactionType || !transactionType.defectShipmentMethod"
+                                        [disabled]="readonly"></option>
+                                    <option *ngFor="let shipmentMethod of shipmentMethods"
+                                        [selected]="transactionType.defectShipmentMethod && transactionType.defectShipmentMethod._id === shipmentMethod._id"
+                                        [ngValue]="shipmentMethod._id" [disabled]="readonly">
+                                        {{shipmentMethod.name}}</option>
+                                </select>
+                                <button type="button" class="btn btn-light" placement="right"
+                                    popoverClass="popover-class"
+                                    ngbPopover="Metodo por defecto">
+                                    <b>?</b>
+                                </button>
+                            </div>
+                        </div>
+                        
+
+                    </div>
+                </ng-template>
+
+                </ngb-tab>
 				<ngb-tab *ngIf="transactionType" title="Auditoría">
 					<ng-template ngbTabContent>
 						<div class="row tab-content">

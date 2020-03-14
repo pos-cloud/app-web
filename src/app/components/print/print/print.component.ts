@@ -308,6 +308,8 @@ export class PrintComponent implements OnInit {
             "company.fantasyName" : 1,
 
             "table.description" : 1,
+            "shiptmentMethod._id" : 1,
+            "shiptmentMethod.name" : 1,
 
 
             "employeeClosing._id" : 1,
@@ -3369,7 +3371,14 @@ export class PrintComponent implements OnInit {
 			this.doc.setFontType('bold');
 			this.doc.text("Empleado: " + this.transaction.employeeOpening.name, margin, row);
 			this.doc.setFontType('normal');
-		}
+        }
+        
+        if(this.transaction.shipmentMethod && this.transaction.shipmentMethod._id){
+            row += 5;
+			this.doc.setFontType('bold');
+			this.doc.text("Método de Envío: " + this.transaction.shipmentMethod.name, margin, row);
+			this.doc.setFontType('normal');
+        }
 
 		//Cabecera de la tala de productos
 		row += 3;

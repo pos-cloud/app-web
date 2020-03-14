@@ -26,6 +26,18 @@
 							(click)="openModal('change-employee')">
 						</button>
 					</div>
+                </div>
+                <div class="col-md-2"
+					*ngIf="transaction.type && transaction.type.requestShipmentMethod">
+					<div class="btn-group">
+                        <b>Método de Envío:</b>
+						<button *ngIf="transaction.shipmentMethod" type="button" class="btn btn-outline-light" (click)="openModal('change-shipment-method')">
+							{{ transaction.shipmentMethod.name }}
+						</button>
+						<button type="button" class="btn btn-outline-light fa fa-exchange"
+							(click)="openModal('change-shipment-method')">
+						</button>
+					</div>
 				</div>
 				<div class="col-md-2"
 					*ngIf="transaction && transaction.company && transaction.type && transaction.type.requestTransport">

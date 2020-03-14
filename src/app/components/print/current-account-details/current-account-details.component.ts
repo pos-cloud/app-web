@@ -606,7 +606,6 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     if (transaction.expirationDate) {
                         this.doc.text(110, row, transaction.expirationDate);
                     }
-                    console.log(transaction)
                     this.doc.textEx("$ " + this.roundNumber.transform(transaction.totalPrice).toFixed(2).toString(), 155, row, 'right', 'middle');
                     this.doc.textEx("$ " + this.roundNumber.transform(transaction.balance * Math.sign(transaction.totalPrice)).toFixed(2).toString(), 180, row, 'right', 'middle');
                     acumulado = acumulado + transaction.balance * Math.sign(transaction.totalPrice);
