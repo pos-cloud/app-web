@@ -572,7 +572,11 @@ export class PointOfSaleComponent implements OnInit {
 	async addTransaction(type: TransactionType) {
 
 		this.transaction = new Transaction();
-		this.transaction.type = type;
+        this.transaction.type = type;
+        console.log(this.transaction.type)
+        if(this.transaction.type.defectShipmentMethod){
+            this.transaction.shipmentMethod = this.transaction.type.defectShipmentMethod
+        }
 		this.transaction.table = this.tableSelected;
 
 		if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
