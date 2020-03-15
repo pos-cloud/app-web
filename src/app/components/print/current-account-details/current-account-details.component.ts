@@ -206,6 +206,377 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
         this.loading = true;
 
+        let timezone = "-03:00";
+        if (Config.timezone && Config.timezone !== '') {
+            timezone = Config.timezone.split('UTC')[1];
+        }
+
+        let query = [];
+
+        query.push(
+            {
+                "$lookup": {
+                    "from": "transaction-types",
+                    "foreignField": "_id",
+                    "localField": "type",
+                    "as": "type"
+                }
+            }, {
+            "$unwind": {
+                "path": "$type",
+                "preserveNullAndEmptyArrays": true
+            }
+        }, {
+            "$lookup": {
+                "from": "companies",
+                "foreignField": "_id",
+                "localField": "company",
+                "as": "company"
+            }
+        }, {
+            "$unwind": {
+                "path": "$company",
+                "preserveNullAndEmptyArrays": true
+            }
+        }, {
+            "$lookup": {
+                "from": "vat-conditions",
+                "foreignField": "_id",
+                "localField": "company.vatCondition",
+                "as": "company.vatCondition"
+            }
+        }, {
+            "$unwind": {
+                "path": "$company.vatCondition",
+                "preserveNullAndEmptyArrays": true
+            }
+        }, {
+            "$lookup": {
+                "from": "identification-types",
+                "foreignField": "_id",
+                "localField": "company.identificationType",
+                "as": "company.identificationType"
+            }
+        }, {
+            "$unwind": {
+                "path": "$company.identificationType",
+                "preserveNullAndEmptyArrays": true
+            }
+        }, {
+            "$lookup": {
+                "from": "employees",
+                "foreignField": "_id",
+                "localField": "company.employee",
+                "as": "company.employee"
+            }
+        }, {
+            "$unwind": {
+                "path": "$company.employee",
+                "preserveNullAndEmptyArrays": true
+            }
+        }, {
+            "$lookup": {
+                "from": "states",
+                "foreignField": "_id",
+                "localField": "company.state",
+                "as": "company.state"
+            }
+        }, {
+            "$unwind": {
+                "path": "$company.state",
+                "preserveNullAndEmptyArrays": true
+            }
+        }, {
+            "$project": {
+                "_id": 1,
+                "company._id": 1,
+                "company.name": 1,
+                "company.address": 1,
+                "company.city": 1,
+                "company.phones": 1,
+                "company.emails": 1,
+                "company.type": 1,
+                "company.identificationType.name": 1,
+                "company.identificationValue": 1,
+                "company.vatCondition.description": 1,
+                "company.employee._id": 1,
+                "company.employee.name": 1,
+                "company.operationType": 1,
+                "company.state.name": 1,
+                "endDate": 1,
+                "endDate2": {
+                    "$dateToString": {
+                        "date": "$endDate",
+                        "format": "%d/%m/%Y",
+                        "timezone": timezone
+                    }
+                },
+                "type.name": 1,
+                "type.currentAccount": 1,
+                "type.movement": 1,
+                "number": 1,
+                "letter": 1,
+                "origin": 1,
+                "expirationDate": {
+                    "$dateToString": {
+                        "date": "$expirationDate",
+                        "format": "%d/%m/%Y",
+                        "timezone": timezone
+                    }
+                },
+                "state": 1,
+                "balance": 1,
+                "operationType": 1,
+                "type.labelPrint": 1,
+                "totalPrice": {
+                    "$switch": {
+                        "branches": [{
+                            "case": {
+                                "$and": [{
+                                    "$eq": [this.companyType, "Cliente"]
+                                }, {
+                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, false]
+                                }, {
+                                    "$eq": ["$type.movement", "Entrada"]
+                                }, {
+                                    "$eq": ["$type.currentAccount", "Si"]
+                                }]
+                            },
+                            "then": {
+                                "$multiply": ["$totalPrice", 1]
+                            }
+                        }, {
+                            "case": {
+                                "$and": [{
+                                    "$eq": [this.companyType, "Cliente"]
+                                }, {
+                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, false]
+                                }, {
+                                    "$eq": ["$type.movement", "Salida"]
+                                }, {
+                                    "$eq": ["$type.currentAccount", "Si"]
+                                }]
+                            },
+                            "then": {
+                                "$multiply": ["$totalPrice", -1]
+                            }
+                        }, {
+                            "case": {
+                                "$and": [{
+                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, false]
+                                }, {
+                                    "$eq": [this.companyType, "Cliente"]
+                                }, {
+                                    "$eq": ["$type.movement", "Entrada"]
+                                }, {
+                                    "$eq": ["$type.currentAccount", "Cobra"]
+                                }]
+                            },
+                            "then": {
+                                "$multiply": ["$totalPrice", -1]
+                            }
+                        }, {
+                            "case": {
+                                "$and": [{
+                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, false]
+                                }, {
+                                    "$eq": [this.companyType, "Cliente"]
+                                }, {
+                                    "$eq": ["$type.movement", "Salida"]
+                                }, {
+                                    "$eq": ["$type.currentAccount", "Cobra"]
+                                }]
+                            },
+                            "then": {
+                                "$multiply": ["$totalPrice", 1]
+                            }
+                        }, {
+                            "case": {
+                                "$and": [{
+                                    "$eq": [this.companyType, "Cliente"]
+                                }, {
+                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, true]
+                                }, {
+                                    "$eq": ["$type.movement", "Entrada"]
+                                }, {
+                                    "$eq": ["$type.currentAccount", "Si"]
+                                }]
+                            },
+                            "then": {
+                                "$multiply": ["$totalPrice", -1]
+                            }
+                        }, {
+                            "case": {
+                                "$and": [{
+                                    "$eq": [this.companyType, "Cliente"]
+                                }, {
+                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, true]
+                                }, {
+                                    "$eq": ["$type.movement", "Salida"]
+                                }, {
+                                    "$eq": ["$type.currentAccount", "Si"]
+                                }]
+                            },
+                            "then": {
+                                "$multiply": ["$totalPrice", 1]
+                            }
+                        }, {
+                            "case": {
+                                "$and": [{
+                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, true]
+                                }, {
+                                    "$eq": [this.companyType, "Cliente"]
+                                }, {
+                                    "$eq": ["$type.movement", "Entrada"]
+                                }, {
+                                    "$eq": ["$type.currentAccount", "Cobra"]
+                                }]
+                            },
+                            "then": {
+                                "$multiply": ["$totalPrice", 1]
+                            }
+                        }, {
+                            "case": {
+                                "$and": [{
+                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, true]
+                                }, {
+                                    "$eq": [this.companyType, "Cliente"]
+                                }, {
+                                    "$eq": ["$type.movement", "Salida"]
+                                }, {
+                                    "$eq": ["$type.currentAccount", "Cobra"]
+                                }]
+                            },
+                            "then": {
+                                "$multiply": ["$totalPrice", -1]
+                            }
+                        }, {
+                            "case": {
+                                "$and": [{
+                                    "$eq": [this.companyType, "Proveedor"]
+                                }, {
+                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewProviderlse, false]
+                                }, {
+                                    "$eq": ["$type.movement", "Entrada"]
+                                }, {
+                                    "$eq": ["$type.currentAccount", "Si"]
+                                }]
+                            },
+                            "then": {
+                                "$multiply": ["$totalPrice", -1]
+                            }
+                        }, {
+                            "case": {
+                                "$and": [{
+                                    "$eq": [this.companyType, "Proveedor"]
+                                }, {
+                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, false]
+                                }, {
+                                    "$eq": ["$type.movement", "Salida"]
+                                }, {
+                                    "$eq": ["$type.currentAccount", "Si"]
+                                }]
+                            },
+                            "then": {
+                                "$multiply": ["$totalPrice", 1]
+                            }
+                        }, {
+                            "case": {
+                                "$and": [{
+                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, false]
+                                }, {
+                                    "$eq": [this.companyType, "Proveedor"]
+                                }, {
+                                    "$eq": ["$type.movement", "Entrada"]
+                                }, {
+                                    "$eq": ["$type.currentAccount", "Cobra"]
+                                }]
+                            },
+                            "then": {
+                                "$multiply": ["$totalPrice", 1]
+                            }
+                        }, {
+                            "case": {
+                                "$and": [{
+                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, false]
+                                }, {
+                                    "$eq": [this.companyType, "Proveedor"]
+                                }, {
+                                    "$eq": ["$type.movement", "Salida"]
+                                }, {
+                                    "$eq": ["$type.currentAccount", "Cobra"]
+                                }]
+                            },
+                            "then": {
+                                "$multiply": ["$totalPrice", -1]
+                            }
+                        }, {
+                            "case": {
+                                "$and": [{
+                                    "$eq": [this.companyType, "Proveedor"]
+                                }, {
+                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, true]
+                                }, {
+                                    "$eq": ["$type.movement", "Entrada"]
+                                }, {
+                                    "$eq": ["$type.currentAccount", "Si"]
+                                }]
+                            },
+                            "then": {
+                                "$multiply": ["$totalPrice", 1]
+                            }
+                        }, {
+                            "case": {
+                                "$and": [{
+                                    "$eq": [this.companyType, "Proveedor"]
+                                }, {
+                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, true]
+                                }, {
+                                    "$eq": ["$type.movement", "Salida"]
+                                }, {
+                                    "$eq": ["$type.currentAccount", "Si"]
+                                }]
+                            },
+                            "then": {
+                                "$multiply": ["$totalPrice", -1]
+                            }
+                        }, {
+                            "case": {
+                                "$and": [{
+                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, true]
+                                }, {
+                                    "$eq": [this.companyType, "Proveedor"]
+                                }, {
+                                    "$eq": ["$type.movement", "Entrada"]
+                                }, {
+                                    "$eq": ["$type.currentAccount", "Cobra"]
+                                }]
+                            },
+                            "then": {
+                                "$multiply": ["$totalPrice", -1]
+                            }
+                        }, {
+                            "case": {
+                                "$and": [{
+                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, true]
+                                }, {
+                                    "$eq": [this.companyType, "Proveedor"]
+                                }, {
+                                    "$eq": ["$type.movement", "Salida"]
+                                }, {
+                                    "$eq": ["$type.currentAccount", "Cobra"]
+                                }]
+                            },
+                            "then": {
+                                "$multiply": ["$totalPrice", 1]
+                            }
+                        }],
+                        "default": 0
+                    }
+                }
+            }
+        });
+
         let match = `{`;
 
 
@@ -238,266 +609,35 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
         match = JSON.parse(match);
 
-        let timezone = "-03:00";
-        if (Config.timezone && Config.timezone !== '') {
-            timezone = Config.timezone.split('UTC')[1];
-        }
+        query.push({ "$match": match })
 
-        // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-        let project = {
-            "_id": 1,
-            "company._id": 1,
-            "company.name": 1,
-            "company.address": 1,
-            "company.city": 1,
-            "company.phones": 1,
-            "company.emails": 1,
-            "company.type": 1,
-            "company.identificationType.name": 1,
-            "company.identificationValue": 1,
-            "company.vatCondition.description": 1,
-            "company.employee._id": 1,
-            "company.employee.name": 1,
-            "company.operationType": 1,
-            "company.state.name": 1,
-            "endDate": 1,
-            "endDate2": { $dateToString: { date: "$endDate", format: "%d/%m/%Y", timezone: timezone } },
-            "type.name": 1,
-            "type.currentAccount": 1,
-            "type.movement": 1,
-            "number": 1,
-            "letter": 1,
-            "origin": 1,
-            "expirationDate": { $dateToString: { date: "$expirationDate", format: "%d/%m/%Y", timezone: timezone } },
-            "state": 1,
-            "balance": 1,
-            "operationType": 1,
-            "type.labelPrint": 1,
-            totalPrice: {
-                $switch: {
-                    branches: [
-                        {
-                            case: {
-                                $and:
-                                    [
-                                        { $eq: [this.companyType, "Cliente"] },
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false] },
-                                        { $eq: ["$type.movement", "Entrada"] },
-                                        { $eq: ["$type.currentAccount", "Si"] }
-
-                                    ]
-                            },
-                            then: { $multiply: ["$totalPrice", 1] }
-                        },
-                        {
-                            case: {
-                                $and:
-                                    [
-                                        { $eq: [this.companyType, "Cliente"] },
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false] },
-                                        { $eq: ["$type.movement", "Salida"] },
-                                        { $eq: ["$type.currentAccount", "Si"] }
-
-                                    ]
-                            }, then: { $multiply: ["$totalPrice", -1] }
-                        },
-                        {
-                            case: {
-                                $and:
-                                    [
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false] },
-                                        { $eq: [this.companyType, "Cliente"] },
-                                        { $eq: ["$type.movement", "Entrada"] },
-                                        { $eq: ["$type.currentAccount", "Cobra"] }
-
-                                    ]
-                            }, then: { $multiply: ["$totalPrice", -1] }
-                        },
-                        {
-                            case: {
-                                $and:
-                                    [
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false] },
-                                        { $eq: [this.companyType, "Cliente"] },
-                                        { $eq: ["$type.movement", "Salida"] },
-                                        { $eq: ["$type.currentAccount", "Cobra"] }
-
-                                    ]
-                            }, then: { $multiply: ["$totalPrice", 1] }
-                        },
-                        // invertida true
-                        {
-                            case: {
-                                $and:
-                                    [
-                                        { $eq: [this.companyType, "Cliente"] },
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true] },
-                                        { $eq: ["$type.movement", "Entrada"] },
-                                        { $eq: ["$type.currentAccount", "Si"] }
-
-                                    ]
-                            },
-                            then: { $multiply: ["$totalPrice", -1] }
-                        },
-                        {
-                            case: {
-                                $and:
-                                    [
-                                        { $eq: [this.companyType, "Cliente"] },
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true] },
-                                        { $eq: ["$type.movement", "Salida"] },
-                                        { $eq: ["$type.currentAccount", "Si"] }
-
-                                    ]
-                            }, then: { $multiply: ["$totalPrice", 1] }
-                        },
-                        {
-                            case: {
-                                $and:
-                                    [
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true] },
-                                        { $eq: [this.companyType, "Cliente"] },
-                                        { $eq: ["$type.movement", "Entrada"] },
-                                        { $eq: ["$type.currentAccount", "Cobra"] }
-
-                                    ]
-                            }, then: { $multiply: ["$totalPrice", 1] }
-                        },
-                        {
-                            case: {
-                                $and:
-                                    [
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true] },
-                                        { $eq: [this.companyType, "Cliente"] },
-                                        { $eq: ["$type.movement", "Salida"] },
-                                        { $eq: ["$type.currentAccount", "Cobra"] }
-
-                                    ]
-                            }, then: { $multiply: ["$totalPrice", -1] }
-                        },
-                        //proveedor
-                        {
-                            case: {
-                                $and:
-                                    [
-                                        { $eq: [this.companyType, "Proveedor"] },
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false] },
-                                        { $eq: ["$type.movement", "Entrada"] },
-                                        { $eq: ["$type.currentAccount", "Si"] }
-
-                                    ]
-                            },
-                            then: { $multiply: ["$totalPrice", -1] }
-                        },
-                        {
-                            case: {
-                                $and:
-                                    [
-                                        { $eq: [this.companyType, "Proveedor"] },
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false] },
-                                        { $eq: ["$type.movement", "Salida"] },
-                                        { $eq: ["$type.currentAccount", "Si"] }
-
-                                    ]
-                            }, then: { $multiply: ["$totalPrice", 1] }
-                        },
-                        {
-                            case: {
-                                $and:
-                                    [
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false] },
-                                        { $eq: [this.companyType, "Proveedor"] },
-                                        { $eq: ["$type.movement", "Entrada"] },
-                                        { $eq: ["$type.currentAccount", "Cobra"] }
-
-                                    ]
-                            }, then: { $multiply: ["$totalPrice", 1] }
-                        },
-                        {
-                            case: {
-                                $and:
-                                    [
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false] },
-                                        { $eq: [this.companyType, "Proveedor"] },
-                                        { $eq: ["$type.movement", "Salida"] },
-                                        { $eq: ["$type.currentAccount", "Cobra"] }
-
-                                    ]
-                            }, then: { $multiply: ["$totalPrice", -1] }
-                        },
-                        // invertida true
-                        {
-                            case: {
-                                $and:
-                                    [
-                                        { $eq: [this.companyType, "Proveedor"] },
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true] },
-                                        { $eq: ["$type.movement", "Entrada"] },
-                                        { $eq: ["$type.currentAccount", "Si"] }
-
-                                    ]
-                            },
-                            then: { $multiply: ["$totalPrice", 1] }
-                        },
-                        {
-                            case: {
-                                $and:
-                                    [
-                                        { $eq: [this.companyType, "Proveedor"] },
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true] },
-                                        { $eq: ["$type.movement", "Salida"] },
-                                        { $eq: ["$type.currentAccount", "Si"] }
-
-                                    ]
-                            }, then: { $multiply: ["$totalPrice", -1] }
-                        },
-                        {
-                            case: {
-                                $and:
-                                    [
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true] },
-                                        { $eq: [this.companyType, "Proveedor"] },
-                                        { $eq: ["$type.movement", "Entrada"] },
-                                        { $eq: ["$type.currentAccount", "Cobra"] }
-
-                                    ]
-                            }, then: { $multiply: ["$totalPrice", -1] }
-                        },
-                        {
-                            case: {
-                                $and:
-                                    [
-                                        { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true] },
-                                        { $eq: [this.companyType, "Proveedor"] },
-                                        { $eq: ["$type.movement", "Salida"] },
-                                        { $eq: ["$type.currentAccount", "Cobra"] }
-
-                                    ]
-                            }, then: { $multiply: ["$totalPrice", 1] }
-                        }
-                    ],
-                    default: 0
+        query.push({
+            "$group": {
+                "_id": {
+                    "company": "$company"
+                },
+                "transactions": {
+                    "$push": "$$ROOT"
+                },
+                "count": {
+                    "$sum": 1
+                },
+                "price": {
+                    "$sum": "$totalPrice"
+                },
+                "balance": {
+                    "$sum": "$balance"
                 }
             }
-        }
+        }, {
+            "$sort": {
+                "_id.company.name": 1,
+                "transactions.endDate": 1
+            }
+        });
 
-        let group = {
-            _id: {
-                company: "$company"
-            },
-            transactions: { $push: '$$ROOT' },
-            count: { $sum: 1 },
-            price: { $sum: "$totalPrice" },
-            balance: { $sum: "$balance" }
-        };
-
-        this._transactionService.getTransactionsV2(
-            project, // PROJECT
-            match, // MATCH
-            { "company.name": 1 }, // SORT
-            group, // GROUP
-            0, // LIMIT
-            0 // SKIP
+        this._transactionService.getTransactionsV3(
+            query
         ).subscribe(
             result => {
                 if (result) {
@@ -659,368 +799,363 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
             var fullQuery = []
 
-            if (this.companyType === CompanyType.Client) {
-
-                fullQuery =
-                    [
-                        { "$lookup": { "from": "payment-methods", "foreignField": "_id", "localField": "type", "as": "type" } },
-                        { "$unwind": { "path": "$type" } },
-                        { "$lookup": { "from": "transactions", "foreignField": "_id", "localField": "transaction", "as": "transaction" } },
-                        { "$unwind": { "path": "$transaction" } },
-                        { "$lookup": { "from": "transaction-types", "foreignField": "_id", "localField": "transaction.type", "as": "transaction.type" } },
-                        { "$unwind": { "path": "$transaction.type" } },
-                        { "$lookup": { "from": "companies", "foreignField": "_id", "localField": "transaction.company", "as": "transaction.company" } },
-                        { "$unwind": { "path": "$transaction.company", "preserveNullAndEmptyArrays": true } },
-                        { $lookup: { from: "states", foreignField: "_id", localField: "transaction.company.state", as: "transaction.company.state" } },
-                        { $unwind: { path: "$transaction.company.state", preserveNullAndEmptyArrays: true } },
-                        { $lookup: { from: "employees", foreignField: "_id", localField: "transaction.company.employee", as: "transaction.company.employee" } },
-                        { $unwind: { path: "$transaction.company.employee", preserveNullAndEmptyArrays: true } },
-                        { "$lookup": { "from": "identification-types", "foreignField": "_id", "localField": "transaction.company.identificationType", "as": "transaction.company.identificationType" } },
-                        { "$unwind": { "path": "$transaction.company.identificationType", "preserveNullAndEmptyArrays": true } },
-                        { $lookup: { from: "vat-conditions", foreignField: "_id", localField: "transaction.company.vatCondition", as: "transaction.company.vatCondition" } },
-                        { $unwind: { path: "$transaction.company.vatCondition", preserveNullAndEmptyArrays: true } },
-                        {
-                            "$project": {
-                                "_id": 1,
-                                "type.isCurrentAccount": 1,
-                                "transaction._id": 1,
-                                "transaction.company._id": 1,
-                                "transaction.company.name": 1,
-                                "transaction.company.type": 1,
-                                "transaction.company.address": 1,
-                                "transaction.company.city": 1,
-                                "transaction.company.phones": 1,
-                                "transaction.company.emails": 1,
-                                "transaction.company.identificationType.name": 1,
-                                "transaction.company.identificationValue": 1,
-                                "transaction.company.vatCondition.description": 1,
-                                "transaction.company.employee._id": 1,
-                                "transaction.company.employee.name": 1,
-                                "transaction.company.operationType": 1,
-                                "transaction.company.state.name": 1,
-                                "transaction.type.currentAccount": 1,
-                                "transaction.type.movement": 1,
-                                "transaction.type.labelPrint": 1,
-                                "transaction.type.name": 1,
-                                "transaction.state": 1,
-                                "transaction.operationType": 1,
-                                "transaction.number": 1,
-                                "transaction.origin": 1,
-                                "transaction.letter": 1,
-                                "trasaction.expirationDate": 1,
-                                "transaction.endDate2": { $dateToString: { date: "$transaction.endDate", format: "%d/%m/%Y", timezone: timezone } },
-                                "operationType": 1,
-                                "transaction.totalPrice": {
-                                    $switch: {
-                                        branches: [
-                                            {
-                                                case: {
-                                                    $and:
-                                                        [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false] },
-                                                            { $eq: ["$transaction.type.movement", "Entrada"] },
-                                                            { $eq: ["$transaction.type.currentAccount", "Si"] }
-
-                                                        ]
-                                                },
-                                                then: { $multiply: ["$transaction.totalPrice", 1] }
-                                            },
-                                            {
-                                                case: {
-                                                    $and:
-                                                        [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false] },
-                                                            { $eq: ["$transaction.type.movement", "Salida"] },
-                                                            { $eq: ["$transaction.type.currentAccount", "Si"] }
-
-                                                        ]
-                                                }, then: { $multiply: ["$transaction.totalPrice", -1] }
-                                            },
-                                            {
-                                                case: {
-                                                    $and:
-                                                        [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false] },
-                                                            { $eq: ["$transaction.type.movement", "Entrada"] },
-                                                            { $eq: ["$transaction.type.currentAccount", "Cobra"] }
-
-                                                        ]
-                                                }, then: { $multiply: ["$transaction.totalPrice", -1] }
-                                            },
-                                            {
-                                                case: {
-                                                    $and:
-                                                        [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false] },
-                                                            { $eq: ["$transaction.type.movement", "Salida"] },
-                                                            { $eq: ["$transaction.type.currentAccount", "Cobra"] }
-
-                                                        ]
-                                                }, then: { $multiply: ["$transaction.totalPrice", 1] }
-                                            },
-                                            // invertida true
-                                            {
-                                                case: {
-                                                    $and:
-                                                        [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true] },
-                                                            { $eq: ["$transaction.type.movement", "Entrada"] },
-                                                            { $eq: ["$transaction.type.currentAccount", "Si"] }
-
-                                                        ]
-                                                },
-                                                then: { $multiply: ["$transaction.totalPrice", -1] }
-                                            },
-                                            {
-                                                case: {
-                                                    $and:
-                                                        [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true] },
-                                                            { $eq: ["$transaction.type.movement", "Salida"] },
-                                                            { $eq: ["$transaction.type.currentAccount", "Si"] }
-
-                                                        ]
-                                                }, then: { $multiply: ["$transaction.totalPrice", 1] }
-                                            },
-                                            {
-                                                case: {
-                                                    $and:
-                                                        [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true] },
-                                                            { $eq: ["$transaction.type.movement", "Entrada"] },
-                                                            { $eq: ["$transaction.type.currentAccount", "Cobra"] }
-
-                                                        ]
-                                                }, then: { $multiply: ["$transaction.totalPrice", 1] }
-                                            },
-                                            {
-                                                case: {
-                                                    $and:
-                                                        [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true] },
-                                                            { $eq: ["$transaction.type.movement", "Salida"] },
-                                                            { $eq: ["$transaction.type.currentAccount", "Cobra"] }
-
-                                                        ]
-                                                }, then: { $multiply: ["$transaction.totalPrice", -1] }
-                                            },
-                                        ],
-                                        default: 0
+            fullQuery.push(
+                { "$lookup": { "from": "payment-methods", "foreignField": "_id", "localField": "type", "as": "type" } },
+                { "$unwind": { "path": "$type" } },
+                { "$lookup": { "from": "transactions", "foreignField": "_id", "localField": "transaction", "as": "transaction" } },
+                { "$unwind": { "path": "$transaction" } },
+                { "$lookup": { "from": "transaction-types", "foreignField": "_id", "localField": "transaction.type", "as": "transaction.type" } },
+                { "$unwind": { "path": "$transaction.type" } },
+                { "$lookup": { "from": "companies", "foreignField": "_id", "localField": "transaction.company", "as": "transaction.company" } },
+                { "$unwind": { "path": "$transaction.company", "preserveNullAndEmptyArrays": true } },
+                { $lookup: { from: "states", foreignField: "_id", localField: "transaction.company.state", as: "transaction.company.state" } },
+                { $unwind: { path: "$transaction.company.state", preserveNullAndEmptyArrays: true } },
+                { $lookup: { from: "employees", foreignField: "_id", localField: "transaction.company.employee", as: "transaction.company.employee" } },
+                { $unwind: { path: "$transaction.company.employee", preserveNullAndEmptyArrays: true } },
+                { "$lookup": { "from": "identification-types", "foreignField": "_id", "localField": "transaction.company.identificationType", "as": "transaction.company.identificationType" } },
+                { "$unwind": { "path": "$transaction.company.identificationType", "preserveNullAndEmptyArrays": true } },
+                { $lookup: { from: "vat-conditions", foreignField: "_id", localField: "transaction.company.vatCondition", as: "transaction.company.vatCondition" } },
+                { $unwind: { path: "$transaction.company.vatCondition", preserveNullAndEmptyArrays: true } },
+                {
+                    "$project": {
+                        "_id": 1,
+                        "type.isCurrentAccount": 1,
+                        "transaction._id": 1,
+                        "transaction.company._id": 1,
+                        "transaction.company.name": 1,
+                        "transaction.company.type": 1,
+                        "transaction.company.address": 1,
+                        "transaction.company.city": 1,
+                        "transaction.company.phones": 1,
+                        "transaction.company.emails": 1,
+                        "transaction.company.identificationType.name": 1,
+                        "transaction.company.identificationValue": 1,
+                        "transaction.company.vatCondition.description": 1,
+                        "transaction.company.employee._id": 1,
+                        "transaction.company.employee.name": 1,
+                        "transaction.company.operationType": 1,
+                        "transaction.company.state.name": 1,
+                        "transaction.type.currentAccount": 1,
+                        "transaction.type.movement": 1,
+                        "transaction.type.labelPrint": 1,
+                        "transaction.type.name": 1,
+                        "transaction.state": 1,
+                        "transaction.operationType": 1,
+                        "transaction.number": 1,
+                        "transaction.origin": 1,
+                        "transaction.letter": 1,
+                        "trasaction.expirationDate": 1,
+                        "transaction.endDate2": { $dateToString: { date: "$transaction.endDate", format: "%d/%m/%Y", timezone: timezone } },
+                        "operationType": 1,
+                        "transaction.totalPrice": {
+                            "$switch": {
+                                "branches": [{
+                                    "case": {
+                                        "$and": [{
+                                            "$eq": [this.companyType, "Cliente"]
+                                        }, {
+                                            "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, false]
+                                        }, {
+                                            "$eq": ["$transaction.type.movement", "Entrada"]
+                                        }, {
+                                            "$eq": ["$transaction.type.currentAccount", "Si"]
+                                        }]
+                                    },
+                                    "then": {
+                                        "$multiply": ["$transaction.totalPrice", 1]
                                     }
-                                }
-                            }
-                        },
-                        {
-                            "$match":
-                            {
-                                "$or": [{ "type.isCurrentAccount": true }, { "transaction.type.currentAccount": "Cobra" }],
-                                "transaction.state": "Cerrado",
-                                "transaction.company.type": "Cliente",
-                                "transaction.operationType": { "$ne": "D" },
-                                "operationType": { "$ne": "D" }
-                            }
-                        },
-                        {
-                            "$group": {
-                                "_id": { "transactions": "$transaction" },
-                                "transactions": { $push: "$transaction" }
-                            }
-                        },
-                        {
-                            "$group": {
-                                "_id": { "company": "$_id.transactions.company" },
-                                "transactions": { $push: "$_id.transactions" },
-                                "price": { "$sum": "$_id.transactions.totalPrice" }
-                            }
-                        },
-                        {
-                            "$sort": {
-                                "_id.company.name": 1
+                                }, {
+                                    "case": {
+                                        "$and": [{
+                                            "$eq": [this.companyType, "Cliente"]
+                                        }, {
+                                            "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, false]
+                                        }, {
+                                            "$eq": ["$transaction.type.movement", "Salida"]
+                                        }, {
+                                            "$eq": ["$transaction.type.currentAccount", "Si"]
+                                        }]
+                                    },
+                                    "then": {
+                                        "$multiply": ["$transaction.totalPrice", -1]
+                                    }
+                                }, {
+                                    "case": {
+                                        "$and": [{
+                                            "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, false]
+                                        }, {
+                                            "$eq": [this.companyType, "Cliente"]
+                                        }, {
+                                            "$eq": ["$transaction.type.movement", "Entrada"]
+                                        }, {
+                                            "$eq": ["$transaction.type.currentAccount", "Cobra"]
+                                        }]
+                                    },
+                                    "then": {
+                                        "$multiply": ["$transaction.totalPrice", -1]
+                                    }
+                                }, {
+                                    "case": {
+                                        "$and": [{
+                                            "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, false]
+                                        }, {
+                                            "$eq": [this.companyType, "Cliente"]
+                                        }, {
+                                            "$eq": ["$transaction.type.movement", "Salida"]
+                                        }, {
+                                            "$eq": ["$transaction.type.currentAccount", "Cobra"]
+                                        }]
+                                    },
+                                    "then": {
+                                        "$multiply": ["$transaction.totalPrice", 1]
+                                    }
+                                }, {
+                                    "case": {
+                                        "$and": [{
+                                            "$eq": [this.companyType, "Cliente"]
+                                        }, {
+                                            "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, true]
+                                        }, {
+                                            "$eq": ["$transaction.type.movement", "Entrada"]
+                                        }, {
+                                            "$eq": ["$transaction.type.currentAccount", "Si"]
+                                        }]
+                                    },
+                                    "then": {
+                                        "$multiply": ["$transaction.totalPrice", -1]
+                                    }
+                                }, {
+                                    "case": {
+                                        "$and": [{
+                                            "$eq": [this.companyType, "Cliente"]
+                                        }, {
+                                            "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, true]
+                                        }, {
+                                            "$eq": ["$transaction.type.movement", "Salida"]
+                                        }, {
+                                            "$eq": ["$transaction.type.currentAccount", "Si"]
+                                        }]
+                                    },
+                                    "then": {
+                                        "$multiply": ["$transaction.totalPrice", 1]
+                                    }
+                                }, {
+                                    "case": {
+                                        "$and": [{
+                                            "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, true]
+                                        }, {
+                                            "$eq": [this.companyType, "Cliente"]
+                                        }, {
+                                            "$eq": ["$transaction.type.movement", "Entrada"]
+                                        }, {
+                                            "$eq": ["$transaction.type.currentAccount", "Cobra"]
+                                        }]
+                                    },
+                                    "then": {
+                                        "$multiply": ["$transaction.totalPrice", 1]
+                                    }
+                                }, {
+                                    "case": {
+                                        "$and": [{
+                                            "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, true]
+                                        }, {
+                                            "$eq": [this.companyType, "Cliente"]
+                                        }, {
+                                            "$eq": ["$transaction.type.movement", "Salida"]
+                                        }, {
+                                            "$eq": ["$transaction.type.currentAccount", "Cobra"]
+                                        }]
+                                    },
+                                    "then": {
+                                        "$multiply": ["$transaction.totalPrice", -1]
+                                    }
+                                }, {
+                                    "case": {
+                                        "$and": [{
+                                            "$eq": [this.companyType, "Proveedor"]
+                                        }, {
+                                            "$eq": [this.config.reports.summaryOfAccounts.invertedViewProviderlse, false]
+                                        }, {
+                                            "$eq": ["$transaction.type.movement", "Entrada"]
+                                        }, {
+                                            "$eq": ["$transaction.type.currentAccount", "Si"]
+                                        }]
+                                    },
+                                    "then": {
+                                        "$multiply": ["$transaction.totalPrice", -1]
+                                    }
+                                }, {
+                                    "case": {
+                                        "$and": [{
+                                            "$eq": [this.companyType, "Proveedor"]
+                                        }, {
+                                            "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, false]
+                                        }, {
+                                            "$eq": ["$transaction.type.movement", "Salida"]
+                                        }, {
+                                            "$eq": ["$transaction.type.currentAccount", "Si"]
+                                        }]
+                                    },
+                                    "then": {
+                                        "$multiply": ["$transaction.totalPrice", 1]
+                                    }
+                                }, {
+                                    "case": {
+                                        "$and": [{
+                                            "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, false]
+                                        }, {
+                                            "$eq": [this.companyType, "Proveedor"]
+                                        }, {
+                                            "$eq": ["$transaction.type.movement", "Entrada"]
+                                        }, {
+                                            "$eq": ["$transaction.type.currentAccount", "Cobra"]
+                                        }]
+                                    },
+                                    "then": {
+                                        "$multiply": ["$transaction.totalPrice", 1]
+                                    }
+                                }, {
+                                    "case": {
+                                        "$and": [{
+                                            "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, false]
+                                        }, {
+                                            "$eq": [this.companyType, "Proveedor"]
+                                        }, {
+                                            "$eq": ["$transaction.type.movement", "Salida"]
+                                        }, {
+                                            "$eq": ["$transaction.type.currentAccount", "Cobra"]
+                                        }]
+                                    },
+                                    "then": {
+                                        "$multiply": ["$transaction.totalPrice", -1]
+                                    }
+                                }, {
+                                    "case": {
+                                        "$and": [{
+                                            "$eq": [this.companyType, "Proveedor"]
+                                        }, {
+                                            "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, true]
+                                        }, {
+                                            "$eq": ["$transaction.type.movement", "Entrada"]
+                                        }, {
+                                            "$eq": ["$transaction.type.currentAccount", "Si"]
+                                        }]
+                                    },
+                                    "then": {
+                                        "$multiply": ["$transaction.totalPrice", 1]
+                                    }
+                                }, {
+                                    "case": {
+                                        "$and": [{
+                                            "$eq": [this.companyType, "Proveedor"]
+                                        }, {
+                                            "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, true]
+                                        }, {
+                                            "$eq": ["$transaction.type.movement", "Salida"]
+                                        }, {
+                                            "$eq": ["$transaction.type.currentAccount", "Si"]
+                                        }]
+                                    },
+                                    "then": {
+                                        "$multiply": ["$transaction.totalPrice", -1]
+                                    }
+                                }, {
+                                    "case": {
+                                        "$and": [{
+                                            "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, true]
+                                        }, {
+                                            "$eq": [this.companyType, "Proveedor"]
+                                        }, {
+                                            "$eq": ["$transaction.type.movement", "Entrada"]
+                                        }, {
+                                            "$eq": ["$transaction.type.currentAccount", "Cobra"]
+                                        }]
+                                    },
+                                    "then": {
+                                        "$multiply": ["$transaction.totalPrice", -1]
+                                    }
+                                }, {
+                                    "case": {
+                                        "$and": [{
+                                            "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, true]
+                                        }, {
+                                            "$eq": [this.companyType, "Proveedor"]
+                                        }, {
+                                            "$eq": ["$transaction.type.movement", "Salida"]
+                                        }, {
+                                            "$eq": ["$transaction.type.currentAccount", "Cobra"]
+                                        }]
+                                    },
+                                    "then": {
+                                        "$multiply": ["$transaction.totalPrice", 1]
+                                    }
+                                }],
+                                "default": 0
                             }
                         }
-                    ]
-            } else {
-                fullQuery =
-                    [
-                        { "$lookup": { "from": "payment-methods", "foreignField": "_id", "localField": "type", "as": "type" } },
-                        { "$unwind": { "path": "$type" } },
-                        { "$lookup": { "from": "transactions", "foreignField": "_id", "localField": "transaction", "as": "transaction" } },
-                        { "$unwind": { "path": "$transaction" } },
-                        { "$lookup": { "from": "transaction-types", "foreignField": "_id", "localField": "transaction.type", "as": "transaction.type" } },
-                        { "$unwind": { "path": "$transaction.type" } },
-                        { "$lookup": { "from": "companies", "foreignField": "_id", "localField": "transaction.company", "as": "transaction.company" } },
-                        { "$unwind": { "path": "$transaction.company", "preserveNullAndEmptyArrays": true } },
-                        { $lookup: { from: "states", foreignField: "_id", localField: "transaction.company.state", as: "transaction.company.state" } },
-                        { $unwind: { path: "$transaction.company.state", preserveNullAndEmptyArrays: true } },
-                        { $lookup: { from: "employees", foreignField: "_id", localField: "transaction.company.employee", as: "transaction.company.employee" } },
-                        { $unwind: { path: "$transaction.company.employee", preserveNullAndEmptyArrays: true } },
-                        { "$lookup": { "from": "identification-types", "foreignField": "_id", "localField": "transaction.company.identificationType", "as": "transaction.company.identificationType" } },
-                        { "$unwind": { "path": "$transaction.company.identificationType", "preserveNullAndEmptyArrays": true } },
-                        { $lookup: { from: "vat-conditions", foreignField: "_id", localField: "transaction.company.vatCondition", as: "transaction.company.vatCondition" } },
-                        { $unwind: { path: "$transaction.company.vatCondition", preserveNullAndEmptyArrays: true } },
-                        {
-                            "$project": {
-                                "_id": 1,
-                                "type.isCurrentAccount": 1,
-                                "transaction._id": 1,
-                                "transaction.company._id": 1,
-                                "transaction.company.name": 1,
-                                "transaction.company.type": 1,
-                                "transaction.company.address": 1,
-                                "transaction.company.city": 1,
-                                "transaction.company.phones": 1,
-                                "transaction.company.emails": 1,
-                                "transaction.company.identificationType.name": 1,
-                                "transaction.company.identificationValue": 1,
-                                "transaction.company.vatCondition.description": 1,
-                                "transaction.company.employee._id": 1,
-                                "transaction.company.employee.name": 1,
-                                "transaction.company.operationType": 1,
-                                "transaction.company.state.name": 1,
-                                "transaction.type.currentAccount": 1,
-                                "transaction.type.movement": 1,
-                                "transaction.type.labelPrint": 1,
-                                "transaction.type.name": 1,
-                                "transaction.state": 1,
-                                "transaction.operationType": 1,
-                                "transaction.number": 1,
-                                "transaction.origin": 1,
-                                "transaction.letter": 1,
-                                "trasaction.expirationDate": 1,
-                                "transaction.endDate2": { $dateToString: { date: "$transaction.endDate", format: "%d/%m/%Y", timezone: timezone } },
-                                "operationType": 1,
-                                "transaction.totalPrice": {
-                                    $switch: {
-                                        branches: [
-                                            //proveedor
-                                            {
-                                                case: {
-                                                    $and:
-                                                        [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false] },
-                                                            { $eq: ["$transaction.type.movement", "Entrada"] },
-                                                            { $eq: ["$transaction.type.currentAccount", "Si"] }
+                    }
+                });
 
-                                                        ]
-                                                },
-                                                then: { $multiply: ["$transaction.totalPrice", -1] }
-                                            },
-                                            {
-                                                case: {
-                                                    $and:
-                                                        [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false] },
-                                                            { $eq: ["$transaction.type.movement", "Salida"] },
-                                                            { $eq: ["$transaction.type.currentAccount", "Si"] }
+            let match = `{`;
 
-                                                        ]
-                                                }, then: { $multiply: ["$transaction.totalPrice", 1] }
-                                            },
-                                            {
-                                                case: {
-                                                    $and:
-                                                        [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false] },
-                                                            { $eq: ["$transaction.type.movement", "Entrada"] },
-                                                            { $eq: ["$transaction.type.currentAccount", "Cobra"] }
 
-                                                        ]
-                                                }, then: { $multiply: ["$transaction.totalPrice", 1] }
-                                            },
-                                            {
-                                                case: {
-                                                    $and:
-                                                        [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false] },
-                                                            { $eq: ["$transaction.type.movement", "Salida"] },
-                                                            { $eq: ["$transaction.type.currentAccount", "Cobra"] }
-
-                                                        ]
-                                                }, then: { $multiply: ["$transaction.totalPrice", -1] }
-                                            },
-                                            // invertida true
-                                            {
-                                                case: {
-                                                    $and:
-                                                        [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true] },
-                                                            { $eq: ["$transaction.type.movement", "Entrada"] },
-                                                            { $eq: ["$transaction.type.currentAccount", "Si"] }
-
-                                                        ]
-                                                },
-                                                then: { $multiply: ["$transaction.totalPrice", 1] }
-                                            },
-                                            {
-                                                case: {
-                                                    $and:
-                                                        [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true] },
-                                                            { $eq: ["$transaction.type.movement", "Salida"] },
-                                                            { $eq: ["$transaction.type.currentAccount", "Si"] }
-
-                                                        ]
-                                                }, then: { $multiply: ["$transaction.totalPrice", -1] }
-                                            },
-                                            {
-                                                case: {
-                                                    $and:
-                                                        [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true] },
-                                                            { $eq: ["$transaction.type.movement", "Entrada"] },
-                                                            { $eq: ["$transaction.type.currentAccount", "Cobra"] }
-
-                                                        ]
-                                                }, then: { $multiply: ["$transaction.totalPrice", -1] }
-                                            },
-                                            {
-                                                case: {
-                                                    $and:
-                                                        [
-                                                            { $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true] },
-                                                            { $eq: ["$transaction.type.movement", "Salida"] },
-                                                            { $eq: ["$transaction.type.currentAccount", "Cobra"] }
-
-                                                        ]
-                                                }, then: { $multiply: ["$transaction.totalPrice", 1] }
-                                            }
-                                        ],
-                                        default: 0
-                                    }
-                                }
-                            }
-                        },
-                        {
-                            "$match":
-                            {
-                                "$or": [{ "type.isCurrentAccount": true }, { "transaction.type.currentAccount": "Cobra" }],
-                                "transaction.state": "Cerrado",
-                                "transaction.company.type": "Proveedor",
-                                "transaction.operationType": { "$ne": "D" },
-                                "operationType": { "$ne": "D" }
-                            }
-                        },
-                        {
-                            "$group": {
-                                "_id": { "transactions": "$transaction" },
-                                "transactions": { $push: "$transaction" }
-                            }
-                        },
-                        {
-                            "$group": {
-                                "_id": { "company": "$_id.transactions.company" },
-                                "transactions": { $push: "$_id.transactions" },
-                                "price": { "$sum": "$_id.transactions.totalPrice" }
-                            }
-                        }
-                    ]
+            if (this.companyForm.value.company) {
+                match += `"transaction.company._id": { "$oid" : "${this.companyForm.value.company._id}"},`
+            }
+            if (this.companyForm.value.employee) {
+                match += `"transaction.company.employee._id": { "$oid" : "${this.companyForm.value.employee}"},`
             }
 
-            this._movementOfCashService.getMovementsOfCashesFullQuery(
+            /*if (this.startDate && this.endDate) {
+    
+                let timezone = "-03:00";
+                if (Config.timezone && Config.timezone !== '') {
+                    timezone = Config.timezone.split('UTC')[1];
+                }
+    
+                match += `"endDate" : { "$gte": {"$date": "${this.startDate}T00:00:00${timezone}"},
+                                        "$lte": {"$date": "${this.endDate}T00:00:00${timezone}"}
+                                    },`
+            }*/
+
+
+            match += `      "$or": [{ "type.isCurrentAccount": true }, { "transaction.type.currentAccount": "Cobra" }],
+                            "transaction.state": "Cerrado",
+                            "transaction.company.type": "${this.companyType}",
+                            "transaction.operationType": { "$ne": "D" },
+                            "operationType" : { "$ne" : "D" } }`;
+
+            match = JSON.parse(match);
+
+            fullQuery.push({ "$match": match })
+
+            fullQuery.push(
+                {
+                    "$group": {
+                        "_id": { "transactions": "$transaction" },
+                        "transactions": { $push: "$transaction" }
+                    }
+                },
+                {
+                    "$group": {
+                        "_id": { "company": "$_id.transactions.company" },
+                        "transactions": { $push: "$_id.transactions" },
+                        "price": { "$sum": "$_id.transactions.totalPrice" }
+                    }
+                },
+                {
+                    "$sort": {
+                        "_id.company.name": 1,
+                        "transactions.endDate" : 1 
+                    }
+                }
+            );
+
+            this._movementOfCashService.getMovementsOfCashesV3(
                 fullQuery
             ).subscribe(
                 result => {
-                    if (result && result.movementsOfCashes && result.movementsOfCashes.length > 0) {
+                    if (result && result.length > 0) {
                         resolve(result)
                         this.loading = false;
                     } else {
@@ -1042,7 +1177,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
         this.items = await this.getMovementOfCash()
 
-        this.items = this.items['movementsOfCashes'];
+        //this.items = this.items['movementsOfCashes'];
 
 
         let page = 1;
