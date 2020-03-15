@@ -103,6 +103,28 @@ export class TransactionService {
 				return of(err);
 			})
 		);
+    }
+    
+    public getTransactionsV3(
+		query
+	): Observable<any> {
+
+		const URL = `${Config.apiURL}v3/transactions`;
+
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
+
+		return this._http.post(URL, query, {
+			headers: headers
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
 	}
 
 	public getTotalTransactionsBetweenDates(
