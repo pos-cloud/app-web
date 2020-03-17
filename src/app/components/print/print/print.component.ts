@@ -308,8 +308,8 @@ export class PrintComponent implements OnInit {
             "company.fantasyName" : 1,
 
             "table.description" : 1,
-            "shiptmentMethod._id" : 1,
-            "shiptmentMethod.name" : 1,
+            "shipmentMethod._id" : 1,
+            "shipmentMethod.name" : 1,
 
 
             "employeeClosing._id" : 1,
@@ -333,7 +333,9 @@ export class PrintComponent implements OnInit {
 		).subscribe(
 			async result => {
 				if (result && result.transactions && result.transactions.length === 1) {
-					this.transaction = result.transactions[0];
+
+                    this.transaction = result.transactions[0];
+                    
 
 					if (this.transaction.branchDestination && this.transaction.branchDestination.image) {
 						this.branchImagen = this.transaction.branchDestination.image
