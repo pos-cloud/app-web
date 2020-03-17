@@ -20,11 +20,18 @@
 						[style.color]="(transaction.color && transaction.color.split(':')[1]) ? transaction.color.split(':')[1] : 'black'">
 						<div class="row"
 							style="position: absolute; top: 18px; width: 100%; margin: 0px; padding: 0px; left: 0px;">
-							<div class="col-md-12 center-content"
+							<div class="col-md-8 center-content"
 								*ngIf="transaction && transaction._id && transaction._id !== ''">
 								<button class="btn" style="width: 100%; background-color: #fe2e2e; color: white;">
 									<span *ngIf="transaction.orderNumber > 0">{{ transaction.orderNumber }}</span>
-									<span *ngIf="!transaction.orderNumber">{{ transaction.number }}</span>
+                                    <span *ngIf="!transaction.orderNumber">{{ transaction.number }}</span>
+                                    
+								</button>
+                            </div>
+                            <div class="col-md-4 center-content"
+								*ngIf="transaction && transaction._id && transaction._id !== '' && transaction.shipmentMethod && transaction.shipmentMethod.name">
+								<button class="btn" style="width: 100%; background-color: #fe2e2e; color: white;">
+									<span>{{ transaction.shipmentMethod.name }}</span>
 								</button>
 							</div>
 						</div>
