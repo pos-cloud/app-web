@@ -2968,9 +2968,9 @@ export class PrintComponent implements OnInit {
 
 
         //jackson
-        /*this.doc.line(0, row, 80, row);
-        row += 40
-        this.doc.line(0, row, 80, row);*/
+        //this.doc.line(0, row, 80, row);
+        //row += 40
+        //this.doc.line(0, row, 80, row);
 
         this.doc.setFontType('bold');
         this.doc.setFontSize(this.fontSizes.large);
@@ -2980,7 +2980,11 @@ export class PrintComponent implements OnInit {
 
         row += 8;
         this.doc.setFontType('bold');
-        this.doc.text("Pedido Nº: " + this.transaction.number, margin, row);
+        if(this.transaction.orderNumber > 0) {
+            this.doc.text("Pedido Nº: " + this.transaction.orderNumber, margin, row);
+        } else {
+            this.doc.text("Pedido Nº: " + this.transaction.number, margin, row);
+        }
         row += 5;
         this.doc.setFontType('normal');
         this.doc.text("Fecha: " + this.transaction.startDate.substring(0, 5), margin, row);
