@@ -288,7 +288,7 @@ export class MovementOfCancellationComponent implements OnInit {
 			number: { $toString: '$number' },
 			letter: 1,
 			state: 1,
-			totalPrice: { $toString: '$totalPrice' },
+			totalPrice: 1,
 			balance: 1,
 			balanceSelected: '$balance',
 			operationType: 1,

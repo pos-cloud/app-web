@@ -43,8 +43,10 @@
 								(input)="getTransactions()" placeholder="Letra..."></th>
 						<th><input type="text" class="form-control" [(ngModel)]="filters['number']"
 								(input)="getTransactions()" placeholder="Número..."></th>
-						<th><input type="text" class="form-control" [(ngModel)]="filters['totalPrice']"
-								(input)="getTransactions()" placeholder="Precio Total..."></th>
+						<th>
+              <!-- <input type="text" class="form-control" [(ngModel)]="filters['totalPrice']"
+                (input)="getTransactions()" placeholder="Precio Total..."> -->
+              </th>
 						<th></th>
 					</tr>
 				</thead>
@@ -69,7 +71,7 @@
 						<td (click)="selectTransaction(transaction, false)">{{transaction.letter}}</td>
 						<td (click)="selectTransaction(transaction, false)">{{transaction.number}}</td>
 						<td (click)="selectTransaction(transaction, false)">
-							{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
+							{{transaction.totalPrice  }}</td>
 						<td>
 							<input type="number" class="form-control" [(ngModel)]="transaction['balanceSelected']"
 								(blur)="updateBalanceOrigin(transaction)"
