@@ -34,7 +34,7 @@ export class SelectChecksComponent implements OnInit {
     public pathLocation: string[]
     public totalAmountSelected: number = 0;
     public totalAmount: number = 0;
-  
+
     public currentPage: number = 0;
     public displayedColumns = [
       "_id",
@@ -46,7 +46,7 @@ export class SelectChecksComponent implements OnInit {
       "statusCheck",
       "observation",
       "bank._id",
-      "bank.name", 
+      "bank.name",
       "amountPaid",
       "operationType",
       "expirationDate",
@@ -65,15 +65,15 @@ export class SelectChecksComponent implements OnInit {
     ];
     public filters: any[];
     public filterValue: string;
-  
-  
+
+
     constructor(
       public _movementOfCashService: MovementOfCashService,
       public _router: Router,
       public _modalService: NgbModal,
       public activeModal: NgbActiveModal,
       public alertConfig: NgbAlertConfig,
-    ) { 
+    ) {
       this.filters = new Array();
       for(let field of this.displayedColumns) {
         this.filters[field] = "";
@@ -82,19 +82,19 @@ export class SelectChecksComponent implements OnInit {
         this.filters['type._id'] = this.paymentMethod._id;
       }
     }
-  
+
     ngOnInit() {
-  
+
       this.pathLocation = this._router.url.split('/');
       this.userType = this.pathLocation[1];
       this.transactionMovement = this.pathLocation[2].charAt(0).toUpperCase() + this.pathLocation[2].slice(1);
       this.getMovementOfCashes();
     }
-  
+
     public getMovementOfCashes(): void {
-      
+
       this.loading = true;
-  
+
       // ORDENAMOS LA CONSULTA
       let sortAux;
       if (this.orderTerm[0].charAt(0) === '-') {
@@ -103,7 +103,7 @@ export class SelectChecksComponent implements OnInit {
           sortAux = `{ "${this.orderTerm[0]}" : 1 }`;
       }
       sortAux = JSON.parse(sortAux);
-      
+
       // FILTRAMOS LA CONSULTA
       let match = `{`;
       for(let i = 0; i < this.displayedColumns.length; i++) {
@@ -112,26 +112,26 @@ export class SelectChecksComponent implements OnInit {
           match += `"${this.displayedColumns[i]}": { "$regex": "${value}", "$options": "i"},`;
         }
       }
-  
+
       match += `"operationType": { "$ne": "D" },
                 "transaction.state": "${TransactionState.Closed}",
                 "transaction.operationType": { "$ne": "D" },`;
-      
-      
+
+
     match += `"statusCheck": "${StatusCheck.Available}","type.inputAndOuput" : true }`;
-      
-      
+
+
       match = JSON.parse(match);
-      
+
       let project = {};
       // CAMPOS A TRAER
-      
+
         project = {
           "_id": 1,
           "number": 1,
           "bank._id": 1 ,
           "bank.name": 1,
-          "amountPaid":{ $toString: '$amountPaid'},
+          "amountPaid":1,
           "operationType": 1,
           "expirationDate": { $dateToString: { date: "$expirationDate", format: "%d/%m/%Y", timezone: "-03:00" }},
           "transaction._id":1,
@@ -151,14 +151,14 @@ export class SelectChecksComponent implements OnInit {
           "observation": 1,
           "transaction.operationType": 1
       }
-  
+
       // AGRUPAMOS EL RESULTADO
       let group = {
         _id: null,
         count: { $sum: 1 },
         movementsOfCashes: { $push: '$$ROOT' }
       };
-  
+
       let limit = this.itemsPerPage;
       let page = 0;
       if(this.currentPage != 0) {
@@ -167,8 +167,8 @@ export class SelectChecksComponent implements OnInit {
       let skip = !isNaN(page * this.itemsPerPage) ?
               (page * this.itemsPerPage):
                   0 // SKIP
-      
-      
+
+
       this._movementOfCashService.getMovementsOfCashesV2(
           project, // PROJECT
           match, // MATCH
@@ -197,20 +197,20 @@ export class SelectChecksComponent implements OnInit {
         }
       );
     }
-  
+
     public orderBy (term: string): void {
-  
+
       if (this.orderTerm[0] === term) {
         this.orderTerm[0] = '-' + term;
       } else {
         this.orderTerm[0] = term;
       }
-  
+
       this.getMovementOfCashes();
     }
-  
+
     public openModal(op: string, movementOfCash: MovementOfCash): void {
-  
+
       let modalRef;
       switch (op) {
         case 'view':
@@ -231,20 +231,20 @@ export class SelectChecksComponent implements OnInit {
         default: ;
       }
     };
-  
+
     public calculateTotal() :void {
       this.totalAmount = 0;
       for(let movementofCash of this.movementsOfCashes) {
         this.totalAmount = this.totalAmount + parseFloat(movementofCash.amountPaid.toString());
       }
     }
-  
+
     public addItem(movementOfCashSelected) {
       this.eventAddItem.emit(movementOfCashSelected);
     }
-  
+
     public async selectmovementOfCash(movementOfCashSelected: MovementOfCash) {
-      
+
       let movementOfCash = await this.getMovementOfCashById(movementOfCashSelected._id);
       if(this.isMovementOfCashSelected(movementOfCash)) {
         this.deleteMovementOfCashSelected(movementOfCash);
@@ -260,24 +260,24 @@ export class SelectChecksComponent implements OnInit {
         }
       }
     }
-  
+
     public isMovementOfCashSelected(movementOfCash: MovementOfCash) {
-  
+
       let isSelected: boolean = false;
-  
+
       for(let mov of this.movementsOfCashesSelected) {
         if(mov._id.toString() === movementOfCash._id.toString()) {
           isSelected = true;
         }
       }
-  
+
       return isSelected;
     }
-  
+
     public deleteMovementOfCashSelected(movementOfCash: MovementOfCash): void {
-  
+
       let movementToDelete: number;
-  
+
       for(let i=0; i < this.movementsOfCashesSelected.length; i++) {
         if(this.movementsOfCashesSelected[i]._id.toString() === movementOfCash._id.toString()) {
           movementToDelete = i;
@@ -288,7 +288,7 @@ export class SelectChecksComponent implements OnInit {
         this.movementsOfCashesSelected.splice(movementToDelete, 1);
       }
     }
-  
+
     public closeModal(): void {
       this.activeModal.close(
         {
@@ -296,11 +296,11 @@ export class SelectChecksComponent implements OnInit {
         }
       );
     }
-  
+
     public getMovementOfCashById(id: string): Promise<MovementOfCash> {
-  
+
       return new Promise<MovementOfCash>((resolve, reject) => {
-  
+
         this._movementOfCashService.getMovementOfCash(id).subscribe(
           async result => {
             if (!result.movementOfCash) {
@@ -317,18 +317,18 @@ export class SelectChecksComponent implements OnInit {
         );
       });
     }
-  
+
     public pageChange(page): void {
       this.currentPage = page;
       this.getMovementOfCashes();
     }
-  
+
     public showMessage(message: string, type: string, dismissible: boolean): void {
       this.alertMessage = message;
       this.alertConfig.type = type;
       this.alertConfig.dismissible = dismissible;
     }
-  
+
     public hideMessage(): void {
       this.alertMessage = '';
     }

@@ -31,8 +31,8 @@
               <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.transactionMovement']" (keydown.enter)="getMovementOfCashes()" placeholder="Movimiento..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['bank.name']" (keydown.enter)="getMovementOfCashes()" placeholder="Banco..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['expirationDate']" (keydown.enter)="getMovementOfCashes()" placeholder="Fecha..."></th>
-              <th><input type="text" class="form-control" [(ngModel)]="filters['amountPaid']" (keydown.enter)="getMovementOfCashes()" placeholder="Importe..."></th>
-  
+              <th></th>
+
             </tr>
           </thead>
           <tbody>
@@ -52,7 +52,7 @@
               <td *ngIf="movementOfCash.bank" class="flat" (click)="selectmovementOfCash(movementOfCash)">{{movementOfCash.bank.name }}</td>
               <td *ngIf="!movementOfCash.bank" (click)="selectmovementOfCash(movementOfCash)"></td>
               <td class="flat" (click)="selectmovementOfCash(movementOfCash)">{{movementOfCash.expirationDate }}</td>
-              <td class="flat" (click)="selectmovementOfCash(movementOfCash)">{{movementOfCash.amountPaid }}</td>
+              <td class="flat" (click)="selectmovementOfCash(movementOfCash)">{{movementOfCash.amountPaid | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
             </tr>
             <tr align="center" *ngIf="totalItems === 0 && !loading">
               <td colspan="15">No se encontraron movimientos</td>
@@ -87,7 +87,7 @@
               </div>
             </div>
           </div>
-          
+
         </div>
     </div>
   </section>
