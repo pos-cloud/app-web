@@ -1877,9 +1877,9 @@ export class AddSaleOrderComponent {
 				if (this.transaction.type.defectEmailTemplate) {
 
 					if (this.transaction.type.electronics) {
-						modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/invoice/ + ${this.transaction._id}">Su comprobante</a>`
+						modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/invoice/${this.transaction._id}">Su comprobante</a>`
 					} else {
-						modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/others/ + ${this.transaction._id}">Su comprobante</a>`
+						modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/others/${this.transaction._id}">Su comprobante</a>`
 					}
 
 					if (Config.country === 'MX') {

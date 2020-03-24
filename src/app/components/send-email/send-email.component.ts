@@ -50,7 +50,7 @@ export class SendEmailComponent implements OnInit {
     public html = '';
 
     public tinyMCEConfigBody = {
-        selector: "textarea",
+        selector: "tinymce",
         theme: "modern",
         paste_data_images: true,
         plugins: [
