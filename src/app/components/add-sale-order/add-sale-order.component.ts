@@ -1593,7 +1593,8 @@ export class AddSaleOrderComponent {
 	public validateElectronicTransactionAR(): void {
 
 		this.showMessage("Validando comprobante con AFIP...", 'info', false);
-		this.loading = true;
+        this.loading = true;
+        this.transaction.type.defectEmailTemplate = null;  
 		this._transactionService.validateElectronicTransactionAR(this.transaction).subscribe(
 			result => {
 				let msn = '';
@@ -1660,6 +1661,7 @@ export class AddSaleOrderComponent {
 				this.loading = false;
 			},
 			error => {
+                console.log(error)
 				this.showMessage("Ha ocurrido un error en el servidor. Comuníquese con Soporte.", 'danger', false);
 				this.loading = false;
 			}
