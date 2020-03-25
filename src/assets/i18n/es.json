@@ -14,7 +14,8 @@
 			"description": "Categoría"
 		},
 		"code": "Código",
-		"costPrice": "Precio de Costo",
+        "costPrice": "Precio de Costo",
+        "basePrice" : "Precio Base",
 		"description": "Descripción",
 		"make": {
 			"description": "Marca"
