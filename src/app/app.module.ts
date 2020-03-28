@@ -296,6 +296,7 @@ import { SelectChecksComponent } from './components/select-checks/select-checks.
 import { ShipmentMethodComponent } from './components/shipment-method/shipment-method.component';
 import { ListShipmentMethodComponent } from './components/list-shipment-method/list-shipment-method.component';
 import { SelectShipmentMethodComponent } from './components/select-shipment-method/select-shipment-method.component';
+import { NotificationGuard } from './guards/notification.guard';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -771,7 +772,8 @@ export function HttpLoaderFactory(http: HttpClient) {
 		CountryService,
 		BankService,
 		BranchService,
-		AuthGuard,
+        AuthGuard,
+        NotificationGuard,
 		LicenseGuard,
 		AuthService,
 		OriginService,
