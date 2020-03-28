@@ -23,6 +23,8 @@ import { Deposit } from 'app/models/deposit';
 import { DepositService } from 'app/services/deposit.service';
 import { AuthService } from 'app/services/auth.service';
 import { Subscription } from 'rxjs';
+import { ArticleStockService } from 'app/services/article-stock.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: 'app-report-kardex',
@@ -62,9 +64,12 @@ export class ReportKardexComponent implements OnInit {
     public startDate: string;
     public endDate: string;
     public timezone: string = "-03:00";
+    public articleStockId: string;
 
     constructor(
         public _movementOfArticleService: MovementOfArticleService,
+        public _articleStockService : ArticleStockService,
+        private _toastr: ToastrService,
         private _articleService: ArticleService,
         public _router: Router,
         private _route: ActivatedRoute,
@@ -325,6 +330,7 @@ export class ReportKardexComponent implements OnInit {
             if (params['article']) this.articleSelectedId = params['article'];
             if (params['branch']) this.branchSelectedId = params['branch'];
             if (params['deposit']) this.depositSelectedId = params['deposit'];
+            if (params['aricleStock']) this.articleStockId = params['articleStock'];
         });
     }
 
@@ -715,6 +721,179 @@ export class ReportKardexComponent implements OnInit {
         this.subscription.unsubscribe();
     }
 
+    public repairStock() {
+
+        this.loading= true;
+
+        var query = [
+            {
+                "$lookup": {
+                    "from": "deposits",
+                    "foreignField": "_id",
+                    "localField": "deposit",
+                    "as": "deposit"
+                }
+            }, {
+                "$unwind": {
+                    "path": "$deposit",
+                    "preserveNullAndEmptyArrays": true
+                }
+            }, {
+                "$lookup": {
+                    "from": "articles",
+                    "foreignField": "_id",
+                    "localField": "article",
+                    "as": "article"
+                }
+            }, {
+                "$unwind": {
+                    "path": "$article",
+                    "preserveNullAndEmptyArrays": true
+                }
+            }, {
+                "$lookup": {
+                    "from": "transactions",
+                    "foreignField": "_id",
+                    "localField": "transaction",
+                    "as": "transaction"
+                }
+            }, {
+                "$unwind": {
+                    "path": "$transaction"
+                }
+            }, {
+                "$lookup": {
+                    "from": "transaction-types",
+                    "foreignField": "_id",
+                    "localField": "transaction.type",
+                    "as": "transaction.type"
+                }
+            }, {
+                "$unwind": {
+                    "path": "$transaction.type"
+                }
+            }, {
+                "$sort": {
+                    "transaction.endDate": 1
+                }
+            }, {
+                "$project": {
+                    "transaction.endDate": {
+                        "$dateToString": {
+                            "date": "$transaction.endDate",
+                            "format": "%d/%m/%Y",
+                            "timezone": "-03:00"
+                        }
+                    },
+                    "transaction.type.transactionMovement": 1,
+                    "transaction.type.name": 1,
+                    "transaction.number": {
+                        "$toString": "$transaction.number"
+                    },
+                    "quantityForStock": {
+                        "$toString": "$quantityForStock"
+                    },
+                    "Stock": {
+                        "$toString": "$Stock"
+                    },
+                    "operationType": 1,
+                    "transaction.operationType": 1,
+                    "transaction._id": 1,
+                    "article._id": 1,
+                    "article.description": 1,
+                    "deposit._id": 1,
+                    "endDate": "$transaction.endDate",
+                    "modifyStock": {
+                        "$toString": "$modifyStock"
+                    }
+                }
+            }, {
+                "$match": {
+                    "operationType": {
+                        "$ne": "D"
+                    },
+                    "transaction.operationType": {
+                        "$ne": "D"
+                    },
+                    "deposit._id": { $oid : this.depositSelectedId },
+                    "article._id": { $oid : this.articleSelectedId }
+                }
+            }, {
+                "$group": {
+                    "_id": null,
+                    "count": {
+                        "$sum": 1
+                    },
+                    "items": {
+                        "$push": "$$ROOT"
+                    }
+                }
+            }, {
+                "$project": {
+                    "movementsOfArticles": {
+                        "$slice": ["$movementsOfArticles", 0, 10]
+                    },
+                    "_id": 1,
+                    "count": 1,
+                    "items": 1
+                }
+            }
+        ]
+
+
+        this._movementOfArticleService.getMovementsOfArticlesV3(query).subscribe(
+            result => {
+                if (result && result[0] && result[0].count > 0) {
+                    var balance = 0
+                    for (var mov of result[0].items) {
+                        balance += parseFloat(mov.quantityForStock);
+                    }
+                    var query = `where= "article": "${this.articleSelectedId}",
+                                        "branch": "${this.branchSelectedId}",
+                                        "deposit": "${this.depositSelectedId}"`;
+
+                    this._articleStockService.getArticleStocks(query).subscribe(
+                        result => {
+                            if (!result.articleStocks || result.articleStocks.length <= 0) {
+                                this.showToast("No se encontro el articulo", 'danger');
+                                this.loading = false;
+                            } else {
+                                result.articleStocks[0].realStock = balance;
+                                this._articleStockService.updateArticleStock(result.articleStocks[0]).subscribe(
+                                    result =>{
+                                        if(result && result.articleStock){
+                                            this.showToast("El stock se actualizo correctamente", 'success');
+                                            this.loading = false;
+                                        } else {
+                                            this.showToast("El stock no se pudo actualizar", 'info');
+                                            this.loading = false;
+                                        }
+                                    },
+                                    error =>{
+                                        this.showToast(error._body, 'danger');
+                                        this.loading = false;
+                                    }
+                                )
+                            }
+                        },
+                        error => {
+                            this.showToast(error._body, 'danger');
+                            this.loading = false;
+                        }
+                    );
+                } else {
+                    this.showToast("No se encontraron movimientos", 'danger');
+                    this.loading = false;
+                }
+            },
+            error => {
+                this.showToast(error._body, 'danger');
+                this.loading = false;
+            }
+        );
+           
+    }
+
     public showMessage(message: string, type: string, dismissible: boolean): void {
         this.alertMessage = message;
         this.alertConfig.type = type;
@@ -724,4 +903,24 @@ export class ReportKardexComponent implements OnInit {
     public hideMessage(): void {
         this.alertMessage = '';
     }
+
+    public showToast(message: string, type: string = 'success'): void {
+		switch (type) {
+			case 'success':
+				this._toastr.success('', message);
+				break;
+			case 'info':
+				this._toastr.info('', message);
+				break;
+			case 'warning':
+				this._toastr.warning('', message);
+				break;
+			case 'danger':
+				this._toastr.error('', message);
+				break;
+			default:
+				this._toastr.success('', message);
+				break;
+		}
+	}
 }

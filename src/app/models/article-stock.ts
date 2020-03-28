@@ -127,6 +127,16 @@ export let attributes = [
 		required : true,
 	},
 	{
+		name: 'article.basePrice',
+		visible: false,
+		disabled: false,
+		filter: true,
+		datatype: 'currency',
+    	project: null,
+		align: 'right',
+		required : true,
+    },
+    {
 		name: 'article.costPrice',
 		visible: true,
 		disabled: false,

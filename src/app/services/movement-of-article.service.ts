@@ -100,6 +100,28 @@ export class MovementOfArticleService {
 				return of(err);
 			})
 		);
+    }
+    
+    public getMovementsOfArticlesV3(
+		query
+	): Observable<any> {
+
+		const URL = `${Config.apiURL}v3/movements-of-articles`;
+
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
+
+		return this._http.post(URL, query, {
+			headers: headers
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
 	}
 
 	public saveMovementOfArticle(movementOfArticle: MovementOfArticle): Observable<any> {
