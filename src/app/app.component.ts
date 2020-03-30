@@ -113,7 +113,7 @@ export class AppComponent {
                     }
                 }
             }//3600000
-        }, 10000)
+        }, 3600000)
     }
 
     public getConfigApi(): Promise<Config> {
