@@ -14,6 +14,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { ToastrService } from 'ngx-toastr';
+import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 
 
 
@@ -72,7 +73,7 @@ export class AppComponent {
 
             if (this.config && this.config['expirationLicense']) {
                 var days = moment(this.config['expirationLicense']).diff(moment(), 'days');
-            
+                days = days + 1;
 
                 if (!this.config['demo']) {
                     if (days < 5) {
@@ -93,7 +94,6 @@ export class AppComponent {
                         }
                         if (days < 10) {
                             this.showToast("Su licencia vence en " + days + " días", "info")
-
                         }
 
                     }
@@ -112,7 +112,7 @@ export class AppComponent {
 
                     }
                 }
-            }
+            }//3600000
         }, 3600000)
     }
 
