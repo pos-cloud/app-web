@@ -74,21 +74,7 @@ export class AppComponent {
                 var days = moment(this.config['expirationLicense']).diff(moment(), 'days');
             
 
-                if (this.config['demo']) {
-                    if (days == 0) {
-                        this.showToast("Su licencia demo vence hoy", "info")
-
-                    }
-                    if (days == 1) {
-                        this.showToast("Su licencia demo vence en " + days + " día", "info")
-
-                    }
-                    if (days < 2) {
-                        this.showToast("Su licencia demo vence en " + days + " días", "info")
-
-                    }
-
-                } else {
+                if (!this.config['demo']) {
                     if (days < 5) {
                         this.showToast("Su licencia expiró por favor regularice su pago", "danger")
                     } else {
@@ -109,6 +95,20 @@ export class AppComponent {
                             this.showToast("Su licencia vence en " + days + " días", "info")
 
                         }
+
+                    }
+                } else {
+                    
+                    if (days == 0) {
+                        this.showToast("Su licencia demo vence hoy", "info")
+
+                    }
+                    if (days == 1) {
+                        this.showToast("Su licencia demo vence en " + days + " día", "info")
+
+                    }
+                    if (days < 2) {
+                        this.showToast("Su licencia demo vence en " + days + " días", "info")
 
                     }
                 }
