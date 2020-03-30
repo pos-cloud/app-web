@@ -72,9 +72,9 @@ export class AppComponent {
         setInterval(() => {
 
             if (this.config && this.config['expirationLicense']) {
-                var days = moment(this.config['expirationLicense']).diff(moment(), 'days');
-                days = days + 1;
 
+                var days = moment(this.config['expirationLicense'],'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days');
+                
                 if (!this.config['demo']) {
                     if (days < 5) {
                         this.showToast("Su licencia expiró por favor regularice su pago", "danger")
@@ -113,7 +113,7 @@ export class AppComponent {
                     }
                 }
             }//3600000
-        }, 3600000)
+        }, 10000)
     }
 
     public getConfigApi(): Promise<Config> {
