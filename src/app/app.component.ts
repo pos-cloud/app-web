@@ -73,7 +73,6 @@ export class AppComponent {
             if (this.config && this.config['expirationLicense']) {
                 var days = moment(this.config['expirationLicense']).diff(moment(), 'days');
             
-                this.showToast(days.toString(), "warning")
 
                 if (this.config['demo']) {
                     if (days == 0) {
