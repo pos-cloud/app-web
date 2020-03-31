@@ -28,7 +28,7 @@ export class Config {
 	static companyGrossIncome: string;
 	static companyPostalCode: string;
 	static footerInvoice: string;
-	static expirationLicense: string;
+	static licensePaymentDueDate: string;
 	static country: string;
 	static timezone: string;
 	static currency: Currency;
@@ -95,8 +95,8 @@ export class Config {
 		Config.database = database;
 	}
 
-	public static setExpirationLicense(expirationLicense: string): void {
-		Config.expirationLicense = expirationLicense;
+	public static setlicensePaymentDueDate(licensePaymentDueDate: string): void {
+		Config.licensePaymentDueDate = licensePaymentDueDate;
 	}
 
 	public static setConfigEmail(emailAccount, emailPassword): void {

@@ -20,8 +20,8 @@ export class NotificationGuard implements CanActivate {
         return this._configService.getConfig.pipe(
             take(1),
             map((config: Config) => {
-                if (config && config['expirationLicense']) {
-                    var days = moment(config['expirationLicense']).diff(moment(),'days');
+                if (config && config['licensePaymentDueDate']) {
+                    var days = moment(config['licensePaymentDueDate']).diff(moment(),'days');
 
                     if(config['demo']){
                         if(days = 0) {

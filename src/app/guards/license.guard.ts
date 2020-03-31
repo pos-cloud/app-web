@@ -1,15 +1,20 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, Router } from '@angular/router';
 import { ConfigService } from 'app/services/config.service';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { Config } from 'app/app.config';
+import { ToastrService } from 'ngx-toastr';
+import * as moment from 'moment';
+import 'moment/locale/es';
 
 @Injectable()
 export class LicenseGuard implements CanActivate {
 
   constructor(
-    private _configService: ConfigService
+    private _configService: ConfigService,
+    private _toastr: ToastrService,
+    private _router: Router
   ) {}
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
@@ -18,21 +23,61 @@ export class LicenseGuard implements CanActivate {
       map((config: Config) => {
         if(next.data.module) {
           if(config) {
-            if(eval(next.data.module)) return true; return false;
+            return this.checkLicense(config, next);
           } else {
             this.getConfigApi().then(
               config => {
                 if(config) {
                   this._configService.setConfig(config);
-                  if(eval(next.data.module)) return true; return false;
+                  return this.checkLicense(config, next);
                 }
               }
             );
           }
+        } else {
+          this.getConfigApi().then(
+            config => {
+              if (config) {
+                this._configService.setConfig(config);
+                return this.checkLicense(config, next);
+              }
+            }
+          );
         }
         return true;
       })
     );
+  }
+
+  public checkLicense(config: Config, next: ActivatedRouteSnapshot) {
+    if (config['expirationLicenseDate']) {
+      var days = moment(config['expirationLicenseDate'], 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days');
+      var daysOfPay = moment(config['licensePaymentDueDate'], 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days');
+      if (!config['demo']) {
+        if (days < 1) {
+          this.showToast("Su licencia expiró por favor regularice su pago", "danger");
+        } else {
+          if (days == 1) this.showToast("Su licencia vence hoy", "warning");
+          if (days == 2) this.showToast("Su licencia vence en " + days + " día", "warning");
+          if (days <= 5 && days > 2) this.showToast("Su licencia vence en " + days + " días", "warning");
+          if (days <= 10 && days > 5) this.showToast("Su licencia vence en " + days + " días", "info");
+        }
+      } else {
+        if (days == 1) this.showToast("Su licencia demo vence hoy", "warning");
+        if (days == 2) this.showToast("Su licencia demo vence en " + days + " día", "info");
+        if (days == 3) this.showToast("Su licencia demo vence en " + days + " días", "info");
+      }
+      if (days >= 1 && daysOfPay > 0) {
+        if (!next.data.module) {
+          return true;
+        } else if (eval(next.data.module)) return true; return false;
+      } else {
+        this._router.navigate(['/admin/configuraciones']);
+        return false;
+      }
+    } else {
+      return false;
+    }
   }
 
   public getConfigApi(): Promise<Config> {
@@ -51,5 +96,31 @@ export class LicenseGuard implements CanActivate {
         }
       );
     });
+  }
+
+  public showToast(message: string, type: string = 'success'): void {
+    switch (type) {
+      case 'success':
+        this._toastr.success('', message);
+        break;
+      case 'info':
+        this._toastr.info('', message, {
+          positionClass: 'toast-bottom-left'
+        });
+        break;
+      case 'warning':
+        this._toastr.warning('', message, {
+          positionClass: 'toast-bottom-left'
+        });
+        break;
+      case 'danger':
+        this._toastr.error('', message, {
+          positionClass: 'toast-bottom-left'
+        });
+        break;
+      default:
+        this._toastr.success('', message);
+        break;
+    }
   }
 }

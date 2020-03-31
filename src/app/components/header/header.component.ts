@@ -36,9 +36,9 @@ export class HeaderComponent {
 	public sessionTimer: any;
 	public pathLocation: string[];
 	public isReportVisible: boolean;
-	public licenseDays: number;
-	public readedNotification: boolean = false;
-	public intervalSocket;
+	public readedNotification: boolean;
+  public intervalSocket;
+  public notificationMessage: string;
 
 	constructor(
 		private _authService: AuthService,
@@ -60,18 +60,7 @@ export class HeaderComponent {
 			observableOf(navigator.onLine),
 			observableFromEvent(window, 'online').pipe(mapTo(true)),
 			observableFromEvent(window, 'offline').pipe(mapTo(false))
-		);
-
-		// REVISAR NOTIFICACION LICENCIA
-		this.licenseDays = 10 - new Date().getDate();
-		if (this.licenseDays.toString() !== localStorage.getItem('licenseDays')) {
-			this.readedNotification = false;
-			localStorage.setItem('readedNotification', this.readedNotification.toString());
-			localStorage.setItem('licenseDays', this.licenseDays.toString());
-		}
-		if (localStorage.getItem('readedNotification')) {
-			this.readedNotification = (localStorage.getItem('readedNotification') === "true");
-		}
+    );
 
 		// VERIFICAR LOGUEO Y CARGAR DATOS DE USUARIO
 		this.config$ = this._configService.getConfig;
@@ -103,7 +92,12 @@ export class HeaderComponent {
 		// });
 
 		this.initSocket();
-	}
+  }
+
+  public ngOnInit() {
+      this.readedNotification = false;
+      this.notificationMessage = localStorage.getItem('notificationMessage');
+  }
 
 	private initSocket(): void {
 
@@ -139,7 +133,6 @@ export class HeaderComponent {
 
 	public readNotification(): void {
 		this.readedNotification = true;
-		localStorage.setItem('readedNotification', this.readedNotification.toString());
 	}
 
 	public openModal(op: string, origin?:string): void {
@@ -197,8 +190,8 @@ export class HeaderComponent {
 
 				});
                 break;
-            case 'current' : 
-                
+            case 'current' :
+
             modalRef = this._modalService.open(CurrentAccountDetailsComponent,{ size: 'lg', backdrop: 'static' });
             modalRef.componentInstance.companyType = origin
             modalRef.result.then((result) => {
