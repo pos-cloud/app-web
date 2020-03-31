@@ -573,7 +573,6 @@ export class PointOfSaleComponent implements OnInit {
 
 		this.transaction = new Transaction();
         this.transaction.type = type;
-        console.log(this.transaction.type)
         if(this.transaction.type.defectShipmentMethod){
             this.transaction.shipmentMethod = this.transaction.type.defectShipmentMethod
         }

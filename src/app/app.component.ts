@@ -73,7 +73,7 @@ export class AppComponent {
       this.execNotification();
       setInterval(() => {
         this.execNotification();
-      }, 10000)//3600000
+      }, 3600000)
     }
   }
 

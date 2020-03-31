@@ -344,7 +344,6 @@ export class ListChecksComponent implements OnInit {
 			skip // SKIP
 		).subscribe(
 			result => {
-        console.log(result);
 				this.loading = false;
 				if (result && result[0] && result[0].items) {
 					if (this.itemsPerPage === 0) {

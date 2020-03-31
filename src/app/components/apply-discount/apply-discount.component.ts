@@ -144,7 +144,6 @@ export class ApplyDiscountComponent implements OnInit {
       'percentageToApply': this.roundNumber.transform(this.percentageToApply, 6),
       'totalAmount': this.roundNumber.transform(this.amount - this.amountToApply, 6)
     };
-    console.log(discount);
     this.discountForm.setValue(discount);
   }
 
