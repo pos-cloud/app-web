@@ -50,23 +50,10 @@ export class LicenseGuard implements CanActivate {
   }
 
   public checkLicense(config: Config, next: ActivatedRouteSnapshot) {
-    if (config['expirationLicenseDate']) {
-      var days = moment(config['expirationLicenseDate'], 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days');
+    if (config && config['licensePaymentDueDate']) {
+      var days = moment(moment(config['licensePaymentDueDate']).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days');
+      days++;
       var daysOfPay = moment(config['licensePaymentDueDate'], 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days');
-      if (!config['demo']) {
-        if (days < 1) {
-          this.showToast("Su licencia expiró por favor regularice su pago", "danger");
-        } else {
-          if (days == 1) this.showToast("Su licencia vence hoy", "warning");
-          if (days == 2) this.showToast("Su licencia vence en " + days + " día", "warning");
-          if (days <= 5 && days > 2) this.showToast("Su licencia vence en " + days + " días", "warning");
-          if (days <= 10 && days > 5) this.showToast("Su licencia vence en " + days + " días", "info");
-        }
-      } else {
-        if (days == 1) this.showToast("Su licencia demo vence hoy", "warning");
-        if (days == 2) this.showToast("Su licencia demo vence en " + days + " día", "info");
-        if (days == 3) this.showToast("Su licencia demo vence en " + days + " días", "info");
-      }
       if (days >= 1 && daysOfPay > 0) {
         if (!next.data.module) {
           return true;

@@ -94,9 +94,11 @@ export class HeaderComponent {
 		this.initSocket();
   }
 
-  public ngOnInit() {
-      this.readedNotification = false;
-      this.notificationMessage = localStorage.getItem('notificationMessage');
+  public ngAfterViewInit() {
+      setTimeout(() => {
+        this.readedNotification = false;
+        this.notificationMessage = localStorage.getItem('notificationMessage');
+      }, 3000);
   }
 
 	private initSocket(): void {

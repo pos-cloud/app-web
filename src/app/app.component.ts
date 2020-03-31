@@ -81,17 +81,14 @@ export class AppComponent {
     var message: string;
     if (this.config && this.config['expirationLicenseDate']) {
       var days = moment(moment(this.config['expirationLicenseDate']).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days');
+      days++;
       if (!this.config['demo']) {
-        if (days < 0) {
+        if (days <= 0) {
           message = "Su licencia expiró, por favor, regularice su pago.";
           this.showToast(message, "danger");
         } else {
-          if (days == 0) {
-            message = "Su licencia vence hoy.";
-            this.showToast(message, "warning");
-          }
           if (days == 1) {
-            message = "Su licencia vence en 1 día.";
+            message = "Su licencia vence hoy.";
             this.showToast(message, "warning");
           }
           if (days <= 5 && days > 1) {
@@ -104,12 +101,8 @@ export class AppComponent {
           }
         }
       } else {
-        if (days == 0) {
-          message = "Su licencia de prueba vence hoy.";
-          this.showToast(message, "warning");
-        }
         if (days == 1) {
-          message = "Su licencia de prueba vence en un día.";
+          message = "Su licencia vence hoy.";
           this.showToast(message, "warning");
         }
         if (days > 1) {
