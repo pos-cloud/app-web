@@ -464,9 +464,9 @@ export class ListTransactionsComponent implements OnInit {
 				if (transaction.type.defectEmailTemplate) {
 
 					if (transaction.type.electronics) {
-						modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/invoice/ + ${transaction._id}">Su comprobante</a>`
+						modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/invoice/${transaction._id}">Su comprobante</a>`
 					} else {
-						modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/others/ + ${transaction._id}">Su comprobante</a>`
+						modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/others/${transaction._id}">Su comprobante</a>`
 					}
 
 					if (Config.country === 'MX') {
