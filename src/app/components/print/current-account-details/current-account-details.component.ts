@@ -845,6 +845,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                         "transaction.origin": 1,
                         "transaction.letter": 1,
                         "trasaction.expirationDate": 1,
+                        "transaction.endDate" : 1,
                         "transaction.endDate2": { $dateToString: { date: "$transaction.endDate", format: "%d/%m/%Y", timezone: timezone } },
                         "operationType": 1,
                         "transaction.totalPrice": {
@@ -974,7 +975,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                         "$and": [{
                                             "$eq": [this.companyType, "Proveedor"]
                                         }, {
-                                            "$eq": [this.config.reports.summaryOfAccounts.invertedViewProviderlse, false]
+                                            "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, false]
                                         }, {
                                             "$eq": ["$transaction.type.movement", "Entrada"]
                                         }, {
@@ -1137,6 +1138,11 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     }
                 },
                 {
+                    "$sort": {
+                        "transactions.endDate" : 1 
+                    }
+                },
+                {
                     "$group": {
                         "_id": { "company": "$_id.transactions.company" },
                         "transactions": { $push: "$_id.transactions" },
@@ -1145,8 +1151,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 },
                 {
                     "$sort": {
-                        "_id.company.name": 1,
-                        "transactions.endDate" : 1 
+                        "_id.company.name": 1
                     }
                 }
             );
@@ -1157,6 +1162,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 result => {
                     if (result && result.length > 0) {
                         resolve(result)
+                        console.log(result);
                         this.loading = false;
                     } else {
                         this.showMessage("No se encontraron transacciones", 'info', true);
