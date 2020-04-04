@@ -14,6 +14,7 @@ import { ShipmentMethod } from './shipment-method';
 export class TransactionType {
 
 	public _id: string;
+	public order: number = 1;
 	public transactionMovement: TransactionMovement;
 	public abbreviation: string;
 	public name: string = '';
@@ -60,17 +61,17 @@ export class TransactionType {
 	public printSign: boolean = false;
 	public posKitchen: boolean = false;
 	public readLayout: boolean = false;
-    public updatePrice: boolean = false;
-    public resetNumber : boolean = false;
-    public updateArticle: boolean = false;
-    public finishCharge : boolean = true;
-    public requestEmailTemplate : boolean = false;
-    public defectEmailTemplate : EmailTemplate;
-    public requestShipmentMethod : boolean = false;
-    public defectShipmentMethod : ShipmentMethod;
-    public branch : Branch;
-    public level : number = 0;
-    public expirationDate : string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+	public updatePrice: boolean = false;
+	public resetNumber: boolean = false;
+	public updateArticle: boolean = false;
+	public finishCharge: boolean = true;
+	public requestEmailTemplate: boolean = false;
+	public defectEmailTemplate: EmailTemplate;
+	public requestShipmentMethod: boolean = false;
+	public defectShipmentMethod: ShipmentMethod;
+	public branch: Branch;
+	public level: number = 0;
+	public expirationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 	public creationUser: User;
 	public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 	public updateUser: User;
@@ -80,15 +81,15 @@ export class TransactionType {
 }
 
 export enum Movements {
-	Inflows = <any> "Entrada",
-	Outflows = <any> "Salida"
+	Inflows = <any>"Entrada",
+	Outflows = <any>"Salida"
 }
 
 export enum StockMovement {
 	Inflows = <any>"Entrada",
 	Outflows = <any>"Salida",
-	Inventory = <any> "Inventario",
-	Transfer = <any> "Transferencia"
+	Inventory = <any>"Inventario",
+	Transfer = <any>"Transferencia"
 }
 
 export enum CurrentAccount {
@@ -119,11 +120,11 @@ export enum EntryAmount {
 export enum PriceType {
 	Base = <any>"Precio Base",
 	Final = <any>"Precio Final",
-	SinTax = <any> "Precio Sin Impuestos"
+	SinTax = <any>"Precio Sin Impuestos"
 }
 
 export enum DescriptionType {
 	Code = <any>"Código",
 	Description = <any>"Descripción",
-	PosDescription = <any> "Descripción Corta"
+	PosDescription = <any>"Descripción Corta"
 }

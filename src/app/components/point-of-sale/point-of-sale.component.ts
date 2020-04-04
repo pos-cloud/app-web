@@ -426,7 +426,7 @@ export class PointOfSaleComponent implements OnInit {
 		}
 
 		if (!this.transaction && this.transactionTypeId && this.transactionTypeId !== '') {
-			this.getTransactionTypes(`where="_id":"${this.transactionTypeId}"`).then(
+			this.getTransactionTypes(`where="_id":"${this.transactionTypeId}"&sort="order":1`).then(
 				transactionTypes => {
 					if (transactionTypes) {
 						this.addTransaction(transactionTypes[0]);
@@ -438,7 +438,7 @@ export class PointOfSaleComponent implements OnInit {
 				this.roomSelected._id = pathLocation[4];
 				this.getRooms();
 			} else if (this.posType === "delivery") {
-				await this.getTransactionTypes('where="$or":[{"cashOpening":true},{"cashClosing":true}]').then(
+				await this.getTransactionTypes('where="$or":[{"cashOpening":true},{"cashClosing":true}]&sort="order":1').then(
 					transactionTypes => {
 						if (transactionTypes) {
 							this.transactionTypes = transactionTypes;
@@ -479,12 +479,12 @@ export class PointOfSaleComponent implements OnInit {
 				let where
 
 				if (this.user.branch && this.user.branch._id) {
-					where = 'where="$or":[{"branch":{ "$exists": false}},{"branch":null},{"branch":"' + this.user.branch._id + '"}],"transactionMovement":"' + this.transactionMovement + '","allowAPP":false'
+					where = 'where="$or":[{"branch":{ "$exists": false}},{"branch":null},{"branch":"' + this.user.branch._id + '"}],"transactionMovement":"' + this.transactionMovement + '","allowAPP":false';
 				} else {
-					where = 'where="transactionMovement":"' + this.transactionMovement + '","allowAPP":false'
+					where = 'where="transactionMovement":"' + this.transactionMovement + '","allowAPP":false';
 				}
 
-				await this.getTransactionTypes(where).then(
+				await this.getTransactionTypes(where + '&sort="order":1').then(
 					transactionTypes => {
 						if (transactionTypes) {
 							this.transactionTypes = transactionTypes;
@@ -516,12 +516,12 @@ export class PointOfSaleComponent implements OnInit {
 				let where
 
 				if (this.user.branch && this.user.branch._id) {
-					where = 'where="$or":[{"branch":{ "$exists": false}},{"branch":null},{"branch":"' + this.user.branch._id + '"}],"transactionMovement":"' + this.transactionMovement + '"'
+					where = 'where="$or":[{"branch":{ "$exists": false}},{"branch":null},{"branch":"' + this.user.branch._id + '"}],"transactionMovement":"' + this.transactionMovement + '"';
 				} else {
-					where = 'where="transactionMovement":"' + this.transactionMovement + '"'
+					where = 'where="transactionMovement":"' + this.transactionMovement + '"';
 				}
 
-				await this.getTransactionTypes(where).then(
+				await this.getTransactionTypes(where + '&sort="order":1').then(
 					transactionTypes => {
 						if (transactionTypes) {
 							this.transactionTypes = transactionTypes;
@@ -537,7 +537,7 @@ export class PointOfSaleComponent implements OnInit {
 
 		let query = `where="${op}":true`;
 
-		await this.getTransactionTypes(query).then(
+		await this.getTransactionTypes(query + '&sort="order":1').then(
 			async transactionTypes => {
 				if (transactionTypes && transactionTypes.length > 0) {
 					if (openPending) {
@@ -572,10 +572,10 @@ export class PointOfSaleComponent implements OnInit {
 	async addTransaction(type: TransactionType) {
 
 		this.transaction = new Transaction();
-        this.transaction.type = type;
-        if(this.transaction.type.defectShipmentMethod){
-            this.transaction.shipmentMethod = this.transaction.type.defectShipmentMethod
-        }
+		this.transaction.type = type;
+		if (this.transaction.type.defectShipmentMethod) {
+			this.transaction.shipmentMethod = this.transaction.type.defectShipmentMethod
+		}
 		this.transaction.table = this.tableSelected;
 
 		if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
@@ -614,7 +614,7 @@ export class PointOfSaleComponent implements OnInit {
 							this.transaction.cashBox = cashBoxes[0];
 							this.nextStepTransaction();
 						} else {
-							await this.getTransactionTypes('where="cashOpening":true').then(
+							await this.getTransactionTypes('where="cashOpening":true&sort="order":1').then(
 								transactionTypes => {
 									if (transactionTypes && transactionTypes.length > 0) {
 										this.transaction.type = transactionTypes[0];

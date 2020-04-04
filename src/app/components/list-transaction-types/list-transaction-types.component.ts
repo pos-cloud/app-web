@@ -172,7 +172,7 @@ export class ListTransactionTypesComponent implements OnInit {
 				} else {
 					this.hideMessage();
 					this.loading = false;
-                    this.transactionTypes = result.transactionTypes;
+					this.transactionTypes = result.transactionTypes;
 					this.totalItems = this.transactionTypes.length;
 					this.areTransactionTypesEmpty = false;
 				}
@@ -209,8 +209,8 @@ export class ListTransactionTypesComponent implements OnInit {
 		}
 
 		// FILTRAMOS LA CONSULTA
-		let match = `{  "operationType": { "$ne": "D" }, 
-                    "state" : "Cerrado", 
+		let match = `{  "operationType": { "$ne": "D" },
+                    "state" : "Cerrado",
                     "type.transactionMovement" : "${movement}",
                     "type.operationType": { "$ne": "D" },
                     "endDate" : { "$gte": {"$date": "${this.startDate}T${this.startTime}:00${timezone}"},
@@ -305,7 +305,7 @@ export class ListTransactionTypesComponent implements OnInit {
 
 	public openModal(op: string, transactionType: TransactionType): void {
 
-        let modalRef;
+		let modalRef;
 		switch (op) {
 			case 'view':
 				modalRef = this._modalService.open(TransactionTypeComponent, { size: 'lg', backdrop: 'static' });
@@ -335,9 +335,9 @@ export class ListTransactionTypesComponent implements OnInit {
 				break;
 			case 'delete':
 				modalRef = this._modalService.open(TransactionTypeComponent, { size: 'lg', backdrop: 'static' })
-                modalRef.componentInstance.transactionType = transactionType;
-                modalRef.componentInstance.readonly = true;
-                modalRef.componentInstance.operation = "delete"
+				modalRef.componentInstance.transactionType = transactionType;
+				modalRef.componentInstance.readonly = true;
+				modalRef.componentInstance.operation = "delete"
 				modalRef.result.then((result) => {
 					if (result === 'delete_close') {
 						this.getTransactionTypes();

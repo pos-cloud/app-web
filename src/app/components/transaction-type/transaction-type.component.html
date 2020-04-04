@@ -10,8 +10,7 @@
 			{{alertMessage}}
 		</ngb-alert>
 	</div>
-	<form [formGroup]="transactionTypeForm" #formAddTransactionType="ngForm" (ngSubmit)="addTransactionType()"
-		autocomplete="off">
+	<form [formGroup]="transactionTypeForm" #formAddTransactionType="ngForm" (ngSubmit)="addTransactionType()" autocomplete="off">
 		<div class="modal-body-lg">
 			<ngb-tabset [orientation]="orientation">
 				<ngb-tab title="Datos principales">
@@ -19,25 +18,18 @@
 						<div class="row tab-content">
 							<div class="form-group col-md-12">
 								<div class="row">
-                                    <div class="form-group col-md-2">
-                                        <label for="branch" class="control-label">Sucursal</label>
-                                        <div class="input-group">
-                                            <select class="form-control" formControlName="branch">
-                                                <option [ngValue]="null"
-                                                    [selected]="!transactionType || !transactionType.branch"
-                                                    [disabled]="readonly"></option>
-                                                <option *ngFor="let branch of branches"
-                                                    [selected]="transactionType.branch && transactionType.branch._id === branch._id"
-                                                    [ngValue]="branch._id" [disabled]="readonly">
-                                                    {{branch.name}}</option>
-                                            </select>
-                                            <button type="button" class="btn btn-light" placement="right"
-                                                popoverClass="popover-class"
-                                                ngbPopover="Indica que sucursal lo puede ver, de ser vacio lo ven todas.">
-                                                <b>?</b>
-                                            </button>
-                                        </div>
-                                    </div>
+									<div class="form-group col-md-2">
+										<label for="order">Orden</label>
+										<div class="input-group">
+											<input type="text" class="form-control" formControlName="order" name="order"
+												id="order" [focus]="focusEvent" [readonly]="readonly" />
+											<button type="button" class="btn btn-light" placement="right"
+												popoverClass="popover-class"
+												ngbPopover="Los tipos de transacción se ordenarán según este critero.">
+												<b>?</b>
+											</button>
+										</div>
+									</div>
 									<div class="form-group col-md-2">
 										<label for="transactionMovement" class="control-label">Movimiento</label>
 										<div class="input-group">
@@ -56,28 +48,27 @@
 										<div *ngIf="formErrors.transactionMovement" class="alert alert-danger">
 											{{ formErrors.transactionMovement }}
 										</div>
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="abbreviation">Abrev.</label>
-                                        <div class="input-group">
-                                         <input type="text" class="form-control" formControlName="abbreviation"
-                                          name="abbreviation" id="abbreviation" [focus]="focusEvent"
-                                          [readonly]="readonly" />
-                                         <button type="button" class="btn btn-light" placement="right"
-                                          popoverClass="popover-class"
-                                          ngbPopover="Siglas utilizadas para la alta de transacciones en la aplicación">
-                                          <b>?</b>
-                                         </button>
-                                        </div>
-                                        <div *ngIf="formErrors.abbreviation" class="alert alert-danger">
-                                         {{ formErrors.abbreviation }}
-                                        </div>
-                                       </div>
+									</div>
+									<div class="form-group col-md-2">
+										<label for="abbreviation">Abrev.</label>
+										<div class="input-group">
+											<input type="text" class="form-control" formControlName="abbreviation"
+												name="abbreviation" id="abbreviation" [readonly]="readonly" />
+											<button type="button" class="btn btn-light" placement="right"
+												popoverClass="popover-class"
+												ngbPopover="Siglas utilizadas para la alta de transacciones en la aplicación">
+												<b>?</b>
+											</button>
+										</div>
+										<div *ngIf="formErrors.abbreviation" class="alert alert-danger">
+											{{ formErrors.abbreviation }}
+										</div>
+									</div>
 									<div class="form-group col-md-3">
 										<label for="name">Nombre</label>
 										<div class="input-group">
-											<input type="text" class="form-control" formControlName="name" name="name"
-												id="name" [readonly]="readonly" />
+											<input type="text" class="form-control" formControlName="name" name="name" id="name"
+												[readonly]="readonly" />
 											<button type="button" class="btn btn-light" placement="right"
 												popoverClass="popover-class" ngbPopover="¿Nombre de la transacción?">
 												<b>?</b>
@@ -90,8 +81,8 @@
 									<div class="form-group col-md-3">
 										<label for="labelPrint">Nombre en Impresión</label>
 										<div class="input-group">
-											<input type="text" class="form-control" formControlName="labelPrint"
-												name="labelPrint" id="labelPrint" [readonly]="readonly" />
+											<input type="text" class="form-control" formControlName="labelPrint" name="labelPrint"
+												id="labelPrint" [readonly]="readonly" />
 											<button type="button" class="btn btn-light" placement="right"
 												popoverClass="popover-class"
 												ngbPopover="¿Como saldrá el nombre de la transacción en la impresión?">
@@ -101,16 +92,32 @@
 									</div>
 								</div>
 								<div class="row">
-									<div class="form-group col-md-6">
+									<div class="form-group col-md-2">
+										<label for="branch" class="control-label">Sucursal</label>
+										<div class="input-group">
+											<select class="form-control" formControlName="branch">
+												<option [ngValue]="null" [selected]="!transactionType || !transactionType.branch"
+													[disabled]="readonly"></option>
+												<option *ngFor="let branch of branches"
+													[selected]="transactionType.branch && transactionType.branch._id === branch._id"
+													[ngValue]="branch._id" [disabled]="readonly">
+													{{branch.name}}</option>
+											</select>
+											<button type="button" class="btn btn-light" placement="right"
+												popoverClass="popover-class"
+												ngbPopover="Indica que sucursal lo puede ver, de ser vacio lo ven todas.">
+												<b>?</b>
+											</button>
+										</div>
+									</div>
+									<div class="form-group col-md-5">
 										<label for="currentAccount" class="control-label">Afecta Cuenta
 											Corriente</label>
 										<div class="input-group">
 											<select class="form-control" formControlName="currentAccount">
-												<option value="Si"
-													[selected]="transactionType.currentAccount.toString() === 'Si'"
+												<option value="Si" [selected]="transactionType.currentAccount.toString() === 'Si'"
 													[disabled]="readonly">Si</option>
-												<option value="No"
-													[selected]="transactionType.currentAccount.toString() === 'No'"
+												<option value="No" [selected]="transactionType.currentAccount.toString() === 'No'"
 													[disabled]="readonly">No</option>
 												<option value="Cobra"
 													[selected]="transactionType.currentAccount.toString() === 'Cobra'"
@@ -123,7 +130,7 @@
 											</button>
 										</div>
 									</div>
-									<div class="form-group col-md-6">
+									<div class="form-group col-md-5">
 										<label for="movement" class="control-label">Movimiento de dinero</label>
 										<div class="input-group">
 											<select class="form-control" formControlName="movement">
@@ -156,8 +163,7 @@
 													[disabled]="readonly">No</option>
 											</select>
 											<button type="button" class="btn btn-light" placement="right"
-												popoverClass="popover-class"
-												ngbPopover="¿Se valida la transacción fiscal?">
+												popoverClass="popover-class" ngbPopover="¿Se valida la transacción fiscal?">
 												<b>?</b>
 											</button>
 										</div>
@@ -165,8 +171,8 @@
 									<div *ngIf="userCountry === 'MX'" class="form-group col-md-3">
 										<label for="fiscalCode">Código Fiscal</label>
 										<div class="input-group">
-											<input type="text" class="form-control" formControlName="fiscalCode"
-												name="fiscalCode" id="fiscalCode" [readonly]="readonly" />
+											<input type="text" class="form-control" formControlName="fiscalCode" name="fiscalCode"
+												id="fiscalCode" [readonly]="readonly" />
 											<button type="button" class="btn btn-light" placement="right"
 												popoverClass="popover-class"
 												ngbPopover="¿Cuál es el tipo de comprobante según el ente fiscal?">
@@ -178,10 +184,8 @@
 										<label for="defectUseOfCFDI" class="control-label">Uso de CFDI Defecto</label>
 										<div class="input-group">
 											<select class="form-control" formControlName="defectUseOfCFDI">
-												<option *ngFor="let useOfCFDI of usesOfCFDI" [ngValue]="useOfCFDI._id"
-													[selected]="(transactionType.defectUseOfCFDI && transactionType.defectUseOfCFDI._id && useOfCFDI._id===transactionType.defectUseOfCFDI._id) ||
-											  (transactionType.defectUseOfCFDI && useOfCFDI._id===transactionType.defectUseOfCFDI)"
-													[disabled]="readonly">
+												<option *ngFor="let useOfCFDI of usesOfCFDI" [ngValue]="useOfCFDI._id" [selected]="(transactionType.defectUseOfCFDI && transactionType.defectUseOfCFDI._id && useOfCFDI._id===transactionType.defectUseOfCFDI._id) ||
+											  (transactionType.defectUseOfCFDI && useOfCFDI._id===transactionType.defectUseOfCFDI)" [disabled]="readonly">
 													{{ useOfCFDI.description }}</option>
 											</select>
 											<button type="button" class="btn btn-light" placement="right"
@@ -193,18 +197,18 @@
 									</div>
 									<div *ngIf="userCountry === 'AR'" class="form-group col-md-3">
 										<label for="codeA">Código AFIP A</label>
-										<input type="number" class="form-control" formControlName="codeA" codeA="codeA"
-											id="codeA" [readonly]="readonly" />
+										<input type="number" class="form-control" formControlName="codeA" codeA="codeA" id="codeA"
+											[readonly]="readonly" />
 									</div>
 									<div *ngIf="userCountry === 'AR'" class="form-group col-md-3">
 										<label for="codeB">Código AFIP B</label>
-										<input type="number" class="form-control" formControlName="codeB" codeB="codeB"
-											id="codeB" [readonly]="readonly" />
+										<input type="number" class="form-control" formControlName="codeB" codeB="codeB" id="codeB"
+											[readonly]="readonly" />
 									</div>
 									<div *ngIf="userCountry === 'AR'" class="form-group col-md-3">
 										<label for="codeC">Código AFIP C</label>
-										<input type="number" class="form-control" formControlName="codeC" codeC="codeC"
-											id="codeC" [readonly]="readonly" />
+										<input type="number" class="form-control" formControlName="codeC" codeC="codeC" id="codeC"
+											[readonly]="readonly" />
 									</div>
 								</div>
 								<div class="row">
@@ -245,10 +249,10 @@
 										<label for="tax">Afecta Libro de IVA</label>
 										<div class="input-group">
 											<select class="form-control" formControlName="tax">
-												<option value="true" [selected]="transactionType.tax"
-													[disabled]="readonly">Si</option>
-												<option value="false" [selected]="!transactionType.tax"
-													[disabled]="readonly">No</option>
+												<option value="true" [selected]="transactionType.tax" [disabled]="readonly">Si
+												</option>
+												<option value="false" [selected]="!transactionType.tax" [disabled]="readonly">No
+												</option>
 											</select>
 											<button type="button" class="btn btn-light" placement="right"
 												popoverClass="popover-class"
@@ -265,14 +269,13 @@
 										<label for="allowEdit" class="control-label">Permite editar</label>
 										<div class="input-group">
 											<select class="form-control" formControlName="allowEdit">
-												<option value="true" [selected]="transactionType.allowEdit"
-													[disabled]="readonly">Si</option>
+												<option value="true" [selected]="transactionType.allowEdit" [disabled]="readonly">
+													Si</option>
 												<option value="false" [selected]="!transactionType.allowEdit"
 													[disabled]="readonly">No</option>
 											</select>
 											<button type="button" class="btn btn-light" placement="right"
-												popoverClass="popover-class"
-												ngbPopover="¿Se puede editar la transacción?">
+												popoverClass="popover-class" ngbPopover="¿Se puede editar la transacción?">
 												<b>?</b>
 											</button>
 										</div>
@@ -287,8 +290,7 @@
 													[disabled]="readonly">No</option>
 											</select>
 											<button type="button" class="btn btn-light" placement="right"
-												popoverClass="popover-class"
-												ngbPopover="¿Se puede borrar la transacción?">
+												popoverClass="popover-class" ngbPopover="¿Se puede borrar la transacción?">
 												<b>?</b>
 											</button>
 										</div>
@@ -297,14 +299,13 @@
 										<label for="allowAPP">Permite APP</label>
 										<div class="input-group">
 											<select class="form-control" formControlName="allowAPP">
-												<option value="true" [selected]="transactionType.allowAPP"
-													[disabled]="readonly">Si</option>
+												<option value="true" [selected]="transactionType.allowAPP" [disabled]="readonly">
+													Si</option>
 												<option value="false" [selected]="!transactionType.allowAPP"
 													[disabled]="readonly">No</option>
 											</select>
 											<button type="button" class="btn btn-light" placement="right"
-												popoverClass="popover-class"
-												ngbPopover="¿Permitir usar en la aplicación?">
+												popoverClass="popover-class" ngbPopover="¿Permitir usar en la aplicación?">
 												<b>?</b>
 											</button>
 										</div>
@@ -323,17 +324,18 @@
 												<b>?</b>
 											</button>
 										</div>
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="level">Nivel</label>
-                                        <div class="input-group">
-                                            <input type="number" class="form-control" formControlName="level" name="level"
-                                                id="level" [readonly]="readonly" />
-                                            <button type="button" class="btn btn-light" placement="right"
-												popoverClass="popover-class" ngbPopover="El valor se compara con el del usuario si este es menor al del usuario se mostrara">
+									</div>
+									<div class="form-group col-md-2">
+										<label for="level">Nivel</label>
+										<div class="input-group">
+											<input type="number" class="form-control" formControlName="level" name="level"
+												id="level" [readonly]="readonly" />
+											<button type="button" class="btn btn-light" placement="right"
+												popoverClass="popover-class"
+												ngbPopover="El valor se compara con el del usuario si este es menor al del usuario se mostrara">
 												<b>?</b>
 											</button>
-                                        </div>
+										</div>
 									</div>
 								</div>
 								<b>PERSONALIZADO</b>
@@ -361,10 +363,10 @@
 												<option [ngValue]="null"
 													[selected]="!transactionType || !transactionType.requestEmployee"
 													[disabled]="readonly"></option>
-												<option *ngFor="let employeeType of employeeTypes"
-													[ngValue]="employeeType._id" [selected]="(transactionType.requestEmployee && transactionType.requestEmployee._id && employeeType._id===transactionType.requestEmployee._id) ||
-											  (transactionType.requestEmployee && employeeType._id===transactionType.requestEmployee)"
-													[disabled]="readonly">{{ employeeType.description }}</option>
+												<option *ngFor="let employeeType of employeeTypes" [ngValue]="employeeType._id"
+													[selected]="(transactionType.requestEmployee && transactionType.requestEmployee._id && employeeType._id===transactionType.requestEmployee._id) ||
+											  (transactionType.requestEmployee && employeeType._id===transactionType.requestEmployee)" [disabled]="readonly">
+													{{ employeeType.description }}</option>
 											</select>
 											<button type="button" class="btn btn-light" placement="right"
 												popoverClass="popover-class"
@@ -464,16 +466,16 @@
 								</div>
 								<div class="row">
 									<div class="form-group col-md-4">
-                                        <label for="expirationDate" class="control-label">Vencimiento:</label>
-                                        <div class="input-group">
-                                            <input type="date" class="form-control" formControlName="expirationDate"
-                                                name="expirationDate" id="expirationDate" [readonly]="readonly" />
-                                            <button type="button" class="btn btn-light" placement="right"
-                                                popoverClass="popover-class"
-                                                ngbPopover="Solo funciona de alerta para cuando se quiere imprimir el documento te avisa que esta vencido es utilizado para los documentos pre impresos que traen el vencimiento.">
-                                                <b>?</b>
-                                            </button>
-                                        </div>
+										<label for="expirationDate" class="control-label">Vencimiento:</label>
+										<div class="input-group">
+											<input type="date" class="form-control" formControlName="expirationDate"
+												name="expirationDate" id="expirationDate" [readonly]="readonly" />
+											<button type="button" class="btn btn-light" placement="right"
+												popoverClass="popover-class"
+												ngbPopover="Solo funciona de alerta para cuando se quiere imprimir el documento te avisa que esta vencido es utilizado para los documentos pre impresos que traen el vencimiento.">
+												<b>?</b>
+											</button>
+										</div>
 									</div>
 									<div class="form-group col-md-4">
 										<label for="maxOrderNumber">Máximo número de pedido</label>
@@ -656,8 +658,7 @@
 											<select class="form-control" formControlName="requestPaymentMethods">
 												<option value="true" [selected]="transactionType.requestPaymentMethods"
 													[disabled]="readonly">Si</option>
-												<option value="false"
-													[selected]="!transactionType.requestPaymentMethods"
+												<option value="false" [selected]="!transactionType.requestPaymentMethods"
 													[disabled]="readonly">No</option>
 											</select>
 											<button type="button" class="btn btn-light" placement="right"
@@ -672,8 +673,8 @@
 											medios?</label>
 										<div class="input-group">
 											<select class="form-control" formControlName="allowZero">
-												<option value="true" [selected]="transactionType.allowZero"
-													[disabled]="readonly">Si</option>
+												<option value="true" [selected]="transactionType.allowZero" [disabled]="readonly">
+													Si</option>
 												<option value="false" [selected]="!transactionType.allowZero"
 													[disabled]="readonly">No</option>
 											</select>
@@ -692,8 +693,8 @@
 													[selected]="!transactionType || !transactionType.fastPayment"
 													[disabled]="readonly"></option>
 												<option *ngFor="let paymentMethod of paymentMethods" [selected]="(transactionType.fastPayment && transactionType.fastPayment._id && paymentMethod._id===transactionType.fastPayment._id) ||
-										(transactionType.fastPayment && paymentMethod._id===transactionType.fastPayment)"
-													[ngValue]="paymentMethod._id" [disabled]="readonly">
+										(transactionType.fastPayment && paymentMethod._id===transactionType.fastPayment)" [ngValue]="paymentMethod._id"
+													[disabled]="readonly">
 													{{ paymentMethod.name }}
 												</option>
 											</select>
@@ -703,11 +704,11 @@
 												<b>?</b>
 											</button>
 										</div>
-                                    </div>
-                                    
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-md-4">
+									</div>
+
+								</div>
+								<div class="row">
+									<div class="form-group col-md-4">
 										<label for="finishCharge" class="control-label">¿Cambia el estado al finalizar?</label>
 										<div class="input-group">
 											<select class="form-control" formControlName="finishCharge">
@@ -717,13 +718,12 @@
 													[disabled]="readonly">No</option>
 											</select>
 											<button type="button" class="btn btn-light" placement="right"
-												popoverClass="popover-class"
-												ngbPopover="Pone estado finalizado al cobrar?">
+												popoverClass="popover-class" ngbPopover="Pone estado finalizado al cobrar?">
 												<b>?</b>
 											</button>
 										</div>
 									</div>
-                                </div>
+								</div>
 							</div>
 						</div>
 					</ng-template>
@@ -743,8 +743,7 @@
 													[disabled]="readonly">No</option>
 											</select>
 											<button type="button" class="btn btn-light" placement="right"
-												popoverClass="popover-class"
-												ngbPopover="¿Afecta el stock la transacción?">
+												popoverClass="popover-class" ngbPopover="¿Afecta el stock la transacción?">
 												<b>?</b>
 											</button>
 										</div>
@@ -810,8 +809,7 @@
 													[disabled]="readonly">No</option>
 											</select>
 											<button type="button" class="btn btn-light" placement="right"
-												popoverClass="popover-class"
-												ngbPopover="¿Se utiliza para apertura de caja?">
+												popoverClass="popover-class" ngbPopover="¿Se utiliza para apertura de caja?">
 												<b>?</b>
 											</button>
 										</div>
@@ -826,8 +824,7 @@
 													[disabled]="readonly">No</option>
 											</select>
 											<button type="button" class="btn btn-light" placement="right"
-												popoverClass="popover-class"
-												ngbPopover="¿Se utiliza para cierre de caja?">
+												popoverClass="popover-class" ngbPopover="¿Se utiliza para cierre de caja?">
 												<b>?</b>
 											</button>
 										</div>
@@ -865,8 +862,8 @@
 										<label for="printable" class="control-label">Impresión automática</label>
 										<div class="input-group">
 											<select class="form-control" formControlName="printable">
-												<option value="true" [selected]="transactionType.printable"
-													[disabled]="readonly">Si</option>
+												<option value="true" [selected]="transactionType.printable" [disabled]="readonly">
+													Si</option>
 												<option value="false" [selected]="!transactionType.printable">No
 												</option>
 											</select>
@@ -887,8 +884,7 @@
 												</option>
 											</select>
 											<button type="button" class="btn btn-light" placement="right"
-												popoverClass="popover-class"
-												ngbPopover="Lee el diseño cargado en la impresora?">
+												popoverClass="popover-class" ngbPopover="Lee el diseño cargado en la impresora?">
 												<b>?</b>
 											</button>
 										</div>
@@ -933,8 +929,8 @@
 										<label for="printSign" class="control-label">Imprime Firma</label>
 										<div class="input-group">
 											<select class="form-control" formControlName="printSign">
-												<option value="true" [selected]="transactionType.printSign"
-													[disabled]="readonly">Si</option>
+												<option value="true" [selected]="transactionType.printSign" [disabled]="readonly">
+													Si</option>
 												<option value="false" [selected]="!transactionType.printSign">No
 												</option>
 											</select>
@@ -965,95 +961,91 @@
 							</div>
 						</div>
 					</ng-template>
-                </ngb-tab>  
-                <ngb-tab title="Correo">
-                    <ng-template ngbTabContent>
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            <label for="requestEmailTemplate" class="control-label">¿Envia correo?</label>
-                            <div class="input-group">
-                                <select class="form-control" formControlName="requestEmailTemplate">
-                                    <option value="true" [selected]="transactionType.requestEmailTemplate"
-                                        [disabled]="readonly">Si</option>
-                                    <option value="false" [selected]="!transactionType.requestEmailTemplate">No
-                                    </option>
-                                </select>
-                                <button type="button" class="btn btn-light" placement="right"
-                                    popoverClass="popover-class"
-                                    ngbPopover="Si pide correo al finalizar?">
-                                    <b>?</b>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="defectEmailTemplate" class="control-label">Template defecto</label>
-                            <div class="input-group">
-                                <select class="form-control" formControlName="defectEmailTemplate">
-                                    <option [ngValue]="null"
-                                        [selected]="!transactionType || !transactionType.defectEmailTemplate"
-                                        [disabled]="readonly"></option>
-                                    <option *ngFor="let emailTemplate of emailTemplates"
-                                        [selected]="transactionType.defectEmailTemplate && transactionType.defectEmailTemplate._id === emailTemplate._id"
-                                        [ngValue]="emailTemplate._id" [disabled]="readonly">
-                                        {{emailTemplate.name}}</option>
-                                </select>
-                                <button type="button" class="btn btn-light" placement="right"
-                                    popoverClass="popover-class"
-                                    ngbPopover="Al imprimir la transacción, se emitirá por la impresora seleccionada como defecto.">
-                                    <b>?</b>
-                                </button>
-                            </div>
-                        </div>
-                        
+				</ngb-tab>
+				<ngb-tab title="Correo">
+					<ng-template ngbTabContent>
+						<div class="row">
+							<div class="form-group col-md-6">
+								<label for="requestEmailTemplate" class="control-label">¿Envia correo?</label>
+								<div class="input-group">
+									<select class="form-control" formControlName="requestEmailTemplate">
+										<option value="true" [selected]="transactionType.requestEmailTemplate"
+											[disabled]="readonly">Si</option>
+										<option value="false" [selected]="!transactionType.requestEmailTemplate">No
+										</option>
+									</select>
+									<button type="button" class="btn btn-light" placement="right" popoverClass="popover-class"
+										ngbPopover="Si pide correo al finalizar?">
+										<b>?</b>
+									</button>
+								</div>
+							</div>
+							<div class="form-group col-md-6">
+								<label for="defectEmailTemplate" class="control-label">Template defecto</label>
+								<div class="input-group">
+									<select class="form-control" formControlName="defectEmailTemplate">
+										<option [ngValue]="null"
+											[selected]="!transactionType || !transactionType.defectEmailTemplate"
+											[disabled]="readonly"></option>
+										<option *ngFor="let emailTemplate of emailTemplates"
+											[selected]="transactionType.defectEmailTemplate && transactionType.defectEmailTemplate._id === emailTemplate._id"
+											[ngValue]="emailTemplate._id" [disabled]="readonly">
+											{{emailTemplate.name}}</option>
+									</select>
+									<button type="button" class="btn btn-light" placement="right" popoverClass="popover-class"
+										ngbPopover="Al imprimir la transacción, se emitirá por la impresora seleccionada como defecto.">
+										<b>?</b>
+									</button>
+								</div>
+							</div>
 
-                    </div>
-                </ng-template>
 
-                </ngb-tab>
-                <ngb-tab title="Método de envío">
-                    <ng-template ngbTabContent>
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            <label for="requestShipmentMethod" class="control-label">¿Pide Metodo de envio?</label>
-                            <div class="input-group">
-                                <select class="form-control" formControlName="requestShipmentMethod">
-                                    <option value="true" [selected]="transactionType.requestShipmentMethod"
-                                        [disabled]="readonly">Si</option>
-                                    <option value="false" [selected]="!transactionType.requestShipmentMethod">No
-                                    </option>
-                                </select>
-                                <button type="button" class="btn btn-light" placement="right"
-                                    popoverClass="popover-class"
-                                    ngbPopover="Si pide metodo de envio?">
-                                    <b>?</b>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="defectShipmentMethod" class="control-label">Metodo defecto</label>
-                            <div class="input-group">
-                                <select class="form-control" formControlName="defectShipmentMethod">
-                                    <option [ngValue]="null"
-                                        [selected]="!transactionType || !transactionType.defectShipmentMethod"
-                                        [disabled]="readonly"></option>
-                                    <option *ngFor="let shipmentMethod of shipmentMethods"
-                                        [selected]="transactionType.defectShipmentMethod && transactionType.defectShipmentMethod._id === shipmentMethod._id"
-                                        [ngValue]="shipmentMethod._id" [disabled]="readonly">
-                                        {{shipmentMethod.name}}</option>
-                                </select>
-                                <button type="button" class="btn btn-light" placement="right"
-                                    popoverClass="popover-class"
-                                    ngbPopover="Metodo por defecto">
-                                    <b>?</b>
-                                </button>
-                            </div>
-                        </div>
-                        
+						</div>
+					</ng-template>
 
-                    </div>
-                </ng-template>
+				</ngb-tab>
+				<ngb-tab title="Método de envío">
+					<ng-template ngbTabContent>
+						<div class="row">
+							<div class="form-group col-md-6">
+								<label for="requestShipmentMethod" class="control-label">¿Pide Metodo de envio?</label>
+								<div class="input-group">
+									<select class="form-control" formControlName="requestShipmentMethod">
+										<option value="true" [selected]="transactionType.requestShipmentMethod"
+											[disabled]="readonly">Si</option>
+										<option value="false" [selected]="!transactionType.requestShipmentMethod">No
+										</option>
+									</select>
+									<button type="button" class="btn btn-light" placement="right" popoverClass="popover-class"
+										ngbPopover="Si pide metodo de envio?">
+										<b>?</b>
+									</button>
+								</div>
+							</div>
+							<div class="form-group col-md-6">
+								<label for="defectShipmentMethod" class="control-label">Metodo defecto</label>
+								<div class="input-group">
+									<select class="form-control" formControlName="defectShipmentMethod">
+										<option [ngValue]="null"
+											[selected]="!transactionType || !transactionType.defectShipmentMethod"
+											[disabled]="readonly"></option>
+										<option *ngFor="let shipmentMethod of shipmentMethods"
+											[selected]="transactionType.defectShipmentMethod && transactionType.defectShipmentMethod._id === shipmentMethod._id"
+											[ngValue]="shipmentMethod._id" [disabled]="readonly">
+											{{shipmentMethod.name}}</option>
+									</select>
+									<button type="button" class="btn btn-light" placement="right" popoverClass="popover-class"
+										ngbPopover="Metodo por defecto">
+										<b>?</b>
+									</button>
+								</div>
+							</div>
 
-                </ngb-tab>
+
+						</div>
+					</ng-template>
+
+				</ngb-tab>
 				<ngb-tab *ngIf="transactionType" title="Auditoría">
 					<ng-template ngbTabContent>
 						<div class="row tab-content">
@@ -1075,15 +1067,13 @@
 										<label class="control-label">Última modificación por:</label>
 										<label *ngIf="transactionType.updateUser"
 											class="control-label"><b>{{transactionType.updateUser.name}}</b></label>
-										<label *ngIf="!transactionType.updateUser"
-											class="control-label"><b>-</b></label>
+										<label *ngIf="!transactionType.updateUser" class="control-label"><b>-</b></label>
 									</div>
 									<div class="form-group col-md-6">
 										<label class="control-label">El día:</label>
 										<label *ngIf="transactionType.updateDate"
 											class="control-label"><b>{{transactionType.updateDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
-										<label *ngIf="!transactionType.updateDate"
-											class="control-label"><b>-</b></label>
+										<label *ngIf="!transactionType.updateDate" class="control-label"><b>-</b></label>
 									</div>
 								</div>
 							</div>
