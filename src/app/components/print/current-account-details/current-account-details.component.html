@@ -48,7 +48,7 @@
 				<span *ngIf="!loading">Imprimir Saldo</span>
 				<span *ngIf="loading">Espere por favor</span>
             </button>
-            <button type="button" (click)="print2()" class="btn btn-primary" [disabled]="!companyForm.valid || loading" >
+            <button type="button" (click)="printTotalExcel()" class="btn btn-primary" [disabled]="loading" >
 				<i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
 				<span *ngIf="!loading">Imprimir Total</span>
 				<span *ngIf="loading">Espere por favor</span>

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 import * as jsPDF from 'jspdf';
@@ -7,7 +7,7 @@ import { DateFormatPipe } from './../../../pipes/date-format.pipe';
 import { RoundNumberPipe } from './../../../pipes/round-number.pipe';
 import { TransactionService } from 'app/services/transaction.service';
 import { Config } from './../../../app.config';
-import { CompanyType } from 'app/models/company';
+import { CompanyType, Company } from 'app/models/company';
 import { ConfigService } from 'app/services/config.service';
 import { CurrentAccount, Movements } from 'app/models/transaction-type';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -116,8 +116,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
     public items = [];
     public employees: Employee[];
     public Client
-    public Provider
-
+    public Provider;
     public fontSizes = JSON.parse(`{"xsmall" : 5,
                                   "small" : 7,
                                   "normal" : 10,
@@ -848,7 +847,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                         "transaction.endDate" : 1,
                         "transaction.endDate2": { $dateToString: { date: "$transaction.endDate", format: "%d/%m/%Y", timezone: timezone } },
                         "operationType": 1,
-                        "transaction.totalPrice": {
+                        "amountPaid": {
                             "$switch": {
                                 "branches": [{
                                     "case": {
@@ -863,7 +862,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                         }]
                                     },
                                     "then": {
-                                        "$multiply": ["$transaction.totalPrice", 1]
+                                        "$multiply": ["$amountPaid", 1]
                                     }
                                 }, {
                                     "case": {
@@ -878,7 +877,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                         }]
                                     },
                                     "then": {
-                                        "$multiply": ["$transaction.totalPrice", -1]
+                                        "$multiply": ["$amountPaid", -1]
                                     }
                                 }, {
                                     "case": {
@@ -893,7 +892,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                         }]
                                     },
                                     "then": {
-                                        "$multiply": ["$transaction.totalPrice", -1]
+                                        "$multiply": ["$amountPaid", -1]
                                     }
                                 }, {
                                     "case": {
@@ -908,7 +907,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                         }]
                                     },
                                     "then": {
-                                        "$multiply": ["$transaction.totalPrice", 1]
+                                        "$multiply": ["$amountPaid", 1]
                                     }
                                 }, {
                                     "case": {
@@ -923,7 +922,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                         }]
                                     },
                                     "then": {
-                                        "$multiply": ["$transaction.totalPrice", -1]
+                                        "$multiply": ["$amountPaid", -1]
                                     }
                                 }, {
                                     "case": {
@@ -938,7 +937,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                         }]
                                     },
                                     "then": {
-                                        "$multiply": ["$transaction.totalPrice", 1]
+                                        "$multiply": ["$amountPaid", 1]
                                     }
                                 }, {
                                     "case": {
@@ -953,7 +952,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                         }]
                                     },
                                     "then": {
-                                        "$multiply": ["$transaction.totalPrice", 1]
+                                        "$multiply": ["$amountPaid", 1]
                                     }
                                 }, {
                                     "case": {
@@ -968,7 +967,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                         }]
                                     },
                                     "then": {
-                                        "$multiply": ["$transaction.totalPrice", -1]
+                                        "$multiply": ["$amountPaid", -1]
                                     }
                                 }, {
                                     "case": {
@@ -983,7 +982,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                         }]
                                     },
                                     "then": {
-                                        "$multiply": ["$transaction.totalPrice", -1]
+                                        "$multiply": ["$amountPaid", -1]
                                     }
                                 }, {
                                     "case": {
@@ -998,7 +997,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                         }]
                                     },
                                     "then": {
-                                        "$multiply": ["$transaction.totalPrice", 1]
+                                        "$multiply": ["$amountPaid", 1]
                                     }
                                 }, {
                                     "case": {
@@ -1013,7 +1012,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                         }]
                                     },
                                     "then": {
-                                        "$multiply": ["$transaction.totalPrice", 1]
+                                        "$multiply": ["$amountPaid", 1]
                                     }
                                 }, {
                                     "case": {
@@ -1028,7 +1027,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                         }]
                                     },
                                     "then": {
-                                        "$multiply": ["$transaction.totalPrice", -1]
+                                        "$multiply": ["$amountPaid", -1]
                                     }
                                 }, {
                                     "case": {
@@ -1043,7 +1042,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                         }]
                                     },
                                     "then": {
-                                        "$multiply": ["$transaction.totalPrice", 1]
+                                        "$multiply": ["$amountPaid", 1]
                                     }
                                 }, {
                                     "case": {
@@ -1058,7 +1057,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                         }]
                                     },
                                     "then": {
-                                        "$multiply": ["$transaction.totalPrice", -1]
+                                        "$multiply": ["$amountPaid", -1]
                                     }
                                 }, {
                                     "case": {
@@ -1073,7 +1072,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                         }]
                                     },
                                     "then": {
-                                        "$multiply": ["$transaction.totalPrice", -1]
+                                        "$multiply": ["$amountPaid", -1]
                                     }
                                 }, {
                                     "case": {
@@ -1088,7 +1087,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                         }]
                                     },
                                     "then": {
-                                        "$multiply": ["$transaction.totalPrice", 1]
+                                        "$multiply": ["$amountPaid", 1]
                                     }
                                 }],
                                 "default": 0
@@ -1134,7 +1133,8 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 {
                     "$group": {
                         "_id": { "transactions": "$transaction" },
-                        "transactions": { $push: "$transaction" }
+                        //"transactions": { $push: "$transaction" }
+                        "totalPrice" : { "$sum" : "$amountPaid" }
                     }
                 },
                 {
@@ -1145,8 +1145,8 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 {
                     "$group": {
                         "_id": { "company": "$_id.transactions.company" },
-                        "transactions": { $push: "$_id.transactions" },
-                        "price": { "$sum": "$_id.transactions.totalPrice" }
+                        "transactions": { $push: "$_id.transactions"},
+                        "balance": { "$sum" : "$totalPrice" }
                     }
                 },
                 {
@@ -1162,7 +1162,6 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 result => {
                     if (result && result.length > 0) {
                         resolve(result)
-                        console.log(result);
                         this.loading = false;
                     } else {
                         this.showMessage("No se encontraron transacciones", 'info', true);
@@ -1182,9 +1181,6 @@ export class CurrentAccountDetailsComponent implements OnInit {
     async print2() {
 
         this.items = await this.getMovementOfCash()
-
-        //this.items = this.items['movementsOfCashes'];
-
 
         let page = 1;
         let row = 15;
@@ -1321,6 +1317,30 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
         this.finishImpression();
 
+
+    }
+
+    async printTotalExcel() {
+        this.loading = true;
+        let data: any = [];
+        let items = await this.getMovementOfCash()
+        let y = 0; 
+        for (let i = 0; i < items.length; i++) { 
+            if(this.roundNumber.transform(items[i]["balance"]).toFixed(2) !== "0.00"){
+                data[y] = {};
+                let company : Company = items[i]["_id"]["company"]
+                data[y]["Nombre"] = company.name;
+                data[y]["Condición de IVA"] = company.vatCondition.description;
+                data[y]["Identificación"] = company.identificationValue;
+                data[y]["Ciudad"] = company.city;
+                data[y]["Dirección"] = company.address;
+                data[y]["Correo"] = company.emails;
+                data[y]["Balance"] = this.roundNumber.transform(items[i]["balance"]).toFixed(2);
+                y++;
+            }
+        }
+        this.loading = false;
+        this._companyService.exportAsExcelFile(data, "Resumen de Cuenta de" + this.companyType.toString());
 
     }
 
