@@ -338,7 +338,10 @@ export class ExportIvaComponent implements OnInit {
 					let totalTaxAmountIVA = 0;
 					let totalTaxAmountPercep = 0;
 					let totalImpInt = 0;
-					let totalAmount = 0;
+                    let totalAmount = 0;
+                    let totalIVA10 : number = 0;
+                    let totalIVA21 : number = 0;
+                    let totalIVA27 : number = 0;
 					let totalTaxes: Taxes[] = new Array();
 					let i = 0;
 					for (let transaction of result.transactions) {
@@ -377,7 +380,10 @@ export class ExportIvaComponent implements OnInit {
 						let partialTaxBase: number = 0;
 						let partialTaxAmountIVA: number = 0;
 						let partialTaxAmountPercep: number = 0;
-						let partialImpInt: number = 0;
+                        let partialImpInt: number = 0;
+                        let partialIVA10 : number = 0;
+                        let partialIVA21 : number = 0;
+                        let partialIVA27 : number = 0;
 
 						if (transaction.taxes && transaction.taxes.length > 0) {
 							for (let transactionTax of transaction.taxes) {
@@ -413,7 +419,20 @@ export class ExportIvaComponent implements OnInit {
 									if (transactionTax.tax.code === '3' || transactionTax.tax.code === '4' || transactionTax.tax.code === '5' || transactionTax.tax.code === '6') {
 										partialTaxAmountIVA += transactionTax.taxAmount;
 										totalTaxAmountIVA += transactionTax.taxAmount;
-									}
+                                    }
+                                    
+                                    if(transactionTax.tax.code === '4'){
+                                        partialIVA10 +=  transactionTax.taxAmount;
+                                        totalIVA10 += transactionTax.taxAmount;
+                                    }
+                                    if(transactionTax.tax.code === '5'){
+                                        partialIVA21 += transactionTax.taxAmount;
+                                        totalIVA21 += transactionTax.taxAmount
+                                    }
+                                    if(transactionTax.tax.code === '6'){
+                                        partialIVA27 += transactionTax.taxAmount;
+                                        totalIVA27 += transactionTax.taxAmount;
+                                    }
 
 								} else {
 									partialTaxAmountPercep += transactionTax.taxAmount;
@@ -499,8 +518,11 @@ export class ExportIvaComponent implements OnInit {
 
 						data[i]['GRAVADO'] = this.roundNumber.transform(partialTaxBase);
 						data[i]['EXENTO'] = this.roundNumber.transform(transaction.exempt);
-						data[i]['MONTO IVA'] = this.roundNumber.transform(partialTaxAmountIVA);
-						data[i]['MONTO IMP INT'] = this.roundNumber.transform(partialImpInt)
+                        data[i]['MONTO IVA'] = this.roundNumber.transform(partialTaxAmountIVA);
+                        data[i]['IVA 10.5%'] = this.roundNumber.transform(partialIVA10);
+                        data[i]['IVA 21%'] = this.roundNumber.transform(partialIVA21);
+                        data[i]['IVA 27%'] = this.roundNumber.transform(partialIVA27);
+						data[i]['MONTO IMP INT'] = this.roundNumber.transform(partialImpInt);
 						data[i]['MONTO PERCEP.'] = this.roundNumber.transform(partialTaxAmountPercep);
 						data[i]['MONTO TOTAL'] = this.roundNumber.transform(partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt + partialImpInt);
 
@@ -514,7 +536,10 @@ export class ExportIvaComponent implements OnInit {
 					data[i]['FECHA'] = "TOTALES";
 					data[i]['GRAVADO'] = this.roundNumber.transform(totalTaxBase);
 					data[i]['EXENTO'] = this.roundNumber.transform(totalExempt);
-					data[i]['MONTO IVA'] = this.roundNumber.transform(totalTaxAmountIVA);
+                    data[i]['MONTO IVA'] = this.roundNumber.transform(totalTaxAmountIVA);
+                    data[i]['IVA 10.5%'] = this.roundNumber.transform(totalIVA10);
+                    data[i]['IVA 21%'] = this.roundNumber.transform(totalIVA21);
+                    data[i]['IVA 27%'] = this.roundNumber.transform(totalIVA27);
 					data[i]['MONTO IMP INT'] = this.roundNumber.transform(totalImpInt)
 					data[i]['MONTO PERCEP.'] = this.roundNumber.transform(totalTaxAmountPercep);
 					data[i]['MONTO TOTAL'] = this.roundNumber.transform(totalAmount);
