@@ -286,6 +286,14 @@ export class CompanyService {
 		const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
 		const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
 		this.saveAsExcelFile(excelBuffer, excelFileName);
+    }
+    
+    public exportAsExcelFileMulti(json: any[],json2: any[], excelFileName: string): void {
+        const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(json);
+        const worksheet2: XLSX.WorkSheet = XLSX.utils.json_to_sheet(json2);
+		const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet, 'data2' : worksheet2 }, SheetNames: ['data','data2'] };
+		const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+		this.saveAsExcelFile(excelBuffer, excelFileName);
 	}
 
 	private saveAsExcelFile(buffer: any, fileName: string): void {
