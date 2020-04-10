@@ -1334,6 +1334,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 data[y]["Identificación"] = company.identificationValue;
                 data[y]["Ciudad"] = company.city;
                 data[y]["Dirección"] = company.address;
+                data[y]["Telefono"] = company.phones;
                 data[y]["Correo"] = company.emails;
                 data[y]["Balance"] = this.roundNumber.transform(items[i]["balance"]).toFixed(2);
                 y++;
