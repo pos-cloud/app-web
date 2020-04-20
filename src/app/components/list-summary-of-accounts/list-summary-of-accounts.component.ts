@@ -5,13 +5,13 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { CompanyService } from './../../services/company.service';
-import { CompanyType } from '../../models/company';
+import { CompanyService } from '../company/company.service';
+import { CompanyType } from '../company/company';
 
-import { RoundNumberPipe } from '../../pipes/round-number.pipe';
+import { RoundNumberPipe } from '../../main/pipes/round-number.pipe';
 import { Config } from 'app/app.config';
-import { ConfigService } from 'app/services/config.service';
-import { TransactionMovement } from 'app/models/transaction-type';
+import { ConfigService } from 'app/components/config/config.service';
+import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
 import { CurrentAccountDetailsComponent } from '../print/current-account-details/current-account-details.component';
 import { Subscription } from 'rxjs';
 

@@ -7,19 +7,18 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 // MODELS
-import { Employee } from './../../models/employee';
 import { Config } from 'app/app.config';
 
 // SERVICES
-import { UserService } from './../../services/user.service';
-import { TurnService } from './../../services/turn.service';
-import { EmployeeService } from './../../services/employee.service';
-import { TableService } from './../../services/table.service';
-import { AuthService } from 'app/services/auth.service';
-import { ConfigService } from 'app/services/config.service';
-import { User } from 'app/models/user';
+import { UserService } from '../user/user.service';
+import { EmployeeService } from '../employee/employee.service';
+import { TableService } from '../table/table.service';
+import { AuthService } from 'app/components/login/auth.service';
+import { ConfigService } from 'app/components/config/config.service';
+import { User } from 'app/components/user/user';
 import { ToastrService } from 'ngx-toastr';
 import { Socket } from 'ngx-socket-io';
+import { Employee } from '../employee/employee';
 
 @Component({
   selector: 'app-login',
@@ -62,7 +61,6 @@ export class LoginComponent implements OnInit {
     public _userService: UserService,
     private _authService: AuthService,
     public _employeeService: EmployeeService,
-    public _turnService: TurnService,
     public _tableService: TableService,
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,

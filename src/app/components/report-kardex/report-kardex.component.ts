@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { MovementOfArticle } from 'app/models/movement-of-article';
-import { Article } from 'app/models/article';
+import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
+import { Article } from 'app/components/article/article';
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
@@ -8,22 +8,22 @@ import { ExportExcelComponent } from '../export/export-excel/export-excel.compon
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { ArticleService } from 'app/services/article.service';
-import { ListArticlesComponent } from '../list-articles/list-articles.component';
-import { MovementOfArticleService } from 'app/services/movement-of-article.service';
-import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
-import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
-import { Branch } from 'app/models/branch';
-import { BranchService } from 'app/services/branch.service';
-import { attributes } from 'app/models/movement-of-article';
+import { ArticleService } from 'app/components/article/article.service';
+import { ListArticlesComponent } from '../article/list-articles/list-articles.component';
+import { MovementOfArticleService } from 'app/components/movement-of-article/movement-of-article.service';
+import { ViewTransactionComponent } from '../transaction/view-transaction/view-transaction.component';
+import { RoundNumberPipe } from 'app/main/pipes/round-number.pipe';
+import { Branch } from 'app/components/branch/branch';
+import { BranchService } from 'app/components/branch/branch.service';
+import { attributes } from 'app/components/movement-of-article/movement-of-article';
 import { Config } from 'app/app.config';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CurrencyPipe } from '@angular/common';
-import { Deposit } from 'app/models/deposit';
-import { DepositService } from 'app/services/deposit.service';
-import { AuthService } from 'app/services/auth.service';
+import { Deposit } from 'app/components/deposit/deposit';
+import { DepositService } from 'app/components/deposit/deposit.service';
+import { AuthService } from 'app/components/login/auth.service';
 import { Subscription } from 'rxjs';
-import { ArticleStockService } from 'app/services/article-stock.service';
+import { ArticleStockService } from 'app/components/article-stock/article-stock.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -68,7 +68,7 @@ export class ReportKardexComponent implements OnInit {
 
     constructor(
         public _movementOfArticleService: MovementOfArticleService,
-        public _articleStockService : ArticleStockService,
+        public _articleStockService: ArticleStockService,
         private _toastr: ToastrService,
         private _articleService: ArticleService,
         public _router: Router,
@@ -723,7 +723,7 @@ export class ReportKardexComponent implements OnInit {
 
     public repairStock() {
 
-        this.loading= true;
+        this.loading = true;
 
         var query = [
             {
@@ -815,8 +815,8 @@ export class ReportKardexComponent implements OnInit {
                     "transaction.operationType": {
                         "$ne": "D"
                     },
-                    "deposit._id": { $oid : this.depositSelectedId },
-                    "article._id": { $oid : this.articleSelectedId }
+                    "deposit._id": { $oid: this.depositSelectedId },
+                    "article._id": { $oid: this.articleSelectedId }
                 }
             }, {
                 "$group": {
@@ -860,8 +860,8 @@ export class ReportKardexComponent implements OnInit {
                             } else {
                                 result.articleStocks[0].realStock = balance;
                                 this._articleStockService.updateArticleStock(result.articleStocks[0]).subscribe(
-                                    result =>{
-                                        if(result && result.articleStock){
+                                    result => {
+                                        if (result && result.articleStock) {
                                             this.showToast("El stock se actualizo correctamente", 'success');
                                             this.loading = false;
                                         } else {
@@ -869,7 +869,7 @@ export class ReportKardexComponent implements OnInit {
                                             this.loading = false;
                                         }
                                     },
-                                    error =>{
+                                    error => {
                                         this.showToast(error._body, 'danger');
                                         this.loading = false;
                                     }
@@ -891,7 +891,7 @@ export class ReportKardexComponent implements OnInit {
                 this.loading = false;
             }
         );
-           
+
     }
 
     public showMessage(message: string, type: string, dismissible: boolean): void {
@@ -905,22 +905,22 @@ export class ReportKardexComponent implements OnInit {
     }
 
     public showToast(message: string, type: string = 'success'): void {
-		switch (type) {
-			case 'success':
-				this._toastr.success('', message);
-				break;
-			case 'info':
-				this._toastr.info('', message);
-				break;
-			case 'warning':
-				this._toastr.warning('', message);
-				break;
-			case 'danger':
-				this._toastr.error('', message);
-				break;
-			default:
-				this._toastr.success('', message);
-				break;
-		}
-	}
+        switch (type) {
+            case 'success':
+                this._toastr.success('', message);
+                break;
+            case 'info':
+                this._toastr.info('', message);
+                break;
+            case 'warning':
+                this._toastr.warning('', message);
+                break;
+            case 'danger':
+                this._toastr.error('', message);
+                break;
+            default:
+                this._toastr.success('', message);
+                break;
+        }
+    }
 }

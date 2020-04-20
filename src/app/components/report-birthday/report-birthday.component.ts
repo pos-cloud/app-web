@@ -5,13 +5,13 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { CompanyService } from 'app/services/company.service';
-import { ConfigService } from './../../services/config.service'
+import { CompanyService } from 'app/components/company/company.service';
+import { ConfigService } from '../config/config.service'
 
-import { Company, CompanyType } from 'app/models/company';
+import { Company, CompanyType } from 'app/components/company/company';
 import { Config } from './../../app.config';
-import { AddCompanyComponent } from '../add-company/add-company.component';
 import { Subscription } from 'rxjs';
+import { AddCompanyComponent } from '../company/company/add-company.component';
 
 @Component({
   selector: 'app-report-birthday',

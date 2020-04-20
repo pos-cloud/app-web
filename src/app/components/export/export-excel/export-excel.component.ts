@@ -1,5 +1,4 @@
 import { Component, Input, EventEmitter, Output } from '@angular/core';
-import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
 import { registerLocaleData } from '@angular/common';
 import localeEsAr from '@angular/common/locales/es-AR';
 registerLocaleData(localeEsAr, 'es-Ar');
@@ -7,6 +6,8 @@ registerLocaleData(localeEsAr, 'es-Ar');
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import { TranslatePipe } from '@ngx-translate/core';
+import { RoundNumberPipe } from 'app/main/pipes/round-number.pipe';
+
 const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 const EXCEL_EXTENSION = '.xlsx';
 

@@ -1,0 +1,50 @@
+<div class="modal-header">
+    <h4 class="modal-title">Seleccionar tipo de transacción</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+    <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<section class="container-fluid">
+  <div class="center-content"  *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="form-group col-md-12">
+        <div class="center-content">
+          <div class="btn-group-vertical">
+              <button type="button" 
+                      class="btn"
+                      [ngClass]="{'btn-outline-primary':cancellationTypeSelected,
+                                  'btn-primary':!cancellationTypeSelected}"
+                      (click)="cancellationTypeSelected = null"
+                      *ngIf="transaction && transaction.type">
+                {{ transaction.type.name }}
+            </button>
+            <button type="button" 
+                    *ngFor="let cancellationType of cancellationTypes" 
+                    class="btn" 
+                    [ngClass]="{'btn-primary':cancellationType && cancellationTypeSelected &&
+                                              cancellationType._id===cancellationTypeSelected._id,
+                                'btn-outline-primary':!cancellationType || !cancellationTypeSelected ||
+                                                      cancellationType._id!==cancellationTypeSelected._id}"
+              (click)="cancellationTypeSelected = cancellationType">
+              {{ cancellationType.destination.name }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
+    <button type="button" class="btn btn-primary" (click)="finishSelection()" [focus]="focusEvent">
+      <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+      <span *ngIf="!loading">Aceptar</span>
+      <span *ngIf="loading">Espere por favor</span>
+    </button>
+  </div>
+</section>
+  

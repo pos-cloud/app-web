@@ -6,128 +6,128 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { TransactionService } from '../../../services/transaction.service';
-import { UserService } from '../../../services/user.service';
+import { TransactionService } from '../../transaction/transaction.service';
+import { UserService } from '../../user/user.service';
 
-import { TransactionMovement } from '../../../models/transaction-type';
+import { TransactionMovement } from '../../transaction-type/transaction-type';
 import { Config } from 'app/app.config';
 
 @Component({
-  selector: 'app-export-citi',
-  templateUrl: './export-citi.component.html',
-  styleUrls: ['./export-citi.component.css']
+    selector: 'app-export-citi',
+    templateUrl: './export-citi.component.html',
+    styleUrls: ['./export-citi.component.css']
 })
 
 export class ExportCitiComponent implements OnInit {
 
-  public exportCitiForm: FormGroup;
-  public alertMessage: string = "";
-  public loading: boolean = false;
-  public months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
-  public years = ["2018", "2019", "2020", "2021", "2022"];
-  public toggleButton: boolean;
-  public VATPeriod: string;
-  public compURL: string;
-  public aliURL: string;
-  public apiURL: string;
-  @Input() transactionMovement: TransactionMovement = TransactionMovement.Sale;
+    public exportCitiForm: FormGroup;
+    public alertMessage: string = "";
+    public loading: boolean = false;
+    public months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+    public years = ["2018", "2019", "2020", "2021", "2022"];
+    public toggleButton: boolean;
+    public VATPeriod: string;
+    public compURL: string;
+    public aliURL: string;
+    public apiURL: string;
+    @Input() transactionMovement: TransactionMovement = TransactionMovement.Sale;
 
-  public formErrors = {
-    'month': '',
-    'year' : ''
-  };
+    public formErrors = {
+        'month': '',
+        'year': ''
+    };
 
-  public validationMessages = {
-    'month' : {
-      'required':     'Este campo es requerido.'
-    },
-    'year' : {
-      'required':     'Este campo es requerido.'
-    }
-  };
-
-  constructor(
-    public _fb: FormBuilder,
-    public _router: Router,
-    public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
-    public _transactionService: TransactionService,
-    public _userService: UserService
-  ) { }
-
-  ngOnInit() {
-    this.apiURL = Config.apiURL;
-    this.buildForm();
-  }
-
-  public buildForm(): void {
-    this.exportCitiForm = this._fb.group({
-      'month': [moment().subtract(1, "month").format("MM"), [
-        Validators.required
-        ]
-      ],
-      'year': [moment().format("YYYY"), [
-        Validators.required
-        ]
-      ],
-    });
-    this.exportCitiForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
-
-    this.onValueChanged();
-  }
-
-  public onValueChanged(data?: any): void {
-
-    if (!this.exportCitiForm) { return; }
-    const form = this.exportCitiForm;
-
-    for (const field in this.formErrors) {
-      this.formErrors[field] = '';
-      const control = form.get(field);
-
-      if (control && control.dirty && !control.valid) {
-        const messages = this.validationMessages[field];
-        for (const key in control.errors) {
-          this.formErrors[field] = messages[key] + ' ';
+    public validationMessages = {
+        'month': {
+            'required': 'Este campo es requerido.'
+        },
+        'year': {
+            'required': 'Este campo es requerido.'
         }
-      }
+    };
+
+    constructor(
+        public _fb: FormBuilder,
+        public _router: Router,
+        public activeModal: NgbActiveModal,
+        public alertConfig: NgbAlertConfig,
+        public _transactionService: TransactionService,
+        public _userService: UserService
+    ) { }
+
+    ngOnInit() {
+        this.apiURL = Config.apiURL;
+        this.buildForm();
     }
-  }
 
-  public exportCiti(): void {
+    public buildForm(): void {
+        this.exportCitiForm = this._fb.group({
+            'month': [moment().subtract(1, "month").format("MM"), [
+                Validators.required
+            ]
+            ],
+            'year': [moment().format("YYYY"), [
+                Validators.required
+            ]
+            ],
+        });
+        this.exportCitiForm.valueChanges
+            .subscribe(data => this.onValueChanged(data));
 
-    this.loading = true;
+        this.onValueChanged();
+    }
 
-    this.VATPeriod = this.exportCitiForm.value.year + this.exportCitiForm.value.month;
+    public onValueChanged(data?: any): void {
 
-    this._transactionService.exportCiti(this.VATPeriod, this.transactionMovement).subscribe(
-      result => {
-        if (result.message !== "OK") {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
-        } else {
-          this.showMessage("Los archivos se generaron correctamente.", "success", false);
+        if (!this.exportCitiForm) { return; }
+        const form = this.exportCitiForm;
 
-          this.compURL = '-' + Config.database + '-CITI-' + this.transactionMovement.toString() + 's-' + 'comp' + this.VATPeriod + ".txt";
-          this.aliURL = '-' + Config.database + '-CITI-' + this.transactionMovement.toString() + 's-' + 'ali' + this.VATPeriod + ".txt";
-          this.toggleButton = true;
+        for (const field in this.formErrors) {
+            this.formErrors[field] = '';
+            const control = form.get(field);
+
+            if (control && control.dirty && !control.valid) {
+                const messages = this.validationMessages[field];
+                for (const key in control.errors) {
+                    this.formErrors[field] = messages[key] + ' ';
+                }
+            }
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
-  }
+    }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
-    this.alertMessage = message;
-    this.alertConfig.type = type;
-    this.alertConfig.dismissible = dismissible;
-  }
+    public exportCiti(): void {
 
-  public hideMessage(): void {
-    this.alertMessage = "";
-  }
+        this.loading = true;
+
+        this.VATPeriod = this.exportCitiForm.value.year + this.exportCitiForm.value.month;
+
+        this._transactionService.exportCiti(this.VATPeriod, this.transactionMovement).subscribe(
+            result => {
+                if (result.message !== "OK") {
+                    if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+                } else {
+                    this.showMessage("Los archivos se generaron correctamente.", "success", false);
+
+                    this.compURL = '-' + Config.database + '-CITI-' + this.transactionMovement.toString() + 's-' + 'comp' + this.VATPeriod + ".txt";
+                    this.aliURL = '-' + Config.database + '-CITI-' + this.transactionMovement.toString() + 's-' + 'ali' + this.VATPeriod + ".txt";
+                    this.toggleButton = true;
+                }
+                this.loading = false;
+            },
+            error => {
+                this.showMessage(error._body, "danger", false);
+                this.loading = false;
+            }
+        );
+    }
+
+    public showMessage(message: string, type: string, dismissible: boolean): void {
+        this.alertMessage = message;
+        this.alertConfig.type = type;
+        this.alertConfig.dismissible = dismissible;
+    }
+
+    public hideMessage(): void {
+        this.alertMessage = "";
+    }
 }

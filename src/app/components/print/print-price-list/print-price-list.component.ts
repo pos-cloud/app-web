@@ -7,26 +7,26 @@ import { DomSanitizer } from '@angular/platform-browser';
 import * as jsPDF from 'jspdf';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { DateFormatPipe } from '../../../pipes/date-format.pipe';
-import { RoundNumberPipe } from '../../../pipes/round-number.pipe';
+import { DateFormatPipe } from '../../../main/pipes/date-format.pipe';
+import { RoundNumberPipe } from '../../../main/pipes/round-number.pipe';
 
 //model
-import { Make } from "../../../models/make";
-import { Category } from "../../../models/category";
+import { Make } from "../../make/make";
+import { Category } from "../../category/category";
 
 //service
-import { ArticleService } from "../../../services/article.service";
-import { MakeService } from '../../../services/make.service';
-import { CategoryService } from '../../../services/category.service';
-import { Article } from 'app/models/article';
-import { ConfigService } from 'app/services/config.service';
-import { VariantService } from 'app/services/variant.service';
-import { ArticleFieldService } from 'app/services/article-field.service';
-import { ArticleField } from 'app/models/article-field';
-import { PriceListService } from 'app/services/price-list.service';
-import { PriceList } from 'app/models/price-list';
-import { ArticleStockService } from 'app/services/article-stock.service';
+import { ArticleService } from "../../article/article.service";
+import { MakeService } from '../../make/make.service';
+import { CategoryService } from '../../category/category.service';
+import { Article } from 'app/components/article/article';
+import { VariantService } from 'app/components/variant/variant.service';
+import { ArticleFieldService } from 'app/components/article-field/article-field.service';
+import { ArticleField } from 'app/components/article-field/article-field';
+import { ArticleStockService } from 'app/components/article-stock/article-stock.service';
 import { Config } from 'app/app.config';
+import { PriceList } from 'app/components/price-list/price-list';
+import { PriceListService } from 'app/components/price-list/price-list.service';
+import { ConfigService } from 'app/components/config/config.service';
 
 @Component({
 	selector: 'app-print-price-list',

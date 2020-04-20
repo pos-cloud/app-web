@@ -5,11 +5,11 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { CategoryService } from './../../services/category.service';
+import { CategoryService } from '../category/category.service';
 import { Config } from 'app/app.config';
-import { Branch } from 'app/models/branch';
-import { BranchService } from 'app/services/branch.service';
-import { AuthService } from 'app/services/auth.service';
+import { Branch } from 'app/components/branch/branch';
+import { BranchService } from 'app/components/branch/branch.service';
+import { AuthService } from 'app/components/login/auth.service';
 import { Subscription } from 'rxjs';
 
 @Component({

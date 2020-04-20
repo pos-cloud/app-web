@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Subscription } from "rxjs";
-import {ClockService} from "./../../services/clock.service";
+import {ClockService} from "./clock.service";
 
 import * as moment from 'moment';
 import 'moment/locale/es';

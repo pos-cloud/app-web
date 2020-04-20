@@ -1,0 +1,65 @@
+app-list-tables {
+    .itable {
+        background: #d9534f;
+        width: 120px;
+        height: 120px;
+        margin: 25px;
+        float: left;
+        text-align: center;
+        cursor: pointer;
+		border: 1px solid #848484;
+        border-radius: 5px;
+        box-shadow: 0px 0px 2px;
+    }
+    
+    .itable-enabled {
+        background: #5cb85c;
+    }
+    
+    .itable-busy {
+        background: #d9534f;
+    }
+    
+    .itable-disabled {
+        background: #d1d1d1;
+    }
+    
+    .itable-pending {
+        background: #f0ad4e;
+    }
+    
+    .table-description {
+        font-size: 30px;
+        font: bold;
+        color: white;
+    }
+
+    .table-time {
+        font: bold;
+        color: white;
+    }
+    
+    .number-diners {
+        height: 20px;
+    }
+    
+    .itable:hover {
+        opacity: 0.5;
+    }
+    
+    .employee-name, .table-number, .table-description {
+        color: white;
+    }
+    
+    .table-description {
+        font-size: 30px;
+    }
+
+	/* RESPONSIVE */
+	@media (max-width: 767px) {
+		.itable {
+            width: 100px;
+            margin: 10px;
+        }
+	}
+}

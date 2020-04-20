@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
-import { EmailService } from './../../services/send-email.service';
-import { CompanyService } from './../../services/company.service';
+import { EmailService } from './send-email.service';
+import { CompanyService } from '../company/company.service';
 import * as $ from 'jquery';
 
 @Component({

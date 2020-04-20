@@ -1,0 +1,42 @@
+<div class="modal-header">
+    <h4 class="modal-title">Agregar Salón</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<section class="container-fluid">
+    <div class="center-content" *ngIf="alertMessage !== ''">
+        <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+            {{alertMessage}}
+        </ngb-alert>
+    </div>
+    <form [formGroup]="roomForm" #formAddRoom="ngForm" (ngSubmit)="addRoom()" autocomplete="off">
+        <div class="modal-body">
+            <div class="row">
+                <div class="form-group col-md-12">
+                    <label for="description" class="control-label">Descripción:</label>
+                    <input type="text" class="form-control" formControlName="description" name="description"
+                        id="description" [focus]="focusEvent" [readonly]="readonly" />
+                    <div *ngIf="formErrors.description" class="alert alert-danger">
+                        {{ formErrors.description }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
+            <button type="submit" class="btn btn-primary" [disabled]="!roomForm.valid || loading"
+                *ngIf="operation !== 'delete'">
+                <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+                <span *ngIf="!loading">Guardar</span>
+                <span *ngIf="loading">Espere por favor</span>
+            </button>
+            <button type="button" class="btn btn-danger" *ngIf="operation === 'delete'"
+                [disabled]="!roomForm.valid || loading" (click)="deleteRoom()">
+                <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
+                <span *ngIf="!loading">Eliminar</span>
+                <span *ngIf="loading">Espere por favor</span>
+            </button>
+        </div>
+    </form>
+</section>

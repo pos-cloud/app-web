@@ -3,22 +3,21 @@ import { Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 import * as jsPDF from 'jspdf';
 
-import { DateFormatPipe } from './../../../pipes/date-format.pipe';
-import { RoundNumberPipe } from './../../../pipes/round-number.pipe';
-import { TransactionService } from 'app/services/transaction.service';
+import { DateFormatPipe } from '../../../main/pipes/date-format.pipe';
+import { RoundNumberPipe } from '../../../main/pipes/round-number.pipe';
+import { TransactionService } from 'app/components/transaction/transaction.service';
 import { Config } from './../../../app.config';
-import { CompanyType, Company } from 'app/models/company';
-import { ConfigService } from 'app/services/config.service';
-import { CurrentAccount, Movements } from 'app/models/transaction-type';
+import { CompanyType, Company } from 'app/components/company/company';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Employee } from 'app/models/employee';
-import { EmployeeService } from 'app/services/employee.service';
+import { EmployeeService } from 'app/components/employee/employee.service';
 
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { CompanyService } from 'app/services/company.service';
+import { CompanyService } from 'app/components/company/company.service';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { MovementOfCashService } from 'app/services/movement-of-cash.service';
+import { MovementOfCashService } from 'app/components/movement-of-cash/movement-of-cash.service';
+import { Employee } from 'app/components/employee/employee';
+import { ConfigService } from 'app/components/config/config.service';
 
 var splitRegex = /\r\n|\r|\n/g;
 jsPDF.API.textEx = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
@@ -844,7 +843,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                         "transaction.origin": 1,
                         "transaction.letter": 1,
                         "trasaction.expirationDate": 1,
-                        "transaction.endDate" : 1,
+                        "transaction.endDate": 1,
                         "transaction.endDate2": { $dateToString: { date: "$transaction.endDate", format: "%d/%m/%Y", timezone: timezone } },
                         "operationType": 1,
                         "amountPaid": {
@@ -1134,19 +1133,19 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     "$group": {
                         "_id": { "transactions": "$transaction" },
                         //"transactions": { $push: "$transaction" }
-                        "totalPrice" : { "$sum" : "$amountPaid" }
+                        "totalPrice": { "$sum": "$amountPaid" }
                     }
                 },
                 {
                     "$sort": {
-                        "transactions.endDate" : 1 
+                        "transactions.endDate": 1
                     }
                 },
                 {
                     "$group": {
                         "_id": { "company": "$_id.transactions.company" },
-                        "transactions": { $push: "$_id.transactions"},
-                        "balance": { "$sum" : "$totalPrice" }
+                        "transactions": { $push: "$_id.transactions" },
+                        "balance": { "$sum": "$totalPrice" }
                     }
                 },
                 {
@@ -1324,11 +1323,11 @@ export class CurrentAccountDetailsComponent implements OnInit {
         this.loading = true;
         let data: any = [];
         let items = await this.getMovementOfCash()
-        let y = 0; 
-        for (let i = 0; i < items.length; i++) { 
-            if(this.roundNumber.transform(items[i]["balance"]).toFixed(2) !== "0.00"){
+        let y = 0;
+        for (let i = 0; i < items.length; i++) {
+            if (this.roundNumber.transform(items[i]["balance"]).toFixed(2) !== "0.00") {
                 data[y] = {};
-                let company : Company = items[i]["_id"]["company"]
+                let company: Company = items[i]["_id"]["company"]
                 data[y]["Nombre"] = company.name;
                 data[y]["Condición de IVA"] = company.vatCondition.description;
                 data[y]["Identificación"] = company.identificationValue;

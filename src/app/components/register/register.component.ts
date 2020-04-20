@@ -4,13 +4,13 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { UserState } from './../../models/user';
-import { Employee } from './../../models/employee';
+import { UserState } from '../user/user';
 
-import { EmployeeService } from './../../services/employee.service';
-import { EmployeeTypeService } from './../../services/employee-type.service';
-import { CompanyService } from './../../services/company.service';
-import { AuthService } from 'app/services/auth.service';
+import { EmployeeService } from '../employee/employee.service';
+import { EmployeeTypeService } from '../employee-type/employee-type.service';
+import { CompanyService } from '../company/company.service';
+import { AuthService } from 'app/components/login/auth.service';
+import { Employee } from '../employee/employee';
 
 @Component({
   selector: 'app-register',

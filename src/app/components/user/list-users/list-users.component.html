@@ -1,0 +1,123 @@
+<section class="container-fluid" *ngIf="userType=='admin'">
+	<div class="center-content" *ngIf="alertMessage !== '' && !areUsersEmpty">
+		<ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+			{{alertMessage}}
+		</ngb-alert>
+	</div>
+	<div class="card ">
+		<div class="card-header">Listado de Usuarios
+			<div class="pull-right">
+				<button class="btn" (click)="openModal('add', null)"><i
+						class="fa fa-plus"></i><span>Agregar</span></button>
+				<button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i
+						[ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
+			</div>
+		</div>
+		<div class="card-block table-responsive">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th><i class="fa fa-bars"></i></th>
+						<th (click)="orderBy('name')">Nombre</th>
+						<th (click)="orderBy('email')">Email</th>
+						<th (click)="orderBy('state')">Estado</th>
+						<th (click)="orderBy('tokenExpiration')">Minutos de sesión</th>
+						<th (click)="orderBy('employee','name')">Empleado</th>
+						<th (click)="orderBy('origin','number')">Punto de venta</th>
+						<th (click)="orderBy('company','name')">Empresa</th>
+                        <th (click)="orderBy('cashBoxType','name')">Tipo de Caja</th>
+                        <th (click)="orderBy('level')">Nivel</th>
+					</tr>
+					<tr class="filters">
+						<th></th>
+						<th><input type="text" class="form-control" [(ngModel)]="filterName" placeholder="Nombre...">
+						</th>
+						<th><input type="text" class="form-control" [(ngModel)]="filterEmail" placeholder="Email...">
+						</th>
+						<th><input type="text" class="form-control" [(ngModel)]="filterState" placeholder="Estado...">
+						</th>
+						<th><input type="text" class="form-control" [(ngModel)]="filterTokenExpiration"
+								placeholder="Minutos de sesión..."></th>
+						<th><input type="text" class="form-control" [(ngModel)]="filterEmployee"
+								placeholder="Empleado..."></th>
+						<th><input type="text" class="form-control" [(ngModel)]="filterOrigin"
+								placeholder="Punto de venta..."></th>
+						<th><input type="text" class="form-control" [(ngModel)]="filterCompany"
+								placeholder="Empresa..."></th>
+						<th><input type="text" class="form-control" [(ngModel)]="filterCashBoxType"
+                                placeholder="Tipo de Caja..."></th>
+                                <th><input type="text" class="form-control" [(ngModel)]="filterLevel"
+                                    placeholder="Nivel..."></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngFor="let user of users | filter: filterName:'name'
+                                          | filter: filterEmail:'email'
+                                          | filter: filterState:'state'
+                                          | filter: filterTokenExpiration:'tokenExpiration'
+                                          | filter: filterEmployee:'name':'employee'
+                                          | filter: filterOrigin:'number':'origin'
+                                          | filter: filterCompany:'name':'company'
+                                          | filter: filterCashBoxType:'name':'cashBoxType'
+                                          | filter: filterLevel:'level'
+                                          | orderBy: orderTerm: propertyTerm
+                                          | paginate: { itemsPerPage: itemsPerPage,
+                                                        currentPage: p,
+                                                        totalItems: totalItems
+                                                      }">
+						<td align="left" width="130">
+							<button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', user)"
+								title="Ver"><i class="fa fa-eye"></i></button>
+							<button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', user)"
+								title="Modificar" *ngIf="user.name !== 'soporte'"><i class="fa fa-pencil"></i></button>
+							<button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', user)"
+								title="Eliminar" *ngIf="user.name !== 'soporte'"><i class="fa fa-trash-o"></i></button>
+						</td>
+						<td>{{user.name}}</td>
+						<td>{{user.email}}</td>
+						<td>
+							<h6>
+								<span class="badge" [ngClass]="{'badge-danger':user.state==='No Habilitado',
+                                                  'badge-success':user.state==='Habilitado'}">
+									{{user.state}}
+								</span>
+							</h6>
+						</td>
+						<td>{{user.tokenExpiration}}</td>
+						<td *ngIf="user.employee">{{user.employee.name}}</td>
+						<td *ngIf="!user.employee"></td>
+						<td *ngIf="user.origin">{{user.origin.number}}</td>
+						<td *ngIf="!user.origin"></td>
+						<td *ngIf="user.company">{{user.company.name}}</td>
+						<td *ngIf="!user.company"></td>
+						<td *ngIf="user.cashBoxType">{{user.cashBoxType.name}}</td>
+                        <td *ngIf="!user.cashBoxType"></td>
+                        <td>{{user.level}}</td>
+					</tr>
+					<tr align="center" *ngIf="areUsersEmpty && !loading">
+						<td colspan="7">No se encontraron usuarios</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="card-footer">
+			<div class="row">
+				<div class="col-md-10">
+					<pagination-controls class="my-pagination" (pageChange)="p=$event" #api previousLabel="Ant."
+						nextLabel="Sig." autoHide="true">
+					</pagination-controls>
+				</div>
+				<div class="form-group col-md-2">
+					<select class="form-control" [(ngModel)]="itemsPerPage">
+						<option [value]="5">Mostrar 5 Registros</option>
+						<option [value]="10">Mostrar 10 Registros</option>
+						<option [value]="15">Mostrar 15 Registros</option>
+						<option [value]="20">Mostrar 20 Registros</option>
+						<option [value]="50">Mostrar 50 Registros</option>
+						<option [value]="100">Mostrar 100 Registros</option>
+					</select>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

@@ -1,0 +1,20 @@
+<div class="container-fluid" [style.backgroundImage]="'url(../assets/img/logo.png)'">
+  <div class="row" *ngIf="user && user.shortcuts && user.shortcuts.length > 0">
+    <div class="col-md-12" style="font-size: 18px;">
+      <b>Accesos Directos</b>
+    </div>
+  </div>
+  <div class="row" *ngIf="user && user.shortcuts && user.shortcuts.length > 0">
+    <div class="col-md-12">
+      <div class="card" *ngFor="let shortcut of user.shortcuts">
+        <blockquote class="blockquote mb-0 card-body">
+          <p>{{shortcut.name}}</p>
+          <footer class="blockquote-footer center-content">
+            <span class="btn btn-primary"><a [href]="'/#/'+shortcut.url" style="color: white;">Ir</a></span>
+          </footer>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+</div>
+  <!-- <iframe id="embeddedChart" width="800" height="600" frameborder="0"></iframe> -->

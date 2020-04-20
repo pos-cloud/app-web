@@ -1,0 +1,28 @@
+app-home {
+  .container-fluid {
+    height: 80vh;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-position-y: center;
+  }
+  .fondo {
+    display:block;
+    height: auto;
+    margin: auto;
+  }
+  .card {
+    min-width: 250px !important;
+    width: 250px !important;
+    height: 130px !important;
+    min-height: 130px !important;
+    float: left;
+    margin: 20px;
+  }
+  .card-block {
+    min-width: 250px !important;
+    width: 250px !important;
+    height: 130px !important;
+    min-height: 130px !important;
+  }
+}

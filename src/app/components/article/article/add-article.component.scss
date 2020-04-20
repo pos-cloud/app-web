@@ -1,0 +1,33 @@
+app-add-article {
+  .center-content {
+    margin-top: 30px;
+  }
+
+  .img-article {
+    margin-top: 60px;
+  }
+
+  .badge {
+    margin-left: 5px !important;
+    padding: 5px;
+  }
+
+  .badge-ligth {
+    border: 1px solid black;
+  }
+  
+  img.mediana {
+    width: 200px; height: 150px;
+  }
+
+  .especial {
+    margin-top: 32px;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 767px) {
+    .img-article {
+      margin-top: 0px;
+    }
+  }
+}

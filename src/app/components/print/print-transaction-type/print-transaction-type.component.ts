@@ -4,27 +4,26 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import * as jsPDF from 'jspdf';
 
 //servicios
-import { MovementOfCancellationService } from 'app/services/movement-of-cancellation.service';
-import { MovementOfArticleService } from 'app/services/movement-of-article.service';
-import { MovementOfCashService } from 'app/services/movement-of-cash.service';
-import { TransactionService } from 'app/services/transaction.service';
-import { ConfigService } from 'app/services/config.service';
+import { MovementOfCancellationService } from 'app/components/movement-of-cancellation/movement-of-cancellation.service';
+import { MovementOfArticleService } from 'app/components/movement-of-article/movement-of-article.service';
+import { MovementOfCashService } from 'app/components/movement-of-cash/movement-of-cash.service';
+import { TransactionService } from 'app/components/transaction/transaction.service';
 
 //modelos
-import { Printer, PositionPrint } from 'app/models/printer';
+import { Printer, PositionPrint } from 'app/components/printer/printer';
 import { Config } from 'app/app.config';
-import { MovementOfCash } from 'app/models/movement-of-cash';
-import { MovementOfArticle } from 'app/models/movement-of-article';
-import { Company } from 'app/models/company';
-import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
-import { Transaction } from 'app/models/transaction';
-import { PrintService } from 'app/services/print.service';
-import { ArticleService } from 'app/services/article.service';
-import { Article } from 'app/models/article';
-import { PriceListService } from 'app/services/price-list.service';
-import { resource } from 'selenium-webdriver/http';
-import { PriceList } from 'app/models/price-list';
-import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
+import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
+import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
+import { Company } from 'app/components/company/company';
+import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
+import { Transaction } from 'app/components/transaction/transaction';
+import { PrintService } from 'app/components/print/print.service';
+import { ArticleService } from 'app/components/article/article.service';
+import { Article } from 'app/components/article/article';
+import { RoundNumberPipe } from 'app/main/pipes/round-number.pipe';
+import { PriceListService } from 'app/components/price-list/price-list.service';
+import { ConfigService } from 'app/components/config/config.service';
+import { PriceList } from 'app/components/price-list/price-list';
 
 
 @Component({
@@ -545,60 +544,60 @@ export class PrintTransactionTypeComponent implements OnInit {
     async buildBody(): Promise<boolean> {
         return new Promise<boolean>(async (resolve, reject) => {
             var row = 0;
-            if(this.movementOfArticle && this.movementOfArticle.length > 0){
+            if (this.movementOfArticle && this.movementOfArticle.length > 0) {
                 for (const movementOfArticle of this.movementOfArticle) {
-                    
+
                     for (const field of this.printer.fields) {
-                        if(field.position === PositionPrint.Body){
-                            
+                        if (field.position === PositionPrint.Body) {
+
                             if (field.font !== 'default') {
                                 this.doc.setFont(field.font)
                             }
                             this.doc.setFontType(field.fontType)
                             this.doc.setFontSize(field.fontSize)
-                            if(row < field.positionStartY){
+                            if (row < field.positionStartY) {
                                 row = field.positionStartY
                             }
-    
+
                             try {
-                                this.doc.text(field.positionStartX, row  , (eval(field.value)).toString())
+                                this.doc.text(field.positionStartX, row, (eval(field.value)).toString())
                             } catch (e) {
-                                this.doc.text(field.positionStartX, row , field.value)
+                                this.doc.text(field.positionStartX, row, field.value)
                             }
                         }
                     }
-                    row = row  + this.printer.row;
-                    if(row > this.printer.addPag){
+                    row = row + this.printer.row;
+                    if (row > this.printer.addPag) {
                         await this.buildLayout(PositionPrint.Header);
                         this.doc.addPage()
                         row = 0;
                     }
                 }
-            } 
-            if(this.movementOfCash && this.movementOfCash.length > 0){
+            }
+            if (this.movementOfCash && this.movementOfCash.length > 0) {
                 for (const movementOfCash of this.movementOfCash) {
-                    
+
                     for (const field of this.printer.fields) {
-                        if(field.position === PositionPrint.Body){
-                            
+                        if (field.position === PositionPrint.Body) {
+
                             if (field.font !== 'default') {
                                 this.doc.setFont(field.font)
                             }
                             this.doc.setFontType(field.fontType)
                             this.doc.setFontSize(field.fontSize)
-                            if(row < field.positionStartY){
+                            if (row < field.positionStartY) {
                                 row = field.positionStartY
                             }
-    
+
                             try {
-                                this.doc.text(field.positionStartX, row  , (eval(field.value)).toString())
+                                this.doc.text(field.positionStartX, row, (eval(field.value)).toString())
                             } catch (e) {
-                                this.doc.text(field.positionStartX, row , field.value)
+                                this.doc.text(field.positionStartX, row, field.value)
                             }
                         }
                     }
-                    row = row  + this.printer.row;
-                    if(row > this.printer.addPag){
+                    row = row + this.printer.row;
+                    if (row > this.printer.addPag) {
                         await this.buildLayout(PositionPrint.Header);
                         this.doc.addPage()
                         row = 0;

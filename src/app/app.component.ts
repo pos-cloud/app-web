@@ -4,11 +4,11 @@ import { Component } from '@angular/core';
 
 import { Config } from './app.config';
 
-import { ConfigService } from './services/config.service';
+import { ConfigService } from './components/config/config.service';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
-import { AuthService } from './services/auth.service';
+import { AuthService } from './components/login/auth.service';
 import { TranslateService } from '@ngx-translate/core';
 
 import * as moment from 'moment';

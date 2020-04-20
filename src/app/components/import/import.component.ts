@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { ImportService } from './../../services/import.service';
+import { ImportService } from './import.service';
 
 @Component({
   selector: 'add-import',

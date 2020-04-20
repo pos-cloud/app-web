@@ -1,15 +1,15 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ArticleStockService } from 'app/services/article-stock.service';
+import { ArticleStockService } from 'app/components/article-stock/article-stock.service';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { ArticleStock } from 'app/models/article-stock';
+import { ArticleStock } from 'app/components/article-stock/article-stock';
 
 //terceros
 import * as jsPDF from 'jspdf';
 import { DomSanitizer } from '@angular/platform-browser';
-import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
-import { DateFormatPipe } from 'app/pipes/date-format.pipe';
+import { DateFormatPipe } from 'app/main/pipes/date-format.pipe';
 import { Config } from 'app/app.config';
-import { ConfigService } from 'app/services/config.service';
+import { RoundNumberPipe } from 'app/main/pipes/round-number.pipe';
+import { ConfigService } from 'app/components/config/config.service';
 
 @Component({
   selector: 'app-print-articles-stock',

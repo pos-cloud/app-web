@@ -5,11 +5,11 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { PaymentMethodService } from './../../services/payment-method.service';
+import { PaymentMethodService } from '../payment-method/payment-method.service';
 import { Config } from 'app/app.config';
-import { BranchService } from 'app/services/branch.service';
-import { AuthService } from 'app/services/auth.service';
-import { Branch } from 'app/models/branch';
+import { BranchService } from 'app/components/branch/branch.service';
+import { AuthService } from 'app/components/login/auth.service';
+import { Branch } from 'app/components/branch/branch';
 import { Subscription } from 'rxjs';
 
 @Component({

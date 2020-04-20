@@ -1,0 +1,62 @@
+<div class="modal-header">
+  <h4 class="modal-title" *ngIf="!typeEmployee">Seleccionar Empleado</h4>
+  <h4 class="modal-title" *ngIf="typeEmployee">Seleccionar {{ typeEmployee.description }}</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+  <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="form-group col-md-12">
+        <label for="employee" class="control-label" *ngIf="typeEmployee">{{ typeEmployee.description }}:</label>
+        <div class="center-content">
+          <div class="btn-group-vertical">
+            <button type="button" *ngFor="let employee of employees" class="btn btn-select" [ngClass]="{'btn-primary':employee._id===employeeSelected._id,
+                                    'btn-outline-primary':employee._id!==employeeSelected._id}"
+              (click)="employeeSelected = employee">
+              {{ employee.name }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" *ngIf="requireLogin">
+      <div class="form-group col-md-12">
+        <label for="password" class="control-label">Password:</label>
+        <div class="input-group">
+          <input type="password" class="form-control" [(ngModel)]="password" name="password" id="password" [focus]="focusEvent"/>
+        </div>
+      </div>
+    </div>
+    <div class="row" *ngIf="table">
+      <div class="form-group col-md-12">
+        <label for="chair" class="control-label">Comensales:</label>
+      </div>
+    </div>
+    <div class="row" *ngIf="table">
+      <div class="form-group col-md-8">
+        <div class="input-group">
+          <input type="number" class="form-control" [(ngModel)]="chair" name="chair" id="chair" />
+        </div>
+      </div>
+      <div class="col-md-4" align="right">
+        <button type="button" class="btn btn-danger" (click)="subtractChair()">-</button>
+        <button type="button" class="btn btn-success" (click)="addChair()">+</button>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
+    <button type="button" class="btn btn-primary" [disabled]="loading" (click)="selectEmployee()">
+      <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+      <span *ngIf="!loading">Siguiente</span>
+      <span *ngIf="loading">Espere por favor</span>
+    </button>
+  </div>
+</section>

@@ -4,7 +4,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 //PIPES
-import { RoundNumberPipe } from './../../pipes/round-number.pipe';
+import { RoundNumberPipe } from '../../main/pipes/round-number.pipe';
 
 @Component({
   selector: 'app-apply-discount',
