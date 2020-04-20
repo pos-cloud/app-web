@@ -50,8 +50,8 @@ export class ReportKardexComponent implements OnInit {
     public columns = attributes;
     @ViewChild(ExportExcelComponent, { static: false }) exportExcelComponent: ExportExcelComponent;
     public orderTerm: string[] = ['transaction.endDate'];
-    public currentPage: number = 0;
-    public itemsPerPage = 10;
+    public currentPage: number = 1;
+    public itemsPerPage = 0;
     public totalItems = 0;
     public items: any[];
     public balance: number = 0;
@@ -375,8 +375,6 @@ export class ReportKardexComponent implements OnInit {
             }
         );
 
-
-
         let r = await this.getDepositsByBranch();
         if (r) {
             if (this.articleSelectedId) {
@@ -398,8 +396,8 @@ export class ReportKardexComponent implements OnInit {
     }
 
     public exportItems(): void {
-        this.itemsPerPage = 0;
-        this.getItems();
+        this.exportExcelComponent.items = this.items;
+        this.exportExcelComponent.export();
     }
 
     public getValue(item, column): any {
@@ -628,15 +626,18 @@ export class ReportKardexComponent implements OnInit {
             result => {
                 this.loading = false;
                 if (result && result[0] && result[0].items) {
-                    if (this.itemsPerPage === 0) {
+                    /*if (this.itemsPerPage === 0) {
                         this.exportExcelComponent.items = result[0].items;
                         this.exportExcelComponent.export();
                         this.itemsPerPage = 10;
                         this.getItems();
                     } else {
-                        this.items = result[0].items;
-                        this.totalItems = result[0].count;
-                    }
+                        
+                    }*/
+
+                    this.items = result[0].items;
+                    this.totalItems = result[0].count;
+
                     if (this.currentPage == 0 && this.totalItems > this.itemsPerPage) this.currentPage = parseFloat(this.roundNumber.transform(this.totalItems / this.itemsPerPage + 0.5, 0).toFixed(0));
                     this.balance = 0;
                     for (let mov of this.items) {

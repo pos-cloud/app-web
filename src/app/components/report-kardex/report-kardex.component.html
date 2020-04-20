@@ -163,6 +163,7 @@
       <div class="row">
         <div class="col-md-10">
           <pagination-controls
+            *ngIf="itemsPerPage != 0"
             class="my-pagination"
             (pageChange)="pageChange($event)"
             #api
@@ -179,7 +180,8 @@
             <option [value]="20">Mostrar 20 Registros</option>
             <option [value]="50">Mostrar 50 Registros</option>
             <option [value]="100">Mostrar 100 Registros</option>
-          </select>
+            <option [value]="0">Mostrar Todos</option>
+        </select>
         </div>
       </div>
     </div>
