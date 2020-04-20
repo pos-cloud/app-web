@@ -42,7 +42,10 @@
 		},
 		"barcode": "Código de Barras",
 		"operationType": "Última Operación Proucto",
-		"otherFieldsValues": "Campos Personalizados"
+        "otherFieldsValues": "Campos Personalizados",
+        "providers" : {
+            "name" : "Proveedor"
+        }
 	},
 	"bank": {
 		"name": "Banco"
