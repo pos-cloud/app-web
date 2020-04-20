@@ -76,6 +76,7 @@ export class ListTransactionsComponent implements OnInit {
 	public endDate: string;
 	public dateSelect: string;
     public stateSelect : string = "Cerrado";
+    
 	constructor(
 		public _transactionService: TransactionService,
 		public _configService: ConfigService,

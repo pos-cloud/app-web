@@ -12,6 +12,7 @@ import { MovementOfArticleService } from 'app/components/movement-of-article/mov
 import { attributes, MovementOfArticle } from 'app/components/movement-of-article/movement-of-article'
 import { ViewTransactionComponent } from '../../transaction/view-transaction/view-transaction.component';
 import { Subscription } from 'rxjs';
+import * as moment from 'moment';
 
 @Component({
     selector: 'app-list-movements-of-articles',
@@ -41,6 +42,12 @@ export class ListMovementsOfArticlesComponent implements OnInit {
     public pathLocation: string[];
     private subscription: Subscription = new Subscription();
 
+    //cabecera
+	public startDate: string;
+	public endDate: string;
+	public dateSelect: string;
+    public stateSelect : string = "Cerrado";
+
     constructor(
         public _movementOfArticleService: MovementOfArticleService,
         public _router: Router,
@@ -48,6 +55,10 @@ export class ListMovementsOfArticlesComponent implements OnInit {
         public alertConfig: NgbAlertConfig
     ) {
 
+        this.startDate = moment().format('YYYY-MM-DD');
+		this.endDate = moment().format('YYYY-MM-DD');
+        this.dateSelect = "updateDate";
+        
         this.filters = new Array();
         for (let field of this.columns) {
             if (field.defaultFilter) {
@@ -150,7 +161,13 @@ export class ListMovementsOfArticlesComponent implements OnInit {
             }
         }
 
-        match += `"transaction.type.transactionMovement": "${this.transactionMovement}"`;
+        match += `"transaction.type.transactionMovement": "${this.transactionMovement}",`;
+		match += `"transaction.state": "${this.stateSelect}",`;
+		match += `"${this.dateSelect}" : {
+                    "$gte" : { "$date" : "${this.startDate}T00:00:00${this.timezone}" },
+                    "$lte" : { "$date" : "${this.endDate}T23:59:59${this.timezone}" }
+                }`
+
         if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
         match += `}`;
@@ -165,15 +182,11 @@ export class ListMovementsOfArticlesComponent implements OnInit {
                     project += `,`;
                 }
                 j++;
-                if (this.columns[i].datatype !== "string") {
-                    if (this.columns[i].datatype === "date") {
-                        project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`
-                    } else {
-                        project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
-                    }
-                } else {
-                    project += `"${this.columns[i].name}": 1`;
-                }
+                if (this.columns[i].project === null) {
+					project += `"${this.columns[i].name}": 1`;
+				} else {
+					project += `"${this.columns[i].name}": ${this.columns[i].project}`;
+				}
             }
         }
         project += `}`;

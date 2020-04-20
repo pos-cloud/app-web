@@ -5,6 +5,8 @@ import { Category } from '../category/category';
 import { Taxes } from '../tax/taxes';
 import { ArticleFields } from '../article-field/article-fields';
 import { Deposit } from '../deposit/deposit';
+import * as moment from 'moment';
+import { User } from '../user/user';
 
 export class MovementOfArticle {
 
@@ -42,7 +44,11 @@ export class MovementOfArticle {
     public stockMovement: string;
     public movementParent: MovementOfArticle;
     public isOptional: boolean = false;
-
+    public creationUser: User;
+    public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+    public updateUser: User;
+    public updateDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+    
     constructor() { }
 }
 
@@ -308,6 +314,36 @@ export let attributes = [
     },
     {
         name: 'transaction.type.transactionMovement',
+        visible: false,
+        disabled: true,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: true,
+    },
+    {
+        name: 'creationDate',
+        visible: false,
+        disabled: true,
+        filter: false,
+        datatype: 'date',
+        project: null,
+        align: 'left',
+        required: true,
+    },
+    {
+        name: 'updateDate',
+        visible: false,
+        disabled: true,
+        filter: false,
+        datatype: 'date',
+        project: null,
+        align: 'left',
+        required: true,
+    },
+    {
+        name: 'transaction.state',
         visible: false,
         disabled: true,
         filter: true,
