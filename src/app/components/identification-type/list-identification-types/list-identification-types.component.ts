@@ -7,7 +7,6 @@ import { IdentificationType } from '../identification-type';
 import { IdentificationTypeService } from '../identification-type.service';
 
 import { AddIdentificationTypeComponent } from '../identification-type/add-identification-type.component';
-import { DeleteIdentificationTypeComponent } from '../delete-identification-type/delete-identification-type.component';
 import { ImportComponent } from '../../import/import.component';
 
 @Component({
