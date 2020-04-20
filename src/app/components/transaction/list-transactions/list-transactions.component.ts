@@ -75,7 +75,7 @@ export class ListTransactionsComponent implements OnInit {
 	public startDate: string;
 	public endDate: string;
 	public dateSelect: string;
-
+    public stateSelect : string = "Cerrado";
 	constructor(
 		public _transactionService: TransactionService,
 		public _configService: ConfigService,
@@ -213,11 +213,11 @@ export class ListTransactionsComponent implements OnInit {
 		}
 
 		match += `"type.transactionMovement": "${this.transactionMovement}",`;
-
+		match += `"state": "${this.stateSelect}",`;
 		match += `"${this.dateSelect}" : {
-            "$gte" : { "$date" : "${this.startDate}T00:00:00${this.timezone}" },
-            "$lte" : { "$date" : "${this.endDate}T23:59:59${this.timezone}" }
-        }`
+                    "$gte" : { "$date" : "${this.startDate}T00:00:00${this.timezone}" },
+                    "$lte" : { "$date" : "${this.endDate}T23:59:59${this.timezone}" }
+                }`
 
 
 		if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);

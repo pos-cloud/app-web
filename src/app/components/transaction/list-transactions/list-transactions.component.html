@@ -6,7 +6,15 @@
     </div>
 
     <div class="row container-filter">
-        <div class="col-md-2"></div>
+        <div class="col-md-2">
+            <label class="control-label">
+                <b>Estado:</b>
+            </label>
+            <select class="form-control" [(ngModel)]="stateSelect">
+                <option value="Cerrado">Cerrado</option>
+                <option value="Anulado">Anulado</option>
+            </select>
+        </div>
         <div class="col-md-2">
             <label for="dataSelect" class="control-label">
                 <b>Por Fecha de:</b>
