@@ -296,6 +296,7 @@ export class PrintComponent implements OnInit {
             "company.identificationType.name" :1,
             "company.vatCondition.description" : 1,
             "company.address" :1,
+            "company.addressNumber": 1,
             "company.phones" :1,
             "company.city" :1,
             "company.fantasyName" : 1,
@@ -1722,7 +1723,11 @@ export class PrintComponent implements OnInit {
             }
 
             if (this.company.address) {
-                this.doc.text(this.company.address, 130, 55);
+                if(this.company.addressNumber){
+                    this.doc.text(this.company.address + " " + this.company.addressNumber, 130, 55);
+                } else {
+                    this.doc.text(this.company.address , 130, 55);
+                }
             }
             if (this.company.phones) {
                 this.doc.text(this.company.phones, 130, 60);
