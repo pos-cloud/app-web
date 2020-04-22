@@ -26,7 +26,8 @@ export class CategoryComponent implements OnInit {
 	@Input() readonly: boolean;
 
 	public category: Category;
-	public categoryForm: FormGroup;
+    public categoryForm: FormGroup;
+    public categories : Category[];
 	public alertMessage: string = '';
 	public userType: string;
 	public loading: boolean = false;
@@ -49,6 +50,7 @@ export class CategoryComponent implements OnInit {
 		public activeModal: NgbActiveModal,
 		public alertConfig: NgbAlertConfig,
 	) {
+        this.getCategories();
 		if (window.screen.width < 1000) this.orientation = 'vertical';
 		this.category = new Category();
 	}
@@ -95,9 +97,43 @@ export class CategoryComponent implements OnInit {
 				this.loading = false;
 			}
 		);
-	}
+    }
+    
+    public getCategories() : void {
+        this.loading = true;
+
+        let project = {
+            _id : 1,
+            description : 1,
+            parent : 1,
+            operationType : 1
+        }
+
+        let match = {
+            operationType : { $ne : "D"},
+            parent : null
+        }
+
+		this._categoryService.getCategoriesV2(project,match,{description : -1},{}).subscribe(
+			result => {
+				if (!result.categories) {
+					if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+				} else {
+					this.hideMessage();
+					this.categories = result.categories;
+				}
+				this.loading = false;
+			},
+			error => {
+				this.showMessage(error._body, 'danger', false);
+				this.loading = false;
+			}
+		);
+    }
 
 	public buildForm(): void {
+
+
 
 		this.categoryForm = this._fb.group({
 			'_id': [this.category._id, []],
@@ -107,7 +143,8 @@ export class CategoryComponent implements OnInit {
 			'visibleOnSale': [this.category.visibleOnSale, []],
 			'visibleOnPurchase': [this.category.visibleOnPurchase, []],
 			'ecommerceEnabled': [this.category.ecommerceEnabled, []],
-			'isRequiredOptional': [this.category.isRequiredOptional, []]
+            'isRequiredOptional': [this.category.isRequiredOptional, []],
+            'parent' : [this.category.parent,[]]
 		});
 
 		this.categoryForm.valueChanges
@@ -162,6 +199,17 @@ export class CategoryComponent implements OnInit {
 
 	public setValueForm(): void {
 
+        let parent;
+        if (!this.category.parent) {
+          parent = null;
+        } else {
+          if (this.category.parent._id) {
+            parent = this.category.parent._id;
+          } else {
+            parent = this.category.parent;
+          }
+        }
+
 		this.categoryForm.setValue({
 			'_id': this.category._id,
 			'order': this.category.order,
@@ -170,7 +218,8 @@ export class CategoryComponent implements OnInit {
 			'visibleOnSale': this.category.visibleOnSale,
 			'visibleOnPurchase': this.category.visibleOnPurchase,
 			'ecommerceEnabled': this.category.ecommerceEnabled,
-			'isRequiredOptional': this.category.isRequiredOptional
+            'isRequiredOptional': this.category.isRequiredOptional,
+            'parent' : parent
 		});
 	}
 

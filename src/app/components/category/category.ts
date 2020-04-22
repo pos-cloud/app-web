@@ -13,6 +13,7 @@ export class Category {
 	public visibleOnPurchase: boolean = true;
     public ecommerceEnabled: boolean = false;
     public isRequiredOptional: boolean = false;
+    public parent : Category;
 	public creationUser: User;
 	public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 	public updateUser: User;

@@ -50,7 +50,20 @@
 											</div>
 										</div>
 									</div>
-								</div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-12">
+										<label for="parent" class="control-label">Padre</label>
+										<select class="form-control" formControlName="parent">
+                                            <option *ngFor="let category of categories"
+                                                    [selected]="(category.parent && category.parent._id && parent._id===category.parent._id) ||
+                                                                (category.parent && parent._id===category.parent)"
+                                                    [value]="category._id"
+                                                    [disabled]="readonly">
+                                                    <b>{{category.description}}</b></option>
+										</select>
+									</div>
+                                </div>
 							</div>
 						</div>
 					</ng-template>

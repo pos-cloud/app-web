@@ -25,7 +25,9 @@
 						<th (click)="orderBy('visibleInvoice')">Visible en la factura </th>
 						<th (click)="orderBy('visibleOnSale')">Visible en la venta </th>
                         <th (click)="orderBy('visibleOnPurchase')">Visible en la compra </th>
-                        <th (click)="orderBy('isRequiredOptional')">Obligatorio para opcional </th>
+                        <th (click)="orderBy('isRequiredOptional')">Obligatorio para opcional </th>                        
+                        <th (click)="orderBy('parent','description')">Padre </th>
+
 					</tr>
 					<tr class="filters">
 						<th></th>
@@ -39,8 +41,10 @@
 								placeholder="Visible en la venta..."></th>
 						<th><input type="text" class="form-control" [(ngModel)]="filterVisibleOnPurchase"
                                 placeholder="Visible en la compra..."></th>
-                                <th><input type="text" class="form-control" [(ngModel)]="filterIsRequiredOptional"
+                        <th><input type="text" class="form-control" [(ngModel)]="filterIsRequiredOptional"
                                     placeholder="Visible en la compra..."></th>
+                        <th><input type="text" class="form-control" [(ngModel)]="filterParent"
+                                        placeholder="Padre..."></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -55,6 +59,7 @@
 															| filter: filterVisibleOnSale:'visibleOnSale'
                                                             | filter: filterVisibleOnPurchase:'visibleOnPurchase'
                                                             | filter : filterIsRequiredOptional : 'isRequiredOptional'
+                                                            | filter : filterParent : 'description' : 'parent'
 															| orderBy: orderTerm: propertyTerm
 															| paginate: { itemsPerPage: itemsPerPage,
                                                                   currentPage: p,
@@ -75,6 +80,8 @@
 						<td class="flat">{{category.visibleOnSale}}</td>
                         <td class="flat">{{category.visibleOnPurchase}}</td>
                         <td class="flat">{{category.isRequiredOptional}}</td>
+                        <td class="flat" *ngIf="category.parent">{{category.parent.description}}</td>
+                        <td class="flat" *ngIf="!category.parent"></td>
 
 					</tr>
 					<tr align="center" *ngIf="areCategoriesEmpty && !loading">
