@@ -50,7 +50,7 @@ export class CategoryComponent implements OnInit {
 		public activeModal: NgbActiveModal,
 		public alertConfig: NgbAlertConfig,
 	) {
-        this.getCategories();
+        //this.getCategories();
 		if (window.screen.width < 1000) this.orientation = 'vertical';
 		this.category = new Category();
 	}
@@ -87,7 +87,8 @@ export class CategoryComponent implements OnInit {
 						this.imageURL = Config.apiURL + 'get-image-category/' + this.category.picture + "/" + Config.database;
 					} else {
 						this.imageURL = './../../../assets/img/default.jpg';
-					}
+                    }
+                    this.getCategories();
 					this.setValueForm();
 				}
 				this.loading = false;
@@ -111,7 +112,7 @@ export class CategoryComponent implements OnInit {
 
         let match = {
             operationType : { $ne : "D"},
-            parent : null
+            _id : { $ne : { $oid : this.category._id }}
         }
 
 		this._categoryService.getCategoriesV2(project,match,{description : -1},{}).subscribe(
