@@ -7,7 +7,7 @@
     <div class="row container-filter">
         <div class="col-md-2">
             <label class="control-label">
-                <b>Estado:</b>
+                <b>Estado Transaccion:</b>
             </label>
             <select class="form-control" [(ngModel)]="stateSelect">
                 <option value="Cerrado">Cerrado</option>
@@ -22,11 +22,12 @@
         </div>
         <div class="col-md-2">
             <label for="dataSelect" class="control-label">
-                <b>Por Fecha de:</b>
+                <b>Por Fecha Transaccion de :</b>
             </label>
             <select class="form-control" [(ngModel)]="dateSelect">
-                <option value="creationDate">Creación</option>
-                <option value="updateDate">Modificación</option>
+                <option value="transaction.creationDate">Creación</option>
+                <option value="transaction.updateDate">Modificación</option>
+                <option value="endDate2">Finalización</option>
             </select>
         </div>
         <div class="col-md-2">

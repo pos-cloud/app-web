@@ -57,7 +57,7 @@ export class ListMovementsOfArticlesComponent implements OnInit {
 
         this.startDate = moment().format('YYYY-MM-DD');
 		this.endDate = moment().format('YYYY-MM-DD');
-        this.dateSelect = "updateDate";
+        this.dateSelect = "endDate2";
         
         this.filters = new Array();
         for (let field of this.columns) {
