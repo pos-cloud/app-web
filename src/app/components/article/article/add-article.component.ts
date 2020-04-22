@@ -46,6 +46,7 @@ import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operato
 import { Observable } from 'rxjs';
 import { ConfigService } from 'app/components/config/config.service';
 import { TaxClassification } from 'app/components/tax/tax';
+import { async } from '@angular/core/testing';
 
 @Component({
     selector: 'app-add-article',
@@ -914,11 +915,11 @@ export class AddArticleComponent implements OnInit {
 
     }
 
-    public getCategories(query) {
+    public getCategories(query): Promise<Category[]> {
 
         this.loading = true;
 
-        return new Promise((resolve, reject) => {
+        return new  Promise<Category[]>((resolve, reject) => {
             this._categoryService.getCategories(query).subscribe(
                 result => {
                     if (!result.categories) {
@@ -1433,12 +1434,12 @@ export class AddArticleComponent implements OnInit {
         }
     }
 
-    public saveArticle(): void {
+    async saveArticle() {
 
         this.loading = true;
 
 
-        if (this.isValid()) {
+        if (await this.isValid()) {
             this._articleService.saveArticle(this.article, this.variants).subscribe(
                 result => {
                     if (!result.article) {
@@ -1489,11 +1490,11 @@ export class AddArticleComponent implements OnInit {
         }
     }
 
-    public updateArticle(): void {
+    async updateArticle() {
 
         this.loading = true;
 
-        if (this.isValid()) {
+        if (await this.isValid()) {
 
             this._articleService.updateArticle(this.article, this.variants).subscribe(
                 result => {
@@ -1560,22 +1561,73 @@ export class AddArticleComponent implements OnInit {
         );
     }
 
-    public isValid(): boolean {
+    async isValid() : Promise<boolean> {
 
-        let valid: boolean = true;
+        return new Promise<boolean>(async (resolve, reject) => {
+    
+            if (this.article.make && typeof this.article.make !== 'object') {
+                this.showMessage("Debe seleccionar una marca valida", "danger", true)
+                this.articleForm.value.make = null;
+                resolve(false)
+            }
+    
+            if (typeof this.article.category !== 'object') {
+                this.showMessage("Debe seleccionar una categoría valida", "danger", true)
+                resolve(false)
+            }
 
-        if (this.article.make && typeof this.article.make !== 'object') {
-            this.showMessage("Debe seleccionar una marca valida", "danger", true)
-            this.articleForm.value.make = null;
-            valid = false
-        }
+            if(this.article.category && this.article.category.parent){
+                await this.getCategories(`where="parent": "${ this.article.category.parent._id}"`).then(
+                    result => {
+                        if(result.length > 0){
+                            this.showMessage("Debe seleccionar una categoría valida", "danger", true)
+                            resolve(false)
+                        } else {
+                            resolve(true)
+                        }
+                })
+            } else {
+                resolve(true);
+            }
+            
+        })
 
-        if (typeof this.article.category !== 'object') {
-            this.showMessage("Debe seleccionar una categoría valida", "danger", true)
-            valid = false
-        }
+    }
 
-        return valid;
+    async getCategoriesParent(): Promise<boolean> {
+
+        return new Promise<boolean>((resolve, reject) => {
+
+            this.loading = true;
+
+            let project = {
+                _id : 1,
+                parent : 1,
+                operationType : 1
+            }
+
+            let match = {
+                parent : { $oid : this.article.category.parent._id},
+                operationType : { $ne : "D"}
+            }
+
+            this._categoryService.getCategoriesV2(project,match,{},{}).subscribe(
+                result => {
+                    console.log(result);
+                    if(result && result.categories && result.categories.length > 0){
+                        resolve(true)
+                    } else {
+                        resolve(false)
+                    }
+
+                },
+                error => {
+                    this.loading = false;
+                    this.showMessage(error._body, 'danger', false);
+                    resolve(false);
+                }
+            );
+        });
     }
 
     public cleanForm() {
@@ -1631,8 +1683,6 @@ export class AddArticleComponent implements OnInit {
     }
 
     public deletePicture(index,picture : string): void {
-
-        console.log(picture)
 
         this._articleService.deleteImage(picture).subscribe(
             result => {
