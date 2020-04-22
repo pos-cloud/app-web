@@ -442,7 +442,8 @@ export class AddArticleComponent implements OnInit {
             'providers': [this.article.providers, []],
             'lastPricePurchase': [0.00, []],
             'lastDatePurchase': [0.00, []],
-            'classification': [this.article.classification, []]
+            'classification': [this.article.classification, []],
+            'pictures': this._fb.array([])
         });
 
         this.articleForm.valueChanges.subscribe(data => this.onValueChanged(data));
@@ -736,6 +737,17 @@ export class AddArticleComponent implements OnInit {
                     }))
                 }
 
+            })
+        }
+
+        if (this.article.pictures && this.article.pictures.length > 0) {
+            let pictures = this.articleForm.controls.pictures as FormArray;
+            this.article.pictures.forEach(x => {
+
+                pictures.push(this._fb.group({
+                    '_id': null,
+                    'picture': x.picture,
+                }))
             })
         }
 
@@ -1580,9 +1592,69 @@ export class AddArticleComponent implements OnInit {
         this.activeModal.close(this.hasChanged);
     }
 
-    public fileChangeEvent(fileInput: any): void {
+    public fileChangeEvent(fileInput: any, eCommerce?: boolean): void {
 
         this.filesToUpload = <Array<File>>fileInput.target.files;
+    }
+
+    public addPicture(): void {
+
+        this._articleService.makeFileRequestArray(this.filesToUpload)
+            .then(
+                (result) => {
+                    let resultUpload;
+                    resultUpload = result;
+                    console.log(resultUpload['file']['filename'])
+                    this.addPictureArray(resultUpload['file']['filename'])
+                    this.filesToUpload = [];
+                },
+                (error) => {
+                    this.loading = false;
+                    this.showMessage(error, 'danger', false);
+                }
+            );
+    }
+
+    async addPictureArray(picture: string) {
+
+        let valid = true;
+        const pictures = this.articleForm.controls.pictures as FormArray;
+
+        if (valid) {
+            pictures.push(
+                this._fb.group({
+                    _id: null,
+                    picture: picture,
+                })
+            );
+        }
+    }
+
+    public deletePicture(index,picture : string): void {
+
+        console.log(picture)
+
+        this._articleService.deleteImage(picture).subscribe(
+            result => {
+                if(result){
+                    if(result.result === 'ok'){
+                        let control = <FormArray>this.articleForm.controls.pictures;
+                        control.removeAt(index)
+                    } else {
+                        this.showMessage("La imagen no se pudo eliminar", 'danger', false);
+                    }
+                } else {
+                    this.showMessage("La imagen no se encontro", 'danger', false);
+
+                }
+            },
+            error => {
+                this.showMessage(error._body, 'danger', false);
+                this.loading = false;
+            }
+        )
+
+        
     }
 
     public addArticleTaxes(articleTaxes: Taxes[]): void {

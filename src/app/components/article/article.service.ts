@@ -249,6 +249,59 @@ export class ArticleService {
 
 			xhr.send(formData);
 		});
+    }
+    
+    public makeFileRequestArray(files: Array<File>) {
+
+		let xhr: XMLHttpRequest = new XMLHttpRequest();
+		xhr.open('POST', Config.apiURL + 'upload-image-article/', true);
+		xhr.setRequestHeader('Authorization', this._authService.getToken());
+
+		return new Promise((resolve, reject) => {
+			let formData: any = new FormData();
+
+			if (files && files.length > 0) {
+				for (let i: number = 0; i < files.length; i++) {
+					formData.append('image', files[i], files[i].name);
+				}
+			}
+
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState == 4) {
+					if (xhr.status == 200) {
+						resolve(JSON.parse(xhr.response));
+					} else {
+						reject(xhr.response);
+					}
+				}
+			}
+
+			xhr.send(formData);
+		});
+    }
+    
+    public deleteImage(picture: string): Observable<any> {
+
+		const URL = `${Config.apiURL}delete-image-article`;
+
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
+
+		const params = new HttpParams()
+			.set('picture', picture);
+
+		return this._http.delete(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
 	}
 
 	public getPicture(picture: string): Observable<any> {

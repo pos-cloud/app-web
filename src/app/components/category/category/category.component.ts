@@ -133,8 +133,6 @@ export class CategoryComponent implements OnInit {
 
 	public buildForm(): void {
 
-
-
 		this.categoryForm = this._fb.group({
 			'_id': [this.category._id, []],
 			'order': [this.category.order, [Validators.required]],
