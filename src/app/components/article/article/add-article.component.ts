@@ -1298,8 +1298,13 @@ export class AddArticleComponent implements OnInit {
             const slicePipe = new SlicePipe();
             this.articleForm.value.posDescription = slicePipe.transform(this.articleForm.value.description, 0, 20);
             this.article = this.articleForm.value;
-            this.setValuesForm();
         }
+        if(this.articleForm.value.url === ''){
+            this.articleForm.value.url = this.articleForm.value.description;
+            this.article = this.articleForm.value;
+        }
+
+        this.setValuesForm();
     }
 
     public setValuesForm(): void {
@@ -1377,7 +1382,7 @@ export class AddArticleComponent implements OnInit {
         if (!this.article.ecommerceEnabled === undefined) { this.article.ecommerceEnabled = false; }
         if (!this.article.posKitchen === undefined) { this.article.posKitchen = false; }
         if (!this.article.isWeigth === undefined) { this.article.isWeigth = false; }
-        if (!this.article.url === undefined) { this.article.url = ''; }
+        if (!this.article.url) { this.article.url = ''; }
 
         this.article.basePrice = this.roundNumber.transform(this.article.basePrice);
         this.article.costPrice = this.roundNumber.transform(this.article.costPrice);
