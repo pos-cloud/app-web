@@ -278,6 +278,8 @@ import { TaxComponent } from './components/tax/tax/tax.component';
 import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.component';
 import { TaxService } from './components/tax/tax.service';
 import { AddArticleFieldsComponent } from './components/article/add-article-fields/add-article-fields.component';
+import { DatatableComponent } from './components/datatable/datatable.component';
+import { TranslateMePipe } from './main/pipes/translate-me';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -322,6 +324,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         CapitalizePipe,
         TotalPipe,
         RoundNumberPipe,
+        TranslateMePipe,
         JsonDiffPipe,
         AddUserComponent,
         ListUsersComponent,
@@ -473,7 +476,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         SelectChecksComponent,
         ShipmentMethodComponent,
         ListShipmentMethodComponent,
-        SelectShipmentMethodComponent
+        SelectShipmentMethodComponent,
+        DatatableComponent
     ],
     entryComponents: [
         HomeComponent,
@@ -635,7 +639,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         EmailTemplateComponent,
         SelectChecksComponent,
         ShipmentMethodComponent,
-        SelectShipmentMethodComponent
+        SelectShipmentMethodComponent,
+        DatatableComponent
     ],
     imports: [
         BrowserModule,
@@ -710,6 +715,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         MovementOfCancellationService,
         CurrencyService,
         RoundNumberPipe,
+        TranslateMePipe,
         JsonDiffPipe,
         StateService,
         CountryService,
