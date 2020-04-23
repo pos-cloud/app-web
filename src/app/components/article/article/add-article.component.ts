@@ -1497,7 +1497,7 @@ export class AddArticleComponent implements OnInit {
                                         resultUpload = result;
                                         this.article.picture = resultUpload.article.picture;
                                         if (this.article.picture && this.article.picture !== 'default.jpg') {
-                                            this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
+                                            this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture + "/" + Config.database;
                                         } else {
                                             this.imageURL = './../../../assets/img/default.jpg';
                                         }
