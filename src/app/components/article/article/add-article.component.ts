@@ -738,6 +738,24 @@ export class AddArticleComponent implements OnInit {
         );
     }
 
+    public loadURL(): void {
+        if(this.articleForm.value.url === ''){
+            this.article.url = this.articleForm.value.description.split(' ').join('-')
+                            .split(':').join('')
+                            .split('.').join('')
+                            .split('"').join('')
+                            .split('“').join('')
+                            .split('”').join('')
+                            .split('?').join('')
+                            .split('¿').join('')
+                            .split('!').join('')
+                            .split('¡').join('')
+                            .toLocaleLowerCase()
+                            .normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+            this.setValuesForm();
+        }
+    }
+
     public setValuesArray(): void {
 
         if (this.article.deposits && this.article.deposits.length > 0) {
@@ -1444,20 +1462,6 @@ export class AddArticleComponent implements OnInit {
             this.loading = true;
             this.loadPosDescription();
             this.article = this.articleForm.value;
-            if (this.article.url = '') {
-                this.article.url = this.article.description.split(' ').join('-')
-                    .split(':').join('')
-                    .split('.').join('')
-                    .split('"').join('')
-                    .split('“').join('')
-                    .split('”').join('')
-                    .split('?').join('')
-                    .split('¿').join('')
-                    .split('!').join('')
-                    .split('¡').join('')
-                    .toLocaleLowerCase()
-                    .normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-            }
             if (this.articleForm.value.make === '') {
                 this.article.make = null
             }
@@ -1725,7 +1729,6 @@ export class AddArticleComponent implements OnInit {
                 (result) => {
                     let resultUpload;
                     resultUpload = result;
-                    console.log(resultUpload['file']['filename'])
                     this.addPictureArray(resultUpload['file']['filename'])
                     this.filesToUpload = null;
                 },

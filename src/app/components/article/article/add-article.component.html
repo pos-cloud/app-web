@@ -15,7 +15,7 @@
 	</div>
 	<form [formGroup]="articleForm" #formAddArticle="ngForm" (ngSubmit)="addArticle()" autocomplete="off">
 		<div class="modal-body">
-			<ngb-tabset [orientation]="orientation">
+			<ngb-tabset [orientation]="orientation" (tabChange)="loadURL($event)">
 				<ngb-tab title="Datos principales">
 					<ng-template ngbTabContent>
 						<div class="row tab-content">
@@ -461,9 +461,8 @@
 						</table>
 					</ng-template>
 				</ngb-tab>
-				<ngb-tab title="E-Commerce">
+				<ngb-tab title="E-Commerce" >
 					<ng-template ngbTabContent>
-
 						<div class="row">
 							<div class="form-group col-md-9">
 								<label for="url" class="control-label">URL:</label>
