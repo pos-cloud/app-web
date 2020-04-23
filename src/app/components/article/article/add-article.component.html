@@ -467,17 +467,54 @@
                         </table>
                     </ng-template>
                 </ngb-tab>
-                <ngb-tab title="Imagenes">
+                <ngb-tab title="E-Commerce">
                     <ng-template ngbTabContent>
-                        <div class="row tab-content">
+
+                        <div class="row">
+                            <div class="form-group col-md-9">
+                                <label for="url" class="control-label">URL:</label>
+                                <input type="text" class="form-control" formControlName="url" name="url" id="url" [readonly]="readonly"/>
+                                <div *ngIf="formErrors.url" class="alert alert-danger">
+                                    {{ formErrors.url }}
+                                </div>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="ecommerceEnabled" class="control-label">¿Habilitado para Ecommerce?</label>
+                                <select class="form-control" formControlName="ecommerceEnabled">
+                                    <option [ngValue]="true" [disabled]="readonly">Si</option>
+                                    <option [ngValue]="false" [disabled]="readonly">No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="tag" class="control-label">Tags:</label>
+                                <input type="text" class="form-control" name="tag" id="tag"
+                                    (keydown.enter)="addTag($event.target.value)"
+                                    placeholder="Ingresar el tag y luego presionar enter por cada tag."
+                                    [focus]="focusTagEvent" [readonly]="readonly" />
+                                <div *ngIf="formErrorsTag" class="alert alert-danger">
+                                    {{ formErrorsTag }}
+                                </div>
+                                <div class="row" style="margin-top: 10px;">
+                                    <div class="col-md-12">
+                                        <span class="badge badge-ligth" *ngFor="let n of tags">{{n}}
+                                            <span class="badge badge-danger pointer"
+                                                (click)="deleteTag(n)">X</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
                             <form #pictureForm="ngForm" (ngSubmit)="addPicture(pictureForm)">
                                 <div class="row">
-                                    <div class="form-group col-md-12">
+                                    <div class="form-group col-md-10">
+                                        <label for="sel"> Agregar Imagenes:</label>
                                         <div class="custom-file">
-                                            <label class="custom-file-label btn btn-action" for="customFileLang">Agregar Imagen</label>
-                                            <input type="file" class="custom-file-input" lang="es"
-                                                accept="image/*" id="customFileLang"
-                                                (change)="fileChangeEvent($event)" />
+                                            <label class="custom-file-label btn btn-action" for="customFileLang">Buscar
+                                                Imagen</label>
+                                            <input type="file" class="custom-file-input" language="es" accept="image/*"
+                                                id="customFileLang" (change)="fileChangeEvent($event)" />
                                         </div>
                                     </div>
                                     <div class="form-group col-md-2">
@@ -496,7 +533,7 @@
                                 <tbody>
                                     <tr class="separation"
                                         *ngFor="let picture of articleForm.get('pictures').controls; let i = index;">
-                                       <td>{{picture.value.picture}}</td>
+                                        <td>{{picture.value.picture}}</td>
                                         <td align="right" width="10">
                                             <button type="button" class="btn btn-danger btn-sm"
                                                 (click)="deletePicture(i,picture.value.picture)">
@@ -509,6 +546,8 @@
                                 </tfoot>
                             </table>
                         </div>
+
+
                     </ng-template>
                 </ngb-tab>
                 <ngb-tab title="Configuraciones">
@@ -574,23 +613,13 @@
                                 </div>
                                 <div class="row">
                                     <div class="form-group col-md-6">
-                                        <label for="ecommerceEnabled" class="control-label">¿Habilitado para
-                                            Ecommerce?</label>
-                                        <select class="form-control" formControlName="ecommerceEnabled">
-                                            <option [value]="true" [disabled]="readonly">Si</option>
-                                            <option [value]="false" [disabled]="readonly">No</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-md-6">
                                         <label for="posKitchen" class="control-label">¿Aparece en POS Cocina?</label>
                                         <select class="form-control" formControlName="posKitchen">
                                             <option [value]="true" [disabled]="readonly">Si</option>
                                             <option [value]="false" [disabled]="readonly">No</option>
                                         </select>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-md-12">
+                                    <div class="form-group col-md-6">
                                         <label for="classification" class="control-label">Clasificación</label>
                                         <select class="form-control" formControlName="classification">
                                             <option [ngValue]="null" [selected]="!article || !article.classification"

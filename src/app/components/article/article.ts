@@ -26,6 +26,7 @@ export class Article {
     public unitOfMeasurement: UnitOfMeasurement;
     public observation: string;
     public notes: string[];
+    public tags: string[];
     public basePrice: number = 0.00;
     public taxes: Taxes[];
     public otherFields: ArticleFields[];
@@ -53,6 +54,7 @@ export class Article {
         _id : string,
         picture: string
     }];
+    public url : string;
     public category: Category;
     public barcode: string;
     public printIn: ArticlePrintIn = ArticlePrintIn.Counter;

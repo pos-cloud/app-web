@@ -83,6 +83,7 @@ export class AddArticleComponent implements OnInit {
     public loading = false;
     public focusEvent = new EventEmitter<boolean>();
     public focusNoteEvent = new EventEmitter<boolean>();
+    public focusTagEvent = new EventEmitter<boolean>();
     public apiURL = Config.apiURL;
     public filesToUpload: Array<File>;
     public hasChanged = false;
@@ -96,7 +97,10 @@ export class AddArticleComponent implements OnInit {
     public otherFieldsNumber = false;
     public orientation: string = 'horizontal';
     public notes: string[];
+    public tags: string[];
+
     public formErrorsNote: string;
+    public formErrorsTag: string;
 
     public value;
     public articleFieldSelected: ArticleField;
@@ -164,6 +168,8 @@ export class AddArticleComponent implements OnInit {
             'maxlength': 'No puede exceder los 14 dígitos.'
         },
         'note': {
+        },
+        'tag': {
         }
     };
 
@@ -226,6 +232,7 @@ export class AddArticleComponent implements OnInit {
         if (window.screen.width < 1000) this.orientation = 'vertical';
         this.article = new Article();
         this.notes = new Array();
+        this.tags = new Array();
         this.getCurrencies();
         this.getArticleTypes();
 
@@ -444,7 +451,8 @@ export class AddArticleComponent implements OnInit {
             'lastPricePurchase': [0.00, []],
             'lastDatePurchase': [0.00, []],
             'classification': [this.article.classification, []],
-            'pictures': this._fb.array([])
+            'pictures': this._fb.array([]),
+            'url' : [this.article.url,[]]
         });
 
         this.articleForm.valueChanges.subscribe(data => this.onValueChanged(data));
@@ -491,6 +499,29 @@ export class AddArticleComponent implements OnInit {
         if (note) this.notes.splice(this.notes.indexOf(note), 1);
         this.formErrorsNote = null;
         this.focusNoteEvent.emit(true);
+    }
+
+    public addTag(tag: string): void {
+        tag = tag.toUpperCase();
+        if (!this.tags) this.tags = new Array();
+        if (tag && tag !== '') {
+            if (this.tags.indexOf(tag) == -1) {
+                this.tags.push(tag);
+                this.formErrorsTag = null;
+            } else {
+                this.formErrorsTag = "La nota ingresada ya existe.";
+            }
+        } else {
+            this.formErrorsTag = "Debe ingresar un valór válido.";
+        }
+        this.focusTagEvent.emit(true);
+    }
+
+    public deleteTag(tag: string): void {
+        tag = tag.toUpperCase();
+        if (tag) this.tags.splice(this.tags.indexOf(tag), 1);
+        this.formErrorsTag = null;
+        this.focusTagEvent.emit(true);
     }
 
     public getDeposit(id: string): Promise<Deposit> {
@@ -666,6 +697,7 @@ export class AddArticleComponent implements OnInit {
                     this.hideMessage();
                     this.article = result.article;
                     this.notes = this.article.notes;
+                    this.tags = this.article.tags;
                     this.taxes = this.article.taxes;
                     if (this.article.picture && this.article.picture !== 'default.jpg') {
                         this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture + "/" + Config.database;
@@ -933,6 +965,7 @@ export class AddArticleComponent implements OnInit {
                 error => {
                     this.showMessage(error._body, 'danger', false);
                     this.loading = false;
+                    resolve(null)
                 }
             );
         });
@@ -1344,6 +1377,7 @@ export class AddArticleComponent implements OnInit {
         if (!this.article.ecommerceEnabled === undefined) { this.article.ecommerceEnabled = false; }
         if (!this.article.posKitchen === undefined) { this.article.posKitchen = false; }
         if (!this.article.isWeigth === undefined) { this.article.isWeigth = false; }
+        if (!this.article.url === undefined) { this.article.url = ''; }
 
         this.article.basePrice = this.roundNumber.transform(this.article.basePrice);
         this.article.costPrice = this.roundNumber.transform(this.article.costPrice);
@@ -1388,7 +1422,8 @@ export class AddArticleComponent implements OnInit {
             'favourite': this.article.favourite,
             'providers': providers,
             'lastPricePurchase': lastPricePurchase,
-            'classification': classification
+            'classification': classification,
+            'url' : this.article.url
         };
 
 
@@ -1406,6 +1441,7 @@ export class AddArticleComponent implements OnInit {
                 this.article.make = null
             }
             this.article.notes = this.notes;
+            this.article.tags = this.tags;
             this.autocompleteCode();
             if (this.variants && this.variants.length > 0) {
                 this.article.containsVariants = true;
@@ -1582,19 +1618,30 @@ export class AddArticleComponent implements OnInit {
                         if(result.length > 0){
                             this.showMessage("Debe seleccionar una categoría valida", "danger", true)
                             resolve(false)
-                        } else {
-                            resolve(true)
                         }
                 })
-            } else {
-                resolve(true);
             }
-            
+
+            if(this.article.ecommerceEnabled){
+                await this.getArticleURL().then(
+                    result => {
+                        if(result){
+                            this.showMessage("La URL ya esta en uso", "danger", true)
+                            resolve(false)
+                        } else {
+                            resolve(true);
+                        }
+                    }
+                )
+            } else {
+                resolve(true)
+            }
+
         })
 
     }
 
-    async getCategoriesParent(): Promise<boolean> {
+    async getArticleURL(): Promise<boolean> {
 
         return new Promise<boolean>((resolve, reject) => {
 
@@ -1602,19 +1649,20 @@ export class AddArticleComponent implements OnInit {
 
             let project = {
                 _id : 1,
-                parent : 1,
+                url : 1,
+                ecommerceEnabled : true,
                 operationType : 1
             }
 
             let match = {
-                parent : { $oid : this.article.category.parent._id},
-                operationType : { $ne : "D"}
+                url : this.article.url,
+                operationType : { $ne : "D"},
+                ecommerceEnabled : true
             }
 
-            this._categoryService.getCategoriesV2(project,match,{},{}).subscribe(
+            this._articleService.getArticlesV2(project,match,{},{}).subscribe(
                 result => {
-                    console.log(result);
-                    if(result && result.categories && result.categories.length > 0){
+                    if(result && result.articles && result.articles.length > 0){
                         resolve(true)
                     } else {
                         resolve(false)
@@ -1691,10 +1739,10 @@ export class AddArticleComponent implements OnInit {
                         let control = <FormArray>this.articleForm.controls.pictures;
                         control.removeAt(index)
                     } else {
-                        this.showMessage("La imagen no se pudo eliminar", 'danger', false);
+                        this.showMessage("La imagen no se pudo eliminar", 'danger', true);
                     }
                 } else {
-                    this.showMessage("La imagen no se encontro", 'danger', false);
+                    this.showMessage("La imagen no se encontro", 'danger', true);
 
                 }
             },
