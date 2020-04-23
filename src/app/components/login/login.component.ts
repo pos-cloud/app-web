@@ -69,18 +69,29 @@ export class LoginComponent implements OnInit {
     private _configService: ConfigService,
     private _route: ActivatedRoute,
     private socket: Socket,
-		private _toastr: ToastrService,
+    private _toastr: ToastrService,
     ) {
       this.alertMessage = '';
     }
 
   ngOnInit() {
-    this.company = Config.database;
+    this.processParams();
     this.buildForm();
   }
 
   ngAfterViewInit(): void {
     this.focusEvent.emit(true);
+  }
+
+  private processParams(): void {
+    this._route.queryParams.subscribe(params => {
+      if (params['negocio']) {
+        this.company = params['negocio'];
+        Config.setDatabase(this.company);
+      } else {
+        this.company = Config.database;
+      }
+    });
   }
 
   public buildForm(): void {
@@ -169,7 +180,7 @@ export class LoginComponent implements OnInit {
   }
 
   private initSocket(): void {
-    
+
     let identity: User = JSON.parse(sessionStorage.getItem('user'));
 
     if(identity && Config.database && Config.database !== '') {
@@ -178,7 +189,7 @@ export class LoginComponent implements OnInit {
         database: Config.database,
         clientType: 'pos'
       });
-      
+
       // ESCUCHAMOS SOCKET
       this.socket.on('message', (mnj) => {
         this.showToast(mnj);
@@ -206,22 +217,22 @@ export class LoginComponent implements OnInit {
 
   public setConfigurationSettings(config) {
     if (config.emailAccount) { Config.setConfigEmail(config.emailAccount, config.emailPassword) }
-    if (config.companyName) { 
+    if (config.companyName) {
       Config.setConfigCompany(
-        config.companyPicture, 
-        config.companyName, 
-        config.companyAddress, 
+        config.companyPicture,
+        config.companyName,
+        config.companyAddress,
         config.companyPhone,
-        config.companyVatCondition, 
-        config.companyStartOfActivity, 
-        config.companyGrossIncome, 
-        config.footerInvoice, 
+        config.companyVatCondition,
+        config.companyStartOfActivity,
+        config.companyGrossIncome,
+        config.footerInvoice,
         config.companyFantasyName,
-        config.country, 
-        config.timezone, 
-        config.currency, 
-        config.companyIdentificationType, 
-        config.companyIdentificationValue, 
+        config.country,
+        config.timezone,
+        config.currency,
+        config.companyIdentificationType,
+        config.companyIdentificationValue,
         config.licenseCost,
         config.companyPostalCode);
     }
@@ -242,7 +253,7 @@ export class LoginComponent implements OnInit {
   public hideMessage():void {
     this.alertMessage = '';
   }
-  
+
   public showToast(message: string, type: string = 'success'): void {
 		switch(type) {
 			case 'success':
