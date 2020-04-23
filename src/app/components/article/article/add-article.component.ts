@@ -1711,7 +1711,7 @@ export class AddArticleComponent implements OnInit {
                     resultUpload = result;
                     console.log(resultUpload['file']['filename'])
                     this.addPictureArray(resultUpload['file']['filename'])
-                    this.filesToUpload = [];
+                    this.filesToUpload = null;
                 },
                 (error) => {
                     this.loading = false;
@@ -1748,7 +1748,6 @@ export class AddArticleComponent implements OnInit {
                     }
                 } else {
                     this.showMessage("La imagen no se encontro", 'danger', true);
-
                 }
             },
             error => {
