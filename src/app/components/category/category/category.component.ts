@@ -50,9 +50,9 @@ export class CategoryComponent implements OnInit {
 		public activeModal: NgbActiveModal,
 		public alertConfig: NgbAlertConfig,
 	) {
-        //this.getCategories();
-		if (window.screen.width < 1000) this.orientation = 'vertical';
+        if (window.screen.width < 1000) this.orientation = 'vertical';
 		this.category = new Category();
+        this.getCategories();
 	}
 
 	ngOnInit(): void {
@@ -110,9 +110,16 @@ export class CategoryComponent implements OnInit {
             operationType : 1
         }
 
-        let match = {
-            operationType : { $ne : "D"},
-            _id : { $ne : { $oid : this.category._id }}
+        let match;
+        if(this.category && this.category._id){
+            match = {
+                operationType : { $ne : "D"},
+                _id : { $ne : { $oid : this.category._id }}
+            }
+        } else {
+            match = {
+                operationType : { $ne : "D"}
+            } 
         }
 
 		this._categoryService.getCategoriesV2(project,match,{description : -1},{}).subscribe(
