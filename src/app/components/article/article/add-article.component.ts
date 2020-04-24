@@ -738,9 +738,9 @@ export class AddArticleComponent implements OnInit {
         );
     }
 
-    public loadURL(): void {
+    public loadURL(e): void {
         if(this.articleForm.value.url === ''){
-            this.article.url = this.articleForm.value.description.split(' ').join('-')
+            let url = this.articleForm.value.description.split(' ').join('-')
                             .split(':').join('')
                             .split('.').join('')
                             .split('"').join('')
@@ -752,7 +752,7 @@ export class AddArticleComponent implements OnInit {
                             .split('¡').join('')
                             .toLocaleLowerCase()
                             .normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-            this.setValuesForm();
+            this.articleForm.patchValue({'url' : url});
         }
     }
 
