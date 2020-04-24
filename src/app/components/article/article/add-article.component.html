@@ -15,7 +15,7 @@
 	</div>
 	<form [formGroup]="articleForm" #formAddArticle="ngForm" (ngSubmit)="addArticle()" autocomplete="off">
 		<div class="modal-body">
-			<ngb-tabset [orientation]="orientation" (tabChange)="loadURL($event)">
+			<ngb-tabset [orientation]="orientation" (tabChange)="loadURL()">
 				<ngb-tab title="Datos principales">
 					<ng-template ngbTabContent>
 						<div class="row tab-content">
@@ -75,7 +75,7 @@
 												<label for="posDescription" class="control-label">Descripción
 													Corta:</label>
 												<input type="text" class="form-control" formControlName="posDescription"
-													name="posDescription" id="posDescription"
+													name="posDescription" id="posDescription" (blur)="loadPosDescription()"
 													[readonly]="readonly || (article && article.type && article.type.toString() === 'Variante')" />
 												<div *ngIf="formErrors.posDescription" class="alert alert-danger">
 													{{ formErrors.posDescription }}
@@ -86,7 +86,7 @@
 									<div class="form-group col-md-3">
 										<div class="custom-file">
 											<label *ngIf="!readonly" class="custom-file-label btn btn-action"
-												for="customFileLang">Cambiar Imagen</label>
+												for="customFileLang">{{fileName?fileName:'Buscar Imagen'}}</label>
 											<input *ngIf="!readonly" type="file" class="custom-file-input" lang="es"
 												accept="image/*" id="customFileLang" (change)="fileChangeEvent($event)" />
 											<img class="img-article" [src]="imageURL" height="120" width="120">
@@ -461,13 +461,13 @@
 						</table>
 					</ng-template>
 				</ngb-tab>
-				<ngb-tab title="E-Commerce" >
+				<ngb-tab title="E-Commerce">
 					<ng-template ngbTabContent>
 						<div class="row">
 							<div class="form-group col-md-9">
 								<label for="url" class="control-label">URL:</label>
 								<input type="text" class="form-control" formControlName="url" name="url" id="url"
-									[readonly]="readonly" />
+									(blur)="loadURL()" [readonly]="readonly" />
 								<div *ngIf="formErrors.url" class="alert alert-danger">
 									{{ formErrors.url }}
 								</div>
@@ -505,8 +505,7 @@
 										<div class="form-group col-md-10">
 											<label for="sel"> Agregar Imagenes:</label>
 											<div class="custom-file">
-												<label class="custom-file-label btn btn-action" for="customFileLang">Buscar
-													Imagen</label>
+												<label class="custom-file-label btn btn-action" for="customFileLang">{{fileName?fileName:'Buscar Imagen'}}</label>
 												<input type="file" class="custom-file-input" language="es" accept="image/*"
 													id="customFileLang" (change)="fileChangeEvent($event)" />
 											</div>
