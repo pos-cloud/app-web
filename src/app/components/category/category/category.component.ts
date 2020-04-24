@@ -352,7 +352,7 @@ export class CategoryComponent implements OnInit {
 
         console.log(this.category);
 
-        if(this.category.parent.toString() === this.category._id || this.category._id===this.category.parent._id){
+        if(this.category.parent != null && (this.category.parent.toString() === this.category._id || this.category._id===this.category.parent._id)){
             this.showMessage("No puede seleccionar la misma categoria como padre", "danger", true)
             return false;
         }
