@@ -86,9 +86,9 @@
 									<div class="form-group col-md-3">
 										<div class="custom-file">
 											<label *ngIf="!readonly" class="custom-file-label btn btn-action"
-												for="customFileLang">{{fileName?fileName:'Buscar Imagen'}}</label>
+												for="customFileLang">{{fileNamePrincipal?fileNamePrincipal:'Buscar Imagen'}}</label>
 											<input *ngIf="!readonly" type="file" class="custom-file-input" lang="es"
-												accept="image/*" id="customFileLang" (change)="fileChangeEvent($event)" />
+												accept="image/*" id="customFileLang" (change)="fileChangeEvent($event,false)" />
 											<img class="img-article" [src]="imageURL" height="120" width="120">
 										</div>
 									</div>
@@ -505,9 +505,9 @@
 										<div class="form-group col-md-10">
 											<label for="sel"> Agregar Imagenes:</label>
 											<div class="custom-file">
-												<label class="custom-file-label btn btn-action" for="customFileLang">{{fileName?fileName:'Buscar Imagen'}}</label>
+												<label class="custom-file-label btn btn-action" for="customFileLang">{{fileNameArray?fileNameArray:'Buscar Imagen'}}</label>
 												<input type="file" class="custom-file-input" language="es" accept="image/*"
-													id="customFileLang" (change)="fileChangeEvent($event)" />
+													id="customFileLang" (change)="fileChangeEvent($event,true)" />
 											</div>
 										</div>
 										<div class="form-group col-md-2">

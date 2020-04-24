@@ -86,6 +86,7 @@ export class AddArticleComponent implements OnInit {
     public focusTagEvent = new EventEmitter<boolean>();
     public apiURL = Config.apiURL;
     public filesToUpload: Array<File>;
+    public filesToArray: Array<File>;
     public hasChanged = false;
     public roundNumber: RoundNumberPipe = new RoundNumberPipe();
     public imageURL: string;
@@ -98,7 +99,8 @@ export class AddArticleComponent implements OnInit {
     public orientation: string = 'horizontal';
     public notes: string[];
     public tags: string[];
-    public fileName: string;
+    public fileNamePrincipal: string;
+    public fileNameArray: string;
     public formErrorsNote: string;
     public formErrorsTag: string;
 
@@ -1710,21 +1712,27 @@ export class AddArticleComponent implements OnInit {
         this.activeModal.close(this.hasChanged);
     }
 
-    public fileChangeEvent(fileInput: any, eCommerce?: boolean): void {
+    public fileChangeEvent(fileInput: any, eCommerce: boolean): void {
 
-        this.filesToUpload = <Array<File>>fileInput.target.files;
-        this.fileName = this.filesToUpload[0].name;
+        if(eCommerce){
+            this.filesToArray = <Array<File>>fileInput.target.files;
+            this.fileNameArray = this.filesToArray[0].name;
+        } else {
+            this.filesToUpload = <Array<File>>fileInput.target.files;
+            this.fileNamePrincipal = this.filesToUpload[0].name;
+        }
+
     }
 
     public addPicture(): void {
-        this.fileName = null;
-        this._articleService.makeFileRequestArray(this.filesToUpload)
+        this.fileNameArray = null;
+        this._articleService.makeFileRequestArray(this.filesToArray)
             .then(
                 (result) => {
                     let resultUpload;
                     resultUpload = result;
                     this.addPictureArray(resultUpload['file']['filename']);
-                    this.filesToUpload = null;
+                    this.filesToArray = null;
                 },
                 (error) => {
                     this.loading = false;
