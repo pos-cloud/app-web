@@ -278,7 +278,6 @@ import { TaxComponent } from './components/tax/tax/tax.component';
 import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.component';
 import { TaxService } from './components/tax/tax.service';
 import { AddArticleFieldsComponent } from './components/article/add-article-fields/add-article-fields.component';
-import { DatatableComponent } from './components/datatable/datatable.component';
 import { TranslateMePipe } from './main/pipes/translate-me';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
@@ -476,8 +475,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         SelectChecksComponent,
         ShipmentMethodComponent,
         ListShipmentMethodComponent,
-        SelectShipmentMethodComponent,
-        DatatableComponent
+        SelectShipmentMethodComponent
     ],
     entryComponents: [
         HomeComponent,
@@ -639,8 +637,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         EmailTemplateComponent,
         SelectChecksComponent,
         ShipmentMethodComponent,
-        SelectShipmentMethodComponent,
-        DatatableComponent
+        SelectShipmentMethodComponent
     ],
     imports: [
         BrowserModule,
