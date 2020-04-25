@@ -75,6 +75,11 @@ export class MakeComponent implements OnInit {
                 } else {
                     this.hideMessage();
                     this.make = result.make;
+                    if (this.make.picture && this.make.picture !== 'default.jpg') {
+                        this.imageURL = Config.apiURL + 'get-image-make/' + this.make.picture + "/" + Config.database;
+                    } else {
+                        this.imageURL = './../../../assets/img/default.jpg';
+                    }
                     this.setValueForm();
                 }
                 this.loading = false;
