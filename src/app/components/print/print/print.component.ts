@@ -41,6 +41,7 @@ import { BranchService } from 'app/components/branch/branch.service';
 import { VoucherService } from 'app/components/voucher-reader/voucher.service';
 import { Voucher } from 'app/components/voucher-reader/voucher';
 import { UserService } from 'app/components/user/user.service';
+import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
 
 var splitRegex = /\r\n|\r|\n/g;
 jsPDF.API.textEx = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
@@ -714,23 +715,27 @@ export class PrintComponent implements OnInit {
         row += 5;
 
 
-        let transactions: Transaction[] = await this.getCancellationsOfMovements(this.transactionId)
+        let movCancelation: MovementOfCancellation[] = await this.getCancellationsOfMovements(this.transactionId)
 
-        if (transactions) {
+        if (movCancelation) {
             this.doc.setFontType('bold');
             this.doc.setFontSize(this.fontSizes.normal);
-            this.doc.line(0, row, 100, row)
+            this.doc.line(0, row, 200, row)
             row += 5
             this.doc.text("Comprobantes cancelados", 10, row);
             this.doc.text("Total", 80, row);
+            this.doc.text("Saldo Cancelado", 110, row);
+            this.doc.text("Saldo Pendiente", 150, row);
             row += 3
-            this.doc.line(0, row, 100, row)
+            this.doc.line(0, row, 200, row)
             row += 5
-            for (let index = 0; index < transactions.length; index++) {
+            for (let index = 0; index < movCancelation.length; index++) {
                 this.doc.setFontType('normal');
-                this.doc.text(transactions[index].type.name + "   " + this.padString(transactions[index].origin, 4) + "-" + this.padString(transactions[index].number, 8), 10, row);
+                this.doc.text(movCancelation[index].transactionOrigin.type.name + "   " + this.padString(movCancelation[index].transactionOrigin.origin, 4) + "-" + this.padString(movCancelation[index].transactionOrigin.number, 8), 10, row);
                 //this.doc.text("$ " + this.roundNumber.transform(this.transactions[index].totalPrice), 80, row);
-                this.doc.textEx("$ " + this.roundNumber.transform(transactions[index].totalPrice), 95, row, 'right', 'middle');
+                this.doc.textEx("$ " + this.roundNumber.transform(movCancelation[index].transactionOrigin.totalPrice), 95, row, 'right', 'middle');
+                this.doc.textEx("$ " + this.roundNumber.transform(movCancelation[index].balance), 125, row, 'right', 'middle');
+                this.doc.textEx("$ " + this.roundNumber.transform(movCancelation[index].transactionOrigin.balance), 165, row, 'right', 'middle');
 
                 row += 8;
 
@@ -798,12 +803,15 @@ export class PrintComponent implements OnInit {
                     row = 72
                     this.doc.setFontType('bold');
                     this.doc.setFontSize(this.fontSizes.normal);
-                    this.doc.line(0, row, 100, row)
+                    this.doc.line(0, row, 150, row)
                     row += 5
                     this.doc.text("Comprobantes cancelados", 10, row);
                     this.doc.text("Total", 80, row);
+                    this.doc.text("Saldo Cancelado", 110, row);
+                    this.doc.text("Saldo Pendiente", 150, row);
+
                     row += 3
-                    this.doc.line(0, row, 100, row)
+                    this.doc.line(0, row, 150, row)
                     row += 5
                 }
             }
@@ -829,9 +837,9 @@ export class PrintComponent implements OnInit {
         }
     }
 
-    async getCancellationsOfMovements(transactionDestinationViewId): Promise<Transaction[]> {
+    async getCancellationsOfMovements(transactionDestinationViewId): Promise<MovementOfCancellation[]> {
 
-        return new Promise<Transaction[]>((resolve, reject) => {
+        return new Promise<MovementOfCancellation[]>((resolve, reject) => {
 
             this.loading = true;
 
@@ -842,8 +850,14 @@ export class PrintComponent implements OnInit {
 
             // CAMPOS A TRAER
             let project = {
-                "transactionOrigin": 1,
+                "transactionOrigin.type.name": 1,
+                "transactionOrigin.letter": 1,
+                "transactionOrigin.number": 1,
+                "transactionOrigin.origin": 1,
+                "transactionOrigin.totalPrice": 1,
+                "transactionOrigin.balance": 1,
                 "transactionDestination": 1,
+                "balance": 1,
                 "operationType": 1
             };
 
@@ -856,18 +870,7 @@ export class PrintComponent implements OnInit {
                 0 // SKIP
             ).subscribe(async result => {
                 if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
-                    let transactions = new Array();
-                    for (let index = 0; index < result.movementsOfCancellations.length; index++) {
-                        let transaction = new Transaction;
-                        transaction = await this.getTransaction2(result.movementsOfCancellations[index].transactionOrigin)
-
-                        if (transaction) {
-                            transactions.push(transaction);
-                        } else {
-                            resolve(null)
-                        }
-                    }
-                    resolve(transactions)
+                    resolve(result.movementsOfCancellations)
                 } else {
                     resolve(null)
                     this.loading = false;
@@ -878,35 +881,6 @@ export class PrintComponent implements OnInit {
                     this.showMessage(error._body, 'danger', false);
                     this.loading = false;
                 });
-        });
-
-
-    }
-
-    public getTransaction2(transactionId: string): Promise<Transaction> {
-
-        return new Promise<Transaction>((resolve, reject) => {
-
-            this.loading = true;
-
-            this._transactionService.getTransaction(transactionId).subscribe(
-                result => {
-                    if (!result.transaction) {
-                        this.showMessage(result.message, 'danger', false);
-                        this.loading = false;
-                        resolve(null);
-                    } else {
-                        this.hideMessage();
-                        this.loading = false;
-                        resolve(result.transaction);
-                    }
-                },
-                error => {
-                    this.showMessage(error._body, 'danger', false);
-                    this.loading = false;
-                    resolve(null);
-                }
-            );
         });
     }
 
@@ -1723,10 +1697,10 @@ export class PrintComponent implements OnInit {
             }
 
             if (this.company.address) {
-                if(this.company.addressNumber){
+                if (this.company.addressNumber) {
                     this.doc.text(this.company.address + " " + this.company.addressNumber, 130, 55);
                 } else {
-                    this.doc.text(this.company.address , 130, 55);
+                    this.doc.text(this.company.address, 130, 55);
                 }
             }
             if (this.company.phones) {
