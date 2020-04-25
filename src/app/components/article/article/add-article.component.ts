@@ -1675,6 +1675,7 @@ export class AddArticleComponent implements OnInit {
 
 
             match += `  "url":"${this.article.url}",
+                        "type": "Final",
                         "ecommerceEnabled": true,
                         "operationType" : { "$ne" : "D" } }`;
 
