@@ -47,6 +47,8 @@ import { Observable } from 'rxjs';
 import { ConfigService } from 'app/components/config/config.service';
 import { TaxClassification } from 'app/components/tax/tax';
 import { async } from '@angular/core/testing';
+import { Application } from 'app/components/application/application';
+import { ApplicationService } from 'app/components/application/application.service';
 
 @Component({
     selector: 'app-add-article',
@@ -103,6 +105,8 @@ export class AddArticleComponent implements OnInit {
     public fileNameArray: string;
     public formErrorsNote: string;
     public formErrorsTag: string;
+    public applications: Application[];
+    public applicationsController : Application[];
 
     public value;
     public articleFieldSelected: ArticleField;
@@ -224,6 +228,7 @@ export class AddArticleComponent implements OnInit {
         public _unitOfMeasurementService: UnitOfMeasurementService,
         public _movementsOfArticle: MovementOfArticleService,
         public _articleFields: ArticleFieldService,
+        public _applicationService : ApplicationService,
         public _fb: FormBuilder,
         public _router: Router,
         public activeModal: NgbActiveModal,
@@ -237,6 +242,7 @@ export class AddArticleComponent implements OnInit {
         this.tags = new Array();
         this.getCurrencies();
         this.getArticleTypes();
+        this.getApplications();
 
         const pathLocation: string[] = this._router.url.split('/');
         this.userType = pathLocation[1];
@@ -1624,10 +1630,10 @@ export class AddArticleComponent implements OnInit {
                 resolve(false)
             }
 
-            if (this.article.category && this.article.category.parent) {
-                await this.getCategories(`where="parent": "${this.article.category.parent._id}"`).then(
+            if (this.article.category) {
+                await this.getCategories(`where="parent": "${this.article.category._id}"`).then(
                     result => {
-                        if (result.length > 0) {
+                        if (result && result.length > 0) {
                             this.showMessage("Debe seleccionar una categoría valida", "danger", true)
                             resolve(false)
                         }
@@ -1755,6 +1761,35 @@ export class AddArticleComponent implements OnInit {
                 })
             );
         }
+    }
+
+    public getApplications() : void {
+
+        this.loading = true; 
+
+        let project = {
+            "_id" : 1,
+            "name" : 1,
+            "operationType" : 1,
+        }
+
+        let match = {
+            "operationType" : { "$ne" : "D"}
+        }
+
+
+        this._applicationService.getApplications(project,match,{ name : 1},{}).subscribe(
+            result => {
+                if(result && result.applications){
+                    this.applications = result.applications
+                    this.loading = false;
+                }
+            },
+            error => {
+                this.loading = false;
+                this.showMessage(error._body, 'danger', false);
+            }
+        )
     }
 
     public deletePicture(index, picture: string): void {

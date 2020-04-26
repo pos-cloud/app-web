@@ -79,6 +79,7 @@ import { ListEmailTemplatesComponent } from './components/email-template/list-em
 import { ListShipmentMethodComponent } from './components/shipment-method/list-shipment-method/list-shipment-method.component';
 import { ListCompaniesComponent } from './components/company/list-companies/list-companies.component';
 import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.component';
+import { ListApplicationsComponent } from './components/application/list-applications/list-applications.component';
 
 export const _routes: Routes = [
     {
@@ -532,6 +533,11 @@ export const _routes: Routes = [
     {
         path: 'admin/template-emails',
         component: ListEmailTemplatesComponent,
+        canActivate: [AuthGuard, LicenseGuard]
+    },
+    {
+        path: 'admin/aplicaciones',
+        component: ListApplicationsComponent,
         canActivate: [AuthGuard, LicenseGuard]
     },
     {

@@ -279,6 +279,9 @@ import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.compo
 import { TaxService } from './components/tax/tax.service';
 import { AddArticleFieldsComponent } from './components/article/add-article-fields/add-article-fields.component';
 import { TranslateMePipe } from './main/pipes/translate-me';
+import { ApplicationComponent } from './components/application/application/application.component';
+import { ListApplicationsComponent } from './components/application/list-applications/list-applications.component';
+import { ApplicationService } from './components/application/application.service';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -475,7 +478,9 @@ export function HttpLoaderFactory(http: HttpClient) {
         SelectChecksComponent,
         ShipmentMethodComponent,
         ListShipmentMethodComponent,
-        SelectShipmentMethodComponent
+        SelectShipmentMethodComponent,
+        ApplicationComponent,
+        ListApplicationsComponent
     ],
     entryComponents: [
         HomeComponent,
@@ -637,7 +642,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         EmailTemplateComponent,
         SelectChecksComponent,
         ShipmentMethodComponent,
-        SelectShipmentMethodComponent
+        SelectShipmentMethodComponent,
+        ApplicationComponent
     ],
     imports: [
         BrowserModule,
@@ -732,7 +738,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         ResourceService,
         GalleryService,
         EmailTemplateService,
-        ShipmentMethodService
+        ShipmentMethodService,
+        ApplicationService
     ],
     bootstrap: [AppComponent]
 })

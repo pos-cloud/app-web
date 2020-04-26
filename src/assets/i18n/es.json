@@ -46,7 +46,7 @@
         "providers" : {
             "name" : "Proveedor"
         }
-	},
+    },
 	"bank": {
 		"name": "Banco"
 	},
@@ -197,7 +197,9 @@
         "readLayout" : "Lee Diseño",
         "expirationDate" : "Fecha de vencimiento",
         "tax" : "Afecta libro IVA"
-	},
+    },
+    "order" : "Orden",
+    "url" : "URL",
     "totalPrice": "Precio Total",
     "titular" : "Titular",
 	"unitOfMeasurement": {

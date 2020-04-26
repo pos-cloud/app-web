@@ -11,6 +11,7 @@ import * as moment from 'moment';
 import { Currency } from '../currency/currency';
 import { Company } from '../company/company';
 import { Classification } from '../classification/classification';
+import { Application } from '../application/application';
 
 export class Article {
 
@@ -69,6 +70,7 @@ export class Article {
     public picture: string = 'default.jpg';
     public providers: Company[];
     public classification: Classification;
+    public applications : Application[];
     public operationType: string;
     public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');

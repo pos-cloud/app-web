@@ -1,0 +1,104 @@
+<section class="container-fluid">
+    <div class="center-content" *ngIf="alertMessage !== ''">
+        <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+            {{alertMessage}}
+        </ngb-alert>
+    </div>
+    <div class="card  card-large">
+        <div class="card-header">
+            <span>{{title}}</span>
+            <div class="pull-right">
+                <button class="btn" (click)="openModal('add', null)"><i
+                        class="fa fa-plus"></i><span>Agregar</span></button>
+                <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i
+                        [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
+                <div class="btn-group" ngbDropdown>
+                    <button class="btn" ngbDropdownToggle data-toggle="tooltip" placement="buttom-left"
+                        title="Columnas"><i class="fa fa-columns"></i><span>Columnas</span></button>
+                    <div class="dropdown-menu dropdown-menu-left" ngbDropdownMenu>
+                        <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+                            <div class="example-box" *ngFor="let column of columns" cdkDrag
+                                [cdkDragDisabled]="column.disabled">
+                                <label for="column"><input type="checkbox" [id]="column.name" (change)="getItems()"
+                                        [(ngModel)]="column.visible"
+                                        [disabled]="column.disabled">{{ column.name | translate}}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-block table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>
+                            <i class="fa fa-bars"></i>
+                        </th>
+                        <ng-container *ngFor="let column of columns">
+                            <th *ngIf="column.visible" (click)="orderBy(column.name)">{{ column.name | translate }}</th>
+                        </ng-container>
+                    </tr>
+                    <tr class="filters">
+                        <th></th>
+                        <ng-container *ngFor="let column of columns">
+                            <th *ngIf="column.visible">
+                                <input type="text" class="form-control" [(ngModel)]="filters[column.name]"
+                                    (keydown.enter)="getItems()" placeholder="{{ column.name | translate }}"
+                                    [disabled]="!column.filter">
+                            </th>
+                        </ng-container>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td [attr.colspan]="getColumnsVisibles() + 1" style="padding: 0px">
+                            <app-progressbar [loading]="loading"></app-progressbar>
+                        </td>
+                    </tr>
+                    <tr *ngFor="let item of items | paginate: { itemsPerPage: itemsPerPage,
+                                                        currentPage: currentPage,
+                                                        totalItems: totalItems
+                                                      }">
+                        <td align="left" width="100">
+                            <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', item)"
+                                title="Ver"><i class="fa fa-eye"></i></button>
+                            <button type="button" class="btn btn-primary btn-sm" (click)="openModal('edit', item)"
+                                title="Editar"><i class="fa fa-pencil"></i></button>
+                            <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', item)"
+                                title="Eliminar"><i class="fa fa-trash-o"></i></button>
+
+                        </td>
+                        <ng-container *ngFor="let column of columns">
+                            <td *ngIf="column.visible" [attr.align]="column.align">{{getValue(item, column)}}</td>
+                        </ng-container>
+                    </tr>
+                    <tr align="center" *ngIf="totalItems === 0 && !loading">
+                        <td [attr.colspan]="getColumnsVisibles() + 1">No se encontraron aplicaciones</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                </tfoot>
+            </table>
+        </div>
+        <div class="card-footer">
+            <div class="row">
+                <div class="col-md-10">
+                    <pagination-controls class="my-pagination" (pageChange)="pageChange($event)" #api
+                        previousLabel="Ant." nextLabel="Sig." autoHide="true">
+                    </pagination-controls>
+                </div>
+                <div class="form-group col-md-2">
+                    <select class="form-control" [(ngModel)]="itemsPerPage" (change)="getItems()">
+                        <option [value]="5">Mostrar 5 Registros</option>
+                        <option [value]="10">Mostrar 10 Registros</option>
+                        <option [value]="15">Mostrar 15 Registros</option>
+                        <option [value]="20">Mostrar 20 Registros</option>
+                        <option [value]="50">Mostrar 50 Registros</option>
+                        <option [value]="100">Mostrar 100 Registros</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

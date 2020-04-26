@@ -1,0 +1,120 @@
+<div class="modal-header">
+    <h4 class="modal-title">
+        Aplicación <span *ngIf="application">{{application.name}}</span>
+    </h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<section class="container-fluid">
+    <div class="center-content" *ngIf="alertMessage !== ''">
+        <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+            {{alertMessage}}
+        </ngb-alert>
+    </div>
+    <form [formGroup]="applicationForm" #formApplication="ngForm" (ngSubmit)="addApplication()" autocomplete="off">
+        <div class="modal-body">
+            <ngb-tabset [orientation]="orientation">
+                <ngb-tab title="Datos principales">
+                    <ng-template ngbTabContent>
+                        <div class="row tab-content">
+                            <div class="form-group col-md-12">
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label for="order" class="control-label">Order</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" formControlName="order"
+                                                name="order" id="order" [readonly]="readonly" [focus]="focusEvent" />
+                                        </div>
+                                        <div *ngIf="formErrors.order" class="alert alert-danger">
+                                            {{ formErrors.order }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="name" class="control-label">Nombre</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" formControlName="name" name="name"
+                                                id="name" [readonly]="readonly" />
+                                        </div>
+                                        <div *ngIf="formErrors.name" class="alert alert-danger">
+                                            {{ formErrors.name }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label for="url" class="control-label">URL</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" formControlName="url" name="url"
+                                                id="url" [readonly]="readonly" />
+                                        </div>
+                                        <div *ngIf="formErrors.url" class="alert alert-danger">
+                                            {{ formErrors.url }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="type" class="control-label">Tipo:</label>
+                                        <select class="form-control" formControlName="type">
+                                            <option *ngFor="let type of types" [ngValue]="type"
+                                                [disabled]="readonly">
+                                                {{type}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab *ngIf="this.operation !== 'add'" title="Auditoría">
+                    <ng-template ngbTabContent>
+                        <div class="row tab-content">
+                            <div class="form-group col-md-12">
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">Creado por:</label>
+                                        <label *ngIf="application.creationUser"
+                                            class="control-label"><b>{{application.creationUser.name}}</b></label>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">El día:</label>
+                                        <label *ngIf="application.creationDate" class="control-label">
+                                            <b>{{application.creationDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">Última modificación por:</label>
+                                        <label *ngIf="application.updateUser"
+                                            class="control-label"><b>{{application.updateUser.name}}</b></label>
+                                        <label *ngIf="!application.updateUser" class="control-label"><b>-</b></label>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">El día:</label>
+                                        <label *ngIf="application.updateDate"
+                                            class="control-label"><b>{{application.updateDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
+                                        <label *ngIf="!application.updateDate" class="control-label"><b>-</b></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </div>
+        <div class="modal-footer" *ngIf="operation !== 'view'">
+            <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
+            <button type="submit" class="btn btn-primary" [disabled]="!applicationForm.valid || loading"
+                *ngIf="operation !== 'delete'">
+                <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+                <span *ngIf="!loading">Guardar</span>
+                <span *ngIf="loading">Espere por favor</span>
+            </button>
+            <button type="button" class="btn btn-danger" *ngIf="operation === 'delete'"
+                [disabled]="!applicationForm.valid || loading" (click)="deleteApplication()">
+                <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
+                <span *ngIf="!loading">Eliminar</span>
+                <span *ngIf="loading">Espere por favor</span>
+            </button>
+        </div>
+    </form>
+</section>
