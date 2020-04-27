@@ -479,7 +479,13 @@
 									<option [ngValue]="false" [disabled]="readonly">No</option>
 								</select>
 							</div>
-						</div>
+                        </div>
+                        <div class="row">
+                            <label formArrayName="applications" *ngFor="let order of articleForm.get('applications').controls; let i = index">
+                                <input type="checkbox" [formControlName]="i" />
+                                {{applicationsCtrl[i].name}}
+                            </label>
+                        </div>
 						<div class="row">
 							<div class="form-group col-md-12">
 								<label for="tag" class="control-label">Tags:</label>

@@ -1,6 +1,6 @@
 // Angular
 import { Component, OnInit, EventEmitter, Input, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray, NgForm } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray, NgForm, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 
 // Terceros
@@ -105,8 +105,7 @@ export class AddArticleComponent implements OnInit {
     public fileNameArray: string;
     public formErrorsNote: string;
     public formErrorsTag: string;
-    public applications: Application[];
-    public applicationsController : Application[];
+    public applicationsCtrl: Application[];
 
     public value;
     public articleFieldSelected: ArticleField;
@@ -228,7 +227,7 @@ export class AddArticleComponent implements OnInit {
         public _unitOfMeasurementService: UnitOfMeasurementService,
         public _movementsOfArticle: MovementOfArticleService,
         public _articleFields: ArticleFieldService,
-        public _applicationService : ApplicationService,
+        public _applicationService: ApplicationService,
         public _fb: FormBuilder,
         public _router: Router,
         public activeModal: NgbActiveModal,
@@ -274,6 +273,14 @@ export class AddArticleComponent implements OnInit {
             this.getArticle();
 
         } else {
+            
+            if(this.applicationsCtrl && this.applicationsCtrl.length > 0){
+                console.log("entro");
+                this.applicationsCtrl.forEach(x => {        
+                    const control = new FormControl(false); // if first item set to true, else false
+                    (this.articleForm.controls.applications as FormArray).push(control);
+                })
+            }
             this.imageURL = './../../../assets/img/default.jpg';
         }
     }
@@ -327,20 +334,7 @@ export class AddArticleComponent implements OnInit {
         this._articleFields.getArticleFields().subscribe(
             result => {
                 if (result && result.articleFields) {
-
                     this.articleFields = result.articleFields;
-					/*for (let x = 0; x < result.articleFields.length; x++) {
-
-						if (result.articleFields[x]['datatype'] === ArticleFieldType.String ||
-							result.articleFields[x]['datatype'] === ArticleFieldType.Array) {
-							this.otherFieldsAlfabetico = true;
-						}
-						if (result.articleFields[x]['datatype'] !== ArticleFieldType.String &&
-							result.articleFields[x]['datatype'] !== ArticleFieldType.Array) {
-							this.otherFieldsNumber = true;
-						}
-
-					}*/
                 }
             },
             error => {
@@ -364,6 +358,7 @@ export class AddArticleComponent implements OnInit {
     }
 
     public buildForm(): void {
+
         this.articleForm = this._fb.group({
             '_id': [this.article._id, [
             ]
@@ -460,12 +455,30 @@ export class AddArticleComponent implements OnInit {
             'lastDatePurchase': [0.00, []],
             'classification': [this.article.classification, []],
             'pictures': this._fb.array([]),
+            'applications': this._fb.array([]),
             'url': [this.article.url, []]
         });
 
         this.articleForm.valueChanges.subscribe(data => this.onValueChanged(data));
         this.onValueChanged();
         this.focusEvent.emit(true);
+    }
+
+    onCheckboxChange(e) {
+        const checkArray: FormArray = this.articleForm.get('applications') as FormArray;
+
+        if (e.target.checked) {
+            checkArray.push(new FormControl(e.target.value));
+        } else {
+            let i: number = 0;
+            checkArray.controls.forEach((item: FormControl) => {
+                if (item.value == e.target.value) {
+                    checkArray.removeAt(i);
+                    return;
+                }
+                i++;
+            });
+        }
     }
 
     public onValueChanged(data?: any): void {
@@ -810,6 +823,23 @@ export class AddArticleComponent implements OnInit {
                     '_id': null,
                     'picture': x.picture,
                 }))
+            })
+        }
+
+        if(this.applicationsCtrl && this.applicationsCtrl.length > 0){
+            this.applicationsCtrl.forEach(x => {
+                let encontro = false;
+                this.article.applications.forEach(y => {
+                    if (x._id === y._id) {
+                        encontro = true;
+                        const control = new FormControl(y); // if first item set to true, else false
+                        (this.articleForm.controls.applications as FormArray).push(control);
+                    }
+                })
+                if (!encontro) {
+                    const control = new FormControl(false); // if first item set to true, else false
+                    (this.articleForm.controls.applications as FormArray).push(control);
+                }
             })
         }
 
@@ -1469,6 +1499,13 @@ export class AddArticleComponent implements OnInit {
 
             this.article.taxes = this.taxes;
 
+            const selectedOrderIds = this.articleForm.value.applications
+                .map((v, i) => (v ? this.applicationsCtrl[i] : null))
+                .filter(v => v !== null);
+            console.log(selectedOrderIds);
+
+            this.article.applications = selectedOrderIds;
+
             const pathLocation: string[] = this._router.url.split('/');
             if (pathLocation[2] === "productos") {
                 this.article.type = Type.Final;
@@ -1552,6 +1589,7 @@ export class AddArticleComponent implements OnInit {
 
             this._articleService.updateArticle(this.article, this.variants).subscribe(
                 result => {
+                    console.log(result)
                     if (!result.article) {
                         if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
                     } else {
@@ -1721,7 +1759,7 @@ export class AddArticleComponent implements OnInit {
 
     public fileChangeEvent(fileInput: any, eCommerce: boolean): void {
 
-        if(eCommerce){
+        if (eCommerce) {
             this.filesToArray = <Array<File>>fileInput.target.files;
             this.fileNameArray = this.filesToArray[0].name;
         } else {
@@ -1763,26 +1801,34 @@ export class AddArticleComponent implements OnInit {
         }
     }
 
-    public getApplications() : void {
+    public getApplications(): void {
 
-        this.loading = true; 
+        this.loading = true;
 
         let project = {
-            "_id" : 1,
-            "name" : 1,
-            "operationType" : 1,
+            "_id": 1,
+            "name": 1,
+            "operationType": 1,
         }
 
         let match = {
-            "operationType" : { "$ne" : "D"}
+            "operationType": { "$ne": "D" }
         }
 
 
-        this._applicationService.getApplications(project,match,{ name : 1},{}).subscribe(
+        this._applicationService.getApplications(project, match, { name: 1 }, {}).subscribe(
             result => {
-                if(result && result.applications){
-                    this.applications = result.applications
+                if (result && result.applications) {
+                    this.applicationsCtrl = result.applications
                     this.loading = false;
+
+                    if (!this.articleId) {
+                        this.applicationsCtrl.forEach(x => {        
+                            const control = new FormControl(false); // if first item set to true, else false
+                            (this.articleForm.controls.applications as FormArray).push(control);
+                        })
+            
+                    } 
                 }
             },
             error => {
