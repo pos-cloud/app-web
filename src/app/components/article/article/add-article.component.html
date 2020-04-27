@@ -464,14 +464,16 @@
 				<ngb-tab title="E-Commerce">
 					<ng-template ngbTabContent>
 						<div class="row">
-							<div class="form-group col-md-9">
+							<div class="form-group col-md-12">
 								<label for="url" class="control-label">URL:</label>
 								<input type="text" class="form-control" formControlName="url" name="url" id="url"
 									(blur)="loadURL()" [readonly]="readonly" />
 								<div *ngIf="formErrors.url" class="alert alert-danger">
 									{{ formErrors.url }}
 								</div>
-							</div>
+              </div>
+            </div>
+            <div class="row">
 							<div class="form-group col-md-3">
 								<label for="ecommerceEnabled" class="control-label">Publicar</label>
 								<select class="form-control" formControlName="ecommerceEnabled">
@@ -479,13 +481,17 @@
 									<option [ngValue]="false" [disabled]="readonly">No</option>
 								</select>
 							</div>
-                        </div>
-                        <div class="row">
-                            <label formArrayName="applications" *ngFor="let order of articleForm.get('applications').controls; let i = index">
-                                <input type="checkbox" [formControlName]="i" />
-                                {{applicationsCtrl[i].name}}
-                            </label>
-                        </div>
+							<div class="form-group col-md-9">
+                <label>Aplicaciones</label>
+                <br>
+								<label formArrayName="applications"
+                  *ngFor="let order of articleForm.get('applications')['controls']; let i = index"
+                  style="margin-right: 20px; font-size: 20px;">
+									<input type="checkbox" [formControlName]="i" />
+									{{applicationsCtrl[i].name}}
+								</label>
+							</div>
+						</div>
 						<div class="row">
 							<div class="form-group col-md-12">
 								<label for="tag" class="control-label">Tags:</label>
@@ -511,7 +517,8 @@
 										<div class="form-group col-md-10">
 											<label for="sel"> Agregar Imagenes:</label>
 											<div class="custom-file">
-												<label class="custom-file-label btn btn-action" for="customFileLang">{{fileNameArray?fileNameArray:'Buscar Imagen'}}</label>
+												<label class="custom-file-label btn btn-action"
+													for="customFileLang">{{fileNameArray?fileNameArray:'Buscar Imagen'}}</label>
 												<input type="file" class="custom-file-input" language="es" accept="image/*"
 													id="customFileLang" (change)="fileChangeEvent($event,true)" />
 											</div>
