@@ -57,13 +57,23 @@
                       </div>
                     </div>
                     <div class="row">
-                      <div class="form-group col-md-12">
-                        <label for="ecommerceEnabled" class="control-label">Publicada en E-commerce</label>
-                        <select class="form-control" formControlName="ecommerceEnabled">
-                          <option value="true">Si</option>
-                          <option value="false" selected>No</option>
-                        </select>
-                      </div>
+                        <div class="form-group col-md-3">
+                            <label for="ecommerceEnabled" class="control-label">Publicar</label>
+                            <select class="form-control" formControlName="ecommerceEnabled">
+                                <option [ngValue]="true" [disabled]="readonly">Si</option>
+                                <option [ngValue]="false" [disabled]="readonly">No</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-9">
+                            <label>Aplicaciones</label>
+                            <br>
+                            <label formArrayName="applications"
+                                *ngFor="let order of makeForm.get('applications')['controls']; let i = index"
+                                style="margin-right: 20px; font-size: 20px;">
+                                <input type="checkbox" [formControlName]="i" />
+                                {{applicationsCtrl[i].name}}
+                            </label>
+                        </div>
                     </div>
                   </div>
                 </div>

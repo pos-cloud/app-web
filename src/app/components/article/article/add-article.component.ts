@@ -273,14 +273,6 @@ export class AddArticleComponent implements OnInit {
             this.getArticle();
 
         } else {
-            
-            if(this.applicationsCtrl && this.applicationsCtrl.length > 0){
-                console.log("entro");
-                this.applicationsCtrl.forEach(x => {        
-                    const control = new FormControl(false); // if first item set to true, else false
-                    (this.articleForm.controls.applications as FormArray).push(control);
-                })
-            }
             this.imageURL = './../../../assets/img/default.jpg';
         }
     }
@@ -462,23 +454,6 @@ export class AddArticleComponent implements OnInit {
         this.articleForm.valueChanges.subscribe(data => this.onValueChanged(data));
         this.onValueChanged();
         this.focusEvent.emit(true);
-    }
-
-    onCheckboxChange(e) {
-        const checkArray: FormArray = this.articleForm.get('applications') as FormArray;
-
-        if (e.target.checked) {
-            checkArray.push(new FormControl(e.target.value));
-        } else {
-            let i: number = 0;
-            checkArray.controls.forEach((item: FormControl) => {
-                if (item.value == e.target.value) {
-                    checkArray.removeAt(i);
-                    return;
-                }
-                i++;
-            });
-        }
     }
 
     public onValueChanged(data?: any): void {
@@ -1502,7 +1477,6 @@ export class AddArticleComponent implements OnInit {
             const selectedOrderIds = this.articleForm.value.applications
                 .map((v, i) => (v ? this.applicationsCtrl[i] : null))
                 .filter(v => v !== null);
-            console.log(selectedOrderIds);
 
             this.article.applications = selectedOrderIds;
 
@@ -1816,7 +1790,7 @@ export class AddArticleComponent implements OnInit {
         }
 
 
-        this._applicationService.getApplications(project, match, { name: 1 }, {}).subscribe(
+        this._applicationService.getApplications(project, match, { _id: 1 }, {}).subscribe(
             result => {
                 if (result && result.applications) {
                     this.applicationsCtrl = result.applications

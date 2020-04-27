@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -9,6 +9,8 @@ import { Category } from '../category';
 import { CategoryService } from '../category.service';
 
 import { Config } from '../../../app.config';
+import { ApplicationService } from 'app/components/application/application.service';
+import { Application } from 'app/components/application/application';
 
 @Component({
     selector: 'app-category',
@@ -28,6 +30,7 @@ export class CategoryComponent implements OnInit {
     public category: Category;
     public categoryForm: FormGroup;
     public categories: Category[];
+    public applicationsCtrl: Application[];
     public alertMessage: string = '';
     public userType: string;
     public loading: boolean = false;
@@ -45,6 +48,7 @@ export class CategoryComponent implements OnInit {
 
     constructor(
         public _categoryService: CategoryService,
+        public _applicationService: ApplicationService,
         public _fb: FormBuilder,
         public _router: Router,
         public activeModal: NgbActiveModal,
@@ -53,6 +57,7 @@ export class CategoryComponent implements OnInit {
         if (window.screen.width < 1000) this.orientation = 'vertical';
         this.category = new Category();
         this.getCategories();
+        this.getApplications();
     }
 
     ngOnInit(): void {
@@ -141,7 +146,8 @@ export class CategoryComponent implements OnInit {
             'visibleOnPurchase': [this.category.visibleOnPurchase, []],
             'ecommerceEnabled': [this.category.ecommerceEnabled, []],
             'isRequiredOptional': [this.category.isRequiredOptional, []],
-            'parent': [this.category.parent, []]
+            'parent': [this.category.parent, []],
+            'applications': this._fb.array([])
         });
 
         this.categoryForm.valueChanges
@@ -207,7 +213,7 @@ export class CategoryComponent implements OnInit {
             }
         }
 
-        this.categoryForm.setValue({
+        this.categoryForm.patchValue({
             '_id': this.category._id,
             'order': this.category.order,
             'description': this.category.description,
@@ -218,11 +224,34 @@ export class CategoryComponent implements OnInit {
             'isRequiredOptional': this.category.isRequiredOptional,
             'parent': parent
         });
+
+        if(this.applicationsCtrl && this.applicationsCtrl.length > 0){
+            this.applicationsCtrl.forEach(x => {
+                let encontro = false;
+                this.category.applications.forEach(y => {
+                    if (x._id === y._id) {
+                        encontro = true;
+                        const control = new FormControl(y); // if first item set to true, else false
+                        (this.categoryForm.controls.applications as FormArray).push(control);
+                    }
+                })
+                if (!encontro) {
+                    const control = new FormControl(false); // if first item set to true, else false
+                    (this.categoryForm.controls.applications as FormArray).push(control);
+                }
+            })
+        }
     }
 
     public addCategory() {
 
         this.category = this.categoryForm.value;
+
+        const selectedOrderIds = this.categoryForm.value.applications
+            .map((v, i) => (v ? this.applicationsCtrl[i] : null))
+            .filter(v => v !== null);
+
+        this.category.applications = selectedOrderIds;
 
         switch (this.operation) {
             case 'add':
@@ -289,7 +318,7 @@ export class CategoryComponent implements OnInit {
     public updateCategory(): void {
         this.loading = true;
 
-        if(this.isValid()){
+        if (this.isValid()) {
 
             this._categoryService.updateCategory(this.category).subscribe(
                 result => {
@@ -348,16 +377,53 @@ export class CategoryComponent implements OnInit {
         );
     }
 
-    isValid() : boolean {
+    isValid(): boolean {
 
         console.log(this.category);
 
-        if(this.category.parent != null && (this.category.parent.toString() === this.category._id || this.category._id===this.category.parent._id)){
+        if (this.category.parent != null && (this.category.parent.toString() === this.category._id || this.category._id === this.category.parent._id)) {
             this.showMessage("No puede seleccionar la misma categoria como padre", "danger", true)
             return false;
         }
 
         return true
+    }
+
+    public getApplications(): void {
+
+        this.loading = true;
+
+        let project = {
+            "_id": 1,
+            "name": 1,
+            "operationType": 1,
+        }
+
+        let match = {
+            "operationType": { "$ne": "D" }
+        }
+
+
+        this._applicationService.getApplications(project, match, { _id: 1 }, {}).subscribe(
+            result => {
+                if (result && result.applications) {
+                    this.applicationsCtrl = result.applications
+                    this.loading = false;
+
+                    if (!this.categoryId) {
+                        this.applicationsCtrl.forEach(x => {
+                            const control = new FormControl(false);
+                            (this.categoryForm.controls.applications as FormArray).push(control);
+                        })
+
+                    }
+                }
+            },
+            error => {
+                this.loading = false;
+                this.showMessage(error._body, 'danger', false);
+            }
+        )
     }
 
 

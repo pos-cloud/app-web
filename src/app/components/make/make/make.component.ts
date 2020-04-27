@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -8,6 +8,8 @@ import { Make } from '../make';
 
 import { MakeService } from '../make.service';
 import { Config } from 'app/app.config';
+import { ApplicationService } from 'app/components/application/application.service';
+import { Application } from 'app/components/application/application';
 
 @Component({
     selector: 'app-make',
@@ -30,7 +32,7 @@ export class MakeComponent implements OnInit {
     public filesToUpload: Array<File>;
     public imageURL: string;
     public orientation: string = 'horizontal';
-
+    public applicationsCtrl : Application[];
     public formErrors = {
         'description': ''
     };
@@ -43,6 +45,7 @@ export class MakeComponent implements OnInit {
 
     constructor(
         public _makeService: MakeService,
+        public _applicationService : ApplicationService,
         public _fb: FormBuilder,
         public _router: Router,
         public activeModal: NgbActiveModal,
@@ -50,6 +53,7 @@ export class MakeComponent implements OnInit {
     ) {
         this.make = new Make();
         if (window.screen.width < 1000) this.orientation = 'vertical';
+        this.getApplications();
     }
 
     ngOnInit(): void {
@@ -98,12 +102,30 @@ export class MakeComponent implements OnInit {
         if (!this.make.visibleSale) { this.make.visibleSale = false; }
         if (!this.make.ecommerceEnabled) { this.make.ecommerceEnabled = false; }
 
-        this.makeForm.setValue({
+        this.makeForm.patchValue({
             '_id': this.make._id,
             'description': this.make.description,
             'visibleSale': this.make.visibleSale,
             'ecommerceEnabled': this.make.ecommerceEnabled
         });
+
+        
+        if(this.applicationsCtrl && this.applicationsCtrl.length > 0){
+            this.applicationsCtrl.forEach(x => {
+                let encontro = false;
+                this.make.applications.forEach(y => {
+                    if (x._id === y._id) {
+                        encontro = true;
+                        const control = new FormControl(y); // if first item set to true, else false
+                        (this.makeForm.controls.applications as FormArray).push(control);
+                    }
+                })
+                if (!encontro) {
+                    const control = new FormControl(false); // if first item set to true, else false
+                    (this.makeForm.controls.applications as FormArray).push(control);
+                }
+            })
+        }
     }
 
     ngAfterViewInit() {
@@ -116,7 +138,8 @@ export class MakeComponent implements OnInit {
             '_id': [this.make._id, []],
             'description': [this.make.description, [Validators.required]],
             'visibleSale': [this.make.visibleSale, []],
-            'ecommerceEnabled': [this.make.ecommerceEnabled, []]
+            'ecommerceEnabled': [this.make.ecommerceEnabled, []],
+            'applications': this._fb.array([])
         });
 
         this.makeForm.valueChanges
@@ -147,6 +170,12 @@ export class MakeComponent implements OnInit {
     public addMake(): void {
         this.loading = true;
         this.make = this.makeForm.value;
+
+        const selectedOrderIds = this.makeForm.value.applications
+            .map((v, i) => (v ? this.applicationsCtrl[i] : null))
+            .filter(v => v !== null);
+
+        this.make.applications = selectedOrderIds;
 
         switch (this.operation) {
             case 'add':
@@ -269,8 +298,44 @@ export class MakeComponent implements OnInit {
     }
 
     public fileChangeEvent(fileInput: any) {
-
         this.filesToUpload = <Array<File>>fileInput.target.files;
+    }
+
+    public getApplications(): void {
+
+        this.loading = true;
+
+        let project = {
+            "_id": 1,
+            "name": 1,
+            "operationType": 1,
+        }
+
+        let match = {
+            "operationType": { "$ne": "D" }
+        }
+
+
+        this._applicationService.getApplications(project, match, { _id: 1 }, {}).subscribe(
+            result => {
+                if (result && result.applications) {
+                    this.applicationsCtrl = result.applications
+                    this.loading = false;
+
+                    if (!this.makeId) {
+                        this.applicationsCtrl.forEach(x => {        
+                            const control = new FormControl(false);
+                            (this.makeForm.controls.applications as FormArray).push(control);
+                        })
+            
+                    } 
+                }
+            },
+            error => {
+                this.loading = false;
+                this.showMessage(error._body, 'danger', false);
+            }
+        )
     }
 
     public showMessage(message: string, type: string, dismissible: boolean): void {
