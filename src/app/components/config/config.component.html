@@ -110,6 +110,24 @@
 				<div class="row">
 					<div class="form-group col-md-12">
 						<div class="input-group">
+							<span class="input-group-addon" id="basic-addon1">Latitud:</span>
+							<input type="text" class="form-control" formControlName="latitude"
+								name="latitude" id="latitude" aria-describedby="basic-addon1">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="form-group col-md-12">
+						<div class="input-group">
+							<span class="input-group-addon" id="basic-addon1">Longitud:</span>
+							<input type="text" class="form-control" formControlName="longitude"
+								name="longitude" id="longitude" aria-describedby="basic-addon1">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="form-group col-md-12">
+						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1">Moneda:</span>
 							<select class="form-control" formControlName="currency" name="currency" id="currency">
 								<option *ngFor="let currency of currencies" [selected]="(config['currency'] && config['currency']._id && currency._id===config['currency']._id) ||
