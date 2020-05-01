@@ -67,6 +67,7 @@ export class Article {
     public isWeigth: Boolean = false;
     public ecommerceEnabled: Boolean = false;
     public favourite: Boolean = false;
+  public forShipping: Boolean = false;
     public picture: string = 'default.jpg';
     public providers: Company[];
     public classification: Classification;

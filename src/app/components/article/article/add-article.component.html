@@ -503,6 +503,15 @@
                             </div>
                         </div>
                         <div class="row">
+                          <div class="form-group col-md-6">
+                            <label for="forShipping" class="control-label">Utilizar como envío</label>
+                            <select class="form-control" formControlName="forShipping">
+                              <option [ngValue]="true" [disabled]="readonly">Si</option>
+                              <option [ngValue]="false" [disabled]="readonly">No</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="row">
                             <div class="form-group col-md-12">
                                 <label for="tag" class="control-label">Tags:</label>
                                 <input type="text" class="form-control" name="tag" id="tag"
