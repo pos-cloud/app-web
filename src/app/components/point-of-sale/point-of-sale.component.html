@@ -320,7 +320,7 @@
 </section>
 
 <!-- PEDIDOS-WEB -->
-<section class="container-fluid" *ngIf="posType=='pedidos-web'">
+<section class="container-fluid" *ngIf="posType=='pedidos-web' || posType=='carritos-abandonados'">
 	<div class="row center-content">
 		<div *ngIf="alertMessage !== ''">
 			<ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
@@ -330,7 +330,7 @@
 	</div>
 	<div class="card  list-counter">
 		<div class="card-header">
-			<span>Pedidos a Confirmar</span>
+			<span>Pedidos</span>
 			<div class="pull-right">
 				<button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i
 						[ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</button>
@@ -380,13 +380,13 @@
 						<td align="left" width="150">
 							<button type="button" class="btn btn-success" (click)="viewTransaction(transaction)"
 								title="Ver"><i class="fa fa-eye"></i></button>
-							<button type="button" *ngIf="transaction.type.allowEdit" class="btn btn-primary"
+							<button type="button" *ngIf="transaction.type.allowEdit && posType=='pedidos-web'" class="btn btn-primary"
 								(click)="changeCompany(transaction)" title="Editar"><i
 									class="fa fa-pencil"></i></button>
 							<button type="button" class="btn btn-danger" (click)="cancelTransaction(transaction)"
 								title="Anular"><i class="fa fa-close"></i></button>
 							<button type="button" class="btn btn-light" (click)="printTransaction(transaction)"
-								title="Imprimir"><i class="fa fa-print"></i></button>
+								title="Imprimir" *ngIf="posType=='pedidos-web'"><i class="fa fa-print"></i></button>
 						</td>
 						<td (click)="openTransaction(transaction)" *ngIf="transaction.endDate">
 							{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}
@@ -403,7 +403,7 @@
 						<td>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
 					</tr>
 					<tr align="center" *ngIf="!transactions || transactions.length === 0">
-						<td colspan="8">Aún no hay transacciones pendientes</td>
+						<td colspan="8">No se encontraron pedidos</td>
 					</tr>
 				</tbody>
 			</table>

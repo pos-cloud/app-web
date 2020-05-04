@@ -95,6 +95,11 @@
 							Pedidos Web
 						</button>
 					</div>
+					<div *ngIf="config.modules.app">
+						<button class="dropdown-item" [routerLink]="['pos','carritos-abandonados']" [routerLinkActive]="['active']">
+							Carritos Abandonados
+						</button>
+					</div>
 				</div>
 			</li>
 			<li class="nav-item" *ngIf=" identity.employee &&

@@ -186,7 +186,7 @@ export let attributes = [
         name: 'state',
         visible: true,
         disabled: false,
-        filter: true,
+        filter: false,
         datatype: 'string',
         project: null,
         align: 'left',

@@ -82,619 +82,625 @@ import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.compo
 import { ListApplicationsComponent } from './components/application/list-applications/list-applications.component';
 
 export const _routes: Routes = [
-    {
-        path: '', component: HomeComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'inicio',
-        component: HomeComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'login',
-        component: LoginComponent
-    },
-    {
-        path: 'registrar',
-        component: RegisterComponent
-    },
-    {
-        path: 'admin/venta/statistics',
-        component: StatisticsComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale' }
-    },
-    {
-        path: 'admin/cumpleaños',
-        component: ReportBirthdayComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/venta/productos-mas-vendidos',
-        component: ReportBestSellingArticleComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale' }
-    },
-    {
-        path: 'admin/venta/ventas-por-metodo-de-pago',
-        component: ReportSalesByPaymentMethodComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale' }
-    },
-    {
-        path: 'admin/venta/ventas-por-empleado',
-        component: ReportSalesByEmployeeComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale' }
-    },
-    {
-        path: 'admin/venta/marcas-mas-vendidas',
-        component: ReportSalesByMakeComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale' }
-    },
-    {
-        path: 'admin/venta/ventas-por-cliente',
-        component: ReportSalesByClientComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale' }
-    },
-    {
-        path: 'admin/venta/rubros-mas-vendidos',
-        component: ReportSalesByCategoryComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale' }
-    },
-    {
-        path: 'admin/compra/statistics',
-        component: StatisticsComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.purchase' }
-    },
-    {
-        path: 'admin/compra/productos-mas-comprados',
-        component: ReportBestSellingArticleComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.purchase' }
-    },
-    {
-        path: 'admin/compras/compras-por-empleado',
-        component: ReportSalesByEmployeeComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.purchase' }
-    },
-    {
-        path: 'admin/compra/compras-por-metodo-de-pago',
-        component: ReportSalesByPaymentMethodComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.purchase' }
-    },
-    {
-        path: 'admin/compra/marcas-mas-compradas',
-        component: ReportSalesByMakeComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.purchase' }
-    },
-    {
-        path: 'admin/compra/compras-por-proveedor',
-        component: ReportSalesByClientComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.purchase' }
-    },
-    {
-        path: 'admin/compra/rubros-mas-comprados',
-        component: ReportSalesByCategoryComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.purchase' }
-    },
-    {
-        path: 'admin/cajas',
-        component: ListCashBoxesComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.money' }
-    },
-    {
-        path: 'admin/productos',
-        component: ListArticlesComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/variantes',
-        component: ListArticlesComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/monedas',
-        component: ListCurrenciesComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/states',
-        component: ListStatesComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/countries',
-        component: ListCountriesComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/price-list',
-        component: ListPriceListsComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/empleados',
-        component: ListEmployeesComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/tipos-de-empleado',
-        component: ListEmployeeTypesComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/mesas',
-        component: ListTablesComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale.resto' }
-    },
-    {
-        path: 'admin/ventas',
-        component: ListTransactionsComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale' }
-    },
-    {
-        path: 'admin/compras',
-        component: ListTransactionsComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.purchase' }
-    },
-    {
-        path: 'admin/stock',
-        component: ListTransactionsComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.stock' }
-    },
-    {
-        path: 'admin/fondos',
-        component: ListTransactionsComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.money' }
-    },
-    {
-        path: 'admin/resumenes-de-cuentas',
-        component: ListSummaryOfAccountsComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/salones',
-        component: ListRoomsComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale.resto' }
-    },
-    {
-        path: 'admin/marcas',
-        component: ListMakesComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/condiciones-de-iva',
-        component: ListVATConditionsComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/rubros',
-        component: ListCategoriesComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/usuarios',
-        component: ListUsersComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/usuarios-web',
-        component: ListUsersComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.app' }
-    },
-    {
-        path: 'admin/metodos-de-pago',
-        component: ListPaymentMethodsComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/clientes',
-        component: ListCompaniesComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale' }
-    },
-    {
-        path: 'admin/grupo-empresas',
-        component: ListCompaniesGroupComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/proveedores',
-        component: ListCompaniesComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.purchase' }
-    },
-    {
-        path: 'admin/impresoras',
-        component: ListPrintersComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/tipos-de-transacciones',
-        component: ListTransactionTypesComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/tipos-de-variantes',
-        component: ListVariantTypesComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/valores-de-variantes',
-        component: ListVariantValuesComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/import',
-        component: ImportComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/configuraciones',
-        component: ConfigComponent,
-        canActivate: [AuthGuard]
-    },
-    {
-        path: 'admin/cuentas-corrientes',
-        component: CurrentAccountComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale' }
-    },
-    {
-        path: 'report/kardex-de-productos',
-        component: ReportKardexComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.stock' }
-    },
-    {
-        path: 'report/list-box',
-        component: ListCashBoxComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.money' }
-    },
-    {
-        path: 'admin/send-email',
-        component: SendEmailComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/export-citi',
-        component: ExportCitiComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/export-iva',
-        component: ExportIvaComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/stock-de-productos',
-        component: ListArticleStocksComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.stock' }
-    },
-    {
-        path: 'admin/impuestos',
-        component: ListTaxesComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/tipos-de-caja',
-        component: ListCashBoxTypesComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/bancos',
-        component: ListBankComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/sucursales',
-        component: ListBranchComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/shipment-methods',
-        component: ListShipmentMethodComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/puntos-de-venta',
-        component: ListOriginsComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/usos-de-cfdi',
-        component: ListUsesOfCFDIComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/tipos-de-relacion',
-        component: ListRelationTypesComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/depositos',
-        component: ListDepositsComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/ubicaciones',
-        component: ListLocationsComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/tipos-de-identificacion',
-        component: ListIdentificationTypesComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/campos-de-productos',
-        component: ListArticleFieldsComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/tipos-de-cancelaciones',
-        component: ListCancellationTypeComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'report/cartera-de-cheques',
-        component: ListChecksComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.money' }
-    },
-    {
-        path: 'admin/campos-de-empresas',
-        component: ListCompanyFieldsComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/unidades-de-medida',
-        component: ListUnitsOfMeasurementComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/venta/movimientos-de-medios',
-        component: ListMovementOfCashesComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale' }
-    },
-    {
-        path: 'admin/compra/movimientos-de-medios',
-        component: ListMovementOfCashesComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.purchase' }
-    },
-    {
-        path: 'admin/fondos/movimientos-de-medios',
-        component: ListMovementOfCashesComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.money' }
-    },
-    {
-        path: 'admin/venta/movimientos-de-productos',
-        component: ListMovementsOfArticlesComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale' }
-    },
-    {
-        path: 'admin/compra/movimientos-de-productos',
-        component: ListMovementsOfArticlesComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.purchase' }
-    },
-    {
-        path: 'admin/stock/movimientos-de-productos',
-        component: ListMovementsOfArticlesComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.stock' }
-    },
-    {
-        path: 'admin/classifications',
-        component: ListClassificationsComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale' }
-    },
-    {
-        path: 'admin/update-article-price',
-        component: UpdateArticlePriceComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/licence-payment',
-        component: LicensePaymentComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/structures',
-        component: ListStructureComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/template-emails',
-        component: ListEmailTemplatesComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/aplicaciones',
-        component: ListApplicationsComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/currency-values',
-        component: ListCurrencyValuesComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/transports',
-        component: ListTransportComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/resources',
-        component: ListResourcesComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'admin/galleries',
-        component: ListGalleriesComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'print/invoice/:transaction',
-        component: PrintComponent
-    },
-    {
-        path: 'pos/resto/salones/:id/mesas',
-        component: PointOfSaleComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale.resto' }
-    },
-    {
-        path: 'pos/resto/salones/:id/mesas/:id/editar-transaccion',
-        component: AddSaleOrderComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale.resto' }
-    },
-    {
-        path: 'report/compra/compras-por-tipo-de-transacción',
-        component: ListTransactionTypesComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.purchase' }
-    },
-    {
-        path: 'report/venta/ventas-por-tipo-de-transacción',
-        component: ListTransactionTypesComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale' }
-    },
-    {
-        path: 'report/fondo/fondos-por-tipo-de-transacción',
-        component: ListTransactionTypesComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.money' }
-    },
-    {
-        path: 'report/current-account',
-        component: CurrentAccountDetailsComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'pos',
-        component: PointOfSaleComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'pos/pedidos-web',
-        component: PointOfSaleComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.app' }
-    },
-    {
-        path: 'pos/mostrador/venta',
-        component: PointOfSaleComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale.counter' }
-    },
-    {
-        path: 'pos/mostrador/compra',
-        component: PointOfSaleComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.purchase' }
-    },
-    {
-        path: 'pos/mostrador/fondo',
-        component: PointOfSaleComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.money' }
-    },
-    {
-        path: 'pos/mostrador/stock',
-        component: PointOfSaleComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.stock' }
-    },
-    {
-        path: 'pos/mostrador/editar-transaccion',
-        component: AddSaleOrderComponent,
-        canActivate: [AuthGuard, LicenseGuard]
-    },
-    {
-        path: 'pos/delivery',
-        component: PointOfSaleComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale.delivery' }
-    },
-    {
-        path: 'pos/retiro-de-pedidos',
-        component: PosClientViewComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale' }
-    },
-    {
-        path: 'pos/armado-de-pedidos',
-        component: PosPackingComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale' }
-    },
-    {
-        path: 'pos/delivery/editar-transaccion',
-        component: AddSaleOrderComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale.delivery' }
-    },
-    {
-        path: 'pos/resto',
-        component: PointOfSaleComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale.resto' }
-    },
-    {
-        path: 'pos/resto/editar-transaccion',
-        component: AddSaleOrderComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale.resto' }
-    },
-    {
-        path: 'pos/lector-de-vouchers',
-        component: PointOfSaleComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.sale' }
-    },
-    {
-        path: 'pos/cocina',
-        component: PosKitchenComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-        data: { module: 'config.modules.production.kitchen' }
-    },
-    {
-        path: 'pos/ver-galeria/:name',
-        component: ViewGalleryComponent,
-        canActivate: [AuthGuard, LicenseGuard],
-    },
-    {
-        path: '**',
-        pathMatch: 'full',
-        redirectTo: ''
-    }
+	{
+		path: '', component: HomeComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'inicio',
+		component: HomeComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'login',
+		component: LoginComponent
+	},
+	{
+		path: 'registrar',
+		component: RegisterComponent
+	},
+	{
+		path: 'admin/venta/statistics',
+		component: StatisticsComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale' }
+	},
+	{
+		path: 'admin/cumpleaños',
+		component: ReportBirthdayComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/venta/productos-mas-vendidos',
+		component: ReportBestSellingArticleComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale' }
+	},
+	{
+		path: 'admin/venta/ventas-por-metodo-de-pago',
+		component: ReportSalesByPaymentMethodComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale' }
+	},
+	{
+		path: 'admin/venta/ventas-por-empleado',
+		component: ReportSalesByEmployeeComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale' }
+	},
+	{
+		path: 'admin/venta/marcas-mas-vendidas',
+		component: ReportSalesByMakeComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale' }
+	},
+	{
+		path: 'admin/venta/ventas-por-cliente',
+		component: ReportSalesByClientComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale' }
+	},
+	{
+		path: 'admin/venta/rubros-mas-vendidos',
+		component: ReportSalesByCategoryComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale' }
+	},
+	{
+		path: 'admin/compra/statistics',
+		component: StatisticsComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.purchase' }
+	},
+	{
+		path: 'admin/compra/productos-mas-comprados',
+		component: ReportBestSellingArticleComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.purchase' }
+	},
+	{
+		path: 'admin/compras/compras-por-empleado',
+		component: ReportSalesByEmployeeComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.purchase' }
+	},
+	{
+		path: 'admin/compra/compras-por-metodo-de-pago',
+		component: ReportSalesByPaymentMethodComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.purchase' }
+	},
+	{
+		path: 'admin/compra/marcas-mas-compradas',
+		component: ReportSalesByMakeComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.purchase' }
+	},
+	{
+		path: 'admin/compra/compras-por-proveedor',
+		component: ReportSalesByClientComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.purchase' }
+	},
+	{
+		path: 'admin/compra/rubros-mas-comprados',
+		component: ReportSalesByCategoryComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.purchase' }
+	},
+	{
+		path: 'admin/cajas',
+		component: ListCashBoxesComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.money' }
+	},
+	{
+		path: 'admin/productos',
+		component: ListArticlesComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/variantes',
+		component: ListArticlesComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/monedas',
+		component: ListCurrenciesComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/states',
+		component: ListStatesComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/countries',
+		component: ListCountriesComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/price-list',
+		component: ListPriceListsComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/empleados',
+		component: ListEmployeesComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/tipos-de-empleado',
+		component: ListEmployeeTypesComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/mesas',
+		component: ListTablesComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale.resto' }
+	},
+	{
+		path: 'admin/ventas',
+		component: ListTransactionsComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale' }
+	},
+	{
+		path: 'admin/compras',
+		component: ListTransactionsComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.purchase' }
+	},
+	{
+		path: 'admin/stock',
+		component: ListTransactionsComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.stock' }
+	},
+	{
+		path: 'admin/fondos',
+		component: ListTransactionsComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.money' }
+	},
+	{
+		path: 'admin/resumenes-de-cuentas',
+		component: ListSummaryOfAccountsComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/salones',
+		component: ListRoomsComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale.resto' }
+	},
+	{
+		path: 'admin/marcas',
+		component: ListMakesComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/condiciones-de-iva',
+		component: ListVATConditionsComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/rubros',
+		component: ListCategoriesComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/usuarios',
+		component: ListUsersComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/usuarios-web',
+		component: ListUsersComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.app' }
+	},
+	{
+		path: 'admin/metodos-de-pago',
+		component: ListPaymentMethodsComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/clientes',
+		component: ListCompaniesComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale' }
+	},
+	{
+		path: 'admin/grupo-empresas',
+		component: ListCompaniesGroupComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/proveedores',
+		component: ListCompaniesComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.purchase' }
+	},
+	{
+		path: 'admin/impresoras',
+		component: ListPrintersComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/tipos-de-transacciones',
+		component: ListTransactionTypesComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/tipos-de-variantes',
+		component: ListVariantTypesComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/valores-de-variantes',
+		component: ListVariantValuesComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/import',
+		component: ImportComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/configuraciones',
+		component: ConfigComponent,
+		canActivate: [AuthGuard]
+	},
+	{
+		path: 'admin/cuentas-corrientes',
+		component: CurrentAccountComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale' }
+	},
+	{
+		path: 'report/kardex-de-productos',
+		component: ReportKardexComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.stock' }
+	},
+	{
+		path: 'report/list-box',
+		component: ListCashBoxComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.money' }
+	},
+	{
+		path: 'admin/send-email',
+		component: SendEmailComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/export-citi',
+		component: ExportCitiComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/export-iva',
+		component: ExportIvaComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/stock-de-productos',
+		component: ListArticleStocksComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.stock' }
+	},
+	{
+		path: 'admin/impuestos',
+		component: ListTaxesComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/tipos-de-caja',
+		component: ListCashBoxTypesComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/bancos',
+		component: ListBankComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/sucursales',
+		component: ListBranchComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/shipment-methods',
+		component: ListShipmentMethodComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/puntos-de-venta',
+		component: ListOriginsComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/usos-de-cfdi',
+		component: ListUsesOfCFDIComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/tipos-de-relacion',
+		component: ListRelationTypesComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/depositos',
+		component: ListDepositsComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/ubicaciones',
+		component: ListLocationsComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/tipos-de-identificacion',
+		component: ListIdentificationTypesComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/campos-de-productos',
+		component: ListArticleFieldsComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/tipos-de-cancelaciones',
+		component: ListCancellationTypeComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'report/cartera-de-cheques',
+		component: ListChecksComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.money' }
+	},
+	{
+		path: 'admin/campos-de-empresas',
+		component: ListCompanyFieldsComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/unidades-de-medida',
+		component: ListUnitsOfMeasurementComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/venta/movimientos-de-medios',
+		component: ListMovementOfCashesComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale' }
+	},
+	{
+		path: 'admin/compra/movimientos-de-medios',
+		component: ListMovementOfCashesComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.purchase' }
+	},
+	{
+		path: 'admin/fondos/movimientos-de-medios',
+		component: ListMovementOfCashesComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.money' }
+	},
+	{
+		path: 'admin/venta/movimientos-de-productos',
+		component: ListMovementsOfArticlesComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale' }
+	},
+	{
+		path: 'admin/compra/movimientos-de-productos',
+		component: ListMovementsOfArticlesComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.purchase' }
+	},
+	{
+		path: 'admin/stock/movimientos-de-productos',
+		component: ListMovementsOfArticlesComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.stock' }
+	},
+	{
+		path: 'admin/classifications',
+		component: ListClassificationsComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale' }
+	},
+	{
+		path: 'admin/update-article-price',
+		component: UpdateArticlePriceComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/licence-payment',
+		component: LicensePaymentComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/structures',
+		component: ListStructureComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/template-emails',
+		component: ListEmailTemplatesComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/aplicaciones',
+		component: ListApplicationsComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/currency-values',
+		component: ListCurrencyValuesComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/transports',
+		component: ListTransportComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/resources',
+		component: ListResourcesComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'admin/galleries',
+		component: ListGalleriesComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'print/invoice/:transaction',
+		component: PrintComponent
+	},
+	{
+		path: 'pos/resto/salones/:id/mesas',
+		component: PointOfSaleComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale.resto' }
+	},
+	{
+		path: 'pos/resto/salones/:id/mesas/:id/editar-transaccion',
+		component: AddSaleOrderComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale.resto' }
+	},
+	{
+		path: 'report/compra/compras-por-tipo-de-transacción',
+		component: ListTransactionTypesComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.purchase' }
+	},
+	{
+		path: 'report/venta/ventas-por-tipo-de-transacción',
+		component: ListTransactionTypesComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale' }
+	},
+	{
+		path: 'report/fondo/fondos-por-tipo-de-transacción',
+		component: ListTransactionTypesComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.money' }
+	},
+	{
+		path: 'report/current-account',
+		component: CurrentAccountDetailsComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'pos',
+		component: PointOfSaleComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'pos/pedidos-web',
+		component: PointOfSaleComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.app' }
+	},
+	{
+		path: 'pos/carritos-abandonados',
+		component: PointOfSaleComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.app' }
+	},
+	{
+		path: 'pos/mostrador/venta',
+		component: PointOfSaleComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale.counter' }
+	},
+	{
+		path: 'pos/mostrador/compra',
+		component: PointOfSaleComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.purchase' }
+	},
+	{
+		path: 'pos/mostrador/fondo',
+		component: PointOfSaleComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.money' }
+	},
+	{
+		path: 'pos/mostrador/stock',
+		component: PointOfSaleComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.stock' }
+	},
+	{
+		path: 'pos/mostrador/editar-transaccion',
+		component: AddSaleOrderComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+	},
+	{
+		path: 'pos/delivery',
+		component: PointOfSaleComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale.delivery' }
+	},
+	{
+		path: 'pos/retiro-de-pedidos',
+		component: PosClientViewComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale' }
+	},
+	{
+		path: 'pos/armado-de-pedidos',
+		component: PosPackingComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale' }
+	},
+	{
+		path: 'pos/delivery/editar-transaccion',
+		component: AddSaleOrderComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale.delivery' }
+	},
+	{
+		path: 'pos/resto',
+		component: PointOfSaleComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale.resto' }
+	},
+	{
+		path: 'pos/resto/editar-transaccion',
+		component: AddSaleOrderComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale.resto' }
+	},
+	{
+		path: 'pos/lector-de-vouchers',
+		component: PointOfSaleComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.sale' }
+	},
+	{
+		path: 'pos/cocina',
+		component: PosKitchenComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+		data: { module: 'config.modules.production.kitchen' }
+	},
+	{
+		path: 'pos/ver-galeria/:name',
+		component: ViewGalleryComponent,
+		canActivate: [AuthGuard, LicenseGuard],
+	},
+	{
+		path: '**',
+		pathMatch: 'full',
+		redirectTo: ''
+	}
 ];
