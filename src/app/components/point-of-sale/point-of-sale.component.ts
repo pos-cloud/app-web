@@ -461,8 +461,13 @@ export class PointOfSaleComponent implements OnInit {
 				);
 			} else if (this.posType === 'pedidos-web') {
 				let query = {
-					state: TransactionState.Closed,
-					madein: this.posType,
+					$or: [
+						{ state: TransactionState.Closed },
+            { state: TransactionState.Outstanding },
+            { state: TransactionState.PaymentConfirmed },
+            { state: TransactionState.PaymentDeclined }
+					],
+					madein: 'pedidos-web',
 					balance: { $gt: 0 },
 					operationType: { $ne: 'D' },
 					"type.transactionMovement": this.transactionMovement,
@@ -476,7 +481,7 @@ export class PointOfSaleComponent implements OnInit {
 			} else if (this.posType === 'carritos-abandonados') {
 				let query = {
 					state: TransactionState.Open,
-          madein: 'pedidos-web',
+					madein: 'pedidos-web',
 					totalPrice: { $gt: 0 },
 					operationType: { $ne: 'D' },
 					"type.transactionMovement": this.transactionMovement,
@@ -1576,7 +1581,7 @@ export class PointOfSaleComponent implements OnInit {
 
 			let sort: {} = { startDate: -1 };
 
-			if (this.posType === 'pedidos-web') {
+			if (this.posType === 'pedidos-web' || this.posType === 'carritos-abandonados') {
 				sort = { endDate: -1 };
 			}
 
