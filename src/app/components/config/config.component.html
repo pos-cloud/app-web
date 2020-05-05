@@ -27,8 +27,7 @@
 	<div class="card ">
 		<div class="card-header">Datos de la Empresa</div>
 		<div class="card-block">
-			<form [formGroup]="configFormCompany" #formAddConfig="ngForm" (ngSubmit)="addConfigCompany()"
-				autocomplete="off">
+			<form [formGroup]="configFormCompany" #formAddConfig="ngForm" (ngSubmit)="addConfigCompany()" autocomplete="off">
 				<div class="row">
 					<div class="form-group col-md-2">
 						<img [src]="imageURL" height="150" width="300">
@@ -62,79 +61,11 @@
 					<div class="form-group col-md-12">
 						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1">Nombre de fantasía:</span>
-							<input type="text" class="form-control" formControlName="companyFantasyName"
-								name="companyFantasyName" id="companyFantasyName" aria-describedby="basic-addon1">
+							<input type="text" class="form-control" formControlName="companyFantasyName" name="companyFantasyName"
+								id="companyFantasyName" aria-describedby="basic-addon1">
 						</div>
 						<div *ngIf="formErrors.companyFantasyName" class="alert alert-danger">
 							{{ formErrors.companyFantasyName }}
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="form-group col-md-12">
-						<div class="input-group">
-							<span class="input-group-addon" id="basic-addon1">País:</span>
-							<select class="form-control" formControlName="country" name="country" id="country"
-								(ngModelChange)="getTimeZone($event)">
-								<option *ngFor="let country of countries" [value]="country.alpha2Code">
-									{{country.name}}
-								</option>
-							</select>
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="form-group col-md-12">
-						<div class="input-group">
-							<span class="input-group-addon" id="basic-addon1">Zona Horaria:</span>
-							<select class="form-control" formControlName="timezone" name="timezone" id="timezone">
-								<option *ngFor="let timezone of timezones" [value]="timezone">
-									{{timezone}}
-								</option>
-							</select>
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="form-group col-md-12">
-						<div class="input-group">
-							<span class="input-group-addon" id="basic-addon1">Código Postal:</span>
-							<input type="text" class="form-control" formControlName="companyPostalCode"
-								name="companyPostalCode" id="companyPostalCode" aria-describedby="basic-addon1">
-						</div>
-						<div *ngIf="formErrors.companyPostalCode" class="alert alert-danger">
-							{{ formErrors.companyPostalCode }}
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="form-group col-md-12">
-						<div class="input-group">
-							<span class="input-group-addon" id="basic-addon1">Latitud:</span>
-							<input type="text" class="form-control" formControlName="latitude"
-								name="latitude" id="latitude" aria-describedby="basic-addon1">
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="form-group col-md-12">
-						<div class="input-group">
-							<span class="input-group-addon" id="basic-addon1">Longitud:</span>
-							<input type="text" class="form-control" formControlName="longitude"
-								name="longitude" id="longitude" aria-describedby="basic-addon1">
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="form-group col-md-12">
-						<div class="input-group">
-							<span class="input-group-addon" id="basic-addon1">Moneda:</span>
-							<select class="form-control" formControlName="currency" name="currency" id="currency">
-								<option *ngFor="let currency of currencies" [selected]="(config['currency'] && config['currency']._id && currency._id===config['currency']._id) ||
-                                    (config['currency'] && currency._id===config['currency'])" [value]="currency._id">
-									{{currency.name}}
-								</option>
-							</select>
 						</div>
 					</div>
 				</div>
@@ -156,8 +87,7 @@
 						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1">Nro. de Identificación:</span>
 							<input type="text" class="form-control" formControlName="companyIdentificationValue"
-								name="companyIdentificationValue" id="companyIdentificationValue"
-								aria-describedby="basic-addon1">
+								name="companyIdentificationValue" id="companyIdentificationValue" aria-describedby="basic-addon1">
 						</div>
 						<div *ngIf="formErrors.companyIdentificationValue" class="alert alert-danger">
 							{{ formErrors.companyIdentificationValue }}
@@ -168,14 +98,16 @@
 					<div class="form-group col-md-12">
 						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1"
-								*ngIf="configFormCompany.value.country === 'AR'">Condición de IVA:</span>
+								*ngIf="configFormCompany.value.country === 'AR'">Condición de
+								IVA:</span>
 							<span class="input-group-addon" id="basic-addon1"
-								*ngIf="configFormCompany.value.country !== 'AR'">Régimen Fiscal:</span>
-							<select class="form-control" formControlName="companyVatCondition"
-								name="companyVatCondition" id="companyVatCondition">
-								<option *ngFor="let vatCondition of vatConditions"
-									[selected]="(config['companyVatCondition'] && config['companyVatCondition']._id && vatCondition._id===config['companyVatCondition']._id) ||
-                                    (config['companyVatCondition'] && vatCondition._id===config['companyVatCondition'])" [value]="vatCondition._id">
+								*ngIf="configFormCompany.value.country !== 'AR'">Régimen
+								Fiscal:</span>
+							<select class="form-control" formControlName="companyVatCondition" name="companyVatCondition"
+								id="companyVatCondition">
+								<option *ngFor="let vatCondition of vatConditions" [selected]="(config['companyVatCondition'] && config['companyVatCondition']._id && vatCondition._id===config['companyVatCondition']._id) ||
+                                    (config['companyVatCondition'] && vatCondition._id===config['companyVatCondition'])"
+									[value]="vatCondition._id">
 									{{vatCondition.description}}
 								</option>
 							</select>
@@ -199,20 +131,8 @@
 					<div class="form-group col-md-12">
 						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1">Ingresos Brutos:</span>
-							<input type="text" class="form-control" formControlName="companyGrossIncome"
-								name="companyGrossIncome" id="companyGrossIncome" aria-describedby="basic-addon1">
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="form-group col-md-12">
-						<div class="input-group">
-							<span class="input-group-addon" id="basic-addon1">Dirección:</span>
-							<input type="text" class="form-control" formControlName="companyAddress"
-								name="companyAddress" id="companyAddress" aria-describedby="basic-addon1">
-						</div>
-						<div *ngIf="formErrors.companyAddress" class="alert alert-danger">
-							{{ formErrors.companyAddress }}
+							<input type="text" class="form-control" formControlName="companyGrossIncome" name="companyGrossIncome"
+								id="companyGrossIncome" aria-describedby="basic-addon1">
 						</div>
 					</div>
 				</div>
@@ -231,6 +151,95 @@
 				<div class="row">
 					<div class="form-group col-md-12">
 						<div class="input-group">
+							<span class="input-group-addon" id="basic-addon1">País:</span>
+							<select class="form-control" formControlName="country" name="country" id="country"
+								(ngModelChange)="getTimeZone($event)">
+								<option *ngFor="let country of countries" [value]="country.alpha2Code">
+									{{country.name}}
+								</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="form-group col-md-12">
+						<div class="input-group">
+							<span class="input-group-addon" id="basic-addon1">Código Postal:</span>
+							<input type="text" class="form-control" formControlName="companyPostalCode" name="companyPostalCode"
+								id="companyPostalCode" aria-describedby="basic-addon1">
+						</div>
+						<div *ngIf="formErrors.companyPostalCode" class="alert alert-danger">
+							{{ formErrors.companyPostalCode }}
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="form-group col-md-12">
+						<div class="input-group">
+							<span class="input-group-addon" id="basic-addon1">Dirección:</span>
+							<input type="text" class="form-control" formControlName="companyAddress" name="companyAddress"
+								id="companyAddress" aria-describedby="basic-addon1">
+						</div>
+						<div *ngIf="formErrors.companyAddress" class="alert alert-danger">
+							{{ formErrors.companyAddress }}
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="form-group col-md-12">
+						<div class="input-group">
+							<span class="input-group-addon" id="basic-addon1">Zona Horaria:</span>
+							<select class="form-control" formControlName="timezone" name="timezone" id="timezone">
+								<option *ngFor="let timezone of timezones" [value]="timezone">
+									{{timezone}}
+								</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="form-group col-md-12">
+						<div class="input-group">
+							<span class="input-group-addon" id="basic-addon1">Latitud:</span>
+							<input type="text" class="form-control" formControlName="latitude" name="latitude" id="latitude"
+								aria-describedby="basic-addon1">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="form-group col-md-12">
+						<div class="input-group">
+							<span class="input-group-addon" id="basic-addon1">Longitud:</span>
+							<input type="text" class="form-control" formControlName="longitude" name="longitude" id="longitude"
+								aria-describedby="basic-addon1">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="form-group col-md-12">
+						<div class="input-group">
+							<span class="input-group-addon" id="basic-addon1">Moneda:</span>
+							<select class="form-control" formControlName="currency" name="currency" id="currency">
+								<option *ngFor="let currency of currencies" [selected]="(config['currency'] && config['currency']._id && currency._id===config['currency']._id) ||
+                                    (config['currency'] && currency._id===config['currency'])" [value]="currency._id">
+									{{currency.name}}
+								</option>
+							</select>
+						</div>
+					</div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">API Key de Mercadopago:</span>
+              <input type="text" class="form-control" formControlName="mercadopagoAPIKey" name="mercadopagoAPIKey" id="mercadopagoAPIKey"
+                aria-describedby="basic-addon1">
+            </div>
+          </div>
+        </div>
+				<div class="row">
+					<div class="form-group col-md-12">
+						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1">Pie de Impresión:</span>
 							<input type="text" class="form-control" formControlName="footerInvoice" name="footerInvoice"
 								id="footerInvoice" aria-describedby="basic-addon1">
@@ -242,10 +251,8 @@
 				</div>
 				<div class="row">
 					<div class="form-group col-md-12">
-						<button type="submit" class="btn btn-primary"
-							[disabled]="!configFormCompany.valid || loadingCompany">
-							<i class="fa"
-								[ngClass]="{'fa-save':!loadingCompany, 'fa-spinner fa-spin':loadingCompany}"></i>
+						<button type="submit" class="btn btn-primary" [disabled]="!configFormCompany.valid || loadingCompany">
+							<i class="fa" [ngClass]="{'fa-save':!loadingCompany, 'fa-spinner fa-spin':loadingCompany}"></i>
 							<span *ngIf="!loadingCompany">Guardar</span>
 							<span *ngIf="loadingCompany">Espere por favor</span>
 						</button>
@@ -282,8 +289,8 @@
 					<div class="form-group col-md-12">
 						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1">Contraseña de Email:</span>
-							<input type="password" class="form-control" formControlName="emailPassword"
-								name="emailPassword" id="emailPassword" aria-describedby="basic-addon1">
+							<input type="password" class="form-control" formControlName="emailPassword" name="emailPassword"
+								id="emailPassword" aria-describedby="basic-addon1">
 						</div>
 						<div *ngIf="formErrors.emailPassword" class="alert alert-danger">
 							{{ formErrors.emailPassword }}
@@ -292,8 +299,7 @@
 				</div>
 				<div class="row">
 					<div class="form-group col-md-12">
-						<button type="submit" class="btn btn-primary"
-							[disabled]="!configFormEmail.valid || loadingEmail">
+						<button type="submit" class="btn btn-primary" [disabled]="!configFormEmail.valid || loadingEmail">
 							<i class="fa" [ngClass]="{'fa-save':!loadingEmail, 'fa-spinner fa-spin':loadingEmail}"></i>
 							<span *ngIf="!loadingEmail">Guardar</span>
 							<span *ngIf="loadingEmail">Espere por favor</span>
@@ -318,7 +324,8 @@
 					</div>
 					<div class="form-group col-md-2" [hidden]="!cert">
 						<button type="button" class="btn btn-secundary"><a
-								[attr.href]="apiURL + 'download-file/' + routeFile">Descargar CRS</a></button>
+								[attr.href]="apiURL + 'download-file/' + routeFile">Descargar
+								CRS</a></button>
 					</div>
 				</div>
 				<div class="row">
@@ -336,15 +343,13 @@
 	<div class="card ">
 		<div class="card-header">Sistema</div>
 		<div class='card-block'>
-			<form [formGroup]="configFormSystem" #formAddConfigSystem="ngForm" (ngSubmit)="addConfigSystem()"
-				autocomplete="off">
+			<form [formGroup]="configFormSystem" #formAddConfigSystem="ngForm" (ngSubmit)="addConfigSystem()" autocomplete="off">
 				<div class="row">
 					<div class="form-group col-md-12">
 						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1">Longitud de código interno en
 								artículo:</span>
-							<input type="number" class="form-control"
-								formControlName="article.code.validators.maxLength"
+							<input type="number" class="form-control" formControlName="article.code.validators.maxLength"
 								name="article.code.validators.maxLength" id="article.code.validators.maxLength"
 								aria-describedby="basic-addon1">
 						</div>
@@ -354,10 +359,12 @@
 					<div class="form-group col-md-12">
 						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1"
-								*ngIf="configFormCompany.value.country === 'AR'">Cóndicion de IVA defecto para las
+								*ngIf="configFormCompany.value.country === 'AR'">Cóndicion de IVA
+								defecto para las
 								empresas:</span>
 							<span class="input-group-addon" id="basic-addon1"
-								*ngIf="configFormCompany.value.country !== 'AR'">Régimen Fiscal defecto para las
+								*ngIf="configFormCompany.value.country !== 'AR'">Régimen Fiscal
+								defecto para las
 								empresas:</span>
 							<select class="form-control" formControlName="company.vatCondition.default"
 								name="company.vatCondition.default" id="company.vatCondition.default">
@@ -418,8 +425,7 @@
 						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1">Vista invertida en cuenta corriente de
 								proveedores:</span>
-							<select class="form-control"
-								formControlName="reports.summaryOfAccounts.invertedViewProvider"
+							<select class="form-control" formControlName="reports.summaryOfAccounts.invertedViewProvider"
 								name="reports.summaryOfAccounts.invertedViewProvider"
 								id="reports.summaryOfAccounts.invertedViewProvider">
 								<option value="true">Si</option>
@@ -433,8 +439,7 @@
 						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1">Detallar método de pago en el reporte de
 								cuentas corrientes por empresa:</span>
-							<select class="form-control"
-								formControlName="reports.summaryOfAccounts.detailsPaymentMethod"
+							<select class="form-control" formControlName="reports.summaryOfAccounts.detailsPaymentMethod"
 								name="reports.summaryOfAccounts.detailsPaymentMethod"
 								id="reports.summaryOfAccounts.detailsPaymentMethod">
 								<option value="true">Si</option>
@@ -462,8 +467,7 @@
 							<span class="input-group-addon" id="basic-addon1">Prefijo del código de barra de la
 								balanza:</span>
 							<input type="number" class="form-control" formControlName="tradeBalance.codePrefix"
-								name="tradeBalance.codePrefix" id="tradeBalance.codePrefix"
-								aria-describedby="basic-addon1">
+								name="tradeBalance.codePrefix" id="tradeBalance.codePrefix" aria-describedby="basic-addon1">
 						</div>
 					</div>
 				</div>
@@ -515,16 +519,15 @@
 						<div class="input-group">
 							<span class="input-group-addon" id="basic-addon1">Expiración del voucher (en minutos):</span>
 							<input type="number" class="form-control" formControlName="voucher.minutesOfExpiration"
-								name="voucher.minutesOfExpiration" id="voucher.minutesOfExpiration" aria-describedby="basic-addon1">
+								name="voucher.minutesOfExpiration" id="voucher.minutesOfExpiration"
+								aria-describedby="basic-addon1">
 						</div>
 					</div>
 				</div>
 				<div class="row">
 					<div class="form-group col-md-12">
-						<button type="submit" class="btn btn-primary"
-							[disabled]="!configFormSystem.valid || loadingSystem">
-							<i class="fa"
-								[ngClass]="{'fa-save':!loadingSystem, 'fa-spinner fa-spin':loadingSystem}"></i>
+						<button type="submit" class="btn btn-primary" [disabled]="!configFormSystem.valid || loadingSystem">
+							<i class="fa" [ngClass]="{'fa-save':!loadingSystem, 'fa-spinner fa-spin':loadingSystem}"></i>
 							<span *ngIf="!loadingSystem">Guardar</span>
 							<span *ngIf="loadingSystem">Espere por favor</span>
 						</button>

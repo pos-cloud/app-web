@@ -35,6 +35,7 @@ export class Config {
   static currency: Currency;
   static licenseCost: number;
   static showLicenseNotification: boolean = true;
+  static mercadopagoAPIKey: string;
   public article: {
     code: {
       validators: {
