@@ -112,7 +112,8 @@
 	"ecommerceEnabled": "Publicado para E-commerce",
 	"employeeClosing": {
 		"name": "Empleado"
-	},
+  },
+  "statusCheck": "Estado",
 	"employee": {
 		"name": "Empleado asignado"
 	},
