@@ -1,11 +1,38 @@
 app-point-of-sale {
+  td {
+    white-space: nowrap;
+  }
+  .btn-state-close,
+  .btn-state-close:hover {
+    color: #fff;
+    background-color: #28a745;
+    border-color: #28a745;
+  }
+  .btn-state-open,
+  .btn-state-open:hover {
+    color: #212529;
+    background-color: #ffc107;
+    border-color: #ffc107;
+  }
+  .btn-state-canceled,
+  .btn-state-canceled:hover {
+    color: #fff;
+    background-color: #c82333;
+    border-color: #bd2130;
+  }
+  .btn-state-sent,
+  .btn-state-sent:hover {
+    color: #212529;
+    background-color: #dae0e5;
+    border-color: #d3d9df;
+  }
   .margin-top {
     margin-top: 20px;
   }
 
   .list-delivery {
-	height: 33/100vh;
-	margin-bottom: 20px;
+    height: 33/100vh;
+    margin-bottom: 20px;
   }
 
   .list-counter {

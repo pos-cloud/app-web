@@ -229,7 +229,7 @@
                   <td>{{movementOfCash.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
                   <td *ngIf="movementOfCash.bank">{{movementOfCash.bank.name}}</td>
                   <td *ngIf="!movementOfCash.bank"></td>
-                  <td>{{movementOfCash.observation}}</td>
+                  <td style="white-space: normal;">{{movementOfCash.observation}}</td>
                 </tr>
 
                 <tr align="center " *ngIf="movementsOfCashes.length === 0">
@@ -284,7 +284,7 @@
                   <td>{{transaction.deliveryAddress.flat}}</td>
                   <td>{{transaction.deliveryAddress.floor}}</td>
                   <td>{{transaction.deliveryAddress.postalCode}}</td>
-                  <td>{{transaction.deliveryAddress.observation}}</td>
+                  <td style="white-space: normal;">{{transaction.deliveryAddress.observation}}</td>
                 </tr>
               </tbody>
             </table>

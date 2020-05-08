@@ -67,16 +67,14 @@ export class ListTransactionsComponent implements OnInit {
 	public columns = attributes;
 	public pathLocation: string[];
 	private subscription: Subscription = new Subscription();
-
-
 	public dateFormat = new DateFormatPipe();
 
 	//cabecera
 	public startDate: string;
 	public endDate: string;
 	public dateSelect: string;
-    public stateSelect : string = "Cerrado";
-    
+  public stateSelect: string = "";
+
 	constructor(
 		public _transactionService: TransactionService,
 		public _configService: ConfigService,
@@ -99,7 +97,6 @@ export class ListTransactionsComponent implements OnInit {
 		this.startDate = moment().format('YYYY-MM-DD');
 		this.endDate = moment().format('YYYY-MM-DD');
 		this.dateSelect = "creationDate";
-
 	}
 
 	public ngOnInit(): void {
@@ -214,7 +211,7 @@ export class ListTransactionsComponent implements OnInit {
 		}
 
 		match += `"type.transactionMovement": "${this.transactionMovement}",`;
-		match += `"state": "${this.stateSelect}",`;
+    if(this.stateSelect && this.stateSelect !== '') match += `"state": "${this.stateSelect}",`;
 		match += `"${this.dateSelect}" : {
                     "$gte" : { "$date" : "${this.startDate}T00:00:00${this.timezone}" },
                     "$lte" : { "$date" : "${this.endDate}T23:59:59${this.timezone}" }

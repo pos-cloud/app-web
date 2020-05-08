@@ -462,13 +462,22 @@ export class PointOfSaleComponent implements OnInit {
 			} else if (this.posType === 'pedidos-web') {
 				let query = {
 					$or: [
-						{ state: TransactionState.Closed },
-            { state: TransactionState.Outstanding },
+            {
+              $and: [
+                {
+                  $or: [
+                    { state: TransactionState.Closed },
+                    { state: TransactionState.Outstanding }
+                  ]
+                },
+                { balance: { $gt: 0 } }
+              ]
+            },
             { state: TransactionState.PaymentConfirmed },
-            { state: TransactionState.PaymentDeclined }
+            { state: TransactionState.Delivered },
+            { state: TransactionState.Sent }
 					],
 					madein: 'pedidos-web',
-					balance: { $gt: 0 },
 					operationType: { $ne: 'D' },
 					"type.transactionMovement": this.transactionMovement,
 				}
@@ -1025,10 +1034,10 @@ export class PointOfSaleComponent implements OnInit {
 		}
 	}
 
-	public async chargeTransaction(transaction: Transaction) {
+	public async chargeTransaction(transaction: Transaction, state: TransactionState = TransactionState.Closed) {
 		this.transaction = await this.getTransaction(transaction._id);
 		if (this.transaction) {
-			this.openModal('charge');
+      this.openModal('charge', state);
 		}
 	}
 
@@ -1074,7 +1083,7 @@ export class PointOfSaleComponent implements OnInit {
 		});
 	}
 
-	async openModal(op: string) {
+	async openModal(op: string, state: TransactionState = TransactionState.Closed) {
 
 		let modalRef;
 
@@ -1127,7 +1136,7 @@ export class PointOfSaleComponent implements OnInit {
 					modalRef.componentInstance.transaction = this.transaction;
 					modalRef.result.then((result) => {
 						if (result.movementsOfCashes) {
-							this.finishTransaction();
+							this.finishTransaction(state);
 						} else {
 							this.refresh();
 						}
@@ -1472,7 +1481,7 @@ export class PointOfSaleComponent implements OnInit {
 		});
 	}
 
-	async finishTransaction() {
+	async finishTransaction(state: TransactionState = TransactionState.Closed) {
 		await this.updateBalance().then(
 			async balance => {
 				if (balance !== null) {
@@ -1489,7 +1498,7 @@ export class PointOfSaleComponent implements OnInit {
 						}
 					}
 					this.transaction.expirationDate = this.transaction.endDate;
-					this.transaction.state = TransactionState.Closed;
+          this.transaction.state = state;
 					await this.updateTransaction(this.transaction).then(
 						transaction => {
 							if (transaction) {
@@ -1776,25 +1785,12 @@ export class PointOfSaleComponent implements OnInit {
 		});
 	}
 
-	async changeStateOfTransaction(transaction: Transaction, state: string) {
+	async changeStateOfTransaction(transaction: Transaction, state: TransactionState) {
 
 		this.transaction = await this.getTransaction(transaction._id);
 		if (this.transaction) {
 			if (this.transaction.totalPrice > 0) {
-				if (state === "Enviado") {
-					if (this.transaction.type.requestEmployee) {
-						this.openModal('select-employee');
-					} else {
-						this.transaction.state = TransactionState.Sent;
-					}
-				} else if (state === "Entregado") {
-					this.transaction.state = TransactionState.Delivered;
-				}
-
-				this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-				this.transaction.VATPeriod = moment().format('YYYYMM');
-				this.transaction.expirationDate = this.transaction.endDate;
-
+        this.transaction.state = state;
 				await this.updateTransaction(this.transaction).then(
 					transaction => {
 						if (this.transaction) {
