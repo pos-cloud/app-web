@@ -1557,8 +1557,15 @@ export class PointOfSaleComponent implements OnInit {
 				"type.allowEdit": 1,
 				"type.name": 1,
 				"type.level": 1,
-				"type.transactionMovement": 1,
-				"branchOrigin": 1,
+        "type.transactionMovement": 1,
+        "branchOrigin": 1,
+        "deliveryAddress.name": 1,
+        "deliveryAddress.number": 1,
+        "deliveryAddress.floor": 1,
+        "deliveryAddress.flat": 1,
+        "deliveryAddress.city": 1,
+        "deliveryAddress.state": 1,
+        "deliveryAddress.observation": 1,
 			}
 
 			if (this.transactionMovement === TransactionMovement.Stock) {
