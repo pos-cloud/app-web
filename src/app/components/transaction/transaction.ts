@@ -15,6 +15,7 @@ import { Transport } from '../transport/transport';
 import { PriceList } from '../price-list/price-list';
 import { ShipmentMethod } from '../shipment-method/shipment-method';
 import { Employee } from 'app/components/employee/employee';
+import { Address } from '../address/address';
 
 export class Transaction {
 
@@ -54,7 +55,8 @@ export class Transaction {
 	public quotation: number;
 	public table: Table;
 	public employeeOpening: Employee;
-	public employeeClosing: Employee;
+  public employeeClosing: Employee;
+  public deliveryAddress: Address;
 	public branchOrigin: Branch;
 	public branchDestination: Branch;
 	public depositOrigin: Deposit;
