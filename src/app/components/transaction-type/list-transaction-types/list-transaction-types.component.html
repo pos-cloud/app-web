@@ -1,5 +1,5 @@
 <!--ADMIN-->
-<section class="container-fluid" *ngIf="userType=='admin'">
+<section class="container-fluid" *ngIf="userType=='admin' && (identity$ | async) as identity">
 	<div class="center-content" *ngIf="alertMessage !== '' && !areTransactionTypesEmpty">
 		<ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
 			{{alertMessage}}
@@ -57,7 +57,7 @@
 						<th (click)="orderBy('requestCurrency')">Pide Moneda</th>
 						<th (click)="orderBy('fastPayment','name')">Pago rápido</th>
 						<th (click)="orderBy('allowAPP')">APP</th>
-						<th (click)="orderBy('application')">Aplicación</th>
+						<th (click)="orderBy('application','name')">Aplicación</th>
 						<th (click)="orderBy('requestEmailTemplate')">¿Envia correo?</th>
 						<th (click)="orderBy('defectEmailTemplate','name')">Template defecto</th>
 						<th (click)="orderBy('level')">Nivel</th>
@@ -181,7 +181,7 @@
                                                               | filter: filterRequestCurrency:'requestCurrency'
                                                               | filter: filterFastPayment:'name':'fastPayment'
                                                               | filter: filterAllowAPP:'allowAPP'
-                                                              | filter: filterApplication:'application'
+                                                              | filter: filterApplication:'name':'application'
                                                               | filter: filterRequestEmailTemplate:'requestEmailTemplate'
                                                               | filter: filterDefectEmailTemplate:'name': 'defectEmailTemplate'
                                                               | filter: filterLevel:'level'
@@ -194,9 +194,9 @@
 							<button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', transactionType)"
 								title="Ver"><i class="fa fa-eye"></i></button>
 							<button type="button" class="btn btn-primary  btn-sm" (click)="openModal('update', transactionType)"
-								title="Modificar"><i class="fa fa-pencil"></i></button>
+								title="Modificar" *ngIf="identity.name === 'soporte' || !transactionType.allowAPP"><i class="fa fa-pencil"></i></button>
 							<button type="button" class="btn btn-danger  btn-sm" (click)="openModal('delete', transactionType)"
-								title="Eliminar"><i class="fa fa-trash-o"></i></button>
+								title="Eliminar" *ngIf="identity.name === 'soporte' || !transactionType.allowAPP"><i class="fa fa-trash-o"></i></button>
 						</td>
 						<td class="flat">{{transactionType.transactionMovement}}</td>
 						<td class="flat">{{transactionType.order}}</td>

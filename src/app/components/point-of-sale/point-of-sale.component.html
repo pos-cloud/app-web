@@ -342,6 +342,7 @@
 					<tr>
 						<th></th>
 						<th (click)="orderBy('endDate')">Fecha</th>
+						<th (click)="orderBy('type','name')">Tipo</th>
 						<th (click)="orderBy('number')">Número</th>
 						<th (click)="orderBy('company','name')">Cliente</th>
 						<th (click)="orderBy('state')">Estado</th>
@@ -353,6 +354,8 @@
 						<th></th>
 						<th><input type="date" class="form-control" [(ngModel)]="filterEndDate"
 								placeholder="Fecha..."></th>
+						<th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo...">
+						</th>
 						<th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número...">
 						</th>
 						<th><input type="text" class="form-control" [(ngModel)]="filterCompany"
@@ -373,6 +376,7 @@
 						</td>
 					</tr>
 					<tr *ngFor="let transaction of transactions | filter: filterEndDate:'endDate'
+                                                        | filter: filterType:'name':'type'
                                                         | filter: filterNumber:'number'
                                                         | filter: filterCompany:'name':'company'
                                                         | filter: filterTotalPrice:'totalPrice'
@@ -402,6 +406,7 @@
 							{{transaction.startDate | dateFormat:'DD/MM/YYYY' }}
 							<b>{{transaction.startDate | dateFormat:'HH:mm:ss' }}</b>
 						</td>
+						<td>{{transaction.type.name}}</td>
 						<td><b>{{transaction.number}}</b></td>
 						<td *ngIf="transaction.company">{{transaction.company.name}}</td>
 						<td *ngIf="!transaction.company">Consumidor Final</td>
