@@ -57,6 +57,7 @@
 						<th (click)="orderBy('requestCurrency')">Pide Moneda</th>
 						<th (click)="orderBy('fastPayment','name')">Pago rápido</th>
 						<th (click)="orderBy('allowAPP')">APP</th>
+						<th (click)="orderBy('application')">Aplicación</th>
 						<th (click)="orderBy('requestEmailTemplate')">¿Envia correo?</th>
 						<th (click)="orderBy('defectEmailTemplate','name')">Template defecto</th>
 						<th (click)="orderBy('level')">Nivel</th>
@@ -134,6 +135,7 @@
 						<th><input type="text" class="form-control" [(ngModel)]="filterFastPayment" placeholder="Pago rápido...">
 						</th>
 						<th><input type="text" class="form-control" [(ngModel)]="filterAllowAPP" placeholder="APP..."></th>
+						<th><input type="text" class="form-control" [(ngModel)]="filterApplication" placeholder="Aplicación..."></th>
 						<th><input type="text" class="form-control" [(ngModel)]="filterRequestEmailTemplate"
 								placeholder="¿Envia correo?"></th>
 						<th><input type="text" class="form-control" [(ngModel)]="filterDefectEmailTemplate"
@@ -179,6 +181,7 @@
                                                               | filter: filterRequestCurrency:'requestCurrency'
                                                               | filter: filterFastPayment:'name':'fastPayment'
                                                               | filter: filterAllowAPP:'allowAPP'
+                                                              | filter: filterApplication:'application'
                                                               | filter: filterRequestEmailTemplate:'requestEmailTemplate'
                                                               | filter: filterDefectEmailTemplate:'name': 'defectEmailTemplate'
                                                               | filter: filterLevel:'level'
@@ -239,6 +242,8 @@
 						<td class="flat" *ngIf="transactionType.fastPayment">{{transactionType.fastPayment.name}}</td>
 						<td class="flat" *ngIf="!transactionType.fastPayment"></td>
 						<td class="flat">{{transactionType.allowAPP}}</td>
+						<td class="flat" *ngIf="transactionType.application">{{transactionType.application.name}}</td>
+						<td class="flat" *ngIf="!transactionType.application"></td>
 						<td class="flat">{{transactionType.requestEmailTemplate}}</td>
 						<td class="flat" *ngIf="transactionType.defectEmailTemplate">{{transactionType.defectEmailTemplate.name}}
 						</td>

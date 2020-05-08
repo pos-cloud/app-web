@@ -185,7 +185,7 @@
 										<div class="input-group">
 											<select class="form-control" formControlName="defectUseOfCFDI">
 												<option *ngFor="let useOfCFDI of usesOfCFDI" [ngValue]="useOfCFDI._id" [selected]="(transactionType.defectUseOfCFDI && transactionType.defectUseOfCFDI._id && useOfCFDI._id===transactionType.defectUseOfCFDI._id) ||
-											  (transactionType.defectUseOfCFDI && useOfCFDI._id===transactionType.defectUseOfCFDI)" [disabled]="readonly">
+											  (transactionType.defectUseOfCFDI && useOfCFDI._id===transactionType['defectUseOfCFDI'])" [disabled]="readonly">
 													{{ useOfCFDI.description }}</option>
 											</select>
 											<button type="button" class="btn btn-light" placement="right"
@@ -266,6 +266,18 @@
 								<hr>
 								<div class="row">
 									<div class="form-group col-md-2">
+										<label for="level">Nivel</label>
+										<div class="input-group">
+											<input type="number" class="form-control" formControlName="level" name="level"
+												id="level" [readonly]="readonly" />
+											<button type="button" class="btn btn-light" placement="right"
+												popoverClass="popover-class"
+												ngbPopover="El valor se compara con el del usuario si este es menor al del usuario se mostrara">
+												<b>?</b>
+											</button>
+										</div>
+									</div>
+									<div class="form-group col-md-2">
 										<label for="allowEdit" class="control-label">Permite editar</label>
 										<div class="input-group">
 											<select class="form-control" formControlName="allowEdit">
@@ -296,7 +308,7 @@
 										</div>
 									</div>
 									<div class="form-group col-md-2">
-										<label for="allowAPP">Permite APP</label>
+										<label for="allowAPP">Habilitado Ecommerce</label>
 										<div class="input-group">
 											<select class="form-control" formControlName="allowAPP">
 												<option value="true" [selected]="transactionType.allowAPP" [disabled]="readonly">
@@ -309,30 +321,22 @@
 												<b>?</b>
 											</button>
 										</div>
-									</div>
-									<div class="form-group col-md-2">
-										<label for="requestTransport">Pide Transporte</label>
+                  </div>
+                  <div class="form-group col-md-3">
+										<label for="application" class="control-label">Aplicación</label>
 										<div class="input-group">
-											<select class="form-control" formControlName="requestTransport">
-												<option value="true" [selected]="transactionType.requestTransport"
-													[disabled]="readonly">Si</option>
-												<option value="false" [selected]="!transactionType.requestTransport"
-													[disabled]="readonly">No</option>
+											<select class="form-control" formControlName="application">
+												<option [ngValue]="null"
+													[selected]="!transactionType || !transactionType.application"
+													[disabled]="readonly"></option>
+												<option *ngFor="let application of applications" [ngValue]="application._id"
+													[selected]="(transactionType.application && transactionType.application._id && application._id===transactionType.application._id) ||
+											  (transactionType.application && application._id==transactionType['application'])" [disabled]="readonly">
+													{{ application.name }}</option>
 											</select>
 											<button type="button" class="btn btn-light" placement="right"
-												popoverClass="popover-class" ngbPopover="¿Pide Transporte?">
-												<b>?</b>
-											</button>
-										</div>
-									</div>
-									<div class="form-group col-md-2">
-										<label for="level">Nivel</label>
-										<div class="input-group">
-											<input type="number" class="form-control" formControlName="level" name="level"
-												id="level" [readonly]="readonly" />
-											<button type="button" class="btn btn-light" placement="right"
 												popoverClass="popover-class"
-												ngbPopover="El valor se compara con el del usuario si este es menor al del usuario se mostrara">
+												ngbPopover="¿En cuál aplicación se va a usar como defecto?">
 												<b>?</b>
 											</button>
 										</div>
@@ -341,7 +345,7 @@
 								<b>PERSONALIZADO</b>
 								<hr>
 								<div class="row">
-									<div class="form-group col-md-3">
+									<div class="form-group col-md-2">
 										<label for="requestCompany" class="control-label">Pide empresa</label>
 										<div class="input-group">
 											<select class="form-control" formControlName="requestCompany">
@@ -356,7 +360,7 @@
 											</button>
 										</div>
 									</div>
-									<div class="form-group col-md-3">
+									<div class="form-group col-md-2">
 										<label for="requestEmployee" class="control-label">Pide empleado</label>
 										<div class="input-group">
 											<select class="form-control" formControlName="requestEmployee">
@@ -365,7 +369,7 @@
 													[disabled]="readonly"></option>
 												<option *ngFor="let employeeType of employeeTypes" [ngValue]="employeeType._id"
 													[selected]="(transactionType.requestEmployee && transactionType.requestEmployee._id && employeeType._id===transactionType.requestEmployee._id) ||
-											  (transactionType.requestEmployee && employeeType._id===transactionType.requestEmployee)" [disabled]="readonly">
+											  (transactionType.requestEmployee && employeeType._id===transactionType['requestEmployee'])" [disabled]="readonly">
 													{{ employeeType.description }}</option>
 											</select>
 											<button type="button" class="btn btn-light" placement="right"
@@ -375,7 +379,7 @@
 											</button>
 										</div>
 									</div>
-									<div class="form-group col-md-3">
+									<div class="form-group col-md-2">
 										<label for="requestCurrency" class="control-label">Pide moneda</label>
 										<div class="input-group">
 											<select class="form-control" formControlName="requestCurrency">
@@ -391,8 +395,8 @@
 											</button>
 										</div>
 									</div>
-									<div class="form-group col-md-3">
-										<label for="defectOrders" class="control-label">Defecto como pedido</label>
+									<div class="form-group col-md-2">
+										<label for="defectOrders" class="control-label">Para pedido</label>
 										<div class="input-group">
 											<select class="form-control" formControlName="defectOrders">
 												<option value="true" [selected]="transactionType.defectOrders"
@@ -403,6 +407,21 @@
 											<button type="button" class="btn btn-light" placement="right"
 												popoverClass="popover-class"
 												ngbPopover="¿Se utiliza para dar de alta pedidos en POS modo resto o delivery?">
+												<b>?</b>
+											</button>
+										</div>
+									</div>
+									<div class="form-group col-md-2">
+										<label for="requestTransport">Pide Transporte</label>
+										<div class="input-group">
+											<select class="form-control" formControlName="requestTransport">
+												<option value="true" [selected]="transactionType.requestTransport"
+													[disabled]="readonly">Si</option>
+												<option value="false" [selected]="!transactionType.requestTransport"
+													[disabled]="readonly">No</option>
+											</select>
+											<button type="button" class="btn btn-light" placement="right"
+												popoverClass="popover-class" ngbPopover="¿Pide Transporte?">
 												<b>?</b>
 											</button>
 										</div>
@@ -693,7 +712,7 @@
 													[selected]="!transactionType || !transactionType.fastPayment"
 													[disabled]="readonly"></option>
 												<option *ngFor="let paymentMethod of paymentMethods" [selected]="(transactionType.fastPayment && transactionType.fastPayment._id && paymentMethod._id===transactionType.fastPayment._id) ||
-										(transactionType.fastPayment && paymentMethod._id===transactionType.fastPayment)" [ngValue]="paymentMethod._id"
+										(transactionType.fastPayment && paymentMethod._id===transactionType['fastPayment'])" [ngValue]="paymentMethod._id"
 													[disabled]="readonly">
 													{{ paymentMethod.name }}
 												</option>
