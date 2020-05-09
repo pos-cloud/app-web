@@ -15,14 +15,15 @@
       <div class="row">
         <div class="form-group col-md-3">
           <label for="code" class="control-label">Código:</label>
-          <input type="number" class="form-control" formControlName="code" name="code" id="code" [focus]="focusEvent" [readonly]="readonly"/>
+          <input type="number" class="form-control" formControlName="code" name="code" id="code" [focus]="focusEvent"
+            [readonly]="readonly" />
           <div *ngIf="formErrors.code" class="alert alert-danger">
             {{ formErrors.code }}
           </div>
         </div>
         <div class="form-group col-md-9">
           <label for="name" class="control-label">Nombre:</label>
-          <input type="text" class="form-control" formControlName="name" name="name" id="name" [readonly]="readonly"/>
+          <input type="text" class="form-control" formControlName="name" name="name" id="name" [readonly]="readonly" />
           <div *ngIf="formErrors.name" class="alert alert-danger">
             {{ formErrors.name }}
           </div>
@@ -33,14 +34,16 @@
           <label for="discount" class="control-label">Descuento:</label>
           <div class="input-group">
             <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
-            <input type="number" class="form-control" formControlName="discount" name="discount" id="discount" [readonly]="readonly" />
+            <input type="number" class="form-control" formControlName="discount" name="discount" id="discount"
+              [readonly]="readonly" />
           </div>
         </div>
         <div class="form-group col-md-6">
           <label for="surcharge" class="control-label">Recargo:</label>
           <div class="input-group">
             <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
-            <input type="number" class="form-control" formControlName="surcharge" name="surcharge" id="surcharge" [readonly]="readonly"/>
+            <input type="number" class="form-control" formControlName="surcharge" name="surcharge" id="surcharge"
+              [readonly]="readonly" />
           </div>
         </div>
       </div>
@@ -86,28 +89,28 @@
         </div>
         <div class="form-group col-md-4">
           <label for="allowToFinance" class="control-label">¿Permite financiar?</label>
-          <select class="form-control" formControlName="allowToFinance" >
-            <option  [disabled]="readonly" value="true">Si</option>
-            <option   [disabled]="readonly" value="false" selected>No</option>
-          </select>
-        </div>
-        <div class="form-group col-md-4">
-            <label for="allowBank" class="control-label">Pide banco?</label>
-            <select class="form-control" formControlName="allowBank" >
-              <option  [disabled]="readonly" value="true">Si</option>
-              <option   [disabled]="readonly" value="false" selected>No</option>
-            </select>
-          </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-4">
-          <label for="cashBoxImpact" class="control-label">¿Afecta la caja diaria?</label>
-          <select class="form-control" formControlName="cashBoxImpact" >
+          <select class="form-control" formControlName="allowToFinance">
             <option [disabled]="readonly" value="true">Si</option>
             <option [disabled]="readonly" value="false" selected>No</option>
           </select>
         </div>
-      <!--<div class="row">
+        <div class="form-group col-md-4">
+          <label for="allowBank" class="control-label">Pide banco?</label>
+          <select class="form-control" formControlName="allowBank">
+            <option [disabled]="readonly" value="true">Si</option>
+            <option [disabled]="readonly" value="false" selected>No</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-4">
+          <label for="cashBoxImpact" class="control-label">¿Afecta la caja diaria?</label>
+          <select class="form-control" formControlName="cashBoxImpact">
+            <option [disabled]="readonly" value="true">Si</option>
+            <option [disabled]="readonly" value="false" selected>No</option>
+          </select>
+        </div>
+        <!--<div class="row">
           <div class="form-group col-md-12">
             <label for="company" class="control-label">Pide empresa</label>
               <div class="input-group">
@@ -121,42 +124,50 @@
               </div>
           </div>
       </div>-->
-            <div class="form-group col-md-4">
-              <label for="bankReconciliation" class="control-label">¿Tiene conciliación?</label>
-              <select class="form-control" formControlName="bankReconciliation">
-                <option [disabled]="readonly" value="true">Si</option>
-                <option [disabled]="readonly" value="false" selected>No</option>
-              </select>
+        <div class="form-group col-md-4">
+          <label for="bankReconciliation" class="control-label">¿Tiene conciliación?</label>
+          <select class="form-control" formControlName="bankReconciliation">
+            <option [disabled]="readonly" value="true">Si</option>
+            <option [disabled]="readonly" value="false" selected>No</option>
+          </select>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="allowCurrencyValue" class="control-label">¿Pide valores de moneda?</label>
+          <select class="form-control" formControlName="allowCurrencyValue">
+            <option [disabled]="readonly" value="true">Si</option>
+            <option [disabled]="readonly" value="false" selected>No</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="mercadopagoAPIKey" class="control-label">API Key de Mercadopago:</label>
+          <div class="input-group">
+            <input type="text" class="form-control" formControlName="mercadopagoAPIKey" name="mercadopagoAPIKey"
+              id="mercadopagoAPIKey" aria-describedby="basic-addon1">
           </div>
-          <div class="form-group col-md-4">
-            <label for="allowCurrencyValue" class="control-label">¿Pide valores de moneda?</label>
-            <select class="form-control" formControlName="allowCurrencyValue">
-              <option [disabled]="readonly" value="true">Si</option>
-              <option [disabled]="readonly" value="false" selected>No</option>
-            </select>
         </div>
       </div>
       <div class="row">
         <div class="form-group col-md-12">
           <label for="observation" class="control-label">Observación</label>
           <div class="input-group">
-            <textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2" [readonly]="readonly"></textarea>
+            <textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2"
+              [readonly]="readonly"></textarea>
           </div>
         </div>
       </div>
     </div>
     <div class="modal-footer" *ngIf="operation !== 'view'">
       <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="!paymentMethodForm.valid || loading" *ngIf="operation !== 'delete'">
+      <button type="submit" class="btn btn-primary" [disabled]="!paymentMethodForm.valid || loading"
+        *ngIf="operation !== 'delete'">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Guardar</span>
         <span *ngIf="loading">Espere por favor</span>
       </button>
-      <button type="button" 
-              class="btn btn-danger" 
-              *ngIf="operation === 'delete'" 
-              [disabled]="!paymentMethodForm.valid || loading" 
-              (click)="deletePaymentMethod()">
+      <button type="button" class="btn btn-danger" *ngIf="operation === 'delete'" [disabled]="!paymentMethodForm.valid || loading"
+        (click)="deletePaymentMethod()">
         <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Eliminar</span>
         <span *ngIf="loading">Espere por favor</span>

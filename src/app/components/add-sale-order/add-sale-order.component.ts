@@ -1661,7 +1661,6 @@ export class AddSaleOrderComponent {
                 this.loading = false;
             },
             error => {
-                console.log(error)
                 this.showMessage("Ha ocurrido un error en el servidor. Comuníquese con Soporte.", 'danger', false);
                 this.loading = false;
             }

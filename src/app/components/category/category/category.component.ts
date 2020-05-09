@@ -119,7 +119,6 @@ export class CategoryComponent implements OnInit {
 
         this._categoryService.getCategoriesV2(project, match, { description: -1 }, {}).subscribe(
             result => {
-                console.log(result);
                 if (!result.categories) {
                     if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
                 } else {
@@ -378,14 +377,10 @@ export class CategoryComponent implements OnInit {
     }
 
     isValid(): boolean {
-
-        console.log(this.category);
-
         if (this.category.parent != null && (this.category.parent.toString() === this.category._id || this.category._id === this.category.parent._id)) {
             this.showMessage("No puede seleccionar la misma categoria como padre", "danger", true)
             return false;
         }
-
         return true
     }
 

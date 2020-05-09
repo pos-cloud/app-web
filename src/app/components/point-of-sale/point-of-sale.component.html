@@ -336,6 +336,7 @@
             <th (click)="orderBy('type','name')">Tipo</th>
             <th (click)="orderBy('number')">Número</th>
             <th (click)="orderBy('company','name')">Cliente</th>
+            <th (click)="orderBy('orderNumber')">Pedido</th>
             <th (click)="orderBy('state')">Estado</th>
             <th>Envío</th>
             <th (click)="orderBy('observation')">Observación</th>
@@ -349,6 +350,7 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número...">
             </th>
             <th><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Empresa..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterOrderNumber" placeholder="Pedido..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterState" placeholder="Estado..."></th>
             <th></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación..."></th>
@@ -367,6 +369,7 @@
                                                         | filter: filterCompany:'name':'company'
                                                         | filter: filterTotalPrice:'totalPrice'
                                                         | filter : filterState : 'state'
+                                                        | filter : filterOrderNumber : 'orderNumber'
                                                         | filter : filterObservation : 'observation'
                                                         | orderBy: orderTerm: propertyTerm
                                                         | paginate: { itemsPerPage: itemsPerPage,
@@ -381,7 +384,7 @@
               <button type="button" class="btn btn-danger" (click)="cancelTransaction(transaction)" title="Anular"
                 *ngIf="transaction.state === 'Abierto'"><i class="fa fa-close"></i></button>
               <button type="button" class="btn btn-light" (click)="printTransaction(transaction)" title="Imprimir"
-                *ngIf="posType=='pedidos-web' && transaction.state === 'Cerrado'"><i class="fa fa-print"></i></button>
+                *ngIf="(posType=='pedidos-web' && transaction.state === 'Cerrado') || transaction.CAE"><i class="fa fa-print"></i></button>
             </td>
             <td (click)="openTransaction(transaction)" *ngIf="transaction.endDate">
               {{transaction.endDate | dateFormat:'DD/MM/YYYY' }}
@@ -395,6 +398,7 @@
             <td><b>{{transaction.number}}</b></td>
             <td *ngIf="transaction.company">{{transaction.company.name}}</td>
             <td *ngIf="!transaction.company">Consumidor Final</td>
+            <td>{{transaction.orderNumber}}</td>
             <td *ngIf="posType==='pedidos-web'">
               <div class="btn-group mr-3">
                 <button type="button" class="btn" [ngClass]="{
@@ -415,6 +419,7 @@
                   'btn-state-sent':transaction.state.toString() === 'Entregado' || transaction.state.toString() === 'Enviado'
                 }"></button>
                   <div class="dropdown-menu" ngbDropdownMenu>
+                    <button ngbDropdownItem *ngIf="transaction.type.electronics && transaction.state.toString() === 'Pago Confirmado' && !transaction.CAE" (click)="validateElectronicTransactionAR(transaction, 'Pago Confirmado')">Facturar</button>
                     <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Pendiente de pago'" (click)="chargeTransaction(transaction, 'Pago Confirmado')">Confirmar pago</button>
                     <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Pago Rechazado' || transaction.state.toString() === 'Pendiente de pago'" (click)="cancelTransaction(transaction)">Anular transacción</button>
                     <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Pago Confirmado'" (click)="changeStateOfTransaction(transaction, 'Enviado')">Marcar Pedido Enviado</button>

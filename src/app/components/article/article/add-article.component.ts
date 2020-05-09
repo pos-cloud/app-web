@@ -1506,7 +1506,6 @@ export class AddArticleComponent implements OnInit {
 
       this._articleService.updateArticle(this.article, this.variants).subscribe(
         result => {
-          console.log(result)
           if (!result.article) {
             if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
           } else {

@@ -48,6 +48,8 @@ import { Subscription } from 'rxjs';
 import { User } from 'app/components/user/user';
 import { UserService } from 'app/components/user/user.service';
 import { SelectCompanyComponent } from '../company/select-company/select-company.component';
+import { Claim, ClaimPriority, ClaimType } from 'app/layout/claim/claim';
+import { ClaimService } from 'app/layout/claim/claim.service';
 
 @Component({
 	selector: 'app-point-of-sale',
@@ -118,7 +120,8 @@ export class PointOfSaleComponent implements OnInit {
 		private _authService: AuthService,
 		private _originService: OriginService,
 		private _configService: ConfigService,
-		private _userService: UserService
+    private _userService: UserService,
+    private _claimService: ClaimService,
 	) {
 		this.roomSelected = new Room();
 		this.transactionTypes = new Array();
@@ -1410,7 +1413,111 @@ export class PointOfSaleComponent implements OnInit {
 
 			default: ;
 		}
-	}
+  }
+
+  public async validateElectronicTransactionAR(transaction: Transaction, state: TransactionState = TransactionState.Closed) {
+
+    transaction = await this.getTransaction(transaction._id);
+    console.log(transaction);
+    if(transaction.type.electronics) {
+      this.showMessage("Validando comprobante con AFIP...", 'info', false);
+      this.loading = true;
+      transaction.type.defectEmailTemplate = null;
+      this._transactionService.validateElectronicTransactionAR(transaction).subscribe(
+        async result => {
+          let msn = '';
+          if (result && result.status != 0) {
+            if (result.status === 'err') {
+              if (result.code && result.code !== '') {
+                msn += result.code + " - ";
+              }
+              if (result.message && result.message !== '') {
+                msn += result.message + ". ";
+              }
+              if (result.observationMessage && result.observationMessage !== '') {
+                msn += result.observationMessage + ". ";
+              }
+              if (result.observationMessage2 && result.observationMessage2 !== '') {
+                msn += result.observationMessage2 + ". ";
+              }
+              if (msn === '') {
+                msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
+              }
+              this.showMessage(msn, 'info', true);
+              let body = {
+                transaction: {
+                  origin: transaction.origin,
+                  letter: transaction.letter,
+                  number: transaction.number,
+                  startDate: transaction.startDate,
+                  endDate: transaction.endDate,
+                  expirationDate: transaction.expirationDate,
+                  VATPeriod: transaction.VATPeriod,
+                  state: transaction.state,
+                  basePrice: transaction.basePrice,
+                  exempt: transaction.exempt,
+                  discountAmount: transaction.discountAmount,
+                  discountPercent: transaction.discountPercent,
+                  totalPrice: transaction.totalPrice,
+                  roundingAmount: transaction.roundingAmount,
+                  CAE: transaction.CAE,
+                  CAEExpirationDate: transaction.CAEExpirationDate,
+                  type: transaction.type,
+                  company: transaction.company,
+                  priceList: transaction.priceList
+                },
+                config: {
+                  companyIdentificationValue: this.config['companyIdentificationValue'],
+                  vatCondition: this.config['companyVatCondition'].code,
+                  database: this.config['database']
+                }
+              }
+              this.saveClaim('ERROR FE AR' + moment().format('DD/MM/YYYY HH:mm') + " : " + msn, JSON.stringify(body));
+            } else {
+              transaction.number = result.number;
+              transaction.CAE = result.CAE;
+              transaction.CAEExpirationDate = moment(result.CAEExpirationDate, 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DDTHH:mm:ssZ");
+              transaction.state = state;
+              await this.updateTransaction(transaction).then(
+                transaction => {
+                  if (transaction) {
+                    this.refresh();
+                  }
+                }
+              );
+            }
+          } else {
+            if (msn === '') {
+              msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
+            }
+            this.showMessage(msn, 'info', true);
+          }
+          this.loading = false;
+        },
+        error => {
+          this.showMessage("Ha ocurrido un error en el servidor. Comuníquese con Soporte.", 'danger', false);
+          this.loading = false;
+        }
+      )
+    } else {
+      this.showMessage("Debe configurar el tipo de transacción como electrónica.", 'danger', false);
+      this.loading = false;
+    }
+  }
+
+  public saveClaim(titulo: string, message: string): void {
+
+    this.loading = true;
+
+    let claim: Claim = new Claim();
+    claim.description = message;
+    claim.name = titulo;
+    claim.priority = ClaimPriority.High;
+    claim.type = ClaimType.Err;
+    claim.listName = 'ERRORES 500';
+
+    this._claimService.saveClaim(claim).subscribe();
+  }
 
 	public updateTable(): Promise<Table> {
 
@@ -1552,21 +1659,26 @@ export class PointOfSaleComponent implements OnInit {
 			this.loading = true;
 
 			let project = {
+        _id: 1,
 				startDate: 1,
 				endDate: 1,
 				origin: 1,
-				number: 1,
+        number: 1,
+        orderNumber: 1,
 				observation: 1,
 				totalPrice: 1,
 				balance: 1,
 				state: 1,
 				madein: 1,
-				operationType: 1,
+        operationType: 1,
+        taxes: 1,
+        CAE: 1,
 				"type._id": 1,
 				"type.allowEdit": 1,
 				"type.name": 1,
 				"type.level": 1,
         "type.transactionMovement": 1,
+        "type.electronics": 1,
         "branchOrigin": 1,
         "deliveryAddress.name": 1,
         "deliveryAddress.number": 1,

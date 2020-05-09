@@ -161,8 +161,7 @@ export class ConfigComponent implements OnInit {
       'latitude': [this.config['latitude'], []],
       'longitude': [this.config['longitude'], []],
       'timezone': [this.config['timezone'], []],
-      'currency': [this.config['currency'], []],
-      'mercadopagoAPIKey': [this.config['mercadopagoAPIKey'], []]
+      'currency': [this.config['currency'], []]
     });
 
     this.configFormCompany.valueChanges.subscribe(data => this.onValueChangedCompany(data));
@@ -539,7 +538,6 @@ export class ConfigComponent implements OnInit {
     if (!this.config['latitude']) this.config['latitude'] = '';
     if (!this.config['longitude']) this.config['longitude'] = '';
     if (!this.config['timezone']) this.config['timezone'] = 'UTC-03:00';
-    if (!this.config['mercadopagoAPIKey']) this.config['mercadopagoAPIKey'] = '';
 
     let currency;
     if (!this.config['currency']) {
@@ -594,8 +592,7 @@ export class ConfigComponent implements OnInit {
       'latitude': this.config['latitude'],
       'longitude': this.config['longitude'],
       'timezone': this.config['timezone'],
-      'currency': currency,
-      'mercadopagoAPIKey': this.config['mercadopagoAPIKey'],
+      'currency': currency
     });
 
     this.configFormEmail.setValue({
