@@ -2487,7 +2487,7 @@ export class AddSaleOrderComponent {
                 this.transaction.company.identificationValue === '')
         ) {
             isValid = false;
-            this.showMessage("El cliente ingresado no tiene nro de identificación", 'info', true);
+            this.showMessage("El cliente ingresado no tiene número de identificación", 'info', true);
             this.loading = false;
         }
 

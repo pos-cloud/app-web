@@ -227,7 +227,7 @@ export class PrintVatBookComponent implements OnInit {
         this.doc.text("RAZÓN SOCIAL", 25, row);
         this.doc.text("IDENTIFICADOR", 65, row);
         this.doc.text("TIPO COMP.", 95, row);
-        this.doc.text("NRO COMP.", 120, row);
+        this.doc.text("NRO. COMP.", 120, row);
         this.doc.text("GRAVADO", 150, row);
         this.doc.text("EXENTO", 175, row);
         this.doc.text("IVA", 195, row);
@@ -465,7 +465,7 @@ export class PrintVatBookComponent implements OnInit {
                 this.doc.text("RAZÓN SOCIAL", 25, row);
                 this.doc.text("IDENTIFICADOR", 65, row);
                 this.doc.text("TIPO COMP.", 95, row);
-                this.doc.text("NRO COMP.", 120, row);
+                this.doc.text("NRO. COMP.", 120, row);
                 this.doc.text("GRAVADO", 150, row);
                 this.doc.text("EXENTO", 175, row);
                 this.doc.text("IVA", 195, row);

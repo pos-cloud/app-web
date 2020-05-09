@@ -1749,7 +1749,7 @@ export class PrintComponent implements OnInit {
         this.doc.setFontSize(this.fontSizes.normal);
         this.doc.text("Fecha", margin, 77);
         this.doc.text("Tipo Comp.", 25, 77);
-        this.doc.text("Nro Comprobante", 53, 77);
+        this.doc.text("Nro. Comprobante", 53, 77);
         if (this.params.detailsPaymentMethod) {
             this.doc.text("Monto", 90, 77);
             this.doc.text("Método", 110, 77);
@@ -1830,7 +1830,7 @@ export class PrintComponent implements OnInit {
                     this.doc.setFontSize(this.fontSizes.normal);
                     this.doc.text("Fecha", margin, 77);
                     this.doc.text("Tipo Comp.", 25, 77);
-                    this.doc.text("Nro Comprobante.", 53, 77);
+                    this.doc.text("Nro. Comprobante.", 53, 77);
                     this.doc.text("Monto", 110, 77);
                     this.doc.text("Debe", 145, 77);
                     this.doc.text("Haber", 165, 77);
