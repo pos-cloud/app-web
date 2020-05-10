@@ -508,6 +508,7 @@ export class PointOfSaleComponent implements OnInit {
               ]
             },
             { state: TransactionState.PaymentConfirmed },
+            { state: TransactionState.PaymentDeclined },
             { state: TransactionState.Delivered },
             { state: TransactionState.Sent }
           ],
@@ -1944,6 +1945,13 @@ export class PointOfSaleComponent implements OnInit {
           this.sendEmail(
             `Pago confirmado en tu Pedido Número ${this.transaction.orderNumber}`,
             `Hola ${transaction.company.name} confirmamos el pago de tu compra.</br><b>Ya estamos preparando tu pedido, te avisamos cuando este en camino.</b>`,
+            email);
+        }
+        if (email && this.transaction.state.toString() === TransactionState.PaymentDeclined.toString()) {
+          this.transaction.balance = 0;
+          this.sendEmail(
+            `Pago rechazado en tu Pedido Número ${this.transaction.orderNumber}`,
+            `Hola ${transaction.company.name} rechazamos el pago de tu compra.</br><b>Lamentamos el incoveniente por no poder finalizar la compra. Puedes realizar de nuevo el pedido cuando desees, te esperamos.</b>`,
             email);
         }
         if (email && this.transaction.state.toString() === TransactionState.Sent.toString()) {

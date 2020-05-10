@@ -421,6 +421,7 @@
                   <div class="dropdown-menu" ngbDropdownMenu>
                     <button ngbDropdownItem *ngIf="transaction.type.electronics && transaction.state.toString() === 'Pago Confirmado' && !transaction.CAE" (click)="validateElectronicTransactionAR(transaction, 'Pago Confirmado')">Facturar</button>
                     <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Pendiente de pago'" (click)="chargeTransaction(transaction, 'Pago Confirmado')">Confirmar pago</button>
+                    <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Pendiente de pago'" (click)="changeStateOfTransaction(transaction, 'Pago Rechazado')">Rechazar pago</button>
                     <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Pago Rechazado' || transaction.state.toString() === 'Pendiente de pago'" (click)="cancelTransaction(transaction)">Anular transacción</button>
                     <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Pago Confirmado'" (click)="changeStateOfTransaction(transaction, 'Enviado')">Marcar Pedido Enviado</button>
                     <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Enviado' || transaction.state.toString() === 'Pago Confirmado'" (click)="changeStateOfTransaction(transaction, 'Cerrado')">Marcar Pedido Entregado</button>
