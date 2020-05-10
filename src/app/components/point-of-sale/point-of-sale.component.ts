@@ -52,6 +52,7 @@ import { Claim, ClaimPriority, ClaimType } from 'app/layout/claim/claim';
 import { ClaimService } from 'app/layout/claim/claim.service';
 import { EmailService } from '../send-email/send-email.service';
 import { CurrencyPipe } from '@angular/common';
+import { SendEmailComponent } from '../send-email/send-email.component';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -1442,9 +1443,56 @@ export class PointOfSaleComponent implements OnInit {
             this.refresh();
           });
         break;
+      case 'send-email':
+        modalRef = this._modalService.open(SendEmailComponent, { size: 'lg', backdrop: 'static' });
+        if (this.transaction.company && this.transaction.company.emails) {
+          modalRef.componentInstance.emails = this.transaction.company.emails;
+        }
+        let labelPrint = this.transaction.type.name;
+        if (this.transaction.type.labelPrint) {
+          labelPrint = this.transaction.type.labelPrint;
+        }
+        modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(this.transaction.origin, 4)}-${this.transaction.letter}-${this.padNumber(this.transaction.number, 8)}`;
+        if (this.transaction.type.electronics) {
+          modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente` + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/invoice/${this.transaction._id}">Su comprobante</a>`
+        } else {
+          modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/others/${this.transaction._id}">Su comprobante</a>`
+        }
 
+        if (Config.country === 'MX') {
+          modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}.poscloud.com.ar:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number;
+        }
+
+        if (this.transaction.type.defectEmailTemplate) {
+
+          if (this.transaction.type.electronics) {
+            modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/invoice/${this.transaction._id}">Su comprobante</a>`
+          } else {
+            modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/others/${this.transaction._id}">Su comprobante</a>`
+          }
+
+          if (Config.country === 'MX') {
+            modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}.poscloud.com.ar:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number;
+          }
+        }
+
+        modalRef.result.then((result) => {
+          this.refresh();
+        }, (reason) => {
+          this.refresh();
+        });
+
+        break;
       default: ;
     }
+  }
+
+  public padNumber(n, length): string {
+
+    var n = n.toString();
+    while (n.length < length)
+      n = "0" + n;
+    return n;
   }
 
   public async validateElectronicTransactionAR(transaction: Transaction, state: TransactionState = TransactionState.Closed) {
@@ -1504,7 +1552,10 @@ export class PointOfSaleComponent implements OnInit {
                   database: this.config['database']
                 }
               }
-              this.saveClaim('ERROR FE AR' + moment().format('DD/MM/YYYY HH:mm') + " : " + msn, JSON.stringify(body));
+              this.saveClaim('ERROR FE AR ' + moment().format('DD/MM/YYYY HH:mm') + " : " + msn, JSON.stringify(body));
+            } else if (result.message) {
+              this.showMessage(result.message, 'info', true);
+              this.saveClaim('ERROR FE AR ' + moment().format('DD/MM/YYYY HH:mm') + " : " + "ERROR AL CONECTAR ", result.message);
             } else {
               transaction.number = result.number;
               transaction.CAE = result.CAE;
@@ -1513,7 +1564,19 @@ export class PointOfSaleComponent implements OnInit {
               await this.updateTransaction(transaction).then(
                 transaction => {
                   if (transaction) {
-                    this.refresh();
+                    if (this.transaction && this.transaction.type.printable) {
+                      this.refresh();
+                      if (this.transaction.type.defectPrinter) {
+                        this.printerSelected = this.printerSelected;
+                        this.openModal("print");
+                      } else {
+                        this.openModal("printers");
+                      }
+                    } else if (this.transaction && this.transaction.type.requestEmailTemplate) {
+                      this.openModal('send-email');
+                    } else {
+                      this.refresh();
+                    }
                   }
                 }
               );
@@ -1934,9 +1997,9 @@ export class PointOfSaleComponent implements OnInit {
     this.transaction = await this.getTransaction(transaction._id);
     let email: string;
     await this.getUsers({ company: { $oid: this.transaction.company._id } })
-    .then(users => {
-      if(users && users.length > 0) email = users[0].email;
-    });
+      .then(users => {
+        if (users && users.length > 0) email = users[0].email;
+      });
     if (this.transaction) {
       if (this.transaction.totalPrice > 0) {
         this.transaction.state = state;

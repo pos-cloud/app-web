@@ -1644,7 +1644,10 @@ export class AddSaleOrderComponent {
                                 database: this.config['database']
                             }
                         }
-                        this.saveClaim('ERROR FE AR' + moment().format('DD/MM/YYYY HH:mm') + " : " + msn, JSON.stringify(body));
+                        this.saveClaim('ERROR FE AR ' + moment().format('DD/MM/YYYY HH:mm') + " : " + msn, JSON.stringify(body));
+                    } else if (result.message) {
+                      this.showMessage(result.message, 'info', true);
+                      this.saveClaim('ERROR FE AR ' + moment().format('DD/MM/YYYY HH:mm') + " : " + "ERROR AL CONECTAR ", result.message);
                     } else {
                         this.transaction.number = result.number;
                         this.transaction.CAE = result.CAE;
@@ -3462,7 +3465,6 @@ export class AddSaleOrderComponent {
                 break;
         }
     }
-
 
     public padNumber(n, length): string {
 
