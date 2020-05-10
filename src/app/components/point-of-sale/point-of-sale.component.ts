@@ -1940,7 +1940,7 @@ export class PointOfSaleComponent implements OnInit {
       if (this.transaction.totalPrice > 0) {
         this.transaction.state = state;
         if (email && this.transaction.state.toString() === TransactionState.PaymentConfirmed.toString()) {
-          transaction.balance = 0;
+          this.transaction.balance = 0;
           this.sendEmail(
             `Pago confirmado en tu Pedido Número ${this.transaction.orderNumber}`,
             `Hola ${transaction.company.name} confirmamos el pago de tu compra.</br><b>Ya estamos preparando tu pedido, te avisamos cuando este en camino.</b>`,
