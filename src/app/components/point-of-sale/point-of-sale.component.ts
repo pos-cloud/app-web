@@ -1172,7 +1172,7 @@ export class PointOfSaleComponent implements OnInit {
           modalRef.componentInstance.transaction = this.transaction;
           modalRef.result.then((result) => {
             if (result.movementsOfCashes) {
-              this.changeStateOfTransaction(this.transaction, TransactionState.PaymentConfirmed);
+              this.changeStateOfTransaction(this.transaction, state);
             } else {
               this.refresh();
             }
