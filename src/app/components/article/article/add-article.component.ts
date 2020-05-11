@@ -239,9 +239,9 @@ export class AddArticleComponent implements OnInit {
     this.article = new Article();
     this.notes = new Array();
     this.tags = new Array();
+    this.getApplications();
     this.getCurrencies();
     this.getArticleTypes();
-    this.getApplications();
 
     const pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
@@ -1732,7 +1732,7 @@ export class AddArticleComponent implements OnInit {
     }
 
 
-    this._applicationService.getApplications(project, match, { _id: 1 }, {}).subscribe(
+    this._applicationService.getApplications(project, match, { name: 1 }, {}).subscribe(
       result => {
         if (result && result.applications) {
           this.applicationsCtrl = result.applications

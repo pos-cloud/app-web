@@ -2020,44 +2020,48 @@ export class PointOfSaleComponent implements OnInit {
 
     this.transaction = await this.getTransaction(transaction._id);
     let email: string;
-    await this.getUsers({ company: { $oid: this.transaction.company._id } })
-      .then(users => {
-        if (users && users.length > 0) email = users[0].email;
-      });
     if (this.transaction) {
       if (this.transaction.totalPrice > 0) {
         this.transaction.state = state;
-        if (email && this.transaction.state.toString() === TransactionState.PaymentConfirmed.toString()) {
-          this.transaction.balance = 0;
-          this.sendEmail(
-            `Pago confirmado en tu Pedido Número ${this.transaction.orderNumber}`,
-            `Hola ${transaction.company.name} confirmamos el pago de tu compra.</br><b>Ya estamos preparando tu pedido, te avisamos cuando este en camino.</b>`,
-            email);
-        }
-        if (email && this.transaction.state.toString() === TransactionState.PaymentDeclined.toString()) {
-          this.transaction.balance = 0;
-          this.sendEmail(
-            `Pago rechazado en tu Pedido Número ${this.transaction.orderNumber}`,
-            `Hola ${transaction.company.name} rechazamos el pago de tu compra.</br><b>Lamentamos el incoveniente por no poder finalizar la compra. Puedes realizar de nuevo el pedido cuando desees, te esperamos.</b>`,
-            email);
-        }
-        if (email && this.transaction.state.toString() === TransactionState.Sent.toString()) {
-          this.sendEmail(
-            `Tu Pedido Número ${this.transaction.orderNumber} está en camino.`,
-            `${transaction.company.name} realizamos el envío de tu pedido.</br>
-            <b>Ya se encuentra en camino a
-            ${this.transaction.deliveryAddress.name} ${this.transaction.deliveryAddress.number},
-            ${this.transaction.deliveryAddress.city},
-            ${this.transaction.deliveryAddress.state}.
-            </b>`,
-            email);
-        }
-        if (email && this.transaction.state.toString() === TransactionState.Closed.toString()) {
-          this.sendEmail(
-            `Tu Pedido Número ${this.transaction.orderNumber} ha sido entregado.`,
-            `${transaction.company.name} hemos entregado tu pedido.</br>
-            <b>Gracias por elegirnos. ¡Te esperamos pronto!</b>`,
-            email);
+        if(this.transaction.type.allowAPP) {
+          if (this.transaction.company) {
+            await this.getUsers({ company: { $oid: this.transaction.company._id } })
+              .then(users => {
+                if (users && users.length > 0) email = users[0].email;
+              });
+          }
+          if (email && this.transaction.state.toString() === TransactionState.PaymentConfirmed.toString()) {
+            this.transaction.balance = 0;
+            this.sendEmail(
+              `Pago confirmado en tu Pedido Número ${this.transaction.orderNumber}`,
+              `Hola ${transaction.company.name} confirmamos el pago de tu compra.</br><b>Ya estamos preparando tu pedido, te avisamos cuando este en camino.</b>`,
+              email);
+          }
+          if (email && this.transaction.state.toString() === TransactionState.PaymentDeclined.toString()) {
+            this.transaction.balance = 0;
+            this.sendEmail(
+              `Pago rechazado en tu Pedido Número ${this.transaction.orderNumber}`,
+              `Hola ${transaction.company.name} rechazamos el pago de tu compra.</br><b>Lamentamos el incoveniente por no poder finalizar la compra. Puedes realizar de nuevo el pedido cuando desees, te esperamos.</b>`,
+              email);
+          }
+          if (email && this.transaction.state.toString() === TransactionState.Sent.toString()) {
+            this.sendEmail(
+              `Tu Pedido Número ${this.transaction.orderNumber} está en camino.`,
+              `${transaction.company.name} realizamos el envío de tu pedido.</br>
+              <b>Ya se encuentra en camino a
+              ${this.transaction.deliveryAddress.name} ${this.transaction.deliveryAddress.number},
+              ${this.transaction.deliveryAddress.city},
+              ${this.transaction.deliveryAddress.state}.
+              </b>`,
+              email);
+          }
+          if (email && this.transaction.state.toString() === TransactionState.Closed.toString()) {
+            this.sendEmail(
+              `Tu Pedido Número ${this.transaction.orderNumber} ha sido entregado.`,
+              `${transaction.company.name} hemos entregado tu pedido.</br>
+              <b>Gracias por elegirnos. ¡Te esperamos pronto!</b>`,
+              email);
+          }
         }
         await this.updateTransaction(this.transaction).then(
           transaction => {
