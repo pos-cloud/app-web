@@ -1444,6 +1444,30 @@ export class PointOfSaleComponent implements OnInit {
           });
         break;
       case 'send-email':
+
+        if (this.transaction.type.readLayout) {
+            modalRef = this._modalService.open(PrintTransactionTypeComponent)
+            modalRef.componentInstance.transactionId = this.transaction._id;
+            modalRef.componentInstance.source = "mail";
+        } else {
+            modalRef = this._modalService.open(PrintComponent);
+            modalRef.componentInstance.company = this.transaction.company;
+            modalRef.componentInstance.transactionId = this.transaction._id;
+            modalRef.componentInstance.typePrint = 'invoice';
+            modalRef.componentInstance.source = "mail";
+        }
+        if (this.transaction.type.defectPrinter) {
+            modalRef.componentInstance.printer = this.transaction.type.defectPrinter;
+        } else {
+            if (this.printers && this.printers.length > 0) {
+                for (let printer of this.printers) {
+                    if (printer.printIn === PrinterPrintIn.Counter) {
+                        modalRef.componentInstance.printer = printer;
+                    }
+                }
+            }
+        }
+        
         modalRef = this._modalService.open(SendEmailComponent, { size: 'lg', backdrop: 'static' });
         if (this.transaction.company && this.transaction.company.emails) {
           modalRef.componentInstance.emails = this.transaction.company.emails;
