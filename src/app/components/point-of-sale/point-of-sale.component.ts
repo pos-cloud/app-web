@@ -78,7 +78,7 @@ export class PointOfSaleComponent implements OnInit {
   ];
   public originsToFilter: number[];
   public transactionTypes: TransactionType[];
-  public transactionMovement: TransactionMovement;
+  public transactionMovement: TransactionMovement = TransactionMovement.Sale;
   public userType: string;
   public propertyTerm: string;
   public orderTerm: string[] = ['startDate'];
@@ -1467,7 +1467,7 @@ export class PointOfSaleComponent implements OnInit {
                 }
             }
         }
-        
+
         modalRef = this._modalService.open(SendEmailComponent, { size: 'lg', backdrop: 'static' });
         if (this.transaction.company && this.transaction.company.emails) {
           modalRef.componentInstance.emails = this.transaction.company.emails;
