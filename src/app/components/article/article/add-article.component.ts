@@ -673,6 +673,8 @@ export class AddArticleComponent implements OnInit {
         .split('“').join('')
         .split('”').join('')
         .split('?').join('')
+        .split('/').join('-')
+        .split('\\').join('-')
         .split('¿').join('')
         .split('!').join('')
         .split('¡').join('')
@@ -841,7 +843,6 @@ export class AddArticleComponent implements OnInit {
             }
           }
         }
-
         this.article.code = this.padString(code, this.config.article.code.validators.maxLength);
 
         this.setValuesForm();
@@ -1402,6 +1403,7 @@ export class AddArticleComponent implements OnInit {
     if (!this.readonly) {
       this.loading = true;
       this.loadPosDescription();
+      this.loadURL();
       this.article = this.articleForm.value;
       if (this.articleForm.value.make === '') {
         this.article.make = null

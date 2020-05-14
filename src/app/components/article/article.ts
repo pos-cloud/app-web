@@ -326,6 +326,16 @@ export let attributes = [
         required: false,
     },
     {
+        name: 'url',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+    },
+    {
         name: 'picture',
         visible: false,
         disabled: false,
