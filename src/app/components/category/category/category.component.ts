@@ -105,6 +105,7 @@ export class CategoryComponent implements OnInit {
     }
 
     public getCategories(): void {
+        
         this.loading = true;
 
         let project = {
@@ -146,7 +147,8 @@ export class CategoryComponent implements OnInit {
             'ecommerceEnabled': [this.category.ecommerceEnabled, []],
             'isRequiredOptional': [this.category.isRequiredOptional, []],
             'parent': [this.category.parent, []],
-            'applications': this._fb.array([])
+            'applications': this._fb.array([]),
+            'favourite' : [this.category.favourite,[]]
         });
 
         this.categoryForm.valueChanges
@@ -221,7 +223,8 @@ export class CategoryComponent implements OnInit {
             'visibleOnPurchase': this.category.visibleOnPurchase,
             'ecommerceEnabled': this.category.ecommerceEnabled,
             'isRequiredOptional': this.category.isRequiredOptional,
-            'parent': parent
+            'parent': parent,
+            'favourite': this.category.favourite
         });
 
         if(this.applicationsCtrl && this.applicationsCtrl.length > 0){
@@ -270,48 +273,53 @@ export class CategoryComponent implements OnInit {
 
         this.loading = true;
 
-        this._categoryService.saveCategory(this.category).subscribe(
-            result => {
-                if (!result.category) {
-                    if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                    this.loading = false;
-                } else {
-                    this.category = result.category;
-                    if (this.filesToUpload) {
-                        this._categoryService.makeFileRequest(this.category._id, this.filesToUpload)
-                            .then(
-                                (result) => {
-                                    let resultUpload;
-                                    resultUpload = result;
-                                    this.category.picture = resultUpload.category.picture;
-                                    if (this.category.picture && this.category.picture !== 'default.jpg') {
-                                        this.imageURL = Config.apiURL + 'get-image-category/' + this.category.picture + "/" + Config.database;
-                                    } else {
-                                        this.imageURL = './../../../assets/img/default.jpg';
-                                    }
-                                    this.showMessage("El rubro se ha añadido con éxito.", 'success', false);
-                                    this.category = new Category();
-                                    this.filesToUpload = null;
-                                    this.buildForm();
-                                },
-                                (error) => {
-                                    this.showMessage(error, 'danger', false);
-                                }
-                            );
+        if (this.isValid()) {
+            this._categoryService.saveCategory(this.category).subscribe(
+                result => {
+                    if (!result.category) {
+                        if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+                        this.loading = false;
                     } else {
-                        this.showMessage("El rubro se ha añadido con éxito.", 'success', false);
-                        this.category = new Category();
-                        this.filesToUpload = null;
-                        this.buildForm();
+                        this.category = result.category;
+                        if (this.filesToUpload) {
+                            this._categoryService.makeFileRequest(this.category._id, this.filesToUpload)
+                                .then(
+                                    (result) => {
+                                        let resultUpload;
+                                        resultUpload = result;
+                                        this.category.picture = resultUpload.category.picture;
+                                        if (this.category.picture && this.category.picture !== 'default.jpg') {
+                                            this.imageURL = Config.apiURL + 'get-image-category/' + this.category.picture + "/" + Config.database;
+                                        } else {
+                                            this.imageURL = './../../../assets/img/default.jpg';
+                                        }
+                                        this.showMessage("El rubro se ha añadido con éxito.", 'success', false);
+                                        this.category = new Category();
+                                        this.filesToUpload = null;
+                                        this.buildForm();
+                                    },
+                                    (error) => {
+                                        this.showMessage(error, 'danger', false);
+                                    }
+                                );
+                        } else {
+                            this.showMessage("El rubro se ha añadido con éxito.", 'success', false);
+                            this.category = new Category();
+                            this.filesToUpload = null;
+                            this.buildForm();
+                        }
                     }
+                    this.loading = false;
+                },
+                error => {
+                    this.showMessage(error._body, 'danger', false);
+                    this.loading = false;
                 }
-                this.loading = false;
-            },
-            error => {
-                this.showMessage(error._body, 'danger', false);
-                this.loading = false;
-            }
-        );
+            );
+        }else {
+            this.loading = false;
+        }
+
     }
 
     public updateCategory(): void {
@@ -380,6 +388,11 @@ export class CategoryComponent implements OnInit {
         if (this.category.parent != null && (this.category.parent.toString() === this.category._id || this.category._id === this.category.parent._id)) {
             this.showMessage("No puede seleccionar la misma categoria como padre", "danger", true)
             return false;
+        }
+        console.log(this.category);
+        if(this.category.favourite && this.category.parent!= null){
+            this.showMessage("No puede seleccionar categoria padre como destacado", "danger", true)
+            return false; 
         }
         return true
     }

@@ -14,6 +14,7 @@ export class Category {
     public visibleOnPurchase: boolean = true;
     public ecommerceEnabled: boolean = false;
     public applications : Application[];
+    public favourite : boolean = false;
     public isRequiredOptional: boolean = false;
     public parent: Category;
     public creationUser: User;
@@ -97,6 +98,16 @@ export let attributes = [
     },
     {
         name: 'ecommerceEnabled',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'boolean',
+        project: null,
+        align: 'left',
+        required: false,
+    },
+    {
+        name: 'favourite',
         visible: true,
         disabled: false,
         filter: true,
