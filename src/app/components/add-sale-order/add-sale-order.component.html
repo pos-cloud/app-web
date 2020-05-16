@@ -48,7 +48,7 @@
 					<b> Lista de Precio:</b>
 					<span *ngIf="transaction.company.priceList.name">{{transaction.company.priceList.name}}</span>
 				</div>
-				<div class="col-md-2" *ngIf="transactionMovement && transactionMovement !=='Stock'">
+				<div class="col-md-2" *ngIf="transactionMovement && transactionMovement !=='Stock'" (click)="openModal('current-account')" >
 					<b *ngIf="transactionMovement === 'Venta'">Cliente: </b>
 					<b *ngIf="transactionMovement === 'Compra'">Proveedor: </b>
 					<span *ngIf="!transaction.company && transactionMovement === 'Venta'">Consumidor final</span>

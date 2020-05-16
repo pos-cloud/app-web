@@ -1757,6 +1757,11 @@ export class AddSaleOrderComponent {
         let modalRef;
 
         switch (op) {
+            case 'current-account':
+                if(this.transaction.company && this.transaction.company._id){
+                    this._router.navigate([]).then(result => {  window.open( `/#/admin/cuentas-corrientes?companyId=${this.transaction.company._id}&companyType=${this.transaction.company.type}`, '_blank'); });
+                }
+                break;
             case 'add-article':
                 this.display = false;
                 modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
