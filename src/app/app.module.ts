@@ -262,22 +262,24 @@ import { TaxComponent } from './components/tax/tax/tax.component';
 import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.component';
 import { TaxService } from './components/tax/tax.service';
 import { AddArticleFieldsComponent } from './components/article/add-article-fields/add-article-fields.component';
-import { ApplicationComponent } from './components/application/application/application.component';
-import { ListApplicationsComponent } from './components/application/list-applications/list-applications.component';
-import { ApplicationService } from './components/application/application.service';
 import { ProgressbarModule } from './components/progressbar/progressbar.module';
 import { DirectivesModule } from './main/directives/directives.module';
 import { PipesModule } from './main/pipes/pipes.module';
 import { ExportersModule } from './components/export/exporters.module';
 import { DatatableModule } from './components/datatable/datatable.module';
 import { ListCategoriesPosComponent } from './components/category/list-categories-pos/list-categories-pos.component';
+import { ApplicationModule } from './components/application/application.module';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
 //const configSocket: SocketIoConfig = { url: "http://192.168.0.88:300", options: {transports: ['websocket']} }; // PROD
 
-export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http);
+// export function HttpLoaderFactory(http: HttpClient) {
+//   return new TranslateHttpLoader(http);
+// }
+
+export function createTranslateLoader(http: HttpClient) {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 
 @NgModule({
@@ -454,8 +456,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ShipmentMethodComponent,
     ListShipmentMethodComponent,
     SelectShipmentMethodComponent,
-    ApplicationComponent,
-    ListApplicationsComponent,
     ListCategoriesPosComponent
   ],
   entryComponents: [
@@ -614,7 +614,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     SelectChecksComponent,
     ShipmentMethodComponent,
     SelectShipmentMethodComponent,
-    ApplicationComponent
   ],
   imports: [
     BrowserModule,
@@ -631,7 +630,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
+        useFactory: (createTranslateLoader),
         deps: [HttpClient]
       }
     }),
@@ -646,7 +645,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     DirectivesModule,
     PipesModule,
     ExportersModule,
-    DatatableModule
+    DatatableModule,
+    ApplicationModule
   ],
   providers: [
     NgbActiveModal,
@@ -712,8 +712,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ResourceService,
     GalleryService,
     EmailTemplateService,
-    ShipmentMethodService,
-    ApplicationService
+    ShipmentMethodService
   ],
   bootstrap: [AppComponent]
 })

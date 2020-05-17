@@ -30,13 +30,13 @@ import { Branch } from 'app/components/branch/branch';
 import { ShipmentMethodService } from 'app/components/shipment-method/shipment-method.service';
 import { ShipmentMethod } from 'app/components/shipment-method/shipment-method';
 import { ApplicationService } from 'app/components/application/application.service';
-import { Application } from 'app/components/application/application';
+import { Application } from 'app/components/application/application.model';
 
 @Component({
   selector: 'app-transaction-type',
   templateUrl: './transaction-type.component.html',
   styleUrls: ['./transaction-type.component.css'],
-  providers: [NgbAlertConfig]
+  providers: [NgbAlertConfig, ApplicationService]
 })
 
 export class TransactionTypeComponent implements OnInit {
@@ -213,7 +213,7 @@ export class TransactionTypeComponent implements OnInit {
 
     this.loading = true;
 
-    this._applicationService.getApplications(
+    this._applicationService.getAll(
       { name: 1, operationType: 1 }, // PROJECT
       { operationType: { $ne: 'D' } }, // MATCH
       { name: 1 }, // SORT

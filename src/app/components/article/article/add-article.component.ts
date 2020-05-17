@@ -46,15 +46,14 @@ import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operato
 import { Observable } from 'rxjs';
 import { ConfigService } from 'app/components/config/config.service';
 import { TaxClassification } from 'app/components/tax/tax';
-import { async } from '@angular/core/testing';
-import { Application } from 'app/components/application/application';
+import { Application } from 'app/components/application/application.model';
 import { ApplicationService } from 'app/components/application/application.service';
 
 @Component({
   selector: 'app-add-article',
   templateUrl: './add-article.component.html',
   styleUrls: ['./add-article.component.scss'],
-  providers: [NgbAlertConfig, DecimalPipe],
+  providers: [NgbAlertConfig, DecimalPipe, ApplicationService],
   encapsulation: ViewEncapsulation.None
 })
 
@@ -1733,8 +1732,7 @@ export class AddArticleComponent implements OnInit {
       "operationType": { "$ne": "D" }
     }
 
-
-    this._applicationService.getApplications(project, match, { name: 1 }, {}).subscribe(
+    this._applicationService.getAll(project, match, { name: 1 }, {}).subscribe(
       result => {
         if (result && result.applications) {
           this.applicationsCtrl = result.applications

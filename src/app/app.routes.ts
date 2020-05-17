@@ -536,11 +536,6 @@ export const _routes: Routes = [
 		canActivate: [AuthGuard, LicenseGuard]
 	},
 	{
-		path: 'admin/aplicaciones',
-		component: ListApplicationsComponent,
-		canActivate: [AuthGuard, LicenseGuard]
-	},
-	{
 		path: 'admin/currency-values',
 		component: ListCurrencyValuesComponent,
 		canActivate: [AuthGuard, LicenseGuard]

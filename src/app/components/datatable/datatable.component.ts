@@ -144,15 +144,15 @@ export class DatatableComponent {
         this.itemsPerPage,
         this.sort
       ).then(result => {
-        if (result.result) {
-          if (result.result.length > 0) {
+        if (result && result[0] && result[0].items) {
+          if (result[0].items.length > 0) {
             if (this.itemsPerPage === 0) {
-              this.exportExcelComponent.items = result.result[0].items;
+              this.exportExcelComponent.items = result[0].items;
               this.exportExcelComponent.export();
               this.itemsPerPage = 10;
             } else {
-              this.items = result.result[0].items;
-              this.totalItems = result.result[0].count;
+              this.items = result[0].items;
+              this.totalItems = result[0].count;
             }
           } else {
             this.items = [];
