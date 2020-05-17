@@ -271,6 +271,7 @@ import { PipesModule } from './main/pipes/pipes.module';
 import { ExportersModule } from './components/export/exporters.module';
 import { DatatableModule } from './components/datatable/datatable.module';
 import { ListCategoriesPosComponent } from './components/category/list-categories-pos/list-categories-pos.component';
+import { JsonDiffPipe } from './main/pipes/json-diff';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -713,7 +714,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     GalleryService,
     EmailTemplateService,
     ShipmentMethodService,
-    ApplicationService
+    ApplicationService,
+    JsonDiffPipe
   ],
   bootstrap: [AppComponent]
 })

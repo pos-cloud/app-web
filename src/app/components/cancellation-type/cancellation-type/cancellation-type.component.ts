@@ -104,6 +104,7 @@ export class CancellationTypeComponent implements OnInit {
     if (!this.cancellationType._id) { this.cancellationType._id = ''; }
     if (this.cancellationType.modifyBalance === undefined) { this.cancellationType.modifyBalance = true; }
     if (this.cancellationType.requestAutomatic === undefined) { this.cancellationType.requestAutomatic = false; }
+    if (this.cancellationType.requestCompany === undefined) { this.cancellationType.requestCompany = true; }
 
     let origin;
     if (!this.cancellationType.origin) {
@@ -132,7 +133,8 @@ export class CancellationTypeComponent implements OnInit {
       'origin': origin,
       'destination': destination,
       'modifyBalance': this.cancellationType.modifyBalance,
-      'requestAutomatic': this.cancellationType.requestAutomatic
+      'requestAutomatic': this.cancellationType.requestAutomatic,
+      'requestCompany' : this.cancellationType.requestCompany
     };
     this.cancellationTypeForm.setValue(values);
   }
@@ -210,7 +212,11 @@ export class CancellationTypeComponent implements OnInit {
       'requestAutomatic': [this.cancellationType.requestAutomatic, [
           Validators.required
         ]
+      ],
+      'requestCompany': [this.cancellationType.requestCompany, [
+        Validators.required
       ]
+    ]
     });
 
     this.cancellationTypeForm.valueChanges

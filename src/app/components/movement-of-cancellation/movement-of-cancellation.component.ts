@@ -206,7 +206,8 @@ export class MovementOfCancellationComponent implements OnInit {
             "origin._id": 1,
             "destination._id": 1,
             "operationType": 1,
-            "modifyBalance": 1
+            "modifyBalance": 1,
+            "requestCompany" : 1
         };
 
         this._cancellationTypeService.getCancellationTypes(
@@ -235,6 +236,7 @@ export class MovementOfCancellationComponent implements OnInit {
     async getTransactions() {
 
         this.loading = true;
+        let requestCompany : Boolean = false
 
         /// ORDENAMOS LA CONSULTA
         let sortAux;
@@ -260,6 +262,9 @@ export class MovementOfCancellationComponent implements OnInit {
             match += `"$or": [`
             for (let index = 0; index < this.cancellationTypes.length; index++) {
                 match += `{ "type._id"  : "${this.cancellationTypes[index].origin._id}"}`;
+                if(this.cancellationTypes[index].requestCompany){
+                    requestCompany = true;
+                }
                 if (index < this.cancellationTypes.length) {
                     match += ','
                 }
@@ -270,9 +275,18 @@ export class MovementOfCancellationComponent implements OnInit {
             match += `],`
         } else {
             match += `{ "type._id"  : "${this.cancellationTypes[0].origin._id}"}`
+            if(this.cancellationTypes[0].requestCompany){
+                requestCompany = true;
+            }
         }
 
-        match += `"operationType": { "$ne": "D" } , "state" : "Cerrado" , "company._id":  "${this.transactionDestination.company._id}", "balance": { "$gt": 0 } }`;
+        console.log(requestCompany)
+
+        if(requestCompany){
+            match += `"company._id":  "${this.transactionDestination.company._id}",`
+        }
+
+        match += `"operationType": { "$ne": "D" } , "state" : "Cerrado", "balance": { "$gt": 0 } }`;
 
         match = JSON.parse(match);
 

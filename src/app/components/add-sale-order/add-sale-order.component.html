@@ -129,7 +129,6 @@
 				</div>
 				<div class="col-md-3" *ngIf=" showButtonCancelation &&
                                       transaction &&
-                                      transaction.company &&
                                       transaction.totalPrice === 0">
 					<div class="btn-group">
 						<button type="button" class="btn btn-outline-light" (click)="openModal('list-cancellations')">
