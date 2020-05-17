@@ -2063,14 +2063,7 @@ export class PointOfSaleComponent implements OnInit {
               email);
           }
         }
-        await this.updateTransaction(this.transaction).then(
-          transaction => {
-            if (this.transaction) {
-              this.transaction = transaction;
-              this.refresh();
-            }
-          }
-        );
+        this.finishTransaction(state);
       } else {
         this.showMessage("No se puede cambiar de estado una transacción con monto menor o igual $0,00.", "info", true);
       }
