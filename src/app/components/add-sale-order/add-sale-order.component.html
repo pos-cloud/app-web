@@ -384,8 +384,8 @@
 			</div>
 			<div class="row" *ngIf="display">
 				<div class="col-md-12">
-					<app-list-categories (eventSelectCategory)="showArticles($event)"
-						[transactionMovement]="transaction.type.transactionMovement"></app-list-categories>
+					<app-list-categories-pos (eventSelectCategory)="showArticles($event)"
+						[transactionMovement]="transaction.type.transactionMovement"></app-list-categories-pos>
 				</div>
 			</div>
 		</div>

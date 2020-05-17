@@ -54,7 +54,6 @@ import { CancellationTypeService } from 'app/components/cancellation-type/cancel
 import { CurrencyService } from 'app/components/currency/currency.service';
 import { Currency } from 'app/components/currency/currency';
 import { CancellationType } from 'app/components/cancellation-type/cancellation-type';
-import { ListCategoriesComponent } from '../category/list-categories/list-categories.component';
 import { ImportComponent } from '../import/import.component';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { ClaimService } from 'app/layout/claim/claim.service';
@@ -80,6 +79,7 @@ import { SelectShipmentMethodComponent } from '../shipment-method/select-shipmen
 import { SelectCompanyComponent } from '../company/select-company/select-company.component';
 import { TaxBase, TaxClassification } from '../tax/tax';
 import { TaxService } from '../tax/tax.service';
+import { ListCategoriesPosComponent } from '../category/list-categories-pos/list-categories-pos.component';
 
 @Component({
     selector: 'app-add-sale-order',
@@ -134,7 +134,7 @@ export class AddSaleOrderComponent {
     public userCountry: string = 'AR';
     public lastQuotation: number = 1;
     @ViewChild(ListArticlesPosComponent, { static: false }) listArticlesComponent: ListArticlesPosComponent;
-    @ViewChild(ListCategoriesComponent, { static: false }) listCategoriesComponent: ListCategoriesComponent;
+    @ViewChild(ListCategoriesPosComponent, { static: false }) listCategoriesComponent: ListCategoriesPosComponent;
     public categorySelected: Category;
     public totalTaxesAmount: number = 0;
     public filtersTaxClassification: TaxClassification[];
