@@ -11,7 +11,7 @@ import * as moment from 'moment';
 import { Currency } from '../currency/currency';
 import { Company } from '../company/company';
 import { Classification } from '../classification/classification';
-import { Application } from '../application/application';
+import { Application } from '../application/application.model';
 
 export class Article {
 

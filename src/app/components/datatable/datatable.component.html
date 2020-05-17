@@ -70,9 +70,9 @@
               <button type="button" class="btn btn-primary btn-sm" (click)="emitEvent('update', item)" [disabled]="loading"
                 title="{{'update' | translate | capitalize}}"><i class="fa fa-pencil"></i>
               </button>
-              <button type="button" class="btn btn-danger btn-sm" (click)="emitEvent('delete', item)" [disabled]="loading"
+              <!-- <button type="button" class="btn btn-danger btn-sm" (click)="emitEvent('delete', item)" [disabled]="loading"
                 title="{{'delete' | translate | capitalize}}"><i class="fa fa-trash-o"></i>
-              </button>
+              </button> -->
             </td>
             <ng-container *ngFor="let column of columns">
               <td *ngIf="column.visible && column.datatype !== 'boolean'" [attr.align]="column.align">

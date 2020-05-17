@@ -1,4 +1,8 @@
 {
+  "add": "Agregar",
+  "refresh": "Actualizar",
+  "columns": "Columnas",
+  "applications": "Applicaciones",
 	"address": "Dirección",
 	"addressNumber": "Número",
 	"allowMeasure": "¿Es pesable?",
