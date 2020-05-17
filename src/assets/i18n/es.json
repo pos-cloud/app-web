@@ -217,5 +217,7 @@
     "realStock": "Stock",
     "receiver" : "Destinatario",
 	"Preparando": "En Preparación",
-	"Entregado": "Para Retirar"
+  "Entregado": "Para Retirar",
+  "applications": "Aplicaciones",
+  "applicationsName": "Aplicaciones"
 }
