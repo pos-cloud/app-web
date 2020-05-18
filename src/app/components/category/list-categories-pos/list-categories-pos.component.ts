@@ -43,8 +43,6 @@ export class ListCategoriesPosComponent implements OnInit {
 	) { }
 
 	ngOnInit(): void {
-
-        console.log(this.areCategoriesVisible);
 		this.database = Config.database;
 		this.getCategories();
 	}

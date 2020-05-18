@@ -388,7 +388,6 @@ export class CategoryComponent implements OnInit {
       this.showMessage("No puede seleccionar la misma categoria como padre", "danger", true)
       return false;
     }
-    console.log(this.category);
     if (this.category.favourite && this.category.parent != null) {
       this.showMessage("No puede seleccionar categoria padre como destacado", "danger", true)
       return false;
