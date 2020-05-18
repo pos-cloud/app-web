@@ -15,7 +15,7 @@ import { Transport } from '../transport/transport';
 import { PriceList } from '../price-list/price-list';
 import { ShipmentMethod } from '../shipment-method/shipment-method';
 import { Employee } from 'app/components/employee/employee';
-import { Address } from '../address/address';
+import { Address } from '../address/address.model';
 
 export class Transaction {
 
