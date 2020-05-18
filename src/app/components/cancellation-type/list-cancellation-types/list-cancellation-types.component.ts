@@ -38,6 +38,7 @@ export class ListCancellationTypeComponent implements OnInit {
     "destination.operationType",
     "modifyBalance",
     "requestAutomatic",
+    "requestCompany",
     "operationType",
   ];
   public filters: any[];
