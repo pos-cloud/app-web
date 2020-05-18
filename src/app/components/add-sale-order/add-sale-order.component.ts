@@ -1759,7 +1759,7 @@ export class AddSaleOrderComponent {
         switch (op) {
             case 'current-account':
                 if(this.transaction.company && this.transaction.company._id){
-                    this._router.navigate([]).then(result => {  window.open( `/#/admin/cuentas-corrientes?companyId=${this.transaction.company._id}&companyType=${this.transaction.company.type}`, '_blank'); });
+                    window.open( `/#/admin/cuentas-corrientes?companyId=${this.transaction.company._id}&companyType=${this.transaction.company.type}`, '_blank');
                 }
                 break;
             case 'add-article':
