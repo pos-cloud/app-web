@@ -268,7 +268,6 @@ import { PipesModule } from './main/pipes/pipes.module';
 import { ExportersModule } from './components/export/exporters.module';
 import { DatatableModule } from './components/datatable/datatable.module';
 import { ListCategoriesPosComponent } from './components/category/list-categories-pos/list-categories-pos.component';
-import { JsonDiffPipe } from './main/pipes/json-diff';
 import { ApplicationModule } from './components/application/application.module';
 import { ApplicationService } from './components/application/application.service';
 
@@ -716,7 +715,6 @@ export function createTranslateLoader(http: HttpClient) {
     EmailTemplateService,
     ShipmentMethodService,
     ApplicationService,
-    JsonDiffPipe,
     ShipmentMethodService
   ],
   bootstrap: [AppComponent]

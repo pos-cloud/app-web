@@ -28,7 +28,10 @@ import { JsonDiffPipe } from './json-diff';
 		RoundNumberPipe,
     TotalPipe,
     TranslateMePipe
-	]
+  ],
+  providers: [
+    JsonDiffPipe
+  ]
 })
 
 export class PipesModule { }
