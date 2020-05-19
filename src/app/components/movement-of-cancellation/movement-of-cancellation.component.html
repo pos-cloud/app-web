@@ -164,8 +164,8 @@
 					<td>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
 					<td>{{transaction.balance | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
 				</tr>
-				<tr align="center" *ngIf="totalItems === 0 && !loading">
-					<td colspan="16">No se encontraron transacciones para cancelar</td>
+				<tr align="center" *ngIf="transactions.length === 0 && !loading">
+					<td colspan="16">No se encontraron transacciones</td>
 				</tr>
 			</tbody>
 		</table>

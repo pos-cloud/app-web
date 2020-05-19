@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ViewEncapsulation, EventEmitter } from '@angu
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TransactionMovement, Movements } from '../transaction-type/transaction-type'
-import { Transaction } from '../transaction/transaction'
+import { Transaction, TransactionState } from '../transaction/transaction'
 
 //service
 import { CancellationTypeService } from "../cancellation-type/cancellation-type.service"
@@ -145,11 +145,10 @@ export class MovementOfCancellationComponent implements OnInit {
                     } else {
                         transaction = await this.getTransaction(result.movementsOfCancellations[index].transactionOrigin)
                     }
-                    if (transaction) {
+                    if (transaction && transaction.state === TransactionState.Closed) {
                         transaction.balance = result.movementsOfCancellations[index].balance;
                         this.transactions.push(transaction);
                     } else {
-                        this.showMessage("No se encontraron transactiones relacionadas", 'danger', false);
                         this.totalItems = 0;
                         this.loading = false;
                     }
