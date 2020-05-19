@@ -63,13 +63,11 @@ export class AddTransactionComponent implements OnInit {
     public readonly: boolean = false;
     public states: TransactionState[] = [
         TransactionState.Open,
-        TransactionState.Canceled,
         TransactionState.Closed,
         TransactionState.Packing,
         TransactionState.Delivered,
         TransactionState.Sent,
         TransactionState.Preparing,
-        TransactionState.Pending
     ];
     public companyName: string = "Consumidor Final";
     public transactionDate: string;

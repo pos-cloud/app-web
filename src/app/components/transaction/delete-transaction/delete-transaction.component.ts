@@ -20,7 +20,6 @@ export class DeleteTransactionComponent {
 
   public transaction: Transaction;
   @Input() transactionId: string;
-  @Input() op: string = "cancel";
   public alertMessage: string = "";
   public focusEvent = new EventEmitter<boolean>();
   public loading: boolean = false;
@@ -67,42 +66,12 @@ export class DeleteTransactionComponent {
     );
   }
 
-  public cancelTransaction(): void {
-
-    this.loading = true;
-
-    if (!this.transaction.CAE &&
-        !this.transaction.SATStamp && 
-        !this.transaction.stringSAT &&
-        !this.transaction.CFDStamp) {
-      if(!this.transaction.endDate) {
-        this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-        this.transaction.VATPeriod = moment().format('YYYYMM');
-        this.transaction.expirationDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-      }
-      this.transaction.state = TransactionState.Canceled;
-      
-      this._transactionService.updateTransaction(this.transaction).subscribe(
-        result => {
-          this.activeModal.close("delete_close");
-          this.loading = false;
-        },
-        error => {
-          this.showMessage(error._body, "danger", false);
-          this.loading = false;
-        }
-      );
-    } else {
-      this.showMessage('No se puede anular una transacción electrónica certificada', 'info', true);
-    }
-  }
-
   public deleteTransaction(): void {
 
     this.loading = true;
 
     if (!this.transaction.CAE &&
-      !this.transaction.SATStamp && 
+      !this.transaction.SATStamp &&
       !this.transaction.stringSAT &&
       !this.transaction.CFDStamp) {
       this._transactionService.deleteTransaction(this.transaction._id).subscribe(
