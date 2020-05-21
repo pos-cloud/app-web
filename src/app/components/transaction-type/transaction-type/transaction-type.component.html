@@ -962,7 +962,7 @@
 									</div>
 								</div>
 								<div class="row">
-									<div class="form-group col-md-6">
+									<div class="form-group col-md-4">
 										<label for="printSign" class="control-label">Imprime Firma</label>
 										<div class="input-group">
 											<select class="form-control" formControlName="printSign">
@@ -978,7 +978,7 @@
 											</button>
 										</div>
 									</div>
-									<div class="form-group col-md-6">
+									<div class="form-group col-md-4">
 										<label for="posKitchen" class="control-label">Imprime Voucher/Bar/Cocina</label>
 										<div class="input-group">
 											<select class="form-control" formControlName="posKitchen">
@@ -990,6 +990,22 @@
 											<button type="button" class="btn btn-light" placement="right"
 												popoverClass="popover-class"
 												ngbPopover="¿Se imprimen los productos configurados como Imprime en Bar/Cocina/Voucher?">
+												<b>?</b>
+											</button>
+										</div>
+                                    </div>
+                                    <div class="form-group col-md-4">
+										<label for="printOrigin" class="control-label">Imprime Documentos Cancelados?</label>
+										<div class="input-group">
+											<select class="form-control" formControlName="printOrigin">
+												<option value="true" [selected]="transactionType.printOrigin"
+													[disabled]="readonly">Si</option>
+												<option value="false" [selected]="!transactionType.printOrigin">No
+												</option>
+											</select>
+											<button type="button" class="btn btn-light" placement="right"
+												popoverClass="popover-class"
+												ngbPopover="¿Se imprimen los documentos que se cancelaron?">
 												<b>?</b>
 											</button>
 										</div>

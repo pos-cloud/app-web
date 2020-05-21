@@ -119,7 +119,9 @@ export class PrintComponent implements OnInit {
     public pathLocation: string[];
     public alertMessage: string = '';
     public branchImagen;
+    public printOrigin;
     public shiftClosingTransaction;
+    public movementsOfCancellation: MovementOfCancellation[];
     public shiftClosingMovementOfArticle;
     public shiftClosingMovementOfCash;
     public companyName: string = Config.companyName;
@@ -194,6 +196,10 @@ export class PrintComponent implements OnInit {
 
         this.doc = new jsPDF(orientation, units, [pageWidth, pageHigh]);
 
+        if (this.transactionId) {
+            this.movementsOfCancellation = await this.getCancellationsOfMovements(this.transactionId);
+            this.printOrigin = 0;
+        }
 
         this.getConfig();
     }
@@ -289,6 +295,7 @@ export class PrintComponent implements OnInit {
             "type.requestTransport" : 1,
             "type.printSign" : 1,
             "type.electronics" : 1,
+            "type.printOrigin" : 1,
 
             "company._id" : 1,
             "company.name" : 1,
@@ -850,6 +857,7 @@ export class PrintComponent implements OnInit {
 
             // CAMPOS A TRAER
             let project = {
+                "transactionOrigin._id": 1,
                 "transactionOrigin.type.name": 1,
                 "transactionOrigin.letter": 1,
                 "transactionOrigin.number": 1,
@@ -2778,7 +2786,14 @@ export class PrintComponent implements OnInit {
         }
     }
 
-    public finishImpression(): void {
+    async finishImpression() {
+
+        if (this.movementsOfCancellation && this.movementsOfCancellation.length !== this.printOrigin && this.transaction.type.printOrigin) {
+            this.transactionId = this.movementsOfCancellation[this.printOrigin].transactionOrigin._id;
+            this.printOrigin++;
+            this.doc.addPage();
+            this.getConfig()
+        }
 
         if (!this.source && (this.printer && !this.printer.url)) {
             this.doc.autoPrint();

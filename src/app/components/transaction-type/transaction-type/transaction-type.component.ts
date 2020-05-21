@@ -333,7 +333,9 @@ export class TransactionTypeComponent implements OnInit {
       'application': [this.transactionType.application, []],
       'branch': [this.transactionType.branch, []],
       'level': [this.transactionType.level, []],
-      'groupsArticles': [this.transactionType.groupsArticles, []]
+      'groupsArticles': [this.transactionType.groupsArticles, []],
+      'printOrigin': [this.transactionType.printOrigin, []]
+
     });
 
     this.transactionTypeForm.valueChanges
@@ -681,6 +683,7 @@ export class TransactionTypeComponent implements OnInit {
       'branch': branch,
       'level': this.transactionType.level,
       'groupsArticles' : this.transactionType.groupsArticles,
+      'printOrigin' : this.transactionType.printOrigin
     });
   }
 
