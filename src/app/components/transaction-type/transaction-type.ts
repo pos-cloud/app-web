@@ -72,6 +72,7 @@ export class TransactionType {
   public application: Application;
   public branch: Branch;
   public level: number = 0;
+  public groupsArticles: boolean = false;
   public expirationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');

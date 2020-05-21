@@ -332,7 +332,8 @@ export class TransactionTypeComponent implements OnInit {
       'defectShipmentMethod': [this.transactionType.defectShipmentMethod, []],
       'application': [this.transactionType.application, []],
       'branch': [this.transactionType.branch, []],
-      'level': [this.transactionType.level, []]
+      'level': [this.transactionType.level, []],
+      'groupsArticles': [this.transactionType.groupsArticles, []]
     });
 
     this.transactionTypeForm.valueChanges
@@ -486,6 +487,7 @@ export class TransactionTypeComponent implements OnInit {
     if (this.transactionType.automaticCreation === undefined) this.transactionType.automaticCreation = false;
     if (this.transactionType.readLayout === undefined) this.transactionType.readLayout = false;
     if (!this.transactionType.level) this.transactionType.level = 0;
+    if (!this.transactionType.groupsArticles) this.transactionType.groupsArticles = false;
 
     let defectPrinter;
     if (!this.transactionType.defectPrinter) {
@@ -677,7 +679,8 @@ export class TransactionTypeComponent implements OnInit {
       'defectShipmentMethod': defectShipmentMethod,
       'application': application,
       'branch': branch,
-      'level': this.transactionType.level
+      'level': this.transactionType.level,
+      'groupsArticles' : this.transactionType.groupsArticles,
     });
   }
 

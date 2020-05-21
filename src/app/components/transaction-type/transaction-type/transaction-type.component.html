@@ -662,7 +662,25 @@
 									</div>
 								</div>
 							</div>
-						</div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-3">
+                                <label for="groupsArticles" class="control-label">Agrupa Articulos?</label>
+                                <div class="input-group">
+                                    <select class="form-control" formControlName="groupsArticles">
+                                        <option value="true" [selected]="transactionType.groupsArticles"
+                                            [disabled]="readonly">Si</option>
+                                        <option value="false" [selected]="!transactionType.groupsArticles"
+                                            [disabled]="readonly">No</option>
+                                    </select>
+                                    <button type="button" class="btn btn-light" placement="right"
+                                        popoverClass="popover-class"
+                                        ngbPopover="¿Agrupa los articulos de igual codigo y precio?">
+                                        <b>?</b>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
 					</ng-template>
 				</ngb-tab>
 				<ngb-tab title="Método de Pago">

@@ -203,7 +203,7 @@ export class ListChecksComponent implements OnInit {
     ];
     private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
     private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
-    public sort = { "transaction.endDate": 1 };
+    public sort = { "expirationDate": 1 };
     public timezone = "-03:00";
     @ViewChild(ExportExcelComponent, { static: false }) exportExcelComponent: ExportExcelComponent;
     public items: any[] = new Array();

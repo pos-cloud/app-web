@@ -18,7 +18,7 @@
           <tr>
             <th></th>
             <th colspan="2" >Transacción Cancelada</th>
-            <th colspan="5" >Transacción Cancelatoria</th>
+            <th colspan="6" >Transacción Cancelatoria</th>
           </tr>
           <tr>
             <th>
@@ -31,6 +31,7 @@
             <th (click)="orderBy('modifyBalance')">Modifica el Saldo</th>
             <th (click)="orderBy('requestAutomatic')">Solicita al final</th>
             <th (click)="orderBy('requestCompany')">Pide Empresa?</th>
+            <th (click)="orderBy('stateOrigin')">Estado de Origen?</th>
           </tr>
           <tr class="filters">
             <th>
@@ -41,6 +42,7 @@
             <th><input type="text" class="form-control" [(ngModel)]="filters['modifyBalance']" (input)="getCancellationTypes()" placeholder="Modifica el Saldo..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['requestAutomatic']" (input)="getCancellationTypes()" placeholder="Solicita al final..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['requestCompany']" (input)="getCancellationTypes()" placeholder="Pide Empresa?..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['stateOrigin']" (input)="getCancellationTypes()" placeholder="Origen?..."></th>
           </tr>
         </thead>
         <tbody>
@@ -76,8 +78,9 @@
             <td>{{cancellationType.modifyBalance}}</td>
             <td>{{cancellationType.requestAutomatic}}</td>
             <td>{{cancellationType.requestCompany}}</td>
+            <td>{{cancellationType.stateOrigin}}</td>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
-            <td colspan="7">No se encontraron cancelaciones</td>
+            <td colspan="8">No se encontraron cancelaciones</td>
           </tr>
         </tbody>
       </table>
