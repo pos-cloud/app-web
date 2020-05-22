@@ -597,17 +597,17 @@ export class MovementOfCancellationComponent implements OnInit {
                             await this.getMovementOfArticles(mov.transactionOrigin).then(
                                 async movementsOfArticles => {
                                     if (movementsOfArticles && movementsOfArticles.length > 0) {
-                                        for(let mov2 of movementsOfArticles) {
+                                        for (let mov2 of movementsOfArticles) {
                                             //le mandas el mov a la fun
                                             let movement = this.existsMovementOfArticle(mov2);
-                                            if(!movement) {
-                                                if(!this.movArticle) this.movArticle = new Array();
+                                            if (!movement) {
+                                                if (!this.movArticle) this.movArticle = new Array();
                                                 this.movArticle.push(mov2);
                                             } else {
                                                 // recalculo
                                                 movement.amount += mov2.amount;
                                                 movement.unitPrice += mov2.unitPrice;
-                                                movement = await this.recalculateMovArticle(movement,mov.transactionOrigin);
+                                                movement = await this.recalculateMovArticle(movement, mov.transactionOrigin);
                                             }
                                         }
                                     }
@@ -620,7 +620,7 @@ export class MovementOfCancellationComponent implements OnInit {
                     }
                 }
                 //guardo todos los mov agrupados
-                if(this.movArticle && this.movArticle.length !== 0){
+                if (this.movArticle && this.movArticle.length !== 0) {
                     await this.saveMovementsOfArticles(this.movArticle).then(
                         movementsOfArticlesSaved => {
                             if (movementsOfArticlesSaved && movementsOfArticlesSaved.length > 0) {
@@ -645,9 +645,9 @@ export class MovementOfCancellationComponent implements OnInit {
 
     public existsMovementOfArticle(movementOfArticle: MovementOfArticle): MovementOfArticle {
         let movement: MovementOfArticle;
-        if(this.movArticle && this.movArticle.length > 0) {
-            for(let mov of this.movArticle) {
-                if(mov.article._id === movementOfArticle.article._id && mov.salePrice === movementOfArticle.salePrice) movement = mov;
+        if (this.movArticle && this.movArticle.length > 0) {
+            for (let mov of this.movArticle) {
+                if (mov.article._id === movementOfArticle.article._id && mov.salePrice === movementOfArticle.salePrice) movement = mov;
             }
         }
         return movement;
@@ -694,7 +694,7 @@ export class MovementOfCancellationComponent implements OnInit {
                         let movements: MovementOfArticle[] = new Array();
                         for (let mov of result.movementsOfArticles) {
 
-                           let movementOfArticle = await this.recalculateMovArticle(mov,transaction);
+                            let movementOfArticle = await this.recalculateMovArticle(mov, transaction);
 
                             movements.push(movementOfArticle);
                         }
@@ -710,7 +710,7 @@ export class MovementOfCancellationComponent implements OnInit {
         });
     }
 
-    public recalculateMovArticle(mov : MovementOfArticle, transaction : Transaction) : MovementOfArticle{
+    public recalculateMovArticle(mov: MovementOfArticle, transaction: Transaction): MovementOfArticle {
 
 
         let movementOfArticle = new MovementOfArticle();
@@ -725,43 +725,41 @@ export class MovementOfCancellationComponent implements OnInit {
         } else {
             movementOfArticle.make = mov.make;
         }
-        console.log(mov.category);
         movementOfArticle.category = mov.category;
         /*if (mov.category && mov.category._id && mov.category._id !== "") {
         } else {
             movementOfArticle.category = mov.category;
         }*/
 
-            movementOfArticle.costPrice = mov.costPrice;
-            movementOfArticle.salePrice = mov.salePrice;
-            let taxes: Taxes[] = new Array();
-            if (movementOfArticle.article && movementOfArticle.article.taxes && movementOfArticle.article.taxes.length > 0) {
-                for (let taxAux of movementOfArticle.article.taxes) {
-                    let tax: Taxes = new Taxes();
-                    tax.percentage = this.roundNumber.transform(taxAux.percentage);
-                    tax.tax = taxAux.tax;
-                    if (tax.tax.taxBase == TaxBase.Neto) {
-                        tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice);
-                    }
-                    if (tax.percentage === 0) {
-                        tax.taxAmount = this.roundNumber.transform(tax.taxAmount * movementOfArticle.amount);
-                    } else {
-                        tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
-                    }
-                    movementOfArticle.salePrice += tax.taxAmount;
-                    taxes.push(tax);
+        movementOfArticle.costPrice = mov.costPrice;
+        movementOfArticle.salePrice = mov.salePrice;
+        let taxes: Taxes[] = new Array();
+        if (movementOfArticle.article && movementOfArticle.article.taxes && movementOfArticle.article.taxes.length > 0) {
+            for (let taxAux of movementOfArticle.article.taxes) {
+                let tax: Taxes = new Taxes();
+                tax.percentage = this.roundNumber.transform(taxAux.percentage);
+                tax.tax = taxAux.tax;
+                if (tax.tax.taxBase == TaxBase.Neto) {
+                    tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice);
                 }
+                if (tax.percentage === 0) {
+                    tax.taxAmount = this.roundNumber.transform(tax.taxAmount * movementOfArticle.amount);
+                } else {
+                    tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+                }
+                movementOfArticle.salePrice += tax.taxAmount;
+                taxes.push(tax);
             }
-            movementOfArticle.taxes = taxes;
+        }
+        movementOfArticle.taxes = taxes;
 
-            movementOfArticle.unitPrice = movementOfArticle.salePrice / movementOfArticle.amount;
-            movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
-            movementOfArticle.markupPercentage = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.costPrice * 100), 3);
-            movementOfArticle.roundingAmount = mov.roundingAmount;
+        movementOfArticle.unitPrice = movementOfArticle.salePrice / movementOfArticle.amount;
+        movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
+        movementOfArticle.markupPercentage = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.costPrice * 100), 3);
+        movementOfArticle.roundingAmount = mov.roundingAmount;
+        if (this.transactionDestination.type.requestTaxes && transaction.type.requestTaxes) {
+            movementOfArticle.taxes = mov.taxes;
         } else {
-            if (this.transactionDestination.type.requestTaxes && transaction.type.requestTaxes) {
-                movementOfArticle.taxes = mov.taxes;
-            }
             movementOfArticle.costPrice = mov.costPrice;
             movementOfArticle.unitPrice = mov.unitPrice;
             movementOfArticle.markupPercentage = mov.markupPercentage;
