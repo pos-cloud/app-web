@@ -731,26 +731,6 @@ export class MovementOfCancellationComponent implements OnInit {
         } else {
             movementOfArticle.category = mov.category;
         }*/
-        movementOfArticle.amount = mov.amount;
-        movementOfArticle.quantityForStock = 0;
-        movementOfArticle.barcode = mov.barcode;
-        movementOfArticle.notes = mov.notes;
-        movementOfArticle.printed = mov.printed;
-        movementOfArticle.printIn = mov.printIn;
-        movementOfArticle.article = mov.article;
-        movementOfArticle.transaction = new Transaction();
-        movementOfArticle.transaction._id = this.transactionDestination._id;
-        movementOfArticle.modifyStock = this.transactionDestination.type.modifyStock;
-        if (this.transactionDestination.type.stockMovement) {
-            movementOfArticle.stockMovement = this.transactionDestination.type.stockMovement.toString();
-        }
-
-        movementOfArticle.measure = mov.measure;
-        movementOfArticle.quantityMeasure = mov.quantityMeasure;
-
-        movementOfArticle.basePrice = mov.basePrice;
-
-        if (this.transactionDestination.type.requestTaxes && !transaction.type.requestTaxes) {
 
             movementOfArticle.costPrice = mov.costPrice;
             movementOfArticle.salePrice = mov.salePrice;
