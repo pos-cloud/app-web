@@ -119,7 +119,8 @@ export class PrintComponent implements OnInit {
     public pathLocation: string[];
     public alertMessage: string = '';
     public branchImagen;
-    public printOrigin;
+    public printOrigin : boolean = false;
+    public printOriginCount;
     public shiftClosingTransaction;
     public movementsOfCancellation: MovementOfCancellation[];
     public shiftClosingMovementOfArticle;
@@ -198,7 +199,7 @@ export class PrintComponent implements OnInit {
 
         if (this.transactionId) {
             this.movementsOfCancellation = await this.getCancellationsOfMovements(this.transactionId);
-            this.printOrigin = 0;
+            this.printOriginCount = 0;
         }
 
         this.getConfig();
@@ -338,6 +339,9 @@ export class PrintComponent implements OnInit {
 
                     this.transaction = result.transactions[0];
 
+                    if(this.transaction.type.printOrigin){
+                        this.printOrigin = true;
+                    }
 
                     if (this.transaction.branchDestination && this.transaction.branchDestination.image) {
                         this.branchImagen = this.transaction.branchDestination.image
@@ -2788,9 +2792,9 @@ export class PrintComponent implements OnInit {
 
     async finishImpression() {
 
-        if (this.movementsOfCancellation && this.movementsOfCancellation.length !== this.printOrigin && this.transaction.type.printOrigin) {
-            this.transactionId = this.movementsOfCancellation[this.printOrigin].transactionOrigin._id;
-            this.printOrigin++;
+        if (this.movementsOfCancellation && this.movementsOfCancellation.length !== this.printOriginCount && this.printOrigin) {
+            this.transactionId = this.movementsOfCancellation[this.printOriginCount].transactionOrigin._id;
+            this.printOriginCount++;
             this.doc.addPage();
             this.getConfig()
         }
