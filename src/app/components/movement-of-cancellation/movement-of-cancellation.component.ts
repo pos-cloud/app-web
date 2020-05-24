@@ -148,7 +148,7 @@ export class MovementOfCancellationComponent implements OnInit {
                     } else {
                         transaction = await this.getTransaction(result.movementsOfCancellations[index].transactionOrigin)
                     }
-                    if (transaction && transaction.state === TransactionState.Closed) {
+                    if (transaction && (transaction.state === TransactionState.Closed || transaction.state === TransactionState.Sent)) {
                         transaction.balance = this.roundNumber.transform(result.movementsOfCancellations[index].balance);
                         this.transactions.push(transaction);
                     } else {
@@ -294,7 +294,6 @@ export class MovementOfCancellationComponent implements OnInit {
 
         match += `"operationType": { "$ne": "D" }, "balance": { "$gt": 0 } }`;
 
-        console.log(match);
         match = JSON.parse(match);
 
         let timezone = "-03:00";
@@ -651,7 +650,7 @@ export class MovementOfCancellationComponent implements OnInit {
         let movement: MovementOfArticle;
         if (this.movArticle && this.movArticle.length > 0) {
             for (let mov of this.movArticle) {
-                if (mov.article._id === movementOfArticle.article._id && mov.salePrice === movementOfArticle.salePrice) movement = mov;
+                if (movementOfArticle.article && mov.article && mov.article._id === movementOfArticle.article._id && mov.salePrice === movementOfArticle.salePrice) movement = mov;
             }
         }
         return movement;
@@ -719,16 +718,18 @@ export class MovementOfCancellationComponent implements OnInit {
 
         let movementOfArticle = new MovementOfArticle();
 
+        movementOfArticle.transaction = this.transactionDestination;
+        movementOfArticle.article = mov.article;
         movementOfArticle.code = mov.code;
         movementOfArticle.codeSAT = mov.codeSAT;
         movementOfArticle.description = mov.description;
         movementOfArticle.observation = mov.observation;
         movementOfArticle.otherFields = mov.otherFields;
-        if (mov.make && mov.make._id && mov.make._id !== "") {
+        movementOfArticle.make = mov.make;
+        /*if (mov.make && mov.make._id && mov.make._id !== "") {
             movementOfArticle.make._id = mov.make._id;
         } else {
-            movementOfArticle.make = mov.make;
-        }
+        }*/
         movementOfArticle.category = mov.category;
         /*if (mov.category && mov.category._id && mov.category._id !== "") {
         } else {
