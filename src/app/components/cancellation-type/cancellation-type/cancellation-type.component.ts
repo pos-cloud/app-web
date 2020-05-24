@@ -107,6 +107,7 @@ export class CancellationTypeComponent implements OnInit {
         if (this.cancellationType.modifyBalance === undefined) { this.cancellationType.modifyBalance = true; }
         if (this.cancellationType.requestAutomatic === undefined) { this.cancellationType.requestAutomatic = false; }
         if (this.cancellationType.requestCompany === undefined) { this.cancellationType.requestCompany = true; }
+        if (this.cancellationType.stateOrigin === undefined) { this.cancellationType.stateOrigin = TransactionState.Closed; }
 
         let origin;
         if (!this.cancellationType.origin) {
