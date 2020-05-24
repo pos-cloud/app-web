@@ -260,9 +260,11 @@ export class MovementOfCancellationComponent implements OnInit {
             }
         }
 
+        match += `"$and":[`
+
         if (this.cancellationTypes && this.cancellationTypes.length != 0) {
 
-            match += `"$or": [`
+            match += `{"$or": [`
             for (let index = 0; index < this.cancellationTypes.length; index++) {
                 match += `{ "type._id"  : "${this.cancellationTypes[index].origin._id}"}`;
                 if (this.cancellationTypes[index].requestCompany) {
@@ -275,22 +277,24 @@ export class MovementOfCancellationComponent implements OnInit {
 
             match = match.slice(0, -1);
 
-            match += `],`
+            match += `]},`
         } else {
-            match += `{ "type._id"  : "${this.cancellationTypes[0].origin._id}"}`
+            match += `{ "type._id"  : "${this.cancellationTypes[0].origin._id}"},`
             if (this.cancellationTypes[0].requestCompany) {
                 this.requestCompany = true;
             }
         }
+        
+        match += `{ "$or":[{"state": "Cerrado"},{"state":"Enviado"}]}],`
 
         if (this.requestCompany) {
             match += `"company._id":  "${this.transactionDestination.company._id}",`
         }
 
-        match += `"$or":[{"state": "Cerrado"},{"state":"Enviado"}],`
 
         match += `"operationType": { "$ne": "D" }, "balance": { "$gt": 0 } }`;
 
+        console.log(match);
         match = JSON.parse(match);
 
         let timezone = "-03:00";
