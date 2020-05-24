@@ -123,6 +123,7 @@
                         <i class="fa fa-bars"></i>
                     </th>
                     <th (click)="orderBy('endDate')">Fecha</th>
+                    <th (click)="orderBy('state')">Estado</th>
                     <th (click)="orderBy('type.name')">Nombre</th>
                     <th (click)="orderBy('origin')" *ngIf="userCountry === 'AR'">POS</th>
                     <th (click)="orderBy('letter')">Letra</th>
@@ -134,6 +135,8 @@
                     <th></th>
                     <th><input type="text" class="form-control" [(ngModel)]="filters['endDate']"
                             (input)="getTransactions()" placeholder="Fecha..."></th>
+                    <th><input type="text" class="form-control" [(ngModel)]="filters['state']"
+                                (input)="getTransactions()" placeholder="Fecha..."></th>
                     <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']"
                             (input)="getTransactions()" placeholder="Nombre..."></th>
                     <th><input type="text" class="form-control" [(ngModel)]="filters['origin']"
@@ -160,6 +163,7 @@
                             title="Ver"><i class="fa fa-eye"></i></button>
                     </td>
                     <td>{{transaction.endDate | dateFormat:'DD/MM/YYYY'}}</td>
+                    <td >{{transaction.state}}</td>
                     <td *ngIf="transaction.type">{{transaction.type.name}}</td>
                     <td *ngIf="!transaction.type"></td>
                     <td *ngIf="userCountry === 'AR'">{{transaction.origin}}</td>
