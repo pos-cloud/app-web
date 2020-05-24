@@ -609,7 +609,7 @@ export class MovementOfCancellationComponent implements OnInit {
                                             } else {
                                                 // recalculo
                                                 movement.amount += mov2.amount;
-                                                movement.unitPrice += mov2.unitPrice;
+                                                movement.unitPrice = mov2.unitPrice;
                                                 movement = await this.recalculateMovArticle(movement, mov.transactionOrigin);
                                             }
                                         }
