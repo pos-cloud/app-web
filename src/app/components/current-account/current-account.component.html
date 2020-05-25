@@ -20,17 +20,17 @@
             <b>Detallar método de pago</b>
           </label>
           <select class="form-control" [(ngModel)]="detailsPaymentMethod">
-            <option [value]="true">Sí</option>
-            <option [value]="false">No</option>
+            <option [ngValue]="true">Sí</option>
+            <option [ngValue]="false">No</option>
           </select>
         </div>
         <div class="col-md-2">
-          <label for="detailsPaymentMethod" class="control-label">
+          <label for="showBalanceOfTransactions" class="control-label">
             <b>Mostrar saldo de transacciones</b>
           </label>
           <select class="form-control" [(ngModel)]="showBalanceOfTransactions">
-            <option [value]="true">Sí</option>
-            <option [value]="false">No</option>
+            <option [ngValue]="true">Sí</option>
+            <option [ngValue]="false">No</option>
           </select>
         </div>
         <div class="col-md-2">
