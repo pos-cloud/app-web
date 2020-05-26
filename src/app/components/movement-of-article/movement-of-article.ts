@@ -121,6 +121,16 @@ export let attributes = [
         required: false,
     },
     {
+        name: 'transaction.employeeClosing.name',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'center',
+        required: false,
+    },
+    {
         name: 'code',
         visible: true,
         disabled: false,

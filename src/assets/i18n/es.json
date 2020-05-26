@@ -179,7 +179,10 @@
 		"type": {
 			"name": "Tipo de Transacción",
 			"transactionMovement": "Movimiento"
-		},
+        },
+        "employeeClosing" : {
+            "name" : "Empleado"
+        },
 		"origin": "Punto de Venta",
 		"company": {
 			"name": "Razón Social"
