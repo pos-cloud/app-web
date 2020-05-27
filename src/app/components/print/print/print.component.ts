@@ -276,12 +276,11 @@ export class PrintComponent implements OnInit {
             "branchDestination.image" : 1,
             "madein" : 1,
             "orderNumber" : 1,
-
+            "exempt" : 1,
             "transport.name" :1,
             "transport.address" : 1,
             "transport.city" : 1,
             "transport.identificationValue" : 1,
-
             "type.requestPaymentMethods":1,
             "type.requestArticles" : 1,
             "type.labelPrint" : 1,
@@ -1876,7 +1875,7 @@ export class PrintComponent implements OnInit {
 
     async toPrintInvoice() {
 
-        var transport = 0;
+      var transport = 0;
 
         // Encabezado de la transacción
         if (!this.transaction.type.isPreprinted) {
@@ -2286,10 +2285,10 @@ export class PrintComponent implements OnInit {
                 this.transaction.company.vatCondition.discriminate &&
                 this.transaction.type.requestTaxes) {
 
+              if (this.transaction.taxes && this.transaction.taxes.length > 0) {
+                this.doc.setFontType('bold');
                 this.doc.text("Neto Gravado:", 140, rowTotals);
-
-
-                if (this.transaction.taxes && this.transaction.taxes.length > 0) {
+                this.doc.setFontType('normal');
                     for (let tax of this.transaction.taxes) {
                         rowTotals += space;
                         this.doc.setFontType('bold');
@@ -2307,7 +2306,6 @@ export class PrintComponent implements OnInit {
                     this.doc.text("Exento:", 140, rowTotals);
                     this.doc.setFontType('normal');
                     this.doc.text("$ " + this.roundNumber.transform(this.transaction.exempt, 2), 173, rowTotals);
-                    subtotal -= this.transaction.exempt;
                 }
             }
 
@@ -2318,9 +2316,6 @@ export class PrintComponent implements OnInit {
                     subtotal += this.transaction.discountAmount;
                 }
             }
-
-
-
 
             this.doc.text("$ " + this.roundNumber.transform((subtotal), 2).toString(), 173, 247);
             if (neto > 0) {
