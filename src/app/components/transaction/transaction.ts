@@ -511,7 +511,7 @@ export let attributes = [
   {
     name: 'endDate2',
     visible: false,
-    disabled: false,
+    disabled: true,
     filter: false,
     datatype: 'date',
     project: `"$endDate"`,

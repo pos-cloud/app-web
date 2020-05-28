@@ -210,6 +210,9 @@
     "url" : "URL",
     "totalPrice": "Precio Total",
     "titular" : "Titular",
+    "defectEmailTemplate": {
+      "_id": "Indentificador de Template"
+    },
 	"unitOfMeasurement": {
 		"abbreviation": "Unidad de Medida",
 		"name": "Unidad de Medida"
@@ -227,5 +230,6 @@
   "Entregado": "Para Retirar",
   "applications": "Aplicaciones",
   "applicationsName": "Aplicaciones",
-  "_id": "Identificador"
+  "_id": "Identificador",
+  "endDate2": "Fecha"
 }
