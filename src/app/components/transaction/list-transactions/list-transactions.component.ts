@@ -201,7 +201,11 @@ export class ListTransactionsComponent implements OnInit {
 					if (this.columns[i].defaultFilter) {
 						match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
 					} else {
-						match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
+            if(this.columns[i].name.includes('_id')) {
+              match += `"${this.columns[i].name}": { "$oid": "${value}" }`;
+            } else {
+              match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
+            }
 					}
 					if (i < this.columns.length - 1) {
 						match += ',';
