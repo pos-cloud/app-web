@@ -1523,6 +1523,11 @@ export class PointOfSaleComponent implements OnInit {
 
     transaction = await this.getTransaction(transaction._id);
 
+    // ACTUALIZAMOS LA FECHA DE LA FACTURA AL DÍA DE HOY
+    transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+    transaction.VATPeriod = moment(transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
+    transaction.expirationDate = transaction.endDate;
+
     if (transaction.type.electronics) {
       this.showMessage("Validando comprobante con AFIP...", 'info', false);
       this.loading = true;
