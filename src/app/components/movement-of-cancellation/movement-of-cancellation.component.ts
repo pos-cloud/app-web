@@ -42,7 +42,7 @@ export class MovementOfCancellationComponent implements OnInit {
     public focusEvent = new EventEmitter<boolean>();
     public movArticle: MovementOfArticle[] = new Array();
     public transactionDestination: Transaction;
-    public requestCompany: Boolean = false;
+    public requestCompany: boolean = false;
     public transactionMovement: TransactionMovement;
     public transactions: Transaction[];
     public cancellationTypes: CancellationType[];

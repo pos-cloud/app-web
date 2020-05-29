@@ -73,8 +73,8 @@
                             {{transaction.origin}}</td>
                         <td (click)="selectTransaction(transaction, false)">{{transaction.letter}}</td>
                         <td (click)="selectTransaction(transaction, false)">{{transaction.number}}</td>
-                        <td (click)="selectTransaction(transaction, false)">{{transaction.company.city}}</td>
-                        <td *ngIf="!requestCompany" (click)="selectTransaction(transaction, false)">
+                        <td  *ngIf="!requestCompany" (click)="selectTransaction(transaction, false)">{{transaction.company.city}}</td>
+                        <td (click)="selectTransaction(transaction, false)">
                             {{transaction.totalPrice  }}</td>
                         <td>
                             <input type="number" class="form-control" [(ngModel)]="transaction['balanceSelected']"
