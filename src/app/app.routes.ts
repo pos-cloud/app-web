@@ -80,6 +80,7 @@ import { ListShipmentMethodComponent } from './components/shipment-method/list-s
 import { ListCompaniesComponent } from './components/company/list-companies/list-companies.component';
 import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.component';
 import { ListApplicationsComponent } from './components/application/list-applications/list-applications.component';
+import { ListMovementsOfCancellationsComponent } from './components/movement-of-cancellation/list-movements-of-cancellations/list-movements-of-cancellations.component';
 
 export const _routes: Routes = [
 	{
@@ -364,6 +365,16 @@ export const _routes: Routes = [
 		component: ReportKardexComponent,
 		canActivate: [AuthGuard, LicenseGuard],
 		data: { module: 'config.modules.stock' }
+    },
+    {
+		path: 'report/venta/movimientos-de-cancellaciones',
+		component: ListMovementsOfCancellationsComponent,
+		canActivate: [AuthGuard, LicenseGuard]
+    },
+    {
+		path: 'report/compra/movimientos-de-cancellaciones',
+		component: ListMovementsOfCancellationsComponent,
+		canActivate: [AuthGuard, LicenseGuard]
 	},
 	{
 		path: 'report/list-box',

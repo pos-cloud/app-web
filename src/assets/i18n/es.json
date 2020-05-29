@@ -187,6 +187,50 @@
 		"company": {
 			"name": "Razón Social"
 		}
+    },
+    "transactionOrigin": {
+		"_id": "Identificador Transacción",
+		"cashBox": {
+			"number": "Caja"
+		},
+		"endDate": "Fecha",
+		"letter": "Letra",
+		"number": "Número",
+		"operationType": "Última Operación Transacción",
+		"type": {
+			"name": "Tipo de Transacción",
+			"transactionMovement": "Movimiento"
+        },
+        "employeeClosing" : {
+            "name" : "Empleado"
+        },
+		"origin": "Punto de Venta",
+		"company": {
+			"name": "Razón Social"
+        },
+        "totalPrice" : "Precio Total"
+    },
+    "transactionDestination": {
+        "totalPrice" : "Precio Total",
+		"_id": "Identificador Transacción",
+		"cashBox": {
+			"number": "Caja"
+		},
+		"endDate": "Fecha",
+		"letter": "Letra",
+		"number": "Número",
+		"operationType": "Última Operación Transacción",
+		"type": {
+			"name": "Tipo de Transacción",
+			"transactionMovement": "Movimiento"
+        },
+        "employeeClosing" : {
+            "name" : "Empleado"
+        },
+		"origin": "Punto de Venta",
+		"company": {
+			"name": "Razón Social"
+		}
 	},
 	"transport": {
 		"name": "Nombre de Transporte"

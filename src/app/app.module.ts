@@ -270,6 +270,7 @@ import { DatatableModule } from './components/datatable/datatable.module';
 import { ListCategoriesPosComponent } from './components/category/list-categories-pos/list-categories-pos.component';
 import { ApplicationModule } from './components/application/application.module';
 import { ApplicationService } from './components/application/application.service';
+import { ListMovementsOfCancellationsComponent } from './components/movement-of-cancellation/list-movements-of-cancellations/list-movements-of-cancellations.component';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -457,7 +458,8 @@ export function createTranslateLoader(http: HttpClient) {
     ShipmentMethodComponent,
     ListShipmentMethodComponent,
     SelectShipmentMethodComponent,
-    ListCategoriesPosComponent
+    ListCategoriesPosComponent,
+    ListMovementsOfCancellationsComponent
   ],
   entryComponents: [
     HomeComponent,

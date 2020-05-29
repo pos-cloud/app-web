@@ -564,6 +564,11 @@
 					<a (click)="openModal('current','Cliente')">
 						Detalle de cuentas corrientes
 					</a>
+                </li>
+                <li>
+					<a (click)="openReport('report/venta/movimientos-de-cancellaciones')">
+						Cancelaciones de venta
+					</a>
 				</li>
 			</ul>
 		</div>
@@ -644,6 +649,11 @@
 				<li>
 					<a (click)="openModal('current','Proveedor')">
 						Detalle de cuentas corrientes
+					</a>
+                </li>
+                <li>
+					<a (click)="openReport('report/compra/movimientos-de-cancellaciones')">
+						Cancelaciones de compra
 					</a>
 				</li>
 			</ul>
@@ -744,6 +754,11 @@
 				<li class="dropdown-header">Varios</li>
 				<li>
 					<a (click)="openReport('admin/cumpleaños')">
+						Cumpleaños
+					</a>
+                </li>
+                <li>
+					<a (click)="openReport('report/list-movements-of-cancellations')">
 						Cumpleaños
 					</a>
 				</li>
