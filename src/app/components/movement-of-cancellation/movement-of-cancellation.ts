@@ -149,7 +149,7 @@ export let attributes = [
     },
     {
         name: 'transactionDestination.company.name',
-        visible: false,
+        visible: true,
         disabled: false,
         filter: true,
         datatype: 'string',
