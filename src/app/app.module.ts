@@ -67,8 +67,6 @@ import { ListArticlesComponent } from './components/article/list-articles/list-a
 import { AddArticleComponent } from './components/article/article/add-article.component';
 import { ListEmployeesComponent } from './components/employee/list-employees/list-employees.component';
 import { AddEmployeeComponent } from './components/employee/employee/add-employee.component';
-import { UpdateEmployeeComponent } from './components/employee/update-employee/update-employee.component';
-import { DeleteEmployeeComponent } from './components/employee/delete-employee/delete-employee.component';
 import { ListTablesComponent } from './components/table/list-tables/list-tables.component';
 import { TableComponent } from './components/table/table/table.component';
 import { ListCashBoxesComponent } from './components/cash-box/list-cash-boxes/list-cash-boxes.component';
@@ -293,8 +291,6 @@ export function createTranslateLoader(http: HttpClient) {
     AddArticleComponent,
     ListEmployeesComponent,
     AddEmployeeComponent,
-    UpdateEmployeeComponent,
-    DeleteEmployeeComponent,
     ListTablesComponent,
     TableComponent,
     ListCashBoxTypesComponent,
@@ -468,8 +464,6 @@ export function createTranslateLoader(http: HttpClient) {
     AddArticleComponent,
     ListEmployeesComponent,
     AddEmployeeComponent,
-    UpdateEmployeeComponent,
-    DeleteEmployeeComponent,
     ListTablesComponent,
     TableComponent,
     ListCashBoxTypesComponent,
