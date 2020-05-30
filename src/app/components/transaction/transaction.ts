@@ -178,6 +178,16 @@ export let attributes = [
     required: false,
   },
   {
+    name: 'employeeClosing._id',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    project: null,
+    align: 'left',
+    required: true,
+  },
+  {
     name: 'madein',
     visible: true,
     disabled: false,
