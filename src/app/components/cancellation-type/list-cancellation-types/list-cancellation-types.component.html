@@ -9,40 +9,37 @@
       <div class="pull-right">
           <button class="btn" (click)="openModal('add', null)" ><i class="fa fa-plus"></i><span>Agregar</span></button>
         <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
-        
+
       </div>
     </div>
     <div class="card-block table-responsive">
       <table class="table table-striped">
         <thead>
           <tr>
-            <th></th>
-            <th colspan="2" >Transacción Cancelada</th>
-            <th colspan="6" >Transacción Cancelatoria</th>
-          </tr>
-          <tr>
             <th>
               <i class="fa fa-bars"></i>
             </th>
             <th (click)="orderBy('origin.transactionMovement')">Tipo</th>
-            <th (click)="orderBy('origin.name')">Nombre</th>
+            <th (click)="orderBy('origin.name')">Trans. Cancelada</th>
+            <th (click)="orderBy('stateOrigin')">Estado al cancelar</th>
             <th (click)="orderBy('destination.transactionMovement')" >Tipo</th>
-            <th (click)="orderBy('destination.name')" >Nombre</th>
-            <th (click)="orderBy('modifyBalance')">Modifica el Saldo</th>
+            <th (click)="orderBy('destination.name')" >Trans. Cancelatoria</th>
             <th (click)="orderBy('requestAutomatic')">Solicita al final</th>
-            <th (click)="orderBy('requestCompany')">Pide Empresa?</th>
-            <th (click)="orderBy('stateOrigin')">Estado de Trans. Cancelada?</th>
+            <th (click)="orderBy('modifyBalance')">Modifica el Saldo</th>
+            <th (click)="orderBy('requestStatusOrigin')">Acota por estado</th>
+            <th (click)="orderBy('requestCompany')">Acota por Empresa</th>
           </tr>
           <tr class="filters">
             <th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['origin.transactionMovement']" (input)="getCancellationTypes()" placeholder="Tipo de Transacción Cancelada..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['origin.name']" (input)="getCancellationTypes()" placeholder="Nombre de Transacción Cancelada..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['destination.transactionMovement']" (input)="getCancellationTypes()" placeholder="Tipo de Transacción Cancelatoria..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['destination.name']" (input)="getCancellationTypes()" placeholder="Nombre de Transacción Cancelatoria..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['modifyBalance']" (input)="getCancellationTypes()" placeholder="Modifica el Saldo..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['origin.transactionMovement']" (input)="getCancellationTypes()" placeholder="Tipo..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['origin.name']" (input)="getCancellationTypes()" placeholder="Trans. Cancelada..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['stateOrigin']" (input)="getCancellationTypes()" placeholder="Estado al cancelar..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['destination.transactionMovement']" (input)="getCancellationTypes()" placeholder="Tipo..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['destination.name']" (input)="getCancellationTypes()" placeholder="Trans. Cancelatoria..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['requestAutomatic']" (input)="getCancellationTypes()" placeholder="Solicita al final..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['requestCompany']" (input)="getCancellationTypes()" placeholder="Pide Empresa?..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['stateOrigin']" (input)="getCancellationTypes()" placeholder="Origen?..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['modifyBalance']" (input)="getCancellationTypes()" placeholder="Modifica el Saldo..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['requestStatusOrigin']" (input)="getCancellationTypes()" placeholder="Acota por estado..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['requestCompany']" (input)="getCancellationTypes()" placeholder="Acota por empresa..."></th>
           </tr>
         </thead>
         <tbody>
@@ -57,8 +54,8 @@
                                                                     }">
             <td align="left" width="150">
               <button type="button"
-                      class="btn btn-success  btn-sm" 
-                      (click)="openModal('view', cancellationType)" 
+                      class="btn btn-success  btn-sm"
+                      (click)="openModal('view', cancellationType)"
                       title="Ver"><i class="fa fa-eye"></i></button>
               <button type="button"
                       class="btn btn-primary btn-sm"
@@ -73,12 +70,13 @@
             </td>
             <td>{{cancellationType.origin.transactionMovement}}</td>
             <td>{{cancellationType.origin.name}}</td>
+            <td>{{cancellationType.stateOrigin}}</td>
             <td>{{cancellationType.destination.transactionMovement}}</td>
             <td>{{cancellationType.destination.name}}</td>
-            <td>{{cancellationType.modifyBalance}}</td>
             <td>{{cancellationType.requestAutomatic}}</td>
+            <td>{{cancellationType.modifyBalance}}</td>
+            <td>{{cancellationType.requestStatusOrigin}}</td>
             <td>{{cancellationType.requestCompany}}</td>
-            <td>{{cancellationType.stateOrigin}}</td>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
             <td colspan="8">No se encontraron cancelaciones</td>
           </tr>

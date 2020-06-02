@@ -41,6 +41,7 @@ export class ListCancellationTypeComponent implements OnInit {
     "requestCompany",
     "stateOrigin",
     "operationType",
+    "requestStatusOrigin"
   ];
   public filters: any[];
   public filterValue: string;
