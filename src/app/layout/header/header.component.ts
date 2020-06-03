@@ -31,7 +31,8 @@ export class HeaderComponent {
 
 	public config$: any;
 	public identity$: Observable<User>;
-	public online$: Observable<boolean>;
+  public online$: Observable<boolean>;
+  public online: boolean = true;
 	public hideMenu: boolean;
 	public sessionTimer: any;
 	public pathLocation: string[];
@@ -60,6 +61,18 @@ export class HeaderComponent {
 			observableOf(navigator.onLine),
 			observableFromEvent(window, 'online').pipe(mapTo(true)),
 			observableFromEvent(window, 'offline').pipe(mapTo(false))
+    );
+
+    this.online$.subscribe(
+      result => {
+        if (!this.online && result) {
+          this.showToast('Conexión a internet restablecida', 'success');
+        }
+        if (!result) {
+          this.showToast('Se ha perdido la conexión a internet, por favor verificar su red', 'warning');
+        }
+        this.online = result;
+      }
     );
 
 		// VERIFICAR LOGUEO Y CARGAR DATOS DE USUARIO

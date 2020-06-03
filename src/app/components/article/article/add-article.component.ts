@@ -1606,6 +1606,8 @@ export class AddArticleComponent implements OnInit {
                         }
                     }
                 )
+            } else {
+              resolve(true);
             }
 
         })
