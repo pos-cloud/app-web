@@ -231,7 +231,11 @@ export class ListTransactionsComponent implements OnInit {
                         if (this.columns[i].name.includes('_id')) {
                             match += `"${this.columns[i].name}": { "$oid": "${value}" }`;
                         } else {
-                            match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
+                            if(value.includes('$')){
+                                match += `"${this.columns[i].name}": { ${value} }`;
+                            } else {
+                                match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
+                            }
                         }
                     }
                     if (i < this.columns.length - 1) {
@@ -241,7 +245,6 @@ export class ListTransactionsComponent implements OnInit {
             }
         }
 
-        console.log(this.employeeClosingId);
         if(this.employeeClosingId){
             match += `"employeeClosing._id": { "$oid" : "${this.employeeClosingId}"},`;
         }
@@ -258,10 +261,9 @@ export class ListTransactionsComponent implements OnInit {
 
         match += `}`;
 
+        console.log(match);
 
         match = JSON.parse(match);
-
-        console.log(match);
 
         // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
         let project = `{`;
