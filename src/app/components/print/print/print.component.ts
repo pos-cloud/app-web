@@ -296,6 +296,7 @@ export class PrintComponent implements OnInit {
             "type.printSign" : 1,
             "type.electronics" : 1,
             "type.printOrigin" : 1,
+            "type.isPreprinted" : 1,
 
             "company._id" : 1,
             "company.name" : 1,
