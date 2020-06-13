@@ -273,6 +273,16 @@ export class ReportKardexComponent implements OnInit {
                 required: true,
             },
             {
+                name: 'transaction.state',
+                visible: false,
+                disabled: true,
+                filter: false,
+                project: null,
+                datatype: 'string',
+                align: 'left',
+                required: true,
+            },
+            {
                 name: 'transaction._id',
                 visible: false,
                 disabled: true,
@@ -571,6 +581,7 @@ export class ReportKardexComponent implements OnInit {
         if (this.depositSelectedId) match['deposit._id'] = { $oid: this.depositSelectedId };
         match['endDate'] = { $gte: { $date: this.startDate + 'T00:00:00' + timezone }, $lte: { $date: this.endDate + 'T23:59:59' + timezone } };
         match['article._id'] = { $oid: this.articleSelected._id };
+        match['transaction.state'] = "Cerrado";
 
         // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
         let project = `{`;
@@ -816,6 +827,7 @@ export class ReportKardexComponent implements OnInit {
                     "transaction.operationType": {
                         "$ne": "D"
                     },
+                    "transaction.state" : "Cerrado",
                     "deposit._id": { $oid: this.depositSelectedId },
                     "article._id": { $oid: this.articleSelectedId }
                 }
