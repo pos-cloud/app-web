@@ -118,8 +118,7 @@
                             <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', item)"
                                 title="Ver"><i class="fa fa-eye"></i>
                             </button>
-                            <button type="button" *ngIf="item.type.allowEdit &&
-                               (item.state === 'Cerrado' || item.state === 'Preparando')"
+                            <button type="button" *ngIf="item.type.allowEdit"
                                 class="btn btn-primary btn-sm" (click)="openModal('edit', item)" title="Editar"><i
                                     class="fa fa-pencil"></i>
                             </button>
