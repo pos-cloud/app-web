@@ -426,7 +426,17 @@ export class PrintTransactionTypeComponent implements OnInit {
                             this.doc.setFontType(field.fontType)
                             this.doc.setFontSize(field.fontSize)
 
-                            if (field.value.split('.')[0] === "movementOfArticle" && this.movementOfArticle) {
+                            try {
+                                if (field.positionEndX || field.positionEndY) {
+                                    this.doc.text(field.positionStartX, field.positionStartY, eval("this." + field.value).toString().slice(field.positionEndX, field.positionEndY))
+                                } else {
+                                    this.doc.text(field.positionStartX, field.positionStartY, eval("this." + field.value).toString())
+                                }
+                            } catch (e) {
+                                this.doc.text(field.positionStartX, field.positionStartY, field.value)
+                            }
+
+                            /*if (field.value.split('.')[0] === "movementOfArticle" && this.movementOfArticle) {
                                 this.movementOfArticle.forEach(async movementOfArticle => {
                                     try {
                                         this.doc.text(field.positionStartX, row, (eval(field.value)).toString())
@@ -478,9 +488,10 @@ export class PrintTransactionTypeComponent implements OnInit {
                                 } catch (e) {
                                     this.doc.text(field.positionStartX, field.positionStartY, field.value)
                                 }
-                            }
+                            }*/
                             break;
                         case 'dataSum':
+                            var sum = 0;
                             if (field.font !== 'default') {
                                 this.doc.setFont(field.font)
                             }
@@ -489,21 +500,18 @@ export class PrintTransactionTypeComponent implements OnInit {
 
                             if (field.value.split('.')[0] === "movementOfArticle" && this.movementOfArticle) {
                                 this.movementOfArticle.forEach(async movementOfArticle => {
-                                    let sum = 0;
-                                    if (typeof eval("this." + field.value) === "number") {
-                                        sum = sum + eval("this" + field.value);
-                                    }
-                                    try {
-                                        this.doc.text(field.positionStartX, field.positionStartY, sum.toString())
-                                    } catch (e) {
-                                        this.doc.text(field.positionStartX, field.positionStartY, field.value)
-                                    }
+                                    sum = sum + eval(field.value);
                                 });
+                                try {
+                                    this.doc.text(field.positionStartX, field.positionStartY, sum.toString())
+                                } catch (e) {
+                                    this.doc.text(field.positionStartX, field.positionStartY, field.value)
+                                }
                             } else if (field.value.split('.')[0] === "movementOfCash" && this.movementOfCash) {
                                 this.movementOfCash.forEach(async movementOfCash => {
                                     let sum = 0;
                                     if (typeof eval("this." + field.value) === "number") {
-                                        sum = sum + eval("this" + field.value);
+                                        sum = sum + eval("this." + field.value);
                                     }
                                     try {
                                         this.doc.text(field.positionStartX, field.positionStartY, sum.toString())
@@ -515,7 +523,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                                 this.movementOfCancellation.forEach(async movementOfCancellation => {
                                     let sum = 0;
                                     if (typeof eval("this." + field.value) === "number") {
-                                        sum = sum + eval("this" + field.value);
+                                        sum = sum + eval("this." + field.value);
                                     }
                                     try {
                                         this.doc.text(field.positionStartX, field.positionStartY, sum.toString())
@@ -568,9 +576,9 @@ export class PrintTransactionTypeComponent implements OnInit {
                     }
                     row = row + this.printer.row;
                     if (row > this.printer.addPag) {
-                        await this.buildLayout(PositionPrint.Header);
-                        this.doc.addPage()
                         row = 0;
+                        this.doc.addPage()
+                        await this.buildLayout(PositionPrint.Header);
                     }
                 }
             }
@@ -598,9 +606,9 @@ export class PrintTransactionTypeComponent implements OnInit {
                     }
                     row = row + this.printer.row;
                     if (row > this.printer.addPag) {
-                        await this.buildLayout(PositionPrint.Header);
-                        this.doc.addPage()
                         row = 0;
+                        this.doc.addPage()
+                        await this.buildLayout(PositionPrint.Header);
                     }
                 }
             }
