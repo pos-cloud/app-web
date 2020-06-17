@@ -219,9 +219,6 @@ export class ListArticleStocksComponent implements OnInit {
             if(elementC.datatype === 'number' || elementC.datatype === 'currency'){
                 this.items.forEach(elementI => {
                     Object.keys(elementI).forEach(elementK => {
-                        console.log(elementK);
-                        console.log(elementC.name);
-                        console.log(elementI);
                         if(elementK === elementC.name){
                             total = total + elementI[elementK];
                         }

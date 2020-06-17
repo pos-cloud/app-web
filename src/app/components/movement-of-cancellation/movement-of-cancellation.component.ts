@@ -260,7 +260,6 @@ export class MovementOfCancellationComponent implements OnInit {
         match += ',';
       }
     }
-    console.log(this.cancellationTypes)
     match += `"$or": [`
     for (let index = 0; index < this.cancellationTypes.length; index++) {
       match += `{ "$and":[{ "type._id"  : "${this.cancellationTypes[index].origin._id}"},{"state":"${this.cancellationTypes[index].requestStatusOrigin}"}]}`;
@@ -281,7 +280,6 @@ export class MovementOfCancellationComponent implements OnInit {
     }
 
     match += `"operationType": { "$ne": "D" }, "balance": { "$gt": 0 } }`;
-    console.log(match);
     match = JSON.parse(match);
 
     let timezone = "-03:00";

@@ -71,8 +71,6 @@ export class ListMovementsOfCancellationsComponent implements OnInit {
 
     async ngOnInit() {
 
-        console.log("entro")
-
         if (Config.timezone && Config.timezone !== '') {
             this.timezone = Config.timezone.split('UTC')[1];
         }
@@ -174,7 +172,6 @@ export class ListMovementsOfCancellationsComponent implements OnInit {
 
         match += `}`;
 
-        console.log(match);
         match = JSON.parse(match);
 
         // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS

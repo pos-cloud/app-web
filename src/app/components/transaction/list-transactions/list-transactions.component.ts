@@ -261,8 +261,6 @@ export class ListTransactionsComponent implements OnInit {
 
         match += `}`;
 
-        console.log(match);
-
         match = JSON.parse(match);
 
         // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
@@ -287,7 +285,6 @@ export class ListTransactionsComponent implements OnInit {
 
         project = JSON.parse(project);
 
-        console.log(project);
         // AGRUPAMOS EL RESULTADO
         let group = {
             _id: null,
