@@ -152,15 +152,11 @@ export class ListArticleStocksComponent implements OnInit {
                     project += `,`;
                 }
                 j++;
-                if (this.columns[i].project) {
-                    project += `"${this.columns[i].name}" : ${this.columns[i].project} `
-                } else {
-                    if (this.columns[i].datatype !== "string") {
-                        project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
-                    } else {
-                        project += `"${this.columns[i].name}": 1`;
-                    }
-                }
+                if (this.columns[i].project === null) {
+					project += `"${this.columns[i].name}": 1`;
+				} else {
+					project += `"${this.columns[i].name}": ${this.columns[i].project}`;
+				}
             }
         }
         project += `}`;
@@ -223,6 +219,9 @@ export class ListArticleStocksComponent implements OnInit {
             if(elementC.datatype === 'number' || elementC.datatype === 'currency'){
                 this.items.forEach(elementI => {
                     Object.keys(elementI).forEach(elementK => {
+                        console.log(elementK);
+                        console.log(elementC.name);
+                        console.log(elementI);
                         if(elementK === elementC.name){
                             total = total + elementI[elementK];
                         }
