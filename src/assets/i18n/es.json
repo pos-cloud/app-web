@@ -76,7 +76,9 @@
 		"name": "Empresa",
 		"employee": {
 			"name": "Empleado de Empresa"
-		},
+        },
+        "city" : "Ciudad",
+        "state" : "Estado",
 		"group": {
 			"description": "Grupo de Empresa"
         },
@@ -185,7 +187,11 @@
         },
 		"origin": "Punto de Venta",
 		"company": {
-			"name": "Razón Social"
+            "name": "Razón Social",
+            "city" : "Ciudad",
+            "state" : {
+                "name" : "Estado"
+            }
 		}
     },
     "transactionOrigin": {
@@ -206,7 +212,9 @@
         },
 		"origin": "Punto de Venta",
 		"company": {
-			"name": "Razón Social"
+            "name": "Razón Social",
+            "city" : "Ciudad",
+            "state" : "Estado"
         },
         "totalPrice" : "Precio Total"
     },
