@@ -72,6 +72,7 @@ export class MovementOfCancellationComponent implements OnInit {
   public userCountry: string;
   public balanceSelected: number = 0;
   public userType: string;
+  public automaticSelectionReady: boolean = false;
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -352,9 +353,9 @@ export class MovementOfCancellationComponent implements OnInit {
                 this.recalculateBalanceSelected();
               } else {
                 this.movementsOfCancellations = new Array();
-                this.selectAutomatically();
+                if (!this.automaticSelectionReady) this.selectAutomatically();
               }
-            } else if (this.totalPrice === 0 && this.balanceSelected === 0) {
+            } else if (this.totalPrice === 0 && this.balanceSelected === 0 && !this.automaticSelectionReady) {
               this.movementsOfCancellations = new Array();
               this.selectAutomatically();
             }
@@ -413,7 +414,7 @@ export class MovementOfCancellationComponent implements OnInit {
   }
 
   async selectAutomatically() {
-
+    this.automaticSelectionReady = true;
     if (this.totalPrice > 0) {
       for (let transaction of this.transactions) {
         if (this.totalPrice > this.balanceSelected) {
