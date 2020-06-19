@@ -210,6 +210,7 @@ export class MovementOfCancellationComponent implements OnInit {
       "origin.type": 1,
       "destination._id": 1,
       operationType: 1,
+      automaticSelection: 1,
       modifyBalance: 1,
       requestCompany: 1,
       stateOrigin: 1,
@@ -353,9 +354,9 @@ export class MovementOfCancellationComponent implements OnInit {
                 this.recalculateBalanceSelected();
               } else {
                 this.movementsOfCancellations = new Array();
-                if (!this.automaticSelectionReady) this.selectAutomatically();
+                if (!this.automaticSelectionReady && this.cancellationTypes[0].automaticSelection) this.selectAutomatically();
               }
-            } else if (this.totalPrice === 0 && this.balanceSelected === 0 && !this.automaticSelectionReady) {
+            } else if (this.totalPrice === 0 && this.balanceSelected === 0 && !this.automaticSelectionReady && this.cancellationTypes[0].automaticSelection) {
               this.movementsOfCancellations = new Array();
               this.selectAutomatically();
             }

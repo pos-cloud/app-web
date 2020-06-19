@@ -103,6 +103,7 @@ export class CancellationTypeComponent implements OnInit {
   public setValueForm(): void {
 
     if (!this.cancellationType._id) { this.cancellationType._id = ''; }
+    if (this.cancellationType.automaticSelection === undefined) { this.cancellationType.automaticSelection = false; }
     if (this.cancellationType.modifyBalance === undefined) { this.cancellationType.modifyBalance = true; }
     if (this.cancellationType.requestAutomatic === undefined) { this.cancellationType.requestAutomatic = false; }
     if (this.cancellationType.requestCompany === undefined) { this.cancellationType.requestCompany = true; }
@@ -135,6 +136,7 @@ export class CancellationTypeComponent implements OnInit {
       '_id': this.cancellationType._id,
       'origin': origin,
       'destination': destination,
+      'automaticSelection': this.cancellationType.automaticSelection,
       'modifyBalance': this.cancellationType.modifyBalance,
       'requestAutomatic': this.cancellationType.requestAutomatic,
       'requestCompany': this.cancellationType.requestCompany,
@@ -202,6 +204,7 @@ export class CancellationTypeComponent implements OnInit {
       '_id': [this.cancellationType._id, []],
       'origin': [this.cancellationType.origin, [Validators.required]],
       'destination': [this.cancellationType.destination, [Validators.required]],
+      'automaticSelection': [this.cancellationType.automaticSelection, [Validators.required]],
       'modifyBalance': [this.cancellationType.modifyBalance, [Validators.required]],
       'requestAutomatic': [this.cancellationType.requestAutomatic, [Validators.required]],
       'requestCompany': [this.cancellationType.requestCompany, [Validators.required]],
