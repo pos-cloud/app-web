@@ -521,8 +521,8 @@ export class AddTransactionComponent implements OnInit {
                     this.hideMessage();
                     this.loading = false;
                     this.employees = result.employees;
-                    this.transaction.employeeOpening = this.employees[0];
-                    this.transaction.employeeClosing = this.employees[0];
+                   // this.transaction.employeeOpening = this.employees[0];
+                   // this.transaction.employeeClosing = this.employees[0];
                     this.setValuesForm();
                 }
             },
