@@ -25,6 +25,7 @@
             <th (click)="orderBy('destination.transactionMovement')" >Tipo</th>
             <th (click)="orderBy('destination.name')" >Trans. Cancelatoria</th>
             <th (click)="orderBy('requestAutomatic')">Solicita al final</th>
+            <th (click)="orderBy('automaticSelection')">Selección automática</th>
             <th (click)="orderBy('modifyBalance')">Modifica el Saldo</th>
             <th (click)="orderBy('requestStatusOrigin')">Acota por estado</th>
             <th (click)="orderBy('requestCompany')">Acota por Empresa</th>
@@ -37,6 +38,7 @@
             <th><input type="text" class="form-control" [(ngModel)]="filters['destination.transactionMovement']" (input)="getCancellationTypes()" placeholder="Tipo..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['destination.name']" (input)="getCancellationTypes()" placeholder="Trans. Cancelatoria..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['requestAutomatic']" (input)="getCancellationTypes()" placeholder="Solicita al final..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['automaticSelection']" (input)="getCancellationTypes()" placeholder="Selección automática..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['modifyBalance']" (input)="getCancellationTypes()" placeholder="Modifica el Saldo..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['requestStatusOrigin']" (input)="getCancellationTypes()" placeholder="Acota por estado..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['requestCompany']" (input)="getCancellationTypes()" placeholder="Acota por empresa..."></th>
@@ -74,6 +76,7 @@
             <td>{{cancellationType.destination.transactionMovement}}</td>
             <td>{{cancellationType.destination.name}}</td>
             <td>{{cancellationType.requestAutomatic}}</td>
+            <td>{{cancellationType.automaticSelection}}</td>
             <td>{{cancellationType.modifyBalance}}</td>
             <td>{{cancellationType.requestStatusOrigin}}</td>
             <td>{{cancellationType.requestCompany}}</td>

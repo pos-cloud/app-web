@@ -53,7 +53,7 @@
                         <option value="Cerrado">Cerrado</option>
                         <option value="Entregado">Entregado</option>
                         <option value="Enviado">Enviado</option>
-                        <option value="Pago Confirmad">Pago Confirmado</option>
+                        <option value="Pago Confirmado">Pago Confirmado</option>
                         <option value="Pago Rechazado">Pago Rechazado</option>
                         <option value="Pendiente de pago">Pendiente de pago</option>
                         <option value="Preparando">Preparando</option>
@@ -92,7 +92,19 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="form-group col-md-4">
+                    <label for="automaticSelection" class="control-label">¿Selecciona automaticamente?</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="automaticSelection">
+                        <option value="true" [selected]="cancellationType.automaticSelection" [disabled]="readonly">Si</option>
+                        <option value="false" [selected]="!cancellationType.automaticSelection" [disabled]="readonly">No</option>
+                      </select>
+                      <button type="button" class="btn btn-light" placement="right"
+                        ngbPopover="¿Al buscar transacciones a cancelar selecciona automaticamente las transacciones pendientes?">
+                        <b>?</b>
+                      </button></div>
+                  </div>
+                  <div class="form-group col-md-4">
                     <label for="requestStatusOrigin" class="control-label">Acota por estado</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="requestStatusOrigin">
@@ -100,7 +112,7 @@
                         <option value="Cerrado">Cerrado</option>
                         <option value="Entregado">Entregado</option>
                         <option value="Enviado">Enviado</option>
-                        <option value="Pago Confirmad">Pago Confirmado</option>
+                        <option value="Pago Confirmado">Pago Confirmado</option>
                         <option value="Pago Rechazado">Pago Rechazado</option>
                         <option value="Pendiente de pago">Pendiente de pago</option>
                         <option value="Preparando">Preparando</option>
@@ -111,7 +123,7 @@
                       </button>
                     </div>
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="form-group col-md-4">
                     <label for="requestCompany" class="control-label">Acota por Empresa</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="requestCompany">

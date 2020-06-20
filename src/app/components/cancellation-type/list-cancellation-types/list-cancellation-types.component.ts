@@ -36,6 +36,7 @@ export class ListCancellationTypeComponent implements OnInit {
     "destination.name",
     "destination.transactionMovement",
     "destination.operationType",
+    "automaticSelection",
     "modifyBalance",
     "requestAutomatic",
     "requestCompany",

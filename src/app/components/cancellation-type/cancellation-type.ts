@@ -6,6 +6,7 @@ export class CancellationType extends Model {
 
   public origin: TransactionType;
   public destination: TransactionType;
+  public automaticSelection: boolean = true;
   public modifyBalance: boolean = true;
   public requestAutomatic: boolean = false;
   public requestCompany: boolean = true;
@@ -64,6 +65,16 @@ export class CancellationType extends Model {
         filter: true,
         defaultFilter: null,
         datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+      }, {
+        name: 'automaticSelection',
+        visible: true,
+        disabled: false,
+        filter: true,
+        defaultFilter: null,
+        datatype: 'boolean',
         project: null,
         align: 'left',
         required: false,
