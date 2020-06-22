@@ -37,7 +37,29 @@ export class DatatableComponent {
   public totalItems = 0;
   @Input() title: string;
   @Input() sort: {};
-  @Input() columns: any[];
+  @Input() columns: {
+    name: string,
+    visible: boolean,
+    disabled: boolean,
+    filter: boolean,
+    defaultFilter: string,
+    datatype: string,
+    project: any,
+    align: string,
+    required: boolean
+  }[];
+  @Input() rowButtons: {
+    title: string,
+    class: string,
+    icon: string,
+    click: string
+  }[];
+  @Input() headerButtons: {
+    title: string,
+    class: string,
+    icon: string,
+    click: string
+  }[];
   @Input() _service: any;
 
   // //EXCEL
@@ -54,14 +76,12 @@ export class DatatableComponent {
   }
 
   public async ngOnInit() {
-    this.title = this.capitalizePipe.transform(this.title);
-    this._title.setTitle(this.title);
+    setTimeout(() => {
+      this.title = this.capitalizePipe.transform(this.translatePipe.translateMe(this.title));
+      this._title.setTitle(this.title);
+    }, 0);
     this.datatableController = new DatatableController(this._service, this.columns);
     this.processParams();
-  }
-
-  public async ngAfterViewInit() {
-    this._title.setTitle(this.title);
   }
 
   public ngOnDestroy(): void {
@@ -101,8 +121,14 @@ export class DatatableComponent {
     });
   }
 
+  public runEvent(event: any, item: any) {
+    eval(event);
+  }
+
   public getValue(item, column): any {
-    return this.datatableController.getValue(item, column);
+    return (typeof this.datatableController.getValue(item, column) === 'string') ?
+      this.translatePipe.transform(this.datatableController.getValue(item, column)) :
+      this.datatableController.getValue(item, column);
   }
 
   public exportItems(): void {
@@ -144,22 +170,22 @@ export class DatatableComponent {
         this.itemsPerPage,
         this.sort
       ).then(result => {
-        if (result && result[0] && result[0].items) {
-          if (result[0].items.length > 0) {
+        if (result.status === 200) {
+          if (result.result.length > 0) {
             if (this.itemsPerPage === 0) {
-              this.exportExcelComponent.items = result[0].items;
+              this.exportExcelComponent.items = result.result[0].items;
               this.exportExcelComponent.export();
               this.itemsPerPage = 10;
             } else {
-              this.items = result[0].items;
-              this.totalItems = result[0].count;
+              this.items = result.result[0].items;
+              this.totalItems = result.result[0].count;
             }
           } else {
             this.items = [];
             this.totalItems = 0;
           }
-        } else (result.error) ? this.showToast(result.error.message, 'info') : this.showToast(result.message, 'info');
-      }).catch(err => (err.error) ? this.showToast(err.error.message, 'danger') : this.showToast(err, 'danger'))
+        } else this.showToast(result);
+      }).catch(error => this.showToast(error))
     );
     this.loading = false;
   }
@@ -183,23 +209,36 @@ export class DatatableComponent {
     });
   }
 
-  public showToast(message: string, type: string = 'success'): void {
+  public showToast(result, type?: string, title?: string, message?: string): void {
+    if (result) {
+      if (result.status === 200) {
+        type = 'success';
+        title = result.message;
+      } else if (result.status === 500 || result.status === 400) {
+        type = 'danger';
+        title = (result.error && result.error.message) ? result.error.message : result.message;
+      } else if (result.status === 401) {
+        type = 'danger';
+        title = (result.error && result.error.message) ? result.error.message : result.message;
+      } else {
+        type = 'info';
+        title = result.message;
+      }
+    }
     switch (type) {
       case 'success':
-        this._toastr.success('', this.translatePipe.translateMe(message.toString()));
-        break;
-      case 'info':
-        this._toastr.info('', this.translatePipe.translateMe(message.toString()));
-        break;
-      case 'warning':
-        this._toastr.warning('', this.translatePipe.translateMe(message.toString()));
+        this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
         break;
       case 'danger':
-        this._toastr.error('', this.translatePipe.translateMe(message.toString()));
+        this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        break;
+      case 'warning':
+        this._toastr.warning(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
         break;
       default:
-        this._toastr.success('', this.translatePipe.translateMe(message.toString()));
+        this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
         break;
     }
+    this.loading = false;
   }
 }

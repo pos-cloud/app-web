@@ -3,6 +3,12 @@ import { User } from '../user/user';
 export class Model {
 
   public _id: string;
+  public audits: [
+    {
+      date: string,
+      user: User
+    }
+  ];
   public creationDate: string;
   public updateDate: string;
   public creationUser: User;
@@ -36,6 +42,17 @@ export class Model {
   }[] {
     return [
       ...atrributes,
+      {
+        name: '_id',
+        visible: false,
+        disabled: false,
+        filter: true,
+        defaultFilter: null,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false
+      },
       {
         name: 'creationDate',
         visible: false,

@@ -9,9 +9,11 @@ export class Config {
   static database: string;
   static apiHost: string = 'localhost';
   static apiURL: string;
+  static apiV8URL: string;
   static apiURL_FE_AR: string = 'libs/fe/ar/index.php';
   static apiURL_FE_MX: string = 'libs/fe/mx/01_CFDI_fe.php';
   static apiPort = 300;
+  static apiV8Port = 308;
   static modules;
   static emailAccount: string;
   static emailPassword: string;
@@ -76,16 +78,23 @@ export class Config {
 
   constructor() {
     Config.updateApiURL();
+    Config.updateApiV8URL();
   }
 
   public static setApiHost(apiHost: string): void {
     this.apiHost = apiHost;
     Config.updateApiURL();
+    Config.updateApiV8URL();
   }
 
   public static setApiPort(apiPort: number): void {
     this.apiPort = apiPort;
     Config.updateApiURL();
+  }
+
+  public static setApiV8Port(apiPort: number): void {
+    this.apiPort = apiPort;
+    Config.updateApiV8URL();
   }
 
   public static setModules(modules): void {
@@ -150,6 +159,14 @@ export class Config {
       Config.apiURL = 'http://' + Config.apiHost + ':' + Config.apiPort + '/api/';
     } else {
       Config.apiURL = 'http://' + Config.apiHost + '/api/';
+    }
+  }
+
+  public static updateApiV8URL() {
+    if (Config.apiPort !== 0) {
+      Config.apiV8URL = 'http://' + Config.apiHost + ':' + Config.apiV8Port + '/';
+    } else {
+      Config.apiV8URL = 'http://' + Config.apiV8Port + '/';
     }
   }
 }

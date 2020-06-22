@@ -1,10 +1,15 @@
 /* CONTENIDO */
+
 html {
   font-family: Open Sans, sans-serif !important;
 }
 
 body {
   font-family: Open Sans, sans-serif !important;
+}
+
+.card-header .btn-light {
+  border: 0px;
 }
 
 .navbar {
@@ -108,13 +113,11 @@ body {
   display: none;
 }
 
-.copy_2W,
-.text_eD {
+.copy_2W, .text_eD {
   display: none !important;
 }
 
-.avatar_2c._expanded_1H,
-.avatar_2c {
+.avatar_2c._expanded_1H, .avatar_2c {
   display: none !important;
 }
 
@@ -186,8 +189,7 @@ body {
   box-sizing: border-box;
 }
 
-#fuse-splash-screen .spinner-wrapper .spinner .inner .left,
-#fuse-splash-screen .spinner-wrapper .spinner .inner .right {
+#fuse-splash-screen .spinner-wrapper .spinner .inner .left, #fuse-splash-screen .spinner-wrapper .spinner .inner .right {
   position: absolute;
   top: 0;
   height: 100px;
@@ -195,8 +197,7 @@ body {
   overflow: hidden;
 }
 
-#fuse-splash-screen .spinner-wrapper .spinner .inner .left .half-circle,
-#fuse-splash-screen .spinner-wrapper .spinner .inner .right .half-circle {
+#fuse-splash-screen .spinner-wrapper .spinner .inner .left .half-circle, #fuse-splash-screen .spinner-wrapper .spinner .inner .right .half-circle {
   position: absolute;
   top: 0;
   width: 100px;
@@ -233,29 +234,24 @@ body {
   0% {
     transform: rotate(0deg) scale(0.5);
   }
-
   100% {
     transform: rotate(360deg) scale(0.5);
   }
 }
 
 @keyframes left-wobble {
-  0%,
-  100% {
+  0%, 100% {
     transform: rotate(130deg);
   }
-
   50% {
     transform: rotate(-5deg);
   }
 }
 
 @keyframes right-wobble {
-  0%,
-  100% {
+  0%, 100% {
     transform: rotate(-130deg);
   }
-
   50% {
     transform: rotate(5deg);
   }
@@ -265,35 +261,29 @@ body {
   12.5% {
     transform: rotate(135deg);
   }
-
   25% {
     transform: rotate(270deg);
   }
-
   37.5% {
     transform: rotate(405deg);
   }
-
   50% {
     transform: rotate(540deg);
   }
-
   62.5% {
     transform: rotate(675deg);
   }
-
   75% {
     transform: rotate(810deg);
   }
-
   87.5% {
     transform: rotate(945deg);
   }
-
   100% {
     transform: rotate(1080deg);
   }
 }
+
 /* FIN FUSE SPLASH SCREEN */
 
 /* CHECK COLUMNS */
@@ -351,6 +341,7 @@ body {
 }
 
 /* LISTADOS */
+
 .card {
   min-height: 65vh !important;
   height: auto;
@@ -446,6 +437,7 @@ td {
 }
 
 /* RESPONSIVE */
+
 .collapse.show {
   background-color: white;
 }
@@ -454,7 +446,6 @@ td {
   .container-fluid {
     padding: 20px 5px !important;
   }
-
   .card .card-header .btn span {
     display: none;
   }

@@ -11,12 +11,16 @@ import { CategoryService } from '../category.service';
 import { Config } from '../../../app.config';
 import { ApplicationService } from 'app/components/application/application.service';
 import { Application } from 'app/components/application/application.model';
+import { Subscription } from 'rxjs';
+import Resulteable from 'app/util/Resulteable';
+import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-category',
   templateUrl: './category.component.html',
   styleUrls: ['./category.component.scss'],
-  providers: [NgbAlertConfig, ApplicationService],
+  providers: [NgbAlertConfig, ApplicationService, TranslateMePipe],
   encapsulation: ViewEncapsulation.None
 })
 
@@ -29,7 +33,7 @@ export class CategoryComponent implements OnInit {
   public category: Category;
   public categoryForm: FormGroup;
   public categories: Category[];
-  public applicationsCtrl: Application[];
+  public applications: Application[];
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
@@ -37,6 +41,7 @@ export class CategoryComponent implements OnInit {
   public filesToUpload: Array<File>;
   public imageURL: string;
   public orientation: string = 'horizontal';
+  private subscription: Subscription = new Subscription();
 
   public formErrors = { 'order': '', 'description': '' };
 
@@ -52,18 +57,31 @@ export class CategoryComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
+    public translatePipe: TranslateMePipe,
+    private _toastr: ToastrService,
   ) {
     if (window.screen.width < 1000) this.orientation = 'vertical';
     this.category = new Category();
     this.getCategories();
-    this.getApplications();
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.buildForm();
+
+    await this.getAllApplications({})
+      .then((result: Application[]) => {
+        this.applications = result;
+        if (!this.categoryId) {
+          this.applications.forEach(x => {
+            const control = new FormControl(false);
+            (this.categoryForm.controls.applications as FormArray).push(control);
+          })
+        }
+      })
+      .catch((error: Resulteable) => this.showToast(error));
 
     if (this.categoryId) {
       this.getCategory();
@@ -226,8 +244,8 @@ export class CategoryComponent implements OnInit {
       'favourite': this.category.favourite
     });
 
-    if (this.applicationsCtrl && this.applicationsCtrl.length > 0) {
-      this.applicationsCtrl.forEach(x => {
+    if (this.applications && this.applications.length > 0) {
+      this.applications.forEach(x => {
         let encontro = false;
         this.category.applications.forEach(y => {
           if (x._id === y._id) {
@@ -249,7 +267,7 @@ export class CategoryComponent implements OnInit {
     this.category = this.categoryForm.value;
 
     const selectedOrderIds = this.categoryForm.value.applications
-      .map((v, i) => (v ? this.applicationsCtrl[i] : null))
+      .map((v, i) => (v ? this.applications[i] : null))
       .filter(v => v !== null);
 
     this.category.applications = selectedOrderIds;
@@ -391,40 +409,23 @@ export class CategoryComponent implements OnInit {
     return true
   }
 
-  public getApplications(): void {
-
-    this.loading = true;
-
-    let project = {
-      "_id": 1,
-      "name": 1,
-      "operationType": 1,
-    }
-
-    let match = {
-      "operationType": { "$ne": "D" }
-    }
-
-    this._applicationService.getAll(project, match, { _id: 1 }, {}).subscribe(
-      result => {
-        if (result && result.applications) {
-          this.applicationsCtrl = result.applications
+  public getAllApplications(match: {}): Promise<Application[]> {
+    return new Promise<Application[]>((resolve, reject) => {
+      this.subscription.add(this._applicationService.getAll(
+        {}, // PROJECT
+        match, // MATCH
+        { name: 1 }, // SORT
+        {}, // GROUP
+        0, // LIMIT
+        0 // SKIP
+      ).subscribe(
+        result => {
           this.loading = false;
-
-          if (!this.categoryId) {
-            this.applicationsCtrl.forEach(x => {
-              const control = new FormControl(false);
-              (this.categoryForm.controls.applications as FormArray).push(control);
-            })
-
-          }
-        }
-      },
-      error => {
-        this.loading = false;
-        this.showMessage(error._body, 'danger', false);
-      }
-    )
+          (result.status === 200) ? resolve(result.result) : reject(result);
+        },
+        error => reject(error)
+      ));
+    });
   }
 
 
@@ -441,5 +442,32 @@ export class CategoryComponent implements OnInit {
 
   public hideMessage(): void {
     this.alertMessage = '';
+  }
+
+  public showToast(result, type?: string, title?: string, message?: string): void {
+    if (result) {
+      if (result.status === 200) {
+        type = 'success';
+        title = result.message;
+      } else if (result.status >= 400) {
+        type = 'danger';
+        title = (result.error && result.error.message) ? result.error.message : result.message;
+      } else {
+        type = 'info';
+        title = result.message;
+      }
+    }
+    switch (type) {
+      case 'success':
+        this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        break;
+      case 'danger':
+        this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        break;
+      default:
+        this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        break;
+    }
+    this.loading = false;
   }
 }

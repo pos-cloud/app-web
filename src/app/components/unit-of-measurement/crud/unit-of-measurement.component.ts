@@ -4,8 +4,8 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Application, ApplicationType } from '../application.model';
-import { ApplicationService } from '../application.service';
+import { UnitOfMeasurement } from '../unit-of-measurement.model';
+import { UnitOfMeasurementService } from '../unit-of-measurement.service';
 import { ToastrService } from 'ngx-toastr';
 import { Title } from '@angular/platform-browser';
 import { CapitalizePipe } from 'app/main/pipes/capitalize';
@@ -14,22 +14,22 @@ import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
-  selector: 'app-application',
-  templateUrl: './application.component.html',
-  styleUrls: ['./application.component.scss'],
+  selector: 'app-unit-of-measurement',
+  templateUrl: './unit-of-measurement.component.html',
+  styleUrls: ['./unit-of-measurement.component.scss'],
   providers: [NgbAlertConfig, TranslateMePipe, TranslatePipe]
 })
 
-export class ApplicationComponent implements OnInit {
+export class UnitOfMeasurementComponent implements OnInit {
 
   @Input() objId: string;
   @Input() readonly: boolean;
   @Input() operation: string;
-  public obj: Application;
+  public obj: UnitOfMeasurement;
   public objForm: FormGroup;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  public title: string = 'application';
+  public title: string = 'unit-of-measurement';
   private subscription: Subscription = new Subscription();
   private capitalizePipe: CapitalizePipe = new CapitalizePipe();
   public focus$: Subject<string>[] = new Array();
@@ -51,25 +51,25 @@ export class ApplicationComponent implements OnInit {
     focus: boolean,
     class: string
   }[] = [{
-    name: 'order',
+    name: 'code',
     tag: 'input',
-    tagType: 'number',
+    tagType: 'text',
     search: null,
     format: null,
     values: null,
     validators: [Validators.required],
     focus: true,
-    class: 'form-group col-md-2'
+    class: 'form-group col-md-3'
   }, {
-    name: 'type',
-    tag: 'select',
+    name: 'abbreviation',
+    tag: 'input',
     tagType: 'text',
     search: null,
     format: null,
-    values: [ApplicationType.Web, ApplicationType.App],
+    values: null,
     validators: [Validators.required],
     focus: true,
-    class: 'form-group col-md-2'
+    class: 'form-group col-md-3'
   }, {
     name: 'name',
     tag: 'input',
@@ -79,17 +79,7 @@ export class ApplicationComponent implements OnInit {
     values: null,
     validators: [Validators.required],
     focus: true,
-    class: 'form-group col-md-4'
-  }, {
-    name: 'url',
-    tag: 'input',
-    tagType: 'text',
-    search: null,
-    format: null,
-    values: null,
-    validators: [Validators.required],
-    focus: true,
-    class: 'form-group col-md-4'
+    class: 'form-group col-md-6'
   }];
   public formErrors: {} = {};
   public validationMessages = {
@@ -97,7 +87,7 @@ export class ApplicationComponent implements OnInit {
   };
 
   constructor(
-    private _objService: ApplicationService,
+    private _objService: UnitOfMeasurementService,
     private _toastr: ToastrService,
     private _title: Title,
     public _fb: FormBuilder,
@@ -105,7 +95,7 @@ export class ApplicationComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public translatePipe: TranslateMePipe
   ) {
-    this.obj = new Application();
+    this.obj = new UnitOfMeasurement();
     for (let field of this.formFields) {
       this.formErrors[field.name] = '';
       if (field.tag === 'autocomplete') {

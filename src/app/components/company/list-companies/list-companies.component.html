@@ -22,11 +22,11 @@
             </div>
           </div>
         </div>
-        <button class="btn" (click)="openModal('add', null)" *ngIf="articleType && articleType.toString() === 'Final'"><i class="fa fa-plus"></i><span>Agregar</span></button>
+        <button class="btn" (click)="openModal('add', null)"><i class="fa fa-plus"></i><span>Agregar</span></button>
         <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
         <button class="btn" (click)="openModal('add', null)"><i class="fa fa-plus"></i><span>Agregar</span></button>
         <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems($event)"></app-export-excel>
-        
+
       </div>
     </div>
     <div class="card-block table-responsive">

@@ -11,8 +11,7 @@ export class AddressService extends ModelService {
     public _authService: AuthService
   ) {
     super(
-      `address`, // PATH SINGLE
-      `addresses`, // PATH PLURAL
+      `addresses`, // PATH
       _http,
       _authService
     );

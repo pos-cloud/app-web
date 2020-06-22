@@ -39,7 +39,6 @@ import { UpdateArticlePriceComponent } from "./components/article/update-article
 import { ListVATConditionsComponent } from './components/vat-condition/list-vat-conditions/list-vat-conditions.component';
 import { ReportBirthdayComponent } from './components/report-birthday/report-birthday.component';
 import { ReportSalesByEmployeeComponent } from './components/report-sales-by-employee/report-sales-by-employee.component'
-import { ListUnitsOfMeasurementComponent } from './components/unit-of-measurement/list-units-of-measurement/list-units-of-measurement.component';
 import { ListIdentificationTypesComponent } from './components/identification-type/list-identification-types/list-identification-types.component';
 import { ListMakesComponent } from './components/make/list-makes/list-makes.component';
 import { ListPaymentMethodsComponent } from './components/payment-method/list-payment-methods/list-payment-methods.component';
@@ -79,7 +78,6 @@ import { ListEmailTemplatesComponent } from './components/email-template/list-em
 import { ListShipmentMethodComponent } from './components/shipment-method/list-shipment-method/list-shipment-method.component';
 import { ListCompaniesComponent } from './components/company/list-companies/list-companies.component';
 import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.component';
-import { ListApplicationsComponent } from './components/application/list-applications/list-applications.component';
 import { ListMovementsOfCancellationsComponent } from './components/movement-of-cancellation/list-movements-of-cancellations/list-movements-of-cancellations.component';
 
 export const _routes: Routes = [
@@ -477,11 +475,6 @@ export const _routes: Routes = [
 	{
 		path: 'admin/campos-de-empresas',
 		component: ListCompanyFieldsComponent,
-		canActivate: [AuthGuard, LicenseGuard]
-	},
-	{
-		path: 'admin/unidades-de-medida',
-		component: ListUnitsOfMeasurementComponent,
 		canActivate: [AuthGuard, LicenseGuard]
 	},
 	{

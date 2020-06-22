@@ -11,8 +11,7 @@ export class ApplicationService extends ModelService {
     public _authService: AuthService
   ) {
     super(
-      `application`, // PATH SINGLE
-      `applications`, // PATH PLURAL
+      `applications`, // PATH
       _http,
       _authService
     );

@@ -10,12 +10,16 @@ import { MakeService } from '../make.service';
 import { Config } from 'app/app.config';
 import { ApplicationService } from 'app/components/application/application.service';
 import { Application } from 'app/components/application/application.model';
+import { Subscription } from 'rxjs';
+import Resulteable from 'app/util/Resulteable';
+import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-make',
   templateUrl: './make.component.html',
   styleUrls: ['./make.component.scss'],
-  providers: [NgbAlertConfig, ApplicationService],
+  providers: [NgbAlertConfig, ApplicationService, TranslateMePipe],
   encapsulation: ViewEncapsulation.None
 })
 
@@ -33,7 +37,8 @@ export class MakeComponent implements OnInit {
   public filesToUpload: Array<File>;
   public imageURL: string;
   public orientation: string = 'horizontal';
-  public applicationsCtrl: Application[];
+  public applications: Application[];
+  private subscription: Subscription = new Subscription();
   public formErrors = {
     'description': ''
   };
@@ -50,20 +55,32 @@ export class MakeComponent implements OnInit {
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    public translatePipe: TranslateMePipe,
+    private _toastr: ToastrService,
   ) {
     this.make = new Make();
     if (window.screen.width < 1000) this.orientation = 'vertical';
-    this.getApplications();
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
 
     this.buildForm();
     this.imageURL = './../../../assets/img/default.jpg';
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
 
+    await this.getAllApplications({})
+      .then((result: Application[]) => {
+        this.applications = result;
+        if (!this.makeId) {
+          this.applications.forEach(x => {
+            const control = new FormControl(false);
+            (this.makeForm.controls.applications as FormArray).push(control);
+          })
+        }
+      })
+      .catch((error: Resulteable) => this.showToast(error));
 
     if (this.makeId) {
       this.getMake();
@@ -111,8 +128,8 @@ export class MakeComponent implements OnInit {
     });
 
 
-    if (this.applicationsCtrl && this.applicationsCtrl.length > 0) {
-      this.applicationsCtrl.forEach(x => {
+    if (this.applications && this.applications.length > 0) {
+      this.applications.forEach(x => {
         let encontro = false;
         this.make.applications.forEach(y => {
           if (x._id === y._id) {
@@ -173,7 +190,7 @@ export class MakeComponent implements OnInit {
     this.make = this.makeForm.value;
 
     const selectedOrderIds = this.makeForm.value.applications
-      .map((v, i) => (v ? this.applicationsCtrl[i] : null))
+      .map((v, i) => (v ? this.applications[i] : null))
       .filter(v => v !== null);
 
     this.make.applications = selectedOrderIds;
@@ -302,40 +319,23 @@ export class MakeComponent implements OnInit {
     this.filesToUpload = <Array<File>>fileInput.target.files;
   }
 
-  public getApplications(): void {
-
-    this.loading = true;
-
-    let project = {
-      "_id": 1,
-      "name": 1,
-      "operationType": 1,
-    }
-
-    let match = {
-      "operationType": { "$ne": "D" }
-    }
-
-    this._applicationService.getAll(project, match, { _id: 1 }, {}).subscribe(
-      result => {
-        if (result && result.applications) {
-          this.applicationsCtrl = result.applications
+  public getAllApplications(match: {}): Promise<Application[]> {
+    return new Promise<Application[]>((resolve, reject) => {
+      this.subscription.add(this._applicationService.getAll(
+        {}, // PROJECT
+        match, // MATCH
+        { name: 1 }, // SORT
+        {}, // GROUP
+        0, // LIMIT
+        0 // SKIP
+      ).subscribe(
+        result => {
           this.loading = false;
-
-          if (!this.makeId) {
-            this.applicationsCtrl.forEach(x => {
-              const control = new FormControl(false);
-              (this.makeForm.controls.applications as FormArray).push(control);
-            })
-
-          }
-        }
-      },
-      error => {
-        this.loading = false;
-        this.showMessage(error._body, 'danger', false);
-      }
-    )
+          (result.status === 200) ? resolve(result.result) : reject(result);
+        },
+        error => reject(error)
+      ));
+    });
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
@@ -346,5 +346,32 @@ export class MakeComponent implements OnInit {
 
   public hideMessage(): void {
     this.alertMessage = '';
+  }
+
+  public showToast(result, type?: string, title?: string, message?: string): void {
+    if (result) {
+      if (result.status === 200) {
+        type = 'success';
+        title = result.message;
+      } else if (result.status >= 400) {
+        type = 'danger';
+        title = (result.error && result.error.message) ? result.error.message : result.message;
+      } else {
+        type = 'info';
+        title = result.message;
+      }
+    }
+    switch (type) {
+      case 'success':
+        this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        break;
+      case 'danger':
+        this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        break;
+      default:
+        this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        break;
+    }
+    this.loading = false;
   }
 }

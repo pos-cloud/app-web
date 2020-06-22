@@ -177,6 +177,7 @@ export class AppComponent {
     Config.setDatabase(subdominio);
     Config.setApiHost(hostname); // Prod
     Config.setApiPort(300);
+    Config.setApiV8Port(308);
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

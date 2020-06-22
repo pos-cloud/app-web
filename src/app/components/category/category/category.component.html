@@ -127,7 +127,7 @@
                                             *ngFor="let order of categoryForm.get('applications')['controls']; let i = index"
                                             style="margin-right: 20px; font-size: 20px;">
                                             <input type="checkbox" [formControlName]="i" />
-                                            {{applicationsCtrl[i].name}}
+                                            {{applications[i].name}}
                                         </label>
                                     </div>
                                 </div>

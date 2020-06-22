@@ -154,9 +154,6 @@ import { CompanyContactComponent } from './components/company/company-contact/co
 import { VATConditionComponent } from './components/vat-condition/vat-condition/vat-condition.component';
 import { ReportBirthdayComponent } from './components/report-birthday/report-birthday.component';
 import { ReportSalesByEmployeeComponent } from './components/report-sales-by-employee/report-sales-by-employee.component'
-import { ListUnitsOfMeasurementComponent } from './components/unit-of-measurement/list-units-of-measurement/list-units-of-measurement.component';
-import { AddUnitOfMeasurementComponent } from './components/unit-of-measurement/unit-of-measurement/add-unit-of-measurement.component';
-import { UnitOfMeasurementService } from './components/unit-of-measurement/unit-of-measurement.service';
 import { ListIdentificationTypesComponent } from './components/identification-type/list-identification-types/list-identification-types.component';
 import { AddIdentificationTypeComponent } from './components/identification-type/identification-type/add-identification-type.component';
 import { IdentificationTypeService } from './components/identification-type/identification-type.service';
@@ -269,6 +266,7 @@ import { ListCategoriesPosComponent } from './components/category/list-categorie
 import { ApplicationModule } from './components/application/application.module';
 import { ApplicationService } from './components/application/application.service';
 import { ListMovementsOfCancellationsComponent } from './components/movement-of-cancellation/list-movements-of-cancellations/list-movements-of-cancellations.component';
+import { ComponentsModule } from './components/components.module';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -379,8 +377,6 @@ export function createTranslateLoader(http: HttpClient) {
     CompanyGroupComponent,
     UpdateArticlePriceComponent,
     CompanyContactComponent,
-    ListUnitsOfMeasurementComponent,
-    AddUnitOfMeasurementComponent,
     ListIdentificationTypesComponent,
     AddIdentificationTypeComponent,
     AddUseOfCFDIComponent,
@@ -551,8 +547,6 @@ export function createTranslateLoader(http: HttpClient) {
     CompanyGroupComponent,
     UpdateArticlePriceComponent,
     CompanyContactComponent,
-    ListUnitsOfMeasurementComponent,
-    AddUnitOfMeasurementComponent,
     ListIdentificationTypesComponent,
     AddIdentificationTypeComponent,
     AddUseOfCFDIComponent,
@@ -641,9 +635,8 @@ export function createTranslateLoader(http: HttpClient) {
     ProgressbarModule,
     DirectivesModule,
     PipesModule,
-    ExportersModule,
-    DatatableModule,
-    ApplicationModule
+    ComponentsModule,
+    ExportersModule
   ],
   providers: [
     NgbActiveModal,
@@ -683,7 +676,6 @@ export function createTranslateLoader(http: HttpClient) {
     ArticleFieldService,
     CompanyGroupService,
     CompanyContactService,
-    UnitOfMeasurementService,
     IdentificationTypeService,
     UseOfCFDIService,
     RelationTypeService,

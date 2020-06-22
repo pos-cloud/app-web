@@ -5,7 +5,7 @@ import { Deposit } from '../deposit/deposit';
 import { Location } from '../location/location';
 import { ArticleFields } from '../article-field/article-fields';
 import { User } from '../user/user';
-import { UnitOfMeasurement } from '../unit-of-measurement/unit-of-measurement';
+import { UnitOfMeasurement } from '../unit-of-measurement/unit-of-measurement.model';
 
 import * as moment from 'moment';
 import { Currency } from '../currency/currency';

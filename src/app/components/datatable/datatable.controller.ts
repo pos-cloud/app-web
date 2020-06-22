@@ -51,7 +51,8 @@ export class DatatableController {
     filters: any[],
     currentPage: number,
     itemsPerPage: number,
-    sort: {}
+    sort: {},
+    group: {} = null
   ): Promise<any> {
     return new Promise((resolve, reject) => {
       let timezone = "-03:00";
@@ -107,12 +108,15 @@ export class DatatableController {
       }
       project += `}`;
       project = JSON.parse(project);
+
       // AGRUPAMOS EL RESULTADO
-      let group = {
-        _id: null,
-        count: { $sum: 1 },
-        items: { $push: "$$ROOT" }
-      };
+      if (!group) {
+        group = {
+          _id: null,
+          count: { $sum: 1 },
+          items: { $push: "$$ROOT" }
+        };
+      }
 
       let page = 0;
       if (currentPage != 0) {

@@ -33,8 +33,7 @@
 						class="fa fa-upload"></i><span>Importar Productos</span></button>
 				<button class="btn" (click)="openModal('print-list', null)"><i class="fa fa-print"></i><span>Imprimir
 						Lista</span></button>
-				<app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns"
-					(eventExport)="exportItems($event)"></app-export-excel>
+				<app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems($event)"></app-export-excel>
 			</div>
 		</div>
 		<div class="card-block table-responsive">

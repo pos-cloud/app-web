@@ -56,9 +56,9 @@
         <option [ngValue]="null" [disabled]="!allowChangeBranch">
           Todas
         </option>
-        <option 
-          *ngFor="let branch of branches" 
-          [ngValue]="branch._id" 
+        <option
+          *ngFor="let branch of branches"
+          [ngValue]="branch._id"
           [disabled]="!allowChangeBranch"
           >
           {{branch.number}} - {{branch.name}}

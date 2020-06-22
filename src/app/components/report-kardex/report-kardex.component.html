@@ -33,9 +33,9 @@
             <b>Sucursal</b>
           </label>
           <select class="form-control" [(ngModel)]="branchSelectedId" (change)="getDepositsByBranch()">
-            <option 
-              *ngFor="let branch of branches" 
-              [ngValue]="branch._id" 
+            <option
+              *ngFor="let branch of branches"
+              [ngValue]="branch._id"
               [disabled]="!allowChangeBranch"
               >
               {{branch.number}} - {{branch.name}}
@@ -47,9 +47,9 @@
             <b>Depósito</b>
           </label>
           <select class="form-control" [(ngModel)]="depositSelectedId">
-            <option 
-              *ngFor="let deposit of deposits" 
-              [ngValue]="deposit._id" 
+            <option
+              *ngFor="let deposit of deposits"
+              [ngValue]="deposit._id"
               [disabled]="!allowChangeBranch"
               >
               {{deposit.name}}

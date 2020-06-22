@@ -12,8 +12,7 @@
 				<div class="btn-group" ngbDropdown>
 					<button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i
 							[ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
-					<app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns"
-						(eventExport)="exportItems()"></app-export-excel>
+					<app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems()"></app-export-excel>
 					<div class="btn-group" ngbDropdown>
 						<button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Columnas"><i
 								class="fa fa-columns"></i><span>Columnas</span></button>

@@ -1,17 +1,18 @@
 <section class="container-fluid">
   <div class="card card-large">
     <div class="card-header">
-      <span>{{title}}</span>
+      <span style="color: #607D8B">{{title}}</span>
       <div class="pull-right">
-        <button class="btn" (click)="emitEvent('add', null)" [disabled]="loading">
-          <i class="fa fa-plus"></i><span>{{ 'add' | translate | capitalize }}</span></button>
-        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading">
-          <i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>{{ 'refresh' | translate | capitalize }}</span></button>
-        <div class="btn-group" ngbDropdown [ngClass]="{'disabled': loading, 'enabled': !loading }">
-          <button class="btn" ngbDropdownToggle data-toggle="tooltip" placement="buttom-left"><i
-              class="fa fa-columns"></i><span>{{ 'columns' | translate | capitalize }}</span></button>
-          <div class="dropdown-menu dropdown-menu-left" ngbDropdownMenu>
-            <div cdkDropList class="example-list" (cdkDropListDropped)="datatableController.drop($event)">
+        <button *ngFor="let button of headerButtons" [type]="'button'" [class]="button.class"
+          (click)="runEvent(button.click, null)" [disabled]="loading"><i
+            [class]="button.icon"></i><span>{{ button.title | translate | capitalize }}</span>
+        </button>
+        <div class="columns-area float-right" ngbDropdown>
+          <button class="btn btn-light" type="button" id="user" ngbDropdownToggle aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-columns"></i><span>{{ 'columns' | translate | capitalize }}</span>
+          </button>
+          <div ngbDropdownMenu>
+            <div ngbDropdownItem cdkDropList class="example-list" (cdkDropListDropped)="datatableController.drop($event)">
               <div class="example-box" *ngFor="let column of columns" cdkDrag [cdkDragDisabled]="column.disabled">
                 <label for="column"><input type="checkbox" [id]="column.name" (change)="getItems()" [(ngModel)]="column.visible"
                     [disabled]="column.disabled">{{ column.name | translate}}:</label>
@@ -19,8 +20,7 @@
             </div>
           </div>
         </div>
-        <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns"
-          (eventExport)="exportItems()"></app-export-excel>
+        <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems()"></app-export-excel>
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -40,13 +40,17 @@
               <th *ngIf="column.visible">
                 <input *ngIf="column.datatype !== 'boolean'" type="text" class="form-control"
                   [ngClass]="{'disabled': loading, 'enabled': !loading }" [(ngModel)]="filters[column.name]"
-                  (keydown.enter)="addFilters()" placeholder="{{ column.name | translate }}" [disabled]="!column.filter || loading">
+                  (keydown.enter)="addFilters()" placeholder="{{ column.name | translate }}"
+                  [disabled]="!column.filter || loading">
                 <select class="form-control" *ngIf="column.datatype === 'boolean'" [(ngModel)]="filters[column.name]"
                   (change)="addFilters()">
-                  <option value="" [ngClass]="{'disabled': loading, 'enabled': !loading }" [disabled]="!column.filter || loading">{{'select filter' | translate | capitalize}}</option>
-                  <option value="true" [ngClass]="{'disabled': loading, 'enabled': !loading }" [disabled]="!column.filter || loading">{{'true' | translate | capitalize}}
+                  <option value="" [ngClass]="{'disabled': loading, 'enabled': !loading }" [disabled]="!column.filter || loading">
+                    {{'select filter' | translate | capitalize}}</option>
+                  <option value="true" [ngClass]="{'disabled': loading, 'enabled': !loading }"
+                    [disabled]="!column.filter || loading">{{'true' | translate | capitalize}}
                   </option>
-                  <option value="false" [ngClass]="{'disabled': loading, 'enabled': !loading }" [disabled]="!column.filter  || loading">{{'false' | translate | capitalize}}
+                  <option value="false" [ngClass]="{'disabled': loading, 'enabled': !loading }"
+                    [disabled]="!column.filter  || loading">{{'false' | translate | capitalize}}
                   </option>
                 </select>
               </th>
@@ -63,22 +67,17 @@
 														  currentPage: currentPage,
 														  totalItems: totalItems
 														}">
-            <td align="left" width="100">
-              <button type="button" class="btn btn-success btn-sm" (click)="emitEvent('view', item)" [disabled]="loading"
-                title="{{'view' | translate | capitalize}}"><i class="fa fa-eye"></i>
+            <td align="left">
+              <button *ngFor="let button of rowButtons" [type]="'button'" [class]="button.class"
+                (click)="runEvent(button.click, item)" [disabled]="loading" [title]="button.title | translate | capitalize"><i
+                  [class]="button.icon"></i>
               </button>
-              <button type="button" class="btn btn-primary btn-sm" (click)="emitEvent('update', item)" [disabled]="loading"
-                title="{{'update' | translate | capitalize}}"><i class="fa fa-pencil"></i>
-              </button>
-              <!-- <button type="button" class="btn btn-danger btn-sm" (click)="emitEvent('delete', item)" [disabled]="loading"
-                title="{{'delete' | translate | capitalize}}"><i class="fa fa-trash-o"></i>
-              </button> -->
             </td>
             <ng-container *ngFor="let column of columns">
               <td *ngIf="column.visible && column.datatype !== 'boolean'" [attr.align]="column.align">
-                {{datatableController.getValue(item, column)}}</td>
+                {{getValue(item, column)}}</td>
               <td *ngIf="column.visible && column.datatype === 'boolean'" [attr.align]="column.align">
-                <input type="checkbox" [checked]="datatableController.getValue(item, column) === 'true'" disabled>
+                <input type="checkbox" [checked]="getValue(item, column) === 'true'" disabled>
               </td>
             </ng-container>
           </tr>

@@ -31,12 +31,16 @@ import { ShipmentMethodService } from 'app/components/shipment-method/shipment-m
 import { ShipmentMethod } from 'app/components/shipment-method/shipment-method';
 import { ApplicationService } from 'app/components/application/application.service';
 import { Application } from 'app/components/application/application.model';
+import { Subscription } from 'rxjs';
+import Resulteable from 'app/util/Resulteable';
+import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-transaction-type',
   templateUrl: './transaction-type.component.html',
   styleUrls: ['./transaction-type.component.css'],
-  providers: [NgbAlertConfig, ApplicationService]
+  providers: [NgbAlertConfig, ApplicationService, TranslateMePipe]
 })
 
 export class TransactionTypeComponent implements OnInit {
@@ -66,6 +70,7 @@ export class TransactionTypeComponent implements OnInit {
   public branches: Branch[];
   public shipmentMethods: ShipmentMethod[];
   public applications: Application[];
+  private subscription: Subscription = new Subscription();
   public formErrors = {
     'transactionMovement': '',
     'abbreviation': '',
@@ -98,7 +103,9 @@ export class TransactionTypeComponent implements OnInit {
     private _emailTemplateService: EmailTemplateService,
     private _shipmentMethodService: ShipmentMethodService,
     private _branchService: BranchService,
-    private _applicationService: ApplicationService
+    private _applicationService: ApplicationService,
+    public translatePipe: TranslateMePipe,
+    private _toastr: ToastrService,
   ) {
     if (window.screen.width < 1000) this.orientation = 'vertical';
     this.getCurrencies();
@@ -109,10 +116,9 @@ export class TransactionTypeComponent implements OnInit {
     this.getEmailTemplates();
     this.getShipmentMethod();
     this.getBranches();
-    this.getApplications();
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
 
     this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
@@ -121,6 +127,11 @@ export class TransactionTypeComponent implements OnInit {
       this.transactionType = new TransactionType();
     }
     this.buildForm();
+    await this.getAllApplications({})
+      .then((result: Application[]) => {
+        this.applications = result;
+      })
+      .catch((error: Resulteable) => this.showToast(error));
     this.setValueForm();
   }
 
@@ -209,31 +220,23 @@ export class TransactionTypeComponent implements OnInit {
     );
   }
 
-  public getApplications(): void {
-
-    this.loading = true;
-
-    this._applicationService.getAll(
-      { name: 1, operationType: 1 }, // PROJECT
-      { operationType: { $ne: 'D' } }, // MATCH
-      { name: 1 }, // SORT
-      {}, // GROUP
-      0, // LIMIT
-      0 // SKIP
-    ).subscribe(
-      result => {
-        if (result && result.applications) {
-          this.applications = result.applications;
-        } else {
-          this.applications = new Array();
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+  public getAllApplications(match: {}): Promise<Application[]> {
+    return new Promise<Application[]>((resolve, reject) => {
+      this.subscription.add(this._applicationService.getAll(
+        {}, // PROJECT
+        match, // MATCH
+        { name: 1 }, // SORT
+        {}, // GROUP
+        0, // LIMIT
+        0 // SKIP
+      ).subscribe(
+        result => {
+          this.loading = false;
+          (result.status === 200) ? resolve(result.result) : reject(result);
+        },
+        error => reject(error)
+      ));
+    });
   }
 
   public getBranches(): void {
@@ -786,5 +789,32 @@ export class TransactionTypeComponent implements OnInit {
 
   public hideMessage(): void {
     this.alertMessage = '';
+  }
+
+  public showToast(result, type?: string, title?: string, message?: string): void {
+    if (result) {
+      if (result.status === 200) {
+        type = 'success';
+        title = result.message;
+      } else if (result.status >= 400) {
+        type = 'danger';
+        title = (result.error && result.error.message) ? result.error.message : result.message;
+      } else {
+        type = 'info';
+        title = result.message;
+      }
+    }
+    switch (type) {
+      case 'success':
+        this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        break;
+      case 'danger':
+        this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        break;
+      default:
+        this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        break;
+    }
+    this.loading = false;
   }
 }
