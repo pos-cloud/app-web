@@ -161,7 +161,7 @@ export let attributes = [
         required: false,
     },
     {
-        name: 'barcode',
+        name: 'article.barcode',
         visible: true,
         disabled: false,
         filter: true,
