@@ -30,7 +30,8 @@ import { JsonDiffPipe } from './json-diff';
     TranslateMePipe
   ],
   providers: [
-    JsonDiffPipe
+    JsonDiffPipe,
+    RoundNumberPipe
   ]
 })
 
