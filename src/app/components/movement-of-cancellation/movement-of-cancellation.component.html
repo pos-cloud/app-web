@@ -29,6 +29,9 @@
                         <th (click)="orderBy('letter')">Letra</th>
                         <th (click)="orderBy('number')">Número</th>
                         <th *ngIf="!requestCompany" (click)="orderBy('company.city')">Ciudad</th>
+                        <th *ngIf="!requestCompany" (click)="orderBy('company.state.name')">Provincia</th>
+                        <th *ngIf="!requestCompany" (click)="orderBy('company.group.description')">Grupo</th>
+
                         <th (click)="orderBy('totalPrice')">Precio Total</th>
                         <th (click)="orderBy('balance')">Saldo</th>
                     </tr>
@@ -46,6 +49,10 @@
                                 (input)="getTransactions()" placeholder="Número..."></th>
                         <th *ngIf="!requestCompany"><input type="text" class="form-control" [(ngModel)]="filters['company.city']"
                                 (input)="getTransactions()" placeholder="Ciudad..."></th>
+                                <th *ngIf="!requestCompany"><input type="text" class="form-control" [(ngModel)]="filters['company.state.name']"
+                                    (input)="getTransactions()" placeholder="Provincia..."></th>
+                                    <th *ngIf="!requestCompany"><input type="text" class="form-control" [(ngModel)]="filters['company.group.description']"
+                                        (input)="getTransactions()" placeholder="Grupo..."></th>
                         <th>
                             <!-- <input type="text" class="form-control" [(ngModel)]="filters['totalPrice']"
                 (input)="getTransactions()" placeholder="Precio Total..."> -->
@@ -74,6 +81,8 @@
                         <td (click)="selectTransaction(transaction, false)">{{transaction.letter}}</td>
                         <td (click)="selectTransaction(transaction, false)">{{transaction.number}}</td>
                         <td  *ngIf="!requestCompany" (click)="selectTransaction(transaction, false)">{{transaction.company.city}}</td>
+                        <td  *ngIf="!requestCompany" (click)="selectTransaction(transaction, false)">{{transaction.company.state?.name}}</td>
+                        <td  *ngIf="!requestCompany" (click)="selectTransaction(transaction, false)">{{transaction.company.group?.description}}</td>
                         <td (click)="selectTransaction(transaction, false)">
                             {{transaction.totalPrice  }}</td>
                         <td>
