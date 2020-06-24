@@ -1122,8 +1122,9 @@ export class CurrentAccountDetailsComponent implements OnInit {
                             "transaction.state": "Cerrado",
                             "transaction.company.type": "${this.companyType}",
                             "transaction.operationType": { "$ne": "D" },
-                            "transaction.company.operationType :  { "$ne" : "D" },
+                            "transaction.company.operationType": {"$ne": "D"},
                             "operationType" : { "$ne" : "D" } }`;
+
 
             match = JSON.parse(match);
 
