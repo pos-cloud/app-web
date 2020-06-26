@@ -1,10 +1,10 @@
 
 import * as moment from 'moment';
-import { CashBoxType } from '../cash-box-type/cash-box-type';
 import { Employee } from 'app/components/employee/employee';
+import { CashBoxType } from '../cash-box-type/cash-box-type.model';
 
 export class CashBox {
-    
+
     public _id: string;
     public number: number;
     public openingDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');

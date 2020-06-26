@@ -136,7 +136,6 @@ import { ReportSalesByClientComponent } from './components/report-sales-by-clien
 import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
 import { ReportSalesByCategoryComponent } from './components/report-sales-by-category/report-sales-by-category.component';
 import { CashBoxComponent } from './components/cash-box/cash-box/cash-box.component';
-import { CashBoxTypeComponent } from './components/cash-box-type/cash-box-type/cash-box-type.component';
 import { LocationComponent } from './components/location/location/location.component';
 import { ListLocationsComponent } from './components/location/list-locations/list-locations.component';
 import { CompanyNewsComponent } from './components/company/company-news/company-news.component';
@@ -241,8 +240,6 @@ import { GalleryService } from './components/gallery/gallery.service';
 import { ViewGalleryComponent } from './components/gallery/view-gallery/view-gallery.component';
 
 import { NguCarouselModule } from '@ngu/carousel';
-import { ListCashBoxTypesComponent } from './components/cash-box-type/list-cash-box-types/list-cash-box-types.component';
-import { CashBoxTypeService } from './components/cash-box-type/cash-box-type.service';
 import { EmailTemplateComponent } from './components/email-template/email-template/email-template.component';
 import { ListEmailTemplatesComponent } from './components/email-template/list-email-templates/list-email-templates.component';
 import { EmailTemplateService } from './components/email-template/email-template.service';
@@ -261,12 +258,9 @@ import { ProgressbarModule } from './components/progressbar/progressbar.module';
 import { DirectivesModule } from './main/directives/directives.module';
 import { PipesModule } from './main/pipes/pipes.module';
 import { ExportersModule } from './components/export/exporters.module';
-import { DatatableModule } from './components/datatable/datatable.module';
-import { ListCategoriesPosComponent } from './components/category/list-categories-pos/list-categories-pos.component';
-import { ApplicationModule } from './components/application/application.module';
-import { ApplicationService } from './components/application/application.service';
 import { ListMovementsOfCancellationsComponent } from './components/movement-of-cancellation/list-movements-of-cancellations/list-movements-of-cancellations.component';
 import { ComponentsModule } from './components/components.module';
+import { ListCategoriesPosComponent } from './components/category/list-categories-pos/list-categories-pos.component';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -291,7 +285,6 @@ export function createTranslateLoader(http: HttpClient) {
     AddEmployeeComponent,
     ListTablesComponent,
     TableComponent,
-    ListCashBoxTypesComponent,
     ListCashBoxesComponent,
     ListTransactionsComponent,
     AddSaleOrderComponent,
@@ -363,7 +356,6 @@ export function createTranslateLoader(http: HttpClient) {
     ReportBirthdayComponent,
     ReportSalesByEmployeeComponent,
     CashBoxComponent,
-    CashBoxTypeComponent,
     LocationComponent,
     ListLocationsComponent,
     CompanyNewsComponent,
@@ -462,7 +454,6 @@ export function createTranslateLoader(http: HttpClient) {
     AddEmployeeComponent,
     ListTablesComponent,
     TableComponent,
-    ListCashBoxTypesComponent,
     ListCashBoxesComponent,
     ListTransactionsComponent,
     AddSaleOrderComponent,
@@ -533,7 +524,6 @@ export function createTranslateLoader(http: HttpClient) {
     ReportBirthdayComponent,
     ReportSalesByEmployeeComponent,
     CashBoxComponent,
-    CashBoxTypeComponent,
     LocationComponent,
     ListLocationsComponent,
     CompanyNewsComponent,
@@ -646,7 +636,6 @@ export function createTranslateLoader(http: HttpClient) {
     EmployeeTypeService,
     TableService,
     CashBoxService,
-    CashBoxTypeService,
     TransactionService,
     TransactionTypeService,
     MovementOfArticleService,
@@ -702,7 +691,6 @@ export function createTranslateLoader(http: HttpClient) {
     GalleryService,
     EmailTemplateService,
     ShipmentMethodService,
-    ApplicationService,
     ShipmentMethodService
   ],
   bootstrap: [AppComponent]

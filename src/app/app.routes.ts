@@ -72,7 +72,6 @@ import { ListCurrencyValuesComponent } from './components/currency-value/list-cu
 import { ListResourcesComponent } from './components/resource/list-resources/list-resources.component';
 import { ListGalleriesComponent } from './components/gallery/list-galleries/list-galleries.component';
 import { ViewGalleryComponent } from './components/gallery/view-gallery/view-gallery.component';
-import { ListCashBoxTypesComponent } from './components/cash-box-type/list-cash-box-types/list-cash-box-types.component';
 import { CurrentAccountDetailsComponent } from './components/print/current-account-details/current-account-details.component';
 import { ListEmailTemplatesComponent } from './components/email-template/list-email-templates/list-email-templates.component';
 import { ListShipmentMethodComponent } from './components/shipment-method/list-shipment-method/list-shipment-method.component';
@@ -404,11 +403,6 @@ export const _routes: Routes = [
 	{
 		path: 'admin/impuestos',
 		component: ListTaxesComponent,
-		canActivate: [AuthGuard, LicenseGuard]
-	},
-	{
-		path: 'admin/tipos-de-caja',
-		component: ListCashBoxTypesComponent,
 		canActivate: [AuthGuard, LicenseGuard]
 	},
 	{

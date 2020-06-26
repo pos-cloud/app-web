@@ -1,147 +1,129 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { Router } from '@angular/router';
-
-import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-
-import { CashBoxType } from '../cash-box-type';
+import { Component, ViewEncapsulation, ViewChild } from '@angular/core';
+import { CashBoxType } from '../cash-box-type.model';
 import { CashBoxTypeService } from '../cash-box-type.service';
-
-import { CashBoxTypeComponent } from '../cash-box-type/cash-box-type.component';
+import { CashBoxTypeComponent } from '../crud/cash-box-type.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { DatatableComponent } from '../../datatable/datatable.component';
 
 @Component({
-	selector: 'app-list-cash-box-types',
-	templateUrl: './list-cash-box-types.component.html',
-	styleUrls: ['./list-cash-box-types.component.scss'],
-	providers: [NgbAlertConfig],
-	encapsulation: ViewEncapsulation.None
+  selector: 'app-list-cash-box-types',
+  templateUrl: './list-cash-box-types.component.html',
+  styleUrls: ['./list-cash-box-types.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 
-export class ListCashBoxTypesComponent implements OnInit {
+export class ListCashBoxTypesComponent {
 
-	public cashBoxTypes: CashBoxType[] = new Array();
-	public areCashBoxTypesEmpty: boolean = true;
-	public alertMessage: string = '';
-	public userType: string;
-	public orderTerm: string[] = ['description'];
-	public propertyTerm: string;
-	public areFiltersVisible: boolean = false;
-	public loading: boolean = false;
-	public itemsPerPage = 10;
-	public totalItems = 0;
+  public title: string = 'cash-box-types';
+  public sort = { "name": 1 };
+  public columns = CashBoxType.getAttributes();
+  public rowButtons: {
+    title: string,
+    class: string,
+    icon: string,
+    click: string
+  }[] = [{
+    title: 'view',
+    class: 'btn btn-success btn-sm',
+    icon: 'fa fa-eye',
+    click: `this.emitEvent('view', item)`
+  }, {
+    title: 'update',
+    class: 'btn btn-primary btn-sm',
+    icon: 'fa fa-pencil',
+    click: `this.emitEvent('update', item)`
+  }, {
+    title: 'delete',
+    class: 'btn btn-danger btn-sm',
+    icon: 'fa fa-trash-o',
+    click: `this.emitEvent('delete', item)`
+  }];
+  public headerButtons: {
+    title: string,
+    class: string,
+    icon: string,
+    click: string
+  }[] = [{
+    title: 'add',
+    class: 'btn btn-light',
+    icon: 'fa fa-plus',
+    click: `this.emitEvent('add', null)`
+  }, {
+    title: 'refresh',
+    class: 'btn btn-light',
+    icon: 'fa fa-refresh',
+    click: `this.refresh()`
+  }];
 
-	constructor(
-		public _cashBoxTypeService: CashBoxTypeService,
-		public _router: Router,
-		public _modalService: NgbModal,
-		public alertConfig: NgbAlertConfig
-	) { }
+  // //EXCEL
+  @ViewChild(DatatableComponent, { static: false }) datatableComponent: DatatableComponent;
 
-	ngOnInit(): void {
+  constructor(
+    public _service: CashBoxTypeService,
+    private _modalService: NgbModal,
+  ) {}
 
-		let pathLocation: string[] = this._router.url.split('/');
-		this.userType = pathLocation[1];
-		this.getCashBoxTypes();
-	}
+  public async emitEvent(event) {
+    this.openModal(event.op, event.obj);
+  };
 
-	public getCashBoxTypes(): void {
+  public async openModal(op: string, obj: any) {
 
-		this.loading = true;
+    let modalRef;
+    let scrollX = await window.scrollX;
+    let scrollY = await window.scrollY;
+    switch (op) {
+      case 'view':
+        modalRef = this._modalService.open(CashBoxTypeComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.objId = obj._id;
+        modalRef.componentInstance.readonly = true;
+        modalRef.componentInstance.operation = 'view';
+        modalRef.result.then((result) => {
+          window.scrollTo(scrollX, scrollY);
+        }, (reason) => {
+          window.scrollTo(scrollX, scrollY);
+        });
+        break;
+      case 'add':
+        modalRef = this._modalService.open(CashBoxTypeComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.readonly = false;
+        modalRef.componentInstance.operation = 'add';
+        modalRef.result.then((result) => {
+          if (result.obj) this.refresh();
+          window.scrollTo(scrollX, scrollY);
+        }, (reason) => {
+          window.scrollTo(scrollX, scrollY);
+        });
+        break;
+      case 'update':
+        modalRef = this._modalService.open(CashBoxTypeComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.objId = obj._id;
+        modalRef.componentInstance.readonly = false;
+        modalRef.componentInstance.operation = 'update';
+        modalRef.result.then((result) => {
+          if (result.obj) this.refresh();
+          window.scrollTo(scrollX, scrollY);
+        }, (reason) => {
+          window.scrollTo(scrollX, scrollY);
+        });
+        break;
+      case 'delete':
+        modalRef = this._modalService.open(CashBoxTypeComponent, { size: 'lg', backdrop: 'static' })
+        modalRef.componentInstance.objId = obj._id;
+        modalRef.componentInstance.readonly = true;
+        modalRef.componentInstance.operation = 'delete';
+        modalRef.result.then((result) => {
+          if (result.obj) this.refresh();
+          window.scrollTo(scrollX, scrollY);
+        }, (reason) => {
+          window.scrollTo(scrollX, scrollY);
+        });
+        break;
+      default: ;
+    }
+  };
 
-		this._cashBoxTypeService.getCashBoxTypes().subscribe(
-			result => {
-				if (!result.cashBoxTypes) {
-					if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-					this.loading = false;
-					this.cashBoxTypes = new Array();
-					this.areCashBoxTypesEmpty = true;
-				} else {
-					this.hideMessage();
-					this.loading = false;
-					this.cashBoxTypes = result.cashBoxTypes;
-					this.totalItems = this.cashBoxTypes.length;
-					this.areCashBoxTypesEmpty = false;
-				}
-			},
-			error => {
-				this.showMessage(error._body, 'danger', false);
-				this.loading = false;
-			}
-		);
-	}
-
-	public orderBy(term: string, property?: string): void {
-
-		if (this.orderTerm[0] === term) {
-			this.orderTerm[0] = "-" + term;
-		} else {
-			this.orderTerm[0] = term;
-		}
-		this.propertyTerm = property;
-	}
-
-	public refresh(): void {
-		this.getCashBoxTypes();
-	}
-
-	public openModal(op: string, cashBoxType: CashBoxType): void {
-
-		let modalRef;
-		switch (op) {
-			case 'view':
-				modalRef = this._modalService.open(CashBoxTypeComponent, { size: 'lg', backdrop: 'static' });
-				modalRef.componentInstance.cashBoxTypeId = cashBoxType._id;
-				modalRef.componentInstance.operation = "view";
-				modalRef.componentInstance.readonly = true;
-				modalRef.result.then((result) => {
-				}, (reason) => {
-				});
-				break;
-			case 'add':
-				modalRef = this._modalService.open(CashBoxTypeComponent, { size: 'lg', backdrop: 'static' });
-				modalRef.componentInstance.operation = "add";
-				modalRef.componentInstance.readonly = false;
-				modalRef.result.then((result) => {
-					this.getCashBoxTypes();
-				}, (reason) => {
-					this.getCashBoxTypes();
-				});
-				break;
-			case 'update':
-				modalRef = this._modalService.open(CashBoxTypeComponent, { size: 'lg', backdrop: 'static' });
-				modalRef.componentInstance.cashBoxTypeId = cashBoxType._id;
-				modalRef.componentInstance.operation = "update";
-				modalRef.componentInstance.readonly = false;
-				modalRef.componentInstance.cashBoxType = cashBoxType;
-				modalRef.result.then((result) => {
-					this.getCashBoxTypes();
-				}, (reason) => {
-					this.getCashBoxTypes();
-				});
-				break;
-			case 'delete':
-				modalRef = this._modalService.open(CashBoxTypeComponent, { size: 'lg', backdrop: 'static' });
-				modalRef.componentInstance.cashBoxTypeId = cashBoxType._id;
-				modalRef.componentInstance.operation = "delete";
-				modalRef.componentInstance.readonly = true;
-				modalRef.result.then((result) => {
-					if (result === 'delete_close') {
-						this.getCashBoxTypes();
-					}
-				}, (reason) => {
-					this.getCashBoxTypes();
-				});
-				break;
-			default: ;
-		}
-	}
-
-	public showMessage(message: string, type: string, dismissible: boolean): void {
-		this.alertMessage = message;
-		this.alertConfig.type = type;
-		this.alertConfig.dismissible = dismissible;
-	}
-
-	public hideMessage(): void {
-		this.alertMessage = '';
-	}
+  public refresh() {
+    this.datatableComponent.refresh();
+  }
 }

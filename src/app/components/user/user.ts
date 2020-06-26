@@ -1,9 +1,9 @@
 import { Company } from '../company/company';
 import { Origin } from '../origin/origin';
 import { Printer } from '../printer/printer';
-import { CashBoxType } from '../cash-box-type/cash-box-type';
 import { Branch } from '../branch/branch';
 import { Employee } from '../employee/employee';
+import { CashBoxType } from '../cash-box-type/cash-box-type.model';
 
 export class User {
 

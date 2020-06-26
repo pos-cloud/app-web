@@ -47,7 +47,7 @@
                         </ng-template>
                         <label for="make">Marca:</label>
                         <input id="make" type="text" class="form-control" formControlName="make" name="make"
-                          [ngbTypeahead]="searchMakes" [resultTemplate]="rtMakes" [inputFormatter]="formatterMakes" />
+                          [ngbTypeahead]="searchMakes" [resultTemplate]="rtMakes" [inputFormatter]="formatterMakes" [readonly]="readonly"/>
                       </div>
                       <div class="form-group col-md-6">
                         <ng-template #rtCategories let-r="result" let-t="term">
@@ -56,7 +56,7 @@
                         <label for="category">Rubro:</label>
                         <input id="category" type="text" class="form-control" formControlName="category" name="category"
                           [ngbTypeahead]="searchCategories" [resultTemplate]="rtCategories"
-                          [inputFormatter]="formatterCategories" />
+                          [inputFormatter]="formatterCategories" [readonly]="readonly"/>
                       </div>
                     </div>
                     <div class="row">
@@ -99,7 +99,7 @@
                     <label for="unitOfMeasurement">{{'unitOfMeasurement'| translate | capitalize}}:</label>
                     <input id="unitOfMeasurement" type="text" class="form-control" formControlName="unitOfMeasurement" name="unitOfMeasurement"
                       [ngbTypeahead]="searchUnitsOfMeasurement" [resultTemplate]="result"
-                      [inputFormatter]="formatterUnitsOfMeasurement" />
+                      [inputFormatter]="formatterUnitsOfMeasurement" [readonly]="readonly"/>
                     <div class="invalid-feedback" [style.display]="(formErrors['unitOfMeasurement'])? 'block': 'none'">
                       {{ formErrors['unitOfMeasurement'] }}
                     </div>
