@@ -728,9 +728,9 @@ export class ReportKardexComponent implements OnInit {
 
     this.loading = true;
 
-    var query = `where= "article": "${this.articleSelectedId}",
-                                      "branch": "${this.branchSelectedId}",
-                                      "deposit": "${this.depositSelectedId}"`;
+    var query = `where= "article": "${this.articleSelected._id}",
+                        "branch": "${this.branchSelectedId}",
+                        "deposit": "${this.depositSelectedId}"`;
 
     this._articleStockService.getArticleStocks(query).subscribe(
       result => {
