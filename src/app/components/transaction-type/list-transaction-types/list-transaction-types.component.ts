@@ -18,7 +18,6 @@ import { AuthService } from 'app/components/login/auth.service';
 import { BranchService } from 'app/components/branch/branch.service';
 import { Observable } from 'rxjs';
 import { User } from 'app/components/user/user';
-import { ApplicationService } from 'app/components/application/application.service';
 
 @Component({
   selector: 'app-list-transaction-types',

@@ -1,14 +1,7 @@
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import * as moment from 'moment';
-import 'moment/locale/es';
-
-
-import { Config } from 'app/app.config';
 import { Employee } from '../employee';
-import { EmployeeType } from 'app/components/employee-type/employee-type';
 import { Table } from 'app/components/table/table';
 import { EmployeeService } from '../employee.service';
 import { EmployeeTypeService } from 'app/components/employee-type/employee-type.service';
@@ -16,7 +9,7 @@ import { TableService } from 'app/components/table/table.service';
 import { AuthService } from 'app/components/login/auth.service';
 import { TransactionService } from 'app/components/transaction/transaction.service';
 import { UserService } from 'app/components/user/user.service';
-import { User } from 'app/components/user/user';
+import { EmployeeType } from 'app/components/employee-type/employee-type.model';
 
 @Component({
     selector: 'app-select-employee',

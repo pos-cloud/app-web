@@ -4,6 +4,7 @@ import { UnitOfMeasurementModule } from './unit-of-measurement/unit-of-measureme
 import { ExportersModule } from './export/exporters.module';
 import { ApplicationModule } from './application/application.module';
 import { CashBoxTypeModule } from './cash-box-type/cash-box-type.module';
+import { EmployeeTypeModule } from './employee-type/employee-type.module';
 
 @NgModule({
 	imports: [
@@ -12,6 +13,7 @@ import { CashBoxTypeModule } from './cash-box-type/cash-box-type.module';
     ExportersModule,
     ApplicationModule,
     CashBoxTypeModule,
+    EmployeeTypeModule
 	],
 	declarations: [
 	],

@@ -12,7 +12,6 @@ import { CompanyService } from 'app/components/company/company.service';
 import { Company } from 'app/components/company/company';
 import { Origin } from 'app/components/origin/origin';
 import { OriginService } from 'app/components/origin/origin.service';
-import { EmployeeType } from 'app/components/employee-type/employee-type';
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 import { Printer } from 'app/components/printer/printer';
@@ -23,6 +22,7 @@ import { Branch } from 'app/components/branch/branch';
 import { Employee } from 'app/components/employee/employee';
 import { AuthService } from 'app/components/login/auth.service';
 import { CashBoxType } from 'app/components/cash-box-type/cash-box-type.model';
+import { EmployeeType } from 'app/components/employee-type/employee-type.model';
 
 @Component({
   selector: 'app-add-user',

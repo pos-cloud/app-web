@@ -140,7 +140,7 @@ export class AddArticleComponent implements OnInit {
     },
     'make': {
       'required': 'Este campo es requerido.',
-      'validateAutocomplete': 'Debe ingresar un valor válido'
+      'validateAutocompletevalidateAutocomplete': 'Debe ingresar un valor válido'
     },
     'description': {
       'required': 'Este campo es requerido.'

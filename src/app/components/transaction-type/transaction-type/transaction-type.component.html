@@ -361,17 +361,17 @@
 										</div>
 									</div>
 									<div class="form-group col-md-2">
-										<label for="requestEmployee" class="control-label">Pide empleado</label>
+                    <label for="requestEmployee">{{'requestEmployee'| translate | capitalize}}:</label>
 										<div class="input-group">
-											<select class="form-control" formControlName="requestEmployee">
-												<option [ngValue]="null"
-													[selected]="!transactionType || !transactionType.requestEmployee"
-													[disabled]="readonly"></option>
-												<option *ngFor="let employeeType of employeeTypes" [ngValue]="employeeType._id"
-													[selected]="(transactionType.requestEmployee && transactionType.requestEmployee._id && employeeType._id===transactionType.requestEmployee._id) ||
-											  (transactionType.requestEmployee && employeeType._id===transactionType['requestEmployee'])" [disabled]="readonly">
-													{{ employeeType.description }}</option>
-											</select>
+                      <ng-template #result let-r="result" let-t="term">
+                        <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+                      </ng-template>
+                      <input id="requestEmployee" type="text" class="form-control" formControlName="requestEmployee" name="requestEmployee"
+                        [ngbTypeahead]="searchEmployeeTypes" [resultTemplate]="result" [inputFormatter]="formatterEmployeeTypes"
+                        [readonly]="readonly" />
+                      <div class="invalid-feedback" [style.display]="(formErrors['requestEmployee'])? 'block': 'none'">
+                        {{ formErrors['requestEmployee'] }}
+                      </div>
 											<button type="button" class="btn btn-light" placement="right"
 												popoverClass="popover-class"
 												ngbPopover="Selecciona el tipo de empleado a solicitar en la carga">

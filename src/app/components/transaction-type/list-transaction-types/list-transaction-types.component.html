@@ -223,33 +223,24 @@
 						<td class="flat" *ngIf="userCountry === 'AR'">{{getCode(transactionType, "B")}}</td>
 						<td class="flat" *ngIf="userCountry === 'AR'">{{getCode(transactionType, "C")}}</td>
 						<td class="flat" *ngIf="userCountry !== 'AR'">{{transactionType.fiscalCode}}</td>
-						<td class="flat" *ngIf="userCountry === 'MX' && transactionType.defectUseOfCFDI">
-							{{transactionType.defectUseOfCFDI.description}}</td>
-						<td class="flat" *ngIf="userCountry === 'MX' && !transactionType.defectUseOfCFDI"></td>
+						<td class="flat" *ngIf="userCountry === 'MX' && transactionType.defectUseOfCFDI">{{transactionType?.defectUseOfCFDI?.description}}</td>
 						<td class="flat">{{transactionType.allowEdit}}</td>
 						<td class="flat">{{transactionType.allowDelete}}</td>
 						<td class="flat">{{transactionType.allowZero}}</td>
 						<td class="flat">{{transactionType.printable}}</td>
 						<td class="flat">{{transactionType.posKitchen}}</td>
-						<td class="flat" *ngIf="transactionType.defectPrinter">{{transactionType.defectPrinter.name}}</td>
-						<td class="flat" *ngIf="!transactionType.defectPrinter"></td>
+						<td class="flat">{{transactionType?.defectPrinter?.name}}</td>
 						<td class="flat">{{transactionType.requestTaxes}}</td>
 						<td class="flat">{{transactionType.tax}}</td>
 						<td class="flat">{{transactionType.requestCompany}}</td>
-						<td class="flat" *ngIf="transactionType.requestEmployee">{{transactionType.requestEmployee.name}}</td>
-						<td class="flat" *ngIf="!transactionType.requestEmployee"></td>
+						<td class="flat">{{transactionType?.requestEmployee?.description}}</td>
 						<td class="flat">{{transactionType.requestCurrency}}</td>
-						<td class="flat" *ngIf="transactionType.fastPayment">{{transactionType.fastPayment.name}}</td>
-						<td class="flat" *ngIf="!transactionType.fastPayment"></td>
+						<td class="flat">{{transactionType?.fastPayment?.name}}</td>
 						<td class="flat">{{transactionType.allowAPP}}</td>
-						<td class="flat" *ngIf="transactionType.application">{{transactionType.application.name}}</td>
-						<td class="flat" *ngIf="!transactionType.application"></td>
+						<td class="flat">{{transactionType?.application?.name}}</td>
 						<td class="flat">{{transactionType.requestEmailTemplate}}</td>
-						<td class="flat" *ngIf="transactionType.defectEmailTemplate">{{transactionType.defectEmailTemplate.name}}
-						</td>
-						<td class="flat" *ngIf="!transactionType.defectEmailTemplate"></td>
+						<td class="flat">{{transactionType?.defectEmailTemplate?.name}}</td>
 						<td class="flat">{{transactionType.level}}</td>
-
 					</tr>
 					<tr align="center" *ngIf="areTransactionTypesEmpty && !loading">
 						<td colspan="19">No se encontraron tipos de transacción</td>

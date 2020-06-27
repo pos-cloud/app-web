@@ -27,16 +27,15 @@
                                 </div>
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="type" class="control-label">Tipo</label>
-                                <select class="form-control" formControlName="type">
-                                    <option *ngFor="let employeeType of employeeTypes" 
-                                        [value]="employeeType._id"
-                                        [disabled]="readonly"
-                                        [selected]="employeeType && employee.type && employeeType._id === employee.type._id">
-                                        {{employeeType.description}}</option>
-                                </select>
-                                <div *ngIf="formErrors.type" class="alert alert-danger">
-                                    {{ formErrors.type }}
+                                <ng-template #result let-r="result" let-t="term">
+                                  <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+                                </ng-template>
+                                <label for="type">{{'type'| translate | capitalize}}:</label>
+                                <input id="type" type="text" class="form-control" formControlName="type" name="type"
+                                  [ngbTypeahead]="searchEmployeeTypes" [resultTemplate]="result" [inputFormatter]="formatterEmployeeTypes"
+                                  [readonly]="readonly" />
+                                <div class="invalid-feedback" [style.display]="(formErrors['type'])? 'block': 'none'">
+                                  {{ formErrors['type'] }}
                                 </div>
                             </div>
                         </div>

@@ -21,7 +21,6 @@ import { _routes } from './app.routes';
 // servicios
 import { ArticleService } from './components/article/article.service';
 import { EmployeeService } from './components/employee/employee.service';
-import { EmployeeTypeService } from './components/employee-type/employee-type.service';
 import { TableService } from './components/table/table.service';
 import { CashBoxService } from './components/cash-box/cash-box.service';
 import { TransactionService } from './components/transaction/transaction.service';
@@ -85,8 +84,6 @@ import { DeleteUserComponent } from './components/user/delete-user/delete-user.c
 import { ListCompaniesComponent } from './components/company/list-companies/list-companies.component';
 import { DeleteCompanyComponent } from './components/company/delete-company/delete-company.component';
 import { AddCompanyComponent } from './components/company/company/add-company.component';
-import { ListEmployeeTypesComponent } from './components/employee-type/list-employee-types/list-employee-types.component';
-import { EmployeeTypeComponent } from './components/employee-type/employee-type/employee-type.component';
 import { PrinterComponent } from './components/printer/printer/printer.component';
 import { ListPrintersComponent } from './components/printer/list-printers/list-printers.component';
 import { AddMovementOfCashComponent } from './components/movement-of-cash/add-movement-of-cash/add-movement-of-cash.component';
@@ -306,8 +303,6 @@ export function createTranslateLoader(http: HttpClient) {
     DeleteCompanyComponent,
     AddCompanyComponent,
     ClockComponent,
-    EmployeeTypeComponent,
-    ListEmployeeTypesComponent,
     PrinterComponent,
     ListPrintersComponent,
     AddMovementOfCashComponent,
@@ -475,8 +470,6 @@ export function createTranslateLoader(http: HttpClient) {
     DeleteCompanyComponent,
     AddCompanyComponent,
     ClockComponent,
-    EmployeeTypeComponent,
-    ListEmployeeTypesComponent,
     PrinterComponent,
     ListPrintersComponent,
     AddMovementOfCashComponent,
@@ -633,7 +626,6 @@ export function createTranslateLoader(http: HttpClient) {
     NgbAlertConfig,
     ArticleService,
     EmployeeService,
-    EmployeeTypeService,
     TableService,
     CashBoxService,
     TransactionService,

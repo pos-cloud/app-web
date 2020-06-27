@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 
 //Terceros de mierda
@@ -10,7 +10,6 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { TransactionType, Movements, CurrentAccount, CodeAFIP, TransactionMovement, StockMovement, EntryAmount, PriceType, DescriptionType } from '../transaction-type';
 import { Printer } from '../../printer/printer';
-import { EmployeeType } from '../../employee-type/employee-type';
 
 import { TransactionTypeService } from '../transaction-type.service';
 import { PrinterService } from '../../printer/printer.service';
@@ -31,10 +30,12 @@ import { ShipmentMethodService } from 'app/components/shipment-method/shipment-m
 import { ShipmentMethod } from 'app/components/shipment-method/shipment-method';
 import { ApplicationService } from 'app/components/application/application.service';
 import { Application } from 'app/components/application/application.model';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import Resulteable from 'app/util/Resulteable';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
+import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
+import { EmployeeType } from 'app/components/employee-type/employee-type.model';
 
 @Component({
   selector: 'app-transaction-type',
@@ -71,6 +72,24 @@ export class TransactionTypeComponent implements OnInit {
   public shipmentMethods: ShipmentMethod[];
   public applications: Application[];
   private subscription: Subscription = new Subscription();
+
+  public searchEmployeeTypes = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(() => this.loading = true),
+      switchMap(async term => {
+        let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' } } : {};
+        return await this.getAllEmployeeTypes(match).then(
+          result => {
+            return result;
+          }
+        )
+      }),
+      tap(() => this.loading = false)
+    )
+  public formatterEmployeeTypes = (x: EmployeeType) => { return x.description; };
+
   public formErrors = {
     'transactionMovement': '',
     'abbreviation': '',
@@ -110,7 +129,6 @@ export class TransactionTypeComponent implements OnInit {
     if (window.screen.width < 1000) this.orientation = 'vertical';
     this.getCurrencies();
     this.getPaymentMethods();
-    this.getEmployeeTypes();
     this.getPrinters();
     this.getUsesOfCFDI();
     this.getEmailTemplates();
@@ -178,25 +196,23 @@ export class TransactionTypeComponent implements OnInit {
     );
   }
 
-  public getEmployeeTypes(): void {
-
-    this.loading = true;
-
-    this._employeeTypeService.getEmployeeTypes().subscribe(
-      result => {
-        if (!result.employeeTypes) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+  public getAllEmployeeTypes(match: {}): Promise<EmployeeType[]> {
+    return new Promise<EmployeeType[]>((resolve, reject) => {
+      this.subscription.add(this._employeeTypeService.getAll(
+        {}, // PROJECT
+        match, // MATCH
+        { description: 1 }, // SORT
+        {}, // GROUP
+        10, // LIMIT
+        0 // SKIP
+      ).subscribe(
+        result => {
           this.loading = false;
-        } else {
-          this.loading = false;
-          this.employeeTypes = result.employeeTypes;
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+          (result.status === 200) ? resolve(result.result) : reject(result);
+        },
+        error => reject(error)
+      ));
+    });
   }
 
   public getPaymentMethods(): void {
@@ -310,7 +326,7 @@ export class TransactionTypeComponent implements OnInit {
       'allowEdit': [this.transactionType.allowEdit, []],
       'allowDelete': [this.transactionType.allowDelete, []],
       'allowZero': [this.transactionType.allowZero, []],
-      'requestEmployee': [this.transactionType.requestEmployee, []],
+      'requestEmployee': [this.transactionType.requestEmployee, [this.validateAutocomplete]],
       'requestCurrency': [this.transactionType.requestCurrency, []],
       'fastPayment': [this.transactionType.fastPayment, []],
       'requestCompany': [this.transactionType.requestCompany, []],
@@ -426,6 +442,15 @@ export class TransactionTypeComponent implements OnInit {
     )
   }
 
+  public validateAutocomplete(c: FormControl) {
+    let result = (c.value && Object.keys(c.value)[0] === '0') ? {
+      validateAutocomplete: {
+        valid: false
+      }
+    } : null;
+    return result;
+  }
+
   public getUsesOfCFDI(): void {
 
     this.loading = true;
@@ -534,18 +559,6 @@ export class TransactionTypeComponent implements OnInit {
     if (this.transactionType.allowZero === undefined) this.transactionType.allowZero = false;
     if (this.transactionType.requestCurrency === undefined) this.transactionType.requestCurrency = false;
     if (this.transactionType.requestTransport === undefined) this.transactionType.requestTransport = false;
-
-
-    let requestEmployee;
-    if (!this.transactionType.requestEmployee) {
-      requestEmployee = null;
-    } else {
-      if (this.transactionType.requestEmployee._id) {
-        requestEmployee = this.transactionType.requestEmployee._id;
-      } else {
-        requestEmployee = this.transactionType.requestEmployee;
-      }
-    }
 
     let fastPayment;
     if (!this.transactionType.fastPayment) {
@@ -661,7 +674,7 @@ export class TransactionTypeComponent implements OnInit {
       'allowDelete': this.transactionType.allowDelete,
       'allowZero': this.transactionType.allowZero,
       'requestCurrency': this.transactionType.requestCurrency,
-      'requestEmployee': requestEmployee,
+      'requestEmployee': this.transactionType.requestEmployee,
       'fastPayment': fastPayment,
       'requestCompany': this.transactionType.requestCompany,
       'cashBoxImpact': this.transactionType.cashBoxImpact,
@@ -694,6 +707,7 @@ export class TransactionTypeComponent implements OnInit {
 
     this.loading = true;
     this.transactionType = this.transactionTypeForm.value;
+    if (this.transactionType.requestEmployee.toString() === '') this.transactionType.requestEmployee = null;
     this.transactionType.codes = this.getCodes();
     if (this.operation === 'add') {
       this.saveTransactionType();

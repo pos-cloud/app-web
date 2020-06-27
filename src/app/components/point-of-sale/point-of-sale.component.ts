@@ -22,8 +22,6 @@ import { AddMovementOfCashComponent } from '../movement-of-cash/add-movement-of-
 import { SelectEmployeeComponent } from '../employee/select-employee/select-employee.component';
 import { ViewTransactionComponent } from '../transaction/view-transaction/view-transaction.component';
 import { CashBoxComponent } from '../cash-box/cash-box/cash-box.component';
-import { EmployeeType } from 'app/components/employee-type/employee-type';
-import { EmployeeTypeService } from 'app/components/employee-type/employee-type.service';
 import { Currency } from 'app/components/currency/currency';
 import { CurrencyService } from 'app/components/currency/currency.service';
 import { Config } from 'app/app.config';
@@ -51,8 +49,8 @@ import { SelectCompanyComponent } from '../company/select-company/select-company
 import { Claim, ClaimPriority, ClaimType } from 'app/layout/claim/claim';
 import { ClaimService } from 'app/layout/claim/claim.service';
 import { EmailService } from '../send-email/send-email.service';
-import { CurrencyPipe } from '@angular/common';
 import { SendEmailComponent } from '../send-email/send-email.component';
+import { EmployeeType } from '../employee-type/employee-type.model';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -99,7 +97,6 @@ export class PointOfSaleComponent implements OnInit {
   private subscription: Subscription = new Subscription();
   public identity: User;
   public user: User;
-  private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
 
   // CAMPOS TRAIDOS DE LA CUENTA CTE.
   @Input() company: Company;
@@ -112,7 +109,6 @@ export class PointOfSaleComponent implements OnInit {
     private _transactionService: TransactionService,
     private _transactionTypeService: TransactionTypeService,
     private _printerService: PrinterService,
-    private _employeeTypeService: EmployeeTypeService,
     private _depositService: DepositService,
     private _branchService: BranchService,
     private _router: Router,
@@ -2073,26 +2069,6 @@ export class PointOfSaleComponent implements OnInit {
         this.showMessage("No se puede cambiar de estado una transacción con monto menor o igual $0,00.", "info", true);
       }
     }
-  }
-
-  public getEmployeeType(op: string, employeeType: string): void {
-
-    let query = 'where="description":"' + employeeType + '"';
-
-    this._employeeTypeService.getEmployeeTypes(query).subscribe(
-      result => {
-        if (!result.employeeTypes) {
-          this.showMessage("No existen empleados de tipo " + employeeType, "info", true);
-        } else {
-          this.hideMessage();
-          this.employeeTypeSelected = result.employeeTypes[0];
-          this.openModal(op);
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-      }
-    );
   }
 
   public changeRoom(room: Room): void {

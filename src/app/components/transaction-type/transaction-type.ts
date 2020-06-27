@@ -1,5 +1,4 @@
 import { Printer } from '../printer/printer';
-import { EmployeeType } from '../employee-type/employee-type';
 import { PaymentMethod } from '../payment-method/payment-method';
 import { CompanyType } from '../company/company';
 import { User } from '../user/user';
@@ -10,6 +9,7 @@ import { Branch } from '../branch/branch';
 import * as moment from 'moment';
 import { ShipmentMethod } from '../shipment-method/shipment-method';
 import { Application } from '../application/application.model';
+import { EmployeeType } from '../employee-type/employee-type.model';
 
 export class TransactionType {
 

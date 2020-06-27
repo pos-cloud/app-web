@@ -1,148 +1,129 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { Router } from '@angular/router';
-
-import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-
-import { EmployeeType } from '../employee-type';
+import { Component, ViewEncapsulation, ViewChild } from '@angular/core';
+import { EmployeeType } from '../employee-type.model';
 import { EmployeeTypeService } from '../employee-type.service';
-
-import { EmployeeTypeComponent } from '../employee-type/employee-type.component';
+import { EmployeeTypeComponent } from '../crud/employee-type.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { DatatableComponent } from '../../datatable/datatable.component';
 
 @Component({
-    selector: 'app-list-employee-types',
-    templateUrl: './list-employee-types.component.html',
-    styleUrls: ['./list-employee-types.component.scss'],
-    providers: [NgbAlertConfig],
-    encapsulation: ViewEncapsulation.None
+  selector: 'app-list-employee-types',
+  templateUrl: './list-employee-types.component.html',
+  styleUrls: ['./list-employee-types.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 
-export class ListEmployeeTypesComponent implements OnInit {
+export class ListEmployeeTypesComponent {
 
-    public employeeTypes: EmployeeType[] = new Array();
-    public areEmployeeTypesEmpty: boolean = true;
-    public alertMessage: string = '';
-    public userType: string;
-    public orderTerm: string[] = ['description'];
-    public propertyTerm: string;
-    public areFiltersVisible: boolean = false;
-    public loading: boolean = false;
-    public itemsPerPage = 10;
-    public totalItems = 0;
+  public title: string = 'employee-types';
+  public sort = { "name": 1 };
+  public columns = EmployeeType.getAttributes();
+  public rowButtons: {
+    title: string,
+    class: string,
+    icon: string,
+    click: string
+  }[] = [{
+    title: 'view',
+    class: 'btn btn-success btn-sm',
+    icon: 'fa fa-eye',
+    click: `this.emitEvent('view', item)`
+  }, {
+    title: 'update',
+    class: 'btn btn-primary btn-sm',
+    icon: 'fa fa-pencil',
+    click: `this.emitEvent('update', item)`
+  }, {
+    title: 'delete',
+    class: 'btn btn-danger btn-sm',
+    icon: 'fa fa-trash-o',
+    click: `this.emitEvent('delete', item)`
+  }];
+  public headerButtons: {
+    title: string,
+    class: string,
+    icon: string,
+    click: string
+  }[] = [{
+    title: 'add',
+    class: 'btn btn-light',
+    icon: 'fa fa-plus',
+    click: `this.emitEvent('add', null)`
+  }, {
+    title: 'refresh',
+    class: 'btn btn-light',
+    icon: 'fa fa-refresh',
+    click: `this.refresh()`
+  }];
 
-    constructor(
-        public _employeeTypeService: EmployeeTypeService,
-        public _router: Router,
-        public _modalService: NgbModal,
-        public alertConfig: NgbAlertConfig
-    ) { }
+  // //EXCEL
+  @ViewChild(DatatableComponent, { static: false }) datatableComponent: DatatableComponent;
 
-    ngOnInit(): void {
+  constructor(
+    public _service: EmployeeTypeService,
+    private _modalService: NgbModal,
+  ) {}
 
-        let pathLocation: string[] = this._router.url.split('/');
-        this.userType = pathLocation[1];
-        this.getEmployeeTypes();
+  public async emitEvent(event) {
+    this.openModal(event.op, event.obj);
+  };
+
+  public async openModal(op: string, obj: any) {
+
+    let modalRef;
+    let scrollX = await window.scrollX;
+    let scrollY = await window.scrollY;
+    switch (op) {
+      case 'view':
+        modalRef = this._modalService.open(EmployeeTypeComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.objId = obj._id;
+        modalRef.componentInstance.readonly = true;
+        modalRef.componentInstance.operation = 'view';
+        modalRef.result.then((result) => {
+          window.scrollTo(scrollX, scrollY);
+        }, (reason) => {
+          window.scrollTo(scrollX, scrollY);
+        });
+        break;
+      case 'add':
+        modalRef = this._modalService.open(EmployeeTypeComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.readonly = false;
+        modalRef.componentInstance.operation = 'add';
+        modalRef.result.then((result) => {
+          if (result.obj) this.refresh();
+          window.scrollTo(scrollX, scrollY);
+        }, (reason) => {
+          window.scrollTo(scrollX, scrollY);
+        });
+        break;
+      case 'update':
+        modalRef = this._modalService.open(EmployeeTypeComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.objId = obj._id;
+        modalRef.componentInstance.readonly = false;
+        modalRef.componentInstance.operation = 'update';
+        modalRef.result.then((result) => {
+          if (result.obj) this.refresh();
+          window.scrollTo(scrollX, scrollY);
+        }, (reason) => {
+          window.scrollTo(scrollX, scrollY);
+        });
+        break;
+      case 'delete':
+        modalRef = this._modalService.open(EmployeeTypeComponent, { size: 'lg', backdrop: 'static' })
+        modalRef.componentInstance.objId = obj._id;
+        modalRef.componentInstance.readonly = true;
+        modalRef.componentInstance.operation = 'delete';
+        modalRef.result.then((result) => {
+          if (result.obj) this.refresh();
+          window.scrollTo(scrollX, scrollY);
+        }, (reason) => {
+          window.scrollTo(scrollX, scrollY);
+        });
+        break;
+      default: ;
     }
+  };
 
-    public getEmployeeTypes(): void {
-
-        this.loading = true;
-
-        this._employeeTypeService.getEmployeeTypes().subscribe(
-            result => {
-                if (!result.employeeTypes) {
-                    if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                    this.loading = false;
-                    this.employeeTypes = new Array();
-                    this.areEmployeeTypesEmpty = true;
-                } else {
-                    this.hideMessage();
-                    this.loading = false;
-                    this.employeeTypes = result.employeeTypes;
-                    this.totalItems = this.employeeTypes.length;
-                    this.areEmployeeTypesEmpty = false;
-                }
-            },
-            error => {
-                this.showMessage(error._body, 'danger', false);
-                this.loading = false;
-            }
-        );
-    }
-
-    public orderBy(term: string, property?: string): void {
-
-        if (this.orderTerm[0] === term) {
-            this.orderTerm[0] = "-" + term;
-        } else {
-            this.orderTerm[0] = term;
-        }
-        this.propertyTerm = property;
-    }
-
-    public refresh(): void {
-        this.getEmployeeTypes();
-    }
-
-    public openModal(op: string, employeeType: EmployeeType): void {
-
-        let modalRef;
-        switch (op) {
-            case 'add':
-                modalRef = this._modalService.open(EmployeeTypeComponent, { size: 'lg', backdrop: 'static' });
-                modalRef.componentInstance.operation = "add";
-                modalRef.componentInstance.readonly = false;
-                modalRef.result.then((result) => {
-                    this.getEmployeeTypes();
-                }, (reason) => {
-                    this.getEmployeeTypes();
-                });
-                break;
-            case 'update':
-                modalRef = this._modalService.open(EmployeeTypeComponent, { size: 'lg', backdrop: 'static' });
-                modalRef.componentInstance.employeeTypeId = employeeType._id;
-                modalRef.componentInstance.operation = "update";
-                modalRef.componentInstance.readonly = false;
-                modalRef.result.then((result) => {
-                    if (result === 'save_close') {
-                        this.getEmployeeTypes();
-                    }
-                }, (reason) => {
-
-                });
-                break;
-            case 'delete':
-                modalRef = this._modalService.open(EmployeeTypeComponent, { size: 'lg', backdrop: 'static' });
-                modalRef.componentInstance.employeeTypeId = employeeType._id;
-                modalRef.componentInstance.operation = "delete";
-                modalRef.componentInstance.readonly = true;
-                modalRef.result.then((result) => {
-                    if (result === 'delete_close') {
-                        this.getEmployeeTypes();
-                    }
-                }, (reason) => {
-
-                });
-                break;
-            case 'view':
-                modalRef = this._modalService.open(EmployeeTypeComponent, { size: 'lg', backdrop: 'static' });
-                modalRef.componentInstance.operation = "view";
-                modalRef.componentInstance.employeeTypeId = employeeType._id;
-                modalRef.componentInstance.readonly = true;
-                modalRef.result.then((result) => {
-                }, (reason) => {
-                });
-                break;
-            default: ;
-        }
-    }
-
-    public showMessage(message: string, type: string, dismissible: boolean): void {
-        this.alertMessage = message;
-        this.alertConfig.type = type;
-        this.alertConfig.dismissible = dismissible;
-    }
-
-    public hideMessage(): void {
-        this.alertMessage = '';
-    }
+  public refresh() {
+    this.datatableComponent.refresh();
+  }
 }
