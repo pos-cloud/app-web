@@ -152,7 +152,11 @@ export class ListMovementsOfArticlesComponent implements OnInit {
                     if (this.columns[i].defaultFilter) {
                         match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
                     } else {
-                        match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
+                        if(value.includes('$')){
+                            match += `"${this.columns[i].name}": { ${value} }`;
+                        } else {
+                            match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
+                        }
                     }
                     if (i < this.columns.length - 1) {
                         match += ',';
@@ -171,6 +175,7 @@ export class ListMovementsOfArticlesComponent implements OnInit {
         if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
         match += `}`;
+        console.log(match);
         match = JSON.parse(match);
 
         // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS

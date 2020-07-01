@@ -1,104 +1,131 @@
-<!--ESTADISTICAS GENERALES-->
-<div class="card "  *ngIf="listType === 'statistics'">
-  <div class="card-header">HOY Cumplen años</div>
-  <div class="card-block table-responsive">
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th><i class="fa fa-bars"></i></th>
-          <th>Quién </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td colspan="99" style="padding: 0px">
-            <app-progressbar [loading]="loading"></app-progressbar>
-          </td>
-        </tr>
-        <tr *ngFor="let company of companies">
-          <td align="left" width="130">
-            <button type="button" class="btn btn-success btn-sm" (click)="openModal('view', company._id)" title="Ver"><i class="fa fa-eye"></i></button>
-            <a class="btn btn-default btn-sm icon-ws" href="https://web.whatsapp.com/send?phone=54{{company.phones}}&text=''" target="_blank"><i class="fa fa-whatsapp"></i></a>
-            <a class="btn btn-info btn-sm" href="mailto:{{company.emails}}" target="_blank"><i class="fa fa-envelope"></i></a>
-          </td>
-          <td class="flat">{{ company.name }}</td>
-        </tr>
-        <tr *ngIf="companies.length > 0" align="center">
-          <td colspan="3"><a [routerLink]="['','admin','cumpleaños']">Ver más...</a></td>
-        </tr>
-        <tr align="center" *ngIf="companies.length === 0 && !loading">
-          <td colspan="4">No se encontraron cumpleaños</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
+<!--ESTADISTICAS GENERALES
+<div class="card " *ngIf="listType === 'statistics'">
+    <div class="card-header">HOY Cumplen años</div>
+    <div class="card-block table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th><i class="fa fa-bars"></i></th>
+                    <th>Quién </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="99" style="padding: 0px">
+                        <app-progressbar [loading]="loading"></app-progressbar>
+                    </td>
+                </tr>
+                <tr *ngFor="let company of companies">
+                    <td align="left" width="130">
+                        <button type="button" class="btn btn-success btn-sm" (click)="openModal('view', company._id)"
+                            title="Ver"><i class="fa fa-eye"></i></button>
+                        <a class="btn btn-default btn-sm icon-ws"
+                            href="https://web.whatsapp.com/send?phone=54{{company.phones}}&text=''" target="_blank"><i
+                                class="fa fa-whatsapp"></i></a>
+                        <a class="btn btn-info btn-sm" href="mailto:{{company.emails}}" target="_blank"><i
+                                class="fa fa-envelope"></i></a>
+                    </td>
+                    <td class="flat">{{ company.name }}</td>
+                </tr>
+                <tr *ngIf="companies.length > 0" align="center">
+                    <td colspan="3"><a [routerLink]="['','admin','cumpleaños']">Ver más...</a></td>
+                </tr>
+                <tr align="center" *ngIf="companies.length === 0 && !loading">
+                    <td colspan="4">No se encontraron cumpleaños</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>-->
 
 <!--REPORTE-->
 <section class="container-fluid" *ngIf="listType !== 'statistics'">
-  <div class="center-content" *ngIf="alertMessage !== '' && !areTurnsEmptys">
-    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-      {{alertMessage}}
-    </ngb-alert>
-  </div>
-  <div class="row container-filter">
-    <div class="col-md-2 offset-md-4">
-      <label for="when" class="control-label">
-        <b>Cuando:</b>
-      </label>
-      <select class="form-control" [(ngModel)]="when" name="when">
-        <option *ngFor="let w of dates" [value]="w" [selected]="when === w">{{ w }}</option>
-      </select>
+    <div class="center-content" *ngIf="alertMessage !== '' && !areTurnsEmptys">
+        <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+            {{alertMessage}}
+        </ngb-alert>
     </div>
-    <div class="col-md-2" (click)="refresh()">
-        <label for="action" class="control-label">
-            <b>Acción:</b>
-          </label>
-      <span class="form-control btn-action center-content">
-        <i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar
-      </span>
+    <div class="card  card-large">
+        <div class="card-header">Cumpleaños</div>
+        <div class="card-block table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th><i class="fa fa-bars"></i></th>
+                        <th>Tipo</th>
+                        <th>Quién</th>
+                        <th>Día</th>
+                        <th>Mes</th>
+                        <th>Semana</th>
+                        <th>Año</th>
+                        <th>Teléfonos</th>
+                        <th>Emails</th>
+                    </tr>
+                    <tr class="filters">
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th><input type="text" class="form-control" [(ngModel)]="day" (input)="getBirthday()"
+                                placeholder="Día..."></th>
+                        <th><input type="text" class="form-control" [(ngModel)]="month" (input)="getBirthday()"
+                                placeholder="Mes..."></th>
+                        <th><input type="text" class="form-control" [(ngModel)]="week" (input)="getBirthday()"
+                                placeholder="Semana..."></th>
+                        <th><input type="text" class="form-control" [(ngModel)]="year" (input)="getBirthday()"
+                                placeholder="Año..."></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="99" style="padding: 0px">
+                            <app-progressbar [loading]="loading"></app-progressbar>
+                        </td>
+                    </tr>
+                    <tr *ngFor="let company of companies">
+                        <td align="left" width="150">
+                            <button type="button" class="btn btn-success btn-sm"
+                                (click)="openModal('view', company._id)" title="Ver"><i class="fa fa-eye"></i></button>
+                            <a class="btn btn-default btn-sm icon-ws"
+                                href="https://web.whatsapp.com/send?phone=54{{company.phones}}&text=''"
+                                target="_blank"><i class="fa fa-whatsapp"></i></a>
+                            <a class="btn btn-info btn-sm" href="mailto:{{company.emails}}" target="_blank"><i
+                                    class="fa fa-envelope"></i></a>
+                        </td>
+                        <td class="flat">{{ company.type }}</td>
+                        <td class="flat">{{ company.name }}</td>
+                        <td class="flat">{{ company['day'] }}</td>
+                        <td class="flat">{{ company['month'] }}</td>
+                        <td class="flat">{{ company['week'] }}</td>
+                        <td class="flat">{{ company['year'] }}</td>
+                        <td class="flat">{{ company.phones }}</td>
+                        <td class="flat">{{ company.emails }}</td>
+                    </tr>
+                    <tr align="center" *ngIf="companies.length === 0 && !loading">
+                        <td colspan="6">No se encontraron cumpleaños</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer">
+            <!--<div class="row">
+                <div class="col-md-10">
+                    <pagination-controls class="my-pagination" (pageChange)="pageChange($event)" #api
+                        previousLabel="Ant." nextLabel="Sig." autoHide="true">
+                    </pagination-controls>
+                </div>
+                <div class="form-group col-md-2">
+                    <select class="form-control" [(ngModel)]="itemsPerPage" (change)="getBirthday()">
+                        <option [value]="5">Mostrar 5 Registros</option>
+                        <option [value]="10">Mostrar 10 Registros</option>
+                        <option [value]="15">Mostrar 15 Registros</option>
+                        <option [value]="20">Mostrar 20 Registros</option>
+                        <option [value]="50">Mostrar 50 Registros</option>
+                        <option [value]="100">Mostrar 100 Registros</option>
+                    </select>
+                </div>
+            </div>-->
+        </div>
     </div>
-  </div>
-  <div class="card  card-large">
-    <div class="card-header">Cumpleaños</div>
-    <div class="card-block table-responsive">
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th><i class="fa fa-bars"></i></th>
-            <th>Tipo</th>
-            <th>Quién</th>
-            <th>Cuándo</th>
-            <th>Teléfonos</th>
-            <th>Emails</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td colspan="99" style="padding: 0px">
-              <app-progressbar [loading]="loading"></app-progressbar>
-            </td>
-          </tr>
-          <tr *ngFor="let company of companies">
-            <td align="left" width="150">
-              <button type="button" class="btn btn-success btn-sm" (click)="openModal('view', company._id)" title="Ver"><i class="fa fa-eye"></i></button>
-              <a class="btn btn-default btn-sm icon-ws" href="https://web.whatsapp.com/send?phone=54{{company.phones}}&text=''" target="_blank"><i class="fa fa-whatsapp"></i></a>
-              <a class="btn btn-info btn-sm" href="mailto:{{company.emails}}" target="_blank"><i class="fa fa-envelope"></i></a>
-            </td>
-            <td class="flat">{{ company.type }}</td>
-            <td class="flat">{{ company.name }}</td>
-            <td class="flat" *ngIf="company.birthday">{{ company.birthday.slice(0, 10) }}</td>
-            <td class="flat" *ngIf="!company.birthday"></td>
-            <td class="flat">{{ company.phones }}</td>
-            <td class="flat">{{ company.emails }}</td>
-          </tr>
-          <tr align="center" *ngIf="companies.length === 0 && !loading">
-            <td colspan="6">No se encontraron cumpleaños</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="card-footer">
-    </div>
-  </div>
 </section>
