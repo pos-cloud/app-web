@@ -127,10 +127,10 @@
                               item.state.toString() !== 'Cerrado'))" class="btn btn-danger btn-sm"
                                 (click)="openModal('delete', item)" title="Eliminar"><i class="fa fa-trash-o"></i>
                             </button>
-                            <button *ngIf="item.state === 'Cerrado'" type="button" class="btn btn-light btn-sm"
+                            <button *ngIf="item.state.toString() !== 'Pendiente' || item.state.toString() !== 'Abierto'" type="button" class="btn btn-light btn-sm"
                                 (click)="openModal('print', item)" title="Imprimir"><i class="fa fa-print"></i>
                             </button>
-                            <button type="button" *ngIf="item.state === 'Cerrado'" class="btn btn-light btn-sm"
+                            <button type="button" *ngIf="item.state.toString() !== 'Pendiente' || item.state.toString() !== 'Abierto'" class="btn btn-light btn-sm"
                                 (click)="openModal('send-email', item)" title="Enviar"><i class="fa fa-envelope"></i>
                             </button>
                         </td>
