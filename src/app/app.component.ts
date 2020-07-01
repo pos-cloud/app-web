@@ -174,8 +174,8 @@ export class AppComponent {
         .replace(/www./g, "")
         .replace(/https/g, "");
     }
-    Config.setDatabase("syf");
-    Config.setApiHost("syf.poscloud.com.ar"); // Prod
+    Config.setDatabase(subdominio);
+    Config.setApiHost(hostname); // Prod
     Config.setApiPort(300);
     Config.setApiV8Port(308);
   }
