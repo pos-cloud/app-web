@@ -707,7 +707,7 @@ export class TransactionTypeComponent implements OnInit {
 
     this.loading = true;
     this.transactionType = this.transactionTypeForm.value;
-    if (this.transactionType.requestEmployee.toString() === '') this.transactionType.requestEmployee = null;
+    if (this.transactionType.requestEmployee && this.transactionType.requestEmployee.toString() === '') this.transactionType.requestEmployee = null;
     this.transactionType.codes = this.getCodes();
     if (this.operation === 'add') {
       this.saveTransactionType();
