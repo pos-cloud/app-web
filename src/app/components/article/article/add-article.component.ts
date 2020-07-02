@@ -1393,9 +1393,9 @@ export class AddArticleComponent implements OnInit {
       this.loadPosDescription();
       this.loadURL();
       this.article = this.articleForm.value;
-      if (this.articleForm.value.make === '') {
-        this.article.make = null
-      }
+      if (this.article.make && this.article.make.toString() === '') this.article.make = null;
+      if (this.article.category && this.article.category.toString() === '') this.article.category = null;
+      if (this.article.unitOfMeasurement && this.article.unitOfMeasurement.toString() === '') this.article.unitOfMeasurement = null;
       this.article.notes = this.notes;
       this.article.tags = this.tags;
       this.autocompleteCode();

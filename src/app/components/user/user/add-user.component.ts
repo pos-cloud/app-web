@@ -514,7 +514,7 @@ export class AddUserComponent implements OnInit {
     this.user = this.userForm.value;
     this.user.shortcuts = shortcuts;
     this.user.tokenExpiration = 1440;
-    if(this.user.cashBoxType.toString() === '') this.user.cashBoxType = null;
+    if (this.user.cashBoxType && this.user.cashBoxType.toString() === '') this.user.cashBoxType = null;
     if (this.operation === 'add') {
       this.saveUser();
     } else if (this.operation === 'update') {
