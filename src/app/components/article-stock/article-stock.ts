@@ -11,6 +11,7 @@ export class ArticleStock {
     public realStock: number = 0.00;
     public minStock: number = 0.00;
     public maxStock: number = 0.00;
+    public updateDate: string;
 
     constructor() { }
 }
@@ -195,6 +196,16 @@ export let attributes = [
         filter: true,
         datatype: 'string',
         project: null,
+        align: 'left',
+        required: true,
+    },
+    {
+        name: 'updateDate',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project:  `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y", "timezone": "-03:00" } }`,
         align: 'left',
         required: true,
     },
