@@ -218,6 +218,13 @@ export class ConfigComponent implements OnInit {
   }
 
   public buildFormSystem() {
+    if (!this.config.twilio) {
+      this.config.twilio = {
+        senderNumber: '',
+        accountSid: '',
+        authToken: ''
+      }
+    }
     this.configFormSystem = this._fb.group({
       '_id': [this.config._id, [Validators.required]],
       'article.code.validators.maxLength': [this.config.article.code.validators.maxLength, []],
@@ -233,7 +240,10 @@ export class ConfigComponent implements OnInit {
       'tradeBalance.numberOfIntegers': [this.config.tradeBalance.numberOfIntegers, []],
       'tradeBalance.numberOfDecimals': [this.config.tradeBalance.numberOfDecimals, []],
       'voucher.readingLimit': [this.config.voucher.readingLimit, []],
-      'voucher.minutesOfExpiration': [this.config.voucher.minutesOfExpiration, []]
+      'voucher.minutesOfExpiration': [this.config.voucher.minutesOfExpiration, []],
+      'twilio.senderNumber': [this.config.twilio.senderNumber, []],
+      'twilio.accountSid': [this.config.twilio.accountSid, []],
+      'twilio.authToken': [this.config.twilio.authToken, []]
     });
 
     this.configFormSystem.valueChanges.subscribe(data => this.onValueChangedSystem(data));
@@ -562,6 +572,16 @@ export class ConfigComponent implements OnInit {
     if (this.config.tradeBalance.numberOfDecimals === undefined) this.config.tradeBalance.numberOfDecimals = 2;
     if (this.config.voucher.readingLimit === undefined) this.config.voucher.readingLimit = 0;
     if (this.config.voucher.minutesOfExpiration === undefined) this.config.voucher.minutesOfExpiration = 720;
+    if (!this.config.twilio) {
+      this.config.twilio = {
+        senderNumber: '',
+        accountSid: '',
+        authToken: ''
+      }
+    }
+    if (!this.config.twilio.senderNumber) this.config.twilio.senderNumber = '';
+    if (!this.config.twilio.accountSid) this.config.twilio.accountSid = '';
+    if (!this.config.twilio.authToken) this.config.twilio.authToken = '';
 
     let vatConfitionDefault;
     if (!this.config.company.vatCondition.default) {
@@ -616,7 +636,10 @@ export class ConfigComponent implements OnInit {
       'tradeBalance.numberOfIntegers': this.config.tradeBalance.numberOfIntegers,
       'tradeBalance.numberOfDecimals': this.config.tradeBalance.numberOfDecimals,
       'voucher.readingLimit': this.config.voucher.readingLimit,
-      'voucher.minutesOfExpiration': this.config.voucher.minutesOfExpiration
+      'voucher.minutesOfExpiration': this.config.voucher.minutesOfExpiration,
+      'twilio.senderNumber': this.config.twilio.senderNumber,
+      'twilio.accountSid': this.config.twilio.accountSid,
+      'twilio.authToken': this.config.twilio.authToken
     });
   }
 

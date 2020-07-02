@@ -75,6 +75,11 @@ export class Config {
     readingLimit: number,
     minutesOfExpiration: number
   };
+  public twilio: {
+    senderNumber: string,
+    accountSid: string,
+    authToken: string
+  };
 
   constructor() {
     Config.updateApiURL();
