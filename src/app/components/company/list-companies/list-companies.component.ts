@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewEncapsulation, EventEmitter, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { NgbModal, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
@@ -46,7 +46,7 @@ export class ListCompaniesComponent implements OnInit {
 	public userCountry: string;
 	private subscription: Subscription = new Subscription();
 	public focusEvent = new EventEmitter<boolean>();
-
+    public employee: string;
 	//
 	public title: string = "Empresas"
 	public currentPage: number = 0;
@@ -67,7 +67,8 @@ export class ListCompaniesComponent implements OnInit {
 		public _modalService: NgbModal,
 		public activeModal: NgbActiveModal,
 		public alertConfig: NgbAlertConfig,
-		public _authService: AuthService
+        public _authService: AuthService,
+        private _route: ActivatedRoute
 	) {
 		this.filters = new Array();
 		for (let field of this.columns) {
@@ -76,7 +77,8 @@ export class ListCompaniesComponent implements OnInit {
 			} else {
 				this.filters[field.name] = "";
 			}
-		}
+        }
+        this.processParams();
 	}
 
 	ngOnInit(): void {
@@ -127,7 +129,25 @@ export class ListCompaniesComponent implements OnInit {
 			const walk = (x - startX) * 0.7; //scroll-fast
 			slider.scrollLeft = scrollLeft - walk;
 		});
-	}
+    }
+    
+    private processParams(): void {
+        this._route.queryParams.subscribe(params => {
+            if (params['employee']) {
+                this.employee = params['employee'];
+
+                let pathLocation: string[] = this._router.url.split('/');
+                
+                var listType = pathLocation[2].split('?')[0];
+                
+                if (listType === "clientes") {
+                    this.type = CompanyType.Client;
+                } else if (listType === "proveedores") {
+                    this.type = CompanyType.Provider;
+                }   
+            }
+        });
+    }
 
 	ngAfterViewInit() {
 		this.focusEvent.emit(true);
@@ -155,7 +175,10 @@ export class ListCompaniesComponent implements OnInit {
 			}
 		}
 
-		match += `,"companyType": "${this.type}"`;
+        match += `,"companyType": "${this.type}"`;
+        if(this.employee){
+            match += `,"employee._id": { "$oid" : "${this.employee}"}`
+        }
 		if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
 		match += `}`;
@@ -187,7 +210,7 @@ export class ListCompaniesComponent implements OnInit {
 
 			}
 		}
-		project += `}`;
+        project += `}`;
 
 		project = JSON.parse(project);
 
@@ -350,7 +373,10 @@ export class ListCompaniesComponent implements OnInit {
 				}, (reason) => {
 
 				});
-				break;
+                break;
+            case 'account' : 
+                this._router.navigateByUrl("admin/cuentas-corrientes?companyId="+ company._id + "&companyType" + this.type)
+                break;
 			case 'import':
 				modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
 				let model: any = new Company();

@@ -203,6 +203,16 @@ export let attributes = [
     required : false,
   },
   {
+    name: 'employee._id',
+    visible: false,
+    disabled: true,
+    filter: false,
+    datatype: 'string',
+    project: null,
+    align: 'left',
+    required : true,
+  },
+  {
     name: 'observation',
     visible: true,
     disabled: false,
