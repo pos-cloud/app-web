@@ -47,13 +47,13 @@ export class LoginComponent implements OnInit {
 
   public validationMessages = {
     'company': {
-      'required':       'Este campo es requerido.'
+      'required': 'Este campo es requerido.'
     },
     'user': {
-      'required':       'Este campo es requerido.'
+      'required': 'Este campo es requerido.'
     },
     'password': {
-      'required':       'Este campo es requerido.'
+      'required': 'Este campo es requerido.'
     }
   };
 
@@ -70,11 +70,11 @@ export class LoginComponent implements OnInit {
     private _route: ActivatedRoute,
     private socket: Socket,
     private _toastr: ToastrService,
-    ) {
-      this.alertMessage = '';
-    }
+  ) {
+    this.alertMessage = '';
+  }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.processParams();
     this.buildForm();
   }
@@ -97,17 +97,17 @@ export class LoginComponent implements OnInit {
   public buildForm(): void {
 
     this.loginForm = this._fb.group({
-      'company': [ this.company, [
+      'company': [this.company, [
         Validators.required
-        ]
+      ]
       ],
       'user': [this.user, [
         Validators.required
-        ]
+      ]
       ],
       'password': [this.password, [
         Validators.required
-        ]
+      ]
       ]
     });
 
@@ -156,7 +156,7 @@ export class LoginComponent implements OnInit {
           this.initSocket();
           await this.getConfigApi().then(
             config => {
-              if(config) {
+              if (config) {
                 this._configService.setConfig(config);
                 this.setConfigurationSettings(config);
               }
@@ -183,7 +183,7 @@ export class LoginComponent implements OnInit {
 
     let identity: User = JSON.parse(sessionStorage.getItem('user'));
 
-    if(identity && Config.database && Config.database !== '') {
+    if (identity && Config.database && Config.database !== '') {
       // INICIAMOS SOCKET
       this.socket.emit('start', {
         database: Config.database,
@@ -250,27 +250,27 @@ export class LoginComponent implements OnInit {
     this.alertConfig.dismissible = dismissible;
   }
 
-  public hideMessage():void {
+  public hideMessage(): void {
     this.alertMessage = '';
   }
 
   public showToast(message: string, type: string = 'success'): void {
-		switch(type) {
-			case 'success':
-				this._toastr.success('', message);
-				break;
-			case 'info':
-				this._toastr.info('', message);
-				break;
-			case 'warning':
-				this._toastr.warning('', message);
-				break;
-			case 'danger':
-				this._toastr.error('', message);
-				break;
-			default:
-				this._toastr.success('', message);
-				break;
-		}
+    switch (type) {
+      case 'success':
+        this._toastr.success('', message);
+        break;
+      case 'info':
+        this._toastr.info('', message);
+        break;
+      case 'warning':
+        this._toastr.warning('', message);
+        break;
+      case 'danger':
+        this._toastr.error('', message);
+        break;
+      default:
+        this._toastr.success('', message);
+        break;
+    }
   }
 }

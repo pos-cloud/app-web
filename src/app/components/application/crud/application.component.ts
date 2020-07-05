@@ -252,7 +252,7 @@ export class ApplicationComponent implements OnInit {
           this.showToast(result);
           if (result.status === 200) this.activeModal.close({ obj: this.obj });
         },
-        err => error => this.showToast(error)
+        error => this.showToast(error)
       )
     );
   }
@@ -265,7 +265,7 @@ export class ApplicationComponent implements OnInit {
           this.showToast(result);
           if (result.status === 200) this.activeModal.close({ obj: this.obj });
         },
-        err => error => this.showToast(error)
+        error => this.showToast(error)
       )
     );
   }
@@ -278,7 +278,7 @@ export class ApplicationComponent implements OnInit {
           this.showToast(result);
           if (result.status === 200) this.activeModal.close({ obj: this.obj });
         },
-        err => error => this.showToast(error)
+        error => this.showToast(error)
       )
     );
   }
