@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">Eliminar Movimiento {{movementOfCash.type.name}}</h4>
+  <h4 class="modal-title">Eliminar Movimiento {{movementOfCash.type?.name}}</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -10,7 +10,7 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <p>¿Está seguro de eliminar el método {{movementOfCash.type.name}} por {{movementOfCash.amountPaid}}?</p>
+  <p>¿Está seguro de eliminar el método {{movementOfCash.type?.name}} por {{movementOfCash.amountPaid}}?</p>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-light" (click)="activeModal.close('Close click')">Cancelar</button>
