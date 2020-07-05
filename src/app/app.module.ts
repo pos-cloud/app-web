@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
 // paquetes de terceros
@@ -258,6 +258,7 @@ import { ExportersModule } from './components/export/exporters.module';
 import { ListMovementsOfCancellationsComponent } from './components/movement-of-cancellation/list-movements-of-cancellations/list-movements-of-cancellations.component';
 import { ComponentsModule } from './components/components.module';
 import { ListCategoriesPosComponent } from './components/category/list-categories-pos/list-categories-pos.component';
+import { AuthInterceptor } from './main/interceptors/auth.interceptor';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -622,6 +623,11 @@ export function createTranslateLoader(http: HttpClient) {
     ExportersModule
   ],
   providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    },
     NgbActiveModal,
     NgbAlertConfig,
     ArticleService,
