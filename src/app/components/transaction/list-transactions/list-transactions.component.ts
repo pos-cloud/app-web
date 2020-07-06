@@ -511,6 +511,21 @@ export class ListTransactionsComponent implements OnInit {
                 }
 
                 break;
+            case 'download' :
+                if (transaction.type.readLayout) {
+                    modalRef = this._modalService.open(PrintTransactionTypeComponent)
+                    modalRef.componentInstance.transactionId = transaction._id;
+                    modalRef.componentInstance.source = "mail";
+                } else {
+                    modalRef = this._modalService.open(PrintComponent);
+                    modalRef.componentInstance.company = transaction.company;
+                    modalRef.componentInstance.transactionId = transaction._id;
+                    modalRef.componentInstance.typePrint = 'invoice';
+                    modalRef.componentInstance.source = "mail";
+                }
+                var url = `http://${Config.database}.poscloud.com.ar:300/api/print/others/${transaction._id}`;
+                window.open(url);
+                break;
             default: ;
         }
     };
