@@ -1633,7 +1633,7 @@ export class AddMovementOfArticleComponent implements OnInit {
                 if (!result.movementOfArticle) {
                     if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
                 } else {
-                    let query = '{"movementParent":"' + result.movementOfArticle._id + '"}';
+                    let query = '{"movementParent":"' + result.movementOfArticle._id + '", "operationType": { "$ne": "D" }}';
                     this._movementOfArticleService.deleteMovementsOfArticles(query).subscribe(
                         result => {
                             if (result && result.movementsOfArticles) {
