@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
-import { of } from "rxjs";
+import { of, BehaviorSubject } from "rxjs";
 import { Observable } from "rxjs/Observable";
 import { map, catchError } from "rxjs/operators";
 
@@ -12,10 +12,20 @@ import { Variant } from 'app/components/variant/variant';
 @Injectable()
 export class ArticleService {
 
+  private articlesPos: BehaviorSubject<Article[]> = new BehaviorSubject<Article[]>(null);
+
 	constructor(
 		private _http: HttpClient,
 		public _authService: AuthService
-	) { }
+  ) { }
+
+  public setArticlesPos(articlesPos: Article[]): void {
+    this.articlesPos.next(articlesPos);
+  }
+
+  public get getArticlesPos() {
+    return this.articlesPos.asObservable();
+  }
 
 	public getArticle(_id: string): Observable<any> {
 
@@ -250,7 +260,7 @@ export class ArticleService {
 			xhr.send(formData);
 		});
     }
-    
+
     public makeFileRequestArray(files: Array<File>) {
 
 		let xhr: XMLHttpRequest = new XMLHttpRequest();
@@ -279,7 +289,7 @@ export class ArticleService {
 			xhr.send(formData);
 		});
     }
-    
+
     public deleteImage(picture: string): Observable<any> {
 
 		const URL = `${Config.apiURL}delete-image-article`;

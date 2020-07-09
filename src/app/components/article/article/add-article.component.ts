@@ -1422,6 +1422,7 @@ export class AddArticleComponent implements OnInit {
         this.article.type = Type.Final;
       }
 
+      this._articleService.setArticlesPos(null);
       if (this.operation === 'add' || this.operation === 'copy') {
         this.saveArticle();
       } else if (this.operation === 'update') {
