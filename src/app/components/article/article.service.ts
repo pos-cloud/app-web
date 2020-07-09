@@ -12,12 +12,42 @@ import { Variant } from 'app/components/variant/variant';
 @Injectable()
 export class ArticleService {
 
+  private items: BehaviorSubject<Article[]> = new BehaviorSubject<Article[]>(null);
+  private countItems: BehaviorSubject<number> = new BehaviorSubject<number>(null);
+  private variants: BehaviorSubject<Article[]> = new BehaviorSubject<Article[]>(null);
+  private countVariants: BehaviorSubject<number> = new BehaviorSubject<number>(null);
   private articlesPos: BehaviorSubject<Article[]> = new BehaviorSubject<Article[]>(null);
 
 	constructor(
 		private _http: HttpClient,
 		public _authService: AuthService
   ) { }
+
+  public setItems(items: Article[], count: number): void {
+    this.items.next(items);
+    this.countItems.next(count);
+  }
+
+  public get getItems() {
+    return this.items.asObservable();
+  }
+
+  public get getCountItems() {
+    return this.countItems.asObservable();
+  }
+
+  public setVariants(variants: Article[], countVariants: number): void {
+    this.variants.next(variants);
+    this.countItems.next(countVariants);
+  }
+
+  public get getVariants() {
+    return this.variants.asObservable();
+  }
+
+  public get getCountVariants() {
+    return this.countVariants.asObservable();
+  }
 
   public setArticlesPos(articlesPos: Article[]): void {
     this.articlesPos.next(articlesPos);
