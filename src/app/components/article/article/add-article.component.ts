@@ -1423,8 +1423,8 @@ export class AddArticleComponent implements OnInit {
       }
 
       this._articleService.setArticlesPos(null);
-      this._articleService.setItems(null, 0);
-      this._articleService.setVariants(null, 0);
+      this._articleService.setItems(null);
+      this._articleService.setVariants(null);
       if (this.operation === 'add' || this.operation === 'copy') {
         this.saveArticle();
       } else if (this.operation === 'update') {

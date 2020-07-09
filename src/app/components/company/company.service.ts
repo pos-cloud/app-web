@@ -1,25 +1,43 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
-import { of } from "rxjs";
+import { of, BehaviorSubject } from "rxjs";
 import { Observable } from "rxjs/Observable";
 import { map, catchError } from "rxjs/operators";
-
 import { Company } from './company';
 import { Config } from '../../app.config';
 import { AuthService } from '../login/auth.service';
-
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
+import { DatatableHistory } from '../datatable/datatable-history.interface';
 const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 const EXCEL_EXTENSION = '.xlsx';
 
 @Injectable()
 export class CompanyService {
 
+  private clients: BehaviorSubject<DatatableHistory> = new BehaviorSubject<DatatableHistory>(null);
+  private providers: BehaviorSubject<DatatableHistory> = new BehaviorSubject<DatatableHistory>(null);
+
 	constructor(
 		private _http: HttpClient,
 		private _authService: AuthService,
-	) { }
+  ) { }
+
+  public setClients(clients: DatatableHistory): void {
+    this.clients.next(clients);
+  }
+
+  public get getClients() {
+    return this.clients.asObservable();
+  }
+
+  public setProviders(providers: DatatableHistory): void {
+    this.providers.next(providers);
+  }
+
+  public get getProviders() {
+    return this.providers.asObservable();
+  }
 
 	public getCompany(_id: string): Observable<any> {
 
@@ -287,7 +305,7 @@ export class CompanyService {
 		const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
 		this.saveAsExcelFile(excelBuffer, excelFileName);
     }
-    
+
     public exportAsExcelFileMulti(json: any[],json2: any[], excelFileName: string): void {
         const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(json);
         const worksheet2: XLSX.WorkSheet = XLSX.utils.json_to_sheet(json2);

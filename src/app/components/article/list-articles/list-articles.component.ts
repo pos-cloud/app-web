@@ -1,23 +1,16 @@
 
-import { Component, OnInit, Input, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-
 import { Article, Type, attributes } from '../article';
 import { Config } from '../../../app.config';
-import { Transaction } from '../../transaction/transaction';
-
 import { ArticleService } from '../article.service';
-
 import { AddArticleComponent } from '../article/add-article.component';
 import { ImportComponent } from '../../import/import.component';
-
 import { RoundNumberPipe } from '../../../main/pipes/round-number.pipe';
 import { Printer, PrinterPrintIn } from '../../printer/printer';
 import { PrinterService } from '../../printer/printer.service';
 import { UpdateArticlePriceComponent } from '../update-article-price/update-article-price.component';
-import { FilterPipe } from 'app/main/pipes/filter.pipe';
 import { AuthService } from 'app/components/login/auth.service';
 import { User } from 'app/components/user/user';
 import { PrintPriceListComponent } from '../../print/print-price-list/print-price-list.component';
@@ -36,6 +29,7 @@ import { Subscription } from 'rxjs';
 import { TaxService } from 'app/components/tax/tax.service';
 import { Tax } from 'app/components/tax/tax';
 import { first } from 'rxjs/operators';
+import { DatatableHistory } from 'app/components/datatable/datatable-history.interface';
 
 @Component({
   selector: 'app-list-articles',
@@ -120,22 +114,13 @@ export class ListArticlesComponent implements OnInit {
     );
 
     this.database = Config.database;
-
+    let datatableHistory: DatatableHistory;
     if ('Variantes' === this.listTitle) {
       this.articleType = Type.Variant;
       this.title = "Listado de Variantes";
       this.subscription.add(this._articleService.getVariants.pipe(first()).subscribe(
-        async variants => {
-          if (variants && variants.length > 0) {
-            this.items = variants;
-            this.subscription.add(this._articleService.getCountVariants.pipe(first()).subscribe(
-              async count => {
-                this.totalItems = count;
-              }
-            ));
-          } else {
-            this.getItems();
-          }
+        async result => {
+          datatableHistory = result;
         }
       ));
     } else if ('Ingredientes' === this.listTitle) {
@@ -147,19 +132,21 @@ export class ListArticlesComponent implements OnInit {
       this.articleType = Type.Final;
       this.title = "Listado de Productos";
       this.subscription.add(this._articleService.getItems.pipe(first()).subscribe(
-        async articles => {
-          if (articles && articles.length > 0) {
-            this.items = articles;
-            this.subscription.add(this._articleService.getCountItems.pipe(first()).subscribe(
-              async count => {
-                this.totalItems = count;
-              }
-            ));
-          } else {
-            this.getItems();
+        async result => {
+          if (result && result.items && result.items.length > 0) {
+            datatableHistory = result;
           }
         }
       ));
+    }
+    if(datatableHistory) {
+      this.items = datatableHistory.items;
+      this.totalItems = datatableHistory.count;
+      this.filters = datatableHistory.filters;
+      this.itemsPerPage = datatableHistory.itemsPerPage;
+      this.currentPage = datatableHistory.currentPage;
+    } else {
+      this.getItems();
     }
     this.initDragHorizontalScroll();
   }
@@ -287,10 +274,17 @@ export class ListArticlesComponent implements OnInit {
           } else {
             this.items = result[0].items;
             this.totalItems = result[0].count;
+            let datatableHistory: DatatableHistory = {
+              items: this.items,
+              count: this.totalItems,
+              filters: this.filters,
+              itemsPerPage: this.itemsPerPage,
+              currentPage: this.currentPage
+            };
             if (this.articleType === Type.Final) {
-              this._articleService.setItems(this.items, this.totalItems);
+              this._articleService.setItems(datatableHistory);
             } else if (this.articleType === Type.Variant) {
-              this._articleService.setVariants(this.items, this.totalItems);
+              this._articleService.setVariants(datatableHistory);
             }
           }
         } else {
