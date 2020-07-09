@@ -9,6 +9,7 @@ import { Article } from '../article/article';
 import { Config } from '../../app.config';
 import { AuthService } from '../login/auth.service';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
+import { Transaction } from '../transaction/transaction';
 
 @Injectable()
 export class ArticleStockService {
@@ -170,16 +171,16 @@ export class ArticleStockService {
     );
   }
 
-  public updateObjByArticle(movementOfArticle: MovementOfArticle): Observable<any> {
+  public updateStockByTransaction(transaction: Transaction): Observable<any> {
 
-    const URL = `${Config.apiV8URL}stock/by-article`;
+    const URL = `${Config.apiV8URL}stock/by-transaction`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
     return this._http.put(URL, {
-      movementOfArticle: movementOfArticle
+      transaction: transaction
     }, {
       headers: headers
     }).pipe(

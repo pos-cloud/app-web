@@ -2574,7 +2574,7 @@ export class AddSaleOrderComponent {
       this.transaction.type.modifyStock) {
       this.loading = true;
       if (await this.areValidMovementOfArticle()) {
-        isValid = await this.processStock();
+        isValid = await this.updateStockByTransaction();
       } else {
         isValid = false;
       }
@@ -2745,22 +2745,10 @@ export class AddSaleOrderComponent {
     });
   }
 
-  async processStock(): Promise<boolean> {
-    return new Promise<boolean>(async (resolve, reject) => {
-      let isValid: boolean = true;
-      for (let movementOfArticle of this.movementsOfArticles) {
-        if (movementOfArticle.article && isValid) {
-          isValid = await this.updateArticleStockByArticle(movementOfArticle);
-        }
-      }
-      resolve(isValid);
-    });
-  }
-
-  public updateArticleStockByArticle(movementOfArticle: MovementOfArticle): Promise<boolean> {
+  public updateStockByTransaction(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.loading = true;
-      this._articleStockService.updateObjByArticle(movementOfArticle).subscribe(
+      this._articleStockService.updateStockByTransaction(this.transaction).subscribe(
         result => {
           this.loading = false;
           if (result.status === 200) {
