@@ -1299,9 +1299,11 @@ export class AddSaleOrderComponent {
         let taxes: Taxes[] = new Array();
         if (movementOfArticle.taxes) {
           let impInt: number = 0;
-          for (let taxAux of movementOfArticle.article.taxes) {
-            if (taxAux.percentage === 0) {
-              impInt = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount, 4);
+          if (movementOfArticle.article) {
+            for (let taxAux of movementOfArticle.article.taxes) {
+              if (taxAux.percentage === 0) {
+                impInt = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount, 4);
+              }
             }
           }
           for (let taxAux of movementOfArticle.taxes) {
