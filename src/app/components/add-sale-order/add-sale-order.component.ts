@@ -3372,7 +3372,8 @@ export class AddSaleOrderComponent {
     this.listArticlesComponent.areArticlesVisible = false;
     this.listArticlesComponent.filterArticle = this.filterArticle;
     if (!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
-      this.focusEvent.emit(true);
+        this.listCategoriesComponent.ngOnInit();
+        this.focusEvent.emit(true);
     }
   }
 
