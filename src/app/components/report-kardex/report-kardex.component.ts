@@ -371,7 +371,7 @@ export class ReportKardexComponent implements OnInit {
 
     await this._authService.getIdentity.subscribe(
       async identity => {
-        if (identity && identity.origin) {
+        if (identity && identity.origin && identity.origin.branch) {
           this.allowChangeBranch = false;
           this.branchSelectedId = identity.origin.branch._id;
         } else {
