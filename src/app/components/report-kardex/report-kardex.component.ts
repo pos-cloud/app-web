@@ -24,6 +24,7 @@ import { AuthService } from 'app/components/login/auth.service';
 import { Subscription } from 'rxjs';
 import { ArticleStockService } from 'app/components/article-stock/article-stock.service';
 import { ToastrService } from 'ngx-toastr';
+import { ArticleStock } from '../article-stock/article-stock';
 
 @Component({
   selector: 'app-report-kardex',
@@ -38,10 +39,10 @@ export class ReportKardexComponent implements OnInit {
   public alertMessage: string = '';
   public loading: boolean = false;
   public roundNumber: RoundNumberPipe;
-  @Input() branchSelectedId: String;
+  @Input() branchSelectedId: string;
   public allowChangeBranch: boolean;
   public branches: Branch[];
-  @Input() depositSelectedId: String;
+  @Input() depositSelectedId: string;
   public deposits: Deposit[];
   private subscription: Subscription = new Subscription();
 
@@ -735,7 +736,27 @@ export class ReportKardexComponent implements OnInit {
     this._articleStockService.getArticleStocks(query).subscribe(
       result => {
         if (!result.articleStocks || result.articleStocks.length <= 0) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          let articleStock = new ArticleStock();
+          articleStock.article = this.articleSelected;
+          articleStock.branch = new Branch();
+          articleStock.branch._id = this.branchSelectedId;
+          articleStock.deposit = new Deposit();
+          articleStock.deposit._id = this.depositSelectedId;
+          articleStock.realStock = this.balance;
+          this._articleStockService.saveArticleStock(articleStock).subscribe(
+            result => {
+              this.loading = false;
+              if (result && result.articleStock) {
+                this.showToast("El stock se actualizó correctamente.", 'success');
+              } else {
+                if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+              }
+            },
+            error => {
+              this.showToast(error._body, 'danger');
+              this.loading = false;
+            }
+          )
         } else {
           result.articleStocks[0].realStock = this.balance;
           this._articleStockService.updateArticleStock(result.articleStocks[0]).subscribe(
