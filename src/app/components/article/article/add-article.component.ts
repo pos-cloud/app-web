@@ -1576,6 +1576,7 @@ export class AddArticleComponent implements OnInit {
             if (this.article.applications.length > 0) {
                 await this.getArticleURL().then(
                     result => {
+
                         if (result) {
                             this.showMessage("La URL ya esta en uso", "danger", true);
                             resolve(false);
@@ -1599,7 +1600,8 @@ export class AddArticleComponent implements OnInit {
             let project = {
                 _id: 1,
                 url: 1,
-                ecommerceEnabled: true,
+                ecommerceEnabled: 1,
+                type: 1,
                 operationType: 1
             }
 
@@ -1616,7 +1618,6 @@ export class AddArticleComponent implements OnInit {
                         "operationType" : { "$ne" : "D" } }`;
 
             match = JSON.parse(match);
-
             this._articleService.getArticlesV2(project, match, {}, {}).subscribe(
                 result => {
                     if (result && result.articles && result.articles.length > 0) {
