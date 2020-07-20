@@ -175,7 +175,6 @@ export class ListMovementsOfArticlesComponent implements OnInit {
         if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
         match += `}`;
-        console.log(match);
         match = JSON.parse(match);
 
         // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS

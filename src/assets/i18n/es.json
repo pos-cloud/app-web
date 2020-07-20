@@ -39,6 +39,7 @@
   "article.taxes[2].amount": "Monto Imp",
   "article.taxes[2].percentage": "Porcentaje Imp",
   "article.unitOfMeasurement.abbreviation": "Un. de Medida",
+  "article.containsStructure" : "¿Tiene Estructura?",
   "authentication token missing": "falta el token de autenticación",
   "bad provided credentials": "Credenciales proporcionadas incorrectas",
   "balance": "Saldo",

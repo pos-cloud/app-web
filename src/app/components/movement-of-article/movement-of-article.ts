@@ -48,7 +48,7 @@ export class MovementOfArticle {
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     public updateUser: User;
     public updateDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-    
+
     constructor() { }
 }
 
@@ -311,6 +311,16 @@ export let attributes = [
         required: false,
     },
     {
+        name: 'article.containsStructure',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: `{ "$toString" : "$article.containsStructure"}`,
+        align: 'left',
+        required: false,
+    },
+    {
         name: 'quantityForStock',
         visible: false,
         disabled: false,
@@ -392,6 +402,7 @@ export let attributes = [
         align: 'left',
         required: true,
     },
+
     {
         name: 'transaction._id',
         visible: false,
