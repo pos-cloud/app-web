@@ -355,7 +355,7 @@ export let attributes = [
     {
         name: 'transaction.type.transactionMovement',
         visible: false,
-        disabled: true,
+        disabled: false,
         filter: true,
         datatype: 'string',
         project: null,
@@ -365,7 +365,7 @@ export let attributes = [
     {
         name: 'transaction.creationDate',
         visible: false,
-        disabled: true,
+        disabled: false,
         filter: false,
         datatype: 'date',
         project: null,
@@ -375,7 +375,7 @@ export let attributes = [
     {
         name: 'transaction.updateDate',
         visible: false,
-        disabled: true,
+        disabled: false,
         filter: false,
         datatype: 'date',
         project: null,
@@ -395,7 +395,7 @@ export let attributes = [
     {
         name: 'transaction.state',
         visible: false,
-        disabled: true,
+        disabled: false,
         filter: true,
         datatype: 'string',
         project: null,
@@ -406,7 +406,7 @@ export let attributes = [
     {
         name: 'transaction._id',
         visible: false,
-        disabled: true,
+        disabled: false,
         filter: true,
         datatype: 'string',
         project: null,
@@ -416,7 +416,7 @@ export let attributes = [
     {
         name: 'article._id',
         visible: false,
-        disabled: true,
+        disabled: false,
         filter: true,
         datatype: 'string',
         project: null,
