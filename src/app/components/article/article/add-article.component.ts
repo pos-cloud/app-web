@@ -175,9 +175,6 @@ export class AddArticleComponent implements OnInit {
         'unitOfMeasurement': {
             'validateAutocomplete': 'Debe ingresar un valor válido'
         },
-        'barcode': {
-            'maxlength': 'No puede exceder los 14 dígitos.'
-        },
         'currency': {
             'maxlength': 'No puede exceder los 14 dígitos.'
         },
@@ -408,7 +405,7 @@ export class AddArticleComponent implements OnInit {
             'otherFields': this._fb.array([]),
             'children': this._fb.array([]),
             'observation': [this.article.observation, []],
-            'barcode': [this.article.barcode, [Validators.maxLength(14)]],
+            'barcode': [this.article.barcode, []],
             'printIn': [this.article.printIn, []],
             'allowPurchase': [this.article.allowPurchase, []],
             'allowSale': [this.article.allowSale, []],
