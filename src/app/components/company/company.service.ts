@@ -9,19 +9,26 @@ import { AuthService } from '../login/auth.service';
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import { DatatableHistory } from '../datatable/datatable-history.interface';
+import { ModelService } from '../model/model.service';
 const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 const EXCEL_EXTENSION = '.xlsx';
 
 @Injectable()
-export class CompanyService {
+export class CompanyService extends ModelService {
 
   private clients: BehaviorSubject<DatatableHistory> = new BehaviorSubject<DatatableHistory>(null);
   private providers: BehaviorSubject<DatatableHistory> = new BehaviorSubject<DatatableHistory>(null);
 
-	constructor(
-		private _http: HttpClient,
-		private _authService: AuthService,
-  ) { }
+  constructor(
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {
+    super(
+      `companies`, // PATH
+      _http,
+      _authService
+    );
+  }
 
   public setClients(clients: DatatableHistory): void {
     this.clients.next(clients);

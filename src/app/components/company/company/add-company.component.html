@@ -277,7 +277,7 @@
                                       [value]="group._id"
                                       [disabled]="readonly">
                                       {{group.description}}</option>
-  
+
                       </select>
                     <div *ngIf="formErrors.group" class="alert alert-danger">
                       {{ formErrors.group }}
@@ -295,7 +295,7 @@
                                       [value]="employee._id"
                                       [disabled]="readonly">
                                       {{employee.name}}</option>
-  
+
                       </select>
                     <div *ngIf="formErrors.employee" class="alert alert-danger">
                       {{ formErrors.employee }}
@@ -313,7 +313,7 @@
                                       [value]="transport._id"
                                       [disabled]="readonly">
                                       {{transport.name}}</option>
-  
+
                       </select>
                     <div *ngIf="formErrors.transport" class="alert alert-danger">
                       {{ formErrors.transport }}
@@ -331,7 +331,7 @@
                                       [value]="priceList._id"
                                       [disabled]="readonly">
                                       {{priceList.name}}</option>
-  
+
                       </select>
                     <div *ngIf="formErrors.priceList" class="alert alert-danger">
                       {{ formErrors.priceList }}
@@ -344,13 +344,19 @@
 				</ngb-tab>
 			</ngb-tabset>
 		</div>
-		<div class="modal-footer" *ngIf="!readonly">
+		<div class="modal-footer">
 			<button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
-			<button type="submit" class="btn btn-primary" [disabled]="!companyForm.valid || loading" >
+			<button type="submit" class="btn btn-primary" [disabled]="!companyForm.valid || loading" *ngIf="!readonly">
 				<i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
 				<span *ngIf="!loading">Guardar</span>
 				<span *ngIf="loading">Espere por favor</span>
 			</button>
+      <button type="button" class="btn btn-danger" *ngIf="operation === 'delete'" [disabled]="loading"
+        (click)="addCompany()">
+        <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
+        <span *ngIf="!loading"> {{'delete' | translate | capitalize}}</span>
+        <span *ngIf="loading"> {{'loading' | translate | capitalize}}</span>
+      </button>
 		</div>
 	</form>
 </section>

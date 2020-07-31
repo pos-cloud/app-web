@@ -32,12 +32,15 @@ import { PriceList } from 'app/components/price-list/price-list';
 import { PriceListService } from 'app/components/price-list/price-list.service';
 import { Employee } from 'app/components/employee/employee';
 import { Config } from 'app/app.config';
+import { Subscription } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateMePipe } from 'app/main/pipes/translate-me';
 
 @Component({
   selector: 'app-add-company',
   templateUrl: './add-company.component.html',
   styleUrls: ['./add-company.component.css'],
-  providers: [NgbAlertConfig]
+  providers: [NgbAlertConfig, TranslateMePipe]
 })
 
 export class AddCompanyComponent implements OnInit {
@@ -66,6 +69,7 @@ export class AddCompanyComponent implements OnInit {
   public transports: Transport;
   public priceLists: PriceList[];
   public orientation: string = 'horizontal';
+  private subscription: Subscription = new Subscription();
 
   public formErrors = {
     'code': '',
@@ -143,7 +147,9 @@ export class AddCompanyComponent implements OnInit {
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    private _toastr: ToastrService,
+    public translatePipe: TranslateMePipe
   ) {
     if (window.screen.width < 1000) this.orientation = 'vertical';
     this.company = new Company();
@@ -639,7 +645,7 @@ export class AddCompanyComponent implements OnInit {
 
   public addCompany(): void {
 
-    if (!this.readonly) {
+    if (!this.readonly || this.operation === 'delete') {
       this.company = this.companyForm.value;
 
       this.company.otherFields = this.otherFields;
@@ -654,6 +660,8 @@ export class AddCompanyComponent implements OnInit {
           this.saveCompany();
         } else if (this.operation === 'update') {
           this.updateCompany();
+        } else if (this.operation === 'delete') {
+          this.deleteObj();
         }
       }
     }
@@ -833,6 +841,46 @@ export class AddCompanyComponent implements OnInit {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       });
+  }
+
+  public deleteObj() {
+    this.loading = true;
+    this.subscription.add(
+      this._companyService.delete(this.company._id).subscribe(
+        async result => {
+          this.showToast(result);
+          if (result.status === 200) this.activeModal.close({ company: this.company });
+        },
+        error => this.showToast(error)
+      )
+    );
+  }
+
+  public showToast(result, type?: string, title?: string, message?: string): void {
+    if (result) {
+      if (result.status === 200) {
+        type = 'success';
+        title = result.message;
+      } else if (result.status >= 400) {
+        type = 'danger';
+        title = (result.error && result.error.message) ? result.error.message : result.message;
+      } else {
+        type = 'info';
+        title = result.message;
+      }
+    }
+    switch (type) {
+      case 'success':
+        this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        break;
+      case 'danger':
+        this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        break;
+      default:
+        this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        break;
+    }
+    this.loading = false;
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

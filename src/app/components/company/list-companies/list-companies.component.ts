@@ -392,14 +392,14 @@ export class ListCompaniesComponent implements OnInit {
         });
         break;
       case 'delete':
-        modalRef = this._modalService.open(DeleteCompanyComponent, { size: 'lg', backdrop: 'static' });
+        modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.company = company;
+        modalRef.componentInstance.readonly = true;
+        modalRef.componentInstance.operation = 'delete';
         modalRef.result.then((result) => {
-          if (result === 'delete_close') {
-            this.getItems();
-          }
+          this.getItems();
         }, (reason) => {
-
+          this.getItems();
         });
         break;
       case 'account':
