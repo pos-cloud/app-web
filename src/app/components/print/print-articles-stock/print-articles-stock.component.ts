@@ -64,7 +64,7 @@ export class PrintArticlesStockComponent implements OnInit {
     this.getArticleStocksV2();
   }
 
-  
+
   public getArticleStocksV2() : void {
 
     this.loading = true;
@@ -98,7 +98,7 @@ export class PrintArticlesStockComponent implements OnInit {
       match += `"article.description": { "$regex": "${this.description}", "$options": "i" }, `
     }
 
-    
+
     match += `"article.operationType" : { "$ne" : "D" },
               "operationType" : { "$ne" : "D" } }`;
 
@@ -129,7 +129,7 @@ export class PrintArticlesStockComponent implements OnInit {
       result => {
         if (result && result.articleStocks) {
           this.toPrintInventario(result.articleStocks);
-        } 
+        }
       },
       error => {
         this.showMessage(error._body, 'danger', false);
@@ -178,10 +178,10 @@ export class PrintArticlesStockComponent implements OnInit {
     row += 5;
     let count = 0;
 
-    // // Detalle de productos
+    // Detalle de productos
     if(articleStocks && articleStocks.length > 0) {
       for(let articleStock of articleStocks) {
-        
+
         if(articleStock.article.code) {
           this.doc.text(articleStock.article.code, 5, row);
         }
@@ -211,7 +211,7 @@ export class PrintArticlesStockComponent implements OnInit {
           if (this.config['companyName']) {
             this.doc.text(this.config['companyName'], 5, row);
           }
-      
+
           this.doc.setFontType('normal');
           row += 5;
           if (this.config['companyIdentificationType'] && this.config['companyIdentificationValue']) {
@@ -247,10 +247,10 @@ export class PrintArticlesStockComponent implements OnInit {
   }
 
   public finishImpression(): void {
-    
+
     this.doc.autoPrint();
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
-    
+
   }
 
   public centerText(lMargin, rMargin, pdfInMM, startPdf, height, text): void {

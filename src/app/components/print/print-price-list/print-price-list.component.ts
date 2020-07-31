@@ -539,7 +539,7 @@ export class PrintPriceListComponent implements OnInit {
 
 		let page = 1;
 
-		// // Detalle de productos
+		// Detalle de productos
 		if (this.articles && this.articles.length > 0) {
 			for (let index = 0; index < this.articles.length; index++) {
 				if (this.articles[index].code) {

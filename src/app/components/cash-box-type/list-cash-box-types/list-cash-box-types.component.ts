@@ -55,7 +55,7 @@ export class ListCashBoxTypesComponent {
     click: `this.refresh()`
   }];
 
-  // //EXCEL
+  // EXCEL
   @ViewChild(DatatableComponent, { static: false }) datatableComponent: DatatableComponent;
 
   constructor(

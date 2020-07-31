@@ -304,5 +304,9 @@
   "you're not authorized": "No estas autorizado",
   "abbreviation": "Abreviación",
   "creationUser.name": "Usuario que lo creó",
-  "updateUser.name": "Usuario que lo modificó"
+  "updateUser.name": "Usuario que lo modificó",
+  "collectionName": "Tabla",
+  "doc._id": "Identificador Documento",
+  "histories": "Historial",
+  "historiy": "Historial"
 }

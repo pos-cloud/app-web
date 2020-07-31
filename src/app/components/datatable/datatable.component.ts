@@ -22,14 +22,14 @@ import { ExportExcelComponent } from '../export/export-excel/export-excel.compon
 export class DatatableComponent {
 
   public items: any[] = new Array();
-  public loading: boolean = false;
+  @Input() loading: boolean = false;
   private subscription: Subscription = new Subscription();
   private capitalizePipe: CapitalizePipe = new CapitalizePipe();
   private URL: string;
 
   @Output() eventFunction = new EventEmitter<{ op: string, obj: any }>();
 
-  // // TABLA
+  // TABLA
   public datatableController: DatatableController;
   public filters: any[];
   public currentPage: number = 0;
@@ -62,7 +62,7 @@ export class DatatableComponent {
   }[];
   @Input() _service: any;
 
-  // //EXCEL
+  // EXCEL
   @ViewChild(ExportExcelComponent, { static: false }) exportExcelComponent: ExportExcelComponent;
 
   constructor(

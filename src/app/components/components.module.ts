@@ -5,6 +5,7 @@ import { ExportersModule } from './export/exporters.module';
 import { ApplicationModule } from './application/application.module';
 import { CashBoxTypeModule } from './cash-box-type/cash-box-type.module';
 import { EmployeeTypeModule } from './employee-type/employee-type.module';
+import { HistoryModule } from './history/history.module';
 
 @NgModule({
 	imports: [
@@ -13,7 +14,8 @@ import { EmployeeTypeModule } from './employee-type/employee-type.module';
     ExportersModule,
     ApplicationModule,
     CashBoxTypeModule,
-    EmployeeTypeModule
+    EmployeeTypeModule,
+    HistoryModule
 	],
 	declarations: [
 	],

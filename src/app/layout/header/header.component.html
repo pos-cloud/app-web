@@ -269,6 +269,10 @@
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-gears"></i> Configuración</a>
         <div class="dropdown-menu" ngbDropdownMenu>
+          <button class="dropdown-item" [routerLink]="['histories']" [routerLinkActive]="['active']"
+          *ngIf="(identity?.name === 'soporte')">
+            Historial
+          </button>
           <button class="dropdown-item" [routerLink]="['admin','configuraciones']" [routerLinkActive]="['active']">
             Generales
           </button>

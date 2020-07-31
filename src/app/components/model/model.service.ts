@@ -9,7 +9,7 @@ import { AuthService } from '../login/auth.service';
 @Injectable()
 export class ModelService {
 
-  private URL = `${Config.apiV8URL}`;
+  public URL = `${Config.apiV8URL}`;
 
   constructor(
     public path: string,
