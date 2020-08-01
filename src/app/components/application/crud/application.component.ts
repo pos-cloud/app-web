@@ -12,6 +12,7 @@ import { CapitalizePipe } from 'app/main/pipes/capitalize';
 import { Subscription, Subject } from 'rxjs';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { TranslatePipe } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-application',
@@ -22,9 +23,9 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 export class ApplicationComponent implements OnInit {
 
-  @Input() objId: string;
-  @Input() readonly: boolean;
-  @Input() operation: string;
+  public objId: string;
+  public readonly: boolean;
+  public operation: string;
   public obj: Application;
   public objForm: FormGroup;
   public loading: boolean = false;
@@ -103,7 +104,8 @@ export class ApplicationComponent implements OnInit {
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public translatePipe: TranslateMePipe
+    public translatePipe: TranslateMePipe,
+    private _router: Router,
   ) {
     this.obj = new Application();
     for (let field of this.formFields) {
@@ -115,10 +117,14 @@ export class ApplicationComponent implements OnInit {
   }
 
   public async ngOnInit() {
+    let pathUrl: string[] = this._router.url.split('/');
+    this.operation = pathUrl[2];
+    if (this.operation !== 'add' && this.operation !== 'update') this.readonly = false;
     this.title = this.translatePipe.transform(this.operation) + " " + this.translatePipe.transform(this.title);
     this.title = this.capitalizePipe.transform(this.title);
     this._title.setTitle(this.title);
     this.buildForm();
+    this.objId = pathUrl[3];
     if (this.objId && this.objId !== '') {
       this.subscription.add(this._objService.getById(this.objId).subscribe(
         result => {
@@ -131,8 +137,6 @@ export class ApplicationComponent implements OnInit {
         },
         error => this.showToast(error)
       ));
-    } else {
-      if (this.operation !== 'add') this.showToast(null, 'danger', 'Debe ingresar un identificador válido')
     }
   }
 
@@ -250,7 +254,7 @@ export class ApplicationComponent implements OnInit {
       this._objService.save(this.obj).subscribe(
         result => {
           this.showToast(result);
-          if (result.status === 200) this.activeModal.close({ obj: this.obj });
+          if (result.status === 200) this._router.navigate(['/applications']);
         },
         error => this.showToast(error)
       )
@@ -263,7 +267,7 @@ export class ApplicationComponent implements OnInit {
       this._objService.update(this.obj).subscribe(
         result => {
           this.showToast(result);
-          if (result.status === 200) this.activeModal.close({ obj: this.obj });
+          if (result.status === 200) this._router.navigate(['/applications']);
         },
         error => this.showToast(error)
       )
@@ -276,7 +280,7 @@ export class ApplicationComponent implements OnInit {
       this._objService.delete(this.obj._id).subscribe(
         async result => {
           this.showToast(result);
-          if (result.status === 200) this.activeModal.close({ obj: this.obj });
+          if (result.status === 200) this._router.navigate(['/applications']);
         },
         error => this.showToast(error)
       )

@@ -8,6 +8,8 @@ import { UserService } from '../user.service';
 
 import { AddUserComponent } from '../user/add-user.component';
 import { DeleteUserComponent } from '../delete-user/delete-user.component';
+import { AuthService } from 'app/components/login/auth.service';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-list-users',
@@ -29,13 +31,22 @@ export class ListUsersComponent implements OnInit {
   public loading: boolean = false;
   public itemsPerPage = 10;
   public totalItems = 0;
+  public identity: User;
 
   constructor(
     public _userService: UserService,
     public _router: Router,
     public _modalService: NgbModal,
-    public alertConfig: NgbAlertConfig
-  ) { }
+    public alertConfig: NgbAlertConfig,
+    public _authService: AuthService
+  ) {
+    this._authService.getIdentity.pipe(first()).subscribe(
+      async identity => {
+        this.identity = identity;
+        console.log(this.identity);
+      }
+    );
+  }
 
   ngOnInit(): void {
 
@@ -47,31 +58,31 @@ export class ListUsersComponent implements OnInit {
     this.loading = true;
 
     this._userService.getUsers(query).subscribe(
-        result => {
-					if (!result.users) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            this.loading = false;
-					  this.users = new Array();
-            this.areUsersEmpty = true;
-					} else {
-            this.hideMessage();
-            this.loading = false;
-            this.users = result.users;
-            this.totalItems = this.users.length;
-            this.areUsersEmpty = false;
-          }
-				},
-				error => {
-          this.showMessage(error._body, 'danger', false);
+      result => {
+        if (!result.users) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
-				}
-      );
-   }
+          this.users = new Array();
+          this.areUsersEmpty = true;
+        } else {
+          this.hideMessage();
+          this.loading = false;
+          this.users = result.users;
+          this.totalItems = this.users.length;
+          this.areUsersEmpty = false;
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
 
-  public orderBy (term: string, property?: string): void {
+  public orderBy(term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-"+term;
+      this.orderTerm[0] = "-" + term;
     } else {
       this.orderTerm[0] = term;
     }
@@ -81,24 +92,24 @@ export class ListUsersComponent implements OnInit {
   public refresh(): void {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    if(pathLocation[2] === 'usuarios') {
+    if (pathLocation[2] === 'usuarios') {
       this.getUsers(`where="$and":[{"employee":{ "$exists": true }},{"employee":{ "$ne": null }}]`);
-    } else if(pathLocation[2] === 'usuarios-web') {
+    } else if (pathLocation[2] === 'usuarios-web') {
       this.getUsers(`where="$and":[{"company":{ "$exists": true }},{"company":{ "$ne": null }}]`);
     }
   }
 
-  public openModal(op: string, user:User): void {
+  public openModal(op: string, user: User): void {
 
     let modalRef;
-    switch(op) {
+    switch (op) {
       case 'view':
         modalRef = this._modalService.open(AddUserComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.userId = user._id;
         modalRef.componentInstance.readonly = true;
         modalRef.componentInstance.operation = 'view';
         break;
-      case 'add' :
+      case 'add':
         modalRef = this._modalService.open(AddUserComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.readonly = false;
         modalRef.componentInstance.operation = 'add';
@@ -108,29 +119,29 @@ export class ListUsersComponent implements OnInit {
           this.refresh();
         });
         break;
-      case 'update' :
-          modalRef = this._modalService.open(AddUserComponent, { size: 'lg', backdrop: 'static' });
-          modalRef.componentInstance.userId = user._id;
-          modalRef.componentInstance.readonly = false;
-          modalRef.componentInstance.operation = 'update';
-          modalRef.result.then((result) => {
-            this.refresh();
-          }, (reason) => {
-            this.refresh();
-          });
+      case 'update':
+        modalRef = this._modalService.open(AddUserComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.userId = user._id;
+        modalRef.componentInstance.readonly = false;
+        modalRef.componentInstance.operation = 'update';
+        modalRef.result.then((result) => {
+          this.refresh();
+        }, (reason) => {
+          this.refresh();
+        });
         break;
-      case 'delete' :
-          modalRef = this._modalService.open(DeleteUserComponent, { size: 'lg', backdrop: 'static' })
-          modalRef.componentInstance.user = user;
-          modalRef.result.then((result) => {
-            if (result === 'delete_close') {
-              this.refresh();
-            }
-          }, (reason) => {
+      case 'delete':
+        modalRef = this._modalService.open(DeleteUserComponent, { size: 'lg', backdrop: 'static' })
+        modalRef.componentInstance.user = user;
+        modalRef.result.then((result) => {
+          if (result === 'delete_close') {
+            this.refresh();
+          }
+        }, (reason) => {
 
-          });
+        });
         break;
-      default : ;
+      default: ;
     }
   };
 
@@ -140,7 +151,7 @@ export class ListUsersComponent implements OnInit {
     this.alertConfig.dismissible = dismissible;
   }
 
-  public hideMessage():void {
+  public hideMessage(): void {
     this.alertMessage = '';
   }
 }

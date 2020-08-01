@@ -20,6 +20,26 @@ const routes: Routes = [
     path: 'applications',
     component: ListApplicationsComponent,
     canActivate: [AuthGuard]
+  },
+  {
+    path: 'applications/add',
+    component: ApplicationComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'applications/view/:id',
+    component: ApplicationComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'applications/update/:id',
+    component: ApplicationComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'applications/delete/:id',
+    component: ApplicationComponent,
+    canActivate: [AuthGuard]
   }
 ];
 

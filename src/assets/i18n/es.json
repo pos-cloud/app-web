@@ -308,5 +308,6 @@
   "collectionName": "Tabla",
   "doc._id": "Identificador Documento",
   "histories": "Historial",
-  "historiy": "Historial"
+  "historiy": "Historial",
+  "return": "Volver"
 }
