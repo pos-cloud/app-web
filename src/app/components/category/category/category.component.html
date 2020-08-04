@@ -157,7 +157,7 @@
                     class="btn btn-danger"
                     *ngIf="operation === 'delete'"
                     [disabled]="!categoryForm.valid || loading"
-                    (click)="deleteCategory()">
+                    (click)="addCategory()">
               <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
               <span *ngIf="!loading">Eliminar</span>
               <span *ngIf="loading">Espere por favor</span>

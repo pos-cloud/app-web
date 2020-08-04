@@ -55,7 +55,7 @@ export class CategoryComponent implements OnInit {
   constructor(
     public _categoryService: CategoryService,
     public _applicationService: ApplicationService,
-    public _articleService : ArticleService,
+    public _articleService: ArticleService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -283,7 +283,7 @@ export class CategoryComponent implements OnInit {
         this.updateCategory();
         break;
       case 'delete':
-        this.deleteCategory();
+        this.deleteObj();
       default:
         break;
     }
@@ -388,81 +388,62 @@ export class CategoryComponent implements OnInit {
     }
   }
 
-  public deleteCategory(): void {
-
-    this.loading = true;
-
-    this._categoryService.deleteCategory(this.category._id).subscribe(
-      result => {
-        this.activeModal.close('delete_close');
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
   isValid(): Promise<Boolean> {
 
-    return new Promise<Boolean>((resolve,reject) =>{
-        if (this.category.parent != null && (this.category.parent.toString() === this.category._id || this.category._id === this.category.parent._id)) {
-            this.showMessage("No puede seleccionar la misma categoria como padre", "danger", true)
-            resolve(false);
-          }
+    return new Promise<Boolean>((resolve, reject) => {
+      if (this.category.parent != null && (this.category.parent.toString() === this.category._id || this.category._id === this.category.parent._id)) {
+        this.showMessage("No puede seleccionar la misma categoria como padre", "danger", true)
+        resolve(false);
+      }
 
-          if(this.category.parent != null){
-            this.getArticlesByCategory(this.category.parent.toString()).then(
-                result =>{
-                    if(result){
-                        this.showMessage("No puede seleccionar un padre con articulos", "danger", true)
-                        resolve(false);
-                    } else {
-                        resolve(true)
-                    }
-                },
-                error =>{
-                    resolve(true)
-                }
-            )
-        } else {
+      if (this.category.parent != null) {
+        this.getArticlesByCategory(this.category.parent.toString()).then(
+          result => {
+            if (result) {
+              this.showMessage("No puede seleccionar un padre con articulos", "danger", true)
+              resolve(false);
+            } else {
+              resolve(true)
+            }
+          },
+          error => {
             resolve(true)
-        }
+          }
+        )
+      } else {
+        resolve(true)
+      }
     })
-    
-
-    
   }
 
-  getArticlesByCategory(categoryId : string) : Promise<Boolean>{
-      return new Promise<Boolean>((resolve,reject) =>{
+  getArticlesByCategory(categoryId: string): Promise<Boolean> {
+    return new Promise<Boolean>((resolve, reject) => {
 
-        var project = {
-            "_id" : 1,
-            "category" : 1,
-            "operationType" : 1
+      var project = {
+        "_id": 1,
+        "category": 1,
+        "operationType": 1
+      }
+
+      var match = {
+        "category": { "$oid": categoryId },
+        "operationType": { "$ne": "D" }
+      }
+
+      this._articleService.getArticlesV2(project, match, {}, {}).subscribe(
+        result => {
+          if (result && result.articles && result.articles.length > 0) {
+            resolve(true)
+          } else {
+            resolve(false)
+          }
+        },
+        error => {
+          resolve(false)
         }
+      )
 
-        var match = {   
-            "category" : { "$oid" : categoryId},
-            "operationType" : { "$ne" : "D" }
-        }
-
-        this._articleService.getArticlesV2(project,match,{},{}).subscribe(
-            result =>{
-                if(result && result.articles && result.articles.length > 0){
-                    resolve(true)
-                } else{
-                    resolve(false)
-                }
-            },
-            error =>{
-                resolve(false)
-            }
-        )
-
-      })
+    })
   }
 
   public getAllApplications(match: {}): Promise<Application[]> {
@@ -500,6 +481,19 @@ export class CategoryComponent implements OnInit {
     this.alertMessage = '';
   }
 
+  public deleteObj() {
+    this.loading = true;
+    this.subscription.add(
+      this._categoryService.delete(this.category._id).subscribe(
+        async result => {
+          this.showToast(result);
+          if (result.status === 200) this.activeModal.close({ category: this.category });
+        },
+        error => this.showToast(error)
+      )
+    );
+  }
+
   public showToast(result, type?: string, title?: string, message?: string): void {
     if (result) {
       if (result.status === 200) {
@@ -526,4 +520,5 @@ export class CategoryComponent implements OnInit {
     }
     this.loading = false;
   }
+
 }

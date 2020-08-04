@@ -155,13 +155,11 @@ export class ListCategoriesComponent implements OnInit {
                 modalRef.componentInstance.operation = "delete";
 				modalRef.componentInstance.categoryId = category._id;
 				modalRef.componentInstance.readonly = true;
-				modalRef.result.then((result) => {
-					if (result === 'delete_close') {
-						this.getCategories();
-					}
-				}, (reason) => {
-
-				});
+        modalRef.result.then((result) => {
+          this.getCategories();
+        }, (reason) => {
+          this.getCategories();
+        });
 				break;
 			case 'import':
 				modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });

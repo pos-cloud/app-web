@@ -7,221 +7,228 @@ import { map, catchError } from "rxjs/operators";
 import { Category } from './category';
 import { Config } from '../../app.config';
 import { AuthService } from '../login/auth.service';
+import { ModelService } from '../model/model.service';
 
 @Injectable()
-export class CategoryService {
+export class CategoryService extends ModelService {
 
-	constructor(
-		private _http: HttpClient,
-		private _authService: AuthService
-	) { }
+  constructor(
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {
+    super(
+      `categories`, // PATH
+      _http,
+      _authService
+    );
+  }
 
-	public getCategory(_id: string): Observable<any> {
+  public getCategory(_id: string): Observable<any> {
 
-		const URL = `${Config.apiURL}category`;
+    const URL = `${Config.apiURL}category`;
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		const params = new HttpParams()
-			.set('id', _id);
+    const params = new HttpParams()
+      .set('id', _id);
 
-		return this._http.get(URL, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    return this._http.get(URL, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 
-	public getCategories(
-		query?: string
-	): Observable<any> {
+  public getCategories(
+    query?: string
+  ): Observable<any> {
 
-		const URL = `${Config.apiURL}categories`;
+    const URL = `${Config.apiURL}categories`;
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		const params = new HttpParams()
-			.set('query', query);
+    const params = new HttpParams()
+      .set('query', query);
 
-		return this._http.get(URL, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    return this._http.get(URL, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 
-	public getCategoriesV2(
-		project: {},
-		match: {},
-		sort: {},
-		group: {},
-		limit: number = 0,
-		skip: number = 0
-	): Observable<any> {
+  public getCategoriesV2(
+    project: {},
+    match: {},
+    sort: {},
+    group: {},
+    limit: number = 0,
+    skip: number = 0
+  ): Observable<any> {
 
-		const URL = `${Config.apiURL}v2/categories`;
+    const URL = `${Config.apiURL}v2/categories`;
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		const params = new HttpParams()
-			.set('project', JSON.stringify(project))
-			.set('match', JSON.stringify(match))
-			.set('sort', JSON.stringify(sort))
-			.set('group', JSON.stringify(group))
-			.set('limit', limit.toString())
-			.set('skip', skip.toString());
+    const params = new HttpParams()
+      .set('project', JSON.stringify(project))
+      .set('match', JSON.stringify(match))
+      .set('sort', JSON.stringify(sort))
+      .set('group', JSON.stringify(group))
+      .set('limit', limit.toString())
+      .set('skip', skip.toString());
 
-		return this._http.get(URL, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    return this._http.get(URL, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 
-	public getSalesByCategory(
-		query: string
-	): Observable<any> {
+  public getSalesByCategory(
+    query: string
+  ): Observable<any> {
 
-		const URL = `${Config.apiURL}sales-by-category`;
+    const URL = `${Config.apiURL}sales-by-category`;
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		const params = new HttpParams()
-			.set('query', query);
+    const params = new HttpParams()
+      .set('query', query);
 
-		return this._http.get(URL, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    return this._http.get(URL, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 
-	public saveCategory(category: Category): Observable<any> {
+  public saveCategory(category: Category): Observable<any> {
 
-		const URL = `${Config.apiURL}category`;
+    const URL = `${Config.apiURL}category`;
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		return this._http.post(URL, category, {
-			headers: headers
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    return this._http.post(URL, category, {
+      headers: headers
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 
-	public updateCategory(category: Category): Observable<any> {
+  public updateCategory(category: Category): Observable<any> {
 
-		const URL = `${Config.apiURL}category`;
+    const URL = `${Config.apiURL}category`;
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		const params = new HttpParams()
-			.set('id', category._id);
+    const params = new HttpParams()
+      .set('id', category._id);
 
-		return this._http.put(URL, category, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    return this._http.put(URL, category, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 
-	public deleteCategory(_id: string): Observable<any> {
+  public deleteCategory(_id: string): Observable<any> {
 
-		const URL = `${Config.apiURL}category`;
+    const URL = `${Config.apiURL}category`;
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		const params = new HttpParams()
-			.set('id', _id);
+    const params = new HttpParams()
+      .set('id', _id);
 
-		return this._http.delete(URL, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    return this._http.delete(URL, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 
-	public makeFileRequest(idCategory: String, files: Array<File>) {
+  public makeFileRequest(idCategory: String, files: Array<File>) {
 
-		let xhr: XMLHttpRequest = new XMLHttpRequest();
-		xhr.open('POST', Config.apiURL + 'upload-image-category/' + idCategory, true);
-		xhr.setRequestHeader('Authorization', this._authService.getToken());
+    let xhr: XMLHttpRequest = new XMLHttpRequest();
+    xhr.open('POST', Config.apiURL + 'upload-image-category/' + idCategory, true);
+    xhr.setRequestHeader('Authorization', this._authService.getToken());
 
-		return new Promise((resolve, reject) => {
-			let formData: any = new FormData();
+    return new Promise((resolve, reject) => {
+      let formData: any = new FormData();
 
-			if (files && files.length > 0) {
-				for (let i: number = 0; i < files.length; i++) {
-					formData.append('image', files[i], files[i].name);
-				}
-			}
+      if (files && files.length > 0) {
+        for (let i: number = 0; i < files.length; i++) {
+          formData.append('image', files[i], files[i].name);
+        }
+      }
 
-			xhr.onreadystatechange = function () {
-				if (xhr.readyState == 4) {
-					if (xhr.status == 200) {
-						resolve(JSON.parse(xhr.response));
-					} else {
-						reject(xhr.response);
-					}
-				}
-			}
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4) {
+          if (xhr.status == 200) {
+            resolve(JSON.parse(xhr.response));
+          } else {
+            reject(xhr.response);
+          }
+        }
+      }
 
-			xhr.send(formData);
-		});
-	}
+      xhr.send(formData);
+    });
+  }
 }
