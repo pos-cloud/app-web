@@ -149,6 +149,8 @@ export class ListCategoriesPosComponent implements OnInit {
                 match += `"visibleOnSale":true,"parent": { "$oid" : "${categoryId}"},`;
             } else if (this.transactionMovement === TransactionMovement.Purchase) {
                 match += `"visibleOnPurchase":true,"parent": { "$oid" : "${categoryId}"},`;
+            } else {
+                match += `"parent": { "$oid" : "${categoryId}"},`;
             }
 
             match += `"operationType": { "$ne" : "D"} }`
