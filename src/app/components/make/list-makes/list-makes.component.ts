@@ -50,31 +50,31 @@ export class ListMakesComponent implements OnInit {
     this.loading = true;
 
     this._makeService.getMakes().subscribe(
-        result => {
-          if (!result.makes) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            this.loading = false;
-            this.makes = new Array();
-            this.areMakesEmpty = true;
-          } else {
-            this.hideMessage();
-            this.loading = false;
-            this.makes = result.makes;
-            this.totalItems = this.makes.length;
-            this.areMakesEmpty = false;
-          }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
+      result => {
+        if (!result.makes) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
+          this.makes = new Array();
+          this.areMakesEmpty = true;
+        } else {
+          this.hideMessage();
+          this.loading = false;
+          this.makes = result.makes;
+          this.totalItems = this.makes.length;
+          this.areMakesEmpty = false;
         }
-      );
-   }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
 
-  public orderBy (term: string, property?: string): void {
+  public orderBy(term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-"+term;
+      this.orderTerm[0] = "-" + term;
     } else {
       this.orderTerm[0] = term;
     }
@@ -85,17 +85,17 @@ export class ListMakesComponent implements OnInit {
     this.getMakes();
   }
 
-  public openModal(op: string, make:Make): void {
+  public openModal(op: string, make: Make): void {
 
     let modalRef;
-    switch(op) {
+    switch (op) {
       case 'view':
         modalRef = this._modalService.open(MakeComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.makeId = make._id;
         modalRef.componentInstance.readonly = true;
         modalRef.componentInstance.operation = "view";
         break;
-      case 'add' :
+      case 'add':
         modalRef = this._modalService.open(MakeComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.readonly = false;
         modalRef.componentInstance.operation = "add";
@@ -105,30 +105,28 @@ export class ListMakesComponent implements OnInit {
           this.getMakes();
         });
         break;
-      case 'update' :
-          modalRef = this._modalService.open(MakeComponent, { size: 'lg', backdrop: 'static' });
-          modalRef.componentInstance.makeId = make._id;
-          modalRef.componentInstance.readonly = false;
-          modalRef.componentInstance.operation = "update"
-          modalRef.result.then((result) => {
-            this.getMakes();
-          }, (reason) => {
-            this.getMakes();
-          });
+      case 'update':
+        modalRef = this._modalService.open(MakeComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.makeId = make._id;
+        modalRef.componentInstance.readonly = false;
+        modalRef.componentInstance.operation = "update"
+        modalRef.result.then((result) => {
+          this.getMakes();
+        }, (reason) => {
+          this.getMakes();
+        });
         break;
-      case 'delete' :
-          modalRef = this._modalService.open(MakeComponent, { size: 'lg', backdrop: 'static' })
-          modalRef.componentInstance.makeId = make._id;
-          modalRef.componentInstance.readonly = true;
-          modalRef.componentInstance.operation = "delete"
-          modalRef.result.then((result) => {
-            if (result === 'delete_close') {
-              this.getMakes();
-            }
-          }, (reason) => {
-
-          });
-          break;
+      case 'delete':
+        modalRef = this._modalService.open(MakeComponent, { size: 'lg', backdrop: 'static' })
+        modalRef.componentInstance.makeId = make._id;
+        modalRef.componentInstance.readonly = true;
+        modalRef.componentInstance.operation = "delete"
+        modalRef.result.then((result) => {
+          this.getMakes();
+        }, (reason) => {
+          this.getMakes();
+        });
+        break;
       case 'import':
         modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
         let model: any = new Make();
@@ -143,7 +141,7 @@ export class ListMakesComponent implements OnInit {
 
         });
         break;
-      default : ;
+      default: ;
     }
   };
 
@@ -157,7 +155,7 @@ export class ListMakesComponent implements OnInit {
     this.alertConfig.dismissible = dismissible;
   }
 
-  public hideMessage():void {
+  public hideMessage(): void {
     this.alertMessage = '';
   }
 }

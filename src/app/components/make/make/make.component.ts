@@ -203,7 +203,7 @@ export class MakeComponent implements OnInit {
         this.updateMake();
         break;
       case 'delete':
-        this.deleteMake();
+        this.deleteObj();
       default:
         break;
     }
@@ -299,22 +299,6 @@ export class MakeComponent implements OnInit {
     );
   }
 
-  public deleteMake(): void {
-
-    this.loading = true;
-
-    this._makeService.deleteMake(this.make._id).subscribe(
-      result => {
-        this.activeModal.close('delete_close');
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
   public fileChangeEvent(fileInput: any) {
     this.filesToUpload = <Array<File>>fileInput.target.files;
   }
@@ -346,6 +330,19 @@ export class MakeComponent implements OnInit {
 
   public hideMessage(): void {
     this.alertMessage = '';
+  }
+
+  public deleteObj() {
+    this.loading = true;
+    this.subscription.add(
+      this._makeService.delete(this.make._id).subscribe(
+        async result => {
+          this.showToast(result);
+          if (result.status === 200) this.activeModal.close({ make: this.make });
+        },
+        error => this.showToast(error)
+      )
+    );
   }
 
   public showToast(result, type?: string, title?: string, message?: string): void {
