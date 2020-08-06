@@ -9,7 +9,7 @@ import { User } from 'app/components/user/user';
 export class AuthGuard implements CanActivate {
 
   constructor(
-    private _authService: AuthService, 
+    private _authService: AuthService,
     private _router: Router
   ) {}
 

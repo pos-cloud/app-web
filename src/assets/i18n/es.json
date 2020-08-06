@@ -309,5 +309,11 @@
   "doc._id": "Identificador Documento",
   "histories": "Historial",
   "historiy": "Historial",
-  "return": "Volver"
+  "return": "Volver",
+  "socialNetworks.facebook": "facebook",
+  "socialNetworks.instagram": "instagram",
+  "socialNetworks.twitter": "twitter",
+  "socialNetworks.youtube": "youtube",
+  "design.showFilters": "Muestra los filtros en la tienda",
+  "design.about": "Acerca de"
 }

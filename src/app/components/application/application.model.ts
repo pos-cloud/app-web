@@ -6,6 +6,16 @@ export class Application extends Model {
   public name: string;
   public url: string;
   public type: ApplicationType;
+  public socialNetworks: {
+    facebook: string,
+    instagram: string,
+    youtube: string,
+    twitter: string,
+  };
+  public design: {
+    showFilters: boolean,
+    about: string
+  };
 
   constructor() { super(); }
 

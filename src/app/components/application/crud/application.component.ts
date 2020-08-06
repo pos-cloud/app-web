@@ -52,6 +52,16 @@ export class ApplicationComponent implements OnInit {
     focus: boolean,
     class: string
   }[] = [{
+    name: 'Datos',
+    tag: 'separator',
+    tagType: null,
+    search: null,
+    format: null,
+    values: null,
+    validators: null,
+    focus: true,
+    class: 'form-group col-md-12'
+  }, {
     name: 'order',
     tag: 'input',
     tagType: 'number',
@@ -91,6 +101,76 @@ export class ApplicationComponent implements OnInit {
     validators: [Validators.required],
     focus: true,
     class: 'form-group col-md-4'
+  }, {
+    name: 'Redes sociales',
+    tag: 'separator',
+    tagType: null,
+    search: null,
+    format: null,
+    values: null,
+    validators: null,
+    focus: true,
+    class: 'form-group col-md-12'
+  }, {
+    name: 'socialNetworks.facebook',
+    tag: 'input',
+    tagType: 'text',
+    search: null,
+    format: null,
+    values: null,
+    validators: null,
+    focus: true,
+    class: 'form-group col-md-4'
+  }, {
+    name: 'socialNetworks.instagram',
+    tag: 'input',
+    tagType: 'text',
+    search: null,
+    format: null,
+    values: null,
+    validators: null,
+    focus: true,
+    class: 'form-group col-md-4'
+  }, {
+    name: 'socialNetworks.twitter',
+    tag: 'input',
+    tagType: 'text',
+    search: null,
+    format: null,
+    values: null,
+    validators: null,
+    focus: true,
+    class: 'form-group col-md-4'
+  }, {
+    name: 'Diseño',
+    tag: 'separator',
+    tagType: null,
+    search: null,
+    format: null,
+    values: null,
+    validators: null,
+    focus: true,
+    class: 'form-group col-md-12'
+  }, {
+    name: 'design.showFilters',
+    tag: 'select',
+    tagType: null,
+    search: null,
+    format: null,
+    values: ['true', 'false'],
+    validators: null,
+    focus: true,
+    class: 'form-group col-md-4'
+  }, {
+    name: 'design.about',
+    tag: 'textarea',
+    tagType: null,
+    search: null,
+    format: null,
+    values: ['true', 'false'],
+    validators: null,
+    focus: true,
+    class: 'form-group col-md-12'
   }];
   public formErrors: {} = {};
   public validationMessages = {
@@ -109,9 +189,11 @@ export class ApplicationComponent implements OnInit {
   ) {
     this.obj = new Application();
     for (let field of this.formFields) {
-      this.formErrors[field.name] = '';
-      if (field.tag === 'autocomplete') {
-        this.focus$[field.name] = new Subject<string>();
+      if (field.tag !== 'separator') {
+        this.formErrors[field.name] = '';
+        if (field.tag === 'autocomplete') {
+          this.focus$[field.name] = new Subject<string>();
+        }
       }
     }
   }
@@ -154,10 +236,9 @@ export class ApplicationComponent implements OnInit {
       _id: [this.obj._id]
     };
     for (let field of this.formFields) {
-      fields[field.name] = [this.obj[field.name], field.validators]
+      if (field.tag !== 'separator') fields[field.name] = [this.obj[field.name], field.validators]
     }
     this.objForm = this._fb.group(fields);
-
     this.objForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
     this.focusEvent.emit(true);
@@ -194,13 +275,22 @@ export class ApplicationComponent implements OnInit {
       _id: this.obj._id
     }
     for (let field of this.formFields) {
-      switch (field.tagType) {
-        case 'date':
-          values[field.name] = (this.obj[field.name] !== undefined) ? moment(this.obj[field.name]).format('YYYY-MM-DD') : null
-          break;
-        default:
-          values[field.name] = (this.obj[field.name] !== undefined) ? this.obj[field.name] : null
-          break;
+      if (field.tag !== 'separator') {
+        if (field.name.split('.').length > 1) {
+          for (let f of field.name.split('.')) {
+            if (!eval('this.obj.' + f)) {
+              this.obj[f] = {};
+            }
+          }
+        }
+        switch (field.tagType) {
+          case 'date':
+            values[field.name] = (eval("this.obj." + field.name) !== undefined) ? moment(eval("this.obj." + field.name)).format('YYYY-MM-DD') : null
+            break;
+          default:
+            if (field.tag !== 'separator') values[field.name] = (eval("this.obj." + field.name) !== undefined) ? eval("this.obj." + field.name) : null
+            break;
+        }
       }
     }
     this.objForm.patchValue(values);
@@ -222,10 +312,10 @@ export class ApplicationComponent implements OnInit {
       for (let field of this.formFields) {
         switch (field.tagType) {
           case 'date':
-            this.obj[field.name] = moment(this.obj[field.name]).format('YYYY-MM-DD') + moment().format('THH:mm:ssZ');
+            this.obj[field.name] = moment(eval("this.obj." + field.name)).format('YYYY-MM-DD') + moment().format('THH:mm:ssZ');
             break;
           case 'number':
-            this.obj[field.name] = parseFloat(this.obj[field.name]);
+            this.obj[field.name] = parseFloat(eval("this.obj." + field.name));
             break;
           default:
             break;
