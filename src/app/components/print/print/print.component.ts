@@ -289,7 +289,6 @@ export class PrintComponent implements OnInit {
             "type.requestTaxes" : 1,
             "type.printDescriptionType" : 1,
             "type.showPrices" : 1,
-            "type.usPreprinted" : 1,
             "type.requestTransport" : 1,
             "type.printSign" : 1,
             "type.electronics" : 1,
@@ -861,6 +860,7 @@ export class PrintComponent implements OnInit {
         "transactionOrigin.number": 1,
         "transactionOrigin.origin": 1,
         "transactionOrigin.totalPrice": 1,
+        "transactionOrigin.company.name" : 1,
         "transactionOrigin.balance": 1,
         "transactionDestination": 1,
         "balance": 1,
@@ -2241,6 +2241,128 @@ export class PrintComponent implements OnInit {
           }
         }
       }
+    }
+
+    let movCancelation: MovementOfCancellation[] = await this.getCancellationsOfMovements(this.transactionId)
+
+    if (movCancelation && this.printOrigin) {
+      this.doc.setFontType('bold');
+      this.doc.setFontSize(this.fontSizes.normal);
+      this.doc.line(0, row, 200, row)
+      row += 5
+      this.doc.text("Comprobantes cancelados", 10, row);
+      this.doc.text("Total", 80, row);
+      this.doc.text("Cliente", 110, row);
+      row += 3
+      this.doc.line(0, row, 200, row)
+      row += 5
+      for (let index = 0; index < movCancelation.length; index++) {
+        this.doc.setFontType('normal');
+        this.doc.text(movCancelation[index].transactionOrigin.type.name + "   " + this.padString(movCancelation[index].transactionOrigin.origin, 4) + "-" + this.padString(movCancelation[index].transactionOrigin.number, 8), 10, row);
+        //this.doc.text("$ " + this.roundNumber.transform(this.transactions[index].totalPrice), 80, row);
+        this.doc.textEx("$ " + this.roundNumber.transform(movCancelation[index].transactionOrigin.totalPrice), 95, row, 'right', 'middle');
+        this.doc.text(movCancelation[index].transactionOrigin.company.name, 110, row);
+
+        row += 5;
+
+        if (row > 240) {
+            this.doc.setFontType("bold");
+            row = 95;
+            this.doc.addPage();
+            
+            if (!this.transaction.type.isPreprinted) {
+
+              //this.getHeader(true);
+
+              // Detalle Emisor
+              this.doc.setDrawColor(110, 110, 110);
+
+              // Dibujar lineas horizontales
+              this.doc.line(0, 50, 240, 50);
+              if (this.config && this.config[0]) {
+                this.doc.setFontSize(this.fontSizes.normal);
+
+                if (this.config[0].companyIdentificationType) {
+                  this.doc.setFontType('bold');
+                  this.doc.text(this.config[0].companyIdentificationType.name + ":", 110, 35);
+                  this.doc.setFontType('normal');
+                  this.doc.text(this.config[0].companyIdentificationValue, 122, 35);
+                }
+
+                if (this.config[0].country === 'AR') {
+                  this.doc.setFontType('bold');
+                  this.doc.text("Ingresos Brutos:", 110, 40);
+                  this.doc.setFontType('normal');
+                  if (this.config[0].companyGrossIncome) {
+                    this.doc.text(this.config[0].companyGrossIncome, 140, 40);
+                  }
+                }
+
+                this.doc.setFontType('bold');
+                this.doc.text("Inicio de Actividades:", 110, 45);
+                this.doc.setFontType('normal');
+                if (this.config[0].companyStartOfActivity) {
+                  this.doc.text(this.dateFormat.transform(this.config[0].companyStartOfActivity, 'DD/MM/YYYY'), 149, 45);
+                }
+              }
+
+              this.doc.setFontSize(this.fontSizes.normal);
+              this.doc.setFontType('normal');
+
+              // Dibujar la linea cortada para la letra
+              this.doc.line(105, 13, 105, 50); //vertical letra
+
+              // Numeración de la transacción
+              this.doc.setFontSize(this.fontSizes.extraLarge);
+
+              if (this.transaction.type.labelPrint &&
+                this.transaction.type.labelPrint !== '') {
+                this.centerText(5, 5, 105, 105, 10, this.transaction.type.labelPrint);
+              } else {
+                this.centerText(5, 5, 105, 105, 10, this.transaction.type.name);
+              }
+              this.doc.setFontSize(this.fontSizes.normal);
+              this.doc.setFontType('bold');
+              this.doc.text("Comp. Nº:", 110, 20);
+              this.doc.setFontType('normal');
+              if (Config.country === 'AR') {
+                this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 10), 130, 20);
+              } else {
+                this.doc.text(this.padString(this.transaction.number, 10), 130, 20);
+              }
+              this.doc.setFontType('bold');
+              this.doc.text("Fecha:", 110, 25);
+              this.doc.setFontType('normal');
+              if (this.transaction.endDate) {
+                this.doc.text(this.transaction.endDate.split(' ')[0], 125, 25);
+              } else {
+                this.doc.text(this.transaction.startDate.split(' ')[0], 125, 25);
+              }
+
+              // Letra de transacción
+              this.doc.setFontSize(this.fontSizes.extraLarge);
+              this.doc.setFontType('bold');
+              this.doc.setDrawColor("Black");
+              this.doc.rect(100, 3, 10, 10);
+              this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
+              this.doc.setFontType('normal');
+
+              // Encabezado de la tabla de Detalle de Productos
+              this.doc.setFontType('bold');
+              this.doc.setFontSize(this.fontSizes.normal);
+              this.doc.line(0, row, 200, row)
+              row += 5
+              this.doc.text("Comprobantes cancelados", 10, row);
+              this.doc.text("Total", 80, row);
+              this.doc.text("Cliente", 110, row);
+              row += 3
+              this.doc.line(0, row, 200, row)
+              row += 5
+            }
+            this.getClient();
+          }
+      }
+
     }
 
     if (this.transaction.type && this.transaction.type.showPrices) {
