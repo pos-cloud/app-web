@@ -102,7 +102,7 @@ export class ApplicationComponent implements OnInit {
     multiple: false,
     class: 'form-group col-md-4'
   }, {
-    name: 'Redes sociales',
+    name: 'Datos de contacto',
     tag: 'separator',
     tagType: null,
     search: null,
@@ -113,7 +113,7 @@ export class ApplicationComponent implements OnInit {
     multiple: false,
     class: 'form-group col-md-12'
   }, {
-    name: 'socialNetworks.whatsapp',
+    name: 'contact.phone',
     tag: 'input',
     tagType: 'number',
     search: null,
@@ -122,7 +122,29 @@ export class ApplicationComponent implements OnInit {
     validators: null,
     focus: true,
     multiple: false,
-    class: 'form-group col-md-4'
+    class: 'form-group col-md-6'
+  }, {
+    name: 'contact.whatsapp',
+    tag: 'input',
+    tagType: 'number',
+    search: null,
+    format: null,
+    values: null,
+    validators: null,
+    focus: true,
+    multiple: false,
+    class: 'form-group col-md-6'
+  }, {
+    name: 'Redes sociales',
+    tag: 'separator',
+    tagType: null,
+    search: null,
+    format: null,
+    values: null,
+    validators: null,
+    focus: true,
+    multiple: false,
+    class: 'form-group col-md-12'
   }, {
     name: 'socialNetworks.facebook',
     tag: 'input',
@@ -174,7 +196,7 @@ export class ApplicationComponent implements OnInit {
     search: null,
     format: null,
     values: ['1', '2', '3', '4'],
-    validators: [Validators.required],
+    validators: null,
     focus: true,
     multiple: false,
     class: 'form-group col-md-12'

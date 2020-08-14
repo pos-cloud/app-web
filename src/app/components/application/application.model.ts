@@ -11,8 +11,11 @@ export class Application extends Model {
     instagram: string,
     youtube: string,
     twitter: string,
-    whatsapp: string,
   };
+  public contact: {
+    phone: number,
+    whatsapp: number,
+  }
   public design: {
     about: string,
     categoriesByLine: number,

@@ -424,6 +424,11 @@ td {
   width: 400px;
 }
 
+.scroll {
+  max-height: 75vh !important;
+  overflow-y: scroll;
+}
+
 @media (min-width: 1100px) {
   .modal-lg {
     max-width: 1000px !important;
