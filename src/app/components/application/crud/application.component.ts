@@ -47,7 +47,7 @@ export class ApplicationComponent implements OnInit {
   public database: string = Config.database;
 
   public formFields: FormField[] = [{
-    name: 'Datos',
+    name: 'Datos de la aplicación',
     tag: 'separator',
     tagType: null,
     search: null,
