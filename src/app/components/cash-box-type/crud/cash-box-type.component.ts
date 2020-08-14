@@ -12,6 +12,7 @@ import { CapitalizePipe } from 'app/main/pipes/capitalize';
 import { Subscription, Subject } from 'rxjs';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { TranslatePipe } from '@ngx-translate/core';
+import { FormField } from 'app/util/formField.interface';
 
 @Component({
   selector: 'app-cash-box-type',
@@ -40,17 +41,7 @@ export class CashBoxTypeComponent implements OnInit {
   public src: any;
   public imageURL: string;
 
-  public formFields: {
-    name: string,
-    tag: string,
-    tagType: string,
-    search: any,
-    format: any,
-    values: any[],
-    validators: any[],
-    focus: boolean,
-    class: string
-  }[] = [{
+  public formFields: FormField[] = [{
     name: 'name',
     tag: 'input',
     tagType: 'text',
@@ -59,6 +50,7 @@ export class CashBoxTypeComponent implements OnInit {
     values: null,
     validators: [Validators.required],
     focus: true,
+    multiple: false,
     class: 'form-group col-md-12'
   }];
   public formErrors: {} = {};

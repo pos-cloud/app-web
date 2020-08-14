@@ -311,9 +311,12 @@
   "historiy": "Historial",
   "return": "Volver",
   "socialNetworks.facebook": "facebook",
+  "socialNetworks.whatsapp": "whatsapp",
   "socialNetworks.instagram": "instagram",
   "socialNetworks.twitter": "twitter",
   "socialNetworks.youtube": "youtube",
   "design.showFilters": "Muestra los filtros en la tienda",
-  "design.about": "Acerca de"
+  "design.about": "Sobre nosotros",
+  "design.categoriesByLine": "Categorías por línea",
+  "design.resources.banners": "Banners"
 }

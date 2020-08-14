@@ -11,10 +11,14 @@ export class Application extends Model {
     instagram: string,
     youtube: string,
     twitter: string,
+    whatsapp: string,
   };
   public design: {
-    showFilters: boolean,
-    about: string
+    about: string,
+    categoriesByLine: number,
+    resources: {
+      banners: string[]
+    }
   };
 
   constructor() { super(); }

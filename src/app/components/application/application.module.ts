@@ -14,6 +14,7 @@ import { DatatableModule } from '../datatable/datatable.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from 'app/main/pipes/pipes.module';
 import { ListApplicationsComponent } from './list-applications/list-applications.component';
+import { NgxTinymceModule } from 'ngx-tinymce';
 
 const routes: Routes = [
   {
@@ -57,7 +58,8 @@ const routes: Routes = [
     TranslateModule,
     NgbDropdownModule,
     NgbModule,
-    DatatableModule
+    DatatableModule,
+    NgxTinymceModule
   ],
   declarations: [
     ListApplicationsComponent,

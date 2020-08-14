@@ -18,8 +18,42 @@
                   <label *ngIf="field.tag !== 'separator'" [for]="field.name"
                     class="control-label">{{field.name | translate | capitalize}}:</label>
                   <div class="input-group">
+
+                    <!-- FILE -->
+                    <div class="row" style="width: 100%;" *ngIf="field.tag === 'input' && field.tagType === 'file'">
+                      <div class="col-md-12">
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="custom-file">
+                              <label class="custom-file-label btn btn-light"
+                                [id]="'labelFile'+field.name.split('.')[field.name.split('.').length - 1]"
+                                for="customFile">{{(filesToUpload && filesToUpload[field.name] && filesToUpload[field.name].length > 0)? filesToUpload[field.name].length + ' archivos cargados':'Seleccionar archivos'}}</label>
+                              <input [type]="field.tagType" class="custom-file-input" [formControlName]="field.name"
+                                [name]="field.name" [id]="field.name" [readonly]="readonly"
+                                [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
+                                (change)="onFileSelected($event, field.name)" [accept]="field.format+'/*'"
+                                [multiple]="field.multiple" />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row" *ngIf="field.name == 'design.resources.banners'">
+                          <div class="col-md-3" style="padding: 1rem" *ngFor="let file of obj?.design?.resources?.banners">
+                            <div class="card" style="min-height: auto !important;">
+                              <div class="img-file"
+                                [style.backgroundImage]="'url('+apiURL + 'file?filename=' + file + '&model=' + field.name.split('.')[field.name.split('.').length - 1] + '&database=' + database+')'">
+                              </div>
+                              <div class="card-body" style="text-align: center;">
+                                <a class="btn btn-danger" style="color: white;" (click)="deleteFile('image', field.name, file)"><i
+                                    class="fa fa-trash-o"></i>Eliminar</a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                     <!-- INPUT -->
-                    <input *ngIf="field.tag === 'input'" [type]="field.tagType" class="form-control"
+                    <input *ngIf="field.tag === 'input' && field.tagType !== 'file'" [type]="field.tagType" class="form-control"
                       [formControlName]="field.name" [name]="field.name" [id]="field.name" [readonly]="readonly"
                       [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
                       (blur)="onValueChanged($event.target.id)" />
@@ -28,7 +62,8 @@
                     <select *ngIf="field.tag === 'select'" class="form-control" [formControlName]="field.name" [id]="field.name"
                       [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
                       (blur)="onValueChanged($event.target.id)">
-                      <option *ngFor="let v of field.values" [value]="v" [disabled]="readonly">{{ v | translate | capitalize}}
+                      <option *ngFor="let v of field.values" [value]="v" [disabled]="readonly" [selected]="obj[field.name] == v">
+                        {{ v | translate | capitalize}}
                       </option>
                     </select>
 
@@ -49,6 +84,12 @@
                       [name]="field.name" [id]="field.name" [readonly]="readonly"
                       [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
                       (blur)="onValueChanged($event.target.id)"></textarea>
+
+                    <!-- HTML -->
+                    <tinymce *ngIf="field.tag === 'html'" [formControlName]="field.name" [config]="tinyMCEConfigBody"
+                      [id]="field.name" [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
+                      (blur)="onValueChanged($event.target.id)" style="width: 100%;">
+                    </tinymce>
 
                     <!-- MOSTRAR ERROR -->
                     <div class="invalid-feedback" [style.display]="(formErrors[field.name])? 'block': 'none'">

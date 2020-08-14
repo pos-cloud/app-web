@@ -175,4 +175,56 @@ export class ModelService {
       })
     );
   }
+
+  public uploadFile(type: string, model: string, file: File): Promise<any> {
+    let xhr: XMLHttpRequest = new XMLHttpRequest();
+    xhr.open('POST', `${Config.apiV8URL}file?type=${type}&model=${model}`, true);
+    xhr.setRequestHeader('Authorization', this._authService.getToken());
+    return new Promise((resolve, reject) => {
+      let formData: any = new FormData();
+      formData.append('image', file, file.name);
+      xhr.upload.addEventListener("progress", this.progressFunction, false);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4) {
+          if (xhr.status == 200) {
+            resolve(JSON.parse(xhr.response));
+          } else {
+            reject(JSON.parse(xhr.response));
+          }
+        }
+      }
+      xhr.send(formData);
+    });
+  }
+
+  public progressFunction(evt) {
+    if (evt.lengthComputable) {
+      let percentage: number = Math.round(evt.loaded / evt.total * 100);
+      // document.getElementsByClassName('labelFile')[0].innerHTML = percentage + "%";
+    }
+  }
+
+  public deleteFile(type: string, model: string, filename: string): Observable<any> {
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+      .set('type', type)
+      .set('model', model)
+      .set('filename', filename)
+
+    return this._http.delete(`${Config.apiV8URL}file`, {
+      headers,
+      params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 }

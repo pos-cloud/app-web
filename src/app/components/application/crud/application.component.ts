@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -13,12 +13,16 @@ import { Subscription, Subject } from 'rxjs';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Router } from '@angular/router';
+import { FormField } from 'app/util/formField.interface';
+import * as $ from 'jquery';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-application',
   templateUrl: './application.component.html',
   styleUrls: ['./application.component.scss'],
-  providers: [NgbAlertConfig, TranslateMePipe, TranslatePipe]
+  providers: [NgbAlertConfig, TranslateMePipe, TranslatePipe],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ApplicationComponent implements OnInit {
@@ -35,23 +39,14 @@ export class ApplicationComponent implements OnInit {
   private capitalizePipe: CapitalizePipe = new CapitalizePipe();
   public focus$: Subject<string>[] = new Array();
   public stateId: number;
-  public filesToUpload: Array<File>;
-  public selectedFile: File = null;
-  public filename: string;
-  public src: any;
-  public imageURL: string;
+  public filesToUpload: any[] = new Array();
+  public filename: any[] = new Array();
+  public typeFile: any[] = new Array();
+  public oldFiles: any[];
+  public apiURL: string = Config.apiV8URL;
+  public database: string = Config.database;
 
-  public formFields: {
-    name: string,
-    tag: string,
-    tagType: string,
-    search: any,
-    format: any,
-    values: any[],
-    validators: any[],
-    focus: boolean,
-    class: string
-  }[] = [{
+  public formFields: FormField[] = [{
     name: 'Datos',
     tag: 'separator',
     tagType: null,
@@ -60,6 +55,7 @@ export class ApplicationComponent implements OnInit {
     values: null,
     validators: null,
     focus: true,
+    multiple: false,
     class: 'form-group col-md-12'
   }, {
     name: 'order',
@@ -70,6 +66,7 @@ export class ApplicationComponent implements OnInit {
     values: null,
     validators: [Validators.required],
     focus: true,
+    multiple: false,
     class: 'form-group col-md-2'
   }, {
     name: 'type',
@@ -80,6 +77,7 @@ export class ApplicationComponent implements OnInit {
     values: [ApplicationType.Web, ApplicationType.App],
     validators: [Validators.required],
     focus: true,
+    multiple: false,
     class: 'form-group col-md-2'
   }, {
     name: 'name',
@@ -90,6 +88,7 @@ export class ApplicationComponent implements OnInit {
     values: null,
     validators: [Validators.required],
     focus: true,
+    multiple: false,
     class: 'form-group col-md-4'
   }, {
     name: 'url',
@@ -100,6 +99,7 @@ export class ApplicationComponent implements OnInit {
     values: null,
     validators: [Validators.required],
     focus: true,
+    multiple: false,
     class: 'form-group col-md-4'
   }, {
     name: 'Redes sociales',
@@ -110,7 +110,19 @@ export class ApplicationComponent implements OnInit {
     values: null,
     validators: null,
     focus: true,
+    multiple: false,
     class: 'form-group col-md-12'
+  }, {
+    name: 'socialNetworks.whatsapp',
+    tag: 'input',
+    tagType: 'number',
+    search: null,
+    format: null,
+    values: null,
+    validators: null,
+    focus: true,
+    multiple: false,
+    class: 'form-group col-md-4'
   }, {
     name: 'socialNetworks.facebook',
     tag: 'input',
@@ -120,6 +132,7 @@ export class ApplicationComponent implements OnInit {
     values: null,
     validators: null,
     focus: true,
+    multiple: false,
     class: 'form-group col-md-4'
   }, {
     name: 'socialNetworks.instagram',
@@ -130,6 +143,7 @@ export class ApplicationComponent implements OnInit {
     values: null,
     validators: null,
     focus: true,
+    multiple: false,
     class: 'form-group col-md-4'
   }, {
     name: 'socialNetworks.twitter',
@@ -140,6 +154,7 @@ export class ApplicationComponent implements OnInit {
     values: null,
     validators: null,
     focus: true,
+    multiple: false,
     class: 'form-group col-md-4'
   }, {
     name: 'Diseño',
@@ -150,32 +165,80 @@ export class ApplicationComponent implements OnInit {
     values: null,
     validators: null,
     focus: true,
+    multiple: false,
     class: 'form-group col-md-12'
   }, {
-    name: 'design.showFilters',
+    name: 'design.categoriesByLine',
     tag: 'select',
     tagType: null,
     search: null,
     format: null,
-    values: ['true', 'false'],
-    validators: null,
+    values: ['1', '2', '3', '4'],
+    validators: [Validators.required],
     focus: true,
-    class: 'form-group col-md-4'
+    multiple: false,
+    class: 'form-group col-md-12'
   }, {
     name: 'design.about',
-    tag: 'textarea',
+    tag: 'html',
     tagType: null,
     search: null,
     format: null,
-    values: ['true', 'false'],
+    values: null,
     validators: null,
     focus: true,
+    multiple: false,
+    class: 'form-group col-md-12'
+  }, {
+    name: 'design.resources.banners',
+    tag: 'input',
+    tagType: 'file',
+    search: null,
+    format: 'image',
+    values: null,
+    validators: null,
+    focus: true,
+    multiple: true,
     class: 'form-group col-md-12'
   }];
   public formErrors: {} = {};
   public validationMessages = {
     'required': 'Este campo es requerido.',
   };
+
+  public tinyMCEConfigBody = {
+    selector: "textarea",
+    theme: "modern",
+    paste_data_images: true,
+    plugins: [
+      "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+      "searchreplace wordcount visualblocks visualchars code fullscreen",
+      "insertdatetime media nonbreaking table contextmenu directionality",
+      "emoticons template paste textcolor colorpicker textpattern"
+    ],
+    toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | forecolor backcolor emoticons | print preview fullscreen",
+    image_advtab: true,
+    height: 250,
+    file_picker_types: 'file image media',
+    images_dataimg_filter: function (img) {
+      return img.hasAttribute('internal-blob');
+    },
+    file_picker_callback: function (callback, value, meta) {
+      if (meta.filetype == 'image') {
+        $('#upload').trigger('click');
+        $('#upload').on('change', function () {
+          var file = this.files[0];
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            callback(e.target['result'], {
+              alt: ''
+            });
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+    },
+  }
 
   constructor(
     private _objService: ApplicationService,
@@ -230,6 +293,18 @@ export class ApplicationComponent implements OnInit {
     this.subscription.unsubscribe();
   }
 
+  public onFileSelected(event, model: string) {
+    this.filesToUpload[model] = event.target.files;
+    this.filename[model] = '';
+    let i: number = 0;
+    for (let file of this.filesToUpload[model]) {
+      if (i != 0) this.filename[model] += ', ';
+      this.filename[model] += file.name;
+      i++;
+    }
+    this.typeFile[model] = this.filesToUpload[model][0].type.split("/")[0];
+  }
+
   public buildForm(): void {
 
     let fields: {} = {
@@ -277,15 +352,26 @@ export class ApplicationComponent implements OnInit {
     for (let field of this.formFields) {
       if (field.tag !== 'separator') {
         if (field.name.split('.').length > 1) {
+          let sumF: string = '';
+          let entro: boolean = false;
           for (let f of field.name.split('.')) {
-            if (!eval('this.obj.' + f)) {
-              this.obj[f] = {};
+            sumF += `['${f}']`;
+            if (!eval(`this.obj${sumF}`)) {
+              entro = true;
+              eval(`this.obj${sumF} = {}`);
             }
           }
+          if (entro) eval(`this.obj${sumF} = null`);
         }
         switch (field.tagType) {
           case 'date':
             values[field.name] = (eval("this.obj." + field.name) !== undefined) ? moment(eval("this.obj." + field.name)).format('YYYY-MM-DD') : null
+            break;
+          case 'file':
+            if (!this.oldFiles || !this.oldFiles[field.name]) {
+              this.oldFiles = new Array();
+              this.oldFiles[field.name] = eval("this.obj?." + field.name);
+            }
             break;
           default:
             if (field.tag !== 'separator') values[field.name] = (eval("this.obj." + field.name) !== undefined) ? eval("this.obj." + field.name) : null
@@ -312,10 +398,40 @@ export class ApplicationComponent implements OnInit {
       for (let field of this.formFields) {
         switch (field.tagType) {
           case 'date':
-            this.obj[field.name] = moment(eval("this.obj." + field.name)).format('YYYY-MM-DD') + moment().format('THH:mm:ssZ');
+            this.obj[field.name] = moment(this.obj[field.name]).format('YYYY-MM-DD') + moment().format('THH:mm:ssZ');
             break;
           case 'number':
-            this.obj[field.name] = parseFloat(eval("this.obj." + field.name));
+            this.obj[field.name] = parseFloat(this.obj[field.name]);
+            break;
+          case 'file':
+            if (this.filesToUpload && this.filesToUpload[field.name] && this.filesToUpload[field.name].length > 0) {
+              this.loading = true;
+              this._objService.deleteFile(this.typeFile[field.name], field.name.split('.')[field.name.split('.').length - 1], this.obj[field.name]);
+              if (this.filesToUpload[field.name] && this.filesToUpload[field.name].length > 0) {
+                this.obj[field.name] = this.oldFiles[field.name];
+                if (field.multiple && (!this.obj || !this.obj[field.name] || this.obj[field.name].length === 0)) {
+                  this.obj[field.name] = new Array();
+                }
+                for (let file of this.filesToUpload[field.name]) {
+                  await this._objService.uploadFile(this.typeFile[field.name], field.name.split('.')[field.name.split('.').length - 1], file)
+                    .then(result => {
+                      this.loading = false;
+                      if (result['result']) {
+                        if (!field.multiple) {
+                          this.obj[field.name] = result['result'];
+                        } else {
+                          this.obj[field.name].push(result['result']);
+                        }
+                      } else {
+                        this.showToast(result['error'].message, 'info');
+                        isValid = false;
+                      }
+                    })
+                    .catch(error => { this.loading = false; isValid = false; this.showToast(error.message, 'danger'); });
+                }
+              }
+              this.loading = false;
+            }
             break;
           default:
             break;
@@ -336,6 +452,28 @@ export class ApplicationComponent implements OnInit {
           break;
       }
     }
+  }
+
+  public deleteFile(typeFile: string, fieldName: string, filename: string) {
+    this._objService.deleteFile(typeFile, fieldName.split('.')[fieldName.split('.').length - 1], filename).subscribe(
+      result => {
+        if (result.status === 200) {
+          eval('this.obj.' + fieldName + ' = this.obj.' + fieldName + '.filter(item => item !== filename)');
+          this.loading = true;
+          this.subscription.add(
+            this._objService.update(this.obj).subscribe(
+              result => {
+                this.showToast(result);
+              },
+              error => this.showToast(error)
+            )
+          );
+        } else {
+          this.showToast(result);
+        }
+      },
+      error => this.showToast(error)
+    )
   }
 
   public saveObj() {
@@ -370,7 +508,9 @@ export class ApplicationComponent implements OnInit {
       this._objService.delete(this.obj._id).subscribe(
         async result => {
           this.showToast(result);
-          if (result.status === 200) this._router.navigate(['/applications']);
+          if (result.status === 200) {
+            this._router.navigate(['/applications']);
+          }
         },
         error => this.showToast(error)
       )

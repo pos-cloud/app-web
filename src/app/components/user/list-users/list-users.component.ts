@@ -43,7 +43,6 @@ export class ListUsersComponent implements OnInit {
     this._authService.getIdentity.pipe(first()).subscribe(
       async identity => {
         this.identity = identity;
-        console.log(this.identity);
       }
     );
   }
