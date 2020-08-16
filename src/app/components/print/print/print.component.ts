@@ -1194,7 +1194,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontStyle("normal");
     this.doc.setTextColor(164, 164, 164);
     this.doc.setFontSize(this.fontSizes.normal);
-    this.doc.text("Generado en https://poscloud.com.ar, tu Punto de Venta en la NUBE.", 5, 290);
+    this.doc.text("Generado en http://poscloud.com.ar, tu Punto de Venta en la NUBE.", 5, 290);
     this.doc.setTextColor(0, 0, 0);
 
     this.finishImpression();
@@ -1465,7 +1465,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontStyle("normal");
     this.doc.setTextColor(164, 164, 164);
     this.doc.setFontSize(this.fontSizes.normal);
-    this.doc.text("Generado en https://poscloud.com.ar, tu Punto de Venta en la NUBE.", 5, 290);
+    this.doc.text("Generado en http://poscloud.com.ar, tu Punto de Venta en la NUBE.", 5, 290);
     this.doc.setTextColor(0, 0, 0);
 
     this.finishImpression();
@@ -2269,7 +2269,7 @@ export class PrintComponent implements OnInit {
             this.doc.setFontType("bold");
             row = 95;
             this.doc.addPage();
-            
+
             if (!this.transaction.type.isPreprinted) {
 
               //this.getHeader(true);
@@ -3517,7 +3517,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontStyle("normal");
     this.doc.setTextColor(164, 164, 164);
     this.doc.setFontSize(this.fontSizes.normal);
-    this.doc.text("Generado en https://poscloud.com.ar, tu Punto de Venta en la NUBE.", 5, 293);
+    this.doc.text("Generado en http://poscloud.com.ar, tu Punto de Venta en la NUBE.", 5, 293);
     this.doc.setTextColor(0, 0, 0);
   }
 
