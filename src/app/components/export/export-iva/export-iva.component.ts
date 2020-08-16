@@ -27,6 +27,9 @@ import { BranchService } from 'app/components/branch/branch.service';
 import { Branch } from 'app/components/branch/branch';
 import { TaxClassification, Tax } from 'app/components/tax/tax';
 import { TaxService } from 'app/components/tax/tax.service';
+import { StateService } from 'app/components/state/state.service';
+import { State } from 'app/components/state/state';
+import { Config } from 'app/app.config';
 
 @Component({
     selector: 'app-export-iva',
@@ -38,8 +41,10 @@ export class ExportIvaComponent implements OnInit {
     @Input() type;
     public exportIVAForm: FormGroup;
     public dataIVA: any = [];
+    public dataState: any = [];
     public dataClassification: any = [];
     public vatConditions: VATCondition[];
+    public states: State[];
     public taxes: Tax[];
     public dataTaxes: any[];
     public classifications: Classification[];
@@ -89,6 +94,7 @@ export class ExportIvaComponent implements OnInit {
         public _movementOfArticleService: MovementOfArticleService,
         public _configService: ConfigService,
         public _vatConditionService: VATConditionService,
+        public _stateService: StateService,
         public _classificationService: ClassificationService,
         public _articleFieldService: ArticleFieldService,
         public _branchesService: BranchService,
@@ -97,6 +103,7 @@ export class ExportIvaComponent implements OnInit {
         public _companyService: CompanyService,
     ) {
         this.getVATConditions();
+        this.getStates();
         this.getTaxes();
         this.getClassifications();
         this.getArticleFields();
@@ -105,6 +112,42 @@ export class ExportIvaComponent implements OnInit {
 
     ngOnInit() {
         this.buildForm();
+    }
+
+    public getStates(): void {
+
+        this.loading = true;
+
+        var project = {
+            "_id": 1,
+            "name": 1
+        }
+
+        var match = {
+            "operationType ": { "$ne": "D" }
+        }
+
+        this._stateService.getStates(project, match, {}, {}).subscribe(
+            result => {
+                if (!result.states) {
+                } else {
+                    this.states = result.states;
+                    for (let index = 0; index < this.states.length; index++) {
+                        this.dataState[index] = {};
+                        this.dataState[index]['_id'] = this.states[index]._id
+                        this.dataState[index]['name'] = this.states[index].name
+                        this.dataState[index]['gravado'] = 0;
+                        this.dataState[index]['iva'] = 0;
+                    }
+
+                }
+                this.loading = false;
+            },
+            error => {
+                this.showMessage(error._body, 'danger', false);
+                this.loading = false;
+            }
+        );
     }
 
     public getVATConditions(): void {
@@ -169,7 +212,8 @@ export class ExportIvaComponent implements OnInit {
                         this.dataClassification[index]['_id'] = this.classifications[index]._id
                         this.dataClassification[index]['name'] = this.classifications[index].name
 
-                        this.dataClassification[index]['total'] = 0;
+                        this.dataClassification[index]['gravado'] = 0;
+                        this.dataClassification[index]['iva'] = 0;
 
                     }
                 } else {
@@ -373,8 +417,6 @@ export class ExportIvaComponent implements OnInit {
 
     public exportAsXLSX(): void {
 
-
-
         this._transactionService.getVATBook(this.type.replace('s', '') + "&" + this.exportIVAForm.value.year + this.exportIVAForm.value.month + "&" + this.exportIVAForm.value.folioNumber).subscribe(
             async result => {
                 if (result && result.transactions) {
@@ -396,13 +438,23 @@ export class ExportIvaComponent implements OnInit {
                         let totalTaxes: Taxes[] = new Array();
                         let i = 0;
 
+                        this.dataIVA.forEach(element => {
+                            element['gravado'] = 0;
+                            element['iva'] = 0;
+                        });
+
+                        this.dataState.forEach(element => {
+                            element['gravado'] = 0;
+                            element['iva'] = 0;
+                        });
 
                         for (let transaction of result.transactions) {
 
                             if (transaction.branchDestination.name === this.branches[index].name) {
 
-                                data[i] = {};
 
+
+                                data[i] = {};
                                 //DATOS PRINCIPALES
                                 data[i]['FECHA'] = this.dateFormat.transform(transaction.endDate, 'DD/MM/YYYY');
                                 if (transaction.company) {
@@ -418,9 +470,12 @@ export class ExportIvaComponent implements OnInit {
                                     data[i]['TIPO COMP.'] = transaction.type.name;
                                 }
 
-                                data[i]['NRO COMP.'] = this.padString(transaction.origin, 4) + "-" +
-                                    transaction.letter + "-" +
-                                    this.padString(transaction.number, 8);
+                                data[i]['Abrev'] = transaction.type.abbreviation;
+
+                                data[i]['Punto de Venta'] = this.padString(transaction.origin, 4);
+                                data[i]['Letra'] = transaction.letter
+                                data[i]['Numero'] = this.padString(transaction.number, 8);
+
 
                                 if (transaction.type.transactionMovement === TransactionMovement.Sale && transaction.type.movement === Movements.Outflows ||
                                     transaction.type.transactionMovement === TransactionMovement.Purchase && transaction.type.movement === Movements.Inflows) {
@@ -492,14 +547,23 @@ export class ExportIvaComponent implements OnInit {
                                             partialTaxAmountPercep += transactionTax.taxAmount;
                                             totalTaxAmountPercep += transactionTax.taxAmount;
                                         }
+
+                                        for (let index = 0; index < this.dataIVA.length; index++) {
+                                            if (transaction.company && transaction.company.vatCondition && this.dataIVA[index]['_id'] === transaction.company.vatCondition) {
+                                                this.dataIVA[index]['gravado'] = this.dataIVA[index]['gravado'] + transactionTax.taxBase;
+                                                this.dataIVA[index]['iva'] = this.dataIVA[index]['iva'] + transactionTax.taxAmount;
+                                            }
+                                        }
+
+                                        for (let index = 0; index < this.dataState.length; index++) {
+                                            if (transaction.company && transaction.company.state && this.dataState[index]['_id'] === transaction.company.state) {
+                                                this.dataState[index]['gravado'] = this.dataState[index]['gravado'] + transactionTax.taxBase;
+                                                this.dataState[index]['iva'] = this.dataState[index]['iva'] + transactionTax.taxAmount;
+                                            }
+                                        }
                                     }
                                 }
 
-                                for (let index = 0; index < this.dataIVA.length; index++) {
-                                    if (transaction.company && transaction.company.vatCondition && this.dataIVA[index]['_id'] === transaction.company.vatCondition) {
-                                        this.dataIVA[index]['total'] = this.dataIVA[index]['total'] + partialTaxBase;
-                                    }
-                                }
 
                                 if (this.exportIVAForm.value.otherFields === "true") {
 
@@ -622,12 +686,30 @@ export class ExportIvaComponent implements OnInit {
                         i++;
                         data[i] = {};
                         data[i]["IDENTIFICADOR"] = 'REGIMEN';
-                        data[i]["TIPO COMP."] = 'MONTO';
+                        data[i]["TIPO COMP."] = 'Gravado';
+                        data[i]["Abrev"] = 'IVA'
                         this.dataIVA.forEach(element => {
                             i++;
                             data[i] = {};
                             data[i]["IDENTIFICADOR"] = element['description']
-                            data[i]["TIPO COMP."] = element['total']
+                            data[i]["TIPO COMP."] = element['gravado']
+                            data[i]["Abrev"] = element['iva']
+                        });
+
+                        i += 5;
+                        data[i] = {};
+                        data[i]["RAZÓN SOCIAL"] = 'TOTALES POR Prov';
+                        i++;
+                        data[i] = {};
+                        data[i]["IDENTIFICADOR"] = 'Provincia';
+                        data[i]["TIPO COMP."] = 'Gravado';
+                        data[i]["Abrev"] = 'IVA'
+                        this.dataState.forEach(element => {
+                            i++;
+                            data[i] = {};
+                            data[i]["IDENTIFICADOR"] = element['name']
+                            data[i]["TIPO COMP."] = element['gravado']
+                            data[i]["Abrev"] = element['iva']
                         });
 
                         i += 5;
@@ -655,7 +737,7 @@ export class ExportIvaComponent implements OnInit {
                                 data[i] = {};
 
                                 data[i]["TIPO COMP."] = Object.keys(element['value'][0])[1]
-                                data[i]["NRO COMP."] = Object.keys(element['value'][0])[2]
+                                data[i]["Abrev"] = Object.keys(element['value'][0])[2]
                                 data[i]["GRAVADO"] = Object.keys(element['value'][0])[3]
                                 data[i]["EXENTO"] = Object.keys(element['value'][0])[4]
                                 data[i]["MONTO IVA"] = Object.keys(element['value'][0])[5]
@@ -668,7 +750,7 @@ export class ExportIvaComponent implements OnInit {
                                     data[i] = {};
                                     data[i]["IDENTIFICADOR"] = element2[Object.keys(element2)[0]]
                                     data[i]["TIPO COMP."] = element2[Object.keys(element2)[1]]
-                                    data[i]["NRO COMP."] = element2[Object.keys(element2)[2]]
+                                    data[i]["Abrev"] = element2[Object.keys(element2)[2]]
                                     data[i]["GRAVADO"] = element2[Object.keys(element2)[3]]
                                     data[i]["EXENTO"] = element2[Object.keys(element2)[4]]
                                     data[i]["MONTO IVA"] = element2[Object.keys(element2)[5]]
