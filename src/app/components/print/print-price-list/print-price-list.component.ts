@@ -276,6 +276,10 @@ export class PrintPriceListComponent implements OnInit {
 
 		if (this.printPriceListForm.value.articleField && this.printPriceListForm.value.articleFieldValue) {
 			match += `"otherFields" : { "$elemMatch" : { "$and": [ { "value" :  "${this.printPriceListForm.value.articleFieldValue}" } ] }},`
+        }
+        
+        if (this.printPriceListForm.value.withImage == "true") {
+			match += `"picture" : { "$ne" : "default.jpg" },`
 		}
 
 		match += `"type" : "Final", "allowSale": true , "operationType" : { "$ne" : "D" } }`;
