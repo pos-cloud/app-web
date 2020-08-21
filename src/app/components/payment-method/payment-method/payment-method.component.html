@@ -110,33 +110,32 @@
             <option [disabled]="readonly" value="false" selected>No</option>
           </select>
         </div>
-        <!--<div class="row">
-          <div class="form-group col-md-12">
-            <label for="company" class="control-label">Pide empresa</label>
-              <div class="input-group">
-                <select class="form-control" formControlName="company">
-                  <option *ngFor="let companyType of companyTypes"
-                          [ngValue]="companyType"
-                          [selected]="paymentMethod.company === companyType"
-                          [disabled]="readonly"
-                  >{{ companyType }}</option>
-                </select>
-              </div>
-          </div>
-      </div>-->
-        <div class="form-group col-md-4">
-          <label for="bankReconciliation" class="control-label">¿Tiene conciliación?</label>
-          <select class="form-control" formControlName="bankReconciliation">
-            <option [disabled]="readonly" value="true">Si</option>
-            <option [disabled]="readonly" value="false" selected>No</option>
-          </select>
-        </div>
         <div class="form-group col-md-4">
           <label for="allowCurrencyValue" class="control-label">¿Pide valores de moneda?</label>
           <select class="form-control" formControlName="allowCurrencyValue">
             <option [disabled]="readonly" value="true">Si</option>
             <option [disabled]="readonly" value="false" selected>No</option>
           </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="observation" class="control-label">Observación</label>
+          <div class="input-group">
+            <textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2"
+              [readonly]="readonly"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label>Aplicaciones</label>
+          <br>
+          <label formArrayName="applications" *ngFor="let app of paymentMethodForm.get('applications')['controls']; let i = index"
+            style="margin-right: 20px; font-size: 20px;">
+            <input type="checkbox" [formControlName]="i" />
+            {{applications[i].name}}
+          </label>
         </div>
       </div>
       <div class="row">
@@ -150,10 +149,10 @@
       </div>
       <div class="row">
         <div class="form-group col-md-12">
-          <label for="observation" class="control-label">Observación</label>
+          <label for="whatsappNumber" class="control-label">Número de Whatsapp:</label>
           <div class="input-group">
-            <textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2"
-              [readonly]="readonly"></textarea>
+            <input type="text" class="form-control" formControlName="whatsappNumber" name="whatsappNumber"
+              id="whatsappNumber" aria-describedby="basic-addon1">
           </div>
         </div>
       </div>

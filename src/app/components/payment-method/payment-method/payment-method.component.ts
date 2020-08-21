@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -7,12 +7,18 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { PaymentMethod, CompanyType } from '../payment-method';
 
 import { PaymentMethodService } from '../payment-method.service';
+import { Application } from 'app/components/application/application.model';
+import { Subscription, Subject } from 'rxjs';
+import { ApplicationService } from 'app/components/application/application.service';
+import Resulteable from 'app/util/Resulteable';
+import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-payment-method',
   templateUrl: './payment-method.component.html',
   styleUrls: ['./payment-method.component.css'],
-  providers: [NgbAlertConfig]
+  providers: [NgbAlertConfig, TranslateMePipe]
 })
 
 export class PaymentMethodComponent implements OnInit {
@@ -27,7 +33,9 @@ export class PaymentMethodComponent implements OnInit {
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public companyTypes: CompanyType[] = [CompanyType.None, CompanyType.Client, CompanyType.Provider];
-
+  public applications: Application[];
+  private subscription: Subscription = new Subscription();
+  public focus$: Subject<string>[] = new Array();
 
   public formErrors = {
     'code': '',
@@ -44,19 +52,31 @@ export class PaymentMethodComponent implements OnInit {
   };
 
   constructor(
-    public _paymentMethodService: PaymentMethodService,
+    private _paymentMethodService: PaymentMethodService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    private _applicationService: ApplicationService,
+    public translatePipe: TranslateMePipe,
+    private _toastr: ToastrService,
   ) { }
 
-  ngOnInit(): void {
+  async ngOnInit() {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.paymentMethod = new PaymentMethod();
     this.buildForm();
+
+    await this.getAllApplications({})
+      .then((result: Application[]) => {
+        this.applications = result;
+        if (!this.paymentMethodId) {
+          this.setValuesArray();
+        }
+      })
+      .catch((error: Resulteable) => this.showToast(error));
 
     if (this.paymentMethodId) {
       this.getPaymentMetod()
@@ -69,6 +89,7 @@ export class PaymentMethodComponent implements OnInit {
         if (result && result.paymentMethod) {
           this.paymentMethod = result.paymentMethod;
           this.setValueForm();
+          this.setValuesArray();
         }
       },
       error => {
@@ -102,7 +123,9 @@ export class PaymentMethodComponent implements OnInit {
       'observation': [this.paymentMethod.observation, [],],
       'allowBank': [this.paymentMethod.allowBank, [],],
       'bankReconciliation': [this.paymentMethod.bankReconciliation, []],
-      'mercadopagoAPIKey': [this.paymentMethod.mercadopagoAPIKey, []]
+      'mercadopagoAPIKey': [this.paymentMethod.mercadopagoAPIKey, []],
+      'whatsappNumber': [this.paymentMethod.whatsappNumber, []],
+      'applications': this._fb.array([]),
     });
 
     this.paymentMethodForm.valueChanges
@@ -131,13 +154,22 @@ export class PaymentMethodComponent implements OnInit {
   }
 
   public addPaymentMethod() {
-    switch (this.operation) {
-      case 'add':
-        this.savePaymentMethod();
-        break;
-      case 'update':
-        this.updatePaymentMethod();
-        break;
+
+    this.paymentMethod = this.paymentMethodForm.value;
+    const selectedOrderIds = this.paymentMethodForm.value.applications
+      .map((v, i) => (v ? this.applications[i] : null))
+      .filter(v => v !== null);
+    this.paymentMethod.applications = selectedOrderIds;
+
+    if (!this.readonly) {
+      switch (this.operation) {
+        case 'add':
+          this.savePaymentMethod();
+          break;
+        case 'update':
+          this.updatePaymentMethod();
+          break;
+      }
     }
   }
 
@@ -160,9 +192,10 @@ export class PaymentMethodComponent implements OnInit {
     if (this.paymentMethod.allowBank === undefined) this.paymentMethod.allowBank = false;
     if (!this.paymentMethod.company) this.paymentMethod.company = null;
     if (!this.paymentMethod.mercadopagoAPIKey) this.paymentMethod.mercadopagoAPIKey = null;
+    if (!this.paymentMethod.whatsappNumber) this.paymentMethod.whatsappNumber = null;
     if (!this.paymentMethod.observation) this.paymentMethod.observation = '';
 
-    this.paymentMethodForm.setValue({
+    this.paymentMethodForm.patchValue({
       '_id': this.paymentMethod._id,
       'code': this.paymentMethod.code,
       'name': this.paymentMethod.name,
@@ -180,19 +213,53 @@ export class PaymentMethodComponent implements OnInit {
       'observation': this.paymentMethod.observation,
       'allowCurrencyValue': this.paymentMethod.allowCurrencyValue,
       'allowBank': this.paymentMethod.allowBank,
-      'mercadopagoAPIKey': this.paymentMethod.mercadopagoAPIKey
+      'mercadopagoAPIKey': this.paymentMethod.mercadopagoAPIKey,
+      'whatsappNumber': this.paymentMethod.whatsappNumber,
+    });
+  }
+
+  public setValuesArray(): void {
+
+    if (this.applications && this.applications.length > 0) {
+      this.applications.forEach(x => {
+        let exists = false;
+        if (this.paymentMethod.applications) {
+          this.paymentMethod.applications.forEach(y => {
+            if (x._id === y._id) {
+              exists = true;
+              const control = new FormControl(y); // if first item set to true, else false
+              (this.paymentMethodForm.controls.applications as FormArray).push(control);
+            }
+          })
+        }
+        if (!exists) {
+          const control = new FormControl(false); // if first item set to true, else false
+          (this.paymentMethodForm.controls.applications as FormArray).push(control);
+        }
+      })
+    }
+  }
+
+  public getAllApplications(match: {}): Promise<Application[]> {
+    return new Promise<Application[]>((resolve, reject) => {
+      this.subscription.add(this._applicationService.getAll(
+        {}, // PROJECT
+        match, // MATCH
+        { name: 1 }, // SORT
+        {}, // GROUP
+        0, // LIMIT
+        0 // SKIP
+      ).subscribe(
+        result => {
+          this.loading = false;
+          (result.status === 200) ? resolve(result.result) : reject(result);
+        },
+        error => reject(error)
+      ));
     });
   }
 
   public updatePaymentMethod(): void {
-    if (!this.readonly) {
-      this.loading = true;
-      this.paymentMethod = this.paymentMethodForm.value;
-      this.saveChanges();
-    }
-  }
-
-  public saveChanges(): void {
 
     this.loading = true;
 
@@ -232,8 +299,6 @@ export class PaymentMethodComponent implements OnInit {
 
   public savePaymentMethod(): void {
 
-    this.paymentMethod = this.paymentMethodForm.value;
-
     this.loading = true;
 
     this._paymentMethodService.savePaymentMethod(this.paymentMethod).subscribe(
@@ -264,5 +329,32 @@ export class PaymentMethodComponent implements OnInit {
 
   public hideMessage(): void {
     this.alertMessage = '';
+  }
+
+  public showToast(result, type?: string, title?: string, message?: string): void {
+    if (result) {
+      if (result.status === 200) {
+        type = 'success';
+        title = result.message;
+      } else if (result.status >= 400) {
+        type = 'danger';
+        title = (result.error && result.error.message) ? result.error.message : result.message;
+      } else {
+        type = 'info';
+        title = result.message;
+      }
+    }
+    switch (type) {
+      case 'success':
+        this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        break;
+      case 'danger':
+        this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        break;
+      default:
+        this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        break;
+    }
+    this.loading = false;
   }
 }

@@ -1,7 +1,7 @@
 import { User } from '../user/user';
 
 import * as moment from 'moment';
-
+import { Application } from '../application/application.model';
 
 export class PaymentMethod {
 
@@ -22,7 +22,9 @@ export class PaymentMethod {
   public allowCurrencyValue: boolean;
   public allowBank: boolean;
   public mercadopagoAPIKey: string;
+  public whatsappNumber: string;
   public observation: string;
+  public applications: Application[];
   public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public updateUser: User;
