@@ -1725,11 +1725,16 @@ export class PointOfSaleComponent implements OnInit {
           }
           this.transaction.expirationDate = this.transaction.endDate;
           this.transaction.state = state;
+          let print: boolean = false;
+          if (this.transaction.type.printable && this.transaction.printed === 0) {
+            this.transaction.printed = 1;
+            print = true;
+          }
           await this.updateTransaction(this.transaction).then(
             transaction => {
               if (transaction) {
                 this.transaction = transaction;
-                if (this.transaction.type.printable) {
+                if (print) {
                   this.refresh();
                   if (this.transaction.type.defectPrinter) {
                     this.printerSelected = this.printerSelected;
@@ -2065,33 +2070,37 @@ export class PointOfSaleComponent implements OnInit {
               if(this.transaction.balance === 0 && ((this.transaction.type.electronics && this.transaction.CAE) || !this.transaction.type.electronics)) this.transaction.state = TransactionState.Closed;
           }
         }
-        let print: boolean = false;
-        if (this.transaction.type.printable && this.transaction.printed === 0) {
-          this.transaction.printed = 1;
-          print = true;
-        }
-        await this.updateTransaction(this.transaction).then(
-          transaction => {
-            if (transaction) {
-              this.transaction = transaction;
-              if (print) {
-                this.refresh();
-                if (this.transaction.type.defectPrinter) {
-                  this.printerSelected = this.printerSelected;
-                  this.openModal("print");
+        if(this.transaction.state === TransactionState.Closed) {
+          this.finishTransaction();
+        } else {
+          let print: boolean = false;
+          if (this.transaction.type.printable && this.transaction.printed === 0) {
+            this.transaction.printed = 1;
+            print = true;
+          }
+          await this.updateTransaction(this.transaction).then(
+            transaction => {
+              if (transaction) {
+                this.transaction = transaction;
+                if (print) {
+                  this.refresh();
+                  if (this.transaction.type.defectPrinter) {
+                    this.printerSelected = this.printerSelected;
+                    this.openModal("print");
+                  } else {
+                    this.openModal("printers");
+                  }
                 } else {
-                  this.openModal("printers");
+                  if (this.posType !== 'delivery' && this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+                    this.transactionTypeId = this.transaction.type._id;
+                    this.transaction = undefined;
+                  }
+                  this.refresh();
                 }
-              } else {
-                if (this.posType !== 'delivery' && this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
-                  this.transactionTypeId = this.transaction.type._id;
-                  this.transaction = undefined;
-                }
-                this.refresh();
               }
             }
-          }
-        );
+          );
+        }
       } else {
         this.showMessage("No se puede cambiar de estado una transacción con monto menor o igual $0,00.", "info", true);
       }
