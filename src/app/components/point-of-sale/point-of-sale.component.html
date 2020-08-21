@@ -420,12 +420,12 @@
                 }"></button>
                   <div class="dropdown-menu" ngbDropdownMenu>
                     <button ngbDropdownItem *ngIf="transaction.type.electronics && !transaction.CAE && (transaction.state.toString() === 'Pago Confirmado' || transaction.state.toString() === 'Entregado')" (click)="validateElectronicTransactionAR(transaction, 'Pago Confirmado')">Facturar</button>
-                    <button ngbDropdownItem *ngIf="(transaction.state.toString() === 'Pendiente de pago' || transaction.state.toString() === 'Entregado') && this.transaction.balance != 0" (click)="chargeTransaction(transaction, 'Pago Confirmado')">Confirmar pago</button>
+                    <button ngbDropdownItem *ngIf="(transaction.state.toString() === 'Pendiente de pago' || transaction.state.toString() === 'Entregado') && transaction.balance != 0" (click)="chargeTransaction(transaction, 'Pago Confirmado')">Confirmar pago</button>
                     <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Pendiente de pago' || (transaction.balance !== 0 && transaction.state.toString() === 'Enviado')" (click)="changeStateOfTransaction(transaction, 'Pago Rechazado')">Rechazar pago</button>
                     <!-- <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Pago Rechazado' || transaction.state.toString() === 'Pendiente de pago'" (click)="cancelTransaction(transaction)">Eliminar transacción</button> -->
                     <button ngbDropdownItem *ngIf="transaction.state.toString() !== 'Enviado' && transaction.state.toString() !== 'Entregado'" (click)="changeStateOfTransaction(transaction, 'Enviado')">Marcar Pedido Enviado</button>
                     <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Enviado' || transaction.state.toString() === 'Pago Confirmado'" (click)="changeStateOfTransaction(transaction, 'Entregado')">Marcar Pedido Entregado</button>
-                    <button ngbDropdownItem *ngIf="transaction.balance === 0 && transaction.state.toString() !== 'Enviado'" (click)="changeStateOfTransaction(transaction, 'Cerrado')">Cerrar</button>
+                    <button ngbDropdownItem *ngIf="transaction.balance === 0 && transaction.state.toString() !== 'Enviado' && transaction.type.electronics" (click)="changeStateOfTransaction(transaction, 'Cerrado')">Cerrar</button>
                   </div>
                 </div>
               </div>

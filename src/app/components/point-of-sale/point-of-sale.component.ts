@@ -2062,7 +2062,7 @@ export class PointOfSaleComponent implements OnInit {
               `${transaction.company.name} hemos entregado tu pedido.</br>
               <b>Gracias por elegirnos. ¡Te esperamos pronto!</b>`,
               email);
-              if(this.transaction.balance === 0 && this.transaction.type.electronics && this.transaction.CAE) this.transaction.state = TransactionState.Closed;
+              if(this.transaction.balance === 0 && ((this.transaction.type.electronics && this.transaction.CAE) || !this.transaction.type.electronics)) this.transaction.state = TransactionState.Closed;
           }
         }
         let print: boolean = false;
