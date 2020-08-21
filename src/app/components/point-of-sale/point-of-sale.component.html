@@ -384,7 +384,7 @@
               <button type="button" class="btn btn-danger" (click)="cancelTransaction(transaction)" title="Eliminar"
                 *ngIf="transaction.state === 'Abierto'"><i class="fa fa-close"></i></button>
               <button type="button" class="btn btn-light" (click)="printTransaction(transaction)" title="Imprimir"
-                *ngIf="(posType=='pedidos-web' && transaction.state === 'Cerrado') || transaction.CAE"><i class="fa fa-print"></i></button>
+                *ngIf="posType=='pedidos-web'"><i class="fa fa-print"></i></button>
             </td>
             <td (click)="openTransaction(transaction)" *ngIf="transaction.endDate">
               {{transaction.endDate | dateFormat:'DD/MM/YYYY' }}
@@ -419,12 +419,13 @@
                   'btn-state-sent':transaction.state.toString() === 'Entregado' || transaction.state.toString() === 'Enviado'
                 }"></button>
                   <div class="dropdown-menu" ngbDropdownMenu>
-                    <button ngbDropdownItem *ngIf="transaction.type.electronics && transaction.state.toString() === 'Pago Confirmado' && !transaction.CAE" (click)="validateElectronicTransactionAR(transaction, 'Pago Confirmado')">Facturar</button>
-                    <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Pendiente de pago'" (click)="chargeTransaction(transaction, 'Pago Confirmado')">Confirmar pago</button>
-                    <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Pendiente de pago'" (click)="changeStateOfTransaction(transaction, 'Pago Rechazado')">Rechazar pago</button>
-                    <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Pago Rechazado' || transaction.state.toString() === 'Pendiente de pago'" (click)="cancelTransaction(transaction)">Eliminar transacción</button>
-                    <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Pago Confirmado'" (click)="changeStateOfTransaction(transaction, 'Enviado')">Marcar Pedido Enviado</button>
-                    <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Enviado' || transaction.state.toString() === 'Pago Confirmado'" (click)="changeStateOfTransaction(transaction, 'Cerrado')">Marcar Pedido Entregado</button>
+                    <button ngbDropdownItem *ngIf="transaction.type.electronics && !transaction.CAE && (transaction.state.toString() === 'Pago Confirmado' || transaction.state.toString() === 'Entregado')" (click)="validateElectronicTransactionAR(transaction, 'Pago Confirmado')">Facturar</button>
+                    <button ngbDropdownItem *ngIf="(transaction.state.toString() === 'Pendiente de pago' || transaction.state.toString() === 'Entregado') && this.transaction.balance != 0" (click)="chargeTransaction(transaction, 'Pago Confirmado')">Confirmar pago</button>
+                    <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Pendiente de pago' || (transaction.balance !== 0 && transaction.state.toString() === 'Enviado')" (click)="changeStateOfTransaction(transaction, 'Pago Rechazado')">Rechazar pago</button>
+                    <!-- <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Pago Rechazado' || transaction.state.toString() === 'Pendiente de pago'" (click)="cancelTransaction(transaction)">Eliminar transacción</button> -->
+                    <button ngbDropdownItem *ngIf="transaction.state.toString() !== 'Enviado' && transaction.state.toString() !== 'Entregado'" (click)="changeStateOfTransaction(transaction, 'Enviado')">Marcar Pedido Enviado</button>
+                    <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Enviado' || transaction.state.toString() === 'Pago Confirmado'" (click)="changeStateOfTransaction(transaction, 'Entregado')">Marcar Pedido Entregado</button>
+                    <button ngbDropdownItem *ngIf="transaction.balance === 0 && transaction.state.toString() !== 'Enviado'" (click)="changeStateOfTransaction(transaction, 'Cerrado')">Cerrar</button>
                   </div>
                 </div>
               </div>

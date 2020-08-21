@@ -53,6 +53,7 @@ export class Transaction {
   public cashBox: CashBox;
   public currency: Currency;
   public quotation: number;
+  public printed: number;
   public table: Table;
   public employeeOpening: Employee;
   public employeeClosing: Employee;
