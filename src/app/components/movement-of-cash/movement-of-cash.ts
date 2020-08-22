@@ -17,6 +17,7 @@ export class MovementOfCash {
   public expirationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public discount: number = 0.00;
   public surcharge: number = 0.00;
+  public commissionAmount: number = 0.00;
   public statusCheck: StatusCheck = null;
   public amountPaid: number = 0.00;
   public observation: string;

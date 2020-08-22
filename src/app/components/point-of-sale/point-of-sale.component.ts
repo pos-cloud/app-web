@@ -538,9 +538,9 @@ export class PointOfSaleComponent implements OnInit {
         let where
 
         if (this.user.branch && this.user.branch._id) {
-          where = 'where="level":{ "$lt" : "'+this.user.level+'"},"$or":[{"branch":{ "$exists": false}},{"branch":null},{"branch":"' + this.user.branch._id + '"}],"transactionMovement":"' + this.transactionMovement + '","allowAPP":false';
+          where = 'where="level":{ "$lt" : "' + this.user.level + '"},"$or":[{"branch":{ "$exists": false}},{"branch":null},{"branch":"' + this.user.branch._id + '"}],"transactionMovement":"' + this.transactionMovement + '","allowAPP":false';
         } else {
-          where = 'where="level":{ "$lt" : "'+this.user.level+'"},"transactionMovement":"' + this.transactionMovement + '","allowAPP":false';
+          where = 'where="level":{ "$lt" : "' + this.user.level + '"},"transactionMovement":"' + this.transactionMovement + '","allowAPP":false';
         }
 
         await this.getTransactionTypes(where + '&sort="order":1').then(
@@ -575,9 +575,9 @@ export class PointOfSaleComponent implements OnInit {
         let where
 
         if (this.user.branch && this.user.branch._id) {
-          where = 'where="level":{ "$lt" : "'+this.user.level+'"},"$or":[{"branch":{ "$exists": false}},{"branch":null},{"branch":"' + this.user.branch._id + '"}],"transactionMovement":"' + this.transactionMovement + '"';
+          where = 'where="level":{ "$lt" : "' + this.user.level + '"},"$or":[{"branch":{ "$exists": false}},{"branch":null},{"branch":"' + this.user.branch._id + '"}],"transactionMovement":"' + this.transactionMovement + '"';
         } else {
-          where = 'where="level":{ "$lt" : "'+this.user.level+'"},"transactionMovement":"' + this.transactionMovement + '"';
+          where = 'where="level":{ "$lt" : "' + this.user.level + '"},"transactionMovement":"' + this.transactionMovement + '"';
         }
 
         await this.getTransactionTypes(where + '&sort="order":1').then(
@@ -1165,8 +1165,19 @@ export class PointOfSaleComponent implements OnInit {
         if (await this.isValidCharge()) {
           modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.transaction = this.transaction;
-          modalRef.result.then((result) => {
+          modalRef.result.then(async (result) => {
             if (result.movementsOfCashes) {
+              this.transaction.commissionAmount = 0;
+              for (let mov of result.movementsOfCashes) {
+                this.transaction.commissionAmount += mov.commissionAmount;
+              }
+              await this.updateTransaction(this.transaction).then(
+                async transaction => {
+                  if (transaction) {
+                    this.transaction = transaction;
+                  }
+                }
+              );
               this.changeStateOfTransaction(this.transaction, state);
             } else {
               this.refresh();
@@ -1441,26 +1452,26 @@ export class PointOfSaleComponent implements OnInit {
       case 'send-email':
 
         if (this.transaction.type.readLayout) {
-            modalRef = this._modalService.open(PrintTransactionTypeComponent)
-            modalRef.componentInstance.transactionId = this.transaction._id;
-            modalRef.componentInstance.source = "mail";
+          modalRef = this._modalService.open(PrintTransactionTypeComponent)
+          modalRef.componentInstance.transactionId = this.transaction._id;
+          modalRef.componentInstance.source = "mail";
         } else {
-            modalRef = this._modalService.open(PrintComponent);
-            modalRef.componentInstance.company = this.transaction.company;
-            modalRef.componentInstance.transactionId = this.transaction._id;
-            modalRef.componentInstance.typePrint = 'invoice';
-            modalRef.componentInstance.source = "mail";
+          modalRef = this._modalService.open(PrintComponent);
+          modalRef.componentInstance.company = this.transaction.company;
+          modalRef.componentInstance.transactionId = this.transaction._id;
+          modalRef.componentInstance.typePrint = 'invoice';
+          modalRef.componentInstance.source = "mail";
         }
         if (this.transaction.type.defectPrinter) {
-            modalRef.componentInstance.printer = this.transaction.type.defectPrinter;
+          modalRef.componentInstance.printer = this.transaction.type.defectPrinter;
         } else {
-            if (this.printers && this.printers.length > 0) {
-                for (let printer of this.printers) {
-                    if (printer.printIn === PrinterPrintIn.Counter) {
-                        modalRef.componentInstance.printer = printer;
-                    }
-                }
+          if (this.printers && this.printers.length > 0) {
+            for (let printer of this.printers) {
+              if (printer.printIn === PrinterPrintIn.Counter) {
+                modalRef.componentInstance.printer = printer;
+              }
             }
+          }
         }
 
         modalRef = this._modalService.open(SendEmailComponent, { size: 'lg', backdrop: 'static' });
@@ -2029,7 +2040,7 @@ export class PointOfSaleComponent implements OnInit {
       if (this.transaction.totalPrice > 0) {
         let oldState = this.transaction.state;
         this.transaction.state = state;
-        if(this.transaction.type.allowAPP) {
+        if (this.transaction.type.allowAPP) {
           if (this.transaction.company) {
             await this.getUsers({ company: { $oid: this.transaction.company._id } })
               .then(users => {
@@ -2043,7 +2054,7 @@ export class PointOfSaleComponent implements OnInit {
               `Pago confirmado en tu Pedido Número ${this.transaction.orderNumber}`,
               `Hola ${transaction.company.name} confirmamos el pago de tu compra.</br><b>Ya estamos preparando tu pedido, te avisamos cuando este en camino.</b>`,
               email);
-            if(oldState === TransactionState.Delivered) this.transaction.state = TransactionState.Closed;
+            if (oldState === TransactionState.Delivered) this.transaction.state = TransactionState.Closed;
             console.log(this.transaction.state);
           } else if (email && this.transaction.state.toString() === TransactionState.PaymentDeclined.toString()) {
             this.transaction.balance = 0;
@@ -2067,10 +2078,10 @@ export class PointOfSaleComponent implements OnInit {
               `${transaction.company.name} hemos entregado tu pedido.</br>
               <b>Gracias por elegirnos. ¡Te esperamos pronto!</b>`,
               email);
-              if(this.transaction.balance === 0 && ((this.transaction.type.electronics && this.transaction.CAE) || !this.transaction.type.electronics)) this.transaction.state = TransactionState.Closed;
+            if (this.transaction.balance === 0 && ((this.transaction.type.electronics && this.transaction.CAE) || !this.transaction.type.electronics)) this.transaction.state = TransactionState.Closed;
           }
         }
-        if(this.transaction.state === TransactionState.Closed) {
+        if (this.transaction.state === TransactionState.Closed) {
           this.finishTransaction();
         } else {
           let print: boolean = false;

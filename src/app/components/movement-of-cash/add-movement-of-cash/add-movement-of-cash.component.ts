@@ -65,6 +65,7 @@ export class AddMovementOfCashComponent implements OnInit {
   public amountToPay: number = 0.00;
   public amountPaid: number = 0.00;
   public amountDiscount: number = 0.00;
+  public percentageCommission: number = 0.00;
   public roundNumber = new RoundNumberPipe();
   public quotas: number = 1;
   public days: number = 30;
@@ -190,6 +191,7 @@ export class AddMovementOfCashComponent implements OnInit {
     this.movementOfCashForm = this._fb.group({
       'transactionAmount': [parseFloat(this.roundNumber.transform(this.transactionAmount)).toFixed(2), [Validators.required]],
       'paymentMethod': [this.movementOfCash.type, [Validators.required]],
+      'percentageCommission': [this.percentageCommission, []],
       'amountToPay': [this.amountToPay, []],
       'amountPaid': [this.amountPaid, []],
       'amountDiscount': [this.amountDiscount, []],
@@ -197,6 +199,7 @@ export class AddMovementOfCashComponent implements OnInit {
       'observation': [this.movementOfCash.observation, []],
       'discount': [this.movementOfCash.type.discount, []],
       'surcharge': [this.movementOfCash.type.surcharge, []],
+      'commissionAmount': [this.movementOfCash.commissionAmount, []],
       'expirationDate': [moment(this.movementOfCash.expirationDate).format('YYYY-MM-DD'), []],
       'receiver': [this.movementOfCash.receiver, []],
       'number': [this.movementOfCash.number, [Validators.pattern("^[0-9]*$")]],
@@ -225,6 +228,7 @@ export class AddMovementOfCashComponent implements OnInit {
     if (!this.movementOfCash.amountPaid) this.movementOfCash.amountPaid = 0.00;
     if (!this.movementOfCash.discount) this.movementOfCash.discount = 0.00;
     if (!this.movementOfCash.surcharge) this.movementOfCash.surcharge = 0.00;
+    if (!this.movementOfCash.commissionAmount) this.movementOfCash.commissionAmount = 0.00;
     if (!this.movementOfCash.receiver) this.movementOfCash.receiver = '';
     if (!this.movementOfCash.number) this.movementOfCash.number = '';
     if (!this.movementOfCash.titular) this.movementOfCash.titular = '';
@@ -256,9 +260,11 @@ export class AddMovementOfCashComponent implements OnInit {
       'amountPaid': parseFloat(this.roundNumber.transform(this.amountPaid).toFixed(2)),
       'amountDiscount': parseFloat(this.roundNumber.transform(this.amountDiscount).toFixed(2)),
       'paymentChange': parseFloat(this.roundNumber.transform(this.paymentChange).toFixed(2)),
+      'percentageCommission': parseFloat(this.roundNumber.transform(this.percentageCommission).toFixed(2)),
       'observation': this.movementOfCash.observation,
       'discount': parseFloat(this.roundNumber.transform(this.movementOfCash.discount).toFixed(2)),
       'surcharge': parseFloat(this.roundNumber.transform(this.movementOfCash.surcharge).toFixed(2)),
+      'commissionAmount': parseFloat(this.roundNumber.transform(this.movementOfCash.commissionAmount).toFixed(2)),
       'expirationDate': moment(this.movementOfCash.expirationDate).format('YYYY-MM-DD'),
       'receiver': this.movementOfCash.receiver,
       'number': this.movementOfCash.number,
@@ -807,6 +813,11 @@ export class AddMovementOfCashComponent implements OnInit {
           } else {
             this.movementOfCash.surcharge = 0;
           }
+          if (this.movementOfCash.type.commission) {
+            this.percentageCommission = this.movementOfCash.type.commission;
+          } else {
+            this.percentageCommission = 0;
+          }
           this.getMovementOfCashesByTransaction();
         }
         this.loading = false;
@@ -884,6 +895,7 @@ export class AddMovementOfCashComponent implements OnInit {
     this.movementOfCash.receiver = this.movementOfCashForm.value.receiver;
     this.movementOfCash.titular = this.movementOfCashForm.value.titular;
     this.movementOfCash.CUIT = this.movementOfCashForm.value.CUIT;
+    this.percentageCommission = this.paymentMethodSelected.commission;
 
     this.setValuesForm();
   }
@@ -997,6 +1009,13 @@ export class AddMovementOfCashComponent implements OnInit {
 
       resolve(true);
     });
+  }
+
+  public changePercentageCommission() {
+    this.percentageCommission = this.movementOfCashForm.value.percentageCommission;
+    let days = moment(moment(this.movementOfCashForm.value.expirationDate).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days');
+    this.movementOfCash.commissionAmount = (this.amountToPay * this.percentageCommission / 100) * days;
+    this.setValuesForm();
   }
 
   async areValidAmounts(): Promise<boolean> {

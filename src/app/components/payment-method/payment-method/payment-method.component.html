@@ -30,7 +30,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-4">
           <label for="discount" class="control-label">Descuento:</label>
           <div class="input-group">
             <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
@@ -38,11 +38,19 @@
               [readonly]="readonly" />
           </div>
         </div>
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-4">
           <label for="surcharge" class="control-label">Recargo:</label>
           <div class="input-group">
             <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
             <input type="number" class="form-control" formControlName="surcharge" name="surcharge" id="surcharge"
+              [readonly]="readonly" />
+          </div>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="commission" class="control-label">Comisión:</label>
+          <div class="input-group">
+            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
+            <input type="number" class="form-control" formControlName="commission" name="commission" id="commission"
               [readonly]="readonly" />
           </div>
         </div>
@@ -113,6 +121,13 @@
         <div class="form-group col-md-4">
           <label for="allowCurrencyValue" class="control-label">¿Pide valores de moneda?</label>
           <select class="form-control" formControlName="allowCurrencyValue">
+            <option [disabled]="readonly" value="true">Si</option>
+            <option [disabled]="readonly" value="false" selected>No</option>
+          </select>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="isCommission" class="control-label">¿Se usa para comisión?</label>
+          <select class="form-control" formControlName="isCommission">
             <option [disabled]="readonly" value="true">Si</option>
             <option [disabled]="readonly" value="false" selected>No</option>
           </select>
