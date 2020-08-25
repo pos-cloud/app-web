@@ -335,7 +335,7 @@ export class PrintPriceListComponent implements OnInit {
 	async printPriceListWithImagen() {
 
 		this.loading = true;
-		var row = 15;
+		var row = 8;
 		let count = 0;
 		var margin = 5;
 		this.doc.setFontType('bold');
@@ -356,14 +356,15 @@ export class PrintPriceListComponent implements OnInit {
 		this.centerText(margin, margin, 210, 0, row, "LISTA DE PRECIOS AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
 
 		row += 3;
-		this.doc.line(0, row, 400, row);
+        this.doc.line(0, row, 400, row);
+        row += 3;
 		count = 0;
 
 		if (this.articles && this.articles.length > 0) {
 			for (let article of this.articles) {
 				this.doc.setFontType('blod')
 				if (article.picture !== 'default.jpg' && await this.getPicture(article.picture)) {
-					this.doc.addImage(this.imageURL, 'JPEG', 15, row + 4, 60, 40);
+					this.doc.addImage(this.imageURL, 'JPEG', 15, row + 8, 60, 40);
 				}
 				row += 5
 				this.doc.setFontSize(this.fontSizes.extraLarge)
@@ -378,7 +379,7 @@ export class PrintPriceListComponent implements OnInit {
 				if (article.make) {
 					this.doc.text(95, row, 'Marca: ' + article.make.description)
 				}
-				this.doc.text(160, row, 'Precio')
+				//this.doc.text(160, row, 'Precio')
 				this.doc.setFontSize(this.fontSizes.extraLarge)
 
 				let increasePrice = 0;
@@ -417,64 +418,64 @@ export class PrintPriceListComponent implements OnInit {
 						}
 					}
 				}
-				if (increasePrice != 0) {
+				/*if (increasePrice != 0) {
 					this.doc.text(160, row + 8, "$" + (this.roundNumber.transform(article.salePrice + (article.salePrice * increasePrice / 100))).toString());
 				} else {
 					this.doc.text(160, row + 8, "$" + (this.roundNumber.transform(article.salePrice)).toString());
-				}
+				}*/
 				this.doc.setFontSize(this.fontSizes.normal)
-				row += 5
+                var rowAux=row;
+                row += 5
 				this.doc.text(95, row, 'Categoría: ' + article.category.description)
 				if (article.otherFields && article.otherFields.length > 0) {
 					for (let fields of article.otherFields) {
 						row += 5
 						this.doc.text(95, row, fields.articleField.name + ": " + fields.value)
 					}
-				}
+                }
+                row += 5
+                this.doc.setFontSize(this.fontSizes.extraLarge)
+                if (increasePrice != 0) {
+					this.doc.text(95, row + 8, "$" + (this.roundNumber.transform(article.salePrice + (article.salePrice * increasePrice / 100))).toString());
+				} else {
+					this.doc.text(95, row + 8, "$" + (this.roundNumber.transform(article.salePrice)).toString());
+                }
+                this.doc.setFontSize(this.fontSizes.normal)
+
 				if (article.containsVariants) {
 					let variants = await this.getVariants(article._id)
 					for (let variant of variants) {
-						row += 5
-						this.doc.text(95, row, variant["_id"]["type"]["name"] + ":")
-						let col = 110 + variant["_id"]["type"]["name"].length;
+                        this.doc.text(150, rowAux, variant["_id"]["type"]["name"]);
 						for (let value of variant["value"]) {
-							this.doc.text(col, row, value["description"])
-							col += 5 + value["description"].length;
-						}
-						row += 5
-						this.doc.text(95, row, "Stock Disp.:")
-						let col2 = 110 + variant["_id"]["type"]["name"].length;
-						for (let value of variant["value"]) {
-							var stock = await this.getStock(value['id'])
-							if (stock) {
-								this.doc.text(col2, row, stock.toString())
+                            var stock = await this.getStock(value['id'])
+                            rowAux += 5;
+                            if (stock) {
+                                this.doc.text(150, rowAux, value["description"] + " STK: "+stock.toString());
 							} else {
-								this.doc.text(col2, row, "0")
+                                this.doc.text(150, rowAux, value["description"] + " STK: 0")
 							}
-							col2 += 5 + value["description"].length;
-						}
+                        }
 					}
 				} else {
 					row += 5
 					var stock = await this.getStock(article._id)
 					if (stock) {
-						this.doc.text(95, row, "Stock Disp.: " + stock.toString())
+						this.doc.text(95, row, "Stock: " + stock.toString())
 					} else {
-						this.doc.text(95, row, "Stock Disp.: 0")
+						this.doc.text(95, row, "Stock: 0")
 					}
 				}
-
 				row += 15
-				this.doc.line(0, row, 300, row);
-				row += 5
-
+				//this.doc.line(0, row, 300, row);
+				//row += 5
 				count++;
 				//4 item por pag
 				if (count === 4) {
 
 					this.doc.addPage();
 
-					var row = 15;
+                    
+					var row = 8;
 					var margin = 5;
 					this.doc.setFontType('bold');
 
@@ -493,9 +494,10 @@ export class PrintPriceListComponent implements OnInit {
 					this.doc.setFontType('bold');
 					this.centerText(margin, margin, 210, 0, row, "LISTA DE PRECIOS AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
 
-					row += 3;
-					this.doc.line(0, row, 400, row);
-					count = 0;
+                    row += 3;
+                    this.doc.line(0, row, 400, row);
+                    row += 3;
+                    count = 0;
 				}
 			}
 		}
