@@ -1012,6 +1012,7 @@ export class AddMovementOfCashComponent implements OnInit {
   }
 
   public changePercentageCommission() {
+    this.movementOfCash = Object.assign(this.movementOfCashForm.value);
     this.percentageCommission = this.movementOfCashForm.value.percentageCommission;
     let days = moment(moment(this.movementOfCashForm.value.expirationDate).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days');
     this.movementOfCash.commissionAmount = (this.amountToPay * this.percentageCommission / 100) * days;
