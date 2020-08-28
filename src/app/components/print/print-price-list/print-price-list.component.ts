@@ -450,9 +450,9 @@ export class PrintPriceListComponent implements OnInit {
                             var stock = await this.getStock(value['id'])
                             rowAux += 5;
                             if (stock) {
-                                this.doc.text(150, rowAux, value["description"] + " STK: "+stock.toString());
+                                this.doc.text(150, rowAux, value["description"] + " /STK: "+stock.toString());
 							} else {
-                                this.doc.text(150, rowAux, value["description"] + " STK: 0")
+                                this.doc.text(150, rowAux, value["description"] + " /STK: 0")
 							}
                         }
 					}
@@ -460,9 +460,9 @@ export class PrintPriceListComponent implements OnInit {
 					row += 5
 					var stock = await this.getStock(article._id)
 					if (stock) {
-						this.doc.text(95, row, "Stock: " + stock.toString())
+						this.doc.text(95, row, "/STK: " + stock.toString())
 					} else {
-						this.doc.text(95, row, "Stock: 0")
+						this.doc.text(95, row, "/STK: 0")
 					}
 				}
 				row += 15
@@ -748,8 +748,8 @@ export class PrintPriceListComponent implements OnInit {
 
 
 			let match = `{"article._id" : { "$oid" : "${articleId}"},
-                    "article.operationType" : { "$ne" : "D" },
-                    "operationType" : { "$ne" : "D" } }`;
+                        "article.operationType" : { "$ne" : "D" },
+                        "operationType" : { "$ne" : "D" } }`;
 
 			match = JSON.parse(match);
 
@@ -771,7 +771,11 @@ export class PrintPriceListComponent implements OnInit {
 			).subscribe(
 				result => {
 					if (result && result.articleStocks && result.articleStocks.length > 0) {
-						resolve(result.articleStocks[0].realStock)
+                        var stock = 0;
+                        result.articleStocks.forEach(element => {
+                            stock += element.realStock
+                        });
+						resolve(stock.toString());
 					} else {
 						resolve("0")
 					}
