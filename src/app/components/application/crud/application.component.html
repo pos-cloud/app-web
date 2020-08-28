@@ -72,7 +72,7 @@
               <select *ngIf="field.tag === 'select'" class="form-control" [formControlName]="field.name" [id]="field.name"
                 [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
                 (blur)="onValueChanged($event.target.id)">
-                <option *ngFor="let v of field.values" [value]="v" [disabled]="readonly" [selected]="obj[field.name] == v">
+                <option *ngFor="let v of field.values" [value]="v" [disabled]="readonly" [selected]="obj[field.name] && obj[field.name] == v">
                   {{ v | translate | capitalize}}
                 </option>
               </select>

@@ -222,6 +222,28 @@ export class ApplicationComponent implements OnInit {
     focus: true,
     multiple: true,
     class: 'form-group col-md-12'
+  }, {
+    name: 'Autentificación',
+    tag: 'separator',
+    tagType: null,
+    search: null,
+    format: null,
+    values: null,
+    validators: null,
+    focus: true,
+    multiple: false,
+    class: 'form-group col-md-12'
+  }, {
+    name: 'auth.requireOPT',
+    tag: 'select',
+    tagType: null,
+    search: null,
+    format: null,
+    values: ['true', 'false'],
+    validators: null,
+    focus: false,
+    multiple: false,
+    class: 'form-group col-md-12'
   }];
   public formErrors: {} = {};
   public validationMessages = {
@@ -298,6 +320,7 @@ export class ApplicationComponent implements OnInit {
           this.loading = false;
           if (result.status === 200) {
             this.obj = result.result;
+            console.log(this.obj.auth.requireOPT);
             this.setValuesForm();
           }
           else this.showToast(result);
@@ -378,7 +401,7 @@ export class ApplicationComponent implements OnInit {
           let entro: boolean = false;
           for (let f of field.name.split('.')) {
             sumF += `['${f}']`;
-            if (!eval(`this.obj${sumF}`)) {
+            if (eval(`this.obj${sumF}`) == null || eval(`this.obj${sumF}`) == undefined) {
               entro = true;
               eval(`this.obj${sumF} = {}`);
             }

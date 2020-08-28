@@ -23,6 +23,9 @@ export class Application extends Model {
       banners: string[]
     }
   };
+  public auth: {
+    requireOPT: boolean
+  };
 
   constructor() { super(); }
 

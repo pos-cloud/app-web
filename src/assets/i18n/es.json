@@ -320,5 +320,6 @@
   "design.showFilters": "Muestra los filtros en la tienda",
   "design.about": "Sobre nosotros",
   "design.categoriesByLine": "Categorías por línea",
-  "design.resources.banners": "Banners"
+  "design.resources.banners": "Banners",
+  "auth.requireOPT": "Verifica teléfono al registrarse"
 }
