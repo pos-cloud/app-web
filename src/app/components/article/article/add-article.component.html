@@ -124,13 +124,11 @@
                 <div class="row">
                   <div class="form-group col-md-12">
                     <div class="row">
-                      <div class="form-group col-md-12">
-                        <label for="observation" class="control-label">Observación:</label>
-                        <div class="input-group">
-                          <textarea type="text" class="form-control" formControlName="observation" name="observation"
-                            id="observation" rows="2" [readonly]="readonly"></textarea>
+                        <div class="form-group col-md-12">
+                            <label for="observation" class="control-label">Observación</label>
+                            <tinymce formControlName="observation" [config]="tinyMCEConfigBody">
+                            </tinymce>
                         </div>
-                      </div>
                     </div>
                     <div class="row">
                       <div class="form-group col-md-12">
@@ -652,6 +650,12 @@
                     <label *ngIf="!article.updateDate" class="control-label"><b>-</b></label>
                   </div>
                 </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                      <label class="control-label">Id:</label>
+                      <label class="control-label"><b>{{article._id}}</b></label>
+                    </div>
+                  </div>
               </div>
             </div>
           </ng-template>

@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 
 // Terceros
 import { NgbAlertConfig, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import * as $ from 'jquery';
 
 // Models
 import { Article, ArticlePrintIn, Type } from '../article';
@@ -110,6 +111,58 @@ export class AddArticleComponent implements OnInit {
   public applications: Application[];
   private subscription: Subscription = new Subscription();
   public focus$: Subject<string>[] = new Array();
+
+  public html = '';
+
+  public tinyMCEConfigBody = {
+      selector: "textarea",
+      theme: "modern",
+      paste_data_images: true,
+      plugins: [
+          "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+          "searchreplace wordcount visualblocks visualchars code fullscreen",
+          "insertdatetime media nonbreaking table contextmenu directionality",
+          "emoticons template paste textcolor colorpicker textpattern"
+      ],
+      toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | forecolor backcolor emoticons | print preview fullscreen",
+      image_advtab: true,
+      height: 250,
+      file_picker_types: 'file image media',
+      images_dataimg_filter: function(img) {
+          return img.hasAttribute('internal-blob');
+        },
+      /*file_picker_callback: function (callback, value, meta) {
+          if (meta.filetype == 'image') {
+              $('#upload').trigger('click');
+              $('#upload').on('change', function () {
+                  var file = this.files[0];
+                  var reader = new FileReader();
+                  reader.onload = function (e) {
+                      callback(e.target['result'], {
+                          alt: ''
+                      });
+                  };
+                  reader.readAsDataURL(file);
+              });
+          }
+      },*/
+      file_picker_callback: function(callback, value, meta) {
+          if (meta.filetype == 'image') {
+            $('#upload').trigger('click');
+            $('#upload').on('change', function() {
+              var file = this.files[0];
+              var reader = new FileReader();
+              reader.onload = function(e) {
+          
+                callback(e.target['result'], {
+                  alt: ''
+                });
+              };
+              reader.readAsDataURL(file);
+            });
+          }
+        },
+  }
 
   public value;
   public articleFieldSelected: ArticleField;
