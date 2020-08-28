@@ -190,8 +190,8 @@ export class ConfigComponent implements OnInit {
   public buildFormEmail() {
     this.configFormEmail = this._fb.group({
       '_id': [this.config._id, [Validators.required]],
-      'emailAccount': [this.config['emailAccount'], [Validators.required]],
-      'emailPassword': [this.config['emailPassword'], [Validators.required]]
+      'emailAccount': [this.config['emailAccount'], []],
+      'emailPassword': [this.config['emailPassword'], []]
     });
 
     this.configFormEmail.valueChanges.subscribe(data => this.onValueChangedEmail(data));
