@@ -49,7 +49,7 @@ export class Application extends Model {
         defaultFilter: null,
         datatype: 'number',
         project: null,
-        align: 'right',
+        align: 'center',
         required: false,
       },
       {
