@@ -7,7 +7,8 @@
     </div>
     <br>
     <div class="row center-content">
-      <h5>Ingresa a tu cuenta</h5>
+      <h5 *ngIf="company !== 'syf'">Ingresa a tu cuenta</h5>
+      <h5 *ngIf="company === 'syf'">SyF Colchones y Sommiers</h5>
     </div>
     <hr>
     <div class="row center-content" *ngIf="alertMessage !== ''">
