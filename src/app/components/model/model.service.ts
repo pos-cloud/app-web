@@ -139,28 +139,6 @@ export class ModelService {
     );
   }
 
-  public getStates(name?: string): Observable<any> {
-
-    let URL: string = 'https://apis.datos.gob.ar/georef/api/provincias';
-
-    let params = new HttpParams()
-      .set('campos', 'nombre')
-      .set('max', '20');
-    if (name && name !== '') {
-      params = params.append('nombre', name);
-    }
-    return this._http.get(URL, {
-      params: params
-    }).pipe(
-      map(res => {
-        return res['provincias'];
-      }),
-      catchError((err) => {
-        return of(err);
-      })
-    );
-  }
-
   public getCities(state: number, name?: string): Observable<any> {
 
     let URL: string = 'https://apis.datos.gob.ar/georef/api/municipios';
