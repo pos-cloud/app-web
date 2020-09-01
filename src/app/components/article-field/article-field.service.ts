@@ -7,14 +7,21 @@ import { map, catchError } from "rxjs/operators";
 import { ArticleField } from './article-field';
 import { Config } from '../../app.config';
 import { AuthService } from '../login/auth.service';
+import { ModelService } from '../model/model.service';
 
 @Injectable()
-export class ArticleFieldService {
+export class ArticleFieldService extends ModelService {
 
-	constructor(
-		private _http: HttpClient,
-		private _authService: AuthService
-	) { }
+  constructor(
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {
+    super(
+      `article-fields`, // PATH
+      _http,
+      _authService
+    );
+  }
 
 	public getArticleField(_id: string): Observable<any> {
 

@@ -7,14 +7,21 @@ import { map, catchError } from "rxjs/operators";
 import { CompanyContact } from './company-contact';
 import { Config } from '../../app.config';
 import { AuthService } from '../login/auth.service';
+import { ModelService } from '../model/model.service';
 
 @Injectable()
-export class CompanyContactService {
+export class CompanyContactService extends ModelService {
 
-	constructor(
-		private _http: HttpClient,
-		private _authService: AuthService
-	) { }
+  constructor(
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {
+    super(
+      `company-contacts`, // PATH
+      _http,
+      _authService
+    );
+  }
 
 	public getCompanyContact(_id: string): Observable<any> {
 

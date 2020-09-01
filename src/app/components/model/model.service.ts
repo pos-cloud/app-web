@@ -1,15 +1,17 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
-import { of } from "rxjs";
+import { of, BehaviorSubject } from "rxjs";
 import { Observable } from "rxjs/Observable";
 import { map, catchError } from "rxjs/operators";
 import { Config } from 'app/app.config';
 import { AuthService } from '../login/auth.service';
+import { DatatableHistory } from '../datatable/datatable-history.interface';
 
 @Injectable()
 export class ModelService {
 
   public URL = `${Config.apiV8URL}`;
+  private items: BehaviorSubject<DatatableHistory> = new BehaviorSubject<DatatableHistory>(null);
 
   constructor(
     public path: string,
@@ -17,6 +19,14 @@ export class ModelService {
     public _authService: AuthService,
   ) {
     this.URL += path;
+  }
+
+  public setItems(items: DatatableHistory): void {
+    this.items.next(items);
+  }
+
+  public get getItems() {
+    return this.items.asObservable();
   }
 
   public getById(_id: string): Observable<any> {

@@ -7,14 +7,21 @@ import { map, catchError } from "rxjs/operators";
 import { Config } from '../../app.config';
 import { Bank } from './bank';
 import { AuthService } from '../login/auth.service';
+import { ModelService } from '../model/model.service';
 
 @Injectable()
-export class BankService {
+export class BankService extends ModelService {
 
-	constructor(
-		private _http: HttpClient,
-		private _authService: AuthService
-	) { }
+  constructor(
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {
+    super(
+      `banks`, // PATH
+      _http,
+      _authService
+    );
+  }
 
 	public getBank(_id: string): Observable<any> {
 

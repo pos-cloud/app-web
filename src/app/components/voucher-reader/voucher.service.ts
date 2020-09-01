@@ -7,14 +7,21 @@ import { map, catchError } from "rxjs/operators";
 import { Config } from '../../app.config';
 import { AuthService } from '../login/auth.service';
 import { Voucher } from './voucher';
+import { ModelService } from '../model/model.service';
 
 @Injectable()
-export class VoucherService {
+export class VoucherService extends ModelService {
 
-	constructor(
-		private _http: HttpClient,
-		private _authService: AuthService
-	) { }
+  constructor(
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {
+    super(
+      `vouchers`, // PATH
+      _http,
+      _authService
+    );
+  }
 
 	public getVoucher(_id: string): Observable<any> {
 

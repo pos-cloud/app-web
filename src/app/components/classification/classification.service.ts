@@ -7,14 +7,21 @@ import { map, catchError } from "rxjs/operators";
 import { Config } from '../../app.config';
 import { Classification } from './classification';
 import { AuthService } from '../login/auth.service';
+import { ModelService } from '../model/model.service';
 
 @Injectable()
-export class ClassificationService {
+export class ClassificationService extends ModelService {
 
-	constructor(
-		private _http: HttpClient,
-		private _authService: AuthService
-	) { }
+  constructor(
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {
+    super(
+      `classifications`, // PATH
+      _http,
+      _authService
+    );
+  }
 
 	public getClassification(_id: string): Observable<any> {
 

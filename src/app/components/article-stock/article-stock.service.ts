@@ -5,19 +5,25 @@ import { Observable } from "rxjs/Observable";
 import { map, catchError } from "rxjs/operators";
 
 import { ArticleStock } from './article-stock';
-import { Article } from '../article/article';
 import { Config } from '../../app.config';
 import { AuthService } from '../login/auth.service';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { Transaction } from '../transaction/transaction';
+import { ModelService } from '../model/model.service';
 
 @Injectable()
-export class ArticleStockService {
+export class ArticleStockService extends ModelService {
 
   constructor(
-    private _http: HttpClient,
-    private _authService: AuthService
-  ) { }
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {
+    super(
+      `article-stocks`, // PATH
+      _http,
+      _authService
+    );
+  }
 
   public getArticleStock(_id: string): Observable<any> {
 

@@ -7,284 +7,291 @@ import { map, catchError } from "rxjs/operators";
 import { MovementOfCash } from './movement-of-cash';
 import { Config } from '../../app.config';
 import { AuthService } from '../login/auth.service';
+import { ModelService } from '../model/model.service';
 
 @Injectable()
-export class MovementOfCashService {
+export class MovementOfCashService extends ModelService {
 
-	constructor(
-		private _http: HttpClient,
-		private _authService: AuthService
-	) { }
+  constructor(
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {
+    super(
+      `movements-of-cashs`, // PATH
+      _http,
+      _authService
+    );
+  }
 
-	public getMovementOfCash(_id: string): Observable<any> {
+  public getMovementOfCash(_id: string): Observable<any> {
 
-		const URL = `${Config.apiURL}movement-of-cash`;
+    const URL = `${Config.apiURL}movement-of-cash`;
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		const params = new HttpParams()
-			.set('id', _id);
+    const params = new HttpParams()
+      .set('id', _id);
 
-		return this._http.get(URL, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    return this._http.get(URL, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 
-	public getMovementsOfCashes(
-		query?: string
-	): Observable<any> {
+  public getMovementsOfCashes(
+    query?: string
+  ): Observable<any> {
 
-		const URL = `${Config.apiURL}movements-of-cashes`;
+    const URL = `${Config.apiURL}movements-of-cashes`;
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		const params = new HttpParams()
-			.set('query', query);
+    const params = new HttpParams()
+      .set('query', query);
 
-		return this._http.get(URL, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    return this._http.get(URL, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 
-	public getMovementsOfCashesV2(
-		project: {},
-		match: {},
-		sort: {},
-		group: {},
-		limit: number = 0,
-		skip: number = 0
-	): Observable<any> {
+  public getMovementsOfCashesV2(
+    project: {},
+    match: {},
+    sort: {},
+    group: {},
+    limit: number = 0,
+    skip: number = 0
+  ): Observable<any> {
 
-		const URL = `${Config.apiURL}v2/movements-of-cashes`;
+    const URL = `${Config.apiURL}v2/movements-of-cashes`;
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		const params = new HttpParams()
-			.set('project', JSON.stringify(project))
-			.set('match', JSON.stringify(match))
-			.set('sort', JSON.stringify(sort))
-			.set('group', JSON.stringify(group))
-			.set('limit', limit.toString())
-			.set('skip', skip.toString());
+    const params = new HttpParams()
+      .set('project', JSON.stringify(project))
+      .set('match', JSON.stringify(match))
+      .set('sort', JSON.stringify(sort))
+      .set('group', JSON.stringify(group))
+      .set('limit', limit.toString())
+      .set('skip', skip.toString());
 
-		return this._http.get(URL, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-    }
+    return this._http.get(URL, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 
-    public getMovementsOfCashesV3(
-		query
-	): Observable<any> {
+  public getMovementsOfCashesV3(
+    query
+  ): Observable<any> {
 
-		const URL = `${Config.apiURL}v3/movements-of-cashes`;
+    const URL = `${Config.apiURL}v3/movements-of-cashes`;
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		return this._http.post(URL, query, {
-			headers: headers
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
-    
-    public getMovementsOfCashesFullQuery(
-		query : {} 
-	): Observable<any> {
+    return this._http.post(URL, query, {
+      headers: headers
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 
-		const URL = `${Config.apiURL}v2/movements-of-cashes`;
+  public getMovementsOfCashesFullQuery(
+    query: {}
+  ): Observable<any> {
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+    const URL = `${Config.apiURL}v2/movements-of-cashes`;
 
-		const params = new HttpParams()
-			.set('fullQuery', JSON.stringify(query));
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		return this._http.get(URL, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    const params = new HttpParams()
+      .set('fullQuery', JSON.stringify(query));
 
-	public getMovementsOfCashesByMovement(
-		movement?: string
-	): Observable<any> {
+    return this._http.get(URL, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 
-		const URL = `${Config.apiURL}movements-of-cashes-by-transaction-movement`;
+  public getMovementsOfCashesByMovement(
+    movement?: string
+  ): Observable<any> {
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+    const URL = `${Config.apiURL}movements-of-cashes-by-transaction-movement`;
 
-		const params = new HttpParams()
-			.set('movement', movement);
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		return this._http.get(URL, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    const params = new HttpParams()
+      .set('movement', movement);
 
-	public saveMovementOfCash(movementOfCash: MovementOfCash): Observable<any> {
+    return this._http.get(URL, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 
-		const URL = `${Config.apiURL}movement-of-cash`;
+  public saveMovementOfCash(movementOfCash: MovementOfCash): Observable<any> {
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+    const URL = `${Config.apiURL}movement-of-cash`;
 
-		return this._http.post(URL, movementOfCash, {
-			headers: headers
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-	public saveMovementsOfCashes(movementsOfCashes: MovementOfCash[]): Observable<any> {
+    return this._http.post(URL, movementOfCash, {
+      headers: headers
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 
-		const URL = `${Config.apiURL}movements-of-cashes`;
+  public saveMovementsOfCashes(movementsOfCashes: MovementOfCash[]): Observable<any> {
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+    const URL = `${Config.apiURL}movements-of-cashes`;
 
-		return this._http.post(URL, { movementsOfCashes: movementsOfCashes }, {
-			headers: headers
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-	public updateMovementOfCash(movementOfCash: MovementOfCash): Observable<any> {
+    return this._http.post(URL, { movementsOfCashes: movementsOfCashes }, {
+      headers: headers
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 
-		const URL = `${Config.apiURL}movement-of-cash`;
+  public updateMovementOfCash(movementOfCash: MovementOfCash): Observable<any> {
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+    const URL = `${Config.apiURL}movement-of-cash`;
 
-		const params = new HttpParams()
-			.set('id', movementOfCash._id);
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		return this._http.put(URL, movementOfCash, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    const params = new HttpParams()
+      .set('id', movementOfCash._id);
 
-	public deleteMovementOfCash(_id: string): Observable<any> {
+    return this._http.put(URL, movementOfCash, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 
-		const URL = `${Config.apiURL}movement-of-cash`;
+  public deleteMovementOfCash(_id: string): Observable<any> {
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+    const URL = `${Config.apiURL}movement-of-cash`;
 
-		const params = new HttpParams()
-			.set('id', _id);
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		return this._http.delete(URL, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    const params = new HttpParams()
+      .set('id', _id);
 
-	public deleteMovementsOfCashes(query: string): Observable<any> {
+    return this._http.delete(URL, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 
-		const URL = `${Config.apiURL}movements-of-cashes`;
+  public deleteMovementsOfCashes(query: string): Observable<any> {
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+    const URL = `${Config.apiURL}movements-of-cashes`;
 
-		const params = new HttpParams()
-			.set('query', query);
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		return this._http.delete(URL, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    const params = new HttpParams()
+      .set('query', query);
+
+    return this._http.delete(URL, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 }

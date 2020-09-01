@@ -7,14 +7,21 @@ import { map, catchError } from "rxjs/operators";
 import { Config } from '../../app.config';
 import { AuthService } from '../login/auth.service';
 import { CancellationType } from './cancellation-type';
+import { ModelService } from '../model/model.service';
 
 @Injectable()
-export class CancellationTypeService {
+export class CancellationTypeService extends ModelService {
 
-	constructor(
-		private _http: HttpClient,
-		private _authService: AuthService
-	) { }
+  constructor(
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {
+    super(
+      `cancellation-types`, // PATH
+      _http,
+      _authService
+    );
+  }
 
 	public getCancellationType(_id: string): Observable<any> {
 

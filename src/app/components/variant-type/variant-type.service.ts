@@ -7,14 +7,21 @@ import { map, catchError } from "rxjs/operators";
 import { VariantType } from './variant-type';
 import { Config } from '../../app.config';
 import { AuthService } from '../login/auth.service';
+import { ModelService } from '../model/model.service';
 
 @Injectable()
-export class VariantTypeService {
+export class VariantTypeService extends ModelService {
 
-	constructor(
-		private _http: HttpClient,
-		private _authService: AuthService
-	) { }
+  constructor(
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {
+    super(
+      `variant-types`, // PATH
+      _http,
+      _authService
+    );
+  }
 
 	public getVariantType(_id: string): Observable<any> {
 

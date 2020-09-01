@@ -9,25 +9,23 @@ import { Config } from '../../app.config';
 import { AuthService } from '../login/auth.service';
 import { Variant } from 'app/components/variant/variant';
 import { DatatableHistory } from '../datatable/datatable-history.interface';
+import { ModelService } from '../model/model.service';
 
 @Injectable()
-export class ArticleService {
+export class ArticleService extends ModelService {
 
-  private items: BehaviorSubject<DatatableHistory> = new BehaviorSubject<DatatableHistory>(null);
   private variants: BehaviorSubject<DatatableHistory> = new BehaviorSubject<DatatableHistory>(null);
   private articlesPos: BehaviorSubject<Article[]> = new BehaviorSubject<Article[]>(null);
 
-	constructor(
-		private _http: HttpClient,
-		public _authService: AuthService
-  ) { }
-
-  public setItems(items: DatatableHistory): void {
-    this.items.next(items);
-  }
-
-  public get getItems() {
-    return this.items.asObservable();
+  constructor(
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {
+    super(
+      `articles`, // PATH
+      _http,
+      _authService
+    );
   }
 
   public setVariants(variants: DatatableHistory): void {

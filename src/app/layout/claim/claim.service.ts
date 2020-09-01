@@ -7,14 +7,21 @@ import { map, catchError } from "rxjs/operators";
 import { Config } from '../../app.config';
 import { AuthService } from '../../components/login/auth.service';
 import { Claim } from 'app/layout/claim/claim';
+import { ModelService } from 'app/components/model/model.service';
 
 @Injectable()
-export class ClaimService {
+export class ClaimService extends ModelService {
 
-	constructor(
-		private _http: HttpClient,
-		private _authService: AuthService
-	) { }
+  constructor(
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {
+    super(
+      `claims`, // PATH
+      _http,
+      _authService
+    );
+  }
 
 	public saveClaim(claim: Claim): Observable<any> {
 

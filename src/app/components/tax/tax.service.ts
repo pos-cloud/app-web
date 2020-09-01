@@ -6,15 +6,21 @@ import { map, catchError } from "rxjs/operators";
 import { AuthService } from 'app/components/login/auth.service';
 import { Config } from 'app/app.config';
 import { Tax } from './tax';
-
+import { ModelService } from '../model/model.service';
 
 @Injectable()
-export class TaxService {
+export class TaxService extends ModelService {
 
-	constructor(
-		private _http: HttpClient,
-		private _authService: AuthService
-	) { }
+  constructor(
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {
+    super(
+      `taxes`, // PATH
+      _http,
+      _authService
+    );
+  }
 
 	public getTax(_id: string): Observable<any> {
 

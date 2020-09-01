@@ -7,14 +7,21 @@ import { map, catchError } from "rxjs/operators";
 import { TransactionType } from './transaction-type';
 import { Config } from '../../app.config';
 import { AuthService } from '../login/auth.service';
+import { ModelService } from '../model/model.service';
 
 @Injectable()
-export class TransactionTypeService {
+export class TransactionTypeService extends ModelService {
 
-	constructor(
-		private _http: HttpClient,
-		private _authService: AuthService
-	) { }
+  constructor(
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {
+    super(
+      `transaction-types`, // PATH
+      _http,
+      _authService
+    );
+  }
 
 	public getTransactionType(_id: string): Observable<any> {
 
