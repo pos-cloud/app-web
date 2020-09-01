@@ -6,6 +6,7 @@ import { ApplicationModule } from './application/application.module';
 import { CashBoxTypeModule } from './cash-box-type/cash-box-type.module';
 import { EmployeeTypeModule } from './employee-type/employee-type.module';
 import { HistoryModule } from './history/history.module';
+import { ShipmentMethodModule } from './shipment-method/shipment-method.module';
 
 @NgModule({
 	imports: [
@@ -15,7 +16,8 @@ import { HistoryModule } from './history/history.module';
     ApplicationModule,
     CashBoxTypeModule,
     EmployeeTypeModule,
-    HistoryModule
+    HistoryModule,
+    ShipmentMethodModule
 	],
 	declarations: [
 	],

@@ -13,9 +13,9 @@ import { Branch } from '../branch/branch';
 import { Deposit } from '../deposit/deposit';
 import { Transport } from '../transport/transport';
 import { PriceList } from '../price-list/price-list';
-import { ShipmentMethod } from '../shipment-method/shipment-method';
 import { Employee } from 'app/components/employee/employee';
 import { Address } from '../address/address.model';
+import { ShipmentMethod } from '../shipment-method/shipment-method.model';
 
 export class Transaction {
 

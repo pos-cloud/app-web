@@ -1057,11 +1057,11 @@
 					</ng-template>
 
 				</ngb-tab>
-				<ngb-tab title="Método de envío">
+				<ngb-tab title="Método de entrega">
 					<ng-template ngbTabContent>
 						<div class="row">
 							<div class="form-group col-md-6">
-								<label for="requestShipmentMethod" class="control-label">¿Pide Metodo de envio?</label>
+								<label for="requestShipmentMethod" class="control-label">¿Pide Método de envío?</label>
 								<div class="input-group">
 									<select class="form-control" formControlName="requestShipmentMethod">
 										<option value="true" [selected]="transactionType.requestShipmentMethod"
@@ -1070,31 +1070,29 @@
 										</option>
 									</select>
 									<button type="button" class="btn btn-light" placement="right" popoverClass="popover-class"
-										ngbPopover="Si pide metodo de envio?">
+										ngbPopover="Si pide método de entrega?">
 										<b>?</b>
 									</button>
 								</div>
 							</div>
-							<div class="form-group col-md-6">
-								<label for="defectShipmentMethod" class="control-label">Metodo defecto</label>
-								<div class="input-group">
-									<select class="form-control" formControlName="defectShipmentMethod">
-										<option [ngValue]="null"
-											[selected]="!transactionType || !transactionType.defectShipmentMethod"
-											[disabled]="readonly"></option>
-										<option *ngFor="let shipmentMethod of shipmentMethods"
-											[selected]="transactionType.defectShipmentMethod && transactionType.defectShipmentMethod._id === shipmentMethod._id"
-											[ngValue]="shipmentMethod._id" [disabled]="readonly">
-											{{shipmentMethod.name}}</option>
-									</select>
-									<button type="button" class="btn btn-light" placement="right" popoverClass="popover-class"
-										ngbPopover="Metodo por defecto">
-										<b>?</b>
-									</button>
-								</div>
-							</div>
-
-
+              <div class="form-group col-md-6">
+                <label for="defectShipmentMethod">{{'defectShipmentMethod'| translate | capitalize}}:</label>
+                <div class="input-group">
+                  <ng-template #result let-r="result" let-t="term">
+                    <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+                  </ng-template>
+                  <input id="defectShipmentMethod" type="text" class="form-control" formControlName="defectShipmentMethod" name="defectShipmentMethod"
+                    [ngbTypeahead]="searchShipmentMethods" [resultTemplate]="result" [inputFormatter]="formatterShipmentMethods"
+                    [readonly]="readonly" />
+                  <div class="invalid-feedback" [style.display]="(formErrors['defectShipmentMethod'])? 'block': 'none'">
+                    {{ formErrors['defectShipmentMethod'] }}
+                  </div>
+                  <button type="button" class="btn btn-light" placement="right" popoverClass="popover-class"
+                    ngbPopover="Selecciona el método de entrega defecto">
+                    <b>?</b>
+                  </button>
+                </div>
+              </div>
 						</div>
 					</ng-template>
 

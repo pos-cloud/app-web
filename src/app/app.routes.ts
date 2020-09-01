@@ -74,7 +74,6 @@ import { ListGalleriesComponent } from './components/gallery/list-galleries/list
 import { ViewGalleryComponent } from './components/gallery/view-gallery/view-gallery.component';
 import { CurrentAccountDetailsComponent } from './components/print/current-account-details/current-account-details.component';
 import { ListEmailTemplatesComponent } from './components/email-template/list-email-templates/list-email-templates.component';
-import { ListShipmentMethodComponent } from './components/shipment-method/list-shipment-method/list-shipment-method.component';
 import { ListCompaniesComponent } from './components/company/list-companies/list-companies.component';
 import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.component';
 import { ListMovementsOfCancellationsComponent } from './components/movement-of-cancellation/list-movements-of-cancellations/list-movements-of-cancellations.component';
@@ -419,11 +418,6 @@ export const _routes: Routes = [
   {
     path: 'admin/sucursales',
     component: ListBranchComponent,
-    canActivate: [AuthGuard, LicenseGuard]
-  },
-  {
-    path: 'admin/shipment-methods',
-    component: ListShipmentMethodComponent,
     canActivate: [AuthGuard, LicenseGuard]
   },
   {

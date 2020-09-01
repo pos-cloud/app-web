@@ -27,7 +27,6 @@ import { EmailTemplate } from 'app/components/email-template/email-template';
 import { BranchService } from 'app/components/branch/branch.service';
 import { Branch } from 'app/components/branch/branch';
 import { ShipmentMethodService } from 'app/components/shipment-method/shipment-method.service';
-import { ShipmentMethod } from 'app/components/shipment-method/shipment-method';
 import { ApplicationService } from 'app/components/application/application.service';
 import { Application } from 'app/components/application/application.model';
 import { Subscription, Observable } from 'rxjs';
@@ -36,6 +35,7 @@ import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { EmployeeType } from 'app/components/employee-type/employee-type.model';
+import { ShipmentMethod } from 'app/components/shipment-method/shipment-method.model';
 
 @Component({
   selector: 'app-transaction-type',
@@ -90,6 +90,23 @@ export class TransactionTypeComponent implements OnInit {
     )
   public formatterEmployeeTypes = (x: EmployeeType) => { return x.description; };
 
+  public searchShipmentMethods = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(() => this.loading = true),
+      switchMap(async term => {
+        let match: {} = (term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {};
+        return await this.getAllShipmentMethods(match).then(
+          result => {
+            return result;
+          }
+        )
+      }),
+      tap(() => this.loading = false)
+    )
+  public formatterShipmentMethods = (x: ShipmentMethod) => { return x.name; };
+
   public formErrors = {
     'transactionMovement': '',
     'abbreviation': '',
@@ -132,7 +149,6 @@ export class TransactionTypeComponent implements OnInit {
     this.getPrinters();
     this.getUsesOfCFDI();
     this.getEmailTemplates();
-    this.getShipmentMethod();
     this.getBranches();
   }
 
@@ -194,6 +210,25 @@ export class TransactionTypeComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public getAllShipmentMethods(match: {}): Promise<ShipmentMethod[]> {
+    return new Promise<ShipmentMethod[]>((resolve, reject) => {
+      this.subscription.add(this._shipmentMethodService.getAll(
+        {}, // PROJECT
+        match, // MATCH
+        { name: 1 }, // SORT
+        {}, // GROUP
+        10, // LIMIT
+        0 // SKIP
+      ).subscribe(
+        result => {
+          this.loading = false;
+          (result.status === 200) ? resolve(result.result) : reject(result);
+        },
+        error => reject(error)
+      ));
+    });
   }
 
   public getAllEmployeeTypes(match: {}): Promise<EmployeeType[]> {
@@ -348,7 +383,7 @@ export class TransactionTypeComponent implements OnInit {
       'requestEmailTemplate': [this.transactionType.requestEmailTemplate, []],
       'defectEmailTemplate': [this.transactionType.defectEmailTemplate, []],
       'requestShipmentMethod': [this.transactionType.requestShipmentMethod, []],
-      'defectShipmentMethod': [this.transactionType.defectShipmentMethod, []],
+      'defectShipmentMethod': [this.transactionType.defectShipmentMethod, [this.validateAutocomplete]],
       'application': [this.transactionType.application, []],
       'branch': [this.transactionType.branch, []],
       'level': [this.transactionType.level, []],
@@ -403,36 +438,6 @@ export class TransactionTypeComponent implements OnInit {
           this.emailTemplates = result.emailTemplates
         } else {
           this.emailTemplates = null;
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    )
-  }
-
-  public getShipmentMethod() {
-
-    let match = {
-      operationType: { $ne: "D" }
-    }
-
-
-    let project = {
-      name: 1,
-      operationType: 1,
-      creationDate: 1,
-      updateUser: 1,
-      updateDate: 1
-    }
-
-    this._shipmentMethodService.getShipmentMethods(project, match, {}, {}).subscribe(
-      result => {
-        if (result && result.shipmentMethods) {
-          this.shipmentMethods = result.shipmentMethods
-        } else {
-          this.shipmentMethods = null;
         }
       },
       error => {
@@ -601,17 +606,6 @@ export class TransactionTypeComponent implements OnInit {
       }
     }
 
-    let defectShipmentMethod;
-    if (!this.transactionType.defectShipmentMethod) {
-      defectShipmentMethod = null;
-    } else {
-      if (this.transactionType.defectShipmentMethod._id) {
-        defectShipmentMethod = this.transactionType.defectShipmentMethod._id;
-      } else {
-        defectShipmentMethod = this.transactionType.defectShipmentMethod;
-      }
-    }
-
     let application;
     if (!this.transactionType.application) {
       application = null;
@@ -694,7 +688,7 @@ export class TransactionTypeComponent implements OnInit {
       'requestEmailTemplate': this.transactionType.requestEmailTemplate,
       'defectEmailTemplate': defectEmailTemplate,
       'requestShipmentMethod': this.transactionType.requestShipmentMethod,
-      'defectShipmentMethod': defectShipmentMethod,
+      'defectShipmentMethod': this.transactionType.defectShipmentMethod,
       'application': application,
       'branch': branch,
       'level': this.transactionType.level,

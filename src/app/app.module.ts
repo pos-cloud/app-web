@@ -53,7 +53,6 @@ import { CompanyContactService } from "./components/company/company-contact.serv
 import { CompanyFieldService } from './components/company-field/company-field.service';
 import { BankService } from './components/bank/bank.service';
 import { PriceListService } from './components/price-list/price-list.service';
-import { ShipmentMethodService } from './components/shipment-method/shipment-method.service';
 
 // guards
 import { AuthGuard } from './main/guards/auth.guard';
@@ -242,9 +241,6 @@ import { ListEmailTemplatesComponent } from './components/email-template/list-em
 import { EmailTemplateService } from './components/email-template/email-template.service';
 import { VoucherService } from './components/voucher-reader/voucher.service';
 import { SelectChecksComponent } from './components/movement-of-cash/select-checks/select-checks.component';
-import { ShipmentMethodComponent } from './components/shipment-method/shipment-method/shipment-method.component';
-import { ListShipmentMethodComponent } from './components/shipment-method/list-shipment-method/list-shipment-method.component';
-import { SelectShipmentMethodComponent } from './components/shipment-method/select-shipment-method/select-shipment-method.component';
 import { NotificationGuard } from './main/guards/notification.guard';
 import { SelectCompanyComponent } from './components/company/select-company/select-company.component';
 import { TaxComponent } from './components/tax/tax/tax.component';
@@ -435,9 +431,6 @@ export function createTranslateLoader(http: HttpClient) {
     EmailTemplateComponent,
     ListEmailTemplatesComponent,
     SelectChecksComponent,
-    ShipmentMethodComponent,
-    ListShipmentMethodComponent,
-    SelectShipmentMethodComponent,
     ListCategoriesPosComponent,
     ListMovementsOfCancellationsComponent
   ],
@@ -587,8 +580,6 @@ export function createTranslateLoader(http: HttpClient) {
     CurrentAccountDetailsComponent,
     EmailTemplateComponent,
     SelectChecksComponent,
-    ShipmentMethodComponent,
-    SelectShipmentMethodComponent,
   ],
   imports: [
     BrowserModule,
@@ -688,8 +679,6 @@ export function createTranslateLoader(http: HttpClient) {
     ResourceService,
     GalleryService,
     EmailTemplateService,
-    ShipmentMethodService,
-    ShipmentMethodService
   ],
   bootstrap: [AppComponent]
 })

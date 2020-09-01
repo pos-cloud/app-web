@@ -321,5 +321,9 @@
   "design.about": "Sobre nosotros",
   "design.categoriesByLine": "Categorías por línea",
   "design.resources.banners": "Banners",
-  "auth.requireOPT": "Verifica teléfono al registrarse"
+  "auth.requireOPT": "Verifica teléfono al registrarse",
+  "shipment-methods": "métodos de entrega",
+  "shipment-method": "método de entrega",
+  "shipmentMethod": "método de entrega",
+  "defectShipmentMethod": "método de entrega defecto"
 }

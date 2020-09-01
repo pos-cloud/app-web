@@ -7,9 +7,9 @@ import { EmailTemplate } from '../email-template/email-template';
 import { Branch } from '../branch/branch';
 
 import * as moment from 'moment';
-import { ShipmentMethod } from '../shipment-method/shipment-method';
 import { Application } from '../application/application.model';
 import { EmployeeType } from '../employee-type/employee-type.model';
+import { ShipmentMethod } from '../shipment-method/shipment-method.model';
 
 export class TransactionType {
 

@@ -1,12 +1,12 @@
 import { Component, OnInit, EventEmitter } from '@angular/core';
-import { ShipmentMethod } from 'app/components/shipment-method/shipment-method';
 import { ShipmentMethodService } from 'app/components/shipment-method/shipment-method.service';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { ShipmentMethod } from '../shipment-method.model';
 
 @Component({
   selector: 'app-select-shipment-method',
   templateUrl: './select-shipment-method.component.html',
-  styleUrls: ['./select-shipment-method.component.css']
+  styleUrls: ['./select-shipment-method.component.scss']
 })
 export class SelectShipmentMethodComponent implements OnInit {
 
@@ -42,7 +42,7 @@ export class SelectShipmentMethodComponent implements OnInit {
     }
 
 
-    this._shipmentMethodService.getShipmentMethods(project, match, {}, {}, 0, 0).subscribe(
+    this._shipmentMethodService.getAll(project, match, {}, {}, 0, 0).subscribe(
       result => {
         if (result && result.shipmentMethods) {
           this.shipmentMethods = result.shipmentMethods;
