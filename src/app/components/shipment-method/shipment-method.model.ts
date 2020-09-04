@@ -1,4 +1,5 @@
 import { Model } from '../model/model.model';
+import { Application } from '../application/application.model';
 
 export class ShipmentMethod extends Model {
 
@@ -12,6 +13,7 @@ export class ShipmentMethod extends Model {
     }[],
     area: number
   }];
+  public applications: Application[];
 
   constructor() { super(); }
 

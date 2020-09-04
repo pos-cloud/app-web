@@ -2048,14 +2048,12 @@ export class PointOfSaleComponent implements OnInit {
               });
           }
           if (email && this.transaction.state.toString() === TransactionState.PaymentConfirmed.toString()) {
-            console.log(oldState);
             this.transaction.balance = 0;
             this.sendEmail(
               `Pago confirmado en tu Pedido Número ${this.transaction.orderNumber}`,
               `Hola ${transaction.company.name} confirmamos el pago de tu compra.</br><b>Ya estamos preparando tu pedido, te avisamos cuando este en camino.</b>`,
               email);
             if (oldState === TransactionState.Delivered) this.transaction.state = TransactionState.Closed;
-            console.log(this.transaction.state);
           } else if (email && this.transaction.state.toString() === TransactionState.PaymentDeclined.toString()) {
             this.transaction.balance = 0;
             this.sendEmail(

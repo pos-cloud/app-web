@@ -15,7 +15,6 @@ import { Subscription } from 'rxjs';
 import Resulteable from 'app/util/Resulteable';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
-import { Article } from 'app/components/article/article';
 import { ArticleService } from 'app/components/article/article.service';
 
 @Component({
@@ -465,9 +464,7 @@ export class CategoryComponent implements OnInit {
     });
   }
 
-
   public fileChangeEvent(fileInput: any) {
-
     this.filesToUpload = <Array<File>>fileInput.target.files;
   }
 

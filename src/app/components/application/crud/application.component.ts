@@ -320,7 +320,6 @@ export class ApplicationComponent implements OnInit {
           this.loading = false;
           if (result.status === 200) {
             this.obj = result.result;
-            console.log(this.obj.auth.requireOPT);
             this.setValuesForm();
           }
           else this.showToast(result);

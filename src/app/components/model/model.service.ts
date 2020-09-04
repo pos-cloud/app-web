@@ -48,10 +48,10 @@ export class ModelService {
   }
 
   public getAll(
-    project: {},
-    match: {},
-    sort: {},
-    group: {},
+    project: {} = {},
+    match: {} = {},
+    sort: {} = {},
+    group: {} = {},
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {

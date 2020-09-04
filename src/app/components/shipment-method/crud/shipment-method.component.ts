@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl, FormArray } from '@angular/forms';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
@@ -13,6 +13,9 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { FormField } from 'app/util/formField.interface';
 import { ShipmentMethod, ZoneType } from '../shipment-method.model';
 import { ShipmentMethodService } from '../shipment-method.service';
+import { Application } from 'app/components/application/application.model';
+import { ApplicationService } from 'app/components/application/application.service';
+import Resulteable from 'app/util/Resulteable';
 declare const google: any;
 
 @Component({
@@ -41,6 +44,7 @@ export class ShipmentMethodComponent implements OnInit {
   public filename: string;
   public src: any;
   public imageURL: string;
+  public applications: Application[];
 
   public formFields: FormField[] = [{
     name: 'name',
@@ -66,7 +70,8 @@ export class ShipmentMethodComponent implements OnInit {
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public translatePipe: TranslateMePipe
+    public translatePipe: TranslateMePipe,
+    private _applicationService: ApplicationService
   ) {
     this.obj = new ShipmentMethod();
     for (let field of this.formFields) {
@@ -83,20 +88,33 @@ export class ShipmentMethodComponent implements OnInit {
     this._title.setTitle(this.title);
     this.buildForm();
     if (this.objId && this.objId !== '') {
-      this.subscription.add(this._objService.getById(this.objId).subscribe(
-        result => {
-          this.loading = false;
-          if (result.status === 200) {
-            this.obj = result.result;
-            this.setValuesForm();
-          }
-          else this.showToast(result);
+      this.subscription.add(await this._objService.getAll(
+        {
+          name: 1,
+          zones: 1,
+          'applications._id': 1,
+          'applications.name': 1,
         },
-        error => this.showToast(error)
-      ));
+        { _id: { $oid: this.objId } }).subscribe(
+          result => {
+            this.loading = false;
+            if (result.status === 200) {
+              this.obj = result.result[0];
+              this.setValuesForm();
+            }
+            else this.showToast(result);
+          },
+          error => this.showToast(error)
+        ));
     } else {
       if (this.operation !== 'add') this.showToast(null, 'danger', 'Debe ingresar un identificador válido')
     }
+    await this.getAllApplications({})
+      .then((result: Application[]) => {
+        this.applications = result;
+        this.setValuesForm();
+      })
+      .catch((error: Resulteable) => this.showToast(error));
   }
 
   public ngAfterViewInit(): void {
@@ -110,7 +128,8 @@ export class ShipmentMethodComponent implements OnInit {
   public buildForm(): void {
 
     let fields: {} = {
-      _id: [this.obj._id]
+      _id: [this.obj._id],
+      applications: this._fb.array([])
     };
     for (let field of this.formFields) {
       fields[field.name] = [this.obj[field.name], field.validators]
@@ -162,7 +181,44 @@ export class ShipmentMethodComponent implements OnInit {
           break;
       }
     }
+    if (this.applications && this.applications.length > 0) {
+      this.applications.forEach(x => {
+        let exists: boolean = false;
+        if (this.obj && this.obj.applications && this.obj.applications.length > 0) {
+          this.obj.applications.forEach(y => {
+            if (x._id === y._id) {
+              exists = true;
+              const control = new FormControl(y);
+              (this.objForm.controls.applications as FormArray).push(control);
+            }
+          })
+        }
+        if (!exists) {
+          const control = new FormControl(false);
+          (this.objForm.controls.applications as FormArray).push(control);
+        }
+      })
+    }
     this.objForm.patchValue(values);
+  }
+
+  public getAllApplications(match: {}): Promise<Application[]> {
+    return new Promise<Application[]>((resolve, reject) => {
+      this.subscription.add(this._applicationService.getAll(
+        {}, // PROJECT
+        match, // MATCH
+        { name: 1 }, // SORT
+        {}, // GROUP
+        0, // LIMIT
+        0 // SKIP
+      ).subscribe(
+        result => {
+          this.loading = false;
+          (result.status === 200) ? resolve(result.result) : reject(result);
+        },
+        error => reject(error)
+      ));
+    });
   }
 
   public async addObj() {
@@ -173,6 +229,10 @@ export class ShipmentMethodComponent implements OnInit {
 
     if (isValid) {
       this.obj = Object.assign(this.obj, this.objForm.value);
+      const selectedOrderIds = this.objForm.value.applications
+        .map((v, i) => (v ? this.applications[i] : null))
+        .filter(v => v !== null);
+      this.obj.applications = selectedOrderIds;
     } else {
       this.onValueChanged();
     }
@@ -376,9 +436,7 @@ export class ShipmentMethodComponent implements OnInit {
       navigator.geolocation.getCurrentPosition((position) => {
         this.lat = position.coords.latitude;
         this.lng = position.coords.longitude;
-        console.log(this.lat, this.lng);
         this.map.setCenter(new google.maps.LatLng(this.lat, this.lng));
-        console.log(this.map);
       });
     }
   }

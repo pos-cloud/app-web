@@ -45,13 +45,22 @@
                 </div>
               </div>
             </div>
+            <div class="form-group col-md-12">
+              <label for="applications">Aplicaciones:</label>
+              <br>
+              <label formArrayName="applications" *ngFor="let order of objForm.get('applications')['controls']; let i = index"
+                style="margin-right: 20px; font-size: 20px;">
+                <input type="checkbox" [formControlName]="i" />
+                {{applications[i].name}}
+              </label>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </form>
   <div class="row">
-    <div class="col-md-12" style="padding: 2rem;">
+    <div class="col-md-12" style="padding: 0rem 2rem;">
       <div class="row">
         <div class="col-md-12">
           <hr>
