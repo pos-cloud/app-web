@@ -273,7 +273,7 @@ export class ListArticleStocksComponent implements OnInit {
         let modalRef;
         switch (op) {
             case 'view':
-                this._router.navigate(['/report/kardex-de-productos/'], { queryParams: { article: articleStock.article._id, branch: articleStock.branch._id, deposit: articleStock.deposit._id } });
+                window.open(`/#/report/kardex-de-productos/?article=${articleStock.article._id}&branch=${articleStock.branch._id}&deposit=${articleStock.deposit._id}`, '_blank');
                 break;
             case 'add':
                 modalRef = this._modalService.open(AddArticleStockComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
