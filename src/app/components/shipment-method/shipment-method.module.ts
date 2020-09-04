@@ -15,6 +15,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from 'app/main/pipes/pipes.module';
 import { ListShipmentMethodsComponent } from './list-shipment-methods/list-shipment-methods.component';
 import { AgmCoreModule } from '@agm/core';
+import { SelectShipmentMethodComponent } from './select-shipment-method/select-shipment-method.component';
 
 const routes: Routes = [
   {
@@ -46,13 +47,16 @@ const routes: Routes = [
   ],
   declarations: [
     ListShipmentMethodsComponent,
-    ShipmentMethodComponent
+    ShipmentMethodComponent,
+    SelectShipmentMethodComponent
   ],
   exports: [
-    ShipmentMethodComponent
+    ShipmentMethodComponent,
+    SelectShipmentMethodComponent
   ],
   entryComponents: [
-    ShipmentMethodComponent
+    ShipmentMethodComponent,
+    SelectShipmentMethodComponent
   ],
   providers: [
     ShipmentMethodService
