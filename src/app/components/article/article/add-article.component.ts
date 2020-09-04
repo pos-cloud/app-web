@@ -126,7 +126,7 @@ export class AddArticleComponent implements OnInit {
       ],
       toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | forecolor backcolor emoticons | print preview fullscreen",
       image_advtab: true,
-      height: 250,
+      height: 100,
       file_picker_types: 'file image media',
       images_dataimg_filter: function(img) {
           return img.hasAttribute('internal-blob');
@@ -153,7 +153,7 @@ export class AddArticleComponent implements OnInit {
               var file = this.files[0];
               var reader = new FileReader();
               reader.onload = function(e) {
-          
+
                 callback(e.target['result'], {
                   alt: ''
                 });
