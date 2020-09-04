@@ -142,6 +142,7 @@
   "male": "Masculino",
   "markupPercentage": "Margen",
   "markupPrice": "Utilidad",
+  "markupPrice2": "Utilidad s/imp",
   "message": "Mensaje",
   "modifyStock": "Modifica stock",
   "must select payment method": "Debe seleccionar una moneda",
