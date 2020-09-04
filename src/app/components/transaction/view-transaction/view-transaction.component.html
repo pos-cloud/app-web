@@ -87,10 +87,14 @@
               <input type="text" class="form-control" name="exempt" value="{{transaction.exempt}}" readonly />
             </div>
             <div class="form-group col-md-4">
-              <label for="discountAmount" class="control-label">Descuento:</label>
+              <label for="discountAmount" class="control-label">Descuento ($):</label>
               <input type="text" class="form-control" name="discountAmount" value="{{transaction.discountAmount}}" readonly />
             </div>
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-2">
+                <label for="discountPercent" class="control-label">Descuento (%):</label>
+                <input type="text" class="form-control" name="discountPercent" value="{{transaction.discountPercent}}%" readonly />
+              </div>
+            <div class="form-group col-md-2">
               <label for="VATPeriod" class="control-label">Período de IVA:</label>
               <input type="text" class="form-control" name="VATPeriod" value="{{transaction.VATPeriod}}" readonly />
             </div>
