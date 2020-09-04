@@ -16,11 +16,13 @@
                 <!-- INPUT -->
                 <input *ngIf="field.tag === 'input'" [type]="field.tagType" class="form-control" [formControlName]="field.name"
                   [name]="field.name" [id]="field.name" [readonly]="readonly"
-                  [ngClass]="{'is-invalid':!objForm.get(field.name).valid && formErrors[field.name]}" (blur)="onValueChanged($event.target.id)" />
+                  [ngClass]="{'is-invalid':!objForm.get(field.name).valid && formErrors[field.name]}"
+                  (blur)="onValueChanged($event.target.id)" />
 
                 <!-- SELECT -->
-                <select *ngIf="field.tag === 'select'" class="form-control"  [formControlName]="field.name" [id]="field.name"
-                  [ngClass]="{'is-invalid':!objForm.get(field.name).valid && formErrors[field.name]}" (blur)="onValueChanged($event.target.id)">
+                <select *ngIf="field.tag === 'select'" class="form-control" [formControlName]="field.name" [id]="field.name"
+                  [ngClass]="{'is-invalid':!objForm.get(field.name).valid && formErrors[field.name]}"
+                  (blur)="onValueChanged($event.target.id)">
                   <option *ngFor="let v of field.values" [value]="v" [disabled]="readonly">{{ v | translate | capitalize}}
                   </option>
                 </select>
@@ -30,8 +32,9 @@
                   <ng-template #result let-r="result" let-t="term">
                     <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
                   </ng-template>
-                  <input [type]="field.tagType" class="form-control" [id]="field.name" [formControlName]="field.name" [readonly]="readonly"
-                    [name]="field.name" [ngbTypeahead]="field.search" [resultTemplate]="result" [inputFormatter]="field.format"
+                  <input [type]="field.tagType" class="form-control" [id]="field.name" [formControlName]="field.name"
+                    [readonly]="readonly" [name]="field.name" [ngbTypeahead]="field.search" [resultTemplate]="result"
+                    [inputFormatter]="field.format"
                     [ngClass]="{'is-invalid':!objForm.get(field.name).valid && formErrors[field.name]}"
                     (focus)="focus$[field.name].next($any($event).target.value)" (blur)="onValueChanged($event.target.id)" />
                 </div>
@@ -46,20 +49,116 @@
         </div>
       </div>
     </div>
-    <div class="modal-footer" *ngIf="operation !== 'view'">
-      <button type="button" class="btn btn-light"
-        (click)="activeModal.close('cancel')">{{'cancel' | translate | capitalize}}</button>
-      <button type="submit" class="btn btn-primary" [disabled]="loading" *ngIf="operation !== 'delete'">
-        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
-        <span *ngIf="!loading"> {{'save' | translate | capitalize}}</span>
-        <span *ngIf="loading"> {{'loading' | translate | capitalize}}</span>
-      </button>
-      <button type="button" class="btn btn-danger" *ngIf="operation === 'delete'" [disabled]="loading"
-        (click)="addObj()">
-        <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
-        <span *ngIf="!loading"> {{'delete' | translate | capitalize}}</span>
-        <span *ngIf="loading"> {{'loading' | translate | capitalize}}</span>
-      </button>
-    </div>
   </form>
+  <div class="row">
+    <div class="col-md-12" style="padding: 2rem;">
+      <div class="row">
+        <div class="col-md-12">
+          <hr>
+          <b>Zonas</b>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card-block table-responsive" style="max-height: 300px; min-height: 100px !important;">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>
+                    Acción
+                  </th>
+                  <th>
+                    Tipo
+                  </th>
+                  <th>
+                    Nombre
+                  </th>
+                  <th>
+                    Área
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let zone of this.obj.zones; let i = index;">
+                  <td>
+                    <button type="button" class="btn btn-success btn-sm" title="Ver" (click)="viewZone(i)"><i
+                        class="fa fa-eye"></i>
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm" title="Eliminar" (click)="deleteZone(i)"><i
+                        class="fa fa-trash-o"></i>
+                    </button>
+                  </td>
+                  <td>
+                    {{zone.type | translate | capitalize }}
+                  </td>
+                  <td>
+                    {{zone.name}}
+                  </td>
+                  <td>
+                    {{zone.area}}
+                  </td>
+                </tr>
+                <tr *ngIf="!loading && this.obj?.zones?.length === 0">
+                  <td class="text-center" colspan="10">No se encontraron zonas cargadas</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <label for="zoneName" class="control-label">Nombre de la zona:</label>
+          <input type="text" class="form-control" id="zoneName" name="zoneName" [(ngModel)]="zoneName"
+            [readonly]="readonly || (zonesActive && zonesActive.length > 0)" />
+        </div>
+        <div class="col-md-4">
+          <label for="zoneType" class="control-label">Tipo de zona:</label>
+          <select class="form-control" [(ngModel)]="zoneType" (change)="changeZoneType()">
+            <option *ngFor="let v of ['in','out']" [value]="v" [disabled]="readonly || (zonesActive && zonesActive.length > 0)">
+              {{ v | translate | capitalize}}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label for="action" class="control-label">Acción:</label>
+          <div class="row">
+            <div class="col-md-12">
+              <button class="btn btn-success" (click)="addZone()" *ngIf="!zonesActive || zonesActive.length == 0"
+                [disabled]="readonly">+</button>
+              <button class="btn btn-light" (click)="createZone()" *ngIf="(zonesActive && zonesActive.length > 0)"
+                [disabled]="readonly">Nueva
+                Zona</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" style="margin: 10px 0px">
+        <div class="col-md-12">
+          Área seleccionada: {{ (selectedArea) ? selectedArea.toPrecision(5) : 0.00 }}m<sup>2</sup>
+          <a (click)="viewAllZones()" style="color: cornflowerblue; cursor: pointer; margin-left: 10px;">Ver todas las zonas</a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <agm-map [zoom]="13" style="height: 400px;" (mapReady)="onMapReady($event)">
+          </agm-map>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer" *ngIf="operation !== 'view'">
+    <button type="button" class="btn btn-light"
+      (click)="activeModal.close('cancel')">{{'cancel' | translate | capitalize}}</button>
+    <button type="button" (click)="addObj()" class="btn btn-primary" [disabled]="loading" *ngIf="operation !== 'delete'">
+      <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+      <span *ngIf="!loading"> {{'save' | translate | capitalize}}</span>
+      <span *ngIf="loading"> {{'loading' | translate | capitalize}}</span>
+    </button>
+    <button type="button" class="btn btn-danger" *ngIf="operation === 'delete'" [disabled]="loading" (click)="addObj()">
+      <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
+      <span *ngIf="!loading"> {{'delete' | translate | capitalize}}</span>
+      <span *ngIf="loading"> {{'loading' | translate | capitalize}}</span>
+    </button>
+  </div>
 </section>

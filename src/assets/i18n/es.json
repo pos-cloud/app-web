@@ -325,5 +325,7 @@
   "shipment-methods": "métodos de entrega",
   "shipment-method": "método de entrega",
   "shipmentMethod": "método de entrega",
-  "defectShipmentMethod": "método de entrega defecto"
+  "defectShipmentMethod": "método de entrega defecto",
+  "in": "incluye",
+  "out": "excluye"
 }

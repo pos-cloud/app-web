@@ -3,8 +3,10 @@
     <div class="card-header">
       <span style="color: #607D8B">{{title}}</span>
       <div class="pull-right">
-        <button type="button" class="btn" [routerLink]="['/applications']"><i class="fa fa-arrow-left"></i>{{'return' | translate | capitalize}}</button>
-        <button type="button" class="btn" [disabled]="loading" *ngIf="operation !== 'delete' && operation !== 'view'" (click)="addObj()">
+        <button type="button" class="btn" [routerLink]="['/applications']"><i
+            class="fa fa-arrow-left"></i>{{'return' | translate | capitalize}}</button>
+        <button type="button" class="btn" [disabled]="loading" *ngIf="operation !== 'delete' && operation !== 'view'"
+          (click)="addObj()">
           <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
           <span *ngIf="!loading"> {{'save' | translate | capitalize}}</span>
           <span *ngIf="loading"> {{'loading' | translate | capitalize}}</span>
@@ -52,7 +54,7 @@
                         <div class="img-file"
                           [style.backgroundImage]="'url('+apiURL + 'file?filename=' + file + '&model=' + field.name.split('.')[field.name.split('.').length - 1] + '&database=' + database+')'">
                         </div>
-                        <div class="card-body" style="text-align: center;">
+                        <div class="card-body text-center">
                           <a class="btn btn-danger" style="color: white;" (click)="deleteFile('image', field.name, file)"><i
                               class="fa fa-trash-o"></i>Eliminar</a>
                         </div>
@@ -72,7 +74,8 @@
               <select *ngIf="field.tag === 'select'" class="form-control" [formControlName]="field.name" [id]="field.name"
                 [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
                 (blur)="onValueChanged($event.target.id)">
-                <option *ngFor="let v of field.values" [value]="v" [disabled]="readonly" [selected]="obj[field.name] && obj[field.name] == v">
+                <option *ngFor="let v of field.values" [value]="v" [disabled]="readonly"
+                  [selected]="obj[field.name] && obj[field.name] == v">
                   {{ v | translate | capitalize}}
                 </option>
               </select>

@@ -11,8 +11,9 @@ import { Subscription, Subject } from 'rxjs';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FormField } from 'app/util/formField.interface';
-import { ShipmentMethod } from '../shipment-method.model';
+import { ShipmentMethod, ZoneType } from '../shipment-method.model';
 import { ShipmentMethodService } from '../shipment-method.service';
+declare const google: any;
 
 @Component({
   selector: 'app-shipment-method',
@@ -171,7 +172,7 @@ export class ShipmentMethodComponent implements OnInit {
     isValid = (this.operation === 'delete') ? true : this.objForm.valid;
 
     if (isValid) {
-      this.obj = this.objForm.value;
+      this.obj = Object.assign(this.obj, this.objForm.value);
     } else {
       this.onValueChanged();
     }
@@ -270,5 +271,277 @@ export class ShipmentMethodComponent implements OnInit {
         break;
     }
     this.loading = false;
+  }
+
+  // PERSONALIZADO GOOGLE MAPS
+  map: any;
+  lat: number = -31.4276889;
+  lng: number = -62.0941095;
+  pointList: { lat: number; lng: number }[] = [];
+  drawingManager: any;
+  selectedShape: any;
+  selectedArea = 0;
+  zones: any[] = new Array();
+  zoneName: string;
+  zoneType: ZoneType = ZoneType.OUT;
+  zonesActive: {
+    zone: any,
+    polyline: any
+  }[];
+
+  onMapReady(map) {
+    this.map = map;
+    this.setCurrentPosition();
+    this.initDrawingManager(map);
+  }
+
+  changeZoneType() {
+    if (this.zoneType === ZoneType.IN) {
+      this.drawingManager.polygonOptions.fillColor = 'green';
+      this.drawingManager.polygonOptions.strokeColor = 'green';
+    } else {
+      this.drawingManager.polygonOptions.fillColor = 'red';
+      this.drawingManager.polygonOptions.strokeColor = 'red';
+    }
+  }
+
+  initDrawingManager = (map: any) => {
+    const self = this;
+    const options = {
+      drawingControl: true,
+      drawingControlOptions: {
+        drawingModes: ['polygon']
+      },
+      polygonOptions: {
+        draggable: false,
+        editable: true,
+        fillColor: 'red',
+        strokeColor: 'red'
+      },
+      drawingMode: google.maps.drawing.OverlayType.POLYGON,
+    };
+    this.drawingManager = new google.maps.drawing.DrawingManager(options);
+    this.drawingManager.setMap(map);
+    google.maps.event.addListener(
+      this.drawingManager,
+      'overlaycomplete',
+      (event) => {
+        if (event.type === google.maps.drawing.OverlayType.POLYGON) {
+          const paths = event.overlay.getPaths();
+          for (let p = 0; p < paths.getLength(); p++) {
+            google.maps.event.addListener(
+              paths.getAt(p),
+              'set_at',
+              () => {
+                if (!event.overlay.drag) {
+                  self.updatePointList(event.overlay.getPath());
+                }
+              }
+            );
+            google.maps.event.addListener(
+              paths.getAt(p),
+              'insert_at',
+              () => {
+                self.updatePointList(event.overlay.getPath());
+              }
+            );
+            google.maps.event.addListener(
+              paths.getAt(p),
+              'remove_at',
+              () => {
+                self.updatePointList(event.overlay.getPath());
+              }
+            );
+          }
+          self.updatePointList(event.overlay.getPath());
+        }
+        if (event.type !== google.maps.drawing.OverlayType.MARKER) {
+          // Switch back to non-drawing mode after drawing a shape.
+          self.drawingManager.setDrawingMode(null);
+          // To hide:
+          self.drawingManager.setOptions({
+            drawingControl: false,
+          });
+
+          // set selected shape object
+          const newShape = event.overlay;
+          newShape.type = event.type;
+          this.setSelection(newShape);
+        }
+      }
+    );
+  }
+  private setCurrentPosition() {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        this.lat = position.coords.latitude;
+        this.lng = position.coords.longitude;
+        console.log(this.lat, this.lng);
+        this.map.setCenter(new google.maps.LatLng(this.lat, this.lng));
+        console.log(this.map);
+      });
+    }
+  }
+  clearSelection() {
+    if (this.selectedShape) {
+      this.selectedShape.setEditable(false);
+      this.selectedShape = null;
+      this.pointList = [];
+    }
+  }
+  setSelection(shape) {
+    this.clearSelection();
+    this.selectedShape = shape;
+    shape.setEditable(true);
+  }
+
+  deleteSelectedShape() {
+    if (this.selectedShape) {
+      this.selectedShape.setMap(null);
+      this.selectedArea = 0;
+      this.pointList = [];
+      // To show:
+      this.drawingManager.setOptions({
+        drawingControl: true,
+      });
+    }
+  }
+
+  updatePointList(path) {
+    this.pointList = [];
+    const len = path.getLength();
+    for (let i = 0; i < len; i++) {
+      this.pointList.push(
+        path.getAt(i).toJSON()
+      );
+    }
+    this.selectedArea = google.maps.geometry.spherical.computeArea(
+      path
+    );
+  }
+
+  public addZone() {
+    let isValid: boolean = true;
+    if (isValid && (!this.zoneName || this.zoneName === '')) {
+      isValid = false;
+      this.showToast(null, 'info', 'Debe completar el nombre de la zona.');
+    }
+    if (isValid && this.existsZoneName()) {
+      isValid = false;
+      this.showToast(null, 'info', 'El nombre de la zona ya existe.');
+    }
+    if (isValid && (!this.zoneType || this.zoneType.toString() === '')) {
+      isValid = false;
+      this.showToast(null, 'info', 'Debe completar el tipo la zona.');
+    }
+    if (isValid && (!this.pointList || this.pointList.length === 0)) {
+      isValid = false;
+      this.showToast(null, 'info', 'Debe dibujar la zona en el mapa debajo.');
+    }
+    if (isValid) {
+      this.obj.zones.push({
+        name: this.zoneName,
+        type: this.zoneType,
+        points: this.pointList,
+        area: this.selectedArea
+      });
+      this.zoneName = '';
+      this.deleteSelectedShape();
+      this.showToast(null, 'success', 'Operación realizada con éxito');
+    }
+  }
+
+  public existsZoneName() {
+    let exists: boolean = false;
+    if (this.obj.zones && this.obj.zones.length > 0) {
+      for (let zone of this.obj.zones) {
+        if (zone.name === this.zoneName) exists = true;
+      }
+    }
+    return exists;
+  }
+  public createZone() {
+    this.zoneName = '';
+    this.selectedArea = 0;
+    this.pointList = [];
+    for (let zone of this.zonesActive) {
+      zone.polyline.setMap(null);
+    }
+    this.zonesActive = null;
+    this.initDrawingManager(this.map);
+  }
+
+  public viewAllZones() {
+    this.selectedArea = 0;
+    if (!this.zonesActive) this.zonesActive = new Array();
+
+    for (let zone of this.obj.zones) {
+      this.selectedArea += zone.area;
+      zone.points.push(zone.points[0]);
+      let fillColor: string;
+      let strokeColor: string;
+      if (zone.type === ZoneType.IN) {
+        fillColor = 'green';
+        strokeColor = 'green';
+      } else {
+        fillColor = 'red';
+        strokeColor = 'red';
+      }
+
+      this.zonesActive.push({
+        zone: zone,
+        polyline: new google.maps.Polyline({
+          path: zone.points,
+          geodesic: true,
+          fillColor: fillColor,
+          strokeColor: strokeColor,
+          strokeOpacity: 1.0,
+          strokeWeight: 2,
+          editable: false,
+          map: this.map
+        })
+      });
+    }
+    this.drawingManager.setMap(null);
+  }
+
+  public viewZone(pos: number) {
+    this.pointList = this.obj.zones[pos].points;
+    this.selectedArea = this.obj.zones[pos].area;
+    this.zoneName = this.obj.zones[pos].name;
+    this.zoneType = this.obj.zones[pos].type;
+
+    this.obj.zones[pos].points.push(this.obj.zones[pos].points[0]);
+
+    let fillColor: string;
+    let strokeColor: string;
+    if (this.zoneType === ZoneType.IN) {
+      fillColor = 'green';
+      strokeColor = 'green';
+    } else {
+      fillColor = 'red';
+      strokeColor = 'red';
+    }
+
+    if (!this.zonesActive) this.zonesActive = new Array();
+    this.zonesActive.push({
+      zone: this.obj.zones[pos],
+      polyline: new google.maps.Polyline({
+        path: this.pointList,
+        geodesic: true,
+        fillColor: fillColor,
+        strokeColor: strokeColor,
+        strokeOpacity: 1.0,
+        strokeWeight: 2,
+        editable: false,
+        map: this.map
+      })
+    });
+    this.drawingManager.setMap(null);
+  }
+
+  public deleteZone(pos: number) {
+    this.obj.zones.splice(pos, 1);
+    this.showToast(null, 'success', 'Operación realizada con éxito');
   }
 }

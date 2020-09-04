@@ -8,9 +8,9 @@
     <div class="card-header">
       <span>Listado de Transportes</span>
       <div class="pull-right">
-          <button class="btn" (click)="openModal('add', null)" ><i class="fa fa-plus"></i><span>Agregar</span></button>
-        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
-        
+        <button class="btn" (click)="openModal('add', null)"><i class="fa fa-plus"></i><span>Agregar</span></button>
+        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i
+            [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -26,9 +26,12 @@
           </tr>
           <tr class="filters">
             <th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['name']" (input)="getTransports()" placeholder="Nombre..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['identificationValue']" (input)="getTransports()" placeholder="Numero..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['account']" (input)="getTransports()" placeholder="Dirección..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['name']" (input)="getTransports()"
+                placeholder="Nombre..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['identificationValue']" (input)="getTransports()"
+                placeholder="Numero..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['account']" (input)="getTransports()"
+                placeholder="Dirección..."></th>
           </tr>
         </thead>
         <tbody>
@@ -42,19 +45,13 @@
                                                                       totalItems: totalItems
                                                                     }">
             <td align="left" width="150">
-              <button type="button"
-                      class="btn btn-success  btn-sm" 
-                      (click)="openModal('view', transport)" 
-                      title="Ver"><i class="fa fa-eye"></i></button>
-              <button type="button"
-                      class="btn btn-primary btn-sm"
-                      (click)="openModal('edit', transport)"
-                      title="Editar"><i class="fa fa-pencil"></i>
+              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', transport)" title="Ver"><i
+                  class="fa fa-eye"></i></button>
+              <button type="button" class="btn btn-primary btn-sm" (click)="openModal('edit', transport)" title="Editar"><i
+                  class="fa fa-pencil"></i>
               </button>
-              <button type="button"
-                      class="btn btn-danger btn-sm"
-                      (click)="openModal('delete', transport)"
-                      title="Eliminar"><i class="fa fa-trash-o"></i>
+              <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', transport)" title="Eliminar"><i
+                  class="fa fa-trash-o"></i>
               </button>
             </td>
             <td>{{transport.name}}</td>
@@ -71,12 +68,7 @@
     <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
-          <pagination-controls
-            class="my-pagination"
-            (pageChange)="pageChange($event)"
-            #api
-            previousLabel="Ant."
-            nextLabel="Sig."
+          <pagination-controls class="my-pagination" (pageChange)="pageChange($event)" #api previousLabel="Ant." nextLabel="Sig."
             autoHide="true">
           </pagination-controls>
         </div>

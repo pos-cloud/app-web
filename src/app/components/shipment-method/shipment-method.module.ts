@@ -14,6 +14,7 @@ import { DatatableModule } from '../datatable/datatable.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from 'app/main/pipes/pipes.module';
 import { ListShipmentMethodsComponent } from './list-shipment-methods/list-shipment-methods.component';
+import { AgmCoreModule } from '@agm/core';
 
 const routes: Routes = [
   {
@@ -37,7 +38,11 @@ const routes: Routes = [
     TranslateModule,
     NgbDropdownModule,
     NgbModule,
-    DatatableModule
+    DatatableModule,
+    AgmCoreModule.forRoot({
+      apiKey: "AIzaSyCi1AySMkCMeuptt0rwsgpo6nEgigDVJ4E",
+      libraries: ['places', 'drawing', 'geometry']
+    }),
   ],
   declarations: [
     ListShipmentMethodsComponent,

@@ -3,6 +3,15 @@ import { Model } from '../model/model.model';
 export class ShipmentMethod extends Model {
 
   public name: string;
+  public zones: [{
+    name: string,
+    type: ZoneType,
+    points: {
+      lat: number,
+      lng: number
+    }[],
+    area: number
+  }];
 
   constructor() { super(); }
 
@@ -31,4 +40,9 @@ export class ShipmentMethod extends Model {
       }
     ])
   }
+}
+
+export enum ZoneType {
+  IN = <any>"in",
+  OUT = <any>"out"
 }
