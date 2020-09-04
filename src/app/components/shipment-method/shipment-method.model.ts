@@ -4,7 +4,7 @@ import { Application } from '../application/application.model';
 export class ShipmentMethod extends Model {
 
   public name: string;
-  public zones: [{
+  public zones: {
     name: string,
     type: ZoneType,
     points: {
@@ -12,7 +12,7 @@ export class ShipmentMethod extends Model {
       lng: number
     }[],
     area: number
-  }];
+  }[];
   public applications: Application[];
 
   constructor() { super(); }

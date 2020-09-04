@@ -497,6 +497,7 @@ export class ShipmentMethodComponent implements OnInit {
       this.showToast(null, 'info', 'Debe dibujar la zona en el mapa debajo.');
     }
     if (isValid) {
+      if (!this.obj.zones) this.obj.zones = new Array();
       this.obj.zones.push({
         name: this.zoneName,
         type: this.zoneType,
@@ -531,7 +532,6 @@ export class ShipmentMethodComponent implements OnInit {
 
   public viewAllZones() {
     this.selectedArea = 0;
-    if (!this.zonesActive) this.zonesActive = new Array();
 
     for (let zone of this.obj.zones) {
       this.selectedArea += zone.area;
@@ -546,6 +546,7 @@ export class ShipmentMethodComponent implements OnInit {
         strokeColor = 'red';
       }
 
+      if (!this.zonesActive) this.zonesActive = new Array();
       this.zonesActive.push({
         zone: zone,
         polyline: new google.maps.Polyline({
