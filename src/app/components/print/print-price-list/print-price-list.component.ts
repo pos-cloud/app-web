@@ -436,9 +436,9 @@ export class PrintPriceListComponent implements OnInit {
                 row += 5
                 this.doc.setFontSize(this.fontSizes.extraLarge)
                 if (increasePrice != 0) {
-					this.doc.text(95, row + 8, "$" + (this.roundNumber.transform(article.salePrice + (article.salePrice * increasePrice / 100))).toString());
+					this.doc.text(95, row + 10, "$" + (this.roundNumber.transform(article.salePrice + (article.salePrice * increasePrice / 100))).toString());
 				} else {
-					this.doc.text(95, row + 8, "$" + (this.roundNumber.transform(article.salePrice)).toString());
+					this.doc.text(95, row + 10, "$" + (this.roundNumber.transform(article.salePrice)).toString());
                 }
                 this.doc.setFontSize(this.fontSizes.normal)
 
@@ -455,7 +455,8 @@ export class PrintPriceListComponent implements OnInit {
                                 this.doc.text(150, rowAux, value["description"] + " /STK: 0")
 							}
                         }
-					}
+                    }
+                    row = rowAux;
 				} else {
 					row += 5
 					var stock = await this.getStock(article._id)
@@ -465,7 +466,7 @@ export class PrintPriceListComponent implements OnInit {
 						this.doc.text(95, row, "/STK: 0")
 					}
 				}
-				row += 15
+				row += 16
 				//this.doc.line(0, row, 300, row);
 				//row += 5
 				count++;
