@@ -31,7 +31,7 @@
               <i class="fa fa-bars"></i>
             </th>
             <ng-container *ngFor="let column of columns">
-              <th *ngIf="column.visible" (click)="orderBy(column.name)">{{ column.name | translate }}</th>
+              <th *ngIf="column.visible" (click)="orderBy(column.name)">{{ column.name | translate | capitalize }}</th>
             </ng-container>
           </tr>
           <tr class="filters">
@@ -46,10 +46,10 @@
                   (change)="addFilters()">
                   <option value="" [ngClass]="{'disabled': loading, 'enabled': !loading }" [disabled]="!column.filter || loading">
                     {{'select filter' | translate | capitalize}}</option>
-                  <option value="true" [ngClass]="{'disabled': loading, 'enabled': !loading }"
+                  <option [value]="true" [ngClass]="{'disabled': loading, 'enabled': !loading }"
                     [disabled]="!column.filter || loading">{{'true' | translate | capitalize}}
                   </option>
-                  <option value="false" [ngClass]="{'disabled': loading, 'enabled': !loading }"
+                  <option [value]="false" [ngClass]="{'disabled': loading, 'enabled': !loading }"
                     [disabled]="!column.filter  || loading">{{'false' | translate | capitalize}}
                   </option>
                 </select>
@@ -77,7 +77,7 @@
               <td *ngIf="column.visible && column.datatype !== 'boolean'" [attr.align]="column.align">
                 {{getValue(item, column)}}</td>
               <td *ngIf="column.visible && column.datatype === 'boolean'" [attr.align]="column.align">
-                <input type="checkbox" [checked]="getValue(item, column) === 'true'" disabled>
+                <input type="checkbox" [checked]="getValue(item, column)" disabled>
               </td>
             </ng-container>
           </tr>

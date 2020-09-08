@@ -40,6 +40,16 @@ export class ShipmentMethod extends Model {
         project: null,
         align: 'left',
         required: false,
+      }, {
+        name: 'requireAddress',
+        visible: true,
+        disabled: false,
+        filter: true,
+        defaultFilter: null,
+        datatype: 'boolean',
+        project: null,
+        align: 'left',
+        required: false,
       }
     ])
   }

@@ -65,11 +65,15 @@ export class DatatableController {
       for (let i = 0; i < this.columns.length; i++) {
         if (this.columns[i].visible || this.columns[i].required) {
           let value = filters[this.columns[i].name];
-          if (value && value != "" && value !== {}) {
+          if (value != undefined && value != null && value != "" && value !== {}) {
             if (this.columns[i].defaultFilter) {
               match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
             } else {
-              match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
+              if(this.columns[i].datatype !== 'boolean') {
+                match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
+              } else {
+                match += `"${this.columns[i].name}": ${value}`;
+              }
             }
             if (i < this.columns.length - 1) {
               match += ',';
@@ -77,9 +81,9 @@ export class DatatableController {
           }
         }
       }
-
       if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
       match += `}`;
+      console.log(match);
       match = JSON.parse(match);
 
       // ARMAMOS EL PROJECT
@@ -92,8 +96,8 @@ export class DatatableController {
           }
           j++;
           if (!this.columns[i].project) {
-            if (this.columns[i].datatype !== "string") {
-              if (this.columns[i].datatype === "date") {
+            if (this.columns[i].datatype !== 'string' && this.columns[i].datatype !== 'boolean') {
+              if (this.columns[i].datatype === 'date') {
                 project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${timezone}" }}`
               } else {
                 project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
