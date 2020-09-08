@@ -4,6 +4,8 @@ import { Application } from '../application/application.model';
 export class ShipmentMethod extends Model {
 
   public name: string;
+  public applications: Application[];
+  public requireAddress: boolean = true;
   public zones: {
     name: string,
     type: ZoneType,
@@ -13,7 +15,6 @@ export class ShipmentMethod extends Model {
     }[],
     area: number
   }[];
-  public applications: Application[];
 
   constructor() { super(); }
 

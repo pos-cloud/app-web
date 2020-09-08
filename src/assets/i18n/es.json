@@ -329,5 +329,6 @@
   "defectShipmentMethod": "método de entrega defecto",
   "in": "incluye",
   "out": "excluye",
-  "notifications.app.checkout": "en la web al finalizar la compra"
+  "notifications.app.checkout": "en la web al finalizar la compra",
+  "requireAddress": "solicita dirección de envío"
 }

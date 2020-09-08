@@ -53,6 +53,12 @@ export class ShipmentMethodComponent implements OnInit {
     validators: [Validators.required],
     focus: true,
     class: 'form-group col-md-12'
+  }, {
+    name: 'requireAddress',
+    tag: 'select',
+    tagType: 'boolean',
+    values: ['true', 'false'],
+    class: 'form-group col-md-12'
   }];
   public formErrors: {} = {};
   public validationMessages = {
@@ -87,9 +93,10 @@ export class ShipmentMethodComponent implements OnInit {
       this.subscription.add(await this._objService.getAll(
         {
           name: 1,
-          zones: 1,
           'applications._id': 1,
           'applications.name': 1,
+          requireAddress: 1,
+          zones: 1,
         },
         { _id: { $oid: this.objId } }).subscribe(
           result => {
@@ -242,11 +249,15 @@ export class ShipmentMethodComponent implements OnInit {
           case 'number':
             this.obj[field.name] = parseFloat(this.obj[field.name]);
             break;
+          case 'boolean':
+            this.obj[field.name] = this.obj[field.name] === 'true';
+            break;
           default:
             break;
         }
       }
     }
+    console.log(this.obj);
 
     if (isValid) {
       switch (this.operation) {
