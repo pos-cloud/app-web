@@ -45,34 +45,20 @@ export class UnitOfMeasurementComponent implements OnInit {
     name: 'code',
     tag: 'input',
     tagType: 'text',
-    search: null,
-    format: null,
-    values: null,
     validators: [Validators.required],
     focus: true,
-    multiple: false,
     class: 'form-group col-md-3'
   }, {
     name: 'abbreviation',
     tag: 'input',
     tagType: 'text',
-    search: null,
-    format: null,
-    values: null,
     validators: [Validators.required],
-    focus: false,
-    multiple: false,
     class: 'form-group col-md-3'
   }, {
     name: 'name',
     tag: 'input',
     tagType: 'text',
-    search: null,
-    format: null,
-    values: null,
     validators: [Validators.required],
-    focus: false,
-    multiple: false,
     class: 'form-group col-md-6'
   }];
   public formErrors: {} = {};

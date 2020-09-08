@@ -45,12 +45,8 @@ export class CashBoxTypeComponent implements OnInit {
     name: 'name',
     tag: 'input',
     tagType: 'text',
-    search: null,
-    format: null,
-    values: null,
     validators: [Validators.required],
     focus: true,
-    multiple: false,
     class: 'form-group col-md-12'
   }];
   public formErrors: {} = {};

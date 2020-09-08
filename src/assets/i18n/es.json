@@ -328,5 +328,6 @@
   "shipmentMethod": "método de entrega",
   "defectShipmentMethod": "método de entrega defecto",
   "in": "incluye",
-  "out": "excluye"
+  "out": "excluye",
+  "notifications.app.checkout": "en la web al finalizar la compra"
 }

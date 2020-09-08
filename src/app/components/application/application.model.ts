@@ -26,6 +26,14 @@ export class Application extends Model {
   public auth: {
     requireOPT: boolean
   };
+  public notifications: {
+    app: {
+      checkout: string
+    },
+    email: {
+      checkout: string
+    }
+  };
 
   constructor() { super(); }
 

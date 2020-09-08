@@ -50,166 +50,78 @@ export class ApplicationComponent implements OnInit {
     name: 'Datos de la aplicación',
     tag: 'separator',
     tagType: null,
-    search: null,
-    format: null,
-    values: null,
-    validators: null,
-    focus: true,
-    multiple: false,
     class: 'form-group col-md-12'
   }, {
     name: 'order',
     tag: 'input',
     tagType: 'number',
-    search: null,
-    format: null,
-    values: null,
     validators: [Validators.required],
     focus: true,
-    multiple: false,
     class: 'form-group col-md-2'
   }, {
     name: 'type',
     tag: 'select',
     tagType: 'text',
-    search: null,
-    format: null,
     values: [ApplicationType.Web, ApplicationType.App],
     validators: [Validators.required],
-    focus: true,
-    multiple: false,
     class: 'form-group col-md-2'
   }, {
     name: 'name',
     tag: 'input',
     tagType: 'text',
-    search: null,
-    format: null,
-    values: null,
     validators: [Validators.required],
-    focus: true,
-    multiple: false,
     class: 'form-group col-md-4'
   }, {
     name: 'url',
     tag: 'input',
     tagType: 'text',
-    search: null,
-    format: null,
-    values: null,
     validators: [Validators.required],
-    focus: true,
-    multiple: false,
     class: 'form-group col-md-4'
   }, {
     name: 'Datos de contacto',
     tag: 'separator',
     tagType: null,
-    search: null,
-    format: null,
-    values: null,
-    validators: null,
-    focus: true,
-    multiple: false,
     class: 'form-group col-md-12'
   }, {
     name: 'contact.phone',
     tag: 'input',
     tagType: 'number',
-    search: null,
-    format: null,
-    values: null,
-    validators: null,
-    focus: true,
-    multiple: false,
     class: 'form-group col-md-6'
   }, {
     name: 'contact.whatsapp',
     tag: 'input',
     tagType: 'number',
-    search: null,
-    format: null,
-    values: null,
-    validators: null,
-    focus: true,
-    multiple: false,
     class: 'form-group col-md-6'
   }, {
     name: 'Redes sociales',
     tag: 'separator',
     tagType: null,
-    search: null,
-    format: null,
-    values: null,
-    validators: null,
-    focus: true,
-    multiple: false,
     class: 'form-group col-md-12'
   }, {
     name: 'socialNetworks.facebook',
     tag: 'input',
     tagType: 'text',
-    search: null,
-    format: null,
-    values: null,
-    validators: null,
-    focus: true,
-    multiple: false,
     class: 'form-group col-md-4'
   }, {
     name: 'socialNetworks.instagram',
     tag: 'input',
     tagType: 'text',
-    search: null,
-    format: null,
-    values: null,
-    validators: null,
-    focus: true,
-    multiple: false,
     class: 'form-group col-md-4'
   }, {
     name: 'socialNetworks.twitter',
     tag: 'input',
     tagType: 'text',
-    search: null,
-    format: null,
-    values: null,
-    validators: null,
-    focus: true,
-    multiple: false,
     class: 'form-group col-md-4'
   }, {
     name: 'Diseño',
     tag: 'separator',
     tagType: null,
-    search: null,
-    format: null,
-    values: null,
-    validators: null,
-    focus: true,
-    multiple: false,
     class: 'form-group col-md-12'
   }, {
     name: 'design.categoriesByLine',
     tag: 'select',
     tagType: null,
-    search: null,
-    format: null,
     values: ['1', '2', '3', '4'],
-    validators: null,
-    focus: true,
-    multiple: false,
-    class: 'form-group col-md-12'
-  }, {
-    name: 'design.about',
-    tag: 'html',
-    tagType: null,
-    search: null,
-    format: null,
-    values: null,
-    validators: null,
-    focus: true,
-    multiple: false,
     class: 'form-group col-md-12'
   }, {
     name: 'design.resources.banners',
@@ -217,32 +129,35 @@ export class ApplicationComponent implements OnInit {
     tagType: 'file',
     search: null,
     format: 'image',
-    values: null,
-    validators: null,
-    focus: true,
+    multiple: true,
+    class: 'form-group col-md-12'
+  }, {
+    name: 'design.about',
+    tag: 'html',
+    tagType: null,
+    class: 'form-group col-md-12'
+  }, {
+    name: 'Avisos',
+    tag: 'separator',
+    tagType: null,
+    class: 'form-group col-md-12'
+  }, {
+    name: 'notifications.app.checkout',
+    tag: 'input',
+    tagType: 'text',
+    default: 'Le notificaremos todos los detalles por correo electrónico. ¡Muchas Gracias por su compra!',
     multiple: true,
     class: 'form-group col-md-12'
   }, {
     name: 'Autentificación',
     tag: 'separator',
     tagType: null,
-    search: null,
-    format: null,
-    values: null,
-    validators: null,
-    focus: true,
-    multiple: false,
     class: 'form-group col-md-12'
   }, {
     name: 'auth.requireOPT',
     tag: 'select',
     tagType: null,
-    search: null,
-    format: null,
     values: ['true', 'false'],
-    validators: null,
-    focus: false,
-    multiple: false,
     class: 'form-group col-md-12'
   }];
   public formErrors: {} = {};
@@ -262,7 +177,7 @@ export class ApplicationComponent implements OnInit {
     ],
     toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | forecolor backcolor emoticons | print preview fullscreen",
     image_advtab: true,
-    height: 250,
+    height: 150,
     file_picker_types: 'file image media',
     images_dataimg_filter: function (img) {
       return img.hasAttribute('internal-blob');
@@ -300,6 +215,9 @@ export class ApplicationComponent implements OnInit {
         this.formErrors[field.name] = '';
         if (field.tag === 'autocomplete') {
           this.focus$[field.name] = new Subject<string>();
+        }
+        if(field.default) {
+          this.obj[field.name] = field.default;
         }
       }
     }
@@ -357,6 +275,7 @@ export class ApplicationComponent implements OnInit {
     for (let field of this.formFields) {
       if (field.tag !== 'separator') fields[field.name] = [this.obj[field.name], field.validators]
     }
+    console.log(fields);
     this.objForm = this._fb.group(fields);
     this.objForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
