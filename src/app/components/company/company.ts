@@ -173,6 +173,16 @@ export let attributes = [
     required : false,
   },
   {
+    name: 'gender',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    project: null,
+    align: 'left',
+    required : false,
+  },
+  {
     name: 'allowCurrentAccount',
     visible: true,
     disabled: false,
