@@ -67,7 +67,7 @@ export class ListChecksComponent implements OnInit {
         },
         {
             name: 'receiver',
-            visible: true,
+            visible: false,
             disabled: false,
             filter: true,
             datatype: 'string',
