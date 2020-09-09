@@ -1534,6 +1534,7 @@ export class AddSaleOrderComponent {
     }
 
     this.totalTaxesAmount = 0;
+    this.totalTaxesBase = 0;
 
     // REDONDEAMOS IMPUESTO
     for (let taxes of transactionTaxes) {

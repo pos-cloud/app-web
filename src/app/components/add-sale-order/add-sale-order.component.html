@@ -232,11 +232,11 @@
                                 <strong>Subtotal</strong>
                             </td>
                             <td align="right">
-                                <strong>{{transaction.totalPrice + transaction.discountAmount - totalTaxesAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
+                                <strong>{{transaction.totalPrice + transaction.discountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
                             </td>
                         </tr>
 
-                        <tr class="totals" *ngIf="transactionMovement !== 'Stock'">
+                        <tr class="totals" *ngIf="transaction.discountAmount > 0 && transactionMovement !== 'Stock'">
                             <td align="left">
                             </td>
                             <td align="left">
@@ -250,7 +250,6 @@
                         </tr>
 
                         <tr *ngIf="transactionMovement !== 'Stock' && transaction.type.requestTaxes"
-                            (click)="!loading ? openModal('change-taxes') : $event.stopPropagation()"
                             [ngClass]="{'disabled': loading, 'enabled': !loading }" class="pointer totals">
                             <td align="left">
                             </td>
@@ -278,7 +277,7 @@
                                 <strong>{{totalTaxesAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
                             </td>
                         </tr>
-                        <tr *ngIf="transactionMovement !== 'Stock' && transaction.type.requestTaxes"
+                        <tr *ngIf="transaction.exempt > 0 && transactionMovement !== 'Stock' && transaction.type.requestTaxes"
                             [ngClass]="{'disabled': loading, 'enabled': !loading }" class="pointer totals">
                             <td align="left">
                             </td>
@@ -291,8 +290,6 @@
                                 <strong>{{transaction.exempt | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
                             </td>
                         </tr>
-
-
                         <tr>
                             <td align="left">
                             </td>
