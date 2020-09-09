@@ -235,6 +235,35 @@
                                 <strong>{{transaction.totalPrice + transaction.discountAmount - totalTaxesAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
                             </td>
                         </tr>
+
+                        <tr class="totals" *ngIf="transactionMovement !== 'Stock'">
+                            <td align="left">
+                            </td>
+                            <td align="left">
+                            </td>
+                            <td align="left">
+                                <strong>Descuento</strong>
+                            </td>
+                            <td align="right">
+                                <strong>({{transaction.discountAmount | currency:'USD':'symbol-narrow':'1.2-2'}})</strong>
+                            </td>
+                        </tr>
+
+                        <tr *ngIf="transactionMovement !== 'Stock' && transaction.type.requestTaxes"
+                            (click)="!loading ? openModal('change-taxes') : $event.stopPropagation()"
+                            [ngClass]="{'disabled': loading, 'enabled': !loading }" class="pointer totals">
+                            <td align="left">
+                            </td>
+                            <td align="left">
+                            </td>
+                            <td align="left">
+                                <strong>Neto Gravado</strong>
+                            </td>
+                            <td align="right">
+                                <strong>{{totalTaxesBase | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
+                            </td>
+                        </tr>
+
                         <tr *ngIf="transactionMovement !== 'Stock' && transaction.type.requestTaxes"
                             (click)="!loading ? openModal('change-taxes') : $event.stopPropagation()"
                             [ngClass]="{'disabled': loading, 'enabled': !loading }" class="pointer totals">
@@ -249,25 +278,26 @@
                                 <strong>{{totalTaxesAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
                             </td>
                         </tr>
-                        <tr class="totals" *ngIf="transactionMovement !== 'Stock'">
+                        <tr *ngIf="transactionMovement !== 'Stock' && transaction.type.requestTaxes"
+                            [ngClass]="{'disabled': loading, 'enabled': !loading }" class="pointer totals">
                             <td align="left">
                             </td>
                             <td align="left">
                             </td>
                             <td align="left">
-                                <strong>Descuento</strong>
+                                <strong>Exento</strong>
                             </td>
                             <td align="right">
-                                <strong>({{transaction.discountAmount | currency:'USD':'symbol-narrow':'1.2-2'}})</strong>
+                                <strong>{{transaction.exempt | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
                             </td>
                         </tr>
+
+
                         <tr>
                             <td align="left">
                             </td>
                             <td align="left">
-
                             </td>
-
                             <td align="left">
                                 <h6>
                                     <b>TOTAL</b>

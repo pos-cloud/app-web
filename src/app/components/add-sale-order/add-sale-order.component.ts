@@ -138,6 +138,7 @@ export class AddSaleOrderComponent {
   @ViewChild(ListCategoriesPosComponent, { static: false }) listCategoriesComponent: ListCategoriesPosComponent;
   public categorySelected: Category;
   public totalTaxesAmount: number = 0;
+  public totalTaxesBase: number = 0;
   public filtersTaxClassification: TaxClassification[];
   public fastPayment: PaymentMethod
   public transports: Transport[];
@@ -1539,6 +1540,7 @@ export class AddSaleOrderComponent {
       taxes.taxBase = this.roundNumber.transform(taxes.taxBase);
       taxes.taxAmount = this.roundNumber.transform(taxes.taxAmount);
       this.totalTaxesAmount += taxes.taxAmount;
+      this.totalTaxesBase += taxes.taxBase;
     }
 
     this.transaction.taxes = transactionTaxes;
