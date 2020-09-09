@@ -1,142 +1,148 @@
 <div class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-2">
-        <label for="branch" class="control-label">
-          <b>Sucursal</b>
-        </label>
-        <select class="form-control" [(ngModel)]="branchSelectedId">
-          <option [ngValue]="null"
-                  [disabled]="!allowChangeBranch"
-                  [selected]="!branchSelectedId">
-            Todas
-          </option>
-          <option 
-            *ngFor="let branch of branches" 
-            [ngValue]="branch._id" 
-            [disabled]="!allowChangeBranch"
-            [selected]="(branch && branch._id && branch._id === branchSelectedId) ||
-                        (branch === branchSelectedId)"
-            >
-            {{branch.number}} - {{branch.name}}
-          </option>
-        </select>
-      </div>
-      <div class="col-md-2">
-        <label for="startDate" class="control-label">
-          <b>Fecha Desde:</b>
-        </label>
-        <input type="date" class="form-control" name="startDate" min="2000-01-01" [(ngModel)]="startDate" />
-      </div>
-      <div class="col-md-2">
-        <label for="startTime" class="control-label">
-          <b>Hora Desde:</b>
-        </label>
-        <input type="time" class="form-control" name="startTime" [(ngModel)]="startTime" />
-      </div>
-      <div class="col-md-2">
-        <label for="endDate" class="control-label">
-          <b>Fecha Hasta:</b>
-        </label>
-        <input type="date" class="form-control" name="endDate" min="2000-01-01" [(ngModel)]="endDate" />
-      </div>
-      <div class="col-md-2">
-        <label for="endTime" class="control-label">
-          <b>Hora Hasta:</b>
-        </label>
-        <input type="time" class="form-control" name="endTime" [(ngModel)]="endTime" />
-      </div>
-      <div class="col-md-2" (click)="loadStatistics()">
-        <label for="refresh" class="control-label"><b>Acción:</b></label>
-        <span class="form-control btn-action center-content">
-          <i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</span>
-      </div>
-    </div>
-    <br>
-    <br>
-    <div class="row">
-      <div class="col-md-4">
-        <div class="cardd card-stats card-success">
-          <div class="card-body ">
-            <div class="row">
-              <div class="col-5">
-                <div class="icon-big text-center">
-                  <i class="fa fa-bar-chart"></i>
-                </div>
-              </div>
-              <div class="col-7 d-flex align-items-center">
-                <div class="numbers">
-                  <p class="card-category" *ngIf="transactionMovement === 'Venta'">Ventas</p>
-                  <p class="card-category" *ngIf="transactionMovement === 'Compra'">Compras</p>
-                  <h4 class="card-title" *ngIf="loading">Cargando...</h4>
-                  <h4 class="card-title" *ngIf="!loading">{{ totalSales | currency:'USD':'symbol-narrow':'1.2-2' }}</h4>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="cardd card-stats card-info">
-          <div class="card-body ">
-            <div class="row">
-              <div class="col-5">
-                <div class="icon-big text-center">
-                  <i class="fa fa-money"></i>
-                </div>
-              </div>
-              <div class="col-7 d-flex align-items-center">
-                <div class="numbers">
-                  <p class="card-category" *ngIf="transactionMovement === 'Venta'">Cobranzas</p>
-                  <p class="card-category" *ngIf="transactionMovement === 'Compra'">Pagos</p>
-                  <h4 class="card-title" *ngIf="loading">Cargando...</h4>
-                  <h4 class="card-title" *ngIf="!loading">{{ totalCollections | currency:'USD':'symbol-narrow':'1.2-2' }}</h4>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="cardd card-stats card-danger">
-          <div class="card-body">
-            <div class="row">
-              <div class="col-5">
-                <div class="icon-big text-center">
-                  <i class="fa fa-undo"></i>
-                </div>
-              </div>
-              <div class="col-7 d-flex align-items-center">
-                <div class="numbers">
-                  <p class="card-category">Devoluciones</p>
-                  <h4 class="card-title" *ngIf="loading">Cargando...</h4>
-                  <h4 class="card-title" *ngIf="!loading">{{ totalReturns | currency:'USD':'symbol-narrow':'1.2-2' }}</h4>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
+    <div class="container-fluid">
         <div class="row">
-          <div class="col-md-6">
-            <app-report-best-selling-article [startDate]="startDate" [startTime]="startTime" [endDate]="endDate" [endTime]="endTime"></app-report-best-selling-article>
-          </div>
-          <div class="col-md-6">
-            <app-report-sales-by-payment-method [startDate]="startDate" [startTime]="startTime" [endDate]="endDate" [endTime]="endTime"></app-report-sales-by-payment-method>
-          </div>
+            <div class="col-md-2">
+                <label for="branch" class="control-label">
+                    <b>Sucursal</b>
+                </label>
+                <select class="form-control" [(ngModel)]="branchSelectedId">
+                    <option [ngValue]="null" [disabled]="!allowChangeBranch" [selected]="!branchSelectedId">
+                        Todas
+                    </option>
+                    <option *ngFor="let branch of branches" [ngValue]="branch._id" [disabled]="!allowChangeBranch"
+                        [selected]="(branch && branch._id && branch._id === branchSelectedId) ||
+                        (branch === branchSelectedId)">
+                        {{branch.number}} - {{branch.name}}
+                    </option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="startDate" class="control-label">
+                    <b>Fecha Desde:</b>
+                </label>
+                <input type="date" class="form-control" name="startDate" min="2000-01-01" [(ngModel)]="startDate" />
+            </div>
+            <div class="col-md-2">
+                <label for="startTime" class="control-label">
+                    <b>Hora Desde:</b>
+                </label>
+                <input type="time" class="form-control" name="startTime" [(ngModel)]="startTime" />
+            </div>
+            <div class="col-md-2">
+                <label for="endDate" class="control-label">
+                    <b>Fecha Hasta:</b>
+                </label>
+                <input type="date" class="form-control" name="endDate" min="2000-01-01" [(ngModel)]="endDate" />
+            </div>
+            <div class="col-md-2">
+                <label for="endTime" class="control-label">
+                    <b>Hora Hasta:</b>
+                </label>
+                <input type="time" class="form-control" name="endTime" [(ngModel)]="endTime" />
+            </div>
+            <div class="col-md-2" (click)="loadStatistics()">
+                <label for="refresh" class="control-label"><b>Acción:</b></label>
+                <span class="form-control btn-action center-content">
+                    <i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</span>
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="cardd card-stats card-success">
+                    <div class="card-body ">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="icon-big text-center">
+                                    <i class="fa fa-bar-chart"></i>
+                                </div>
+                            </div>
+                            <div class="col-7 d-flex align-items-center">
+                                <div class="numbers">
+                                    <p class="card-category" *ngIf="transactionMovement === 'Venta'">Ventas</p>
+                                    <p class="card-category" *ngIf="transactionMovement === 'Compra'">Compras</p>
+                                    <h4 class="card-title" *ngIf="loading">Cargando...</h4>
+                                    <h4 class="card-title" *ngIf="!loading">
+                                        {{ totalSales | currency:'USD':'symbol-narrow':'1.2-2' }}</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="cardd card-stats card-info">
+                    <div class="card-body ">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="icon-big text-center">
+                                    <i class="fa fa-money"></i>
+                                </div>
+                            </div>
+                            <div class="col-7 d-flex align-items-center">
+                                <div class="numbers">
+                                    <p class="card-category" *ngIf="transactionMovement === 'Venta'">Cobranzas</p>
+                                    <p class="card-category" *ngIf="transactionMovement === 'Compra'">Pagos</p>
+                                    <h4 class="card-title" *ngIf="loading">Cargando...</h4>
+                                    <h4 class="card-title" *ngIf="!loading">
+                                        {{ totalCollections | currency:'USD':'symbol-narrow':'1.2-2' }}</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="cardd card-stats card-danger">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="icon-big text-center">
+                                    <i class="fa fa-undo"></i>
+                                </div>
+                            </div>
+                            <div class="col-7 d-flex align-items-center">
+                                <div class="numbers">
+                                    <p class="card-category">Devoluciones</p>
+                                    <h4 class="card-title" *ngIf="loading">Cargando...</h4>
+                                    <h4 class="card-title" *ngIf="!loading">
+                                        {{ totalReturns | currency:'USD':'symbol-narrow':'1.2-2' }}</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row">
-          <div class="col-md-6">
-            <app-report-sales-by-client [startDate]="startDate" [startTime]="startTime" [endDate]="endDate" [endTime]="endTime"></app-report-sales-by-client>
-          </div>
-          <div class="col-md-6">
-            <app-report-sales-by-make [startDate]="startDate" [startTime]="startTime" [endDate]="endDate" [endTime]="endTime"></app-report-sales-by-make>
-          </div>
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-6">
+                        <app-report-best-selling-article [startDate]="startDate" [startTime]="startTime"
+                            [endDate]="endDate" [endTime]="endTime"></app-report-best-selling-article>
+                    </div>
+                    <div class="col-md-6">
+                        <app-report-sales-by-payment-method [startDate]="startDate" [startTime]="startTime"
+                            [endDate]="endDate" [endTime]="endTime"></app-report-sales-by-payment-method>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <app-report-sales-by-client [startDate]="startDate" [startTime]="startTime" [endDate]="endDate"
+                            [endTime]="endTime"></app-report-sales-by-client>
+                    </div>
+                    <div class="col-md-6">
+                        <app-report-sales-by-make [startDate]="startDate" [startTime]="startTime" [endDate]="endDate"
+                            [endTime]="endTime"></app-report-sales-by-make>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <app-report-birthday [startDate]="startDate" [startTime]="startTime" [endDate]="endDate" [endTime]="endTime"></app-report-birthday>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>

@@ -34,6 +34,7 @@ export class ReportBirthdayComponent implements OnInit {
     @Input() endDate: string;
     @Input() endTime: string;
     @Input() limit: number = 0;
+    @Input() origin : string;
     public dates: string[] = ["HOY", "ESTE MES", "TODOS"];
     public when: string;
     public listType: string = 'statistics';
@@ -73,8 +74,84 @@ export class ReportBirthdayComponent implements OnInit {
             this.timezone = Config.timezone.split('UTC')[1];
         }
 
-        this.getBirthday();
+        if(this.listType === 'statistics'){
+            this.getBirthday2();
+        } else {
+            this.getBirthday();
+        }
     }
+
+    public getBirthday2(): void {
+
+        this.loading = true;
+    
+        // FILTRAMOS LA CONSULTA
+        let match: any = `{ "operationType" : { "$ne" : "D" }`;
+        match += `,"birthday": { "$regex": "${moment(this.startDate, 'YYYY-MM-DD').format('DD/MM')}", "$options": "i"}`;
+
+    
+        if (this.transactionMovement === "Venta") {
+          match += `, "type": "${CompanyType.Client}" `;
+        } else if (this.transactionMovement === "Compra") {
+          match += `, "type": "${CompanyType.Provider}" `;
+        }
+    
+        match += `}`;
+        match = JSON.parse(match);
+    
+        // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+        let displayedColumns = [
+          "name",
+          "birthday",
+          "phones",
+          "emails",
+          "operationType",
+          "type"
+        ];
+    
+        let project = '{}';
+        if (displayedColumns && displayedColumns.length > 0) {
+          project = '{';
+          for (let i = 0; i < displayedColumns.length; i++) {
+            let field = displayedColumns[i];
+            project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y %H:%M:%S","timezone":"${this.timezone}"}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
+            if (i < displayedColumns.length - 1) {
+              project += ',';
+            }
+          }
+          project += '}';
+        }
+        project = JSON.parse(project);
+    
+        // AGRUPAMOS EL RESULTADO
+        let group = {
+          _id: null,
+          count: { $sum: 1 },
+          companies: { $push: "$$ROOT" }
+        };
+    
+        this.subscription.add(this._companyService.getCompaniesV2(
+          project, // PROJECT
+          match, // MATCH
+          { birthday: 1 }, // SORT
+          group, // GROUP
+          0, // LIMIT
+          0 // SKIP
+        ).subscribe(
+          result => {
+            this.loading = false;
+            if (result && result[0] && result[0].companies) {
+              this.companies = result[0].companies;
+            } else {
+              this.companies = new Array();
+            }
+          },
+          error => {
+            this.showMessage(error._body, 'danger', false);
+            this.loading = false;
+          }
+        ));
+      }
 
     public getBirthday(): void {
 
