@@ -300,7 +300,7 @@
   "warning": "Advertencia",
   "welcome": "Bienvenido",
   "with whom": "Con quién",
-  "wrong authentication token": "Token de autenticación incorrecto",
+  "wrong authentication token": "la sesión se ha vencido",
   "you must select a state": "Debe seleccionar una provincia",
   "you must select who correctly": "Debe seleccionar a quién correctamente",
   "you're not authorized": "No estas autorizado",
@@ -330,5 +330,7 @@
   "in": "incluye",
   "out": "excluye",
   "notifications.app.checkout": "en la web al finalizar la compra",
-  "requireAddress": "solicita dirección de envío"
+  "requireAddress": "solicita dirección de envío",
+  "design.categoryTitle": "Título de las categorías",
+  "design.showSearchBar": "Mostrar buscador"
 }

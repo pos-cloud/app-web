@@ -18,7 +18,9 @@ export class Application extends Model {
   }
   public design: {
     about: string,
+    categoryTitle: string,
     categoriesByLine: number,
+    showSearchBar: boolean,
     resources: {
       banners: string[]
     }

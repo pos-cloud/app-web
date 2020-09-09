@@ -118,10 +118,24 @@ export class ApplicationComponent implements OnInit {
     tagType: null,
     class: 'form-group col-md-12'
   }, {
+    name: 'design.categoryTitle',
+    tag: 'input',
+    tagType: 'text',
+    default: 'Categorías',
+    class: 'form-group col-md-6'
+  }, {
     name: 'design.categoriesByLine',
     tag: 'select',
     tagType: null,
     values: ['1', '2', '3', '4'],
+    default: '3',
+    class: 'form-group col-md-6'
+  }, {
+    name: 'design.showSearchBar',
+    tag: 'select',
+    tagType: null,
+    values: ['true', 'false'],
+    default: 'true',
     class: 'form-group col-md-12'
   }, {
     name: 'design.resources.banners',
@@ -216,7 +230,7 @@ export class ApplicationComponent implements OnInit {
         if (field.tag === 'autocomplete') {
           this.focus$[field.name] = new Subject<string>();
         }
-        if(field.default) {
+        if (field.default) {
           this.obj[field.name] = field.default;
         }
       }
