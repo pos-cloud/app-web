@@ -75,6 +75,7 @@ export class AuthService {
     userStorage.name = user.name;
     userStorage.employee = user.employee;
     userStorage.origin = user.origin;
+    userStorage.permission = user.permission;
     userStorage.cashBoxType = user.cashBoxType;
     sessionStorage.setItem('user', JSON.stringify(userStorage));
     sessionStorage.setItem('session_token', user.token);

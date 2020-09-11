@@ -1,219 +1,249 @@
 <div class="modal-header">
-  <h4 class="modal-title">Usuario <span *ngIf="user">{{user.name}}</span></h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
-    <span aria-hidden="true">&times;</span>
-  </button>
+    <h4 class="modal-title">Usuario <span *ngIf="user">{{user.name}}</span></h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
 </div>
 <section class="container-fluid">
-  <div class="center-content" *ngIf="alertMessage !== ''">
-    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-      {{alertMessage}}
-    </ngb-alert>
-  </div>
-  <form [formGroup]="userForm" #formAddUser="ngForm" (ngSubmit)="addUser()" autocomplete="off">
-    <div class="modal-body">
-      <ngb-tabset>
-        <ngb-tab title="Datos principales">
-          <ng-template ngbTabContent>
-            <div class="row">
-              <div class="col-md-12">
-                <div class="row">
-                  <div class="form-group col-md-2">
-                    <label for="branch" class="control-label">Sucursal</label>
-                    <div class="input-group">
-                      <select class="form-control" formControlName="branch">
-                        <option [ngValue]="null" [selected]="!user || !user.branch" [disabled]="readonly"></option>
-                        <option *ngFor="let branch of branches" [selected]="user.branch && user.branch._id === branch._id"
-                          [ngValue]="branch._id" [disabled]="readonly">
-                          {{branch.name}}</option>
-                      </select>
-                      <button type="button" class="btn btn-light" placement="right" popoverClass="popover-class"
-                        ngbPopover="Indica que sucursal pertenece el usuario.">
-                        <b>?</b>
-                      </button>
-                    </div>
-                  </div>
-                  <div class="form-group col-md-5">
-                    <label for="name" class="control-label">Nombre:</label>
-                    <div class="input-group">
-                      <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent"
-                        [readonly]="readonly" />
-                    </div>
-                    <div *ngIf="formErrors.name" class="alert alert-danger">
-                      {{ formErrors.name }}
-                    </div>
-                  </div>
-                  <div class="form-group col-md-3">
-                    <label for="state" class="control-label">Habilitado</label>
-                    <select class="form-control" formControlName="state">
-                      <option *ngFor="let state of states" [value]="state"
-                        [disabled]="readonly  || (identity && identity.employee && identity.employee.type && identity.employee.type.description !== 'Administrador')">
-                        {{state}}</option>
-                    </select>
-                    <div *ngIf="formErrors.state" class="alert alert-danger">
-                      {{ formErrors.state }}
-                    </div>
-                  </div>
-                  <div class="form-group col-md-2">
-                    <label for="level" class="control-label">Nivel:</label>
-                    <div class="input-group">
-                      <input type="text" class="form-control" formControlName="level" name="level" id="level"
-                        [readonly]="readonly" />
-                    </div>
-                    <div *ngIf="formErrors.level" class="alert alert-danger">
-                      {{ formErrors.level }}
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group col-md-6">
-                    <label for="email" class="control-label">Email:</label>
-                    <div class="input-group">
-                      <input type="text" class="form-control" formControlName="email" name="email" id="email"
-                        [readonly]="readonly" />
-                    </div>
-                    <div *ngIf="formErrors.email" class="alert alert-danger">
-                      {{ formErrors.email }}
-                    </div>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="password" class="control-label">Contraseña:</label>
-                    <input type="password" class="form-control" formControlName="password" name="password" id="password"
-                      [readonly]="readonly" />
-                    <div *ngIf="formErrors.password" class="alert alert-danger">
-                      {{ formErrors.password }}
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group col-md-6">
-                    <label for="employee" class="control-label">Empleado Asociado</label>
-                    <select class="form-control" formControlName="employee">
-                      <option [ngValue]="null" [selected]="!user || !user.employee"
-                        [disabled]="readonly || (identity && identity.employee && identity.employee.type && identity.employee.type.description !== 'Administrador')">
-                      </option>
-                      <option *ngFor="let employee of employees" [value]="employee._id"
-                        [disabled]="readonly || (identity && identity.employee && identity.employee.type && identity.employee.type.description !== 'Administrador')"
-                        [selected]="(user.employee && user.employee._id && employee._id===user.employee._id) ||
+    <div class="center-content" *ngIf="alertMessage !== ''">
+        <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+            {{alertMessage}}
+        </ngb-alert>
+    </div>
+    <form [formGroup]="userForm" #formAddUser="ngForm" (ngSubmit)="addUser()" autocomplete="off">
+        <div class="modal-body">
+            <ngb-tabset>
+                <ngb-tab title="Datos principales">
+                    <ng-template ngbTabContent>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="form-group col-md-2">
+                                        <label for="branch" class="control-label">Sucursal</label>
+                                        <div class="input-group">
+                                            <select class="form-control" formControlName="branch">
+                                                <option [ngValue]="null" [selected]="!user || !user.branch"
+                                                    [disabled]="readonly"></option>
+                                                <option *ngFor="let branch of branches"
+                                                    [selected]="user.branch && user.branch._id === branch._id"
+                                                    [ngValue]="branch._id" [disabled]="readonly">
+                                                    {{branch.name}}</option>
+                                            </select>
+                                            <button type="button" class="btn btn-light" placement="right"
+                                                popoverClass="popover-class"
+                                                ngbPopover="Indica que sucursal pertenece el usuario.">
+                                                <b>?</b>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-5">
+                                        <label for="name" class="control-label">Nombre:</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" formControlName="name" name="name"
+                                                id="name" [focus]="focusEvent" [readonly]="readonly" />
+                                        </div>
+                                        <div *ngIf="formErrors.name" class="alert alert-danger">
+                                            {{ formErrors.name }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label for="state" class="control-label">Habilitado</label>
+                                        <select class="form-control" formControlName="state">
+                                            <option *ngFor="let state of states" [value]="state"
+                                                [disabled]="readonly  || (identity && identity.employee && identity.employee.type && identity.employee.type.description !== 'Administrador')">
+                                                {{state}}</option>
+                                        </select>
+                                        <div *ngIf="formErrors.state" class="alert alert-danger">
+                                            {{ formErrors.state }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="level" class="control-label">Nivel:</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" formControlName="level" name="level"
+                                                id="level" [readonly]="readonly" />
+                                        </div>
+                                        <div *ngIf="formErrors.level" class="alert alert-danger">
+                                            {{ formErrors.level }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label for="email" class="control-label">Email:</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" formControlName="email" name="email"
+                                                id="email" [readonly]="readonly" />
+                                        </div>
+                                        <div *ngIf="formErrors.email" class="alert alert-danger">
+                                            {{ formErrors.email }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="password" class="control-label">Contraseña:</label>
+                                        <input type="password" class="form-control" formControlName="password"
+                                            name="password" id="password" [readonly]="readonly" />
+                                        <div *ngIf="formErrors.password" class="alert alert-danger">
+                                            {{ formErrors.password }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label for="employee" class="control-label">Empleado Asociado</label>
+                                        <select class="form-control" formControlName="employee">
+                                            <option [ngValue]="null" [selected]="!user || !user.employee"
+                                                [disabled]="readonly || (identity && identity.employee && identity.employee.type && identity.employee.type.description !== 'Administrador')">
+                                            </option>
+                                            <option *ngFor="let employee of employees" [value]="employee._id"
+                                                [disabled]="readonly || (identity && identity.employee && identity.employee.type && identity.employee.type.description !== 'Administrador')"
+                                                [selected]="(user.employee && user.employee._id && employee._id===user.employee._id) ||
                                           (user.employee && employee._id===user.employee)">
-                        {{employee.name}}
-                      </option>
-                    </select>
-                    <div *ngIf="formErrors.employee" class="alert alert-danger">
-                      {{ formErrors.employee }}
-                    </div>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <ng-template #rtCompanies let-r="result" let-t="term">
-                      <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
-                    </ng-template>
-                    <label for="company">Compañia Asociada:</label>
-                    <input id="company" type="text" class="form-control" formControlName="company" name="company"
-                      [ngbTypeahead]="searchCompanies" [resultTemplate]="rtCompanies" [inputFormatter]="formatterCompanies" [readonly]="readonly"/>
-                    <hr>
-                    <div *ngIf="formErrors.company" class="alert alert-danger">
-                      {{ formErrors.state }}
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group col-md-6">
-                    <label for="origin" class="control-label">Punto de Venta</label>
-                    <select class="form-control" formControlName="origin">
-                      <option [ngValue]="null" [selected]="!user || !user.origin"
-                        [disabled]="readonly || (identity && identity.employee && identity.employee.type && identity.employee.type.description !== 'Administrador')">
-                      </option>
-                      <option *ngFor="let origin of origins" [value]="origin._id"
-                        [disabled]="readonly || (identity && identity.employee && identity.employee.type && identity.employee.type.description !== 'Administrador')"
-                        [selected]="(user.origin && user.origin._id && origin._id===user.origin._id) ||
+                                                {{employee.name}}
+                                            </option>
+                                        </select>
+                                        <div *ngIf="formErrors.employee" class="alert alert-danger">
+                                            {{ formErrors.employee }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <ng-template #rtCompanies let-r="result" let-t="term">
+                                            <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+                                        </ng-template>
+                                        <label for="company">Compañia Asociada:</label>
+                                        <input id="company" type="text" class="form-control" formControlName="company"
+                                            name="company" [ngbTypeahead]="searchCompanies"
+                                            [resultTemplate]="rtCompanies" [inputFormatter]="formatterCompanies"
+                                            [readonly]="readonly" />
+                                        <hr>
+                                        <div *ngIf="formErrors.company" class="alert alert-danger">
+                                            {{ formErrors.state }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label for="origin" class="control-label">Punto de Venta</label>
+                                        <select class="form-control" formControlName="origin">
+                                            <option [ngValue]="null" [selected]="!user || !user.origin"
+                                                [disabled]="readonly || (identity && identity.employee && identity.employee.type && identity.employee.type.description !== 'Administrador')">
+                                            </option>
+                                            <option *ngFor="let origin of origins" [value]="origin._id"
+                                                [disabled]="readonly || (identity && identity.employee && identity.employee.type && identity.employee.type.description !== 'Administrador')"
+                                                [selected]="(user.origin && user.origin._id && origin._id===user.origin._id) ||
 											(user.origin && origin._id===user.origin)">
-                        {{origin.number}} ( Sucursal {{origin.branch.name}} )
-                      </option>
-                    </select>
-                    <div *ngIf="formErrors.origin" class="alert alert-danger">
-                      {{ formErrors.origin }}
-                    </div>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <ng-template #result let-r="result" let-t="term">
-                      <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+                                                {{origin.number}} ( Sucursal {{origin.branch.name}} )
+                                            </option>
+                                        </select>
+                                        <div *ngIf="formErrors.origin" class="alert alert-danger">
+                                            {{ formErrors.origin }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <ng-template #result let-r="result" let-t="term">
+                                            <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+                                        </ng-template>
+                                        <label for="cashBoxType">{{'cashBoxType'| translate | capitalize}}:</label>
+                                        <input id="cashBoxType" type="text" class="form-control"
+                                            formControlName="cashBoxType" name="cashBoxType"
+                                            [ngbTypeahead]="searchCashBoxTypes" [resultTemplate]="result"
+                                            [inputFormatter]="formatterCashBoxTypes" [readonly]="readonly" />
+                                        <div class="invalid-feedback"
+                                            [style.display]="(formErrors['cashBoxType'])? 'block': 'none'">
+                                            {{ formErrors['cashBoxType'] }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </ng-template>
-                    <label for="cashBoxType">{{'cashBoxType'| translate | capitalize}}:</label>
-                    <input id="cashBoxType" type="text" class="form-control" formControlName="cashBoxType" name="cashBoxType"
-                      [ngbTypeahead]="searchCashBoxTypes" [resultTemplate]="result" [inputFormatter]="formatterCashBoxTypes" [readonly]="readonly"/>
-                    <div class="invalid-feedback" [style.display]="(formErrors['cashBoxType'])? 'block': 'none'">
-                      {{ formErrors['cashBoxType'] }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </ng-template>
-        </ngb-tab>
-        <ngb-tab title="Accesos Directos">
-          <ng-template ngbTabContent>
-            <app-shortcut [shortcuts]="user.shortcuts" (eventAddShortcut)="addShortcut($event)">
-            </app-shortcut>
-          </ng-template>
-        </ngb-tab>
-        <ngb-tab title="Impresoras">
-          <ng-template ngbTabContent>
-            <div class="row tab-content">
-              <form #printerForm="ngForm" (ngSubmit)="addPrinter(printerForm)">
-                <div class="row">
-                  <div class="form-group col-md-8">
-                    <label for="printer" class="control-label">Impresora</label>
-                    <select class="form-control" ngModel name="printer">
-                      <option *ngFor="let printer of AuxPrinters" [ngValue]="printer._id" [disabled]="readonly">
-                        {{printer.name}} - {{printer.printIn}}</option>
-                    </select>
-                  </div>
-                  <div class="form-group col-md-2">
-                    <label class="control-label">Acción:</label>
-                    <button type="summit" class="btn btn-success btn-sm">
-                      <i class="fa fa-plus"></i>
-                    </button>
-                  </div>
-                </div>
-              </form>
+                </ngb-tab>
+                <ngb-tab title="Accesos Directos">
+                    <ng-template ngbTabContent>
+                        <app-shortcut [shortcuts]="user.shortcuts" (eventAddShortcut)="addShortcut($event)">
+                        </app-shortcut>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab title="Permisos">
+                    <ng-template ngbTabContent>
+                        <div class="row">
+                            <div class="form-group col-md-2">
+                                <label for="permission" class="control-label">Permiso</label>
+                                <div class="input-group">
+                                    <select class="form-control" formControlName="permission">
+                                        <option [ngValue]="null" [selected]="!user || !user.permission"
+                                            [disabled]="readonly"></option>
+                                        <option *ngFor="let permission of permissions"
+                                            [selected]="user.permission && user.permission._id === permission._id"
+                                            [ngValue]="permission._id" [disabled]="readonly">
+                                            {{permission.name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab title="Impresoras">
+                    <ng-template ngbTabContent>
+                        <div class="row tab-content">
+                            <form #printerForm="ngForm" (ngSubmit)="addPrinter(printerForm)">
+                                <div class="row">
+                                    <div class="form-group col-md-8">
+                                        <label for="printer" class="control-label">Impresora</label>
+                                        <select class="form-control" ngModel name="printer">
+                                            <option *ngFor="let printer of AuxPrinters" [ngValue]="printer._id"
+                                                [disabled]="readonly">
+                                                {{printer.name}} - {{printer.printIn}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label class="control-label">Acción:</label>
+                                        <button type="summit" class="btn btn-success btn-sm">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
 
-              <table class="table table-striped">
-                <thead>
-                  <tr class="separation">
-                    <th>Impresoras Disponibles</th>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr class="separation">
+                                        <th>Impresoras Disponibles</th>
 
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="separation" *ngFor="let printerAux of userForm.get('printers').controls; let i = index;">
-                    <div *ngFor="let printer of AuxPrinters; let i = index">
-                      <td
-                        *ngIf="printerAux && printerAux.value && printerAux.value.printer &&  printerAux.value.printer === printer._id">
-                        {{printer.name}} - {{printer.printIn}}</td>
-                    </div>
-                    <td align="right" width="10">
-                      <button type="button" class="btn btn-danger btn-sm" (click)="deletePrinter(i)">
-                        <i class="fa fa-trash-o"></i>
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-                <tfoot>
-                </tfoot>
-              </table>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="separation"
+                                        *ngFor="let printerAux of userForm.get('printers').controls; let i = index;">
+                                        <div *ngFor="let printer of AuxPrinters; let i = index">
+                                            <td
+                                                *ngIf="printerAux && printerAux.value && printerAux.value.printer &&  printerAux.value.printer === printer._id">
+                                                {{printer.name}} - {{printer.printIn}}</td>
+                                        </div>
+                                        <td align="right" width="10">
+                                            <button type="button" class="btn btn-danger btn-sm"
+                                                (click)="deletePrinter(i)">
+                                                <i class="fa fa-trash-o"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                </tfoot>
+                            </table>
 
-            </div>
-          </ng-template>
-        </ngb-tab>
-      </ngb-tabset>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="!userForm.valid || loading">
-        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
-        <span *ngIf="!loading">Guardar</span>
-        <span *ngIf="loading">Espere por favor</span>
-      </button>
-    </div>
-  </form>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
+            <button type="submit" class="btn btn-primary" [disabled]="!userForm.valid || loading">
+                <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+                <span *ngIf="!loading">Guardar</span>
+                <span *ngIf="loading">Espere por favor</span>
+            </button>
+        </div>
+    </form>
 </section>
