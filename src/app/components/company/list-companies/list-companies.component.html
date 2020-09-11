@@ -22,11 +22,11 @@
                         </div>
                     </div>
                 </div>
-                <button class="btn" (click)="openModal('add', null)"><i
+                <button *ngIf="actions && actions.add" class="btn" (click)="openModal('add', null)"><i
                         class="fa fa-plus"></i><span>Agregar</span></button>
                 <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i
                         [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
-                <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns"
+                <app-export-excel *ngIf="actions && actions.export" #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns"
                     (eventExport)="exportItems($event)"></app-export-excel>
 
             </div>
@@ -66,9 +66,9 @@
                         <td align="left" width="100">
                             <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', item)"
                                 title="Ver"><i class="fa fa-eye"></i></button>
-                            <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', item)"
+                            <button *ngIf="actions && actions.edit" type="button" class="btn btn-primary btn-sm" (click)="openModal('update', item)"
                                 title="Editar"><i class="fa fa-pencil"></i></button>
-                            <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', item)"
+                            <button *ngIf="actions && actions.delete" type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', item)"
                                 title="Eliminar"><i class="fa fa-trash-o"></i></button>
                             <button type="button" class="btn btn-light btn-sm" (click)="openModal('account', item)"
                                 title="Cuenta Corriente"><i class="fa fa-book"></i></button>
