@@ -1,333 +1,360 @@
 <div class="modal-header">
-  <h4 class="modal-title">Forma de pago</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
-    <span aria-hidden="true">&times;</span>
-  </button>
+    <h4 class="modal-title">Forma de pago</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
 </div>
 <section class="container-fluid">
-  <div class="center-content" *ngIf="alertMessage !== ''">
-    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-      {{alertMessage}}
-    </ngb-alert>
-  </div>
-  <form [formGroup]="movementOfCashForm" #formAddMovementOfCash="ngForm" autocomplete="off" (ngSubmit)="addMovementOfCash()">
-    <div class="modal-body">
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="transactionAmount" class="control-label">Importe de la transacción:</label>
-          <div class="input-group">
-            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-            <input type="number" class="form-control" formControlName="transactionAmount" name="transactionAmount" readonly />
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-3">
-          <label for="paymentMethod" class="control-label">Medio de pago:</label>
-          <div class="btn-group-vertical">
-            <button type="button" *ngFor="let paymentMethod of paymentMethods" class="btn btn-select"
-              [ngClass]="{'btn-primary':paymentMethod._id===paymentMethodSelected._id, 'btn-outline-primary':paymentMethod._id!==paymentMethodSelected._id}"
-              (click)="changePaymentMethod(paymentMethod)">
-              {{ paymentMethod.name }}
-            </button>
-          </div>
-          <div *ngIf="formErrors.paymentMethod" class="alert alert-danger">
-            {{ formErrors.paymentMethod }}
-          </div>
-        </div>
-        <div class="form-group col-md-9">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="row">
+    <div class="center-content" *ngIf="alertMessage !== ''">
+        <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+            {{alertMessage}}
+        </ngb-alert>
+    </div>
+    <form [formGroup]="movementOfCashForm" #formAddMovementOfCash="ngForm" autocomplete="off"
+        (ngSubmit)="addMovementOfCash()">
+        <div class="modal-body">
+            <div class="row">
                 <div class="form-group col-md-12">
-                  <label *ngIf="transaction && transaction.type && transaction.type.movement.toString() === 'Entrada'"
-                    for="amountToPay" class="control-label">Importe recibido:</label>
-                  <label *ngIf="transaction && transaction.type && transaction.type.movement.toString() === 'Salida'"
-                    for="amountToPay" class="control-label">Importe a pagar:</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-                    <input (input)="onInputChange($event)" class="form-control input" formControlName="amountToPay"
-                      name="amountToPay" min="0" step="1" [focus]="focusEvent" (change)="changeAmountToPay()" />
-                  </div>
-                  <div *ngIf="formErrors.amountToPay" class="alert alert-danger">
-                    {{ formErrors.amountToPay }}
-                  </div>
+                    <label for="transactionAmount" class="control-label">Importe de la transacción:</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
+                        <input type="number" class="form-control" formControlName="transactionAmount"
+                            name="transactionAmount" readonly />
+                    </div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="form-group col-md-12">
-                  <label for="amountPaid" class="control-label">Importe abonado:</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-                    <input type="number" class="form-control" formControlName="amountPaid" name="amountPaid" min="0" step="1"
-                      readonly />
-                  </div>
-                  <div *ngIf="formErrors.amountPaid" class="alert alert-danger">
-                    {{ formErrors.amountPaid }}
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="form-group col-md-12">
-                  <label for="paymentChange" class="control-label">Su vuelto es:</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-                    <input type="number" class="form-control" name="paymentChange" formControlName="paymentChange" min="0"
-                      step="1" readonly />
-                  </div>
-                </div>
-              </div>
             </div>
-            <div class="col-md-6">
-              <div class="simple-keyboard"></div>
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label for="paymentMethod" class="control-label">Medio de pago:</label>
+                    <div class="btn-group-vertical">
+                        <button type="button" *ngFor="let paymentMethod of paymentMethods" class="btn btn-select"
+                            [ngClass]="{'btn-primary':paymentMethod._id===paymentMethodSelected._id, 'btn-outline-primary':paymentMethod._id!==paymentMethodSelected._id}"
+                            (click)="changePaymentMethod(paymentMethod)">
+                            {{ paymentMethod.name }}
+                        </button>
+                    </div>
+                    <div *ngIf="formErrors.paymentMethod" class="alert alert-danger">
+                        {{ formErrors.paymentMethod }}
+                    </div>
+                </div>
+                <div class="form-group col-md-9">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label
+                                        *ngIf="transaction && transaction.type && transaction.type.movement.toString() === 'Entrada'"
+                                        for="amountToPay" class="control-label">Importe recibido:</label>
+                                    <label
+                                        *ngIf="transaction && transaction.type && transaction.type.movement.toString() === 'Salida'"
+                                        for="amountToPay" class="control-label">Importe a pagar:</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text"
+                                                id="basic-addon1">$</span></div>
+                                        <input (input)="onInputChange($event)" class="form-control input"
+                                            formControlName="amountToPay" name="amountToPay" min="0" step="1"
+                                            [focus]="focusEvent" (change)="changeAmountToPay()" />
+                                    </div>
+                                    <div *ngIf="formErrors.amountToPay" class="alert alert-danger">
+                                        {{ formErrors.amountToPay }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label for="amountPaid" class="control-label">Importe abonado:</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text"
+                                                id="basic-addon1">$</span></div>
+                                        <input type="number" class="form-control" formControlName="amountPaid"
+                                            name="amountPaid" min="0" step="1" readonly />
+                                    </div>
+                                    <div *ngIf="formErrors.amountPaid" class="alert alert-danger">
+                                        {{ formErrors.amountPaid }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label for="paymentChange" class="control-label">Su vuelto es:</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text"
+                                                id="basic-addon1">$</span></div>
+                                        <input type="number" class="form-control" name="paymentChange"
+                                            formControlName="paymentChange" min="0" step="1" readonly />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="simple-keyboard"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-      <div class="row" *ngIf="paymentMethodSelected && (
+            <div class="row" *ngIf="paymentMethodSelected && (
                                 ( paymentMethodSelected.discount &&
                                   paymentMethodSelected.discount > 0) ||
                                 ( paymentMethodSelected.surcharge &&
                                   paymentMethodSelected.surcharge > 0))">
-        <div class="form-group col-md-4">
-          <label for="discount" class="control-label">Descuento:</label>
-          <div class="input-group">
-            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
-            <input type="number" class="form-control" formControlName="discount" name="discount" min="0" step="1" readonly />
-          </div>
-        </div>
-        <div class="form-group col-md-4">
-          <label for="surcharge" class="control-label">Recargo:</label>
-          <div class="input-group">
-            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
-            <input type="number" class="form-control" formControlName="surcharge" name="surcharge" min="0" step="1" readonly />
-          </div>
-        </div>
-        <div class="form-group col-md-4">
-          <label for="amountDiscount" class="control-label">Monto Descuento/Recargo:</label>
-          <div class="input-group">
-            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-            <input type="number" class="form-control" min="0" step="1" formControlName="amountDiscount" name="amountDiscount"
-              readonly />
-          </div>
-        </div>
-      </div>
-      <div class="row" *ngIf="paymentMethodSelected && (
+                <div class="form-group col-md-4">
+                    <label for="discount" class="control-label">Descuento:</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
+                        <input type="number" class="form-control" formControlName="discount" name="discount" min="0"
+                            step="1" readonly />
+                    </div>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="surcharge" class="control-label">Recargo:</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
+                        <input type="number" class="form-control" formControlName="surcharge" name="surcharge" min="0"
+                            step="1" readonly />
+                    </div>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="amountDiscount" class="control-label">Monto Descuento/Recargo:</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
+                        <input type="number" class="form-control" min="0" step="1" formControlName="amountDiscount"
+                            name="amountDiscount" readonly />
+                    </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="paymentMethodSelected && (
                                 ( paymentMethodSelected.commission &&
                                   paymentMethodSelected.commission > 0))">
-        <div class="form-group col-md-6">
-          <label for="percentageCommission" class="control-label">Comisión:</label>
-          <div class="input-group">
-            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
-            <input type="number" class="form-control" formControlName="percentageCommission" name="percentageCommission" min="0" step="1" (blur)="changePercentageCommission()"/>
-          </div>
-        </div>
-        <div class="form-group col-md-6">
-          <label for="commissionAmount" class="control-label">Monto Comisión:</label>
-          <div class="input-group">
-            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-            <input type="number" class="form-control" min="0" step="1" formControlName="commissionAmount" name="commissionAmount"
-              readonly />
-          </div>
-        </div>
-      </div>
-      <div class="row"
-        *ngIf="paymentMethodSelected && paymentMethodSelected.isCurrentAccount && !paymentMethodSelected.allowToFinance">
-        <div class="form-group col-md-12">
-          <label for="expirationDate" class="control-label">Fecha Vencimiento:</label>
-          <input type="date" class="form-control" formControlName="expirationDate" name="expirationDate" min="2000-01-01" (blur)="changePercentageCommission()"/>
-        </div>
-      </div>
-      <div class="row" *ngIf="paymentMethodSelected && paymentMethodSelected.allowToFinance">
-        <div class="form-group col-md-12 box-finance">
-          <div class="row">
-            <div class="form-group col-md-12">
-              <b>Financiación</b>
+                <div class="form-group col-md-5">
+                    <label for="percentageCommission" class="control-label">Comisión:</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
+                        <input type="number" class="form-control" formControlName="percentageCommission"
+                            name="percentageCommission" min="0" step="1" (blur)="changePercentageCommission()" />
+                    </div>
+                </div>
+                <div class="form-group col-md-5">
+                    <label for="commissionAmount" class="control-label">Monto Comisión:</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
+                        <input type="number" class="form-control" min="0" step="1" formControlName="commissionAmount"
+                            name="commissionAmount" readonly />
+                    </div>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="daysCommission" class="control-label">Días calculados:</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" formControlName="daysCommission"
+                            name="daysCommission" readonly/>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="form-group col-md-6">
-              <label for="quotas" class="control-label">Cant. Cuotas:</label>
-              <div class="input-group">
-                <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1"><i
-                      class="fa fa-list-ol"></i></span></div>
-                <input type="number" class="form-control" formControlName="quotas" name="quotas" min="0" step="1"
-                  (change)="calculateQuotas('quotas')" />
-              </div>
+            <div class="row"
+                *ngIf="paymentMethodSelected && paymentMethodSelected.isCurrentAccount && !paymentMethodSelected.allowToFinance">
+                <div class="form-group col-md-12">
+                    <label for="expirationDate" class="control-label">Fecha Vencimiento:</label>
+                    <input type="date" class="form-control" formControlName="expirationDate" name="expirationDate"
+                        min="2000-01-01" (blur)="changePercentageCommission()" />
+                </div>
             </div>
-            <div class="form-group col-md-6">
-              <label for="days" class="control-label">Cant. Días:</label>
-              <div class="input-group">
-                <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1"><i
-                      class="fa fa-calendar"></i></span></div>
-                <input type="number" class="form-control" formControlName="days" name="days" min="0" step="1"
-                  (change)="calculateQuotas('days')" />
-              </div>
+            <div class="row" *ngIf="paymentMethodSelected && paymentMethodSelected.allowToFinance">
+                <div class="form-group col-md-12 box-finance">
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <b>Financiación</b>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="quotas" class="control-label">Cant. Cuotas:</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1"><i
+                                            class="fa fa-list-ol"></i></span></div>
+                                <input type="number" class="form-control" formControlName="quotas" name="quotas" min="0"
+                                    step="1" (change)="calculateQuotas('quotas')" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="days" class="control-label">Cant. Días:</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1"><i
+                                            class="fa fa-calendar"></i></span></div>
+                                <input type="number" class="form-control" formControlName="days" name="days" min="0"
+                                    step="1" (change)="calculateQuotas('days')" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label for="expirationDate" class="control-label">Fecha:</label>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="quota" class="control-label">Cuota:</label>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="amount" class="control-label">Monto:</label>
+                        </div>
+                    </div>
+                    <div class="row" *ngFor="let mov of movementsOfCashesToFinance">
+                        <div class="form-group col-md-4">
+                            <input type="date" class="form-control" name="expirationDate" min="0" step="1"
+                                #expirationDateMov [value]="mov.expirationDate | dateFormat:'YYYY-MM-DD'"
+                                (blur)="calculateQuotas('expirationDate', expirationDateMov.value, mov)" />
+                        </div>
+                        <div class="form-group col-md-4">
+                            <input type="number" class="form-control" name="expirationDate" min="0" step="1"
+                                [value]="mov.quota" readonly />
+                        </div>
+                        <div class="form-group col-md-4">
+                            <div class="input-group">
+                                <div class="input-group-prepend"><span class="input-group-text"
+                                        id="basic-addon1">$</span></div>
+                                <input type="number" class="form-control" name="amountPaid" min="0" step="1"
+                                    #amountPaidMov [value]="mov.amountPaid"
+                                    (change)="calculateQuotas('amountPaid', amountPaidMov.value, mov)" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="form-group col-md-4">
-              <label for="expirationDate" class="control-label">Fecha:</label>
-            </div>
-            <div class="form-group col-md-4">
-              <label for="quota" class="control-label">Cuota:</label>
-            </div>
-            <div class="form-group col-md-4">
-              <label for="amount" class="control-label">Monto:</label>
-            </div>
-          </div>
-          <div class="row" *ngFor="let mov of movementsOfCashesToFinance">
-            <div class="form-group col-md-4">
-              <input type="date" class="form-control" name="expirationDate" min="0" step="1" #expirationDateMov
-                [value]="mov.expirationDate | dateFormat:'YYYY-MM-DD'"
-                (blur)="calculateQuotas('expirationDate', expirationDateMov.value, mov)" />
-            </div>
-            <div class="form-group col-md-4">
-              <input type="number" class="form-control" name="expirationDate" min="0" step="1" [value]="mov.quota" readonly />
-            </div>
-            <div class="form-group col-md-4">
-              <div class="input-group">
-                <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-                <input type="number" class="form-control" name="amountPaid" min="0" step="1" #amountPaidMov
-                  [value]="mov.amountPaid" (change)="calculateQuotas('amountPaid', amountPaidMov.value, mov)" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="observation" class="control-label">Observación:</label>
-          <textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2">
+            <div class="row">
+                <div class="form-group col-md-12">
+                    <label for="observation" class="control-label">Observación:</label>
+                    <textarea type="text" class="form-control" formControlName="observation" name="observation"
+                        id="observation" rows="2">
                     </textarea>
-        </div>
-      </div>
-      <div *ngIf="paymentMethodSelected && paymentMethodSelected.allowBank" class="row">
-        <div class="form-group col-md-12">
-          <label for="bank" class="control-label">Banco</label>
-          <select class="form-control" formControlName="bank">
-            <option *ngFor="let bank of banks" [selected]="(movementOfCash.bank && movementOfCash.bank._id && bank._id===movementOfCash.bank._id) ||
+                </div>
+            </div>
+            <div *ngIf="paymentMethodSelected && paymentMethodSelected.allowBank" class="row">
+                <div class="form-group col-md-12">
+                    <label for="bank" class="control-label">Banco</label>
+                    <select class="form-control" formControlName="bank">
+                        <option *ngFor="let bank of banks" [selected]="(movementOfCash.bank && movementOfCash.bank._id && bank._id===movementOfCash.bank._id) ||
                                   (movementOfCash.bank && bank._id===movementOfCash.bank)" [value]="bank._id"
-              [disabled]="readonly">
-              {{bank.code}} - {{bank.name}}</option>
-          </select>
-          <div *ngIf="formErrors.bank" class="alert alert-danger">
-            {{ formErrors.bank }}
-          </div>
-        </div>
-      </div>
-      <div *ngIf="paymentMethodSelected &&
+                            [disabled]="readonly">
+                            {{bank.code}} - {{bank.name}}</option>
+                    </select>
+                    <div *ngIf="formErrors.bank" class="alert alert-danger">
+                        {{ formErrors.bank }}
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="paymentMethodSelected &&
                     paymentMethodSelected.checkDetail &&
                     (!paymentMethodSelected.inputAndOuput ||
                     transaction.type.movement.toString() === 'Entrada')">
-        <div class="row">
-          <div class="form-group col-md-6">
-            <b>Datos del cheque:</b>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-6">
-            <label for="number" class="control-label">Comprobante:</label>
-            <input type="text" class="form-control" name="number" formControlName="number" />
-            <div *ngIf="formErrors.number" class="alert alert-danger">
-              {{ formErrors.number }}
-            </div>
-          </div>
-          <div class="form-group col-md-6">
-            <label for="expirationDate" class="control-label">Fecha Vencimiento:</label>
-            <input type="date" class="form-control" formControlName="expirationDate" name="expirationDate" min="2000-01-01"  (blur)="changePercentageCommission()"/>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <label for="bank" class="control-label">Banco</label>
-            <select class="form-control" formControlName="bank">
-              <option *ngFor="let bank of banks" [selected]="(movementOfCash.bank && movementOfCash.bank._id && bank._id===movementOfCash.bank._id) ||
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <b>Datos del cheque:</b>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="number" class="control-label">Comprobante:</label>
+                        <input type="text" class="form-control" name="number" formControlName="number" />
+                        <div *ngIf="formErrors.number" class="alert alert-danger">
+                            {{ formErrors.number }}
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="expirationDate" class="control-label">Fecha Vencimiento:</label>
+                        <input type="date" class="form-control" formControlName="expirationDate" name="expirationDate"
+                            min="2000-01-01" (blur)="changePercentageCommission()" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <label for="bank" class="control-label">Banco</label>
+                        <select class="form-control" formControlName="bank">
+                            <option *ngFor="let bank of banks" [selected]="(movementOfCash.bank && movementOfCash.bank._id && bank._id===movementOfCash.bank._id) ||
                                       (movementOfCash.bank && bank._id===movementOfCash.bank)" [value]="bank._id"
-                [disabled]="readonly">
-                {{bank.code}} - {{bank.name}}</option>
-            </select>
-            <div *ngIf="formErrors.bank" class="alert alert-danger">
-              {{ formErrors.bank }}
+                                [disabled]="readonly">
+                                {{bank.code}} - {{bank.name}}</option>
+                        </select>
+                        <div *ngIf="formErrors.bank" class="alert alert-danger">
+                            {{ formErrors.bank }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="deliveredBy" class="control-label">Entregado por:</label>
+                        <input type="text" class="form-control" name="deliveredBy" formControlName="deliveredBy" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="receiver" class="control-label">Destinatario:</label>
+                        <input type="text" class="form-control" name="receiver" formControlName="receiver" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="titular" class="control-label">Titular:</label>
+                        <input type="text" class="form-control" name="titular" formControlName="titular" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="CUIT" class="control-label">CUIT:</label>
+                        <input type="text" class="form-control" name="CUIT" formControlName="CUIT" />
+                        <div *ngIf="formErrors.CUIT" class="alert alert-danger">
+                            {{ formErrors.CUIT }}
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-6">
-            <label for="deliveredBy" class="control-label">Entregado por:</label>
-            <input type="text" class="form-control" name="deliveredBy" formControlName="deliveredBy" />
-          </div>
-          <div class="form-group col-md-6">
-            <label for="receiver" class="control-label">Destinatario:</label>
-            <input type="text" class="form-control" name="receiver" formControlName="receiver" />
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-6">
-            <label for="titular" class="control-label">Titular:</label>
-            <input type="text" class="form-control" name="titular" formControlName="titular" />
-          </div>
-          <div class="form-group col-md-6">
-            <label for="CUIT" class="control-label">CUIT:</label>
-            <input type="text" class="form-control" name="CUIT" formControlName="CUIT" />
-            <div *ngIf="formErrors.CUIT" class="alert alert-danger">
-              {{ formErrors.CUIT }}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div *ngIf="paymentMethodSelected &&
+            <div *ngIf="paymentMethodSelected &&
                       paymentMethodSelected.inputAndOuput &&
                       transaction.type.movement.toString() === 'Salida'" class="form-group col-md-6">
-        <button type="button" class="btn btn-outline-primary" (click)="openModal('list-movements-of-cashes',null)">Buscar en
-          Cartera</button>
-      </div>
+                <button type="button" class="btn btn-outline-primary"
+                    (click)="openModal('list-movements-of-cashes',null)">Buscar en
+                    Cartera</button>
+            </div>
 
-      <div class="row table-responsive" *ngIf="movementsOfCashes && movementsOfCashes.length > 0">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th width="130">
-                <i class="fa fa-bars"></i>
-              </th>
-              <th>Método</th>
-              <th>Cuota</th>
-              <th>Monto</th>
-              <th>Vencimiento</th>
-              <th>Comprobante</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let movement of movementsOfCashes | orderBy: orderTerm: propertyTerm">
-              <td align="left" width="130">
-                <button type="button" class="btn btn-danger btn-sm" title="Eliminar" (click)="openModal('delete', movement)">
-                  <i class="fa fa-trash-o"></i>
-                </button>
-              </td>
-              <td *ngIf="movement && movement.type" class="flat" width="430">{{ movement.type.name }}</td>
-              <td *ngIf="!movement && !movement.type" class="flat" width="430"></td>
-              <td class="flat" width="430">{{ movement.quota }}</td>
-              <td align="right" class="flat" width="430">{{ movement.amountPaid | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
-              <td class="flat" width="430">{{ movement.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
-              <td class="flat" width="430">{{ movement.number }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-light" (click)="cancel()">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="!movementOfCashForm.valid || loading">
-        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
-        <span *ngIf="!loading">Guardar</span>
-        <span *ngIf="loading">Espere por favor</span>
-      </button>
-      <button type="button" class="btn btn-success" [disabled]="!movementOfCashForm.valid || loading"
-        *ngIf="transaction.type.allowZero" (click)="finish()">
-        <i class="fa" [ngClass]="{'fa-check':!loading, 'fa-spinner fa-spin':loading}"></i>
-        <span *ngIf="!loading">Finalizar</span>
-        <span *ngIf="loading">Espere por favor</span>
-      </button>
-    </div>
-  </form>
+            <div class="row table-responsive" *ngIf="movementsOfCashes && movementsOfCashes.length > 0">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th width="130">
+                                <i class="fa fa-bars"></i>
+                            </th>
+                            <th>Método</th>
+                            <th>Cuota</th>
+                            <th>Monto</th>
+                            <th>Vencimiento</th>
+                            <th>Comprobante</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let movement of movementsOfCashes | orderBy: orderTerm: propertyTerm">
+                            <td align="left" width="130">
+                                <button type="button" class="btn btn-danger btn-sm" title="Eliminar"
+                                    (click)="openModal('delete', movement)">
+                                    <i class="fa fa-trash-o"></i>
+                                </button>
+                            </td>
+                            <td *ngIf="movement && movement.type" class="flat" width="430">{{ movement.type.name }}</td>
+                            <td *ngIf="!movement && !movement.type" class="flat" width="430"></td>
+                            <td class="flat" width="430">{{ movement.quota }}</td>
+                            <td align="right" class="flat" width="430">
+                                {{ movement.amountPaid | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
+                            <td class="flat" width="430">{{ movement.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
+                            <td class="flat" width="430">{{ movement.number }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-light" (click)="cancel()">Cancelar</button>
+            <button type="submit" class="btn btn-primary" [disabled]="!movementOfCashForm.valid || loading">
+                <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+                <span *ngIf="!loading">Guardar</span>
+                <span *ngIf="loading">Espere por favor</span>
+            </button>
+            <button type="button" class="btn btn-success" [disabled]="!movementOfCashForm.valid || loading"
+                *ngIf="transaction.type.allowZero" (click)="finish()">
+                <i class="fa" [ngClass]="{'fa-check':!loading, 'fa-spinner fa-spin':loading}"></i>
+                <span *ngIf="!loading">Finalizar</span>
+                <span *ngIf="loading">Espere por favor</span>
+            </button>
+        </div>
+    </form>
 </section>

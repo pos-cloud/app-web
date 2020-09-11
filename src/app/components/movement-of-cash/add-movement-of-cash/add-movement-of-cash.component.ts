@@ -66,6 +66,7 @@ export class AddMovementOfCashComponent implements OnInit {
   public amountPaid: number = 0.00;
   public amountDiscount: number = 0.00;
   public percentageCommission: number = 0.00;
+  public daysCommission: number = 0;
   public roundNumber = new RoundNumberPipe();
   public quotas: number = 1;
   public days: number = 30;
@@ -192,6 +193,7 @@ export class AddMovementOfCashComponent implements OnInit {
       'transactionAmount': [parseFloat(this.roundNumber.transform(this.transactionAmount)).toFixed(2), [Validators.required]],
       'paymentMethod': [this.movementOfCash.type, [Validators.required]],
       'percentageCommission': [this.percentageCommission, []],
+      'daysCommission': [this.daysCommission, []],
       'amountToPay': [this.amountToPay, []],
       'amountPaid': [this.amountPaid, []],
       'amountDiscount': [this.amountDiscount, []],
@@ -261,6 +263,7 @@ export class AddMovementOfCashComponent implements OnInit {
       'amountDiscount': parseFloat(this.roundNumber.transform(this.amountDiscount).toFixed(2)),
       'paymentChange': parseFloat(this.roundNumber.transform(this.paymentChange).toFixed(2)),
       'percentageCommission': parseFloat(this.roundNumber.transform(this.percentageCommission).toFixed(2)),
+      'daysCommission': this.daysCommission,
       'observation': this.movementOfCash.observation,
       'discount': parseFloat(this.roundNumber.transform(this.movementOfCash.discount).toFixed(2)),
       'surcharge': parseFloat(this.roundNumber.transform(this.movementOfCash.surcharge).toFixed(2)),
@@ -1014,9 +1017,22 @@ export class AddMovementOfCashComponent implements OnInit {
   public changePercentageCommission() {
     this.movementOfCash = Object.assign(this.movementOfCashForm.value);
     this.percentageCommission = this.movementOfCashForm.value.percentageCommission;
-    let days = moment(moment(this.movementOfCashForm.value.expirationDate).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days');
-    this.movementOfCash.commissionAmount = (this.amountToPay * this.percentageCommission / 100) * days;
+    this.daysCommission = this.getBusinessDays(moment(this.movementOfCashForm.value.expirationDate),moment()) + 3;
+    this.movementOfCash.commissionAmount = (this.amountToPay * this.percentageCommission / 100) * this.daysCommission;
     this.setValuesForm();
+  }
+
+  public getBusinessDays(startDate, endDate){
+    var startDateMoment = moment(startDate);
+    var endDateMoment = moment(endDate)
+    var days = Math.round(startDateMoment.diff(endDateMoment, 'days') - startDateMoment .diff(endDateMoment, 'days') / 7 * 2);
+    if (endDateMoment.day() === 6) {
+      days--;
+    }
+    if (startDateMoment.day() === 7) {
+      days--;
+    }
+    return days;
   }
 
   async areValidAmounts(): Promise<boolean> {
