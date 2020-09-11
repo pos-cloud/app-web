@@ -32,6 +32,9 @@ import { AddTransactionComponent } from '../transaction/add-transaction/add-tran
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { SendEmailComponent } from '../send-email/send-email.component';
 import { SelectCompanyComponent } from '../company/select-company/select-company.component';
+import { AuthService } from '../login/auth.service';
+import { User } from 'app/components/user/user';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-current-account',
@@ -69,6 +72,14 @@ export class CurrentAccountComponent implements OnInit {
   public transactionMovement: TransactionMovement;
   public showBalanceOfTransactions: boolean = false;
 
+  public identity: User;
+    public actions = {
+        add: true,
+        edit: true,
+        delete: true,
+        export: true
+    };
+
   constructor(
     public _transactionService: TransactionService,
     public _transactionTypeService: TransactionTypeService,
@@ -76,6 +87,7 @@ export class CurrentAccountComponent implements OnInit {
     public _companyService: CompanyService,
     public _configService: ConfigService,
     public _router: Router,
+    public _authService: AuthService,
     private _route: ActivatedRoute,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig,
@@ -101,6 +113,21 @@ export class CurrentAccountComponent implements OnInit {
 
   async ngOnInit() {
 
+    this._authService.getIdentity.pipe(first()).subscribe(
+        identity => {
+            console.log(identity);
+            this.identity = identity;
+        }
+    );
+
+    if (this.identity.permission && this.identity.permission.collections) {
+        this.identity.permission.collections.forEach(element => {
+            if (element.name === "transacciones") {
+                this.actions = element.actions;
+            }
+        });
+    }
+
     this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
@@ -116,6 +143,9 @@ export class CurrentAccountComponent implements OnInit {
         }
       }
     );
+
+
+
   }
 
   public getSummary(): void {
