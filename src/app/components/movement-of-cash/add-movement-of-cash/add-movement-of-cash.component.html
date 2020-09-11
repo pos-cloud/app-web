@@ -276,7 +276,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div *ngIf="paymentMethodSelected && paymentMethodSelected.checkPerson" class="row">
                     <div class="form-group col-md-6">
                         <label for="deliveredBy" class="control-label">Entregado por:</label>
                         <input type="text" class="form-control" name="deliveredBy" formControlName="deliveredBy" />

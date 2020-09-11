@@ -803,6 +803,7 @@ export class AddMovementOfCashComponent implements OnInit {
         if (!result.paymentMethods) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
+            console.log(result);
           this.paymentMethods = result.paymentMethods;
           this.movementOfCash.type = this.paymentMethods[0];
           this.paymentMethodSelected = this.movementOfCash.type;

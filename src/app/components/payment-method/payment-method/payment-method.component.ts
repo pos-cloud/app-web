@@ -169,6 +169,7 @@ export class PaymentMethodComponent implements OnInit {
       'acceptReturned': [this.paymentMethod.acceptReturned, []],
       'inputAndOuput': [this.paymentMethod.inputAndOuput, []],
       'checkDetail': [this.paymentMethod.checkDetail, []],
+      'checkPerson': [this.paymentMethod.checkPerson, []],
       'cardDetail': [this.paymentMethod.cardDetail, []],
       'allowToFinance': [this.paymentMethod.allowToFinance, []],
       'cashBoxImpact': [this.paymentMethod.cashBoxImpact, []],
@@ -240,6 +241,7 @@ export class PaymentMethodComponent implements OnInit {
     if (this.paymentMethod.acceptReturned === undefined) this.paymentMethod.acceptReturned = false;
     if (this.paymentMethod.inputAndOuput === undefined) this.paymentMethod.inputAndOuput = false;
     if (this.paymentMethod.checkDetail === undefined) this.paymentMethod.checkDetail = false;
+    if (this.paymentMethod.checkPerson === undefined) this.paymentMethod.checkPerson = false;
     if (this.paymentMethod.cardDetail === undefined) this.paymentMethod.cardDetail = false;
     if (this.paymentMethod.allowToFinance === undefined) this.paymentMethod.allowToFinance = false;
     if (this.paymentMethod.cashBoxImpact === undefined) this.paymentMethod.cashBoxImpact = false;
@@ -273,6 +275,7 @@ export class PaymentMethodComponent implements OnInit {
       'allowBank': this.paymentMethod.allowBank,
       'mercadopagoAPIKey': this.paymentMethod.mercadopagoAPIKey,
       'whatsappNumber': this.paymentMethod.whatsappNumber,
+      'checkPerson' : this.paymentMethod.checkPerson
     });
   }
 

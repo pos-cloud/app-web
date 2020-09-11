@@ -16,6 +16,7 @@ export class PaymentMethod {
   public acceptReturned: boolean;
   public inputAndOuput: boolean;
   public checkDetail: boolean;
+  public checkPerson : boolean;
   public cardDetail: boolean;
   public allowToFinance: boolean;
   public cashBoxImpact: boolean;
