@@ -803,7 +803,6 @@ export class AddMovementOfCashComponent implements OnInit {
         if (!result.paymentMethods) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
-            console.log(result);
           this.paymentMethods = result.paymentMethods;
           this.movementOfCash.type = this.paymentMethods[0];
           this.paymentMethodSelected = this.movementOfCash.type;
@@ -1018,7 +1017,13 @@ export class AddMovementOfCashComponent implements OnInit {
   public changePercentageCommission() {
     this.movementOfCash = Object.assign(this.movementOfCashForm.value);
     this.percentageCommission = this.movementOfCashForm.value.percentageCommission;
-    this.daysCommission = this.getBusinessDays(moment(this.movementOfCashForm.value.expirationDate),moment()) + 3;
+    this.daysCommission = moment(moment(this.movementOfCashForm.value.expirationDate).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days') + 3;
+    if(moment(this.movementOfCashForm.value.expirationDate).day() === 6){
+        this.daysCommission += 2
+    }
+    if(moment(this.movementOfCashForm.value.expirationDate).day() === 7){
+        this.daysCommission += 1
+    }
     this.movementOfCash.commissionAmount = (this.amountToPay * this.percentageCommission / 100) * this.daysCommission;
     this.setValuesForm();
   }
