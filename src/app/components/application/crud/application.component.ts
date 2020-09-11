@@ -289,7 +289,6 @@ export class ApplicationComponent implements OnInit {
     for (let field of this.formFields) {
       if (field.tag !== 'separator') fields[field.name] = [this.obj[field.name], field.validators]
     }
-    console.log(fields);
     this.objForm = this._fb.group(fields);
     this.objForm.valueChanges
       .subscribe(data => this.onValueChanged(data));

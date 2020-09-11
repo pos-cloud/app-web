@@ -257,7 +257,6 @@ export class ShipmentMethodComponent implements OnInit {
         }
       }
     }
-    console.log(this.obj);
 
     if (isValid) {
       switch (this.operation) {
@@ -447,15 +446,8 @@ export class ShipmentMethodComponent implements OnInit {
       });
     }
   }
-  clearSelection() {
-    if (this.selectedShape) {
-      this.selectedShape.setEditable(false);
-      this.selectedShape = null;
-      this.pointList = [];
-    }
-  }
+
   setSelection(shape) {
-    this.clearSelection();
     this.selectedShape = shape;
     shape.setEditable(true);
   }
@@ -473,7 +465,7 @@ export class ShipmentMethodComponent implements OnInit {
   }
 
   updatePointList(path) {
-    this.pointList = [];
+      this.pointList = [];
     const len = path.getLength();
     for (let i = 0; i < len; i++) {
       this.pointList.push(
@@ -514,6 +506,7 @@ export class ShipmentMethodComponent implements OnInit {
       this.zoneName = '';
       this.deleteSelectedShape();
       this.showToast(null, 'success', 'Operación realizada con éxito');
+      this.initDrawingManager(this.map);
     }
   }
 
@@ -529,7 +522,7 @@ export class ShipmentMethodComponent implements OnInit {
   public createZone() {
     this.zoneName = '';
     this.selectedArea = 0;
-    this.pointList = [];
+      this.pointList = [];
     for (let zone of this.zonesActive) {
       zone.polyline.setMap(null);
     }
