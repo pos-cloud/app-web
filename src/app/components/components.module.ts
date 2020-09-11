@@ -7,6 +7,7 @@ import { CashBoxTypeModule } from './cash-box-type/cash-box-type.module';
 import { EmployeeTypeModule } from './employee-type/employee-type.module';
 import { HistoryModule } from './history/history.module';
 import { ShipmentMethodModule } from './shipment-method/shipment-method.module';
+import { PermissionModule } from './permission/permission.module';
 
 @NgModule({
 	imports: [
@@ -14,6 +15,7 @@ import { ShipmentMethodModule } from './shipment-method/shipment-method.module';
     UnitOfMeasurementModule,
     ExportersModule,
     ApplicationModule,
+    PermissionModule,
     CashBoxTypeModule,
     EmployeeTypeModule,
     HistoryModule,

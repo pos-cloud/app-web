@@ -151,6 +151,8 @@
   "no data found": "No se encontraron datos",
   "notes": "Notas",
   "number": "Número",
+  "permissions" : "Permisos",
+  "permission" : "Permiso",
   "observation": "Observación",
   "operations": "Operaciones",
   "operationType": "Última Operación",
