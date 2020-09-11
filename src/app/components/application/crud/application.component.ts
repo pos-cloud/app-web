@@ -118,6 +118,13 @@ export class ApplicationComponent implements OnInit {
     tagType: null,
     class: 'form-group col-md-12'
   }, {
+    name: 'design.resources.logo',
+    tag: 'input',
+    tagType: 'file',
+    search: null,
+    format: 'image',
+    class: 'form-group col-md-12'
+  }, {
     name: 'design.categoryTitle',
     tag: 'input',
     tagType: 'text',
@@ -269,6 +276,10 @@ export class ApplicationComponent implements OnInit {
     this.subscription.unsubscribe();
   }
 
+  public getFiles(fieldName) {
+    return eval('this.obj?.'+fieldName.split('.').join('?.'));
+  }
+
   public onFileSelected(event, model: string) {
     this.filesToUpload[model] = event.target.files;
     this.filename[model] = '';
@@ -407,6 +418,8 @@ export class ApplicationComponent implements OnInit {
                 }
               }
               this.loading = false;
+            } else {
+              this.obj[field.name] = this.oldFiles[field.name];
             }
             break;
           default:
@@ -434,12 +447,17 @@ export class ApplicationComponent implements OnInit {
     this._objService.deleteFile(typeFile, fieldName.split('.')[fieldName.split('.').length - 1], filename).subscribe(
       result => {
         if (result.status === 200) {
-          eval('this.obj.' + fieldName + ' = this.obj.' + fieldName + '.filter(item => item !== filename)');
+          try {
+            eval('this.obj.' + fieldName + ' = this.obj.' + fieldName + '.filter(item => item !== filename)');
+          } catch (error) {
+            eval('this.obj.' + fieldName + ' = null');
+          }
           this.loading = true;
           this.subscription.add(
             this._objService.update(this.obj).subscribe(
               result => {
                 this.showToast(result);
+                this.setValuesForm();
               },
               error => this.showToast(error)
             )

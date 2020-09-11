@@ -22,6 +22,7 @@ export class Application extends Model {
     categoriesByLine: number,
     showSearchBar: boolean,
     resources: {
+      logo: string,
       banners: string[]
     }
   };

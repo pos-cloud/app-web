@@ -48,14 +48,27 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col-md-3" style="padding: 1rem" *ngFor="let file of obj?.design?.resources?.banners">
+                  <div class="row" *ngIf="field.multiple">
+                    <div class="col-md-3" style="padding: 1rem" *ngFor="let file of getFiles(field.name)">
                       <div class="card" style="min-height: auto !important;">
                         <div class="img-file"
                           [style.backgroundImage]="'url('+apiURL + 'file?filename=' + file + '&model=' + field.name.split('.')[field.name.split('.').length - 1] + '&database=' + database+')'">
                         </div>
                         <div class="card-body text-center">
                           <a class="btn btn-danger" style="color: white;" (click)="deleteFile('image', field.name, file)"><i
+                              class="fa fa-trash-o"></i>Eliminar</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row" *ngIf="!field.multiple && getFiles(field.name)">
+                    <div class="col-md-3" style="padding: 1rem">
+                      <div class="card" style="min-height: auto !important;">
+                        <div class="img-file"
+                          [style.backgroundImage]="'url('+apiURL + 'file?filename=' + getFiles(field.name) + '&model=' + field.name.split('.')[field.name.split('.').length - 1] + '&database=' + database+')'">
+                        </div>
+                        <div class="card-body text-center">
+                          <a class="btn btn-danger" style="color: white;" (click)="deleteFile('image', field.name, getFiles(field.name))"><i
                               class="fa fa-trash-o"></i>Eliminar</a>
                         </div>
                       </div>
