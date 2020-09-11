@@ -197,7 +197,7 @@
                     </form>
 
                     <div formArrayName="collections"
-                        *ngFor="let collection of objForm.get('collections').controls; let i = index;">
+                        *ngFor="let collection of objForm.get('collections')['controls']; let i = index;">
                         <div [formGroupName]="i">
                             {{collections.actions.add | json}}
                             <div class="row">
