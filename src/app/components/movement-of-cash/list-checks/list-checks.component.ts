@@ -57,7 +57,7 @@ export class ListChecksComponent implements OnInit {
         },
         {
             name: 'deliveredBy',
-            visible: true,
+            visible: false,
             disabled: false,
             filter: true,
             datatype: 'string',
@@ -68,6 +68,16 @@ export class ListChecksComponent implements OnInit {
         {
             name: 'receiver',
             visible: false,
+            disabled: false,
+            filter: true,
+            datatype: 'string',
+            project: null,
+            align: 'left',
+            required: false,
+        },
+        {
+            name: 'transaction.company.name',
+            visible: true,
             disabled: false,
             filter: true,
             datatype: 'string',
