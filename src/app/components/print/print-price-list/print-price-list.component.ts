@@ -458,7 +458,7 @@ export class PrintPriceListComponent implements OnInit {
                     }
                     row = rowAux;
 				} else {
-					row += 5
+					row += 7
 					var stock = await this.getStock(article._id)
 					if (stock) {
 						this.doc.text(95, row, "/STK: " + stock.toString())
