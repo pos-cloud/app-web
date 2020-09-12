@@ -4,7 +4,7 @@ import 'moment/locale/es';
 
 export class Holiday extends Model {
 
-    public name: String;
+    public name: string;
     public date: Date;
 
     constructor() { super(); }
