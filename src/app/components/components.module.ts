@@ -8,6 +8,7 @@ import { EmployeeTypeModule } from './employee-type/employee-type.module';
 import { HistoryModule } from './history/history.module';
 import { ShipmentMethodModule } from './shipment-method/shipment-method.module';
 import { PermissionModule } from './permission/permission.module';
+import { HolidayModule } from './holiday/holiday.module';
 
 @NgModule({
 	imports: [
@@ -19,7 +20,8 @@ import { PermissionModule } from './permission/permission.module';
     CashBoxTypeModule,
     EmployeeTypeModule,
     HistoryModule,
-    ShipmentMethodModule
+    ShipmentMethodModule,
+    HolidayModule
 	],
 	declarations: [
 	],
