@@ -74,7 +74,7 @@ export class TransactionType {
   public level: number = 0;
   public groupsArticles: boolean = false;
   public printOrigin: boolean = false;
-  public expirationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+  public expirationDate: string = null;
   public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public updateUser: User;
