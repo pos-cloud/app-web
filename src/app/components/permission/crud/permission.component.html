@@ -124,148 +124,115 @@
 
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
-                    <!--Array permisos-->
-                    <form #collectionsForm="ngForm" (ngSubmit)="addCollection(collectionsForm)">
-                        <div class="row">
-                            <div class="form-group col-md-12">
-                                <label class="control-label">Tabla:</label>
-                                <select ngModel name="name" class="form-control">
-                                    <option *ngFor="let name of tables" [ngValue]="name" [disabled]="readonly">
-                                        {{name}}
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div class="form-group col-md-3">
-                                <label class="control-label">Agregar</label>
-                                <div class="input-group">
-                                    <select ngModel name="add" class="form-control">
-                                        <option [ngValue]="true"
-                                            [disabled]="readonly">Si</option>
-                                        <option [ngValue]="false"
-                                            [disabled]="readonly">No</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group col-md-3">
-                                <label class="control-label">Editar</label>
-                                <div class="input-group">
-                                    <select ngModel name="edit" class="form-control">
-                                        <option [ngValue]="true"
-                                            [disabled]="readonly">Si</option>
-                                        <option [ngValue]="false"
-                                            [disabled]="readonly">No</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group col-md-3">
-                                <label class="control-label">Eliminar</label>
-                                <div class="input-group">
-                                    <select ngModel name="delete" class="form-control">
-                                        <option [ngValue]="true"
-                                            [disabled]="readonly">Si</option>
-                                        <option [ngValue]="false"
-                                            [disabled]="readonly">No</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group col-md-3">
-                                <label class="control-label">Exportar</label>
-                                <div class="input-group">
-                                    <select ngModel name="export" class="form-control">
-                                        <option [ngValue]="true"
-                                            [disabled]="readonly">Si</option>
-                                        <option [ngValue]="false"
-                                            [disabled]="readonly">No</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group col-md-1">
-                                <label class="control-label">Acción:</label>
-                                <button type="summit" class="btn btn-success btn-sm">
-                                    <i class="fa fa-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-
-                    <div formArrayName="collections"
-                        *ngFor="let collection of objForm.get('collections')['controls']; let i = index;">
-                        <div [formGroupName]="i">
-                            {{collections.actions.add | json}}
-                            <div class="row">
-                                <div class="form-group col-md-12">
-                                    <select class="form-control" formControlName="name">
-                                        <option *ngFor="let name of tables" [value]="name" [disabled]="readonly">
+                    <div class="form-group col-md-12 row" style="width: 100%;">
+                        <!--Array permisos-->
+                        <form #collectionsForm="ngForm" (ngSubmit)="addCollection(collectionsForm)">
+                            <div class="row" style="width: 100%;">
+                                <div class="form-group col-md-3">
+                                    <label class="control-label">Tabla:</label>
+                                    <select ngModel name="name" class="form-control">
+                                        <option *ngFor="let name of tables" [ngValue]="name" [disabled]="readonly">
                                             {{name}}
                                         </option>
                                     </select>
                                 </div>
-
-                                <div class="form-group col-md-3">
+    
+                                <div class="form-group col-md-2">
                                     <label class="control-label">Agregar</label>
                                     <div class="input-group">
-                                        <select class="form-control" formControlName="add">
-                                            <option [value]="true" [selected]="actions.add"
+                                        <select ngModel name="add" class="form-control">
+                                            <option [ngValue]="true"
                                                 [disabled]="readonly">Si</option>
-                                            <option [value]="false" [selected]="!actions.add"
+                                            <option [ngValue]="false"
                                                 [disabled]="readonly">No</option>
                                         </select>
                                     </div>
                                 </div>
-
-                                <div class="form-group col-md-3">
+    
+                                <div class="form-group col-md-2">
                                     <label class="control-label">Editar</label>
                                     <div class="input-group">
-                                        <select class="form-control" formControlName="edit">
-                                            <option [value]="true" [selected]="actions.edit"
+                                        <select ngModel name="edit" class="form-control">
+                                            <option [ngValue]="true"
                                                 [disabled]="readonly">Si</option>
-                                            <option [value]="false" [selected]="!actions.edit"
+                                            <option [ngValue]="false"
                                                 [disabled]="readonly">No</option>
                                         </select>
                                     </div>
                                 </div>
-
-                                <div class="form-group col-md-3">
+    
+                                <div class="form-group col-md-2">
                                     <label class="control-label">Eliminar</label>
                                     <div class="input-group">
-                                        <select class="form-control" formControlName="delete">
-                                            <option [value]="true" [selected]="actions.delete"
+                                        <select ngModel name="delete" class="form-control">
+                                            <option [ngValue]="true"
                                                 [disabled]="readonly">Si</option>
-                                            <option [value]="false" [selected]="!actions.delete"
+                                            <option [ngValue]="false"
                                                 [disabled]="readonly">No</option>
                                         </select>
                                     </div>
                                 </div>
-
-                                <div class="form-group col-md-3">
+    
+                                <div class="form-group col-md-2">
                                     <label class="control-label">Exportar</label>
                                     <div class="input-group">
-                                        <select class="form-control" formControlName="export">
-                                            <option [value]="true" [selected]="actions.export"
+                                        <select ngModel name="export" class="form-control">
+                                            <option [ngValue]="true"
                                                 [disabled]="readonly">Si</option>
-                                            <option [value]="false" [selected]="!actions.export"
+                                            <option [ngValue]="false"
                                                 [disabled]="readonly">No</option>
                                         </select>
                                     </div>
                                 </div>
-
+    
                                 <div class="form-group col-md-1">
-                                    <button type="button" class="btn btn-danger btn-sm" (click)="deleteCollection(i)">
-                                        <i class="fa fa-trash-o"></i>
+                                    <label class="control-label">Acción:</label>
+                                    <button type="summit" class="btn btn-success btn-sm">
+                                        <i class="fa fa-plus"></i>
                                     </button>
                                 </div>
                             </div>
+                        </form>
+    
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table width="100%" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Tabla</th>
+                                        <th>Agregar</th>
+                                        <th>Editar</th>
+                                        <th>Eliminar</th>
+                                        <th>Exportar</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let field of objForm.get('collections').controls; let i = index;">
+                                        <td *ngIf="field && field.value">{{field.value.name}}</td>
+                                        <td *ngIf="field && field.value">{{field.value.actions.add}}</td>
+                                        <td *ngIf="field && field.value">{{field.value.actions.edit}}</td>
+                                        <td *ngIf="field && field.value">{{field.value.actions.delete}}</td>
+                                        <td *ngIf="field && field.value">{{field.value.actions.export}}</td>
+                                        <td align="right" width="10">
+                                            <button type="button" class="btn btn-danger btn-sm"
+                                                (click)="deleteCollection(i)">
+                                                <i class="fa fa-trash-o"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                </tfoot>
+                            </table>
                         </div>
                     </div>
                 </div>
+
+                
             </form>
         </div>
     </div>

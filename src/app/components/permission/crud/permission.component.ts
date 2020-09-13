@@ -60,6 +60,12 @@ export class PermissionComponent implements OnInit {
         validators: [Validators.required],
         focus: true,
         class: 'form-group col-md-2'
+    },
+    {
+        name: 'Permisos',
+        tag: 'separator',
+        tagType: null,
+        class: 'form-group col-md-12'
     }];
     public formErrors: {} = {};
     public validationMessages = {
