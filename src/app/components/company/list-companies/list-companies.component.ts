@@ -418,7 +418,7 @@ export class ListCompaniesComponent implements OnInit {
                 });
                 break;
             case 'account':
-                this._router.navigateByUrl("admin/cuentas-corrientes?companyId=" + company._id + "&companyType" + this.type)
+                this._router.navigateByUrl("admin/cuentas-corrientes?companyId=" + company._id + "&companyType=" + this.type)
                 break;
             case 'import':
                 modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });

@@ -115,7 +115,6 @@ export class CurrentAccountComponent implements OnInit {
 
     this._authService.getIdentity.pipe(first()).subscribe(
         identity => {
-            console.log(identity);
             this.identity = identity;
         }
     );
