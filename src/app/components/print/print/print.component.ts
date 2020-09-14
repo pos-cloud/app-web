@@ -1755,7 +1755,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontSize(this.fontSizes.normal);
     this.doc.text("Fecha", margin, 77);
     this.doc.text("Tipo Comp.", 25, 77);
-    this.doc.text("Nro. Comprobante", 53, 77);
+    this.doc.text("Nro. Comprobante", 70, 77);
     if (this.params.detailsPaymentMethod) {
       this.doc.text("Monto", 90, 77);
       this.doc.text("Método", 110, 77);
@@ -1790,9 +1790,9 @@ export class PrintComponent implements OnInit {
           this.doc.text(item.transactionTypeName.slice(0, 15), 25, row);
         }
         if (Config.country === 'AR') {
-          this.doc.text(this.padString(item.transactionOrigin, 4) + "-" + item.transactionLetter + "-" + this.padString(item.transactionNumber, 10), 53, row);
+          this.doc.text(this.padString(item.transactionOrigin, 4) + "-" + item.transactionLetter + "-" + this.padString(item.transactionNumber, 10), 70, row);
         } else {
-          this.doc.text(item.transactionLetter + "-" + this.padString(item.transactionNumber, 10), 53, row);
+          this.doc.text(item.transactionLetter + "-" + this.padString(item.transactionNumber, 10), 70, row);
         }
         if (this.params.detailsPaymentMethod) {
           this.doc.text("$ " + this.roundNumber.transform(item.transactionTotalPrice), 90, row);
