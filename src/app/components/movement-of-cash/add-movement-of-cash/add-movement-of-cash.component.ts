@@ -1032,7 +1032,7 @@ export class AddMovementOfCashComponent implements OnInit {
 
             this.movementOfCash = Object.assign(this.movementOfCashForm.value);
             this.percentageCommission = this.movementOfCashForm.value.percentageCommission;
-            this.daysCommission = moment(moment(this.movementOfCashForm.value.expirationDate).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days') + 3;
+            this.daysCommission = moment(moment(this.movementOfCashForm.value.expirationDate).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days') + 4;
             if (moment(this.movementOfCashForm.value.expirationDate).day() === 6) {
                 this.daysCommission += 2
             }

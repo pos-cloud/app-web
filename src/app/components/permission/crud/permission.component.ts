@@ -237,6 +237,18 @@ export class PermissionComponent implements OnInit {
         let valid = true;
         const collections = this.objForm.controls.collections as FormArray;
 
+        this.objForm.controls.collections.value.forEach(element => {
+            if (collectionForm.value.name == element.name) {
+                this.showToast("","warning","Esta regla ya existe")
+                valid = false;
+            }
+        });
+
+        if(collectionForm.value.add === "" || collectionForm.value.edit === "" || collectionForm.value.delete === "" || collectionForm.value.export === ""){
+            this.showToast("","warning","Debe completar todos los campos")
+            valid = false;
+        }
+
         if (valid) {
             collections.push(
                 this._fb.group({
