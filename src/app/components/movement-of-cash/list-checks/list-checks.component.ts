@@ -13,6 +13,9 @@ import { CurrencyPipe } from '@angular/common';
 import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
 import { Subscription } from 'rxjs';
 import { EditCheckComponent } from '../edit-check/edit-check.component';
+import { Branch } from 'app/components/branch/branch';
+import { AuthService } from 'app/components/login/auth.service';
+import { BranchService } from 'app/components/branch/branch.service';
 
 @Component({
     selector: 'app-list-checks',
@@ -43,6 +46,9 @@ export class ListChecksComponent implements OnInit {
     public filters: any[];
     public filterValue: string;
     private subscription: Subscription = new Subscription();
+    public branches: Branch[];
+    @Input() branchSelectedId: String;
+    public allowChangeBranch: boolean;
 
     public columns = [
         {
@@ -178,6 +184,17 @@ export class ListChecksComponent implements OnInit {
             required: true,
         },
         {
+            name: 'transaction.branchDestination._id',
+            visible: false,
+            disabled: true,
+            filter: true,
+            defaultFilter: null,
+            datatype: 'string',
+            project: `1`,
+            align: 'left',
+            required: true,
+        },
+        {
             name: 'transaction._id',
             visible: false,
             disabled: true,
@@ -224,6 +241,10 @@ export class ListChecksComponent implements OnInit {
         public _modalService: NgbModal,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,
+        private _authService: AuthService,
+        private _branchService: BranchService,
+
+
     ) {
         this.filters = new Array();
         for (let field of this.columns) {
@@ -235,7 +256,30 @@ export class ListChecksComponent implements OnInit {
         }
     }
 
-    public ngOnInit(): void {
+    async ngOnInit() {
+
+        if(!this.branchSelectedId) {
+            await this.getBranches({ operationType: { $ne: 'D' } }).then(
+              branches => {
+                this.branches = branches;
+                if(this.branches && this.branches.length > 1) {
+                  this.branchSelectedId = this.branches[0]._id;
+                }
+              }
+            );
+            this._authService.getIdentity.subscribe(
+              async identity => {
+                if(identity && identity.origin) {
+                  this.allowChangeBranch = false;
+                  this.branchSelectedId = identity.origin.branch._id;
+                } else {
+                  this.allowChangeBranch = true;
+                  this.branchSelectedId = null;
+                }
+              }
+            );
+          }
+
         this.pathLocation = this._router.url.split('/');
         this.transactionMovement = this.pathLocation[2].charAt(0).toUpperCase() + this.pathLocation[2].slice(1);
         this.getItems();
@@ -271,6 +315,33 @@ export class ListChecksComponent implements OnInit {
         });
     }
 
+    public getBranches(match: {} = {}): Promise<Branch[]> {
+
+        return new Promise<Branch[]>((resolve, reject) => {
+      
+          this._branchService.getBranches(
+              {}, // PROJECT
+              match, // MATCH
+              { number: 1 }, // SORT
+              {}, // GROUP
+              0, // LIMIT
+              0 // SKIP
+          ).subscribe(
+            result => {
+              if (result && result.branches) {
+                resolve(result.branches);
+              } else {
+                resolve(null);
+              }
+            },
+            error => {
+              this.showMessage(error._body, 'danger', false);
+              resolve(null);
+            }
+          );
+        });
+      }
+
     public getItems(): void {
 
         this.loading = true;
@@ -291,6 +362,10 @@ export class ListChecksComponent implements OnInit {
                     }
                 }
             }
+        }
+
+        if(this.branchSelectedId){
+            match += `"transaction.branchDestination._id": { "$oid" : "${this.branchSelectedId}" },`; 
         }
 
         match += `"statusCheck": "Disponible","type.inputAndOuput" : true`;
