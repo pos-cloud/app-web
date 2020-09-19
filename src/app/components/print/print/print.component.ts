@@ -276,6 +276,10 @@ export class PrintComponent implements OnInit {
             "orderNumber" : 1,
             "exempt" : 1,
             "transport.name" :1,
+            "deliveryAddress.name": 1,
+            "deliveryAddress.number": 1,
+            "deliveryAddress.flat": 1,
+            "deliveryAddress.floor": 1,
             "transport.address" : 1,
             "transport.city" : 1,
             "transport.identificationValue" : 1,
@@ -3304,6 +3308,8 @@ export class PrintComponent implements OnInit {
 
     this.doc.setFontType('normal');
 
+    console.log(this.transaction);
+
     if (this.transaction.company) {
       if (this.transaction.madein == 'resto' || this.transaction.madein == 'mostrador') {
         row += 5;
@@ -3319,6 +3325,27 @@ export class PrintComponent implements OnInit {
         row += 5;
         this.doc.setFontType('bold');
         this.doc.text("Entregar a: " + this.transaction.company.address, margin, row);
+        this.doc.setFontType('normal');
+      }
+      if(this.transaction.madein == 'pedidos-web' && this.transaction.deliveryAddress){
+        row += 5;
+        let direccion = "";
+        this.doc.setFontType('bold');
+
+        if(this.transaction.deliveryAddress.name){
+            direccion = direccion + " "+ this.transaction.deliveryAddress.name;
+        }
+        if(this.transaction.deliveryAddress.number){
+            direccion = direccion + " N°"+ this.transaction.deliveryAddress.number;
+        }
+        if(this.transaction.deliveryAddress.floor){
+            direccion = direccion + " P"+ this.transaction.deliveryAddress.floor;
+        }
+        if(this.transaction.deliveryAddress.flat){
+            direccion = direccion + " D:"+ this.transaction.deliveryAddress.flat;
+        }
+
+        this.doc.text("Entregar a: " + direccion, margin, row);
         this.doc.setFontType('normal');
       }
     } else {
