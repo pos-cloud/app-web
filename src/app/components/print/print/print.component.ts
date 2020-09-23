@@ -3308,8 +3308,6 @@ export class PrintComponent implements OnInit {
 
     this.doc.setFontType('normal');
 
-    console.log(this.transaction);
-
     if (this.transaction.company) {
       if (this.transaction.madein == 'resto' || this.transaction.madein == 'mostrador') {
         row += 5;

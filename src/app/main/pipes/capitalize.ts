@@ -12,10 +12,10 @@ export class CapitalizePipe implements PipeTransform {
       let w = '';
       if (value.split(' ').length > 0 && all) {
         value.split(' ').forEach(word => {
-          w += word.charAt(0).toUpperCase() + word.toString().substr(1, word.length).toLowerCase() + ' '
+          w += word.charAt(0).toUpperCase() + word.toString().substr(1, word.length) + ' '
         });
       } else {
-        w = value.charAt(0).toUpperCase() + value.toString().substr(1, value.length).toLowerCase();
+        w = value.charAt(0).toUpperCase() + value.toString().substr(1, value.length);
       }
       return w;
     }
