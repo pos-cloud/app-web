@@ -337,5 +337,6 @@
   "notifications.app.checkout": "en la web al finalizar la compra",
   "requireAddress": "solicita dirección de envío",
   "design.categoryTitle": "Título de las categorías",
-  "design.showSearchBar": "Mostrar buscador"
+  "design.showSearchBar": "Mostrar buscador",
+  "contact.claim": "Número de Reclamo"
 }

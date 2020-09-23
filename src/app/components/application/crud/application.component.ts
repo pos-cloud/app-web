@@ -86,12 +86,17 @@ export class ApplicationComponent implements OnInit {
     name: 'contact.phone',
     tag: 'input',
     tagType: 'number',
-    class: 'form-group col-md-6'
+    class: 'form-group col-md-4'
   }, {
     name: 'contact.whatsapp',
     tag: 'input',
     tagType: 'number',
-    class: 'form-group col-md-6'
+    class: 'form-group col-md-4'
+  }, {
+    name: 'contact.claim',
+    tag: 'input',
+    tagType: 'number',
+    class: 'form-group col-md-4'
   }, {
     name: 'Redes sociales',
     tag: 'separator',
@@ -277,7 +282,7 @@ export class ApplicationComponent implements OnInit {
   }
 
   public getFiles(fieldName) {
-    return eval('this.obj?.'+fieldName.split('.').join('?.'));
+    return eval('this.obj?.' + fieldName.split('.').join('?.'));
   }
 
   public onFileSelected(event, model: string) {

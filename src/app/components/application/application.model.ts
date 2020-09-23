@@ -15,6 +15,7 @@ export class Application extends Model {
   public contact: {
     phone: number,
     whatsapp: number,
+    claim: number,
   }
   public design: {
     about: string,
