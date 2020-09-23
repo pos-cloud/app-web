@@ -137,7 +137,10 @@ export class ExportIvaComponent implements OnInit {
                         this.dataState[index]['_id'] = this.states[index]._id
                         this.dataState[index]['name'] = this.states[index].name
                         this.dataState[index]['gravado'] = 0;
-                        this.dataState[index]['iva'] = 0;
+                        this.dataState[index]['iva10'] = 0;
+                        this.dataState[index]['iva21'] = 0;
+                        this.dataState[index]['iva27'] = 0;
+
                     }
 
                 }
@@ -163,7 +166,9 @@ export class ExportIvaComponent implements OnInit {
                         this.dataIVA[index] = {};
                         this.dataIVA[index]['_id'] = this.vatConditions[index]._id
                         this.dataIVA[index]['description'] = this.vatConditions[index].description
-                        this.dataIVA[index]['total'] = 0;
+                        this.dataIVA[index]['iva10'] = 0;
+                        this.dataIVA[index]['iva21'] = 0;
+                        this.dataIVA[index]['iva27'] = 0;
                     }
 
                 }
@@ -440,12 +445,16 @@ export class ExportIvaComponent implements OnInit {
 
                         this.dataIVA.forEach(element => {
                             element['gravado'] = 0;
-                            element['iva'] = 0;
+                            element['iva10'] = 0;
+                            element['iva21'] = 0;
+                            element['iva27'] = 0;
                         });
 
                         this.dataState.forEach(element => {
                             element['gravado'] = 0;
-                            element['iva'] = 0;
+                            element['iva10'] = 0;
+                            element['iva21'] = 0;
+                            element['iva27'] = 0;
                         });
 
                         for (let transaction of result.transactions) {
@@ -551,14 +560,19 @@ export class ExportIvaComponent implements OnInit {
                                         for (let index = 0; index < this.dataIVA.length; index++) {
                                             if (transaction.company && transaction.company.vatCondition && this.dataIVA[index]['_id'] === transaction.company.vatCondition) {
                                                 this.dataIVA[index]['gravado'] = this.dataIVA[index]['gravado'] + transactionTax.taxBase;
-                                                this.dataIVA[index]['iva'] = this.dataIVA[index]['iva'] + transactionTax.taxAmount;
+                                                this.dataIVA[index]['iva10'] = this.dataIVA[index]['iva10'] + partialIVA10;
+                                                this.dataIVA[index]['iva21'] = this.dataIVA[index]['iva21'] + partialIVA21;
+                                                this.dataIVA[index]['iva27'] = this.dataIVA[index]['iva27'] + partialIVA27;
+
                                             }
                                         }
 
                                         for (let index = 0; index < this.dataState.length; index++) {
                                             if (transaction.company && transaction.company.state && this.dataState[index]['_id'] === transaction.company.state) {
                                                 this.dataState[index]['gravado'] = this.dataState[index]['gravado'] + transactionTax.taxBase;
-                                                this.dataState[index]['iva'] = this.dataState[index]['iva'] + transactionTax.taxAmount;
+                                                this.dataState[index]['iva10'] = this.dataState[index]['iva10'] + partialIVA10;
+                                                this.dataState[index]['iva21'] = this.dataState[index]['iva21'] + partialIVA21;
+                                                this.dataState[index]['iva27'] = this.dataState[index]['iva27'] + partialIVA27;
                                             }
                                         }
                                     }
@@ -666,7 +680,7 @@ export class ExportIvaComponent implements OnInit {
 
                         i += 5;
                         data[i] = {};
-                        data[i]['RAZÓN SOCIAL'] = 'TOTALES POR IMPUESTO';
+                        //data[i]['RAZÓN SOCIAL'] = 'TOTALES POR IMPUESTO';
                         i++;
                         data[i] = {};
                         data[i]['RAZÓN SOCIAL'] = 'IMPUESTO';
@@ -682,38 +696,47 @@ export class ExportIvaComponent implements OnInit {
 
                         i += 5;
                         data[i] = {};
-                        data[i]["RAZÓN SOCIAL"] = 'TOTALES POR REGIMEN';
+                        //data[i]["RAZÓN SOCIAL"] = 'TOTALES POR REGIMEN';
                         i++;
                         data[i] = {};
-                        data[i]["IDENTIFICADOR"] = 'REGIMEN';
-                        data[i]["TIPO COMP."] = 'Gravado';
-                        data[i]["Abrev"] = 'IVA'
+                        data[i]["RAZÓN SOCIAL"] = 'REGIMEN';
+                        data[i]["IDENTIFICADOR"] = 'GRAVADO';
+                        data[i]["TIPO COMP."] = 'IVA 10.5%';
+                        data[i]["Abrev"] = 'IVA 21%';
+                        data[i]["Punto de Venta"] = 'IVA 27%';
                         this.dataIVA.forEach(element => {
                             i++;
                             data[i] = {};
-                            data[i]["IDENTIFICADOR"] = element['description']
-                            data[i]["TIPO COMP."] = element['gravado']
-                            data[i]["Abrev"] = element['iva']
+                            data[i]["RAZÓN SOCIAL"] = element['description']
+                            data[i]["IDENTIFICADOR"] = element['gravado']
+                            data[i]["TIPO COMP."] = element['iva10']
+                            data[i]["Abrev"] = element['iva21']
+                            data[i]["Punto de Venta"] = element['iva27']
                         });
 
                         i += 5;
                         data[i] = {};
-                        data[i]["RAZÓN SOCIAL"] = 'TOTALES POR Prov';
+                        //data[i]["RAZÓN SOCIAL"] = 'PROVINCIAS';
                         i++;
                         data[i] = {};
-                        data[i]["IDENTIFICADOR"] = 'Provincia';
-                        data[i]["TIPO COMP."] = 'Gravado';
-                        data[i]["Abrev"] = 'IVA'
+                        data[i]["RAZÓN SOCIAL"] = 'PROVINCIAS';
+                        data[i]["IDENTIFICADOR"] = 'GRAVADO';
+                        data[i]["TIPO COMP."] = 'IVA 10.5%';
+                        data[i]["Abrev"] = 'IVA 21%';
+                        data[i]["Punto de Venta"] = 'IVA 27%';
                         this.dataState.forEach(element => {
                             i++;
                             data[i] = {};
-                            data[i]["IDENTIFICADOR"] = element['name']
-                            data[i]["TIPO COMP."] = element['gravado']
-                            data[i]["Abrev"] = element['iva']
+                            data[i]["RAZÓN SOCIAL"] = element['name']
+                            data[i]["IDENTIFICADOR"] = element['gravado']
+                            data[i]["TIPO COMP."] = element['iva10']
+                            data[i]["Abrev"] = element['iva21']
+                            data[i]["Punto de Venta"] = element['iva27']
+
                         });
 
                         i += 5;
-                        data[i] = {};
+                        /*data[i] = {};
                         data[i]["RAZÓN SOCIAL"] = 'TOTALES POR CLASIFICACIÓN';
                         i++;
                         data[i] = {};
@@ -724,7 +747,7 @@ export class ExportIvaComponent implements OnInit {
                             data[i] = {};
                             data[i]["IDENTIFICADOR"] = element['name']
                             data[i]["TIPO COMP."] = element['total']
-                        });
+                        });*/
 
                         if (this.exportIVAForm.value.otherFields === "true") {
 
