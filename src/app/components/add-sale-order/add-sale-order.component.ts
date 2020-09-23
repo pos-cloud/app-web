@@ -1329,6 +1329,8 @@ export class AddSaleOrderComponent {
         movementOfArticle.taxes = taxes;
       }
       this.loading = false;
+      //guardamos la lista con la que se calculo el precio
+      this.transaction.priceList = this.priceList
       resolve(movementOfArticle);
     });
   }
