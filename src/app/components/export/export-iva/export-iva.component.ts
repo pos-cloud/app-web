@@ -560,89 +560,93 @@ export class ExportIvaComponent implements OnInit {
                                         for (let index = 0; index < this.dataIVA.length; index++) {
                                             if (transaction.company && transaction.company.vatCondition && this.dataIVA[index]['_id'] === transaction.company.vatCondition) {
                                                 this.dataIVA[index]['gravado'] = this.dataIVA[index]['gravado'] + transactionTax.taxBase;
-                                                this.dataIVA[index]['iva10'] = this.dataIVA[index]['iva10'] + partialIVA10;
-                                                this.dataIVA[index]['iva21'] = this.dataIVA[index]['iva21'] + partialIVA21;
-                                                this.dataIVA[index]['iva27'] = this.dataIVA[index]['iva27'] + partialIVA27;
-
+                                                this.dataIVA[index]['iva10'] +=  partialIVA10;
+                                                this.dataIVA[index]['iva21'] +=  partialIVA21;
+                                                this.dataIVA[index]['iva27'] +=  partialIVA27;
                                             }
                                         }
 
                                         for (let index = 0; index < this.dataState.length; index++) {
                                             if (transaction.company && transaction.company.state && this.dataState[index]['_id'] === transaction.company.state) {
                                                 this.dataState[index]['gravado'] = this.dataState[index]['gravado'] + transactionTax.taxBase;
-                                                this.dataState[index]['iva10'] = this.dataState[index]['iva10'] + partialIVA10;
-                                                this.dataState[index]['iva21'] = this.dataState[index]['iva21'] + partialIVA21;
-                                                this.dataState[index]['iva27'] = this.dataState[index]['iva27'] + partialIVA27;
+                                                this.dataState[index]['iva10'] +=  partialIVA10;
+                                                this.dataState[index]['iva21'] +=  partialIVA21;
+                                                this.dataState[index]['iva27'] +=  partialIVA27;
                                             }
                                         }
                                     }
-                                }
 
 
-                                if (this.exportIVAForm.value.otherFields === "true") {
+                                    if (this.exportIVAForm.value.otherFields === "true") {
 
-                                    var movementOfArticles: MovementOfArticle[] = await this.getMovementOfArticle(transaction._id)
-
-                                    if (movementOfArticles && movementOfArticles.length > 0) {
-                                        for (const movementOfArticle of movementOfArticles) {
-
-                                            //preguntamos si tiene la mierda de other fields tanto el movimiento como el data article fields jijiji
-                                            if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0 && this.dataArticleFields && this.dataArticleFields.length > 0) {
-                                                //si dice que si hay que recorrer para ver cuantos
-                                                for (const otherField of movementOfArticle.otherFields) {
-
-                                                    //preguntamos si el otherfield discrimina en IVA
-                                                    if (otherField.articleField.discriminateVAT) {
-
-                                                        //guardamos los dos datos que necesitamos id y valor
-                                                        var id = otherField.articleField._id;
-                                                        var valor = otherField.value;
-
-                                                        //ahora recorremos la mierda del data
-                                                        for (let index = 0; index < this.dataArticleFields.length; index++) {
-                                                            //primero preguntamos si el id son iguales para entrar a los valores
-                                                            if (id === this.dataArticleFields[index]['_id']) {
-                                                                //si entra solo tengo que recorrer los valores de ese id para comparar
-                                                                for (let index2 = 0; index2 < this.dataArticleFields[index]['value'].length; index2++) {
-                                                                    //entonces preguntamos si los valores son iguales
-                                                                    if (valor === this.dataArticleFields[index]['value'][index2]['name']) {
-                                                                        //perfecto si entra aca updateamos el data en su valor
-                                                                        //this.dataArticleFields[index]['value'][index2]['total'] = this.dataArticleFields[index]['value'][index2]['total'] + partialTaxBase;
-
-                                                                        for (const tax of movementOfArticle.taxes) {
-                                                                            for (const tax2 of Object.keys(this.dataArticleFields[index]['value'][index2])) {
-                                                                                if (tax.tax.name === tax2) {
-                                                                                    this.dataArticleFields[index]['value'][index2][tax2] = this.dataArticleFields[index]['value'][index2][tax2] + tax.taxBase;
+                                        var movementOfArticles: MovementOfArticle[] = await this.getMovementOfArticle(transaction._id)
+    
+                                        if (movementOfArticles && movementOfArticles.length > 0) {
+                                            for (const movementOfArticle of movementOfArticles) {
+    
+                                                //preguntamos si tiene la mierda de other fields tanto el movimiento como el data article fields jijiji
+                                                if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0 && this.dataArticleFields && this.dataArticleFields.length > 0) {
+                                                    //si dice que si hay que recorrer para ver cuantos
+                                                    for (const otherField of movementOfArticle.otherFields) {
+    
+                                                        //preguntamos si el otherfield discrimina en IVA
+                                                        if (otherField.articleField.discriminateVAT) {
+    
+                                                            //guardamos los dos datos que necesitamos id y valor
+                                                            var id = otherField.articleField._id;
+                                                            var valor = otherField.value;
+    
+                                                            //ahora recorremos la mierda del data
+                                                            for (let index = 0; index < this.dataArticleFields.length; index++) {
+                                                                //primero preguntamos si el id son iguales para entrar a los valores
+                                                                if (id === this.dataArticleFields[index]['_id']) {
+                                                                    //si entra solo tengo que recorrer los valores de ese id para comparar
+                                                                    for (let index2 = 0; index2 < this.dataArticleFields[index]['value'].length; index2++) {
+                                                                        //entonces preguntamos si los valores son iguales
+                                                                        if (valor === this.dataArticleFields[index]['value'][index2]['name']) {
+                                                                            //perfecto si entra aca updateamos el data en su valor
+                                                                            //this.dataArticleFields[index]['value'][index2]['total'] = this.dataArticleFields[index]['value'][index2]['total'] + partialTaxBase;
+    
+                                                                            for (const tax of movementOfArticle.taxes) {
+                                                                                for (const tax2 of Object.keys(this.dataArticleFields[index]['value'][index2])) {
+                                                                                    if (tax.tax.name === tax2) {
+                                                                                        this.dataArticleFields[index]['value'][index2][tax2] = this.dataArticleFields[index]['value'][index2][tax2] + tax.taxBase;
+                                                                                    }
                                                                                 }
                                                                             }
+    
+    
                                                                         }
-
-
                                                                     }
                                                                 }
                                                             }
                                                         }
-                                                    }
-
-                                                }
-                                            }
-
-                                        }
-
-                                        for (let index = 0; index < this.dataClassification.length; index++) {
-                                            if (movementOfArticles && movementOfArticles.length !== 0) {
-                                                for (const element of movementOfArticles) {
-                                                    if (element.article && element.article.classification && this.dataClassification[index]['_id'] === element.article.classification._id) {
-                                                        this.dataClassification[index]['total'] = this.dataClassification[index]['total'] + partialTaxBase;
+    
                                                     }
                                                 }
+    
                                             }
+    
+                                            for (let index = 0; index < this.dataClassification.length; index++) {
+                                                if (movementOfArticles && movementOfArticles.length !== 0) {
+                                                    for (const element of movementOfArticles) {
+                                                        if (element.article && element.article.classification && this.dataClassification[index]['_id'] === element.article.classification._id) {
+                                                            this.dataClassification[index]['total'] = this.dataClassification[index]['total'] + partialTaxBase;
+                                                        }
+                                                    }
+                                                }
+                                            }
+    
+                                        } else {
+                                            movementOfArticles = new Array()
                                         }
-
-                                    } else {
-                                        movementOfArticles = new Array()
                                     }
                                 }
+
+
+
+
+                                
 
 
 
