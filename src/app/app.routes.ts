@@ -78,6 +78,7 @@ import { ListCompaniesComponent } from './components/company/list-companies/list
 import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.component';
 import { ListMovementsOfCancellationsComponent } from './components/movement-of-cancellation/list-movements-of-cancellations/list-movements-of-cancellations.component';
 import { ListHistoriesComponent } from './components/history/list-history/list-histories.component';
+import { ReportTransactionTypeComponent } from './components/report-transaction-type/report-transaction-type.component';
 
 export const _routes: Routes = [
   {
@@ -571,19 +572,19 @@ export const _routes: Routes = [
   },
   {
     path: 'report/compra/compras-por-tipo-de-transacción',
-    component: ListTransactionTypesComponent,
+    component: ReportTransactionTypeComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.purchase' }
   },
   {
     path: 'report/venta/ventas-por-tipo-de-transacción',
-    component: ListTransactionTypesComponent,
+    component: ReportTransactionTypeComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.sale' }
   },
   {
     path: 'report/fondo/fondos-por-tipo-de-transacción',
-    component: ListTransactionTypesComponent,
+    component: ReportTransactionTypeComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.money' }
   },
