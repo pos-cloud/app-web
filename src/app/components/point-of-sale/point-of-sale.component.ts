@@ -72,7 +72,8 @@ export class PointOfSaleComponent implements OnInit {
     TransactionState.Pending.toString(),
     TransactionState.Sent.toString(),
     TransactionState.Preparing.toString(),
-    TransactionState.Packing.toString()
+    TransactionState.Packing.toString(),
+    TransactionState.Outstanding.toString()
   ];
   public originsToFilter: number[];
   public transactionTypes: TransactionType[];
@@ -180,7 +181,7 @@ export class PointOfSaleComponent implements OnInit {
       }
       // RECORRER ESTADOS INSERTADOS
       Object.keys(params).map(key => {
-        if (this.posType === 'delivery') {
+        if (this.posType === 'delivery' || this.posType === 'pedidos-web') {
           for (const s of params[key].split(',')) {
             if (this.validTransactionStates.includes(s)) {
               this.transactionStates.push(s);
@@ -491,27 +492,37 @@ export class PointOfSaleComponent implements OnInit {
           }
         );
       } else if (this.posType === 'pedidos-web') {
-        let query = {
-          $or: [
-            {
-              $and: [
-                {
-                  $or: [
-                    { state: TransactionState.Closed },
-                    { state: TransactionState.Outstanding }
-                  ]
-                },
-                { balance: { $gt: 0 } }
-              ]
-            },
-            { state: TransactionState.PaymentConfirmed },
-            { state: TransactionState.Delivered },
-            { state: TransactionState.Sent }
-          ],
-          madein: 'pedidos-web',
-          operationType: { $ne: 'D' },
-          "type.transactionMovement": this.transactionMovement,
-        }
+          var query;
+          if(this.transactionStates.length > 0){
+            query = {
+                state : { $in: this.transactionStates },
+                madein: 'pedidos-web',
+                operationType: { $ne: 'D' },
+                "type.transactionMovement": this.transactionMovement,
+              }
+          } else {
+              query = {
+                $or: [
+                  {
+                    $and: [
+                      {
+                        $or: [
+                          { state: TransactionState.Closed },
+                          { state: TransactionState.Outstanding }
+                        ]
+                      },
+                      { balance: { $gt: 0 } }
+                    ]
+                  },
+                  { state: TransactionState.PaymentConfirmed },
+                  { state: TransactionState.Delivered },
+                  { state: TransactionState.Sent }
+                ],
+                madein: 'pedidos-web',
+                operationType: { $ne: 'D' },
+                "type.transactionMovement": this.transactionMovement,
+              }
+          }
         await this.getTransactionsV2(query).then(
           transactions => {
             this.hideMessage();
