@@ -3314,7 +3314,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('normal');
 
     if (this.transaction.company) {
-      if (this.transaction.madein == 'resto' || this.transaction.madein == 'mostrador') {
+      if (this.transaction.madein == 'resto' || this.transaction.madein == 'mostrador' || this.transaction.madein == 'pedidos-web') {
         this.row += 5;
         this.doc.setFontType('bold');
         if (this.transaction.company.name !== undefined) {
@@ -3322,6 +3322,11 @@ export class PrintComponent implements OnInit {
         } else {
           this.doc.text("Cliente : Consumidor Final", margin, this.row);
         }
+        this.row += 5;
+        if(this.transaction.company.phones){
+            this.doc.text("Telefono : " + this.transaction.company.phones, margin, this.row);
+        }
+
         this.doc.setFontType('normal');
       }
       if (this.transaction.madein == 'delivery') {
