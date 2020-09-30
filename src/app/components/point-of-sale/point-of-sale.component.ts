@@ -1856,7 +1856,8 @@ export class PointOfSaleComponent implements OnInit {
       let sort: {} = { startDate: -1 };
 
       if (this.posType === 'pedidos-web' || this.posType === 'carritos-abandonados') {
-        sort = { endDate: -1 };
+        sort = { endDate: 1 };
+        this.orderTerm = ['endDate'];
       }
 
       this.subscription.add(this._transactionService.getTransactionsV2(

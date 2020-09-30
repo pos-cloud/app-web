@@ -141,7 +141,7 @@ export let attributes = [
   },
   {
     name: 'updateDate',
-    visible: true,
+    visible: false,
     disabled: false,
     filter: false,
     datatype: 'string',
