@@ -165,7 +165,6 @@ export class PaymentMethodComponent implements OnInit {
       'surcharge': [this.paymentMethod.surcharge, []],
       'commission': [this.paymentMethod.commission, []],
       'isCurrentAccount': [this.paymentMethod.isCurrentAccount, []],
-      'isCommission': [this.paymentMethod.isCommission, []],
       'acceptReturned': [this.paymentMethod.acceptReturned, []],
       'inputAndOuput': [this.paymentMethod.inputAndOuput, []],
       'checkDetail': [this.paymentMethod.checkDetail, []],
@@ -237,7 +236,6 @@ export class PaymentMethodComponent implements OnInit {
     if (!this.paymentMethod.surcharge) this.paymentMethod.surcharge = 0.00;
     if (!this.paymentMethod.commission) this.paymentMethod.commission = 0.00;
     if (this.paymentMethod.isCurrentAccount === undefined) this.paymentMethod.isCurrentAccount = false;
-    if (this.paymentMethod.isCommission === undefined) this.paymentMethod.isCommission = false;
     if (this.paymentMethod.acceptReturned === undefined) this.paymentMethod.acceptReturned = false;
     if (this.paymentMethod.inputAndOuput === undefined) this.paymentMethod.inputAndOuput = false;
     if (this.paymentMethod.checkDetail === undefined) this.paymentMethod.checkDetail = false;
@@ -261,7 +259,6 @@ export class PaymentMethodComponent implements OnInit {
       'surcharge': this.paymentMethod.surcharge,
       'commission': this.paymentMethod.commission,
       'isCurrentAccount': this.paymentMethod.isCurrentAccount,
-      'isCommission': this.paymentMethod.isCommission,
       'acceptReturned': this.paymentMethod.acceptReturned,
       'inputAndOuput': this.paymentMethod.inputAndOuput,
       'checkDetail': this.paymentMethod.checkDetail,

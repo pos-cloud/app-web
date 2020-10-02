@@ -12,7 +12,6 @@ export class PaymentMethod {
   public surcharge: number = 0.00;
   public commission: number = 0.00;
   public isCurrentAccount: boolean;
-  public isCommission: boolean;
   public acceptReturned: boolean;
   public inputAndOuput: boolean;
   public checkDetail: boolean;

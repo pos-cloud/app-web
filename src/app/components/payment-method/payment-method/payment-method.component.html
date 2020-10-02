@@ -120,23 +120,16 @@
                 </div>
             </div>
             <div class="row">
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-6">
                     <label for="cashBoxImpact" class="control-label">¿Afecta la caja diaria?</label>
                     <select class="form-control" formControlName="cashBoxImpact">
                         <option [disabled]="readonly" value="true">Si</option>
                         <option [disabled]="readonly" value="false" selected>No</option>
                     </select>
                 </div>
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-6">
                     <label for="allowCurrencyValue" class="control-label">¿Pide valores de moneda?</label>
                     <select class="form-control" formControlName="allowCurrencyValue">
-                        <option [disabled]="readonly" value="true">Si</option>
-                        <option [disabled]="readonly" value="false" selected>No</option>
-                    </select>
-                </div>
-                <div class="form-group col-md-4">
-                    <label for="isCommission" class="control-label">¿Se usa para comisión?</label>
-                    <select class="form-control" formControlName="isCommission">
                         <option [disabled]="readonly" value="true">Si</option>
                         <option [disabled]="readonly" value="false" selected>No</option>
                     </select>
