@@ -1010,7 +1010,16 @@
 											</button>
 										</div>
 									</div>
-								</div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-4">
+										<label for="numberPrint" class="control-label">Cantidad de impresiones?</label>
+										<div class="input-group">
+											<input type="number" class="form-control" formControlName="numberPrint"
+												name="numberPrint" id="numberPrint" [readonly]="readonly" />
+										</div>
+									</div>
+                                </div>
 							</div>
 						</div>
 					</ng-template>

@@ -69,7 +69,7 @@ export class Transaction {
   public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public updateUser: User;
-  public updateDate: string;
+  public updateDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 
   constructor() { }
 }
@@ -136,6 +136,16 @@ export let attributes = [
     filter: false,
     datatype: 'string',
     project: `{ "$dateToString": { "date": "$endDate", "format": "%d/%m/%Y", "timezone": "-03:00" } }`,
+    align: 'right',
+    required: true,
+  },
+  {
+    name: 'updateDate',
+    visible: false,
+    disabled: false,
+    filter: false,
+    datatype: 'string',
+    project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y", "timezone": "-03:00" } }`,
     align: 'right',
     required: true,
   },

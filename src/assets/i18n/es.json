@@ -335,7 +335,9 @@
   "in": "incluye",
   "out": "excluye",
   "notifications.app.checkout": "en la web al finalizar la compra",
+  "notifications.app.temporaryMessage": "mensaje temporal para evitar que carguen nuevos pedidos",
   "requireAddress": "solicita dirección de envío",
   "design.categoryTitle": "Título de las categorías",
-  "design.showSearchBar": "Mostrar buscador"
+  "design.showSearchBar": "Mostrar buscador",
+  "contact.claim": "Número de Reclamo"
 }

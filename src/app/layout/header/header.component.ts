@@ -20,6 +20,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Config } from 'app/app.config';
 import { Socket } from 'ngx-socket-io';
 import { CurrentAccountDetailsComponent } from '../../components/print/current-account-details/current-account-details.component';
+import { PushNotificationsService } from 'app/components/notification/notification.service';
 
 @Component({
 	selector: 'app-header',
@@ -51,11 +52,13 @@ export class HeaderComponent {
 		public alertConfig: NgbAlertConfig,
 		public _modalService: NgbModal,
 		private socket: Socket,
-		private _toastr: ToastrService,
+        private _toastr: ToastrService,
+        private _notificationService: PushNotificationsService
 	) {
 		// OCULTAR MENU REPORTE
-		this.isReportVisible = false;
-
+        this.isReportVisible = false;
+        //pedimos permiso
+        this._notificationService.requestPermission();
 		// REVISAR INTERNET
 		this.online$ = observableMerge(
 			observableOf(navigator.onLine),
@@ -129,7 +132,8 @@ export class HeaderComponent {
 
 				// ESCUCHAMOS SOCKET
 				this.socket.on('message', (mnj) => {
-					this.showToast(mnj);
+                    this.showToast(mnj);
+                    this.showNotification(mnj);
 				});
 
 				if (this.intervalSocket) {
@@ -261,5 +265,14 @@ export class HeaderComponent {
 				this._toastr.success('', message);
 				break;
 		}
-	}
+    }
+    
+    public showNotification (message : string){
+        let data: Array < any >= [];
+        data.push({
+            'title': 'Pedido',
+            'alertContent': message
+        });
+        this._notificationService.generateNotification(data);
+      }
 }

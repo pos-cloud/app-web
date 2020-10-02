@@ -15,6 +15,7 @@ export class Application extends Model {
   public contact: {
     phone: number,
     whatsapp: number,
+    claim: number,
   }
   public design: {
     about: string,
@@ -31,12 +32,19 @@ export class Application extends Model {
   };
   public notifications: {
     app: {
-      checkout: string
+      checkout: string,
+      temporaryMessage: string
     },
     email: {
       checkout: string
     }
   };
+
+  public schedule : {
+    day : string,
+    from : string,
+    to : string
+  }[]
 
   constructor() { super(); }
 

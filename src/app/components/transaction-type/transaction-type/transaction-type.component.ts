@@ -388,7 +388,8 @@ export class TransactionTypeComponent implements OnInit {
       'branch': [this.transactionType.branch, []],
       'level': [this.transactionType.level, []],
       'groupsArticles': [this.transactionType.groupsArticles, []],
-      'printOrigin': [this.transactionType.printOrigin, []]
+      'printOrigin': [this.transactionType.printOrigin, []],
+      'numberPrint' : [this.transactionType.numberPrint, []]
 
     });
 
@@ -584,6 +585,8 @@ export class TransactionTypeComponent implements OnInit {
     if (this.transactionType.updatePrice === undefined) this.transactionType.updatePrice = false;
     if (this.transactionType.updateArticle === undefined) this.transactionType.updateArticle = false;
     if (this.transactionType.finishCharge === undefined) this.transactionType.finishCharge = true;
+    if (this.transactionType.numberPrint === undefined) this.transactionType.numberPrint = 0;
+
 
     if (this.transactionType.expirationDate) {
       this.transactionType.expirationDate = moment(this.transactionType.expirationDate).format('YYYY-MM-DD');
@@ -693,7 +696,8 @@ export class TransactionTypeComponent implements OnInit {
       'branch': branch,
       'level': this.transactionType.level,
       'groupsArticles' : this.transactionType.groupsArticles,
-      'printOrigin' : this.transactionType.printOrigin
+      'printOrigin' : this.transactionType.printOrigin,
+      'numberPrint' : this.transactionType.numberPrint
     });
   }
 

@@ -255,6 +255,8 @@ import { ListMovementsOfCancellationsComponent } from './components/movement-of-
 import { ComponentsModule } from './components/components.module';
 import { ListCategoriesPosComponent } from './components/category/list-categories-pos/list-categories-pos.component';
 import { AuthInterceptor } from './main/interceptors/auth.interceptor';
+import { PushNotificationsService } from './components/notification/notification.service';
+import { ReportTransactionTypeComponent } from './components/report-transaction-type/report-transaction-type.component';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -432,7 +434,8 @@ export function createTranslateLoader(http: HttpClient) {
     ListEmailTemplatesComponent,
     SelectChecksComponent,
     ListCategoriesPosComponent,
-    ListMovementsOfCancellationsComponent
+    ListMovementsOfCancellationsComponent,
+    ReportTransactionTypeComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -679,6 +682,7 @@ export function createTranslateLoader(http: HttpClient) {
     ResourceService,
     GalleryService,
     EmailTemplateService,
+    PushNotificationsService
   ],
   bootstrap: [AppComponent]
 })
