@@ -172,7 +172,8 @@ export class AddTransactionComponent implements OnInit {
                         }
                         this.getCancellationsOfMovements()
                     }
-                });
+                }
+            );
         }
     }
 

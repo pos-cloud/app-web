@@ -333,11 +333,6 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard]
   },
   {
-    path: 'admin/tipos-de-transacciones',
-    component: ListTransactionTypesComponent,
-    canActivate: [AuthGuard, LicenseGuard]
-  },
-  {
     path: 'admin/tipos-de-variantes',
     component: ListVariantTypesComponent,
     canActivate: [AuthGuard, LicenseGuard]

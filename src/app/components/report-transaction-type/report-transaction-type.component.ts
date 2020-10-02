@@ -16,7 +16,6 @@ import { User } from 'app/components/user/user';
 import { Transaction } from '../transaction/transaction';
 import { TransactionMovement, TransactionType } from '../transaction-type/transaction-type';
 import { TransactionTypeService } from '../transaction-type/transaction-type.service';
-import { TransactionTypeComponent } from '../transaction-type/transaction-type/transaction-type.component';
 
 @Component({
   selector: 'app-report-transaction-type',
@@ -165,9 +164,9 @@ export class ReportTransactionTypeComponent implements OnInit {
 
     this.loading = true;
 
-    this._transactionTypeService.getTransactionTypes().subscribe(
+    this._transactionTypeService.getAll({},{"operationType":{"$ne":"D"}},{}).subscribe(
       result => {
-        if (!result.transactionTypes) {
+        if (result.status != 200) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.transactionTypes = new Array();
@@ -175,7 +174,7 @@ export class ReportTransactionTypeComponent implements OnInit {
         } else {
           this.hideMessage();
           this.loading = false;
-          this.transactionTypes = result.transactionTypes;
+          this.transactionTypes = result.result;
           this.totalItems = this.transactionTypes.length;
           this.areTransactionTypesEmpty = false;
         }
@@ -304,54 +303,6 @@ export class ReportTransactionTypeComponent implements OnInit {
       }
     }
   }
-
-
-  public openModal(op: string, transactionType: TransactionType): void {
-
-    let modalRef;
-    switch (op) {
-      case 'view':
-        modalRef = this._modalService.open(TransactionTypeComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.operation = 'view';
-        modalRef.componentInstance.transactionType = transactionType;
-        modalRef.componentInstance.readonly = true;
-        break;
-      case 'add':
-        modalRef = this._modalService.open(TransactionTypeComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.operation = 'add';
-        modalRef.result.then((result) => {
-          this.getTransactionTypes();
-        }, (reason) => {
-          this.getTransactionTypes();
-        });
-        break;
-      case 'update':
-        modalRef = this._modalService.open(TransactionTypeComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.operation = 'update';
-        modalRef.componentInstance.transactionType = transactionType;
-        modalRef.componentInstance.readonly = false;
-        modalRef.result.then((result) => {
-          this.getTransactionTypes();
-        }, (reason) => {
-          this.getTransactionTypes();
-        });
-        break;
-      case 'delete':
-        modalRef = this._modalService.open(TransactionTypeComponent, { size: 'lg', backdrop: 'static' })
-        modalRef.componentInstance.transactionType = transactionType;
-        modalRef.componentInstance.readonly = true;
-        modalRef.componentInstance.operation = "delete"
-        modalRef.result.then((result) => {
-          if (result === 'delete_close') {
-            this.getTransactionTypes();
-          }
-        }, (reason) => {
-
-        });
-        break;
-      default: ;
-    }
-  };
 
   public getCode(transactionType: TransactionType, letter: string): number {
 

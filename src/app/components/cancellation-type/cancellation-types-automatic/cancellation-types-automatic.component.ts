@@ -185,7 +185,12 @@ export class CancellationTypeAutomaticComponent implements OnInit {
             this.activeModal.close();
         } else {
             // CAMBIAMOS EL TIPO
-            await this.getTransactionTypes(`where="_id":"${this.cancellationTypeSelected.destination._id}"`).then(
+
+            let match = {
+                _id : {"$oid" : this.cancellationTypeSelected.destination._id}
+            }
+
+            await this.getTransactionTypes(match).then(
                 async transactionTypes => {
                     if (transactionTypes && transactionTypes.length > 0) {
 
@@ -598,19 +603,33 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         });
     }
 
-    public getTransactionTypes(query?: string): Promise<TransactionType[]> {
+    public getTransactionTypes(match): Promise<TransactionType[]> {
 
         return new Promise<TransactionType[]>((resolve, reject) => {
 
             this.loading = true;
 
-            this._transactionTypeService.getTransactionTypes(query).subscribe(
+            let project = {
+                _id : 1,
+                fixedOrigin : 1,
+                fixedLetter : 1,
+                cashBoxImpact : 1,
+                requestArticles : 1,
+                stockMovement:1,
+                requestTaxes : 1,
+                transactionMovement:1,
+                operationType : 1,
+            }
+
+            match["operationType"] = {"$ne":"D"}
+
+            this._transactionTypeService.getAll(project,match,{},{}).subscribe(
                 result => {
                     this.loading = false;
-                    if (!result.transactionTypes) {
+                    if (result.status != 200) {
                         resolve(null);
                     } else {
-                        resolve(result.transactionTypes);
+                        resolve(result.result);
                     }
                 },
                 error => {

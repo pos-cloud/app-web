@@ -24,7 +24,6 @@ import { EmployeeService } from './components/employee/employee.service';
 import { TableService } from './components/table/table.service';
 import { CashBoxService } from './components/cash-box/cash-box.service';
 import { TransactionService } from './components/transaction/transaction.service';
-import { TransactionTypeService } from './components/transaction-type/transaction-type.service';
 import { MovementOfArticleService } from './components/movement-of-article/movement-of-article.service';
 import { UserService } from './components/user/user.service';
 import { RoomService } from './components/room/room.service';
@@ -94,8 +93,6 @@ import { SendEmailComponent } from './components/send-email/send-email.component
 import { SelectEmployeeComponent } from './components/employee/select-employee/select-employee.component';
 import { PrintComponent } from './components/print/print/print.component';
 import { ViewTransactionComponent } from './components/transaction/view-transaction/view-transaction.component';
-import { ListTransactionTypesComponent } from './components/transaction-type/list-transaction-types/list-transaction-types.component';
-import { TransactionTypeComponent } from './components/transaction-type/transaction-type/transaction-type.component';
 import { UpdateArticleStockComponent } from './components/article-stock/update-article-stock/update-article-stock.component';
 import { ListArticleStocksComponent } from './components/article-stock/list-article-stocks/list-article-stocks.component';
 import { AddVariantComponent } from './components/variant/add-variant/add-variant.component';
@@ -313,8 +310,6 @@ export function createTranslateLoader(http: HttpClient) {
     SelectEmployeeComponent,
     PrintComponent,
     ViewTransactionComponent,
-    ListTransactionTypesComponent,
-    TransactionTypeComponent,
     RegisterComponent,
     AddArticleStockComponent,
     UpdateArticleStockComponent,
@@ -478,8 +473,6 @@ export function createTranslateLoader(http: HttpClient) {
     SelectEmployeeComponent,
     PrintComponent,
     ViewTransactionComponent,
-    ListTransactionTypesComponent,
-    TransactionTypeComponent,
     RegisterComponent,
     AddArticleStockComponent,
     UpdateArticleStockComponent,
@@ -629,7 +622,6 @@ export function createTranslateLoader(http: HttpClient) {
     TableService,
     CashBoxService,
     TransactionService,
-    TransactionTypeService,
     MovementOfArticleService,
     UserService,
     RoomService,

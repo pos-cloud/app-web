@@ -252,6 +252,11 @@ export class AddSaleOrderComponent {
         async transaction => {
           if (transaction) {
             this.transaction = transaction;
+
+            if(!this.transaction.company && this.transaction.type.company){
+                this.transaction.company = this.transaction.type.company;
+            }
+
             if (this.transaction &&
               this.transaction.company &&
               this.transaction.company.transport) {

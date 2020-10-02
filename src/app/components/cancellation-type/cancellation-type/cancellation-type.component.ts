@@ -150,12 +150,23 @@ export class CancellationTypeComponent implements OnInit {
 
     this.loading = true;
 
-    this._transactionTypeService.getTransactionTypes('sort="transactionMovement":1').subscribe(
+    let project = {
+        _id : 1,
+        name : 1,
+        operationType : 1
+    }
+
+    let match = {
+        operationType : { "$ne" : "D" }
+    }
+
+    this._transactionTypeService.getAll(project,match,{},{}).subscribe(
       result => {
-        if (!result.transactionTypes) {
+          
+        if (result.status != 200) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
-          this.origins = result.transactionTypes;
+          this.origins = result.result;
         }
         this.loading = false;
       },
@@ -176,14 +187,24 @@ export class CancellationTypeComponent implements OnInit {
       }
     }
 
-    let query = 'where="transactionMovement":"' + this.originSelected.transactionMovement + '","_id":{"$ne":"' + this.originSelected._id + '"}';
+    let project = {
+        name : 1,
+        transactionMovement:1,
+        _id :1
+    }
 
-    this._transactionTypeService.getTransactionTypes(query).subscribe(
+    let match = {
+        transactionMovement : this.originSelected.transactionMovement,
+        _id : { "$ne": this.originSelected._id },
+        operationType : { "$ne" : "D" }
+    }
+
+    this._transactionTypeService.getAll(project,match,{}).subscribe(
       result => {
-        if (!result.transactionTypes) {
+        if (result.status != 200) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
-          this.destinations = result.transactionTypes;
+          this.destinations = result.result;
           if (this.cancellationType.origin &&
             this.cancellationType.destination) {
             this.setValueForm();

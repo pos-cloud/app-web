@@ -104,18 +104,31 @@ export class ListCashBoxesComponent implements OnInit {
 
 	public getTransactionTypes(cashBox: CashBox): void {
 
-		this.loading = true;
+        this.loading = true;
+        
+        let project = {
+            name : 1,
+            cashClosing:1,
+            cashBoxImpact :1,
+            defectPrinter : 1
+        }
+    
+        let match = {
+            cashClosing : true,
+            cashBoxImpact : true,
+            operationType : { "$ne" : "D" }
+        }
 
-		this._transactionTypeService.getTransactionTypes('where="cashClosing":true,"cashBoxImpact":true').subscribe(
+		this._transactionTypeService.getAll(project,match,{}).subscribe(
 			result => {
-				if (!result.transactionTypes) {
+				if (result.status != 200) {
 					if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
 					this.loading = false;
 					this.openModal('print', cashBox);
 				} else {
 					this.hideMessage();
 					this.loading = false;
-					this.openModal('print', cashBox, result.transactionTypes[0].defectPrinter);
+					this.openModal('print', cashBox, result.result[0].defectPrinter);
 				}
 			},
 			error => {

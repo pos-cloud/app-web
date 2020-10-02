@@ -376,20 +376,54 @@ export class PointOfSaleComponent implements OnInit {
     });
   }
 
-  public getTransactionTypes(query?: string): Promise<TransactionType[]> {
+  public getTransactionTypes(match?): Promise<TransactionType[]> {
 
     return new Promise<TransactionType[]>((resolve, reject) => {
 
       this.loading = true;
 
-      this.subscription.add(this._transactionTypeService.getTransactionTypes(query).subscribe(
+      let project = {
+        _id : 1,
+        defectShipmentMethod : 1,
+        fixedLetter : 1,
+        currentAccount : 1,
+        cashBoxImpact : 1,
+        fixedOrigin : 1,
+        transactionMovement: 1,
+        stockMovement :1,
+        maxOrderNumber : 1,
+        requestEmployee : 1,
+        requestArticles : 1,
+        requestCompany : 1,
+        automaticNumbering :1,
+        company : 1,
+        automaticCreation : 1,
+        requestPaymentMethods : 1,
+        readLayout : 1,
+        defectPrinter : 1,
+        name : 1,
+        labelPrint : 1,
+        electronics : 1,
+        "defectEmailTemplate._id" : 1,
+        "defectEmailTemplate.design": 1,
+        printable : 1,
+        requestEmailTemplate : 1,
+        allowAPP : 1,
+        order : 1,
+        cashOpening : 1,
+        cashClosing : 1,
+        level : 1,
+        branch : 1,
+        defectOrders : 1,
+        operationType : 1
+      }
+
+      match["operationType"] = {"$ne":"D"}
+
+      this.subscription.add(this._transactionTypeService.getAll(project,match,{order:1}).subscribe(
         result => {
           this.loading = false;
-          if (!result.transactionTypes) {
-            resolve(null);
-          } else {
-            resolve(result.transactionTypes);
-          }
+          (result.status === 200) ? resolve(result.result) : reject(result);
         },
         error => {
           this.loading = false;
@@ -458,7 +492,12 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     if (!this.transaction && this.transactionTypeId && this.transactionTypeId !== '') {
-      this.getTransactionTypes(`where="_id":"${this.transactionTypeId}"&sort="order":1`).then(
+
+        let match = {
+            "_id" : { "$oid" : this.transactionTypeId}
+        }
+
+      this.getTransactionTypes(match).then(
         transactionTypes => {
           if (transactionTypes) {
             this.addTransaction(transactionTypes[0]);
@@ -470,7 +509,11 @@ export class PointOfSaleComponent implements OnInit {
         this.roomSelected._id = pathLocation[4];
         this.getRooms();
       } else if (this.posType === "delivery") {
-        await this.getTransactionTypes('where="$or":[{"cashOpening":true},{"cashClosing":true}]&sort="order":1').then(
+        let match = {
+            "$or" : [
+                {"cashOpening":true},{"cashClosing":true}]
+        }
+        await this.getTransactionTypes(match).then(
           transactionTypes => {
             if (transactionTypes) {
               this.transactionTypes = transactionTypes;
@@ -546,15 +589,30 @@ export class PointOfSaleComponent implements OnInit {
       } else if (this.posType === 'mostrador') {
 
 
-        let where
+        let match;
 
         if (this.user.branch && this.user.branch._id) {
-          where = 'where="level":{ "$lt" : "' + this.user.level + '"},"$or":[{"branch":{ "$exists": false}},{"branch":null},{"branch":"' + this.user.branch._id + '"}],"transactionMovement":"' + this.transactionMovement + '","allowAPP":false';
+            match = {
+                level : { "$lt" : this.user.level },
+                "$or" : [
+                    { branch : {"$exits": false}},
+                    {branch:null},
+                    {branch: this.user.branch._id }
+                ],
+                transactionMovement : this.transactionMovement,
+                "allowAPP": false
+            }
         } else {
-          where = 'where="level":{ "$lt" : "' + this.user.level + '"},"transactionMovement":"' + this.transactionMovement + '","allowAPP":false';
+            match = {
+                level : { "$lt" : this.user.level },
+                transactionMovement : this.transactionMovement,
+                "allowAPP": false
+            }
         }
 
-        await this.getTransactionTypes(where + '&sort="order":1').then(
+
+
+        await this.getTransactionTypes(match).then(
           transactionTypes => {
             if (transactionTypes) {
               this.transactionTypes = transactionTypes;
@@ -583,15 +641,28 @@ export class PointOfSaleComponent implements OnInit {
         );
       } else if (this.posType === "cuentas-corrientes") {
 
-        let where
+        let match;
 
         if (this.user.branch && this.user.branch._id) {
-          where = 'where="level":{ "$lt" : "' + this.user.level + '"},"$or":[{"branch":{ "$exists": false}},{"branch":null},{"branch":"' + this.user.branch._id + '"}],"transactionMovement":"' + this.transactionMovement + '"';
+            match = {
+                level : { "$lt" : this.user.level },
+                "$or" : [
+                    { branch : {"$exits": false}},
+                    {branch:null},
+                    {branch: this.user.branch._id }
+                ],
+                transactionMovement : this.transactionMovement,
+                "allowAPP": false
+            }
         } else {
-          where = 'where="level":{ "$lt" : "' + this.user.level + '"},"transactionMovement":"' + this.transactionMovement + '"';
+            match = {
+                level : { "$lt" : this.user.level },
+                transactionMovement : this.transactionMovement,
+                "allowAPP": false
+            }
         }
 
-        await this.getTransactionTypes(where + '&sort="order":1').then(
+        await this.getTransactionTypes(match).then(
           transactionTypes => {
             if (transactionTypes) {
               this.transactionTypes = transactionTypes;
@@ -605,9 +676,11 @@ export class PointOfSaleComponent implements OnInit {
 
   public async initTransactionByType(op: string, openPending: boolean = false) {
 
-    let query = `where="${op}":true`;
+    let match = {
+        op : true
+    }
 
-    await this.getTransactionTypes(query + '&sort="order":1').then(
+    await this.getTransactionTypes(match).then(
       async transactionTypes => {
         if (transactionTypes && transactionTypes.length > 0) {
           if (openPending) {
@@ -684,7 +757,10 @@ export class PointOfSaleComponent implements OnInit {
               this.transaction.cashBox = cashBoxes[0];
               this.nextStepTransaction();
             } else {
-              await this.getTransactionTypes('where="cashOpening":true&sort="order":1').then(
+                let match = {
+                    "cashOpening":true
+                }
+              await this.getTransactionTypes(match).then(
                 transactionTypes => {
                   if (transactionTypes && transactionTypes.length > 0) {
                     this.transaction.type = transactionTypes[0];
@@ -1015,9 +1091,14 @@ export class PointOfSaleComponent implements OnInit {
           (this.posType === 'resto' && this.transaction.table))) {
         this.openModal('select-employee');
       } else if (!this.transaction.company &&
-        (this.transaction.type.requestCompany || (this.transaction.type.requestArticles && this.posType === 'cuentas-corrientes'))) {
+                    (this.transaction.type.requestCompany || (this.transaction.type.requestArticles && this.posType === 'cuentas-corrientes')) && !this.transaction.type.company) {
         if (!this.company) {
-          this.openModal('company');
+            if(this.transaction.type.company){
+                this.transaction.company = this.transaction.type.company
+                this.nextStepTransaction();
+            } else {
+                this.openModal('company');
+            }
         } else {
           this.transaction.company = this.company;
           this.nextStepTransaction();
@@ -1162,7 +1243,7 @@ export class PointOfSaleComponent implements OnInit {
               } else {
                 this.finishTransaction();
               }
-            } else if (result === "change-company") {
+            } else if (result === "change-company" && !this.transaction.type.company) {
               this.openModal('company');
             } else {
               this.refresh();

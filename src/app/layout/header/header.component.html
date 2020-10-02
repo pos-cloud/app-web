@@ -320,11 +320,8 @@
             Puntos de venta
           </button>
           <div class="dropdown-divider"></div>
-          <button *ngIf="(config.modules.sale.resto ||
-                      config.modules.sale.counter ||
-                      config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
-            [routerLink]="['admin','tipos-de-transacciones']" [routerLinkActive]="['active']">
-            Tipos de Transacciones
+          <button class="dropdown-item" [routerLink]="['transaction-types']" [routerLinkActive]="['active']">
+            {{ 'transaction-types' | translate | capitalize }}
           </button>
           <button *ngIf="(config.modules.sale.resto ||
                       config.modules.sale.counter ||
