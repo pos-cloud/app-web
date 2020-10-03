@@ -51,12 +51,14 @@ import { ClaimService } from 'app/layout/claim/claim.service';
 import { EmailService } from '../send-email/send-email.service';
 import { SendEmailComponent } from '../send-email/send-email.component';
 import { EmployeeType } from '../employee-type/employee-type.model';
+import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-point-of-sale',
   templateUrl: './point-of-sale.component.html',
   styleUrls: ['./point-of-sale.component.scss'],
-  providers: [NgbAlertConfig],
+  providers: [NgbAlertConfig, TranslateMePipe],
   encapsulation: ViewEncapsulation.None
 })
 
@@ -124,6 +126,8 @@ export class PointOfSaleComponent implements OnInit {
     private _userService: UserService,
     private _claimService: ClaimService,
     private _emailService: EmailService,
+    public translatePipe: TranslateMePipe,
+    private _toastr: ToastrService,
   ) {
     this.roomSelected = new Room();
     this.transactionTypes = new Array();
@@ -383,51 +387,55 @@ export class PointOfSaleComponent implements OnInit {
       this.loading = true;
 
       let project = {
-        _id : 1,
-        defectShipmentMethod : 1,
-        fixedLetter : 1,
-        currentAccount : 1,
-        cashBoxImpact : 1,
-        fixedOrigin : 1,
+        _id: 1,
+        defectShipmentMethod: 1,
+        fixedLetter: 1,
+        currentAccount: 1,
+        cashBoxImpact: 1,
+        fixedOrigin: 1,
         transactionMovement: 1,
-        stockMovement :1,
-        maxOrderNumber : 1,
-        requestEmployee : 1,
-        requestArticles : 1,
-        requestCompany : 1,
-        automaticNumbering :1,
-        company : 1,
-        automaticCreation : 1,
-        requestPaymentMethods : 1,
-        readLayout : 1,
-        defectPrinter : 1,
-        name : 1,
-        labelPrint : 1,
-        electronics : 1,
-        "defectEmailTemplate._id" : 1,
+        stockMovement: 1,
+        maxOrderNumber: 1,
+        requestEmployee: 1,
+        requestArticles: 1,
+        requestCompany: 1,
+        automaticNumbering: 1,
+        company: 1,
+        automaticCreation: 1,
+        requestPaymentMethods: 1,
+        readLayout: 1,
+        defectPrinter: 1,
+        name: 1,
+        labelPrint: 1,
+        electronics: 1,
+        "defectEmailTemplate._id": 1,
         "defectEmailTemplate.design": 1,
-        printable : 1,
-        requestEmailTemplate : 1,
-        allowAPP : 1,
-        order : 1,
-        cashOpening : 1,
-        cashClosing : 1,
-        level : 1,
-        branch : 1,
-        defectOrders : 1,
-        operationType : 1
+        printable: 1,
+        requestEmailTemplate: 1,
+        allowAPP: 1,
+        order: 1,
+        cashOpening: 1,
+        cashClosing: 1,
+        level: 1,
+        branch: 1,
+        defectOrders: 1,
+        operationType: 1
       }
 
-      match["operationType"] = {"$ne":"D"}
+      match["operationType"] = { "$ne": "D" }
 
-      this.subscription.add(this._transactionTypeService.getAll(project,match,{order:1}).subscribe(
+      this.subscription.add(this._transactionTypeService.getAll(project, match, { order: 1 }).subscribe(
         result => {
           this.loading = false;
-          (result.status === 200) ? resolve(result.result) : reject(result);
+          if(result.status === 200) {
+            resolve(result.result);
+          } else {
+            resolve(null);
+            this.showToast(result);
+          }
         },
         error => {
-          this.loading = false;
-          this.showMessage(error._body, 'danger', false);
+          this.showToast(error);
           resolve(null);
         }
       ));
@@ -493,9 +501,9 @@ export class PointOfSaleComponent implements OnInit {
 
     if (!this.transaction && this.transactionTypeId && this.transactionTypeId !== '') {
 
-        let match = {
-            "_id" : { "$oid" : this.transactionTypeId}
-        }
+      let match = {
+        "_id": { "$oid": this.transactionTypeId }
+      }
 
       this.getTransactionTypes(match).then(
         transactionTypes => {
@@ -510,8 +518,8 @@ export class PointOfSaleComponent implements OnInit {
         this.getRooms();
       } else if (this.posType === "delivery") {
         let match = {
-            "$or" : [
-                {"cashOpening":true},{"cashClosing":true}]
+          "$or": [
+            { "cashOpening": true }, { "cashClosing": true }]
         }
         await this.getTransactionTypes(match).then(
           transactionTypes => {
@@ -535,37 +543,37 @@ export class PointOfSaleComponent implements OnInit {
           }
         );
       } else if (this.posType === 'pedidos-web') {
-          var query;
-          if(this.transactionStates.length > 0){
-            query = {
-                state : { $in: this.transactionStates },
-                madein: 'pedidos-web',
-                operationType: { $ne: 'D' },
-                "type.transactionMovement": this.transactionMovement,
-              }
-          } else {
-              query = {
-                $or: [
+        var query;
+        if (this.transactionStates.length > 0) {
+          query = {
+            state: { $in: this.transactionStates },
+            madein: 'pedidos-web',
+            operationType: { $ne: 'D' },
+            "type.transactionMovement": this.transactionMovement,
+          }
+        } else {
+          query = {
+            $or: [
+              {
+                $and: [
                   {
-                    $and: [
-                      {
-                        $or: [
-                          { state: TransactionState.Closed },
-                          { state: TransactionState.Outstanding }
-                        ]
-                      },
-                      { balance: { $gt: 0 } }
+                    $or: [
+                      { state: TransactionState.Closed },
+                      { state: TransactionState.Outstanding }
                     ]
                   },
-                  { state: TransactionState.PaymentConfirmed },
-                  { state: TransactionState.Delivered },
-                  { state: TransactionState.Sent }
-                ],
-                madein: 'pedidos-web',
-                operationType: { $ne: 'D' },
-                "type.transactionMovement": this.transactionMovement,
-              }
+                  { balance: { $gt: 0 } }
+                ]
+              },
+              { state: TransactionState.PaymentConfirmed },
+              { state: TransactionState.Delivered },
+              { state: TransactionState.Sent }
+            ],
+            madein: 'pedidos-web',
+            operationType: { $ne: 'D' },
+            "type.transactionMovement": this.transactionMovement,
           }
+        }
         await this.getTransactionsV2(query).then(
           transactions => {
             this.hideMessage();
@@ -592,22 +600,22 @@ export class PointOfSaleComponent implements OnInit {
         let match;
 
         if (this.user.branch && this.user.branch._id) {
-            match = {
-                level : { "$lt" : this.user.level },
-                "$or" : [
-                    { branch : {"$exits": false}},
-                    {branch:null},
-                    {branch: this.user.branch._id }
-                ],
-                transactionMovement : this.transactionMovement,
-                "allowAPP": false
-            }
+          match = {
+            level: { "$lt": this.user.level },
+            "$or": [
+              { branch: { "$exits": false } },
+              { branch: null },
+              { branch: this.user.branch._id }
+            ],
+            transactionMovement: this.transactionMovement,
+            "allowAPP": false
+          }
         } else {
-            match = {
-                level : { "$lt" : this.user.level },
-                transactionMovement : this.transactionMovement,
-                "allowAPP": false
-            }
+          match = {
+            level: { "$lt": this.user.level },
+            transactionMovement: this.transactionMovement,
+            "allowAPP": false
+          }
         }
 
 
@@ -644,22 +652,22 @@ export class PointOfSaleComponent implements OnInit {
         let match;
 
         if (this.user.branch && this.user.branch._id) {
-            match = {
-                level : { "$lt" : this.user.level },
-                "$or" : [
-                    { branch : {"$exits": false}},
-                    {branch:null},
-                    {branch: this.user.branch._id }
-                ],
-                transactionMovement : this.transactionMovement,
-                "allowAPP": false
-            }
+          match = {
+            level: { "$lt": this.user.level },
+            "$or": [
+              { branch: { "$exits": false } },
+              { branch: null },
+              { branch: this.user.branch._id }
+            ],
+            transactionMovement: this.transactionMovement,
+            "allowAPP": false
+          }
         } else {
-            match = {
-                level : { "$lt" : this.user.level },
-                transactionMovement : this.transactionMovement,
-                "allowAPP": false
-            }
+          match = {
+            level: { "$lt": this.user.level },
+            transactionMovement: this.transactionMovement,
+            "allowAPP": false
+          }
         }
 
         await this.getTransactionTypes(match).then(
@@ -677,7 +685,7 @@ export class PointOfSaleComponent implements OnInit {
   public async initTransactionByType(op: string, openPending: boolean = false) {
 
     let match = {
-        op : true
+      op: true
     }
 
     await this.getTransactionTypes(match).then(
@@ -757,9 +765,9 @@ export class PointOfSaleComponent implements OnInit {
               this.transaction.cashBox = cashBoxes[0];
               this.nextStepTransaction();
             } else {
-                let match = {
-                    "cashOpening":true
-                }
+              let match = {
+                "cashOpening": true
+              }
               await this.getTransactionTypes(match).then(
                 transactionTypes => {
                   if (transactionTypes && transactionTypes.length > 0) {
@@ -1091,14 +1099,14 @@ export class PointOfSaleComponent implements OnInit {
           (this.posType === 'resto' && this.transaction.table))) {
         this.openModal('select-employee');
       } else if (!this.transaction.company &&
-                    (this.transaction.type.requestCompany || (this.transaction.type.requestArticles && this.posType === 'cuentas-corrientes')) && !this.transaction.type.company) {
+        (this.transaction.type.requestCompany || (this.transaction.type.requestArticles && this.posType === 'cuentas-corrientes')) && !this.transaction.type.company) {
         if (!this.company) {
-            if(this.transaction.type.company){
-                this.transaction.company = this.transaction.type.company
-                this.nextStepTransaction();
-            } else {
-                this.openModal('company');
-            }
+          if (this.transaction.type.company) {
+            this.transaction.company = this.transaction.type.company
+            this.nextStepTransaction();
+          } else {
+            this.openModal('company');
+          }
         } else {
           this.transaction.company = this.company;
           this.nextStepTransaction();
@@ -2310,5 +2318,32 @@ export class PointOfSaleComponent implements OnInit {
 
   public hideMessage(): void {
     this.alertMessage = '';
+  }
+
+  public showToast(result, type?: string, title?: string, message?: string): void {
+    if (result) {
+      if (result.status === 200) {
+        type = 'success';
+        title = result.message;
+      } else if (result.status >= 400) {
+        type = 'danger';
+        title = (result.error && result.error.message) ? result.error.message : result.message;
+      } else {
+        type = 'info';
+        title = result.message;
+      }
+    }
+    switch (type) {
+      case 'success':
+        this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        break;
+      case 'danger':
+        this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        break;
+      default:
+        this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        break;
+    }
+    this.loading = false;
   }
 }
