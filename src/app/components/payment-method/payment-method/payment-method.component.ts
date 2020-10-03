@@ -8,11 +8,14 @@ import { PaymentMethod, CompanyType } from '../payment-method';
 
 import { PaymentMethodService } from '../payment-method.service';
 import { Application } from 'app/components/application/application.model';
-import { Subscription, Subject } from 'rxjs';
+import { Subscription, Subject, Observable } from 'rxjs';
 import { ApplicationService } from 'app/components/application/application.service';
 import Resulteable from 'app/util/Resulteable';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { Article } from 'app/components/article/article';
+import { ArticleService } from 'app/components/article/article.service';
 
 @Component({
   selector: 'app-payment-method',
@@ -54,54 +57,71 @@ export class PaymentMethodComponent implements OnInit {
   public html = '';
 
   public tinyMCEConfigBody = {
-      selector: "textarea",
-      theme: "modern",
-      paste_data_images: true,
-      plugins: [
-          "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-          "searchreplace wordcount visualblocks visualchars code fullscreen",
-          "insertdatetime media nonbreaking table contextmenu directionality",
-          "emoticons template paste textcolor colorpicker textpattern"
-      ],
-      toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | forecolor backcolor emoticons | print preview fullscreen",
-      image_advtab: true,
-      height: 250,
-      file_picker_types: 'file image media',
-      images_dataimg_filter: function(img) {
-          return img.hasAttribute('internal-blob');
-        },
-      /*file_picker_callback: function (callback, value, meta) {
-          if (meta.filetype == 'image') {
-              $('#upload').trigger('click');
-              $('#upload').on('change', function () {
-                  var file = this.files[0];
-                  var reader = new FileReader();
-                  reader.onload = function (e) {
-                      callback(e.target['result'], {
-                          alt: ''
-                      });
-                  };
-                  reader.readAsDataURL(file);
-              });
-          }
-      },*/
-      file_picker_callback: function(callback, value, meta) {
-          if (meta.filetype == 'image') {
+    selector: "textarea",
+    theme: "modern",
+    paste_data_images: true,
+    plugins: [
+      "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+      "searchreplace wordcount visualblocks visualchars code fullscreen",
+      "insertdatetime media nonbreaking table contextmenu directionality",
+      "emoticons template paste textcolor colorpicker textpattern"
+    ],
+    toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | forecolor backcolor emoticons | print preview fullscreen",
+    image_advtab: true,
+    height: 250,
+    file_picker_types: 'file image media',
+    images_dataimg_filter: function (img) {
+      return img.hasAttribute('internal-blob');
+    },
+    /*file_picker_callback: function (callback, value, meta) {
+        if (meta.filetype == 'image') {
             $('#upload').trigger('click');
-            $('#upload').on('change', function() {
-              var file = this.files[0];
-              var reader = new FileReader();
-              reader.onload = function(e) {
-          
-                callback(e.target['result'], {
-                  alt: ''
-                });
-              };
-              reader.readAsDataURL(file);
+            $('#upload').on('change', function () {
+                var file = this.files[0];
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    callback(e.target['result'], {
+                        alt: ''
+                    });
+                };
+                reader.readAsDataURL(file);
             });
-          }
-        },
+        }
+    },*/
+    file_picker_callback: function (callback, value, meta) {
+      if (meta.filetype == 'image') {
+        $('#upload').trigger('click');
+        $('#upload').on('change', function () {
+          var file = this.files[0];
+          var reader = new FileReader();
+          reader.onload = function (e) {
+
+            callback(e.target['result'], {
+              alt: ''
+            });
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+    },
   }
+
+  public searchArticles = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(() => this.loading = true),
+      switchMap(async term => {
+        let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' } } : {};
+        return await this.getAllArticles(match).then(
+          result => {
+            return result;
+          }
+        )
+      }),
+      tap(() => this.loading = false)
+    )
+  public formatterArticles = (x: Article) => { return x.description; };
 
   constructor(
     private _paymentMethodService: PaymentMethodService,
@@ -112,6 +132,7 @@ export class PaymentMethodComponent implements OnInit {
     private _applicationService: ApplicationService,
     public translatePipe: TranslateMePipe,
     private _toastr: ToastrService,
+    private _articleService: ArticleService
   ) { }
 
   async ngOnInit() {
@@ -164,6 +185,11 @@ export class PaymentMethodComponent implements OnInit {
       'discount': [this.paymentMethod.discount, []],
       'surcharge': [this.paymentMethod.surcharge, []],
       'commission': [this.paymentMethod.commission, []],
+      'commissionArticle': [this.paymentMethod.commissionArticle, []],
+      'administrativeExpense': [this.paymentMethod.administrativeExpense, []],
+      'administrativeExpenseArticle': [this.paymentMethod.administrativeExpenseArticle, []],
+      'otherExpense': [this.paymentMethod.otherExpense, []],
+      'otherExpenseArticle': [this.paymentMethod.otherExpenseArticle, []],
       'isCurrentAccount': [this.paymentMethod.isCurrentAccount, []],
       'acceptReturned': [this.paymentMethod.acceptReturned, []],
       'inputAndOuput': [this.paymentMethod.inputAndOuput, []],
@@ -227,6 +253,25 @@ export class PaymentMethodComponent implements OnInit {
     }
   }
 
+  public getAllArticles(match: {}): Promise<Article[]> {
+    return new Promise<Article[]>((resolve, reject) => {
+      this.subscription.add(this._articleService.getAll(
+        {}, // PROJECT
+        match, // MATCH
+        { description: 1 }, // SORT
+        {}, // GROUP
+        10, // LIMIT
+        0 // SKIP
+      ).subscribe(
+        result => {
+          this.loading = false;
+          (result.status === 200) ? resolve(result.result) : reject(result);
+        },
+        error => reject(error)
+      ));
+    });
+  }
+
   public setValueForm(): void {
 
     if (!this.paymentMethod._id) this.paymentMethod._id = '';
@@ -235,6 +280,11 @@ export class PaymentMethodComponent implements OnInit {
     if (!this.paymentMethod.discount) this.paymentMethod.discount = 0.00;
     if (!this.paymentMethod.surcharge) this.paymentMethod.surcharge = 0.00;
     if (!this.paymentMethod.commission) this.paymentMethod.commission = 0.00;
+    if (!this.paymentMethod.commissionArticle) this.paymentMethod.commissionArticle = null;
+    if (!this.paymentMethod.administrativeExpense) this.paymentMethod.administrativeExpense = 0.00;
+    if (!this.paymentMethod.administrativeExpenseArticle) this.paymentMethod.administrativeExpenseArticle = null;
+    if (!this.paymentMethod.otherExpense) this.paymentMethod.otherExpense = 0.00;
+    if (!this.paymentMethod.otherExpenseArticle) this.paymentMethod.otherExpenseArticle = null;
     if (this.paymentMethod.isCurrentAccount === undefined) this.paymentMethod.isCurrentAccount = false;
     if (this.paymentMethod.acceptReturned === undefined) this.paymentMethod.acceptReturned = false;
     if (this.paymentMethod.inputAndOuput === undefined) this.paymentMethod.inputAndOuput = false;
@@ -258,6 +308,11 @@ export class PaymentMethodComponent implements OnInit {
       'discount': this.paymentMethod.discount,
       'surcharge': this.paymentMethod.surcharge,
       'commission': this.paymentMethod.commission,
+      'commissionArticle': this.paymentMethod.commissionArticle,
+      'administrativeExpense': this.paymentMethod.administrativeExpense,
+      'administrativeExpenseArticle': this.paymentMethod.administrativeExpenseArticle,
+      'otherExpense': this.paymentMethod.otherExpense,
+      'otherExpenseArticle': this.paymentMethod.otherExpenseArticle,
       'isCurrentAccount': this.paymentMethod.isCurrentAccount,
       'acceptReturned': this.paymentMethod.acceptReturned,
       'inputAndOuput': this.paymentMethod.inputAndOuput,
@@ -272,7 +327,7 @@ export class PaymentMethodComponent implements OnInit {
       'allowBank': this.paymentMethod.allowBank,
       'mercadopagoAPIKey': this.paymentMethod.mercadopagoAPIKey,
       'whatsappNumber': this.paymentMethod.whatsappNumber,
-      'checkPerson' : this.paymentMethod.checkPerson
+      'checkPerson': this.paymentMethod.checkPerson
     });
   }
 
@@ -328,7 +383,7 @@ export class PaymentMethodComponent implements OnInit {
           this.loading = false;
         } else {
           this.paymentMethod = result.paymentMethod;
-          this.showMessage("El método de pago se ha actualizado con éxito.", 'success', false);
+          this.showToast(null, 'success', 'El método de pago se ha actualizado con éxito.');
         }
         this.loading = false;
       },
@@ -366,7 +421,7 @@ export class PaymentMethodComponent implements OnInit {
           this.loading = false;
         } else {
           this.paymentMethod = result.paymentMethod;
-          this.showMessage("El medio de pago se ha añadido con éxito.", 'success', true);
+          this.showToast(null, 'success', 'El medio de pago se ha añadido con éxito.');
           this.paymentMethod = new PaymentMethod();
           this.buildForm();
         }

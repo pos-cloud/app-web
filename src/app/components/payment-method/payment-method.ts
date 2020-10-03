@@ -2,6 +2,7 @@ import { User } from '../user/user';
 
 import * as moment from 'moment';
 import { Application } from '../application/application.model';
+import { Article } from '../article/article';
 
 export class PaymentMethod {
 
@@ -11,6 +12,11 @@ export class PaymentMethod {
   public discount: number = 0.00;
   public surcharge: number = 0.00;
   public commission: number = 0.00;
+	public commissionArticle: Article;
+	public administrativeExpense: number = 0.00;
+	public administrativeExpenseArticle: Article;
+	public otherExpense: number = 0.00;
+	public otherExpenseArticle: Article;
   public isCurrentAccount: boolean;
   public acceptReturned: boolean;
   public inputAndOuput: boolean;

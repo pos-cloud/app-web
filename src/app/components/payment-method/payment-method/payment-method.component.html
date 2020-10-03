@@ -32,7 +32,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-6">
                     <label for="discount" class="control-label">Descuento:</label>
                     <div class="input-group">
                         <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
@@ -40,7 +40,7 @@
                             id="discount" [readonly]="readonly" />
                     </div>
                 </div>
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-6">
                     <label for="surcharge" class="control-label">Recargo:</label>
                     <div class="input-group">
                         <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
@@ -48,12 +48,70 @@
                             id="surcharge" [readonly]="readonly" />
                     </div>
                 </div>
-                <div class="form-group col-md-4">
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
                     <label for="commission" class="control-label">Comisión:</label>
                     <div class="input-group">
                         <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
                         <input type="number" class="form-control" formControlName="commission" name="commission"
                             id="commission" [readonly]="readonly" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <ng-template #result let-r="result" let-t="term">
+                        <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+                    </ng-template>
+                    <label for="commissionArticle">{{'commissionArticle'| translate | capitalize}}:</label>
+                    <input id="commissionArticle" type="text" class="form-control" formControlName="commissionArticle"
+                        name="commissionArticle" [ngbTypeahead]="searchArticles" [resultTemplate]="result"
+                        [inputFormatter]="formatterArticles" [readonly]="readonly" />
+                    <div class="invalid-feedback" [style.display]="(formErrors['commissionArticle'])? 'block': 'none'">
+                        {{ formErrors['commissionArticle'] }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="administrativeExpense" class="control-label">Gasto Administrativo:</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
+                        <input type="number" class="form-control" formControlName="administrativeExpense"
+                            name="administrativeExpense" id="administrativeExpense" [readonly]="readonly" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <ng-template #result let-r="result" let-t="term">
+                        <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+                    </ng-template>
+                    <label for="administrativeExpenseArticle">{{'administrativeExpenseArticle'| translate | capitalize}}:</label>
+                    <input id="administrativeExpenseArticle" type="text" class="form-control" formControlName="administrativeExpenseArticle"
+                        name="administrativeExpenseArticle" [ngbTypeahead]="searchArticles" [resultTemplate]="result"
+                        [inputFormatter]="formatterArticles" [readonly]="readonly" />
+                    <div class="invalid-feedback" [style.display]="(formErrors['administrativeExpenseArticle'])? 'block': 'none'">
+                        {{ formErrors['administrativeExpenseArticle'] }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="otherExpense" class="control-label">Otro gasto:</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
+                        <input type="number" class="form-control" formControlName="otherExpense" name="otherExpense"
+                            id="otherExpense" [readonly]="readonly" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <ng-template #result let-r="result" let-t="term">
+                        <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+                    </ng-template>
+                    <label for="otherExpenseArticle">{{'otherExpenseArticle'| translate | capitalize}}:</label>
+                    <input id="otherExpenseArticle" type="text" class="form-control" formControlName="otherExpenseArticle"
+                        name="otherExpenseArticle" [ngbTypeahead]="searchArticles" [resultTemplate]="result"
+                        [inputFormatter]="formatterArticles" [readonly]="readonly" />
+                    <div class="invalid-feedback" [style.display]="(formErrors['otherExpenseArticle'])? 'block': 'none'">
+                        {{ formErrors['otherExpenseArticle'] }}
                     </div>
                 </div>
             </div>

@@ -384,5 +384,8 @@
     "printSign": "Imprime Firma",
     "printDescriptionType" : "Descripción que Imprime",
     "company" : "Empresa",
-    "transactionMovement" : "Movimiento"
+    "transactionMovement" : "Movimiento",
+    "commissionArticle": "Artículo comission",
+    "administrativeExpenseArticle": "Artículo Gasto Administrativo",
+    "otherExpenseArticle": "Artículo Otro Gasto"
 }
