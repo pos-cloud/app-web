@@ -1,4 +1,5 @@
 import { User } from '../user/user';
+import * as moment from 'moment';
 
 export class Model {
 
@@ -9,8 +10,8 @@ export class Model {
       user: User
     }
   ];
-  public creationDate: string;
-  public updateDate: string;
+  public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');;
+  public updateDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');;
   public creationUser: User;
   public updateUser: User;
   public operationType: string;
@@ -59,8 +60,8 @@ export class Model {
         disabled: false,
         filter: true,
         defaultFilter: null,
-        datatype: 'date',
-        project: null,
+        datatype: 'string',
+        project: `{ "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y", "timezone": "-03:00" } }`,
         align: 'left',
         required: false
       },
@@ -70,7 +71,7 @@ export class Model {
         disabled: false,
         filter: true,
         defaultFilter: null,
-        datatype: 'date',
+        datatype: 'string',
         project: null,
         align: 'left',
         required: false,
@@ -81,8 +82,8 @@ export class Model {
         disabled: false,
         filter: true,
         defaultFilter: null,
-        datatype: 'date',
-        project: null,
+        datatype: 'string',
+        project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y", "timezone": "-03:00" } }`,
         align: 'left',
         required: false,
       },
@@ -92,7 +93,7 @@ export class Model {
         disabled: false,
         filter: true,
         defaultFilter: null,
-        datatype: 'date',
+        datatype: 'string',
         project: null,
         align: 'left',
         required: false,
