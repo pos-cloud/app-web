@@ -18,7 +18,7 @@ import { TranslateMePipe } from 'app/main/pipes/translate-me';
   selector: 'app-cancellation-type',
   templateUrl: './cancellation-type.component.html',
   styleUrls: ['./cancellation-type.component.css'],
-  providers: [NgbAlertConfig]
+  providers: [NgbAlertConfig,TranslateMePipe]
 })
 export class CancellationTypeComponent implements OnInit {
 
