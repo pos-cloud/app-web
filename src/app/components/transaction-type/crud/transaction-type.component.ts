@@ -124,7 +124,7 @@ export class TransactionTypeComponent implements OnInit {
         )
     }
 
-    public formatterEmployeeType = (x: { description: string }) => x.description;
+    public formatterEmployeeType = (x: { name: string }) => x.name;
 
     public searchPaymentMethods = (text$: Observable<string>) => {
         const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
@@ -314,7 +314,7 @@ export class TransactionTypeComponent implements OnInit {
             name: 'allowAPP',
             tag: 'select',
             tagType: 'text',
-            values: ['true', 'false'],
+            values: ['false', 'true'],
             validators: [Validators.required],
             class: 'form-group col-md-2'
         }, {
@@ -335,7 +335,7 @@ export class TransactionTypeComponent implements OnInit {
             name: 'electronics',
             tag: 'select',
             tagType: 'text',
-            values: ['true', 'false'],
+            values: ['false', 'true'],
             validators: [Validators.required],
             class: 'form-group col-md-2'
         }, {
@@ -383,7 +383,7 @@ export class TransactionTypeComponent implements OnInit {
             name: 'fixedLetter',
             tag: 'select',
             tagType: 'text',
-            values: ['A', 'B', "C", "E", "M", "R", "T", "X"],
+            values: ["X",'A', 'B', "C", "E", "M", "R", "T"],
             class: 'form-group col-md-2'
         },
         {
@@ -402,7 +402,7 @@ export class TransactionTypeComponent implements OnInit {
             name: 'automaticCreation',
             tag: 'select',
             tagType: 'text',
-            values: ['true', 'false'],
+            values: ['false', 'true'],
             validators: [Validators.required],
             class: 'form-group col-md-2'
         },
@@ -417,7 +417,6 @@ export class TransactionTypeComponent implements OnInit {
             tag: 'select',
             tagType: 'text',
             values: [CompanyType.None, CompanyType.Client, CompanyType.Provider],
-            validators: [Validators.required],
             class: 'form-group col-md-2'
         },
         {
@@ -430,7 +429,6 @@ export class TransactionTypeComponent implements OnInit {
             focus: false,
             class: 'form-group col-md-4'
         },
-
         {
             name: 'requestCurrency',
             tag: 'select',
@@ -442,14 +440,14 @@ export class TransactionTypeComponent implements OnInit {
             name: 'defectOrders',
             tag: 'select',
             tagType: 'text',
-            values: ['true', 'false'],
+            values: ['false', 'true'],
             class: 'form-group col-md-2'
         },
         {
             name: 'requestTransport',
             tag: 'select',
             tagType: 'text',
-            values: ['true', 'false'],
+            values: ['false', 'true'],
             class: 'form-group col-md-2'
         }, {
             name: 'Producto',
@@ -461,7 +459,7 @@ export class TransactionTypeComponent implements OnInit {
             name: 'requestArticles',
             tag: 'select',
             tagType: 'text',
-            values: ['true', 'false'],
+            values: ['false', 'true'],
             class: 'form-group col-md-2'
         },
         {
@@ -503,7 +501,7 @@ export class TransactionTypeComponent implements OnInit {
             name: 'updatePrice',
             tag: 'select',
             tagType: "text",
-            values: ['true', 'false'],
+            values: ['false', 'true'],
             class: 'form-group col-md-2'
         },
         {
@@ -567,7 +565,7 @@ export class TransactionTypeComponent implements OnInit {
             name: 'modifyStock',
             tag: 'select',
             tagType: "text",
-            values: ['true', 'false'],
+            values: ['false', 'true'],
             class: 'form-group col-md-2'
         },
         {
@@ -588,19 +586,19 @@ export class TransactionTypeComponent implements OnInit {
             name: 'cashBoxImpact',
             tag: 'select',
             tagType: "text",
-            values: ['true', 'false'],
+            values: ['false', 'true'],
             class: 'form-group col-md-2'
         }, {
             name: 'cashOpening',
             tag: 'select',
             tagType: "text",
-            values: ['true', 'false'],
+            values: ['false', 'true'],
             class: 'form-group col-md-2'
         }, {
             name: 'cashClosing',
             tag: 'select',
             tagType: "text",
-            values: ['true', 'false'],
+            values: ['false', 'true'],
             class: 'form-group col-md-2'
         },
 
@@ -613,7 +611,7 @@ export class TransactionTypeComponent implements OnInit {
             name: 'requestEmailTemplate',
             tag: 'select',
             tagType: "text",
-            values: ['true', 'false'],
+            values: ['false', 'true'],
             class: 'form-group col-md-2'
         }, {
             name: 'defectEmailTemplate',
@@ -635,7 +633,7 @@ export class TransactionTypeComponent implements OnInit {
             name: 'requestShipmentMethod',
             tag: 'select',
             tagType: "text",
-            values: ['true', 'false'],
+            values: ['false', 'true'],
             class: 'form-group col-md-2'
         }, {
             name: 'defectShipmentMethod',
@@ -674,19 +672,19 @@ export class TransactionTypeComponent implements OnInit {
             name: 'isPreprinted',
             tag: 'select',
             tagType: "text",
-            values: ['true', 'false'],
+            values: ['false', 'true'],
             class: 'form-group col-md-2'
         }, {
             name: 'printable',
             tag: 'select',
             tagType: "text",
-            values: ['true', 'false'],
+            values: ['false', 'true'],
             class: 'form-group col-md-2'
         }, {
             name: 'readLayout',
             tag: 'select',
             tagType: "text",
-            values: ['true', 'false'],
+            values: ['false', 'true'],
             class: 'form-group col-md-2'
         },
 
@@ -694,19 +692,19 @@ export class TransactionTypeComponent implements OnInit {
             name: 'printSign',
             tag: 'select',
             tagType: "text",
-            values: ['true', 'false'],
+            values: ['false', 'true'],
             class: 'form-group col-md-2'
         }, {
             name: 'printOrigin',
             tag: 'select',
             tagType: "text",
-            values: ['true', 'false'],
+            values: ['false', 'true'],
             class: 'form-group col-md-2'
         }, {
             name: 'posKitchen',
             tag: 'select',
             tagType: "text",
-            values: ['true', 'false'],
+            values: ['false', 'true'],
             class: 'form-group col-md-2'
         }, {
             name: 'printDescriptionType',
@@ -889,8 +887,9 @@ export class TransactionTypeComponent implements OnInit {
                     if (result.status === 200) {
                         this.obj = result.result[0];
                         this.setValuesForm();
+                    } else {
+                      this.showToast(result);
                     }
-                    else this.showToast(result);
                 },
                 error => this.showToast(error)
             ));
@@ -1177,12 +1176,18 @@ export class TransactionTypeComponent implements OnInit {
 
     public getEmployeeType(match: {}): Promise<EmployeeType[]> {
         return new Promise<EmployeeType[]>((resolve, reject) => {
+            let project = {
+                name : "$description",
+                operationType : 1
+            }
             this.subscription.add(this._employeeTypeService.getAll({
+                project,
                 match,
                 sort: { description: 1 },
                 limit: 10,
             }).subscribe(
                 result => {
+                    console.log(result);
                     this.loading = false;
                     (result.status === 200) ? resolve(result.result) : reject(result);
                 },
