@@ -11,6 +11,8 @@ import { TransactionType } from '../../transaction-type/transaction-type';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TransactionState } from 'app/components/transaction/transaction';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateMePipe } from 'app/main/pipes/translate-me';
 
 @Component({
   selector: 'app-cancellation-type',
@@ -59,6 +61,8 @@ export class CancellationTypeComponent implements OnInit {
     public _transactionTypeService: TransactionTypeService,
     public _router: Router,
     public _fb: FormBuilder,
+    public translatePipe: TranslateMePipe,
+    private _toastr: ToastrService,
     public activeModal: NgbActiveModal,
   ) {
     if (window.screen.width < 1000) this.orientation = 'vertical';
@@ -154,6 +158,7 @@ export class CancellationTypeComponent implements OnInit {
       project: {
         _id: 1,
         name: 1,
+        transactionMovement : 1,
         operationType: 1
       },
       match: {
@@ -161,16 +166,15 @@ export class CancellationTypeComponent implements OnInit {
       }
     }).subscribe(
       result => {
-
-        if (result.status != 200) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.origins = result.result;
-        }
         this.loading = false;
+        if(result.status == 200){
+            this.origins = result.result;
+        } else {
+            this.showToast(result);
+        }
       },
       error => {
-        this.showMessage(error._body, 'danger', false);
+        this.showToast(error);
         this.loading = false;
       }
     );
@@ -199,20 +203,20 @@ export class CancellationTypeComponent implements OnInit {
       }
     }).subscribe(
       result => {
-        if (result.status != 200) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.destinations = result.result;
+        this.loading = false;
+        if(result.status == 200){
+            this.destinations = result.result;
           if (this.cancellationType.origin &&
             this.cancellationType.destination) {
             this.setValueForm();
           }
+        } else {
+            this.showToast(result);
         }
-        this.loading = false;
       },
       error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
+          this.loading = false;
+          this.showToast(error);
       }
     );
   }
@@ -377,4 +381,31 @@ export class CancellationTypeComponent implements OnInit {
   public hideMessage(): void {
     this.alertMessage = '';
   }
+
+  public showToast(result, type?: string, title?: string, message?: string): void {
+    if (result) {
+        if (result.status === 200) {
+            type = 'success';
+            title = result.message;
+        } else if (result.status >= 400) {
+            type = 'danger';
+            title = (result.error && result.error.message) ? result.error.message : result.message;
+        } else {
+            type = 'info';
+            title = result.message;
+        }
+    }
+    switch (type) {
+        case 'success':
+            this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+            break;
+        case 'danger':
+            this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+            break;
+        default:
+            this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+            break;
+    }
+    this.loading = false;
+}
 }

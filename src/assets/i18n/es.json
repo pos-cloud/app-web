@@ -387,5 +387,9 @@
     "transactionMovement" : "Movimiento",
     "commissionArticle": "Artículo comission",
     "administrativeExpenseArticle": "Artículo Gasto Administrativo",
-    "otherExpenseArticle": "Artículo Otro Gasto"
+    "otherExpenseArticle": "Artículo Otro Gasto",
+    "readLayout" : "Lee Diseño",
+    "numberPrint" : "Cantidad de Impresiones",
+    "movement" : "Movimiento",
+    "currentAccount" : "Cuenta Corriente"
 }
