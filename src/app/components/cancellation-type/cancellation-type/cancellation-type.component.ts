@@ -13,12 +13,13 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TransactionState } from 'app/components/transaction/transaction';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-cancellation-type',
   templateUrl: './cancellation-type.component.html',
   styleUrls: ['./cancellation-type.component.css'],
-  providers: [NgbAlertConfig,TranslateMePipe]
+  providers: [NgbAlertConfig,TranslateMePipe,TranslatePipe]
 })
 export class CancellationTypeComponent implements OnInit {
 
@@ -163,6 +164,9 @@ export class CancellationTypeComponent implements OnInit {
       },
       match: {
         operationType: { "$ne": "D" }
+      },
+      sort : {
+        transactionMovement : 1
       }
     }).subscribe(
       result => {
