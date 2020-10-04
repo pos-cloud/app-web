@@ -1220,6 +1220,7 @@ export class AddMovementOfCashComponent implements OnInit {
                                                 if (transaction) {
                                                     this.transaction = transaction;
                                                     this.keyboard.setInput('');
+                                                    this.showToast(null, 'success', 'Operación realizada con éxito');
                                                     this.getMovementOfCashesByTransaction();
                                                 }
                                             }
@@ -1229,11 +1230,13 @@ export class AddMovementOfCashComponent implements OnInit {
                                     this.movementsOfCashes = new Array();
                                     this.movementsOfCashes.push(this.movementOfCash);
                                     if (!this.fastPayment) {
+                                        this.showToast(null, 'success', 'Operación realizada con éxito');
                                         this.getMovementOfCashesByTransaction();
                                     } else {
                                         if (this.amountDiscount && this.amountDiscount !== 0) {
                                             this.addMovementOfArticle();
                                         } else {
+                                            this.showToast(null, 'success', 'Operación realizada con éxito');
                                             this.getMovementOfCashesByTransaction();
                                         }
                                     }
@@ -1245,6 +1248,7 @@ export class AddMovementOfCashComponent implements OnInit {
                     await this.saveMovementsOfCashes().then(
                         movementsOfCashes => {
                             if (movementsOfCashes && movementsOfCashes.length > 0) {
+                                this.showToast(null, 'success', 'Operación realizada con éxito');
                                 this.getMovementOfCashesByTransaction();
                             }
                         }
