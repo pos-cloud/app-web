@@ -254,7 +254,6 @@ export class TransactionTypeComponent implements OnInit {
             name: 'abbreviation',
             tag: 'input',
             tagType: 'text',
-            validators: [Validators.required],
             class: 'form-group col-md-1'
         }, {
             name: 'transactionMovement',
@@ -384,12 +383,14 @@ export class TransactionTypeComponent implements OnInit {
             tag: 'select',
             tagType: 'text',
             values: ["X",'A', 'B', "C", "E", "M", "R", "T"],
+            default : "X",
             class: 'form-group col-md-2'
         },
         {
             name: "expirationDate",
             tag: 'input',
             tagType: 'date',
+            default : moment("3000-01-01").format("YYYY-MM-DDTHH:mm:ssZ"),
             class: 'form-group col-md-2'
         },
         {
