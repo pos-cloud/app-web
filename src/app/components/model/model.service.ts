@@ -47,14 +47,14 @@ export class ModelService {
     );
   }
 
-  public getAll(
-    project: {} = {},
-    match: {} = {},
-    sort: {} = {},
-    group: {} = {},
-    limit: number = 0,
-    skip: number = 0
-  ): Observable<any> {
+  public getAll({
+    project = {},
+    match = {},
+    sort = {},
+    group = {},
+    limit = 0,
+    skip = 0
+  }): Observable<any> {
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

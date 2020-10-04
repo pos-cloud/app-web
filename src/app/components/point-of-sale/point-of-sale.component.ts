@@ -424,10 +424,14 @@ export class PointOfSaleComponent implements OnInit {
 
       match["operationType"] = { "$ne": "D" }
 
-      this.subscription.add(this._transactionTypeService.getAll(project, match, { order: 1 }).subscribe(
+      this.subscription.add(this._transactionTypeService.getAll({
+        project,
+        match,
+        sort: { order: 1 }
+      }).subscribe(
         result => {
           this.loading = false;
-          if(result.status === 200) {
+          if (result.status === 200) {
             resolve(result.result);
           } else {
             resolve(null);

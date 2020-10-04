@@ -34,6 +34,8 @@ export class Transaction {
   public discountAmount: number = 0.00;
   public discountPercent: number = 0.00;
   public commissionAmount: number = 0.00;
+  public administrativeExpenseAmount: number = 0.00;
+  public otherExpenseAmount: number = 0.00;
   public totalPrice: number = 0.00;
   public roundingAmount: number = 0.00;
   public diners: number = 0;

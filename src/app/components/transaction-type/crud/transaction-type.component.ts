@@ -15,7 +15,7 @@ import { FormField } from 'app/util/formField.interface';
 import * as $ from 'jquery';
 import { Config } from 'app/app.config';
 import { TransactionTypeService } from '../transaction-type.service';
-import { TransactionMovement, TransactionType, CurrentAccount, Movements, EntryAmount, PriceType,DescriptionType,StockMovement } from '../transaction-type';
+import { TransactionMovement, TransactionType, CurrentAccount, Movements, EntryAmount, PriceType, DescriptionType, StockMovement } from '../transaction-type';
 import { BranchService } from 'app/components/branch/branch.service';
 import { Branch } from 'app/components/branch/branch';
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
@@ -73,7 +73,7 @@ export class TransactionTypeComponent implements OnInit {
             tap(() => this.loading = true),
             switchMap(async term => {
                 let match: {} = (term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {};
-                match["operationType"] = { "$ne" : "D"};
+                match["operationType"] = { "$ne": "D" };
                 return await this.getBranches(match).then(
                     result => {
                         return result;
@@ -93,7 +93,7 @@ export class TransactionTypeComponent implements OnInit {
             tap(() => this.loading = true),
             switchMap(async term => {
                 let match: {} = (term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {};
-                match["operationType"] = { "$ne" : "D"};
+                match["operationType"] = { "$ne": "D" };
                 return await this.getApplications(match).then(
                     result => {
                         return result;
@@ -113,7 +113,7 @@ export class TransactionTypeComponent implements OnInit {
             tap(() => this.loading = true),
             switchMap(async term => {
                 let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' } } : {};
-                match["operationType"] = { "$ne" : "D"};
+                match["operationType"] = { "$ne": "D" };
                 return await this.getEmployeeType(match).then(
                     result => {
                         return result;
@@ -133,7 +133,7 @@ export class TransactionTypeComponent implements OnInit {
             tap(() => this.loading = true),
             switchMap(async term => {
                 let match: {} = (term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {};
-                match["operationType"] = { "$ne" : "D"};
+                match["operationType"] = { "$ne": "D" };
                 return await this.getPaymentMethods(match).then(
                     result => {
                         return result;
@@ -153,7 +153,7 @@ export class TransactionTypeComponent implements OnInit {
             tap(() => this.loading = true),
             switchMap(async term => {
                 let match: {} = (term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {};
-                match["operationType"] = { "$ne" : "D"};
+                match["operationType"] = { "$ne": "D" };
                 return await this.getEmailTemplates(match).then(
                     result => {
                         return result;
@@ -173,7 +173,7 @@ export class TransactionTypeComponent implements OnInit {
             tap(() => this.loading = true),
             switchMap(async term => {
                 let match: {} = (term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {};
-                match["operationType"] = { "$ne" : "D"};
+                match["operationType"] = { "$ne": "D" };
                 return await this.getShipmentMethods(match).then(
                     result => {
                         return result;
@@ -193,7 +193,7 @@ export class TransactionTypeComponent implements OnInit {
             tap(() => this.loading = true),
             switchMap(async term => {
                 let match: {} = (term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {};
-                match["operationType"] = { "$ne" : "D"};
+                match["operationType"] = { "$ne": "D" };
                 return await this.getPrinters(match).then(
                     result => {
                         return result;
@@ -214,7 +214,7 @@ export class TransactionTypeComponent implements OnInit {
             tap(() => this.loading = true),
             switchMap(async term => {
                 let match: {} = (term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {};
-                match["operationType"] = { "$ne" : "D"};
+                match["operationType"] = { "$ne": "D" };
                 return await this.getCompanies(match).then(
                     result => {
                         return result;
@@ -352,8 +352,8 @@ export class TransactionTypeComponent implements OnInit {
             values: ['true', 'false'],
             validators: [Validators.required],
             class: 'form-group col-md-2'
-        }, 
-        
+        },
+
         {
             name: 'automaticNumbering',
             tag: 'select',
@@ -379,24 +379,24 @@ export class TransactionTypeComponent implements OnInit {
             tag: 'input',
             tagType: 'number',
             class: 'form-group col-md-2'
-        },{
+        }, {
             name: 'fixedLetter',
             tag: 'select',
             tagType: 'text',
-            values: ['A','B',"C","E","M","R","T","X"],
+            values: ['A', 'B', "C", "E", "M", "R", "T", "X"],
             class: 'form-group col-md-2'
-        }, 
+        },
         {
-            name : "expirationDate",
-            tag : 'input',
+            name: "expirationDate",
+            tag: 'input',
             tagType: 'date',
             class: 'form-group col-md-2'
         },
         {
-            name : "maxOrderNumber",
-            tag : 'input',
-            tagType : "number",
-            class : 'form-group col-md-2'
+            name: "maxOrderNumber",
+            tag: 'input',
+            tagType: "number",
+            class: 'form-group col-md-2'
         },
         {
             name: 'automaticCreation',
@@ -430,21 +430,21 @@ export class TransactionTypeComponent implements OnInit {
             focus: false,
             class: 'form-group col-md-4'
         },
-        
+
         {
             name: 'requestCurrency',
             tag: 'select',
             tagType: 'text',
             values: ['true', 'false'],
             class: 'form-group col-md-2'
-        }, 
+        },
         {
             name: 'defectOrders',
             tag: 'select',
             tagType: 'text',
             values: ['true', 'false'],
             class: 'form-group col-md-2'
-        }, 
+        },
         {
             name: 'requestTransport',
             tag: 'select',
@@ -489,35 +489,35 @@ export class TransactionTypeComponent implements OnInit {
             name: 'entryAmount',
             tag: 'select',
             tagType: 'text',
-            values: [EntryAmount.CostWithVAT,EntryAmount.CostWithoutVAT,EntryAmount.SaleWithVAT,EntryAmount.SaleWithoutVAT],
+            values: [EntryAmount.CostWithVAT, EntryAmount.CostWithoutVAT, EntryAmount.SaleWithVAT, EntryAmount.SaleWithoutVAT],
             class: 'form-group col-md-2'
         },
         {
             name: 'showDescriptionType',
             tag: 'select',
             tagType: 'text',
-            values: [DescriptionType.Code,DescriptionType.Description,DescriptionType.PosDescription],
+            values: [DescriptionType.Code, DescriptionType.Description, DescriptionType.PosDescription],
             class: 'form-group col-md-2'
         },
         {
-            name : 'updatePrice',
-            tag : 'select',
-            tagType : "text",
-            values : ['true','false'],
+            name: 'updatePrice',
+            tag: 'select',
+            tagType: "text",
+            values: ['true', 'false'],
             class: 'form-group col-md-2'
         },
         {
-            name : 'updateArticle',
-            tag : 'select',
-            tagType : "text",
-            values : ['true','false'],
+            name: 'updateArticle',
+            tag: 'select',
+            tagType: "text",
+            values: ['true', 'false'],
             class: 'form-group col-md-2'
         },
         {
-            name : 'groupsArticles',
-            tag : 'select',
-            tagType : "text",
-            values : ['true','false'],
+            name: 'groupsArticles',
+            tag: 'select',
+            tagType: "text",
+            values: ['true', 'false'],
             class: 'form-group col-md-2'
         },
         {
@@ -527,17 +527,17 @@ export class TransactionTypeComponent implements OnInit {
             class: 'form-group col-md-12'
         },
         {
-            name : 'requestPaymentMethods',
-            tag : 'select',
-            tagType : "text",
-            values : ['true','false'],
+            name: 'requestPaymentMethods',
+            tag: 'select',
+            tagType: "text",
+            values: ['true', 'false'],
             class: 'form-group col-md-2'
         },
         {
-            name : 'allowZero',
-            tag : 'select',
-            tagType : "text",
-            values : ['true','false'],
+            name: 'allowZero',
+            tag: 'select',
+            tagType: "text",
+            values: ['true', 'false'],
             class: 'form-group col-md-2'
         },
         {
@@ -551,10 +551,10 @@ export class TransactionTypeComponent implements OnInit {
             class: 'form-group col-md-4'
         },
         {
-            name : 'finishCharge',
-            tag : 'select',
-            tagType : "text",
-            values : ['true','false'],
+            name: 'finishCharge',
+            tag: 'select',
+            tagType: "text",
+            values: ['true', 'false'],
             class: 'form-group col-md-2'
         },
         {
@@ -564,17 +564,17 @@ export class TransactionTypeComponent implements OnInit {
             class: 'form-group col-md-12'
         },
         {
-            name : 'modifyStock',
-            tag : 'select',
-            tagType : "text",
-            values : ['true','false'],
+            name: 'modifyStock',
+            tag: 'select',
+            tagType: "text",
+            values: ['true', 'false'],
             class: 'form-group col-md-2'
         },
         {
-            name : 'stockMovement',
-            tag : 'select',
-            tagType : "text",
-            values : [StockMovement.Inflows,StockMovement.Inventory,StockMovement.Outflows,StockMovement.Transfer],
+            name: 'stockMovement',
+            tag: 'select',
+            tagType: "text",
+            values: [StockMovement.Inflows, StockMovement.Inventory, StockMovement.Outflows, StockMovement.Transfer],
             class: 'form-group col-md-2'
         },
         {
@@ -583,37 +583,37 @@ export class TransactionTypeComponent implements OnInit {
             tagType: null,
             class: 'form-group col-md-12'
         },
-        
+
         {
-            name : 'cashBoxImpact',
-            tag : 'select',
-            tagType : "text",
-            values : ['true','false'],
+            name: 'cashBoxImpact',
+            tag: 'select',
+            tagType: "text",
+            values: ['true', 'false'],
             class: 'form-group col-md-2'
-        },{
-            name : 'cashOpening',
-            tag : 'select',
-            tagType : "text",
-            values : ['true','false'],
+        }, {
+            name: 'cashOpening',
+            tag: 'select',
+            tagType: "text",
+            values: ['true', 'false'],
             class: 'form-group col-md-2'
-        },{
-            name : 'cashClosing',
-            tag : 'select',
-            tagType : "text",
-            values : ['true','false'],
+        }, {
+            name: 'cashClosing',
+            tag: 'select',
+            tagType: "text",
+            values: ['true', 'false'],
             class: 'form-group col-md-2'
         },
-        
+
         {
             name: 'Correo',
             tag: 'separator',
             tagType: null,
             class: 'form-group col-md-12'
-        },{
-            name : 'requestEmailTemplate',
-            tag : 'select',
-            tagType : "text",
-            values : ['true','false'],
+        }, {
+            name: 'requestEmailTemplate',
+            tag: 'select',
+            tagType: "text",
+            values: ['true', 'false'],
             class: 'form-group col-md-2'
         }, {
             name: 'defectEmailTemplate',
@@ -631,11 +631,11 @@ export class TransactionTypeComponent implements OnInit {
             tag: 'separator',
             tagType: null,
             class: 'form-group col-md-12'
-        },{
-            name : 'requestShipmentMethod',
-            tag : 'select',
-            tagType : "text",
-            values : ['true','false'],
+        }, {
+            name: 'requestShipmentMethod',
+            tag: 'select',
+            tagType: "text",
+            values: ['true', 'false'],
             class: 'form-group col-md-2'
         }, {
             name: 'defectShipmentMethod',
@@ -671,50 +671,50 @@ export class TransactionTypeComponent implements OnInit {
             class: 'form-group col-md-3'
         },
         {
-            name : 'isPreprinted',
-            tag : 'select',
-            tagType : "text",
-            values : ['true','false'],
+            name: 'isPreprinted',
+            tag: 'select',
+            tagType: "text",
+            values: ['true', 'false'],
             class: 'form-group col-md-2'
-        },{
-            name : 'printable',
-            tag : 'select',
-            tagType : "text",
-            values : ['true','false'],
+        }, {
+            name: 'printable',
+            tag: 'select',
+            tagType: "text",
+            values: ['true', 'false'],
             class: 'form-group col-md-2'
-        },{
-            name : 'readLayout',
-            tag : 'select',
-            tagType : "text",
-            values : ['true','false'],
+        }, {
+            name: 'readLayout',
+            tag: 'select',
+            tagType: "text",
+            values: ['true', 'false'],
             class: 'form-group col-md-2'
         },
 
         {
-            name : 'printSign',
-            tag : 'select',
-            tagType : "text",
-            values : ['true','false'],
+            name: 'printSign',
+            tag: 'select',
+            tagType: "text",
+            values: ['true', 'false'],
             class: 'form-group col-md-2'
-        },{
-            name : 'printOrigin',
-            tag : 'select',
-            tagType : "text",
-            values : ['true','false'],
+        }, {
+            name: 'printOrigin',
+            tag: 'select',
+            tagType: "text",
+            values: ['true', 'false'],
             class: 'form-group col-md-2'
-        },{
-            name : 'posKitchen',
-            tag : 'select',
-            tagType : "text",
-            values : ['true','false'],
+        }, {
+            name: 'posKitchen',
+            tag: 'select',
+            tagType: "text",
+            values: ['true', 'false'],
             class: 'form-group col-md-2'
-        },{
+        }, {
             name: 'printDescriptionType',
             tag: 'select',
             tagType: 'text',
-            values: [DescriptionType.Code,DescriptionType.Description,DescriptionType.PosDescription],
+            values: [DescriptionType.Code, DescriptionType.Description, DescriptionType.PosDescription],
             class: 'form-group col-md-2'
-        },{
+        }, {
             name: 'numberPrint',
             tag: 'input',
             tagType: 'number',
@@ -770,11 +770,11 @@ export class TransactionTypeComponent implements OnInit {
         public _branchService: BranchService,
         public _applicationService: ApplicationService,
         public _employeeTypeService: EmployeeTypeService,
-        public _paymentMethod : PaymentMethodService,
-        public _emailTemplate : EmailTemplateService,
+        public _paymentMethod: PaymentMethodService,
+        public _emailTemplate: EmailTemplateService,
         public _shipmentMethod: ShipmentMethodService,
-        public _printer : PrinterService,
-        public _company : CompanyService,
+        public _printer: PrinterService,
+        public _company: CompanyService,
         public translatePipe: TranslateMePipe,
         private _router: Router,
     ) {
@@ -805,8 +805,6 @@ export class TransactionTypeComponent implements OnInit {
 
             let project = {
                 _id: 1,
-                "branch._id": 1,
-                "branch.name": 1,
                 operationType: 1,
                 order: 1,
                 name: 1,
@@ -823,66 +821,69 @@ export class TransactionTypeComponent implements OnInit {
                 allowEdit: 1,
                 allowDelete: 1,
                 allowAPP: 1,
+                requestCompany: 1,
+                requestCurrency: 1,
+                defectOrders: 1,
+                automaticNumbering: 1,
+                requestTransport: 1,
+                defectUseOfCFDI: 1,
+                fiscalCode: 1,
+                fixedOrigin: 1,
+                fixedLetter: 1,
+                expirationDate: 1,
+                maxOrderNumber: 1,
+                requestArticles: 1,
+                modifyArticle: 1,
+                entryAmount: 1,
+                showPrices: 1,
+                showPriceType: 1,
+                updatePrice: 1,
+                showDescriptionType: 1,
+                updateArticle: 1,
+                groupsArticles: 1,
+                requestPaymentMethods: 1,
+                allowZero: 1,
+                finishCharge: 1,
+                modifyStock: 1,
+                stockMovement: 1,
+                cashBoxImpact: 1,
+                cashOpening: 1,
+                cashClosing: 1,
+                requestEmailTemplate: 1,
+                requestShipmentMethod: 1,
+                isPreprinted: 1,
+                printable: 1,
+                readLayout: 1,
+                posKitchen: 1,
+                printOrigin: 1,
+                printSign: 1,
+                printDescriptionType: 1,
+                numberPrint: 1,
+                "branch._id": 1,
+                "branch.name": 1,
+                "company._id": 1,
+                "company.name": 1,
+                "defectShipmentMethod._id": 1,
+                "defectShipmentMethod.name": 1,
+                "defectPrinter._id": 1,
+                "defectPrinter.name": 1,
+                "defectEmailTemplate._id": 1,
+                "defectEmailTemplate.name": 1,
+                "fastPayment._id": 1,
+                "fastPayment.name": 1,
                 "application._id": 1,
                 "application.name": 1,
-                requestCompany : 1,
-                "requestEmployee._id" : 1,
-                "requestEmployee.description" : 1,
-                requestCurrency : 1,
-                defectOrders : 1,
-                automaticNumbering : 1,
-                requestTransport: 1,
-                defectUseOfCFDI : 1,
-                fiscalCode: 1,
-                fixedOrigin : 1,
-                fixedLetter: 1,
-                expirationDate : 1,
-                maxOrderNumber : 1,
-                requestArticles : 1,
-                modifyArticle : 1,
-                entryAmount : 1,
-                showPrices : 1,
-                showPriceType :1,
-                updatePrice : 1,
-                showDescriptionType : 1,
-                updateArticle : 1,
-                groupsArticles : 1,
-                requestPaymentMethods: 1,
-                allowZero : 1,
-                finishCharge : 1,
-                modifyStock : 1,
-                stockMovement : 1,
-                cashBoxImpact : 1,
-                cashOpening : 1,
-                cashClosing : 1,
-                "fastPayment._id" :1,
-                "fastPayment.name" :1,
-                requestEmailTemplate : 1,
-                "defectEmailTemplate._id" : 1,
-                "defectEmailTemplate.name" : 1,
-                requestShipmentMethod : 1,
-                "defectShipmentMethod._id" : 1,
-                "defectShipmentMethod.name" : 1,
-                "defectPrinter._id" :1,
-                "defectPrinter.name" : 1,
-                isPreprinted: 1,
-                printable : 1,
-                readLayout :1,
-                posKitchen : 1,
-                printOrigin : 1,
-                printSign : 1,
-                printDescriptionType : 1,
-                numberPrint : 1,
-                "company._id" : 1,
-                "company.name" : 1
+                "requestEmployee._id": 1,
+                "requestEmployee.description": 1,
             }
 
-            let match = {
-                "operationType": { "$ne": "D" },
-                "_id": { "$oid": this.objId }
-            }
-
-            this.subscription.add(this._objService.getAll(project, match, {}, {}).subscribe(
+            this.subscription.add(this._objService.getAll({
+                project,
+                match: {
+                    operationType: { $ne: "D" },
+                    _id: { $oid: this.objId }
+                }
+            }).subscribe(
                 result => {
                     this.loading = false;
                     if (result.status === 200) {
@@ -1144,14 +1145,11 @@ export class TransactionTypeComponent implements OnInit {
 
     public getBranches(match: {}): Promise<Branch[]> {
         return new Promise<Branch[]>((resolve, reject) => {
-            this.subscription.add(this._branchService.getAll(
-                {}, // PROJECT
-                match, // MATCH
-                { name: 1 }, // SORT
-                {}, // GROUP
-                10, // LIMIT
-                0 // SKIP
-            ).subscribe(
+            this.subscription.add(this._branchService.getAll({
+                match,
+                sort: { name: 1 },
+                limit: 10,
+            }).subscribe(
                 result => {
                     this.loading = false;
                     (result.status === 200) ? resolve(result.result) : reject(result);
@@ -1163,14 +1161,11 @@ export class TransactionTypeComponent implements OnInit {
 
     public getApplications(match: {}): Promise<Application[]> {
         return new Promise<Application[]>((resolve, reject) => {
-            this.subscription.add(this._applicationService.getAll(
-                {}, // PROJECT
-                match, // MATCH
-                { name: 1 }, // SORT
-                {}, // GROUP
-                10, // LIMIT
-                0 // SKIP
-            ).subscribe(
+            this.subscription.add(this._applicationService.getAll({
+                match,
+                sort: { name: 1 },
+                limit: 10,
+            }).subscribe(
                 result => {
                     this.loading = false;
                     (result.status === 200) ? resolve(result.result) : reject(result);
@@ -1182,14 +1177,11 @@ export class TransactionTypeComponent implements OnInit {
 
     public getEmployeeType(match: {}): Promise<EmployeeType[]> {
         return new Promise<EmployeeType[]>((resolve, reject) => {
-            this.subscription.add(this._employeeTypeService.getAll(
-                {}, // PROJECT
-                match, // MATCH
-                { description: 1 }, // SORT
-                {}, // GROUP
-                10, // LIMIT
-                0 // SKIP
-            ).subscribe(
+            this.subscription.add(this._employeeTypeService.getAll({
+                match,
+                sort: { description: 1 },
+                limit: 10,
+            }).subscribe(
                 result => {
                     this.loading = false;
                     (result.status === 200) ? resolve(result.result) : reject(result);
@@ -1201,14 +1193,12 @@ export class TransactionTypeComponent implements OnInit {
 
     public getPaymentMethods(match: {}): Promise<PaymentMethod[]> {
         return new Promise<PaymentMethod[]>((resolve, reject) => {
-            this.subscription.add(this._paymentMethod.getAll(
-                {name:1,operationType:1}, // PROJECT
-                match, // MATCH
-                { name: 1 }, // SORT
-                {}, // GROUP
-                10, // LIMIT
-                0 // SKIP
-            ).subscribe(
+            this.subscription.add(this._paymentMethod.getAll({
+                project: { name: 1, operationType: 1 },
+                match,
+                sort: { name: 1 },
+                limit: 10,
+            }).subscribe(
                 result => {
                     this.loading = false;
                     (result.status === 200) ? resolve(result.result) : reject(result);
@@ -1220,14 +1210,12 @@ export class TransactionTypeComponent implements OnInit {
 
     public getEmailTemplates(match: {}): Promise<EmailTemplate[]> {
         return new Promise<EmailTemplate[]>((resolve, reject) => {
-            this.subscription.add(this._emailTemplate.getAll(
-                {name:1,operationType:1}, // PROJECT
-                match, // MATCH
-                { name: 1 }, // SORT
-                {}, // GROUP
-                10, // LIMIT
-                0 // SKIP
-            ).subscribe(
+            this.subscription.add(this._emailTemplate.getAll({
+                project: { name: 1, operationType: 1 },
+                match,
+                sort: { name: 1 },
+                limit: 10,
+            }).subscribe(
                 result => {
                     this.loading = false;
                     (result.status === 200) ? resolve(result.result) : reject(result);
@@ -1239,14 +1227,12 @@ export class TransactionTypeComponent implements OnInit {
 
     public getShipmentMethods(match: {}): Promise<ShipmentMethod[]> {
         return new Promise<ShipmentMethod[]>((resolve, reject) => {
-            this.subscription.add(this._shipmentMethod.getAll(
-                {name:1,operationType:1}, // PROJECT
-                match, // MATCH
-                { name: 1 }, // SORT
-                {}, // GROUP
-                10, // LIMIT
-                0 // SKIP
-            ).subscribe(
+            this.subscription.add(this._shipmentMethod.getAll({
+                project: { name: 1, operationType: 1 },
+                match,
+                sort: { name: 1 },
+                limit: 10,
+            }).subscribe(
                 result => {
                     this.loading = false;
                     (result.status === 200) ? resolve(result.result) : reject(result);
@@ -1258,14 +1244,12 @@ export class TransactionTypeComponent implements OnInit {
 
     public getPrinters(match: {}): Promise<Printer[]> {
         return new Promise<Printer[]>((resolve, reject) => {
-            this.subscription.add(this._printer.getAll(
-                {name:1,operationType:1}, // PROJECT
-                match, // MATCH
-                { name: 1 }, // SORT
-                {}, // GROUP
-                10, // LIMIT
-                0 // SKIP
-            ).subscribe(
+            this.subscription.add(this._printer.getAll({
+                project: { name: 1, operationType: 1 },
+                match,
+                sort: { name: 1 },
+                limit: 10,
+            }).subscribe(
                 result => {
                     this.loading = false;
                     (result.status === 200) ? resolve(result.result) : reject(result);
@@ -1277,14 +1261,12 @@ export class TransactionTypeComponent implements OnInit {
 
     public getCompanies(match: {}): Promise<Company[]> {
         return new Promise<Company[]>((resolve, reject) => {
-            this.subscription.add(this._company.getAll(
-                {name:1,operationType:1}, // PROJECT
-                match, // MATCH
-                { name: 1 }, // SORT
-                {}, // GROUP
-                10, // LIMIT
-                0 // SKIP
-            ).subscribe(
+            this.subscription.add(this._company.getAll({
+                project: { name: 1, operationType: 1 },
+                match,
+                sort: { name: 1 },
+                limit: 10,
+            }).subscribe(
                 result => {
                     this.loading = false;
                     (result.status === 200) ? resolve(result.result) : reject(result);

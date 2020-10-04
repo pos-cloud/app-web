@@ -115,53 +115,53 @@ export class AddArticleComponent implements OnInit {
   public html = '';
 
   public tinyMCEConfigBody = {
-      selector: "textarea",
-      theme: "modern",
-      paste_data_images: true,
-      plugins: [
-          "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-          "searchreplace wordcount visualblocks visualchars code fullscreen",
-          "insertdatetime media nonbreaking table contextmenu directionality",
-          "emoticons template paste textcolor colorpicker textpattern"
-      ],
-      toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | forecolor backcolor emoticons | print preview fullscreen",
-      image_advtab: true,
-      height: 100,
-      file_picker_types: 'file image media',
-      images_dataimg_filter: function(img) {
-          return img.hasAttribute('internal-blob');
-        },
-      /*file_picker_callback: function (callback, value, meta) {
-          if (meta.filetype == 'image') {
-              $('#upload').trigger('click');
-              $('#upload').on('change', function () {
-                  var file = this.files[0];
-                  var reader = new FileReader();
-                  reader.onload = function (e) {
-                      callback(e.target['result'], {
-                          alt: ''
-                      });
-                  };
-                  reader.readAsDataURL(file);
-              });
-          }
-      },*/
-      file_picker_callback: function(callback, value, meta) {
-          if (meta.filetype == 'image') {
+    selector: "textarea",
+    theme: "modern",
+    paste_data_images: true,
+    plugins: [
+      "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+      "searchreplace wordcount visualblocks visualchars code fullscreen",
+      "insertdatetime media nonbreaking table contextmenu directionality",
+      "emoticons template paste textcolor colorpicker textpattern"
+    ],
+    toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | forecolor backcolor emoticons | print preview fullscreen",
+    image_advtab: true,
+    height: 100,
+    file_picker_types: 'file image media',
+    images_dataimg_filter: function (img) {
+      return img.hasAttribute('internal-blob');
+    },
+    /*file_picker_callback: function (callback, value, meta) {
+        if (meta.filetype == 'image') {
             $('#upload').trigger('click');
-            $('#upload').on('change', function() {
-              var file = this.files[0];
-              var reader = new FileReader();
-              reader.onload = function(e) {
-
-                callback(e.target['result'], {
-                  alt: ''
-                });
-              };
-              reader.readAsDataURL(file);
+            $('#upload').on('change', function () {
+                var file = this.files[0];
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    callback(e.target['result'], {
+                        alt: ''
+                    });
+                };
+                reader.readAsDataURL(file);
             });
-          }
-        },
+        }
+    },*/
+    file_picker_callback: function (callback, value, meta) {
+      if (meta.filetype == 'image') {
+        $('#upload').trigger('click');
+        $('#upload').on('change', function () {
+          var file = this.files[0];
+          var reader = new FileReader();
+          reader.onload = function (e) {
+
+            callback(e.target['result'], {
+              alt: ''
+            });
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+    },
   }
 
   public value;
@@ -1746,14 +1746,11 @@ export class AddArticleComponent implements OnInit {
 
   public getAllUnitsOfMeasurement(match: {}): Promise<UnitOfMeasurement[]> {
     return new Promise<UnitOfMeasurement[]>((resolve, reject) => {
-      this.subscription.add(this._unitOfMeasurementService.getAll(
-        {}, // PROJECT
-        match, // MATCH
-        { name: 1 }, // SORT
-        {}, // GROUP
-        10, // LIMIT
-        0 // SKIP
-      ).subscribe(
+      this.subscription.add(this._unitOfMeasurementService.getAll({
+        match,
+        sort: { name: 1 },
+        limit: 10,
+      }).subscribe(
         result => {
           this.loading = false;
           (result.status === 200) ? resolve(result.result) : reject(result);
@@ -1765,14 +1762,10 @@ export class AddArticleComponent implements OnInit {
 
   public getAllApplications(match: {}): Promise<Application[]> {
     return new Promise<Application[]>((resolve, reject) => {
-      this.subscription.add(this._applicationService.getAll(
-        {}, // PROJECT
-        match, // MATCH
-        { name: 1 }, // SORT
-        {}, // GROUP
-        0, // LIMIT
-        0 // SKIP
-      ).subscribe(
+      this.subscription.add(this._applicationService.getAll({
+        match,
+        sort: { name: 1 },
+      }).subscribe(
         result => {
           this.loading = false;
           (result.status === 200) ? resolve(result.result) : reject(result);

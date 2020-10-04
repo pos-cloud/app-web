@@ -69,7 +69,7 @@ export class DatatableController {
             if (this.columns[i].defaultFilter) {
               match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
             } else {
-              if(this.columns[i].datatype !== 'boolean') {
+              if (this.columns[i].datatype !== 'boolean') {
                 match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
               } else {
                 match += `"${this.columns[i].name}": ${value}`;
@@ -125,19 +125,15 @@ export class DatatableController {
       if (currentPage != 0) {
         page = currentPage - 1;
       }
-      let skip = !isNaN(page * itemsPerPage) ?
-        (page * itemsPerPage) :
-        0 // SKIP
-      let limit = itemsPerPage;
 
-      this.service.getAll(
+      this.service.getAll({
         project,
         match,
         sort,
         group,
-        limit,
-        skip
-      ).subscribe(
+        limit: itemsPerPage,
+        skip: !isNaN(page * itemsPerPage) ? (page * itemsPerPage) : 0
+      }).subscribe(
         result => {
           resolve(result);
         },

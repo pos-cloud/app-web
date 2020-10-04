@@ -90,25 +90,26 @@ export class ShipmentMethodComponent implements OnInit {
     this._title.setTitle(this.title);
     this.buildForm();
     if (this.objId && this.objId !== '') {
-      this.subscription.add(await this._objService.getAll(
-        {
+      this.subscription.add(await this._objService.getAll({
+        project: {
           name: 1,
           'applications._id': 1,
           'applications.name': 1,
           requireAddress: 1,
           zones: 1,
         },
-        { _id: { $oid: this.objId } }).subscribe(
-          result => {
-            this.loading = false;
-            if (result.status === 200) {
-              this.obj = result.result[0];
-              this.setValuesForm();
-            }
-            else this.showToast(result);
-          },
-          error => this.showToast(error)
-        ));
+        match: { _id: { $oid: this.objId } }
+      }).subscribe(
+        result => {
+          this.loading = false;
+          if (result.status === 200) {
+            this.obj = result.result[0];
+            this.setValuesForm();
+          }
+          else this.showToast(result);
+        },
+        error => this.showToast(error)
+      ));
     } else {
       if (this.operation !== 'add') this.showToast(null, 'danger', 'Debe ingresar un identificador válido')
     }
@@ -207,14 +208,10 @@ export class ShipmentMethodComponent implements OnInit {
 
   public getAllApplications(match: {}): Promise<Application[]> {
     return new Promise<Application[]>((resolve, reject) => {
-      this.subscription.add(this._applicationService.getAll(
-        {}, // PROJECT
-        match, // MATCH
-        { name: 1 }, // SORT
-        {}, // GROUP
-        0, // LIMIT
-        0 // SKIP
-      ).subscribe(
+      this.subscription.add(this._applicationService.getAll({
+        match,
+        sort: { name: 1 },
+      }).subscribe(
         result => {
           this.loading = false;
           (result.status === 200) ? resolve(result.result) : reject(result);
@@ -465,7 +462,7 @@ export class ShipmentMethodComponent implements OnInit {
   }
 
   updatePointList(path) {
-      this.pointList = [];
+    this.pointList = [];
     const len = path.getLength();
     for (let i = 0; i < len; i++) {
       this.pointList.push(
@@ -522,7 +519,7 @@ export class ShipmentMethodComponent implements OnInit {
   public createZone() {
     this.zoneName = '';
     this.selectedArea = 0;
-      this.pointList = [];
+    this.pointList = [];
     for (let zone of this.zonesActive) {
       zone.polyline.setMap(null);
     }

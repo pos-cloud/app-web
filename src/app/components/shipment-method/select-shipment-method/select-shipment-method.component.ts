@@ -31,18 +31,16 @@ export class SelectShipmentMethodComponent implements OnInit {
   }
 
   public getShipmentMethods(): void {
-    let project = {
-      _id: 1,
-      name: 1,
-      operationType: 1
-    }
-
-    let match = {
-      operationType: { $ne: "D" }
-    }
-
-
-    this._shipmentMethodService.getAll(project, match, {}, {}, 0, 0).subscribe(
+    this._shipmentMethodService.getAll({
+      project: {
+        _id: 1,
+        name: 1,
+        operationType: 1
+      },
+      match: {
+        operationType: { $ne: "D" }
+      }
+    }).subscribe(
       result => {
         if (result && result.shipmentMethods) {
           this.shipmentMethods = result.shipmentMethods;

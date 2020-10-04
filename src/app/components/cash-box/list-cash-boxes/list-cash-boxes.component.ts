@@ -30,7 +30,7 @@ export class ListCashBoxesComponent implements OnInit {
 	public loading: boolean = false;
 	public itemsPerPage = 10;
 	public totalItems = 0;
-	public filterNumber; filterOpeningDate; filterClosingDate; filterState; filterEmployee; p;filterType;
+	public filterNumber; filterOpeningDate; filterClosingDate; filterState; filterEmployee; p; filterType;
 
 	constructor(
 		public _cashBoxService: CashBoxService,
@@ -104,22 +104,20 @@ export class ListCashBoxesComponent implements OnInit {
 
 	public getTransactionTypes(cashBox: CashBox): void {
 
-        this.loading = true;
-        
-        let project = {
-            name : 1,
-            cashClosing:1,
-            cashBoxImpact :1,
-            defectPrinter : 1
-        }
-    
-        let match = {
-            cashClosing : true,
-            cashBoxImpact : true,
-            operationType : { "$ne" : "D" }
-        }
+		this.loading = true;
 
-		this._transactionTypeService.getAll(project,match,{}).subscribe(
+		this._transactionTypeService.getAll({
+			project: {
+				name: 1,
+				cashClosing: 1,
+				cashBoxImpact: 1,
+				defectPrinter: 1
+			}, match: {
+				cashClosing: true,
+				cashBoxImpact: true,
+				operationType: { $ne: "D" }
+			}
+		}).subscribe(
 			result => {
 				if (result.status != 200) {
 					if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);

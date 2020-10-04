@@ -164,7 +164,9 @@ export class ReportTransactionTypeComponent implements OnInit {
 
     this.loading = true;
 
-    this._transactionTypeService.getAll({},{"operationType":{"$ne":"D"}},{}).subscribe(
+    this._transactionTypeService.getAll({
+      match: { operationType: { $ne: "D" } }
+    }).subscribe(
       result => {
         if (result.status != 200) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);

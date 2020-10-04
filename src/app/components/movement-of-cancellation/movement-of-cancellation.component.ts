@@ -23,6 +23,7 @@ import { TaxBase } from '../tax/tax';
 import { MovementOfCancellationService } from 'app/components/movement-of-cancellation/movement-of-cancellation.service';
 import { Config } from 'app/app.config';
 import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
+import { ArticleService } from '../article/article.service';
 
 @Component({
     selector: 'app-movement-of-cancellation',
@@ -88,6 +89,7 @@ export class MovementOfCancellationComponent implements OnInit {
         public _movementOfArticleService: MovementOfArticleService,
         public _movementOfCancellationService: MovementOfCancellationService,
         public _router: Router,
+        public _articleService: ArticleService
     ) {
         this.userCountry = Config.country;
         const pathLocation: string[] = this._router.url.split('/');
@@ -608,6 +610,94 @@ export class MovementOfCancellationComponent implements OnInit {
                                                 this.movArticle.push(mov2);
                                             }
                                         }
+                                    } else if (mov.transactionDestination.commissionAmount > 0 ||
+                                        mov.transactionDestination.administrativeExpenseAmount > 0 ||
+                                        mov.transactionDestination.otherExpenseAmount > 0) {
+
+                                        // await this._movementOfCashService.getAll(
+                                        //     {},
+                                        //     { transaction: mov.transactionDestination._id },
+                                        //     )
+                                        // let movementOfArticle: MovementOfArticle = new MovementOfArticle();
+                                        // movementOfArticle.code = mov.code;
+                                        // movementOfArticle.codeSAT = mov.codeSAT;
+                                        // movementOfArticle.description = mov.description;
+                                        // movementOfArticle.observation = mov.observation;
+                                        // movementOfArticle.otherFields = mov.otherFields;
+                                        // if (mov.make && mov.make._id && mov.make._id !== "") {
+                                        //     movementOfArticle.make = mov.make._id;
+                                        // } else {
+                                        //     movementOfArticle.make = mov.make;
+                                        // }
+                                        // if (mov.category && mov.category._id && mov.category._id !== "") {
+                                        //     movementOfArticle.category = mov.category._id;
+                                        // } else {
+                                        //     movementOfArticle.category = mov.category;
+                                        // }
+                                        // movementOfArticle.amount = mov.amount;
+                                        // movementOfArticle.quantityForStock = 0;
+                                        // movementOfArticle.barcode = mov.barcode;
+                                        // movementOfArticle.notes = mov.notes;
+                                        // movementOfArticle.printed = mov.printed;
+                                        // movementOfArticle.printIn = mov.printIn;
+                                        // movementOfArticle.article = mov.article;
+                                        // movementOfArticle.transaction = new Transaction();
+                                        // movementOfArticle.transaction._id = this.transactionDestination._id;
+                                        // movementOfArticle.modifyStock = this.transactionDestination.type.modifyStock;
+                                        // if (this.transactionDestination.type.stockMovement) {
+                                        //     movementOfArticle.stockMovement = this.transactionDestination.type.stockMovement.toString();
+                                        // }
+
+                                        // movementOfArticle.measure = mov.measure;
+                                        // movementOfArticle.quantityMeasure = mov.quantityMeasure;
+
+                                        // movementOfArticle.basePrice = mov.basePrice;
+
+                                        // if (this.transactionDestination.type.requestTaxes && !transaction.type.requestTaxes) {
+
+                                        //     movementOfArticle.costPrice = mov.costPrice;
+                                        //     movementOfArticle.salePrice = mov.salePrice;
+                                        //     let taxes: Taxes[] = new Array();
+                                        //     if (movementOfArticle.article && movementOfArticle.article.taxes && movementOfArticle.article.taxes.length > 0) {
+                                        //         for (let taxAux of movementOfArticle.article.taxes) {
+                                        //             let tax: Taxes = new Taxes();
+                                        //             tax.percentage = this.roundNumber.transform(taxAux.percentage);
+                                        //             tax.tax = taxAux.tax;
+                                        //             if (tax.tax.taxBase == TaxBase.Neto) {
+                                        //                 tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice);
+                                        //             }
+                                        //             if (tax.percentage === 0) {
+                                        //                 tax.taxAmount = this.roundNumber.transform(tax.taxAmount * movementOfArticle.amount);
+                                        //             } else {
+                                        //                 tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+                                        //             }
+                                        //             movementOfArticle.salePrice += tax.taxAmount;
+                                        //             taxes.push(tax);
+                                        //         }
+                                        //     }
+                                        //     movementOfArticle.taxes = taxes;
+
+                                        //     movementOfArticle.unitPrice = movementOfArticle.salePrice / movementOfArticle.amount;
+                                        //     movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
+                                        //     movementOfArticle.markupPercentage = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.costPrice * 100), 3);
+                                        //     movementOfArticle.roundingAmount = mov.roundingAmount;
+                                        // } else {
+                                        //     if (this.transactionDestination.type.requestTaxes && transaction.type.requestTaxes) {
+                                        //         movementOfArticle.taxes = mov.taxes;
+                                        //     }
+                                        //     movementOfArticle.costPrice = mov.costPrice;
+                                        //     movementOfArticle.unitPrice = mov.unitPrice;
+                                        //     movementOfArticle.markupPercentage = mov.markupPercentage;
+                                        //     movementOfArticle.markupPrice = mov.markupPrice;
+                                        //     movementOfArticle.salePrice = mov.salePrice;
+                                        //     movementOfArticle.roundingAmount = mov.roundingAmount;
+                                        // }
+                                        // if (this.transactionDestination.type.transactionMovement === TransactionMovement.Sale) {
+                                        //     movementOfArticle = this.recalculateSalePrice(movementOfArticle);
+                                        // } else {
+                                        //     movementOfArticle = this.recalculateCostPrice(movementOfArticle);
+                                        // }
+                                        // movements.push(movementOfArticle);
                                     }
                                 }
                             );

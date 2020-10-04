@@ -143,14 +143,11 @@ export class AddEmployeeComponent implements OnInit {
 
   public getAllEmployeeTypes(match: {}): Promise<EmployeeType[]> {
     return new Promise<EmployeeType[]>((resolve, reject) => {
-      this.subscription.add(this._employeeTypeService.getAll(
-        {}, // PROJECT
-        match, // MATCH
-        { description: 1 }, // SORT
-        {}, // GROUP
-        10, // LIMIT
-        0 // SKIP
-      ).subscribe(
+      this.subscription.add(this._employeeTypeService.getAll({
+        match,
+        sort: { description: 1 },
+        limit: 10,
+      }).subscribe(
         result => {
           this.loading = false;
           (result.status === 200) ? resolve(result.result) : reject(result);

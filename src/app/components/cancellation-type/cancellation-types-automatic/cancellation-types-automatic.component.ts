@@ -187,7 +187,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
             // CAMBIAMOS EL TIPO
 
             let match = {
-                _id : {"$oid" : this.cancellationTypeSelected.destination._id}
+                _id: { "$oid": this.cancellationTypeSelected.destination._id }
             }
 
             await this.getTransactionTypes(match).then(
@@ -609,21 +609,22 @@ export class CancellationTypeAutomaticComponent implements OnInit {
 
             this.loading = true;
 
-            let project = {
-                _id : 1,
-                fixedOrigin : 1,
-                fixedLetter : 1,
-                cashBoxImpact : 1,
-                requestArticles : 1,
-                stockMovement:1,
-                requestTaxes : 1,
-                transactionMovement:1,
-                operationType : 1,
-            }
+            match["operationType"] = { "$ne": "D" };
 
-            match["operationType"] = {"$ne":"D"}
-
-            this._transactionTypeService.getAll(project,match,{},{}).subscribe(
+            this._transactionTypeService.getAll({
+                project: {
+                    _id: 1,
+                    fixedOrigin: 1,
+                    fixedLetter: 1,
+                    cashBoxImpact: 1,
+                    requestArticles: 1,
+                    stockMovement: 1,
+                    requestTaxes: 1,
+                    transactionMovement: 1,
+                    operationType: 1,
+                },
+                match
+            }).subscribe(
                 result => {
                     this.loading = false;
                     if (result.status != 200) {

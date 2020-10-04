@@ -18,6 +18,8 @@ export class MovementOfCash {
   public discount: number = 0.00;
   public surcharge: number = 0.00;
   public commissionAmount: number = 0.00;
+  public administrativeExpenseAmount: number = 0.00;
+  public otherExpenseAmount: number = 0.00;
   public statusCheck: StatusCheck = null;
   public amountPaid: number = 0.00;
   public observation: string;

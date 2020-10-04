@@ -149,6 +149,46 @@
                     </div>
                 </div>
             </div>
+            <div class="row" *ngIf="paymentMethodSelected && (
+                                ( paymentMethodSelected.administrativeExpense &&
+                                  paymentMethodSelected.administrativeExpense > 0))">
+                <div class="form-group col-md-6">
+                    <label for="percentageAdministrativeExpense" class="control-label">Gasto administrativo:</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
+                        <input type="number" class="form-control" formControlName="percentageAdministrativeExpense"
+                            name="percentageAdministrativeExpense" min="0" step="1" (blur)="changePercentageAdministrativeExpense()" />
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="administrativeExpenseAmount" class="control-label">Monto Gasto administrativo:</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
+                        <input type="number" class="form-control" min="0" step="1" formControlName="administrativeExpenseAmount"
+                            name="administrativeExpenseAmount" readonly />
+                    </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="paymentMethodSelected && (
+                                ( paymentMethodSelected.otherExpense &&
+                                  paymentMethodSelected.otherExpense > 0))">
+                <div class="form-group col-md-6">
+                    <label for="percentageOtherExpense" class="control-label">Otros Gastos:</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
+                        <input type="number" class="form-control" formControlName="percentageOtherExpense"
+                            name="percentageOtherExpense" min="0" step="1" (blur)="changePercentageOtherExpense()" />
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="otherExpenseAmount" class="control-label">Monto Otros Gastos:</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
+                        <input type="number" class="form-control" min="0" step="1" formControlName="otherExpenseAmount"
+                            name="otherExpenseAmount" readonly />
+                    </div>
+                </div>
+            </div>
             <div class="row"
                 *ngIf="paymentMethodSelected && paymentMethodSelected.isCurrentAccount && !paymentMethodSelected.allowToFinance">
                 <div class="form-group col-md-12">
@@ -230,13 +270,9 @@
                     <label for="bank" class="control-label">Banco</label>
                     <select class="form-control" formControlName="bank">
                         <option *ngFor="let bank of banks" [selected]="(movementOfCash.bank && movementOfCash.bank._id && bank._id===movementOfCash.bank._id) ||
-                                  (movementOfCash.bank && bank._id===movementOfCash.bank)" [value]="bank._id"
-                            [disabled]="readonly">
+                                  (movementOfCash.bank && bank._id==movementOfCash.bank)" [value]="bank._id">
                             {{bank.code}} - {{bank.name}}</option>
                     </select>
-                    <div *ngIf="formErrors.bank" class="alert alert-danger">
-                        {{ formErrors.bank }}
-                    </div>
                 </div>
             </div>
             <div *ngIf="paymentMethodSelected &&
@@ -267,13 +303,9 @@
                         <label for="bank" class="control-label">Banco</label>
                         <select class="form-control" formControlName="bank">
                             <option *ngFor="let bank of banks" [selected]="(movementOfCash.bank && movementOfCash.bank._id && bank._id===movementOfCash.bank._id) ||
-                                      (movementOfCash.bank && bank._id===movementOfCash.bank)" [value]="bank._id"
-                                [disabled]="readonly">
+                                      (movementOfCash.bank && bank._id===movementOfCash.bank)" [value]="bank._id">
                                 {{bank.code}} - {{bank.name}}</option>
                         </select>
-                        <div *ngIf="formErrors.bank" class="alert alert-danger">
-                            {{ formErrors.bank }}
-                        </div>
                     </div>
                 </div>
                 <div *ngIf="paymentMethodSelected && paymentMethodSelected.checkPerson" class="row">

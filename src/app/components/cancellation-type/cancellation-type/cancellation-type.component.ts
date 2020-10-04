@@ -150,19 +150,18 @@ export class CancellationTypeComponent implements OnInit {
 
     this.loading = true;
 
-    let project = {
-        _id : 1,
-        name : 1,
-        operationType : 1
-    }
-
-    let match = {
-        operationType : { "$ne" : "D" }
-    }
-
-    this._transactionTypeService.getAll(project,match,{},{}).subscribe(
+    this._transactionTypeService.getAll({
+      project: {
+        _id: 1,
+        name: 1,
+        operationType: 1
+      },
+      match: {
+        operationType: { "$ne": "D" }
+      }
+    }).subscribe(
       result => {
-          
+
         if (result.status != 200) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
@@ -187,19 +186,18 @@ export class CancellationTypeComponent implements OnInit {
       }
     }
 
-    let project = {
-        name : 1,
-        transactionMovement:1,
-        _id :1
-    }
-
-    let match = {
-        transactionMovement : this.originSelected.transactionMovement,
-        _id : { "$ne": this.originSelected._id },
-        operationType : { "$ne" : "D" }
-    }
-
-    this._transactionTypeService.getAll(project,match,{}).subscribe(
+    this._transactionTypeService.getAll({
+      project: {
+        name: 1,
+        transactionMovement: 1,
+        _id: 1
+      },
+      match: {
+        transactionMovement: this.originSelected.transactionMovement,
+        _id: { "$ne": this.originSelected._id },
+        operationType: { "$ne": "D" }
+      }
+    }).subscribe(
       result => {
         if (result.status != 200) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);

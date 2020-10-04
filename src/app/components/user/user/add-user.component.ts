@@ -212,14 +212,11 @@ export class AddUserComponent implements OnInit {
 
   public getAllCashBoxTypes(match: {}): Promise<CashBoxType[]> {
     return new Promise<CashBoxType[]>((resolve, reject) => {
-      this.subscription.add(this._cashBoxTypeService.getAll(
-        {}, // PROJECT
-        match, // MATCH
-        { name: 1 }, // SORT
-        {}, // GROUP
-        10, // LIMIT
-        0 // SKIP
-      ).subscribe(
+      this.subscription.add(this._cashBoxTypeService.getAll({
+        match,
+        sort: { name: 1 },
+        limit: 10,
+      }).subscribe(
         result => {
           this.loading = false;
           (result.status === 200) ? resolve(result.result) : reject(result);
@@ -483,10 +480,10 @@ export class AddUserComponent implements OnInit {
 
     this._originService.getOrigins(
       { number: 1, 'branch.name': 1, operationType: 1 }, // PROJECT
-      { operationType: { $ne: 'D' } }, // MATCH
-      { numnber: 1 }, // SORT
+      { operationType: { $ne: 'D' } },
+      { numnber: 1 },
       {}, // GROUP
-      0, // LIMIT
+      0,
       0 // SKIP
     ).subscribe(
       result => {
@@ -532,10 +529,10 @@ export class AddUserComponent implements OnInit {
 
     this._branchService.getBranches(
       { name: 1, operationType: 1 }, // PROJECT
-      { operationType: { $ne: 'D' } }, // MATCH
-      { name: 1 }, // SORT
+      { operationType: { $ne: 'D' } },
+      { name: 1 },
       {}, // GROUP
-      0, // LIMIT
+      0,
       0 // SKIP
     ).subscribe(
       result => {
@@ -558,14 +555,11 @@ export class AddUserComponent implements OnInit {
 
     this.loading = true;
 
-    this._permissionService.getAll(
-      { name: 1, operationType: 1 }, // PROJECT
-      { operationType: { $ne: 'D' } }, // MATCH
-      { name: 1 }, // SORT
-      {}, // GROUP
-      0, // LIMIT
-      0 // SKIP
-    ).subscribe(
+    this._permissionService.getAll({
+      project: { name: 1, operationType: 1 },
+      match: { operationType: { $ne: 'D' } },
+      sort: { name: 1 },
+    }).subscribe(
       result => {
         if (result.status === 200) {
           this.permissions = result.result;

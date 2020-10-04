@@ -255,14 +255,11 @@ export class PaymentMethodComponent implements OnInit {
 
   public getAllArticles(match: {}): Promise<Article[]> {
     return new Promise<Article[]>((resolve, reject) => {
-      this.subscription.add(this._articleService.getAll(
-        {}, // PROJECT
-        match, // MATCH
-        { description: 1 }, // SORT
-        {}, // GROUP
-        10, // LIMIT
-        0 // SKIP
-      ).subscribe(
+      this.subscription.add(this._articleService.getAll({
+        match,
+        sort: { description: 1 },
+        limit: 10,
+      }).subscribe(
         result => {
           this.loading = false;
           (result.status === 200) ? resolve(result.result) : reject(result);
@@ -355,14 +352,10 @@ export class PaymentMethodComponent implements OnInit {
 
   public getAllApplications(match: {}): Promise<Application[]> {
     return new Promise<Application[]>((resolve, reject) => {
-      this.subscription.add(this._applicationService.getAll(
-        {}, // PROJECT
-        match, // MATCH
-        { name: 1 }, // SORT
-        {}, // GROUP
-        0, // LIMIT
-        0 // SKIP
-      ).subscribe(
+      this.subscription.add(this._applicationService.getAll({
+        match,
+        sort: { name: 1 },
+      }).subscribe(
         result => {
           this.loading = false;
           (result.status === 200) ? resolve(result.result) : reject(result);

@@ -223,6 +223,9 @@
                   <th>Método</th>
                   <th>Cuota</th>
                   <th>Monto</th>
+                  <th>Comisión</th>
+                  <th>Gasto Admin.</th>
+                  <th>Otros gastos</th>
                   <th>Comprobante</th>
                   <th>Vencimiento</th>
                   <th>Banco</th>
@@ -230,11 +233,13 @@
                 </tr>
               </thead>
               <tbody>
-
                 <tr *ngFor="let movementOfCash of movementsOfCashes | orderBy: orderTerm: propertyTerm">
                   <td (click)="pushCurrencyValue(movementOfCash)">{{movementOfCash.type.name}}</td>
                   <td>{{movementOfCash.quota}}</td>
                   <td>{{movementOfCash.amountPaid | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                  <td>{{movementOfCash.commissionAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                  <td>{{movementOfCash.administrativeExpenseAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                  <td>{{movementOfCash.otherExpenseAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                   <td>{{movementOfCash.number}}</td>
                   <td>{{movementOfCash.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
                   <td *ngIf="movementOfCash.bank">{{movementOfCash.bank.name}}</td>
