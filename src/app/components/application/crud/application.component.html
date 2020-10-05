@@ -194,7 +194,7 @@
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let field of objForm.get('schedule')['controls']; let i = index;">
-                                            <td *ngIf="field && field.value">{{field.value.day}}</td>
+                                            <td *ngIf="field && field.value">{{field.value.day | translate }}</td>
                                             <td *ngIf="field && field.value">{{field.value.from}}</td>
                                             <td *ngIf="field && field.value">{{field.value.to}}</td>
                                             <td align="right" width="10">
