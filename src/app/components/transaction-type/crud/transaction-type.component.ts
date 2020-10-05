@@ -573,7 +573,8 @@ export class TransactionTypeComponent implements OnInit {
             name: 'stockMovement',
             tag: 'select',
             tagType: "text",
-            values: [StockMovement.Inflows, StockMovement.Inventory, StockMovement.Outflows, StockMovement.Transfer],
+            values: [null,StockMovement.Inflows, StockMovement.Inventory, StockMovement.Outflows, StockMovement.Transfer],
+            default : null,
             class: 'form-group col-md-2'
         },
         {
@@ -1054,6 +1055,8 @@ export class TransactionTypeComponent implements OnInit {
                             this.obj[field.name] = this.oldFiles[field.name];
                         }
                         break;
+                        case 'boolean':
+                            this.obj[field.name] = this.obj[field.name] === 'true';
                     default:
                         break;
                 }
