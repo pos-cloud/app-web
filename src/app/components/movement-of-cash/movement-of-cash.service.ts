@@ -17,7 +17,7 @@ export class MovementOfCashService extends ModelService {
     public _authService: AuthService
   ) {
     super(
-      `movements-of-cashs`, // PATH
+      `movements-of-cashes`, // PATH
       _http,
       _authService
     );

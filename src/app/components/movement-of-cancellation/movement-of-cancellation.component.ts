@@ -26,6 +26,9 @@ import { MovementOfCancellation } from 'app/components/movement-of-cancellation/
 import { ArticleService } from '../article/article.service';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
+import Resulteable from 'app/util/Resulteable';
+import { Article } from '../article/article';
+import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
 
 @Component({
     selector: 'app-movement-of-cancellation',
@@ -44,7 +47,7 @@ export class MovementOfCancellationComponent implements OnInit {
     @Input() selectionView: boolean = false;
     @Input() movementsOfCancellations: MovementOfCancellation[] = new Array();
     public focusEvent = new EventEmitter<boolean>();
-    public movArticle: MovementOfArticle[] = new Array();
+    public movsOfArticles: MovementOfArticle[] = new Array();
     public transactionDestination: Transaction;
     public requestCompany: boolean = false;
     public transactionMovement: TransactionMovement;
@@ -315,18 +318,15 @@ export class MovementOfCancellationComponent implements OnInit {
             'type.movement': 1,
         };
 
-        // AGRUPAMOS EL RESULTADO
-        let group = {
-            _id: null,
-            count: { $sum: 1 },
-            transactions: { $push: "$$ROOT" }
-        };
-
         this._transactionService.getTransactionsV2(
             project, // PROJECT
             match, // MATCH
             sortAux, // SORT
-            group, // GROUP
+            {
+                _id: null,
+                count: { $sum: 1 },
+                transactions: { $push: "$$ROOT" }
+            }, // GROUP
             0, // LIMIT
             0 // SKIP
         ).subscribe(
@@ -385,24 +385,25 @@ export class MovementOfCancellationComponent implements OnInit {
 
         return new Promise<MovementOfCancellation[]>((resolve, reject) => {
 
-            // CAMPOS A TRAER
-            let project = {
-                "_id": 0,
-                "transactionOrigin._id": 1,
-                "transactionDestination._id": 1,
-                "balance": 1,
-                "operationType": 1,
-                'transactionOrigin.type.name': 1,
-                'transactionOrigin.type.movement': 1,
-                'transactionOrigin.type.transactionMovement': 1,
-                'transactionOrigin.number': 1,
-                'transactionOrigin.operationType': 1,
-                'transactionOrigin.balance': 1
-            };
-
             this._movementOfCancellationService.getMovementsOfCancellations(
-                project, // PROJECT
-                { "transactionDestination._id": { $oid: this.transactionDestination._id }, "operationType": { "$ne": "D" }, "transactionOrigin.operationType": { "$ne": "D" } }, // MATCH
+                {
+                    "_id": 0,
+                    "transactionOrigin._id": 1,
+                    "transactionDestination._id": 1,
+                    "balance": 1,
+                    "operationType": 1,
+                    'transactionOrigin.type.name': 1,
+                    'transactionOrigin.type.movement': 1,
+                    'transactionOrigin.type.transactionMovement': 1,
+                    'transactionOrigin.number': 1,
+                    'transactionOrigin.operationType': 1,
+                    'transactionOrigin.balance': 1
+                }, // PROJECT
+                {
+                    "transactionDestination._id": { $oid: this.transactionDestination._id },
+                    operationType: { $ne: "D" },
+                    "transactionOrigin.operationType": { "$ne": "D" }
+                }, // MATCH
                 {}, // SORT
                 {}, // GROUP
                 0, // LIMIT
@@ -591,125 +592,95 @@ export class MovementOfCancellationComponent implements OnInit {
                                 await this.updateTransaction(mov.transactionOrigin, type.stateOrigin);
                             }
                         }
-                        if (mov.transactionDestination.type && mov.transactionDestination.type.requestArticles) {
+                        if (mov.transactionOrigin.type && mov.transactionOrigin.type.requestArticles &&
+                            mov.transactionDestination.type && mov.transactionDestination.type.requestArticles) {
                             await this.getMovementOfArticles(mov.transactionOrigin).then(
                                 async movementsOfArticles => {
                                     if (movementsOfArticles && movementsOfArticles.length > 0) {
                                         for (let mov2 of movementsOfArticles) {
                                             if (this.transactionDestination.type.groupsArticles) {
-                                                //le mandas el mov a la fun
                                                 let movement = this.existsMovementOfArticle(mov2);
                                                 if (!movement) {
-                                                    if (!this.movArticle) this.movArticle = new Array();
-                                                    this.movArticle.push(mov2);
+                                                    if (!this.movsOfArticles) this.movsOfArticles = new Array();
+                                                    this.movsOfArticles.push(mov2);
                                                 } else {
-                                                    // recalculo
                                                     movement.amount += mov2.amount;
                                                     movement = await this.recalculateMovArticle(movement, mov.transactionOrigin);
                                                 }
                                             } else {
-                                                this.movArticle.push(mov2);
+                                                this.movsOfArticles.push(mov2);
                                             }
                                         }
-                                    } else if (mov.transactionDestination.commissionAmount > 0 ||
-                                        mov.transactionDestination.administrativeExpenseAmount > 0 ||
-                                        mov.transactionDestination.otherExpenseAmount > 0) {
-
-                                        await this._movementOfCashService.getAll({
-                                            match: { transaction: mov.transactionDestination._id },
-                                        }).toPromise()
-                                        .then(
-                                            restult => {
-                                                if(restult.status === 200) {
-                                                    
-                                                } else {
-                                                    this.showToast
-                                                }
-                                            }
-                                        );
-                                        // let movementOfArticle: MovementOfArticle = new MovementOfArticle();
-                                        // movementOfArticle.code = mov.code;
-                                        // movementOfArticle.codeSAT = mov.codeSAT;
-                                        // movementOfArticle.description = mov.description;
-                                        // movementOfArticle.observation = mov.observation;
-                                        // movementOfArticle.otherFields = mov.otherFields;
-                                        // if (mov.make && mov.make._id && mov.make._id !== "") {
-                                        //     movementOfArticle.make = mov.make._id;
-                                        // } else {
-                                        //     movementOfArticle.make = mov.make;
-                                        // }
-                                        // if (mov.category && mov.category._id && mov.category._id !== "") {
-                                        //     movementOfArticle.category = mov.category._id;
-                                        // } else {
-                                        //     movementOfArticle.category = mov.category;
-                                        // }
-                                        // movementOfArticle.amount = mov.amount;
-                                        // movementOfArticle.quantityForStock = 0;
-                                        // movementOfArticle.barcode = mov.barcode;
-                                        // movementOfArticle.notes = mov.notes;
-                                        // movementOfArticle.printed = mov.printed;
-                                        // movementOfArticle.printIn = mov.printIn;
-                                        // movementOfArticle.article = mov.article;
-                                        // movementOfArticle.transaction = new Transaction();
-                                        // movementOfArticle.transaction._id = this.transactionDestination._id;
-                                        // movementOfArticle.modifyStock = this.transactionDestination.type.modifyStock;
-                                        // if (this.transactionDestination.type.stockMovement) {
-                                        //     movementOfArticle.stockMovement = this.transactionDestination.type.stockMovement.toString();
-                                        // }
-
-                                        // movementOfArticle.measure = mov.measure;
-                                        // movementOfArticle.quantityMeasure = mov.quantityMeasure;
-
-                                        // movementOfArticle.basePrice = mov.basePrice;
-
-                                        // if (this.transactionDestination.type.requestTaxes && !transaction.type.requestTaxes) {
-
-                                        //     movementOfArticle.costPrice = mov.costPrice;
-                                        //     movementOfArticle.salePrice = mov.salePrice;
-                                        //     let taxes: Taxes[] = new Array();
-                                        //     if (movementOfArticle.article && movementOfArticle.article.taxes && movementOfArticle.article.taxes.length > 0) {
-                                        //         for (let taxAux of movementOfArticle.article.taxes) {
-                                        //             let tax: Taxes = new Taxes();
-                                        //             tax.percentage = this.roundNumber.transform(taxAux.percentage);
-                                        //             tax.tax = taxAux.tax;
-                                        //             if (tax.tax.taxBase == TaxBase.Neto) {
-                                        //                 tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice);
-                                        //             }
-                                        //             if (tax.percentage === 0) {
-                                        //                 tax.taxAmount = this.roundNumber.transform(tax.taxAmount * movementOfArticle.amount);
-                                        //             } else {
-                                        //                 tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
-                                        //             }
-                                        //             movementOfArticle.salePrice += tax.taxAmount;
-                                        //             taxes.push(tax);
-                                        //         }
-                                        //     }
-                                        //     movementOfArticle.taxes = taxes;
-
-                                        //     movementOfArticle.unitPrice = movementOfArticle.salePrice / movementOfArticle.amount;
-                                        //     movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
-                                        //     movementOfArticle.markupPercentage = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.costPrice * 100), 3);
-                                        //     movementOfArticle.roundingAmount = mov.roundingAmount;
-                                        // } else {
-                                        //     if (this.transactionDestination.type.requestTaxes && transaction.type.requestTaxes) {
-                                        //         movementOfArticle.taxes = mov.taxes;
-                                        //     }
-                                        //     movementOfArticle.costPrice = mov.costPrice;
-                                        //     movementOfArticle.unitPrice = mov.unitPrice;
-                                        //     movementOfArticle.markupPercentage = mov.markupPercentage;
-                                        //     movementOfArticle.markupPrice = mov.markupPrice;
-                                        //     movementOfArticle.salePrice = mov.salePrice;
-                                        //     movementOfArticle.roundingAmount = mov.roundingAmount;
-                                        // }
-                                        // if (this.transactionDestination.type.transactionMovement === TransactionMovement.Sale) {
-                                        //     movementOfArticle = this.recalculateSalePrice(movementOfArticle);
-                                        // } else {
-                                        //     movementOfArticle = this.recalculateCostPrice(movementOfArticle);
-                                        // }
-                                        // movements.push(movementOfArticle);
                                     }
                                 }
                             );
+                        } else if (mov.transactionOrigin.commissionAmount > 0 ||
+                            mov.transactionOrigin.administrativeExpenseAmount > 0 ||
+                            mov.transactionOrigin.otherExpenseAmount > 0) {
+                            await this._movementOfCashService.getAll({
+                                project: {
+                                    _id: 1,
+                                    transaction: 1,
+                                    commissionAmount: 1,
+                                    administrativeExpenseAmount: 1,
+                                    otherExpenseAmount: 1,
+                                    number: 1,
+                                    'type._id': 1,
+                                    'type.name': 1,
+                                    'type.commissionArticle': 1,
+                                    'type.administrativeExpenseArticle': 1,
+                                    'type.otherExpenseArticle': 1,
+                                },
+                                match: { transaction: { $oid: mov.transactionOrigin._id } },
+                            }).toPromise()
+                                .then(async (result: Resulteable) => {
+                                    if (result.status === 200) {
+                                        let movementsOfCashes: MovementOfCash[] = result.result;
+                                        endedProcess = false;
+                                        for (let movementOfCash of movementsOfCashes) {
+                                            if (!endedProcess) {
+                                                if (movementOfCash.commissionAmount > 0) {
+                                                    let movementOfArticle = await this.createMovementOfArticleByArticleId(
+                                                        movementOfCash.type.commissionArticle.toString(),
+                                                        movementOfCash.commissionAmount,
+                                                        this.transactionDestination,
+                                                        ` POR ${movementOfCash.type.name} ${(movementOfCash.number) ? movementOfCash.number : ''}`
+                                                    );
+                                                    if (movementOfArticle) this.movsOfArticles.push(movementOfArticle)
+                                                    else endedProcess = true;
+                                                }
+
+                                                if (movementOfCash.administrativeExpenseAmount > 0) {
+                                                    let movementOfArticle = await this.createMovementOfArticleByArticleId(
+                                                        movementOfCash.type.administrativeExpenseArticle.toString(),
+                                                        movementOfCash.administrativeExpenseAmount,
+                                                        this.transactionDestination,
+                                                        ` POR ${movementOfCash.type.name} ${(movementOfCash.number) ? movementOfCash.number : ''}`
+                                                    );
+                                                    if (movementOfArticle) this.movsOfArticles.push(movementOfArticle)
+                                                    else endedProcess = true;
+                                                }
+
+                                                if (movementOfCash.otherExpenseAmount > 0) {
+                                                    let movementOfArticle = await this.createMovementOfArticleByArticleId(
+                                                        movementOfCash.type.otherExpenseArticle.toString(),
+                                                        movementOfCash.otherExpenseAmount,
+                                                        this.transactionDestination,
+                                                        ` POR ${movementOfCash.type.name} ${(movementOfCash.number) ? movementOfCash.number : ''}`
+                                                    );
+                                                    if (movementOfArticle) this.movsOfArticles.push(movementOfArticle)
+                                                    else endedProcess = true;
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        endedProcess = true;
+                                        this.showToast(result);
+                                    }
+                                }).catch(error => {
+                                    endedProcess = true;
+                                    this.showToast(error);
+                                });
                         }
                     } else {
                         endedProcess = false;
@@ -717,8 +688,8 @@ export class MovementOfCancellationComponent implements OnInit {
                     }
                 }
                 //guardo todos los mov agrupados
-                if (this.movArticle && this.movArticle.length !== 0) {
-                    await this.saveMovementsOfArticles(this.movArticle).then(
+                if (this.movsOfArticles && this.movsOfArticles.length !== 0) {
+                    await this.saveMovementsOfArticles(this.movsOfArticles).then(
                         movementsOfArticlesSaved => {
                             if (movementsOfArticlesSaved && movementsOfArticlesSaved.length > 0) {
                                 endedProcess = true;
@@ -740,10 +711,187 @@ export class MovementOfCancellationComponent implements OnInit {
         }
     }
 
+    async createMovementOfArticleByArticleId(articleId: string, salePrice: number, transaction: Transaction, descriptionPlus?: string) {
+
+        let err: boolean = false;
+
+        return new Promise<MovementOfArticle>(async (resolve, reject) => {
+
+            await this.getArticle(articleId).then(
+                async article => {
+                    if (article) {
+                        let increasePrice = 0;
+
+                        let movementOfArticle = new MovementOfArticle();
+                        movementOfArticle.article = article;
+                        movementOfArticle.code = article.code;
+                        movementOfArticle.codeSAT = article.codeSAT;
+                        movementOfArticle.description = article.description + descriptionPlus;
+                        movementOfArticle.observation = article.observation;
+                        movementOfArticle.make = article.make;
+                        movementOfArticle.category = article.category;
+                        movementOfArticle.barcode = article.barcode;
+                        movementOfArticle.transaction = transaction;
+                        movementOfArticle.modifyStock = transaction.type.modifyStock;
+                        movementOfArticle.otherFields = article.otherFields;
+                        movementOfArticle.amount = 1;
+
+                        if (transaction.type.stockMovement) {
+                            movementOfArticle.stockMovement = transaction.type.stockMovement.toString();
+                        }
+
+                        let quotation = 1;
+                        if (transaction.quotation) {
+                            quotation = transaction.quotation;
+                        }
+
+                        movementOfArticle.basePrice = this.roundNumber.transform(article.basePrice);
+
+                        if (article.currency &&
+                            Config.currency &&
+                            Config.currency._id !== article.currency._id) {
+                            movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
+                        }
+
+                        if (transaction &&
+                            transaction.type &&
+                            transaction.type.transactionMovement === TransactionMovement.Sale) {
+                            let fields: ArticleFields[] = new Array();
+                            if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
+                                for (const field of movementOfArticle.otherFields) {
+                                    if (field.articleField.datatype === ArticleFieldType.Percentage || field.articleField.datatype === ArticleFieldType.Number) {
+                                        if (field.articleField.datatype === ArticleFieldType.Percentage) {
+                                            field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
+                                        } else if (field.articleField.datatype === ArticleFieldType.Number) {
+                                            field.amount = parseFloat(field.value);
+                                        }
+                                    }
+                                    fields.push(field);
+                                }
+                            }
+
+                            movementOfArticle.otherFields = fields;
+                            movementOfArticle.costPrice = this.roundNumber.transform(article.costPrice);
+                            movementOfArticle.markupPercentage = article.markupPercentage;
+                            movementOfArticle.markupPrice = this.roundNumber.transform(article.markupPrice);
+                            if (salePrice) article.salePrice = salePrice;
+                            movementOfArticle.unitPrice = this.roundNumber.transform(article.salePrice / movementOfArticle.amount);
+                            movementOfArticle.salePrice = this.roundNumber.transform(article.salePrice);
+
+                            if (article.currency &&
+                                Config.currency &&
+                                Config.currency._id !== article.currency._id) {
+                                movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
+                                movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
+                            }
+
+                            if (increasePrice != 0) {
+                                movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.markupPrice + (movementOfArticle.markupPrice * increasePrice / 100));
+                                movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + (movementOfArticle.unitPrice * increasePrice / 100));
+                                movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice + (movementOfArticle.salePrice * increasePrice / 100));
+                            }
+
+                            if (transaction.type.requestTaxes) {
+                                let taxes: Taxes[] = new Array();
+                                if (article.taxes) {
+                                    for (let taxAux of article.taxes) {
+                                        let tax: Taxes = new Taxes();
+                                        if (taxAux.tax && taxAux.tax._id) {
+                                            tax.tax = taxAux.tax;
+                                        }
+                                        tax.percentage = this.roundNumber.transform(taxAux.percentage);
+                                        tax.taxAmount = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount);
+                                        tax.taxBase = this.roundNumber.transform(taxAux.taxBase * movementOfArticle.amount);
+                                        taxes.push(tax);
+                                    }
+                                }
+                                movementOfArticle.taxes = taxes;
+                            }
+                        } else {
+                            movementOfArticle.markupPercentage = 0;
+                            movementOfArticle.markupPrice = 0;
+
+                            let taxedAmount = movementOfArticle.basePrice;
+                            movementOfArticle.costPrice = 0;
+
+                            let fields: ArticleFields[] = new Array();
+                            if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
+                                for (const field of movementOfArticle.otherFields) {
+                                    if (field.articleField.datatype === ArticleFieldType.Percentage || field.articleField.datatype === ArticleFieldType.Number) {
+                                        if (field.articleField.datatype === ArticleFieldType.Percentage) {
+                                            field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
+                                        } else if (field.articleField.datatype === ArticleFieldType.Number) {
+                                            field.amount = parseFloat(field.value);
+                                        }
+                                        if (field.articleField.modifyVAT) {
+                                            taxedAmount += field.amount;
+                                        } else {
+                                            movementOfArticle.costPrice += field.amount;
+                                        }
+                                    }
+                                    fields.push(field);
+                                }
+                            }
+                            movementOfArticle.otherFields = fields;
+                            if (transaction.type.requestTaxes) {
+                                let taxes: Taxes[] = new Array();
+                                if (article.taxes) {
+                                    for (let taxAux of article.taxes) {
+                                        if (taxAux.tax && taxAux.tax._id) {
+                                            taxAux.tax = taxAux.tax;
+                                        }
+                                        taxAux.taxBase = this.roundNumber.transform(taxedAmount);
+                                        if (taxAux.percentage !== 0) {
+                                            taxAux.taxAmount = this.roundNumber.transform((taxAux.taxBase * taxAux.percentage / 100));
+                                        }
+                                        taxes.push(taxAux);
+                                        movementOfArticle.costPrice += taxAux.taxAmount;
+                                    }
+                                    movementOfArticle.taxes = taxes;
+                                }
+                            }
+                            movementOfArticle.costPrice += this.roundNumber.transform(taxedAmount);
+                            movementOfArticle.unitPrice = movementOfArticle.basePrice;
+                            movementOfArticle.salePrice = movementOfArticle.costPrice;
+                        }
+                        resolve(movementOfArticle);
+                    } else {
+                        this.showToast(null, 'danger', 'No se encontro artículo configurado en el método de pago');
+                        resolve(null);
+                    }
+                }
+            ).catch(error => {
+                this.showToast(error);
+                resolve(null);
+            });
+        })
+    }
+
+    public getArticle(articleId: string): Promise<Article> {
+
+        return new Promise<Article>((resolve, reject) => {
+
+            this._articleService.getArticle(articleId).subscribe(
+                result => {
+                    if (!result.article) {
+                        if (result.message && result.message !== '') this.showToast(null, 'info', result.message);
+                        resolve(null);
+                    } else {
+                        resolve(result.article);
+                    }
+                },
+                error => {
+                    this.showToast(null, 'danger', error._body);
+                    resolve(null);
+                }
+            );
+        });
+    }
+
     public existsMovementOfArticle(movementOfArticle: MovementOfArticle): MovementOfArticle {
         let movement: MovementOfArticle;
-        if (this.movArticle && this.movArticle.length > 0) {
-            for (let mov of this.movArticle) {
+        if (this.movsOfArticles && this.movsOfArticles.length > 0) {
+            for (let mov of this.movsOfArticles) {
                 if (movementOfArticle.article && mov.article && mov.article._id === movementOfArticle.article._id && mov.salePrice === movementOfArticle.salePrice) movement = mov;
             }
         }
@@ -1159,29 +1307,29 @@ export class MovementOfCancellationComponent implements OnInit {
     }
 
     public showToast(result, type?: string, title?: string, message?: string): void {
-      if (result) {
-        if (result.status === 200) {
-          type = 'success';
-          title = result.message;
-        } else if (result.status >= 400) {
-          type = 'danger';
-          title = (result.error && result.error.message) ? result.error.message : result.message;
-        } else {
-          type = 'info';
-          title = result.message;
+        if (result) {
+            if (result.status === 200) {
+                type = 'success';
+                title = result.message;
+            } else if (result.status >= 400) {
+                type = 'danger';
+                title = (result.error && result.error.message) ? result.error.message : result.message;
+            } else {
+                type = 'info';
+                title = result.message;
+            }
         }
-      }
-      switch (type) {
-        case 'success':
-          this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
-          break;
-        case 'danger':
-          this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
-          break;
-        default:
-          this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
-          break;
-      }
-      this.loading = false;
+        switch (type) {
+            case 'success':
+                this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+            case 'danger':
+                this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+            default:
+                this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+        }
+        this.loading = false;
     }
 }
