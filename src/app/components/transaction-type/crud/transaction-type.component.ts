@@ -298,21 +298,21 @@ export class TransactionTypeComponent implements OnInit {
         }, {
             name: 'allowEdit',
             tag: 'select',
-            tagType: 'text',
+            tagType: 'boolean',
             values: ['true', 'false'],
             validators: [Validators.required],
             class: 'form-group col-md-2'
         }, {
             name: 'allowDelete',
             tag: 'select',
-            tagType: 'text',
+            tagType: 'boolean',
             values: ['true', 'false'],
             validators: [Validators.required],
             class: 'form-group col-md-2'
         }, {
             name: 'allowAPP',
             tag: 'select',
-            tagType: 'text',
+            tagType: 'boolean',
             values: ['false', 'true'],
             validators: [Validators.required],
             class: 'form-group col-md-2'
@@ -333,21 +333,21 @@ export class TransactionTypeComponent implements OnInit {
         }, {
             name: 'electronics',
             tag: 'select',
-            tagType: 'text',
+            tagType: 'boolean',
             values: ['false', 'true'],
             validators: [Validators.required],
             class: 'form-group col-md-2'
         }, {
             name: 'tax',
             tag: 'select',
-            tagType: 'text',
+            tagType: 'boolean',
             values: ['true', 'false'],
             validators: [Validators.required],
             class: 'form-group col-md-2'
         }, {
             name: 'requestTaxes',
             tag: 'select',
-            tagType: 'text',
+            tagType: 'boolean',
             values: ['true', 'false'],
             validators: [Validators.required],
             class: 'form-group col-md-2'
@@ -356,7 +356,7 @@ export class TransactionTypeComponent implements OnInit {
         {
             name: 'automaticNumbering',
             tag: 'select',
-            tagType: 'text',
+            tagType: 'boolean',
             values: ['true', 'false'],
             validators: [Validators.required],
             class: 'form-group col-md-2'
@@ -402,7 +402,7 @@ export class TransactionTypeComponent implements OnInit {
         {
             name: 'automaticCreation',
             tag: 'select',
-            tagType: 'text',
+            tagType: 'boolean',
             values: ['false', 'true'],
             validators: [Validators.required],
             class: 'form-group col-md-2'
@@ -433,21 +433,21 @@ export class TransactionTypeComponent implements OnInit {
         {
             name: 'requestCurrency',
             tag: 'select',
-            tagType: 'text',
+            tagType: 'boolean',
             values: ['true', 'false'],
             class: 'form-group col-md-2'
         },
         {
             name: 'defectOrders',
             tag: 'select',
-            tagType: 'text',
+            tagType: 'boolean',
             values: ['false', 'true'],
             class: 'form-group col-md-2'
         },
         {
             name: 'requestTransport',
             tag: 'select',
-            tagType: 'text',
+            tagType: 'boolean',
             values: ['false', 'true'],
             class: 'form-group col-md-2'
         }, {
@@ -459,21 +459,21 @@ export class TransactionTypeComponent implements OnInit {
         {
             name: 'requestArticles',
             tag: 'select',
-            tagType: 'text',
+            tagType: 'boolean',
             values: ['false', 'true'],
             class: 'form-group col-md-2'
         },
         {
             name: 'modifyArticle',
             tag: 'select',
-            tagType: 'text',
+            tagType: 'boolean',
             values: ['true', 'false'],
             class: 'form-group col-md-2'
         },
         {
             name: 'showPrices',
             tag: 'select',
-            tagType: 'text',
+            tagType: 'boolean',
             values: ['true', 'false'],
             class: 'form-group col-md-2'
         },
@@ -501,21 +501,21 @@ export class TransactionTypeComponent implements OnInit {
         {
             name: 'updatePrice',
             tag: 'select',
-            tagType: "text",
+            tagType: "boolean",
             values: ['false', 'true'],
             class: 'form-group col-md-2'
         },
         {
             name: 'updateArticle',
             tag: 'select',
-            tagType: "text",
+            tagType: "boolean",
             values: ['true', 'false'],
             class: 'form-group col-md-2'
         },
         {
             name: 'groupsArticles',
             tag: 'select',
-            tagType: "text",
+            tagType: "boolean",
             values: ['true', 'false'],
             class: 'form-group col-md-2'
         },
@@ -528,14 +528,14 @@ export class TransactionTypeComponent implements OnInit {
         {
             name: 'requestPaymentMethods',
             tag: 'select',
-            tagType: "text",
+            tagType: "boolean",
             values: ['true', 'false'],
             class: 'form-group col-md-2'
         },
         {
             name: 'allowZero',
             tag: 'select',
-            tagType: "text",
+            tagType: "boolean",
             values: ['true', 'false'],
             class: 'form-group col-md-2'
         },
@@ -552,7 +552,7 @@ export class TransactionTypeComponent implements OnInit {
         {
             name: 'finishCharge',
             tag: 'select',
-            tagType: "text",
+            tagType: "boolean",
             values: ['true', 'false'],
             class: 'form-group col-md-2'
         },
@@ -565,7 +565,7 @@ export class TransactionTypeComponent implements OnInit {
         {
             name: 'modifyStock',
             tag: 'select',
-            tagType: "text",
+            tagType: "boolean",
             values: ['false', 'true'],
             class: 'form-group col-md-2'
         },
@@ -587,19 +587,19 @@ export class TransactionTypeComponent implements OnInit {
         {
             name: 'cashBoxImpact',
             tag: 'select',
-            tagType: "text",
+            tagType: "boolean",
             values: ['false', 'true'],
             class: 'form-group col-md-2'
         }, {
             name: 'cashOpening',
             tag: 'select',
-            tagType: "text",
+            tagType: "boolean",
             values: ['false', 'true'],
             class: 'form-group col-md-2'
         }, {
             name: 'cashClosing',
             tag: 'select',
-            tagType: "text",
+            tagType: "boolean",
             values: ['false', 'true'],
             class: 'form-group col-md-2'
         },
@@ -612,7 +612,7 @@ export class TransactionTypeComponent implements OnInit {
         }, {
             name: 'requestEmailTemplate',
             tag: 'select',
-            tagType: "text",
+            tagType: "boolean",
             values: ['false', 'true'],
             class: 'form-group col-md-2'
         }, {
@@ -634,7 +634,7 @@ export class TransactionTypeComponent implements OnInit {
         }, {
             name: 'requestShipmentMethod',
             tag: 'select',
-            tagType: "text",
+            tagType: "boolean",
             values: ['false', 'true'],
             class: 'form-group col-md-2'
         }, {
@@ -673,19 +673,19 @@ export class TransactionTypeComponent implements OnInit {
         {
             name: 'isPreprinted',
             tag: 'select',
-            tagType: "text",
+            tagType: "boolean",
             values: ['false', 'true'],
             class: 'form-group col-md-2'
         }, {
             name: 'printable',
             tag: 'select',
-            tagType: "text",
+            tagType: "boolean",
             values: ['false', 'true'],
             class: 'form-group col-md-2'
         }, {
             name: 'readLayout',
             tag: 'select',
-            tagType: "text",
+            tagType: "boolean",
             values: ['false', 'true'],
             class: 'form-group col-md-2'
         },
@@ -693,19 +693,19 @@ export class TransactionTypeComponent implements OnInit {
         {
             name: 'printSign',
             tag: 'select',
-            tagType: "text",
+            tagType: "boolean",
             values: ['false', 'true'],
             class: 'form-group col-md-2'
         }, {
             name: 'printOrigin',
             tag: 'select',
-            tagType: "text",
+            tagType: "boolean",
             values: ['false', 'true'],
             class: 'form-group col-md-2'
         }, {
             name: 'posKitchen',
             tag: 'select',
-            tagType: "text",
+            tagType: "boolean",
             values: ['false', 'true'],
             class: 'form-group col-md-2'
         }, {
