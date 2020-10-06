@@ -1,6 +1,6 @@
 import { Component, ViewEncapsulation, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 
-import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbDropdownConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { Title } from '@angular/platform-browser';
@@ -72,7 +72,9 @@ export class DatatableComponent {
     private translatePipe: TranslateMePipe,
     private _router: Router,
     private _route: ActivatedRoute,
+    config: NgbDropdownConfig
   ) {
+    config.placement = 'bottom-right';
   }
 
   public async ngOnInit() {
