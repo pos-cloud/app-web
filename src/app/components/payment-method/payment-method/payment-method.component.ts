@@ -255,6 +255,8 @@ export class PaymentMethodComponent implements OnInit {
 
   public getAllArticles(match: {}): Promise<Article[]> {
     return new Promise<Article[]>((resolve, reject) => {
+      match['type'] = 'Final';
+      match['operationType'] = { $ne: 'D' };
       this.subscription.add(this._articleService.getAll({
         match,
         sort: { description: 1 },
