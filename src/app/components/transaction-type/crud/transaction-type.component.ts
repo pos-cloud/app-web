@@ -589,17 +589,20 @@ export class TransactionTypeComponent implements OnInit {
             tag: 'select',
             tagType: "boolean",
             values: ['false', 'true'],
+            default : 'true',
             class: 'form-group col-md-2'
         }, {
             name: 'cashOpening',
             tag: 'select',
             tagType: "boolean",
             values: ['false', 'true'],
+            default : 'false',
             class: 'form-group col-md-2'
         }, {
             name: 'cashClosing',
             tag: 'select',
             tagType: "boolean",
+            default : 'false',
             values: ['false', 'true'],
             class: 'form-group col-md-2'
         },
