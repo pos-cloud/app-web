@@ -67,7 +67,7 @@ export class OriginComponent implements OnInit {
   ngOnInit() {
     this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
-    this.userType = pathLocation[1];;
+    this.userType = pathLocation[1];
     this.buildForm();
     this.getBranches();
     
