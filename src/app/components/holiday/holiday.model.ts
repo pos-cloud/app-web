@@ -1,6 +1,7 @@
 import { Model } from '../model/model.model';
 import * as moment from 'moment';
 import 'moment/locale/es';
+import { IAttribute } from 'app/util/attribute.interface';
 
 export class Holiday extends Model {
 
@@ -9,17 +10,7 @@ export class Holiday extends Model {
 
     constructor() { super(); }
 
-    static getAttributes(): {
-        name: string,
-        visible: boolean,
-        disabled: boolean,
-        filter: boolean,
-        defaultFilter: string,
-        datatype: string,
-        project: any,
-        align: string,
-        required: boolean
-    }[] {
+    static getAttributes(): IAttribute[] {
         return Model.getAttributes([
             {
                 name: 'name',

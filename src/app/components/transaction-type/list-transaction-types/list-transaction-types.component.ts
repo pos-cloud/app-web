@@ -4,6 +4,7 @@ import { DatatableComponent } from '../../datatable/datatable.component';
 import { Router } from '@angular/router';
 import { TransactionTypeService } from '../transaction-type.service';
 import { TransactionType } from '../transaction-type';
+import { IButton } from 'app/util/buttons.interface';
 
 @Component({
   selector: 'app-list-transaction-types',
