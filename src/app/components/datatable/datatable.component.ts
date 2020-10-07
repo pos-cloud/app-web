@@ -10,6 +10,8 @@ import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
+import { IAttribute } from 'app/util/attribute.interface';
+import { IButton } from 'app/util/buttons.interface';
 
 @Component({
   selector: 'app-datatable',
@@ -37,29 +39,9 @@ export class DatatableComponent {
   public totalItems = 0;
   @Input() title: string;
   @Input() sort: {};
-  @Input() columns: {
-    name: string,
-    visible: boolean,
-    disabled: boolean,
-    filter: boolean,
-    defaultFilter: string,
-    datatype: string,
-    project: any,
-    align: string,
-    required: boolean
-  }[];
-  @Input() rowButtons: {
-    title: string,
-    class: string,
-    icon: string,
-    click: string
-  }[];
-  @Input() headerButtons: {
-    title: string,
-    class: string,
-    icon: string,
-    click: string
-  }[];
+  @Input() columns: IAttribute[];
+  @Input() rowButtons: IButton[];
+  @Input() headerButtons: IButton[];
   @Input() _service: any;
 
   // EXCEL

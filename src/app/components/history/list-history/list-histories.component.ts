@@ -5,6 +5,7 @@ import { DatatableComponent } from '../../datatable/datatable.component';
 import { Subscription } from 'rxjs';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
+import { IButton } from 'app/util/buttons.interface';
 
 @Component({
   selector: 'app-list-histories',
@@ -20,23 +21,13 @@ export class ListHistoriesComponent {
   public sort = { "name": 1 };
   public columns = History.getAttributes();
   public loading: boolean = false;
-  public rowButtons: {
-    title: string,
-    class: string,
-    icon: string,
-    click: string
-  }[] = [{
+  public rowButtons: IButton[] = [{
     title: 'recover',
     class: 'btn btn-info btn-sm',
     icon: 'fa fa-undo',
     click: `this.emitEvent('recover', item)`
   }];
-  public headerButtons: {
-    title: string,
-    class: string,
-    icon: string,
-    click: string
-  }[] = [{
+  public headerButtons: IButton[] = [{
     title: 'add',
     class: 'btn btn-light',
     icon: 'fa fa-plus',

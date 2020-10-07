@@ -1,3 +1,4 @@
+import { IAttribute } from 'app/util/attribute.interface';
 import { Model } from '../model/model.model';
 
 export class EmployeeType extends Model {
@@ -6,17 +7,7 @@ export class EmployeeType extends Model {
 
   constructor() { super(); }
 
-  static getAttributes(): {
-    name: string,
-    visible: boolean,
-    disabled: boolean,
-    filter: boolean,
-    defaultFilter: string,
-    datatype: string,
-    project: any,
-    align: string,
-    required: boolean
-  }[] {
+  static getAttributes(): IAttribute[] {
     return Model.getAttributes([
       {
         name: 'description',

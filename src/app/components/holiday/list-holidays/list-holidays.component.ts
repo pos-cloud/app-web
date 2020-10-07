@@ -5,6 +5,7 @@ import { HolidayComponent } from '../crud/holiday.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { Router } from '@angular/router';
+import { IButton } from 'app/util/buttons.interface';
 
 @Component({
   selector: 'app-list-holidays',
@@ -18,12 +19,7 @@ export class ListHolidaysComponent {
   public title: string = 'holidays';
   public sort = { "name": 1 };
   public columns = Holiday.getAttributes();
-  public rowButtons: {
-    title: string,
-    class: string,
-    icon: string,
-    click: string
-  }[] = [{
+  public rowButtons: IButton[] = [{
     title: 'view',
     class: 'btn btn-success btn-sm',
     icon: 'fa fa-eye',
@@ -39,12 +35,7 @@ export class ListHolidaysComponent {
     icon: 'fa fa-trash-o',
     click: `this.emitEvent('delete', item)`
   }];
-  public headerButtons: {
-    title: string,
-    class: string,
-    icon: string,
-    click: string
-  }[] = [{
+  public headerButtons: IButton[] = [{
     title: 'add',
     class: 'btn btn-light',
     icon: 'fa fa-plus',

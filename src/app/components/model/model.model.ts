@@ -1,5 +1,6 @@
 import { User } from '../user/user';
 import * as moment from 'moment';
+import { IAttribute } from 'app/util/attribute.interface';
 
 export class Model {
 
@@ -19,28 +20,8 @@ export class Model {
   constructor() { }
 
   static getAttributes(
-    atrributes: {
-      name: string,
-      visible: boolean,
-      disabled: boolean,
-      filter: boolean,
-      defaultFilter: string,
-      datatype: string,
-      project: any,
-      align: string,
-      required: boolean
-    }[]
-  ): {
-    name: string,
-    visible: boolean,
-    disabled: boolean,
-    filter: boolean,
-    defaultFilter: string,
-    datatype: string,
-    project: any,
-    align: string,
-    required: boolean
-  }[] {
+    atrributes: IAttribute[]
+  ): IAttribute[] {
     return [
       ...atrributes,
       {

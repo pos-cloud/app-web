@@ -4,6 +4,7 @@ import { CashBoxTypeService } from '../cash-box-type.service';
 import { CashBoxTypeComponent } from '../crud/cash-box-type.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DatatableComponent } from '../../datatable/datatable.component';
+import { IButton } from 'app/util/buttons.interface';
 
 @Component({
   selector: 'app-list-cash-box-types',
@@ -17,12 +18,7 @@ export class ListCashBoxTypesComponent {
   public title: string = 'cash-box-types';
   public sort = { "name": 1 };
   public columns = CashBoxType.getAttributes();
-  public rowButtons: {
-    title: string,
-    class: string,
-    icon: string,
-    click: string
-  }[] = [{
+  public rowButtons: IButton[] = [{
     title: 'view',
     class: 'btn btn-success btn-sm',
     icon: 'fa fa-eye',
@@ -38,12 +34,7 @@ export class ListCashBoxTypesComponent {
     icon: 'fa fa-trash-o',
     click: `this.emitEvent('delete', item)`
   }];
-  public headerButtons: {
-    title: string,
-    class: string,
-    icon: string,
-    click: string
-  }[] = [{
+  public headerButtons: IButton[] = [{
     title: 'add',
     class: 'btn btn-light',
     icon: 'fa fa-plus',

@@ -17,12 +17,7 @@ export class ListTransactionTypesComponent {
   public title: string = 'transaction-types';
   public sort = { "name": 1 };
   public columns = TransactionType.getAttributes();
-  public rowButtons: {
-    title: string,
-    class: string,
-    icon: string,
-    click: string
-  }[] = [{
+  public rowButtons: IButton[] = [{
     title: 'view',
     class: 'btn btn-success btn-sm',
     icon: 'fa fa-eye',
@@ -38,12 +33,7 @@ export class ListTransactionTypesComponent {
     icon: 'fa fa-trash-o',
     click: `this.emitEvent('delete', item)`
   }];
-  public headerButtons: {
-    title: string,
-    class: string,
-    icon: string,
-    click: string
-  }[] = [{
+  public headerButtons: IButton[] = [{
     title: 'add',
     class: 'btn btn-light',
     icon: 'fa fa-plus',

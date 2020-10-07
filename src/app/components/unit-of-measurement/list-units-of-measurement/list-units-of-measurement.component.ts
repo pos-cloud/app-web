@@ -4,6 +4,7 @@ import { UnitOfMeasurementService } from '../unit-of-measurement.service';
 import { UnitOfMeasurementComponent } from '../crud/unit-of-measurement.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DatatableComponent } from '../../datatable/datatable.component';
+import { IButton } from 'app/util/buttons.interface';
 
 @Component({
   selector: 'app-list-units-of-measurement',
@@ -17,12 +18,7 @@ export class ListUnitOfMeasurementsComponent {
   public title: string = 'units-of-measurement';
   public sort = { "name": 1 };
   public columns = UnitOfMeasurement.getAttributes();
-  public rowButtons: {
-    title: string,
-    class: string,
-    icon: string,
-    click: string
-  }[] = [{
+  public rowButtons: IButton[] = [{
     title: 'view',
     class: 'btn btn-success btn-sm',
     icon: 'fa fa-eye',
@@ -38,12 +34,7 @@ export class ListUnitOfMeasurementsComponent {
     icon: 'fa fa-trash-o',
     click: `this.emitEvent('delete', item)`
   }];
-  public headerButtons: {
-    title: string,
-    class: string,
-    icon: string,
-    click: string
-  }[] = [{
+  public headerButtons: IButton[] = [{
     title: 'add',
     class: 'btn btn-light',
     icon: 'fa fa-plus',
@@ -61,7 +52,7 @@ export class ListUnitOfMeasurementsComponent {
   constructor(
     public _service: UnitOfMeasurementService,
     private _modalService: NgbModal,
-  ) {}
+  ) { }
 
   public async emitEvent(event) {
     this.openModal(event.op, event.obj);

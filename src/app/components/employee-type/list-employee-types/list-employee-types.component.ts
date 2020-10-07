@@ -4,6 +4,7 @@ import { EmployeeTypeService } from '../employee-type.service';
 import { EmployeeTypeComponent } from '../crud/employee-type.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DatatableComponent } from '../../datatable/datatable.component';
+import { IButton } from 'app/util/buttons.interface';
 
 @Component({
   selector: 'app-list-employee-types',
@@ -17,12 +18,7 @@ export class ListEmployeeTypesComponent {
   public title: string = 'employee-types';
   public sort = { "name": 1 };
   public columns = EmployeeType.getAttributes();
-  public rowButtons: {
-    title: string,
-    class: string,
-    icon: string,
-    click: string
-  }[] = [{
+  public rowButtons: IButton[] = [{
     title: 'view',
     class: 'btn btn-success btn-sm',
     icon: 'fa fa-eye',
@@ -38,12 +34,7 @@ export class ListEmployeeTypesComponent {
     icon: 'fa fa-trash-o',
     click: `this.emitEvent('delete', item)`
   }];
-  public headerButtons: {
-    title: string,
-    class: string,
-    icon: string,
-    click: string
-  }[] = [{
+  public headerButtons: IButton[] = [{
     title: 'add',
     class: 'btn btn-light',
     icon: 'fa fa-plus',

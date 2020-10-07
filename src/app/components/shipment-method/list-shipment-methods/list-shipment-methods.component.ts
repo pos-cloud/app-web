@@ -4,6 +4,7 @@ import { ShipmentMethodService } from '../shipment-method.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { ShipmentMethodComponent } from './../crud/shipment-method.component'
+import { IButton } from 'app/util/buttons.interface';
 
 @Component({
   selector: 'app-list-shipment-methods',
@@ -17,12 +18,7 @@ export class ListShipmentMethodsComponent {
   public title: string = 'shipment-methods';
   public sort = { "name": 1 };
   public columns = ShipmentMethod.getAttributes();
-  public rowButtons: {
-    title: string,
-    class: string,
-    icon: string,
-    click: string
-  }[] = [{
+  public rowButtons: IButton[] = [{
     title: 'view',
     class: 'btn btn-success btn-sm',
     icon: 'fa fa-eye',
@@ -38,12 +34,7 @@ export class ListShipmentMethodsComponent {
     icon: 'fa fa-trash-o',
     click: `this.emitEvent('delete', item)`
   }];
-  public headerButtons: {
-    title: string,
-    class: string,
-    icon: string,
-    click: string
-  }[] = [{
+  public headerButtons: IButton[] = [{
     title: 'add',
     class: 'btn btn-light',
     icon: 'fa fa-plus',
