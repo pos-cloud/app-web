@@ -674,7 +674,7 @@ export class ReportKardexComponent implements OnInit {
 
   public refresh(): void {
     if (this.articleSelected) {
-      this.getItems();;
+      this.getItems();
     } else {
       this.showMessage("Debe seleccionar un Producto", 'info', true);
     }
@@ -695,7 +695,7 @@ export class ReportKardexComponent implements OnInit {
           (result) => {
             if (result.article) {
               this.articleSelected = result.article;
-              this.getItems();;
+              this.getItems();
             }
           }, (reason) => {
           }

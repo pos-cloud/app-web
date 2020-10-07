@@ -149,7 +149,7 @@ export class EditCheckComponent implements OnInit {
 
     public updateCheck() {
 
-        this.movementOfCash.expirationDate = moment(this.checkForm.value.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");;
+        this.movementOfCash.expirationDate = moment(this.checkForm.value.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
         this.movementOfCash.statusCheck = this.checkForm.value.statusCheck;
         this.movementOfCash.bank = this.checkForm.value.bank;
         this.movementOfCash.deliveredBy = this.checkForm.value.deliveredBy;

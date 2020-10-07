@@ -11,8 +11,8 @@ export class Model {
       user: User
     }
   ];
-  public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');;
-  public updateDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');;
+  public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+  public updateDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public creationUser: User;
   public updateUser: User;
   public operationType: string;

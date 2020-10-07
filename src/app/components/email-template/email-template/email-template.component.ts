@@ -105,7 +105,7 @@ export class EmailTemplateComponent implements OnInit {
 
     ngOnInit() {
         let pathLocation: string[] = this._router.url.split('/');
-        this.userType = pathLocation[1];;
+        this.userType = pathLocation[1];
         this.buildForm();
 
         if (this.emailTemplateId) {
