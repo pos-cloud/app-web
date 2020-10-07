@@ -688,9 +688,7 @@ export class PointOfSaleComponent implements OnInit {
 
   public async initTransactionByType(op: string, openPending: boolean = false) {
 
-    let match = {
-      op: true
-    }
+    let match = JSON.parse(`{"${op}": true}`);
 
     await this.getTransactionTypes(match).then(
       async transactionTypes => {
