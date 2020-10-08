@@ -10,6 +10,7 @@ import { ShipmentMethodModule } from './shipment-method/shipment-method.module';
 import { PermissionModule } from './permission/permission.module';
 import { HolidayModule } from './holiday/holiday.module';
 import { TransactionTypeModule } from './transaction-type/transaction-type.module';
+import { CategoryModule } from './category/category.module';
 
 @NgModule({
 	imports: [
@@ -23,7 +24,8 @@ import { TransactionTypeModule } from './transaction-type/transaction-type.modul
     HistoryModule,
     ShipmentMethodModule,
     HolidayModule,
-    TransactionTypeModule
+    TransactionTypeModule,
+    CategoryModule
 	],
 	declarations: [
 	],

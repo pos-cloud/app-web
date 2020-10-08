@@ -399,5 +399,10 @@
     "friday": "Viernes",
     "saturday": "Sábado",
     "sunday": "Domingo",
-    "codes": "Códigos"
+    "codes": "Códigos",
+    "category" : "Categoría",
+    "visibleOnSale" : "Visible para la venta",
+    "visibleOnPurchase" : "Visible para la compra",
+    "visibleInvoice" : "Visible en la factura",
+    "isRequiredOptional" : "Es requerido en opcional"
 }

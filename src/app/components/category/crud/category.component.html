@@ -1,0 +1,150 @@
+<section class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <span style="color: #607D8B">{{title}}</span>
+            <div class="pull-right">
+                <button type="button" class="btn" [routerLink]="['/categories']"><i
+                        class="fa fa-arrow-left"></i><span>{{'return' | translate | capitalize}}</span></button>
+                <button type="button" class="btn" [disabled]="loading"
+                    *ngIf="operation !== 'delete' && operation !== 'view'" (click)="addObj()">
+                    <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+                    <span *ngIf="!loading"> {{'save' | translate | capitalize}}</span>
+                    <span *ngIf="loading"> {{'loading' | translate | capitalize}}</span>
+                </button>
+                <button type="button" class="btn btn-danger" *ngIf="operation === 'delete'" [disabled]="loading"
+                    (click)="addObj()">
+                    <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
+                    <span *ngIf="!loading"> {{'delete' | translate | capitalize}}</span>
+                    <span *ngIf="loading"> {{'loading' | translate | capitalize}}</span>
+                </button>
+            </div>
+        </div>
+        <div class="card-body scroll">
+            <form [formGroup]="objForm" #formCrud="ngForm" autocomplete="off">
+                <div class="row">
+                    <div *ngFor="let field of formFields" [class]="field.class">
+                        <!-- SEPARATOR -->
+                        <div *ngIf="field.tag === 'separator'">
+                            <hr>
+                            <b>{{field.name}}</b>
+                        </div>
+                        <label *ngIf="field.tag !== 'separator'" [for]="field.name"
+                            class="control-label">{{field.name | translate | capitalize}}:</label>
+                        <div class="input-group">
+
+                            <!-- FILE -->
+                            <div class="row" style="width: 100%;"
+                                *ngIf="field.tag === 'input' && field.tagType === 'file'">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="custom-file">
+                                                <label class="custom-file-label btn btn-light"
+                                                    [id]="'labelFile'+field.name.split('.')[field.name.split('.').length - 1]"
+                                                    for="customFile">{{(filesToUpload && filesToUpload[field.name] && filesToUpload[field.name].length > 0)? filesToUpload[field.name].length + ' archivos cargados':'Seleccionar archivos'}}</label>
+                                                <input [type]="field.tagType" class="custom-file-input"
+                                                    [formControlName]="field.name" [name]="field.name" [id]="field.name"
+                                                    [readonly]="readonly"
+                                                    [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
+                                                    (change)="onFileSelected($event, field.name)"
+                                                    [accept]="field.format+'/*'" [multiple]="field.multiple" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row" *ngIf="field.multiple">
+                                        <div class="col-md-3" style="padding: 1rem"
+                                            *ngFor="let file of getFiles(field.name)">
+                                            <div class="card" style="min-height: auto !important;">
+                                                <div class="img-file"
+                                                    [style.backgroundImage]="'url('+apiURL + 'file?filename=' + file + '&model=' + field.name.split('.')[field.name.split('.').length - 1] + '&database=' + database+')'">
+                                                </div>
+                                                <div class="card-body text-center">
+                                                    <a class="btn btn-danger" style="color: white;"
+                                                        (click)="deleteFile('image', field.name, file)"><i
+                                                            class="fa fa-trash-o"></i>Eliminar</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row" *ngIf="!field.multiple && getFiles(field.name)">
+                                        <div class="col-md-3" style="padding: 1rem">
+                                            <div class="card" style="min-height: auto !important;">
+                                                <div class="img-file"
+                                                    [style.backgroundImage]="'url('+apiURL + 'file?filename=' + getFiles(field.name) + '&model=' + field.name.split('.')[field.name.split('.').length - 1] + '&database=' + database+')'">
+                                                </div>
+                                                <div class="card-body text-center">
+                                                    <a class="btn btn-danger" style="color: white;"
+                                                        (click)="deleteFile('image', field.name, getFiles(field.name))"><i
+                                                            class="fa fa-trash-o"></i>Eliminar</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- INPUT -->
+                            <input *ngIf="field.tag === 'input' && field.tagType !== 'file'" [type]="field.tagType"
+                                class="form-control" [formControlName]="field.name" [name]="field.name"
+                                [id]="field.name" [readonly]="readonly"
+                                [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
+                                (blur)="onValueChanged($event.target.id)" />
+
+                            <!-- SELECT -->
+                            <select *ngIf="field.tag === 'select'" class="form-control" [formControlName]="field.name"
+                                [id]="field.name"
+                                [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
+                                (blur)="onValueChanged($event.target.id)">
+                                <option *ngFor="let v of field.values" [value]="v" [disabled]="readonly"
+                                    [selected]="obj[field.name] && obj[field.name] == v">
+                                    {{ v | translate | capitalize}}
+                                </option>
+                            </select>
+
+                            <!-- AUTOCOMPLETE -->
+                            <div *ngIf="field.tag === 'autocomplete'" style="width: 100%;">
+                                <ng-template #result let-r="result" let-t="term">
+                                  <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+                                </ng-template>
+                                <input [type]="field.tagType" class="form-control" [id]="field.name" [formControlName]="field.name"
+                                  [readonly]="readonly" [name]="field.name" [ngbTypeahead]="field.search" [resultTemplate]="result"
+                                  [inputFormatter]="field.format"
+                                  [ngClass]="{'is-invalid':!objForm.get(field.name).valid && formErrors[field.name]}"
+                                  (focus)="focus$[field.name].next($any($event).target.value)"
+                                  (blur)="onValueChanged($event.target.id)" />
+                              </div>
+
+                            <!-- TEXTAREA -->
+                            <textarea *ngIf="field.tag === 'textarea'" class="form-control"
+                                [formControlName]="field.name" [name]="field.name" [id]="field.name"
+                                [readonly]="readonly"
+                                [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
+                                (blur)="onValueChanged($event.target.id)"></textarea>
+
+                            <!-- HTML -->
+                            <tinymce *ngIf="field.tag === 'html'" [formControlName]="field.name"
+                                [config]="tinyMCEConfigBody" [id]="field.name"
+                                [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
+                                (blur)="onValueChanged($event.target.id)" style="width: 100%;">
+                            </tinymce>
+
+                            <!-- MOSTRAR ERROR -->
+                            <div class="invalid-feedback" [style.display]="(formErrors[field.name])? 'block': 'none'">
+                                {{ formErrors[field.name] }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-md-12">
+                    <label for="applications">Aplicaciones:</label>
+                    <br>
+                    <label formArrayName="applications" *ngFor="let order of objForm.get('applications')['controls']; let i = index"
+                      style="margin-right: 20px; font-size: 20px;">
+                      <input type="checkbox" [formControlName]="i" />
+                      {{applications[i].name}}
+                    </label>
+                  </div>
+            </form>
+        </div>
+    </div>
+</section>
