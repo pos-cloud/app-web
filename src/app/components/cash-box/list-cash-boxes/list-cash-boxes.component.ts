@@ -116,7 +116,13 @@ export class ListCashBoxesComponent implements OnInit {
 				name: 1,
 				cashClosing: 1,
 				cashBoxImpact: 1,
-				defectPrinter: 1
+				'defectPrinter._id': 1,
+				'defectPrinter.type': 1,
+				'defectPrinter.pageWidth': 1,
+				'defectPrinter.pageHigh': 1,
+				'defectPrinter.printIn': 1,
+				'defectPrinter.origin': 1,
+				'defectPrinter.url': 1
 			}, match: {
 				cashClosing: true,
 				cashBoxImpact: true,
