@@ -486,6 +486,8 @@ export class ApplicationComponent implements OnInit {
                             this.obj[field.name] = this.oldFiles[field.name];
                         }
                         break;
+                    case 'boolean':
+                        this.obj[field.name] = this.obj[field.name] == 'true';
                     default:
                         break;
                 }

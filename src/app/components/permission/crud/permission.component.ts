@@ -239,13 +239,13 @@ export class PermissionComponent implements OnInit {
 
         this.objForm.controls.collections.value.forEach(element => {
             if (collectionForm.value.name == element.name) {
-                this.showToast("","warning","Esta regla ya existe")
+                this.showToast("", "warning", "Esta regla ya existe")
                 valid = false;
             }
         });
 
-        if(collectionForm.value.add === "" || collectionForm.value.edit === "" || collectionForm.value.delete === "" || collectionForm.value.export === ""){
-            this.showToast("","warning","Debe completar todos los campos")
+        if (collectionForm.value.add === "" || collectionForm.value.edit === "" || collectionForm.value.delete === "" || collectionForm.value.export === "") {
+            this.showToast("", "warning", "Debe completar todos los campos")
             valid = false;
         }
 
@@ -254,11 +254,11 @@ export class PermissionComponent implements OnInit {
                 this._fb.group({
                     _id: null,
                     name: collectionForm.value.name,
-                    actions : {
-                        add : collectionForm.value.add,
-                        edit : collectionForm.value.edit,
-                        delete : collectionForm.value.delete,
-                        export : collectionForm.value.export
+                    actions: {
+                        add: collectionForm.value.add,
+                        edit: collectionForm.value.edit,
+                        delete: collectionForm.value.delete,
+                        export: collectionForm.value.export
                     }
                 })
             );
@@ -323,6 +323,8 @@ export class PermissionComponent implements OnInit {
                             this.loading = false;
                         }
                         break;
+                    case 'boolean':
+                        this.obj[field.name] = this.obj[field.name] == 'true';
                     default:
                         break;
                 }

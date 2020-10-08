@@ -382,15 +382,14 @@ export class TransactionTypeComponent implements OnInit {
             name: 'fixedLetter',
             tag: 'select',
             tagType: 'text',
-            values: ["X",'A', 'B', "C", "E", "M", "R", "T"],
-            default : "X",
+            values: ["X", 'A', 'B', "C", "E", "M", "R", "T"],
+            default: "X",
             class: 'form-group col-md-2'
         },
         {
             name: "expirationDate",
             tag: 'input',
             tagType: 'date',
-            default : moment("3000-01-01").format("YYYY-MM-DDTHH:mm:ssZ"),
             class: 'form-group col-md-2'
         },
         {
@@ -573,8 +572,8 @@ export class TransactionTypeComponent implements OnInit {
             name: 'stockMovement',
             tag: 'select',
             tagType: "text",
-            values: [null,StockMovement.Inflows, StockMovement.Inventory, StockMovement.Outflows, StockMovement.Transfer],
-            default : null,
+            values: [null, StockMovement.Inflows, StockMovement.Inventory, StockMovement.Outflows, StockMovement.Transfer],
+            default: null,
             class: 'form-group col-md-2'
         },
         {
@@ -589,20 +588,20 @@ export class TransactionTypeComponent implements OnInit {
             tag: 'select',
             tagType: "boolean",
             values: ['false', 'true'],
-            default : 'true',
+            default: 'true',
             class: 'form-group col-md-2'
         }, {
             name: 'cashOpening',
             tag: 'select',
             tagType: "boolean",
             values: ['false', 'true'],
-            default : 'false',
+            default: 'false',
             class: 'form-group col-md-2'
         }, {
             name: 'cashClosing',
             tag: 'select',
             tagType: "boolean",
-            default : 'false',
+            default: 'false',
             values: ['false', 'true'],
             class: 'form-group col-md-2'
         },
@@ -893,7 +892,7 @@ export class TransactionTypeComponent implements OnInit {
                         this.obj = result.result[0];
                         this.setValuesForm();
                     } else {
-                      this.showToast(result);
+                        this.showToast(result);
                     }
                 },
                 error => this.showToast(error)
@@ -1010,7 +1009,6 @@ export class TransactionTypeComponent implements OnInit {
         let isValid: boolean = true;
 
         isValid = (this.operation === 'delete') ? true : this.objForm.valid;
-
         if (isValid) {
             this.obj = this.objForm.value;
         } else {
@@ -1021,7 +1019,7 @@ export class TransactionTypeComponent implements OnInit {
             for (let field of this.formFields) {
                 switch (field.tagType) {
                     case 'date':
-                        this.obj[field.name] = moment(this.obj[field.name]).format('YYYY-MM-DD') + moment().format('THH:mm:ssZ');
+                        this.obj[field.name] = (moment(this.obj[field.name]).isValid()) ? moment(this.obj[field.name]).format('YYYY-MM-DD') + moment().format('THH:mm:ssZ') : null;
                         break;
                     case 'number':
                         this.obj[field.name] = parseFloat(this.obj[field.name]);
@@ -1058,8 +1056,8 @@ export class TransactionTypeComponent implements OnInit {
                             this.obj[field.name] = this.oldFiles[field.name];
                         }
                         break;
-                        case 'boolean':
-                            this.obj[field.name] = this.obj[field.name] === 'true';
+                    case 'boolean':
+                        this.obj[field.name] = this.obj[field.name] == 'true';
                     default:
                         break;
                 }
@@ -1184,8 +1182,8 @@ export class TransactionTypeComponent implements OnInit {
     public getEmployeeType(match: {}): Promise<EmployeeType[]> {
         return new Promise<EmployeeType[]>((resolve, reject) => {
             let project = {
-                name : "$description",
-                operationType : 1
+                name: "$description",
+                operationType: 1
             }
             this.subscription.add(this._employeeTypeService.getAll({
                 project,
@@ -1194,7 +1192,6 @@ export class TransactionTypeComponent implements OnInit {
                 limit: 10,
             }).subscribe(
                 result => {
-                    console.log(result);
                     this.loading = false;
                     (result.status === 200) ? resolve(result.result) : reject(result);
                 },

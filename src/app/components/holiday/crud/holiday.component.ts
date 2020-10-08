@@ -128,7 +128,7 @@ export class HolidayComponent implements OnInit {
   }
 
   public getFiles(fieldName) {
-    return eval('this.obj?.'+fieldName.split('.').join('?.'));
+    return eval('this.obj?.' + fieldName.split('.').join('?.'));
   }
 
   public onFileSelected(event, model: string) {
@@ -273,6 +273,8 @@ export class HolidayComponent implements OnInit {
               this.obj[field.name] = this.oldFiles[field.name];
             }
             break;
+          case 'boolean':
+            this.obj[field.name] = this.obj[field.name] == 'true';
           default:
             break;
         }

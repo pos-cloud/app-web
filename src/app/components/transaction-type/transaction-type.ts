@@ -77,7 +77,7 @@ export class TransactionType extends Model {
     public level: number = 0;
     public groupsArticles: boolean = false;
     public printOrigin: boolean = false;
-    public expirationDate: string = null;
+    public expirationDate: string;
     public numberPrint: number = 0;
     public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
