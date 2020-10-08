@@ -11,13 +11,14 @@ import { TransactionTypeService } from 'app/components/transaction-type/transact
 import { Printer } from 'app/components/printer/printer';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
 	selector: 'app-list-cash-boxes',
 	templateUrl: './list-cash-boxes.component.html',
 	styleUrls: ['./list-cash-boxes.component.scss'],
-	providers: [NgbAlertConfig],
-	encapsulation: ViewEncapsulation.None
+    providers: [NgbAlertConfig, TranslateMePipe, TranslatePipe],
+    encapsulation: ViewEncapsulation.None
 })
 
 export class ListCashBoxesComponent implements OnInit {
