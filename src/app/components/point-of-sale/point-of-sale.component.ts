@@ -607,9 +607,9 @@ export class PointOfSaleComponent implements OnInit {
           match = {
             level: { "$lt": this.user.level },
             "$or": [
-              { branch: { "$exits": false } },
+              { branch: { "$exists": false } },
               { branch: null },
-              { branch: this.user.branch._id }
+              { branch: { "$oid" : this.user.branch._id } }
             ],
             transactionMovement: this.transactionMovement,
             "allowAPP": false
@@ -621,6 +621,8 @@ export class PointOfSaleComponent implements OnInit {
             "allowAPP": false
           }
         }
+
+        console.log(match);
 
 
 
@@ -659,9 +661,9 @@ export class PointOfSaleComponent implements OnInit {
           match = {
             level: { "$lt": this.user.level },
             "$or": [
-              { branch: { "$exits": false } },
+              { branch: { "$exists": false } },
               { branch: null },
-              { branch: this.user.branch._id }
+              { branch: { "$oid" : this.user.branch._id } }
             ],
             transactionMovement: this.transactionMovement,
             "allowAPP": false
