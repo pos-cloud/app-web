@@ -89,7 +89,7 @@ export class CategoryComponent implements OnInit {
         {
             name: 'visibleOnSale',
             tag: 'select',
-            tagType: 'boolean',            
+            tagType: 'boolean',
             values: ['true', 'false'],
             default: 'true',
             class: 'form-group col-md-3'
@@ -138,7 +138,7 @@ export class CategoryComponent implements OnInit {
             tagType: 'text',
             class: 'form-group col-md-4'
         }
-        
+
     ];
     public formErrors: {} = {};
     public validationMessages = {
@@ -228,10 +228,10 @@ export class CategoryComponent implements OnInit {
                 isRequiredOptional: 1,
                 favourite: 1,
                 "parent._id": 1,
-                "parent.description" : 1,
+                "parent.description": 1,
                 'applications._id': 1,
                 'applications.name': 1,
-                'observation' : 1
+                'observation': 1
             }
 
             this.subscription.add(this._objService.getAll({
@@ -255,11 +255,11 @@ export class CategoryComponent implements OnInit {
         }
 
         await this.getAllApplications({})
-      .then((result: Application[]) => {
-        this.applications = result;
-        this.setValuesForm();
-      })
-      .catch((error: Resulteable) => this.showToast(error));
+            .then((result: Application[]) => {
+                this.applications = result;
+                this.setValuesForm();
+            })
+            .catch((error: Resulteable) => this.showToast(error));
     }
 
     public ngAfterViewInit(): void {
@@ -364,22 +364,22 @@ export class CategoryComponent implements OnInit {
         }
         if (this.applications && this.applications.length > 0) {
             this.applications.forEach(x => {
-              let exists: boolean = false;
-              if (this.obj && this.obj.applications && this.obj.applications.length > 0) {
-                this.obj.applications.forEach(y => {
-                  if (x._id === y._id) {
-                    exists = true;
-                    const control = new FormControl(y);
+                let exists: boolean = false;
+                if (this.obj && this.obj.applications && this.obj.applications.length > 0) {
+                    this.obj.applications.forEach(y => {
+                        if (x._id === y._id) {
+                            exists = true;
+                            const control = new FormControl(y);
+                            (this.objForm.controls.applications as FormArray).push(control);
+                        }
+                    })
+                }
+                if (!exists) {
+                    const control = new FormControl(false);
                     (this.objForm.controls.applications as FormArray).push(control);
-                  }
-                })
-              }
-              if (!exists) {
-                const control = new FormControl(false);
-                (this.objForm.controls.applications as FormArray).push(control);
-              }
+                }
             })
-          }
+        }
 
         this.objForm.patchValue(values);
     }
@@ -388,9 +388,12 @@ export class CategoryComponent implements OnInit {
 
         let isValid: boolean = true;
 
-        isValid = (this.operation === 'delete') ? true : this.objForm.valid;
         if (isValid) {
-            this.obj = this.objForm.value;
+            this.obj = Object.assign(this.obj, this.objForm.value);
+            const selectedOrderIds = this.objForm.value.applications
+                .map((v, i) => (v ? this.applications[i] : null))
+                .filter(v => v !== null);
+            this.obj.applications = selectedOrderIds;
         } else {
             this.onValueChanged();
         }
@@ -529,18 +532,18 @@ export class CategoryComponent implements OnInit {
 
     public getAllApplications(match: {}): Promise<Application[]> {
         return new Promise<Application[]>((resolve, reject) => {
-          this.subscription.add(this._applicationService.getAll({
-            match,
-            sort: { name: 1 },
-          }).subscribe(
-            result => {
-              this.loading = false;
-              (result.status === 200) ? resolve(result.result) : reject(result);
-            },
-            error => reject(error)
-          ));
+            this.subscription.add(this._applicationService.getAll({
+                match,
+                sort: { name: 1 },
+            }).subscribe(
+                result => {
+                    this.loading = false;
+                    (result.status === 200) ? resolve(result.result) : reject(result);
+                },
+                error => reject(error)
+            ));
         });
-      }
+    }
 
     public showToast(result, type?: string, title?: string, message?: string): void {
         if (result) {
