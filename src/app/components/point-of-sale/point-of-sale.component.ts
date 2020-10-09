@@ -622,10 +622,6 @@ export class PointOfSaleComponent implements OnInit {
           }
         }
 
-        console.log(match);
-
-
-
         await this.getTransactionTypes(match).then(
           transactionTypes => {
             if (transactionTypes) {

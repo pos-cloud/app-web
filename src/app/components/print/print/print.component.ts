@@ -301,7 +301,6 @@ export class PrintComponent implements OnInit {
             "type.printOrigin" : 1,
             "type.isPreprinted" : 1,
             "type.numberPrint" : 1,
-
             "company._id" : 1,
             "company.name" : 1,
             "company.vatCondition.discriminate" :1,
@@ -313,19 +312,13 @@ export class PrintComponent implements OnInit {
             "company.phones" :1,
             "company.city" :1,
             "company.fantasyName" : 1,
-
             "table.description" : 1,
             "shipmentMethod._id" : 1,
             "shipmentMethod.name" : 1,
-
-
             "employeeClosing._id" : 1,
             "employeeClosing.name" : 1,
-
             "employeeOpening._id" : 1,
             "employeeOpening.name" : 1
-
-
         }`;
 
     project = JSON.parse(project)
@@ -867,7 +860,7 @@ export class PrintComponent implements OnInit {
         "transactionOrigin.number": 1,
         "transactionOrigin.origin": 1,
         "transactionOrigin.totalPrice": 1,
-        "transactionOrigin.company.name" : 1,
+        "transactionOrigin.company.name": 1,
         "transactionOrigin.balance": 1,
         "transactionDestination": 1,
         "balance": 1,
@@ -2273,101 +2266,101 @@ export class PrintComponent implements OnInit {
         row += 5;
 
         if (row > 240) {
-            this.doc.setFontType("bold");
-            row = 95;
-            this.doc.addPage();
+          this.doc.setFontType("bold");
+          row = 95;
+          this.doc.addPage();
 
-            if (!this.transaction.type.isPreprinted) {
+          if (!this.transaction.type.isPreprinted) {
 
-              //this.getHeader(true);
+            //this.getHeader(true);
 
-              // Detalle Emisor
-              this.doc.setDrawColor(110, 110, 110);
+            // Detalle Emisor
+            this.doc.setDrawColor(110, 110, 110);
 
-              // Dibujar lineas horizontales
-              this.doc.line(0, 50, 240, 50);
-              if (this.config && this.config[0]) {
-                this.doc.setFontSize(this.fontSizes.normal);
+            // Dibujar lineas horizontales
+            this.doc.line(0, 50, 240, 50);
+            if (this.config && this.config[0]) {
+              this.doc.setFontSize(this.fontSizes.normal);
 
-                if (this.config[0].companyIdentificationType) {
-                  this.doc.setFontType('bold');
-                  this.doc.text(this.config[0].companyIdentificationType.name + ":", 110, 35);
-                  this.doc.setFontType('normal');
-                  this.doc.text(this.config[0].companyIdentificationValue, 122, 35);
-                }
-
-                if (this.config[0].country === 'AR') {
-                  this.doc.setFontType('bold');
-                  this.doc.text("Ingresos Brutos:", 110, 40);
-                  this.doc.setFontType('normal');
-                  if (this.config[0].companyGrossIncome) {
-                    this.doc.text(this.config[0].companyGrossIncome, 140, 40);
-                  }
-                }
-
+              if (this.config[0].companyIdentificationType) {
                 this.doc.setFontType('bold');
-                this.doc.text("Inicio de Actividades:", 110, 45);
+                this.doc.text(this.config[0].companyIdentificationType.name + ":", 110, 35);
                 this.doc.setFontType('normal');
-                if (this.config[0].companyStartOfActivity) {
-                  this.doc.text(this.dateFormat.transform(this.config[0].companyStartOfActivity, 'DD/MM/YYYY'), 149, 45);
+                this.doc.text(this.config[0].companyIdentificationValue, 122, 35);
+              }
+
+              if (this.config[0].country === 'AR') {
+                this.doc.setFontType('bold');
+                this.doc.text("Ingresos Brutos:", 110, 40);
+                this.doc.setFontType('normal');
+                if (this.config[0].companyGrossIncome) {
+                  this.doc.text(this.config[0].companyGrossIncome, 140, 40);
                 }
               }
 
-              this.doc.setFontSize(this.fontSizes.normal);
+              this.doc.setFontType('bold');
+              this.doc.text("Inicio de Actividades:", 110, 45);
               this.doc.setFontType('normal');
-
-              // Dibujar la linea cortada para la letra
-              this.doc.line(105, 13, 105, 50); //vertical letra
-
-              // Numeración de la transacción
-              this.doc.setFontSize(this.fontSizes.extraLarge);
-
-              if (this.transaction.type.labelPrint &&
-                this.transaction.type.labelPrint !== '') {
-                this.centerText(5, 5, 105, 105, 10, this.transaction.type.labelPrint);
-              } else {
-                this.centerText(5, 5, 105, 105, 10, this.transaction.type.name);
+              if (this.config[0].companyStartOfActivity) {
+                this.doc.text(this.dateFormat.transform(this.config[0].companyStartOfActivity, 'DD/MM/YYYY'), 149, 45);
               }
-              this.doc.setFontSize(this.fontSizes.normal);
-              this.doc.setFontType('bold');
-              this.doc.text("Comp. Nº:", 110, 20);
-              this.doc.setFontType('normal');
-              if (Config.country === 'AR') {
-                this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 10), 130, 20);
-              } else {
-                this.doc.text(this.padString(this.transaction.number, 10), 130, 20);
-              }
-              this.doc.setFontType('bold');
-              this.doc.text("Fecha:", 110, 25);
-              this.doc.setFontType('normal');
-              if (this.transaction.endDate) {
-                this.doc.text(this.transaction.endDate.split(' ')[0], 125, 25);
-              } else {
-                this.doc.text(this.transaction.startDate.split(' ')[0], 125, 25);
-              }
-
-              // Letra de transacción
-              this.doc.setFontSize(this.fontSizes.extraLarge);
-              this.doc.setFontType('bold');
-              this.doc.setDrawColor("Black");
-              this.doc.rect(100, 3, 10, 10);
-              this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
-              this.doc.setFontType('normal');
-
-              // Encabezado de la tabla de Detalle de Productos
-              this.doc.setFontType('bold');
-              this.doc.setFontSize(this.fontSizes.normal);
-              this.doc.line(0, row, 200, row)
-              row += 5
-              this.doc.text("Comprobantes cancelados", 10, row);
-              this.doc.text("Total", 80, row);
-              this.doc.text("Cliente", 110, row);
-              row += 3
-              this.doc.line(0, row, 200, row)
-              row += 5
             }
-            this.getClient();
+
+            this.doc.setFontSize(this.fontSizes.normal);
+            this.doc.setFontType('normal');
+
+            // Dibujar la linea cortada para la letra
+            this.doc.line(105, 13, 105, 50); //vertical letra
+
+            // Numeración de la transacción
+            this.doc.setFontSize(this.fontSizes.extraLarge);
+
+            if (this.transaction.type.labelPrint &&
+              this.transaction.type.labelPrint !== '') {
+              this.centerText(5, 5, 105, 105, 10, this.transaction.type.labelPrint);
+            } else {
+              this.centerText(5, 5, 105, 105, 10, this.transaction.type.name);
+            }
+            this.doc.setFontSize(this.fontSizes.normal);
+            this.doc.setFontType('bold');
+            this.doc.text("Comp. Nº:", 110, 20);
+            this.doc.setFontType('normal');
+            if (Config.country === 'AR') {
+              this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 10), 130, 20);
+            } else {
+              this.doc.text(this.padString(this.transaction.number, 10), 130, 20);
+            }
+            this.doc.setFontType('bold');
+            this.doc.text("Fecha:", 110, 25);
+            this.doc.setFontType('normal');
+            if (this.transaction.endDate) {
+              this.doc.text(this.transaction.endDate.split(' ')[0], 125, 25);
+            } else {
+              this.doc.text(this.transaction.startDate.split(' ')[0], 125, 25);
+            }
+
+            // Letra de transacción
+            this.doc.setFontSize(this.fontSizes.extraLarge);
+            this.doc.setFontType('bold');
+            this.doc.setDrawColor("Black");
+            this.doc.rect(100, 3, 10, 10);
+            this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
+            this.doc.setFontType('normal');
+
+            // Encabezado de la tabla de Detalle de Productos
+            this.doc.setFontType('bold');
+            this.doc.setFontSize(this.fontSizes.normal);
+            this.doc.line(0, row, 200, row)
+            row += 5
+            this.doc.text("Comprobantes cancelados", 10, row);
+            this.doc.text("Total", 80, row);
+            this.doc.text("Cliente", 110, row);
+            row += 3
+            this.doc.line(0, row, 200, row)
+            row += 5
           }
+          this.getClient();
+        }
       }
 
     }
@@ -3272,7 +3265,7 @@ export class PrintComponent implements OnInit {
 
   async toPrintRoll() {
     //Cabecera del ticket
-    
+
     var margin = 5;
 
     let width = this.printer.pageWidth;
@@ -3308,7 +3301,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('normal');
 
     this.doc.text("Fecha: " + this.transaction.endDate.substring(0, 5), (width / 1.6), this.row);
-    this.row +=5;
+    this.row += 5;
     this.doc.text("Hora: " + this.transaction.endDate.substring(11, 13) + ":" + this.transaction.endDate.substring(15, 17), (width / 1.6), this.row);
 
     this.doc.setFontType('normal');
@@ -3323,8 +3316,8 @@ export class PrintComponent implements OnInit {
           this.doc.text("Cliente : Consumidor Final", margin, this.row);
         }
         this.row += 5;
-        if(this.transaction.company.phones){
-            this.doc.text("Telefono : " + this.transaction.company.phones, margin, this.row);
+        if (this.transaction.company.phones) {
+          this.doc.text("Telefono : " + this.transaction.company.phones, margin, this.row);
         }
 
         this.doc.setFontType('normal');
@@ -3335,27 +3328,27 @@ export class PrintComponent implements OnInit {
         this.doc.text("Entregar a: " + this.transaction.company.address, margin, this.row);
         this.doc.setFontType('normal');
       }
-      if(this.transaction.madein == 'pedidos-web' && this.transaction.deliveryAddress){
+      if (this.transaction.madein == 'pedidos-web' && this.transaction.deliveryAddress) {
         this.row += 5;
         let direccion = "";
         this.doc.setFontType('bold');
 
-        if(this.transaction.deliveryAddress.name){
-            direccion = direccion + " "+ this.transaction.deliveryAddress.name;
+        if (this.transaction.deliveryAddress.name) {
+          direccion = direccion + " " + this.transaction.deliveryAddress.name;
         }
-        if(this.transaction.deliveryAddress.number){
-            direccion = direccion + " N°"+ this.transaction.deliveryAddress.number;
+        if (this.transaction.deliveryAddress.number) {
+          direccion = direccion + " N°" + this.transaction.deliveryAddress.number;
         }
-        
+
 
         this.doc.text("Entregar a: " + direccion, margin, this.row);
-        if(this.transaction.deliveryAddress.floor){
-            this.row += 5;
-            this.doc.text("Piso: "+ this.transaction.deliveryAddress.floor, margin+5, this.row);
+        if (this.transaction.deliveryAddress.floor) {
+          this.row += 5;
+          this.doc.text("Piso: " + this.transaction.deliveryAddress.floor, margin + 5, this.row);
         }
-        if(this.transaction.deliveryAddress.flat){
-            this.row += 5;
-            this.doc.text(" Departamento: "+ this.transaction.deliveryAddress.flat, margin+5, this.row);
+        if (this.transaction.deliveryAddress.flat) {
+          this.row += 5;
+          this.doc.text(" Departamento: " + this.transaction.deliveryAddress.flat, margin + 5, this.row);
         }
         this.doc.setFontType('normal');
       }
@@ -3500,11 +3493,11 @@ export class PrintComponent implements OnInit {
       } else {
         await this.getCompanyPicture(3, 3, this.printer.pageWidth - 5, 26, false);
       }
-      if(this.transaction.type.numberPrint && this.count < this.transaction.type.numberPrint){
-          this.count++;
-          this.toPrintRoll();
-      } else{
-          this.finishImpression();
+      if (this.transaction.type.numberPrint && this.count < this.transaction.type.numberPrint) {
+        this.count++;
+        this.toPrintRoll();
+      } else {
+        this.finishImpression();
       }
     }
   }
