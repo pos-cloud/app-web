@@ -17,8 +17,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 	selector: 'app-list-cash-boxes',
 	templateUrl: './list-cash-boxes.component.html',
 	styleUrls: ['./list-cash-boxes.component.scss'],
-    providers: [NgbAlertConfig, TranslateMePipe, TranslatePipe],
-    encapsulation: ViewEncapsulation.None
+	providers: [NgbAlertConfig, TranslateMePipe, TranslatePipe],
+	encapsulation: ViewEncapsulation.None
 })
 
 export class ListCashBoxesComponent implements OnInit {
@@ -39,9 +39,9 @@ export class ListCashBoxesComponent implements OnInit {
 		public _cashBoxService: CashBoxService,
 		public _router: Router,
 		public _modalService: NgbModal,
-        public alertConfig: NgbAlertConfig,
-        public translatePipe: TranslateMePipe,
-        private _toastr: ToastrService,
+		public alertConfig: NgbAlertConfig,
+		public translatePipe: TranslateMePipe,
+		private _toastr: ToastrService,
 		public activeModal: NgbActiveModal,
 		public _transactionTypeService: TransactionTypeService
 	) { }
@@ -130,38 +130,24 @@ export class ListCashBoxesComponent implements OnInit {
 			}
 		}).subscribe(
 			result => {
-
-                this.loading = false;
-                if (result.status === 200) {
-                    if(result.result[0].defectPrinter){
-                        this.openModal('print', cashBox, result.result[0].defectPrinter);
-                    } else {
-                        this.openModal('print', cashBox);
-                    }
-                } else {
-                    this.showToast(result);
-                }
-
-
-				if (result.status != 200) {
-					if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+				if (result.status === 200) {
 					this.loading = false;
-					this.openModal('print', cashBox);
+					if (result.result[0].defectPrinter) {
+						this.openModal('print', cashBox, result.result[0].defectPrinter);
+					} else {
+						this.openModal('print', cashBox);
+					}
 				} else {
-					this.hideMessage();
-					this.loading = false;
-					this.openModal('print', cashBox, result.result[0].defectPrinter);
+					this.showToast(result);
 				}
 			},
 			error => {
-				this.showMessage(error._body, 'danger', false);
-				this.loading = false;
+				this.showToast(error);
 			}
 		);
 	}
 
 	public openModal(op: string, cashBox: CashBox, printer: Printer = null): void {
-
 		let modalRef;
 		switch (op) {
 			case 'print':
@@ -170,9 +156,7 @@ export class ListCashBoxesComponent implements OnInit {
 				modalRef.componentInstance.printer = printer;
 				modalRef.componentInstance.typePrint = 'cash-box';
 				modalRef.result.then((result) => {
-
 				}, (reason) => {
-
 				});
 				break;
 			default: ;
@@ -187,32 +171,32 @@ export class ListCashBoxesComponent implements OnInit {
 
 	public hideMessage(): void {
 		this.alertMessage = '';
-    }
-    
-    public showToast(result, type?: string, title?: string, message?: string): void {
-        if (result) {
-            if (result.status === 200) {
-                type = 'success';
-                title = result.message;
-            } else if (result.status >= 400) {
-                type = 'danger';
-                title = (result.error && result.error.message) ? result.error.message : result.message;
-            } else {
-                type = 'info';
-                title = result.message;
-            }
-        }
-        switch (type) {
-            case 'success':
-                this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
-                break;
-            case 'danger':
-                this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
-                break;
-            default:
-                this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
-                break;
-        }
-        this.loading = false;
-    }
+	}
+
+	public showToast(result, type?: string, title?: string, message?: string): void {
+		if (result) {
+			if (result.status === 200) {
+				type = 'success';
+				title = result.message;
+			} else if (result.status >= 400) {
+				type = 'danger';
+				title = (result.error && result.error.message) ? result.error.message : result.message;
+			} else {
+				type = 'info';
+				title = result.message;
+			}
+		}
+		switch (type) {
+			case 'success':
+				this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+				break;
+			case 'danger':
+				this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+				break;
+			default:
+				this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+				break;
+		}
+		this.loading = false;
+	}
 }
