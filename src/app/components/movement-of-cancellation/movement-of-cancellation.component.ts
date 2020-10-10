@@ -112,8 +112,10 @@ export class MovementOfCancellationComponent implements OnInit {
 
     async ngOnInit() {
         if (this.transactionDestinationViewId || this.transactionOriginViewId) {
+            console.log("entro1")
             this.getCancellationsOfMovements();
         } else {
+            console.log("entro2")
             this.transactionDestination = await this.getTransaction(this.transactionDestinationId);
             if (this.transactionDestination) {
                 this.getCancellationTypes();
@@ -340,6 +342,7 @@ export class MovementOfCancellationComponent implements OnInit {
                             if (!this.movementsOfCancellations || this.movementsOfCancellations.length === 0) {
                                 await this.getMovementsOfCancellations().then(
                                     movementsOfCancellations => {
+                                        console.log(movementsOfCancellations);
                                         this.movementsOfCancellations = movementsOfCancellations;
                                         if (this.movementsOfCancellations && this.movementsOfCancellations.length > 0) {
                                             for (let mov of this.movementsOfCancellations) {
@@ -476,7 +479,7 @@ export class MovementOfCancellationComponent implements OnInit {
                 if ((transactionSelected.type.transactionMovement === TransactionMovement.Sale &&
                     transactionSelected.type.movement === Movements.Outflows) ||
                     (transactionSelected.type.transactionMovement === TransactionMovement.Purchase &&
-                        transactionSelected.type.movement === Movements.Inflows)) {
+                        transactionSelected.type.movement === Movements.Inflows) || transactionSelected.type._id === this.transactionDestination.type._id) {
                     transBalance = transactionSelected.balance * -1;
                 } else {
                     if (transactionSelected.balance > this.totalPrice && this.totalPrice !== 0) {

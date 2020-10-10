@@ -202,7 +202,7 @@ export class CancellationTypeComponent implements OnInit {
       },
       match: {
         transactionMovement: this.originSelected.transactionMovement,
-        _id: { "$ne": this.originSelected._id },
+        //_id: { "$ne": this.originSelected._id },
         operationType: { "$ne": "D" }
       }
     }).subscribe(
@@ -300,10 +300,10 @@ export class CancellationTypeComponent implements OnInit {
       }
     }
 
-    if (destinationSelected._id === this.originSelected._id) {
+    /*if (destinationSelected._id === this.originSelected._id) {
       valid = false;
       this.showMessage('No se puede cancelar una transacción con otra del mismo tipo', 'info', false);
-    }
+    }*/
 
     return valid;
   }
