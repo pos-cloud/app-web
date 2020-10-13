@@ -25,7 +25,6 @@
             </div>
             <div class="row">
                 <div class="form-group col-md-3">
-                    <label for="paymentMethod" class="control-label">Medio de pago:</label>
                     <div class="btn-group-vertical">
                         <button type="button" *ngFor="let paymentMethod of paymentMethods" class="btn btn-select"
                             [ngClass]="{'btn-primary':paymentMethod._id===paymentMethodSelected._id, 'btn-outline-primary':paymentMethod._id!==paymentMethodSelected._id}"
