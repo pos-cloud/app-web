@@ -24,7 +24,7 @@ export class TransactionType extends Model {
     public currentAccount: CurrentAccount = CurrentAccount.No;
     public movement: Movements = Movements.Inflows;
     public modifyStock: boolean = false;
-    public stockMovement: StockMovement = StockMovement.Inflows;
+    public stockMovement: StockMovement;
     public requestArticles: boolean = false;
     public modifyArticle: boolean = false;
     public entryAmount: EntryAmount = EntryAmount.SaleWithVAT;

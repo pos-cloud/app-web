@@ -274,7 +274,7 @@ export class HolidayComponent implements OnInit {
             }
             break;
           case 'boolean':
-            this.obj[field.name] = this.obj[field.name] == 'true';
+            this.obj[field.name] = this.obj[field.name] == 'true' || this.obj[field.name] == true;
           default:
             break;
         }

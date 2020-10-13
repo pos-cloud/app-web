@@ -254,6 +254,7 @@ export class TransactionTypeComponent implements OnInit {
             name: 'abbreviation',
             tag: 'input',
             tagType: 'text',
+            validators: [Validators.required],
             class: 'form-group col-md-1'
         }, {
             name: 'transactionMovement',
@@ -1057,7 +1058,8 @@ export class TransactionTypeComponent implements OnInit {
                         }
                         break;
                     case 'boolean':
-                        this.obj[field.name] = this.obj[field.name] == 'true';
+                        this.obj[field.name] = this.obj[field.name] == 'true' || this.obj[field.name] == true;
+                        break;
                     default:
                         break;
                 }

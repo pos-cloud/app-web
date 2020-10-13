@@ -247,7 +247,7 @@ export class ShipmentMethodComponent implements OnInit {
             this.obj[field.name] = parseFloat(this.obj[field.name]);
             break;
           case 'boolean':
-            this.obj[field.name] = this.obj[field.name] == 'true';
+            this.obj[field.name] = this.obj[field.name] == 'true' || this.obj[field.name] == true;
             break;
           default:
             break;

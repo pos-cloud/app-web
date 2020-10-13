@@ -340,7 +340,7 @@
     "design.categoryTitle": "Título de las categorías",
     "design.showSearchBar": "Mostrar buscador",
     "contact.claim": "Número de Reclamo",
-    "requestCompany": "Tipo de Empresa",
+    "requestCompany": "Pide Empresa",
     "requestCurrency": "Permite Moneda",
     "allowEdit": "Permite Editar",
     "allowDelete": "Permite Eliminar",
@@ -357,7 +357,7 @@
     "defectUseOfCFDI": "Uso CFDI (MX)",
     "fixedOrigin": "Punto de Venta",
     "fixedLetter": "Letra",
-    "maxOrderNumber": "Reset de Pedido",
+    "maxOrderNumber": "Resetea Nro de Pedido",
     "requestArticles": "Pide Producto",
     "modifyArticle": "Modifica Producto",
     "entryAmount": "Monto a editar",
@@ -390,7 +390,7 @@
     "otherExpenseArticle": "Artículo Otro Gasto",
     "readLayout": "Lee Diseño",
     "numberPrint": "Cantidad de Impresiones",
-    "movement": "Movimiento",
+    "movement": "Movimiento de Dinero",
     "currentAccount": "Cuenta Corriente",
     "monday": "Lunes",
     "tuesday": "Martes",
@@ -399,5 +399,7 @@
     "friday": "Viernes",
     "saturday": "Sábado",
     "sunday": "Domingo",
-    "codes": "Códigos"
+    "codes": "Códigos",
+    "isPreprinted": "Es preimpreso",
+    "printable": "Imprime al final"
 }
