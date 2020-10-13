@@ -135,36 +135,37 @@ export class AddMovementOfCashComponent implements OnInit {
     ngOnInit() {
         this.transactionAmount = this.transaction.totalPrice;
         this.buildForm();
-        this.keyboard = new Keyboard({
-            onChange: input => this.onChange(input),
-            onKeyPress: button => this.onKeyPress(button),
-            layout: {
-                default: ["7 8 9", "4 5 6", "1 2 3", "0 . {bksp}", "{enter}"],
-                shift: []
-            },
-            buttonTheme: [
-                {
-                    class: "hg-blue",
-                    buttons: "{enter}"
-                },
-                {
-                    class: "hg-red",
-                    buttons: "{bksp}"
-                }
-            ],
-            theme: "hg-theme-default hg-layout-numeric numeric-theme",
-            display: {
-                "{bksp}": "Borrar ⌫",
-                "{enter}": "Enter ↵"
-            }
-        });
-
         this.getPaymentMethods();
         this.getBanks();
     }
 
     ngAfterViewInit() {
         this.focusEvent.emit(true);
+        if(this.transaction.type.showKeyboard) {
+            this.keyboard = new Keyboard({
+                onChange: input => this.onChange(input),
+                onKeyPress: button => this.onKeyPress(button),
+                layout: {
+                    default: ["7 8 9", "4 5 6", "1 2 3", "0 . {bksp}", "{enter}"],
+                    shift: []
+                },
+                buttonTheme: [
+                    {
+                        class: "hg-blue",
+                        buttons: "{enter}"
+                    },
+                    {
+                        class: "hg-red",
+                        buttons: "{bksp}"
+                    }
+                ],
+                theme: "hg-theme-default hg-layout-numeric numeric-theme",
+                display: {
+                    "{bksp}": "Borrar ⌫",
+                    "{enter}": "Enter ↵"
+                }
+            });
+        }
     }
 
     public ngOnDestroy(): void {
@@ -192,15 +193,17 @@ export class AddMovementOfCashComponent implements OnInit {
     };
 
     onInputChange = (event: any) => {
-        this.keyboard.setInput(event.target.value);
+        if(this.keyboard) this.keyboard.setInput(event.target.value);
     };
 
     handleShift = () => {
-        let currentLayout = this.keyboard.options.layoutName;
-        let shiftToggle = currentLayout === "default" ? "shift" : "default";
-        this.keyboard.setOptions({
-            layoutName: shiftToggle
-        });
+        if(this.keyboard) {
+            let currentLayout = this.keyboard.options.layoutName;
+            let shiftToggle = currentLayout === "default" ? "shift" : "default";
+            this.keyboard.setOptions({
+                layoutName: shiftToggle
+            });
+        }
     };
 
     public buildForm(): void {
@@ -562,7 +565,7 @@ export class AddMovementOfCashComponent implements OnInit {
                                                             transaction => {
                                                                 if (transaction) {
                                                                     this.transaction = transaction;
-                                                                    this.keyboard.setInput('');
+                                                                    if(this.keyboard) this.keyboard.setInput('');
                                                                     this.getMovementOfCashesByTransaction();
                                                                 }
                                                             }
@@ -860,7 +863,7 @@ export class AddMovementOfCashComponent implements OnInit {
     }
 
     public changeAmountToPay(): void {
-        this.keyboard.setInput(this.movementOfCashForm.value.amountToPay.toString());
+        if(this.keyboard) this.keyboard.setInput(this.movementOfCashForm.value.amountToPay.toString());
         this.updateAmounts('amountToPay');
     }
 
@@ -880,7 +883,7 @@ export class AddMovementOfCashComponent implements OnInit {
 
         if (op !== 'amountToPay' && this.transaction.totalPrice !== 0) {
             this.amountToPay = this.transactionAmount - this.amountPaid - this.amountDiscount;
-            this.keyboard.setInput('');
+            if(this.keyboard) this.keyboard.setInput('');
         }
 
         this.movementOfCash.discount = this.paymentMethodSelected.discount;
@@ -913,7 +916,7 @@ export class AddMovementOfCashComponent implements OnInit {
             this.calculateQuotas('quotas');
         }
 
-        if (op === 'init') {
+        if (op === 'init' && this.keyboard) {
             this.keyboard.setInput('');
         }
 
@@ -1219,7 +1222,7 @@ export class AddMovementOfCashComponent implements OnInit {
                                             transaction => {
                                                 if (transaction) {
                                                     this.transaction = transaction;
-                                                    this.keyboard.setInput('');
+                                                    if(this.keyboard) this.keyboard.setInput('');
                                                     this.showToast(null, 'success', 'Operación realizada con éxito');
                                                     this.getMovementOfCashesByTransaction();
                                                 }

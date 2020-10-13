@@ -557,6 +557,13 @@ export class TransactionTypeComponent implements OnInit {
             class: 'form-group col-md-2'
         },
         {
+            name: 'showKeyboard',
+            tag: 'select',
+            tagType: "boolean",
+            values: ['true', 'false'],
+            class: 'form-group col-md-2'
+        },
+        {
             name: 'Stock',
             tag: 'separator',
             tagType: null,
@@ -845,6 +852,7 @@ export class TransactionTypeComponent implements OnInit {
                 updateArticle: 1,
                 groupsArticles: 1,
                 requestPaymentMethods: 1,
+                showKeyboard: 1,
                 allowZero: 1,
                 finishCharge: 1,
                 modifyStock: 1,
@@ -1078,6 +1086,8 @@ export class TransactionTypeComponent implements OnInit {
                     this.deleteObj();
                     break;
             }
+        } else {
+            this.showToast(null, 'info', 'Revise los errores marcados en el formulario');
         }
     }
 

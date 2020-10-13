@@ -406,5 +406,6 @@
     "visibleInvoice" : "Visible en la factura",
     "isRequiredOptional" : "Es requerido en opcional",
     "isPreprinted": "Es preimpreso",
-    "printable": "Imprime al final"
+    "printable": "Imprime al final",
+    "showKeyboard": "Muestra teclado"
 }

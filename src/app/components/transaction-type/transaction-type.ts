@@ -30,6 +30,7 @@ export class TransactionType extends Model {
     public entryAmount: EntryAmount = EntryAmount.SaleWithVAT;
     public requestTaxes: boolean = false;
     public requestPaymentMethods: boolean = true;
+    public showKeyboard: boolean = false;
     public defectOrders: boolean = false;
     public electronics: boolean = false;
     public codes: CodeAFIP[]; // AR
@@ -175,6 +176,12 @@ export class TransactionType extends Model {
             },
             {
                 name: 'requestPaymentMethods',
+                filter: true,
+                datatype: 'boolean',
+                align: 'left',
+            },
+            {
+                name: 'showKeyboard',
                 filter: true,
                 datatype: 'boolean',
                 align: 'left',

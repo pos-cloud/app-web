@@ -506,6 +506,8 @@ export class ApplicationComponent implements OnInit {
                     this.deleteObj();
                     break;
             }
+        } else {
+            this.showToast(null, 'info', 'Revise los errores marcados en el formulario');
         }
     }
 
