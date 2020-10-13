@@ -74,8 +74,6 @@ import { ListRoomsComponent } from './components/room/list-rooms/list-rooms.comp
 import { RoomComponent } from './components/room/room/room.component';
 import { ListMakesComponent } from './components/make/list-makes/list-makes.component';
 import { MakeComponent } from './components/make/make/make.component';
-import { ListCategoriesComponent } from './components/category/list-categories/list-categories.component';
-import { CategoryComponent } from './components/category/category/category.component';
 import { AddUserComponent } from './components/user/user/add-user.component';
 import { ListUsersComponent } from './components/user/list-users/list-users.component';
 import { DeleteUserComponent } from './components/user/delete-user/delete-user.component';
@@ -248,12 +246,12 @@ import { ProgressbarModule } from './components/progressbar/progressbar.module';
 import { DirectivesModule } from './main/directives/directives.module';
 import { PipesModule } from './main/pipes/pipes.module';
 import { ExportersModule } from './components/export/exporters.module';
-import { ListMovementsOfCancellationsComponent } from './components/movement-of-cancellation/list-movements-of-cancellations/list-movements-of-cancellations.component';
 import { ComponentsModule } from './components/components.module';
 import { ListCategoriesPosComponent } from './components/category/list-categories-pos/list-categories-pos.component';
 import { AuthInterceptor } from './main/interceptors/auth.interceptor';
-import { PushNotificationsService } from './components/notification/notification.service';
+import { ListMovementsOfCancellationsComponent } from './components/movement-of-cancellation/list-movements-of-cancellations/list-movements-of-cancellations.component';
 import { ReportTransactionTypeComponent } from './components/report-transaction-type/report-transaction-type.component';
+import { PushNotificationsService } from './components/notification/notification.service';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -288,8 +286,6 @@ export function createTranslateLoader(http: HttpClient) {
     ListVATConditionsComponent,
     VATConditionComponent,
     MakeComponent,
-    ListCategoriesComponent,
-    CategoryComponent,
     PointOfSaleComponent,
     LoginComponent,
     AddUserComponent,
@@ -451,8 +447,6 @@ export function createTranslateLoader(http: HttpClient) {
     ListVATConditionsComponent,
     VATConditionComponent,
     MakeComponent,
-    ListCategoriesComponent,
-    CategoryComponent,
     PointOfSaleComponent,
     LoginComponent,
     AddUserComponent,
