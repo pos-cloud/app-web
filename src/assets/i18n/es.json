@@ -407,5 +407,6 @@
     "isRequiredOptional" : "Es requerido en opcional",
     "isPreprinted": "Es preimpreso",
     "printable": "Imprime al final",
-    "showKeyboard": "Muestra teclado"
+    "showKeyboard": "Muestra teclado",
+    "design.resources.logo" : "Logo" 
 }
