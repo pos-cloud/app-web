@@ -367,7 +367,7 @@
                             <td *ngIf="!movement && !movement.type" class="flat" width="430"></td>
                             <td class="flat" width="430">{{ movement.quota }}</td>
                             <td align="right" class="flat" width="430">
-                                {{ movement.amountPaid | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
+                                {{ (movement.amountPaid - movement.commissionAmount - movement.administrativeExpenseAmount - movement.otherExpenseAmount ) | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
                             <td class="flat" width="430">{{ movement.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
                             <td class="flat" width="430">{{ movement.number }}</td>
                         </tr>
