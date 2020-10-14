@@ -3340,8 +3340,14 @@ export class PrintComponent implements OnInit {
           direccion = direccion + " N°" + this.transaction.deliveryAddress.number;
         }
 
+        if(direccion.length > 30){
+            this.doc.text("Entregar a: " + direccion.slice(0,29) + "-", margin, this.row);
+            this.row += 5;
+            this.doc.text(direccion.slice(29,direccion.length), margin, this.row);
+        } else {
+            this.doc.text("Entregar a: " + direccion, margin, this.row);
+        }
 
-        this.doc.text("Entregar a: " + direccion, margin, this.row);
         if (this.transaction.deliveryAddress.floor) {
           this.row += 5;
           this.doc.text("Piso: " + this.transaction.deliveryAddress.floor, margin + 5, this.row);
@@ -3494,6 +3500,8 @@ export class PrintComponent implements OnInit {
         await this.getCompanyPicture(3, 3, this.printer.pageWidth - 5, 26, false);
       }
       if (this.transaction.type.numberPrint && this.count < this.transaction.type.numberPrint) {
+        this.row += 5;
+        this.doc.line(0, this.row, width, this.row);
         this.count++;
         this.toPrintRoll();
       } else {
