@@ -408,5 +408,6 @@
     "isPreprinted": "Es preimpreso",
     "printable": "Imprime al final",
     "showKeyboard": "Muestra teclado",
-    "design.resources.logo" : "Logo" 
+    "design.resources.logo" : "Logo",
+    "parent" : "Padre" 
 }

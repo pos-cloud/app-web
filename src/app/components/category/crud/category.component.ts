@@ -56,18 +56,49 @@ export class CategoryComponent implements OnInit {
     public imageURL: string;
     public applications: Application[];
 
+
+    public searchCategories = (text$: Observable<string>) => {
+        const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+        const inputFocus$ = this.focus$['parent'];
+        return merge(debouncedText$, inputFocus$).pipe(
+            tap(() => this.loading = true),
+            switchMap(async term => {
+                let match: {} = (term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {};
+                match["operationType"] = { "$ne": "D" };
+                return await this.getCategories(match).then(
+                    result => {
+                        return result;
+                    }
+                );
+            }),
+            tap(() => this.loading = false),
+        )
+    }
+
+    public formatterCategories = (x: { name: string }) => x.name;
+
     public formFields: FormField[] = [
         {
             name: 'order',
             tag: 'input',
             tagType: 'number',
-            class: 'form-group col-md-1'
+            class: 'form-group col-md-2'
         },
         {
             name: 'description',
             tag: 'input',
             tagType: 'text',
             validators: [Validators.required],
+            class: 'form-group col-md-10'
+        },
+        {
+            name: 'parent',
+            tag: 'autocomplete',
+            tagType: 'text',
+            search: this.searchCategories,
+            format: this.formatterCategories,
+            values: null,
+            focus: false,
             class: 'form-group col-md-4'
         },
         {
@@ -227,8 +258,8 @@ export class CategoryComponent implements OnInit {
                 visibleOnSale: 1,
                 isRequiredOptional: 1,
                 favourite: 1,
-                "parent._id": 1,
-                "parent.description": 1,
+                'parent._id': 1,
+                'parent.name':'$parent.description',
                 'applications._id': 1,
                 'applications.name': 1,
                 'observation': 1
@@ -537,6 +568,26 @@ export class CategoryComponent implements OnInit {
             this.subscription.add(this._applicationService.getAll({
                 match,
                 sort: { name: 1 },
+            }).subscribe(
+                result => {
+                    this.loading = false;
+                    (result.status === 200) ? resolve(result.result) : reject(result);
+                },
+                error => reject(error)
+            ));
+        });
+    }
+
+    public getCategories(match: {}): Promise<Category[]> {
+        return new Promise<Category[]>((resolve, reject) => {
+            this.subscription.add(this._objService.getAll({
+                project : {
+                    name: "$description",
+                    operationType: 1
+                },
+                match,
+                sort: { description: 1 },
+                limit: 10,
             }).subscribe(
                 result => {
                     this.loading = false;
