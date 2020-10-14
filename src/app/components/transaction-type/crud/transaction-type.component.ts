@@ -665,6 +665,12 @@ export class TransactionTypeComponent implements OnInit {
             class: 'form-group col-md-12'
         },
         {
+            name: 'labelPrint',
+            tag: 'input',
+            tagType: 'text',
+            class: 'form-group col-md-3'
+        },
+        {
             name: 'defectPrinter',
             tag: 'autocomplete',
             tagType: 'text',
@@ -673,12 +679,6 @@ export class TransactionTypeComponent implements OnInit {
             values: null,
             focus: false,
             class: 'form-group col-md-4'
-        },
-        {
-            name: 'labelPrint',
-            tag: 'input',
-            tagType: 'text',
-            class: 'form-group col-md-3'
         },
         {
             name: 'isPreprinted',
@@ -1062,7 +1062,7 @@ export class TransactionTypeComponent implements OnInit {
                             }
                             this.loading = false;
                         } else {
-                            this.obj[field.name] = this.oldFiles[field.name];
+                            if (this.oldFiles) this.obj[field.name] = this.oldFiles[field.name];
                         }
                         break;
                     case 'boolean':

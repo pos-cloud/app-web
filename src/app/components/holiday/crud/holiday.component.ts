@@ -270,7 +270,7 @@ export class HolidayComponent implements OnInit {
               }
               this.loading = false;
             } else {
-              this.obj[field.name] = this.oldFiles[field.name];
+              if (this.oldFiles) this.obj[field.name] = this.oldFiles[field.name];
             }
             break;
           case 'boolean':

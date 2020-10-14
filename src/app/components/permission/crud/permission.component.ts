@@ -321,6 +321,8 @@ export class PermissionComponent implements OnInit {
                                 }
                             }
                             this.loading = false;
+                        } else {
+                            if (this.oldFiles) this.obj[field.name] = this.oldFiles[field.name];
                         }
                         break;
                     case 'boolean':

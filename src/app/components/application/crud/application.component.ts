@@ -178,7 +178,7 @@ export class ApplicationComponent implements OnInit {
         default: 'Le notificaremos todos los detalles por correo electrónico. ¡Muchas Gracias por su compra!',
         multiple: true,
         class: 'form-group col-md-6'
-    },{
+    }, {
         name: 'notifications.app.temporaryMessage',
         tag: 'input',
         tagType: 'text',
@@ -483,7 +483,7 @@ export class ApplicationComponent implements OnInit {
                             }
                             this.loading = false;
                         } else {
-                            this.obj[field.name] = this.oldFiles[field.name];
+                            if (this.oldFiles) this.obj[field.name] = this.oldFiles[field.name];
                         }
                         break;
                     case 'boolean':

@@ -350,7 +350,7 @@
     "tax": "Libro IVA",
     "defectOrders": "Es pedido",
     "requestTransport": "Pide transporte",
-    "labelPrint": "Nombre de impresión",
+    "labelPrint": "Nombre para impresión",
     "automaticNumbering": "Numeración Automática",
     "branch": "Sucursal",
     "fiscalCode": "Codigo Fiscal (MX)",
