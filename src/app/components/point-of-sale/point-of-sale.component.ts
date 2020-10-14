@@ -165,7 +165,7 @@ export class PointOfSaleComponent implements OnInit {
 
   public initInterval(): void {
     setInterval(() => {
-      if (this.posType === 'delivery') {
+      if (this.posType === 'delivery' || this.posType === 'pedidos-web') {
         this.refresh();
       }
     }, 5000);
