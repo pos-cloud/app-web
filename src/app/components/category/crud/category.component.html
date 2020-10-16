@@ -56,7 +56,7 @@
                                             *ngFor="let file of getFiles(field.name)">
                                             <div class="card" style="min-height: auto !important;">
                                                 <div class="img-file"
-                                                    [style.backgroundImage]="'url('+apiURL + 'file?filename=' + file + '&model=' + field.name.split('.')[field.name.split('.').length - 1] + '&database=' + database+')'">
+                                                    [style.backgroundImage]="'url('+apiURL + 'file?filename=' + file + '&model=category&database=' + database+')'">
                                                 </div>
                                                 <div class="card-body text-center">
                                                     <a class="btn btn-danger" style="color: white;"
@@ -70,7 +70,7 @@
                                         <div class="col-md-3" style="padding: 1rem">
                                             <div class="card" style="min-height: auto !important;">
                                                 <div class="img-file"
-                                                    [style.backgroundImage]="'url('+apiURL + 'file?filename=' + getFiles(field.name) + '&model=' + field.name.split('.')[field.name.split('.').length - 1] + '&database=' + database+')'">
+                                                    [style.backgroundImage]="'url('+apiURL + 'file?filename=' + getFiles(field.name) + '&model=category&database=' + database+')'">
                                                 </div>
                                                 <div class="card-body text-center">
                                                     <a class="btn btn-danger" style="color: white;"
