@@ -277,7 +277,7 @@ export class HolidayComponent implements OnInit {
                         this.obj[field.name] = this.obj[field.name] == 'true' || this.obj[field.name] == true;
                         break;
                     case 'text':
-                        if (field.tag === 'autocomplete' && !this.obj[field.name]['_id']) {
+                        if(field.tag === 'autocomplete' && (this.obj[field.name] == "" || (this.obj[field.name] && !this.obj[field.name]['_id']))){
                             this.obj[field.name] = null;
                         }
                         break;
