@@ -327,6 +327,11 @@ export class PermissionComponent implements OnInit {
                         break;
                     case 'boolean':
                         this.obj[field.name] = this.obj[field.name] == 'true' || this.obj[field.name] == true;
+                    case 'text':
+                        if (field.tag === 'autocomplete' && !this.obj[field.name]['_id']) {
+                            this.obj[field.name] = null;
+                        }
+                        break;
                     default:
                         break;
                 }
