@@ -127,6 +127,21 @@ export class ApplicationComponent implements OnInit {
         tagType: null,
         class: 'form-group col-md-12'
     }, {
+        name: 'design.colors.primary',
+        tag: 'input',
+        tagType: 'text',
+        class: 'form-group col-md-4'
+    }, {
+        name: 'design.colors.secondary',
+        tag: 'input',
+        tagType: 'text',
+        class: 'form-group col-md-4'
+    },{
+        name: 'design.colors.tercery',
+        tag: 'input',
+        tagType: 'text',
+        class: 'form-group col-md-4'
+    }, {
         name: 'design.resources.logo',
         tag: 'input',
         tagType: 'file',
@@ -196,7 +211,7 @@ export class ApplicationComponent implements OnInit {
         values: ['true', 'false'],
         class: 'form-group col-md-12'
     }, {
-        name: 'Horarios',
+        name: 'Horarios de atención',
         tag: 'separator',
         tagType: null,
         class: 'form-group col-md-12'

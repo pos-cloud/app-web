@@ -26,6 +26,11 @@ export class Application extends Model {
     resources: {
       logo: string,
       banners: string[]
+    },
+    colors : {
+        primary : string,
+        secondary : string,
+        tercery : string
     }
   };
   public auth: {

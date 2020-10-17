@@ -409,5 +409,8 @@
     "printable": "Imprime al final",
     "showKeyboard": "Muestra teclado",
     "design.resources.logo" : "Logo",
+    "design.colors.primary" : "Color Primario",
+    "design.colors.secondary" : "Color Secundario",
+    "design.colors.tercery" : "Color Terciario",
     "parent" : "Padre" 
 }
