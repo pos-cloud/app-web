@@ -3501,7 +3501,9 @@ export class PrintComponent implements OnInit {
       }
       if (this.transaction.type.numberPrint && this.count < this.transaction.type.numberPrint) {
         this.row += 5;
+        this.doc.setLineWidth(1.5)
         this.doc.line(0, this.row, width, this.row);
+        this.doc.setLineWidth(0)
         this.count++;
         this.toPrintRoll();
       } else {
