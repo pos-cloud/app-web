@@ -30,6 +30,7 @@ export class TransactionType extends Model {
     public entryAmount: EntryAmount = EntryAmount.SaleWithVAT;
     public requestTaxes: boolean = false;
     public requestPaymentMethods: boolean = true;
+    public paymentMethods : PaymentMethod[];
     public showKeyboard: boolean = false;
     public defectOrders: boolean = false;
     public electronics: boolean = false;

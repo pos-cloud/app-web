@@ -141,7 +141,7 @@ export class AddMovementOfCashComponent implements OnInit {
 
     ngAfterViewInit() {
         this.focusEvent.emit(true);
-        if(this.transaction.type.showKeyboard) {
+        if (this.transaction.type.showKeyboard) {
             this.keyboard = new Keyboard({
                 onChange: input => this.onChange(input),
                 onKeyPress: button => this.onKeyPress(button),
@@ -193,11 +193,11 @@ export class AddMovementOfCashComponent implements OnInit {
     };
 
     onInputChange = (event: any) => {
-        if(this.keyboard) this.keyboard.setInput(event.target.value);
+        if (this.keyboard) this.keyboard.setInput(event.target.value);
     };
 
     handleShift = () => {
-        if(this.keyboard) {
+        if (this.keyboard) {
             let currentLayout = this.keyboard.options.layoutName;
             let shiftToggle = currentLayout === "default" ? "shift" : "default";
             this.keyboard.setOptions({
@@ -278,6 +278,18 @@ export class AddMovementOfCashComponent implements OnInit {
             } else {
                 bank = this.movementOfCash.bank;
             }
+        }
+
+        if(!this.percentageCommission){
+            this.percentageCommission = 0;
+        }
+
+        if(!this.percentageAdministrativeExpense){
+            this.percentageAdministrativeExpense = 0;
+        }
+
+        if(!this.percentageOtherExpense){
+            this.percentageOtherExpense = 0;
         }
 
         const values = {
@@ -565,7 +577,7 @@ export class AddMovementOfCashComponent implements OnInit {
                                                             transaction => {
                                                                 if (transaction) {
                                                                     this.transaction = transaction;
-                                                                    if(this.keyboard) this.keyboard.setInput('');
+                                                                    if (this.keyboard) this.keyboard.setInput('');
                                                                     this.getMovementOfCashesByTransaction();
                                                                 }
                                                             }
@@ -828,12 +840,44 @@ export class AddMovementOfCashComponent implements OnInit {
 
         this.loading = true;
 
-        this._paymentMethodService.getPaymentMethods().subscribe(
+        let project = {
+            acceptReturned: 1,
+            allowToFinance: 1,
+            bankReconciliation: 1,
+            cardDetail: 1,
+            cashBoxImpact: 1,
+            checkDetail: 1,
+            code: 1,
+            discount: 1,
+            commission : 1,
+            administrativeExpenseAmount : 1,
+            inputAndOuput: 1,
+            isCurrentAccount: 1,
+            name: 1,
+            operationType: 1,
+            surcharge: 1
+        }
+
+        let match = {};
+
+        match["operationType"] = { "$ne" : "D"};
+
+        if (this.transaction.type && this.transaction.type.paymentMethods && this.transaction.type.paymentMethods.length > 0) {
+            match['$or'] = new Array();
+            this.transaction.type.paymentMethods.forEach(element => {                
+                match['$or'].push({ _id : { "$oid" : element } });
+            });
+        } 
+
+        this.subscription.add(this._paymentMethodService.getAll({
+            project : {},
+            match: match,
+            sort: { name: 1 },
+        }).subscribe(
             result => {
-                if (!result.paymentMethods) {
-                    if (result.message && result.message !== '') this.showToast(null, 'info', result.message);
-                } else {
-                    this.paymentMethods = result.paymentMethods;
+                this.loading = false;
+                if (result.status === 200) {
+                    this.paymentMethods = result.result;
                     this.movementOfCash.type = this.paymentMethods[0];
                     this.paymentMethodSelected = this.movementOfCash.type;
                     if (this.movementOfCash.type.discount) {
@@ -852,18 +896,19 @@ export class AddMovementOfCashComponent implements OnInit {
                         this.percentageCommission = 0;
                     }
                     this.getMovementOfCashesByTransaction();
+                } else {
+                    this.showToast(result.result)
                 }
-                this.loading = false;
             },
             error => {
                 this.showToast(error);
                 this.loading = false;
             }
-        );
+        ));
     }
 
     public changeAmountToPay(): void {
-        if(this.keyboard) this.keyboard.setInput(this.movementOfCashForm.value.amountToPay.toString());
+        if (this.keyboard) this.keyboard.setInput(this.movementOfCashForm.value.amountToPay.toString());
         this.updateAmounts('amountToPay');
     }
 
@@ -883,7 +928,7 @@ export class AddMovementOfCashComponent implements OnInit {
 
         if (op !== 'amountToPay' && this.transaction.totalPrice !== 0) {
             this.amountToPay = this.transactionAmount - this.amountPaid - this.amountDiscount;
-            if(this.keyboard) this.keyboard.setInput('');
+            if (this.keyboard) this.keyboard.setInput('');
         }
 
         this.movementOfCash.discount = this.paymentMethodSelected.discount;
@@ -1222,7 +1267,7 @@ export class AddMovementOfCashComponent implements OnInit {
                                             transaction => {
                                                 if (transaction) {
                                                     this.transaction = transaction;
-                                                    if(this.keyboard) this.keyboard.setInput('');
+                                                    if (this.keyboard) this.keyboard.setInput('');
                                                     this.showToast(null, 'success', 'Operación realizada con éxito');
                                                     this.getMovementOfCashesByTransaction();
                                                 }
