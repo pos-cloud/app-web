@@ -223,6 +223,11 @@ export class PaymentMethodComponent implements OnInit {
   public addPaymentMethod() {
 
     this.paymentMethod = this.paymentMethodForm.value;
+    if (!this.paymentMethod.discountArticle || !this.paymentMethod.discountArticle._id) this.paymentMethod.discountArticle = null;
+    if (!this.paymentMethod.surchargeArticle || !this.paymentMethod.surchargeArticle._id) this.paymentMethod.surchargeArticle = null;
+    if (!this.paymentMethod.commissionArticle || !this.paymentMethod.commissionArticle._id) this.paymentMethod.commissionArticle = null;
+    if (!this.paymentMethod.administrativeExpenseArticle || !this.paymentMethod.administrativeExpenseArticle._id) this.paymentMethod.administrativeExpenseArticle = null;
+    if (!this.paymentMethod.otherExpenseArticle || !this.paymentMethod.otherExpenseArticle._id) this.paymentMethod.otherExpenseArticle = null;
     const selectedOrderIds = this.paymentMethodForm.value.applications
       .map((v, i) => (v ? this.applications[i] : null))
       .filter(v => v !== null);
