@@ -10,7 +10,9 @@ export class PaymentMethod {
   public code: number = 1;
   public name: string = '';
   public discount: number = 0.00;
+  public discountArticle: Article;
   public surcharge: number = 0.00;
+  public surchargeArticle: Article;
   public commission: number = 0.00;
 	public commissionArticle: Article;
 	public administrativeExpense: number = 0.00;

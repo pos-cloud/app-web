@@ -68,26 +68,11 @@ export class PaymentMethodComponent implements OnInit {
     ],
     toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | forecolor backcolor emoticons | print preview fullscreen",
     image_advtab: true,
-    height: 250,
+    height: 150,
     file_picker_types: 'file image media',
     images_dataimg_filter: function (img) {
       return img.hasAttribute('internal-blob');
     },
-    /*file_picker_callback: function (callback, value, meta) {
-        if (meta.filetype == 'image') {
-            $('#upload').trigger('click');
-            $('#upload').on('change', function () {
-                var file = this.files[0];
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    callback(e.target['result'], {
-                        alt: ''
-                    });
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-    },*/
     file_picker_callback: function (callback, value, meta) {
       if (meta.filetype == 'image') {
         $('#upload').trigger('click');
@@ -183,7 +168,9 @@ export class PaymentMethodComponent implements OnInit {
       'code': [this.paymentMethod.code, []],
       'name': [this.paymentMethod.name, [Validators.required]],
       'discount': [this.paymentMethod.discount, []],
+      'discountArticle': [this.paymentMethod.discountArticle, []],
       'surcharge': [this.paymentMethod.surcharge, []],
+      'surchargeArticle': [this.paymentMethod.surchargeArticle, []],
       'commission': [this.paymentMethod.commission, []],
       'commissionArticle': [this.paymentMethod.commissionArticle, []],
       'administrativeExpense': [this.paymentMethod.administrativeExpense, []],
@@ -277,7 +264,9 @@ export class PaymentMethodComponent implements OnInit {
     if (!this.paymentMethod.code) this.paymentMethod.code = 1;
     if (!this.paymentMethod.name) this.paymentMethod.name = '';
     if (!this.paymentMethod.discount) this.paymentMethod.discount = 0.00;
+    if (!this.paymentMethod.discountArticle) this.paymentMethod.discountArticle = null;
     if (!this.paymentMethod.surcharge) this.paymentMethod.surcharge = 0.00;
+    if (!this.paymentMethod.surchargeArticle) this.paymentMethod.surchargeArticle = null;
     if (!this.paymentMethod.commission) this.paymentMethod.commission = 0.00;
     if (!this.paymentMethod.commissionArticle) this.paymentMethod.commissionArticle = null;
     if (!this.paymentMethod.administrativeExpense) this.paymentMethod.administrativeExpense = 0.00;
@@ -305,7 +294,9 @@ export class PaymentMethodComponent implements OnInit {
       'code': this.paymentMethod.code,
       'name': this.paymentMethod.name,
       'discount': this.paymentMethod.discount,
+      'discountArticle': this.paymentMethod.discountArticle,
       'surcharge': this.paymentMethod.surcharge,
+      'surchargeArticle': this.paymentMethod.surchargeArticle,
       'commission': this.paymentMethod.commission,
       'commissionArticle': this.paymentMethod.commissionArticle,
       'administrativeExpense': this.paymentMethod.administrativeExpense,

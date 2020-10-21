@@ -413,5 +413,7 @@
     "design.colors.secondary" : "Color Secundario",
     "design.colors.tercery" : "Color Terciario",
     "parent" : "Padre",
-    "_parent.name" : "Padre"
+    "_parent.name" : "Padre",
+    "surchargeArticle": "Artículo de recargo",
+    "discountArticle": "Artículo de descuento"
 }
