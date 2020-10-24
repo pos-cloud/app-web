@@ -280,15 +280,6 @@ export class TransactionTypeComponent implements OnInit {
             validators: [Validators.required],
             class: 'form-group col-md-3'
         }, {
-            name: 'company',
-            tag: 'autocomplete',
-            tagType: 'text',
-            search: this.searchCompanies,
-            format: this.formatterCompanies,
-            values: null,
-            focus: false,
-            class: 'form-group col-md-4'
-        }, {
             name: 'Permisos',
             tag: 'separator',
             tagType: null,
@@ -420,7 +411,17 @@ export class TransactionTypeComponent implements OnInit {
             tag: 'select',
             tagType: 'text',
             values: [CompanyType.None, CompanyType.Client, CompanyType.Provider],
-            class: 'form-group col-md-2'
+            class: 'form-group col-md-4'
+        },
+        {
+            name: 'company',
+            tag: 'autocomplete',
+            tagType: 'text',
+            search: this.searchCompanies,
+            format: this.formatterCompanies,
+            values: null,
+            focus: false,
+            class: 'form-group col-md-8'
         },
         {
             name: 'requestEmployee',
@@ -1106,6 +1107,7 @@ export class TransactionTypeComponent implements OnInit {
                         this.obj[field.name] = this.obj[field.name] == 'true' || this.obj[field.name] == true;
                         break;
                     case 'text':
+                        if(this.obj[field.name] === "null") this.obj[field.name] = null;
                         if(field.tag === 'autocomplete' && (this.obj[field.name] == "" || (this.obj[field.name] && !this.obj[field.name]['_id']))){
                             this.obj[field.name] = null;
                         }
