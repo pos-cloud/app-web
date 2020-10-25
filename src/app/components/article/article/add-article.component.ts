@@ -439,6 +439,7 @@ export class AddArticleComponent implements OnInit {
 
     this.articleForm = this._fb.group({
       '_id': [this.article._id, []],
+      'order': [this.article.order,[]],
       'code': [this.article.code, [Validators.required]],
       'codeSAT': [this.article.codeSAT, []],
       'currency': [this.article.currency, []],
@@ -1337,6 +1338,7 @@ export class AddArticleComponent implements OnInit {
     if (!this.article._id) { this.article._id = ''; }
     if (!this.article.code) { this.article.code = this.padString(1, this.config.article.code.validators.maxLength); }
     if (!this.article.codeSAT) { this.article.codeSAT = ''; }
+    if (!this.article.order) { this.article.order = 1; }
 
     let currency;
     if (!this.article.currency) {

@@ -19,6 +19,7 @@ export class Article {
   public type: Type = Type.Final;
   public containsVariants: boolean = false;
   public containsStructure: boolean = false;
+  public order : number = 1;
   public code: string = "0000000001";
   public codeSAT: string;
   public description: string = '';
