@@ -3435,7 +3435,7 @@ export class PrintComponent implements OnInit {
               this.doc.setTextColor(0, 0, 0);
             }
           }
-          if (movementOfArticle.article.containsStructure) {
+          if (movementOfArticle.article && movementOfArticle.article.containsStructure) {
             var movArticle: MovementOfArticle[] = await this.getMovArticleChild(movementOfArticle._id)
 
             if (movArticle && movArticle.length > 0) {
