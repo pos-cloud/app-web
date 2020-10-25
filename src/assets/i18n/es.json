@@ -415,5 +415,6 @@
     "parent" : "Padre",
     "_parent.name" : "Padre",
     "surchargeArticle": "Artículo de recargo",
-    "discountArticle": "Artículo de descuento"
+    "discountArticle": "Artículo de descuento",
+    "company.type" : "Tipo"
 }

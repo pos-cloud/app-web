@@ -13,6 +13,14 @@
   <form [formGroup]="paymentMethodForm" #formAddPaymentMethod="ngForm" (ngSubmit)="addPaymentMethod()" autocomplete="off">
     <div class="modal-body">
       <div class="row">
+        <div class="form-group col-md-2">
+            <label for="order" class="control-label">Orden:</label>
+            <input type="number" class="form-control" formControlName="order" name="order" id="order" [focus]="focusEvent"
+              [readonly]="readonly" />
+            <div *ngIf="formErrors.order" class="alert alert-danger">
+              {{ formErrors.order }}
+            </div>
+          </div>
         <div class="form-group col-md-3">
           <label for="code" class="control-label">Código:</label>
           <input type="number" class="form-control" formControlName="code" name="code" id="code" [focus]="focusEvent"
@@ -21,7 +29,7 @@
             {{ formErrors.code }}
           </div>
         </div>
-        <div class="form-group col-md-9">
+        <div class="form-group col-md-7">
           <label for="name" class="control-label">Nombre:</label>
           <input type="text" class="form-control" formControlName="name" name="name" id="name" [readonly]="readonly" />
           <div *ngIf="formErrors.name" class="alert alert-danger">

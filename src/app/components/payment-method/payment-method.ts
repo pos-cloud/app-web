@@ -7,6 +7,7 @@ import { Article } from '../article/article';
 export class PaymentMethod {
 
   public _id: string;
+  public order: number = 1;
   public code: number = 1;
   public name: string = '';
   public discount: number = 0.00;

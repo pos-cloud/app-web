@@ -872,7 +872,7 @@ export class AddMovementOfCashComponent implements OnInit {
         this.subscription.add(this._paymentMethodService.getAll({
             project : {},
             match: match,
-            sort: { name: 1 },
+            sort: { order: 1 },
         }).subscribe(
             result => {
                 this.loading = false;

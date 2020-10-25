@@ -165,6 +165,7 @@ export class PaymentMethodComponent implements OnInit {
 
     this.paymentMethodForm = this._fb.group({
       '_id': [this.paymentMethod._id, []],
+      'order': [this.paymentMethod.order, []],
       'code': [this.paymentMethod.code, []],
       'name': [this.paymentMethod.name, [Validators.required]],
       'discount': [this.paymentMethod.discount, []],
@@ -267,6 +268,7 @@ export class PaymentMethodComponent implements OnInit {
 
     if (!this.paymentMethod._id) this.paymentMethod._id = '';
     if (!this.paymentMethod.code) this.paymentMethod.code = 1;
+    if (!this.paymentMethod.order) this.paymentMethod.order = 1;
     if (!this.paymentMethod.name) this.paymentMethod.name = '';
     if (!this.paymentMethod.discount) this.paymentMethod.discount = 0.00;
     if (!this.paymentMethod.discountArticle) this.paymentMethod.discountArticle = null;
@@ -296,6 +298,7 @@ export class PaymentMethodComponent implements OnInit {
 
     this.paymentMethodForm.patchValue({
       '_id': this.paymentMethod._id,
+      'order': this.paymentMethod.order,
       'code': this.paymentMethod.code,
       'name': this.paymentMethod.name,
       'discount': this.paymentMethod.discount,
