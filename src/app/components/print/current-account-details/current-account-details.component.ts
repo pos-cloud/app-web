@@ -11,7 +11,7 @@ import { CompanyType, Company } from 'app/components/company/company';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { EmployeeService } from 'app/components/employee/employee.service';
 
-import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, tap, switchMap, combineAll } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { CompanyService } from 'app/components/company/company.service';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -1338,6 +1338,11 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 data[y]["Dirección"] = company.address;
                 data[y]["Telefono"] = company.phones;
                 data[y]["Correo"] = company.emails;
+                if(company.employee){
+                    data[y]["Empleado"] = company.employee.name;
+                } else {
+                    data[y]["Empleado"] = "";
+                }
                 data[y]["Balance"] = this.roundNumber.transform(items[i]["balance"]).toFixed(2);
                 data[y]["Balance"] = parseFloat(data[y]["Balance"].replace('.',','));
                 y++;
