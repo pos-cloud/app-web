@@ -282,6 +282,7 @@ export class PrintComponent implements OnInit {
             "deliveryAddress.number": 1,
             "deliveryAddress.flat": 1,
             "deliveryAddress.floor": 1,
+            "deliveryAddress.observation": 1,
             "transport.address" : 1,
             "transport.city" : 1,
             "transport.identificationValue" : 1,
@@ -3356,6 +3357,15 @@ export class PrintComponent implements OnInit {
           this.row += 5;
           this.doc.text(" Departamento: " + this.transaction.deliveryAddress.flat, margin + 5, this.row);
         }
+
+        if(this.transaction.deliveryAddress.observation.length > 30){
+            this.doc.text("Obs: " + this.transaction.deliveryAddress.observation.slice(0,29) + "-", margin, this.row);
+            this.row += 5;
+            this.doc.text(this.transaction.deliveryAddress.observation.slice(29,this.transaction.deliveryAddress.observation.length), margin, this.row);
+        } else {
+            this.doc.text("Obs: " + this.transaction.deliveryAddress.observation, margin, this.row);
+        }
+
         this.doc.setFontType('normal');
       }
     } else {
