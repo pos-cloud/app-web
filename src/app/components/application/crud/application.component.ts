@@ -127,6 +127,21 @@ export class ApplicationComponent implements OnInit {
         tagType: null,
         class: 'form-group col-md-12'
     }, {
+        name: 'design.colors.primary',
+        tag: 'input',
+        tagType: 'text',
+        class: 'form-group col-md-4'
+    }, {
+        name: 'design.colors.secondary',
+        tag: 'input',
+        tagType: 'text',
+        class: 'form-group col-md-4'
+    },{
+        name: 'design.colors.tercery',
+        tag: 'input',
+        tagType: 'text',
+        class: 'form-group col-md-4'
+    }, {
         name: 'design.resources.logo',
         tag: 'input',
         tagType: 'file',
@@ -196,7 +211,7 @@ export class ApplicationComponent implements OnInit {
         values: ['true', 'false'],
         class: 'form-group col-md-12'
     }, {
-        name: 'Horarios',
+        name: 'Horarios de atención',
         tag: 'separator',
         tagType: null,
         class: 'form-group col-md-12'
@@ -488,6 +503,11 @@ export class ApplicationComponent implements OnInit {
                         break;
                     case 'boolean':
                         this.obj[field.name] = this.obj[field.name] == 'true' || this.obj[field.name] == true;
+                    case 'text':
+                        if (field.tag === 'autocomplete' && (this.obj[field.name] == "" || (this.obj[field.name] && !this.obj[field.name]['_id']))) {
+                            this.obj[field.name] = null;
+                        }
+                        break;
                     default:
                         break;
                 }

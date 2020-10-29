@@ -1,680 +1,731 @@
 <div class="modal-header">
-  <h4 class="modal-title" *ngIf="operation==='add' || operation==='copy'">Agregar Producto</h4>
-  <h4 class="modal-title" *ngIf="operation==='update'">Editar {{ articleType }} {{article.code}} -
-    {{article.description}}</h4>
-  <h4 class="modal-title" *ngIf="operation==='view'">{{ articleType }} {{article.code}} - {{article.description}}</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
-    <span aria-hidden="true">&times;</span>
-  </button>
+    <h4 class="modal-title" *ngIf="operation==='add' || operation==='copy'">Agregar Producto</h4>
+    <h4 class="modal-title" *ngIf="operation==='update'">Editar {{ articleType }} {{article.code}} -
+        {{article.description}}</h4>
+    <h4 class="modal-title" *ngIf="operation==='view'">{{ articleType }} {{article.code}} - {{article.description}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
 </div>
 <section class="container-fluid">
-  <div class="center-content" *ngIf="alertMessage !== ''">
-    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-      {{alertMessage}}
-    </ngb-alert>
-  </div>
-  <form [formGroup]="articleForm" #formAddArticle="ngForm" (ngSubmit)="addArticle()" autocomplete="off">
-    <div class="modal-body">
-      <ngb-tabset [orientation]="orientation" (tabChange)="loadURL()">
-        <ngb-tab title="Datos principales">
-          <ng-template ngbTabContent>
-            <div class="row tab-content">
-              <div class="form-group col-md-12">
-                <div class="row">
-                  <div class="form-group col-md-9">
-                    <div class="row">
-                      <div class="form-group col-md-6">
-                        <label for="code" class="control-label">Código Interno:</label>
-                        <input type="text" class="form-control" formControlName="code" name="code" id="code"
-                          (blur)="autocompleteCode()" [focus]="focusEvent" [readonly]="readonly" />
-                        <div *ngIf="formErrors.code" class="alert alert-danger">
-                          {{ formErrors.code }}
+    <div class="center-content" *ngIf="alertMessage !== ''">
+        <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+            {{alertMessage}}
+        </ngb-alert>
+    </div>
+    <form [formGroup]="articleForm" #formAddArticle="ngForm" (ngSubmit)="addArticle()" autocomplete="off">
+        <div class="modal-body">
+            <ngb-tabset [orientation]="orientation" (tabChange)="loadURL()">
+                <ngb-tab title="Datos principales">
+                    <ng-template ngbTabContent>
+                        <div class="row tab-content">
+                            <div class="form-group col-md-12">
+                                <div class="row">
+                                    <div class="form-group col-md-9">
+                                        <div class="row">
+                                            <div class="form-group col-md-2">
+                                                <label for="order" class="control-label">Orden:</label>
+                                                <input type="number" class="form-control" formControlName="order"
+                                                    name="order" id="order" [readonly]="readonly" />
+                                                <div *ngIf="formErrors.order" class="alert alert-danger">
+                                                    {{ formErrors.order }}
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-5">
+                                                <label for="code" class="control-label">Código Interno:</label>
+                                                <input type="text" class="form-control" formControlName="code"
+                                                    name="code" id="code" (blur)="autocompleteCode()"
+                                                    [focus]="focusEvent" [readonly]="readonly" />
+                                                <div *ngIf="formErrors.code" class="alert alert-danger">
+                                                    {{ formErrors.code }}
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-5">
+                                                <label for="barcode" class="control-label">Código de Barras:</label>
+                                                <input type="text" class="form-control" formControlName="barcode"
+                                                    name="barcode" id="barcode" [readonly]="readonly" />
+                                                <div *ngIf="formErrors.barcode" class="alert alert-danger">
+                                                    {{ formErrors.barcode }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-6">
+                                                <ng-template #rtMakes let-r="result" let-t="term">
+                                                    <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+                                                </ng-template>
+                                                <label for="make">Marca:</label>
+                                                <input id="make" type="text" class="form-control" formControlName="make"
+                                                    name="make" [ngbTypeahead]="searchMakes" [resultTemplate]="rtMakes"
+                                                    [inputFormatter]="formatterMakes" [readonly]="readonly" />
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <ng-template #rtCategories let-r="result" let-t="term">
+                                                    <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+                                                </ng-template>
+                                                <label for="category">Rubro:</label>
+                                                <input id="category" type="text" class="form-control"
+                                                    formControlName="category" name="category"
+                                                    [ngbTypeahead]="searchCategories" [resultTemplate]="rtCategories"
+                                                    [inputFormatter]="formatterCategories" [readonly]="readonly" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-8">
+                                                <label for="description" class="control-label">Descripción:</label>
+                                                <input type="text" class="form-control" formControlName="description"
+                                                    name="description" id="description" (blur)="loadPosDescription()"
+                                                    [readonly]="readonly || (article && article.type && article.type.toString() === 'Variante')" />
+                                                <div *ngIf="formErrors.description" class="alert alert-danger">
+                                                    {{ formErrors.description }}
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label for="posDescription" class="control-label">Descripción
+                                                    Corta:</label>
+                                                <input type="text" class="form-control" formControlName="posDescription"
+                                                    name="posDescription" id="posDescription"
+                                                    (blur)="loadPosDescription()"
+                                                    [readonly]="readonly || (article && article.type && article.type.toString() === 'Variante')" />
+                                                <div *ngIf="formErrors.posDescription" class="alert alert-danger">
+                                                    {{ formErrors.posDescription }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <div class="custom-file">
+                                            <label *ngIf="!readonly" class="custom-file-label btn btn-action"
+                                                for="customFileLang">{{fileNamePrincipal?fileNamePrincipal:'Buscar Imagen'}}</label>
+                                            <input *ngIf="!readonly" type="file" class="custom-file-input" lang="es"
+                                                accept="image/*" id="customFileLang"
+                                                (change)="fileChangeEvent($event,false)" />
+                                            <img class="img-article" [src]="imageURL" height="120" width="120">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-4">
+                                        <ng-template #result let-r="result" let-t="term">
+                                            <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+                                        </ng-template>
+                                        <label
+                                            for="unitOfMeasurement">{{'unitOfMeasurement'| translate | capitalize}}:</label>
+                                        <input id="unitOfMeasurement" type="text" class="form-control"
+                                            formControlName="unitOfMeasurement" name="unitOfMeasurement"
+                                            [ngbTypeahead]="searchUnitsOfMeasurement" [resultTemplate]="result"
+                                            [inputFormatter]="formatterUnitsOfMeasurement" [readonly]="readonly" />
+                                        <div class="invalid-feedback"
+                                            [style.display]="(formErrors['unitOfMeasurement'])? 'block': 'none'">
+                                            {{ formErrors['unitOfMeasurement'] }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="quantityPerMeasure" class="control-label">Cantidad:</label>
+                                        <input type="text" class="form-control" formControlName="quantityPerMeasure"
+                                            name="quantityPerMeasure" id="quantityPerMeasure" [readonly]="readonly" />
+                                        <div *ngIf="formErrors.quantityPerMeasure" class="alert alert-danger">
+                                            {{ formErrors.quantityPerMeasure }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="printIn" class="control-label">Imprime en:</label>
+                                        <select class="form-control" formControlName="printIn">
+                                            <option *ngFor="let printIn of printIns" [ngValue]="printIn"
+                                                [disabled]="readonly || (article && article.type && article.type.toString() === 'Variante')">
+                                                {{printIn}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-12">
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <label for="observation" class="control-label">Observación</label>
+                                                <tinymce formControlName="observation" [config]="tinyMCEConfigBody">
+                                                </tinymce>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <label for="note" class="control-label">Notas:</label>
+                                                <input type="text" class="form-control" name="note" id="note"
+                                                    (keydown.enter)="addNote($event.target.value)"
+                                                    placeholder="Ingresar la nota y luego presionar enter por cada nota."
+                                                    [focus]="focusNoteEvent" [readonly]="readonly" />
+                                                <div *ngIf="formErrorsNote" class="alert alert-danger">
+                                                    {{ formErrorsNote }}
+                                                </div>
+                                                <div class="row" style="margin-top: 10px;">
+                                                    <div class="col-md-12">
+                                                        <span class="badge badge-ligth" *ngFor="let n of notes">{{n}}
+                                                            <span class="badge badge-danger pointer"
+                                                                (click)="deleteNote(n)">X</span></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="config.country === 'MX'" class="row">
+                                    <div class="form-group col-md-12">
+                                        <label for="codeSAT" class="control-label">Código SAT:</label>
+                                        <input type="text" class="form-control" formControlName="codeSAT" name="codeSAT"
+                                            id="codeSAT" [readonly]="readonly" />
+                                        <div *ngIf="formErrors.codeSAT" class="alert alert-danger">
+                                            {{ formErrors.codeSAT }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-12 center-content">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" formControlName="favourite"
+                                                value="" id="favourite" name="favourite">
+                                            <label class="form-check-label" for="favourite"
+                                                title="Si es un producto destacado, aparecerá primero en la lista de produtos en el pedido para agregar">
+                                                <b>Producto destacado</b>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                      </div>
-                      <div class="form-group col-md-6">
-                        <label for="barcode" class="control-label">Código de Barras:</label>
-                        <input type="text" class="form-control" formControlName="barcode" name="barcode" id="barcode"
-                          [readonly]="readonly" />
-                        <div *ngIf="formErrors.barcode" class="alert alert-danger">
-                          {{ formErrors.barcode }}
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="form-group col-md-6">
-                        <ng-template #rtMakes let-r="result" let-t="term">
-                          <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
-                        </ng-template>
-                        <label for="make">Marca:</label>
-                        <input id="make" type="text" class="form-control" formControlName="make" name="make"
-                          [ngbTypeahead]="searchMakes" [resultTemplate]="rtMakes" [inputFormatter]="formatterMakes" [readonly]="readonly"/>
-                      </div>
-                      <div class="form-group col-md-6">
-                        <ng-template #rtCategories let-r="result" let-t="term">
-                          <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
-                        </ng-template>
-                        <label for="category">Rubro:</label>
-                        <input id="category" type="text" class="form-control" formControlName="category" name="category"
-                          [ngbTypeahead]="searchCategories" [resultTemplate]="rtCategories"
-                          [inputFormatter]="formatterCategories" [readonly]="readonly"/>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="form-group col-md-8">
-                        <label for="description" class="control-label">Descripción:</label>
-                        <input type="text" class="form-control" formControlName="description" name="description" id="description"
-                          (blur)="loadPosDescription()"
-                          [readonly]="readonly || (article && article.type && article.type.toString() === 'Variante')" />
-                        <div *ngIf="formErrors.description" class="alert alert-danger">
-                          {{ formErrors.description }}
-                        </div>
-                      </div>
-                      <div class="form-group col-md-4">
-                        <label for="posDescription" class="control-label">Descripción
-                          Corta:</label>
-                        <input type="text" class="form-control" formControlName="posDescription" name="posDescription"
-                          id="posDescription" (blur)="loadPosDescription()"
-                          [readonly]="readonly || (article && article.type && article.type.toString() === 'Variante')" />
-                        <div *ngIf="formErrors.posDescription" class="alert alert-danger">
-                          {{ formErrors.posDescription }}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="form-group col-md-3">
-                    <div class="custom-file">
-                      <label *ngIf="!readonly" class="custom-file-label btn btn-action"
-                        for="customFileLang">{{fileNamePrincipal?fileNamePrincipal:'Buscar Imagen'}}</label>
-                      <input *ngIf="!readonly" type="file" class="custom-file-input" lang="es" accept="image/*"
-                        id="customFileLang" (change)="fileChangeEvent($event,false)" />
-                      <img class="img-article" [src]="imageURL" height="120" width="120">
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group col-md-4">
-                    <ng-template #result let-r="result" let-t="term">
-                      <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
                     </ng-template>
-                    <label for="unitOfMeasurement">{{'unitOfMeasurement'| translate | capitalize}}:</label>
-                    <input id="unitOfMeasurement" type="text" class="form-control" formControlName="unitOfMeasurement" name="unitOfMeasurement"
-                      [ngbTypeahead]="searchUnitsOfMeasurement" [resultTemplate]="result"
-                      [inputFormatter]="formatterUnitsOfMeasurement" [readonly]="readonly"/>
-                    <div class="invalid-feedback" [style.display]="(formErrors['unitOfMeasurement'])? 'block': 'none'">
-                      {{ formErrors['unitOfMeasurement'] }}
-                    </div>
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label for="quantityPerMeasure" class="control-label">Cantidad:</label>
-                    <input type="text" class="form-control" formControlName="quantityPerMeasure" name="quantityPerMeasure"
-                      id="quantityPerMeasure" [readonly]="readonly" />
-                    <div *ngIf="formErrors.quantityPerMeasure" class="alert alert-danger">
-                      {{ formErrors.quantityPerMeasure }}
-                    </div>
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label for="printIn" class="control-label">Imprime en:</label>
-                    <select class="form-control" formControlName="printIn">
-                      <option *ngFor="let printIn of printIns" [ngValue]="printIn"
-                        [disabled]="readonly || (article && article.type && article.type.toString() === 'Variante')">
-                        {{printIn}}</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group col-md-12">
-                    <div class="row">
-                        <div class="form-group col-md-12">
-                            <label for="observation" class="control-label">Observación</label>
-                            <tinymce formControlName="observation" [config]="tinyMCEConfigBody">
-                            </tinymce>
-                        </div>
-                    </div>
-                    <div class="row">
-                      <div class="form-group col-md-12">
-                        <label for="note" class="control-label">Notas:</label>
-                        <input type="text" class="form-control" name="note" id="note"
-                          (keydown.enter)="addNote($event.target.value)"
-                          placeholder="Ingresar la nota y luego presionar enter por cada nota."  [focus]="focusNoteEvent" [readonly]="readonly" />
-                        <div *ngIf="formErrorsNote" class="alert alert-danger">
-                          {{ formErrorsNote }}
-                        </div>
-                        <div class="row" style="margin-top: 10px;">
-                          <div class="col-md-12">
-                            <span class="badge badge-ligth" *ngFor="let n of notes">{{n}}
-                              <span class="badge badge-danger pointer" (click)="deleteNote(n)">X</span></span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div *ngIf="config.country === 'MX'" class="row">
-                  <div class="form-group col-md-12">
-                    <label for="codeSAT" class="control-label">Código SAT:</label>
-                    <input type="text" class="form-control" formControlName="codeSAT" name="codeSAT" id="codeSAT"
-                      [readonly]="readonly" />
-                    <div *ngIf="formErrors.codeSAT" class="alert alert-danger">
-                      {{ formErrors.codeSAT }}
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group col-md-12 center-content">
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" formControlName="favourite" value="" id="favourite"
-                        name="favourite">
-                      <label class="form-check-label" for="favourite"
-                        title="Si es un producto destacado, aparecerá primero en la lista de produtos en el pedido para agregar">
-                        <b>Producto destacado</b>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </ng-template>
-        </ngb-tab>
-        <ngb-tab title="Precios">
-          <ng-template ngbTabContent>
-            <div class="row tab-content">
-              <div class="form-group col-md-12">
-                <div class="row">
-                  <div class="form-group col-md-6">
-                    <label for="basePrice" class="control-label">Precio Base:</label>
-                    <div class="input-group">
-                      <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-                      <input type="number" class="form-control" formControlName="basePrice" name="basePrice" id="basePrice"
-                        step="1" (blur)="updatePrices('basePrice')" [readonly]="readonly" />
-                    </div>
-                    <div *ngIf="formErrors.basePrice" class="alert alert-danger">
-                      {{ formErrors.basePrice }}
-                    </div>
-                  </div>
-                  <div *ngIf="!article.containsVariants" class="col-md-3">
-                    <label class="control-label">Precio última compra:</label>
-                    <div class="input-group">
-                      <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-                      <input type="number" class="form-control" formControlName="lastPricePurchase"
-                        [(ngModel)]="lastPricePurchase" readonly />
-                    </div>
-                  </div>
-                  <div *ngIf="!article.containsVariants" class="col-md-3">
-                    <label class="control-label">Fecha última compra:</label>
-                    <div class="input-group">
-                      <input type="text" class="form-control" formControlName="lastDatePurchase" [(ngModel)]="lastDatePurchase"
-                        readonly />
-                    </div>
-                  </div>
-                </div>
-                <app-add-article-fields *ngIf="otherFieldsNumber" (eventAddArticleFields)="addArticleFields($event)"
-                  [fields]="otherFields" [location]="'Price'"></app-add-article-fields>
-                <app-add-article-tax (eventAddArticleTax)="addArticleTaxes($event)" [article]="article"
-                  [otherFields]="otherFields" [articleTaxes]="taxes" [filtersTaxClassification]="filtersTaxClassification">
-                </app-add-article-tax>
-                <div class="row">
-                  <div class="form-group col-md-12">
-                    <label for="costPrice" class="control-label">Precio de costo:</label>
-                    <div class="input-group">
-                      <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-                      <input type="number" class="form-control" formControlName="costPrice" name="costPrice" id="costPrice"
-                        step="1" (blur)="updatePrices('costPrice')" readonly />
-                    </div>
-                    <div *ngIf="formErrors.costPrice" class="alert alert-danger">
-                      {{ formErrors.costPrice }}
-                    </div>
-                  </div>
-                </div>
+                </ngb-tab>
+                <ngb-tab title="Precios">
+                    <ng-template ngbTabContent>
+                        <div class="row tab-content">
+                            <div class="form-group col-md-12">
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label for="basePrice" class="control-label">Precio Base:</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text"
+                                                    id="basic-addon1">$</span></div>
+                                            <input type="number" class="form-control" formControlName="basePrice"
+                                                name="basePrice" id="basePrice" step="1"
+                                                (blur)="updatePrices('basePrice')" [readonly]="readonly" />
+                                        </div>
+                                        <div *ngIf="formErrors.basePrice" class="alert alert-danger">
+                                            {{ formErrors.basePrice }}
+                                        </div>
+                                    </div>
+                                    <div *ngIf="!article.containsVariants" class="col-md-3">
+                                        <label class="control-label">Precio última compra:</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text"
+                                                    id="basic-addon1">$</span></div>
+                                            <input type="number" class="form-control"
+                                                formControlName="lastPricePurchase" [(ngModel)]="lastPricePurchase"
+                                                readonly />
+                                        </div>
+                                    </div>
+                                    <div *ngIf="!article.containsVariants" class="col-md-3">
+                                        <label class="control-label">Fecha última compra:</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" formControlName="lastDatePurchase"
+                                                [(ngModel)]="lastDatePurchase" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                                <app-add-article-fields *ngIf="otherFieldsNumber"
+                                    (eventAddArticleFields)="addArticleFields($event)" [fields]="otherFields"
+                                    [location]="'Price'"></app-add-article-fields>
+                                <app-add-article-tax (eventAddArticleTax)="addArticleTaxes($event)" [article]="article"
+                                    [otherFields]="otherFields" [articleTaxes]="taxes"
+                                    [filtersTaxClassification]="filtersTaxClassification">
+                                </app-add-article-tax>
+                                <div class="row">
+                                    <div class="form-group col-md-12">
+                                        <label for="costPrice" class="control-label">Precio de costo:</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text"
+                                                    id="basic-addon1">$</span></div>
+                                            <input type="number" class="form-control" formControlName="costPrice"
+                                                name="costPrice" id="costPrice" step="1"
+                                                (blur)="updatePrices('costPrice')" readonly />
+                                        </div>
+                                        <div *ngIf="formErrors.costPrice" class="alert alert-danger">
+                                            {{ formErrors.costPrice }}
+                                        </div>
+                                    </div>
+                                </div>
 
-                <div class="row">
-                  <div class="form-group col-md-4">
-                    <label for="markupPercentage" class="control-label">Margen:</label>
-                    <div class="input-group">
-                      <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
-                      <input type="number" class="form-control" formControlName="markupPercentage" name="markupPercentage"
-                        id="markupPercentage" step="1" (blur)="updatePrices('markupPercentage')" [readonly]="readonly" />
-                    </div>
-                    <div *ngIf="formErrors.markupPercentage" class="alert alert-danger">
-                      {{ formErrors.markupPercentage }}
-                    </div>
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label for="markupPrice" class="control-label">Utilidad:</label>
-                    <div class="input-group">
-                      <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-                      <input type="number" class="form-control" formControlName="markupPrice" name="markupPrice" id="markupPrice"
-                        step="1" (blur)="updatePrices('markupPrice')" [readonly]="readonly" />
-                    </div>
-                    <div *ngIf="formErrors.markupPrice" class="alert alert-danger">
-                      {{ formErrors.markupPrice }}
-                    </div>
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label for="salePrice" class="control-label">Precio de Venta:</label>
-                    <div class="input-group">
-                      <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-                      <input type="number" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice"
-                        step="1" (blur)="updatePrices('salePrice')" [readonly]="readonly" />
-                    </div>
-                    <div *ngIf="formErrors.salePrice" class="alert alert-danger">
-                      {{ formErrors.salePrice }}
-                    </div>
-                  </div>
-                </div>
-                <div class="row" *ngIf="currencies && currencies.length > 0">
-                  <div class="form-group col-md-12">
-                    <label for="currency" class="control-label">Moneda:</label>
-                    <select class="form-control" formControlName="currency">
-                      <option *ngFor="let currency of currencies" [selected]="(article.currency && article.currency._id && currency._id===article.currency._id) ||
+                                <div class="row">
+                                    <div class="form-group col-md-4">
+                                        <label for="markupPercentage" class="control-label">Margen:</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text"
+                                                    id="basic-addon1">%</span></div>
+                                            <input type="number" class="form-control" formControlName="markupPercentage"
+                                                name="markupPercentage" id="markupPercentage" step="1"
+                                                (blur)="updatePrices('markupPercentage')" [readonly]="readonly" />
+                                        </div>
+                                        <div *ngIf="formErrors.markupPercentage" class="alert alert-danger">
+                                            {{ formErrors.markupPercentage }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="markupPrice" class="control-label">Utilidad:</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text"
+                                                    id="basic-addon1">$</span></div>
+                                            <input type="number" class="form-control" formControlName="markupPrice"
+                                                name="markupPrice" id="markupPrice" step="1"
+                                                (blur)="updatePrices('markupPrice')" [readonly]="readonly" />
+                                        </div>
+                                        <div *ngIf="formErrors.markupPrice" class="alert alert-danger">
+                                            {{ formErrors.markupPrice }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="salePrice" class="control-label">Precio de Venta:</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text"
+                                                    id="basic-addon1">$</span></div>
+                                            <input type="number" class="form-control" formControlName="salePrice"
+                                                name="salePrice" id="salePrice" step="1"
+                                                (blur)="updatePrices('salePrice')" [readonly]="readonly" />
+                                        </div>
+                                        <div *ngIf="formErrors.salePrice" class="alert alert-danger">
+                                            {{ formErrors.salePrice }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" *ngIf="currencies && currencies.length > 0">
+                                    <div class="form-group col-md-12">
+                                        <label for="currency" class="control-label">Moneda:</label>
+                                        <select class="form-control" formControlName="currency">
+                                            <option *ngFor="let currency of currencies" [selected]="(article.currency && article.currency._id && currency._id===article.currency._id) ||
                                           (article.currency && currency._id===article.currency)" [value]="currency._id"
-                        [disabled]="readonly || (article && article.type && article.type.toString() === 'Variante')">
-                        {{currency.name}}</option>
-                    </select>
-                    <div *ngIf="formErrors.currency" class="alert alert-danger">
-                      {{ formErrors.currency }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </ng-template>
-        </ngb-tab>
-        <ngb-tab title="Stock">
-          <ng-template ngbTabContent>
-            <form #depositForm="ngForm" (ngSubmit)="addDeposit(depositForm)">
-              <div class="row">
-                <div class="form-group col-md-10">
-                  <label for="deposit" class="control-label">Agregar Depósito:</label>
-                  <select class="form-control" ngModel name="deposit">
-                    <option *ngFor="let deposit of deposits" [value]="deposit._id" [disabled]="readonly">
-                      Sucursal {{deposit.branch.name}} - Depósito
-                      {{deposit.name}}</option>
-                  </select>
-                  <div *ngIf="formErrors.deposit" class="alert alert-danger">
-                    {{ formErrors.deposit }}
-                  </div>
-                </div>
-                <div class="form-group col-md-2">
-                  <button type="summit" class="btn btn-success btn-sm especial">
-                    <i class="fa fa-plus"></i>
-                  </button>
-                </div>
-              </div>
-            </form>
-            <table class="table table-striped">
-              <thead>
-                <tr class="separation">
-                  <th>Depósitos Disponibles:</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="separation" *ngFor="let depositAux of articleForm.get('deposits').controls; let i = index;">
-                  <div *ngFor="let deposit of deposits; let i = index">
-                    <td
-                      *ngIf="depositAux && depositAux.value && depositAux.value.deposit &&  depositAux.value.deposit === deposit._id">
-                      Sucursal {{deposit.branch.name}} - Depósito {{deposit.name}}</td>
-                  </div>
-                  <td align="right" width="10">
-                    <button type="button" class="btn btn-danger btn-sm" (click)="deleteDeposit(i)">
-                      <i class="fa fa-trash-o"></i>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-              <tfoot>
-              </tfoot>
-            </table>
-            <form #locationForm="ngForm" (ngSubmit)="addLocation(locationForm)">
-              <div class="row">
-                <div class="form-group col-md-10">
-                  <label for="location" class="control-label">Agregar Ubicación:</label>
-                  <select class="form-control" ngModel name="location">
-                    <option *ngFor="let location of locations" [value]="location._id" [disabled]="readonly">
-                      {{location.description}} -
-                      {{location.positionX}}-{{location.positionY}}-{{location.positionZ}}
-                    </option>
-                  </select>
-                  <div *ngIf="formErrors.location" class="alert alert-danger">
-                    {{ formErrors.location }}
-                  </div>
-                </div>
-                <div class="form-group col-md-2">
-                  <button type="summit" class="btn btn-success btn-sm especial">
-                    <i class="fa fa-plus"></i>
-                  </button>
-                </div>
-              </div>
-            </form>
-            <table class="table table-striped">
-              <thead>
-                <tr class="separation">
-                  <th>Ubicaciones Disponibles:</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="separation" *ngFor="let locationAux of articleForm.get('locations').controls; let i = index;">
-                  <div *ngFor="let location of locations; let i = index">
-                    <td
-                      *ngIf="locationAux && locationAux.value && locationAux.value.location && locationAux.value.location === location._id">
-                      {{location.description}}</td>
-                  </div>
-                  <td align="right" width="10">
-                    <button type="button" class="btn btn-danger btn-sm" (click)="deleteLocation(i)">
-                      <i class="fa fa-trash-o"></i>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-              <tfoot>
-              </tfoot>
-            </table>
-          </ng-template>
-        </ngb-tab>
-        <ngb-tab title="Variantes" *ngIf="articleType === 'Producto'">
-          <ng-template ngbTabContent>
-            <app-add-variant (eventAddVariants)="manageVariants($event)" [article]="article" [variants]="variants">
-            </app-add-variant>
-          </ng-template>
-        </ngb-tab>
-        <ngb-tab title="Campos Personalizados">
-          <ng-template ngbTabContent>
-            <form #otherFieldForm="ngForm" (ngSubmit)="addOtherField(otherFieldForm)">
-              <div class="row">
-                <div class="form-group col-md-5">
-                  <label for="articleField" class="control-label">Campo</label>
-                  <select class="form-control" name="articleField" [(ngModel)]="articleFieldSelected"
-                    (change)="buildListArticleField(articleFieldSelected)">
-                    <option *ngFor="let articleField of articleFields" [ngValue]="articleField" [disabled]="readonly">
-                      {{articleField.name}} </option>
-                  </select>
-                  <div *ngIf="formErrors.articleField" class="alert alert-danger">
-                    {{ formErrors.articleField }}
-                  </div>
-                </div>
-                <div *ngIf="articleFieldSelected" class="form-group col-md-3">
-                  <label for="value" class="control-label">Valor</label>
-                  <select *ngIf="articleFieldSelected.datatype === 'Lista' && articleFieldValues.length > 0" class="form-control"
-                    [(ngModel)]="value" name="value">
-                    <option *ngFor="let value of articleFieldValues" [disabled]="readonly">{{value}}
-                    </option>
-                  </select>
-                  <input class="form-control" type="number"
-                    *ngIf="articleFieldSelected.datatype === 'Porcentaje' || articleFieldSelected.datatype === 'Número'"
-                    [(ngModel)]="value" name="value">
-                  <input class="form-control" *ngIf="articleFieldSelected.datatype === 'Alfabético'" type="text"
-                    [(ngModel)]="value" name="value">
-                </div>
-                <div class="form-group col-md-2">
-                  <button type="summit" class="btn btn-success btn-sm especial">
-                    <i class="fa fa-plus"></i>
-                  </button>
-                </div>
-              </div>
-            </form>
-            <table class="table table-striped">
-              <thead>
-                <tr class="separation">
-                  <th>Campo</th>
-                  <th>Valor</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="separation" *ngFor="let otherField of articleForm.get('otherFields').controls; let i = index;">
-                  <div *ngFor="let articleField of articleFields; let i = index">
-                    <td
-                      *ngIf="otherField && otherField.value && otherField.value.articleField && otherField.value.articleField === articleField._id">
-                      {{articleField.name}}</td>
-                  </div>
-                  <td>{{otherField.value.value}}</td>
+                                                [disabled]="readonly || (article && article.type && article.type.toString() === 'Variante')">
+                                                {{currency.name}}</option>
+                                        </select>
+                                        <div *ngIf="formErrors.currency" class="alert alert-danger">
+                                            {{ formErrors.currency }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab title="Stock">
+                    <ng-template ngbTabContent>
+                        <form #depositForm="ngForm" (ngSubmit)="addDeposit(depositForm)">
+                            <div class="row">
+                                <div class="form-group col-md-10">
+                                    <label for="deposit" class="control-label">Agregar Depósito:</label>
+                                    <select class="form-control" ngModel name="deposit">
+                                        <option *ngFor="let deposit of deposits" [value]="deposit._id"
+                                            [disabled]="readonly">
+                                            Sucursal {{deposit.branch.name}} - Depósito
+                                            {{deposit.name}}</option>
+                                    </select>
+                                    <div *ngIf="formErrors.deposit" class="alert alert-danger">
+                                        {{ formErrors.deposit }}
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <button type="summit" class="btn btn-success btn-sm especial">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr class="separation">
+                                    <th>Depósitos Disponibles:</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="separation"
+                                    *ngFor="let depositAux of articleForm.get('deposits').controls; let i = index;">
+                                    <div *ngFor="let deposit of deposits; let i = index">
+                                        <td
+                                            *ngIf="depositAux && depositAux.value && depositAux.value.deposit &&  depositAux.value.deposit === deposit._id">
+                                            Sucursal {{deposit.branch.name}} - Depósito {{deposit.name}}</td>
+                                    </div>
+                                    <td align="right" width="10">
+                                        <button type="button" class="btn btn-danger btn-sm" (click)="deleteDeposit(i)">
+                                            <i class="fa fa-trash-o"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                            </tfoot>
+                        </table>
+                        <form #locationForm="ngForm" (ngSubmit)="addLocation(locationForm)">
+                            <div class="row">
+                                <div class="form-group col-md-10">
+                                    <label for="location" class="control-label">Agregar Ubicación:</label>
+                                    <select class="form-control" ngModel name="location">
+                                        <option *ngFor="let location of locations" [value]="location._id"
+                                            [disabled]="readonly">
+                                            {{location.description}} -
+                                            {{location.positionX}}-{{location.positionY}}-{{location.positionZ}}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="formErrors.location" class="alert alert-danger">
+                                        {{ formErrors.location }}
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <button type="summit" class="btn btn-success btn-sm especial">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr class="separation">
+                                    <th>Ubicaciones Disponibles:</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="separation"
+                                    *ngFor="let locationAux of articleForm.get('locations').controls; let i = index;">
+                                    <div *ngFor="let location of locations; let i = index">
+                                        <td
+                                            *ngIf="locationAux && locationAux.value && locationAux.value.location && locationAux.value.location === location._id">
+                                            {{location.description}}</td>
+                                    </div>
+                                    <td align="right" width="10">
+                                        <button type="button" class="btn btn-danger btn-sm" (click)="deleteLocation(i)">
+                                            <i class="fa fa-trash-o"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                            </tfoot>
+                        </table>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab title="Variantes" *ngIf="articleType === 'Producto'">
+                    <ng-template ngbTabContent>
+                        <app-add-variant (eventAddVariants)="manageVariants($event)" [article]="article"
+                            [variants]="variants">
+                        </app-add-variant>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab title="Campos Personalizados">
+                    <ng-template ngbTabContent>
+                        <form #otherFieldForm="ngForm" (ngSubmit)="addOtherField(otherFieldForm)">
+                            <div class="row">
+                                <div class="form-group col-md-5">
+                                    <label for="articleField" class="control-label">Campo</label>
+                                    <select class="form-control" name="articleField" [(ngModel)]="articleFieldSelected"
+                                        (change)="buildListArticleField(articleFieldSelected)">
+                                        <option *ngFor="let articleField of articleFields" [ngValue]="articleField"
+                                            [disabled]="readonly">
+                                            {{articleField.name}} </option>
+                                    </select>
+                                    <div *ngIf="formErrors.articleField" class="alert alert-danger">
+                                        {{ formErrors.articleField }}
+                                    </div>
+                                </div>
+                                <div *ngIf="articleFieldSelected" class="form-group col-md-3">
+                                    <label for="value" class="control-label">Valor</label>
+                                    <select
+                                        *ngIf="articleFieldSelected.datatype === 'Lista' && articleFieldValues.length > 0"
+                                        class="form-control" [(ngModel)]="value" name="value">
+                                        <option *ngFor="let value of articleFieldValues" [disabled]="readonly">{{value}}
+                                        </option>
+                                    </select>
+                                    <input class="form-control" type="number"
+                                        *ngIf="articleFieldSelected.datatype === 'Porcentaje' || articleFieldSelected.datatype === 'Número'"
+                                        [(ngModel)]="value" name="value">
+                                    <input class="form-control" *ngIf="articleFieldSelected.datatype === 'Alfabético'"
+                                        type="text" [(ngModel)]="value" name="value">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <button type="summit" class="btn btn-success btn-sm especial">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr class="separation">
+                                    <th>Campo</th>
+                                    <th>Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="separation"
+                                    *ngFor="let otherField of articleForm.get('otherFields').controls; let i = index;">
+                                    <div *ngFor="let articleField of articleFields; let i = index">
+                                        <td
+                                            *ngIf="otherField && otherField.value && otherField.value.articleField && otherField.value.articleField === articleField._id">
+                                            {{articleField.name}}</td>
+                                    </div>
+                                    <td>{{otherField.value.value}}</td>
 
-                  <td align="right" width="10">
-                    <button type="button" class="btn btn-danger btn-sm" (click)="deleteOtherField(i)">
-                      <i class="fa fa-trash-o"></i>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-              <tfoot>
-              </tfoot>
-            </table>
-          </ng-template>
-        </ngb-tab>
-        <ngb-tab title="E-Commerce">
-          <ng-template ngbTabContent>
-            <div class="row">
-              <div class="form-group col-md-12">
-                <label for="url" class="control-label">URL:</label>
-                <input type="text" class="form-control" formControlName="url" name="url" id="url" (blur)="loadURL()"
-                  [readonly]="readonly" />
-                <div *ngIf="formErrors.url" class="alert alert-danger">
-                  {{ formErrors.url }}
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="form-group col-md-3">
-                <label for="ecommerceEnabled" class="control-label">Publicar</label>
-                <select class="form-control" formControlName="ecommerceEnabled">
-                  <option [ngValue]="true" [disabled]="readonly">Si</option>
-                  <option [ngValue]="false" [disabled]="readonly">No</option>
-                </select>
-              </div>
-              <div class="form-group col-md-9">
-                <label>Aplicaciones</label>
-                <br>
-                <label formArrayName="applications"
-                  *ngFor="let app of articleForm.get('applications')['controls']; let i = index"
-                  style="margin-right: 20px; font-size: 20px;">
-                  <input type="checkbox" [formControlName]="i" />
-                  {{applications[i].name}}
-                </label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="form-group col-md-6">
-                <label for="forShipping" class="control-label">Utilizar como envío</label>
-                <select class="form-control" formControlName="forShipping">
-                  <option [ngValue]="true" [disabled]="readonly">Si</option>
-                  <option [ngValue]="false" [disabled]="readonly">No</option>
-                </select>
-              </div>
-            </div>
-            <div class="row">
-              <div class="form-group col-md-12">
-                <label for="tag" class="control-label">Tags:</label>
-                <input type="text" class="form-control" name="tag" id="tag" (keydown.enter)="addTag($event.target.value)"
-                  placeholder="Ingresar el tag y luego presionar enter por cada tag." [focus]="focusTagEvent" [readonly]="readonly" />
-                <div *ngIf="formErrorsTag" class="alert alert-danger">
-                  {{ formErrorsTag }}
-                </div>
-                <div class="row" style="margin-top: 10px;">
-                  <div class="col-md-12">
-                    <span class="badge badge-ligth" *ngFor="let n of tags">{{n}}
-                      <span class="badge badge-danger pointer" (click)="deleteTag(n)">X</span></span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-12">
-                <form #pictureForm="ngForm" (ngSubmit)="addPicture(pictureForm)">
-                  <div class="row">
-                    <div class="form-group col-md-10">
-                      <label for="sel"> Agregar Imagenes:</label>
-                      <div class="custom-file">
-                        <label class="custom-file-label btn btn-action"
-                          for="customFileLang">{{fileNameArray?fileNameArray:'Buscar Imagen'}}</label>
-                        <input type="file" class="custom-file-input" language="es" accept="image/*" id="customFileLang"
-                          (change)="fileChangeEvent($event,true)" />
-                      </div>
-                    </div>
-                    <div class="form-group col-md-2">
-                      <button type="summit" class="btn btn-success btn-sm especial">
-                        <i class="fa fa-plus"></i>
-                      </button>
-                    </div>
-                  </div>
-                </form>
-                <table class="table table-striped">
-                  <thead>
-                    <tr class="separation">
-                      <th>Imagenes Cargadas:</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr class="separation" *ngFor="let picture of articleForm.get('pictures').controls; let i = index;">
-                      <td>{{picture.value.picture}}</td>
-                      <td align="right" width="10">
-                        <button type="button" class="btn btn-danger btn-sm" (click)="deletePicture(i,picture.value.picture)">
-                          <i class="fa fa-trash-o"></i>
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                  <tfoot>
-                  </tfoot>
-                </table>
-              </div>
-            </div>
-          </ng-template>
-        </ngb-tab>
-        <ngb-tab title="Configuraciones">
-          <ng-template ngbTabContent>
-            <div class="row tab-content">
-              <div class="form-group col-md-12">
-                <div class="row">
-                  <div class="form-group col-md-6">
-                    <label for="allowPurchase" class="control-label">¿Habilitado para la
-                      compra?</label>
-                    <select class="form-control" formControlName="allowPurchase">
-                      <option [value]="true" [disabled]="readonly">Si</option>
-                      <option [value]="false" [disabled]="readonly">No</option>
-                    </select>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="provider" class="control-label">Proveedor</label>
-                    <select class="form-control" formControlName="providers">
-                      <option [ngValue]="null" [selected]="!article || !article.providers" [disabled]="readonly"></option>
-                      <option *ngFor="let provider of companies" [selected]="(article.providers && article.providers[0] && article.providers[0]._id && provider._id===article.providers[0]._id) ||
-                                          (article.providers && article.providers[0] && provider._id===article.providers[0])"
-                        [value]="provider._id">
-                        {{provider.name}}</option>
-                    </select>
-                    <div *ngIf="formErrors.providers" class="alert alert-danger">
-                      {{ formErrors.provider }}
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group col-md-6">
-                    <label for="allowSale" class="control-label">¿Habilitado para la venta?</label>
-                    <select class="form-control" formControlName="allowSale">
-                      <option [value]="true" [disabled]="readonly">Si</option>
-                      <option [value]="false" [disabled]="readonly">No</option>
-                    </select>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="allowSaleWithoutStock" class="control-label">¿Se puede vender sin
-                      stock disponible?</label>
-                    <select class="form-control" formControlName="allowSaleWithoutStock">
-                      <option [value]="true" [disabled]="readonly">Si</option>
-                      <option [value]="false" [disabled]="readonly">No</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group col-md-6">
-                    <label for="isWeigth" class="control-label">¿Es pesable?</label>
-                    <select class="form-control" formControlName="isWeigth">
-                      <option [value]="true" [disabled]="readonly">Si</option>
-                      <option [value]="false" [disabled]="readonly">No</option>
-                    </select>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="allowMeasure" class="control-label">¿Pide medida?</label>
-                    <select class="form-control" formControlName="allowMeasure">
-                      <option [value]="true" [disabled]="readonly">Si</option>
-                      <option [value]="false" [disabled]="readonly">No</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group col-md-6">
-                    <label for="posKitchen" class="control-label">¿Aparece en POS Cocina?</label>
-                    <select class="form-control" formControlName="posKitchen">
-                      <option [value]="true" [disabled]="readonly">Si</option>
-                      <option [value]="false" [disabled]="readonly">No</option>
-                    </select>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="classification" class="control-label">Clasificación</label>
-                    <select class="form-control" formControlName="classification">
-                      <option [ngValue]="null" [selected]="!article || !article.classification" [disabled]="readonly"></option>
-                      <option *ngFor="let classification of classifications" [selected]="(article.classification && article.classification._id && classification._id===article.classification._id) ||
+                                    <td align="right" width="10">
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                            (click)="deleteOtherField(i)">
+                                            <i class="fa fa-trash-o"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                            </tfoot>
+                        </table>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab title="E-Commerce">
+                    <ng-template ngbTabContent>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="url" class="control-label">URL:</label>
+                                <input type="text" class="form-control" formControlName="url" name="url" id="url"
+                                    (blur)="loadURL()" [readonly]="readonly" />
+                                <div *ngIf="formErrors.url" class="alert alert-danger">
+                                    {{ formErrors.url }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-3">
+                                <label for="ecommerceEnabled" class="control-label">Publicar</label>
+                                <select class="form-control" formControlName="ecommerceEnabled">
+                                    <option [ngValue]="true" [disabled]="readonly">Si</option>
+                                    <option [ngValue]="false" [disabled]="readonly">No</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-9">
+                                <label>Aplicaciones</label>
+                                <br>
+                                <label formArrayName="applications"
+                                    *ngFor="let app of articleForm.get('applications')['controls']; let i = index"
+                                    style="margin-right: 20px; font-size: 20px;">
+                                    <input type="checkbox" [formControlName]="i" />
+                                    {{applications[i].name}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="forShipping" class="control-label">Utilizar como envío</label>
+                                <select class="form-control" formControlName="forShipping">
+                                    <option [ngValue]="true" [disabled]="readonly">Si</option>
+                                    <option [ngValue]="false" [disabled]="readonly">No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="tag" class="control-label">Tags:</label>
+                                <input type="text" class="form-control" name="tag" id="tag"
+                                    (keydown.enter)="addTag($event.target.value)"
+                                    placeholder="Ingresar el tag y luego presionar enter por cada tag."
+                                    [focus]="focusTagEvent" [readonly]="readonly" />
+                                <div *ngIf="formErrorsTag" class="alert alert-danger">
+                                    {{ formErrorsTag }}
+                                </div>
+                                <div class="row" style="margin-top: 10px;">
+                                    <div class="col-md-12">
+                                        <span class="badge badge-ligth" *ngFor="let n of tags">{{n}}
+                                            <span class="badge badge-danger pointer"
+                                                (click)="deleteTag(n)">X</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form #pictureForm="ngForm" (ngSubmit)="addPicture(pictureForm)">
+                                    <div class="row">
+                                        <div class="form-group col-md-10">
+                                            <label for="sel"> Agregar Imagenes:</label>
+                                            <div class="custom-file">
+                                                <label class="custom-file-label btn btn-action"
+                                                    for="customFileLang">{{fileNameArray?fileNameArray:'Buscar Imagen'}}</label>
+                                                <input type="file" class="custom-file-input" language="es"
+                                                    accept="image/*" id="customFileLang"
+                                                    (change)="fileChangeEvent($event,true)" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-2">
+                                            <button type="summit" class="btn btn-success btn-sm especial">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr class="separation">
+                                            <th>Imagenes Cargadas:</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="separation"
+                                            *ngFor="let picture of articleForm.get('pictures').controls; let i = index;">
+                                            <td>{{picture.value.picture}}</td>
+                                            <td align="right" width="10">
+                                                <button type="button" class="btn btn-danger btn-sm"
+                                                    (click)="deletePicture(i,picture.value.picture)">
+                                                    <i class="fa fa-trash-o"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab title="Configuraciones">
+                    <ng-template ngbTabContent>
+                        <div class="row tab-content">
+                            <div class="form-group col-md-12">
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label for="allowPurchase" class="control-label">¿Habilitado para la
+                                            compra?</label>
+                                        <select class="form-control" formControlName="allowPurchase">
+                                            <option [value]="true" [disabled]="readonly">Si</option>
+                                            <option [value]="false" [disabled]="readonly">No</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="provider" class="control-label">Proveedor</label>
+                                        <select class="form-control" formControlName="providers">
+                                            <option [ngValue]="null" [selected]="!article || !article.providers"
+                                                [disabled]="readonly"></option>
+                                            <option *ngFor="let provider of companies"
+                                                [selected]="(article.providers && article.providers[0] && article.providers[0]._id && provider._id===article.providers[0]._id) ||
+                                          (article.providers && article.providers[0] && provider._id===article.providers[0])" [value]="provider._id">
+                                                {{provider.name}}</option>
+                                        </select>
+                                        <div *ngIf="formErrors.providers" class="alert alert-danger">
+                                            {{ formErrors.provider }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label for="allowSale" class="control-label">¿Habilitado para la venta?</label>
+                                        <select class="form-control" formControlName="allowSale">
+                                            <option [value]="true" [disabled]="readonly">Si</option>
+                                            <option [value]="false" [disabled]="readonly">No</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="allowSaleWithoutStock" class="control-label">¿Se puede vender sin
+                                            stock disponible?</label>
+                                        <select class="form-control" formControlName="allowSaleWithoutStock">
+                                            <option [value]="true" [disabled]="readonly">Si</option>
+                                            <option [value]="false" [disabled]="readonly">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label for="isWeigth" class="control-label">¿Es pesable?</label>
+                                        <select class="form-control" formControlName="isWeigth">
+                                            <option [value]="true" [disabled]="readonly">Si</option>
+                                            <option [value]="false" [disabled]="readonly">No</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="allowMeasure" class="control-label">¿Pide medida?</label>
+                                        <select class="form-control" formControlName="allowMeasure">
+                                            <option [value]="true" [disabled]="readonly">Si</option>
+                                            <option [value]="false" [disabled]="readonly">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label for="posKitchen" class="control-label">¿Aparece en POS Cocina?</label>
+                                        <select class="form-control" formControlName="posKitchen">
+                                            <option [value]="true" [disabled]="readonly">Si</option>
+                                            <option [value]="false" [disabled]="readonly">No</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="classification" class="control-label">Clasificación</label>
+                                        <select class="form-control" formControlName="classification">
+                                            <option [ngValue]="null" [selected]="!article || !article.classification"
+                                                [disabled]="readonly"></option>
+                                            <option *ngFor="let classification of classifications" [selected]="(article.classification && article.classification._id && classification._id===article.classification._id) ||
                                           (article.classification && classification._id===article.classification)"
-                        [value]="classification._id" [disabled]="readonly">
-                        {{classification.name}}</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </ng-template>
-        </ngb-tab>
-        <ngb-tab *ngIf="this.operation !== 'add'" title="Auditoría">
-          <ng-template ngbTabContent>
-            <div class="row tab-content">
-              <div class="form-group col-md-12">
-                <div class="row">
-                  <div class="form-group col-md-6">
-                    <label class="control-label">Creado por:</label>
-                    <label *ngIf="article.creationUser" class="control-label"><b>
-                        {{article.creationUser.name}}</b></label>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label class="control-label">El día:</label>
-                    <label *ngIf="article.creationDate" class="control-label"><b>
-                        {{article.creationDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group col-md-6">
-                    <label class="control-label">Última modificación por:</label>
-                    <label *ngIf="article.updateUser" class="control-label"><b>{{article.updateUser.name}}</b></label>
-                    <label *ngIf="!article.updateUser" class="control-label"><b>-</b></label>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label class="control-label">El día:</label>
-                    <label *ngIf="article.updateDate"
-                      class="control-label"><b>{{article.updateDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
-                    <label *ngIf="!article.updateDate" class="control-label"><b>-</b></label>
-                  </div>
-                </div>
-                <div class="row">
-                    <div class="form-group col-md-6">
-                      <label class="control-label">Id:</label>
-                      <label class="control-label"><b>{{article._id}}</b></label>
-                    </div>
-                  </div>
-              </div>
-            </div>
-          </ng-template>
-        </ngb-tab>
-      </ngb-tabset>
-    </div>
-    <div class="modal-footer" *ngIf="operation !== 'view'">
-      <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="!articleForm.valid || loading" *ngIf="operation !== 'delete'">
-        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
-        <span *ngIf="!loading">Guardar</span>
-        <span *ngIf="loading">Espere por favor</span>
-      </button>
-      <button type="button" class="btn btn-danger" *ngIf="operation === 'delete'" [disabled]="!articleForm.valid || loading"
-        (click)="deleteArticle()">
-        <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
-        <span *ngIf="!loading">Eliminar</span>
-        <span *ngIf="loading">Espere por favor</span>
-      </button>
-    </div>
-  </form>
+                                                [value]="classification._id" [disabled]="readonly">
+                                                {{classification.name}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab *ngIf="this.operation !== 'add'" title="Auditoría">
+                    <ng-template ngbTabContent>
+                        <div class="row tab-content">
+                            <div class="form-group col-md-12">
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">Creado por:</label>
+                                        <label *ngIf="article.creationUser" class="control-label"><b>
+                                                {{article.creationUser.name}}</b></label>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">El día:</label>
+                                        <label *ngIf="article.creationDate" class="control-label"><b>
+                                                {{article.creationDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">Última modificación por:</label>
+                                        <label *ngIf="article.updateUser"
+                                            class="control-label"><b>{{article.updateUser.name}}</b></label>
+                                        <label *ngIf="!article.updateUser" class="control-label"><b>-</b></label>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">El día:</label>
+                                        <label *ngIf="article.updateDate"
+                                            class="control-label"><b>{{article.updateDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
+                                        <label *ngIf="!article.updateDate" class="control-label"><b>-</b></label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">Id:</label>
+                                        <label class="control-label"><b>{{article._id}}</b></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </div>
+        <div class="modal-footer" *ngIf="operation !== 'view'">
+            <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
+            <button type="submit" class="btn btn-primary" [disabled]="!articleForm.valid || loading"
+                *ngIf="operation !== 'delete'">
+                <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+                <span *ngIf="!loading">Guardar</span>
+                <span *ngIf="loading">Espere por favor</span>
+            </button>
+            <button type="button" class="btn btn-danger" *ngIf="operation === 'delete'"
+                [disabled]="!articleForm.valid || loading" (click)="deleteArticle()">
+                <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
+                <span *ngIf="!loading">Eliminar</span>
+                <span *ngIf="loading">Espere por favor</span>
+            </button>
+        </div>
+    </form>
 </section>

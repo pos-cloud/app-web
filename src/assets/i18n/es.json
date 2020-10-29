@@ -40,6 +40,8 @@
     "article.taxes[2].percentage": "Porcentaje Imp",
     "article.unitOfMeasurement.abbreviation": "Un. de Medida",
     "article.containsStructure": "¿Tiene Estructura?",
+    "article.picture" : "Imagen",
+    "article.ecommerceEnabled" : "¿Habilitado E-commerce?",
     "authentication token missing": "falta el token de autenticación",
     "bad provided credentials": "Credenciales proporcionadas incorrectas",
     "balance": "Saldo",
@@ -408,5 +410,13 @@
     "isPreprinted": "Es preimpreso",
     "printable": "Imprime al final",
     "showKeyboard": "Muestra teclado",
-    "design.resources.logo" : "Logo" 
+    "design.resources.logo" : "Logo",
+    "design.colors.primary" : "Color Primario",
+    "design.colors.secondary" : "Color Secundario",
+    "design.colors.tercery" : "Color Terciario",
+    "parent" : "Padre",
+    "_parent.name" : "Padre",
+    "surchargeArticle": "Artículo de recargo",
+    "discountArticle": "Artículo de descuento",
+    "company.type" : "Tipo"
 }

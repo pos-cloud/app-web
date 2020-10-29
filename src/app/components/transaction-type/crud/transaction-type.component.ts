@@ -33,6 +33,7 @@ import { ShipmentMethod } from 'app/components/shipment-method/shipment-method.m
 import { PrinterService } from 'app/components/printer/printer.service';
 import { Printer } from 'app/components/printer/printer';
 import { CompanyService } from 'app/components/company/company.service';
+import Resulteable from 'app/util/Resulteable';
 
 
 @Component({
@@ -65,6 +66,7 @@ export class TransactionTypeComponent implements OnInit {
     public apiURL: string = Config.apiV8URL;
     public database: string = Config.database;
     public branches: Branch[];
+    public paymentMethods: PaymentMethod[];
 
     public searchBranches = (text$: Observable<string>) => {
         const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
@@ -278,15 +280,6 @@ export class TransactionTypeComponent implements OnInit {
             validators: [Validators.required],
             class: 'form-group col-md-3'
         }, {
-            name: 'company',
-            tag: 'autocomplete',
-            tagType: 'text',
-            search: this.searchCompanies,
-            format: this.formatterCompanies,
-            values: null,
-            focus: false,
-            class: 'form-group col-md-4'
-        }, {
             name: 'Permisos',
             tag: 'separator',
             tagType: null,
@@ -418,7 +411,17 @@ export class TransactionTypeComponent implements OnInit {
             tag: 'select',
             tagType: 'text',
             values: [CompanyType.None, CompanyType.Client, CompanyType.Provider],
-            class: 'form-group col-md-2'
+            class: 'form-group col-md-4'
+        },
+        {
+            name: 'company',
+            tag: 'autocomplete',
+            tagType: 'text',
+            search: this.searchCompanies,
+            format: this.formatterCompanies,
+            values: null,
+            focus: false,
+            class: 'form-group col-md-8'
         },
         {
             name: 'requestEmployee',
@@ -514,50 +517,6 @@ export class TransactionTypeComponent implements OnInit {
         },
         {
             name: 'groupsArticles',
-            tag: 'select',
-            tagType: "boolean",
-            values: ['true', 'false'],
-            class: 'form-group col-md-2'
-        },
-        {
-            name: 'Método de Pago',
-            tag: 'separator',
-            tagType: null,
-            class: 'form-group col-md-12'
-        },
-        {
-            name: 'requestPaymentMethods',
-            tag: 'select',
-            tagType: "boolean",
-            values: ['true', 'false'],
-            class: 'form-group col-md-2'
-        },
-        {
-            name: 'allowZero',
-            tag: 'select',
-            tagType: "boolean",
-            values: ['true', 'false'],
-            class: 'form-group col-md-2'
-        },
-        {
-            name: 'fastPayment',
-            tag: 'autocomplete',
-            tagType: 'text',
-            search: this.searchPaymentMethods,
-            format: this.formatterPaymentMethods,
-            values: null,
-            focus: false,
-            class: 'form-group col-md-4'
-        },
-        {
-            name: 'finishCharge',
-            tag: 'select',
-            tagType: "boolean",
-            values: ['true', 'false'],
-            class: 'form-group col-md-2'
-        },
-        {
-            name: 'showKeyboard',
             tag: 'select',
             tagType: "boolean",
             values: ['true', 'false'],
@@ -730,6 +689,50 @@ export class TransactionTypeComponent implements OnInit {
             tagType: 'number',
             class: 'form-group col-md-2'
         },
+        {
+            name: 'Método de Pago',
+            tag: 'separator',
+            tagType: null,
+            class: 'form-group col-md-12'
+        },
+        {
+            name: 'requestPaymentMethods',
+            tag: 'select',
+            tagType: "boolean",
+            values: ['true', 'false'],
+            class: 'form-group col-md-2'
+        },
+        {
+            name: 'allowZero',
+            tag: 'select',
+            tagType: "boolean",
+            values: ['true', 'false'],
+            class: 'form-group col-md-2'
+        },
+        {
+            name: 'fastPayment',
+            tag: 'autocomplete',
+            tagType: 'text',
+            search: this.searchPaymentMethods,
+            format: this.formatterPaymentMethods,
+            values: null,
+            focus: false,
+            class: 'form-group col-md-4'
+        },
+        {
+            name: 'finishCharge',
+            tag: 'select',
+            tagType: "boolean",
+            values: ['true', 'false'],
+            class: 'form-group col-md-2'
+        },
+        {
+            name: 'showKeyboard',
+            tag: 'select',
+            tagType: "boolean",
+            values: ['true', 'false'],
+            class: 'form-group col-md-2'
+        }
     ];
     public formErrors: {} = {};
     public validationMessages = {
@@ -886,10 +889,12 @@ export class TransactionTypeComponent implements OnInit {
                 "application.name": 1,
                 "requestEmployee._id": 1,
                 "requestEmployee.description": 1,
+                "paymentMethods._id" : 1,
+                "paymentMethods.name" : 1
             }
 
             this.subscription.add(this._objService.getAll({
-                project,
+                project : project,
                 match: {
                     operationType: { $ne: "D" },
                     _id: { $oid: this.objId }
@@ -907,6 +912,13 @@ export class TransactionTypeComponent implements OnInit {
                 error => this.showToast(error)
             ));
         }
+
+        await this.getAllPaymentMethods()
+            .then((result: PaymentMethod[]) => {
+                this.paymentMethods = result;
+                this.setValuesForm();
+            })
+            .catch((error: Resulteable) => this.showToast(error));
     }
 
     public ngAfterViewInit(): void {
@@ -936,7 +948,8 @@ export class TransactionTypeComponent implements OnInit {
     public buildForm(): void {
 
         let fields: {} = {
-            _id: [this.obj._id]
+            _id: [this.obj._id],
+            paymentMethods: this._fb.array([])
         };
         for (let field of this.formFields) {
             if (field.tag !== 'separator') fields[field.name] = [this.obj[field.name], field.validators]
@@ -976,7 +989,7 @@ export class TransactionTypeComponent implements OnInit {
     public setValuesForm(): void {
 
         let values: {} = {
-            _id: this.obj._id
+            _id: this.obj._id,
         }
         for (let field of this.formFields) {
             if (field.tag !== 'separator') {
@@ -1010,6 +1023,26 @@ export class TransactionTypeComponent implements OnInit {
         }
 
 
+        if (this.paymentMethods && this.paymentMethods.length > 0) {
+            this.paymentMethods.forEach(x => {
+                let exists: boolean = false;
+                if (this.obj && this.obj.paymentMethods && this.obj.paymentMethods.length > 0) {
+                    this.obj.paymentMethods.forEach(y => {
+                        if (x._id === y._id) {
+                            exists = true;
+                            const control = new FormControl(y);
+                            (this.objForm.controls.paymentMethods as FormArray).push(control);
+                        }
+                    })
+                }
+                if (!exists) {
+                    const control = new FormControl(false);
+                    (this.objForm.controls.paymentMethods as FormArray).push(control);
+                }
+            })
+        }
+
+
         this.objForm.patchValue(values);
     }
 
@@ -1018,11 +1051,16 @@ export class TransactionTypeComponent implements OnInit {
         let isValid: boolean = true;
 
         isValid = (this.operation === 'delete') ? true : this.objForm.valid;
+        
         if (isValid) {
-            this.obj = this.objForm.value;
-        } else {
+            this.obj = Object.assign(this.obj, this.objForm.value);
+            const selectedOrderIds = this.objForm.value.paymentMethods
+                .map((v, i) => (v ? this.paymentMethods[i] : null))
+                .filter(v => v !== null);
+            this.obj.paymentMethods = selectedOrderIds;
+            } else {
             this.onValueChanged();
-        }
+            }
 
         if (isValid) {
             for (let field of this.formFields) {
@@ -1067,6 +1105,12 @@ export class TransactionTypeComponent implements OnInit {
                         break;
                     case 'boolean':
                         this.obj[field.name] = this.obj[field.name] == 'true' || this.obj[field.name] == true;
+                        break;
+                    case 'text':
+                        if(this.obj[field.name] === "null") this.obj[field.name] = null;
+                        if(field.tag === 'autocomplete' && (this.obj[field.name] == "" || (this.obj[field.name] && !this.obj[field.name]['_id']))){
+                            this.obj[field.name] = null;
+                        }
                         break;
                     default:
                         break;
@@ -1289,6 +1333,22 @@ export class TransactionTypeComponent implements OnInit {
                 limit: 10,
             }).subscribe(
                 result => {
+                    this.loading = false;
+                    (result.status === 200) ? resolve(result.result) : reject(result);
+                },
+                error => reject(error)
+            ));
+        });
+    }
+
+    public getAllPaymentMethods(): Promise<PaymentMethod[]> {
+        return new Promise<PaymentMethod[]>((resolve, reject) => {
+            this.subscription.add(this._paymentMethod.getAll({
+                match : { operationType : {"$ne": "D"}},
+                sort: { name: 1 },
+            }).subscribe(
+                result => {
+                    console.log(result);
                     this.loading = false;
                     (result.status === 200) ? resolve(result.result) : reject(result);
                 },

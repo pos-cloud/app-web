@@ -282,6 +282,7 @@ export class PrintComponent implements OnInit {
             "deliveryAddress.number": 1,
             "deliveryAddress.flat": 1,
             "deliveryAddress.floor": 1,
+            "deliveryAddress.observation": 1,
             "transport.address" : 1,
             "transport.city" : 1,
             "transport.identificationValue" : 1,
@@ -3340,8 +3341,14 @@ export class PrintComponent implements OnInit {
           direccion = direccion + " N°" + this.transaction.deliveryAddress.number;
         }
 
+        if(direccion.length > 30){
+            this.doc.text("Entregar a: " + direccion.slice(0,29) + "-", margin, this.row);
+            this.row += 5;
+            this.doc.text(direccion.slice(29,direccion.length), margin, this.row);
+        } else {
+            this.doc.text("Entregar a: " + direccion, margin, this.row);
+        }
 
-        this.doc.text("Entregar a: " + direccion, margin, this.row);
         if (this.transaction.deliveryAddress.floor) {
           this.row += 5;
           this.doc.text("Piso: " + this.transaction.deliveryAddress.floor, margin + 5, this.row);
@@ -3350,6 +3357,15 @@ export class PrintComponent implements OnInit {
           this.row += 5;
           this.doc.text(" Departamento: " + this.transaction.deliveryAddress.flat, margin + 5, this.row);
         }
+
+        if(this.transaction.deliveryAddress.observation.length > 30){
+            this.doc.text("Obs: " + this.transaction.deliveryAddress.observation.slice(0,29) + "-", margin, this.row);
+            this.row += 5;
+            this.doc.text(this.transaction.deliveryAddress.observation.slice(29,this.transaction.deliveryAddress.observation.length), margin, this.row);
+        } else {
+            this.doc.text("Obs: " + this.transaction.deliveryAddress.observation, margin, this.row);
+        }
+
         this.doc.setFontType('normal');
       }
     } else {
@@ -3429,7 +3445,7 @@ export class PrintComponent implements OnInit {
               this.doc.setTextColor(0, 0, 0);
             }
           }
-          if (movementOfArticle.article.containsStructure) {
+          if (movementOfArticle.article && movementOfArticle.article.containsStructure) {
             var movArticle: MovementOfArticle[] = await this.getMovArticleChild(movementOfArticle._id)
 
             if (movArticle && movArticle.length > 0) {
@@ -3494,6 +3510,10 @@ export class PrintComponent implements OnInit {
         await this.getCompanyPicture(3, 3, this.printer.pageWidth - 5, 26, false);
       }
       if (this.transaction.type.numberPrint && this.count < this.transaction.type.numberPrint) {
+        this.row += 5;
+        this.doc.setLineWidth(1.5)
+        this.doc.line(0, this.row, width, this.row);
+        this.doc.setLineWidth(0)
         this.count++;
         this.toPrintRoll();
       } else {

@@ -56,18 +56,49 @@ export class CategoryComponent implements OnInit {
     public imageURL: string;
     public applications: Application[];
 
+
+    public searchCategories = (text$: Observable<string>) => {
+        const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+        const inputFocus$ = this.focus$['parent'];
+        return merge(debouncedText$, inputFocus$).pipe(
+            tap(() => this.loading = true),
+            switchMap(async term => {
+                let match: {} = (term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {};
+                match["operationType"] = { "$ne": "D" };
+                return await this.getCategories(match).then(
+                    result => {
+                        return result;
+                    }
+                );
+            }),
+            tap(() => this.loading = false),
+        )
+    }
+
+    public formatterCategories = (x: { name: string }) => x.name;
+
     public formFields: FormField[] = [
         {
             name: 'order',
             tag: 'input',
             tagType: 'number',
-            class: 'form-group col-md-1'
+            class: 'form-group col-md-2'
         },
         {
             name: 'description',
             tag: 'input',
             tagType: 'text',
             validators: [Validators.required],
+            class: 'form-group col-md-10'
+        },
+        {
+            name: 'parent',
+            tag: 'autocomplete',
+            tagType: 'text',
+            search: this.searchCategories,
+            format: this.formatterCategories,
+            values: null,
+            focus: false,
             class: 'form-group col-md-4'
         },
         {
@@ -227,8 +258,8 @@ export class CategoryComponent implements OnInit {
                 visibleOnSale: 1,
                 isRequiredOptional: 1,
                 favourite: 1,
-                "parent._id": 1,
-                "parent.description": 1,
+                'parent._id': 1,
+                'parent.name':'$parent.description',
                 'applications._id': 1,
                 'applications.name': 1,
                 'observation': 1
@@ -388,14 +419,16 @@ export class CategoryComponent implements OnInit {
 
         let isValid: boolean = true;
 
+        isValid = (this.operation === 'delete') ? true : this.objForm.valid;
+
         if (isValid) {
-            this.obj = Object.assign(this.obj, this.objForm.value);
-            const selectedOrderIds = this.objForm.value.applications
-                .map((v, i) => (v ? this.applications[i] : null))
-                .filter(v => v !== null);
-            this.obj.applications = selectedOrderIds;
+        this.obj = Object.assign(this.obj, this.objForm.value);
+        const selectedOrderIds = this.objForm.value.applications
+            .map((v, i) => (v ? this.applications[i] : null))
+            .filter(v => v !== null);
+        this.obj.applications = selectedOrderIds;
         } else {
-            this.onValueChanged();
+        this.onValueChanged();
         }
 
         if (isValid) {
@@ -410,14 +443,14 @@ export class CategoryComponent implements OnInit {
                     case 'file':
                         if (this.filesToUpload && this.filesToUpload[field.name] && this.filesToUpload[field.name].length > 0) {
                             this.loading = true;
-                            this._objService.deleteFile(this.typeFile[field.name], field.name.split('.')[field.name.split('.').length - 1], this.obj[field.name]);
+                            this._objService.deleteFile(this.typeFile[field.name], "category", this.obj[field.name]);
                             if (this.filesToUpload[field.name] && this.filesToUpload[field.name].length > 0) {
                                 this.obj[field.name] = this.oldFiles[field.name];
                                 if (field.multiple && (!this.obj || !this.obj[field.name] || this.obj[field.name].length === 0)) {
                                     this.obj[field.name] = new Array();
                                 }
                                 for (let file of this.filesToUpload[field.name]) {
-                                    await this._objService.uploadFile(this.typeFile[field.name], field.name.split('.')[field.name.split('.').length - 1], file)
+                                    await this._objService.uploadFile(this.typeFile[field.name], "category", file)
                                         .then(result => {
                                             this.loading = false;
                                             if (result['result']) {
@@ -440,7 +473,13 @@ export class CategoryComponent implements OnInit {
                         }
                         break;
                     case 'boolean':
-                        this.obj[field.name] = this.obj[field.name] == 'true';
+                        this.obj[field.name] = this.obj[field.name] == 'true' || this.obj[field.name] == true;
+                    case 'text':
+                        console.log(this.obj);
+                        if(field.tag === 'autocomplete' && (this.obj[field.name] == "" || (this.obj[field.name] && !this.obj[field.name]['_id']))){
+                            this.obj[field.name] = null;
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -465,7 +504,7 @@ export class CategoryComponent implements OnInit {
     }
 
     public deleteFile(typeFile: string, fieldName: string, filename: string) {
-        this._objService.deleteFile(typeFile, fieldName.split('.')[fieldName.split('.').length - 1], filename).subscribe(
+        this._objService.deleteFile(typeFile, "category", filename).subscribe(
             result => {
                 if (result.status === 200) {
                     try {
@@ -505,6 +544,7 @@ export class CategoryComponent implements OnInit {
     }
 
     public updateObj() {
+        console.log(this.obj);
         this.loading = true;
         this.subscription.add(
             this._objService.update(this.obj).subscribe(
@@ -535,8 +575,28 @@ export class CategoryComponent implements OnInit {
     public getAllApplications(match: {}): Promise<Application[]> {
         return new Promise<Application[]>((resolve, reject) => {
             this.subscription.add(this._applicationService.getAll({
-                match,
+                match : match,
                 sort: { name: 1 },
+            }).subscribe(
+                result => {
+                    this.loading = false;
+                    (result.status === 200) ? resolve(result.result) : reject(result);
+                },
+                error => reject(error)
+            ));
+        });
+    }
+
+    public getCategories(match: {}): Promise<Category[]> {
+        return new Promise<Category[]>((resolve, reject) => {
+            this.subscription.add(this._objService.getAll({
+                project : {
+                    name: "$description",
+                    operationType: 1
+                },
+                match,
+                sort: { description: 1 },
+                limit: 10,
             }).subscribe(
                 result => {
                     this.loading = false;
