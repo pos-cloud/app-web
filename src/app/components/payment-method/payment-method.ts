@@ -24,6 +24,7 @@ export class PaymentMethod {
   public checkPerson : boolean;
   public cardDetail: boolean;
   public allowToFinance: boolean;
+  public payFirstQuota: boolean;
   public cashBoxImpact: boolean;
   public bankReconciliation: boolean;
   public company: CompanyType;

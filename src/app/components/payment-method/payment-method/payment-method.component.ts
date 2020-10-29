@@ -197,6 +197,7 @@ export class PaymentMethodComponent implements OnInit {
       'checkPerson': [this.paymentMethod.checkPerson, []],
       'cardDetail': [this.paymentMethod.cardDetail, []],
       'allowToFinance': [this.paymentMethod.allowToFinance, []],
+      'payFirstQuota': [this.paymentMethod.payFirstQuota, []],
       'cashBoxImpact': [this.paymentMethod.cashBoxImpact, []],
       'company': [this.paymentMethod.company, []],
       'allowCurrencyValue': [this.paymentMethod.allowCurrencyValue, []],
@@ -291,6 +292,7 @@ export class PaymentMethodComponent implements OnInit {
     if (this.paymentMethod.checkPerson === undefined) this.paymentMethod.checkPerson = false;
     if (this.paymentMethod.cardDetail === undefined) this.paymentMethod.cardDetail = false;
     if (this.paymentMethod.allowToFinance === undefined) this.paymentMethod.allowToFinance = false;
+    if (this.paymentMethod.payFirstQuota === undefined) this.paymentMethod.payFirstQuota = false;
     if (this.paymentMethod.cashBoxImpact === undefined) this.paymentMethod.cashBoxImpact = false;
     if (this.paymentMethod.bankReconciliation === undefined) this.paymentMethod.bankReconciliation = false;
     if (this.paymentMethod.allowCurrencyValue === undefined) this.paymentMethod.allowCurrencyValue = false;
@@ -318,6 +320,7 @@ export class PaymentMethodComponent implements OnInit {
       'checkDetail': this.paymentMethod.checkDetail,
       'cardDetail': this.paymentMethod.cardDetail,
       'allowToFinance': this.paymentMethod.allowToFinance,
+      'payFirstQuota': this.paymentMethod.payFirstQuota,
       'cashBoxImpact': this.paymentMethod.cashBoxImpact,
       'bankReconciliation': this.paymentMethod.bankReconciliation,
       'company': this.paymentMethod.company,

@@ -78,6 +78,8 @@ export class AddMovementOfCashComponent implements OnInit {
     public roundNumber = new RoundNumberPipe();
     public quotas: number = 1;
     public days: number = 30;
+    public interestPercentage: number = 0;
+    public interestAmount: number = 0;
     public orderTerm: string[] = ['expirationDate'];
     public propertyTerm: string;
     public holidays: Holiday[];
@@ -141,7 +143,7 @@ export class AddMovementOfCashComponent implements OnInit {
 
     ngAfterViewInit() {
         this.focusEvent.emit(true);
-        if(this.transaction.type.showKeyboard) {
+        if (this.transaction.type.showKeyboard) {
             this.keyboard = new Keyboard({
                 onChange: input => this.onChange(input),
                 onKeyPress: button => this.onKeyPress(button),
@@ -193,11 +195,11 @@ export class AddMovementOfCashComponent implements OnInit {
     };
 
     onInputChange = (event: any) => {
-        if(this.keyboard) this.keyboard.setInput(event.target.value);
+        if (this.keyboard) this.keyboard.setInput(event.target.value);
     };
 
     handleShift = () => {
-        if(this.keyboard) {
+        if (this.keyboard) {
             let currentLayout = this.keyboard.options.layoutName;
             let shiftToggle = currentLayout === "default" ? "shift" : "default";
             this.keyboard.setOptions({
@@ -233,7 +235,8 @@ export class AddMovementOfCashComponent implements OnInit {
             'CUIT': [this.movementOfCash.CUIT, []],
             'deliveredBy': [this.movementOfCash.deliveredBy, []],
             'quotas': [this.quotas, []],
-            'days': [this.days, []]
+            'days': [this.days, []],
+            'interestPercentage': [this.interestPercentage, []],
         });
 
         this.movementOfCashForm.valueChanges
@@ -305,7 +308,8 @@ export class AddMovementOfCashComponent implements OnInit {
             'CUIT': this.movementOfCash.CUIT,
             'deliveredBy': this.movementOfCash.deliveredBy,
             'quotas': this.quotas,
-            'days': this.days
+            'days': this.days,
+            'interestPercentage': this.interestPercentage,
         };
 
         this.movementOfCashForm.setValue(values);
@@ -380,12 +384,17 @@ export class AddMovementOfCashComponent implements OnInit {
 
         this.quotas = this.movementOfCashForm.value.quotas;
         this.days = this.movementOfCashForm.value.days;
-        let expirationDate = 1;
+        this.interestPercentage = this.movementOfCashForm.value.interestPercentage;
+        let expirationDate: number = 1;
+        let amountTotal: number = 0;
+        if(!this.paymentMethodSelected.payFirstQuota) {
+            expirationDate += this.days;
+        }
 
         switch (field) {
             case 'quotas':
                 this.movementsOfCashesToFinance = new Array();
-                let amountTotal = 0;
+                this.interestAmount = (this.roundNumber.transform(this.amountToPay) * this.interestPercentage / 100);
                 for (let i = 0; i < this.quotas; i++) {
                     var mov: MovementOfCash = new MovementOfCash();
                     mov.transaction = this.transaction;
@@ -393,25 +402,17 @@ export class AddMovementOfCashComponent implements OnInit {
                     mov.observation = this.movementOfCash.observation;
                     mov.quota = i + 1;
                     mov.expirationDate = moment(moment(this.movementOfCash.expirationDate, 'YYYY-MM-DD').format('YYYY-MM-DD')).add(expirationDate, 'days').format('YYYY-MM-DD').toString();
-                    expirationDate = (this.days * (i + 1)) + 1;
-                    mov.amountPaid = this.roundNumber.transform(this.amountToPay / this.quotas);
+                    expirationDate += (this.days * (i + 1)) + 1;
+                    mov.amountPaid = this.roundNumber.transform((this.amountToPay + this.interestAmount) / this.quotas);
                     amountTotal += mov.amountPaid;
                     if (i === (this.quotas - 1)) {
-                        if (amountTotal !== this.amountToPay) {
-                            mov.amountPaid = this.roundNumber.transform(mov.amountPaid - (amountTotal - this.amountToPay));
+                        if (amountTotal !== (this.amountToPay + this.interestAmount)) {
+                            mov.amountPaid = this.roundNumber.transform(mov.amountPaid - (amountTotal - (this.amountToPay + this.interestAmount)));
                         }
                     }
                     this.movementsOfCashesToFinance.push(mov);
                 }
-                break;
-            case 'days':
-                let i = 1;
-                this.days = this.movementOfCashForm.value.days;
-                for (let mov of this.movementsOfCashesToFinance) {
-                    mov.expirationDate = moment(moment(this.movementOfCash.expirationDate, 'YYYY-MM-DD').format('YYYY-MM-DD')).add(expirationDate, 'days').format('YYYY-MM-DD').toString();
-                    expirationDate = (this.days * i) + 1;
-                    i++;
-                }
+                this.setValuesForm();
                 break;
             case 'amountPaid':
                 let totalAmount = 0;
@@ -565,7 +566,7 @@ export class AddMovementOfCashComponent implements OnInit {
                                                             transaction => {
                                                                 if (transaction) {
                                                                     this.transaction = transaction;
-                                                                    if(this.keyboard) this.keyboard.setInput('');
+                                                                    if (this.keyboard) this.keyboard.setInput('');
                                                                     this.getMovementOfCashesByTransaction();
                                                                 }
                                                             }
@@ -863,7 +864,7 @@ export class AddMovementOfCashComponent implements OnInit {
     }
 
     public changeAmountToPay(): void {
-        if(this.keyboard) this.keyboard.setInput(this.movementOfCashForm.value.amountToPay.toString());
+        if (this.keyboard) this.keyboard.setInput(this.movementOfCashForm.value.amountToPay.toString());
         this.updateAmounts('amountToPay');
     }
 
@@ -883,7 +884,7 @@ export class AddMovementOfCashComponent implements OnInit {
 
         if (op !== 'amountToPay' && this.transaction.totalPrice !== 0) {
             this.amountToPay = this.transactionAmount - this.amountPaid - this.amountDiscount;
-            if(this.keyboard) this.keyboard.setInput('');
+            if (this.keyboard) this.keyboard.setInput('');
         }
 
         this.movementOfCash.discount = this.paymentMethodSelected.discount;
@@ -956,7 +957,7 @@ export class AddMovementOfCashComponent implements OnInit {
             }
 
             if (this.transaction.totalPrice !== 0 &&
-                this.roundNumber.transform(this.amountPaid + this.amountToPay) > this.roundNumber.transform(this.transactionAmount) &&
+                this.roundNumber.transform(this.amountPaid + this.amountToPay) > this.roundNumber.transform(this.transactionAmount + this.interestAmount) &&
                 !this.paymentMethodSelected.acceptReturned) {
                 resolve(false);
                 this.showToast(null, 'info', "El medio de pago " + this.paymentMethodSelected.name + " no acepta vuelto, por lo tanto el monto a pagar no puede ser mayor que el de la transacción.");
@@ -1016,7 +1017,7 @@ export class AddMovementOfCashComponent implements OnInit {
                         }
                     }
                 }
-                if (amountTotal !== this.movementOfCashForm.value.amountToPay) {
+                if (amountTotal !== (this.movementOfCashForm.value.amountToPay + this.interestAmount)) {
                     resolve(false);
                     this.showToast(null, 'info', "El monto total de las cuotas no puede ser distinto del monto a pagar.");
                 }
@@ -1222,7 +1223,7 @@ export class AddMovementOfCashComponent implements OnInit {
                                             transaction => {
                                                 if (transaction) {
                                                     this.transaction = transaction;
-                                                    if(this.keyboard) this.keyboard.setInput('');
+                                                    if (this.keyboard) this.keyboard.setInput('');
                                                     this.showToast(null, 'success', 'Operación realizada con éxito');
                                                     this.getMovementOfCashesByTransaction();
                                                 }
@@ -1248,6 +1249,16 @@ export class AddMovementOfCashComponent implements OnInit {
                         }
                     );
                 } else {
+                    if (this.interestAmount > 0 && this.transaction.totalPrice !== 0) {
+                        this.transaction.totalPrice += this.interestAmount;
+                        await this.updateTransaction().then(
+                            transaction => {
+                                if (transaction) {
+                                    this.transaction = transaction;
+                                }
+                            }
+                        );
+                    }
                     await this.saveMovementsOfCashes().then(
                         movementsOfCashes => {
                             if (movementsOfCashes && movementsOfCashes.length > 0) {

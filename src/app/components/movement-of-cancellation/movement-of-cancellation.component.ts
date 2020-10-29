@@ -112,10 +112,8 @@ export class MovementOfCancellationComponent implements OnInit {
 
     async ngOnInit() {
         if (this.transactionDestinationViewId || this.transactionOriginViewId) {
-            console.log("entro1")
             this.getCancellationsOfMovements();
         } else {
-            console.log("entro2")
             this.transactionDestination = await this.getTransaction(this.transactionDestinationId);
             if (this.transactionDestination) {
                 this.getCancellationTypes();
@@ -342,7 +340,6 @@ export class MovementOfCancellationComponent implements OnInit {
                             if (!this.movementsOfCancellations || this.movementsOfCancellations.length === 0) {
                                 await this.getMovementsOfCancellations().then(
                                     movementsOfCancellations => {
-                                        console.log(movementsOfCancellations);
                                         this.movementsOfCancellations = movementsOfCancellations;
                                         if (this.movementsOfCancellations && this.movementsOfCancellations.length > 0) {
                                             for (let mov of this.movementsOfCancellations) {
