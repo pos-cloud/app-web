@@ -2392,12 +2392,10 @@ export class PrintComponent implements OnInit {
 
       rowTotals += space;
 
-
       if (this.transaction.company &&
         this.transaction.company.vatCondition &&
         this.transaction.company.vatCondition.discriminate &&
         this.transaction.type.requestTaxes) {
-
         if (this.transaction.taxes && this.transaction.taxes.length > 0) {
           this.doc.setFontType('bold');
           this.doc.text("Neto Gravado:", 140, rowTotals);
@@ -2482,7 +2480,7 @@ export class PrintComponent implements OnInit {
     // FIN FORMA DE PAGO
     if (totalArticle > 0) {
       this.doc.setFontType('bold');
-      this.doc.text("Total de Productos: " + (this.roundNumber.transform(totalArticle)), margin + 70, 250);
+      this.doc.text("Total de Productos: " + (this.roundNumber.transform(totalArticle)), margin + 70, 247);
       this.doc.setFontType('normal');
     }
 
