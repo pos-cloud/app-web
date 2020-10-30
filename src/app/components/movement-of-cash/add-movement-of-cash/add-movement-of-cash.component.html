@@ -39,7 +39,7 @@
                 <div class="form-group col-md-9">
                     <div class="row">
                         <div
-                            [ngClass]="{'col-md-6':transaction.type.showKeyboard, 'col-md-12':!transaction.type.showKeyboard}">
+                            [ngClass]="{'col-md-6':transaction?.type?.showKeyboard, 'col-md-12':!transaction?.type?.showKeyboard}">
                             <div class="row">
                                 <div class="form-group col-md-12">
                                     <label
@@ -206,7 +206,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-4">
                             <label for="quotas" class="control-label">Cant. Cuotas:</label>
                             <div class="input-group">
                                 <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1"><i
@@ -215,13 +215,22 @@
                                     step="1" (change)="calculateQuotas('quotas')" />
                             </div>
                         </div>
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-4">
                             <label for="days" class="control-label">Cant. Días:</label>
                             <div class="input-group">
                                 <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1"><i
                                             class="fa fa-calendar"></i></span></div>
                                 <input type="number" class="form-control" formControlName="days" name="days" min="0"
-                                    step="1" (change)="calculateQuotas('days')" />
+                                    step="1" (change)="calculateQuotas('quotas')" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="interestPercentage" class="control-label">Interés:</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
+                                <input type="number" class="form-control" formControlName="interestPercentage"
+                                    name="interestPercentage" min="0" step="1"
+                                    (change)="calculateQuotas('quotas')" />
                             </div>
                         </div>
                     </div>
@@ -367,7 +376,8 @@
                             <td *ngIf="!movement && !movement.type" class="flat" width="430"></td>
                             <td class="flat" width="430">{{ movement.quota }}</td>
                             <td align="right" class="flat" width="430">
-                                {{ (movement.amountPaid - movement.commissionAmount - movement.administrativeExpenseAmount - movement.otherExpenseAmount ) | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
+                                {{ (movement.amountPaid - movement.commissionAmount - movement.administrativeExpenseAmount - movement.otherExpenseAmount ) | currency:'USD':'symbol-narrow':'1.2-2' }}
+                            </td>
                             <td class="flat" width="430">{{ movement.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
                             <td class="flat" width="430">{{ movement.number }}</td>
                         </tr>
