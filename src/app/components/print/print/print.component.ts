@@ -2370,7 +2370,7 @@ export class PrintComponent implements OnInit {
 
       let space;
       if (Config.country === 'MX') {
-        space = 6;
+        space = 4;
       } else {
         space = 6;
       }
@@ -2391,7 +2391,7 @@ export class PrintComponent implements OnInit {
       let neto = 0;
 
       rowTotals += space;
-
+      var rowNet;
       if (this.transaction.company &&
         this.transaction.company.vatCondition &&
         this.transaction.company.vatCondition.discriminate &&
@@ -2399,9 +2399,10 @@ export class PrintComponent implements OnInit {
         if (this.transaction.taxes && this.transaction.taxes.length > 0) {
           this.doc.setFontType('bold');
           this.doc.text("Neto Gravado:", 140, rowTotals);
+          rowNet = rowTotals;
+          rowTotals += space;
           this.doc.setFontType('normal');
           for (let tax of this.transaction.taxes) {
-            rowTotals += space;
             this.doc.setFontType('bold');
             this.doc.text(tax.tax.name + ":", 140, rowTotals);
             this.doc.setFontType('normal');
@@ -2430,12 +2431,12 @@ export class PrintComponent implements OnInit {
 
       this.doc.text("$ " + this.roundNumber.transform((subtotal), 2).toString(), 173, 247);
       if (neto > 0) {
-        this.doc.text("$ " + this.roundNumber.transform((neto), 2).toString(), 173, 259);
+        this.doc.text("$ " + this.roundNumber.transform((neto), 2).toString(), 173, rowNet);
       }
       rowTotals += space;
-      this.doc.setFontSize(this.fontSizes.extraLarge);
+      //this.doc.setFontSize(this.fontSizes.extraLarge);
       this.doc.setFontType('bold');
-      this.doc.setFontSize(this.fontSizes.large);
+      //this.doc.setFontSize(this.fontSizes.large);
       this.doc.text("Total:", 140, rowTotals);
       this.doc.setFontType('normal');
       this.doc.text("$ " + parseFloat(this.roundNumber.transform(this.transaction.totalPrice, 2)), 173, rowTotals);
