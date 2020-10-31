@@ -69,11 +69,17 @@
                     </div>
                   </div>
                 </div>
-                <div class="row" *ngIf="config.country === 'AR'">
-                  <div class="form-group col-md-12">
+                <div class="row">
+                  <div class="form-group col-md-6" *ngIf="config.country === 'AR'">
                     <label for="grossIncome" class="control-label">Ingresos Brutos:</label>
                     <div class="input-group">
                       <input type="text" class="form-control" formControlName="grossIncome" name="grossIncome" id="grossIncome" [readonly]="readonly"/>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="discount" class="control-label">Descuento:</label>
+                    <div class="input-group">
+                      <input type="number" class="form-control" formControlName="discount" name="discount" id="discount" [readonly]="readonly"/>
                     </div>
                   </div>
                 </div>
