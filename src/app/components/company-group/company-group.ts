@@ -1,16 +1,37 @@
-import { User } from '../user/user';
+import { Model } from '../model/model.model';
+import { IAttribute } from 'app/util/attribute.interface';
 
-import * as moment from 'moment';
+export class CompanyGroup extends Model {
 
-export class CompanyGroup {
-	
-	public _id: string;
-	public description: string = '';
-	public creationUser: User;
-	public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-	public updateUser: User;
-	public updateDate: string;
-  
+    public description: string;
+    public order: number;
 
-	constructor () {}
+    constructor() { super(); }
+
+    static getAttributes(): IAttribute[] {
+        return Model.getAttributes([
+            {
+                name: 'description',
+                visible: true,
+                disabled: false,
+                filter: true,
+                defaultFilter: null,
+                datatype: 'string',
+                project: null,
+                align: 'left',
+                required: false,
+            },
+            {
+                name: 'discount',
+                visible: true,
+                disabled: false,
+                filter: true,
+                defaultFilter: null,
+                datatype: 'number',
+                project: null,
+                align: 'center',
+                required: false,
+            }
+        ])
+    }
 }
