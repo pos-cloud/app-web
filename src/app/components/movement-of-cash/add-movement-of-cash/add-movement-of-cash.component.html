@@ -125,27 +125,41 @@
             <div class="row" *ngIf="paymentMethodSelected && (
                                 ( paymentMethodSelected.commission &&
                                   paymentMethodSelected.commission > 0))">
-                <div class="form-group col-md-5">
-                    <label for="percentageCommission" class="control-label">Comisión:</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
-                        <input type="number" class="form-control" formControlName="percentageCommission"
-                            name="percentageCommission" min="0" step="1" (blur)="changePercentageCommission()" />
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label for="vatOfExpenses" class="control-label">IVA:</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
+                                <input type="number" class="form-control" formControlName="vatOfExpenses"
+                                    name="vatOfExpenses" min="0" step="1" (blur)="changeVatOfExpenses()" />
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group col-md-5">
-                    <label for="commissionAmount" class="control-label">Monto Comisión:</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-                        <input type="number" class="form-control" min="0" step="1" formControlName="commissionAmount"
-                            name="commissionAmount" readonly />
-                    </div>
-                </div>
-                <div class="form-group col-md-2">
-                    <label for="daysCommission" class="control-label">Días calculados:</label>
-                    <div class="input-group">
-                        <input type="number" class="form-control" formControlName="daysCommission" name="daysCommission"
-                            readonly />
+                    <div class="row">
+                        <div class="form-group col-md-5">
+                            <label for="percentageCommission" class="control-label">Comisión:</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
+                                <input type="number" class="form-control" formControlName="percentageCommission"
+                                    name="percentageCommission" min="0" step="1" (blur)="changePercentageCommission()" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-5">
+                            <label for="commissionAmount" class="control-label">Monto Comisión:</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
+                                <input type="number" class="form-control" min="0" step="1" formControlName="commissionAmount"
+                                    name="commissionAmount" readonly />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="daysCommission" class="control-label">Días calculados:</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" formControlName="daysCommission" name="daysCommission"
+                                    readonly />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -227,10 +241,10 @@
                         <div class="form-group col-md-4">
                             <label for="interestPercentage" class="control-label">Interés:</label>
                             <div class="input-group">
-                                <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
+                                <div class="input-group-prepend"><span class="input-group-text"
+                                        id="basic-addon1">%</span></div>
                                 <input type="number" class="form-control" formControlName="interestPercentage"
-                                    name="interestPercentage" min="0" step="1"
-                                    (change)="calculateQuotas('quotas')" />
+                                    name="interestPercentage" min="0" step="1" (change)="calculateQuotas('quotas')" />
                             </div>
                         </div>
                     </div>
