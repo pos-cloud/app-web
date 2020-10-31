@@ -217,6 +217,10 @@ export class TransactionTypeComponent implements OnInit {
             switchMap(async term => {
                 let match: {} = (term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {};
                 match["operationType"] = { "$ne": "D" };
+                console.log(this.objForm.value.requestCompany);
+                if(this.objForm.value.requestCompany !== null){
+                    match["type"] = this.objForm.value.requestCompany
+                }
                 return await this.getCompanies(match).then(
                     result => {
                         return result;
@@ -1327,7 +1331,7 @@ export class TransactionTypeComponent implements OnInit {
     public getCompanies(match: {}): Promise<Company[]> {
         return new Promise<Company[]>((resolve, reject) => {
             this.subscription.add(this._company.getAll({
-                project: { name: 1, operationType: 1 },
+                project: { name: 1, operationType: 1, type: 1 },
                 match,
                 sort: { name: 1 },
                 limit: 10,
