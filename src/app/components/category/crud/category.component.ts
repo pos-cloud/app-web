@@ -475,7 +475,6 @@ export class CategoryComponent implements OnInit {
                     case 'boolean':
                         this.obj[field.name] = this.obj[field.name] == 'true' || this.obj[field.name] == true;
                     case 'text':
-                        console.log(this.obj);
                         if(field.tag === 'autocomplete' && (this.obj[field.name] == "" || (this.obj[field.name] && !this.obj[field.name]['_id']))){
                             this.obj[field.name] = null;
                         }
@@ -544,7 +543,6 @@ export class CategoryComponent implements OnInit {
     }
 
     public updateObj() {
-        console.log(this.obj);
         this.loading = true;
         this.subscription.add(
             this._objService.update(this.obj).subscribe(

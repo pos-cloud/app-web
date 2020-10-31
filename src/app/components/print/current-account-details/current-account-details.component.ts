@@ -1326,7 +1326,6 @@ export class CurrentAccountDetailsComponent implements OnInit {
         let data: any = [];
         let items = await this.getMovementOfCash()
         let y = 0;
-        console.log(items);
         for (let i = 0; i < items.length; i++) {
             if (this.roundNumber.transform(items[i]["balance"]).toFixed(2) !== "0.00") {
                 data[y] = {};

@@ -1348,7 +1348,6 @@ export class TransactionTypeComponent implements OnInit {
                 sort: { name: 1 },
             }).subscribe(
                 result => {
-                    console.log(result);
                     this.loading = false;
                     (result.status === 200) ? resolve(result.result) : reject(result);
                 },
