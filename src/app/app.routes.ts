@@ -34,7 +34,6 @@ import { ReportSalesByPaymentMethodComponent } from './components/report-sales-b
 import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
 import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
 import { ReportSalesByCategoryComponent } from './components/report-sales-by-category/report-sales-by-category.component';
-import { ListCompaniesGroupComponent } from "./components/company-group/list-companies-group/list-companies-group.component";
 import { UpdateArticlePriceComponent } from "./components/article/update-article-price/update-article-price.component"
 import { ListVATConditionsComponent } from './components/vat-condition/list-vat-conditions/list-vat-conditions.component';
 import { ReportBirthdayComponent } from './components/report-birthday/report-birthday.component';
@@ -42,7 +41,6 @@ import { ReportSalesByEmployeeComponent } from './components/report-sales-by-emp
 import { ListIdentificationTypesComponent } from './components/identification-type/list-identification-types/list-identification-types.component';
 import { ListMakesComponent } from './components/make/list-makes/list-makes.component';
 import { ListPaymentMethodsComponent } from './components/payment-method/list-payment-methods/list-payment-methods.component';
-import { ListTransactionTypesComponent } from './components/transaction-type/list-transaction-types/list-transaction-types.component';
 import { ListUsesOfCFDIComponent } from './components/use-of-CFDI.component.ts/list-uses-of-CFDI/list-uses-of-CFDI.component';
 import { ListRelationTypesComponent } from './components/relation-type/list-relation-types/list-relation-types.component';
 import { ListCompanyFieldsComponent } from './components/company/list-company-fields/list-company-fields.component';
@@ -315,11 +313,6 @@ export const _routes: Routes = [
     component: ListCompaniesComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.sale' }
-  },
-  {
-    path: 'admin/grupo-empresas',
-    component: ListCompaniesGroupComponent,
-    canActivate: [AuthGuard, LicenseGuard]
   },
   {
     path: 'admin/proveedores',

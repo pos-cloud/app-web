@@ -1,13 +1,15 @@
-import { Component, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { DatatableComponent } from 'app/components/datatable/datatable.component';
+import { IButton } from 'app/util/buttons.interface';
 
 import { CompanyGroup } from "../company-group";
 
 import { CompanyGroupService } from "../company-group.service";
 
-import { CompanyGroupComponent } from "../company-group/company-group.component";
+import { CompanyGroupComponent } from "../crud/company-group.component";
 
 @Component({
     selector: 'app-list-companies-group',
@@ -16,135 +18,72 @@ import { CompanyGroupComponent } from "../company-group/company-group.component"
     providers: [NgbAlertConfig],
     encapsulation: ViewEncapsulation.None
 })
-export class ListCompaniesGroupComponent implements OnInit {
+export class ListCompaniesGroupComponent {
 
-    public companiesGroups: CompanyGroup[] = new Array();
-    public areCompanyGroupEmpty: boolean = true;
-    public alertMessage: string = '';
-    public userType: string;
-    public orderTerm: string[] = ['description'];
-    public propertyTerm: string;
-    public areFiltersVisible: boolean = false;
-    public loading: boolean = false;
-    @Output() eventAddItem: EventEmitter<CompanyGroup> = new EventEmitter<CompanyGroup>();
-    public itemsPerPage = 10;
-    public totalItems = 0;
-
+    public title: string = 'company-groups';
+    public sort = { "name": 1 };
+    public columns = CompanyGroup.getAttributes();
+    public rowButtons: IButton[] = [{
+      title: 'view',
+      class: 'btn btn-success btn-sm',
+      icon: 'fa fa-eye',
+      click: `this.emitEvent('view', item)`
+    }, {
+      title: 'update',
+      class: 'btn btn-primary btn-sm',
+      icon: 'fa fa-pencil',
+      click: `this.emitEvent('update', item)`
+    }, {
+      title: 'delete',
+      class: 'btn btn-danger btn-sm',
+      icon: 'fa fa-trash-o',
+      click: `this.emitEvent('delete', item)`
+    }];
+    public headerButtons: IButton[] = [{
+      title: 'add',
+      class: 'btn btn-light',
+      icon: 'fa fa-plus',
+      click: `this.emitEvent('add', null)`
+    }, {
+      title: 'refresh',
+      class: 'btn btn-light',
+      icon: 'fa fa-refresh',
+      click: `this.refresh()`
+    }];
+  
+    // EXCEL
+    @ViewChild(DatatableComponent, { static: false }) datatableComponent: DatatableComponent;
+  
     constructor(
-        public _companyGroupService: CompanyGroupService,
-        public _router: Router,
-        public _modalService: NgbModal,
-        public alertConfig: NgbAlertConfig
+      public _service: CompanyGroupService,
+      private _modalService: NgbModal,
+      private _router: Router,
     ) { }
-
-    ngOnInit(): void {
-
-        let pathLocation: string[] = this._router.url.split('/');
-        this.userType = pathLocation[1];
-        this.getCompaniesGroups();
-    }
-
-    public getCompaniesGroups(): void {
-
-        this.loading = true;
-
-        this._companyGroupService.getCompaniesGroups().subscribe(
-            result => {
-                if (!result.companiesGroups) {
-                    if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                    this.loading = false;
-                    this.companiesGroups = new Array();
-                    this.areCompanyGroupEmpty = true;
-                } else {
-                    this.hideMessage();
-                    this.loading = false;
-                    this.companiesGroups = result.companiesGroups;
-                    this.totalItems = this.companiesGroups.length;
-                    this.areCompanyGroupEmpty = false;
-                }
-            },
-            error => {
-                this.showMessage(error._body, 'danger', false);
-                this.loading = false;
-            }
-        );
-    }
-
-    public orderBy(term: string, property?: string): void {
-
-        if (this.orderTerm[0] === term) {
-            this.orderTerm[0] = "-" + term;
-        } else {
-            this.orderTerm[0] = term;
-        }
-        this.propertyTerm = property;
-    }
-
-    public refresh(): void {
-        this.getCompaniesGroups();
-    }
-
-    public openModal(op: string, companyGroup: CompanyGroup): void {
-
-        let modalRef;
-        switch (op) {
-            case 'view':
-                modalRef = this._modalService.open(CompanyGroupComponent, { size: 'lg', backdrop: 'static' });
-                modalRef.componentInstance.companyGroupId = companyGroup._id;
-                modalRef.componentInstance.operation = "view";
-                modalRef.componentInstance.readonly = true;
-                break;
-            case 'add':
-                modalRef = this._modalService.open(CompanyGroupComponent, { size: 'lg', backdrop: 'static' })
-                modalRef.componentInstance.operation = "add";
-                modalRef.componentInstance.readonly = false;
-                modalRef.result.then((result) => {
-                    this.getCompaniesGroups();
-                }, (reason) => {
-                    this.getCompaniesGroups();
-                });
-                break;
-            case 'update':
-                modalRef = this._modalService.open(CompanyGroupComponent, { size: 'lg', backdrop: 'static' });
-                modalRef.componentInstance.companyGroupId = companyGroup._id;
-                modalRef.componentInstance.operation = "edit";
-                modalRef.componentInstance.readonly = false;
-                modalRef.result.then((result) => {
-                    if (result === 'save_close') {
-                        this.getCompaniesGroups();
-                    }
-                }, (reason) => {
-
-                });
-                break;
-            case 'delete':
-                modalRef = this._modalService.open(CompanyGroupComponent, { size: 'lg', backdrop: 'static' })
-                modalRef.componentInstance.companyGroupId = companyGroup._id;
-                modalRef.componentInstance.operation = "delete";
-                modalRef.componentInstance.readonly = true;
-                modalRef.result.then((result) => {
-                    if (result === 'delete_close') {
-                        this.getCompaniesGroups();
-                    }
-                }, (reason) => {
-
-                });
-                break;
-            default: ;
-        }
+  
+    public async emitEvent(event) {
+      this.openModal(event.op, event.obj);
     };
-
-    public addItem(companyGroupSelected) {
-        this.eventAddItem.emit(companyGroupSelected);
+  
+    public async openModal(op: string, obj: any) {
+      switch (op) {
+        case 'view':
+          this._router.navigateByUrl('company-groups/view/' + obj._id);
+          break;
+        case 'add':
+          this._router.navigateByUrl('company-groups/add');
+          break;
+        case 'update':
+          this._router.navigateByUrl('company-groups/update/' + obj._id);
+          break;
+        case 'delete':
+          this._router.navigateByUrl('company-groups/delete/' + obj._id);
+          break;
+        default: ;
+      }
+    };
+  
+    public refresh() {
+      this.datatableComponent.refresh();
     }
-
-    public showMessage(message: string, type: string, dismissible: boolean): void {
-        this.alertMessage = message;
-        this.alertConfig.type = type;
-        this.alertConfig.dismissible = dismissible;
-    }
-
-    public hideMessage(): void {
-        this.alertMessage = '';
-    }
-}
+  }
+  

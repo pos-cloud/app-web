@@ -220,9 +220,9 @@
           <div *ngIf="(config.modules.sale.resto ||
                       config.modules.sale.counter ||
                       config.modules.sale.delivery) || identity.name === 'soporte'">
-            <button class="dropdown-item" [routerLink]="['admin','grupo-empresas']" [routerLinkActive]="['active']">
-              Grupo de Empresas
-            </button>
+                      <button class="dropdown-item" [routerLink]="['company-groups']" [routerLinkActive]="['active']">
+                        {{ 'company-groups' | translate | capitalize }}
+                      </button>
           </div>
           <button class="dropdown-item" [routerLink]="['admin','campos-de-empresas']" [routerLinkActive]="['active']">
             Campos de empresas

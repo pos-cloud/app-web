@@ -41,6 +41,7 @@ export class Company {
   public transport: Transport;
   public priceList: PriceList;
   public addressNumber: string;
+  public discount : number;
   public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public updateUser: User;
