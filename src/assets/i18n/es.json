@@ -418,5 +418,6 @@
     "_parent.name" : "Padre",
     "surchargeArticle": "Artículo de recargo",
     "discountArticle": "Artículo de descuento",
-    "company.type" : "Tipo"
+    "company.type" : "Tipo",
+    "company-groups" : "Grupo de Empresa"
 }

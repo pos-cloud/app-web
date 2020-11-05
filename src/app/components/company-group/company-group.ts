@@ -4,7 +4,7 @@ import { IAttribute } from 'app/util/attribute.interface';
 export class CompanyGroup extends Model {
 
     public description: string;
-    public order: number;
+    public discount: number;
 
     constructor() { super(); }
 
