@@ -217,7 +217,6 @@ export class TransactionTypeComponent implements OnInit {
             switchMap(async term => {
                 let match: {} = (term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {};
                 match["operationType"] = { "$ne": "D" };
-                console.log(this.objForm.value.requestCompany);
                 if(this.objForm.value.requestCompany !== null){
                     match["type"] = this.objForm.value.requestCompany
                 }
