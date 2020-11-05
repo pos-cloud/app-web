@@ -623,7 +623,8 @@ export class AddSaleOrderComponent {
           this.lastMovementOfArticle = this.movementsOfArticles[this.movementsOfArticles.length - 1];
           this.containerMovementsOfArticles.nativeElement.scrollTop = this.containerMovementsOfArticles.nativeElement.scrollHeight;
           this.updateQuantity();
-          this.updatePrices();
+          //this.updatePrices();
+          this.calculateDiscount();
         }
         this.loading = false;
       },
@@ -1336,8 +1337,29 @@ export class AddSaleOrderComponent {
       this.loading = false;
       //guardamos la lista con la que se calculo el precio
       this.transaction.priceList = this.priceList
+
       resolve(movementOfArticle);
     });
+  }
+
+  async calculateDiscount(){
+
+    console.log(this.transaction);
+
+    let discount = 0;
+    
+    if(this.transaction.company && this.transaction.company.discount > 0){
+        discount += this.transaction.company.discount
+
+        if(this.transaction.company && this.transaction.company.group && this.transaction.company.group.discount > 0){
+            discount += this.transaction.company.group.discount
+        }
+    } else if (this.transaction.company && this.transaction.company.group && this.transaction.company.group.discount){
+        discount += this.transaction.company.group.discount
+    }
+
+    this.updatePrices(discount);
+
   }
 
   public getMovementOfArticleByArticle(articleId: string): MovementOfArticle {
@@ -1961,6 +1983,8 @@ export class AddSaleOrderComponent {
             } else {
               this.transaction.transport = null;
             }
+
+            await this.calculateDiscount();
 
             this.updatePrices();
           }
