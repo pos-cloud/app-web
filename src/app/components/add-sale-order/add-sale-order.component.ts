@@ -1344,8 +1344,6 @@ export class AddSaleOrderComponent {
 
   async calculateDiscount(){
 
-    console.log(this.transaction);
-
     let discount = 0;
     
     if(this.transaction.company && this.transaction.company.discount > 0){
