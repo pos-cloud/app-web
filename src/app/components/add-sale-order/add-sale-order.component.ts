@@ -253,8 +253,8 @@ export class AddSaleOrderComponent {
           if (transaction) {
             this.transaction = transaction;
 
-            if(!this.transaction.company && this.transaction.type.company){
-                this.transaction.company = this.transaction.type.company;
+            if (!this.transaction.company && this.transaction.type.company) {
+              this.transaction.company = this.transaction.type.company;
             }
 
             if (this.transaction &&
@@ -623,8 +623,7 @@ export class AddSaleOrderComponent {
           this.lastMovementOfArticle = this.movementsOfArticles[this.movementsOfArticles.length - 1];
           this.containerMovementsOfArticles.nativeElement.scrollTop = this.containerMovementsOfArticles.nativeElement.scrollHeight;
           this.updateQuantity();
-          //this.updatePrices();
-          this.calculateDiscount();
+          this.updatePrices();
         }
         this.loading = false;
       },
@@ -1342,24 +1341,6 @@ export class AddSaleOrderComponent {
     });
   }
 
-  async calculateDiscount(){
-
-    let discount = 0;
-    
-    if(this.transaction.company && this.transaction.company.discount > 0){
-        discount += this.transaction.company.discount
-
-        if(this.transaction.company && this.transaction.company.group && this.transaction.company.group.discount > 0){
-            discount += this.transaction.company.group.discount
-        }
-    } else if (this.transaction.company && this.transaction.company.group && this.transaction.company.group.discount){
-        discount += this.transaction.company.group.discount
-    }
-
-    this.updatePrices(discount);
-
-  }
-
   public getMovementOfArticleByArticle(articleId: string): MovementOfArticle {
 
     let movementOfArticle: MovementOfArticle;
@@ -1419,15 +1400,14 @@ export class AddSaleOrderComponent {
 
     this.loading = true;
 
-    let totalPriceAux = 0;
-    let discountAmountAux = 0;
+    let totalPriceAux: number = 0;
+    let discountAmountAux: number = 0;
+    this.transaction.discountPercent = 0;
 
-    if (discountPercent !== undefined) {
-      this.transaction.discountPercent = this.roundNumber.transform(discountPercent, 6);
-    } else if (!this.transaction.discountPercent) {
-      this.transaction.discountPercent = 0;
-      discountAmountAux = 0;
-    }
+    if (discountPercent !== undefined) this.transaction.discountPercent = this.roundNumber.transform(discountPercent, 6);
+
+    if (this.transaction.company && this.transaction.company.discount > 0) this.transaction.discountPercent += this.transaction.company.discount;
+    if (this.transaction.company && this.transaction.company.group && this.transaction.company.group.discount > 0) this.transaction.discountPercent += this.transaction.company.group.discount;
 
     let isUpdateValid: boolean = true;
 
@@ -1981,8 +1961,6 @@ export class AddSaleOrderComponent {
             } else {
               this.transaction.transport = null;
             }
-
-            await this.calculateDiscount();
 
             this.updatePrices();
           }
@@ -3404,8 +3382,8 @@ export class AddSaleOrderComponent {
     this.listArticlesComponent.areArticlesVisible = false;
     this.listArticlesComponent.filterArticle = this.filterArticle;
     if (!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
-        this.listCategoriesComponent.ngOnInit();
-        this.focusEvent.emit(true);
+      this.listCategoriesComponent.ngOnInit();
+      this.focusEvent.emit(true);
     }
   }
 
