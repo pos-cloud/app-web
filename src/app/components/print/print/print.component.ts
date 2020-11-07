@@ -566,10 +566,18 @@ export class PrintComponent implements OnInit {
     // Encabezado de la tabla de Detalle de Productos
     this.doc.setFontType('bold');
     this.doc.setFontSize(this.fontSizes.normal);
-    this.doc.text("Detalle", 10, 77);
-    this.doc.text("Vencimiento", 80, 77);
-    this.doc.text("Número", 110, 77);
-    this.doc.text("Banco", 150, 77);
+    if(!this.movementsOfCashes[0].type.allowToFinance) {
+      this.doc.text("Detalle", 10, 77);
+      this.doc.text("Vencimiento", 80, 77);
+      this.doc.text("Número", 110, 77);
+      this.doc.text("Banco", 150, 77);
+    } else {
+      this.doc.text("Couta", 10, 77);
+      this.doc.text("Vencimiento", 30, 77);
+      this.doc.text("Capital", 80, 77);
+      this.doc.text("Tasa", 110, 77);
+      this.doc.text("IVA", 150, 77);
+    }
     if (this.transaction.type && this.transaction.type.showPrices) {
       this.doc.text("Total", 185, 77);
       this.doc.setFontType('normal');
@@ -582,31 +590,58 @@ export class PrintComponent implements OnInit {
 
       for (var i = 0; i < this.movementsOfCashes.length; i++) {
 
-        if (this.movementsOfCashes[i].type.name) {
-          this.doc.text(this.movementsOfCashes[i].type.name, 10, row);
-        }
-
-        if (this.movementsOfCashes[i].expirationDate) {
-          this.doc.text(this.dateFormat.transform(this.movementsOfCashes[i].expirationDate, 'DD/MM/YYYY'), 80, row);
+        if(!this.movementsOfCashes[0].type.allowToFinance) {
+          if (this.movementsOfCashes[i].type.name) {
+            this.doc.text(this.movementsOfCashes[i].type.name, 10, row);
+          }
+  
+          if (this.movementsOfCashes[i].expirationDate) {
+            this.doc.text(this.dateFormat.transform(this.movementsOfCashes[i].expirationDate, 'DD/MM/YYYY'), 80, row);
+          } else {
+            this.doc.text("-", 80, row)
+          }
+  
+          if (this.movementsOfCashes[i].number) {
+            this.doc.text(this.movementsOfCashes[i].number, 110, row);
+          } else {
+            this.doc.text("-", 110, row);
+          }
+  
+          if (this.movementsOfCashes[i].bank) {
+            this.doc.text(this.movementsOfCashes[i].bank.name, 150, row);
+          } else {
+            this.doc.text("-", 150, row);
+          }
         } else {
-          this.doc.text("-", 80, row)
-        }
+          this.doc.text(this.movementsOfCashes[i].quota.toString(), 10, row);
 
-        if (this.movementsOfCashes[i].number) {
-          this.doc.text(this.movementsOfCashes[i].number, 110, row);
-        } else {
-          this.doc.text("-", 110, row);
-        }
+          if (this.movementsOfCashes[i].expirationDate) {
+            this.doc.text(this.dateFormat.transform(this.movementsOfCashes[i].expirationDate, 'DD/MM/YYYY'), 30, row);
+          } else {
+            this.doc.text("-", 30, row)
+          }
 
-        if (this.movementsOfCashes[i].bank) {
-          this.doc.text(this.movementsOfCashes[i].bank.name, 150, row);
-        } else {
-          this.doc.text("-", 150, row);
+          if (this.movementsOfCashes[i].capital) {
+            this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfCashes[i].capital), 80, row, 'right', 'right');
+          } else {
+            this.doc.text("$ -", 80, row, 'right', 'right')
+          }
+
+          if (this.movementsOfCashes[i].interestAmount) {
+            this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfCashes[i].interestAmount), 110, row, 'right', 'right');
+          } else {
+            this.doc.text("$ -", 110, row, 'right', 'right')
+          }
+
+          if (this.movementsOfCashes[i].taxAmount) {
+            this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfCashes[0].taxAmount), 150, row, 'right', 'right');
+          } else {
+            this.doc.text("$ -", 150, row, 'right', 'right')
+          }
         }
 
         if (this.movementsOfCashes[i].amountPaid) {
-          this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfCashes[i].amountPaid), 200, row, 'right', 'middle');
-          //this.doc.text("$ " + this.roundNumber.transform(this.movementsOfCashes[i].amountPaid), 185, row);
+          this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfCashes[i].amountPaid), 200, row, 'right', 'right');
         }
 
         if (this.movementsOfCashes[i].observation) {

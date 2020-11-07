@@ -217,7 +217,6 @@ export class TransactionTypeComponent implements OnInit {
             switchMap(async term => {
                 let match: {} = (term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {};
                 match["operationType"] = { "$ne": "D" };
-                console.log(this.objForm.value.requestCompany);
                 if(this.objForm.value.requestCompany !== null){
                     match["type"] = this.objForm.value.requestCompany
                 }
@@ -350,7 +349,6 @@ export class TransactionTypeComponent implements OnInit {
             validators: [Validators.required],
             class: 'form-group col-md-2'
         },
-
         {
             name: 'automaticNumbering',
             tag: 'select',
@@ -402,6 +400,12 @@ export class TransactionTypeComponent implements OnInit {
             tagType: 'boolean',
             values: ['false', 'true'],
             validators: [Validators.required],
+            class: 'form-group col-md-2'
+        },
+        {
+            name: "orderNumber",
+            tag: 'input',
+            tagType: "number",
             class: 'form-group col-md-2'
         },
         {
@@ -852,6 +856,7 @@ export class TransactionTypeComponent implements OnInit {
                 requestArticles: 1,
                 modifyArticle: 1,
                 entryAmount: 1,
+                orderNumber : 1,
                 showPrices: 1,
                 showPriceType: 1,
                 updatePrice: 1,

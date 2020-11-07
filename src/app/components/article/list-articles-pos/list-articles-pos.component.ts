@@ -67,6 +67,8 @@ export class ListArticlesPosComponent implements OnInit {
   public filteredArticles: Article[];
   public config: Config;
   private subscriptionArticlePos: Subscription = new Subscription();
+  public discountCompany: number = 0;
+  public discountCompanyGroup: number = 0;
 
   constructor(
     private _articleService: ArticleService,
@@ -113,6 +115,8 @@ export class ListArticlesPosComponent implements OnInit {
         }
       );
     }
+    if (this.transaction.company && this.transaction.company.discount > 0) this.discountCompany = this.transaction.company.discount;
+    if (this.transaction.company && this.transaction.company.group && this.transaction.company.group.discount > 0) this.discountCompanyGroup = this.transaction.company.group.discount;
 
     this.subscriptionArticlePos.add(this._articleService.getArticlesPos.pipe(first()).subscribe(
       async articles => {
@@ -212,19 +216,19 @@ export class ListArticlesPosComponent implements OnInit {
 
   public getRealPrice(article: Article): void {
 
-    let increasePrice = 0;
+    let increasePrice: number = 0;
     if (this.priceList) {
       if (this.priceList.allowSpecialRules) {
         this.priceList.rules.forEach(rule => {
           if (rule) {
             if (rule.category && article.category && rule.make && article.make && rule.category._id === article.category.toString() && rule.make._id === article.make._id) {
-              increasePrice = rule.percentage + this.priceList.percentage
+              increasePrice = rule.percentage + this.priceList.percentage;
             }
             if (rule.make && article.make && rule.category == null && rule.make._id === article.make._id) {
-              increasePrice = rule.percentage + this.priceList.percentage
+              increasePrice = rule.percentage + this.priceList.percentage;
             }
             if (rule.category && article.category && rule.make == null && rule.category._id === article.category.toString()) {
-              increasePrice = rule.percentage + this.priceList.percentage
+              increasePrice = rule.percentage + this.priceList.percentage;
             }
           }
         });
@@ -232,23 +236,24 @@ export class ListArticlesPosComponent implements OnInit {
           increasePrice = this.priceList.percentage;
         }
       } else {
-        increasePrice = this.priceList.percentage
+        increasePrice = this.priceList.percentage;
       }
 
       if (this.priceList.exceptions && this.priceList.exceptions.length > 0) {
         this.priceList.exceptions.forEach(exception => {
           if (exception) {
             if (article && exception.article && exception.article._id === article._id) {
-              increasePrice = exception.percentage
+              increasePrice = exception.percentage;
             }
           }
         })
       }
-
     }
-    let realPrice = this.roundNumber.transform(article.salePrice + (article.salePrice * increasePrice / 100));
-
-    return realPrice
+    
+    increasePrice -= this.discountCompany;
+    increasePrice -= this.discountCompanyGroup;
+    
+    return this.roundNumber.transform(article.salePrice + (article.salePrice * increasePrice / 100));
 
   }
 

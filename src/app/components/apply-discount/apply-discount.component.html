@@ -9,10 +9,28 @@
     <div class="modal-body container-fluid">
       <div class="row">
         <div class="form-group col-md-12">
-          <label for="amount" class="control-label">Monto de la transacción:</label>
+          <label for="totalPrice" class="control-label">Monto de la transacción:</label>
           <div class="input-group">
             <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-            <input type="number" class="form-control" formControlName="amount" name="amount" min="0" step="1" readonly/>
+            <input type="number" class="form-control" formControlName="totalPrice" name="totalPrice" min="0" step="1" readonly/>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-6">
+          <label for="percentageToApplyCompany" class="control-label">Porcentaje de descuento por Empresa:</label>
+          <div class="input-group">
+            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
+            <input type="number" class="form-control" formControlName="percentageToApplyCompany" name="percentageToApplyCompany" step="1" (change)="updateDiscounts('percentageToApplyCompany')"
+              readonly/>
+          </div>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="percentageToApplyCompanyGroup" class="control-label">Porcentaje de descuento por Grupo de Empresa:</label>
+          <div class="input-group">
+            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
+            <input type="number" class="form-control" formControlName="percentageToApplyCompanyGroup" name="percentageToApplyCompanyGroup" step="1" (change)="updateDiscounts('percentageToApplyCompanyGroup')"
+              readonly/>
           </div>
         </div>
       </div>
