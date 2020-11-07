@@ -1819,9 +1819,11 @@ export class AddSaleOrderComponent {
       case 'apply_discount':
         if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
           modalRef = this._modalService.open(ApplyDiscountComponent, { size: 'lg', backdrop: 'static' });
-          modalRef.componentInstance.amount = this.transaction.totalPrice;
+          modalRef.componentInstance.totalPrice = this.transaction.totalPrice;
           modalRef.componentInstance.amountToApply = this.transaction.discountAmount;
           modalRef.componentInstance.percentageToApply = this.transaction.discountPercent;
+          modalRef.componentInstance.percentageToApplyCompany = (this.transaction.company && this.transaction.company.discount > 0) ? this.transaction.company.discount : 0;
+          modalRef.componentInstance.percentageToApplyCompanyGroup = (this.transaction.company && this.transaction.company.group && this.transaction.company.group.discount > 0) ? this.transaction.company.group.discount : 0;
           modalRef.result.then((result) => {
             if (result.discount) {
               this.updatePrices(
