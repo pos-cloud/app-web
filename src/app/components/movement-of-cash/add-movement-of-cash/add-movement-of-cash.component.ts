@@ -354,7 +354,7 @@ export class AddMovementOfCashComponent implements OnInit {
         }
 
         if (this.transaction.totalPrice !== 0) {
-            this.paymentChange = (this.movementOfCashForm.value.amountPaid - this.movementOfCashForm.value.transactionAmount).toFixed(2);
+            this.paymentChange = ((this.movementOfCashForm.value.amountToPay + this.movementOfCashForm.value.amountPaid) - this.movementOfCashForm.value.transactionAmount).toFixed(2);
             if (parseFloat(this.paymentChange) < 0) {
                 this.paymentChange = '0.00';
             }
@@ -423,7 +423,7 @@ export class AddMovementOfCashComponent implements OnInit {
                     mov.transaction = this.transaction;
                     mov.type = this.paymentMethodSelected;
                     mov.observation = this.movementOfCash.observation;
-                    mov.quota = i + 1;
+                    mov.quota = paymentChange+ 1;
                     mov.expirationDate = moment(moment(this.movementOfCash.expirationDate, 'YYYY-MM-DD').format('YYYY-MM-DD')).add(expirationDate, 'days').format('YYYY-MM-DD').toString();
                     expirationDate += (this.days * (i + 1)) + 1;
                     switch (this.interestType) {
