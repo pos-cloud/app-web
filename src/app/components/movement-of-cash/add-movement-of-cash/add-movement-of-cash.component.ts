@@ -432,21 +432,28 @@ export class AddMovementOfCashComponent implements OnInit {
                             mov.taxAmount = this.roundNumber.transform(mov.interestAmount * this.movementOfCash.taxPercentage / 100);
                             mov.capital = this.roundNumber.transform(this.amountToPay / this.quotas);
                             mov.amountPaid = this.roundNumber.transform(mov.capital + mov.interestAmount + mov.taxAmount);
+                            amountTotal += mov.amountPaid;
+                            if (i === (this.quotas - 1)) {
+                                if (amountTotal !== (this.amountToPay + this.totalInterestAmount + this.totalTaxAmount)) {
+                                    mov.amountPaid = this.roundNumber.transform(mov.amountPaid - (amountTotal - (this.amountToPay + this.totalInterestAmount + this.totalTaxAmount)));
+                                }
+                            }
                             break;
                         case 'Francés':
-                            mov.capital = this.roundNumber.transform(this.amountToPay / this.quotas);
                             let tasa: number = 0.0000000001;
                             if (this.interestPercentage > 0) {
                                 tasa = (this.interestPercentage / 100) / 12;
                             }
-                            let factor: number = (Math.pow((1 + tasa), -this.quotas));
-                            mov.interestAmount = this.roundNumber.transform(this.roundNumber.transform(this.amountToPay * ((tasa) / (1 - factor))) - mov.capital);
+                            let factorTotal: number = (Math.pow((1 + tasa), this.quotas));
+                            let factorQuota: number = (Math.pow((1 + tasa), ((this.quotas + 1) - mov.quota)));
+                            mov.amountPaid = this.roundNumber.transform((this.amountToPay * tasa * factorTotal) / (factorTotal - 1));
+                            mov.capital = this.roundNumber.transform(mov.amountPaid / factorQuota);
+                            mov.interestAmount = this.roundNumber.transform(mov.amountPaid - mov.capital);
                             if (this.movementOfCash.taxPercentage > 0) {
                                 mov.taxAmount = this.roundNumber.transform(mov.interestAmount * this.movementOfCash.taxPercentage / 100);
                             } else {
                                 mov.taxAmount = 0;
                             }
-                            mov.amountPaid = this.roundNumber.transform(mov.capital + mov.interestAmount + mov.taxAmount);
                             break;
                         default:
                             mov.interestAmount = this.roundNumber.transform((this.roundNumber.transform(this.amountToPay) * this.interestPercentage / 100) / this.quotas);
@@ -457,12 +464,6 @@ export class AddMovementOfCashComponent implements OnInit {
                     }
                     this.totalInterestAmount += mov.interestAmount;
                     this.totalTaxAmount += mov.taxAmount;
-                    amountTotal += mov.amountPaid;
-                    if (i === (this.quotas - 1)) {
-                        if (amountTotal !== (this.amountToPay + this.totalInterestAmount + this.totalTaxAmount)) {
-                            mov.amountPaid = this.roundNumber.transform(mov.amountPaid - (amountTotal - (this.amountToPay + this.totalInterestAmount + this.totalTaxAmount)));
-                        }
-                    }
                     this.movementsOfCashesToFinance.push(mov);
                 }
                 this.setValuesForm();
