@@ -5,17 +5,21 @@ import 'moment/locale/es';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Application, ApplicationType } from '../application.model';
+import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { ApplicationService } from '../application.service';
 import { ToastrService } from 'ngx-toastr';
 import { Title } from '@angular/platform-browser';
 import { CapitalizePipe } from 'app/main/pipes/capitalize';
-import { Subscription, Subject } from 'rxjs';
+import { Subscription, Subject, Observable } from 'rxjs';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { FormField } from 'app/util/formField.interface';
 import * as $ from 'jquery';
 import { Config } from 'app/app.config';
+import { Article } from 'app/components/article/article';
+import { Category } from 'app/components/category/category';
+import { ArticleService } from 'app/components/article/article.service';
 
 @Component({
     selector: 'app-application',
@@ -46,9 +50,37 @@ export class ApplicationComponent implements OnInit {
     public oldFiles: any[];
     public apiURL: string = Config.apiV8URL;
     public database: string = Config.database;
+    public home : {
+        title : string,
+        view : string,
+        order : number,
+        resources : {
+            article : Article,
+            category : Category,
+            banner : string,
+            order : number,
+            link : string
+        }[]
+    }[]
 
     public from;
     public to;
+
+    public searchArticle = (text$: Observable<string>) =>
+    text$.pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        tap(() => this.loading = true),
+        switchMap(async term =>
+            await this.getAllArticles({ name: { $regex: term, $options: 'i' }, operationType: { $ne: 'D' } }).then(
+                articles => {
+                    return articles;
+                }
+            )
+        ),
+        tap(() => this.loading = false)
+    )
+    public formatterArticle = (x: { name: string }) => x.name;
 
     public formFields: FormField[] = [{
         name: 'Datos de la aplicación',
@@ -210,12 +242,7 @@ export class ApplicationComponent implements OnInit {
         tagType: null,
         values: ['true', 'false'],
         class: 'form-group col-md-12'
-    }, {
-        name: 'Horarios de atención',
-        tag: 'separator',
-        tagType: null,
-        class: 'form-group col-md-12'
-    },];
+    }];
     public formErrors: {} = {};
     public validationMessages = {
         'required': 'Este campo es requerido.',
@@ -257,6 +284,7 @@ export class ApplicationComponent implements OnInit {
 
     constructor(
         private _objService: ApplicationService,
+        private _articleService : ArticleService,
         private _toastr: ToastrService,
         private _title: Title,
         public _fb: FormBuilder,
@@ -289,11 +317,29 @@ export class ApplicationComponent implements OnInit {
         this.buildForm();
         this.objId = pathUrl[3];
         if (this.objId && this.objId !== '') {
-            this.subscription.add(this._objService.getById(this.objId).subscribe(
+            let project = {
+                _id : 1,
+                "home.resources.article.description" : 1,
+                operationType : 1
+            }
+            this.subscription.add(this._objService.getAll({
+                project : project,
+                match: {
+                    operationType: { $ne: "D" },
+                    _id: { $oid: this.objId }
+                }
+            }).subscribe(
                 result => {
+                    console.log(result);
                     this.loading = false;
                     if (result.status === 200) {
                         this.obj = result.result;
+                        console.log(this.obj);
+                        if(this.obj.home && this.obj.home.length > 0){
+                            this.home = this.obj.home;
+                        } else{
+                            this.home = new Array();
+                        }
                         this.setValuesForm();
                     }
                     else this.showToast(result);
@@ -447,6 +493,103 @@ export class ApplicationComponent implements OnInit {
         control.removeAt(index)
     }
 
+    public addSection(sectionForm: NgForm): void {
+
+        console.log(sectionForm.value);
+
+        if(sectionForm.value.title && sectionForm.value.order && sectionForm.value.view){
+            this.home.push({
+                title: sectionForm.value.title,
+                order: sectionForm.value.order,
+                view: sectionForm.value.view,
+                resources: []
+            });
+            sectionForm.reset();
+        } else {
+            this.showToast("Debe completar todos los campos","danger");
+        }
+
+        console.log(this.home);
+
+
+        this.home.sort(function(a, b) {
+            var textA = a.order;
+            var textB = b.order;
+            return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+        });
+    }
+
+    public addResource(resourceForm : NgForm, data): void {
+        this.home.forEach(element => {
+            if (element.title === data['title']) {
+                element.resources.push({
+                    order : resourceForm.value.order,
+                    link : resourceForm.value.link,
+                    article : resourceForm.value.article,
+                    category : null,
+                    banner : null,
+                });
+
+                element.resources.sort(function(a, b) {
+                    var textA = a.order;
+                    var textB = b.order;
+                    return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+                });
+            }
+        });
+        resourceForm.reset();
+
+        
+    }
+
+    public getAllArticles(match: {}): Promise<Article[]> {
+        return new Promise<Article[]>((resolve, reject) => {
+            this.subscription.add(this._articleService.getAll({
+                project : {
+                    name: "$description",
+                    operationType: 1
+                },
+                match,
+                sort: { description: 1 },
+                limit: 10,
+            }).subscribe(
+                result => {
+                    console.log(result);
+                    this.loading = false;
+                    (result.status === 200) ? resolve(result.result) : reject(result);
+                },
+                error => reject(error)
+            ));
+        });
+    }
+
+    
+    public deleteFile(typeFile: string, fieldName: string, filename: string) {
+        this._objService.deleteFile(typeFile, fieldName.split('.')[fieldName.split('.').length - 1], filename).subscribe(
+            result => {
+                if (result.status === 200) {
+                    try {
+                        eval('this.obj.' + fieldName + ' = this.obj.' + fieldName + '.filter(item => item !== filename)');
+                    } catch (error) {
+                        eval('this.obj.' + fieldName + ' = null');
+                    }
+                    this.loading = true;
+                    this.subscription.add(
+                        this._objService.update(this.obj).subscribe(
+                            result => {
+                                this.showToast(result);
+                                this.setValuesForm();
+                            },
+                            error => this.showToast(error)
+                        )
+                    );
+                } else {
+                    this.showToast(result);
+                }
+            },
+            error => this.showToast(error)
+        )
+    }
 
     public async addObj() {
 
@@ -515,6 +658,14 @@ export class ApplicationComponent implements OnInit {
         }
 
         if (isValid) {
+            console.log(this.obj);
+            this.obj['design.home'] = new Array();
+            this.home.forEach(element => {
+                this.obj['design.home'].push(element);
+            });
+
+            this.obj.home = this.home;
+
             switch (this.operation) {
                 case 'add':
                     this.saveObj();
@@ -529,33 +680,6 @@ export class ApplicationComponent implements OnInit {
         } else {
             this.showToast(null, 'info', 'Revise los errores marcados en el formulario');
         }
-    }
-
-    public deleteFile(typeFile: string, fieldName: string, filename: string) {
-        this._objService.deleteFile(typeFile, fieldName.split('.')[fieldName.split('.').length - 1], filename).subscribe(
-            result => {
-                if (result.status === 200) {
-                    try {
-                        eval('this.obj.' + fieldName + ' = this.obj.' + fieldName + '.filter(item => item !== filename)');
-                    } catch (error) {
-                        eval('this.obj.' + fieldName + ' = null');
-                    }
-                    this.loading = true;
-                    this.subscription.add(
-                        this._objService.update(this.obj).subscribe(
-                            result => {
-                                this.showToast(result);
-                                this.setValuesForm();
-                            },
-                            error => this.showToast(error)
-                        )
-                    );
-                } else {
-                    this.showToast(result);
-                }
-            },
-            error => this.showToast(error)
-        )
     }
 
     public saveObj() {
