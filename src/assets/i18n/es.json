@@ -68,6 +68,7 @@
     "company.group.description": "Grupo de Empresa",
     "company.name": "Empresa",
     "company.state.name": "Provincia",
+    "state.name" : "Provincia",
     "company.state": "Estado",
     "companyType": "Tipo de Empresa",
     "config": "Configuración",
