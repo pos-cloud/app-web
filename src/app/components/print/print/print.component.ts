@@ -574,7 +574,7 @@ export class PrintComponent implements OnInit {
     } else {
       this.doc.text("Couta", 10, 77);
       this.doc.text("Vencimiento", 30, 77);
-      this.doc.text("Capital", 80, 77);
+      this.doc.text("Amort.", 80, 77);
       this.doc.text("Tasa", 110, 77);
       this.doc.text("IVA", 150, 77);
     }
