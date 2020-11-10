@@ -419,5 +419,6 @@
     "surchargeArticle": "Artículo de recargo",
     "discountArticle": "Artículo de descuento",
     "company.type" : "Tipo",
-    "company-groups" : "Grupo de Empresa"
+    "company-groups" : "Grupo de Empresa",
+    "resetOrderNumber" : "Reset Numero de Orden"
 }

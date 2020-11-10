@@ -82,6 +82,7 @@ export class TransactionType extends Model {
     public expirationDate: string;
     public numberPrint: number = 0;
     public orderNumber : number;
+    public resetOrderNumber : string;
     public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     public updateUser: User;
