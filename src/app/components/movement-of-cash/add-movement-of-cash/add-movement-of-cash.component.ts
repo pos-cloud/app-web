@@ -354,7 +354,7 @@ export class AddMovementOfCashComponent implements OnInit {
         }
 
         if (this.transaction.totalPrice !== 0) {
-            this.paymentChange = (this.movementOfCashForm.value.amountPaid - this.movementOfCashForm.value.transactionAmount).toFixed(2);
+            this.paymentChange = ((this.movementOfCashForm.value.amountToPay + this.movementOfCashForm.value.amountPaid) - this.movementOfCashForm.value.transactionAmount).toFixed(2);
             if (parseFloat(this.paymentChange) < 0) {
                 this.paymentChange = '0.00';
             }
@@ -432,37 +432,49 @@ export class AddMovementOfCashComponent implements OnInit {
                             mov.taxAmount = this.roundNumber.transform(mov.interestAmount * this.movementOfCash.taxPercentage / 100);
                             mov.capital = this.roundNumber.transform(this.amountToPay / this.quotas);
                             mov.amountPaid = this.roundNumber.transform(mov.capital + mov.interestAmount + mov.taxAmount);
+                            amountTotal += mov.amountPaid;
+                            if (i === (this.quotas - 1)) {
+                                if (amountTotal !== (this.amountToPay + this.totalInterestAmount + this.totalTaxAmount)) {
+                                    mov.amountPaid = this.roundNumber.transform(mov.amountPaid - (amountTotal - (this.amountToPay + this.totalInterestAmount + this.totalTaxAmount)));
+                                }
+                            }
                             break;
                         case 'Francés':
-                            mov.capital = this.roundNumber.transform(this.amountToPay / this.quotas);
                             let tasa: number = 0.0000000001;
                             if (this.interestPercentage > 0) {
                                 tasa = (this.interestPercentage / 100) / 12;
                             }
-                            let factor: number = (Math.pow((1 + tasa), -this.quotas));
-                            mov.interestAmount = this.roundNumber.transform(this.roundNumber.transform(this.amountToPay * ((tasa) / (1 - factor))) - mov.capital);
+                            let factorTotal: number = (Math.pow((1 + tasa), this.quotas));
+                            let factorQuota: number = (Math.pow((1 + tasa), ((this.quotas + 1) - mov.quota)));
+                            mov.amountPaid = this.roundNumber.transform((this.amountToPay * tasa * factorTotal) / (factorTotal - 1));
+                            mov.amountPaid = this.roundNumber.transform(mov.amountPaid);
+                            mov.capital = this.roundNumber.transform(mov.amountPaid / factorQuota);
+                            mov.capital = this.roundNumber.transform(mov.capital);
+                            mov.interestAmount = this.roundNumber.transform(mov.amountPaid - mov.capital);
+                            mov.interestAmount = this.roundNumber.transform(mov.interestAmount);
                             if (this.movementOfCash.taxPercentage > 0) {
                                 mov.taxAmount = this.roundNumber.transform(mov.interestAmount * this.movementOfCash.taxPercentage / 100);
                             } else {
                                 mov.taxAmount = 0;
                             }
-                            mov.amountPaid = this.roundNumber.transform(mov.capital + mov.interestAmount + mov.taxAmount);
+                            mov.taxAmount = this.roundNumber.transform(mov.taxAmount);
+                            mov.amountPaid += mov.taxAmount;
+                            mov.amountPaid = this.roundNumber.transform(mov.amountPaid);
+                            amountTotal += mov.amountPaid;
+                            amountTotal = this.roundNumber.transform(amountTotal);
                             break;
                         default:
                             mov.interestAmount = this.roundNumber.transform((this.roundNumber.transform(this.amountToPay) * this.interestPercentage / 100) / this.quotas);
                             mov.taxAmount = this.roundNumber.transform(mov.interestAmount * this.movementOfCash.taxPercentage / 100);
                             mov.capital = this.roundNumber.transform(this.amountToPay / this.quotas);
                             mov.amountPaid = this.roundNumber.transform(mov.capital + mov.interestAmount + mov.taxAmount);
+                            amountTotal += mov.amountPaid;
                             break;
                     }
                     this.totalInterestAmount += mov.interestAmount;
                     this.totalTaxAmount += mov.taxAmount;
-                    amountTotal += mov.amountPaid;
-                    if (i === (this.quotas - 1)) {
-                        if (amountTotal !== (this.amountToPay + this.totalInterestAmount + this.totalTaxAmount)) {
-                            mov.amountPaid = this.roundNumber.transform(mov.amountPaid - (amountTotal - (this.amountToPay + this.totalInterestAmount + this.totalTaxAmount)));
-                        }
-                    }
+                    this.totalInterestAmount = this.roundNumber.transform(this.totalInterestAmount);
+                    this.totalTaxAmount = this.roundNumber.transform(this.totalTaxAmount);
                     this.movementsOfCashesToFinance.push(mov);
                 }
                 this.setValuesForm();
@@ -1103,7 +1115,8 @@ export class AddMovementOfCashComponent implements OnInit {
                         }
                     }
                 }
-                if (amountTotal !== (this.movementOfCashForm.value.amountToPay + this.totalInterestAmount + this.totalTaxAmount)) {
+                if (amountTotal !== (this.movementOfCashForm.value.amountToPay + this.totalInterestAmount + this.totalTaxAmount) &&
+                Math.abs(amountTotal - (this.movementOfCashForm.value.amountToPay + this.totalInterestAmount + this.totalTaxAmount)) > 1) {
                     resolve(false);
                     this.showToast(null, 'info', "El monto total de las cuotas no puede ser distinto del monto a pagar.");
                 }
