@@ -1,4 +1,6 @@
 import { IAttribute } from 'app/util/attribute.interface';
+import { Article } from '../article/article';
+import { Category } from '../category/category';
 import { Model } from '../model/model.model';
 
 export class Application extends Model {
@@ -31,7 +33,19 @@ export class Application extends Model {
         primary : string,
         secondary : string,
         tercery : string
-    }
+    },
+    home : {
+        title : string,
+        view : string,
+        order : number,
+        resources : {
+            article : Article,
+            category : Category,
+            banner : string,
+            order : number,
+            link : string
+        }[]
+    }[]
   };
   public auth: {
     requireOPT: boolean

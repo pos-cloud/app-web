@@ -47,7 +47,6 @@ import { DepositService } from './components/deposit/deposit.service';
 import { LocationService } from './components/location/location.service';
 import { CompanyNewsService } from './components/company/company-news.service';
 import { ArticleFieldService } from './components/article-field/article-field.service';
-import { CompanyGroupService } from "./components/company-group/company-group.service";
 import { CompanyContactService } from "./components/company/company-contact.service";
 import { CompanyFieldService } from './components/company-field/company-field.service';
 import { BankService } from './components/bank/bank.service';
@@ -137,8 +136,6 @@ import { DeleteArticleFieldComponent } from './components/article-field/delete-a
 import { ListArticleFieldsComponent } from './components/article-field/list-article-fields/list-article-fields.component';
 import { ListSummaryOfAccountsComponent } from './components/list-summary-of-accounts/list-summary-of-accounts.component';
 import { ListVATConditionsComponent } from './components/vat-condition/list-vat-conditions/list-vat-conditions.component';
-import { ListCompaniesGroupComponent } from './components/company-group/list-companies-group/list-companies-group.component';
-import { CompanyGroupComponent } from './components/company-group/company-group/company-group.component';
 import { UpdateArticlePriceComponent } from './components/article/update-article-price/update-article-price.component';
 import { CompanyContactComponent } from './components/company/company-contact/company-contact.component';
 import { VATConditionComponent } from './components/vat-condition/vat-condition/vat-condition.component';
@@ -350,8 +347,6 @@ export function createTranslateLoader(http: HttpClient) {
     DeleteArticleFieldComponent,
     ListArticleFieldsComponent,
     ListSummaryOfAccountsComponent,
-    ListCompaniesGroupComponent,
-    CompanyGroupComponent,
     UpdateArticlePriceComponent,
     CompanyContactComponent,
     ListIdentificationTypesComponent,
@@ -510,8 +505,6 @@ export function createTranslateLoader(http: HttpClient) {
     DeleteArticleFieldComponent,
     ListArticleFieldsComponent,
     ListSummaryOfAccountsComponent,
-    ListCompaniesGroupComponent,
-    CompanyGroupComponent,
     UpdateArticlePriceComponent,
     CompanyContactComponent,
     ListIdentificationTypesComponent,
@@ -641,7 +634,6 @@ export function createTranslateLoader(http: HttpClient) {
     LocationService,
     CompanyNewsService,
     ArticleFieldService,
-    CompanyGroupService,
     CompanyContactService,
     IdentificationTypeService,
     UseOfCFDIService,

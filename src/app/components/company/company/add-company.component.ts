@@ -401,7 +401,8 @@ export class AddCompanyComponent implements OnInit {
             'state': [this.company.state, []],
             'addressNumber': [this.company.addressNumber, []],
             'transport': [this.company.transport, []],
-            'priceList': [this.company.priceList, []]
+            'priceList': [this.company.priceList, []],
+            'discount' : [this.company.discount,[]]
 
         });
 
@@ -551,6 +552,9 @@ export class AddCompanyComponent implements OnInit {
             }
         }
 
+        if (!this.company.discount) this.company.discount = 0;
+
+
         const values = {
             '_id': this.company._id,
             'name': this.company.name,
@@ -576,7 +580,8 @@ export class AddCompanyComponent implements OnInit {
             'group': group,
             'employee': employee,
             'transport': transport,
-            'priceList': priceList
+            'priceList': priceList,
+            'discount' : this.company.discount
         };
 
         this.companyForm.setValue(values);

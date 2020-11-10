@@ -282,6 +282,7 @@ export class PrintComponent implements OnInit {
             "deliveryAddress.number": 1,
             "deliveryAddress.flat": 1,
             "deliveryAddress.floor": 1,
+            "deliveryAddress.observation": 1,
             "transport.address" : 1,
             "transport.city" : 1,
             "transport.identificationValue" : 1,
@@ -565,10 +566,18 @@ export class PrintComponent implements OnInit {
     // Encabezado de la tabla de Detalle de Productos
     this.doc.setFontType('bold');
     this.doc.setFontSize(this.fontSizes.normal);
-    this.doc.text("Detalle", 10, 77);
-    this.doc.text("Vencimiento", 80, 77);
-    this.doc.text("Número", 110, 77);
-    this.doc.text("Banco", 150, 77);
+    if(!this.movementsOfCashes[0].type.allowToFinance) {
+      this.doc.text("Detalle", 10, 77);
+      this.doc.text("Vencimiento", 80, 77);
+      this.doc.text("Número", 110, 77);
+      this.doc.text("Banco", 150, 77);
+    } else {
+      this.doc.text("Couta", 10, 77);
+      this.doc.text("Vencimiento", 30, 77);
+      this.doc.text("Amort.", 80, 77);
+      this.doc.text("Tasa", 110, 77);
+      this.doc.text("IVA", 150, 77);
+    }
     if (this.transaction.type && this.transaction.type.showPrices) {
       this.doc.text("Total", 185, 77);
       this.doc.setFontType('normal');
@@ -581,31 +590,58 @@ export class PrintComponent implements OnInit {
 
       for (var i = 0; i < this.movementsOfCashes.length; i++) {
 
-        if (this.movementsOfCashes[i].type.name) {
-          this.doc.text(this.movementsOfCashes[i].type.name, 10, row);
-        }
-
-        if (this.movementsOfCashes[i].expirationDate) {
-          this.doc.text(this.dateFormat.transform(this.movementsOfCashes[i].expirationDate, 'DD/MM/YYYY'), 80, row);
+        if(!this.movementsOfCashes[0].type.allowToFinance) {
+          if (this.movementsOfCashes[i].type.name) {
+            this.doc.text(this.movementsOfCashes[i].type.name, 10, row);
+          }
+  
+          if (this.movementsOfCashes[i].expirationDate) {
+            this.doc.text(this.dateFormat.transform(this.movementsOfCashes[i].expirationDate, 'DD/MM/YYYY'), 80, row);
+          } else {
+            this.doc.text("-", 80, row)
+          }
+  
+          if (this.movementsOfCashes[i].number) {
+            this.doc.text(this.movementsOfCashes[i].number, 110, row);
+          } else {
+            this.doc.text("-", 110, row);
+          }
+  
+          if (this.movementsOfCashes[i].bank) {
+            this.doc.text(this.movementsOfCashes[i].bank.name, 150, row);
+          } else {
+            this.doc.text("-", 150, row);
+          }
         } else {
-          this.doc.text("-", 80, row)
-        }
+          this.doc.text(this.movementsOfCashes[i].quota.toString(), 10, row);
 
-        if (this.movementsOfCashes[i].number) {
-          this.doc.text(this.movementsOfCashes[i].number, 110, row);
-        } else {
-          this.doc.text("-", 110, row);
-        }
+          if (this.movementsOfCashes[i].expirationDate) {
+            this.doc.text(this.dateFormat.transform(this.movementsOfCashes[i].expirationDate, 'DD/MM/YYYY'), 30, row);
+          } else {
+            this.doc.text("-", 30, row)
+          }
 
-        if (this.movementsOfCashes[i].bank) {
-          this.doc.text(this.movementsOfCashes[i].bank.name, 150, row);
-        } else {
-          this.doc.text("-", 150, row);
+          if (this.movementsOfCashes[i].capital) {
+            this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfCashes[i].capital), 80, row, 'right', 'right');
+          } else {
+            this.doc.text("$ -", 80, row, 'right', 'right')
+          }
+
+          if (this.movementsOfCashes[i].interestAmount) {
+            this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfCashes[i].interestAmount), 110, row, 'right', 'right');
+          } else {
+            this.doc.text("$ -", 110, row, 'right', 'right')
+          }
+
+          if (this.movementsOfCashes[i].taxAmount) {
+            this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfCashes[0].taxAmount), 150, row, 'right', 'right');
+          } else {
+            this.doc.text("$ -", 150, row, 'right', 'right')
+          }
         }
 
         if (this.movementsOfCashes[i].amountPaid) {
-          this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfCashes[i].amountPaid), 200, row, 'right', 'middle');
-          //this.doc.text("$ " + this.roundNumber.transform(this.movementsOfCashes[i].amountPaid), 185, row);
+          this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfCashes[i].amountPaid), 200, row, 'right', 'right');
         }
 
         if (this.movementsOfCashes[i].observation) {
@@ -2369,7 +2405,7 @@ export class PrintComponent implements OnInit {
 
       let space;
       if (Config.country === 'MX') {
-        space = 6;
+        space = 4;
       } else {
         space = 6;
       }
@@ -2390,19 +2426,18 @@ export class PrintComponent implements OnInit {
       let neto = 0;
 
       rowTotals += space;
-
-
+      var rowNet;
       if (this.transaction.company &&
         this.transaction.company.vatCondition &&
         this.transaction.company.vatCondition.discriminate &&
         this.transaction.type.requestTaxes) {
-
         if (this.transaction.taxes && this.transaction.taxes.length > 0) {
           this.doc.setFontType('bold');
           this.doc.text("Neto Gravado:", 140, rowTotals);
+          rowNet = rowTotals;
+          rowTotals += space;
           this.doc.setFontType('normal');
           for (let tax of this.transaction.taxes) {
-            rowTotals += space;
             this.doc.setFontType('bold');
             this.doc.text(tax.tax.name + ":", 140, rowTotals);
             this.doc.setFontType('normal');
@@ -2431,12 +2466,12 @@ export class PrintComponent implements OnInit {
 
       this.doc.text("$ " + this.roundNumber.transform((subtotal), 2).toString(), 173, 247);
       if (neto > 0) {
-        this.doc.text("$ " + this.roundNumber.transform((neto), 2).toString(), 173, 259);
+        this.doc.text("$ " + this.roundNumber.transform((neto), 2).toString(), 173, rowNet);
       }
       rowTotals += space;
-      this.doc.setFontSize(this.fontSizes.extraLarge);
+      //this.doc.setFontSize(this.fontSizes.extraLarge);
       this.doc.setFontType('bold');
-      this.doc.setFontSize(this.fontSizes.large);
+      //this.doc.setFontSize(this.fontSizes.large);
       this.doc.text("Total:", 140, rowTotals);
       this.doc.setFontType('normal');
       this.doc.text("$ " + parseFloat(this.roundNumber.transform(this.transaction.totalPrice, 2)), 173, rowTotals);
@@ -2481,7 +2516,7 @@ export class PrintComponent implements OnInit {
     // FIN FORMA DE PAGO
     if (totalArticle > 0) {
       this.doc.setFontType('bold');
-      this.doc.text("Total de Productos: " + (this.roundNumber.transform(totalArticle)), margin + 70, 250);
+      this.doc.text("Total de Productos: " + (this.roundNumber.transform(totalArticle)), margin + 70, 247);
       this.doc.setFontType('normal');
     }
 
@@ -3356,6 +3391,15 @@ export class PrintComponent implements OnInit {
           this.row += 5;
           this.doc.text(" Departamento: " + this.transaction.deliveryAddress.flat, margin + 5, this.row);
         }
+
+        if(this.transaction.deliveryAddress.observation.length > 30){
+            this.doc.text("Obs: " + this.transaction.deliveryAddress.observation.slice(0,29) + "-", margin, this.row);
+            this.row += 5;
+            this.doc.text(this.transaction.deliveryAddress.observation.slice(29,this.transaction.deliveryAddress.observation.length), margin, this.row);
+        } else {
+            this.doc.text("Obs: " + this.transaction.deliveryAddress.observation, margin, this.row);
+        }
+
         this.doc.setFontType('normal');
       }
     } else {

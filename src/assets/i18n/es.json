@@ -40,6 +40,8 @@
     "article.taxes[2].percentage": "Porcentaje Imp",
     "article.unitOfMeasurement.abbreviation": "Un. de Medida",
     "article.containsStructure": "¿Tiene Estructura?",
+    "article.picture" : "Imagen",
+    "article.ecommerceEnabled" : "¿Habilitado E-commerce?",
     "authentication token missing": "falta el token de autenticación",
     "bad provided credentials": "Credenciales proporcionadas incorrectas",
     "balance": "Saldo",
@@ -416,5 +418,7 @@
     "_parent.name" : "Padre",
     "surchargeArticle": "Artículo de recargo",
     "discountArticle": "Artículo de descuento",
-    "company.type" : "Tipo"
+    "company.type" : "Tipo",
+    "company-groups" : "Grupo de Empresa",
+    "resetOrderNumber" : "Reset Numero de Orden"
 }

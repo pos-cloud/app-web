@@ -253,8 +253,8 @@ export class AddSaleOrderComponent {
           if (transaction) {
             this.transaction = transaction;
 
-            if(!this.transaction.company && this.transaction.type.company){
-                this.transaction.company = this.transaction.type.company;
+            if (!this.transaction.company && this.transaction.type.company) {
+              this.transaction.company = this.transaction.type.company;
             }
 
             if (this.transaction &&
@@ -1336,6 +1336,7 @@ export class AddSaleOrderComponent {
       this.loading = false;
       //guardamos la lista con la que se calculo el precio
       this.transaction.priceList = this.priceList
+
       resolve(movementOfArticle);
     });
   }
@@ -1399,15 +1400,14 @@ export class AddSaleOrderComponent {
 
     this.loading = true;
 
-    let totalPriceAux = 0;
-    let discountAmountAux = 0;
+    let totalPriceAux: number = 0;
+    let discountAmountAux: number = 0;
+    this.transaction.discountPercent = 0;
 
-    if (discountPercent !== undefined) {
-      this.transaction.discountPercent = this.roundNumber.transform(discountPercent, 6);
-    } else if (!this.transaction.discountPercent) {
-      this.transaction.discountPercent = 0;
-      discountAmountAux = 0;
-    }
+    if (discountPercent !== undefined) this.transaction.discountPercent = this.roundNumber.transform(discountPercent, 6);
+
+    if (this.transaction.company && this.transaction.company.discount > 0) this.transaction.discountPercent += this.transaction.company.discount;
+    if (this.transaction.company && this.transaction.company.group && this.transaction.company.group.discount > 0) this.transaction.discountPercent += this.transaction.company.group.discount;
 
     let isUpdateValid: boolean = true;
 
@@ -1819,9 +1819,11 @@ export class AddSaleOrderComponent {
       case 'apply_discount':
         if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
           modalRef = this._modalService.open(ApplyDiscountComponent, { size: 'lg', backdrop: 'static' });
-          modalRef.componentInstance.amount = this.transaction.totalPrice;
+          modalRef.componentInstance.totalPrice = this.transaction.totalPrice;
           modalRef.componentInstance.amountToApply = this.transaction.discountAmount;
           modalRef.componentInstance.percentageToApply = this.transaction.discountPercent;
+          modalRef.componentInstance.percentageToApplyCompany = (this.transaction.company && this.transaction.company.discount > 0) ? this.transaction.company.discount : 0;
+          modalRef.componentInstance.percentageToApplyCompanyGroup = (this.transaction.company && this.transaction.company.group && this.transaction.company.group.discount > 0) ? this.transaction.company.group.discount : 0;
           modalRef.result.then((result) => {
             if (result.discount) {
               this.updatePrices(
@@ -3382,8 +3384,8 @@ export class AddSaleOrderComponent {
     this.listArticlesComponent.areArticlesVisible = false;
     this.listArticlesComponent.filterArticle = this.filterArticle;
     if (!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
-        this.listCategoriesComponent.ngOnInit();
-        this.focusEvent.emit(true);
+      this.listCategoriesComponent.ngOnInit();
+      this.focusEvent.emit(true);
     }
   }
 

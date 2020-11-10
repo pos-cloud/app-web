@@ -39,7 +39,7 @@
                 <div class="form-group col-md-9">
                     <div class="row">
                         <div
-                            [ngClass]="{'col-md-6':transaction.type.showKeyboard, 'col-md-12':!transaction.type.showKeyboard}">
+                            [ngClass]="{'col-md-6':transaction?.type?.showKeyboard, 'col-md-12':!transaction?.type?.showKeyboard}">
                             <div class="row">
                                 <div class="form-group col-md-12">
                                     <label
@@ -125,27 +125,45 @@
             <div class="row" *ngIf="paymentMethodSelected && (
                                 ( paymentMethodSelected.commission &&
                                   paymentMethodSelected.commission > 0))">
-                <div class="form-group col-md-5">
-                    <label for="percentageCommission" class="control-label">Comisión:</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
-                        <input type="number" class="form-control" formControlName="percentageCommission"
-                            name="percentageCommission" min="0" step="1" (blur)="changePercentageCommission()" />
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label for="taxPercentage" class="control-label">IVA:</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"><span class="input-group-text"
+                                        id="basic-addon1">%</span></div>
+                                <input type="number" class="form-control" formControlName="taxPercentage"
+                                    name="taxPercentage" min="0" step="1" (blur)="changeVatOfExpenses()" />
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group col-md-5">
-                    <label for="commissionAmount" class="control-label">Monto Comisión:</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-                        <input type="number" class="form-control" min="0" step="1" formControlName="commissionAmount"
-                            name="commissionAmount" readonly />
-                    </div>
-                </div>
-                <div class="form-group col-md-2">
-                    <label for="daysCommission" class="control-label">Días calculados:</label>
-                    <div class="input-group">
-                        <input type="number" class="form-control" formControlName="daysCommission" name="daysCommission"
-                            readonly />
+                    <div class="row">
+                        <div class="form-group col-md-5">
+                            <label for="percentageCommission" class="control-label">Comisión:</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"><span class="input-group-text"
+                                        id="basic-addon1">%</span></div>
+                                <input type="number" class="form-control" formControlName="percentageCommission"
+                                    name="percentageCommission" min="0" step="1"
+                                    (blur)="changePercentageCommission()" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-5">
+                            <label for="commissionAmount" class="control-label">Monto Comisión:</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"><span class="input-group-text"
+                                        id="basic-addon1">$</span></div>
+                                <input type="number" class="form-control" min="0" step="1"
+                                    formControlName="commissionAmount" name="commissionAmount" readonly />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="daysCommission" class="control-label">Días calculados:</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" formControlName="daysCommission"
+                                    name="daysCommission" readonly />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -206,7 +224,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-3">
                             <label for="quotas" class="control-label">Cant. Cuotas:</label>
                             <div class="input-group">
                                 <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1"><i
@@ -215,43 +233,91 @@
                                     step="1" (change)="calculateQuotas('quotas')" />
                             </div>
                         </div>
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-3">
                             <label for="days" class="control-label">Cant. Días:</label>
                             <div class="input-group">
                                 <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1"><i
                                             class="fa fa-calendar"></i></span></div>
                                 <input type="number" class="form-control" formControlName="days" name="days" min="0"
-                                    step="1" (change)="calculateQuotas('days')" />
+                                    step="1" (change)="calculateQuotas('quotas')" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="interestPercentage" class="control-label">T.N.A:</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"><span class="input-group-text"
+                                        id="basic-addon1">%</span></div>
+                                <input type="number" class="form-control" formControlName="interestPercentage"
+                                    name="interestPercentage" min="0" step="1" (change)="calculateQuotas('quotas')" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="interestType" class="control-label">Tipo de cálculo:</label>
+                            <select class="form-control" formControlName="interestType" (change)="calculateQuotas('quotas')">
+                                <option value="Interés Simple">Interés Simple</option>
+                                <option value="Francés">Francés</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row" *ngIf="movementOfCashForm.value.interestPercentage > 0">
+                        <div class="col-md-12 form-group">
+                            <label for="taxPercentage" class="control-label">IVA:</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"><span class="input-group-text"
+                                        id="basic-addon1">%</span></div>
+                                <input type="number" class="form-control" formControlName="taxPercentage"
+                                    name="taxPercentage" min="0" step="1" (blur)="calculateQuotas('quotas')" />
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="form-group col-md-4">
-                            <label for="expirationDate" class="control-label">Fecha:</label>
-                        </div>
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-1">
                             <label for="quota" class="control-label">Cuota:</label>
                         </div>
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-3">
+                            <label for="expirationDate" class="control-label">Fecha:</label>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="quota" class="control-label">Amortización:</label>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="quota" class="control-label">Interés:</label>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="quota" class="control-label">IVA:</label>
+                        </div>
+                        <div class="form-group col-md-2">
                             <label for="amount" class="control-label">Monto:</label>
                         </div>
                     </div>
                     <div class="row" *ngFor="let mov of movementsOfCashesToFinance">
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-1">
+                            <input type="number" class="form-control" name="quota" min="0" step="1"
+                                [value]="mov.quota" readonly />
+                        </div>
+                        <div class="form-group col-md-3">
                             <input type="date" class="form-control" name="expirationDate" min="0" step="1"
                                 #expirationDateMov [value]="mov.expirationDate | dateFormat:'YYYY-MM-DD'"
                                 (blur)="calculateQuotas('expirationDate', expirationDateMov.value, mov)" />
                         </div>
-                        <div class="form-group col-md-4">
-                            <input type="number" class="form-control" name="expirationDate" min="0" step="1"
-                                [value]="mov.quota" readonly />
+                        <div class="form-group col-md-2">
+                            <input type="number" class="form-control" name="capital" min="0" step="1"
+                                [value]="mov.capital" readonly />
                         </div>
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-2">
+                            <input type="number" class="form-control" name="capital" min="0" step="1"
+                                [value]="mov.interestAmount" readonly />
+                        </div>
+                        <div class="form-group col-md-2">
+                            <input type="number" class="form-control" name="capital" min="0" step="1"
+                                [value]="mov.taxAmount" readonly />
+                        </div>
+                        <div class="form-group col-md-2">
                             <div class="input-group">
                                 <div class="input-group-prepend"><span class="input-group-text"
                                         id="basic-addon1">$</span></div>
                                 <input type="number" class="form-control" name="amountPaid" min="0" step="1"
-                                    #amountPaidMov [value]="mov.amountPaid"
+                                    #amountPaidMov [value]="mov.amountPaid" [readonly]="movementOfCashForm.value.interestType == 'equitativo'"
                                     (change)="calculateQuotas('amountPaid', amountPaidMov.value, mov)" />
                             </div>
                         </div>
@@ -367,7 +433,8 @@
                             <td *ngIf="!movement && !movement.type" class="flat" width="430"></td>
                             <td class="flat" width="430">{{ movement.quota }}</td>
                             <td align="right" class="flat" width="430">
-                                {{ (movement.amountPaid - movement.commissionAmount - movement.administrativeExpenseAmount - movement.otherExpenseAmount ) | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
+                                {{ (movement.amountPaid - movement.commissionAmount - movement.administrativeExpenseAmount - movement.otherExpenseAmount ) | currency:'USD':'symbol-narrow':'1.2-2' }}
+                            </td>
                             <td class="flat" width="430">{{ movement.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
                             <td class="flat" width="430">{{ movement.number }}</td>
                         </tr>

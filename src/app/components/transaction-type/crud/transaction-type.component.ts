@@ -217,6 +217,9 @@ export class TransactionTypeComponent implements OnInit {
             switchMap(async term => {
                 let match: {} = (term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {};
                 match["operationType"] = { "$ne": "D" };
+                if(this.objForm.value.requestCompany !== null){
+                    match["type"] = this.objForm.value.requestCompany
+                }
                 return await this.getCompanies(match).then(
                     result => {
                         return result;
@@ -346,7 +349,6 @@ export class TransactionTypeComponent implements OnInit {
             validators: [Validators.required],
             class: 'form-group col-md-2'
         },
-
         {
             name: 'automaticNumbering',
             tag: 'select',
@@ -398,6 +400,18 @@ export class TransactionTypeComponent implements OnInit {
             tagType: 'boolean',
             values: ['false', 'true'],
             validators: [Validators.required],
+            class: 'form-group col-md-2'
+        },
+        {
+            name: "orderNumber",
+            tag: 'input',
+            tagType: "number",
+            class: 'form-group col-md-2'
+        },
+        {
+            name: "resetOrderNumber",
+            tag: 'input',
+            tagType: "text",
             class: 'form-group col-md-2'
         },
         {
@@ -848,6 +862,7 @@ export class TransactionTypeComponent implements OnInit {
                 requestArticles: 1,
                 modifyArticle: 1,
                 entryAmount: 1,
+                orderNumber : 1,
                 showPrices: 1,
                 showPriceType: 1,
                 updatePrice: 1,
@@ -890,7 +905,8 @@ export class TransactionTypeComponent implements OnInit {
                 "requestEmployee._id": 1,
                 "requestEmployee.description": 1,
                 "paymentMethods._id" : 1,
-                "paymentMethods.name" : 1
+                "paymentMethods.name" : 1,
+                "resetOrderNumber" : 1
             }
 
             this.subscription.add(this._objService.getAll({
@@ -1327,7 +1343,7 @@ export class TransactionTypeComponent implements OnInit {
     public getCompanies(match: {}): Promise<Company[]> {
         return new Promise<Company[]>((resolve, reject) => {
             this.subscription.add(this._company.getAll({
-                project: { name: 1, operationType: 1 },
+                project: { name: 1, operationType: 1, type: 1 },
                 match,
                 sort: { name: 1 },
                 limit: 10,
@@ -1348,7 +1364,6 @@ export class TransactionTypeComponent implements OnInit {
                 sort: { name: 1 },
             }).subscribe(
                 result => {
-                    console.log(result);
                     this.loading = false;
                     (result.status === 200) ? resolve(result.result) : reject(result);
                 },

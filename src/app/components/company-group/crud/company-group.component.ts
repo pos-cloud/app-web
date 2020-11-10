@@ -1,46 +1,40 @@
-import { Component, OnInit, EventEmitter, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl, FormArray, NgForm } from '@angular/forms';
-import * as moment from 'moment';
-import 'moment/locale/es';
+import { Component, OnInit, EventEmitter, Input, ViewEncapsulation } from '@angular/core';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ToastrService } from 'ngx-toastr';
-import { Title } from '@angular/platform-browser';
-import { CapitalizePipe } from 'app/main/pipes/capitalize';
-import { Subscription, Subject, Observable, merge } from 'rxjs';
-import { TranslateMePipe } from 'app/main/pipes/translate-me';
-import { TranslatePipe } from '@ngx-translate/core';
-import { Router } from '@angular/router';
-import { FormField } from 'app/util/formField.interface';
-import * as $ from 'jquery';
 import { Config } from 'app/app.config';
-import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
-import { Category } from '../category';
-import { CategoryService } from '../category.service';
-import { Application } from 'app/components/application/application.model';
-import { ApplicationService } from 'app/components/application/application.service';
-import Resulteable from 'app/util/Resulteable';
+import { CapitalizePipe } from 'app/main/pipes/capitalize';
+import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import { ToastrService } from 'ngx-toastr';
+import { Subject, Subscription } from 'rxjs';
+import * as $ from 'jquery';
+import * as moment from 'moment';
+import 'moment/locale/es';
+import { CompanyGroup } from '../company-group';
 
+import { CompanyGroupService } from '../company-group.service';
+import { FormField } from 'app/util/formField.interface';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
-    selector: 'app-category',
-    templateUrl: './category.component.html',
-    styleUrls: ['./category.component.scss'],
+    selector: 'app-company-group',
+    templateUrl: './company-group.component.html',
+    styleUrls: ['./company-group.component.scss'],
     providers: [NgbAlertConfig, TranslateMePipe, TranslatePipe],
     encapsulation: ViewEncapsulation.None
 })
-
-export class CategoryComponent implements OnInit {
+export class CompanyGroupComponent implements OnInit {
 
     public objId: string;
     public readonly: boolean;
     public operation: string;
-    public obj: Category;
+    public obj: CompanyGroup;
     public objForm: FormGroup;
     public loading: boolean = false;
-    public schedule: FormArray;
     public focusEvent = new EventEmitter<boolean>();
-    public title: string = 'category';
+    public title: string = 'company-group';
     private subscription: Subscription = new Subscription();
     private capitalizePipe: CapitalizePipe = new CapitalizePipe();
     public focus$: Subject<string>[] = new Array();
@@ -51,126 +45,29 @@ export class CategoryComponent implements OnInit {
     public oldFiles: any[];
     public apiURL: string = Config.apiV8URL;
     public database: string = Config.database;
-    public selectedFile: File = null;
-    public src: any;
-    public imageURL: string;
-    public applications: Application[];
 
+    public from;
+    public to;
 
-    public searchCategories = (text$: Observable<string>) => {
-        const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
-        const inputFocus$ = this.focus$['parent'];
-        return merge(debouncedText$, inputFocus$).pipe(
-            tap(() => this.loading = true),
-            switchMap(async term => {
-                let match: {} = (term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {};
-                match["operationType"] = { "$ne": "D" };
-                return await this.getCategories(match).then(
-                    result => {
-                        return result;
-                    }
-                );
-            }),
-            tap(() => this.loading = false),
-        )
-    }
-
-    public formatterCategories = (x: { name: string }) => x.name;
-
-    public formFields: FormField[] = [
-        {
-            name: 'order',
-            tag: 'input',
-            tagType: 'number',
-            class: 'form-group col-md-2'
-        },
-        {
-            name: 'description',
-            tag: 'input',
-            tagType: 'text',
-            validators: [Validators.required],
-            class: 'form-group col-md-10'
-        },
-        {
-            name: 'parent',
-            tag: 'autocomplete',
-            tagType: 'text',
-            search: this.searchCategories,
-            format: this.formatterCategories,
-            values: null,
-            focus: false,
-            class: 'form-group col-md-4'
-        },
-        {
-            name: 'favourite',
-            tag: 'select',
-            tagType: 'boolean',
-            values: ['true', 'false'],
-            default: 'false',
-            class: 'form-group col-md-4'
-        },
-        {
-            name: 'picture',
-            tag: 'input',
-            tagType: 'file',
-            search: null,
-            format: 'image',
-            class: 'form-group col-md-12'
-        },
-        {
-            name: 'visibleOnSale',
-            tag: 'select',
-            tagType: 'boolean',
-            values: ['true', 'false'],
-            default: 'true',
-            class: 'form-group col-md-3'
-        },
-        {
-            name: 'visibleOnPurchase',
-            tag: 'select',
-            tagType: 'boolean',
-            values: ['true', 'false'],
-            default: 'true',
-            class: 'form-group col-md-3'
-        },
-        {
-            name: 'visibleInvoice',
-            tag: 'select',
-            tagType: 'boolean',
-            values: ['true', 'false'],
-            default: 'false',
-            class: 'form-group col-md-3'
-        },
-        {
-            name: 'isRequiredOptional',
-            tag: 'select',
-            tagType: 'boolean',
-            values: ['true', 'false'],
-            default: 'false',
-            class: 'form-group col-md-3'
-        },
-        {
-            name: 'E-Commerce',
-            tag: 'separator',
-            tagType: null,
-            class: 'form-group col-md-12'
-        },
-        {
-            name: 'ecommerceEnabled',
-            tag: 'select',
-            tagType: 'boolean',
-            values: ['true', 'false'],
-            default: 'false',
-            class: 'form-group col-md-3'
-        },
-        {
-            name: 'observation',
-            tag: 'input',
-            tagType: 'text',
-            class: 'form-group col-md-4'
-        }
-
-    ];
+    public formFields: FormField[] = [{
+        name: 'Datos del Grupo',
+        tag: 'separator',
+        tagType: null,
+        class: 'form-group col-md-12'
+    }, {
+        name: 'description',
+        tag: 'input',
+        tagType: 'text',
+        validators: [Validators.required],
+        class: 'form-group col-md-8'
+    },  {
+        name: 'discount',
+        tag: 'input',
+        tagType: 'number',
+        validators: [Validators.required],
+        focus: true,
+        class: 'form-group col-md-4'
+    }];
     public formErrors: {} = {};
     public validationMessages = {
         'required': 'Este campo es requerido.',
@@ -211,17 +108,16 @@ export class CategoryComponent implements OnInit {
     }
 
     constructor(
-        private _objService: CategoryService,
+        private _objService: CompanyGroupService,
         private _toastr: ToastrService,
         private _title: Title,
         public _fb: FormBuilder,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,
-        public _applicationService: ApplicationService,
         public translatePipe: TranslateMePipe,
         private _router: Router,
     ) {
-        this.obj = new Category();
+        this.obj = new CompanyGroup();
         for (let field of this.formFields) {
             if (field.tag !== 'separator') {
                 this.formErrors[field.name] = '';
@@ -245,52 +141,18 @@ export class CategoryComponent implements OnInit {
         this.buildForm();
         this.objId = pathUrl[3];
         if (this.objId && this.objId !== '') {
-
-            let project = {
-                _id: 1,
-                operationType: 1,
-                description: 1,
-                ecommerceEnabled: 1,
-                visibleInvoice: 1,
-                picture: 1,
-                order: 1,
-                visibleOnPurchase: 1,
-                visibleOnSale: 1,
-                isRequiredOptional: 1,
-                favourite: 1,
-                'parent._id': 1,
-                'parent.name':'$parent.description',
-                'applications._id': 1,
-                'applications.name': 1,
-                'observation': 1
-            }
-
-            this.subscription.add(this._objService.getAll({
-                project,
-                match: {
-                    operationType: { $ne: "D" },
-                    _id: { $oid: this.objId }
-                }
-            }).subscribe(
+            this.subscription.add(this._objService.getById(this.objId).subscribe(
                 result => {
                     this.loading = false;
                     if (result.status === 200) {
-                        this.obj = result.result[0];
+                        this.obj = result.result;
                         this.setValuesForm();
-                    } else {
-                        this.showToast(result);
                     }
+                    else this.showToast(result);
                 },
                 error => this.showToast(error)
             ));
         }
-
-        await this.getAllApplications({})
-            .then((result: Application[]) => {
-                this.applications = result;
-                this.setValuesForm();
-            })
-            .catch((error: Resulteable) => this.showToast(error));
     }
 
     public ngAfterViewInit(): void {
@@ -320,8 +182,7 @@ export class CategoryComponent implements OnInit {
     public buildForm(): void {
 
         let fields: {} = {
-            _id: [this.obj._id],
-            applications: this._fb.array([])
+            _id: [this.obj._id]
         };
         for (let field of this.formFields) {
             if (field.tag !== 'separator') fields[field.name] = [this.obj[field.name], field.validators]
@@ -359,7 +220,6 @@ export class CategoryComponent implements OnInit {
     }
 
     public setValuesForm(): void {
-
         let values: {} = {
             _id: this.obj._id
         }
@@ -393,24 +253,6 @@ export class CategoryComponent implements OnInit {
                 }
             }
         }
-        if (this.applications && this.applications.length > 0) {
-            this.applications.forEach(x => {
-                let exists: boolean = false;
-                if (this.obj && this.obj.applications && this.obj.applications.length > 0) {
-                    this.obj.applications.forEach(y => {
-                        if (x._id === y._id) {
-                            exists = true;
-                            const control = new FormControl(y);
-                            (this.objForm.controls.applications as FormArray).push(control);
-                        }
-                    })
-                }
-                if (!exists) {
-                    const control = new FormControl(false);
-                    (this.objForm.controls.applications as FormArray).push(control);
-                }
-            })
-        }
 
         this.objForm.patchValue(values);
     }
@@ -422,20 +264,16 @@ export class CategoryComponent implements OnInit {
         isValid = (this.operation === 'delete') ? true : this.objForm.valid;
 
         if (isValid) {
-        this.obj = Object.assign(this.obj, this.objForm.value);
-        const selectedOrderIds = this.objForm.value.applications
-            .map((v, i) => (v ? this.applications[i] : null))
-            .filter(v => v !== null);
-        this.obj.applications = selectedOrderIds;
+            this.obj = this.objForm.value;
         } else {
-        this.onValueChanged();
+            this.onValueChanged();
         }
 
         if (isValid) {
             for (let field of this.formFields) {
                 switch (field.tagType) {
                     case 'date':
-                        this.obj[field.name] = (moment(this.obj[field.name]).isValid()) ? moment(this.obj[field.name]).format('YYYY-MM-DD') + moment().format('THH:mm:ssZ') : null;
+                        this.obj[field.name] = moment(this.obj[field.name]).format('YYYY-MM-DD') + moment().format('THH:mm:ssZ');
                         break;
                     case 'number':
                         this.obj[field.name] = parseFloat(this.obj[field.name]);
@@ -443,14 +281,14 @@ export class CategoryComponent implements OnInit {
                     case 'file':
                         if (this.filesToUpload && this.filesToUpload[field.name] && this.filesToUpload[field.name].length > 0) {
                             this.loading = true;
-                            this._objService.deleteFile(this.typeFile[field.name], "category", this.obj[field.name]);
+                            this._objService.deleteFile(this.typeFile[field.name], field.name.split('.')[field.name.split('.').length - 1], this.obj[field.name]);
                             if (this.filesToUpload[field.name] && this.filesToUpload[field.name].length > 0) {
                                 this.obj[field.name] = this.oldFiles[field.name];
                                 if (field.multiple && (!this.obj || !this.obj[field.name] || this.obj[field.name].length === 0)) {
                                     this.obj[field.name] = new Array();
                                 }
                                 for (let file of this.filesToUpload[field.name]) {
-                                    await this._objService.uploadFile(this.typeFile[field.name], "category", file)
+                                    await this._objService.uploadFile(this.typeFile[field.name], field.name.split('.')[field.name.split('.').length - 1], file)
                                         .then(result => {
                                             this.loading = false;
                                             if (result['result']) {
@@ -475,7 +313,7 @@ export class CategoryComponent implements OnInit {
                     case 'boolean':
                         this.obj[field.name] = this.obj[field.name] == 'true' || this.obj[field.name] == true;
                     case 'text':
-                        if(field.tag === 'autocomplete' && (this.obj[field.name] == "" || (this.obj[field.name] && !this.obj[field.name]['_id']))){
+                        if (field.tag === 'autocomplete' && (this.obj[field.name] == "" || (this.obj[field.name] && !this.obj[field.name]['_id']))) {
                             this.obj[field.name] = null;
                         }
                         break;
@@ -503,7 +341,7 @@ export class CategoryComponent implements OnInit {
     }
 
     public deleteFile(typeFile: string, fieldName: string, filename: string) {
-        this._objService.deleteFile(typeFile, "category", filename).subscribe(
+        this._objService.deleteFile(typeFile, fieldName.split('.')[fieldName.split('.').length - 1], filename).subscribe(
             result => {
                 if (result.status === 200) {
                     try {
@@ -535,7 +373,7 @@ export class CategoryComponent implements OnInit {
             this._objService.save(this.obj).subscribe(
                 result => {
                     this.showToast(result);
-                    if (result.status === 200) this._router.navigate(['/categories']);
+                    if (result.status === 200) this._router.navigate(['/company-groups']);
                 },
                 error => this.showToast(error)
             )
@@ -548,7 +386,7 @@ export class CategoryComponent implements OnInit {
             this._objService.update(this.obj).subscribe(
                 result => {
                     this.showToast(result);
-                    if (result.status === 200) this._router.navigate(['/categories']);
+                    if (result.status === 200) this._router.navigate(['/company-groups']);
                 },
                 error => this.showToast(error)
             )
@@ -562,47 +400,12 @@ export class CategoryComponent implements OnInit {
                 async result => {
                     this.showToast(result);
                     if (result.status === 200) {
-                        this._router.navigate(['/categories']);
+                        this._router.navigate(['/company-groups']);
                     }
                 },
                 error => this.showToast(error)
             )
         );
-    }
-
-    public getAllApplications(match: {}): Promise<Application[]> {
-        return new Promise<Application[]>((resolve, reject) => {
-            this.subscription.add(this._applicationService.getAll({
-                match : match,
-                sort: { name: 1 },
-            }).subscribe(
-                result => {
-                    this.loading = false;
-                    (result.status === 200) ? resolve(result.result) : reject(result);
-                },
-                error => reject(error)
-            ));
-        });
-    }
-
-    public getCategories(match: {}): Promise<Category[]> {
-        return new Promise<Category[]>((resolve, reject) => {
-            this.subscription.add(this._objService.getAll({
-                project : {
-                    name: "$description",
-                    operationType: 1
-                },
-                match,
-                sort: { description: 1 },
-                limit: 10,
-            }).subscribe(
-                result => {
-                    this.loading = false;
-                    (result.status === 200) ? resolve(result.result) : reject(result);
-                },
-                error => reject(error)
-            ));
-        });
     }
 
     public showToast(result, type?: string, title?: string, message?: string): void {

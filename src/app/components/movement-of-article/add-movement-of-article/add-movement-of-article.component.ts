@@ -143,7 +143,7 @@ export class AddMovementOfArticleComponent implements OnInit {
             this.movementOfArticle.article.locations.forEach(element => {
                 if (element.location && element.location.deposit && element.location.deposit._id === depositArticle._id) {
                     this.position += `Ubic. ${element.location.description} - ${element.location.positionX} - ${element.location.positionY} - ${element.location.positionZ}`;
-                    this.movementOfArticleForm.patchValue({'position' : this.position })
+                    this.movementOfArticleForm.patchValue({ 'position': this.position })
                 }
             });
         }
@@ -152,7 +152,7 @@ export class AddMovementOfArticleComponent implements OnInit {
                 articleStock => {
                     if (articleStock) {
                         this.stock = articleStock.realStock;
-                        this.movementOfArticleForm.patchValue({'stock' : this.stock })
+                        this.movementOfArticleForm.patchValue({ 'stock': this.stock })
                     }
                 }
             );
@@ -536,7 +536,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     public addAmount(): void {
         this.movementOfArticle.amount += 1;
-        this.setValueForm();
+        this.movementOfArticleForm.patchValue({ amount: this.movementOfArticle.amount });
     }
 
     public subtractAmount(): void {
@@ -557,7 +557,7 @@ export class AddMovementOfArticleComponent implements OnInit {
                 this.movementOfArticle.amount = 1;
             }
         }
-        this.setValueForm();
+        this.movementOfArticleForm.patchValue({ amount: this.movementOfArticle.amount });
     }
 
     public setValueForm(): void {
@@ -1507,7 +1507,7 @@ export class AddMovementOfArticleComponent implements OnInit {
                         tax.tax = taxAux.tax;
                         tax.percentage = this.roundNumber.transform(taxAux.percentage);
                         if (tax.tax.taxBase == TaxBase.Neto) {
-                          tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice - impInt) / ((tax.percentage / 100) + 1), 4);
+                            tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice - impInt) / ((tax.percentage / 100) + 1), 4);
                         }
                         if (tax.percentage === 0) {
                             tax.taxAmount = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount, 4);
