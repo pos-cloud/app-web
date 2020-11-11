@@ -144,6 +144,16 @@ export let attributes = [
     required : false,
   },
   {
+    name: 'state.name',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    project: null,
+    align: 'left',
+    required : false,
+  },
+  {
     name: 'phones',
     visible: true,
     disabled: false,

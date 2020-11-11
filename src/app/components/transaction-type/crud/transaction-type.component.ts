@@ -409,6 +409,12 @@ export class TransactionTypeComponent implements OnInit {
             class: 'form-group col-md-2'
         },
         {
+            name: "resetOrderNumber",
+            tag: 'input',
+            tagType: "text",
+            class: 'form-group col-md-2'
+        },
+        {
             name: 'Personalizado',
             tag: 'separator',
             tagType: null,
@@ -899,7 +905,8 @@ export class TransactionTypeComponent implements OnInit {
                 "requestEmployee._id": 1,
                 "requestEmployee.description": 1,
                 "paymentMethods._id" : 1,
-                "paymentMethods.name" : 1
+                "paymentMethods.name" : 1,
+                "resetOrderNumber" : 1
             }
 
             this.subscription.add(this._objService.getAll({
