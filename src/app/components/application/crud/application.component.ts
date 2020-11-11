@@ -531,6 +531,28 @@ export class ApplicationComponent implements OnInit {
         
     }
 
+    public deleteSection(item): void {
+        var i = this.home.indexOf(item);
+        if (i !== -1) {
+            this.home.splice(i, 1);
+        }
+    }
+
+    public deleteResource(item, data): void {
+        this.home.forEach(element => {
+            if (element.title === data['title']) {
+                var i = element.resources.indexOf(item);
+                if (i !== -1) {
+                    element.resources.splice(i, 1);
+                }
+            }
+        });
+
+
+    }
+
+
+
     public getAllArticles(match: {}): Promise<Article[]> {
         return new Promise<Article[]>((resolve, reject) => {
             this.subscription.add(this._articleService.getAll({
