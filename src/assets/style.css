@@ -343,7 +343,7 @@ body {
 /* LISTADOS */
 
 .card {
-  min-height: 65vh !important;
+  /*min-height: 65vh !important;*/
   height: auto;
   border: 0px !important;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
