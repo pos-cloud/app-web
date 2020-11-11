@@ -227,7 +227,7 @@
                             <div class="col-md-12">
                                 <form #sectionForm="ngForm" (ngSubmit)="addSection(sectionForm)">
                                     <div class="row">
-                                        <div class="form-group col-md-3">
+                                        <div class="form-group col-md-2">
                                             <label for="order"
                                                 class="control-label">{{'order' | translate | capitalize}}:</label>
                                             <div class="input-group">
@@ -235,7 +235,7 @@
                                                     name="order" id="order" [readonly]="readonly" />
                                             </div>
                                         </div>
-                                        <div class="form-group col-md-4">
+                                        <div class="form-group col-md-6">
                                             <label for="title"
                                                 class="control-label">{{'title' | translate | capitalize}}:</label>
                                             <div class="input-group">
@@ -243,12 +243,15 @@
                                                     name="title" id="title" [readonly]="readonly" />
                                             </div>
                                         </div>
-                                        <div class="form-group col-md-4">
+                                        <div class="form-group col-md-2">
                                             <label for="view"
                                                 class="control-label">{{'view' | translate | capitalize}}:</label>
                                             <div class="input-group">
-                                                <input type="text" class="form-control" ngModel
-                                                    name="view" id="view" [readonly]="readonly" />
+                                                <select class="form-control" [(ngModel)]="view" name="view">
+                                                    <option value="grid">Grid</option>
+                                                    <option value="list-v">List-Vertical</option>
+                                                    <option value="list-h">List-Horizontal</option>
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="form-group col-md-1">
@@ -275,7 +278,7 @@
                                             <form #resourceForm="ngForm"
                                                 (ngSubmit)="addResource(resourceForm,data)">
                                                 <div class="row">
-                                                    <div class="form-group col-md-1">
+                                                    <div class="form-group col-md-2">
                                                         <label for="order"
                                                             class="control-label">{{'order' | translate | capitalize}}:</label>
                                                         <div class="input-group">
@@ -283,7 +286,7 @@
                                                                 ngModel id="order" [readonly]="readonly" />
                                                         </div>
                                                     </div>
-                                                    <div class="form-group col-md-7">
+                                                    <div class="form-group col-md-6">
                                                         <ng-template #rtArticle let-r="result" let-t="term">
                                                             <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
                                                         </ng-template>
@@ -301,7 +304,7 @@
                                                                 ngModel id="link" [readonly]="readonly" />
                                                         </div>
                                                     </div>
-                                                    <div class="form-group col-md-2">
+                                                    <div class="form-group col-md-1">
                                                         <label class="control-label">Acción:</label>
                                                         <button type="summit" class="btn btn-success btn-sm">
                                                             <i class="fa fa-plus"></i>
@@ -315,15 +318,15 @@
                                                 <thead>
                                                     <tr>
                                                         <th>Orden</th>
-                                                        <th>Link</th>
                                                         <th>Recurso</th>
+                                                        <th>Link</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let tchild of data.resources let i = index;">
                                                         <td>{{tchild.order}}</td>
-                                                        <td>{{tchild.link}}</td>
                                                         <td>{{tchild.article.description}}</td>
+                                                        <td>{{tchild.link}}</td>
                                                         <td align="right" width="10">
                                                             <button type="button" class="btn btn-danger btn-sm"
                                                                 (click)="deleteResource(tchild,data)">
