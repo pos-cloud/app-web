@@ -314,8 +314,9 @@
                     class="col-md-12 btn-action btn-large center-content"
                     (click)="!loading ? close('charge') : $event.stopPropagation()"
                     [ngClass]="{'disabled': loading, 'enabled': !loading }">
-                    <span *ngIf="transactionMovement && transactionMovement ==='Compra'">Pagar</span>
-                    <span *ngIf="transactionMovement && transactionMovement ==='Venta'">Cobrar</span>
+                    <span *ngIf="transactionMovement && transactionMovement ==='Compra' && transaction.type.requestPaymentMethods">Pagar</span>
+                    <span *ngIf="transactionMovement && transactionMovement ==='Venta' && transaction.type.requestPaymentMethods">Cobrar</span>
+                    <span *ngIf="transactionMovement && transactionMovement ==='Venta' && !transaction.type.requestPaymentMethods">Finalizar</span>
                 </div>
                 <div *ngIf="transaction.type && transaction.type.fastPayment"
                     class="col-md-6 col-sm-6 col-6 btn-action btn-large center-content"

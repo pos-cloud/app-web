@@ -124,7 +124,7 @@
             </div>
             <div class="row" *ngIf="paymentMethodSelected && (
                                 ( paymentMethodSelected.commission &&
-                                  paymentMethodSelected.commission > 0))">
+                                  paymentMethodSelected.commission > 0)) && transaction.type.movement.toString() === 'Entrada'">
                 <div class="col-md-12">
                     <div class="row">
                         <div class="form-group col-md-12">
@@ -169,7 +169,7 @@
             </div>
             <div class="row" *ngIf="paymentMethodSelected && (
                                 ( paymentMethodSelected.administrativeExpense &&
-                                  paymentMethodSelected.administrativeExpense > 0))">
+                                  paymentMethodSelected.administrativeExpense > 0)) && transaction.type.movement.toString() === 'Entrada'">
                 <div class="form-group col-md-6">
                     <label for="percentageAdministrativeExpense" class="control-label">Gasto administrativo:</label>
                     <div class="input-group">
@@ -190,7 +190,7 @@
             </div>
             <div class="row" *ngIf="paymentMethodSelected && (
                                 ( paymentMethodSelected.otherExpense &&
-                                  paymentMethodSelected.otherExpense > 0))">
+                                  paymentMethodSelected.otherExpense > 0)) && transaction.type.movement.toString() === 'Entrada'">
                 <div class="form-group col-md-6">
                     <label for="percentageOtherExpense" class="control-label">Otros Gastos:</label>
                     <div class="input-group">
