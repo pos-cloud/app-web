@@ -253,7 +253,8 @@
                         </div>
                         <div class="form-group col-md-3">
                             <label for="interestType" class="control-label">Tipo de cálculo:</label>
-                            <select class="form-control" formControlName="interestType" (change)="calculateQuotas('quotas')">
+                            <select class="form-control" formControlName="interestType"
+                                (change)="calculateQuotas('quotas')">
                                 <option value="Interés Simple">Interés Simple</option>
                                 <option value="Francés">Francés</option>
                             </select>
@@ -292,8 +293,8 @@
                     </div>
                     <div class="row" *ngFor="let mov of movementsOfCashesToFinance">
                         <div class="form-group col-md-1">
-                            <input type="number" class="form-control" name="quota" min="0" step="1"
-                                [value]="mov.quota" readonly />
+                            <input type="number" class="form-control" name="quota" min="0" step="1" [value]="mov.quota"
+                                readonly />
                         </div>
                         <div class="form-group col-md-3">
                             <input type="date" class="form-control" name="expirationDate" min="0" step="1"
@@ -317,7 +318,8 @@
                                 <div class="input-group-prepend"><span class="input-group-text"
                                         id="basic-addon1">$</span></div>
                                 <input type="number" class="form-control" name="amountPaid" min="0" step="1"
-                                    #amountPaidMov [value]="mov.amountPaid" [readonly]="movementOfCashForm.value.interestType == 'equitativo'"
+                                    #amountPaidMov [value]="mov.amountPaid"
+                                    [readonly]="movementOfCashForm.value.interestType == 'equitativo'"
                                     (change)="calculateQuotas('amountPaid', amountPaidMov.value, mov)" />
                             </div>
                         </div>
@@ -403,8 +405,7 @@
                       paymentMethodSelected.inputAndOuput &&
                       transaction.type.movement.toString() === 'Salida'" class="form-group col-md-6">
                 <button type="button" class="btn btn-outline-primary"
-                    (click)="openModal('list-movements-of-cashes',null)">Buscar en
-                    Cartera</button>
+                    (click)="openModal('list-movements-of-cashes',null)">Buscar en Cartera</button>
             </div>
 
             <div class="row table-responsive" *ngIf="movementsOfCashes && movementsOfCashes.length > 0">
@@ -433,7 +434,7 @@
                             <td *ngIf="!movement && !movement.type" class="flat" width="430"></td>
                             <td class="flat" width="430">{{ movement.quota }}</td>
                             <td align="right" class="flat" width="430">
-                                {{ (movement.amountPaid - movement.commissionAmount - movement.administrativeExpenseAmount - movement.otherExpenseAmount ) | currency:'USD':'symbol-narrow':'1.2-2' }}
+                                {{ movement.amountPaid | currency:'USD':'symbol-narrow':'1.2-2' }}
                             </td>
                             <td class="flat" width="430">{{ movement.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
                             <td class="flat" width="430">{{ movement.number }}</td>

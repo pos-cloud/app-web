@@ -308,9 +308,9 @@ export class AddMovementOfCashComponent implements OnInit {
             'amountPaid': parseFloat(this.roundNumber.transform(this.amountPaid).toFixed(2)),
             'amountDiscount': parseFloat(this.roundNumber.transform(this.amountDiscount).toFixed(2)),
             'paymentChange': parseFloat(this.roundNumber.transform(this.paymentChange).toFixed(2)),
-            'percentageCommission': parseFloat(this.roundNumber.transform(this.percentageCommission).toFixed(2)),
-            'percentageAdministrativeExpense': parseFloat(this.roundNumber.transform(this.percentageAdministrativeExpense).toFixed(2)),
-            'percentageOtherExpense': parseFloat(this.roundNumber.transform(this.percentageOtherExpense).toFixed(2)),
+            'percentageCommission': parseFloat(this.roundNumber.transform(this.percentageCommission, 3).toFixed(3)),
+            'percentageAdministrativeExpense': parseFloat(this.roundNumber.transform(this.percentageAdministrativeExpense, 3).toFixed(3)),
+            'percentageOtherExpense': parseFloat(this.roundNumber.transform(this.percentageOtherExpense, 3).toFixed(3)),
             'daysCommission': this.daysCommission,
             'observation': this.movementOfCash.observation,
             'discount': parseFloat(this.roundNumber.transform(this.movementOfCash.discount).toFixed(2)),
@@ -1031,11 +1031,11 @@ export class AddMovementOfCashComponent implements OnInit {
         this.percentageAdministrativeExpense = this.paymentMethodSelected.administrativeExpense;
         this.percentageOtherExpense = this.paymentMethodSelected.otherExpense;
 
+        this.setValuesForm();
+
         this.changePercentageCommission();
         this.changePercentageAdministrativeExpense();
         this.changePercentageOtherExpense();
-
-        this.setValuesForm();
     }
 
     async isValidAmount(isCopy: boolean = false) {
@@ -1181,6 +1181,7 @@ export class AddMovementOfCashComponent implements OnInit {
     }
 
     public changePercentageAdministrativeExpense() {
+        this.percentageAdministrativeExpense = this.movementOfCashForm.value.percentageAdministrativeExpense;
         this.movementOfCash.administrativeExpenseAmount = this.roundNumber.transform(this.amountToPay * this.percentageAdministrativeExpense / 100);
         if (this.movementOfCash.taxPercentage > 0) this.movementOfCash.administrativeExpenseAmount = this.roundNumber.transform(this.movementOfCash.administrativeExpenseAmount + (this.movementOfCash.administrativeExpenseAmount * this.movementOfCash.taxPercentage / 100));
         this.movementOfCashForm.patchValue({
@@ -1189,6 +1190,7 @@ export class AddMovementOfCashComponent implements OnInit {
     }
 
     public changePercentageOtherExpense() {
+        this.percentageOtherExpense = this.movementOfCashForm.value.percentageOtherExpense;
         this.movementOfCash.otherExpenseAmount = this.roundNumber.transform(this.amountToPay * this.percentageAdministrativeExpense / 100);
         if (this.movementOfCash.taxPercentage > 0) this.movementOfCash.otherExpenseAmount = this.roundNumber.transform(this.movementOfCash.otherExpenseAmount + (this.movementOfCash.otherExpenseAmount * this.movementOfCash.taxPercentage / 100));
         this.movementOfCashForm.patchValue({
