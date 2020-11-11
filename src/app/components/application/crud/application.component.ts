@@ -317,26 +317,15 @@ export class ApplicationComponent implements OnInit {
         this.buildForm();
         this.objId = pathUrl[3];
         if (this.objId && this.objId !== '') {
-            let project = {
-                _id : 1,
-                "home.resources.article.description" : 1,
-                operationType : 1
-            }
-            this.subscription.add(this._objService.getAll({
-                project : project,
-                match: {
-                    operationType: { $ne: "D" },
-                    _id: { $oid: this.objId }
-                }
-            }).subscribe(
+            this.subscription.add(this._objService.getById(this.objId).subscribe(
                 result => {
                     console.log(result);
                     this.loading = false;
                     if (result.status === 200) {
                         this.obj = result.result;
                         console.log(this.obj);
-                        if(this.obj.home && this.obj.home.length > 0){
-                            this.home = this.obj.home;
+                        if(this.obj.design.home && this.obj.design.home.length > 0){
+                            this.home = this.obj.design.home;
                         } else{
                             this.home = new Array();
                         }
@@ -547,6 +536,7 @@ export class ApplicationComponent implements OnInit {
             this.subscription.add(this._articleService.getAll({
                 project : {
                     name: "$description",
+                    description : 1,
                     operationType: 1
                 },
                 match,
@@ -664,7 +654,7 @@ export class ApplicationComponent implements OnInit {
                 this.obj['design.home'].push(element);
             });
 
-            this.obj.home = this.home;
+            //this.obj.design.home = this.home;
 
             switch (this.operation) {
                 case 'add':
