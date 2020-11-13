@@ -406,8 +406,6 @@ export class AddMovementOfCashComponent implements OnInit {
         this.interestPercentage = this.movementOfCashForm.value.interestPercentage;
         this.movementOfCash.taxPercentage = this.movementOfCashForm.value.taxPercentage;
         this.interestType = this.movementOfCashForm.value.interestType;
-        this.totalInterestAmount = 0;
-        this.totalTaxAmount = 0;
         let expirationDate: number = 0;
         let amountTotal: number = 0;
         if (!this.paymentMethodSelected.payFirstQuota) {
@@ -416,6 +414,8 @@ export class AddMovementOfCashComponent implements OnInit {
         switch (field) {
             case 'quotas':
                 this.movementsOfCashesToFinance = new Array();
+                this.totalInterestAmount = 0;
+                this.totalTaxAmount = 0;
                 for (let i = 0; i < this.quotas; i++) {
                     var mov: MovementOfCash = new MovementOfCash();
                     mov.transaction = this.transaction;
