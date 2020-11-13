@@ -319,11 +319,9 @@ export class ApplicationComponent implements OnInit {
         if (this.objId && this.objId !== '') {
             this.subscription.add(this._objService.getById(this.objId).subscribe(
                 result => {
-                    console.log(result);
                     this.loading = false;
                     if (result.status === 200) {
                         this.obj = result.result;
-                        console.log(this.obj);
                         if(this.obj.design.home && this.obj.design.home.length > 0){
                             this.home = this.obj.design.home;
                         } else{
@@ -484,8 +482,6 @@ export class ApplicationComponent implements OnInit {
 
     public addSection(sectionForm: NgForm): void {
 
-        console.log(sectionForm.value);
-
         if(sectionForm.value.title && sectionForm.value.order && sectionForm.value.view){
             this.home.push({
                 title: sectionForm.value.title,
@@ -497,9 +493,6 @@ export class ApplicationComponent implements OnInit {
         } else {
             this.showToast("Debe completar todos los campos","danger");
         }
-
-        console.log(this.home);
-
 
         this.home.sort(function(a, b) {
             var textA = a.order;
@@ -566,7 +559,6 @@ export class ApplicationComponent implements OnInit {
                 limit: 10,
             }).subscribe(
                 result => {
-                    console.log(result);
                     this.loading = false;
                     (result.status === 200) ? resolve(result.result) : reject(result);
                 },
@@ -670,7 +662,6 @@ export class ApplicationComponent implements OnInit {
         }
 
         if (isValid) {
-            console.log(this.obj);
             this.obj['design.home'] = new Array();
             this.home.forEach(element => {
                 this.obj['design.home'].push(element);
