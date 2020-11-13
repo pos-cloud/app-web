@@ -401,31 +401,27 @@ export class AddMovementOfCashComponent implements OnInit {
     }
 
     public calculateQuotas(field: string, newValue?: any, movement?: MovementOfCash): void {
-
         this.quotas = this.movementOfCashForm.value.quotas;
         this.days = this.movementOfCashForm.value.days;
         this.interestPercentage = this.movementOfCashForm.value.interestPercentage;
         this.movementOfCash.taxPercentage = this.movementOfCashForm.value.taxPercentage;
         this.interestType = this.movementOfCashForm.value.interestType;
-        this.totalInterestAmount = 0;
-        this.totalTaxAmount = 0;
-        let expirationDate: number = 1;
+        let expirationDate: number = 0;
         let amountTotal: number = 0;
         if (!this.paymentMethodSelected.payFirstQuota) {
             expirationDate += this.days;
         }
-
         switch (field) {
             case 'quotas':
                 this.movementsOfCashesToFinance = new Array();
+                this.totalInterestAmount = 0;
+                this.totalTaxAmount = 0;
                 for (let i = 0; i < this.quotas; i++) {
                     var mov: MovementOfCash = new MovementOfCash();
                     mov.transaction = this.transaction;
                     mov.type = this.paymentMethodSelected;
                     mov.observation = this.movementOfCash.observation;
                     mov.quota = i + 1;
-                    mov.expirationDate = moment(moment(this.movementOfCash.expirationDate, 'YYYY-MM-DD').format('YYYY-MM-DD')).add(expirationDate, 'days').format('YYYY-MM-DD').toString();
-                    expirationDate += (this.days * (i + 1)) + 1;
                     switch (this.interestType) {
                         case 'Sobre Saldo':
                             mov.interestAmount = this.roundNumber.transform((this.roundNumber.transform(this.amountToPay) * this.interestPercentage / 100) / this.quotas);
@@ -478,19 +474,25 @@ export class AddMovementOfCashComponent implements OnInit {
                     this.movementsOfCashesToFinance.push(mov);
                 }
                 this.setValuesForm();
+                this.calculateQuotas(
+                    'expirationDate',
+                    moment(moment(this.movementOfCash.expirationDate, 'YYYY-MM-DD').format('YYYY-MM-DD')).add(expirationDate, 'days').format('YYYY-MM-DD').toString(),
+                    this.movementsOfCashesToFinance[0]
+                );
                 break;
             case 'amountPaid':
                 let totalAmount = 0;
                 if (this.movementsOfCashesToFinance && this.movementsOfCashesToFinance.length > 0) {
                     for (let i = 0; i < this.movementsOfCashesToFinance.length; i++) {
-                        if (this.movementsOfCashesToFinance[i].quota === movement.quota) {
-                            this.movementsOfCashesToFinance[i].amountPaid = this.roundNumber.transform(parseFloat(newValue));
+                        let mov: MovementOfCash = this.movementsOfCashesToFinance[i];
+                        if (mov.quota === movement.quota) {
+                            mov.amountPaid = this.roundNumber.transform(parseFloat(newValue));
                         }
-                        totalAmount += this.movementsOfCashesToFinance[i].amountPaid;
+                        totalAmount += mov.amountPaid;
                         if (totalAmount > this.amountToPay) {
-                            totalAmount -= this.movementsOfCashesToFinance[i].amountPaid;
-                            this.movementsOfCashesToFinance[i].amountPaid = this.roundNumber.transform(this.amountToPay - totalAmount);
-                            totalAmount += this.movementsOfCashesToFinance[i].amountPaid;
+                            totalAmount -= mov.amountPaid;
+                            mov.amountPaid = this.roundNumber.transform(this.amountToPay - totalAmount);
+                            totalAmount += mov.amountPaid;
                         }
                     }
                 }
@@ -509,20 +511,21 @@ export class AddMovementOfCashComponent implements OnInit {
 
                 if (this.movementsOfCashesToFinance && this.movementsOfCashesToFinance.length > 0) {
                     for (let i = 0; i < this.movementsOfCashesToFinance.length; i++) {
-                        if (this.movementsOfCashesToFinance[i].quota === movement.quota) {
+                        let mov: MovementOfCash = this.movementsOfCashesToFinance[i];
+                        if (mov.quota === movement.quota) {
                             // Editamos desde la fecha modificada en adelante
                             isEdit = true;
-                            this.movementsOfCashesToFinance[i].expirationDate = moment(newValue).toString();
+                            mov.expirationDate = moment(newValue).toString();
                         } else {
                             if (isEdit) {
                                 if (!isSum) {
                                     // Se suma el valor de la fecha en un dia para que de correctamente los dias.
                                     expirationDate = this.days + 1;
-                                    this.movementsOfCashesToFinance[i].expirationDate = moment(moment(this.movementsOfCashesToFinance[i - 1].expirationDate).format('YYYY-MM-DD')).add(expirationDate, 'days').format('YYYY-MM-DD').toString();
+                                    mov.expirationDate = moment(moment(this.movementsOfCashesToFinance[i - 1].expirationDate).format('YYYY-MM-DD')).add(expirationDate, 'days').format('YYYY-MM-DD').toString();
                                     isSum = true;
                                 } else {
                                     expirationDate = this.days;
-                                    this.movementsOfCashesToFinance[i].expirationDate = moment(moment(this.movementsOfCashesToFinance[i - 1].expirationDate).format('YYYY-MM-DD')).add(expirationDate, 'days').format('YYYY-MM-DD').toString();
+                                    mov.expirationDate = moment(moment(this.movementsOfCashesToFinance[i - 1].expirationDate).format('YYYY-MM-DD')).add(expirationDate, 'days').format('YYYY-MM-DD').toString();
                                 }
                             }
                         }
@@ -1116,7 +1119,7 @@ export class AddMovementOfCashComponent implements OnInit {
                     }
                 }
                 if (amountTotal !== (this.movementOfCashForm.value.amountToPay + this.totalInterestAmount + this.totalTaxAmount) &&
-                Math.abs(amountTotal - (this.movementOfCashForm.value.amountToPay + this.totalInterestAmount + this.totalTaxAmount)) > 1) {
+                    Math.abs(amountTotal - (this.movementOfCashForm.value.amountToPay + this.totalInterestAmount + this.totalTaxAmount)) > 1) {
                     resolve(false);
                     this.showToast(null, 'info', "El monto total de las cuotas no puede ser distinto del monto a pagar.");
                 }

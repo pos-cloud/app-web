@@ -495,7 +495,6 @@ export class ApplicationComponent implements OnInit {
             this.showToast("Debe completar todos los campos","danger");
         }
 
-
         this.home.sort(function(a, b) {
             var textA = a.order;
             var textB = b.order;
