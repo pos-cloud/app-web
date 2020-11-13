@@ -150,7 +150,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="row" *ngIf="transaction.state.toString() === 'Cerrado'">
+			<div class="row" *ngIf="transaction.state.toString() !== 'Abierto'">
 				<div class="col-md-12">
 					<label for="balance" class="control-label">Saldo:</label>
 					<div class="input-group">
