@@ -50,6 +50,7 @@ export class ApplicationComponent implements OnInit {
     public oldFiles: any[];
     public apiURL: string = Config.apiV8URL;
     public database: string = Config.database;
+    public view;
     public home : {
         title : string,
         view : string,
