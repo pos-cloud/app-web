@@ -174,6 +174,13 @@ export class ApplicationComponent implements OnInit {
         tag: 'input',
         tagType: 'text',
         class: 'form-group col-md-4'
+    },{
+        name: 'design.font.family',
+        tag: 'select',
+        tagType: null,
+        values: ['Krona One', 'Roboto','IBM Plex Sans'],
+        default: '3',
+        class: 'form-group col-md-4'
     }, {
         name: 'design.resources.logo',
         tag: 'input',
