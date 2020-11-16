@@ -36,7 +36,9 @@ export class Application extends Model {
     },
     font : {
         family : string,
-        size : string
+        weight : string,
+        style : string,
+        size : string,
     }
 
      //xx-small x-small small medium large x-large xx-large
