@@ -190,14 +190,12 @@ export class ApplicationComponent implements OnInit {
         tag: 'select',
         tagType: 'text',
         values: ['100','200','300','400','500','600','700','800','900'],
-        default : '500',
         class: 'form-group col-md-4'
     }, {
         name: 'design.font.style',
         tag: 'select',
         tagType: 'text',
         values: ['normal','italic','oblique','initial','unset','inherit'],
-        default : 'nomal',
         class: 'form-group col-md-4'
     },{
         name: 'design.font.size',
