@@ -593,7 +593,7 @@ export class AddMovementOfCashComponent implements OnInit {
             }
         }
 
-        if (this.roundNumber.transform(amountPaid) >= this.roundNumber.transform(this.transactionAmount)) {
+        if (this.roundNumber.transform(amountPaid) >= this.roundNumber.transform(this.transactionAmount) && this.transactionAmount !== 0) {
             chargedFinished = true;
         }
 
@@ -974,12 +974,12 @@ export class AddMovementOfCashComponent implements OnInit {
         if (op === 'amountToPay') {
             if (typeof this.movementOfCashForm.value.amountToPay === 'string') this.movementOfCashForm.value.amountToPay = parseFloat(this.movementOfCashForm.value.amountToPay);
             this.amountToPay = this.movementOfCashForm.value.amountToPay;
-        } else {
-            this.amountPaid = 0;
-            if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
-                for (let movement of this.movementsOfCashes) {
-                    this.amountPaid += movement.amountPaid;
-                }
+        }
+        
+        this.amountPaid = 0;
+        if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
+            for (let movement of this.movementsOfCashes) {
+                this.amountPaid += movement.amountPaid;
             }
         }
 
@@ -1033,7 +1033,6 @@ export class AddMovementOfCashComponent implements OnInit {
         this.percentageCommission = this.paymentMethodSelected.commission;
         this.percentageAdministrativeExpense = this.paymentMethodSelected.administrativeExpense;
         this.percentageOtherExpense = this.paymentMethodSelected.otherExpense;
-
         this.setValuesForm();
 
         this.changePercentageCommission();
@@ -1151,6 +1150,14 @@ export class AddMovementOfCashComponent implements OnInit {
 
             resolve(true);
         });
+    }
+
+    getTotalAmount(field: string): number {
+        let total: number = 0;
+        for (let mov of this.movementsOfCashes) {
+            total += mov[field];
+        }
+        return total;
     }
 
     public changePercentageCommission() {

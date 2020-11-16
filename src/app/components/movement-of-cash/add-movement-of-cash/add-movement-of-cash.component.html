@@ -122,7 +122,8 @@
                     </div>
                 </div>
             </div>
-            <div class="row" *ngIf="paymentMethodSelected && (
+            <div class="row"
+                *ngIf="paymentMethodSelected && (
                                 ( paymentMethodSelected.commission &&
                                   paymentMethodSelected.commission > 0)) && transaction.type.movement.toString() === 'Entrada'">
                 <div class="col-md-12">
@@ -167,7 +168,8 @@
                     </div>
                 </div>
             </div>
-            <div class="row" *ngIf="paymentMethodSelected && (
+            <div class="row"
+                *ngIf="paymentMethodSelected && (
                                 ( paymentMethodSelected.administrativeExpense &&
                                   paymentMethodSelected.administrativeExpense > 0)) && transaction.type.movement.toString() === 'Entrada'">
                 <div class="form-group col-md-6">
@@ -188,7 +190,8 @@
                     </div>
                 </div>
             </div>
-            <div class="row" *ngIf="paymentMethodSelected && (
+            <div class="row"
+                *ngIf="paymentMethodSelected && (
                                 ( paymentMethodSelected.otherExpense &&
                                   paymentMethodSelected.otherExpense > 0)) && transaction.type.movement.toString() === 'Entrada'">
                 <div class="form-group col-md-6">
@@ -415,10 +418,13 @@
                                 <i class="fa fa-bars"></i>
                             </th>
                             <th>Método</th>
-                            <th>Cuota</th>
-                            <th>Monto</th>
-                            <th>Vencimiento</th>
                             <th>Comprobante</th>
+                            <th>Cuota</th>
+                            <th>Vencimiento</th>
+                            <th>Monto</th>
+                            <th>Comisión</th>
+                            <th>Gastos adm.</th>
+                            <th>Otros gastos</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -429,16 +435,43 @@
                                     <i class="fa fa-trash-o"></i>
                                 </button>
                             </td>
-                            <td *ngIf="movement && movement.type" class="flat" width="430">{{ movement.type.name }}</td>
-                            <td *ngIf="!movement && !movement.type" class="flat" width="430"></td>
-                            <td class="flat" width="430">{{ movement.quota }}</td>
-                            <td align="right" class="flat" width="430">
+                            <td class="flat">{{ movement?.type?.name }}</td>
+                            <td class="flat">{{ movement.number }}</td>
+                            <td class="flat">{{ movement.quota }}</td>
+                            <td class="flat">{{ movement.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
+                            <td align="right" class="flat">
                                 {{ movement.amountPaid | currency:'USD':'symbol-narrow':'1.2-2' }}
                             </td>
-                            <td class="flat" width="430">{{ movement.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
-                            <td class="flat" width="430">{{ movement.number }}</td>
+                            <td align="right" class="flat">
+                                {{ movement.commissionAmount | currency:'USD':'symbol-narrow':'1.2-2' }}
+                            </td>
+                            <td align="right" class="flat">
+                                {{ movement.administrativeExpenseAmount | currency:'USD':'symbol-narrow':'1.2-2' }}
+                            </td>
+                            <td align="right" class="flat">
+                                {{ movement.otherExpenseAmount | currency:'USD':'symbol-narrow':'1.2-2' }}
+                            </td>
                         </tr>
                     </tbody>
+                    <thead>
+                        <tr>
+                            <td colspan="5" align="right">
+                                <b>TOTALES</b>
+                            </td>
+                            <td align="right" class="flat">
+                                <b>{{getTotalAmount('amountPaid') | currency:'USD':'symbol-narrow':'1.2-2'}}</b>
+                            </td>
+                            <td align="right" class="flat">
+                                <b>{{getTotalAmount('commissionAmount') | currency:'USD':'symbol-narrow':'1.2-2'}}</b>
+                            </td>
+                            <td align="right" class="flat">
+                                <b>{{getTotalAmount('administrativeExpenseAmount') | currency:'USD':'symbol-narrow':'1.2-2'}}</b>
+                            </td>
+                            <td align="right" class="flat">
+                                <b>{{getTotalAmount('otherExpenseAmount') | currency:'USD':'symbol-narrow':'1.2-2'}}</b>
+                            </td>
+                        </tr>
+                    </thead>
                 </table>
             </div>
         </div>
