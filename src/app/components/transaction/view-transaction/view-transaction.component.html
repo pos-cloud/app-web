@@ -221,30 +221,36 @@
               <thead>
                 <tr>
                   <th>Método</th>
+                  <th>Comprobante</th>
                   <th>Cuota</th>
+                  <th>Vencimiento</th>
+                  <th>Banco</th>
                   <th>Monto</th>
+                  <th>Observación</th>
                   <th>Comisión</th>
                   <th>Gasto Admin.</th>
                   <th>Otros gastos</th>
-                  <th>Comprobante</th>
-                  <th>Vencimiento</th>
-                  <th>Banco</th>
-                  <th>Observación</th>
+                  <th>Amort.</th>
+                  <th>Interés</th>
+                  <th>IVA</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let movementOfCash of movementsOfCashes | orderBy: orderTerm: propertyTerm">
                   <td (click)="pushCurrencyValue(movementOfCash)">{{movementOfCash.type.name}}</td>
-                  <td>{{movementOfCash.quota}}</td>
-                  <td>{{movementOfCash.amountPaid | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-                  <td>{{movementOfCash.commissionAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-                  <td>{{movementOfCash.administrativeExpenseAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-                  <td>{{movementOfCash.otherExpenseAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                   <td>{{movementOfCash.number}}</td>
+                  <td>{{movementOfCash.quota}}</td>
                   <td>{{movementOfCash.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
                   <td *ngIf="movementOfCash.bank">{{movementOfCash.bank.name}}</td>
                   <td *ngIf="!movementOfCash.bank"></td>
+                  <td>{{movementOfCash.amountPaid | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                   <td style="white-space: normal;">{{movementOfCash.observation}}</td>
+                  <td>{{movementOfCash.commissionAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                  <td>{{movementOfCash.administrativeExpenseAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                  <td>{{movementOfCash.otherExpenseAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                  <td>{{movementOfCash.capital | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                  <td>{{movementOfCash.interestAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                  <td>{{movementOfCash.taxAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                 </tr>
 
                 <tr align="center " *ngIf="movementsOfCashes.length === 0">

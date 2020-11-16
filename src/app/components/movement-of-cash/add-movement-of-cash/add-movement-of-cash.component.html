@@ -122,9 +122,10 @@
                     </div>
                 </div>
             </div>
-            <div class="row" *ngIf="paymentMethodSelected && (
+            <div class="row"
+                *ngIf="paymentMethodSelected && (
                                 ( paymentMethodSelected.commission &&
-                                  paymentMethodSelected.commission > 0))">
+                                  paymentMethodSelected.commission > 0)) && transaction.type.movement.toString() === 'Entrada'">
                 <div class="col-md-12">
                     <div class="row">
                         <div class="form-group col-md-12">
@@ -167,9 +168,10 @@
                     </div>
                 </div>
             </div>
-            <div class="row" *ngIf="paymentMethodSelected && (
+            <div class="row"
+                *ngIf="paymentMethodSelected && (
                                 ( paymentMethodSelected.administrativeExpense &&
-                                  paymentMethodSelected.administrativeExpense > 0))">
+                                  paymentMethodSelected.administrativeExpense > 0)) && transaction.type.movement.toString() === 'Entrada'">
                 <div class="form-group col-md-6">
                     <label for="percentageAdministrativeExpense" class="control-label">Gasto administrativo:</label>
                     <div class="input-group">
@@ -188,9 +190,10 @@
                     </div>
                 </div>
             </div>
-            <div class="row" *ngIf="paymentMethodSelected && (
+            <div class="row"
+                *ngIf="paymentMethodSelected && (
                                 ( paymentMethodSelected.otherExpense &&
-                                  paymentMethodSelected.otherExpense > 0))">
+                                  paymentMethodSelected.otherExpense > 0)) && transaction.type.movement.toString() === 'Entrada'">
                 <div class="form-group col-md-6">
                     <label for="percentageOtherExpense" class="control-label">Otros Gastos:</label>
                     <div class="input-group">
@@ -253,7 +256,8 @@
                         </div>
                         <div class="form-group col-md-3">
                             <label for="interestType" class="control-label">Tipo de cálculo:</label>
-                            <select class="form-control" formControlName="interestType" (change)="calculateQuotas('quotas')">
+                            <select class="form-control" formControlName="interestType"
+                                (change)="calculateQuotas('quotas')">
                                 <option value="Interés Simple">Interés Simple</option>
                                 <option value="Francés">Francés</option>
                             </select>
@@ -292,8 +296,8 @@
                     </div>
                     <div class="row" *ngFor="let mov of movementsOfCashesToFinance">
                         <div class="form-group col-md-1">
-                            <input type="number" class="form-control" name="quota" min="0" step="1"
-                                [value]="mov.quota" readonly />
+                            <input type="number" class="form-control" name="quota" min="0" step="1" [value]="mov.quota"
+                                readonly />
                         </div>
                         <div class="form-group col-md-3">
                             <input type="date" class="form-control" name="expirationDate" min="0" step="1"
@@ -317,7 +321,7 @@
                                 <div class="input-group-prepend"><span class="input-group-text"
                                         id="basic-addon1">$</span></div>
                                 <input type="number" class="form-control" name="amountPaid" min="0" step="1"
-                                    #amountPaidMov [value]="mov.amountPaid" [readonly]="movementOfCashForm.value.interestType == 'equitativo'"
+                                    #amountPaidMov [value]="mov.amountPaid" readonly
                                     (change)="calculateQuotas('amountPaid', amountPaidMov.value, mov)" />
                             </div>
                         </div>
@@ -403,8 +407,7 @@
                       paymentMethodSelected.inputAndOuput &&
                       transaction.type.movement.toString() === 'Salida'" class="form-group col-md-6">
                 <button type="button" class="btn btn-outline-primary"
-                    (click)="openModal('list-movements-of-cashes',null)">Buscar en
-                    Cartera</button>
+                    (click)="openModal('list-movements-of-cashes',null)">Buscar en Cartera</button>
             </div>
 
             <div class="row table-responsive" *ngIf="movementsOfCashes && movementsOfCashes.length > 0">
@@ -415,10 +418,13 @@
                                 <i class="fa fa-bars"></i>
                             </th>
                             <th>Método</th>
-                            <th>Cuota</th>
-                            <th>Monto</th>
-                            <th>Vencimiento</th>
                             <th>Comprobante</th>
+                            <th>Cuota</th>
+                            <th>Vencimiento</th>
+                            <th>Monto</th>
+                            <th>Comisión</th>
+                            <th>Gastos adm.</th>
+                            <th>Otros gastos</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -429,16 +435,43 @@
                                     <i class="fa fa-trash-o"></i>
                                 </button>
                             </td>
-                            <td *ngIf="movement && movement.type" class="flat" width="430">{{ movement.type.name }}</td>
-                            <td *ngIf="!movement && !movement.type" class="flat" width="430"></td>
-                            <td class="flat" width="430">{{ movement.quota }}</td>
-                            <td align="right" class="flat" width="430">
-                                {{ (movement.amountPaid - movement.commissionAmount - movement.administrativeExpenseAmount - movement.otherExpenseAmount ) | currency:'USD':'symbol-narrow':'1.2-2' }}
+                            <td class="flat">{{ movement?.type?.name }}</td>
+                            <td class="flat">{{ movement.number }}</td>
+                            <td class="flat">{{ movement.quota }}</td>
+                            <td class="flat">{{ movement.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
+                            <td align="right" class="flat">
+                                {{ movement.amountPaid | currency:'USD':'symbol-narrow':'1.2-2' }}
                             </td>
-                            <td class="flat" width="430">{{ movement.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
-                            <td class="flat" width="430">{{ movement.number }}</td>
+                            <td align="right" class="flat">
+                                {{ movement.commissionAmount | currency:'USD':'symbol-narrow':'1.2-2' }}
+                            </td>
+                            <td align="right" class="flat">
+                                {{ movement.administrativeExpenseAmount | currency:'USD':'symbol-narrow':'1.2-2' }}
+                            </td>
+                            <td align="right" class="flat">
+                                {{ movement.otherExpenseAmount | currency:'USD':'symbol-narrow':'1.2-2' }}
+                            </td>
                         </tr>
                     </tbody>
+                    <thead>
+                        <tr>
+                            <td colspan="5" align="right">
+                                <b>TOTALES</b>
+                            </td>
+                            <td align="right" class="flat">
+                                <b>{{getTotalAmount('amountPaid') | currency:'USD':'symbol-narrow':'1.2-2'}}</b>
+                            </td>
+                            <td align="right" class="flat">
+                                <b>{{getTotalAmount('commissionAmount') | currency:'USD':'symbol-narrow':'1.2-2'}}</b>
+                            </td>
+                            <td align="right" class="flat">
+                                <b>{{getTotalAmount('administrativeExpenseAmount') | currency:'USD':'symbol-narrow':'1.2-2'}}</b>
+                            </td>
+                            <td align="right" class="flat">
+                                <b>{{getTotalAmount('otherExpenseAmount') | currency:'USD':'symbol-narrow':'1.2-2'}}</b>
+                            </td>
+                        </tr>
+                    </thead>
                 </table>
             </div>
         </div>

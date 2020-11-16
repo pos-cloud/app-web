@@ -625,13 +625,15 @@ export class MovementOfCancellationComponent implements OnInit {
                                     administrativeExpenseAmount: 1,
                                     otherExpenseAmount: 1,
                                     number: 1,
+                                    taxPercentage: 1,
                                     'type._id': 1,
                                     'type.name': 1,
                                     'type.commissionArticle': 1,
                                     'type.administrativeExpenseArticle': 1,
                                     'type.otherExpenseArticle': 1,
+                                    operationType: 1
                                 },
-                                match: { transaction: { $oid: mov.transactionOrigin._id } },
+                                match: { transaction: { $oid: mov.transactionOrigin._id }, operationType: { $ne: 'D' } },
                             }).toPromise()
                                 .then(async (result: Resulteable) => {
                                     if (result.status === 200) {
@@ -644,7 +646,8 @@ export class MovementOfCancellationComponent implements OnInit {
                                                         movementOfCash.type.commissionArticle.toString(),
                                                         movementOfCash.commissionAmount,
                                                         this.transactionDestination,
-                                                        ` POR ${movementOfCash.type.name} ${(movementOfCash.number) ? movementOfCash.number : ''}`
+                                                        ` POR ${movementOfCash.type.name} ${(movementOfCash.number) ? movementOfCash.number : ''}`,
+                                                        (movementOfCash.taxPercentage > 0) ? true : false
                                                     );
                                                     if (movementOfArticle) this.movsOfArticles.push(movementOfArticle)
                                                     else endedProcess = true;
@@ -655,7 +658,8 @@ export class MovementOfCancellationComponent implements OnInit {
                                                         movementOfCash.type.administrativeExpenseArticle.toString(),
                                                         movementOfCash.administrativeExpenseAmount,
                                                         this.transactionDestination,
-                                                        ` POR ${movementOfCash.type.name} ${(movementOfCash.number) ? movementOfCash.number : ''}`
+                                                        ` POR ${movementOfCash.type.name} ${(movementOfCash.number) ? movementOfCash.number : ''}`,
+                                                        (movementOfCash.taxPercentage > 0) ? true : false
                                                     );
                                                     if (movementOfArticle) this.movsOfArticles.push(movementOfArticle)
                                                     else endedProcess = true;
@@ -666,7 +670,8 @@ export class MovementOfCancellationComponent implements OnInit {
                                                         movementOfCash.type.otherExpenseArticle.toString(),
                                                         movementOfCash.otherExpenseAmount,
                                                         this.transactionDestination,
-                                                        ` POR ${movementOfCash.type.name} ${(movementOfCash.number) ? movementOfCash.number : ''}`
+                                                        ` POR ${movementOfCash.type.name} ${(movementOfCash.number) ? movementOfCash.number : ''}`,
+                                                        (movementOfCash.taxPercentage > 0) ? true : false
                                                     );
                                                     if (movementOfArticle) this.movsOfArticles.push(movementOfArticle)
                                                     else endedProcess = true;
@@ -711,7 +716,7 @@ export class MovementOfCancellationComponent implements OnInit {
         }
     }
 
-    async createMovementOfArticleByArticleId(articleId: string, salePrice: number, transaction: Transaction, descriptionPlus?: string) {
+    async createMovementOfArticleByArticleId(articleId: string, salePrice: number, transaction: Transaction, descriptionPlus?: string, calculaTax: boolean = true) {
 
         let err: boolean = false;
 
@@ -791,7 +796,7 @@ export class MovementOfCancellationComponent implements OnInit {
                                 movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice + (movementOfArticle.salePrice * increasePrice / 100));
                             }
 
-                            if (transaction.type.requestTaxes) {
+                            if (transaction.type.requestTaxes && calculaTax) {
                                 let taxes: Taxes[] = new Array();
                                 if (article.taxes) {
                                     for (let taxAux of article.taxes) {
@@ -833,7 +838,7 @@ export class MovementOfCancellationComponent implements OnInit {
                                 }
                             }
                             movementOfArticle.otherFields = fields;
-                            if (transaction.type.requestTaxes) {
+                            if (transaction.type.requestTaxes && calculaTax) {
                                 let taxes: Taxes[] = new Array();
                                 if (article.taxes) {
                                     for (let taxAux of article.taxes) {

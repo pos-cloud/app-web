@@ -47,15 +47,16 @@
                                 (input)="getTransactions()" placeholder="Letra..."></th>
                         <th><input type="text" class="form-control" [(ngModel)]="filters['number']"
                                 (input)="getTransactions()" placeholder="Número..."></th>
-                        <th *ngIf="!requestCompany"><input type="text" class="form-control" [(ngModel)]="filters['company.city']"
-                                (input)="getTransactions()" placeholder="Ciudad..."></th>
-                                <th *ngIf="!requestCompany"><input type="text" class="form-control" [(ngModel)]="filters['company.state.name']"
-                                    (input)="getTransactions()" placeholder="Provincia..."></th>
-                                    <th *ngIf="!requestCompany"><input type="text" class="form-control" [(ngModel)]="filters['company.group.description']"
-                                        (input)="getTransactions()" placeholder="Grupo..."></th>
+                        <th *ngIf="!requestCompany"><input type="text" class="form-control"
+                                [(ngModel)]="filters['company.city']" (input)="getTransactions()"
+                                placeholder="Ciudad..."></th>
+                        <th *ngIf="!requestCompany"><input type="text" class="form-control"
+                                [(ngModel)]="filters['company.state.name']" (input)="getTransactions()"
+                                placeholder="Provincia..."></th>
+                        <th *ngIf="!requestCompany"><input type="text" class="form-control"
+                                [(ngModel)]="filters['company.group.description']" (input)="getTransactions()"
+                                placeholder="Grupo..."></th>
                         <th>
-                            <!-- <input type="text" class="form-control" [(ngModel)]="filters['totalPrice']"
-                (input)="getTransactions()" placeholder="Precio Total..."> -->
                         </th>
                         <th></th>
                     </tr>
@@ -80,13 +81,16 @@
                             {{transaction.origin}}</td>
                         <td (click)="selectTransaction(transaction, false)">{{transaction.letter}}</td>
                         <td (click)="selectTransaction(transaction, false)">{{transaction.number}}</td>
-                        <td  *ngIf="!requestCompany" (click)="selectTransaction(transaction, false)">{{transaction.company.city}}</td>
-                        <td  *ngIf="!requestCompany" (click)="selectTransaction(transaction, false)">{{transaction.company.state?.name}}</td>
-                        <td  *ngIf="!requestCompany" (click)="selectTransaction(transaction, false)">{{transaction.company.group?.description}}</td>
+                        <td *ngIf="!requestCompany" (click)="selectTransaction(transaction, false)">
+                            {{transaction.company.city}}</td>
+                        <td *ngIf="!requestCompany" (click)="selectTransaction(transaction, false)">
+                            {{transaction.company.state?.name}}</td>
+                        <td *ngIf="!requestCompany" (click)="selectTransaction(transaction, false)">
+                            {{transaction.company.group?.description}}</td>
                         <td (click)="selectTransaction(transaction, false)">
                             {{transaction.totalPrice  }}</td>
                         <td>
-                            <input type="number" class="form-control" [(ngModel)]="transaction['balanceSelected']"
+                            <input type="number" style="width: 100px;" class="form-control" [(ngModel)]="transaction['balanceSelected']"
                                 (blur)="updateBalanceOrigin(transaction)"
                                 [readonly]="!isTransactionSelected(transaction)">
                         </td>
@@ -145,7 +149,7 @@
                     <th><input type="text" class="form-control" [(ngModel)]="filters['endDate']"
                             (input)="getTransactions()" placeholder="Fecha..."></th>
                     <th><input type="text" class="form-control" [(ngModel)]="filters['state']"
-                                (input)="getTransactions()" placeholder="Estado..."></th>
+                            (input)="getTransactions()" placeholder="Estado..."></th>
                     <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']"
                             (input)="getTransactions()" placeholder="Nombre..."></th>
                     <th><input type="text" class="form-control" [(ngModel)]="filters['origin']"
@@ -172,7 +176,7 @@
                             title="Ver"><i class="fa fa-eye"></i></button>
                     </td>
                     <td>{{transaction.endDate | dateFormat:'DD/MM/YYYY'}}</td>
-                    <td >{{transaction.state}}</td>
+                    <td>{{transaction.state}}</td>
                     <td *ngIf="transaction.type">{{transaction.type.name}}</td>
                     <td *ngIf="!transaction.type"></td>
                     <td *ngIf="userCountry === 'AR'">{{transaction.origin}}</td>

@@ -135,7 +135,12 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="col-md-12">
+                        <div>
+                            <hr>
+                            <b>Horarios de atención</b>
+                        </div>
                         <div class="row" style="width: 100%;">
                             <div class="col-md-12">
                                 <!--Array horarios-->
@@ -160,14 +165,15 @@
                                         <div class="form-group col-md-2">
                                             <label class="control-label">Desde</label>
                                             <div class="input-group">
-                                                <input type="time" class="form-control" name="from" [(ngModel)]="from"/>
+                                                <input type="time" class="form-control" name="from"
+                                                    [(ngModel)]="from" />
                                             </div>
                                         </div>
 
                                         <div class="form-group col-md-2">
                                             <label class="control-label">Hasta</label>
                                             <div class="input-group">
-                                                <input type="time" class="form-control" name="to" [(ngModel)]="to"/>
+                                                <input type="time" class="form-control" name="to" [(ngModel)]="to" />
                                             </div>
                                         </div>
 
@@ -209,6 +215,131 @@
                                     </tfoot>
                                 </table>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div>
+                            <hr>
+                            <b>Home</b>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form #sectionForm="ngForm" (ngSubmit)="addSection(sectionForm)">
+                                    <div class="row">
+                                        <div class="form-group col-md-2">
+                                            <label for="order"
+                                                class="control-label">{{'order' | translate | capitalize}}:</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" ngModel
+                                                    name="order" id="order" [readonly]="readonly" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="title"
+                                                class="control-label">{{'title' | translate | capitalize}}:</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" ngModel
+                                                    name="title" id="title" [readonly]="readonly" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-2">
+                                            <label for="view"
+                                                class="control-label">{{'view' | translate | capitalize}}:</label>
+                                            <div class="input-group">
+                                                <select class="form-control" [(ngModel)]="view" name="view">
+                                                    <option value="grid">Grid</option>
+                                                    <option value="list-v">List-Vertical</option>
+                                                    <option value="list-h">List-Horizontal</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-1">
+                                            <label class="control-label">Acción:</label>
+                                            <button type="summit" class="btn btn-success btn-sm">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div *ngFor="let data of home; index as i">
+                            <ngb-accordion class="ui-accordion" #acc="ngbAccordion">
+                                <ngb-panel title="{{data.title}} - {{data.view}}">
+                                    <ng-template ngbPanelTitle class="btnper">
+                                        <button style="background-color: #dc3545;    margin-left: 600px;" type="button"
+                                            class="btn btn-danger btn-sm" (click)="deleteSection(data)">
+                                            <i class="btnper fa fa-trash"></i>
+                                        </button>
+                                    </ng-template>
+                                    <ng-template ngbPanelContent>
+                                        <div class="col-md-12">
+                                            <form #resourceForm="ngForm"
+                                                (ngSubmit)="addResource(resourceForm,data)">
+                                                <div class="row">
+                                                    <div class="form-group col-md-2">
+                                                        <label for="order"
+                                                            class="control-label">{{'order' | translate | capitalize}}:</label>
+                                                        <div class="input-group">
+                                                            <input type="number" class="form-control" name="order"
+                                                                ngModel id="order" [readonly]="readonly" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <ng-template #rtArticle let-r="result" let-t="term">
+                                                            <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+                                                        </ng-template>
+                                                        <label for="article">Agregar Producto:</label>
+                                                        <input id="article" type="text" ngModel class="form-control"
+                                                            name="article" [ngbTypeahead]="searchArticle"
+                                                            [resultTemplate]="rtArticle"
+                                                            [inputFormatter]="formatterArticle" [focus]="focusEvent" />
+                                                    </div>
+                                                    <div class="form-group col-md-2">
+                                                        <label for="link"
+                                                            class="control-label">{{'link' | translate | capitalize}}:</label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" name="link"
+                                                                ngModel id="link" [readonly]="readonly" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-md-1">
+                                                        <label class="control-label">Acción:</label>
+                                                        <button type="summit" class="btn btn-success btn-sm">
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Orden</th>
+                                                        <th>Recurso</th>
+                                                        <th>Link</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let tchild of data.resources let i = index;">
+                                                        <td>{{tchild.order}}</td>
+                                                        <td>{{tchild.article.description}}</td>
+                                                        <td>{{tchild.link}}</td>
+                                                        <td align="right" width="10">
+                                                            <button type="button" class="btn btn-danger btn-sm"
+                                                                (click)="deleteResource(tchild,data)">
+                                                                <i class="fa fa-trash-o"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </ng-template>
+                                </ngb-panel>
+                            </ngb-accordion>
                         </div>
                     </div>
                 </div>
