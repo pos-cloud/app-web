@@ -330,6 +330,7 @@
     "design.about": "Sobre nosotros",
     "design.categoriesByLine": "Categorías por línea",
     "design.resources.banners": "Banners",
+    "design.font.family" : "Fuente",
     "auth.requireOPT": "Verifica teléfono al registrarse",
     "shipment-methods": "métodos de entrega",
     "shipment-method": "método de entrega",

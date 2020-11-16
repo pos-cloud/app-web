@@ -174,6 +174,12 @@ export class ApplicationComponent implements OnInit {
         tag: 'input',
         tagType: 'text',
         class: 'form-group col-md-4'
+    },{
+        name: 'design.font.family',
+        tag: 'select',
+        tagType: 'text',
+        values: ['Krona One','IBM Plex Sans','Quicksand'],
+        class: 'form-group col-md-4'
     }, {
         name: 'design.resources.logo',
         tag: 'input',
@@ -323,6 +329,7 @@ export class ApplicationComponent implements OnInit {
                     this.loading = false;
                     if (result.status === 200) {
                         this.obj = result.result;
+                        console.log(this.obj);
                         if(this.obj.design.home && this.obj.design.home.length > 0){
                             this.home = this.obj.design.home;
                         } else{

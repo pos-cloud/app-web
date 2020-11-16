@@ -34,6 +34,15 @@ export class Application extends Model {
         secondary : string,
         tercery : string
     },
+    font : {
+        family : string,
+        size : string
+    }
+
+     //xx-small x-small small medium large x-large xx-large
+    //weight : string, // 100 200 300 400 500 600 700 800 900
+    //style : string //normal italic oblique
+    
     home : {
         title : string,
         view : string,

@@ -266,7 +266,7 @@
                         </div>
                         <div *ngFor="let data of home; index as i">
                             <ngb-accordion class="ui-accordion" #acc="ngbAccordion">
-                                <ngb-panel title="{{data.title}}">
+                                <ngb-panel title="{{data.title}} - {{data.view}}">
                                     <ng-template ngbPanelTitle class="btnper">
                                         <button style="background-color: #dc3545;    margin-left: 600px;" type="button"
                                             class="btn btn-danger btn-sm" (click)="deleteSection(data)">
