@@ -329,7 +329,6 @@ export class ApplicationComponent implements OnInit {
                     this.loading = false;
                     if (result.status === 200) {
                         this.obj = result.result;
-                        console.log(this.obj);
                         if(this.obj.design.home && this.obj.design.home.length > 0){
                             this.home = this.obj.design.home;
                         } else{
