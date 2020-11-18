@@ -653,14 +653,26 @@ export class AddSaleOrderComponent {
 
       this.showCategories();
 
-      if (!itemData.article.containsVariants && !itemData.article.allowMeasure && !await this.getStructure(itemData.article._id)) {
+      if (itemData && itemData.article && itemData.article._id) {
 
-        let movementOfArticle: MovementOfArticle;
+        if (!itemData.article.containsVariants && !itemData.article.allowMeasure && !await this.getStructure(itemData.article._id)) {
 
-        if (!itemData.article.isWeigth || this.transaction.type.stockMovement == StockMovement.Inventory) {
-          if (this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*') {
-            if (this.lastMovementOfArticle) {
-              let query = `where="_id":"${this.lastMovementOfArticle._id}"`;
+          let movementOfArticle: MovementOfArticle;
+
+          if (!itemData.article.isWeigth || this.transaction.type.stockMovement == StockMovement.Inventory) {
+            if (this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*') {
+              if (this.lastMovementOfArticle) {
+                let query = `where="_id":"${this.lastMovementOfArticle._id}"`;
+                await this.getMovementsOfArticles(query).then(
+                  movementsOfArticles => {
+                    if (movementsOfArticles && movementsOfArticles.length > 0) {
+                      movementOfArticle = movementsOfArticles[0];
+                    }
+                  }
+                );
+              }
+            } else if (this.transaction.type.stockMovement == StockMovement.Inventory) {
+              let query = `where="transaction":"${this.transactionId}","operationType":{"$ne":"D"},"article":"${itemData.article._id}"`;
               await this.getMovementsOfArticles(query).then(
                 movementsOfArticles => {
                   if (movementsOfArticles && movementsOfArticles.length > 0) {
@@ -669,18 +681,88 @@ export class AddSaleOrderComponent {
                 }
               );
             }
-          } else if (this.transaction.type.stockMovement == StockMovement.Inventory) {
-            let query = `where="transaction":"${this.transactionId}","operationType":{"$ne":"D"},"article":"${itemData.article._id}"`;
-            await this.getMovementsOfArticles(query).then(
-              movementsOfArticles => {
-                if (movementsOfArticles && movementsOfArticles.length > 0) {
-                  movementOfArticle = movementsOfArticles[0];
+          }
+          if (!movementOfArticle) {
+            movementOfArticle = itemData;
+            movementOfArticle._id = '';
+            movementOfArticle.transaction = this.transaction;
+            movementOfArticle.modifyStock = this.transaction.type.modifyStock;
+            if (this.transaction.type.stockMovement) {
+              movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
+            }
+            movementOfArticle.printed = 0;
+            if (child && child.length === 0) {
+              if (await this.isValidMovementOfArticle(movementOfArticle)) {
+                await this.saveMovementOfArticle(movementOfArticle).then(
+                  movementOfArticle => {
+                    if (movementOfArticle) {
+                      this.getMovementsOfTransaction();
+                    }
+                  }
+                );
+              }
+            } else {
+
+              var movsArticle: MovementOfArticle[] = new Array();
+
+              for (const movArticle of child) {
+                var stock: boolean = await this.getUtilization(movementOfArticle.article._id, movArticle.article._id)
+                if (await this.isValidMovementOfArticle(movArticle, stock)) {
+                  movsArticle.push(movArticle)
                 }
               }
-            );
+              if (movsArticle.length === child.length) {
+                await this.saveMovementOfArticle(movementOfArticle).then(
+                  async movementOfArticle => {
+                    if (movementOfArticle) {
+                      movsArticle = new Array();
+                      for (const movArticle of child) {
+                        movArticle.movementParent = movementOfArticle
+                        movsArticle.push(movArticle)
+                      }
+                      await this.saveMovementsOfArticles(movsArticle).then(
+                        result => {
+                          if (result) {
+                            this.getMovementsOfTransaction();
+                          } else {
+                            this.showMessage("No se pudo crear la estructura de producto", 'info', false);
+                          }
+                        });
+                    }
+                  });
+              }
+            }
+          } else {
+            if (this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*') {
+              movementOfArticle.amount = itemData.amount;
+              this.filterArticle = '';
+            } else {
+              movementOfArticle.amount += 1;
+            }
+            if (await this.isValidMovementOfArticle(movementOfArticle)) {
+              if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+                await this.updateMovementOfArticle(await this.recalculateSalePrice(movementOfArticle)).then(
+                  movementOfArticle => {
+                    if (movementOfArticle) {
+                      this.getMovementsOfTransaction();
+                    }
+                  }
+                );
+              } else {
+                await this.updateMovementOfArticle(this.recalculateCostPrice(movementOfArticle)).then(
+                  movementOfArticle => {
+                    if (movementOfArticle) {
+                      this.getMovementsOfTransaction();
+                    }
+                  }
+                );
+              }
+            } else {
+              movementOfArticle.amount -= 1;
+            }
           }
-        }
-        if (!movementOfArticle) {
+        } else {
+          let movementOfArticle: MovementOfArticle;
           movementOfArticle = itemData;
           movementOfArticle._id = '';
           movementOfArticle.transaction = this.transaction;
@@ -689,88 +771,11 @@ export class AddSaleOrderComponent {
             movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
           }
           movementOfArticle.printed = 0;
-          if (child && child.length === 0) {
-            if (await this.isValidMovementOfArticle(movementOfArticle)) {
-              await this.saveMovementOfArticle(movementOfArticle).then(
-                movementOfArticle => {
-                  if (movementOfArticle) {
-                    this.getMovementsOfTransaction();
-                  }
-                }
-              );
-            }
-          } else {
-
-            var movsArticle: MovementOfArticle[] = new Array();
-
-            for (const movArticle of child) {
-              var stock: boolean = await this.getUtilization(movementOfArticle.article._id, movArticle.article._id)
-              if (await this.isValidMovementOfArticle(movArticle, stock)) {
-                movsArticle.push(movArticle)
-              }
-            }
-            if (movsArticle.length === child.length) {
-              await this.saveMovementOfArticle(movementOfArticle).then(
-                async movementOfArticle => {
-                  if (movementOfArticle) {
-                    movsArticle = new Array();
-                    for (const movArticle of child) {
-                      movArticle.movementParent = movementOfArticle
-                      movsArticle.push(movArticle)
-                    }
-                    await this.saveMovementsOfArticles(movsArticle).then(
-                      result => {
-                        if (result) {
-                          this.getMovementsOfTransaction();
-                        } else {
-                          this.showMessage("No se pudo crear la estructura de producto", 'info', false);
-                        }
-                      });
-                  }
-                });
-            }
-          }
-        } else {
-          if (this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*') {
-            movementOfArticle.amount = itemData.amount;
-            this.filterArticle = '';
-          } else {
-            movementOfArticle.amount += 1;
-          }
-          if (await this.isValidMovementOfArticle(movementOfArticle)) {
-            if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-              await this.updateMovementOfArticle(await this.recalculateSalePrice(movementOfArticle)).then(
-                movementOfArticle => {
-                  if (movementOfArticle) {
-                    this.getMovementsOfTransaction();
-                  }
-                }
-              );
-            } else {
-              await this.updateMovementOfArticle(this.recalculateCostPrice(movementOfArticle)).then(
-                movementOfArticle => {
-                  if (movementOfArticle) {
-                    this.getMovementsOfTransaction();
-                  }
-                }
-              );
-            }
-          } else {
-            movementOfArticle.amount -= 1;
-          }
+          movementOfArticle.amount = 1;
+          this.openModal("movement_of_article", movementOfArticle);
         }
       } else {
-        let movementOfArticle: MovementOfArticle;
-        movementOfArticle = itemData;
-        movementOfArticle._id = '';
-        movementOfArticle.transaction = this.transaction;
-        movementOfArticle.modifyStock = this.transaction.type.modifyStock;
-        if (this.transaction.type.stockMovement) {
-          movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
-        }
-        movementOfArticle.printed = 0;
-        movementOfArticle.amount = 1;
-        this.openModal("movement_of_article", movementOfArticle);
+        this.showToast(null, 'danger', 'Error al agregar el artículo, por favor inténtelo de nuevo.');
       }
     } else {
       this.showArticles();
