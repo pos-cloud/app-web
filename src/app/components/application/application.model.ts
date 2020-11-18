@@ -36,13 +36,10 @@ export class Application extends Model {
     },
     font : {
         family : string,
-        size : string
-    }
-
-     //xx-small x-small small medium large x-large xx-large
-    //weight : string, // 100 200 300 400 500 600 700 800 900
-    //style : string //normal italic oblique
-    
+        weight : string,
+        style : string,
+        size : string,
+    }    
     home : {
         title : string,
         view : string,
