@@ -7,7 +7,7 @@ export class Config {
 
   public _id: string;
   static database: string;
-  static apiHost: string = 'localhost';
+  static apiHost: string = 'vps-1883265-x.dattaweb.com';
   static apiURL: string;
   static apiV8URL: string;
   static apiURL_FE_AR: string = 'libs/fe/ar/index.php';

@@ -175,7 +175,8 @@ export class AppComponent {
         .replace(/https/g, "");
     }
     Config.setDatabase(subdominio);
-    Config.setApiHost(hostname); // Prod
+    // Config.setApiHost(hostname); // Prod
+    Config.setApiHost('vps-1883265-x.dattaweb.com');
     Config.setApiPort(300);
     Config.setApiV8Port(308);
   }
