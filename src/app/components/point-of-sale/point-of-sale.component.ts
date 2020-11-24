@@ -1922,6 +1922,7 @@ export class PointOfSaleComponent implements OnInit {
         "deliveryAddress.city": 1,
         "deliveryAddress.state": 1,
         "deliveryAddress.observation": 1,
+        "shipmentMethod.name": 1,
       }
 
       if (this.transactionMovement === TransactionMovement.Stock) {

@@ -278,12 +278,13 @@
           </div>
         </ng-template>
       </ngb-tab>
-      <ngb-tab title="Entrega" [disabled]="!transaction.deliveryAddress">
+      <ngb-tab title="Entrega">
         <ng-template ngbTabContent>
           <div class="table-responsive">
             <table class="table table-striped">
               <thead>
                 <tr>
+                  <th>Método</th>
                   <th>Tipo</th>
                   <th>Provincia</th>
                   <th>Ciudad</th>
@@ -297,15 +298,16 @@
               </thead>
               <tbody>
                 <tr>
-                  <td>{{transaction.deliveryAddress.type}}</td>
-                  <td>{{transaction.deliveryAddress.state}}</td>
-                  <td>{{transaction.deliveryAddress.city}}</td>
-                  <td>{{transaction.deliveryAddress.name}}</td>
-                  <td>{{transaction.deliveryAddress.number}}</td>
-                  <td>{{transaction.deliveryAddress.flat}}</td>
-                  <td>{{transaction.deliveryAddress.floor}}</td>
-                  <td>{{transaction.deliveryAddress.postalCode}}</td>
-                  <td style="white-space: normal;">{{transaction.deliveryAddress.observation}}</td>
+                  <td>{{transaction.shipmentMethod?.name}}</td>
+                  <td>{{transaction?.deliveryAddress?.type}}</td>
+                  <td>{{transaction?.deliveryAddress?.state}}</td>
+                  <td>{{transaction?.deliveryAddress?.city}}</td>
+                  <td>{{transaction?.deliveryAddress?.name}}</td>
+                  <td>{{transaction?.deliveryAddress?.number}}</td>
+                  <td>{{transaction?.deliveryAddress?.flat}}</td>
+                  <td>{{transaction?.deliveryAddress?.floor}}</td>
+                  <td>{{transaction?.deliveryAddress?.postalCode}}</td>
+                  <td style="white-space: normal;">{{transaction?.deliveryAddress?.observation}}</td>
                 </tr>
               </tbody>
             </table>
