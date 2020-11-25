@@ -434,13 +434,15 @@
               {{transaction.state}}
             </td>
             <td style="white-space: normal;">
-              <b>{{transaction?.shipmentMethod?.name}}</b> - 
-              {{ transaction?.deliveryAddress.name + ' ' + transaction?.deliveryAddress?.number}}
-              {{(transaction?.deliveryAddress?.flat || transaction?.deliveryAddress?.floor)? ' -' : ''}}
-              {{(transaction?.deliveryAddress?.flat)? ' ' + transaction?.deliveryAddress?.flat : ''}}
-              {{(transaction?.deliveryAddress?.floor)? ' ' + transaction?.deliveryAddress?.floor : ''}}
-              {{(transaction?.deliveryAddress?.city)? ', ' + transaction?.deliveryAddress?.city : ''}}
-              {{(transaction?.deliveryAddress?.state)? ', ' + transaction?.deliveryAddress?.state : ''}}
+              <b *ngIf="transaction && transaction.shipmentMethod">{{transaction.shipmentMethod.name}} - </b>
+              <span *ngIf="transaction && transaction.deliveryAddress">
+                {{ transaction.deliveryAddress.name + ' ' + transaction.deliveryAddress.number}}
+                {{(transaction.deliveryAddress.flat || transaction.deliveryAddress.floor)? ' -' : ''}}
+                {{(transaction.deliveryAddress.flat)? ' ' + transaction.deliveryAddress.flat : ''}}
+                {{(transaction.deliveryAddress.floor)? ' ' + transaction.deliveryAddress.floor : ''}}
+                {{(transaction.deliveryAddress.city)? ', ' + transaction.deliveryAddress.city : ''}}
+                {{(transaction.deliveryAddress.state)? ', ' + transaction.deliveryAddress.state : ''}}
+              </span>
             </td>
             <td style="white-space: normal;">{{transaction.observation}}</td>
             <td>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
