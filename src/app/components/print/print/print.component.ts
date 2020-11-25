@@ -2435,9 +2435,10 @@ export class PrintComponent implements OnInit {
           this.doc.setFontType('bold');
           this.doc.text("Neto Gravado:", 140, rowTotals);
           rowNet = rowTotals;
-          rowTotals += space;
+          
           this.doc.setFontType('normal');
           for (let tax of this.transaction.taxes) {
+            rowTotals += space;
             this.doc.setFontType('bold');
             this.doc.text(tax.tax.name + ":", 140, rowTotals);
             this.doc.setFontType('normal');
