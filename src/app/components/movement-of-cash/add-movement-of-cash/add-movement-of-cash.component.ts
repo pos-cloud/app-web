@@ -140,6 +140,7 @@ export class AddMovementOfCashComponent implements OnInit {
 
     ngOnInit() {
         this.transactionAmount = this.transaction.totalPrice;
+        this.movementOfCash.expirationDate = (this.transaction.endDate) ? this.transaction.endDate : this.transaction.startDate;
         this.buildForm();
         this.getPaymentMethods();
         this.getBanks();
@@ -1618,6 +1619,7 @@ export class AddMovementOfCashComponent implements OnInit {
         this.movementOfCash = new MovementOfCash();
         this.movementOfCash.type = this.paymentMethodSelected;
         this.movementOfCash.transaction = this.transaction;
+        this.movementOfCash.expirationDate = (this.transaction.endDate) ? this.transaction.endDate : this.transaction.startDate;
         this.movementOfCash.amountPaid = 0;
         this.buildForm();
     }
