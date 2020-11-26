@@ -1183,33 +1183,29 @@ export class AddMovementOfCashComponent implements OnInit {
     }
 
     public async changePercentageCommission() {
-        if (this.paymentMethodSelected.commission > 0) {
-            await this.getHolidays().then(result => {
-                this.holidays = result;
-                this.movementOfCash = Object.assign(this.movementOfCashForm.value);
-                this.percentageCommission = this.movementOfCashForm.value.percentageCommission;
-                this.daysCommission = moment(moment(this.movementOfCashForm.value.expirationDate).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days') + 4;
-                if (moment(this.movementOfCashForm.value.expirationDate).day() === 6) {
-                    this.daysCommission += 2
-                }
-                if (moment(this.movementOfCashForm.value.expirationDate).day() === 7) {
-                    this.daysCommission += 1
-                }
+        await this.getHolidays().then(result => {
+            this.holidays = result;
+            this.movementOfCash = Object.assign(this.movementOfCashForm.value);
+            this.percentageCommission = this.movementOfCashForm.value.percentageCommission;
+            this.daysCommission = moment(moment(this.movementOfCashForm.value.expirationDate).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days') + 4;
+            if (moment(this.movementOfCashForm.value.expirationDate).day() === 6) {
+                this.daysCommission += 2
+            }
+            if (moment(this.movementOfCashForm.value.expirationDate).day() === 7) {
+                this.daysCommission += 1
+            }
 
-                if (this.holidays && this.holidays.length > 0) {
-                    this.holidays.forEach(element => {
-                        if (moment(this.movementOfCashForm.value.expirationDate).format('YYYY-MM-DD') === moment(element.date).format("YYYY-MM-DD")) {
-                            this.daysCommission += 1
-                        }
-                    });
-                }
+            if (this.holidays && this.holidays.length > 0) {
+                this.holidays.forEach(element => {
+                    if (moment(this.movementOfCashForm.value.expirationDate).format('YYYY-MM-DD') === moment(element.date).format("YYYY-MM-DD")) {
+                        this.daysCommission += 1
+                    }
+                });
+            }
 
-                this.movementOfCash.commissionAmount = this.roundNumber.transform((this.amountToPay * this.percentageCommission / 100) * this.daysCommission);
-                if (this.movementOfCash.taxPercentage > 0) this.movementOfCash.commissionAmount = this.roundNumber.transform(this.movementOfCash.commissionAmount + (this.movementOfCash.commissionAmount * this.movementOfCash.taxPercentage / 100));
-            });
-        } else {
-            this.movementOfCash.commissionAmount = 0;
-        }
+            this.movementOfCash.commissionAmount = this.roundNumber.transform((this.amountToPay * this.percentageCommission / 100) * this.daysCommission);
+            if (this.movementOfCash.taxPercentage > 0) this.movementOfCash.commissionAmount = this.roundNumber.transform(this.movementOfCash.commissionAmount + (this.movementOfCash.commissionAmount * this.movementOfCash.taxPercentage / 100));
+        });
         this.movementOfCashForm.patchValue({
             commissionAmount: this.movementOfCash.commissionAmount
         });
@@ -1217,13 +1213,9 @@ export class AddMovementOfCashComponent implements OnInit {
     }
 
     public changePercentageAdministrativeExpense() {
-        if (this.paymentMethodSelected.administrativeExpense > 0) {
-            this.percentageAdministrativeExpense = this.movementOfCashForm.value.percentageAdministrativeExpense;
-            this.movementOfCash.administrativeExpenseAmount = this.roundNumber.transform(this.amountToPay * this.percentageAdministrativeExpense / 100);
-            if (this.movementOfCash.taxPercentage > 0) this.movementOfCash.administrativeExpenseAmount = this.roundNumber.transform(this.movementOfCash.administrativeExpenseAmount + (this.movementOfCash.administrativeExpenseAmount * this.movementOfCash.taxPercentage / 100));
-        } else {
-            this.movementOfCash.administrativeExpenseAmount = 0;
-        }
+        this.percentageAdministrativeExpense = this.movementOfCashForm.value.percentageAdministrativeExpense;
+        this.movementOfCash.administrativeExpenseAmount = this.roundNumber.transform(this.amountToPay * this.percentageAdministrativeExpense / 100);
+        if (this.movementOfCash.taxPercentage > 0) this.movementOfCash.administrativeExpenseAmount = this.roundNumber.transform(this.movementOfCash.administrativeExpenseAmount + (this.movementOfCash.administrativeExpenseAmount * this.movementOfCash.taxPercentage / 100));
         this.movementOfCashForm.patchValue({
             administrativeExpenseAmount: this.movementOfCash.administrativeExpenseAmount
         });
@@ -1231,13 +1223,9 @@ export class AddMovementOfCashComponent implements OnInit {
     }
 
     public changePercentageOtherExpense() {
-        if (this.paymentMethodSelected.otherExpense > 0) {
-            this.percentageOtherExpense = this.movementOfCashForm.value.percentageOtherExpense;
-            this.movementOfCash.otherExpenseAmount = this.roundNumber.transform(this.amountToPay * this.percentageAdministrativeExpense / 100);
-            if (this.movementOfCash.taxPercentage > 0) this.movementOfCash.otherExpenseAmount = this.roundNumber.transform(this.movementOfCash.otherExpenseAmount + (this.movementOfCash.otherExpenseAmount * this.movementOfCash.taxPercentage / 100));
-        } else {
-            this.movementOfCash.otherExpenseAmount = 0;
-        }
+        this.percentageOtherExpense = this.movementOfCashForm.value.percentageOtherExpense;
+        this.movementOfCash.otherExpenseAmount = this.roundNumber.transform(this.amountToPay * this.percentageOtherExpense / 100);
+        if (this.movementOfCash.taxPercentage > 0) this.movementOfCash.otherExpenseAmount = this.roundNumber.transform(this.movementOfCash.otherExpenseAmount + (this.movementOfCash.otherExpenseAmount * this.movementOfCash.taxPercentage / 100));
         this.movementOfCashForm.patchValue({
             otherExpenseAmount: this.movementOfCash.otherExpenseAmount
         });
@@ -1247,14 +1235,14 @@ export class AddMovementOfCashComponent implements OnInit {
     public changeVatOfExpenses() {
         this.movementOfCash.taxPercentage = this.movementOfCashForm.value.taxPercentage;
         if (this.lastVatOfExpenses > 0) {
-            if(this.paymentMethodSelected.commission > 0) this.movementOfCash.commissionAmount = this.roundNumber.transform(this.movementOfCash.commissionAmount / (this.lastVatOfExpenses / 100 + 1));
-            if(this.paymentMethodSelected.administrativeExpense > 0) this.movementOfCash.administrativeExpenseAmount = this.roundNumber.transform(this.movementOfCash.administrativeExpenseAmount / (this.lastVatOfExpenses / 100 + 1));
-            if(this.paymentMethodSelected.otherExpense > 0) this.movementOfCash.otherExpenseAmount = this.roundNumber.transform(this.movementOfCash.otherExpenseAmount / (this.lastVatOfExpenses / 100 + 1));
+            if (this.paymentMethodSelected.commission > 0) this.movementOfCash.commissionAmount = this.roundNumber.transform(this.movementOfCash.commissionAmount / (this.lastVatOfExpenses / 100 + 1));
+            if (this.paymentMethodSelected.administrativeExpense > 0) this.movementOfCash.administrativeExpenseAmount = this.roundNumber.transform(this.movementOfCash.administrativeExpenseAmount / (this.lastVatOfExpenses / 100 + 1));
+            if (this.paymentMethodSelected.otherExpense > 0) this.movementOfCash.otherExpenseAmount = this.roundNumber.transform(this.movementOfCash.otherExpenseAmount / (this.lastVatOfExpenses / 100 + 1));
         }
         this.lastVatOfExpenses = this.movementOfCash.taxPercentage;
-        if(this.paymentMethodSelected.commission > 0) this.movementOfCash.commissionAmount = this.roundNumber.transform(this.movementOfCash.commissionAmount + (this.movementOfCash.commissionAmount * this.movementOfCash.taxPercentage / 100));
-        if(this.paymentMethodSelected.administrativeExpense > 0) this.movementOfCash.administrativeExpenseAmount = this.roundNumber.transform(this.movementOfCash.administrativeExpenseAmount + (this.movementOfCash.administrativeExpenseAmount * this.movementOfCash.taxPercentage / 100));
-        if(this.paymentMethodSelected.otherExpense > 0) this.movementOfCash.otherExpenseAmount = this.roundNumber.transform(this.movementOfCash.otherExpenseAmount + (this.movementOfCash.otherExpenseAmount * this.movementOfCash.taxPercentage / 100));
+        if (this.paymentMethodSelected.commission > 0) this.movementOfCash.commissionAmount = this.roundNumber.transform(this.movementOfCash.commissionAmount + (this.movementOfCash.commissionAmount * this.movementOfCash.taxPercentage / 100));
+        if (this.paymentMethodSelected.administrativeExpense > 0) this.movementOfCash.administrativeExpenseAmount = this.roundNumber.transform(this.movementOfCash.administrativeExpenseAmount + (this.movementOfCash.administrativeExpenseAmount * this.movementOfCash.taxPercentage / 100));
+        if (this.paymentMethodSelected.otherExpense > 0) this.movementOfCash.otherExpenseAmount = this.roundNumber.transform(this.movementOfCash.otherExpenseAmount + (this.movementOfCash.otherExpenseAmount * this.movementOfCash.taxPercentage / 100));
         this.movementOfCashForm.patchValue({
             commissionAmount: this.movementOfCash.commissionAmount,
             administrativeExpenseAmount: this.movementOfCash.administrativeExpenseAmount,
