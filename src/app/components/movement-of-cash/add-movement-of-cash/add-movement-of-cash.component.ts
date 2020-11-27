@@ -1616,10 +1616,18 @@ export class AddMovementOfCashComponent implements OnInit {
     }
 
     public cleanForm(): void {
+        let oldMovementOfCash: MovementOfCash = new MovementOfCash();
+        oldMovementOfCash = Object.assign(oldMovementOfCash, this.movementOfCash);
         this.movementOfCash = new MovementOfCash();
         this.movementOfCash.type = this.paymentMethodSelected;
+        this.movementOfCash.expirationDate = oldMovementOfCash.expirationDate;
+        this.movementOfCash.receiver = oldMovementOfCash.receiver;
+        this.movementOfCash.number = oldMovementOfCash.number;
+        this.movementOfCash.bank = oldMovementOfCash.bank;
+        this.movementOfCash.titular = oldMovementOfCash.titular;
+        this.movementOfCash.CUIT = oldMovementOfCash.CUIT;
+        this.movementOfCash.deliveredBy = oldMovementOfCash.deliveredBy;
         this.movementOfCash.transaction = this.transaction;
-        this.movementOfCash.expirationDate = (this.transaction.endDate) ? this.transaction.endDate : this.transaction.startDate;
         this.movementOfCash.amountPaid = 0;
         this.buildForm();
     }
