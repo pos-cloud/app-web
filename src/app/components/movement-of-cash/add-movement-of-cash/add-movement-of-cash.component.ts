@@ -1140,11 +1140,6 @@ export class AddMovementOfCashComponent implements OnInit {
                         }
                     }
                 }
-                if (amountTotal !== (this.movementOfCashForm.value.amountToPay + this.totalInterestAmount + this.totalTaxAmount) &&
-                    Math.abs(amountTotal - (this.movementOfCashForm.value.amountToPay + this.totalInterestAmount + this.totalTaxAmount)) > 1) {
-                    isValid = false;
-                    this.showToast(null, 'info', "El monto total de las cuotas no puede ser distinto del monto a pagar.");
-                }
             }
 
             if (isValid && this.paymentMethodSelected.isCurrentAccount &&
@@ -1210,7 +1205,7 @@ export class AddMovementOfCashComponent implements OnInit {
         this.movementOfCashForm.patchValue({
             commissionAmount: this.movementOfCash.commissionAmount
         });
-        if (this.movementOfCash.type && this.movementOfCash.type.allowToFinance) this.calculateQuotas('quotas');
+        if (this.paymentMethodSelected && this.paymentMethodSelected.allowToFinance) this.calculateQuotas('quotas');
     }
 
     public changePercentageAdministrativeExpense() {
@@ -1220,7 +1215,7 @@ export class AddMovementOfCashComponent implements OnInit {
         this.movementOfCashForm.patchValue({
             administrativeExpenseAmount: this.movementOfCash.administrativeExpenseAmount
         });
-        if (this.movementOfCash.type && this.movementOfCash.type.allowToFinance) this.calculateQuotas('quotas');
+        if (this.paymentMethodSelected && this.paymentMethodSelected.allowToFinance) this.calculateQuotas('quotas');
     }
 
     public changePercentageOtherExpense() {
@@ -1230,7 +1225,7 @@ export class AddMovementOfCashComponent implements OnInit {
         this.movementOfCashForm.patchValue({
             otherExpenseAmount: this.movementOfCash.otherExpenseAmount
         });
-        if (this.movementOfCash.type && this.movementOfCash.type.allowToFinance) this.calculateQuotas('quotas');
+        if (this.paymentMethodSelected && this.paymentMethodSelected.allowToFinance) this.calculateQuotas('quotas');
     }
 
     public changeVatOfExpenses() {
@@ -1249,7 +1244,7 @@ export class AddMovementOfCashComponent implements OnInit {
             administrativeExpenseAmount: this.movementOfCash.administrativeExpenseAmount,
             otherExpenseAmount: this.movementOfCash.otherExpenseAmount
         });
-        if (this.movementOfCash.type && this.movementOfCash.type.allowToFinance) this.calculateQuotas('quotas');
+        if (this.paymentMethodSelected && this.paymentMethodSelected.allowToFinance) this.calculateQuotas('quotas');
     }
 
     public getHolidays(): Promise<Holiday[]> {
