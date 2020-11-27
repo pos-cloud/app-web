@@ -585,10 +585,17 @@ export class PrintComponent implements OnInit {
 
     // Detalle de productos
     var row = 85;
+    let commissionAmount: number = 0.00;
+    let administrativeExpenseAmount: number = 0.00;
+    let otherExpenseAmount: number = 0.00;
 
     if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
 
       for (var i = 0; i < this.movementsOfCashes.length; i++) {
+
+        commissionAmount += this.movementsOfCashes[0].commissionAmount;
+        administrativeExpenseAmount += this.movementsOfCashes[0].administrativeExpenseAmount;
+        otherExpenseAmount += this.movementsOfCashes[0].otherExpenseAmount;
 
         if(!this.movementsOfCashes[0].type.allowToFinance) {
           if (this.movementsOfCashes[i].type.name) {
@@ -641,6 +648,7 @@ export class PrintComponent implements OnInit {
         }
 
         if (this.movementsOfCashes[i].amountPaid) {
+          this.doc.setFontStyle("normal");
           this.doc.textEx("$ " + this.roundNumber.transform(this.movementsOfCashes[i].amountPaid), 200, row, 'right', 'right');
         }
 
@@ -745,12 +753,32 @@ export class PrintComponent implements OnInit {
 
     }
 
-    this.doc.setFontSize(this.fontSizes.extraLarge);
+    if(commissionAmount > 0) {
+      row += 8;
+      this.doc.setFontType('bold');
+      this.doc.text("Comisión:", 145, row);
+      this.doc.setFontType('normal');
+      this.doc.text("$ (" + this.roundNumber.transform(commissionAmount) + ")", 202, row, 'right', 'right');
+    }
+    if(administrativeExpenseAmount > 0) {
+      row += 8;
+      this.doc.setFontType('bold');
+      this.doc.text("Gastos administrativos:", 145, row);
+      this.doc.setFontType('normal');
+      this.doc.text("$ (" + this.roundNumber.transform(administrativeExpenseAmount) + ")", 202, row, 'right', 'right');
+    }
+    if(otherExpenseAmount > 0) {
+      row += 8;
+      this.doc.setFontType('bold');
+      this.doc.text("Otros gastos:", 145, row);
+      this.doc.setFontType('normal');
+      this.doc.text("$ (" + this.roundNumber.transform(otherExpenseAmount) + ")", 202, row, 'right', 'right');
+    }
+    row += 8;
     this.doc.setFontType('bold');
-    this.doc.setFontSize(this.fontSizes.large);
-    this.doc.text("Total:", 147, row);
+    this.doc.text("TOTAL:", 145, row);
     this.doc.setFontType('normal');
-    this.doc.text("$ " + this.roundNumber.transform(this.transaction.totalPrice), 180, row);
+    this.doc.text("$ " + this.roundNumber.transform(this.transaction.totalPrice), 200, row, 'right', 'right');
     this.doc.setFontSize(this.fontSizes.normal);
     row += 5;
 
