@@ -227,7 +227,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="form-group col-md-3">
+                        <div class="form-group col-md-2">
                             <label for="quotas" class="control-label">Cant. Cuotas:</label>
                             <div class="input-group">
                                 <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1"><i
@@ -236,16 +236,25 @@
                                     step="1" (change)="calculateQuotas('quotas')" />
                             </div>
                         </div>
-                        <div class="form-group col-md-3">
-                            <label for="days" class="control-label">Cant. Días:</label>
+                        <div class="form-group col-md-2">
+                            <label for="period" class="control-label">Período:</label>
+                            <select class="form-control" formControlName="period"
+                                (change)="calculateQuotas('quotas')">
+                                <option value="Mensual">Meses</option>
+                                <option value="Anual">Años</option>
+                                <option value="Diario">Días</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="days" class="control-label">Cant. Período</label>
                             <div class="input-group">
                                 <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1"><i
                                             class="fa fa-calendar"></i></span></div>
                                 <input type="number" class="form-control" formControlName="days" name="days" min="0"
-                                    step="1" (change)="calculateQuotas('quotas')" />
+                                    step="1" (change)="calculateQuotas('quotas')"/>
                             </div>
                         </div>
-                        <div class="form-group col-md-3">
+                        <div class="form-group col-md-2">
                             <label for="interestPercentage" class="control-label">T.N.A:</label>
                             <div class="input-group">
                                 <div class="input-group-prepend"><span class="input-group-text"
@@ -301,7 +310,7 @@
                         </div>
                         <div class="form-group col-md-3">
                             <input type="date" class="form-control" name="expirationDate" min="0" step="1"
-                                #expirationDateMov [value]="mov.expirationDate | dateFormat:'YYYY-MM-DD'"
+                                #expirationDateMov [value]="mov.expirationDate"
                                 (blur)="calculateQuotas('expirationDate', expirationDateMov.value, mov)" />
                         </div>
                         <div class="form-group col-md-2">

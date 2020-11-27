@@ -78,7 +78,8 @@ export class AddMovementOfCashComponent implements OnInit {
     public daysCommission: number = 0;
     public roundNumber = new RoundNumberPipe();
     public quotas: number = 1;
-    public days: number = 30;
+    public days: number = 1;
+    public period: string = 'Mensual';
     public interestPercentage: number = 0;
     public orderTerm: string[] = ['expirationDate'];
     public propertyTerm: string;
@@ -241,6 +242,7 @@ export class AddMovementOfCashComponent implements OnInit {
             'deliveredBy': [this.movementOfCash.deliveredBy, []],
             'quotas': [this.quotas, []],
             'days': [this.days, []],
+            'period': [this.period, []],
             'interestPercentage': [this.interestPercentage, []],
             'taxPercentage': [this.movementOfCash.taxPercentage, []],
             'interestType': [this.interestType]
@@ -327,6 +329,7 @@ export class AddMovementOfCashComponent implements OnInit {
             'deliveredBy': this.movementOfCash.deliveredBy,
             'quotas': this.quotas,
             'days': this.days,
+            'period': this.period,
             'interestPercentage': this.interestPercentage,
             'taxPercentage': this.movementOfCash.taxPercentage,
             'interestType': this.interestType
@@ -402,15 +405,16 @@ export class AddMovementOfCashComponent implements OnInit {
     public calculateQuotas(field: string, newValue?: any, movement?: MovementOfCash): void {
         this.quotas = this.movementOfCashForm.value.quotas;
         this.days = this.movementOfCashForm.value.days;
+        this.period = this.movementOfCashForm.value.period;
         this.interestPercentage = this.movementOfCashForm.value.interestPercentage;
         this.movementOfCash.taxPercentage = this.movementOfCashForm.value.taxPercentage;
         this.interestType = this.movementOfCashForm.value.interestType;
         let expirationDate: number = 0;
         let amountTotal: number = 0;
         let amountToPayTemp: number = this.amountToPay + this.movementOfCash.commissionAmount + this.movementOfCash.administrativeExpenseAmount + this.movementOfCash.otherExpenseAmount;
-        if (!this.paymentMethodSelected.payFirstQuota) {
-            expirationDate += this.days;
-        }
+        // if (!this.paymentMethodSelected.payFirstQuota && this.period === 'Diario') {
+        //     expirationDate += this.days;
+        // }
         switch (field) {
             case 'quotas':
                 this.movementsOfCashesToFinance = new Array();
@@ -418,6 +422,7 @@ export class AddMovementOfCashComponent implements OnInit {
                 this.totalTaxAmount = 0;
                 for (let i = 0; i < this.quotas; i++) {
                     var mov: MovementOfCash = new MovementOfCash();
+                    mov.expirationDate = mov.date;
                     mov.transaction = this.transaction;
                     mov.type = this.paymentMethodSelected;
                     mov.observation = this.movementOfCash.observation;
@@ -508,29 +513,29 @@ export class AddMovementOfCashComponent implements OnInit {
 
                 let isEdit: boolean = false;
                 let isSum: boolean = false;
-
                 // Corroboramos que la fecha sea válida y comparamos que la fecha sea mayor a la actual
                 if (!moment(newValue).isValid()) {
                     this.showToast(null, 'info', 'Debe ingresar una fecha válida');
                 }
-
                 if (this.movementsOfCashesToFinance && this.movementsOfCashesToFinance.length > 0) {
                     for (let i = 0; i < this.movementsOfCashesToFinance.length; i++) {
                         let mov: MovementOfCash = this.movementsOfCashesToFinance[i];
                         if (mov.quota === movement.quota) {
                             // Editamos desde la fecha modificada en adelante
                             isEdit = true;
-                            mov.expirationDate = moment(newValue).toString();
+                            mov.expirationDate = moment(newValue).format('YYYY-MM-DD').toString();
                         } else {
                             if (isEdit) {
-                                if (!isSum) {
-                                    // Se suma el valor de la fecha en un dia para que de correctamente los dias.
-                                    expirationDate = this.days + 1;
-                                    mov.expirationDate = moment(moment(this.movementsOfCashesToFinance[i - 1].expirationDate).format('YYYY-MM-DD')).add(expirationDate, 'days').format('YYYY-MM-DD').toString();
-                                    isSum = true;
-                                } else {
-                                    expirationDate = this.days;
-                                    mov.expirationDate = moment(moment(this.movementsOfCashesToFinance[i - 1].expirationDate).format('YYYY-MM-DD')).add(expirationDate, 'days').format('YYYY-MM-DD').toString();
+                                switch (this.period) {
+                                    case 'Diario':
+                                        mov.expirationDate = moment(moment(this.movementsOfCashesToFinance[i - 1].expirationDate).format('YYYY-MM-DD')).add(this.days, 'days').format('YYYY-MM-DD').toString();
+                                        break;
+                                    case 'Mensual':
+                                        mov.expirationDate = moment(moment(this.movementsOfCashesToFinance[i - 1].expirationDate).format('YYYY-MM-DD')).add(this.days, 'month').format('YYYY-MM-DD').toString();
+                                        break;
+                                    case 'Anual':
+                                        mov.expirationDate = moment(moment(this.movementsOfCashesToFinance[i - 1].expirationDate).format('YYYY-MM-DD')).add(this.days, 'year').format('YYYY-MM-DD').toString();
+                                        break;
                                 }
                             }
                         }
@@ -1401,24 +1406,32 @@ export class AddMovementOfCashComponent implements OnInit {
                         }
                     );
                 } else {
+                    let isValid: boolean = true;
                     if ((this.totalInterestAmount + this.totalTaxAmount) > 0 && this.transaction.totalPrice !== 0) {
                         this.transaction.totalPrice += (this.totalInterestAmount + this.totalTaxAmount);
                         await this.updateTransaction().then(
                             transaction => {
                                 if (transaction) {
                                     this.transaction = transaction;
+                                } else {
+                                    isValid = false;
                                 }
                             }
                         );
                     }
-                    await this.saveMovementsOfCashes().then(
-                        movementsOfCashes => {
-                            if (movementsOfCashes && movementsOfCashes.length > 0) {
-                                this.showToast(null, 'success', 'Operación realizada con éxito');
-                                this.getMovementOfCashesByTransaction();
-                            }
+                    if(isValid) {
+                        for(let mov of this.movementsOfCashesToFinance) {
+                            mov.expirationDate = moment(mov.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
                         }
-                    );
+                        await this.saveMovementsOfCashes().then(
+                            movementsOfCashes => {
+                                if (movementsOfCashes && movementsOfCashes.length > 0) {
+                                    this.showToast(null, 'success', 'Operación realizada con éxito');
+                                    this.getMovementOfCashesByTransaction();
+                                }
+                            }
+                        );
+                    }
                 }
             } else {
                 this.fastPayment = null;
