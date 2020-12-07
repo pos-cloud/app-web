@@ -609,7 +609,7 @@ export class PointOfSaleComponent implements OnInit {
             "$or": [
               { branch: { "$exists": false } },
               { branch: null },
-              { branch: { "$oid" : this.user.branch._id } }
+              { branch: { "$oid": this.user.branch._id } }
             ],
             transactionMovement: this.transactionMovement,
             "allowAPP": false
@@ -659,7 +659,7 @@ export class PointOfSaleComponent implements OnInit {
             "$or": [
               { branch: { "$exists": false } },
               { branch: null },
-              { branch: { "$oid" : this.user.branch._id } }
+              { branch: { "$oid": this.user.branch._id } }
             ],
             transactionMovement: this.transactionMovement,
             "allowAPP": false
@@ -2069,6 +2069,14 @@ export class PointOfSaleComponent implements OnInit {
         if (this.tableSelected.lastTransaction) {
           this.transaction = await this.getTransaction(this.tableSelected.lastTransaction._id);
           if (this.transaction) {
+            this.transaction.state = TransactionState.Open;
+            await this.updateTransaction(this.transaction).then(
+              transaction => {
+                if (transaction) {
+                  this.transaction = transaction;
+                }
+              }
+            );
             this.nextStepTransaction();
           } else {
             this.hideMessage();

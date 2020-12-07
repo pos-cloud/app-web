@@ -12,6 +12,7 @@ import { UserService } from '../../user/user.service';
 
 import { TableComponent } from '../table/table.component';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
+import { TransactionState } from 'app/components/transaction/transaction';
 
 @Component({
     selector: 'app-list-tables',
