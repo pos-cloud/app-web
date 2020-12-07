@@ -59,6 +59,12 @@ export class ShipmentMethodComponent implements OnInit {
         tagType: 'boolean',
         values: ['true', 'false'],
         class: 'form-group col-md-12'
+    }, {
+        name: 'requireTable',
+        tag: 'select',
+        tagType: 'boolean',
+        values: ['true', 'false'],
+        class: 'form-group col-md-12'
     }];
     public formErrors: {} = {};
     public validationMessages = {

@@ -184,24 +184,24 @@ export class ApplicationComponent implements OnInit {
         tag: 'select',
         tagType: 'text',
         values: ['Krona One','IBM Plex Sans','Quicksand'],
-        class: 'form-group col-md-4'
+        class: 'form-group col-md-3'
     },{
         name: 'design.font.weight',
         tag: 'select',
         tagType: 'text',
         values: ['100','200','300','400','500','600','700','800','900'],
-        class: 'form-group col-md-4'
+        class: 'form-group col-md-3'
     }, {
         name: 'design.font.style',
         tag: 'select',
         tagType: 'text',
         values: ['normal','italic','oblique','initial','unset','inherit'],
-        class: 'form-group col-md-4'
+        class: 'form-group col-md-3'
     },{
         name: 'design.font.size',
         tag: 'input',
         tagType: 'text',
-        class: 'form-group col-md-4'
+        class: 'form-group col-md-3'
     }, {
         name: 'design.resources.logo',
         tag: 'input',

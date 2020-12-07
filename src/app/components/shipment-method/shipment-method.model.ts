@@ -7,6 +7,7 @@ export class ShipmentMethod extends Model {
   public name: string;
   public applications: Application[];
   public requireAddress: boolean = true;
+  public requireTable: boolean = false;
   public zones: {
     name: string,
     type: ZoneType,
@@ -33,6 +34,16 @@ export class ShipmentMethod extends Model {
         required: false,
       }, {
         name: 'requireAddress',
+        visible: true,
+        disabled: false,
+        filter: true,
+        defaultFilter: null,
+        datatype: 'boolean',
+        project: null,
+        align: 'left',
+        required: false,
+      }, {
+        name: 'requireTable',
         visible: true,
         disabled: false,
         filter: true,

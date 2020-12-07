@@ -106,6 +106,7 @@ export class ListTablesComponent implements OnInit {
             "employee.type.description": 1,
             "lastTransaction._id": 1,
             "lastTransaction.startDate": 1,
+            "lastTransaction.state": 1,
             operationType: 1
         }
 

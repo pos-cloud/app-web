@@ -113,7 +113,11 @@
     </div>
     <div class="row" style="padding-left: 10px;">
         <div *ngFor="let table of tables | orderBy:[orderTerm] | filter: filterRoom:'description':'room'">
-            <div class="itable" [ngClass]="{ 'itable-busy':table.state==='Ocupada' || table.state==='Reservada',
+            <div class="itable" [ngClass]="{
+                                        'itable-pending-busy': table.state === 'Ocupada' && table.lastTransaction.state.toString() === 'Pendiente de pago',
+                                        'itable-busy':
+                                        (table.state==='Ocupada'  && table.lastTransaction.state.toString() !== 'Pendiente de pago') || 
+                                        (table.state==='Reservada'  && table.lastTransaction.state.toString() !== 'Pendiente de pago'),
                                         'itable-disabled':table.state==='No Habilitada',
                                         'itable-enabled':table.state==='Disponible',
                                         'itable-pending':table.state==='Pendiente'}" (click)="selectTable(table)">
