@@ -11,6 +11,8 @@
                         class="fa fa-plus"></i><span>Agregar</span></button>
                 <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i
                         [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
+                <button class="btn" (click)="openModal('print-qr', null)"><i class="fa fa-print"></i><span>Imprimir
+                        QR</span></button>
             </div>
         </div>
         <div class="card-block table-responsive">
