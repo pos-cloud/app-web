@@ -767,6 +767,8 @@ export class AddArticleComponent implements OnInit {
         .split('¿').join('')
         .split('!').join('')
         .split('¡').join('')
+        .split('+').join('')
+        .split('-').join('')
         .toLocaleLowerCase()
         .normalize('NFD').replace(/[\u0300-\u036f]/g, "");
       this.articleForm.patchValue({ 'url': url });

@@ -12,6 +12,8 @@ import { UserService } from '../../user/user.service';
 
 import { TableComponent } from '../table/table.component';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
+import { TransactionState } from 'app/components/transaction/transaction';
+import { PrintQRComponent } from 'app/components/print/print-qr/print-qr.component';
 
 @Component({
     selector: 'app-list-tables',
@@ -70,11 +72,14 @@ export class ListTablesComponent implements OnInit {
         this.userType = pathLocation[1];
         this.getTables();
 
-        this.interval = setInterval(() => {
-            if (!this.loading) {
-                this.getTables();
-            }
-        }, 3000);
+        if(this.userType === 'pos') {
+            this.interval = setInterval(() => {
+                console.log("entro");
+                if (!this.loading) {
+                    this.getTables();
+                }
+            }, 3000);
+        }
     }
 
     public ngOnDestroy(): void {
@@ -106,6 +111,7 @@ export class ListTablesComponent implements OnInit {
             "employee.type.description": 1,
             "lastTransaction._id": 1,
             "lastTransaction.startDate": 1,
+            "lastTransaction.state": 1,
             operationType: 1
         }
 
@@ -236,6 +242,10 @@ export class ListTablesComponent implements OnInit {
                     }
                 }, (reason) => {
                 });
+            case 'print-qr':
+                modalRef = this._modalService.open(PrintQRComponent)
+                modalRef.componentInstance.tables = this.tables;
+                break;
             default: ;
         }
     };

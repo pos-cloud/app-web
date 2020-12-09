@@ -338,7 +338,7 @@
             <th (click)="orderBy('company','name')">Cliente</th>
             <th (click)="orderBy('orderNumber')">Pedido</th>
             <th (click)="orderBy('state')">Estado</th>
-            <th (click)="orderBy('deliveryAddress','name')">Envío</th>
+            <th>Entrega</th>
             <th (click)="orderBy('observation')">Observación</th>
             <th (click)="orderBy('totalPrice')">Precio Total</th>
           </tr>
@@ -352,7 +352,7 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Empresa..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterOrderNumber" placeholder="Pedido..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterState" placeholder="Estado..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterDeliveryAddress" placeholder="Envío..."></th>
+            <th></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total..."></th>
           </tr>
@@ -367,7 +367,6 @@
                                                         | filter: filterType:'name':'type'
                                                         | filter: filterNumber:'number'
                                                         | filter: filterCompany:'name':'company'
-                                                        | filter: filterDeliveryAddress:'name':'deliveryAddress'
                                                         | filter: filterTotalPrice:'totalPrice'
                                                         | filter : filterState : 'state'
                                                         | filter : filterOrderNumber : 'orderNumber'
@@ -434,15 +433,17 @@
             <td *ngIf="posType!=='pedidos-web'">
               {{transaction.state}}
             </td>
-            <td *ngIf="transaction.deliveryAddress">
-              {{ transaction.deliveryAddress.name + ' ' + transaction.deliveryAddress.number}}
-              {{(transaction.deliveryAddress.flat || transaction.deliveryAddress.floor)? ' -' : ''}}
-              {{(transaction.deliveryAddress.flat)? ' ' + transaction.deliveryAddress.flat : ''}}
-              {{(transaction.deliveryAddress.floor)? ' ' + transaction.deliveryAddress.floor : ''}}
-              {{(transaction.deliveryAddress.city)? ', ' + transaction.deliveryAddress.city : ''}}
-              {{(transaction.deliveryAddress.state)? ', ' + transaction.deliveryAddress.state : ''}}
+            <td style="white-space: normal;">
+              <b *ngIf="transaction && transaction.shipmentMethod">{{transaction.shipmentMethod.name}} - </b>
+              <span *ngIf="transaction && transaction.deliveryAddress">
+                {{ transaction.deliveryAddress.name + ' ' + transaction.deliveryAddress.number}}
+                {{(transaction.deliveryAddress.flat || transaction.deliveryAddress.floor)? ' -' : ''}}
+                {{(transaction.deliveryAddress.flat)? ' ' + transaction.deliveryAddress.flat : ''}}
+                {{(transaction.deliveryAddress.floor)? ' ' + transaction.deliveryAddress.floor : ''}}
+                {{(transaction.deliveryAddress.city)? ', ' + transaction.deliveryAddress.city : ''}}
+                {{(transaction.deliveryAddress.state)? ', ' + transaction.deliveryAddress.state : ''}}
+              </span>
             </td>
-            <td *ngIf="!transaction.deliveryAddress"></td>
             <td style="white-space: normal;">{{transaction.observation}}</td>
             <td>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
           </tr>

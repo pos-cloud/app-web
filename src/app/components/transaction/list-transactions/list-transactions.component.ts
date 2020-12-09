@@ -488,26 +488,26 @@ export class ListTransactionsComponent implements OnInit {
                 }
                 modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(transaction.origin, 4)}-${transaction.letter}-${this.padNumber(transaction.number, 8)}`;
                 if (transaction.type.electronics) {
-                    modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente` + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/invoice/${transaction._id}">Su comprobante</a>`
+                  modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente` + `<a href="http://${Config.apiHost}:300/api/print/invoice/${Config.database}/${transaction._id}">Su comprobante</a>`
                 } else {
-                    modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/others/${transaction._id}">Su comprobante</a>`
+                  modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://${Config.apiHost}:300/api/print/others/${Config.database}/${transaction._id}">Su comprobante</a>`
                 }
-
+        
                 if (Config.country === 'MX') {
-                    modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}.poscloud.com.ar:300/api/print/xml/CFDI-33_Factura_` + transaction.number;
+                  modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}:300/api/print/xml/CFDI-33_Factura_` + transaction.number;
                 }
-
+        
                 if (transaction.type.defectEmailTemplate) {
-
-                    if (transaction.type.electronics) {
-                        modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/invoice/${transaction._id}">Su comprobante</a>`
-                    } else {
-                        modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.database}.poscloud.com.ar:300/api/print/others/${transaction._id}">Su comprobante</a>`
-                    }
-
-                    if (Config.country === 'MX') {
-                        modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}.poscloud.com.ar:300/api/print/xml/CFDI-33_Factura_` + transaction.number;
-                    }
+        
+                  if (transaction.type.electronics) {
+                    modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.apiHost}:300/api/print/invoice/${Config.database}/${transaction._id}">Su comprobante</a>`
+                  } else {
+                    modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.apiHost}:300/api/print/others/${Config.database}/${transaction._id}">Su comprobante</a>`
+                  }
+        
+                  if (Config.country === 'MX') {
+                    modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.apiHost}:300/api/print/xml/CFDI-33_Factura_` + transaction.number;
+                  }
                 }
 
                 break;
