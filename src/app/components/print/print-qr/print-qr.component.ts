@@ -163,17 +163,20 @@ export class PrintQRComponent implements OnInit {
                     row += 4;
                     this.centerText(margin, margin, 77, 0, row, "y mira la carta¡");
 
-                    this.doc.setTextColor(0);
-                    this.doc.setFontSize(this.fontSizes.normal);
-
                     row += 7;
+
+                    this.centerText(margin, margin, 77, 0, row, "Mesa " + table.description);
+                    
+                    row += 3;
+
+                    this.doc.setTextColor(0);
                     this.doc.setFillColor(255, 255, 255);
                     this.doc.setDrawColor(255, 255, 255);
                     this.doc.roundedRect(23, row-1, 32, 32, 2, 2, "FD");
                     let url = `${application.url}/#/?table=${table._id}`;
                     let imgdata = 'data:image/png;base64,' + await this.getBarcode64(`qr?value=${url}`);
                     this.doc.addImage(imgdata, 'PNG', 24, row, 30, 30);
-                    row += 32;
+                    row += 33;
 
                     this.doc.setFontSize(this.fontSizes.xsmall);
                     this.centerText(margin, margin, 77, 0, row, "o ingresá a");
@@ -184,7 +187,7 @@ export class PrintQRComponent implements OnInit {
                     this.doc.setTextColor(0);
                     this.doc.setFontSize(this.fontSizes.small);
 
-                    row += 10;
+                    row += 7;
                     this.centerText(margin, margin, 77, 0, row, "1 - Abrí tu cámara o lector.");
 
                     row += 5;
