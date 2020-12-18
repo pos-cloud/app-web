@@ -264,7 +264,7 @@ export class TransactionService extends ModelService {
   public validateElectronicTransactionAR(transaction: Transaction): Observable<any> {
 
     //const URL = `${Config.apiURL_FE_AR}`;
-    const URL = `http://34.95.195.134/libs/fe/ar/index.php`;
+    const URL = `http://vps-1883265-x.dattaweb.com/libs/fe/ar/index.php`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/x-www-form-urlencoded');
@@ -290,7 +290,7 @@ export class TransactionService extends ModelService {
   ): Observable<any> {
 
     //const URL = `${Config.apiURL_FE_MX}`;
-    const URL = `http://34.95.195.134/libs/fe/mx/01_CFDI_fe.php`;
+    const URL = `http://vps-1883265-x.dattaweb.com/libs/fe/mx/01_CFDI_fe.php`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/x-www-form-urlencoded');

@@ -183,7 +183,7 @@ export class ApplicationComponent implements OnInit {
         name: 'design.font.family',
         tag: 'select',
         tagType: 'text',
-        values: ['Krona One','IBM Plex Sans','Quicksand'],
+        values: ['Krona One','IBM Plex Sans','Quicksand','Bebas Neue'],
         class: 'form-group col-md-3'
     },{
         name: 'design.font.weight',
