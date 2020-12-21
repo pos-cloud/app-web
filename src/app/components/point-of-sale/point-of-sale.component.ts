@@ -419,7 +419,8 @@ export class PointOfSaleComponent implements OnInit {
         level: 1,
         branch: 1,
         defectOrders: 1,
-        operationType: 1
+        operationType: 1,
+        finishCharge: 1,
       }
 
       match["operationType"] = { "$ne": "D" }
