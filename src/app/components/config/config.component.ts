@@ -191,7 +191,10 @@ export class ConfigComponent implements OnInit {
     this.configFormEmail = this._fb.group({
       '_id': [this.config._id, [Validators.required]],
       'emailAccount': [this.config['emailAccount'], []],
-      'emailPassword': [this.config['emailPassword'], []]
+      'emailPassword': [this.config['emailPassword'], []],
+      'emailHost': [this.config['emailHost'], []],
+      'emailPort': [this.config['emailPort'], []]
+
     });
 
     this.configFormEmail.valueChanges.subscribe(data => this.onValueChangedEmail(data));
@@ -468,6 +471,7 @@ export class ConfigComponent implements OnInit {
   public updateConfig(): Promise<Config> {
 
     return new Promise<Config>((resolve, reject) => {
+        console.log(this.config);
       this._configService.updateConfig(this.config).subscribe(
         result => {
           if (!result.configs) {
@@ -511,6 +515,8 @@ export class ConfigComponent implements OnInit {
 
     if (!this.config['emailAccount']) this.config['emailAccount'] = '';
     if (!this.config['emailPassword']) this.config['emailPassword'] = '';
+    if (!this.config['emailHost']) this.config['emailHost'] = '';
+    if (!this.config['emailPort']) this.config['emailPort'] = '';
     if (!this.config['companyPicture']) this.config['companyPicture'] = 'default.jpg';
     if (!this.config['companyName']) this.config['companyName'] = '';
     if (!this.config['companyFantasyName']) this.config['companyFantasyName'] = '';
@@ -618,7 +624,9 @@ export class ConfigComponent implements OnInit {
     this.configFormEmail.setValue({
       '_id': this.config._id,
       'emailAccount': this.config['emailAccount'],
-      'emailPassword': this.config['emailPassword']
+      'emailPassword': this.config['emailPassword'],
+      'emailHost' : this.config['emailHost'],
+      'emailPort' : this.config['emailPort']
     });
 
     this.configFormSystem.setValue({
