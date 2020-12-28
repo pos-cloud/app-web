@@ -589,6 +589,7 @@ export class MovementOfCancellationComponent implements OnInit {
                     if ((mov.balance <= mov.transactionOrigin.balance) || !this.modifyBalance(mov.transactionOrigin)) {
                         for (const type of this.cancellationTypes) {
                             if (type.origin._id === mov.transactionOrigin.type._id) {
+                                mov.type = type;
                                 await this.updateTransaction(mov.transactionOrigin, type.stateOrigin);
                             }
                         }
