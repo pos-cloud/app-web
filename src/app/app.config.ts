@@ -17,6 +17,8 @@ export class Config {
   static modules;
   static emailAccount: string;
   static emailPassword: string;
+  static emailHost: string;
+  static emailPort : number;
   static companyPicture: string;
   static companyName: string;
   static companyAddress: string;

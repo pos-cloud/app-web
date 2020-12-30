@@ -334,6 +334,8 @@ export class ApplicationComponent implements OnInit {
                 }
             }
         }
+
+        this.home = new Array();
     }
 
     public async ngOnInit() {
@@ -695,8 +697,6 @@ export class ApplicationComponent implements OnInit {
             this.home.forEach(element => {
                 this.obj['design.home'].push(element);
             });
-
-            //this.obj.design.home = this.home;
 
             switch (this.operation) {
                 case 'add':

@@ -2,12 +2,14 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 import { User } from '../user/user';
 import { Transaction } from '../transaction/transaction';
+import { CancellationType } from '../cancellation-type/cancellation-type';
 
 export class MovementOfCancellation {
 
     public _id: string;
     public transactionOrigin: Transaction;
     public transactionDestination: Transaction;
+    public type : CancellationType;
     public balance: number = 0;
     public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
