@@ -471,7 +471,7 @@ export class ConfigComponent implements OnInit {
   public updateConfig(): Promise<Config> {
 
     return new Promise<Config>((resolve, reject) => {
-        console.log(this.config);
+      
       this._configService.updateConfig(this.config).subscribe(
         result => {
           if (!result.configs) {

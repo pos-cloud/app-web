@@ -267,7 +267,7 @@ export class AddSaleOrderComponent {
               if (this.posType === 'resto' && this.transaction.table) {
                 this.transaction.table.employee = null;
                 this.transaction.table.state = TableState.Available;
-                await this.updateTable().then(table => {
+                await this.updateTable(this.transaction.table).then(table => {
                   if (table) {
                     this.transaction.table = table;
                     this.backFinal();
@@ -577,13 +577,13 @@ export class AddSaleOrderComponent {
     );
   }
 
-  public updateTable(): Promise<Table> {
+  public updateTable(table): Promise<Table> {
 
     return new Promise<Table>((resolve, reject) => {
 
       this.loading = true;
 
-      this._tableService.updateTable(this.transaction.table).subscribe(
+      this._tableService.updateTable(table).subscribe(
         result => {
           this.loading = false;
           if (!result.table) {
@@ -1912,7 +1912,7 @@ export class AddSaleOrderComponent {
             if (this.posType === 'resto' && this.transaction.table) {
               this.transaction.table.employee = null;
               this.transaction.table.state = TableState.Available;
-              await this.updateTable().then(table => {
+              await this.updateTable(this.transaction.table).then(table => {
                 if (table) {
                   this.transaction.table = table;
                   this.backFinal();
@@ -2188,7 +2188,7 @@ export class AddSaleOrderComponent {
                   this.transaction = transaction;
                   if (this.transaction.table) {
                     this.transaction.table.employee = result.employee;
-                    await this.updateTable().then(
+                    await this.updateTable(this.transaction.table).then(
                       table => {
                         if (table) {
                           this.transaction.table = table;
@@ -2326,10 +2326,10 @@ export class AddSaleOrderComponent {
             this.transaction.table.state = TableState.Available;
             this.transaction.table.employee = null;
             this.transaction.table.lastTransaction = null;
-            await this.updateTable();
+            await this.updateTable(this.transaction.table);
             this.transaction.table = result.table
             this.transaction.table.state = TableState.Busy;
-            await this.updateTable();
+            await this.updateTable(this.transaction.table);
             await this.updateTransaction().then(
               async transaction => {
                 if (transaction) {
@@ -2621,20 +2621,19 @@ export class AddSaleOrderComponent {
                 this.transaction = transaction;
 
                 if (this.transaction.table) {
-
+                  let table: Table = await this.getTable((this.transaction.table._id) ? this.transaction.table._id : this.transaction.table.toString());
                   if (this.transaction.type.finishCharge) {
-                    this.transaction.table.employee = null;
-                    this.transaction.table.state = TableState.Available;
+                    table.employee = null;
+                    table.state = TableState.Available;
                   } else {
-                    this.transaction.table.state = TableState.Pending;
+                    table.state = TableState.Pending;
                   }
-                  await this.updateTable().then(table => {
+                  await this.updateTable(table).then(table => {
                     if (table) {
                       this.transaction.table = table;
                     }
                   });
                 }
-
                 let cancellationTypesAutomatic = await this.getCancellationTypesAutomatic();
 
                 if (!cancellationTypesAutomatic || cancellationTypesAutomatic.length == 0) {
@@ -2863,18 +2862,6 @@ export class AddSaleOrderComponent {
     } else if (this.voucherArticlesToPrint && this.voucherArticlesToPrint.length !== 0) {
       this.typeOfOperationToPrint = "voucher";
       this.distributeImpressions()
-    } else if (this.posType === 'resto' && this.transaction.table) {
-      this.transaction.table.state = TableState.Busy;
-      await this.updateTable().then(table => {
-        if (table) {
-          this.transaction.table = table;
-          if (this.isCharge) {
-            this.openModal('charge')
-          } else {
-            this.backFinal();
-          }
-        }
-      });
     } else {
       if (this.isCharge) {
         this.openModal('charge')
@@ -2922,6 +2909,29 @@ export class AddSaleOrderComponent {
       rtn = rtn + "?" + params_arr.join("&");
     }
     return rtn;
+  }
+
+  public getTable(tableId: string): Promise<Table> {
+    return new Promise<Table>((resolve, reject) => {
+      this.loading = true;
+      this._tableService.getTable(tableId).subscribe(
+        result => {
+          this.loading = false;
+          if (!result.table) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
+          } else {
+            this.hideMessage();
+            resolve(result.table);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
+          resolve(null);
+        }
+      );
+    });
   }
 
   async getTaxVAT(movementOfArticle: MovementOfArticle) {
@@ -2976,55 +2986,17 @@ export class AddSaleOrderComponent {
           if (this.barArticlesPrinted < this.barArticlesToPrint.length) {
             this.updateMovementOfArticlePrintedBar();
           } else {
-            if (this.posType === 'resto') {
-              if (this.transaction.table) {
-                this.transaction.table.state = TableState.Busy;
-                await this.updateTable().then(table => {
-                  if (table) {
-                    this.transaction.table = table;
-                    if (this.kitchenArticlesToPrint.length > 0) {
-                      this.typeOfOperationToPrint = 'kitchen';
-                      this.distributeImpressions(null)
-                    } else if (this.voucherArticlesToPrint.length > 0) {
-                      this.typeOfOperationToPrint = 'voucher';
-                      this.distributeImpressions(null)
-                    } else {
-                      if (this.isCharge) {
-                        this.openModal('charge')
-                      } else {
-                        this.backFinal();
-                      }
-                    }
-                  }
-                });
-              } else {
-                if (this.kitchenArticlesToPrint.length > 0) {
-                  this.typeOfOperationToPrint = 'kitchen';
-                  this.distributeImpressions(null)
-                } else if (this.voucherArticlesToPrint.length > 0) {
-                  this.typeOfOperationToPrint = 'voucher';
-                  this.distributeImpressions(null)
-                } else {
-                  if (this.isCharge) {
-                    this.openModal('charge')
-                  } else {
-                    this.backFinal();
-                  }
-                }
-              }
+            if (this.kitchenArticlesToPrint.length > 0) {
+              this.typeOfOperationToPrint = 'kitchen';
+              this.distributeImpressions(null)
+            } else if (this.voucherArticlesToPrint.length > 0) {
+              this.typeOfOperationToPrint = 'voucher';
+              this.distributeImpressions(null)
             } else {
-              if (this.kitchenArticlesToPrint.length > 0) {
-                this.typeOfOperationToPrint = 'kitchen';
-                this.distributeImpressions(null)
-              } else if (this.voucherArticlesToPrint.length > 0) {
-                this.typeOfOperationToPrint = 'voucher';
-                this.distributeImpressions(null)
+              if (this.isCharge) {
+                this.openModal('charge')
               } else {
-                if (this.isCharge) {
-                  this.openModal('charge')
-                } else {
-                  this.backFinal();
-                }
+                this.backFinal();
               }
             }
           }
@@ -3051,48 +3023,15 @@ export class AddSaleOrderComponent {
           if (this.kitchenArticlesPrinted < this.kitchenArticlesToPrint.length) {
             this.updateMovementOfArticlePrintedKitchen();
           } else {
-            if (this.posType === 'resto') {
-              if (this.transaction.table) {
-                this.transaction.table.state = TableState.Busy;
-                await this.updateTable().then(table => {
-                  if (table) {
-                    this.transaction.table = table;
-                    if (this.voucherArticlesToPrint.length > 0) {
-                      this.typeOfOperationToPrint = 'voucher';
-                      this.distributeImpressions(null)
-                    } else {
-                      if (this.isCharge) {
-                        this.openModal('charge')
-                      } else {
-                        this.backFinal();
-                      }
-                    }
-                  }
-                });
-              } else {
-                if (this.voucherArticlesToPrint.length > 0) {
-                  this.typeOfOperationToPrint = 'voucher';
-                  this.distributeImpressions(null)
-                } else {
-                  if (this.isCharge) {
-                    this.openModal('charge')
-                  } else {
-                    this.backFinal();
-                  }
-                }
-              }
+            if (this.voucherArticlesToPrint.length > 0) {
+              this.typeOfOperationToPrint = 'voucher';
+              this.distributeImpressions(null)
             } else {
-              if (this.voucherArticlesToPrint.length > 0) {
-                this.typeOfOperationToPrint = 'voucher';
-                this.distributeImpressions(null)
+              if (this.isCharge) {
+                this.openModal('charge')
               } else {
-                if (this.isCharge) {
-                  this.openModal('charge')
-                } else {
-                  this.backFinal();
-                }
+                this.backFinal();
               }
-
             }
           }
         }
@@ -3119,25 +3058,10 @@ export class AddSaleOrderComponent {
           if (this.voucherArticlesPrinted < this.voucherArticlesToPrint.length) {
             this.updateMovementOfArticlePrintedVoucher();
           } else {
-            if (this.posType === 'resto' && this.transaction.table) {
-              this.transaction.table.state = TableState.Busy;
-              await this.updateTable().then(table => {
-                if (table) {
-                  this.transaction.table = table;
-                  if (this.isCharge) {
-                    this.openModal('charge')
-                  } else {
-                    this.backFinal();
-                  }
-
-                }
-              });
+            if (this.isCharge) {
+              this.openModal('charge')
             } else {
-              if (this.isCharge) {
-                this.openModal('charge')
-              } else {
-                this.backFinal();
-              }
+              this.backFinal();
             }
           }
         }
