@@ -756,7 +756,7 @@ export class PrintComponent implements OnInit {
     if(commissionAmount > 0) {
       row += 8;
       this.doc.setFontType('bold');
-      this.doc.text("Comisión:", 145, row);
+      this.doc.text("Tasa de Servicios Diaria:", 145, row);
       this.doc.setFontType('normal');
       this.doc.text("$ (" + this.roundNumber.transform(commissionAmount) + ")", 202, row, 'right', 'right');
     }
