@@ -238,8 +238,7 @@
                         </div>
                         <div class="form-group col-md-2">
                             <label for="period" class="control-label">Período:</label>
-                            <select class="form-control" formControlName="period"
-                                (change)="calculateQuotas('quotas')">
+                            <select class="form-control" formControlName="period" (change)="calculateQuotas('quotas')">
                                 <option value="Mensual">Meses</option>
                                 <option value="Anual">Años</option>
                                 <option value="Diario">Días</option>
@@ -251,7 +250,7 @@
                                 <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1"><i
                                             class="fa fa-calendar"></i></span></div>
                                 <input type="number" class="form-control" formControlName="days" name="days" min="0"
-                                    step="1" (change)="calculateQuotas('quotas')"/>
+                                    step="1" (change)="calculateQuotas('quotas')" />
                             </div>
                         </div>
                         <div class="form-group col-md-2">
@@ -347,12 +346,14 @@
             </div>
             <div *ngIf="paymentMethodSelected && paymentMethodSelected.allowBank" class="row">
                 <div class="form-group col-md-12">
-                    <label for="bank" class="control-label">Banco</label>
-                    <select class="form-control" formControlName="bank">
-                        <option *ngFor="let bank of banks" [selected]="(movementOfCash.bank && movementOfCash.bank._id && bank._id===movementOfCash.bank._id) ||
-                                  (movementOfCash.bank && bank._id==movementOfCash.bank)" [value]="bank._id">
-                            {{bank.code}} - {{bank.name}}</option>
-                    </select>
+                    <ng-template #rtBanks let-r="result" let-t="term">
+                        <ngb-highlight
+                            [result]="r.name + ' (Cód: ' + r.code + ')' + ((r.agency) ? ' (Suc: ' + r.agency + ')' : '') + ((r.account) ? ' (Cuenta: ' + r.account + ')' : '')"
+                            [term]="t"></ngb-highlight>
+                    </ng-template>
+                    <label for="bank">Banco:</label>
+                    <input id="bank" type="text" class="form-control" formControlName="bank" name="bank"
+                        [ngbTypeahead]="searchBanks" [resultTemplate]="rtBanks" [inputFormatter]="formatterBanks" />
                 </div>
             </div>
             <div *ngIf="paymentMethodSelected &&
@@ -380,12 +381,14 @@
                 </div>
                 <div class="row">
                     <div class="form-group col-md-12">
-                        <label for="bank" class="control-label">Banco</label>
-                        <select class="form-control" formControlName="bank">
-                            <option *ngFor="let bank of banks" [selected]="(movementOfCash.bank && movementOfCash.bank._id && bank._id===movementOfCash.bank._id) ||
-                                      (movementOfCash.bank && bank._id===movementOfCash.bank)" [value]="bank._id">
-                                {{bank.code}} - {{bank.name}}</option>
-                        </select>
+                        <ng-template #rtBanks let-r="result" let-t="term">
+                            <ngb-highlight
+                                [result]="r.name + ' (Cód: ' + r.code + ')' + ((r.agency) ? ' (Suc: ' + r.agency + ')' : '') + ((r.account) ? ' (Cuenta: ' + r.account + ')' : '')"
+                                [term]="t"></ngb-highlight>
+                        </ng-template>
+                        <label for="bank">Banco:</label>
+                        <input id="bank" type="text" class="form-control" formControlName="bank" name="bank"
+                            [ngbTypeahead]="searchBanks" [resultTemplate]="rtBanks" [inputFormatter]="formatterBanks" />
                     </div>
                 </div>
                 <div *ngIf="paymentMethodSelected && paymentMethodSelected.checkPerson" class="row">
@@ -474,7 +477,8 @@
                                 <b>{{getTotalAmount('commissionAmount') | currency:'USD':'symbol-narrow':'1.2-2'}}</b>
                             </td>
                             <td align="right" class="flat">
-                                <b>{{getTotalAmount('administrativeExpenseAmount') | currency:'USD':'symbol-narrow':'1.2-2'}}</b>
+                                <b>{{getTotalAmount('administrativeExpenseAmount') |
+                                    currency:'USD':'symbol-narrow':'1.2-2'}}</b>
                             </td>
                             <td align="right" class="flat">
                                 <b>{{getTotalAmount('otherExpenseAmount') | currency:'USD':'symbol-narrow':'1.2-2'}}</b>
