@@ -437,6 +437,7 @@
                             <th>Tasa de Servicios Diaria</th>
                             <th>Gastos adm.</th>
                             <th>Otros gastos</th>
+                            <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -463,6 +464,11 @@
                             <td align="right" class="flat">
                                 {{ movement.otherExpenseAmount | currency:'USD':'symbol-narrow':'1.2-2' }}
                             </td>
+                            <td align="right" class="flat">
+                                {{ (movement.amountPaid - movement.commissionAmount -
+                                movement.administrativeExpenseAmount - movement.otherExpenseAmount) |
+                                currency:'USD':'symbol-narrow':'1.2-2' }}
+                            </td>
                         </tr>
                     </tbody>
                     <thead>
@@ -482,6 +488,9 @@
                             </td>
                             <td align="right" class="flat">
                                 <b>{{getTotalAmount('otherExpenseAmount') | currency:'USD':'symbol-narrow':'1.2-2'}}</b>
+                            </td>
+                            <td align="right" class="flat">
+                                <b>{{getTotalAmount('total') | currency:'USD':'symbol-narrow':'1.2-2'}}</b>
                             </td>
                         </tr>
                     </thead>

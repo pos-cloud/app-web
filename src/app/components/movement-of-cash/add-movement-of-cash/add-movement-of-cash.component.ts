@@ -1172,7 +1172,11 @@ export class AddMovementOfCashComponent implements OnInit {
     getTotalAmount(field: string): number {
         let total: number = 0;
         for (let mov of this.movementsOfCashes) {
-            total += mov[field];
+            if (field !== 'total') {
+                total += mov[field];
+            } else {
+                total += (mov.amountPaid - mov.commissionAmount - mov.administrativeExpenseAmount - mov.otherExpenseAmount);
+            }
         }
         return total;
     }
