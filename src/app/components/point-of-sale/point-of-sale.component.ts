@@ -1100,18 +1100,13 @@ export class PointOfSaleComponent implements OnInit {
           (this.posType === 'resto' && this.transaction.table))) {
         this.openModal('select-employee');
       } else if (!this.transaction.company &&
-        (this.transaction.type.requestCompany || (this.transaction.type.requestArticles && this.posType === 'cuentas-corrientes')) && !this.transaction.type.company) {
-        if (!this.company) {
-          if (this.transaction.type.company) {
+        (this.transaction.type.requestCompany || (this.transaction.type.requestArticles && this.posType === 'cuentas-corrientes'))) {
+          if (this.transaction.type.company && this.transaction.type.company !== null) {
             this.transaction.company = this.transaction.type.company
             this.nextStepTransaction();
           } else {
             this.openModal('company');
           }
-        } else {
-          this.transaction.company = this.company;
-          this.nextStepTransaction();
-        }
       } else if (this.transaction.type.automaticNumbering && this.transaction.type.requestArticles) {
         let route = '/pos/' + this.posType + '/editar-transaccion';
         if (this.posType === "cuentas-corrientes") {
