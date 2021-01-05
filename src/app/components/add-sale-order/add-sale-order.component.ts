@@ -2480,6 +2480,13 @@ export class AddSaleOrderComponent {
     }
 
     if (isValid &&
+        this.transaction.type.transactionMovement === TransactionMovement.Sale &&
+        !this.transaction.company && this.transaction.type.requestCompany) {
+        isValid = false;
+        this.showMessage("Debe seleccionar un cliente para la transacción.", 'info', true);
+    }
+
+    if (isValid &&
       this.transaction.type.electronics &&
       this.transaction.totalPrice >= 5000 &&
       !this.transaction.company &&
@@ -2829,6 +2836,8 @@ export class AddSaleOrderComponent {
   }
 
   async close(op?: string) {
+
+    console.log(op);
 
     if (op === 'charge') {
       this.isCharge = true;
