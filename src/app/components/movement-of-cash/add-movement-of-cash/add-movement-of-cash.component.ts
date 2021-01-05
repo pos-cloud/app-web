@@ -36,10 +36,10 @@ import { TaxService } from '../../tax/tax.service';
 import { Tax } from '../../tax/tax';
 import { Holiday } from 'app/components/holiday/holiday.model';
 import { HolidayService } from 'app/components/holiday/holiday.service';
-import { Subscription } from 'rxjs';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
-import { switchMap } from 'rxjs/operators';
+import { Subscription, Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 
 
 @Component({
@@ -91,6 +91,7 @@ export class AddMovementOfCashComponent implements OnInit {
     public interestType: string = 'Interés Simple';
     public totalInterestAmount: number = 0;
     public totalTaxAmount: number = 0;
+    public focus$: Subject<string>[] = new Array();
 
     public formErrors = {
         'paymentMethod': '', 'amountToPay': '', 'amountPaid': '', 'paymentChange': '', 'observation': '', 'surcharge': '', 'CUIT': '', 'number': ''
@@ -144,7 +145,6 @@ export class AddMovementOfCashComponent implements OnInit {
         this.movementOfCash.expirationDate = (this.transaction.endDate) ? this.transaction.endDate : this.transaction.startDate;
         this.buildForm();
         this.getPaymentMethods();
-        this.getBanks();
     }
 
     ngAfterViewInit() {
@@ -280,17 +280,6 @@ export class AddMovementOfCashComponent implements OnInit {
             this.movementOfCash.observation = this.paymentMethodSelected.observation;
         }
 
-        let bank;
-        if (!this.movementOfCash.bank) {
-            bank = null;
-        } else {
-            if (this.movementOfCash.bank._id) {
-                bank = this.movementOfCash.bank._id;
-            } else {
-                bank = this.movementOfCash.bank;
-            }
-        }
-
         if (!this.percentageCommission) {
             this.percentageCommission = 0;
         }
@@ -323,7 +312,7 @@ export class AddMovementOfCashComponent implements OnInit {
             'expirationDate': moment(this.movementOfCash.expirationDate).format('YYYY-MM-DD'),
             'receiver': this.movementOfCash.receiver,
             'number': this.movementOfCash.number,
-            'bank': bank,
+            'bank': this.movementOfCash.bank,
             'titular': this.movementOfCash.titular,
             'CUIT': this.movementOfCash.CUIT,
             'deliveredBy': this.movementOfCash.deliveredBy,
@@ -372,34 +361,39 @@ export class AddMovementOfCashComponent implements OnInit {
         this.movementOfCash.expirationDate = this.movementOfCashForm.value.expirationDate;
     }
 
-    public getBanks() {
+    public searchBanks = (text$: Observable<string>) =>
+        text$.pipe(
+            debounceTime(300),
+            distinctUntilChanged(),
+            tap(() => this.loading = true),
+            switchMap(term =>
+                this.getBanks((term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {}).then(
+                    banks => {
+                        return banks;
+                    }
+                )
+            ),
+            tap(() => this.loading = false)
+        )
 
+    public formatterBanks = (x: Bank) => x.name;
+
+    public getBanks(match: {}): Promise<Bank[]> {
         this.loading = true;
-
-        this._bankService.getBanks(
-            {
-                _id: 1,
-                name: 1,
-                code: 1,
-                operationType: 1,
-            }, // PROJECT
-            { operationType: { $ne: "D" } }, // MATCH
-            { name: 1 }, // SORT
-            {}, // GROUP
-            0, // LIMIT
-            0 // SKIP
-        ).subscribe(result => {
-            this.loading = false;
-            if (result && result.banks) {
-                this.banks = result.banks;
-            } else {
-                this.banks = new Array();
-            }
-        },
-            error => {
-                this.showToast(error);
-                this.loading = false;
-            });
+        return new Promise<Bank[]>((resolve, reject) => {
+            match["operationType"] = { "$ne": "D" };
+            this.subscription.add(this._bankService.getAll({
+                match,
+                sort: { name: 1 },
+                limit: 10,
+            }).subscribe(
+                result => {
+                    this.loading = false;
+                    (result.status === 200) ? resolve(result.result) : reject(result);
+                },
+                error => reject(error)
+            ));
+        });
     }
 
     public calculateQuotas(field: string, newValue?: any, movement?: MovementOfCash): void {
@@ -1178,7 +1172,11 @@ export class AddMovementOfCashComponent implements OnInit {
     getTotalAmount(field: string): number {
         let total: number = 0;
         for (let mov of this.movementsOfCashes) {
-            total += mov[field];
+            if (field !== 'total') {
+                total += mov[field];
+            } else {
+                total += (mov.amountPaid - mov.commissionAmount - mov.administrativeExpenseAmount - mov.otherExpenseAmount);
+            }
         }
         return total;
     }
@@ -1419,8 +1417,8 @@ export class AddMovementOfCashComponent implements OnInit {
                             }
                         );
                     }
-                    if(isValid) {
-                        for(let mov of this.movementsOfCashesToFinance) {
+                    if (isValid) {
+                        for (let mov of this.movementsOfCashesToFinance) {
                             mov.expirationDate = moment(mov.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
                         }
                         await this.saveMovementsOfCashes().then(
