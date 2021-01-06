@@ -244,6 +244,16 @@ export let attributes = [
     required : false,
   },
   {
+    name: 'discount',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'number',
+    project: null,
+    align: 'left',
+    required : false,
+  },
+  {
     name: 'creationDate',
     visible: false,
     disabled: false,
