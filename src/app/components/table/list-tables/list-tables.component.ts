@@ -72,9 +72,8 @@ export class ListTablesComponent implements OnInit {
         this.userType = pathLocation[1];
         this.getTables();
 
-        if(this.userType === 'pos') {
+        if (this.userType === 'pos') {
             this.interval = setInterval(() => {
-                console.log("entro");
                 if (!this.loading) {
                     this.getTables();
                 }
@@ -151,14 +150,40 @@ export class ListTablesComponent implements OnInit {
 
     }
 
-    public selectTable(table: Table): void {
-        if (table.state === TableState.Pending) {
-            this.openModal('change-state', table)
-        } else {
-            this.eventTableSelected.emit(table);
+    public async selectTable(table: Table) {
+        table = await this.getTable(table._id);
+        if (table) {
+            if (table.state === TableState.Pending) {
+                this.openModal('change-state', table)
+            } else {
+                this.eventTableSelected.emit(table);
+            }
         }
     }
 
+
+    public getTable(tableId: string): Promise<Table> {
+        return new Promise<Table>((resolve, reject) => {
+            this.loading = true;
+            this._tableService.getTable(tableId).subscribe(
+                result => {
+                    this.loading = false;
+                    if (!result.table) {
+                        if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+                        resolve(null);
+                    } else {
+                        this.hideMessage();
+                        resolve(result.table);
+                    }
+                },
+                error => {
+                    this.showMessage(error._body, 'danger', false);
+                    this.loading = false;
+                    resolve(null);
+                }
+            );
+        });
+    }
 
     public calculateAmountOfDiners() {
 
