@@ -215,7 +215,6 @@ export class AddMovementOfCashComponent implements OnInit {
     };
 
     public buildForm(): void {
-
         this.movementOfCashForm = this._fb.group({
             'transactionAmount': [parseFloat(this.roundNumber.transform(this.transactionAmount)).toFixed(2), [Validators.required]],
             'paymentMethod': [this.movementOfCash.type, [Validators.required]],
@@ -291,7 +290,6 @@ export class AddMovementOfCashComponent implements OnInit {
         if (!this.percentageOtherExpense) {
             this.percentageOtherExpense = 0;
         }
-
         const values = {
             'transactionAmount': parseFloat(this.roundNumber.transform(this.transactionAmount).toFixed(2)),
             'paymentMethod': this.paymentMethodSelected,
@@ -367,11 +365,20 @@ export class AddMovementOfCashComponent implements OnInit {
             distinctUntilChanged(),
             tap(() => this.loading = true),
             switchMap(term =>
-                this.getBanks((term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {}).then(
-                    banks => {
-                        return banks;
-                    }
-                )
+                this.getBanks((term && term !== '') ?
+                    {
+                        $or: [
+                            { name: { $regex: term, $options: 'i' } },
+                            { code: { $regex: term, $options: 'i' } },
+                            { account: { $regex: term, $options: 'i' } },
+                            { agency: { $regex: term, $options: 'i' } }
+                        ]
+                    } :
+                    {}).then(
+                        banks => {
+                            return banks;
+                        }
+                    )
             ),
             tap(() => this.loading = false)
         )
@@ -383,6 +390,13 @@ export class AddMovementOfCashComponent implements OnInit {
         return new Promise<Bank[]>((resolve, reject) => {
             match["operationType"] = { "$ne": "D" };
             this.subscription.add(this._bankService.getAll({
+                project: {
+                    _id: 1,
+                    code: { $toString: "$code" },
+                    name: 1,
+                    account: 1,
+                    agency: { $toString: "$agency" },
+                },
                 match,
                 sort: { name: 1 },
                 limit: 10,
@@ -1621,15 +1635,25 @@ export class AddMovementOfCashComponent implements OnInit {
         );
     }
 
-    public cleanForm(): void {
+    public async cleanForm() {
         let oldMovementOfCash: MovementOfCash = new MovementOfCash();
         oldMovementOfCash = Object.assign(oldMovementOfCash, this.movementOfCash);
         this.movementOfCash = new MovementOfCash();
         this.movementOfCash.type = this.paymentMethodSelected;
+        this.paymentChange = '0.00';
+        this.amountToPay = 0;
+        this.amountPaid = 0;
         this.movementOfCash.expirationDate = oldMovementOfCash.expirationDate;
         this.movementOfCash.receiver = oldMovementOfCash.receiver;
         this.movementOfCash.number = oldMovementOfCash.number;
-        this.movementOfCash.bank = oldMovementOfCash.bank;
+        let bank: Bank = (oldMovementOfCash.bank) ? oldMovementOfCash.bank : null;
+        if (bank && !bank._id) {
+            await this.getBanks({ _id: { $oid: bank } })
+                .then((banks: Bank[]) => {
+                    if (banks && banks.length > 0) bank = banks[0];
+                });
+        }
+        this.movementOfCash.bank = bank;
         this.movementOfCash.titular = oldMovementOfCash.titular;
         this.movementOfCash.CUIT = oldMovementOfCash.CUIT;
         this.movementOfCash.deliveredBy = oldMovementOfCash.deliveredBy;
