@@ -1101,12 +1101,12 @@ export class PointOfSaleComponent implements OnInit {
         this.openModal('select-employee');
       } else if (!this.transaction.company &&
         (this.transaction.type.requestCompany || (this.transaction.type.requestArticles && this.posType === 'cuentas-corrientes'))) {
-          if (this.transaction.type.company && this.transaction.type.company !== null) {
-            this.transaction.company = this.transaction.type.company
-            this.nextStepTransaction();
-          } else {
-            this.openModal('company');
-          }
+        if (this.transaction.type.company && this.transaction.type.company !== null) {
+          this.transaction.company = this.transaction.type.company
+          this.nextStepTransaction();
+        } else {
+          this.openModal('company');
+        }
       } else if (this.transaction.type.automaticNumbering && this.transaction.type.requestArticles) {
         let route = '/pos/' + this.posType + '/editar-transaccion';
         if (this.posType === "cuentas-corrientes") {
@@ -2143,81 +2143,77 @@ export class PointOfSaleComponent implements OnInit {
     this.transaction = await this.getTransaction(transaction._id);
     let email: string;
     if (this.transaction) {
-      if (this.transaction.totalPrice > 0) {
-        let oldState = this.transaction.state;
-        this.transaction.state = state;
-        if (this.transaction.type.allowAPP) {
-          if (this.transaction.company) {
-            await this.getUsers({ company: { $oid: this.transaction.company._id } })
-              .then(users => {
-                if (users && users.length > 0) email = users[0].email;
-              });
-          }
-          if (email && this.transaction.state.toString() === TransactionState.PaymentConfirmed.toString()) {
-            this.transaction.balance = 0;
-            this.sendEmail(
-              `Pago confirmado en tu Pedido Número ${this.transaction.orderNumber}`,
-              `Hola ${transaction.company.name} confirmamos el pago de tu compra.</br><b>Ya estamos preparando tu pedido, te avisamos cuando este en camino.</b>`,
-              email);
-            if (oldState === TransactionState.Delivered) this.transaction.state = TransactionState.Closed;
-          } else if (email && this.transaction.state.toString() === TransactionState.PaymentDeclined.toString()) {
-            this.transaction.balance = 0;
-            this.sendEmail(
-              `Pago rechazado en tu Pedido Número ${this.transaction.orderNumber}`,
-              `Hola ${transaction.company.name} rechazamos el pago de tu compra.</br><b>Lamentamos el incoveniente por no poder finalizar la compra. Puedes realizar de nuevo el pedido cuando desees, te esperamos.</b>`,
-              email);
-          } else if (email && this.transaction.state.toString() === TransactionState.Sent.toString()) {
-            this.sendEmail(
-              `Tu Pedido Número ${this.transaction.orderNumber} está en camino.`,
-              `${transaction.company.name} realizamos el envío de tu pedido.</br>
+      let oldState = this.transaction.state;
+      this.transaction.state = state;
+      if (this.transaction.type.allowAPP) {
+        if (this.transaction.company) {
+          await this.getUsers({ company: { $oid: this.transaction.company._id } })
+            .then(users => {
+              if (users && users.length > 0) email = users[0].email;
+            });
+        }
+        if (email && this.transaction.state.toString() === TransactionState.PaymentConfirmed.toString()) {
+          this.transaction.balance = 0;
+          this.sendEmail(
+            `Pago confirmado en tu Pedido Número ${this.transaction.orderNumber}`,
+            `Hola ${transaction.company.name} confirmamos el pago de tu compra.</br><b>Ya estamos preparando tu pedido, te avisamos cuando este en camino.</b>`,
+            email);
+          if (oldState === TransactionState.Delivered) this.transaction.state = TransactionState.Closed;
+        } else if (email && this.transaction.state.toString() === TransactionState.PaymentDeclined.toString()) {
+          this.transaction.balance = 0;
+          this.sendEmail(
+            `Pago rechazado en tu Pedido Número ${this.transaction.orderNumber}`,
+            `Hola ${transaction.company.name} rechazamos el pago de tu compra.</br><b>Lamentamos el incoveniente por no poder finalizar la compra. Puedes realizar de nuevo el pedido cuando desees, te esperamos.</b>`,
+            email);
+        } else if (email && this.transaction.state.toString() === TransactionState.Sent.toString()) {
+          this.sendEmail(
+            `Tu Pedido Número ${this.transaction.orderNumber} está en camino.`,
+            `${transaction.company.name} realizamos el envío de tu pedido.</br>
               <b>Ya se encuentra en camino a
               ${this.transaction.deliveryAddress.name} ${this.transaction.deliveryAddress.number},
               ${this.transaction.deliveryAddress.city},
               ${this.transaction.deliveryAddress.state}.
               </b>`,
-              email);
-          } else if (email && this.transaction.state.toString() === TransactionState.Delivered.toString()) {
-            this.sendEmail(
-              `Tu Pedido Número ${this.transaction.orderNumber} ha sido entregado.`,
-              `${transaction.company.name} hemos entregado tu pedido.</br>
+            email);
+        } else if (email && this.transaction.state.toString() === TransactionState.Delivered.toString()) {
+          this.sendEmail(
+            `Tu Pedido Número ${this.transaction.orderNumber} ha sido entregado.`,
+            `${transaction.company.name} hemos entregado tu pedido.</br>
               <b>Gracias por elegirnos. ¡Te esperamos pronto!</b>`,
-              email);
-            if (this.transaction.balance === 0 && ((this.transaction.type.electronics && this.transaction.CAE) || !this.transaction.type.electronics)) this.transaction.state = TransactionState.Closed;
-          }
+            email);
+          if (this.transaction.balance === 0 && ((this.transaction.type.electronics && this.transaction.CAE) || !this.transaction.type.electronics)) this.transaction.state = TransactionState.Closed;
         }
-        if (this.transaction.state === TransactionState.Closed) {
-          this.finishTransaction();
-        } else {
-          let print: boolean = false;
-          if (this.transaction.type.printable && this.transaction.printed === 0) {
-            this.transaction.printed = 1;
-            print = true;
-          }
-          await this.updateTransaction(this.transaction).then(
-            transaction => {
-              if (transaction) {
-                this.transaction = transaction;
-                if (print) {
-                  this.refresh();
-                  if (this.transaction.type.defectPrinter) {
-                    this.printerSelected = this.printerSelected;
-                    this.openModal("print");
-                  } else {
-                    this.openModal("printers");
-                  }
+      }
+      if (this.transaction.state === TransactionState.Closed) {
+        this.finishTransaction();
+      } else {
+        let print: boolean = false;
+        if (this.transaction.type.printable && this.transaction.printed === 0) {
+          this.transaction.printed = 1;
+          print = true;
+        }
+        await this.updateTransaction(this.transaction).then(
+          transaction => {
+            if (transaction) {
+              this.transaction = transaction;
+              if (print) {
+                this.refresh();
+                if (this.transaction.type.defectPrinter) {
+                  this.printerSelected = this.printerSelected;
+                  this.openModal("print");
                 } else {
-                  if (this.posType !== 'delivery' && this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
-                    this.transactionTypeId = this.transaction.type._id;
-                    this.transaction = undefined;
-                  }
-                  this.refresh();
+                  this.openModal("printers");
                 }
+              } else {
+                if (this.posType !== 'delivery' && this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+                  this.transactionTypeId = this.transaction.type._id;
+                  this.transaction = undefined;
+                }
+                this.refresh();
               }
             }
-          );
-        }
-      } else {
-        this.showMessage("No se puede cambiar de estado una transacción con monto menor o igual $0,00.", "info", true);
+          }
+        );
       }
     }
   }
