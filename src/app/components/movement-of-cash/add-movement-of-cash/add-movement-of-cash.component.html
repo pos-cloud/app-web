@@ -155,7 +155,7 @@
                                 <div class="input-group-prepend"><span class="input-group-text"
                                         id="basic-addon1">$</span></div>
                                 <input type="number" class="form-control" min="0" step="1"
-                                    formControlName="commissionAmount" name="commissionAmount" readonly />
+                                    formControlName="commissionAmount" name="commissionAmount" (blur)="changePercentageCommission(movementOfCashForm.value.commissionAmount)" />
                             </div>
                         </div>
                         <div class="form-group col-md-2">
@@ -186,7 +186,7 @@
                     <div class="input-group">
                         <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
                         <input type="number" class="form-control" min="0" step="1"
-                            formControlName="administrativeExpenseAmount" name="administrativeExpenseAmount" readonly />
+                            formControlName="administrativeExpenseAmount" name="administrativeExpenseAmount" (blur)="changePercentageAdministrativeExpense(movementOfCashForm.value.administrativeExpenseAmount)" />
                     </div>
                 </div>
             </div>
@@ -207,7 +207,7 @@
                     <div class="input-group">
                         <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
                         <input type="number" class="form-control" min="0" step="1" formControlName="otherExpenseAmount"
-                            name="otherExpenseAmount" readonly />
+                            name="otherExpenseAmount" (blur)="changePercentageOtherExpense(movementOfCashForm.value.otherExpenseAmount)" />
                     </div>
                 </div>
             </div>
