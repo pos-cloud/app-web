@@ -2837,8 +2837,6 @@ export class AddSaleOrderComponent {
 
   async close(op?: string) {
 
-    console.log(op);
-
     if (op === 'charge') {
       this.isCharge = true;
     } else {

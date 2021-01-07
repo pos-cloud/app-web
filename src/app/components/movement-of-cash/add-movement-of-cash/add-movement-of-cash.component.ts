@@ -140,11 +140,15 @@ export class AddMovementOfCashComponent implements OnInit {
         this.paymentMethodSelected = this.movementOfCash.type;
     }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.transactionAmount = this.transaction.totalPrice;
         this.movementOfCash.expirationDate = (this.transaction.endDate) ? this.transaction.endDate : this.transaction.startDate;
         this.buildForm();
         this.getPaymentMethods();
+        this.getHolidays()
+            .then(result => {
+                this.holidays = result;
+            });
     }
 
     ngAfterViewInit() {
@@ -1196,31 +1200,28 @@ export class AddMovementOfCashComponent implements OnInit {
     }
 
     public async changePercentageCommission() {
-        await this.getHolidays().then(result => {
-            this.holidays = result;
-            this.movementOfCash = Object.assign(this.movementOfCashForm.value);
-            this.percentageCommission = this.movementOfCashForm.value.percentageCommission;
-            this.daysCommission = moment(moment(this.movementOfCashForm.value.expirationDate).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days') + 4;
-            if (moment(this.movementOfCashForm.value.expirationDate).day() === 6) {
-                this.daysCommission += 2
-            }
-            if (moment(this.movementOfCashForm.value.expirationDate).day() === 7) {
-                this.daysCommission += 1
-            }
+        this.movementOfCash = Object.assign(this.movementOfCashForm.value);
+        this.percentageCommission = this.movementOfCashForm.value.percentageCommission;
+        this.daysCommission = moment(moment(this.movementOfCashForm.value.expirationDate).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days') + 4;
+        if (moment(this.movementOfCashForm.value.expirationDate).day() === 6) {
+            this.daysCommission += 2
+        }
+        if (moment(this.movementOfCashForm.value.expirationDate).day() === 7) {
+            this.daysCommission += 1
+        }
 
-            if (this.holidays && this.holidays.length > 0) {
-                this.holidays.forEach(element => {
-                    if (moment(this.movementOfCashForm.value.expirationDate).format('YYYY-MM-DD') === moment(element.date).format("YYYY-MM-DD")) {
-                        this.daysCommission += 1
-                    }
-                });
-            }
-
-            this.movementOfCash.commissionAmount = this.roundNumber.transform((this.amountToPay * this.percentageCommission / 100) * this.daysCommission);
-            if (this.movementOfCash.taxPercentage > 0) this.movementOfCash.commissionAmount = this.roundNumber.transform(this.movementOfCash.commissionAmount + (this.movementOfCash.commissionAmount * this.movementOfCash.taxPercentage / 100));
-        });
+        if (this.holidays && this.holidays.length > 0) {
+            this.holidays.forEach(element => {
+                if (moment(this.movementOfCashForm.value.expirationDate).format('YYYY-MM-DD') === moment(element.date).format("YYYY-MM-DD")) {
+                    this.daysCommission += 1;
+                }
+            });
+        }
+        this.movementOfCash.commissionAmount = this.roundNumber.transform((this.amountToPay * this.percentageCommission / 100) * this.daysCommission);
+        if (this.movementOfCash.taxPercentage > 0) this.movementOfCash.commissionAmount = this.roundNumber.transform(this.movementOfCash.commissionAmount + (this.movementOfCash.commissionAmount * this.movementOfCash.taxPercentage / 100));
         this.movementOfCashForm.patchValue({
-            commissionAmount: this.movementOfCash.commissionAmount
+            commissionAmount: this.movementOfCash.commissionAmount,
+            daysCommission: this.daysCommission
         });
         if (this.paymentMethodSelected && this.paymentMethodSelected.allowToFinance) this.calculateQuotas('quotas');
     }
