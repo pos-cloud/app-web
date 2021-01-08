@@ -239,7 +239,7 @@ export class AddMovementOfCashComponent implements OnInit {
             'expirationDate': [moment(this.movementOfCash.expirationDate).format('YYYY-MM-DD'), []],
             'receiver': [this.movementOfCash.receiver, []],
             'number': [this.movementOfCash.number, [Validators.pattern("^[0-9]*$")]],
-            'bank': [this.movementOfCash.bank, []],
+            'bank': [(this.movementOfCash.bank) ? this.movementOfCash.bank : null, []],
             'titular': [this.movementOfCash.titular, []],
             'CUIT': [this.movementOfCash.CUIT, []],
             'deliveredBy': [this.movementOfCash.deliveredBy, []],
@@ -314,7 +314,7 @@ export class AddMovementOfCashComponent implements OnInit {
             'expirationDate': moment(this.movementOfCash.expirationDate).format('YYYY-MM-DD'),
             'receiver': this.movementOfCash.receiver,
             'number': this.movementOfCash.number,
-            'bank': this.movementOfCash.bank,
+            'bank': (this.movementOfCash.bank) ? this.movementOfCash.bank : null,
             'titular': this.movementOfCash.titular,
             'CUIT': this.movementOfCash.CUIT,
             'deliveredBy': this.movementOfCash.deliveredBy,
@@ -1217,7 +1217,7 @@ export class AddMovementOfCashComponent implements OnInit {
             });
         }
 
-        if(commissionAmount != null) {
+        if (commissionAmount != null) {
             this.movementOfCash.commissionAmount = commissionAmount;
             this.percentageCommission = this.roundNumber.transform(100 * (this.movementOfCash.commissionAmount / (this.amountToPay * this.daysCommission)));
         } else {
@@ -1235,7 +1235,7 @@ export class AddMovementOfCashComponent implements OnInit {
     }
 
     public changePercentageAdministrativeExpense(administrativeExpenseAmount: number = null) {
-        if(administrativeExpenseAmount != null) {
+        if (administrativeExpenseAmount != null) {
             this.movementOfCash.administrativeExpenseAmount = administrativeExpenseAmount;
             this.percentageAdministrativeExpense = this.roundNumber.transform(100 * (this.movementOfCash.administrativeExpenseAmount / this.amountToPay));
         } else {
@@ -1251,7 +1251,7 @@ export class AddMovementOfCashComponent implements OnInit {
     }
 
     public changePercentageOtherExpense(otherExpenseAmount: number = null) {
-        if(otherExpenseAmount != null) {
+        if (otherExpenseAmount != null) {
             this.movementOfCash.otherExpenseAmount = otherExpenseAmount;
             this.percentageOtherExpense = this.roundNumber.transform(100 * (this.movementOfCash.otherExpenseAmount / this.amountToPay));
         } else {
