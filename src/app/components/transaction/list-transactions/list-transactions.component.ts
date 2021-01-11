@@ -494,7 +494,7 @@ export class ListTransactionsComponent implements OnInit {
                 }
         
                 if (Config.country === 'MX') {
-                  modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}:300/api/print/xml/CFDI-33_Factura_` + transaction.number;
+                  modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.apiHost}:300/api/print/xml/CFDI-33_Factura_` + transaction.number;
                 }
         
                 if (transaction.type.defectEmailTemplate) {
@@ -523,7 +523,7 @@ export class ListTransactionsComponent implements OnInit {
                     modalRef.componentInstance.typePrint = 'invoice';
                     modalRef.componentInstance.source = "mail";
                 }
-                var url = `http://${Config.database}.poscloud.com.ar:300/api/print/others/${transaction._id}`;
+                var url = `http://${Config.apiHost}.poscloud.com.ar:300/api/print/others/${transaction._id}`;
                 window.open(url);
                 break;
             default: ;
