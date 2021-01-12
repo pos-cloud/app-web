@@ -1591,7 +1591,7 @@ export class PointOfSaleComponent implements OnInit {
                 }
         
                 if (Config.country === 'MX') {
-                  modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.apiHost}:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number;
+                    modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://${Config.apiHost}:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number +`">Su comprobante</a>`;
                 }
         
                 if (this.transaction.type.defectEmailTemplate) {
@@ -1603,7 +1603,7 @@ export class PointOfSaleComponent implements OnInit {
                   }
         
                   if (Config.country === 'MX') {
-                    modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.apiHost}:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number;
+                    modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://${Config.apiHost}:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number +`">Su comprobante</a>`;
                   }
                 }
 
