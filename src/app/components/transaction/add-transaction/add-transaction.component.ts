@@ -33,6 +33,7 @@ import { CancellationTypeService } from 'app/components/cancellation-type/cancel
 import { SelectCompanyComponent } from '../../company/select-company/select-company.component';
 import { Employee } from '../../employee/employee';
 import { TaxClassification } from '../../tax/tax';
+import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 
 @Component({
     selector: 'app-add-transaction',
@@ -75,6 +76,7 @@ export class AddTransactionComponent implements OnInit {
     public showButtonCancelation: boolean;
     public filtersTaxClassification: TaxClassification[] = [TaxClassification.Perception, TaxClassification.Withholding];
     public balanceTotal: number = -1; // SE ASIGNA -1 PARA VALIDAR SI SE NECESITA RECALCULAR EL SALDO, O SE EDITA MANUALMENTE.
+    public movementsOfCashes: MovementOfCash[];
 
     public formErrors = {
         'date': '',
@@ -90,35 +92,16 @@ export class AddTransactionComponent implements OnInit {
     };
 
     public validationMessages = {
-        'company': {
-            'required': 'Este campo es requerido.'
-        },
-        'date': {
-            'required': 'Este campo es requerido.'
-        },
-        'origin': {
-            'required': 'Este campo es requerido.'
-        },
-        'letter': {
-            'required': 'Este campo es requerido.'
-        },
-        'number': {
-            'required': 'Este campo es requerido.'
-        },
-        'VATPeriod': {
-            'required': 'Este campo es requerido.'
-        },
-        'basePrice': {
-            'required': 'Este campo es requerido.'
-        },
-        'exempt': {
-            'required': 'Este campo es requerido.'
-        },
-        'totalPrice': {
-            'required': 'Este campo es requerido.'
-        },
-        'employeeOpening': {
-        }
+        'company': { 'required': 'Este campo es requerido.' },
+        'date': { 'required': 'Este campo es requerido.' },
+        'origin': { 'required': 'Este campo es requerido.' },
+        'letter': { 'required': 'Este campo es requerido.' },
+        'number': { 'required': 'Este campo es requerido.' },
+        'VATPeriod': { 'required': 'Este campo es requerido.' },
+        'basePrice': { 'required': 'Este campo es requerido.' },
+        'exempt': { 'required': 'Este campo es requerido.' },
+        'totalPrice': { 'required': 'Este campo es requerido.' },
+        'employeeOpening': {}
     };
 
     constructor(
@@ -355,31 +338,33 @@ export class AddTransactionComponent implements OnInit {
                 modalRef.componentInstance.selectionView = true;
                 modalRef.componentInstance.movementsOfCancellations = this.movementsOfCancellations;
                 modalRef.result.then(async (result) => {
-                    if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
-                        this.movementsOfCancellations = result.movementsOfCancellations;
-
-                        this.balanceTotal = 0;
-                        for (let mov of this.movementsOfCancellations) {
-                            let transOrigin: Transaction = await this.getTransaction(mov.transactionOrigin._id);
-                            if ((transOrigin.type.transactionMovement === TransactionMovement.Sale &&
-                                transOrigin.type.movement === Movements.Outflows) ||
-                                (transOrigin.type.transactionMovement === TransactionMovement.Purchase &&
-                                    transOrigin.type.movement === Movements.Inflows)) {
-                                if (mov.balance > 0) {
-                                    this.balanceTotal -= mov.balance;
+                    if (result) {
+                        this.movementsOfCashes = result.movementsOfCashes;
+                        if (result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
+                            this.movementsOfCancellations = result.movementsOfCancellations;
+                            this.balanceTotal = 0;
+                            for (let mov of this.movementsOfCancellations) {
+                                let transOrigin: Transaction = await this.getTransaction(mov.transactionOrigin._id);
+                                if ((transOrigin.type.transactionMovement === TransactionMovement.Sale &&
+                                    transOrigin.type.movement === Movements.Outflows) ||
+                                    (transOrigin.type.transactionMovement === TransactionMovement.Purchase &&
+                                        transOrigin.type.movement === Movements.Inflows)) {
+                                    if (mov.balance > 0) {
+                                        this.balanceTotal -= mov.balance;
+                                    } else {
+                                        this.balanceTotal += mov.balance;
+                                    }
                                 } else {
                                     this.balanceTotal += mov.balance;
                                 }
-                            } else {
-                                this.balanceTotal += mov.balance;
                             }
+                            this.balanceTotal = this.roundNumber.transform(this.balanceTotal);
+                            if (this.transaction.totalPrice === 0) {
+                                this.transaction.totalPrice = this.balanceTotal;
+                            }
+                            this.transaction.balance = this.roundNumber.transform(this.transaction.totalPrice - this.balanceTotal);
+                            this.setValuesForm();
                         }
-                        this.balanceTotal = this.roundNumber.transform(this.balanceTotal);
-                        if (this.transaction.totalPrice === 0) {
-                            this.transaction.totalPrice = this.balanceTotal;
-                        }
-                        this.transaction.balance = this.roundNumber.transform(this.transaction.totalPrice - this.balanceTotal);
-                        this.setValuesForm();
                     }
                 }, (reason) => {
                 });
@@ -470,7 +455,7 @@ export class AddTransactionComponent implements OnInit {
                                 transaction => {
                                     if (transaction) {
                                         this.transaction = transaction;
-                                        this.activeModal.close({ transaction: this.transaction });
+                                        this.activeModal.close({ transaction: this.transaction, movementsOfCashes: this.movementsOfCashes });
                                     }
                                 }
                             );
@@ -481,7 +466,7 @@ export class AddTransactionComponent implements OnInit {
                     transaction => {
                         if (transaction) {
                             this.transaction = transaction;
-                            this.activeModal.close({ transaction: this.transaction });
+                            this.activeModal.close({ transaction: this.transaction, movementsOfCashes: this.movementsOfCashes });
                         }
                     }
                 );
@@ -522,8 +507,8 @@ export class AddTransactionComponent implements OnInit {
                     this.hideMessage();
                     this.loading = false;
                     this.employees = result.employees;
-                   // this.transaction.employeeOpening = this.employees[0];
-                   // this.transaction.employeeClosing = this.employees[0];
+                    // this.transaction.employeeOpening = this.employees[0];
+                    // this.transaction.employeeClosing = this.employees[0];
                     this.setValuesForm();
                 }
             },

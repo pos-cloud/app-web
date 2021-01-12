@@ -1563,7 +1563,6 @@ export class AddMovementOfCashComponent implements OnInit {
     public saveMovementsOfCashes(): Promise<MovementOfCash[]> {
 
         return new Promise<MovementOfCash[]>((resolve, reject) => {
-
             this._movementOfCashService.saveMovementsOfCashes(this.movementsOfCashesToFinance).subscribe(
                 result => {
                     if (!result.movementsOfCashes) {

@@ -51,7 +51,6 @@ import { RelationType } from 'app/components/relation-type/relation-type';
 import { MovementOfCancellationComponent } from '../movement-of-cancellation/movement-of-cancellation.component';
 import { MovementOfCancellationService } from 'app/components/movement-of-cancellation/movement-of-cancellation.service';
 import { CancellationTypeService } from 'app/components/cancellation-type/cancellation-type.service';
-import { CurrencyService } from 'app/components/currency/currency.service';
 import { Currency } from 'app/components/currency/currency';
 import { CancellationType } from 'app/components/cancellation-type/cancellation-type';
 import { ImportComponent } from '../import/import.component';
@@ -171,7 +170,6 @@ export class AddSaleOrderComponent {
     private _relationTypeService: RelationTypeService,
     private _movementOfCancellationService: MovementOfCancellationService,
     private _cancellationTypeService: CancellationTypeService,
-    private _currencyService: CurrencyService,
     private _claimService: ClaimService,
     private _transportService: TransportService,
     private _priceListService: PriceListService,

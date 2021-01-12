@@ -250,6 +250,7 @@ import { ListMovementsOfCancellationsComponent } from './components/movement-of-
 import { ReportTransactionTypeComponent } from './components/report-transaction-type/report-transaction-type.component';
 import { PushNotificationsService } from './components/notification/notification.service';
 import { PrintQRComponent } from './components/print/print-qr/print-qr.component';
+import { SelectMovementsOfCashesComponent } from './components/movement-of-cash/select-movements-of-cashes/select-movements-of-cashes.component';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -423,7 +424,8 @@ export function createTranslateLoader(http: HttpClient) {
     ListCategoriesPosComponent,
     ListMovementsOfCancellationsComponent,
     ReportTransactionTypeComponent,
-    PrintQRComponent
+    PrintQRComponent,
+    SelectMovementsOfCashesComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -565,7 +567,8 @@ export function createTranslateLoader(http: HttpClient) {
     CurrentAccountDetailsComponent,
     EmailTemplateComponent,
     SelectChecksComponent,
-    PrintQRComponent
+    PrintQRComponent,
+    SelectMovementsOfCashesComponent
   ],
   imports: [
     BrowserModule,

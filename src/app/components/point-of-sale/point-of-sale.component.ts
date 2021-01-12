@@ -53,6 +53,8 @@ import { SendEmailComponent } from '../send-email/send-email.component';
 import { EmployeeType } from '../employee-type/employee-type.model';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
+import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
+import { MovementOfCashService } from '../movement-of-cash/movement-of-cash.service';
 
 @Component({
     selector: 'app-point-of-sale',
@@ -100,6 +102,7 @@ export class PointOfSaleComponent implements OnInit {
     private subscription: Subscription = new Subscription();
     public identity: User;
     public user: User;
+    public movementsOfCashes: MovementOfCash[];
 
     // CAMPOS TRAIDOS DE LA CUENTA CTE.
     @Input() company: Company;
@@ -128,6 +131,7 @@ export class PointOfSaleComponent implements OnInit {
         private _emailService: EmailService,
         public translatePipe: TranslateMePipe,
         private _toastr: ToastrService,
+        private _movementOfCashService: MovementOfCashService
     ) {
         this.roomSelected = new Room();
         this.transactionTypes = new Array();
@@ -1237,25 +1241,27 @@ export class PointOfSaleComponent implements OnInit {
                 );
                 break;
             case 'transaction':
-
                 modalRef = this._modalService.open(AddTransactionComponent, { size: 'lg', backdrop: 'static' });
                 modalRef.componentInstance.transactionId = this.transaction._id;
                 modalRef.result.then(
                     async (result) => {
-                        this.transaction = result.transaction;
-                        if (this.transaction) {
-                            if (this.transaction.type && this.transaction.type.requestArticles) {
-                                let route = '/pos/mostrador/editar-transaccion';
-                                this._router.navigate([route], { queryParams: { transactionId: this.transaction._id, returnURL: this._router.url } });
-                            } else if (this.transaction.type.requestPaymentMethods) {
-                                this.openModal('charge');
+                        if(result) {
+                            this.transaction = result.transaction;
+                            this.movementsOfCashes = result.movementsOfCashes;
+                            if (this.transaction) {
+                                if (this.transaction.type && this.transaction.type.requestArticles) {
+                                    let route = '/pos/mostrador/editar-transaccion';
+                                    this._router.navigate([route], { queryParams: { transactionId: this.transaction._id, returnURL: this._router.url } });
+                                } else if (this.transaction.type.requestPaymentMethods) {
+                                    this.openModal('charge');
+                                } else {
+                                    this.finishTransaction();
+                                }
+                            } else if (result === "change-company" && !this.transaction.type.company) {
+                                this.openModal('company');
                             } else {
-                                this.finishTransaction();
+                                this.refresh();
                             }
-                        } else if (result === "change-company" && !this.transaction.type.company) {
-                            this.openModal('company');
-                        } else {
-                            this.refresh();
                         }
                     }, (reason) => {
                         this.refresh();
@@ -1585,26 +1591,26 @@ export class PointOfSaleComponent implements OnInit {
                 }
                 modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(this.transaction.origin, 4)}-${this.transaction.letter}-${this.padNumber(this.transaction.number, 8)}`;
                 if (this.transaction.type.electronics) {
-                  modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente` + `<a href="http://${Config.apiHost}:300/api/print/invoice/${Config.database}/${this.transaction._id}">Su comprobante</a>`
+                    modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente` + `<a href="http://${Config.apiHost}300/api/print/invoice/${Config.database}/${this.transaction._id}">Su comprobante</a>`
                 } else {
-                  modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://${Config.apiHost}:300/api/print/others/${Config.database}/${this.transaction._id}">Su comprobante</a>`
+                    modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://${Config.apiHost}300/api/print/others/${Config.database}/${this.transaction._id}">Su comprobante</a>`
                 }
-        
+
                 if (Config.country === 'MX') {
                     modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://${Config.apiHost}:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number +`">Su comprobante</a>`;
                 }
-        
+
                 if (this.transaction.type.defectEmailTemplate) {
-        
-                  if (this.transaction.type.electronics) {
-                    modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://${Config.apiHost}:300/api/print/invoice/${Config.database}/${this.transaction._id}">Su comprobante</a>`
-                  } else {
-                    modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://${Config.apiHost}:300/api/print/others/${Config.database}/${this.transaction._id}">Su comprobante</a>`
-                  }
-        
-                  if (Config.country === 'MX') {
-                    modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://${Config.apiHost}:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number +`">Su comprobante</a>`;
-                  }
+
+                    if (this.transaction.type.electronics) {
+                        modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://${Config.apiHost}300/api/print/invoice/${Config.database}/${this.transaction._id}">Su comprobante</a>`
+                    } else {
+                        modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://${Config.apiHost}300/api/print/others/${Config.database}/${this.transaction._id}">Su comprobante</a>`
+                    }
+
+                    if (Config.country === 'MX') {
+                        modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://${Config.apiHost}:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number +`">Su comprobante</a>`;
+                    }
                 }
 
                 modalRef.result.then((result) => {
@@ -1820,52 +1826,94 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     async finishTransaction(state: TransactionState = TransactionState.Closed) {
-        await this.updateBalance().then(
-            async balance => {
-                if (balance !== null) {
-                    this.transaction.balance = balance;
-                    if (this.posType === 'resto' || this.posType === "delivery") {
-                        this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-                        this.transaction.VATPeriod = moment().format('YYYYMM');
-                    } else {
-                        if (!this.transaction.endDate) {
-                            this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-                        }
-                        if (this.transaction.type.transactionMovement !== TransactionMovement.Purchase || !this.transaction.VATPeriod) {
-                            this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
-                        }
-                    }
-                    this.transaction.expirationDate = this.transaction.endDate;
-                    this.transaction.state = state;
-                    let print: boolean = false;
-                    if (this.transaction.type.printable && this.transaction.printed === 0) {
-                        this.transaction.printed = 1;
-                        print = true;
-                    }
-                    await this.updateTransaction(this.transaction).then(
-                        transaction => {
-                            if (transaction) {
-                                this.transaction = transaction;
-                                if (print) {
-                                    this.refresh();
-                                    if (this.transaction.type.defectPrinter) {
-                                        this.printerSelected = this.printerSelected;
-                                        this.openModal("print");
-                                    } else {
-                                        this.openModal("printers");
-                                    }
-                                } else {
-                                    if (this.posType !== 'delivery' && this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
-                                        this.transactionTypeId = this.transaction.type._id;
-                                        this.transaction = undefined;
-                                    }
-                                    this.refresh();
+        let isValid: boolean = true;
+
+        if(isValid) {
+            if(this.movementsOfCashes && this.movementsOfCashes.length > 0) {
+                for (let movementOfCash of this.movementsOfCashes) {
+                    if (movementOfCash.balanceCanceled > 0) {
+                        movementOfCash.cancelingTransaction = this.transaction;
+                        await this.updateMovementOfCash(movementOfCash).then(
+                            movementOfCash => {
+                                if (!movementOfCash) {
+                                    isValid = false;
                                 }
                             }
-                        }
-                    );
+                        );
+                    }
                 }
-            });
+            }
+        }
+
+        if (isValid) {
+            await this.updateBalance().then(
+                async balance => {
+                    if (balance !== null) {
+                        this.transaction.balance = balance;
+                        if (this.posType === 'resto' || this.posType === "delivery") {
+                            this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+                            this.transaction.VATPeriod = moment().format('YYYYMM');
+                        } else {
+                            if (!this.transaction.endDate) {
+                                this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+                            }
+                            if (this.transaction.type.transactionMovement !== TransactionMovement.Purchase || !this.transaction.VATPeriod) {
+                                this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
+                            }
+                        }
+                        this.transaction.expirationDate = this.transaction.endDate;
+                        this.transaction.state = state;
+                        let print: boolean = false;
+                        if (this.transaction.type.printable && this.transaction.printed === 0) {
+                            this.transaction.printed = 1;
+                            print = true;
+                        }
+                        await this.updateTransaction(this.transaction).then(
+                            transaction => {
+                                if (transaction) {
+                                    this.transaction = transaction;
+                                    if (print) {
+                                        this.refresh();
+                                        if (this.transaction.type.defectPrinter) {
+                                            this.printerSelected = this.printerSelected;
+                                            this.openModal("print");
+                                        } else {
+                                            this.openModal("printers");
+                                        }
+                                    } else {
+                                        if (this.posType !== 'delivery' && this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+                                            this.transactionTypeId = this.transaction.type._id;
+                                            this.transaction = undefined;
+                                        }
+                                        this.refresh();
+                                    }
+                                }
+                            }
+                        );
+                    }
+                });
+        }
+    }
+
+    public updateMovementOfCash(movementOfCash: MovementOfCash): Promise<MovementOfCash> {
+
+        return new Promise<MovementOfCash>((resolve, reject) => {
+
+            this._movementOfCashService.updateMovementOfCash(movementOfCash).subscribe(
+                async result => {
+                    if (result && result.movementOfCash) {
+                        resolve(result.movementOfCash);
+                    } else {
+                        if (result && result.message && result.message !== "") this.showMessage(result.message, "info", true);
+                        resolve(null);
+                    }
+                },
+                error => {
+                    this.showMessage(error.body, "info", true);
+                    resolve(null);
+                }
+            )
+        });
     }
 
     public getTransactions(query: string): Promise<Transaction[]> {

@@ -1,0 +1,80 @@
+<!-- SELECCIONAR -->
+<section class="container-fluid">
+  <div class="card ">
+    <div class="card-header">Total de la transacción {{totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}
+      <div class="pull-right">
+        <button class="btn fa fa-minus-square" (click)="deleteAllMovements()"><span> Deseleccionar
+            todo</span></button>
+        <button class="btn fa fa-close" (click)="activeModal.dismiss('close_click')"><span> Cerrar</span></button>
+      </div>
+    </div>
+    <div class="card-block table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th (click)="orderBy('type.name')">Método</th>
+            <th (click)="orderBy('quota')">Cuota</th>
+            <th (click)="orderBy('expirationDate')">Vencimiento</th>
+            <th (click)="orderBy('amountPaid')">Monto</th>
+            <th (click)="orderBy('balanceCanceled')">Saldo Cancelado</th>
+          </tr>
+          <tr class="filters">
+            <th><input type="text" class="form-control" [(ngModel)]="filters['name']" placeholder="Método..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['quota']" placeholder="Cuota..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['expirationDate']"
+                placeholder="Vencimiento..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['amountPaid']" placeholder="Monto..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['balanceCanceled']"
+                placeholder="Saldo Cancelado...">
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
+          </tr>
+          <tr
+            *ngFor="let movementOfCash of movementsOfCashes  | filter: filters['name']:'name':'type'
+            | filter: filters['quota']:'quota'
+                                                                    | filter: filters['expirationDate']:'expirationDate'
+                                                                    | filter: filters['amountPaid']:'amountPaid'
+                                                                    | filter: filters['balanceCanceled']:'balanceCanceled'"
+            [ngClass]="{'row-active':isMovementOfCashSelected(movementOfCash), 'row-inactive':!isMovementOfCashSelected(movementOfCash)}"
+            style="cursor: pointer;">
+            <td (click)="selectMovementOfCash(movementOfCash)">{{movementOfCash.type.name}}</td>
+            <td (click)="selectMovementOfCash(movementOfCash)">{{movementOfCash.quota}}</td>
+            <td (click)="selectMovementOfCash(movementOfCash)">
+              {{movementOfCash.expirationDate | dateFormat:'DD/MM/YYYY'}}</td>
+            <td (click)="selectMovementOfCash(movementOfCash)">
+              {{movementOfCash.amountPaid | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+            <td (click)="selectMovementOfCash(movementOfCash)">
+              {{movementOfCash.balanceCanceled | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+          </tr>
+          <tr align="center" *ngIf="movementsOfCashes.length === 0 && !loading">
+            <td colspan="16">No se encontraron movimientos para cancelar</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer">
+      <div class="row">
+        <div class="col-md-8">
+          <b>Monto total de métodos de pagos seleccionados: {{ balanceSelected | currency:'USD':'symbol-narrow':'1.2-2'
+            }}</b>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-default" (click)="activeModal.close()">
+            Cancelar
+          </button>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-primary" (click)="finish()">
+            Aceptar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

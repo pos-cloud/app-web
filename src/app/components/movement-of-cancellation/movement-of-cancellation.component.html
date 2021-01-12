@@ -31,9 +31,9 @@
                         <th *ngIf="!requestCompany" (click)="orderBy('company.city')">Ciudad</th>
                         <th *ngIf="!requestCompany" (click)="orderBy('company.state.name')">Provincia</th>
                         <th *ngIf="!requestCompany" (click)="orderBy('company.group.description')">Grupo</th>
-
                         <th (click)="orderBy('totalPrice')">Precio Total</th>
                         <th (click)="orderBy('balance')">Saldo</th>
+                        <th></th>
                     </tr>
                     <tr class="filters">
                         <th></th>
@@ -59,6 +59,7 @@
                         <th>
                         </th>
                         <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -73,26 +74,32 @@
                             <button type="button" class="btn btn-success  btn-sm"
                                 (click)="openModal('view', transaction)" title="Ver"><i class="fa fa-eye"></i></button>
                         </td>
-                        <td (click)="selectTransaction(transaction, false)">{{transaction.endDate}}</td>
-                        <td *ngIf="transaction.type" (click)="selectTransaction(transaction, false)">
+                        <td>{{transaction.endDate}}</td>
+                        <td *ngIf="transaction.type">
                             {{transaction.type.name}}</td>
-                        <td *ngIf="!transaction.type" (click)="selectTransaction(transaction, false)"></td>
-                        <td *ngIf="userCountry === 'AR'" (click)="selectTransaction(transaction, false)">
+                        <td *ngIf="!transaction.type"></td>
+                        <td *ngIf="userCountry === 'AR'">
                             {{transaction.origin}}</td>
-                        <td (click)="selectTransaction(transaction, false)">{{transaction.letter}}</td>
-                        <td (click)="selectTransaction(transaction, false)">{{transaction.number}}</td>
-                        <td *ngIf="!requestCompany" (click)="selectTransaction(transaction, false)">
+                        <td>{{transaction.letter}}</td>
+                        <td>{{transaction.number}}</td>
+                        <td *ngIf="!requestCompany">
                             {{transaction.company.city}}</td>
-                        <td *ngIf="!requestCompany" (click)="selectTransaction(transaction, false)">
+                        <td *ngIf="!requestCompany">
                             {{transaction.company.state?.name}}</td>
-                        <td *ngIf="!requestCompany" (click)="selectTransaction(transaction, false)">
+                        <td *ngIf="!requestCompany">
                             {{transaction.company.group?.description}}</td>
-                        <td (click)="selectTransaction(transaction, false)">
-                            {{transaction.totalPrice  }}</td>
                         <td>
-                            <input type="number" style="width: 100px;" class="form-control" [(ngModel)]="transaction['balanceSelected']"
-                                (blur)="updateBalanceOrigin(transaction)"
-                                [readonly]="!isTransactionSelected(transaction)">
+                            {{transaction.totalPrice }}</td>
+                        <td>
+                            <input type="number" style="width: 100px;" class="form-control"
+                                [(ngModel)]="transaction['balanceSelected']" (blur)="updateBalanceOrigin(transaction)"
+                                [readonly]="true">
+                        </td>
+                        <td>
+                            <button class="btn btn-primary"
+                                (click)="openModal('select-movements-of-cashes',transaction)">Parcial</button>
+                            <button class="btn btn-primary" (click)="selectTransaction(transaction, false)"
+                                style="margin-left: 10px">Total</button>
                         </td>
                     </tr>
                     <tr align="center" *ngIf="totalItems === 0 && !loading">
