@@ -71,15 +71,20 @@
             </div>
           </div>
           <div class="row" *ngIf="transaction.branchDestination">
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-4">
               <label for="letter" class="control-label">Sucursal:</label>
               <input type="text" class="form-control" name="letter" value="{{transaction.branchDestination.name}}" readonly />
             </div>
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-4">
               <label for="number" class="control-label">Depósito:</label>
               <input type="text" class="form-control" name="number" min="0" value="{{transaction.depositDestination.name}}"
                 readonly />
             </div>
+            <div class="form-group col-md-4">
+                <label for="priceList" class="control-label">Lista de Precio:</label>
+                <input type="text" class="form-control" name="priceList" min="0" value="{{transaction.priceList.name}}"
+                  readonly />
+              </div>
           </div>
           <div class="row">
             <div class="form-group col-md-4">

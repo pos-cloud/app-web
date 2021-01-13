@@ -1222,7 +1222,11 @@ export class AddSaleOrderComponent {
         movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice / this.lastQuotation) * quotation);
       }
 
+      console.log(this.priceList);
+      console.log(this.newPriceList);
+
       if (movementOfArticle.article && this.priceList) {
+          console.log("entro priceList");
         let increasePrice = 0;
         if (this.priceList.allowSpecialRules && this.priceList.rules && this.priceList.rules.length > 0) {
           this.priceList.rules.forEach(rule => {
@@ -1261,6 +1265,8 @@ export class AddSaleOrderComponent {
       }
 
       if (movementOfArticle.article && this.newPriceList) {
+        console.log("entro newPriceList");
+
         let increasePrice = 0;
         if (this.newPriceList.allowSpecialRules && this.newPriceList.rules && this.newPriceList.rules.length > 0) {
           this.newPriceList.rules.forEach(rule => {
@@ -1338,7 +1344,10 @@ export class AddSaleOrderComponent {
       }
       this.loading = false;
       //guardamos la lista con la que se calculo el precio
-      this.transaction.priceList = this.priceList
+
+      if(this.transaction.company && this.transaction.company.priceList){
+          this.transaction.priceList = this.transaction.company.priceList
+      }
 
       resolve(movementOfArticle);
     });
