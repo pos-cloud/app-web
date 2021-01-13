@@ -359,9 +359,7 @@ export class AddTransactionComponent implements OnInit {
                                 }
                             }
                             this.balanceTotal = this.roundNumber.transform(this.balanceTotal);
-                            if (this.transaction.totalPrice === 0) {
-                                this.transaction.totalPrice = this.balanceTotal;
-                            }
+                            this.transaction.totalPrice = this.balanceTotal;
                             this.transaction.balance = this.roundNumber.transform(this.transaction.totalPrice - this.balanceTotal);
                             this.setValuesForm();
                         }

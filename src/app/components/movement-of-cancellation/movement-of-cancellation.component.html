@@ -93,11 +93,10 @@
                         <td>
                             <input type="number" style="width: 100px;" class="form-control"
                                 [(ngModel)]="transaction['balanceSelected']" (blur)="updateBalanceOrigin(transaction)"
-                                [readonly]="true">
+                                [readonly]="transaction['isFinanced']">
                         </td>
                         <td>
-                            <button class="btn btn-primary"
-                                (click)="openModal('select-movements-of-cashes',transaction)">Parcial</button>
+                            <button class="btn btn-primary" (click)="openModal('select-movements-of-cashes',transaction)" *ngIf="transaction['isFinanced']">Parcial</button>
                             <button class="btn btn-primary" (click)="selectTransaction(transaction, false)"
                                 style="margin-left: 10px">Total</button>
                         </td>

@@ -1222,9 +1222,6 @@ export class AddSaleOrderComponent {
         movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice / this.lastQuotation) * quotation);
       }
 
-      console.log(this.priceList);
-      console.log(this.newPriceList);
-
       if (movementOfArticle.article && this.priceList) {
         let increasePrice = 0;
         if (this.priceList.allowSpecialRules && this.priceList.rules && this.priceList.rules.length > 0) {

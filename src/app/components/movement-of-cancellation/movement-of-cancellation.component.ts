@@ -317,6 +317,7 @@ export class MovementOfCancellationComponent implements OnInit {
             'type._id': { $toString: '$type._id' },
             'type.name': 1,
             'type.requestArticles': 1,
+            'type.requestPaymentMethods': 1,
             'type.movement': 1,
         };
 
@@ -338,6 +339,19 @@ export class MovementOfCancellationComponent implements OnInit {
                     this.transactions = result[0].transactions;
                     this.totalItems = result[0].count;
                     if (this.transactions.length > 0) {
+                        for(let transaction of this.transactions) {
+                            if(!transaction.type.requestArticles && transaction.type.requestPaymentMethods) {
+                                let query = 'where="transaction":"' + transaction._id + '"';
+                                await this.getMovementsOfCashes(query)
+                                .then(movementsOfCashes => {
+                                    for(let mov of movementsOfCashes) {
+                                        if(mov.type.allowToFinance) {
+                                            transaction['isFinanced'] = true;
+                                        }
+                                    }
+                                })
+                            }
+                        }
                         if (this.totalPrice > 0 && this.balanceSelected === 0) {
                             if (!this.movementsOfCancellations || this.movementsOfCancellations.length === 0) {
                                 await this.getMovementsOfCancellations().then(
@@ -381,6 +395,26 @@ export class MovementOfCancellationComponent implements OnInit {
                 this.totalItems = 0;
             }
         );
+    }
+
+    public getMovementsOfCashes(query: string): Promise<MovementOfCash[]> {
+        return new Promise<MovementOfCash[]>((resolve, reject) => {
+            this.loading = true;
+            this._movementOfCashService.getMovementsOfCashes(query).subscribe(
+                result => {
+                    this.loading = false;
+                    if (!result.movementsOfCashes) {
+                        resolve(null);
+                    } else {
+                        resolve(result.movementsOfCashes);
+                    }
+                },
+                error => {
+                    this.loading = false;
+                    resolve(null);
+                }
+            );
+        });
     }
 
     public getMovementsOfCancellations(): Promise<MovementOfCancellation[]> {
@@ -461,26 +495,31 @@ export class MovementOfCancellationComponent implements OnInit {
                 modalRef.componentInstance.transactionId = transaction._id;
                 break;
             case 'select-movements-of-cashes':
-                modalRef = this._modalService.open(SelectMovementsOfCashesComponent, { size: 'lg', backdrop: 'static' });
-                modalRef.componentInstance.transactionId = transaction._id;
-                modalRef.componentInstance.totalPrice = transaction.totalPrice;
-                modalRef.result.then(async (result) => {
-                    if (result && result.movementsOfCashes) {
-                        if (result.transaction) {
-                            transaction.totalPrice = result.transaction.totalPrice;
-                            transaction.balance = result.transaction.balance;
+                if (this.isTransactionSelected(transaction)) {
+                    this.deleteTransactionSelected(transaction);
+                    this.recalculateBalanceSelected();
+                } else {
+                    modalRef = this._modalService.open(SelectMovementsOfCashesComponent, { size: 'lg', backdrop: 'static' });
+                    modalRef.componentInstance.transactionId = transaction._id;
+                    modalRef.componentInstance.totalPrice = transaction.totalPrice;
+                    modalRef.result.then(async (result) => {
+                        if (result && result.movementsOfCashes) {
+                            if (result.transaction) {
+                                transaction.totalPrice = result.transaction.totalPrice;
+                                transaction.balance = result.transaction.balance;
+                            }
+                            let balance = 0;
+                            for (let mov of result.movementsOfCashes) {
+                                balance += mov.balanceCanceled;
+                            }
+                            await this.selectTransaction(transaction, false, balance);
+                            this.updateBalanceOrigin(transaction);
+                            this.assignMovementsOfCashes(result.movementsOfCashes);
+                            this.recalculateBalanceSelected();
                         }
-                        let balance = 0;
-                        for (let mov of result.movementsOfCashes) {
-                            balance += mov.balanceCanceled;
-                        }
-                        await this.selectTransaction(transaction, false, balance);
-                        this.updateBalanceOrigin(transaction);
-                        this.assignMovementsOfCashes(result.movementsOfCashes);
-                        this.recalculateBalanceSelected();
-                    }
-                }, (reason) => {
-                });
+                    }, (reason) => {
+                    });
+                }
                 break;
         }
     }
