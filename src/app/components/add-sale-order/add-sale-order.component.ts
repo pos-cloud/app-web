@@ -1226,7 +1226,6 @@ export class AddSaleOrderComponent {
       console.log(this.newPriceList);
 
       if (movementOfArticle.article && this.priceList) {
-          console.log("entro priceList");
         let increasePrice = 0;
         if (this.priceList.allowSpecialRules && this.priceList.rules && this.priceList.rules.length > 0) {
           this.priceList.rules.forEach(rule => {
@@ -1265,7 +1264,6 @@ export class AddSaleOrderComponent {
       }
 
       if (movementOfArticle.article && this.newPriceList) {
-        console.log("entro newPriceList");
 
         let increasePrice = 0;
         if (this.newPriceList.allowSpecialRules && this.newPriceList.rules && this.newPriceList.rules.length > 0) {
