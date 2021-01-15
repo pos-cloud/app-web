@@ -51,7 +51,6 @@ import { RelationType } from 'app/components/relation-type/relation-type';
 import { MovementOfCancellationComponent } from '../movement-of-cancellation/movement-of-cancellation.component';
 import { MovementOfCancellationService } from 'app/components/movement-of-cancellation/movement-of-cancellation.service';
 import { CancellationTypeService } from 'app/components/cancellation-type/cancellation-type.service';
-import { CurrencyService } from 'app/components/currency/currency.service';
 import { Currency } from 'app/components/currency/currency';
 import { CancellationType } from 'app/components/cancellation-type/cancellation-type';
 import { ImportComponent } from '../import/import.component';
@@ -171,7 +170,6 @@ export class AddSaleOrderComponent {
     private _relationTypeService: RelationTypeService,
     private _movementOfCancellationService: MovementOfCancellationService,
     private _cancellationTypeService: CancellationTypeService,
-    private _currencyService: CurrencyService,
     private _claimService: ClaimService,
     private _transportService: TransportService,
     private _priceListService: PriceListService,
@@ -1263,6 +1261,7 @@ export class AddSaleOrderComponent {
       }
 
       if (movementOfArticle.article && this.newPriceList) {
+
         let increasePrice = 0;
         if (this.newPriceList.allowSpecialRules && this.newPriceList.rules && this.newPriceList.rules.length > 0) {
           this.newPriceList.rules.forEach(rule => {
@@ -1340,7 +1339,10 @@ export class AddSaleOrderComponent {
       }
       this.loading = false;
       //guardamos la lista con la que se calculo el precio
-      this.transaction.priceList = this.priceList
+
+      if(this.transaction.company && this.transaction.company.priceList){
+          this.transaction.priceList = this.transaction.company.priceList
+      }
 
       resolve(movementOfArticle);
     });
@@ -2836,8 +2838,6 @@ export class AddSaleOrderComponent {
   }
 
   async close(op?: string) {
-
-    console.log(op);
 
     if (op === 'charge') {
       this.isCharge = true;

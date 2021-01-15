@@ -338,6 +338,7 @@
             <th (click)="orderBy('company','name')">Cliente</th>
             <th (click)="orderBy('orderNumber')">Pedido</th>
             <th (click)="orderBy('state')">Estado</th>
+            <th>Metodo de Pago</th>
             <th>Entrega</th>
             <th (click)="orderBy('observation')">Observación</th>
             <th (click)="orderBy('totalPrice')">Precio Total</th>
@@ -352,6 +353,7 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Empresa..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterOrderNumber" placeholder="Pedido..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterState" placeholder="Estado..."></th>
+            <th></th>
             <th></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total..."></th>
@@ -433,6 +435,9 @@
             <td *ngIf="posType!=='pedidos-web'">
               {{transaction.state}}
             </td>
+            <td>
+                {{transaction.paymentMethodEcommerce}}
+              </td>
             <td style="white-space: normal;">
               <b *ngIf="transaction && transaction.shipmentMethod">{{transaction.shipmentMethod.name}} - </b>
               <span *ngIf="transaction && transaction.deliveryAddress">

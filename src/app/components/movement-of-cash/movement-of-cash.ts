@@ -36,6 +36,8 @@ export class MovementOfCash {
   public CUIT: string;
   public deliveredBy: string;
   public paymentChange: number = 0.00;
+  public balanceCanceled: number = 0.00;
+  public cancelingTransaction: Transaction;
   public currencyValues: currencyValue[]
 
   constructor() { }

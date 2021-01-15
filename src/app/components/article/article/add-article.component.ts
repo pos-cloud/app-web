@@ -439,7 +439,7 @@ export class AddArticleComponent implements OnInit {
 
     this.articleForm = this._fb.group({
       '_id': [this.article._id, []],
-      'order': [this.article.order,[]],
+      'order': [this.article.order, []],
       'code': [this.article.code, [Validators.required]],
       'codeSAT': [this.article.codeSAT, []],
       'currency': [this.article.currency, []],
@@ -1128,20 +1128,20 @@ export class AddArticleComponent implements OnInit {
     }
 
     let project = {
+      endDate: { $dateToString: { date: "$transaction.endDate", format: "%d/%m/%Y", timezone: timezone } },
+      operationType: 1,
+      amount: 1,
+      salePrice: 1,
+      costPrice: 1,
+      basePrice: 1,
+      "article._id": 1,
+      "transaction._id": 1,
+      "transaction.endDate": 1,
       "transaction.state": 1,
       "transaction.operationType": 1,
-      "article._id": 1,
-      "operationType": 1,
-      "transaction.endDate": 1,
-      'endDate': { $dateToString: { date: "$transaction.endDate", format: "%d/%m/%Y", timezone: timezone } },
       "transaction.type.name": 1,
       "transaction.type.transactionMovement": 1,
-      "transaction._id": 1,
       "transaction.quotation": 1,
-      "amount": 1,
-      "salePrice": 1,
-      "costPrice": 1,
-      "basePrice": 1
     };
 
     // AGRUPAMOS EL RESULTADO
