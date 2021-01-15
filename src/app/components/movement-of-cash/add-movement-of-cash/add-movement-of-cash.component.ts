@@ -323,7 +323,7 @@ export class AddMovementOfCashComponent implements OnInit {
             'period': this.period,
             'interestPercentage': this.interestPercentage,
             'taxPercentage': this.movementOfCash.taxPercentage,
-            'interestType': this.interestType
+            'interestType': this.interestType,
         };
         this.movementOfCashForm.setValue(values);
     }
@@ -951,7 +951,7 @@ export class AddMovementOfCashComponent implements OnInit {
         let match = {};
         match["operationType"] = { "$ne": "D" };
 
-        if (this.transaction.type && this.transaction.type.paymentMethods && this.transaction.type.paymentMethods.length > 0) {
+        if (this.transaction.type && this.transaction.type.paymentMethods && this.transaction.type.paymentMethods.length > 0 && this.transaction.type.paymentMethods[0]) {
             match['$or'] = new Array();
             this.transaction.type.paymentMethods.forEach(element => {
                 match['$or'].push({ _id: { "$oid": element } });
@@ -1378,6 +1378,7 @@ export class AddMovementOfCashComponent implements OnInit {
                     this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
                     this.movementOfCash.observation = this.movementOfCashForm.value.observation;
                     this.movementOfCash.expirationDate = moment(this.movementOfCash.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
+                    this.movementOfCash.interestPercentage = this.movementOfCashForm.value.interestPercentage;
 
                     if (this.paymentMethodSelected.checkDetail) {
                         this.movementOfCash.receiver = this.movementOfCashForm.value.receiver;
@@ -1482,6 +1483,7 @@ export class AddMovementOfCashComponent implements OnInit {
             this.movementOfCash.statusCheck == StatusCheck.Closed;
             this.movementOfCash.discount = this.movementOfCash.type.discount;
             this.movementOfCash.surcharge = this.movementOfCash.type.surcharge;
+            this.movementOfCash.interestPercentage = this.movementOfCashForm.value.interestPercentage;
             if (this.fastPayment.observation) {
                 this.movementOfCash.observation = this.fastPayment.observation;
             }

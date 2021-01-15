@@ -1963,6 +1963,7 @@ export class PointOfSaleComponent implements OnInit {
                 "type.level": 1,
                 "type.transactionMovement": 1,
                 "type.electronics": 1,
+                "type.paymentMethods": 1,
                 "branchOrigin": 1,
                 "deliveryAddress.name": 1,
                 "deliveryAddress.number": 1,

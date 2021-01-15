@@ -28,7 +28,7 @@ import { ArticleService } from '../../article/article.service';
 import { MovementOfCashService } from '../../movement-of-cash/movement-of-cash.service';
 
 //Pipes
-import { DeprecatedDecimalPipe } from '@angular/common';
+import { CurrencyPipe, DeprecatedDecimalPipe } from '@angular/common';
 import { DateFormatPipe } from '../../../main/pipes/date-format.pipe';
 import { RoundNumberPipe } from '../../../main/pipes/round-number.pipe';
 import { CashBox } from '../../cash-box/cash-box';
@@ -42,6 +42,7 @@ import { VoucherService } from 'app/components/voucher-reader/voucher.service';
 import { Voucher } from 'app/components/voucher-reader/voucher';
 import { UserService } from 'app/components/user/user.service';
 import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
+import { CapitalizePipe } from 'app/main/pipes/capitalize';
 
 var splitRegex = /\r\n|\r|\n/g;
 jsPDF.API.textEx = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
@@ -100,6 +101,8 @@ jsPDF.API.textEx = function (text: any, x: number, y: number, hAlign?: string, v
 
 export class PrintComponent implements OnInit {
 
+  private capitalizePipe: CapitalizePipe = new CapitalizePipe();
+  private currencyPipe: CurrencyPipe = new CurrencyPipe('es-AR');
   @Input() company: Company;
   public transaction: Transaction;
   public transactions: Transaction[];
@@ -247,7 +250,6 @@ export class PrintComponent implements OnInit {
     );
   }
 
-
   public getTransaction(transactionId: string): void {
 
     this.loading = true;
@@ -313,6 +315,10 @@ export class PrintComponent implements OnInit {
             "company.phones" :1,
             "company.city" :1,
             "company.fantasyName" : 1,
+            "company.city" : 1,
+            "company.state.name" : 1,
+            "company.address" : 1,
+            "company.addressNumber" : 1,
             "table.description" : 1,
             "shipmentMethod._id" : 1,
             "shipmentMethod.name" : 1,
@@ -566,7 +572,7 @@ export class PrintComponent implements OnInit {
     // Encabezado de la tabla de Detalle de Productos
     this.doc.setFontType('bold');
     this.doc.setFontSize(this.fontSizes.normal);
-    if(!this.movementsOfCashes[0].type.allowToFinance) {
+    if (!this.movementsOfCashes[0].type.allowToFinance) {
       this.doc.text("Detalle", 10, 77);
       this.doc.text("Vencimiento", 80, 77);
       this.doc.text("Número", 110, 77);
@@ -597,23 +603,23 @@ export class PrintComponent implements OnInit {
         administrativeExpenseAmount += this.movementsOfCashes[0].administrativeExpenseAmount;
         otherExpenseAmount += this.movementsOfCashes[0].otherExpenseAmount;
 
-        if(!this.movementsOfCashes[0].type.allowToFinance) {
+        if (!this.movementsOfCashes[0].type.allowToFinance) {
           if (this.movementsOfCashes[i].type.name) {
             this.doc.text(this.movementsOfCashes[i].type.name, 10, row);
           }
-  
+
           if (this.movementsOfCashes[i].expirationDate) {
             this.doc.text(this.dateFormat.transform(this.movementsOfCashes[i].expirationDate, 'DD/MM/YYYY'), 80, row);
           } else {
             this.doc.text("-", 80, row)
           }
-  
+
           if (this.movementsOfCashes[i].number) {
             this.doc.text(this.movementsOfCashes[i].number, 110, row);
           } else {
             this.doc.text("-", 110, row);
           }
-  
+
           if (this.movementsOfCashes[i].bank) {
             this.doc.text(this.movementsOfCashes[i].bank.name, 150, row);
           } else {
@@ -753,21 +759,21 @@ export class PrintComponent implements OnInit {
 
     }
 
-    if(commissionAmount > 0) {
+    if (commissionAmount > 0) {
       row += 8;
       this.doc.setFontType('bold');
       this.doc.text("Tasa de Servicios Diaria:", 145, row);
       this.doc.setFontType('normal');
       this.doc.text("$ (" + this.roundNumber.transform(commissionAmount) + ")", 202, row, 'right', 'right');
     }
-    if(administrativeExpenseAmount > 0) {
+    if (administrativeExpenseAmount > 0) {
       row += 8;
       this.doc.setFontType('bold');
       this.doc.text("Gastos administrativos:", 145, row);
       this.doc.setFontType('normal');
       this.doc.text("$ (" + this.roundNumber.transform(administrativeExpenseAmount) + ")", 202, row, 'right', 'right');
     }
-    if(otherExpenseAmount > 0) {
+    if (otherExpenseAmount > 0) {
       row += 8;
       this.doc.setFontType('bold');
       this.doc.text("Otros gastos:", 145, row);
@@ -781,7 +787,6 @@ export class PrintComponent implements OnInit {
     this.doc.text("$ " + this.roundNumber.transform(this.transaction.totalPrice), 200, row, 'right', 'right');
     this.doc.setFontSize(this.fontSizes.normal);
     row += 5;
-
 
     let movCancelation: MovementOfCancellation[] = await this.getCancellationsOfMovements(this.transactionId)
 
@@ -866,21 +871,19 @@ export class PrintComponent implements OnInit {
           this.doc.setFontType('normal');
           this.doc.setFontSize(this.fontSizes.normal);
 
-
-
-          row = 72
+          row = 72;
           this.doc.setFontType('bold');
           this.doc.setFontSize(this.fontSizes.normal);
-          this.doc.line(0, row, 150, row)
-          row += 5
+          this.doc.line(0, row, 150, row);
+          row += 5;
           this.doc.text("Comprobantes cancelados", 10, row);
           this.doc.text("Total", 80, row);
           this.doc.text("Saldo Cancelado", 110, row);
           this.doc.text("Saldo Pendiente", 150, row);
 
-          row += 3
-          this.doc.line(0, row, 150, row)
-          row += 5
+          row += 3;
+          this.doc.line(0, row, 150, row);
+          row += 5;
         }
       }
 
@@ -894,6 +897,11 @@ export class PrintComponent implements OnInit {
     this.getGreeting();
     this.getFooter();
 
+    if (this.transaction.type.name === 'Préstamo' && Config.database === 'borita') {
+      this.toPrintPagare();
+      this.toPrintMutuo();
+    }
+
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.finishImpression();
     } else {
@@ -905,6 +913,125 @@ export class PrintComponent implements OnInit {
     }
   }
 
+  public toPrintPagare() {
+    let margin: number = 5;
+    this.doc.setProperties({ title: "String Splitting" });
+    this.doc.addPage();
+    this.doc.setFontType('bold');
+    this.doc.setFontType(this.fontSizes.large);
+    this.centerText(5, 5, 210, 0, 10, 'PAGARÉ');
+    this.doc.text(`${this.currencyPipe.transform(this.transaction.totalPrice, 'USD', 'symbol-narrow', '1.2-2')}`, margin, 18);
+    this.doc.text(`${this.transaction.company.address} (${(this.transaction.company.state) ? this.transaction.company.state.name : ''}) ${moment().format('DD [de]') + this.capitalizePipe.transform(moment().format(' MMMM [de] YYYY'))}`, margin, 26);
+    this.doc.setFontType('normal');
+    this.doc.setFontType(this.fontSizes.normal);
+    let text = `Por igual valor recibido a mi entera satisfacción, pagare/mos incondicionalmente A LA VISTA a
+    BORITA S.A. a su orden, sin protesto (Artículo 50 Decreto - Ley Nº 5.965/63), la cantidad de
+    ${this.currencyPipe.transform(this.transaction.totalPrice, 'USD', 'symbol-narrow', '1.2-2')} (${this.capitalizePipe.transform(this.getNumeroALetras(this.roundNumber.transform(this.transaction.totalPrice)).toLowerCase())})
+    Conforme a lo establecido por el art. 5 del Decreto 5965/63 el presente pagaré devengará a
+    partir de la fecha de libramiento y hasta su efectivo pago un interés compensatorio noventa y
+    nueve por ciento Nominal Anual al que se le adicionará desde la fecha de su presentación y no
+    pago, un interés punitorio de hasta el cincuenta por ciento (50 %) del interés compensatorio
+    antes indicado.
+    En nuestro carácter de libradores hacemos constar expresamente que, de conformidad con lo
+    establecido por el artículo 36 del Decreto-Ley 5.965/63, ampliamos el plazo de presentación para
+    el pago de este pagaré hasta diez (10) años a contar de la fecha de libramiento.
+    Lugar de pago: ${(this.transaction.company && this.transaction.company.city && this.transaction.company.city != '') ? this.transaction.company.city : '..................'}, ${(this.transaction.company.state) ? this.transaction.company.state.name : '..................'}.
+    `;
+    let row: number = 34;
+    this.doc.text(text, margin, row);
+    row += 60;
+    this.doc.text(`Firma del deudor: ........................................`, margin, row);
+    row += 8;
+    this.doc.text(`Nombre: ......................................................`, margin, row);
+    row += 8;
+    this.doc.text(`D.N.I. - L.C. - L.E.: ....................................`, margin, row);
+    row += 8;
+    this.doc.text(`Domicilio: ...................................................`, margin, row);
+    row += 8;
+    this.doc.text(`Localidad: ...................................................`, margin, row);
+    row += 8;
+    this.doc.text(`Teléfono: .....................................................`, margin, row);
+
+  }
+
+  public toPrintMutuo() {
+    this.doc.setProperties({ title: "String Splitting" });
+    this.doc.addPage();
+    this.doc.setFontType('bold');
+    this.doc.setFontType(this.fontSizes.large);
+    this.centerText(5, 5, 210, 0, 10, 'CONTRATO DE MUTUO');
+    this.doc.setFontType('normal');
+    this.doc.setFontType(this.fontSizes.normal);
+    this.doc.line(0, 15, this.printer.pageWidth - 5, 15);
+    let text: string =
+      `En la ciudad de ${(this.transaction.company && this.transaction.company.city && this.transaction.company.city != '') ? this.transaction.company.city : '..................'}, Prov. de ${(this.transaction.company.state) ? this.transaction.company.state.name : '..................'} a los ${moment().format('DD [días del mes de]')} ${this.capitalizePipe.transform(moment().format('MMMM [de]'))} ${this.getNumeroALetras(moment().format('YYYY')).toLowerCase()} entre BORITA S.A., representada en este
+    acto por su PRESIDENTE Sr. DANIEL CAFFE D.N.I. Nº 20188385, con domicilio en calle ${(Config.companyAddress) ? Config.companyAddress : '..................'}, por
+    una parte y en adelante denominada LA ACREEDORA y por la otra el Sr./a ${(this.transaction.company) ? this.transaction.company.name : '..................'} L.C./L.E./D.N.I. Nº ${(this.transaction.company) ? this.transaction.company.identificationValue : '..................'}
+    denominado/s en adelante EL/LOS DEUDOR/ES, han convenido en celebrar el presente contrato de mutuo oneroso sujeto a las cláusulas que a
+    continuación se transcriben: PRIMERA: BORITA S.A. otorga en préstamo a ${(this.transaction.company) ? this.transaction.company.name : '..................'} y éste/estos lo acepta/n, la suma de
+    Pesos ${this.capitalizePipe.transform(this.getNumeroALetras(this.roundNumber.transform(this.transaction.totalPrice)).toLowerCase())} (${this.currencyPipe.transform(this.roundNumber.transform(this.transaction.totalPrice), 'USD', 'symbol-narrow', '1.2-2')}) en billetes de esa moneda, con destino ................... ,
+    que el DEUDOR/ES recibe/n en este acto de plena conformidad, sirviendo el presente de formal recibo y carta de adeudo en forma. SEGUNDA:
+    El/LOS DEUDOR/ES se obliga/n a devolver a la ACREEDORA el importe del préstamo indicado en la cláusula anterior en la siguiente forma, 
+    plazo y condiciones: ${this.movementsOfCashes.length} ${(this.movementsOfCashes.length <= 1) ? 'CUOTA' : 'CUOTAS'}, mensuales y consecutivas de ${this.currencyPipe.transform(this.roundNumber.transform(this.movementsOfCashes[this.movementsOfCashes.length - 1].amountPaid), 'USD', 'symbol-narrow', '1.2-2')} (Pesos ${this.capitalizePipe.transform(this.getNumeroALetras(this.movementsOfCashes[this.movementsOfCashes.length - 1].amountPaid).toLowerCase())})
+    cada una venciendo la primera el día ${moment(this.movementsOfCashes[0].expirationDate, 'YYYY-MM-DDTHH:mm:ssZ').format('DD/MM/YYYY')} y las restantes el mismo día de los meses siguientes al primero, obligaciones que deberán ser
+    abonadas en el domicilio de la ACREEDORA en calle ${(Config.companyAddress) ? Config.companyAddress : '..................'}, que incluye los intereses compensatorios
+    pactados, como así también el ${this.movementsOfCashes[0].taxPercentage}% del IVA sobre los intereses correspondientes que poseen cada una de ellas de acuerdo al calculo del
+    ${this.movementsOfCashes[0].type.name}.- TERCERA: Asimismo convienen las partes que el interés que se aplica al presente préstamo de dinero, con el carácter de 
+    compensatorio será del 8,00% mensual, que se aplica sobre el capital prestado, a partir del día de la fecha, que son liquidados conjuntamente
+    con cada una de las cuotas mensuales de capital, aplicando el ${this.movementsOfCashes[0].type.name} de amortización de créditos. El cálculo de los aludidos intereses
+    se practica sobre la base de trescientos sesenta y cinco días corridos calendarios. Además se conviene, en caso de producirse la mora automática
+    en el pago de las obligaciones asumidas por el/los DEUDOR/ES, la aplicación de un interés punitorio adicional del ${this.movementsOfCashes[0].interestPercentage}% mensual, que será
+    computado sobre el saldo de capital adeudado íntegramente, incluyendo la totalidad de las cuotas vencidas y las que se encuentran pendientes
+    de vencimiento en el futuro. El pago de los intereses compensatorios, como los punitorios pactados deberán ser abonados también, en el domicilio
+    de la ACREEDORA. Los intereses serán capitalizados conforme a la tasa mensual pactada, tanto los compensatorios como los punitorios.-
+    CUARTA: La falta de pago de cualquiera de las cuotas pactadas, con sus respectivos intereses, hará incurrir al DEUDOR/ES en mora automática,
+    sin necesidad de interpelación previa de ninguna naturaleza. Tal caso dará derecho a la ACREEDORA a optar por las siguientes alternativas
+    judiciales: a) Exigir el pago de las cuotas vencidas, como así también las obligaciones mensuales a vencer, considerándolas como de plazo
+    vencido en su totalidad, aplicándose en tales  supuestos los intereses compensatorios y punitorios hasta el momento de la cancelación total del
+    crédito otorgado.-b) Exigir el pago de las cuotas vencidas con más los intereses compensatorios y punitorios pactados. La interposición de la
+    demanda judicial y/o preparación de vía ejecutiva, implicará, sin necesidad de otro recaudo, que la ACREEDORA ha ejercido su derecho a
+    considerar caducos los plazos acordados.-QUINTA:: La ACREEDORA podrá exigir la cancelación anticipada total o parcial del préstamo en
+    cualquiera de los siguientes casos:  a) Si el DEUDOR/ES no cumpliera con cualquier otro crédito u obligación a la ACREEDORA.-b)Si se trabare
+    embargo, inhibiciones u otras medidas cautelares sobre bienes del DEUDOR/ES, y si mediare cualquier otra circunstancia que, a criterio
+    de la ACREEDORA afectare la solvencia moral o comercial del DEUDOR/ES.-c)Si el DEUDOR/ES se negare a suministrar las informaciones o
+    permitir las verificaciones que la ACREEDORA estimare necesarias o sí, efectuadas, resultare que los datos contenidos en esta solicitud a
+    sus anexos son inexactos o ha dado a los fondos otro destino que el consignado.-d)Transferencia total o parcial del activo social o del fondo
+    de comercio del DEUDOR/ES. e) En caso  de fusión, transformación o liquidación del DEUDOR/ES.-f)Para el caso de personas físicas, en caso
+    de fallecimiento o incapacidad del DEUDOR/ES.-g)En caso de concurso civil, concurso preventivo o quiebra del DEUDOR/ES o esta le fuere
+    solicitada por terceros.- h)En caso de ser declarado deudor moroso el DEUDOR/ES.-SEXTA: La ACREEDORA podrá solicitar el reemplazo o
+    refuerzo de las garantías del préstamo solicitado dentro del plazo que a ese fin establezca, en caso de quienes las hayan otorgado incurran en
+    cualquiera de los supuestos previstos en la cláusula anterior.-SEPTIMA: El incumplimiento de cualquiera de las obligaciones contraídas
+    por el DEUDOR/ES en virtud de la presente facultará a la ACREEDORA a dar por vencidos los plazos de la deuda aquí constituidos y todas las
+    demás obligaciones que el DEUDOR/ES tenga con la ACREEDORA, pudiendo esta reclamar el pago de las mismas como si fuesen vencidas y
+    exigibles.-OCTAVA: Siempre que la cancelación anticipada no contravenga al sistema de pago de cuotas y cuotas de capital e intereses pactados
+    con la ACREEDORA para este tipo de préstamo, el DEUDOR/ES, a criterio de la ACREEDORA y previo pedido del DEUDOR/ES con preaviso
+    de 48 (cuarenta y ocho) horas, podrá autorizarse cancelaciones totales en cualquier momento durante la vigencia del presente préstamo
+    debiendo abonarse en dicha oportunidad los intereses y reajustes correspondientes.-NOVENA: Todos los gastos, comisiones, impuestos actuales y
+    futuros, etc. que graven esta operación serán a cargo del DEUDOR/ES. También serán a cargo del DEUDOR/ES los gastos que su ejecución
+    judicial o extrajudicial pudiere originar por aplicación de cualquiera de sus cláusulas.-DECIMA: Las prórrogas que la ACREEDORA conceda
+    eventualmente al DEUDOR/ES, para el pago de los servicios o capital, y los intereses compensatorios o punitorios, así como pagos que
+    acepte en cualquier forma o condición, no importarán novación del crédito renunciando expresamente el DEUDOR/ES a hacer valer la
+    presunción consagrada por el art. 746 del Código Civil, obligándose a exhibir todos los comprobantes de pago que justifiquen el
+    correspondiente a cada vencimiento, de lo que no quedará relevado por tenencia del correspondiente a posteriores, que no justificarán
+    haber abonado los vencimientos anteriores.-DECIMA PRIMERA: Queda convenido, para el caso de falta de pago, la ACREEDORA, podrá
+    accionar contra el/los DEUDOR/ES o GARANTE/S o FIADOR/ES, por vía del juicio ejecutivo, en los términos del Código de Procedimiento
+    Civil y Comercial de la Provincia de Formosa, por el importe total del préstamo, sus intereses compensatorios y punitorios, gastos
+    causídicos y costas, sobre la base del presente instrumento y sin necesidad de aviso previo. A tal efecto, la liquidación que practique
+    la ACREEDORA, acompañada de este instrumento será TITULO EJECUTIVO suficiente para accionar en contra del DEUDOR/ES .DECIMA
+    SEGUNDA: El Sr/a. ${(this.transaction.company) ? this.transaction.company.name : '..................'} L.C./L.E./D.N.I. Nº ${(this.transaction.company) ? this.transaction.company.identificationValue : '..................'}, con domicilio en calle ........................., se constituyen en fiador/es y
+    garante/s solidario/s, liso/s y llano/s principal/es pagador/es y con el carácter de codeudor solidario de todas las obligaciones asumidas
+    por el/los DEUDOR/E en el presente contrato, renunciando expresamente a los beneficios de excusión y/o división que
+    pudiere/n corresponderle/s.-DECIMO TERCERA: En las condiciones expresadas, la ACREEDORA y el DEUDOR/ES y GARANTE/S o
+    FIADOR/ES solidarios, aceptan en todas sus partes las cláusulas que anteceden y declaran expresamente someterse a la jurisdicción de los
+    Tribunales Ordinarios de la ciudad de ${(this.transaction.company && this.transaction.company.city && this.transaction.company.city != '') ? this.transaction.company.city : '..................'}, Prov. de ${(this.transaction.company.state) ? this.transaction.company.state.name : '..................'}, renunciando expresamente a cualquier otro fuero que les pudiera corresponder,
+    en especial el fuero Federal, constituyendo domicilio especial para todas las notificaciones y demás efectos legales la ACREEDORA
+    en calle ${(Config.companyAddress) ? Config.companyAddress : '..................'} y el DEUDOR/ES en calle , de la ciudad de ${(this.transaction.company && this.transaction.company.addressNumber && this.transaction.company.addressNumber != '') ? this.transaction.company.addressNumber + ' - ' : '............ - '} ${(this.transaction.company && this.transaction.company.city && this.transaction.company.city != '') ? this.transaction.company.city : '..................'}, Prov. de ${(this.transaction.company.state) ? this.transaction.company.state.name : '..................'}
+    y el/los GARANTE/S o FIADOR/ES en calle ${(Config.companyAddress) ? Config.companyAddress : '..................'}, los que subsistirán a todos los efectos hasta que obre
+    en lo de la ACREEDORA notificación fehaciente del nuevo domicilio contractural.-En prueba de conformidad suscriben las partes tres ejemplares
+    de un mismo tenor en el lugar y fecha que indica más arriba.-`;
+    this.doc.text(text, 0, 20);
+  }
+
   async getCancellationsOfMovements(transactionDestinationViewId): Promise<MovementOfCancellation[]> {
 
     return new Promise<MovementOfCancellation[]>((resolve, reject) => {
@@ -914,7 +1041,6 @@ export class PrintComponent implements OnInit {
       let match;
 
       match = { "transactionDestination": { $oid: transactionDestinationViewId }, "operationType": { "$ne": "D" } };
-
 
       // CAMPOS A TRAER
       let project = {
@@ -2463,7 +2589,7 @@ export class PrintComponent implements OnInit {
           this.doc.setFontType('bold');
           this.doc.text("Neto Gravado:", 140, rowTotals);
           rowNet = rowTotals;
-          
+
           this.doc.setFontType('normal');
           for (let tax of this.transaction.taxes) {
             rowTotals += space;
@@ -3404,12 +3530,12 @@ export class PrintComponent implements OnInit {
           direccion = direccion + " N°" + this.transaction.deliveryAddress.number;
         }
 
-        if(direccion.length > 30){
-            this.doc.text("Entregar a: " + direccion.slice(0,29) + "-", margin, this.row);
-            this.row += 5;
-            this.doc.text(direccion.slice(29,direccion.length), margin, this.row);
+        if (direccion.length > 30) {
+          this.doc.text("Entregar a: " + direccion.slice(0, 29) + "-", margin, this.row);
+          this.row += 5;
+          this.doc.text(direccion.slice(29, direccion.length), margin, this.row);
         } else {
-            this.doc.text("Entregar a: " + direccion, margin, this.row);
+          this.doc.text("Entregar a: " + direccion, margin, this.row);
         }
 
         if (this.transaction.deliveryAddress.floor) {
@@ -3421,16 +3547,16 @@ export class PrintComponent implements OnInit {
           this.doc.text(" Departamento: " + this.transaction.deliveryAddress.flat, margin + 5, this.row);
         }
 
-        if(this.transaction.deliveryAddress && this.transaction.deliveryAddress.observation){
-            if(this.transaction.deliveryAddress.observation.length > 30){
-                this.row += 5;
-                this.doc.text("Obs: " + this.transaction.deliveryAddress.observation.slice(0,29) + "-", margin, this.row);
-                this.row += 5;
-                this.doc.text(this.transaction.deliveryAddress.observation.slice(29,this.transaction.deliveryAddress.observation.length), margin, this.row);
-            } else {
-                this.row += 5;
-                this.doc.text("Obs: " + this.transaction.deliveryAddress.observation, margin, this.row);
-            }
+        if (this.transaction.deliveryAddress && this.transaction.deliveryAddress.observation) {
+          if (this.transaction.deliveryAddress.observation.length > 30) {
+            this.row += 5;
+            this.doc.text("Obs: " + this.transaction.deliveryAddress.observation.slice(0, 29) + "-", margin, this.row);
+            this.row += 5;
+            this.doc.text(this.transaction.deliveryAddress.observation.slice(29, this.transaction.deliveryAddress.observation.length), margin, this.row);
+          } else {
+            this.row += 5;
+            this.doc.text("Obs: " + this.transaction.deliveryAddress.observation, margin, this.row);
+          }
         }
 
         this.doc.setFontType('normal');
@@ -3708,5 +3834,159 @@ export class PrintComponent implements OnInit {
 
   public hideMessage(): void {
     this.alertMessage = '';
+  }
+
+  public getUnidades(num) {
+
+    switch (num) {
+      case 1: return "UNO";
+      case 2: return "DOS";
+      case 3: return "TRES";
+      case 4: return "CUATRO";
+      case 5: return "CINCO";
+      case 6: return "SEIS";
+      case 7: return "SIETE";
+      case 8: return "OCHO";
+      case 9: return "NUEVE";
+    }
+
+    return "";
+  }//getUnidades()
+
+  public getDecenas(num) {
+
+    let decena = Math.floor(num / 10);
+    let unidad = num - (decena * 10);
+
+    switch (decena) {
+      case 1:
+        switch (unidad) {
+          case 0: return "DIEZ";
+          case 1: return "ONCE";
+          case 2: return "DOCE";
+          case 3: return "TRECE";
+          case 4: return "CATORCE";
+          case 5: return "QUINCE";
+          default: return "DIECI" + this.getUnidades(unidad);
+        }
+      case 2:
+        switch (unidad) {
+          case 0: return "VEINTE";
+          default: return "VEINTI" + this.getUnidades(unidad);
+        }
+      case 3: return this.getDecenasY("TREINTA", unidad);
+      case 4: return this.getDecenasY("CUARENTA", unidad);
+      case 5: return this.getDecenasY("CINCUENTA", unidad);
+      case 6: return this.getDecenasY("SESENTA", unidad);
+      case 7: return this.getDecenasY("SETENTA", unidad);
+      case 8: return this.getDecenasY("OCHENTA", unidad);
+      case 9: return this.getDecenasY("NOVENTA", unidad);
+      case 0: return this.getUnidades(unidad);
+    }
+  }//getUnidades()
+
+  public getDecenasY(strSin, numUnidades) {
+    if (numUnidades > 0)
+      return strSin + " Y " + this.getUnidades(numUnidades)
+
+    return strSin;
+  }//getDecenasY()
+
+  public getCentenas(num) {
+    let centenas = Math.floor(num / 100);
+    let decenas = num - (centenas * 100);
+
+    switch (centenas) {
+      case 1:
+        if (decenas > 0)
+          return "CIENTO " + this.getDecenas(decenas);
+        return "CIEN";
+      case 2: return "DOSCIENTOS " + this.getDecenas(decenas);
+      case 3: return "TRESCIENTOS " + this.getDecenas(decenas);
+      case 4: return "CUATROCIENTOS " + this.getDecenas(decenas);
+      case 5: return "QUINIENTOS " + this.getDecenas(decenas);
+      case 6: return "SEISCIENTOS " + this.getDecenas(decenas);
+      case 7: return "SETECIENTOS " + this.getDecenas(decenas);
+      case 8: return "OCHOCIENTOS " + this.getDecenas(decenas);
+      case 9: return "NOVECIENTOS " + this.getDecenas(decenas);
+    }
+
+    return this.getDecenas(decenas);
+  }
+
+  public Seccion(num, divisor, strSingular, strPlural) {
+    let cientos = Math.floor(num / divisor);
+    let resto = num - (cientos * divisor);
+
+    let letras = "";
+
+    if (cientos > 0)
+      if (cientos > 1)
+        letras = this.getCentenas(cientos) + " " + strPlural;
+      else
+        letras = strSingular;
+
+    if (resto > 0)
+      letras += "";
+
+    return letras;
+  }//Seccion()
+
+  public getMiles(num) {
+    let divisor = 1000;
+    let cientos = Math.floor(num / divisor)
+    let resto = num - (cientos * divisor)
+
+    let strMiles = this.Seccion(num, divisor, "UN MIL", "MIL");
+    let strCentenas = this.getCentenas(resto);
+
+    if (strMiles == "")
+      return strCentenas;
+
+    return strMiles + " " + strCentenas;
+  }//getMiles()
+
+  public getMillones(num) {
+    let divisor = 1000000;
+    let cientos = Math.floor(num / divisor)
+    let resto = num - (cientos * divisor)
+
+    let strMillones = this.Seccion(num, divisor, "UN MILLON DE", "MILLONES DE");
+    let strMiles = this.getMiles(resto);
+
+    if (strMillones == "")
+      return strMiles;
+
+    return strMillones + " " + strMiles;
+  }//getMillones()
+
+  public getNumeroALetras(num) {
+    let data = {
+      numero: num,
+      enteros: Math.floor(num),
+      centavos: (((Math.round(num * 100)) - (Math.floor(num) * 100))),
+      letrasCentavos: "",
+      letrasMonedaPlural: '',//"PESOS", 'Dólares', 'Bolívares', 'etcs'
+      letrasMonedaSingular: '', //"PESO", 'Dólar', 'Bolivar', 'etc'
+
+      letrasMonedaCentavoPlural: "CENTAVOS",
+      letrasMonedaCentavoSingular: "CENTAVO"
+    };
+
+    if (data.centavos > 0) {
+      data.letrasCentavos = "CON " + (() => {
+        if (data.centavos == 1)
+          return this.getMillones(data.centavos) + " " + data.letrasMonedaCentavoSingular;
+        else
+          return this.getMillones(data.centavos) + " " + data.letrasMonedaCentavoPlural;
+      })();
+    };
+
+    if (data.enteros == 0)
+      return "CERO " + data.letrasMonedaPlural + " " + data.letrasCentavos;
+    if (data.enteros == 1)
+      return this.getMillones(data.enteros) + " " + data.letrasMonedaSingular + " " + data.letrasCentavos;
+    else
+      return this.getMillones(data.enteros) + " " + data.letrasMonedaPlural + " " + data.letrasCentavos;
   }
 }

@@ -22,6 +22,7 @@ export class MovementOfCash {
   public otherExpenseAmount: number = 0.00;
   public statusCheck: StatusCheck = null;
   public capital: number = 0.00;
+  public interestPercentage: number = 0.00;
   public interestAmount: number = 0.00;
   public taxPercentage: number = 0.00;
   public taxAmount: number = 0.00;
