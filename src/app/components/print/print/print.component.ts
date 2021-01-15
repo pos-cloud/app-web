@@ -3421,12 +3421,16 @@ export class PrintComponent implements OnInit {
           this.doc.text(" Departamento: " + this.transaction.deliveryAddress.flat, margin + 5, this.row);
         }
 
-        if(this.transaction.deliveryAddress.observation.length > 30){
-            this.doc.text("Obs: " + this.transaction.deliveryAddress.observation.slice(0,29) + "-", margin, this.row);
-            this.row += 5;
-            this.doc.text(this.transaction.deliveryAddress.observation.slice(29,this.transaction.deliveryAddress.observation.length), margin, this.row);
-        } else {
-            this.doc.text("Obs: " + this.transaction.deliveryAddress.observation, margin, this.row);
+        if(this.transaction.deliveryAddress && this.transaction.deliveryAddress.observation){
+            if(this.transaction.deliveryAddress.observation.length > 30){
+                this.row += 5;
+                this.doc.text("Obs: " + this.transaction.deliveryAddress.observation.slice(0,29) + "-", margin, this.row);
+                this.row += 5;
+                this.doc.text(this.transaction.deliveryAddress.observation.slice(29,this.transaction.deliveryAddress.observation.length), margin, this.row);
+            } else {
+                this.row += 5;
+                this.doc.text("Obs: " + this.transaction.deliveryAddress.observation, margin, this.row);
+            }
         }
 
         this.doc.setFontType('normal');
@@ -3457,12 +3461,12 @@ export class PrintComponent implements OnInit {
       this.doc.setFontType('normal');
     }
 
-    if (this.transaction.shipmentMethod && this.transaction.shipmentMethod._id) {
+    /*if (this.transaction.shipmentMethod && this.transaction.shipmentMethod._id) {
       this.row += 5;
       this.doc.setFontType('bold');
       this.doc.text("Método de Envío: " + this.transaction.shipmentMethod.name, margin, this.row);
       this.doc.setFontType('normal');
-    }
+    }*/
 
     //Cabecera de la tala de productos
     this.row += 3;
