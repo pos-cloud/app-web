@@ -193,6 +193,7 @@ export class PaymentMethodComponent implements OnInit {
       'allowBank': [this.paymentMethod.allowBank, [],],
       'bankReconciliation': [this.paymentMethod.bankReconciliation, []],
       'mercadopagoAPIKey': [this.paymentMethod.mercadopagoAPIKey, []],
+      'mercadopagoClientId': [this.paymentMethod.mercadopagoClientId, []],
       'whatsappNumber': [this.paymentMethod.whatsappNumber, []],
       'applications': this._fb.array([]),
     });
@@ -295,6 +296,7 @@ export class PaymentMethodComponent implements OnInit {
     if (this.paymentMethod.allowBank === undefined) this.paymentMethod.allowBank = false;
     if (!this.paymentMethod.company) this.paymentMethod.company = null;
     if (!this.paymentMethod.mercadopagoAPIKey) this.paymentMethod.mercadopagoAPIKey = null;
+    if (!this.paymentMethod.mercadopagoClientId) this.paymentMethod.mercadopagoClientId = null;
     if (!this.paymentMethod.whatsappNumber) this.paymentMethod.whatsappNumber = null;
     if (!this.paymentMethod.observation) this.paymentMethod.observation = '';
 
@@ -327,6 +329,7 @@ export class PaymentMethodComponent implements OnInit {
       'allowCurrencyValue': this.paymentMethod.allowCurrencyValue,
       'allowBank': this.paymentMethod.allowBank,
       'mercadopagoAPIKey': this.paymentMethod.mercadopagoAPIKey,
+      'mercadopagoClientId': this.paymentMethod.mercadopagoClientId,
       'whatsappNumber': this.paymentMethod.whatsappNumber,
       'checkPerson': this.paymentMethod.checkPerson
     });

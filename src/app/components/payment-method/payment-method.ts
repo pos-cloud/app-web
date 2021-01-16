@@ -34,6 +34,7 @@ export class PaymentMethod {
   public allowCurrencyValue: boolean;
   public allowBank: boolean;
   public mercadopagoAPIKey: string;
+  public mercadopagoClientId: string;
   public whatsappNumber: string;
   public observation: string;
   public applications: Application[];
