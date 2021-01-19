@@ -1040,7 +1040,7 @@ export class PrintComponent implements OnInit {
 
       let match;
 
-      match = { "transactionDestination": { $oid: transactionDestinationViewId }, "operationType": { "$ne": "D" } };
+      match = { "transactionDestination": { $oid: transactionDestinationViewId }, "operationType": { "$ne": "D" },"transactionOrigin.operationType": { "$ne": "D" } };
 
       // CAMPOS A TRAER
       let project = {
@@ -1052,6 +1052,7 @@ export class PrintComponent implements OnInit {
         "transactionOrigin.totalPrice": 1,
         "transactionOrigin.company.name": 1,
         "transactionOrigin.balance": 1,
+        "transactionOrigin.operationType": 1,
         "transactionDestination": 1,
         "balance": 1,
         "operationType": 1
