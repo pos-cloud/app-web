@@ -172,7 +172,7 @@ export class PointOfSaleComponent implements OnInit {
             if (this.posType === 'delivery' || this.posType === 'pedidos-web') {
                 this.refresh();
             }
-        }, 5000);
+        }, 300000);
     }
 
     private processParams(): void {
