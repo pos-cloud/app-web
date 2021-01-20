@@ -55,6 +55,7 @@ import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
 import { MovementOfCashService } from '../movement-of-cash/movement-of-cash.service';
+import { MercadopagoService } from '../mercadopago/mercadopago.service';
 
 @Component({
     selector: 'app-point-of-sale',
@@ -131,7 +132,8 @@ export class PointOfSaleComponent implements OnInit {
         private _emailService: EmailService,
         public translatePipe: TranslateMePipe,
         private _toastr: ToastrService,
-        private _movementOfCashService: MovementOfCashService
+        private _movementOfCashService: MovementOfCashService,
+        private _mercadopagoService: MercadopagoService
     ) {
         this.roomSelected = new Room();
         this.transactionTypes = new Array();
@@ -481,6 +483,21 @@ export class PointOfSaleComponent implements OnInit {
                 this.loading = false;
             }
         ));
+    }
+
+    verifyPayments() {
+        this.loading = true;
+        this._mercadopagoService.verifyPaymentsByClient().subscribe(
+            result => {
+                this.showToast(null, 'success', 'Finalizó la verificación de pagos.');
+                this.loading = false;
+                this.refresh();
+            }, error => {
+                this.showToast(null, 'success', 'Finalizó la verificación de pagos.');
+                this.loading = false;
+                this.refresh();
+            }
+        )
     }
 
     async refresh() {

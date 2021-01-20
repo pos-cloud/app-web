@@ -78,12 +78,18 @@
             <th></th>
           </tr>
           <tr class="filters">
-            <th><input type="text" class="form-control" [(ngModel)]="filterDeliveredNumber" placeholder="Número..."></th>
-            <th><input type="date" class="form-control" [(ngModel)]="filterDeliveredEndDate" placeholder="{{state}}..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterDeliveredCompany" placeholder="Cliente..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterDeliveredAddress" placeholder="Dirección..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterDeliveredPhones" placeholder="Teléfono..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterDeliveredTotalPrice" placeholder="Precio Total...">
+            <th><input type="text" class="form-control" [(ngModel)]="filterDeliveredNumber" placeholder="Número...">
+            </th>
+            <th><input type="date" class="form-control" [(ngModel)]="filterDeliveredEndDate" placeholder="{{state}}...">
+            </th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterDeliveredCompany" placeholder="Cliente...">
+            </th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterDeliveredAddress" placeholder="Dirección...">
+            </th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterDeliveredPhones" placeholder="Teléfono...">
+            </th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterDeliveredTotalPrice"
+                placeholder="Precio Total...">
             </th>
             <th></th>
           </tr>
@@ -124,13 +130,15 @@
             <td (click)="openTransaction(transaction)" *ngIf="!transaction.company"></td>
             <td>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
             <td *ngIf="state === 'Abierto'">
-              <button class="btn btn-primary" (click)="changeStateOfTransaction(transaction, 'Enviado')" title="Enviar pedido">
+              <button class="btn btn-primary" (click)="changeStateOfTransaction(transaction, 'Enviado')"
+                title="Enviar pedido">
                 <i class="fa fa-motorcycle">
                 </i>
               </button>
             </td>
             <td *ngIf="state === 'Enviado'">
-              <button class="btn btn-warning" (click)="changeStateOfTransaction(transaction, 'Entregado')" title="Entregar">
+              <button class="btn btn-warning" (click)="changeStateOfTransaction(transaction, 'Entregado')"
+                title="Entregar">
                 <i class="fa fa-handshake-o">
                 </i>
               </button>
@@ -175,8 +183,8 @@
       <span>{{transactionMovement}} Pendientes</span>
       <div class="pull-right">
         <div class="btn-group" ngbDropdown>
-          <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Crear Nuevo Comprobante"
-            [disabled]="loading"><i class="fa fa-plus"></i><span>Nuevo</span></button>
+          <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"
+            title="Crear Nuevo Comprobante" [disabled]="loading"><i class="fa fa-plus"></i><span>Nuevo</span></button>
           <div class="dropdown-menu" ngbDropdownMenu>
             <button class="dropdown-item" *ngFor="let transactionType of transactionTypes"
               (click)="addTransaction(transactionType)">{{transactionType.name}}</button>
@@ -211,10 +219,11 @@
             </th>
             <th *ngIf="transactionMovement.toString() === 'Venta'"><input type="text" class="form-control"
                 [(ngModel)]="filterEmployeeClosing" placeholder="Vendedor..."></th>
-            <th *ngIf="(transactionMovement.toString() === 'Compra' || transactionMovement.toString() === 'Venta')"><input
-                type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Empresa...">
+            <th *ngIf="(transactionMovement.toString() === 'Compra' || transactionMovement.toString() === 'Venta')">
+              <input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Empresa...">
             </th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación...">
+            </th>
             <th *ngIf="transactionMovement.toString() !== 'Stock'"><input type="text" class="form-control"
                 [(ngModel)]="filterTotalPrice" placeholder="Precio Total..."></th>
             <th *ngIf="transactionMovement.toString() === 'Stock'"><input type="text" class="form-control"
@@ -310,7 +319,7 @@
   </div>
 </section>
 
-<!-- pedidos-web -->
+<!-- PEDIDOS WEB -->
 <section class="container-fluid" *ngIf="posType=='pedidos-web' || posType=='carritos-abandonados'">
   <div class="row center-content">
     <div *ngIf="alertMessage !== ''">
@@ -323,6 +332,8 @@
     <div class="card-header">
       <span>Pedidos</span>
       <div class="pull-right">
+        <button class="btn fa fa-handshake-o" (click)="verifyPayments()" [disabled]="loading"><i
+            [ngClass]="{'fa fa-handshake-o fa-spin':loading}"></i>Verificar pagos</button>
         <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i
             [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</button>
       </div>
@@ -355,8 +366,10 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterState" placeholder="Estado..."></th>
             <th></th>
             <th></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación...">
+            </th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total...">
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -413,21 +426,32 @@
                 </button>
                 <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown"
                   *ngIf="transaction.state !== 'Cerrado'">
-                  <button class="btn dropdown-toggle-split" ngbDropdownToggle
-                  [ngClass]="{
+                  <button class="btn dropdown-toggle-split" ngbDropdownToggle [ngClass]="{
                   'btn-state-close':transaction.state.toString() === 'Cerrado' || transaction.state.toString() === 'Pago Confirmado',
                   'btn-state-open':transaction.state.toString() === 'Abierto' || transaction.state.toString() === 'Pendiente de pago',
                   'btn-state-canceled':transaction.state.toString() === 'Anulado' || transaction.state.toString() === 'Pago Rechazado',
                   'btn-state-sent':transaction.state.toString() === 'Entregado' || transaction.state.toString() === 'Enviado'
                 }"></button>
                   <div class="dropdown-menu" ngbDropdownMenu>
-                    <button ngbDropdownItem *ngIf="transaction.type.electronics && !transaction.CAE && (transaction.state.toString() === 'Pago Confirmado' || transaction.state.toString() === 'Entregado')" (click)="validateElectronicTransactionAR(transaction, 'Pago Confirmado')">Facturar</button>
-                    <button ngbDropdownItem *ngIf="(transaction.state.toString() === 'Pendiente de pago' || transaction.state.toString() === 'Entregado') && transaction.balance != 0" (click)="chargeTransaction(transaction, 'Pago Confirmado')">Confirmar pago</button>
-                    <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Pendiente de pago' || (transaction.balance !== 0 && transaction.state.toString() === 'Enviado')" (click)="changeStateOfTransaction(transaction, 'Pago Rechazado')">Rechazar pago</button>
+                    <button ngbDropdownItem
+                      *ngIf="transaction.type.electronics && !transaction.CAE && (transaction.state.toString() === 'Pago Confirmado' || transaction.state.toString() === 'Entregado')"
+                      (click)="validateElectronicTransactionAR(transaction, 'Pago Confirmado')">Facturar</button>
+                    <button ngbDropdownItem
+                      *ngIf="(transaction.state.toString() === 'Pendiente de pago' || transaction.state.toString() === 'Entregado') && transaction.balance != 0"
+                      (click)="chargeTransaction(transaction, 'Pago Confirmado')">Confirmar pago</button>
+                    <button ngbDropdownItem
+                      *ngIf="transaction.state.toString() === 'Pendiente de pago' || (transaction.balance !== 0 && transaction.state.toString() === 'Enviado')"
+                      (click)="changeStateOfTransaction(transaction, 'Pago Rechazado')">Rechazar pago</button>
                     <!-- <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Pago Rechazado' || transaction.state.toString() === 'Pendiente de pago'" (click)="cancelTransaction(transaction)">Eliminar transacción</button> -->
-                    <button ngbDropdownItem *ngIf="transaction.state.toString() !== 'Enviado' && transaction.state.toString() !== 'Entregado'" (click)="changeStateOfTransaction(transaction, 'Enviado')">Marcar Pedido Enviado</button>
-                    <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Enviado' || transaction.state.toString() === 'Pago Confirmado'" (click)="changeStateOfTransaction(transaction, 'Entregado')">Marcar Pedido Entregado</button>
-                    <button ngbDropdownItem *ngIf="transaction.balance === 0 && transaction.state.toString() !== 'Enviado' && transaction.type.electronics" (click)="changeStateOfTransaction(transaction, 'Cerrado')">Cerrar</button>
+                    <button ngbDropdownItem
+                      *ngIf="transaction.state.toString() !== 'Enviado' && transaction.state.toString() !== 'Entregado'"
+                      (click)="changeStateOfTransaction(transaction, 'Enviado')">Marcar Pedido Enviado</button>
+                    <button ngbDropdownItem
+                      *ngIf="transaction.state.toString() === 'Enviado' || transaction.state.toString() === 'Pago Confirmado'"
+                      (click)="changeStateOfTransaction(transaction, 'Entregado')">Marcar Pedido Entregado</button>
+                    <button ngbDropdownItem
+                      *ngIf="transaction.balance === 0 && transaction.state.toString() !== 'Enviado' && transaction.type.electronics"
+                      (click)="changeStateOfTransaction(transaction, 'Cerrado')">Cerrar</button>
                   </div>
                 </div>
               </div>
@@ -436,8 +460,8 @@
               {{transaction.state}}
             </td>
             <td>
-                {{transaction.paymentMethodEcommerce}}
-              </td>
+              {{transaction.paymentMethodEcommerce}}
+            </td>
             <td style="white-space: normal;">
               <b *ngIf="transaction && transaction.shipmentMethod">{{transaction.shipmentMethod.name}} - </b>
               <span *ngIf="transaction && transaction.deliveryAddress">
@@ -498,7 +522,8 @@
       <div class="col-md-12">
         <div class="row">
           <ul class="list-group">
-            <li class="list-group-item center-content btn" *ngFor="let printer of printers" (click)="c(printer)">{{printer.name}}
+            <li class="list-group-item center-content btn" *ngFor="let printer of printers" (click)="c(printer)">
+              {{printer.name}}
             </li>
           </ul>
         </div>
@@ -511,7 +536,8 @@
 </ng-template>
 
 <!-- BOTON CTA CTE -->
-<div class="btn-group" ngbDropdown *ngIf="posType=='cuentas-corrientes' && transactionTypes && transactionTypes.length > 0">
+<div class="btn-group" ngbDropdown
+  *ngIf="posType=='cuentas-corrientes' && transactionTypes && transactionTypes.length > 0">
   <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Crear Nuevo Comprobante"><i
       class="fa fa-plus"></i><span>Nueva Transacción</span>
   </button>

@@ -251,6 +251,7 @@ import { ReportTransactionTypeComponent } from './components/report-transaction-
 import { PushNotificationsService } from './components/notification/notification.service';
 import { PrintQRComponent } from './components/print/print-qr/print-qr.component';
 import { SelectMovementsOfCashesComponent } from './components/movement-of-cash/select-movements-of-cashes/select-movements-of-cashes.component';
+import { MercadopagoService } from './components/mercadopago/mercadopago.service';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -666,7 +667,8 @@ export function createTranslateLoader(http: HttpClient) {
     ResourceService,
     GalleryService,
     EmailTemplateService,
-    PushNotificationsService
+    PushNotificationsService,
+    MercadopagoService
   ],
   bootstrap: [AppComponent]
 })
