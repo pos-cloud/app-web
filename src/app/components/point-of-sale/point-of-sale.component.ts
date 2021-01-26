@@ -78,7 +78,9 @@ export class PointOfSaleComponent implements OnInit {
         TransactionState.Sent.toString(),
         TransactionState.Preparing.toString(),
         TransactionState.Packing.toString(),
-        TransactionState.Outstanding.toString()
+        TransactionState.Outstanding.toString(),
+        TransactionState.PaymentDeclined.toString(),
+        TransactionState.PaymentConfirmed.toString()
     ];
     public originsToFilter: number[];
     public transactionTypes: TransactionType[];
@@ -195,7 +197,6 @@ export class PointOfSaleComponent implements OnInit {
                     for (const s of params[key].split(',')) {
                         if (this.validTransactionStates.includes(s)) {
                             this.transactionStates.push(s);
-
                         }
                     }
                     isLoadRefresh = true;
