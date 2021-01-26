@@ -378,7 +378,7 @@ export class TransactionTypeComponent implements OnInit {
             name: 'fixedLetter',
             tag: 'select',
             tagType: 'text',
-            values: ["X", 'A', 'B', "C", "E", "M", "R", "T"],
+            values: ["X", 'A', 'B', "C", "E", "M", "R", "T", " "],
             default: "X",
             class: 'form-group col-md-2'
         },
