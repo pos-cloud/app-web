@@ -372,7 +372,7 @@
     "showPriceType": "Precio que muestra",
     "showDescriptionType": "Descripcion que muestra",
     "updatePrice": "Actualiza Precios",
-    "updateArticle": "Modifica Producto",
+    "updateArticle": "Atajo Producto",
     "groupsArticles": "Agrupa Articulos",
     "allowZero": "Permite ingresar monto 0",
     "requestPaymentMethods": "Pide metodo de pago",
