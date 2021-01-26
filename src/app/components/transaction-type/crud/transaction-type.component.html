@@ -135,13 +135,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group col-md-12">
+                <div class="form-group col-md-12" *ngIf="objForm.get('paymentMethods')">
                     <label for="paymentMethods">Metodos de pago aceptados:</label>
                     <br>
                     <label formArrayName="paymentMethods" *ngFor="let order of objForm.get('paymentMethods')['controls']; let i = index"
                       style="margin-right: 20px; font-size: 20px;">
                       <input type="checkbox" [formControlName]="i" />
-                      {{paymentMethods[i].name}}
+                      {{paymentMethods[i]?.name}}
                     </label>
                   </div>
             </form>
