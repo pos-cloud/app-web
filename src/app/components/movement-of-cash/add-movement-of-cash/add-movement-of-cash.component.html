@@ -122,6 +122,71 @@
                     </div>
                 </div>
             </div>
+            <div *ngIf="paymentMethodSelected &&
+                      paymentMethodSelected.inputAndOuput &&
+                      transaction.type.movement.toString() === 'Salida'" class="form-group col-md-6">
+                <button type="button" class="btn btn-outline-primary"
+                    (click)="openModal('list-movements-of-cashes',null)">Buscar en Cartera</button>
+            </div>
+            <div *ngIf="paymentMethodSelected &&
+                    paymentMethodSelected.checkDetail &&
+                    (!paymentMethodSelected.inputAndOuput ||
+                    transaction.type.movement.toString() === 'Entrada')">
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <b>Datos del cheque:</b>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="number" class="control-label">Comprobante:</label>
+                        <input type="text" class="form-control" name="number" formControlName="number" />
+                        <div *ngIf="formErrors.number" class="alert alert-danger">
+                            {{ formErrors.number }}
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="expirationDate" class="control-label">Fecha Vencimiento:</label>
+                        <input type="date" class="form-control" formControlName="expirationDate" name="expirationDate"
+                            min="2000-01-01" (blur)="changePercentageCommission()" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <ng-template #rtBanks let-r="result" let-t="term">
+                            <ngb-highlight
+                                [result]="r.name + ' (Cód: ' + r.code + ')' + ((r.agency) ? ' (Suc: ' + r.agency + ')' : '') + ((r.account) ? ' (Cuenta: ' + r.account + ')' : '')"
+                                [term]="t"></ngb-highlight>
+                        </ng-template>
+                        <label for="bank">Banco:</label>
+                        <input id="bank" type="text" class="form-control" formControlName="bank" name="bank"
+                            [ngbTypeahead]="searchBanks" [resultTemplate]="rtBanks" [inputFormatter]="formatterBanks" />
+                    </div>
+                </div>
+                <div *ngIf="paymentMethodSelected && paymentMethodSelected.checkPerson" class="row">
+                    <div class="form-group col-md-6">
+                        <label for="deliveredBy" class="control-label">Entregado por:</label>
+                        <input type="text" class="form-control" name="deliveredBy" formControlName="deliveredBy" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="receiver" class="control-label">Destinatario:</label>
+                        <input type="text" class="form-control" name="receiver" formControlName="receiver" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="titular" class="control-label">Titular:</label>
+                        <input type="text" class="form-control" name="titular" formControlName="titular" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="CUIT" class="control-label">CUIT:</label>
+                        <input type="text" class="form-control" name="CUIT" formControlName="CUIT" />
+                        <div *ngIf="formErrors.CUIT" class="alert alert-danger">
+                            {{ formErrors.CUIT }}
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="row"
                 *ngIf="paymentMethodSelected && (
                                 ( paymentMethodSelected.commission &&
@@ -155,7 +220,8 @@
                                 <div class="input-group-prepend"><span class="input-group-text"
                                         id="basic-addon1">$</span></div>
                                 <input type="number" class="form-control" min="0" step="1"
-                                    formControlName="commissionAmount" name="commissionAmount" (blur)="changePercentageCommission(movementOfCashForm.value.commissionAmount)" />
+                                    formControlName="commissionAmount" name="commissionAmount"
+                                    (blur)="changePercentageCommission(movementOfCashForm.value.commissionAmount)" />
                             </div>
                         </div>
                         <div class="form-group col-md-2">
@@ -186,7 +252,8 @@
                     <div class="input-group">
                         <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
                         <input type="number" class="form-control" min="0" step="1"
-                            formControlName="administrativeExpenseAmount" name="administrativeExpenseAmount" (blur)="changePercentageAdministrativeExpense(movementOfCashForm.value.administrativeExpenseAmount)" />
+                            formControlName="administrativeExpenseAmount" name="administrativeExpenseAmount"
+                            (blur)="changePercentageAdministrativeExpense(movementOfCashForm.value.administrativeExpenseAmount)" />
                     </div>
                 </div>
             </div>
@@ -207,7 +274,8 @@
                     <div class="input-group">
                         <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
                         <input type="number" class="form-control" min="0" step="1" formControlName="otherExpenseAmount"
-                            name="otherExpenseAmount" (blur)="changePercentageOtherExpense(movementOfCashForm.value.otherExpenseAmount)" />
+                            name="otherExpenseAmount"
+                            (blur)="changePercentageOtherExpense(movementOfCashForm.value.otherExpenseAmount)" />
                     </div>
                 </div>
             </div>
@@ -356,72 +424,6 @@
                         [ngbTypeahead]="searchBanks" [resultTemplate]="rtBanks" [inputFormatter]="formatterBanks" />
                 </div>
             </div>
-            <div *ngIf="paymentMethodSelected &&
-                    paymentMethodSelected.checkDetail &&
-                    (!paymentMethodSelected.inputAndOuput ||
-                    transaction.type.movement.toString() === 'Entrada')">
-                <div class="row">
-                    <div class="form-group col-md-6">
-                        <b>Datos del cheque:</b>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="form-group col-md-6">
-                        <label for="number" class="control-label">Comprobante:</label>
-                        <input type="text" class="form-control" name="number" formControlName="number" />
-                        <div *ngIf="formErrors.number" class="alert alert-danger">
-                            {{ formErrors.number }}
-                        </div>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label for="expirationDate" class="control-label">Fecha Vencimiento:</label>
-                        <input type="date" class="form-control" formControlName="expirationDate" name="expirationDate"
-                            min="2000-01-01" (blur)="changePercentageCommission()" />
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="form-group col-md-12">
-                        <ng-template #rtBanks let-r="result" let-t="term">
-                            <ngb-highlight
-                                [result]="r.name + ' (Cód: ' + r.code + ')' + ((r.agency) ? ' (Suc: ' + r.agency + ')' : '') + ((r.account) ? ' (Cuenta: ' + r.account + ')' : '')"
-                                [term]="t"></ngb-highlight>
-                        </ng-template>
-                        <label for="bank">Banco:</label>
-                        <input id="bank" type="text" class="form-control" formControlName="bank" name="bank"
-                            [ngbTypeahead]="searchBanks" [resultTemplate]="rtBanks" [inputFormatter]="formatterBanks" />
-                    </div>
-                </div>
-                <div *ngIf="paymentMethodSelected && paymentMethodSelected.checkPerson" class="row">
-                    <div class="form-group col-md-6">
-                        <label for="deliveredBy" class="control-label">Entregado por:</label>
-                        <input type="text" class="form-control" name="deliveredBy" formControlName="deliveredBy" />
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label for="receiver" class="control-label">Destinatario:</label>
-                        <input type="text" class="form-control" name="receiver" formControlName="receiver" />
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="form-group col-md-6">
-                        <label for="titular" class="control-label">Titular:</label>
-                        <input type="text" class="form-control" name="titular" formControlName="titular" />
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label for="CUIT" class="control-label">CUIT:</label>
-                        <input type="text" class="form-control" name="CUIT" formControlName="CUIT" />
-                        <div *ngIf="formErrors.CUIT" class="alert alert-danger">
-                            {{ formErrors.CUIT }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div *ngIf="paymentMethodSelected &&
-                      paymentMethodSelected.inputAndOuput &&
-                      transaction.type.movement.toString() === 'Salida'" class="form-group col-md-6">
-                <button type="button" class="btn btn-outline-primary"
-                    (click)="openModal('list-movements-of-cashes',null)">Buscar en Cartera</button>
-            </div>
-
             <div class="row table-responsive" *ngIf="movementsOfCashes && movementsOfCashes.length > 0">
                 <table class="table table-striped">
                     <thead>
