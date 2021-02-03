@@ -435,7 +435,14 @@ export class TransactionTypeComponent implements OnInit {
             format: this.formatterCompanies,
             values: null,
             focus: false,
-            class: 'form-group col-md-8'
+            class: 'form-group col-md-4'
+        }, {
+            name: 'allowCompanyDiscount',
+            tag: 'select',
+            tagType: 'boolean',
+            values: ['true', 'false'],
+            validators: [Validators.required],
+            class: 'form-group col-md-4'
         },
         {
             name: 'requestEmployee',

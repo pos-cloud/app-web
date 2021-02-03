@@ -115,8 +115,8 @@ export class ListArticlesPosComponent implements OnInit {
         }
       );
     }
-    if (this.transaction.company && this.transaction.company.discount > 0) this.discountCompany = this.transaction.company.discount;
-    if (this.transaction.company && this.transaction.company.group && this.transaction.company.group.discount > 0) this.discountCompanyGroup = this.transaction.company.group.discount;
+    if (this.transaction.company && this.transaction.company.discount > 0 && this.transaction.type.allowCompanyDiscount) this.discountCompany = this.transaction.company.discount;
+    if (this.transaction.company && this.transaction.company.group && this.transaction.company.group.discount > 0 && this.transaction.type.allowCompanyDiscount) this.discountCompanyGroup = this.transaction.company.group.discount;
 
     this.subscriptionArticlePos.add(this._articleService.getArticlesPos.pipe(first()).subscribe(
       async articles => {

@@ -426,5 +426,6 @@
     "company.type" : "Tipo",
     "company-groups" : "Grupo de Empresa",
     "resetOrderNumber" : "Reset Numero de Orden",
-    "requireTable": "Pide mesa"
+    "requireTable": "Pide mesa",
+    "allowCompanyDiscount": "Permite descuento empresa"
 }

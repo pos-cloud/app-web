@@ -1413,8 +1413,8 @@ export class AddSaleOrderComponent {
 
     if (discountPercent !== undefined) this.transaction.discountPercent = this.roundNumber.transform(discountPercent, 6);
 
-    if (this.transaction.company && this.transaction.company.discount > 0) this.transaction.discountPercent += this.transaction.company.discount;
-    if (this.transaction.company && this.transaction.company.group && this.transaction.company.group.discount > 0) this.transaction.discountPercent += this.transaction.company.group.discount;
+    if (this.transaction.company && this.transaction.company.discount > 0 && this.transaction.type.allowCompanyDiscount) this.transaction.discountPercent += this.transaction.company.discount;
+    if (this.transaction.company && this.transaction.company.group && this.transaction.company.group.discount > 0 && this.transaction.type.allowCompanyDiscount) this.transaction.discountPercent += this.transaction.company.group.discount;
 
     let isUpdateValid: boolean = true;
 
@@ -1829,8 +1829,8 @@ export class AddSaleOrderComponent {
           modalRef.componentInstance.totalPrice = this.transaction.totalPrice;
           modalRef.componentInstance.amountToApply = this.transaction.discountAmount;
           modalRef.componentInstance.percentageToApply = this.transaction.discountPercent;
-          modalRef.componentInstance.percentageToApplyCompany = (this.transaction.company && this.transaction.company.discount > 0) ? this.transaction.company.discount : 0;
-          modalRef.componentInstance.percentageToApplyCompanyGroup = (this.transaction.company && this.transaction.company.group && this.transaction.company.group.discount > 0) ? this.transaction.company.group.discount : 0;
+          modalRef.componentInstance.percentageToApplyCompany = (this.transaction.company && this.transaction.company.discount > 0 && this.transaction.type.allowCompanyDiscount) ? this.transaction.company.discount : 0;
+          modalRef.componentInstance.percentageToApplyCompanyGroup = (this.transaction.company && this.transaction.company.group && this.transaction.company.group.discount > 0 && this.transaction.type.allowCompanyDiscount) ? this.transaction.company.group.discount : 0;
           modalRef.result.then((result) => {
             if (result.discount) {
               this.updatePrices(

@@ -51,6 +51,7 @@ export class TransactionType extends Model {
     public allowEdit: boolean = false;
     public allowDelete: boolean = false;
     public allowZero: boolean = false;
+    public allowCompanyDiscount: boolean = true;
     public requestCurrency: boolean = false;
     public requestEmployee: EmployeeType;
     public requestTransport: boolean = false;
@@ -293,6 +294,11 @@ export class TransactionType extends Model {
                 align: 'left',
             }, {
                 name: 'allowZero',
+                filter: true,
+                datatype: 'boolean',
+                align: 'left',
+            }, {
+                name: 'allowCompanyDiscount',
                 filter: true,
                 datatype: 'boolean',
                 align: 'left',
