@@ -389,12 +389,6 @@ export class TransactionTypeComponent implements OnInit {
             class: 'form-group col-md-2'
         },
         {
-            name: "maxOrderNumber",
-            tag: 'input',
-            tagType: "number",
-            class: 'form-group col-md-2'
-        },
-        {
             name: 'automaticCreation',
             tag: 'select',
             tagType: 'boolean',
@@ -403,15 +397,22 @@ export class TransactionTypeComponent implements OnInit {
             class: 'form-group col-md-2'
         },
         {
-            name: "orderNumber",
+            name: "resetOrderNumber",
+            tag: 'select',
+            tagType: "text",
+            values: ['Caja','Cantidad','Tiempo'],
+            class: 'form-group col-md-2'
+        },
+        {
+            name: "maxOrderNumber",
             tag: 'input',
             tagType: "number",
             class: 'form-group col-md-2'
         },
         {
-            name: "resetOrderNumber",
+            name: "orderNumber",
             tag: 'input',
-            tagType: "text",
+            tagType: "number",
             class: 'form-group col-md-2'
         },
         {

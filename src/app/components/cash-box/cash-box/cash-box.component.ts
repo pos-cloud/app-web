@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -30,11 +30,16 @@ import { CurrencyValue } from 'app/components/currency-value/currency-value';
 import { User } from 'app/components/user/user';
 import { UserService } from 'app/components/user/user.service';
 import { PrinterPrintIn, Printer } from 'app/components/printer/printer';
+import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
+import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: 'app-cash-box',
     templateUrl: './cash-box.component.html',
-    styleUrls: ['./cash-box.component.css']
+    styleUrls: ['./cash-box.component.css'],
+    providers: [NgbAlertConfig, TranslateMePipe],
+    encapsulation: ViewEncapsulation.None
 })
 
 export class CashBoxComponent implements OnInit {
@@ -64,10 +69,13 @@ export class CashBoxComponent implements OnInit {
         private _router: Router,
         private _paymentMethodService: PaymentMethodService,
         private _movementOfCashService: MovementOfCashService,
+        private _transactionTypeService : TransactionTypeService,
         private _cashBoxService: CashBoxService,
         private _authService: AuthService,
         private _transactionService: TransactionService,
         private _currencyValueService: CurrencyValueService,
+        public translatePipe: TranslateMePipe,
+        private _toastr: ToastrService,
         private _configService: ConfigService,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,
@@ -618,7 +626,7 @@ export class CashBoxComponent implements OnInit {
                                     } else {
                                         this.cashBox.closingDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
                                         this.cashBox.state = CashBoxState.Closed;
-
+                                        await this.resetOrderNumber();
                                         await this.updateCashBox().then(
                                             cashBox => {
                                                 if (cashBox) {
@@ -641,7 +649,7 @@ export class CashBoxComponent implements OnInit {
 
                 this.cashBox.closingDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
                 this.cashBox.state = CashBoxState.Closed;
-
+                await this.resetOrderNumber();
                 await this.updateCashBox().then(
                     cashBox => {
                         if (cashBox) {
@@ -698,6 +706,56 @@ export class CashBoxComponent implements OnInit {
         });
     }
 
+    public resetOrderNumber() {
+
+        this._transactionTypeService.getAll({
+            project : {
+                resetOrderNumber : 1,
+                orderNumber : 1,
+                operationType : 1,
+                order : 1,
+                transactionMovement: 1,
+                abbreviation: 1,
+                name: 1,
+                currentAccount: 1,
+                movement: 1,
+                modifyStock: 1,
+                requestArticles: 1,
+                requestTaxes: 1
+            },
+            match : {
+                operationType : { "$ne" : "D" },
+                resetOrderNumber : "Caja",
+                orderNumber : { "$gt" : 0 }
+            }
+        }).subscribe(
+            result => {
+                if(result && result.status === 200){
+                    result.result.forEach(async element => {
+                        element.orderNumber = 0;
+                        await this._transactionTypeService.update(element).subscribe(
+                            result => {
+                                if(result && result.status === 200){
+                                    this.showToast(null, 'success', "La numeracion del tipo de transaccion: " + result.result.name + " se reinicio correctamente");
+                                } else {
+                                    this.showToast(result.error);
+                                }
+                            },
+                            error =>{
+                                this.showToast(error);
+                            }
+                        )
+                    });
+                } else {
+                    this.showToast(result.error);
+                }
+            },
+            error =>{
+                this.showToast(error);
+            }
+        )
+    }
+
     public showMessage(message: string, type: string, dismissible: boolean): void {
         this.alertMessage = message;
         this.alertConfig.type = type;
@@ -706,5 +764,32 @@ export class CashBoxComponent implements OnInit {
 
     public hideMessage(): void {
         this.alertMessage = '';
+    }
+
+    public showToast(result, type?: string, title?: string, message?: string): void {
+        if (result) {
+            if (result.status === 200) {
+                type = 'success';
+                title = result.message;
+            } else if (result.status >= 400) {
+                type = 'danger';
+                title = (result.error && result.error.message) ? result.error.message : result.message;
+            } else {
+                type = 'info';
+                title = result.message;
+            }
+        }
+        switch (type) {
+            case 'success':
+                this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+            case 'danger':
+                this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+            default:
+                this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+        }
+        this.loading = false;
     }
 }
