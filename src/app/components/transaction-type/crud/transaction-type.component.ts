@@ -879,6 +879,7 @@ export class TransactionTypeComponent implements OnInit {
                 requestPaymentMethods: 1,
                 showKeyboard: 1,
                 allowZero: 1,
+                allowCompanyDiscount: 1,
                 finishCharge: 1,
                 modifyStock: 1,
                 stockMovement: 1,
