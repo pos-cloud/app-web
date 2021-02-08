@@ -3665,6 +3665,10 @@ export class PrintComponent implements OnInit {
 
     if (this.movementsOfCashes) {
       this.movementsOfCashes.forEach(element => {
+        this.row += 5;
+        this.doc.setFontType('bold');
+        this.doc.text("Forma de Pago: " + element.type.name, margin, this.row)
+        this.doc.setFontStyle("normal");
         if (element && element.paymentChange > 0) {
           this.row += 5;
           this.doc.text("Paga con: $ " + (element.paymentChange + element.amountPaid).toString(), margin, this.row)
