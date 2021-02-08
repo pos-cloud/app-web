@@ -1300,10 +1300,12 @@ export class PointOfSaleComponent implements OnInit {
                                 async transaction => {
                                     if (transaction) {
                                         this.transaction = transaction;
+                                        this.changeStateOfTransaction(this.transaction, state);
+                                    } else {
+                                        this.refresh();
                                     }
                                 }
                             );
-                            this.changeStateOfTransaction(this.transaction, state);
                         } else {
                             this.refresh();
                         }
