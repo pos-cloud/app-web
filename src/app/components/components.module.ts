@@ -12,6 +12,7 @@ import { HolidayModule } from './holiday/holiday.module';
 import { TransactionTypeModule } from './transaction-type/transaction-type.module';
 import { CategoryModule } from './category/category.module';
 import { CompanyGroupModule } from './company-group/company-group.module';
+import { AccountModule } from './account/account.module';
 
 @NgModule({
 	imports: [
@@ -27,7 +28,8 @@ import { CompanyGroupModule } from './company-group/company-group.module';
     HolidayModule,
     TransactionTypeModule,
     CategoryModule,
-    CompanyGroupModule
+    CompanyGroupModule,
+    AccountModule
 	],
 	declarations: [
 	],
