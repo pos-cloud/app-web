@@ -12,6 +12,7 @@ import { Currency } from '../currency/currency';
 import { Company } from '../company/company';
 import { Classification } from '../classification/classification';
 import { Application } from '../application/application.model';
+import { Account } from '../account/account';
 
 export class Article {
 
@@ -73,6 +74,8 @@ export class Article {
     public providers: Company[];
     public classification: Classification;
     public applications: Application[];
+    public salesAccount : Account;
+    public purchaseAccount : Account;
     public operationType: string;
     public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');

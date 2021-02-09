@@ -9,6 +9,10 @@ import { Bank } from '../bank';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
+import { AccountService } from 'app/components/account/account.service';
+import { Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { Account } from 'app/components/account/account';
 
 @Component({
   selector: 'app-bank',
@@ -52,9 +56,27 @@ export class BankComponent implements OnInit {
     }
   };
 
+  public searchAccounts = (text$: Observable<string>) =>
+  text$.pipe(
+    debounceTime(300),
+    distinctUntilChanged(),
+    tap(() => this.loading = true),
+    switchMap(async term => {
+      let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' } } : {};
+      return await this.getAllAccounts(match).then(
+        result => {
+          return result;
+        }
+      )
+    }),
+    tap(() => this.loading = false)
+  )
+public formatterAccounts = (x: Account) => { return x.description; };
+
   constructor(
     public alertConfig: NgbAlertConfig,
     public _bankService: BankService,
+    public _accountService : AccountService,
     public _router: Router,
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
@@ -107,7 +129,7 @@ export class BankComponent implements OnInit {
     if (!this.bank.code) { this.bank.code = 0; }
     if (!this.bank.name) { this.bank.name = ''; }
     if (!this.bank.agency) { this.bank.agency = 0; }
-    if (!this.bank.account) { this.bank.account = ''; }
+    if (!this.bank.account) { this.bank.account = null; }
 
 
     const values = {
@@ -160,6 +182,21 @@ export class BankComponent implements OnInit {
         }
       }
     }
+  }
+
+  public getAllAccounts(match: {}): Promise<Account[]> {
+    return new Promise<Account[]>((resolve, reject) => {
+      this._accountService.getAll({
+        match,
+        sort: { description : 1 },
+      }).subscribe(
+        result => {
+          this.loading = false;
+          (result.status === 200) ? resolve(result.result) : reject(result);
+        },
+        error => reject(error)
+      );
+    });
   }
 
   public addBank() {

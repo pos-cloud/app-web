@@ -599,18 +599,13 @@
                                         </select>
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label for="provider" class="control-label">Proveedor</label>
-                                        <select class="form-control" formControlName="providers">
-                                            <option [ngValue]="null" [selected]="!article || !article.providers"
-                                                [disabled]="readonly"></option>
-                                            <option *ngFor="let provider of companies"
-                                                [selected]="(article.providers && article.providers[0] && article.providers[0]._id && provider._id===article.providers[0]._id) ||
-                                          (article.providers && article.providers[0] && provider._id===article.providers[0])" [value]="provider._id">
-                                                {{provider.name}}</option>
-                                        </select>
-                                        <div *ngIf="formErrors.providers" class="alert alert-danger">
-                                            {{ formErrors.provider }}
-                                        </div>
+                                        <ng-template #rtAccounts let-r="result" let-t="term">
+                                            <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+                                        </ng-template>
+                                        <label for="purchaseAccount">Cuenta Contable:</label>
+                                        <input id="purchaseAccount" type="text" class="form-control" formControlName="purchaseAccount"
+                                            name="purchaseAccount" [ngbTypeahead]="searchAccounts" [resultTemplate]="rtAccounts"
+                                            [inputFormatter]="formatterAccounts" [readonly]="readonly" />
                                     </div>
                                 </div>
                                 <div class="row">
@@ -622,12 +617,13 @@
                                         </select>
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label for="allowSaleWithoutStock" class="control-label">¿Se puede vender sin
-                                            stock disponible?</label>
-                                        <select class="form-control" formControlName="allowSaleWithoutStock">
-                                            <option [value]="true" [disabled]="readonly">Si</option>
-                                            <option [value]="false" [disabled]="readonly">No</option>
-                                        </select>
+                                        <ng-template #rtAccounts let-r="result" let-t="term">
+                                            <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+                                        </ng-template>
+                                        <label for="salesAccount">Cuenta Contable:</label>
+                                        <input id="salesAccount" type="text" class="form-control" formControlName="salesAccount"
+                                            name="salesAccount" [ngbTypeahead]="searchAccounts" [resultTemplate]="rtAccounts"
+                                            [inputFormatter]="formatterAccounts" [readonly]="readonly" />
                                     </div>
                                 </div>
                                 <div class="row">
@@ -663,6 +659,31 @@
                                           (article.classification && classification._id===article.classification)"
                                                 [value]="classification._id" [disabled]="readonly">
                                                 {{classification.name}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label for="provider" class="control-label">Proveedor</label>
+                                        <select class="form-control" formControlName="providers">
+                                            <option [ngValue]="null" [selected]="!article || !article.providers"
+                                                [disabled]="readonly"></option>
+                                            <option *ngFor="let provider of companies"
+                                                [selected]="(article.providers && article.providers[0] && article.providers[0]._id && provider._id===article.providers[0]._id) ||
+                                          (article.providers && article.providers[0] && provider._id===article.providers[0])" [value]="provider._id">
+                                                {{provider.name}}</option>
+                                        </select>
+                                        <div *ngIf="formErrors.providers" class="alert alert-danger">
+                                            {{ formErrors.provider }}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group col-md-6">
+                                        <label for="allowSaleWithoutStock" class="control-label">¿Se puede vender sin
+                                            stock disponible?</label>
+                                        <select class="form-control" formControlName="allowSaleWithoutStock">
+                                            <option [value]="true" [disabled]="readonly">Si</option>
+                                            <option [value]="false" [disabled]="readonly">No</option>
                                         </select>
                                     </div>
                                 </div>

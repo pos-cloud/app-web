@@ -52,6 +52,8 @@ import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operato
 import Resulteable from 'app/util/Resulteable';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
+import { Account } from 'app/components/account/account';
+import { AccountService } from 'app/components/account/account.service';
 
 @Component({
   selector: 'app-add-article',
@@ -288,6 +290,23 @@ export class AddArticleComponent implements OnInit {
     )
   public formatterUnitsOfMeasurement = (x: UnitOfMeasurement) => { return x.name; };
 
+  public searchAccounts = (text$: Observable<string>) =>
+  text$.pipe(
+    debounceTime(300),
+    distinctUntilChanged(),
+    tap(() => this.loading = true),
+    switchMap(async term => {
+      let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' } } : {};
+      return await this.getAllAccounts(match).then(
+        result => {
+          return result;
+        }
+      )
+    }),
+    tap(() => this.loading = false)
+  )
+public formatterAccounts = (x: Account) => { return x.description; };
+
   constructor(
     public _articleService: ArticleService,
     public _articleStockService: ArticleStockService,
@@ -303,6 +322,7 @@ export class AddArticleComponent implements OnInit {
     public _movementsOfArticle: MovementOfArticleService,
     public _articleFields: ArticleFieldService,
     public _applicationService: ApplicationService,
+    public _accountService : AccountService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -476,7 +496,9 @@ export class AddArticleComponent implements OnInit {
       'pictures': this._fb.array([]),
       'applications': this._fb.array([]),
       'url': [this.article.url, []],
-      'forShipping': [this.article.forShipping, []]
+      'forShipping': [this.article.forShipping, []],
+      'salesAccount' : [this.article.salesAccount,[]],
+      'purchaseAccount' : [this.article.purchaseAccount,[]]
     });
 
     this.articleForm.valueChanges.subscribe(data => this.onValueChanged(data));
@@ -1395,6 +1417,8 @@ export class AddArticleComponent implements OnInit {
     if (this.article.forShipping === undefined) { this.article.forShipping = false; }
     if (!this.article.url) { this.article.url = ''; }
     if (!this.article.unitOfMeasurement) { this.article.unitOfMeasurement = null; }
+    if (!this.article.salesAccount) { this.article.salesAccount = null; }
+    if (!this.article.purchaseAccount) { this.article.purchaseAccount = null; }
 
     this.article.basePrice = this.roundNumber.transform(this.article.basePrice);
     this.article.costPrice = this.roundNumber.transform(this.article.costPrice);
@@ -1436,7 +1460,9 @@ export class AddArticleComponent implements OnInit {
       'lastPricePurchase': lastPricePurchase,
       'classification': classification,
       'url': this.article.url,
-      'forShipping': this.article.forShipping
+      'forShipping': this.article.forShipping,
+      'salesAccount' : this.article.salesAccount,
+      'purchaseAccount' : this.article.purchaseAccount
     };
 
     this.articleForm.patchValue(values);
@@ -1769,6 +1795,21 @@ export class AddArticleComponent implements OnInit {
       this.subscription.add(this._applicationService.getAll({
         match,
         sort: { name: 1 },
+      }).subscribe(
+        result => {
+          this.loading = false;
+          (result.status === 200) ? resolve(result.result) : reject(result);
+        },
+        error => reject(error)
+      ));
+    });
+  }
+
+  public getAllAccounts(match: {}): Promise<Account[]> {
+    return new Promise<Account[]>((resolve, reject) => {
+      this.subscription.add(this._accountService.getAll({
+        match,
+        sort: { description : 1 },
       }).subscribe(
         result => {
           this.loading = false;

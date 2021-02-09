@@ -3,6 +3,7 @@ import { User } from '../user/user';
 import * as moment from 'moment';
 import { Application } from '../application/application.model';
 import { Article } from '../article/article';
+import { Account } from '../account/account';
 
 export class PaymentMethod {
 
@@ -38,6 +39,7 @@ export class PaymentMethod {
   public whatsappNumber: string;
   public observation: string;
   public applications: Application[];
+  public account : Account;
   public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public updateUser: User;

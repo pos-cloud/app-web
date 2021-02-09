@@ -3,6 +3,10 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Account } from 'app/components/account/account';
+import { AccountService } from 'app/components/account/account.service';
+import { Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 
 import { Tax, TaxBase, TaxClassification, TaxType } from '../tax';
 
@@ -29,6 +33,23 @@ export class TaxComponent implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+
+  public searchAccounts = (text$: Observable<string>) =>
+  text$.pipe(
+    debounceTime(300),
+    distinctUntilChanged(),
+    tap(() => this.loading = true),
+    switchMap(async term => {
+      let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' } } : {};
+      return await this.getAllAccounts(match).then(
+        result => {
+          return result;
+        }
+      )
+    }),
+    tap(() => this.loading = false)
+  )
+public formatterAccounts = (x: Account) => { return x.description; };
 
   public formErrors = {
     'code': '',
@@ -65,6 +86,7 @@ export class TaxComponent implements OnInit {
 
   constructor(
     public _taxService: TaxService,
+    public _accountService : AccountService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -138,6 +160,7 @@ export class TaxComponent implements OnInit {
       'lastNumber': [this.tax.lastNumber, [
         ]
       ],
+      'account' : [this.tax.account,[]]
     });
 
     this.taxForm.valueChanges
@@ -218,7 +241,8 @@ export class TaxComponent implements OnInit {
     if(!this.tax.type) this.tax.type = TaxType.None;
     if(!this.tax.classification) this.tax.classification = TaxClassification.None;
     if(!this.tax.lastNumber) this.tax.lastNumber = 0;
-    
+    if(!this.tax.account) this.tax.account = null;
+
     let values = {
       '_id': this.tax._id,
       'code': this.tax.code,
@@ -228,7 +252,8 @@ export class TaxComponent implements OnInit {
       'amount': this.tax.amount,
       'type': this.tax.type,
       'classification': this.tax.classification,
-      'lastNumber': this.tax.lastNumber
+      'lastNumber': this.tax.lastNumber,
+      'account' : this.tax.account
     };
 
     this.taxForm.setValue(values);
@@ -312,6 +337,21 @@ export class TaxComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public getAllAccounts(match: {}): Promise<Account[]> {
+    return new Promise<Account[]>((resolve, reject) => {
+      this._accountService.getAll({
+        match,
+        sort: { description : 1 },
+      }).subscribe(
+        result => {
+          this.loading = false;
+          (result.status === 200) ? resolve(result.result) : reject(result);
+        },
+        error => reject(error)
+      );
+    });
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

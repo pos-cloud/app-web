@@ -16,6 +16,8 @@ import { ToastrService } from 'ngx-toastr';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { Article } from 'app/components/article/article';
 import { ArticleService } from 'app/components/article/article.service';
+import { AccountService } from 'app/components/account/account.service';
+import { Account } from 'app/components/account/account';
 
 @Component({
   selector: 'app-payment-method',
@@ -108,6 +110,23 @@ export class PaymentMethodComponent implements OnInit {
     )
   public formatterArticles = (x: Article) => { return x.description; };
 
+  public searchAccounts = (text$: Observable<string>) =>
+  text$.pipe(
+    debounceTime(300),
+    distinctUntilChanged(),
+    tap(() => this.loading = true),
+    switchMap(async term => {
+      let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' } } : {};
+      return await this.getAllAccounts(match).then(
+        result => {
+          return result;
+        }
+      )
+    }),
+    tap(() => this.loading = false)
+  )
+public formatterAccounts = (x: Account) => { return x.description; };
+
   constructor(
     private _paymentMethodService: PaymentMethodService,
     public _fb: FormBuilder,
@@ -115,6 +134,7 @@ export class PaymentMethodComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     private _applicationService: ApplicationService,
+    public _accountService : AccountService,
     public translatePipe: TranslateMePipe,
     private _toastr: ToastrService,
     private _articleService: ArticleService
@@ -196,6 +216,7 @@ export class PaymentMethodComponent implements OnInit {
       'mercadopagoClientId': [this.paymentMethod.mercadopagoClientId, []],
       'whatsappNumber': [this.paymentMethod.whatsappNumber, []],
       'applications': this._fb.array([]),
+      'account' : [this.paymentMethod.account,[]]
     });
 
     this.paymentMethodForm.valueChanges
@@ -299,6 +320,7 @@ export class PaymentMethodComponent implements OnInit {
     if (!this.paymentMethod.mercadopagoClientId) this.paymentMethod.mercadopagoClientId = null;
     if (!this.paymentMethod.whatsappNumber) this.paymentMethod.whatsappNumber = null;
     if (!this.paymentMethod.observation) this.paymentMethod.observation = '';
+    if (!this.paymentMethod.account) this.paymentMethod.account = null;
 
     this.paymentMethodForm.patchValue({
       '_id': this.paymentMethod._id,
@@ -331,7 +353,8 @@ export class PaymentMethodComponent implements OnInit {
       'mercadopagoAPIKey': this.paymentMethod.mercadopagoAPIKey,
       'mercadopagoClientId': this.paymentMethod.mercadopagoClientId,
       'whatsappNumber': this.paymentMethod.whatsappNumber,
-      'checkPerson': this.paymentMethod.checkPerson
+      'checkPerson': this.paymentMethod.checkPerson,
+      'account' : this.paymentMethod.account
     });
   }
 
@@ -362,6 +385,21 @@ export class PaymentMethodComponent implements OnInit {
       this.subscription.add(this._applicationService.getAll({
         match,
         sort: { name: 1 },
+      }).subscribe(
+        result => {
+          this.loading = false;
+          (result.status === 200) ? resolve(result.result) : reject(result);
+        },
+        error => reject(error)
+      ));
+    });
+  }
+
+  public getAllAccounts(match: {}): Promise<Account[]> {
+    return new Promise<Account[]>((resolve, reject) => {
+      this.subscription.add(this._accountService.getAll({
+        match,
+        sort: { description : 1 },
       }).subscribe(
         result => {
           this.loading = false;

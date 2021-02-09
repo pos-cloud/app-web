@@ -88,12 +88,21 @@
         </div>
       </div>
       <div class="row">
-        <div class="form-group col-md-12">
+        <div class="form-group col-md-6">
           <label for="lastNumber" class="control-label">Último Número:</label>
           <input type="text" class="form-control" formControlName="lastNumber" name="lastNumber" id="lastNumber" [readonly]="readonly"/>
           <div *ngIf="formErrors.lastNumber" class="alert alert-danger">
             {{ formErrors.lastNumber }}
           </div>
+        </div>
+        <div class="form-group col-md-4">
+            <ng-template #rtAccounts let-r="result" let-t="term">
+                <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+            </ng-template>
+            <label for="account">Cuenta Contable:</label>
+            <input id="account" type="text" class="form-control" formControlName="account"
+                name="account" [ngbTypeahead]="searchAccounts" [resultTemplate]="rtAccounts"
+                [inputFormatter]="formatterAccounts" [readonly]="readonly" />
         </div>
       </div>
     </div>
