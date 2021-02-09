@@ -28,8 +28,8 @@
                             <hr>
                             <b>{{field.name}}</b>
                         </div>
-                        <label *ngIf="field.tag !== 'separator'" [for]="field.name"
-                            class="control-label">{{field.name | translate | capitalize}}:</label>
+                        <label *ngIf="field.tag !== 'separator'" [for]="field.name" class="control-label">{{field.name |
+                            translate | capitalize}}:</label>
                         <div class="input-group">
 
                             <!-- FILE -->
@@ -41,7 +41,10 @@
                                             <div class="custom-file">
                                                 <label class="custom-file-label btn btn-light"
                                                     [id]="'labelFile'+field.name.split('.')[field.name.split('.').length - 1]"
-                                                    for="customFile">{{(filesToUpload && filesToUpload[field.name] && filesToUpload[field.name].length > 0)? filesToUpload[field.name].length + ' archivos cargados':'Seleccionar archivos'}}</label>
+                                                    for="customFile">{{(filesToUpload && filesToUpload[field.name] &&
+                                                    filesToUpload[field.name].length > 0)?
+                                                    filesToUpload[field.name].length + ' archivos cargados':'Seleccionar
+                                                    archivos'}}</label>
                                                 <input [type]="field.tagType" class="custom-file-input"
                                                     [formControlName]="field.name" [name]="field.name" [id]="field.name"
                                                     [readonly]="readonly"
@@ -104,15 +107,16 @@
                             <!-- AUTOCOMPLETE -->
                             <div *ngIf="field.tag === 'autocomplete'" style="width: 100%;">
                                 <ng-template #result let-r="result" let-t="term">
-                                  <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+                                    <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
                                 </ng-template>
-                                <input [type]="field.tagType" class="form-control" [id]="field.name" [formControlName]="field.name"
-                                  [readonly]="readonly" [name]="field.name" [ngbTypeahead]="field.search" [resultTemplate]="result"
-                                  [inputFormatter]="field.format"
-                                  [ngClass]="{'is-invalid':!objForm.get(field.name).valid && formErrors[field.name]}"
-                                  (focus)="focus$[field.name].next($any($event).target.value)"
-                                  (blur)="onValueChanged($event.target.id)" />
-                              </div>
+                                <input [type]="field.tagType" class="form-control" [id]="field.name"
+                                    [formControlName]="field.name" [readonly]="readonly" [name]="field.name"
+                                    [ngbTypeahead]="field.search" [resultTemplate]="result"
+                                    [inputFormatter]="field.format"
+                                    [ngClass]="{'is-invalid':!objForm.get(field.name).valid && formErrors[field.name]}"
+                                    (focus)="focus$[field.name].next($any($event).target.value)"
+                                    (blur)="onValueChanged($event.target.id)" />
+                            </div>
 
                             <!-- TEXTAREA -->
                             <textarea *ngIf="field.tag === 'textarea'" class="form-control"
@@ -133,17 +137,67 @@
                                 {{ formErrors[field.name] }}
                             </div>
                         </div>
+                        <label *ngIf="field.name === 'electronics'" [for]="'codeA'" class="control-label">{{'codeA' | translate | capitalize}}:</label>
+                        <div class="input-group" *ngIf="field.name === 'electronics'">
+                            <input [type]="'text'" class="form-control"
+                                [formControlName]="'codeA'" [name]="'codeA'" [id]="'codeA'" [readonly]="readonly"
+                                [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
+                                (blur)="onValueChanged($event.target.id)" />
+                        </div>
+                        <label *ngIf="field.name === 'electronics'" [for]="'codeB'" class="control-label">{{'codeB' | translate | capitalize}}:</label>
+                        <div class="input-group" *ngIf="field.name === 'electronics'">
+                            <input [type]="'text'" class="form-control"
+                                [formControlName]="'codeB'" [name]="'codeB'" [id]="'codeB'" [readonly]="readonly"
+                                [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
+                                (blur)="onValueChanged($event.target.id)" />
+                        </div>
+                        <label *ngIf="field.name === 'electronics'" [for]="'codeC'" class="control-label">{{'codeC' | translate | capitalize}}:</label>
+                        <div class="input-group" *ngIf="field.name === 'electronics'">
+                            <input [type]="'text'" class="form-control"
+                                [formControlName]="'codeC'" [name]="'codeC'" [id]="'codeC'" [readonly]="readonly"
+                                [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
+                                (blur)="onValueChanged($event.target.id)" />
+                        </div>
+                        <label *ngIf="field.name === 'electronics'" [for]="'codeE'" class="control-label">{{'codeE' | translate | capitalize}}:</label>
+                        <div class="input-group" *ngIf="field.name === 'electronics'">
+                            <input [type]="'text'" class="form-control"
+                                [formControlName]="'codeE'" [name]="'codeE'" [id]="'codeE'" [readonly]="readonly"
+                                [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
+                                (blur)="onValueChanged($event.target.id)" />
+                        </div>
+                        <label *ngIf="field.name === 'electronics'" [for]="'codeM'" class="control-label">{{'codeM' | translate | capitalize}}:</label>
+                        <div class="input-group" *ngIf="field.name === 'electronics'">
+                            <input [type]="'text'" class="form-control"
+                                [formControlName]="'codeM'" [name]="'codeM'" [id]="'codeM'" [readonly]="readonly"
+                                [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
+                                (blur)="onValueChanged($event.target.id)" />
+                        </div>
+                        <label *ngIf="field.name === 'electronics'" [for]="'codeR'" class="control-label">{{'codeR' | translate | capitalize}}:</label>
+                        <div class="input-group" *ngIf="field.name === 'electronics'">
+                            <input [type]="'text'" class="form-control"
+                                [formControlName]="'codeR'" [name]="'codeR'" [id]="'codeR'" [readonly]="readonly"
+                                [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
+                                (blur)="onValueChanged($event.target.id)" />
+                        </div>
+                        <label *ngIf="field.name === 'electronics'" [for]="'codeT'" class="control-label">{{'codeT' | translate | capitalize}}:</label>
+                        <div class="input-group" *ngIf="field.name === 'electronics'">
+                            <input [type]="'text'" class="form-control"
+                                [formControlName]="'codeT'" [name]="'codeT'" [id]="'codeT'" [readonly]="readonly"
+                                [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
+                                (blur)="onValueChanged($event.target.id)" />
+                        </div>
                     </div>
                 </div>
                 <div class="form-group col-md-12" *ngIf="objForm.get('paymentMethods')">
                     <label for="paymentMethods">Metodos de pago aceptados:</label>
                     <br>
-                    <label formArrayName="paymentMethods" *ngFor="let order of objForm.get('paymentMethods')['controls']; let i = index"
-                      style="margin-right: 20px; font-size: 20px;">
-                      <input type="checkbox" [formControlName]="i" />
-                      {{paymentMethods[i]?.name}}
+                    <label formArrayName="paymentMethods"
+                        *ngFor="let order of objForm.get('paymentMethods')['controls']; let i = index"
+                        style="margin-right: 20px; font-size: 20px;">
+                        <input type="checkbox" [formControlName]="i" />
+                        {{paymentMethods[i]?.name}}
                     </label>
-                  </div>
+                </div>
             </form>
         </div>
     </div>

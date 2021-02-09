@@ -15,7 +15,7 @@ import { FormField } from 'app/util/formField.interface';
 import * as $ from 'jquery';
 import { Config } from 'app/app.config';
 import { TransactionTypeService } from '../transaction-type.service';
-import { TransactionMovement, TransactionType, CurrentAccount, Movements, EntryAmount, PriceType, DescriptionType, StockMovement } from '../transaction-type';
+import { TransactionMovement, TransactionType, CurrentAccount, Movements, EntryAmount, PriceType, DescriptionType, StockMovement, CodeAFIP } from '../transaction-type';
 import { BranchService } from 'app/components/branch/branch.service';
 import { Branch } from 'app/components/branch/branch';
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
@@ -217,7 +217,7 @@ export class TransactionTypeComponent implements OnInit {
             switchMap(async term => {
                 let match: {} = (term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {};
                 match["operationType"] = { "$ne": "D" };
-                if(this.objForm.value.requestCompany !== null){
+                if (this.objForm.value.requestCompany !== null) {
                     match["type"] = this.objForm.value.requestCompany
                 }
                 return await this.getCompanies(match).then(
@@ -333,7 +333,7 @@ export class TransactionTypeComponent implements OnInit {
             tagType: 'boolean',
             values: ['false', 'true'],
             validators: [Validators.required],
-            class: 'form-group col-md-2'
+            class: 'form-group col-md-12'
         }, {
             name: 'tax',
             tag: 'select',
@@ -400,7 +400,7 @@ export class TransactionTypeComponent implements OnInit {
             name: "resetOrderNumber",
             tag: 'select',
             tagType: "text",
-            values: ['Caja','Cantidad','Tiempo'],
+            values: ['Caja', 'Cantidad', 'Tiempo'],
             class: 'form-group col-md-2'
         },
         {
@@ -870,7 +870,7 @@ export class TransactionTypeComponent implements OnInit {
                 requestArticles: 1,
                 modifyArticle: 1,
                 entryAmount: 1,
-                orderNumber : 1,
+                orderNumber: 1,
                 showPrices: 1,
                 showPriceType: 1,
                 updatePrice: 1,
@@ -897,6 +897,7 @@ export class TransactionTypeComponent implements OnInit {
                 printSign: 1,
                 printDescriptionType: 1,
                 numberPrint: 1,
+                codes: 1,
                 "branch._id": 1,
                 "branch.name": 1,
                 "company._id": 1,
@@ -913,13 +914,13 @@ export class TransactionTypeComponent implements OnInit {
                 "application.name": 1,
                 "requestEmployee._id": 1,
                 "requestEmployee.description": 1,
-                "paymentMethods._id" : 1,
-                "paymentMethods.name" : 1,
-                "resetOrderNumber" : 1
+                "paymentMethods._id": 1,
+                "paymentMethods.name": 1,
+                "resetOrderNumber": 1
             }
 
             this.subscription.add(this._objService.getAll({
-                project : project,
+                project: project,
                 match: {
                     operationType: { $ne: "D" },
                     _id: { $oid: this.objId }
@@ -929,6 +930,32 @@ export class TransactionTypeComponent implements OnInit {
                     this.loading = false;
                     if (result.status === 200) {
                         this.obj = result.result[0];
+                        for (let code of this.obj.codes) {
+                            switch (code.letter) {
+                                case 'A':
+                                    this.objForm.patchValue({ codeA: code.code });
+                                    break;
+                                case 'B':
+                                    this.objForm.patchValue({ codeB: code.code });
+                                    break;
+                                case 'C':
+                                    this.objForm.patchValue({ codeC: code.code });
+                                    break;
+                                case 'E':
+                                    this.objForm.patchValue({ codeE: code.code });
+                                    break;
+                                case 'M':
+                                    this.objForm.patchValue({ codeM: code.code });
+                                    break;
+                                case 'R':
+                                    this.objForm.patchValue({ codeR: code.code });
+                                    break;
+
+                                case 'T':
+                                    this.objForm.patchValue({ codeT: code.code });
+                                    break;
+                            }
+                        }
                         this.setValuesForm();
                     } else {
                         this.showToast(result);
@@ -974,7 +1001,14 @@ export class TransactionTypeComponent implements OnInit {
 
         let fields: {} = {
             _id: [this.obj._id],
-            paymentMethods: this._fb.array([])
+            paymentMethods: this._fb.array([]),
+            codeA: '',
+            codeB: '',
+            codeC: '',
+            codeE: '',
+            codeM: '',
+            codeR: '',
+            codeT: '',
         };
         for (let field of this.formFields) {
             if (field.tag !== 'separator') fields[field.name] = [this.obj[field.name], field.validators]
@@ -1047,7 +1081,6 @@ export class TransactionTypeComponent implements OnInit {
             }
         }
 
-
         if (this.paymentMethods && this.paymentMethods.length > 0) {
             this.paymentMethods.forEach(x => {
                 let exists: boolean = false;
@@ -1067,7 +1100,6 @@ export class TransactionTypeComponent implements OnInit {
             })
         }
 
-
         this.objForm.patchValue(values);
     }
 
@@ -1076,16 +1108,16 @@ export class TransactionTypeComponent implements OnInit {
         let isValid: boolean = true;
 
         isValid = (this.operation === 'delete') ? true : this.objForm.valid;
-        
+
         if (isValid) {
             this.obj = Object.assign(this.obj, this.objForm.value);
             const selectedOrderIds = this.objForm.value.paymentMethods
                 .map((v, i) => (v ? this.paymentMethods[i] : null))
                 .filter(v => v !== null);
             this.obj.paymentMethods = selectedOrderIds;
-            } else {
+        } else {
             this.onValueChanged();
-            }
+        }
 
         if (isValid) {
             for (let field of this.formFields) {
@@ -1132,8 +1164,8 @@ export class TransactionTypeComponent implements OnInit {
                         this.obj[field.name] = this.obj[field.name] == 'true' || this.obj[field.name] == true;
                         break;
                     case 'text':
-                        if(this.obj[field.name] === "null") this.obj[field.name] = null;
-                        if(field.tag === 'autocomplete' && (this.obj[field.name] == "" || (this.obj[field.name] && !this.obj[field.name]['_id']))){
+                        if (this.obj[field.name] === "null") this.obj[field.name] = null;
+                        if (field.tag === 'autocomplete' && (this.obj[field.name] == "" || (this.obj[field.name] && !this.obj[field.name]['_id']))) {
                             this.obj[field.name] = null;
                         }
                         break;
@@ -1142,6 +1174,36 @@ export class TransactionTypeComponent implements OnInit {
                 }
             }
         }
+
+        this.obj.codes = new Array();
+        this.obj.codes.push({
+            letter: 'A',
+            code: this.objForm.value.codeA,
+        });
+        this.obj.codes.push({
+            letter: 'B',
+            code: this.objForm.value.codeB,
+        });
+        this.obj.codes.push({
+            letter: 'C',
+            code: this.objForm.value.codeC,
+        });
+        this.obj.codes.push({
+            letter: 'E',
+            code: this.objForm.value.codeE,
+        });
+        this.obj.codes.push({
+            letter: 'M',
+            code: this.objForm.value.codeM,
+        });
+        this.obj.codes.push({
+            letter: 'R',
+            code: this.objForm.value.codeR,
+        });
+        this.obj.codes.push({
+            letter: 'T',
+            code: this.objForm.value.codeT,
+        });
 
         if (isValid) {
             switch (this.operation) {
@@ -1369,7 +1431,7 @@ export class TransactionTypeComponent implements OnInit {
     public getAllPaymentMethods(): Promise<PaymentMethod[]> {
         return new Promise<PaymentMethod[]>((resolve, reject) => {
             this.subscription.add(this._paymentMethod.getAll({
-                match : { operationType : {"$ne": "D"}},
+                match: { operationType: { "$ne": "D" } },
                 sort: { name: 1 },
             }).subscribe(
                 result => {
