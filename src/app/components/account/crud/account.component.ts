@@ -14,33 +14,40 @@ import { Router } from '@angular/router';
 import { FormField } from 'app/util/formField.interface';
 import * as $ from 'jquery';
 import { Config } from 'app/app.config';
+import { BranchService } from 'app/components/branch/branch.service';
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
-import { Category } from '../category';
-import { CategoryService } from '../category.service';
-import { Application } from 'app/components/application/application.model';
 import { ApplicationService } from 'app/components/application/application.service';
-import Resulteable from 'app/util/Resulteable';
+import { Company, CompanyType } from 'app/components/company/company';
+import { EmployeeTypeService } from 'app/components/employee-type/employee-type.service';
+import { PaymentMethodService } from 'app/components/payment-method/payment-method.service';
+import { EmailTemplateService } from 'app/components/email-template/email-template.service';
+import { ShipmentMethodService } from 'app/components/shipment-method/shipment-method.service';
+import { PrinterService } from 'app/components/printer/printer.service';
+import { CompanyService } from 'app/components/company/company.service';
+import { AccountService } from '../account.service';
+import { Account, Modes, Types } from '../account';
+
 
 
 @Component({
-    selector: 'app-category',
-    templateUrl: './category.component.html',
-    styleUrls: ['./category.component.scss'],
+    selector: 'app-account',
+    templateUrl: './account.component.html',
+    styleUrls: ['./account.component.scss'],
     providers: [NgbAlertConfig, TranslateMePipe, TranslatePipe],
     encapsulation: ViewEncapsulation.None
 })
 
-export class CategoryComponent implements OnInit {
+export class AccountComponent implements OnInit {
 
     public objId: string;
     public readonly: boolean;
     public operation: string;
-    public obj: Category;
+    public obj: Account;
     public objForm: FormGroup;
     public loading: boolean = false;
     public schedule: FormArray;
     public focusEvent = new EventEmitter<boolean>();
-    public title: string = 'category';
+    public title: string = 'account';
     private subscription: Subscription = new Subscription();
     private capitalizePipe: CapitalizePipe = new CapitalizePipe();
     public focus$: Subject<string>[] = new Array();
@@ -51,24 +58,20 @@ export class CategoryComponent implements OnInit {
     public oldFiles: any[];
     public apiURL: string = Config.apiV8URL;
     public database: string = Config.database;
-    public selectedFile: File = null;
-    public src: any;
-    public imageURL: string;
-    public applications: Application[];
 
 
-    public searchCategories = (text$: Observable<string>) => {
+    public searchAccount = (text$: Observable<string>) => {
         const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
         const inputFocus$ = this.focus$['parent'];
         return merge(debouncedText$, inputFocus$).pipe(
             tap(() => this.loading = true),
             switchMap(async term => {
-                let match: {} = (term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {};
+                let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' } } : {};
                 if(this.operation === 'update' && this.obj._id){
                     match["_id"] = { "$ne" : { "$oid" : this.obj._id } }
                 }
                 match["operationType"] = { "$ne": "D" };
-                return await this.getCategories(match).then(
+                return await this.getParent(match).then(
                     result => {
                         return result;
                     }
@@ -78,101 +81,47 @@ export class CategoryComponent implements OnInit {
         )
     }
 
-    public formatterCategories = (x: { name: string }) => x.name;
+    public formatterParent = (x: { name: string }) => x.name;
+
 
     public formFields: FormField[] = [
         {
-            name: 'order',
+            name: 'code',
             tag: 'input',
-            tagType: 'number',
-            class: 'form-group col-md-2'
-        },
-        {
+            tagType: 'text',
+            validators: [Validators.required],
+            class: 'form-group col-md-6'
+        }, {
             name: 'description',
             tag: 'input',
             tagType: 'text',
             validators: [Validators.required],
-            class: 'form-group col-md-10'
+            class: 'form-group col-md-6'
+        },
+        {
+            name: 'type',
+            tag: 'select',
+            tagType: 'text',
+            values: [Types.Asset, Types.Passive, Types.netWorth, Types.Result, Types.Compensatory, Types.Other],
+            class: 'form-group col-md-2'
+        },
+        {
+            name: 'mode',
+            tag: 'select',
+            tagType: 'text',
+            values: [Modes.Analytical, Modes.Synthetic],
+            class: 'form-group col-md-2'
         },
         {
             name: 'parent',
             tag: 'autocomplete',
             tagType: 'text',
-            search: this.searchCategories,
-            format: this.formatterCategories,
+            search: this.searchAccount,
+            format: this.formatterParent,
             values: null,
             focus: false,
-            class: 'form-group col-md-4'
+            class: 'form-group col-md-8'
         },
-        {
-            name: 'favourite',
-            tag: 'select',
-            tagType: 'boolean',
-            values: ['true', 'false'],
-            default: 'false',
-            class: 'form-group col-md-4'
-        },
-        {
-            name: 'picture',
-            tag: 'input',
-            tagType: 'file',
-            search: null,
-            format: 'image',
-            class: 'form-group col-md-12'
-        },
-        {
-            name: 'visibleOnSale',
-            tag: 'select',
-            tagType: 'boolean',
-            values: ['true', 'false'],
-            default: 'true',
-            class: 'form-group col-md-3'
-        },
-        {
-            name: 'visibleOnPurchase',
-            tag: 'select',
-            tagType: 'boolean',
-            values: ['true', 'false'],
-            default: 'true',
-            class: 'form-group col-md-3'
-        },
-        {
-            name: 'visibleInvoice',
-            tag: 'select',
-            tagType: 'boolean',
-            values: ['true', 'false'],
-            default: 'false',
-            class: 'form-group col-md-3'
-        },
-        {
-            name: 'isRequiredOptional',
-            tag: 'select',
-            tagType: 'boolean',
-            values: ['true', 'false'],
-            default: 'false',
-            class: 'form-group col-md-3'
-        },
-        {
-            name: 'E-Commerce',
-            tag: 'separator',
-            tagType: null,
-            class: 'form-group col-md-12'
-        },
-        {
-            name: 'ecommerceEnabled',
-            tag: 'select',
-            tagType: 'boolean',
-            values: ['true', 'false'],
-            default: 'false',
-            class: 'form-group col-md-3'
-        },
-        {
-            name: 'observation',
-            tag: 'input',
-            tagType: 'text',
-            class: 'form-group col-md-4'
-        }
-
     ];
     public formErrors: {} = {};
     public validationMessages = {
@@ -214,17 +163,24 @@ export class CategoryComponent implements OnInit {
     }
 
     constructor(
-        private _objService: CategoryService,
+        private _objService: AccountService,
         private _toastr: ToastrService,
         private _title: Title,
         public _fb: FormBuilder,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,
+        public _branchService: BranchService,
         public _applicationService: ApplicationService,
+        public _employeeTypeService: EmployeeTypeService,
+        public _paymentMethod: PaymentMethodService,
+        public _emailTemplate: EmailTemplateService,
+        public _shipmentMethod: ShipmentMethodService,
+        public _printer: PrinterService,
+        public _company: CompanyService,
         public translatePipe: TranslateMePipe,
         private _router: Router,
     ) {
-        this.obj = new Category();
+        this.obj = new Account();
         for (let field of this.formFields) {
             if (field.tag !== 'separator') {
                 this.formErrors[field.name] = '';
@@ -252,24 +208,16 @@ export class CategoryComponent implements OnInit {
             let project = {
                 _id: 1,
                 operationType: 1,
-                description: 1,
-                ecommerceEnabled: 1,
-                visibleInvoice: 1,
-                picture: 1,
-                order: 1,
-                visibleOnPurchase: 1,
-                visibleOnSale: 1,
-                isRequiredOptional: 1,
-                favourite: 1,
+                code: 1,
+                type: 1,
+                mode: 1,
                 'parent._id': 1,
                 'parent.name':'$parent.description',
-                'applications._id': 1,
-                'applications.name': 1,
-                'observation': 1
+                description: 1
             }
 
             this.subscription.add(this._objService.getAll({
-                project,
+                project: project,
                 match: {
                     operationType: { $ne: "D" },
                     _id: { $oid: this.objId }
@@ -287,13 +235,6 @@ export class CategoryComponent implements OnInit {
                 error => this.showToast(error)
             ));
         }
-
-        await this.getAllApplications({})
-            .then((result: Application[]) => {
-                this.applications = result;
-                this.setValuesForm();
-            })
-            .catch((error: Resulteable) => this.showToast(error));
     }
 
     public ngAfterViewInit(): void {
@@ -323,8 +264,7 @@ export class CategoryComponent implements OnInit {
     public buildForm(): void {
 
         let fields: {} = {
-            _id: [this.obj._id],
-            applications: this._fb.array([])
+            _id: [this.obj._id]
         };
         for (let field of this.formFields) {
             if (field.tag !== 'separator') fields[field.name] = [this.obj[field.name], field.validators]
@@ -364,7 +304,7 @@ export class CategoryComponent implements OnInit {
     public setValuesForm(): void {
 
         let values: {} = {
-            _id: this.obj._id
+            _id: this.obj._id,
         }
         for (let field of this.formFields) {
             if (field.tag !== 'separator') {
@@ -396,24 +336,6 @@ export class CategoryComponent implements OnInit {
                 }
             }
         }
-        if (this.applications && this.applications.length > 0) {
-            this.applications.forEach(x => {
-                let exists: boolean = false;
-                if (this.obj && this.obj.applications && this.obj.applications.length > 0) {
-                    this.obj.applications.forEach(y => {
-                        if (x._id === y._id) {
-                            exists = true;
-                            const control = new FormControl(y);
-                            (this.objForm.controls.applications as FormArray).push(control);
-                        }
-                    })
-                }
-                if (!exists) {
-                    const control = new FormControl(false);
-                    (this.objForm.controls.applications as FormArray).push(control);
-                }
-            })
-        }
 
         this.objForm.patchValue(values);
     }
@@ -425,13 +347,9 @@ export class CategoryComponent implements OnInit {
         isValid = (this.operation === 'delete') ? true : this.objForm.valid;
 
         if (isValid) {
-        this.obj = Object.assign(this.obj, this.objForm.value);
-        const selectedOrderIds = this.objForm.value.applications
-            .map((v, i) => (v ? this.applications[i] : null))
-            .filter(v => v !== null);
-        this.obj.applications = selectedOrderIds;
+            this.obj = Object.assign(this.obj, this.objForm.value);
         } else {
-        this.onValueChanged();
+            this.onValueChanged();
         }
 
         if (isValid) {
@@ -446,14 +364,14 @@ export class CategoryComponent implements OnInit {
                     case 'file':
                         if (this.filesToUpload && this.filesToUpload[field.name] && this.filesToUpload[field.name].length > 0) {
                             this.loading = true;
-                            this._objService.deleteFile(this.typeFile[field.name], "category", this.obj[field.name]);
+                            this._objService.deleteFile(this.typeFile[field.name], field.name.split('.')[field.name.split('.').length - 1], this.obj[field.name]);
                             if (this.filesToUpload[field.name] && this.filesToUpload[field.name].length > 0) {
                                 this.obj[field.name] = this.oldFiles[field.name];
                                 if (field.multiple && (!this.obj || !this.obj[field.name] || this.obj[field.name].length === 0)) {
                                     this.obj[field.name] = new Array();
                                 }
                                 for (let file of this.filesToUpload[field.name]) {
-                                    await this._objService.uploadFile(this.typeFile[field.name], "category", file)
+                                    await this._objService.uploadFile(this.typeFile[field.name], field.name.split('.')[field.name.split('.').length - 1], file)
                                         .then(result => {
                                             this.loading = false;
                                             if (result['result']) {
@@ -477,8 +395,10 @@ export class CategoryComponent implements OnInit {
                         break;
                     case 'boolean':
                         this.obj[field.name] = this.obj[field.name] == 'true' || this.obj[field.name] == true;
+                        break;
                     case 'text':
-                        if(field.tag === 'autocomplete' && (this.obj[field.name] == "" || (this.obj[field.name] && !this.obj[field.name]['_id']))){
+                        if (this.obj[field.name] === "null") this.obj[field.name] = null;
+                        if (field.tag === 'autocomplete' && (this.obj[field.name] == "" || (this.obj[field.name] && !this.obj[field.name]['_id']))) {
                             this.obj[field.name] = null;
                         }
                         break;
@@ -506,7 +426,7 @@ export class CategoryComponent implements OnInit {
     }
 
     public deleteFile(typeFile: string, fieldName: string, filename: string) {
-        this._objService.deleteFile(typeFile, "category", filename).subscribe(
+        this._objService.deleteFile(typeFile, fieldName.split('.')[fieldName.split('.').length - 1], filename).subscribe(
             result => {
                 if (result.status === 200) {
                     try {
@@ -538,7 +458,7 @@ export class CategoryComponent implements OnInit {
             this._objService.save(this.obj).subscribe(
                 result => {
                     this.showToast(result);
-                    if (result.status === 200) this._router.navigate(['/categories']);
+                    if (result.status === 200) this._router.navigate(['/accounts']);
                 },
                 error => this.showToast(error)
             )
@@ -551,7 +471,7 @@ export class CategoryComponent implements OnInit {
             this._objService.update(this.obj).subscribe(
                 result => {
                     this.showToast(result);
-                    if (result.status === 200) this._router.navigate(['/categories']);
+                    if (result.status === 200) this._router.navigate(['/accounts']);
                 },
                 error => this.showToast(error)
             )
@@ -565,7 +485,7 @@ export class CategoryComponent implements OnInit {
                 async result => {
                     this.showToast(result);
                     if (result.status === 200) {
-                        this._router.navigate(['/categories']);
+                        this._router.navigate(['/accounts']);
                     }
                 },
                 error => this.showToast(error)
@@ -573,28 +493,10 @@ export class CategoryComponent implements OnInit {
         );
     }
 
-    public getAllApplications(match: {}): Promise<Application[]> {
-        return new Promise<Application[]>((resolve, reject) => {
-            this.subscription.add(this._applicationService.getAll({
-                match : match,
-                sort: { name: 1 },
-            }).subscribe(
-                result => {
-                    this.loading = false;
-                    (result.status === 200) ? resolve(result.result) : reject(result);
-                },
-                error => reject(error)
-            ));
-        });
-    }
-
-    public getCategories(match: {}): Promise<Category[]> {
-        return new Promise<Category[]>((resolve, reject) => {
+    public getParent(match: {}): Promise<Company[]> {
+        return new Promise<Company[]>((resolve, reject) => {
             this.subscription.add(this._objService.getAll({
-                project : {
-                    name: "$description",
-                    operationType: 1
-                },
+                project: { "name": "$description" , operationType: 1 },
                 match,
                 sort: { description: 1 },
                 limit: 10,
