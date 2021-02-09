@@ -84,6 +84,7 @@ export class TransactionType extends Model {
     public numberPrint: number = 0;
     public orderNumber : number;
     public resetOrderNumber : string;
+    public allowAccounting : boolean = false;
     public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     public updateUser: User;

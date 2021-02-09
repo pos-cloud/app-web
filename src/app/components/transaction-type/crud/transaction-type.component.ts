@@ -333,7 +333,7 @@ export class TransactionTypeComponent implements OnInit {
             tagType: 'boolean',
             values: ['false', 'true'],
             validators: [Validators.required],
-            class: 'form-group col-md-12'
+            class: 'form-group col-md-2'
         }, {
             name: 'tax',
             tag: 'select',
@@ -563,6 +563,19 @@ export class TransactionTypeComponent implements OnInit {
             tagType: "text",
             values: [null, StockMovement.Inflows, StockMovement.Inventory, StockMovement.Outflows, StockMovement.Transfer],
             default: null,
+            class: 'form-group col-md-2'
+        },
+        {
+            name: 'Contabilidad',
+            tag: 'separator',
+            tagType: null,
+            class: 'form-group col-md-12'
+        },
+        {
+            name: 'allowAccounting',
+            tag: 'select',
+            tagType: "boolean",
+            values: ['false', 'true'],
             class: 'form-group col-md-2'
         },
         {
@@ -916,7 +929,8 @@ export class TransactionTypeComponent implements OnInit {
                 "requestEmployee.description": 1,
                 "paymentMethods._id": 1,
                 "paymentMethods.name": 1,
-                "resetOrderNumber": 1
+                "resetOrderNumber": 1,
+                "allowAccounting" : 1
             }
 
             this.subscription.add(this._objService.getAll({
