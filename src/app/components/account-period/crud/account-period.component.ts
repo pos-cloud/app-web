@@ -412,7 +412,7 @@ export class AccountPeriodComponent implements OnInit {
             this._objService.save(this.obj).subscribe(
                 result => {
                     this.showToast(result);
-                    if (result.status === 200) this._router.navigate(['/accounts']);
+                    if (result.status === 200) this._router.navigate(['/account-periods']);
                 },
                 error => this.showToast(error)
             )
@@ -425,7 +425,7 @@ export class AccountPeriodComponent implements OnInit {
             this._objService.update(this.obj).subscribe(
                 result => {
                     this.showToast(result);
-                    if (result.status === 200) this._router.navigate(['/accounts']);
+                    if (result.status === 200) this._router.navigate(['/account-periods']);
                 },
                 error => this.showToast(error)
             )
@@ -439,7 +439,7 @@ export class AccountPeriodComponent implements OnInit {
                 async result => {
                     this.showToast(result);
                     if (result.status === 200) {
-                        this._router.navigate(['/accounts']);
+                        this._router.navigate(['/account-periods']);
                     }
                 },
                 error => this.showToast(error)

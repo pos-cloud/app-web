@@ -3,7 +3,7 @@
         <div class="card-header">
             <span style="color: #607D8B">{{title}}</span>
             <div class="pull-right">
-                <button type="button" class="btn" [routerLink]="['/accounts']"><i
+                <button type="button" class="btn" [routerLink]="['/account-periods']"><i
                         class="fa fa-arrow-left"></i><span>{{'return' | translate | capitalize}}</span></button>
                 <button type="button" class="btn" [disabled]="loading"
                     *ngIf="operation !== 'delete' && operation !== 'view'" (click)="addObj()">
