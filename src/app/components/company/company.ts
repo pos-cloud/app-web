@@ -10,6 +10,7 @@ import * as moment from 'moment';
 import { Transport } from '../transport/transport';
 import { PriceList } from '../price-list/price-list';
 import { Employee } from '../employee/employee';
+import { Account } from '../account/account';
 
 export class Company {
 
@@ -42,6 +43,7 @@ export class Company {
   public priceList: PriceList;
   public addressNumber: string;
   public discount : number;
+  public account : Account;
   public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public updateUser: User;
