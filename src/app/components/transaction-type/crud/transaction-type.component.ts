@@ -629,7 +629,6 @@ export class TransactionTypeComponent implements OnInit {
             focus: false,
             class: 'form-group col-md-4'
         },
-
         {
             name: 'Método de Entrega',
             tag: 'separator',

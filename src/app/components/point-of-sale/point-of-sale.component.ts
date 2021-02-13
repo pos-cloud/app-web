@@ -1263,7 +1263,7 @@ export class PointOfSaleComponent implements OnInit {
                 modalRef.componentInstance.transactionId = this.transaction._id;
                 modalRef.result.then(
                     async (result) => {
-                        if(result) {
+                        if (result) {
                             this.transaction = result.transaction;
                             this.movementsOfCashes = result.movementsOfCashes;
                             if (this.transaction) {
@@ -1617,7 +1617,7 @@ export class PointOfSaleComponent implements OnInit {
                 }
 
                 if (Config.country === 'MX') {
-                    modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://${Config.apiHost}:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number +`">Su comprobante</a>`;
+                    modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://${Config.apiHost}:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number + `">Su comprobante</a>`;
                 }
 
                 if (this.transaction.type.defectEmailTemplate) {
@@ -1629,7 +1629,7 @@ export class PointOfSaleComponent implements OnInit {
                     }
 
                     if (Config.country === 'MX') {
-                        modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://${Config.apiHost}:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number +`">Su comprobante</a>`;
+                        modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://${Config.apiHost}:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number + `">Su comprobante</a>`;
                     }
                 }
 
@@ -1848,8 +1848,8 @@ export class PointOfSaleComponent implements OnInit {
     async finishTransaction(state: TransactionState = TransactionState.Closed) {
         let isValid: boolean = true;
 
-        if(isValid) {
-            if(this.movementsOfCashes && this.movementsOfCashes.length > 0) {
+        if (isValid) {
+            if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
                 for (let movementOfCash of this.movementsOfCashes) {
                     if (movementOfCash.balanceCanceled > 0) {
                         movementOfCash.cancelingTransaction = this.transaction;
@@ -1993,7 +1993,7 @@ export class PointOfSaleComponent implements OnInit {
                 "deliveryAddress.state": 1,
                 "deliveryAddress.observation": 1,
                 "shipmentMethod.name": 1,
-                "paymentMethodEcommerce" : 1
+                "paymentMethodEcommerce": 1
             }
 
             if (this.transactionMovement === TransactionMovement.Stock) {
@@ -2229,33 +2229,41 @@ export class PointOfSaleComponent implements OnInit {
                 }
                 if (email && this.transaction.state.toString() === TransactionState.PaymentConfirmed.toString()) {
                     this.transaction.balance = 0;
-                    this.sendEmail(
-                        `Pago confirmado en tu Pedido Número ${this.transaction.orderNumber}`,
-                        `Hola ${transaction.company.name} confirmamos el pago de tu compra.</br><b>Ya estamos preparando tu pedido, te avisamos cuando este en camino.</b>`,
-                        email);
+                    if (this.transaction.type.application.email.statusTransaction.paymentConfirmed.enabled) {
+                        this.sendEmail(
+                            `Pago confirmado en tu Pedido Número ${this.transaction.orderNumber}`,
+                            `Hola ${transaction.company.name} confirmamos el pago de tu compra.</br><b>Ya estamos preparando tu pedido, te avisamos cuando este en camino.</b>`,
+                            email);
+                    }
                     if (oldState === TransactionState.Delivered) this.transaction.state = TransactionState.Closed;
                 } else if (email && this.transaction.state.toString() === TransactionState.PaymentDeclined.toString()) {
                     this.transaction.balance = 0;
-                    this.sendEmail(
-                        `Pago rechazado en tu Pedido Número ${this.transaction.orderNumber}`,
-                        `Hola ${transaction.company.name} rechazamos el pago de tu compra.</br><b>Lamentamos el incoveniente por no poder finalizar la compra. Puedes realizar de nuevo el pedido cuando desees, te esperamos.</b>`,
-                        email);
+                    if (this.transaction.type.application.email.statusTransaction.paymentDeclined.enabled) {
+                        this.sendEmail(
+                            `Pago rechazado en tu Pedido Número ${this.transaction.orderNumber}`,
+                            `Hola ${transaction.company.name} rechazamos el pago de tu compra.</br><b>Lamentamos el incoveniente por no poder finalizar la compra. Puedes realizar de nuevo el pedido cuando desees, te esperamos.</b>`,
+                            email);
+                    }
                 } else if (email && this.transaction.state.toString() === TransactionState.Sent.toString()) {
-                    this.sendEmail(
-                        `Tu Pedido Número ${this.transaction.orderNumber} está en camino.`,
-                        `${transaction.company.name} realizamos el envío de tu pedido.</br>
-              <b>Ya se encuentra en camino a
-              ${this.transaction.deliveryAddress.name} ${this.transaction.deliveryAddress.number},
-              ${this.transaction.deliveryAddress.city},
-              ${this.transaction.deliveryAddress.state}.
-              </b>`,
-                        email);
+                    if (this.transaction.type.application.email.statusTransaction.sent.enabled) {
+                        this.sendEmail(
+                            `Tu Pedido Número ${this.transaction.orderNumber} está en camino.`,
+                            `${transaction.company.name} realizamos el envío de tu pedido.</br>
+                        <b>Ya se encuentra en camino a
+                        ${this.transaction.deliveryAddress.name} ${this.transaction.deliveryAddress.number},
+                        ${this.transaction.deliveryAddress.city},
+                        ${this.transaction.deliveryAddress.state}.
+                        </b>`,
+                            email)
+                    }
                 } else if (email && this.transaction.state.toString() === TransactionState.Delivered.toString()) {
-                    this.sendEmail(
-                        `Tu Pedido Número ${this.transaction.orderNumber} ha sido entregado.`,
-                        `${transaction.company.name} hemos entregado tu pedido.</br>
-              <b>Gracias por elegirnos. ¡Te esperamos pronto!</b>`,
-                        email);
+                    if (this.transaction.type.application.email.statusTransaction.delivered.enabled) {
+                        this.sendEmail(
+                            `Tu Pedido Número ${this.transaction.orderNumber} ha sido entregado.`,
+                            `${transaction.company.name} hemos entregado tu pedido.</br>
+                  <b>Gracias por elegirnos. ¡Te esperamos pronto!</b>`,
+                            email);
+                    }
                     if (this.transaction.balance === 0 && ((this.transaction.type.electronics && this.transaction.CAE) || !this.transaction.type.electronics)) this.transaction.state = TransactionState.Closed;
                 }
             }
