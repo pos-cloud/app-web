@@ -4,14 +4,14 @@ import { ModelService } from '../model/model.service';
 import { AuthService } from '../login/auth.service';
 
 @Injectable()
-export class AccountingPeriodService extends ModelService {
+export class AccountSeatService extends ModelService {
 
   constructor(
     public _http: HttpClient,
     public _authService: AuthService
   ) {
     super(
-      `accounting-periods`, // PATH
+      `account-seats`, // PATH
       _http,
       _authService
     );

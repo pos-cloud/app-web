@@ -14,6 +14,7 @@ import { CategoryModule } from './category/category.module';
 import { CompanyGroupModule } from './company-group/company-group.module';
 import { AccountModule } from './account/account.module';
 import { AccountPeriodModule } from './account-period/account-period.module';
+import { AccountSeatModule } from './account-seat/account-seat.module';
 
 @NgModule({
 	imports: [
@@ -31,7 +32,8 @@ import { AccountPeriodModule } from './account-period/account-period.module';
     CategoryModule,
     CompanyGroupModule,
     AccountModule,
-    AccountPeriodModule
+    AccountPeriodModule,
+    AccountSeatModule
 	],
 	declarations: [
 	],

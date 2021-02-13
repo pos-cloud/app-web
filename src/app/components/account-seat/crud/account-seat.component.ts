@@ -24,30 +24,34 @@ import { EmailTemplateService } from 'app/components/email-template/email-templa
 import { ShipmentMethodService } from 'app/components/shipment-method/shipment-method.service';
 import { PrinterService } from 'app/components/printer/printer.service';
 import { CompanyService } from 'app/components/company/company.service';
-import { AccountingPeriodService } from '../accounting-period.service';
-import { AccountingPeriod, StatusPeriod } from '../accounting-period';
+import { AccountSeatService } from '../account-seat.service';
+import { AccountSeat } from '../account-seat';
+import { AccountPeriodService } from 'app/components/account-period/account-period.service';
+import { AccountService } from 'app/components/account/account.service';
+import { Account } from 'app/components/account/account';
+import { AccountPeriod } from 'app/components/account-period/account-period';
 
 
 
 @Component({
-    selector: 'app-accounting-period',
-    templateUrl: './accounting-period.component.html',
-    styleUrls: ['./accounting-period.component.scss'],
+    selector: 'app-account-seat',
+    templateUrl: './account-seat.component.html',
+    styleUrls: ['./account-seat.component.scss'],
     providers: [NgbAlertConfig, TranslateMePipe, TranslatePipe],
     encapsulation: ViewEncapsulation.None
 })
 
-export class AccountingPeriodComponent implements OnInit {
+export class AccountSeatComponent implements OnInit {
 
     public objId: string;
     public readonly: boolean;
     public operation: string;
-    public obj: AccountingPeriod;
+    public obj: AccountSeat;
     public objForm: FormGroup;
     public loading: boolean = false;
     public schedule: FormArray;
     public focusEvent = new EventEmitter<boolean>();
-    public title: string = 'accounting-period';
+    public title: string = 'account-seat';
     private subscription: Subscription = new Subscription();
     private capitalizePipe: CapitalizePipe = new CapitalizePipe();
     public focus$: Subject<string>[] = new Array();
@@ -59,24 +63,61 @@ export class AccountingPeriodComponent implements OnInit {
     public apiURL: string = Config.apiV8URL;
     public database: string = Config.database;
 
+    public searchPeriods = (text$: Observable<string>) =>
+        text$.pipe(
+            debounceTime(300),
+            distinctUntilChanged(),
+            tap(() => this.loading = true),
+            switchMap(async term => {
+                let match: {} = (term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {};
+                return await this.getAllPeriods(match).then(
+                    result => {
+                        return result;
+                    }
+                )
+            }),
+            tap(() => this.loading = false)
+        )
+    public formatterPeriods = (x: AccountPeriod) => { return x['name'] };
+
+    public searchAccount = (text$: Observable<string>) =>
+        text$.pipe(
+            debounceTime(300),
+            distinctUntilChanged(),
+            tap(() => this.loading = true),
+            switchMap(async term => {
+                let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' } } : {};
+                return await this.getAllAccounts(match).then(
+                    result => {
+                        return result;
+                    }
+                )
+            }),
+            tap(() => this.loading = false)
+        )
+    public formatterAccount = (x: Account) => { return x.description; };
+
     public formFields: FormField[] = [
         {
-            name: 'status',
-            tag: 'select',
+            name: 'date',
+            tag: 'input',
+            tagType: 'date',
+            class: 'form-group col-md-2'
+        },
+        {
+            name: 'período',
+            tag: 'autocomplete',
             tagType: 'text',
-            values: [StatusPeriod.Open, StatusPeriod.Close],
-            class: 'form-group col-md-2'
+            search: this.searchPeriods,
+            format: this.formatterPeriods,
+            values: null,
+            focus: false,
+            class: 'form-group col-md-4'
         },
         {
-            name: 'startDate',
+            name: 'observation',
             tag: 'input',
-            tagType: 'date',
-            class: 'form-group col-md-2'
-        },
-        {
-            name: 'endDate',
-            tag: 'input',
-            tagType: 'date',
+            tagType: 'text',
             class: 'form-group col-md-2'
         }
     ];
@@ -120,7 +161,7 @@ export class AccountingPeriodComponent implements OnInit {
     }
 
     constructor(
-        private _objService: AccountingPeriodService,
+        private _objService: AccountSeatService,
         private _toastr: ToastrService,
         private _title: Title,
         public _fb: FormBuilder,
@@ -128,6 +169,8 @@ export class AccountingPeriodComponent implements OnInit {
         public alertConfig: NgbAlertConfig,
         public _branchService: BranchService,
         public _applicationService: ApplicationService,
+        public _accountService : AccountService,
+        public _periodService: AccountPeriodService,
         public _employeeTypeService: EmployeeTypeService,
         public _paymentMethod: PaymentMethodService,
         public _emailTemplate: EmailTemplateService,
@@ -137,7 +180,7 @@ export class AccountingPeriodComponent implements OnInit {
         public translatePipe: TranslateMePipe,
         private _router: Router,
     ) {
-        this.obj = new AccountingPeriod();
+        this.obj = new AccountSeat();
         for (let field of this.formFields) {
             if (field.tag !== 'separator') {
                 this.formErrors[field.name] = '';
@@ -165,9 +208,12 @@ export class AccountingPeriodComponent implements OnInit {
             let project = {
                 _id: 1,
                 operationType: 1,
-                status: 1,
-                startDate: 1,
-                endDate: 1
+                date: 1,
+                observation: 1,
+                period: 1,
+                "items.account": 1,
+                "items.debit": 1,
+                "items.credit": 1
             }
 
             this.subscription.add(this._objService.getAll({
@@ -178,6 +224,7 @@ export class AccountingPeriodComponent implements OnInit {
                 }
             }).subscribe(
                 result => {
+                    console.log(result);
                     this.loading = false;
                     if (result.status === 200) {
                         this.obj = result.result[0];
@@ -218,7 +265,8 @@ export class AccountingPeriodComponent implements OnInit {
     public buildForm(): void {
 
         let fields: {} = {
-            _id: [this.obj._id]
+            _id: [this.obj._id],
+            'items': this._fb.array([])
         };
         for (let field of this.formFields) {
             if (field.tag !== 'separator') fields[field.name] = [this.obj[field.name], field.validators]
@@ -258,7 +306,7 @@ export class AccountingPeriodComponent implements OnInit {
     public setValuesForm(): void {
 
         let values: {} = {
-            _id: this.obj._id,
+            _id: this.obj._id
         }
         for (let field of this.formFields) {
             if (field.tag !== 'separator') {
@@ -289,6 +337,22 @@ export class AccountingPeriodComponent implements OnInit {
                         break;
                 }
             }
+        }
+
+
+        console.log(this.obj.items);
+
+        if(this.obj.items && this.obj.items.length > 0){
+            var items = <FormArray>this.objForm.controls.items;
+            this.obj.items.forEach(x => {
+                console.log(x);
+                items.push(this._fb.group({
+                    '_id': null,
+                    'account': x.account,
+                    'debit': x.debit,
+                    'credit': x.credit
+                }))
+            })
         }
 
         this.objForm.patchValue(values);
@@ -362,6 +426,8 @@ export class AccountingPeriodComponent implements OnInit {
             }
         }
 
+        console.log(this.obj);
+
         if (isValid) {
             switch (this.operation) {
                 case 'add':
@@ -412,7 +478,7 @@ export class AccountingPeriodComponent implements OnInit {
             this._objService.save(this.obj).subscribe(
                 result => {
                     this.showToast(result);
-                    if (result.status === 200) this._router.navigate(['/accounts']);
+                    if (result.status === 200) this._router.navigate(['/account-seats']);
                 },
                 error => this.showToast(error)
             )
@@ -425,7 +491,7 @@ export class AccountingPeriodComponent implements OnInit {
             this._objService.update(this.obj).subscribe(
                 result => {
                     this.showToast(result);
-                    if (result.status === 200) this._router.navigate(['/accounts']);
+                    if (result.status === 200) this._router.navigate(['/account-seats']);
                 },
                 error => this.showToast(error)
             )
@@ -439,12 +505,73 @@ export class AccountingPeriodComponent implements OnInit {
                 async result => {
                     this.showToast(result);
                     if (result.status === 200) {
-                        this._router.navigate(['/accounts']);
+                        this._router.navigate(['/account-seats']);
                     }
                 },
                 error => this.showToast(error)
             )
         );
+    }
+
+    public getAllPeriods(match: {}): Promise<Account[]> {
+        return new Promise<Account[]>((resolve, reject) => {
+            this.subscription.add(this._periodService.getAll({
+                project : {
+                    "name" : { $concat: ["$status"," Inicio:",{ "$dateToString": { "date": "$startDate", "format": "%d/%m/%Y", "timezone": "-03:00" } }," Fin:", { "$dateToString": { "date": "$endDate", "format": "%d/%m/%Y", "timezone": "-03:00" } } ] },
+                    startDate : { "$dateToString": { "date": "$startDate", "format": "%d/%m/%Y", "timezone": "-03:00" } },
+                    endDate : { "$dateToString": { "date": "$endDate", "format": "%d/%m/%Y", "timezone": "-03:00" } }
+                },
+                match,
+                sort: { startDate: 1 },
+            }).subscribe(
+                result => {
+                    console.log(result);
+                    this.loading = false;
+                    (result.status === 200) ? resolve(result.result) : reject(result);
+                },
+                error => reject(error)
+            ));
+        });
+    }
+
+    public getAllAccounts(match: {}): Promise<Account[]> {
+        return new Promise<Account[]>((resolve, reject) => {
+            this.subscription.add(this._accountService.getAll({
+                match,
+                sort: { description: 1 },
+            }).subscribe(
+                result => {
+                    this.loading = false;
+                    (result.status === 200) ? resolve(result.result) : reject(result);
+                },
+                error => reject(error)
+            ));
+        });
+    }
+
+    public addItem(itemForm: NgForm): void {
+
+        let valid = true;
+        const item = this.objForm.controls.items as FormArray;
+
+        console.log(item.value);
+
+        if (valid) {
+            item.push(
+                this._fb.group({
+                    _id: null,
+                    account: itemForm.value.account,
+                    debit: itemForm.value.debit,
+                    credit: itemForm.value.credit
+                })
+            );
+            itemForm.resetForm();
+        }
+    }
+
+    deleteItem(index) {
+        let control = <FormArray>this.objForm.controls.items;
+        control.removeAt(index)
     }
 
     public showToast(result, type?: string, title?: string, message?: string): void {

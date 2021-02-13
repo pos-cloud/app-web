@@ -3,7 +3,7 @@
         <div class="card-header">
             <span style="color: #607D8B">{{title}}</span>
             <div class="pull-right">
-                <button type="button" class="btn" [routerLink]="['/accounts']"><i
+                <button type="button" class="btn" [routerLink]="['/account-seats']"><i
                         class="fa fa-arrow-left"></i><span>{{'return' | translate | capitalize}}</span></button>
                 <button type="button" class="btn" [disabled]="loading"
                     *ngIf="operation !== 'delete' && operation !== 'view'" (click)="addObj()">
@@ -131,6 +131,82 @@
                             <!-- MOSTRAR ERROR -->
                             <div class="invalid-feedback" [style.display]="(formErrors[field.name])? 'block': 'none'">
                                 {{ formErrors[field.name] }}
+                            </div>
+                        </div>
+
+                        
+
+                    </div>
+                    <div class="col-md-12">
+                        <div>
+                            <hr>
+                            <b>Asiento</b>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form #itemForm="ngForm" (ngSubmit)="addItem(itemForm)">
+                                    <div class="row">
+                                        <div class="form-group col-md-6">
+                                            <ng-template #rtAccount let-r="result" let-t="term">
+                                                <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+                                            </ng-template>
+                                            <label for="account">Cuenta:</label>
+                                            <input id="account" type="text" ngModel class="form-control"
+                                                name="account" [ngbTypeahead]="searchAccount"
+                                                [resultTemplate]="rtAccount"
+                                                [inputFormatter]="formatterAccount" [focus]="focusEvent" />
+                                        </div>
+                                        <div class="form-group col-md-2">
+                                            <label for="debit"
+                                                class="control-label">{{'debit' | translate | capitalize}}:</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" name="debit" [(ngModel)]="debit" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-2">
+                                            <label for="credit"
+                                                class="control-label">{{'credit' | translate | capitalize}}:</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" name="credit" [(ngModel)]="credit" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-1">
+                                            <label class="control-label">Acción:</label>
+                                            <button type="summit" class="btn btn-success btn-sm">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table width="100%" class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Cuenta</th>
+                                            <th>Debe</th>
+                                            <th>Haber</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let field of objForm.get('items').controls; let i = index;">
+                                            <td>{{field?.value?.account}}</td>
+                                            <td>{{field?.value?.debit}}</td>
+                                            <td>{{field?.value?.credit}}</td>
+                                            <td align="right" width="10">
+                                                <button type="button" class="btn btn-danger btn-sm"
+                                                    (click)="deleteItem(i)">
+                                                    <i class="fa fa-trash-o"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                    </tfoot>
+                                </table>
                             </div>
                         </div>
                     </div>

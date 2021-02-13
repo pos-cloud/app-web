@@ -12,34 +12,34 @@ import { DatatableModule } from '../datatable/datatable.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from 'app/main/pipes/pipes.module';
 import { NgxTinymceModule } from 'ngx-tinymce';
-import { ListAccountingPeriodsComponent } from './list-accounting-periods/list-accounting-periods.component';
-import { AccountingPeriodService } from './accounting-period.service';
-import { AccountingPeriodComponent } from './crud/accounting-period.component';
+import { ListAccountSeatsComponent } from './list-account-seats/list-account-seats.component';
+import { AccountSeatService } from './account-seat.service';
+import { AccountSeatComponent } from './crud/account-seat.component';
 
 const routes: Routes = [
   {
-    path: 'accounting-periods',
-    component: ListAccountingPeriodsComponent,
+    path: 'account-seats',
+    component: ListAccountSeatsComponent,
     canActivate: [AuthGuard]
   },
   {
-    path: 'accounting-periods/add',
-    component: AccountingPeriodComponent,
+    path: 'account-seats/add',
+    component: AccountSeatComponent,
     canActivate: [AuthGuard]
   },
   {
-    path: 'accounting-periods/view/:id',
-    component: AccountingPeriodComponent,
+    path: 'account-seats/view/:id',
+    component: AccountSeatComponent,
     canActivate: [AuthGuard]
   },
   {
-    path: 'accounting-periods/update/:id',
-    component: AccountingPeriodComponent,
+    path: 'account-seats/update/:id',
+    component: AccountSeatComponent,
     canActivate: [AuthGuard]
   },
   {
-    path: 'accounting-periods/delete/:id',
-    component: AccountingPeriodComponent,
+    path: 'account-seats/delete/:id',
+    component: AccountSeatComponent,
     canActivate: [AuthGuard]
   }
 ];
@@ -62,18 +62,18 @@ const routes: Routes = [
     NgxTinymceModule
   ],
   declarations: [
-    AccountingPeriodComponent,
-    ListAccountingPeriodsComponent
+    AccountSeatComponent,
+    ListAccountSeatsComponent
   ],
   exports: [
-    AccountingPeriodComponent
+    AccountSeatComponent
   ],
   entryComponents: [
-    AccountingPeriodComponent
+    AccountSeatComponent
   ],
   providers: [
-    AccountingPeriodService
+    AccountSeatService
   ]
 })
 
-export class AccountModule { }
+export class AccountSeatModule { }

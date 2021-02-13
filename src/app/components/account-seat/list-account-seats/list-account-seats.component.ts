@@ -3,21 +3,21 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { Router } from '@angular/router';
 import { IButton } from 'app/util/buttons.interface';
-import { AccountingPeriod } from '../accounting-period';
-import { AccountingPeriodService } from '../accounting-period.service';
+import { AccountSeat } from '../account-seat';
+import { AccountSeatService } from '../account-seat.service';
 
 @Component({
-  selector: 'app-list-accounting-periods',
-  templateUrl: './list-accounting-periods.component.html',
-  styleUrls: ['./list-accounting-periods.component.scss'],
+  selector: 'app-list-account-seats',
+  templateUrl: './list-account-seats.component.html',
+  styleUrls: ['./list-account-seats.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
 
-export class ListAccountingPeriodsComponent {
+export class ListAccountSeatsComponent {
 
-  public title: string = 'accounting-period';
-  public sort = { "status": 1 };
-  public columns = AccountingPeriod.getAttributes();
+  public title: string = 'account-seat';
+  public sort = { "date": 1 };
+  public columns = AccountSeat.getAttributes();
   public rowButtons: IButton[] = [{
     title: 'view',
     class: 'btn btn-success btn-sm',
@@ -50,7 +50,7 @@ export class ListAccountingPeriodsComponent {
   @ViewChild(DatatableComponent, { static: false }) datatableComponent: DatatableComponent;
 
   constructor(
-    public _service: AccountingPeriodService,
+    public _service: AccountSeatService,
     private _modalService: NgbModal,
     private _router: Router,
   ) { }
@@ -62,16 +62,16 @@ export class ListAccountingPeriodsComponent {
   public async openModal(op: string, obj: any) {
     switch (op) {
       case 'view':
-        this._router.navigateByUrl('accounting-periods/view/' + obj._id);
+        this._router.navigateByUrl('account-seats/view/' + obj._id);
         break;
       case 'add':
-        this._router.navigateByUrl('accounting-periods/add');
+        this._router.navigateByUrl('account-seats/add');
         break;
       case 'update':
-        this._router.navigateByUrl('accounting-periods/update/' + obj._id);
+        this._router.navigateByUrl('account-seats/update/' + obj._id);
         break;
       case 'delete':
-        this._router.navigateByUrl('accounting-periods/delete/' + obj._id);
+        this._router.navigateByUrl('account-seats/delete/' + obj._id);
         break;
       default: ;
     }
