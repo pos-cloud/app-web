@@ -62,6 +62,8 @@ export class AccountSeatComponent implements OnInit {
     public oldFiles: any[];
     public apiURL: string = Config.apiV8URL;
     public database: string = Config.database;
+    public debit;
+    public credit;
 
     public searchPeriods = (text$: Observable<string>) =>
         text$.pipe(
