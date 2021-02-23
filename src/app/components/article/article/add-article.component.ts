@@ -1631,6 +1631,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
         if (!result.article) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
+          this._articleService.setItems(null);
           this.activeModal.close('delete_close');
         }
         this.loading = false;
