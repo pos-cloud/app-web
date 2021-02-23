@@ -32,9 +32,12 @@ import { PriceList } from 'app/components/price-list/price-list';
 import { PriceListService } from 'app/components/price-list/price-list.service';
 import { Employee } from 'app/components/employee/employee';
 import { Config } from 'app/app.config';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { AccountService } from 'app/components/account/account.service';
+import { Account } from 'app/components/account/account';
 
 @Component({
     selector: 'app-add-company',
@@ -133,6 +136,23 @@ export class AddCompanyComponent implements OnInit {
         'state': {},
     };
 
+    public searchAccounts = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(() => this.loading = true),
+      switchMap(async term => {
+        let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' } } : {};
+        return await this.getAllAccounts(match).then(
+          result => {
+            return result;
+          }
+        )
+      }),
+      tap(() => this.loading = false)
+    )
+  public formatterAccounts = (x: Account) => { return x.description; };
+
     constructor(
         public _companyService: CompanyService,
         public _vatConditionService: VATConditionService,
@@ -141,6 +161,7 @@ export class AddCompanyComponent implements OnInit {
         public _stateService: StateService,
         public _configService: ConfigService,
         public _identificationTypeService: IdentificationTypeService,
+        public _accountService : AccountService,
         public _countryService: CountryService,
         public _transportService: TransportService,
         public _priceListService: PriceListService,
@@ -217,6 +238,7 @@ export class AddCompanyComponent implements OnInit {
 
         this._companyService.getCompany(this.companyId).subscribe(
             result => {
+                console.log(result);
                 if (!result.company) {
                     if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
                 } else {
@@ -402,8 +424,8 @@ export class AddCompanyComponent implements OnInit {
             'addressNumber': [this.company.addressNumber, []],
             'transport': [this.company.transport, []],
             'priceList': [this.company.priceList, []],
-            'discount' : [this.company.discount,[]]
-
+            'discount' : [this.company.discount,[]],
+            'account' : [this.company.account,[]]
         });
 
         this.companyForm.valueChanges
@@ -553,6 +575,7 @@ export class AddCompanyComponent implements OnInit {
         }
 
         if (!this.company.discount) this.company.discount = 0;
+        if (!this.company.account) this.company.account = null;
 
 
         const values = {
@@ -581,7 +604,8 @@ export class AddCompanyComponent implements OnInit {
             'employee': employee,
             'transport': transport,
             'priceList': priceList,
-            'discount' : this.company.discount
+            'discount' : this.company.discount,
+            'account' : this.company.account
         };
 
         this.companyForm.setValue(values);
@@ -759,6 +783,21 @@ export class AddCompanyComponent implements OnInit {
                 this.loading = false;
             });
     }
+
+    public getAllAccounts(match: {}): Promise<Account[]> {
+        return new Promise<Account[]>((resolve, reject) => {
+          this.subscription.add(this._accountService.getAll({
+            match,
+            sort: { description : 1 },
+          }).subscribe(
+            result => {
+              this.loading = false;
+              (result.status === 200) ? resolve(result.result) : reject(result);
+            },
+            error => reject(error)
+          ));
+        });
+      }
 
     public getPriceLists(): void {
         this.loading = true;

@@ -333,12 +333,12 @@
           <button class="dropdown-item" [routerLink]="['accounts']" [routerLinkActive]="['active']">
             {{ 'accounts' | translate | capitalize }}
           </button>
-          <!--<button class="dropdown-item" [routerLink]="['accounts']" [routerLinkActive]="['active']">
-            {{ 'ejercice' | translate | capitalize }}
+          <button class="dropdown-item" [routerLink]="['account-periods']" [routerLinkActive]="['active']">
+            {{ 'account-periods' | translate | capitalize }}
           </button>
-          <button class="dropdown-item" [routerLink]="['accounts']" [routerLinkActive]="['active']">
-            {{ 'asientos' | translate | capitalize }}
-          </button>-->
+          <button class="dropdown-item" [routerLink]="['account-seats']" [routerLinkActive]="['active']">
+            {{ 'account-seats' | translate | capitalize }}
+          </button>
           <div class="dropdown-divider"></div>
           <button *ngIf="(config.modules.sale.resto ||
                       config.modules.sale.counter ||

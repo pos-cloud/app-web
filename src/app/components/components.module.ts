@@ -13,6 +13,8 @@ import { TransactionTypeModule } from './transaction-type/transaction-type.modul
 import { CategoryModule } from './category/category.module';
 import { CompanyGroupModule } from './company-group/company-group.module';
 import { AccountModule } from './account/account.module';
+import { AccountPeriodModule } from './account-period/account-period.module';
+import { AccountSeatModule } from './account-seat/account-seat.module';
 
 @NgModule({
 	imports: [
@@ -29,7 +31,9 @@ import { AccountModule } from './account/account.module';
     TransactionTypeModule,
     CategoryModule,
     CompanyGroupModule,
-    AccountModule
+    AccountModule,
+    AccountPeriodModule,
+    AccountSeatModule
 	],
 	declarations: [
 	],

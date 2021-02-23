@@ -264,13 +264,22 @@
             <div class="row tab-content">
               <div class="form-group col-md-12">
                 <div class="row">
-                  <div class="form-group col-md-12">
+                  <div class="form-group col-md-6">
                     <label for="allowCurrentAccount" class="control-label">¿Habilitado para comprar en cuenta corriente?</label>
                     <select class="form-control" formControlName="allowCurrentAccount" >
                       <option value="true" [selected]="company.allowCurrentAccount" [disabled]="readonly">Si</option>
                       <option value="false" [selected]="!company.allowCurrentAccount" [disabled]="readonly">No</option>
                     </select>
                   </div>
+                  <div class="form-group col-md-6">
+                    <ng-template #rtAccounts let-r="result" let-t="term">
+                        <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+                    </ng-template>
+                    <label for="account">Cuenta Contable:</label>
+                    <input id="account" type="text" class="form-control" formControlName="account"
+                        name="account" [ngbTypeahead]="searchAccounts" [resultTemplate]="rtAccounts"
+                        [inputFormatter]="formatterAccounts" [readonly]="readonly" />
+                </div>
                 </div>
                 <div class="row">
                   <div class="form-group col-md-12">

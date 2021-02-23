@@ -134,7 +134,7 @@ export class CashBoxComponent implements OnInit {
                                 if (this.transactionType.cashOpening) {
                                     this.showMessage("La caja ya se encuentra abierta.", 'info', true);
                                 } else if (this.transactionType.cashClosing) {
-                                    let query = 'where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled + '"}},{"cashBox":"' + this.cashBox._id + '"}]';
+                                    let query = 'where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled + '"}}{"state":{"$ne": "' + TransactionState.PaymentDeclined + '"}},{"cashBox":"' + this.cashBox._id + '"}]';
                                     await this.getTransactions(query).then(
                                         async transactions => {
                                             if (transactions) {
@@ -336,11 +336,11 @@ export class CashBoxComponent implements OnInit {
             if (this.cashBox.state === CashBoxState.Closed) {
                 this.openModal("print");
             } else {
-                let query = 'where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled + '"}},{"cashBox":"' + this.cashBox._id + '"}]';
+                let query = 'where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled + '"}},{"state":{"$ne": "' + TransactionState.PaymentDeclined + '"}},{"cashBox":"' + this.cashBox._id + '"}]';
                 await this.getTransactions(query).then(
                     async transactions => {
                         if (transactions) {
-                            this.showMessage("No puede cerrar la caja la transaccion : " + transactions[0].type.name + "  " + transactions[0].origin + "-" + transactions[0].letter + "-" + transactions[0].number + "esta abierta.", 'info', true);
+                            this.showMessage("No puede cerrar la caja la transaccion : " + transactions[0].type.name + "  " + transactions[0].origin + "-" + transactions[0].letter + "-" + transactions[0].number + "tiene el estado de " + transactions[0].state, 'info', true);
                         } else {
                             await this.getLastTransactionByType().then(
                                 transaction => {
@@ -718,6 +718,7 @@ export class CashBoxComponent implements OnInit {
                 abbreviation: 1,
                 name: 1,
                 currentAccount: 1,
+                stockMovement : 1,
                 movement: 1,
                 modifyStock: 1,
                 requestArticles: 1,
@@ -726,7 +727,7 @@ export class CashBoxComponent implements OnInit {
             match : {
                 operationType : { "$ne" : "D" },
                 resetOrderNumber : "Caja",
-                orderNumber : { "$gt" : 0 }
+                orderNumber : { "$gte" : 0 }
             }
         }).subscribe(
             result => {

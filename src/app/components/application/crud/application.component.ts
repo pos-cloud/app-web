@@ -10,7 +10,7 @@ import { ApplicationService } from '../application.service';
 import { ToastrService } from 'ngx-toastr';
 import { Title } from '@angular/platform-browser';
 import { CapitalizePipe } from 'app/main/pipes/capitalize';
-import { Subscription, Subject, Observable } from 'rxjs';
+import { Subscription, Subject, Observable, merge } from 'rxjs';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Router } from '@angular/router';
@@ -20,6 +20,9 @@ import { Config } from 'app/app.config';
 import { Article } from 'app/components/article/article';
 import { Category } from 'app/components/category/category';
 import { ArticleService } from 'app/components/article/article.service';
+import { EmailTemplate } from 'app/components/email-template/email-template';
+import { EmailService } from 'app/components/send-email/send-email.service';
+import { EmailTemplateService } from 'app/components/email-template/email-template.service';
 
 @Component({
     selector: 'app-application',
@@ -51,16 +54,16 @@ export class ApplicationComponent implements OnInit {
     public apiURL: string = Config.apiV8URL;
     public database: string = Config.database;
     public view;
-    public home : {
-        title : string,
-        view : string,
-        order : number,
-        resources : {
-            article : Article,
-            category : Category,
-            banner : string,
-            order : number,
-            link : string
+    public home: {
+        title: string,
+        view: string,
+        order: number,
+        resources: {
+            article: Article,
+            category: Category,
+            banner: string,
+            order: number,
+            link: string
         }[]
     }[]
 
@@ -68,20 +71,36 @@ export class ApplicationComponent implements OnInit {
     public to;
 
     public searchArticle = (text$: Observable<string>) =>
-    text$.pipe(
+        text$.pipe(
+            debounceTime(300),
+            distinctUntilChanged(),
+            tap(() => this.loading = true),
+            switchMap(async term =>
+                await this.getAllArticles({ name: { $regex: term, $options: 'i' }, operationType: { $ne: 'D' } }).then(
+                    articles => {
+                        return articles;
+                    }
+                )
+            ),
+            tap(() => this.loading = false)
+        )
+    public formatterArticle = (x: { name: string }) => x.name;
+
+    public searchEmailTemplates = (text$: Observable<string>) => text$.pipe(
         debounceTime(300),
         distinctUntilChanged(),
         tap(() => this.loading = true),
         switchMap(async term =>
-            await this.getAllArticles({ name: { $regex: term, $options: 'i' }, operationType: { $ne: 'D' } }).then(
-                articles => {
-                    return articles;
+            await this.getEmailTemplates({ name: { $regex: term, $options: 'i' }, operationType: { $ne: 'D' } }).then(
+                emailTemplates => {
+                    return emailTemplates;
                 }
             )
         ),
         tap(() => this.loading = false)
-    )
-    public formatterArticle = (x: { name: string }) => x.name;
+    );
+
+    public formatterEmailTemplates = (x: { name: string }) => x.name;
 
     public formFields: FormField[] = [{
         name: 'Datos de la aplicación',
@@ -169,35 +188,160 @@ export class ApplicationComponent implements OnInit {
         tag: 'input',
         tagType: 'text',
         class: 'form-group col-md-4'
-    },{
+    }, {
         name: 'design.colors.tercery',
         tag: 'input',
         tagType: 'text',
         class: 'form-group col-md-4'
-    },{
+    }, {
+        name: 'Correo',
+        tag: 'separator',
+        tagType: null,
+        class: 'form-group col-md-12'
+    },
+    {
+        name: 'email.register.enabled',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['true', 'false'],
+        class: 'form-group col-md-6'
+    },
+    {
+        name: 'email.register.template',
+        tag: 'autocomplete',
+        tagType: 'text',
+        search: this.searchEmailTemplates,
+        format: this.formatterEmailTemplates,
+        values: null,
+        focus: false,
+        class: 'form-group col-md-6'
+    },
+    {
+        name: 'email.endTransaction.enabled',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['true', 'false'],
+        class: 'form-group col-md-6'
+    },
+    {
+        name: 'email.endTransaction.template',
+        tag: 'autocomplete',
+        tagType: 'text',
+        search: this.searchEmailTemplates,
+        format: this.formatterEmailTemplates,
+        values: null,
+        focus: false,
+        class: 'form-group col-md-6'
+    },
+    {
+        name: 'email.statusTransaction.paymentConfirmed.enabled',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['true', 'false'],
+        class: 'form-group col-md-6'
+    },
+    {
+        name: 'email.statusTransaction.paymentConfirmed.template',
+        tag: 'autocomplete',
+        tagType: 'text',
+        search: this.searchEmailTemplates,
+        format: this.formatterEmailTemplates,
+        values: null,
+        focus: false,
+        class: 'form-group col-md-6'
+    },
+    {
+        name: 'email.statusTransaction.paymentDeclined.enabled',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['true', 'false'],
+        class: 'form-group col-md-6'
+    },
+    {
+        name: 'email.statusTransaction.paymentDeclined.template',
+        tag: 'autocomplete',
+        tagType: 'text',
+        search: this.searchEmailTemplates,
+        format: this.formatterEmailTemplates,
+        values: null,
+        focus: false,
+        class: 'form-group col-md-6'
+    },
+    {
+        name: 'email.statusTransaction.closed.enabled',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['true', 'false'],
+        class: 'form-group col-md-6'
+    },
+    {
+        name: 'email.statusTransaction.closed.template',
+        tag: 'autocomplete',
+        tagType: 'text',
+        search: this.searchEmailTemplates,
+        format: this.formatterEmailTemplates,
+        values: null,
+        focus: false,
+        class: 'form-group col-md-6'
+    },
+    {
+        name: 'email.statusTransaction.sent.enabled',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['true', 'false'],
+        class: 'form-group col-md-6'
+    },
+    {
+        name: 'email.statusTransaction.sent.template',
+        tag: 'autocomplete',
+        tagType: 'text',
+        search: this.searchEmailTemplates,
+        format: this.formatterEmailTemplates,
+        values: null,
+        focus: false,
+        class: 'form-group col-md-6'
+    },
+    {
+        name: 'email.statusTransaction.delivered.enabled',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['true', 'false'],
+        class: 'form-group col-md-6'
+    },
+    {
+        name: 'email.statusTransaction.delivered.template',
+        tag: 'autocomplete',
+        tagType: 'text',
+        search: this.searchEmailTemplates,
+        format: this.formatterEmailTemplates,
+        values: null,
+        focus: false,
+        class: 'form-group col-md-6'
+    },
+    {
         name: 'Fuente',
         tag: 'separator',
         tagType: null,
         class: 'form-group col-md-12'
-    },{
+    }, {
         name: 'design.font.family',
         tag: 'select',
         tagType: 'text',
-        values: ['Krona One','IBM Plex Sans','Quicksand','Bebas Neue'],
+        values: ['Krona One', 'IBM Plex Sans', 'Quicksand', 'Bebas Neue'],
         class: 'form-group col-md-3'
-    },{
+    }, {
         name: 'design.font.weight',
         tag: 'select',
         tagType: 'text',
-        values: ['100','200','300','400','500','600','700','800','900'],
+        values: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
         class: 'form-group col-md-3'
     }, {
         name: 'design.font.style',
         tag: 'select',
         tagType: 'text',
-        values: ['normal','italic','oblique','initial','unset','inherit'],
+        values: ['normal', 'italic', 'oblique', 'initial', 'unset', 'inherit'],
         class: 'form-group col-md-3'
-    },{
+    }, {
         name: 'design.font.size',
         tag: 'input',
         tagType: 'text',
@@ -313,7 +457,8 @@ export class ApplicationComponent implements OnInit {
 
     constructor(
         private _objService: ApplicationService,
-        private _articleService : ArticleService,
+        private _articleService: ArticleService,
+        private _emailTemplate: EmailTemplateService,
         private _toastr: ToastrService,
         private _title: Title,
         public _fb: FormBuilder,
@@ -352,10 +497,11 @@ export class ApplicationComponent implements OnInit {
                 result => {
                     this.loading = false;
                     if (result.status === 200) {
+                        console.log(result.result);
                         this.obj = result.result;
-                        if(this.obj.design.home && this.obj.design.home.length > 0){
+                        if (this.obj.design.home && this.obj.design.home.length > 0) {
                             this.home = this.obj.design.home;
-                        } else{
+                        } else {
                             this.home = new Array();
                         }
                         this.setValuesForm();
@@ -443,7 +589,7 @@ export class ApplicationComponent implements OnInit {
                     let entro: boolean = false;
                     for (let f of field.name.split('.')) {
                         sumF += `['${f}']`;
-                        if (eval(`this.obj${sumF}`) == null || eval(`this.obj${sumF}`) == undefined) {
+                        if (eval(`this.obj${sumF}`) == null || eval(`this.obj${sumF}`) == undefined ) {
                             entro = true;
                             eval(`this.obj${sumF} = {}`);
                         }
@@ -480,6 +626,8 @@ export class ApplicationComponent implements OnInit {
             })
         }
 
+        console.log(values);
+
         this.objForm.patchValue(values);
     }
 
@@ -513,7 +661,7 @@ export class ApplicationComponent implements OnInit {
 
     public addSection(sectionForm: NgForm): void {
 
-        if(sectionForm.value.title && sectionForm.value.order && sectionForm.value.view){
+        if (sectionForm.value.title && sectionForm.value.order && sectionForm.value.view) {
             this.home.push({
                 title: sectionForm.value.title,
                 order: sectionForm.value.order,
@@ -522,28 +670,28 @@ export class ApplicationComponent implements OnInit {
             });
             sectionForm.reset();
         } else {
-            this.showToast("Debe completar todos los campos","danger");
+            this.showToast("Debe completar todos los campos", "danger");
         }
 
-        this.home.sort(function(a, b) {
+        this.home.sort(function (a, b) {
             var textA = a.order;
             var textB = b.order;
             return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
         });
     }
 
-    public addResource(resourceForm : NgForm, data): void {
+    public addResource(resourceForm: NgForm, data): void {
         this.home.forEach(element => {
             if (element.title === data['title']) {
                 element.resources.push({
-                    order : resourceForm.value.order,
-                    link : resourceForm.value.link,
-                    article : resourceForm.value.article,
-                    category : null,
-                    banner : null,
+                    order: resourceForm.value.order,
+                    link: resourceForm.value.link,
+                    article: resourceForm.value.article,
+                    category: null,
+                    banner: null,
                 });
 
-                element.resources.sort(function(a, b) {
+                element.resources.sort(function (a, b) {
                     var textA = a.order;
                     var textB = b.order;
                     return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
@@ -552,7 +700,7 @@ export class ApplicationComponent implements OnInit {
         });
         resourceForm.reset();
 
-        
+
     }
 
     public deleteSection(item): void {
@@ -580,9 +728,9 @@ export class ApplicationComponent implements OnInit {
     public getAllArticles(match: {}): Promise<Article[]> {
         return new Promise<Article[]>((resolve, reject) => {
             this.subscription.add(this._articleService.getAll({
-                project : {
+                project: {
                     name: "$description",
-                    description : 1,
+                    description: 1,
                     operationType: 1
                 },
                 match,
@@ -598,7 +746,7 @@ export class ApplicationComponent implements OnInit {
         });
     }
 
-    
+
     public deleteFile(typeFile: string, fieldName: string, filename: string) {
         this._objService.deleteFile(typeFile, fieldName.split('.')[fieldName.split('.').length - 1], filename).subscribe(
             result => {
@@ -753,6 +901,23 @@ export class ApplicationComponent implements OnInit {
                 error => this.showToast(error)
             )
         );
+    }
+
+    public getEmailTemplates(match: {}): Promise<EmailTemplate[]> {
+        return new Promise<EmailTemplate[]>((resolve, reject) => {
+            this.subscription.add(this._emailTemplate.getAll({
+                project: { name: 1, operationType: 1 },
+                match,
+                sort: { name: 1 },
+                limit: 10,
+            }).subscribe(
+                result => {
+                    this.loading = false;
+                    (result.status === 200) ? resolve(result.result) : reject(result);
+                },
+                error => reject(error)
+            ));
+        });
     }
 
     public showToast(result, type?: string, title?: string, message?: string): void {
