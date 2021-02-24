@@ -107,20 +107,10 @@ export class AccountSeatComponent implements OnInit {
             class: 'form-group col-md-2'
         },
         {
-            name: 'período',
-            tag: 'autocomplete',
-            tagType: 'text',
-            search: this.searchPeriods,
-            format: this.formatterPeriods,
-            values: null,
-            focus: false,
-            class: 'form-group col-md-4'
-        },
-        {
             name: 'observation',
             tag: 'input',
             tagType: 'text',
-            class: 'form-group col-md-2'
+            class: 'form-group col-md-10'
         }
     ];
     public formErrors: {} = {};
@@ -341,9 +331,6 @@ export class AccountSeatComponent implements OnInit {
             }
         }
 
-
-        console.log(this.obj.items);
-
         if(this.obj.items && this.obj.items.length > 0){
             var items = <FormArray>this.objForm.controls.items;
             this.obj.items.forEach(x => {
@@ -427,8 +414,6 @@ export class AccountSeatComponent implements OnInit {
                 }
             }
         }
-
-        console.log(this.obj);
 
         if (isValid) {
             switch (this.operation) {
