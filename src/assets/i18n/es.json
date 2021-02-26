@@ -456,5 +456,11 @@
     "codeE": "Código E",
     "codeM": "Código M",
     "codeR": "Código R",
-    "codeT": "Código T"
+    "codeT": "Código T",
+    "containsVariants": "Contiene Variantes",
+    "containsStructure": "Contiene Estructura",
+    "forShipping": "¿Se usa para envío?",
+    "make": "Marca",
+    "providers": "Proveedores",
+    "currency": "Moneda"
 }

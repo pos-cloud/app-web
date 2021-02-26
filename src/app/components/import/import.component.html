@@ -1,11 +1,11 @@
 <div class="modal-header">
   <h4 class="modal-title">Importar</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
-  <span aria-hidden="true">&times;</span>
+    <span aria-hidden="true">&times;</span>
   </button>
 </div>
 <section class="container-fluid">
-  <div class="center-content"  *ngIf="alertMessage !== ''">
+  <div class="center-content" *ngIf="alertMessage !== ''">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
     </ngb-alert>
@@ -15,22 +15,25 @@
       <div class="row">
         <div class="form-group col-md-12">
           <label for="filePath" class="control-label">Archivo:</label>
-          <input type="text" class="form-control" formControlName="filePath" name="filePath" id="filePath" [focus]="focusEvent"/>
+          <input type="text" class="form-control" formControlName="filePath" name="filePath" id="filePath"
+            [focus]="focusEvent" />
           <div *ngIf="formErrors.filePath" class="alert alert-danger">
             {{ formErrors.filePath }}
           </div>
         </div>
       </div>
       <div class="row" *ngFor="let property of properties">
-        <div class="form-group col-md-12" *ngIf="property !== 'model' && property !== 'primaryKey' && property !== 'relations'">
-          <label for="newProperties[property]" class="control-label">{{property.charAt(0).toUpperCase() + property.slice(1)}}:</label>
-          <input type="text" class="form-control" formControlName="{{newProperties[property]}}" name="newProperties[property]" id="newProperties[property]"/>
+        <div class="form-group col-md-12"
+          *ngIf="property !== 'model' && property !== 'primaryKey' && property !== 'relations'">
+          <label for="newProperties[property]" class="control-label">{{property | translate | capitalize}}:</label>
+          <input type="text" class="form-control" formControlName="{{newProperties[property]}}"
+            name="newProperties[property]" id="newProperties[property]" />
         </div>
       </div>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="!importForm.valid || loading" >
+      <button type="submit" class="btn btn-primary" [disabled]="!importForm.valid || loading">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Importar</span>
         <span *ngIf="loading">Espere por favor</span>

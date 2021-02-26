@@ -432,11 +432,11 @@ export class ListArticlesComponent implements OnInit {
         model.allowSale = '';
         model.allowSaleWithoutStock = '';
         model.isWeigth = '';
+        model.observation = '';
         model.relations = new Array();
         model.relations.push("make_relation_description");
         model.relations.push("category_relation_description");
         model.relations.push("providers_relation_code");
-        model.relations.push("currency_relation_code");
         model.relations.push("currency_relation_code");
         modalRef.componentInstance.model = model;
         modalRef.result.then((result) => {
