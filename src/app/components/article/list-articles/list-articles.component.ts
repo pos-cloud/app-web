@@ -420,6 +420,7 @@ export class ListArticlesComponent implements OnInit {
         let model: any = new Article();
         model.model = "article";
         model.primaryKey = "code";
+        model.barcode = '';
         model.type = '';
         model.description = '';
         model.basePrice = '';
@@ -427,12 +428,13 @@ export class ListArticlesComponent implements OnInit {
         model.markupPercentage = '';
         model.markupPrice = '';
         model.salePrice = '';
-        model.barcode = '';
         model.allowPurchase = '';
         model.allowSale = '';
         model.allowSaleWithoutStock = '';
-        model.isWeigth = '';
         model.observation = '';
+        model.ecommerceEnabled = '';
+        model.favourite = '';
+        model.tags = '';
         model.relations = new Array();
         model.relations.push("make_relation_description");
         model.relations.push("category_relation_description");

@@ -462,5 +462,10 @@
     "forShipping": "¿Se usa para envío?",
     "make": "Marca",
     "providers": "Proveedores",
-    "currency": "Moneda"
+    "currency": "Moneda",
+    "company-group": "Grupo de empresa",
+    "employee._id": "ID de empleado",
+    "wooId": "ID de Woocommerce",
+    "tags": "Etiquetas",
+    "tag": "Etiqueta"
 }

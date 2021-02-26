@@ -410,6 +410,16 @@ export let attributes = [
         required: true,
     },
     {
+        name: 'tags',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: `{"$reduce":{"input":"$tags","initialValue":"","in":{"$concat":["$$value",{"$cond":{"if":{"$eq":["$$value",""]},"then":"","else":"; "}},{"$concat":[{"$toString":"$$this"}]}]}}}`,
+        align: 'left',
+        required: false,
+    },
+    {
         name: 'operationType',
         visible: false,
         disabled: true,
