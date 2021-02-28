@@ -177,10 +177,10 @@ export class AppComponent {
     Config.setDatabase(subdominio);
     // Config.setApiHost('localhost'); // TEST
     // Config.setApiV8Host('localhost'); // TEST
+    //Config.setApiPort(300); // TEST
+    //Config.setApiV8Port(308); // TEST
     Config.setApiHost('api.poscloud.com.ar'); // PROD
     Config.setApiV8Host('apiv8.poscloud.com.ar'); // PROD
-    Config.setApiPort(300);
-    Config.setApiV8Port(308);
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
