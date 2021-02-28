@@ -7,7 +7,8 @@ export class Config {
 
   public _id: string;
   static database: string;
-  static apiHost: string = 'vps-1883265-x.dattaweb.com';
+  static apiHost: string = 'localhost';
+  static apiV8Host: string = 'localhost';
   static apiURL: string;
   static apiV8URL: string;
   static apiURL_FE_AR: string = 'libs/fe/ar/index.php';
@@ -18,7 +19,7 @@ export class Config {
   static emailAccount: string;
   static emailPassword: string;
   static emailHost: string;
-  static emailPort : number;
+  static emailPort: number;
   static companyPicture: string;
   static companyName: string;
   static companyAddress: string;
@@ -91,6 +92,10 @@ export class Config {
   public static setApiHost(apiHost: string): void {
     this.apiHost = apiHost;
     Config.updateApiURL();
+  }
+
+  public static setApiV8Host(apiV8Host: string): void {
+    this.apiV8Host = apiV8Host;
     Config.updateApiV8URL();
   }
 
@@ -99,8 +104,8 @@ export class Config {
     Config.updateApiURL();
   }
 
-  public static setApiV8Port(apiPort: number): void {
-    this.apiPort = apiPort;
+  public static setApiV8Port(apiV8Port: number): void {
+    this.apiV8Port = apiV8Port;
     Config.updateApiV8URL();
   }
 
@@ -170,10 +175,10 @@ export class Config {
   }
 
   public static updateApiV8URL() {
-    if (Config.apiPort !== 0) {
-      Config.apiV8URL = 'http://' + Config.apiHost + ':' + Config.apiV8Port + '/';
+    if (Config.apiV8Port !== 0) {
+      Config.apiV8URL = 'http://' + Config.apiV8Host + ':' + Config.apiV8Port + '/';
     } else {
-      Config.apiV8URL = 'http://' + Config.apiV8Port + '/';
+      Config.apiV8URL = 'http://' + Config.apiV8Host + '/';
     }
   }
 }
