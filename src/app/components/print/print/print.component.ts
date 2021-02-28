@@ -257,6 +257,7 @@ export class PrintComponent implements OnInit {
     let project = `{
             "_id": 1,
             "endDate": { "$dateToString": { "date": "$endDate", "format": "%d/%m/%Y %HH %MM", "timezone": "${Config.timezone.split('UTC')[1]}" }},
+            "endDateAFIP": { "$dateToString": { "date": "$endDate", "format": "%Y-%m-%d", "timezone": "${Config.timezone.split('UTC')[1]}" }},
             "startDate": { "$dateToString": { "date": "$startDate", "format": "%d/%m/%Y %HH %MM", "timezone": "${Config.timezone.split('UTC')[1]}" }},
             "balance": 1,
             "operationType": 1,
@@ -432,7 +433,8 @@ export class PrintComponent implements OnInit {
               if (Config.country === 'AR' &&
                 this.transaction.CAE &&
                 this.transaction.CAEExpirationDate) {
-                this.calculateBarcodeAR();
+                //this.calculateBarcodeAR();
+                this.calculateQRAR();
               } else if (Config.country === 'MX' &&
                 this.transaction.stringSAT &&
                 this.transaction.SATStamp &&
@@ -484,7 +486,8 @@ export class PrintComponent implements OnInit {
           if (Config.country === 'AR' &&
             this.transaction.CAE &&
             this.transaction.CAEExpirationDate) {
-            this.calculateBarcodeAR();
+            //this.calculateBarcodeAR();
+            this.calculateQRAR();
           } else if (Config.country === 'MX' &&
             this.transaction.stringSAT &&
             this.transaction.CFDStamp &&
@@ -1127,6 +1130,39 @@ export class PrintComponent implements OnInit {
       + this.transaction.CAE
       + date
       + checkDigit, 'invoice');
+  }
+
+  public calculateQRAR(): void {
+
+    let url = "https://www.afip.gob.ar/fe/qr/?p=";
+    let datos = {};
+
+    let codeInvoice;
+    if (this.transaction.type.codes && this.transaction.type.codes.length > 0) {
+        for (let y: number = 0; y < this.transaction.type.codes.length; y++) {
+          if (this.transaction.letter == this.transaction.type.codes[y].letter) {
+            codeInvoice = this.transaction.type.codes[y].code;
+          }
+        }
+      }
+
+    datos['ver'] = 1;
+    datos['fecha'] = this.transaction['endDateAFIP'];
+    datos['cuit'] = Config.companyIdentificationValue.replace('-','');
+    datos['ptoVta'] = this.transaction.origin;
+    datos['tipoCmp'] = codeInvoice;
+    datos['nroCmp'] = this.transaction.number;
+    datos['importe'] = this.transaction.totalPrice;
+    datos['moneda'] = 'PES';
+    datos['ctz'] = 1;
+    datos['tipoCodAut'] = "E";
+    datos['codAut'] = this.transaction.CAE;
+
+
+    var objJsonB64 = btoa(JSON.stringify(datos));
+    url += objJsonB64;
+
+    this.getBarcode64(`qr?value=${url}`, 'invoice');
   }
 
   public calculateBarcodeMX(): void {
@@ -2759,15 +2795,15 @@ export class PrintComponent implements OnInit {
       this.transaction.CAE &&
       this.transaction.CAEExpirationDate) {
       this.doc.setFontType('bold');
-      this.doc.text("CAE:", 10, 282);
-      this.doc.text("Fecha Vto:", 10, 287);
+      this.doc.text("CAE:", 50, 282);
+      this.doc.text("Fecha Vto:", 50, 287);
       this.doc.setFontType('normal');
-      this.doc.text(this.transaction.CAE, 20, 282);
-      this.doc.text(this.transaction.CAEExpirationDate.split('T')[0], 32, 287);
+      this.doc.text(this.transaction.CAE, 60, 282);
+      this.doc.text(this.transaction.CAEExpirationDate.split('T')[0], 70, 287);
 
       let imgdata = 'data:image/png;base64,' + this.barcode64;
 
-      this.doc.addImage(imgdata, 'PNG', margin, 263, 125, 14);
+      this.doc.addImage(imgdata, 'PNG', margin, 257, 30, 30);
     } else if (Config.country === 'MX' &&
       this.transaction.stringSAT &&
       this.transaction.SATStamp &&
@@ -3033,11 +3069,10 @@ export class PrintComponent implements OnInit {
       this.transaction.CAEExpirationDate) {
       this.doc.setFontType('bold');
       this.doc.text("CAE: " + this.transaction.CAE, margin, row);
+      let imgdata = 'data:image/png;base64,' + this.barcode64;
+      this.doc.addImage(imgdata, 'PNG', margin + 40, row - 3, 20, 20);
       row += 4;
       this.doc.text("Fecha Vto: " + this.transaction.CAEExpirationDate.split('T')[0], margin, row)
-      let imgdata = 'data:image/png;base64,' + this.barcode64;
-      row += 4;
-      this.doc.addImage(imgdata, 'PNG', margin, row, width - 10, 10);
 
     } else if (Config.country === 'MX' &&
       this.transaction.stringSAT &&
