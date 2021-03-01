@@ -11,6 +11,7 @@ export class ShipmentMethod extends Model {
   public zones: {
     name: string,
     type: ZoneType,
+    cost: number,
     points: {
       lat: number,
       lng: number

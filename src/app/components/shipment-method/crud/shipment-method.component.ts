@@ -357,6 +357,7 @@ export class ShipmentMethodComponent implements OnInit {
     selectedArea = 0;
     zones: any[] = new Array();
     zoneName: string;
+    zoneCost: number;
     zoneType: ZoneType = ZoneType.OUT;
     zonesActive: {
         zone: any,
@@ -508,6 +509,7 @@ export class ShipmentMethodComponent implements OnInit {
             this.obj.zones.push({
                 name: this.zoneName,
                 type: this.zoneType,
+                cost : this.zoneCost,
                 points: this.pointList,
                 area: this.selectedArea
             });
