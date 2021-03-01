@@ -12,6 +12,10 @@ import { RoundNumberPipe } from 'app/main/pipes/round-number.pipe';
 import { CurrencyPipe } from '@angular/common';
 import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
 import { Subscription } from 'rxjs';
+import * as moment from 'moment';
+import { Branch } from 'app/components/branch/branch';
+import { AuthService } from 'app/components/login/auth.service';
+import { BranchService } from 'app/components/branch/branch.service';
 
 @Component({
     selector: 'app-list-movement-of-cash',
@@ -46,7 +50,10 @@ export class ListMovementOfCashesComponent implements OnInit {
     public filters: any[];
     public filterValue: string;
     private subscription: Subscription = new Subscription();
-
+    public branches: Branch[];
+    @Input() branchSelectedId: String;
+    public allowChangeBranch: boolean;
+    
     //columns
     public columns = attributes;
     private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
@@ -58,13 +65,27 @@ export class ListMovementOfCashesComponent implements OnInit {
     @ViewChild(ExportExcelComponent, { static: false }) exportExcelComponent: ExportExcelComponent;
     public items: any[] = new Array();
 
+    //cabecera
+    public startDate: string;
+    public endDate: string;
+    public dateSelect: string;
+    public stateSelect: string = "Cerrado";
+
+
     constructor(
         public _movementOfCashService: MovementOfCashService,
+        private _authService: AuthService,
+        private _branchService: BranchService,
         public _router: Router,
         public _modalService: NgbModal,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,
     ) {
+
+        this.startDate = moment().format('YYYY-MM-DD');
+        this.endDate = moment().format('YYYY-MM-DD');
+        this.dateSelect = "endDate2";
+
         this.filters = new Array();
         for (let field of this.columns) {
             if (field.defaultFilter) {
@@ -75,7 +96,30 @@ export class ListMovementOfCashesComponent implements OnInit {
         }
     }
 
-    ngOnInit(): void {
+    async ngOnInit() {
+
+        if(!this.branchSelectedId) {
+            await this.getBranches({ operationType: { $ne: 'D' } }).then(
+              branches => {
+                this.branches = branches;
+                if(this.branches && this.branches.length > 1) {
+                  this.branchSelectedId = this.branches[0]._id;
+                }
+              }
+            );
+            this._authService.getIdentity.subscribe(
+              async identity => {
+                if(identity && identity.origin) {
+                  this.allowChangeBranch = false;
+                  this.branchSelectedId = identity.origin.branch._id;
+                } else {
+                  this.allowChangeBranch = true;
+                  this.branchSelectedId = null;
+                }
+              }
+            );
+          }
+
 
         this.pathLocation = this._router.url.split('/');
         this.transactionMovement = this.pathLocation[2].charAt(0).toUpperCase() + this.pathLocation[2].slice(1);
@@ -134,7 +178,17 @@ export class ListMovementOfCashesComponent implements OnInit {
             }
         }
 
-        match += `"transaction.type.transactionMovement": "${this.transactionMovement}"`;
+        match += `"transaction.type.transactionMovement": "${this.transactionMovement}",`;
+        match += `"transaction.state": "${this.stateSelect}",`;
+        if(this.branchSelectedId){
+            match += `"transaction.branchDestination._id": { "$oid" : "${this.branchSelectedId}" },`;
+        }
+        match += `"${this.dateSelect}" : {
+                        "$gte" : { "$date" : "${this.startDate}T00:00:00${this.timezone}" },
+                        "$lte" : { "$date" : "${this.endDate}T23:59:59${this.timezone}" }
+                    }`
+
+
         if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
         match += `}`;
@@ -150,16 +204,11 @@ export class ListMovementOfCashesComponent implements OnInit {
                     project += `,`;
                 }
                 j++;
-                if (this.columns[i].datatype !== "string") {
-                    if (this.columns[i].datatype === "date") {
-                        project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`
-                    } else {
-                        project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
-                    }
-                } else {
+                if (this.columns[i].project === null) {
                     project += `"${this.columns[i].name}": 1`;
+                } else {
+                    project += `"${this.columns[i].name}": ${this.columns[i].project}`;
                 }
-
             }
         }
         project += `}`;
@@ -289,6 +338,33 @@ export class ListMovementOfCashesComponent implements OnInit {
     public refresh(): void {
         this.getItems();
     }
+
+    public getBranches(match: {} = {}): Promise<Branch[]> {
+
+        return new Promise<Branch[]>((resolve, reject) => {
+      
+          this._branchService.getBranches(
+              {}, // PROJECT
+              match, // MATCH
+              { number: 1 }, // SORT
+              {}, // GROUP
+              0, // LIMIT
+              0 // SKIP
+          ).subscribe(
+            result => {
+              if (result && result.branches) {
+                resolve(result.branches);
+              } else {
+                resolve(null);
+              }
+            },
+            error => {
+              this.showMessage(error._body, 'danger', false);
+              resolve(null);
+            }
+          );
+        });
+      }
 
     public openModal(op: string, movementOfCash: MovementOfCash): void {
 
