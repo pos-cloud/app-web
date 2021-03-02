@@ -1419,6 +1419,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
     if (!this.article.unitOfMeasurement) { this.article.unitOfMeasurement = null; }
     if (!this.article.salesAccount) { this.article.salesAccount = null; }
     if (!this.article.purchaseAccount) { this.article.purchaseAccount = null; }
+    if (!this.article.make) { this.article.make = null; }
 
     this.article.basePrice = this.roundNumber.transform(this.article.basePrice);
     this.article.costPrice = this.roundNumber.transform(this.article.costPrice);
