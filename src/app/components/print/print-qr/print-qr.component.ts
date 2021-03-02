@@ -173,15 +173,16 @@ export class PrintQRComponent implements OnInit {
                     this.doc.setFillColor(255, 255, 255);
                     this.doc.setDrawColor(255, 255, 255);
                     this.doc.roundedRect(23, row-1, 32, 32, 2, 2, "FD");
-                    let url = `${application.url}/%23/?table=${table._id}`;
+                    let url = `${application.url}/#/?table=${table.description}`;
                     let imgdata = 'data:image/png;base64,' + await this.getBarcode64(`qr?value=${url}`);
                     this.doc.addImage(imgdata, 'PNG', 24, row, 30, 30);
                     row += 33;
 
                     this.doc.setFontSize(this.fontSizes.xsmall);
                     this.centerText(margin, margin, 77, 0, row, "o ingresá a");
-                    row += 2;
+                    row += 4;
                     this.doc.setTextColor(2, 117, 216);
+                    this.doc.setFontSize(this.fontSizes.normal);
                     this.centerText(margin, margin, 77, 0, row, `${url}`);
 
                     this.doc.setTextColor(0);
