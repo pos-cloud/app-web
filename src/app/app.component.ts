@@ -175,12 +175,10 @@ export class AppComponent {
         .replace(/https/g, "");
     }
     Config.setDatabase(subdominio);
-    // Config.setApiHost('localhost'); // TEST
-    // Config.setApiV8Host('localhost'); // TEST
-    //Config.setApiPort(300); // TEST
-    //Config.setApiV8Port(308); // TEST
-    Config.setApiHost('api.poscloud.com.ar'); // PROD
-    Config.setApiV8Host('apiv8.poscloud.com.ar'); // PROD
+    //Config.setApiHost('http://localhost:300'); // TEST
+    //Config.setApiV8Host('http://localhost:308'); // TEST
+    Config.setApiHost('https://api.poscloud.com.ar'); // PROD
+    Config.setApiV8Host('https://apiv8.poscloud.com.ar'); // PROD
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

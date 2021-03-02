@@ -168,17 +168,17 @@ export class Config {
 
   public static updateApiURL() {
     if (Config.apiPort !== 0) {
-      Config.apiURL = 'https://' + Config.apiHost + '/api/';
+      Config.apiURL = Config.apiHost + '/api/';
     } else {
-      Config.apiURL = 'https://' + Config.apiHost + '/api/';
+      Config.apiURL = Config.apiHost + '/api/';
     }
   }
 
   public static updateApiV8URL() {
     if (Config.apiV8Port !== 0) {
-      Config.apiV8URL = 'https://' + Config.apiV8Host + '/';
+      Config.apiV8URL = Config.apiV8Host + '/';
     } else {
-      Config.apiV8URL = 'https://' + Config.apiV8Host + '/';
+      Config.apiV8URL = Config.apiV8Host + '/';
     }
   }
 }
