@@ -1611,25 +1611,25 @@ export class PointOfSaleComponent implements OnInit {
                 }
                 modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(this.transaction.origin, 4)}-${this.transaction.letter}-${this.padNumber(this.transaction.number, 8)}`;
                 if (this.transaction.type.electronics) {
-                    modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente` + `<a href="http://${Config.apiHost}300/api/print/invoice/${Config.database}/${this.transaction._id}">Su comprobante</a>`
+                    modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${Config.database}/${this.transaction._id}">Su comprobante</a>`
                 } else {
-                    modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://${Config.apiHost}300/api/print/others/${Config.database}/${this.transaction._id}">Su comprobante</a>`
+                    modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${Config.database}/${this.transaction._id}">Su comprobante</a>`
                 }
 
                 if (Config.country === 'MX') {
-                    modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://${Config.apiHost}:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number + `">Su comprobante</a>`;
+                    modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://vps-1883265-x.dattaweb.com:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number + `">Su comprobante</a>`;
                 }
 
                 if (this.transaction.type.defectEmailTemplate) {
 
                     if (this.transaction.type.electronics) {
-                        modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://${Config.apiHost}300/api/print/invoice/${Config.database}/${this.transaction._id}">Su comprobante</a>`
+                        modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${Config.database}/${this.transaction._id}">Su comprobante</a>`
                     } else {
-                        modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://${Config.apiHost}300/api/print/others/${Config.database}/${this.transaction._id}">Su comprobante</a>`
+                        modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${Config.database}/${this.transaction._id}">Su comprobante</a>`
                     }
 
                     if (Config.country === 'MX') {
-                        modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://${Config.apiHost}:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number + `">Su comprobante</a>`;
+                        modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://vps-1883265-x.dattaweb.com:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number + `">Su comprobante</a>`;
                     }
                 }
 
