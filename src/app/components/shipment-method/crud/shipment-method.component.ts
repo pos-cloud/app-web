@@ -7,7 +7,7 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { Title } from '@angular/platform-browser';
 import { CapitalizePipe } from 'app/main/pipes/capitalize';
-import { Subscription, Subject } from 'rxjs';
+import { Subscription, Subject, Observable, merge } from 'rxjs';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FormField } from 'app/util/formField.interface';
@@ -16,6 +16,9 @@ import { ShipmentMethodService } from '../shipment-method.service';
 import { Application } from 'app/components/application/application.model';
 import { ApplicationService } from 'app/components/application/application.service';
 import Resulteable from 'app/util/Resulteable';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { Article } from 'app/components/article/article';
+import { ArticleService } from 'app/components/article/article.service';
 declare const google: any;
 
 @Component({
@@ -46,6 +49,27 @@ export class ShipmentMethodComponent implements OnInit {
     public imageURL: string;
     public applications: Application[];
 
+    public searchArticles = (text$: Observable<string>) => {
+        const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+        const inputFocus$ = this.focus$['article'];
+        return merge(debouncedText$, inputFocus$).pipe(
+            tap(() => this.loading = true),
+            switchMap(async term => {
+                let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' } } : {};
+                match["operationType"] = { "$ne": "D" };
+                match["type"] = "Final";
+                return await this.getArticles(match).then(
+                    result => {
+                        return result;
+                    }
+                );
+            }),
+            tap(() => this.loading = false),
+        )
+    }
+
+    public formatterArticles = (x: { description: string }) => x.description;
+
     public formFields: FormField[] = [{
         name: 'name',
         tag: 'input',
@@ -65,7 +89,16 @@ export class ShipmentMethodComponent implements OnInit {
         tagType: 'boolean',
         values: ['true', 'false'],
         class: 'form-group col-md-12'
-    }];
+    },{
+        name: 'article',
+        tag: 'autocomplete',
+        tagType: 'text',
+        search: this.searchArticles,
+        format: this.formatterArticles,
+        values: null,
+        focus: false,
+        class: 'form-group col-md-12'
+    },];
     public formErrors: {} = {};
     public validationMessages = {
         'required': 'Este campo es requerido.',
@@ -73,6 +106,7 @@ export class ShipmentMethodComponent implements OnInit {
 
     constructor(
         private _objService: ShipmentMethodService,
+        private _articleService : ArticleService,
         private _toastr: ToastrService,
         private _title: Title,
         public _fb: FormBuilder,
@@ -101,6 +135,9 @@ export class ShipmentMethodComponent implements OnInit {
                     name: 1,
                     'applications._id': 1,
                     'applications.name': 1,
+                    "article._id": 1,
+                    "article.description" : 1,
+                    requireTable : 1,
                     requireAddress: 1,
                     zones: 1,
                 },
@@ -612,5 +649,27 @@ export class ShipmentMethodComponent implements OnInit {
     public deleteZone(pos: number) {
         this.obj.zones.splice(pos, 1);
         this.showToast(null, 'success', 'Operación realizada con éxito');
+    }
+
+    public getArticles(match: {}): Promise<Article[]> {
+        return new Promise<Article[]>((resolve, reject) => {
+            this.subscription.add(this._articleService.getAll({
+                project : {
+                    name : "$description",
+                    description : 1,
+                    type : 1,
+                    operationType : 1
+                },
+                match,
+                sort: { description: 1 },
+                limit: 10,
+            }).subscribe(
+                result => {
+                    this.loading = false;
+                    (result.status === 200) ? resolve(result.result) : reject(result);
+                },
+                error => reject(error)
+            ));
+        });
     }
 }

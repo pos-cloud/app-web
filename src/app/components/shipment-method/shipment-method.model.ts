@@ -1,6 +1,7 @@
 import { Model } from '../model/model.model';
 import { Application } from '../application/application.model';
 import { IAttribute } from 'app/util/attribute.interface';
+import { Article } from '../article/article';
 
 export class ShipmentMethod extends Model {
 
@@ -8,6 +9,7 @@ export class ShipmentMethod extends Model {
   public applications: Application[];
   public requireAddress: boolean = true;
   public requireTable: boolean = false;
+  public article: Article;
   public zones: {
     name: string,
     type: ZoneType,
