@@ -84,6 +84,13 @@ export class Config {
     authToken: string
   };
 
+  public ecommerceCost : number
+  public ecommercePlan : {
+    name : string,
+    cost :  number,
+    pergentaje : number,
+}
+
   constructor() {
     Config.updateApiURL();
     Config.updateApiV8URL();
