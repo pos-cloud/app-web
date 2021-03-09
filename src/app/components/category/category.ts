@@ -17,6 +17,7 @@ export class Category extends Model {
     public applications: Application[];
     public favourite: boolean = false;
     public isRequiredOptional: boolean = false;
+    public wooId: string;
     public parent: Category;
     public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
@@ -123,6 +124,16 @@ export class Category extends Model {
                 disabled: false,
                 filter: true,
                 datatype: 'boolean',
+                project: null,
+                align: 'left',
+                required: false,
+            },
+            {
+                name: 'wooId',
+                visible: false,
+                disabled: false,
+                filter: true,
+                datatype: 'string',
                 project: null,
                 align: 'left',
                 required: false,
