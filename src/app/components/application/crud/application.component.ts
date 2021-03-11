@@ -372,8 +372,14 @@ export class ApplicationComponent implements OnInit {
         tagType: null,
         values: ['true', 'false'],
         default: 'true',
-        class: 'form-group col-md-12'
+        class: 'form-group col-md-6'
     }, {
+        name: 'design.labelNote',
+        tag: 'input',
+        tagType: 'text',
+        default: "",
+        class: 'form-group col-md-6'
+    },{
         name: 'design.resources.banners',
         tag: 'input',
         tagType: 'file',
@@ -497,7 +503,6 @@ export class ApplicationComponent implements OnInit {
                 result => {
                     this.loading = false;
                     if (result.status === 200) {
-                        console.log(result.result);
                         this.obj = result.result;
                         if (this.obj.design.home && this.obj.design.home.length > 0) {
                             this.home = this.obj.design.home;

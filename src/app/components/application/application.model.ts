@@ -22,6 +22,7 @@ export class Application extends Model {
         claim: number,
     }
     public design: {
+        labelNote : string,
         about: string,
         categoryTitle: string,
         categoriesByLine: number,
