@@ -76,6 +76,7 @@ export class Article {
     public applications: Application[];
     public salesAccount : Account;
     public purchaseAccount : Account;
+    public wooId: string;
     public operationType: string;
     public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
@@ -400,16 +401,6 @@ export let attributes = [
         required: false,
     },
     {
-        name: 'type',
-        visible: false,
-        disabled: true,
-        filter: false,
-        datatype: 'string',
-        project: null,
-        align: 'left',
-        required: true,
-    },
-    {
         name: 'tags',
         visible: false,
         disabled: false,
@@ -418,6 +409,26 @@ export let attributes = [
         project: `{"$reduce":{"input":"$tags","initialValue":"","in":{"$concat":["$$value",{"$cond":{"if":{"$eq":["$$value",""]},"then":"","else":"; "}},{"$concat":[{"$toString":"$$this"}]}]}}}`,
         align: 'left',
         required: false,
+    },
+    {
+        name: 'wooId',
+        visible: false,
+        disabled: false,
+        filter: false,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: true,
+    },
+    {
+        name: 'type',
+        visible: false,
+        disabled: true,
+        filter: false,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: true,
     },
     {
         name: 'operationType',

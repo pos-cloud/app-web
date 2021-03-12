@@ -83,7 +83,7 @@
     "configs": "Configuraciones",
     "costPrice": "Precio de Costo",
     "count": "Cantidad",
-    "creationDate": "Fecha de Alta",
+    "creationDate": "Fecha de Creación",
     "credit": "Haber",
     "currency.name": "Moneda",
     "database not indicated in loggingIn": "base de datos no indicada en loggingIn",
@@ -469,5 +469,6 @@
     "employee._id": "ID de empleado",
     "wooId": "ID de Woocommerce",
     "tags": "Etiquetas",
-    "tag": "Etiqueta"
+    "tag": "Etiqueta",
+    "entryDate": "Fecha de Alta"
 }
