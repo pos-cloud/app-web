@@ -9,7 +9,7 @@ export class Category extends Model {
     public _id: string;
     public order: number = 1;
     public description: string = '';
-    public picture: string;
+    public picture: string = 'default.jpg';
     public visibleInvoice: boolean = false;
     public visibleOnSale: boolean = true;
     public visibleOnPurchase: boolean = true;
