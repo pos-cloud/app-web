@@ -453,7 +453,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                                 "$and": [{
                                     "$eq": [this.companyType, "Proveedor"]
                                 }, {
-                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewProviderlse, false]
+                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, false]
                                 }, {
                                     "$eq": ["$type.movement", "Entrada"]
                                 }, {
