@@ -42,7 +42,6 @@ import { VATConditionService } from './components/vat-condition/vat-condition.se
 import { ArticleStockService } from './components/article-stock/article-stock.service';
 import { VariantTypeService } from './components/variant-type/variant-type.service';
 import { VariantService } from './components/variant/variant.service';
-import { VariantValueService } from './components/variant-value/variant-value.service';
 import { DepositService } from './components/deposit/deposit.service';
 import { LocationService } from './components/location/location.service';
 import { CompanyNewsService } from './components/company/company-news.service';
@@ -99,10 +98,6 @@ import { AddVariantTypeComponent } from './components/variant-type/variant-type/
 import { UpdateVariantTypeComponent } from './components/variant-type/update-variant-type/update-variant-type.component';
 import { DeleteVariantTypeComponent } from './components/variant-type/delete-variant-type/delete-variant-type.component';
 import { ListVariantTypesComponent } from './components/variant-type/list-variant-types/list-variant-types.component';
-import { ListVariantValuesComponent } from './components/variant-value/list-variant-values/list-variant-values.component';
-import { DeleteVariantValueComponent } from './components/variant-value/delete-variant-value/delete-variant-value.component';
-import { UpdateVariantValueComponent } from './components/variant-value/update-variant-value/update-variant-value.component';
-import { AddVariantValueComponent } from './components/variant-value/variant-value/add-variant-value.component';
 import { AddMovementOfArticleComponent } from './components/movement-of-article/add-movement-of-article/add-movement-of-article.component';
 import { AddArticleTaxComponent } from './components/article/add-article-tax/add-article-tax.component';
 import { ApplyDiscountComponent } from './components/apply-discount/apply-discount.component';
@@ -318,10 +313,6 @@ export function createTranslateLoader(http: HttpClient) {
     DeleteVariantTypeComponent,
     AddArticleFieldsComponent,
     ListVariantTypesComponent,
-    ListVariantValuesComponent,
-    DeleteVariantValueComponent,
-    UpdateVariantValueComponent,
-    AddVariantValueComponent,
     AddMovementOfArticleComponent,
     AddArticleTaxComponent,
     TaxComponent,
@@ -478,10 +469,6 @@ export function createTranslateLoader(http: HttpClient) {
     UpdateVariantTypeComponent,
     DeleteVariantTypeComponent,
     ListVariantTypesComponent,
-    ListVariantValuesComponent,
-    DeleteVariantValueComponent,
-    UpdateVariantValueComponent,
-    AddVariantValueComponent,
     AddMovementOfArticleComponent,
     AddArticleTaxComponent,
     TaxComponent,
@@ -635,7 +622,6 @@ export function createTranslateLoader(http: HttpClient) {
     ArticleStockService,
     VariantTypeService,
     VariantService,
-    VariantValueService,
     TaxService,
     DepositService,
     LocationService,

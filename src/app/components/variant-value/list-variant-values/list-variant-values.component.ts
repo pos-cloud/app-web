@@ -1,145 +1,84 @@
-import { Component, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, ViewChild } from '@angular/core';
+import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { DatatableComponent } from '../../datatable/datatable.component';
 import { Router } from '@angular/router';
-
-import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-
+import { IButton } from 'app/util/buttons.interface';
 import { VariantValue } from '../variant-value';
 import { VariantValueService } from '../variant-value.service';
 
-import { AddVariantValueComponent } from '../variant-value/add-variant-value.component';
-import { UpdateVariantValueComponent } from '../update-variant-value/update-variant-value.component';
-import { DeleteVariantValueComponent } from '../delete-variant-value/delete-variant-value.component';
 
 @Component({
-    selector: 'app-list-variant-values',
-    templateUrl: './list-variant-values.component.html',
-    styleUrls: ['./list-variant-values.component.scss'],
-    providers: [NgbAlertConfig],
-    encapsulation: ViewEncapsulation.None
+	selector: 'app-list-variant-values',
+	templateUrl: './list-variant-values.component.html',
+	styleUrls: ['./list-variant-values.component.scss'],
+	encapsulation: ViewEncapsulation.None
 })
 
-export class ListVariantValuesComponent implements OnInit {
+export class ListVariantValuesComponent {
 
-    public variantValues: VariantValue[] = new Array();
-    public areVariantValuesEmpty: boolean = true;
-    public alertMessage: string = '';
-    public orderTerm: string[] = ['description'];
-    public propertyTerm: string;
-    public areFiltersVisible: boolean = false;
-    public loading: boolean = false;
-    @Output() eventAddItem: EventEmitter<VariantValue> = new EventEmitter<VariantValue>();
-    public itemsPerPage = 10;
-    public totalItems = 0;
-    public filterType: string;
-    public filterOrder: string;
-    public filterDescription: string;
-    public p;
-
+    public title: string = 'variant-values';
+    public sort = { "description": 1 };
+    public columns = VariantValue.getAttributes();
+    public rowButtons: IButton[] = [{
+      title: 'view',
+      class: 'btn btn-success btn-sm',
+      icon: 'fa fa-eye',
+      click: `this.emitEvent('view', item)`
+    }, {
+      title: 'update',
+      class: 'btn btn-primary btn-sm',
+      icon: 'fa fa-pencil',
+      click: `this.emitEvent('update', item)`
+    }, {
+      title: 'delete',
+      class: 'btn btn-danger btn-sm',
+      icon: 'fa fa-trash-o',
+      click: `this.emitEvent('delete', item)`
+    }];
+    public headerButtons: IButton[] = [{
+      title: 'add',
+      class: 'btn btn-light',
+      icon: 'fa fa-plus',
+      click: `this.emitEvent('add', null)`
+    }, {
+      title: 'refresh',
+      class: 'btn btn-light',
+      icon: 'fa fa-refresh',
+      click: `this.refresh()`
+    }];
+  
+    // EXCEL
+    @ViewChild(DatatableComponent, { static: false }) datatableComponent: DatatableComponent;
+  
     constructor(
-        public _variantValueService: VariantValueService,
-        public _router: Router,
-        public _modalService: NgbModal,
-        public alertConfig: NgbAlertConfig
+      public _service: VariantValueService,
+      private _modalService: NgbModal,
+      private _router: Router,
     ) { }
-
-    ngOnInit(): void {
-
-        this.orderBy('type', 'name');
-        this.getVariantValues();
-    }
-
-    public getVariantValues(): void {
-
-        this.loading = true;
-
-        this._variantValueService.getVariantValues().subscribe(
-            result => {
-                if (!result.variantValues) {
-                    if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                    this.loading = false;
-                    this.variantValues = new Array();
-                    this.areVariantValuesEmpty = true;
-                } else {
-                    this.hideMessage();
-                    this.loading = false;
-                    this.variantValues = result.variantValues;
-                    this.totalItems = this.variantValues.length;
-                    this.areVariantValuesEmpty = false;
-                }
-            },
-            error => {
-                this.showMessage(error._body, 'danger', false);
-                this.loading = false;
-            }
-        );
-    }
-
-    public orderBy(term: string, property?: string): void {
-
-        if (this.orderTerm[0] === term) {
-            this.orderTerm[0] = "-" + term;
-        } else {
-            this.orderTerm[0] = term;
-        }
-        this.propertyTerm = property;
-    }
-
-    public refresh(): void {
-        this.getVariantValues();
-    }
-
-    public openModal(op: string, variantValue: VariantValue): void {
-
-        let modalRef;
-        switch (op) {
-            case 'view':
-                modalRef = this._modalService.open(UpdateVariantValueComponent, { size: 'lg', backdrop: 'static' });
-                modalRef.componentInstance.variantValue = variantValue;
-                modalRef.componentInstance.readonly = true;
-                break;
-            case 'add':
-                modalRef = this._modalService.open(AddVariantValueComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
-                    this.getVariantValues();
-                }, (reason) => {
-                    this.getVariantValues();
-                });
-                break;
-            case 'update':
-                modalRef = this._modalService.open(UpdateVariantValueComponent, { size: 'lg', backdrop: 'static' });
-                modalRef.componentInstance.variantValue = variantValue;
-                modalRef.componentInstance.readonly = false;
-                modalRef.result.then((result) => {
-                    this.getVariantValues();
-                }, (reason) => {
-                    this.getVariantValues();
-                });
-                break;
-            case 'delete':
-                modalRef = this._modalService.open(DeleteVariantValueComponent, { size: 'lg', backdrop: 'static' })
-                modalRef.componentInstance.variantValue = variantValue;
-                modalRef.result.then((result) => {
-                    if (result === 'delete_close') {
-                        this.getVariantValues();
-                    }
-                }, (reason) => {
-
-                });
-                break;
-            default: ;
-        }
+  
+    public async emitEvent(event) {
+      this.openModal(event.op, event.obj);
     };
-
-    public addItem(variantValueSelected) {
-        this.eventAddItem.emit(variantValueSelected);
-    }
-
-    public showMessage(message: string, type: string, dismissible: boolean): void {
-        this.alertMessage = message;
-        this.alertConfig.type = type;
-        this.alertConfig.dismissible = dismissible;
-    }
-
-    public hideMessage(): void {
-        this.alertMessage = '';
+  
+    public async openModal(op: string, obj: any) {
+      switch (op) {
+        case 'view':
+          this._router.navigateByUrl('variant-values/view/' + obj._id);
+          break;
+        case 'add':
+          this._router.navigateByUrl('variant-values/add');
+          break;
+        case 'update':
+          this._router.navigateByUrl('variant-values/update/' + obj._id);
+          break;
+        case 'delete':
+          this._router.navigateByUrl('variant-values/delete/' + obj._id);
+          break;
+        default: ;
+      }
+    };
+  
+    public refresh() {
+      this.datatableComponent.refresh();
     }
 }

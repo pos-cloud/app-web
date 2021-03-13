@@ -15,6 +15,7 @@ import { CompanyGroupModule } from './company-group/company-group.module';
 import { AccountModule } from './account/account.module';
 import { AccountPeriodModule } from './account-period/account-period.module';
 import { AccountSeatModule } from './account-seat/account-seat.module';
+import { VariantValueModule } from './variant-value/variant-value.module';
 
 @NgModule({
 	imports: [
@@ -33,7 +34,8 @@ import { AccountSeatModule } from './account-seat/account-seat.module';
     CompanyGroupModule,
     AccountModule,
     AccountPeriodModule,
-    AccountSeatModule
+    AccountSeatModule,
+    VariantValueModule
 	],
 	declarations: [
 	],

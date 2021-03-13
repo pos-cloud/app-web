@@ -19,7 +19,6 @@ import { RegisterComponent } from './components/register/register.component';
 import { ExportCitiComponent } from './components/export/export-citi/export-citi.component';
 import { ExportIvaComponent } from './components/export/export-iva/export-iva.component';
 import { ListVariantTypesComponent } from './components/variant-type/list-variant-types/list-variant-types.component';
-import { ListVariantValuesComponent } from './components/variant-value/list-variant-values/list-variant-values.component';
 import { ListCashBoxesComponent } from './components/cash-box/list-cash-boxes/list-cash-boxes.component';
 import { AuthGuard } from './main/guards/auth.guard';
 import { ListArticleStocksComponent } from './components/article-stock/list-article-stocks/list-article-stocks.component';
@@ -328,11 +327,6 @@ export const _routes: Routes = [
   {
     path: 'admin/tipos-de-variantes',
     component: ListVariantTypesComponent,
-    canActivate: [AuthGuard, LicenseGuard]
-  },
-  {
-    path: 'admin/valores-de-variantes',
-    component: ListVariantValuesComponent,
     canActivate: [AuthGuard, LicenseGuard]
   },
   {
