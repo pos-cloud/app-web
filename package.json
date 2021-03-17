@@ -40,6 +40,7 @@
     "jspdf": "^1.5.3",
     "jsqr": "^1.2.0",
     "moment": "^2.24.0",
+    "ng-multiselect-dropdown": "^0.2.14",
     "ngx-pagination": "^3.3.0",
     "ngx-socket-io": "^2.1.1",
     "ngx-tinymce": "^7.0.0",

@@ -80,6 +80,7 @@ import { TaxBase, TaxClassification } from '../tax/tax';
 import { TaxService } from '../tax/tax.service';
 import { ListCategoriesPosComponent } from '../category/list-categories-pos/list-categories-pos.component';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import { AccountSeatService } from '../account-seat/account-seat.service';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -172,6 +173,7 @@ export class AddSaleOrderComponent {
     private _cancellationTypeService: CancellationTypeService,
     private _claimService: ClaimService,
     private _transportService: TransportService,
+    private _accountSeatService : AccountSeatService,
     private _priceListService: PriceListService,
     private _toastr: ToastrService,
     private _configService: ConfigService,
@@ -1877,9 +1879,9 @@ export class AddSaleOrderComponent {
         }
         modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(this.transaction.origin, 4)}-${this.transaction.letter}-${this.padNumber(this.transaction.number, 8)}`;
         if (this.transaction.type.electronics) {
-          modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente` + `<a href="http://${Config.apiHost}:300/api/print/invoice/${Config.database}/${this.transaction._id}">Su comprobante</a>`
+          modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${Config.database}/${this.transaction._id}">Su comprobante</a>`
         } else {
-          modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://${Config.apiHost}:300/api/print/others/${Config.database}/${this.transaction._id}">Su comprobante</a>`
+          modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${Config.database}/${this.transaction._id}">Su comprobante</a>`
         }
 
         if (Config.country === 'MX') {
@@ -1889,13 +1891,13 @@ export class AddSaleOrderComponent {
         if (this.transaction.type.defectEmailTemplate) {
 
           if (this.transaction.type.electronics) {
-            modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://${Config.apiHost}:300/api/print/invoice/${Config.database}/${this.transaction._id}">Su comprobante</a>`
+            modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${Config.database}/${this.transaction._id}">Su comprobante</a>`
           } else {
-            modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://${Config.apiHost}:300/api/print/others/${Config.database}/${this.transaction._id}">Su comprobante</a>`
+            modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${Config.database}/${this.transaction._id}">Su comprobante</a>`
           }
 
           if (Config.country === 'MX') {
-            modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.apiHost}:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number;
+            modalRef.componentInstance.body += ` y su XML correspondiente en http://vps-1883265-x.dattaweb.com:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number;
           }
         }
 
@@ -2577,7 +2579,6 @@ export class AddSaleOrderComponent {
       isValid = false;
       this.showToast(null, "info", "No se encontraron productos en la transacción");
     }
-
     // ACTUALIZACIÓN DE PRECIOS DE COSTOS
     if (isValid && this.transaction.type.updatePrice) {
       let count = await this.updateArticlesCostPrice();
@@ -2611,6 +2612,17 @@ export class AddSaleOrderComponent {
     // FIN DE ACTUALIZACIÓN DE STOCK
 
     if (isValid) {
+
+        /*if(this.transaction.type.allowAccounting){
+            await this._accountSeatService.addAccountSeatByTransaction(this.transaction._id).subscribe(
+                result => {
+                    this.showToast(result);
+                },
+                error =>{
+                    this.showToast(error);
+                }
+            )
+        }*/
 
       await this.updateBalance().then(async balance => {
         if (balance !== null) {

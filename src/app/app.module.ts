@@ -247,6 +247,7 @@ import { PushNotificationsService } from './components/notification/notification
 import { PrintQRComponent } from './components/print/print-qr/print-qr.component';
 import { SelectMovementsOfCashesComponent } from './components/movement-of-cash/select-movements-of-cashes/select-movements-of-cashes.component';
 import { MercadopagoService } from './components/mercadopago/mercadopago.service';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -588,7 +589,8 @@ export function createTranslateLoader(http: HttpClient) {
     DirectivesModule,
     PipesModule,
     ComponentsModule,
-    ExportersModule
+    ExportersModule,
+    NgMultiSelectDropDownModule.forRoot() // https://nileshpatel17.github.io/ng-multiselect-dropdown/
   ],
   providers: [
     {

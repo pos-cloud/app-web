@@ -315,4 +315,14 @@ export let attributes = [
         align: 'left',
         required: true,
     },
+    {
+        name: 'transaction.type._id',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: true,
+    }
 ];

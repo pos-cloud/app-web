@@ -6,8 +6,35 @@
     </div>
     <div class="row container-filter">
         <div class="col-md-2">
+            <label for="branch" class="control-label">
+                <b>Sucursal</b>
+            </label>
+            <select class="form-control" [(ngModel)]="branchSelectedId" (change)='getTransactionTypes()'>
+                <option [ngValue]="null" [disabled]="!allowChangeBranch">
+                    Todas
+                </option>
+                <option *ngFor="let branch of branches" [ngValue]="branch._id" [disabled]="!allowChangeBranch">
+                    {{branch.number}} - {{branch.name}}
+                </option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="transactionType" class="control-label">
+                <b>Tipo</b>
+            </label>
+            <ng-multiselect-dropdown
+            [placeholder]="'Tipo de Transacción'"
+            [settings]="dropdownSettings"
+            [data]="transactionTypes"
+            [(ngModel)]="transactionTypesSelect"
+            (onSelect)="onItemSelect($event)"
+            (onSelectAll)="onSelectAll($event)"
+          >
+          </ng-multiselect-dropdown>
+        </div>
+        <div class="col-md-2">
             <label class="control-label">
-                <b>Estado Transaccion:</b>
+                <b>Estado Transacción:</b>
             </label>
             <select class="form-control" [(ngModel)]="stateSelect">
                 <option value="Cerrado">Cerrado</option>
@@ -55,7 +82,8 @@
             <div class="pull-right">
                 <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i
                         [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
-                <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems()"></app-export-excel>
+                <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns"
+                    (eventExport)="exportItems()"></app-export-excel>
                 <div class="btn-group" ngbDropdown>
                     <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Columnas"><i
                             class="fa fa-columns"></i><span>Columnas</span></button>
@@ -64,8 +92,8 @@
                             <div class="example-box" *ngFor="let column of columns" cdkDrag
                                 [cdkDragDisabled]="column.disabled">
                                 <label for="column"><input type="checkbox" [id]="column.name" (change)="getItems()"
-                                        [(ngModel)]="column.visible"
-                                        [disabled]="column.disabled">{{ column.name | translate}}</label>
+                                        [(ngModel)]="column.visible" [disabled]="column.disabled">{{ column.name |
+                                    translate}}</label>
                             </div>
                         </div>
                     </div>
@@ -119,9 +147,14 @@
                 <tfoot>
                     <td></td>
                     <ng-container *ngFor="let column of columns">
-                        <td *ngIf="column.visible && column.datatype === 'number'" [attr.align]="column.align"><strong>{{column.sum}}</strong></td>
-                        <td *ngIf="column.visible && column.datatype === 'currency'" [attr.align]="column.align"><strong>{{column.sum | currency:'USD':'symbol-narrow':'1.2-2'}}</strong></td>
-                        <td *ngIf="column.visible && (column.datatype !== 'number' && column.datatype !== 'currency')" [attr.align]="column.align"></td>
+                        <td *ngIf="column.visible && column.datatype === 'number'" [attr.align]="column.align">
+                            <strong>{{column.sum}}</strong>
+                        </td>
+                        <td *ngIf="column.visible && column.datatype === 'currency'" [attr.align]="column.align">
+                            <strong>{{column.sum | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
+                        </td>
+                        <td *ngIf="column.visible && (column.datatype !== 'number' && column.datatype !== 'currency')"
+                            [attr.align]="column.align"></td>
                     </ng-container>
                 </tfoot>
             </table>

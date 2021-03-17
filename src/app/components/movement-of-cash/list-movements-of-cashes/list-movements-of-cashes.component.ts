@@ -16,6 +16,8 @@ import * as moment from 'moment';
 import { Branch } from 'app/components/branch/branch';
 import { AuthService } from 'app/components/login/auth.service';
 import { BranchService } from 'app/components/branch/branch.service';
+import { TransactionType } from 'app/components/transaction-type/transaction-type';
+import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
 
 @Component({
     selector: 'app-list-movement-of-cash',
@@ -53,7 +55,7 @@ export class ListMovementOfCashesComponent implements OnInit {
     public branches: Branch[];
     @Input() branchSelectedId: String;
     public allowChangeBranch: boolean;
-    
+
     //columns
     public columns = attributes;
     private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
@@ -71,10 +73,26 @@ export class ListMovementOfCashesComponent implements OnInit {
     public dateSelect: string;
     public stateSelect: string = "Cerrado";
 
+    public selectedItems;
+    public transactionTypes: TransactionType[];
+    public transactionTypesSelect;
+    public dropdownSettings = {
+        "singleSelection": false,
+        "defaultOpen": false,
+        "idField": "_id",
+        "textField": "name",
+        "selectAllText": "Select All",
+        "unSelectAllText": "UnSelect All",
+        "enableCheckAll": true,
+        "itemsShowLimit": 3,
+        "allowSearchFilter": true
+    }
+
 
     constructor(
         public _movementOfCashService: MovementOfCashService,
         private _authService: AuthService,
+        public _transactionTypeService: TransactionTypeService,
         private _branchService: BranchService,
         public _router: Router,
         public _modalService: NgbModal,
@@ -98,31 +116,39 @@ export class ListMovementOfCashesComponent implements OnInit {
 
     async ngOnInit() {
 
-        if(!this.branchSelectedId) {
-            await this.getBranches({ operationType: { $ne: 'D' } }).then(
-              branches => {
-                this.branches = branches;
-                if(this.branches && this.branches.length > 1) {
-                  this.branchSelectedId = this.branches[0]._id;
-                }
-              }
-            );
-            this._authService.getIdentity.subscribe(
-              async identity => {
-                if(identity && identity.origin) {
-                  this.allowChangeBranch = false;
-                  this.branchSelectedId = identity.origin.branch._id;
-                } else {
-                  this.allowChangeBranch = true;
-                  this.branchSelectedId = null;
-                }
-              }
-            );
-          }
-
-
         this.pathLocation = this._router.url.split('/');
         this.transactionMovement = this.pathLocation[2].charAt(0).toUpperCase() + this.pathLocation[2].slice(1);
+
+        if (!this.branchSelectedId) {
+            await this.getBranches({ operationType: { $ne: 'D' } }).then(
+                branches => {
+                    this.branches = branches;
+                    if (this.branches && this.branches.length > 1) {
+                        this.branchSelectedId = this.branches[0]._id;
+                    }
+                }
+            );
+            this._authService.getIdentity.subscribe(
+                async identity => {
+                    if (identity && identity.origin) {
+                        this.allowChangeBranch = false;
+                        this.branchSelectedId = identity.origin.branch._id;
+                    } else {
+                        this.allowChangeBranch = true;
+                        this.branchSelectedId = null;
+                    }
+                }
+            );
+        }
+
+        await this.getTransactionTypes().then(
+            result => {
+                if (result) {
+                    this.transactionTypes = result
+                }
+            }
+        )
+
         this.getItems();
         this.initDragHorizontalScroll();
     }
@@ -180,7 +206,7 @@ export class ListMovementOfCashesComponent implements OnInit {
 
         match += `"transaction.type.transactionMovement": "${this.transactionMovement}",`;
         match += `"transaction.state": "${this.stateSelect}",`;
-        if(this.branchSelectedId){
+        if (this.branchSelectedId) {
             match += `"transaction.branchDestination._id": { "$oid" : "${this.branchSelectedId}" },`;
         }
         match += `"${this.dateSelect}" : {
@@ -194,6 +220,15 @@ export class ListMovementOfCashesComponent implements OnInit {
         match += `}`;
 
         match = JSON.parse(match);
+
+        var transactionTypes = [];
+        
+        if (this.transactionTypesSelect) {
+            this.transactionTypesSelect.forEach(element => {
+                transactionTypes.push({ "$oid" : element._id});
+            });
+            match['transaction.type._id'] = { "$in": transactionTypes }
+        }
 
         // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
         let project = `{`;
@@ -342,29 +377,60 @@ export class ListMovementOfCashesComponent implements OnInit {
     public getBranches(match: {} = {}): Promise<Branch[]> {
 
         return new Promise<Branch[]>((resolve, reject) => {
-      
-          this._branchService.getBranches(
-              {}, // PROJECT
-              match, // MATCH
-              { number: 1 }, // SORT
-              {}, // GROUP
-              0, // LIMIT
-              0 // SKIP
-          ).subscribe(
-            result => {
-              if (result && result.branches) {
-                resolve(result.branches);
-              } else {
-                resolve(null);
-              }
-            },
-            error => {
-              this.showMessage(error._body, 'danger', false);
-              resolve(null);
-            }
-          );
+
+            this._branchService.getBranches(
+                {}, // PROJECT
+                match, // MATCH
+                { number: 1 }, // SORT
+                {}, // GROUP
+                0, // LIMIT
+                0 // SKIP
+            ).subscribe(
+                result => {
+                    if (result && result.branches) {
+                        resolve(result.branches);
+                    } else {
+                        resolve(null);
+                    }
+                },
+                error => {
+                    this.showMessage(error._body, 'danger', false);
+                    resolve(null);
+                }
+            );
         });
-      }
+    }
+
+    public getTransactionTypes(): Promise<TransactionType[]> {
+
+        return new Promise<TransactionType[]>((resolve, reject) => {
+
+            this._transactionTypeService.getAll({
+                project: {
+                    _id: 1,
+                    transactionMovement: 1,
+                    operationType: 1,
+                    name: 1,
+                },
+                match: {
+                    transactionMovement: this.transactionMovement,
+                    operationType: { "$ne": "D" }
+                }
+            }).subscribe(
+                result => {
+                    if (result) {
+                        resolve(result.result);
+                    } else {
+                        resolve(null);
+                    }
+                },
+                error => {
+                    this.showMessage(error._body, 'danger', false);
+                    resolve(null);
+                }
+            );
+        });
+    }
 
     public openModal(op: string, movementOfCash: MovementOfCash): void {
 
@@ -386,6 +452,15 @@ export class ListMovementOfCashesComponent implements OnInit {
 
     public ngOnDestroy(): void {
         this.subscription.unsubscribe();
+    }
+
+    onItemSelect(item: any) {
+        console.log(item);
+        //this.transactionTypesSelect.push({ "$oid" : item._id});
+    }
+    onSelectAll(items: any) {
+        /*this.transactionTypesSelect = [];
+        this.transactionTypesSelect.push({ "$oid" : items._id});*/
     }
 
     public showMessage(message: string, type: string, dismissible: boolean): void {
