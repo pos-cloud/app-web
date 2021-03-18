@@ -3566,10 +3566,10 @@ export class PrintComponent implements OnInit {
           direccion = direccion + " N°" + this.transaction.deliveryAddress.number;
         }
 
-        if (direccion.length > 30) {
-          this.doc.text("Entregar a: " + direccion.slice(0, 29) + "-", margin, this.row);
+        if (direccion.length > 27) {
+          this.doc.text("Entregar a: " + direccion.slice(0, 25) + "-", margin, this.row);
           this.row += 5;
-          this.doc.text(direccion.slice(29, direccion.length), margin, this.row);
+          this.doc.text(direccion.slice(25, direccion.length), margin, this.row);
         } else {
           this.doc.text("Entregar a: " + direccion, margin, this.row);
         }
