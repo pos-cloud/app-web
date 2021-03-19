@@ -95,13 +95,25 @@
             {{ formErrors.lastNumber }}
           </div>
         </div>
+        
+      </div>
+      <div class="row">
         <div class="form-group col-md-4">
             <ng-template #rtAccounts let-r="result" let-t="term">
                 <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
             </ng-template>
-            <label for="account">Cuenta Contable:</label>
-            <input id="account" type="text" class="form-control" formControlName="account"
+            <label for="debitAccount">Cuenta Debito:</label>
+            <input id="debitAccount" type="text" class="form-control" formControlName="debitAccount"
                 name="account" [ngbTypeahead]="searchAccounts" [resultTemplate]="rtAccounts"
+                [inputFormatter]="formatterAccounts" [readonly]="readonly" />
+        </div>
+        <div class="form-group col-md-4">
+            <ng-template #rtAccounts let-r="result" let-t="term">
+                <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+            </ng-template>
+            <label for="creditAccount">Cuenta Credito:</label>
+            <input id="creditAccount" type="text" class="form-control" formControlName="creditAccount"
+                name="creditAccount" [ngbTypeahead]="searchAccounts" [resultTemplate]="rtAccounts"
                 [inputFormatter]="formatterAccounts" [readonly]="readonly" />
         </div>
       </div>

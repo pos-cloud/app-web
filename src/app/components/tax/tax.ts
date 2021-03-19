@@ -13,7 +13,8 @@ export class Tax {
 	public classification: TaxClassification = TaxClassification.None;
 	public type: TaxType = TaxType.None;
 	public lastNumber: number = 0;
-    public account : Account;
+    public debitAccount : Account;
+    public creditAccount : Account;
 
 	constructor() { }
 }

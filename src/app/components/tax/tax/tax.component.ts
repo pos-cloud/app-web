@@ -160,7 +160,8 @@ public formatterAccounts = (x: Account) => { return x.description; };
       'lastNumber': [this.tax.lastNumber, [
         ]
       ],
-      'account' : [this.tax.account,[]]
+      'debitAccount' : [this.tax.debitAccount,[]],
+      'creditAccount' : [this.tax.creditAccount,[]]
     });
 
     this.taxForm.valueChanges
@@ -241,7 +242,8 @@ public formatterAccounts = (x: Account) => { return x.description; };
     if(!this.tax.type) this.tax.type = TaxType.None;
     if(!this.tax.classification) this.tax.classification = TaxClassification.None;
     if(!this.tax.lastNumber) this.tax.lastNumber = 0;
-    if(!this.tax.account) this.tax.account = null;
+    if(!this.tax.debitAccount) this.tax.debitAccount = null;
+    if(!this.tax.creditAccount) this.tax.creditAccount = null;
 
     let values = {
       '_id': this.tax._id,
@@ -253,7 +255,8 @@ public formatterAccounts = (x: Account) => { return x.description; };
       'type': this.tax.type,
       'classification': this.tax.classification,
       'lastNumber': this.tax.lastNumber,
-      'account' : this.tax.account
+      'debitAccount' : this.tax.debitAccount,
+      'creditAccount' : this.tax.creditAccount,
     };
 
     this.taxForm.setValue(values);
