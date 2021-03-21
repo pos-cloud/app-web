@@ -64,6 +64,7 @@ export class AccountSeatComponent implements OnInit {
     public database: string = Config.database;
     public debit;
     public credit;
+    public accounts: Account[];
 
     public searchPeriods = (text$: Observable<string>) =>
         text$.pipe(
@@ -107,10 +108,18 @@ export class AccountSeatComponent implements OnInit {
             class: 'form-group col-md-2'
         },
         {
+            name: 'period',
+            tag: 'autocomplete',
+            tagType: 'text',
+            search: this.searchPeriods,
+            format: this.formatterPeriods,
+            class: 'form-group col-md-4'
+        },
+        {
             name: 'observation',
             tag: 'input',
             tagType: 'text',
-            class: 'form-group col-md-10'
+            class: 'form-group col-md-6'
         }
     ];
     public formErrors: {} = {};
@@ -161,7 +170,7 @@ export class AccountSeatComponent implements OnInit {
         public alertConfig: NgbAlertConfig,
         public _branchService: BranchService,
         public _applicationService: ApplicationService,
-        public _accountService : AccountService,
+        public _accountService: AccountService,
         public _periodService: AccountPeriodService,
         public _employeeTypeService: EmployeeTypeService,
         public _paymentMethod: PaymentMethodService,
@@ -172,6 +181,7 @@ export class AccountSeatComponent implements OnInit {
         public translatePipe: TranslateMePipe,
         private _router: Router,
     ) {
+        this.getAllAccounts2();
         this.obj = new AccountSeat();
         for (let field of this.formFields) {
             if (field.tag !== 'separator') {
@@ -202,10 +212,9 @@ export class AccountSeatComponent implements OnInit {
                 operationType: 1,
                 date: 1,
                 observation: 1,
-                period: 1,
-                "items.account": 1,
-                "items.debit": 1,
-                "items.credit": 1
+                "period._id": 1,
+                "period.name": "$period.description",
+                "items" : 1
             }
 
             this.subscription.add(this._objService.getAll({
@@ -213,10 +222,9 @@ export class AccountSeatComponent implements OnInit {
                 match: {
                     operationType: { $ne: "D" },
                     _id: { $oid: this.objId }
-                }
+                },
             }).subscribe(
                 result => {
-                    console.log(result);
                     this.loading = false;
                     if (result.status === 200) {
                         this.obj = result.result[0];
@@ -331,7 +339,7 @@ export class AccountSeatComponent implements OnInit {
             }
         }
 
-        if(this.obj.items && this.obj.items.length > 0){
+        if (this.obj.items && this.obj.items.length > 0) {
             var items = <FormArray>this.objForm.controls.items;
             this.obj.items.forEach(x => {
                 console.log(x);
@@ -503,10 +511,10 @@ export class AccountSeatComponent implements OnInit {
     public getAllPeriods(match: {}): Promise<Account[]> {
         return new Promise<Account[]>((resolve, reject) => {
             this.subscription.add(this._periodService.getAll({
-                project : {
-                    "name" : { $concat: ["$status"," Inicio:",{ "$dateToString": { "date": "$startDate", "format": "%d/%m/%Y", "timezone": "-03:00" } }," Fin:", { "$dateToString": { "date": "$endDate", "format": "%d/%m/%Y", "timezone": "-03:00" } } ] },
-                    startDate : { "$dateToString": { "date": "$startDate", "format": "%d/%m/%Y", "timezone": "-03:00" } },
-                    endDate : { "$dateToString": { "date": "$endDate", "format": "%d/%m/%Y", "timezone": "-03:00" } }
+                project: {
+                    "name": "$description",
+                    startDate: { "$dateToString": { "date": "$startDate", "format": "%d/%m/%Y", "timezone": "-03:00" } },
+                    endDate: { "$dateToString": { "date": "$endDate", "format": "%d/%m/%Y", "timezone": "-03:00" } }
                 },
                 match,
                 sort: { startDate: 1 },
@@ -534,6 +542,21 @@ export class AccountSeatComponent implements OnInit {
                 error => reject(error)
             ));
         });
+    }
+
+    public getAllAccounts2() {
+        this.subscription.add(this._accountService.getAll({
+            match: { operationType: { $ne: 'D' } },
+            sort: { description: 1 },
+        }).subscribe(
+            result => {
+                this.accounts = result.result;
+            },
+            error => {
+                this.showToast(error, 'danger');
+            }
+        ));
+
     }
 
     public addItem(itemForm: NgForm): void {

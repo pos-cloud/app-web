@@ -15,6 +15,8 @@ import { NgxTinymceModule } from 'ngx-tinymce';
 import { ListAccountSeatsComponent } from './list-account-seats/list-account-seats.component';
 import { AccountSeatService } from './account-seat.service';
 import { AccountSeatComponent } from './crud/account-seat.component';
+import { ReportLedgerComponent } from './report-ledger/report-ledger.component';
+import { ExportersModule } from '../export/exporters.module';
 
 const routes: Routes = [
   {
@@ -41,13 +43,24 @@ const routes: Routes = [
     path: 'account-seats/delete/:id',
     component: AccountSeatComponent,
     canActivate: [AuthGuard]
-  }
+  },
+  {
+    path: 'account-seats/delete/:id',
+    component: AccountSeatComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'admin/accountant/ledger',
+    component: ReportLedgerComponent,
+    canActivate: [AuthGuard]
+  },
 ];
 
 @NgModule({
   imports: [
     RouterModule.forChild(routes),
     CommonModule,
+    ExportersModule,
     FormsModule,
     ReactiveFormsModule,
     NgxPaginationModule,
@@ -63,7 +76,8 @@ const routes: Routes = [
   ],
   declarations: [
     AccountSeatComponent,
-    ListAccountSeatsComponent
+    ListAccountSeatsComponent,
+    ReportLedgerComponent
   ],
   exports: [
     AccountSeatComponent
