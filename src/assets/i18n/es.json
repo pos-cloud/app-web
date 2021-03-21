@@ -471,5 +471,8 @@
     "wooId": "ID de Woocommerce",
     "tags": "Etiquetas",
     "tag": "Etiqueta",
-    "entryDate": "Fecha de Alta"
+    "entryDate": "Fecha de Alta",
+    "period" : {
+        "description" : "Período"
+    }
 }
