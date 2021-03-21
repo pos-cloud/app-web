@@ -215,4 +215,26 @@ export class ModelService {
       })
     );
   }
+
+  public getFullQuery(
+    query
+  ): Observable<any> {
+
+    const URL = `${this.URL}/fullquery`;
+
+    const headers = new HttpHeaders()
+    .set('Content-Type', 'application/json')
+    .set('Authorization', this._authService.getToken());
+
+    return this._http.post(URL, query, {
+      headers: headers
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 }
