@@ -700,6 +700,18 @@
             Kardex de Productos
           </a>
         </li>
+        <li class="dropdown-header">Contable</li>
+        <li>
+            <a (click)="openReport('admin/accountant/ledger')">
+              Suma de Saldos por Cuenta 
+            </a>
+          </li>
+          <li class="dropdown-header">Varios</li>
+        <li>
+          <a (click)="openReport('admin/cumpleaños')">
+            Cumpleaños
+          </a>
+        </li>
       </ul>
     </div>
     <div class="col-md-3" style="width: 300px" *ngIf="!config.modules.stock">
@@ -752,16 +764,6 @@
             href="https://web.whatsapp.com/send?phone=5493516158848&text=Hola%21%20Quisiera%20m%C3%A1s%20informaci%C3%B3n%20sobre%20el%20m%C3%B3dulo%20de%20fondos."
             target="blank">
             Más Información
-          </a>
-        </li>
-      </ul>
-    </div>
-    <div class="col-md-3" style="width: 300px">
-      <ul>
-        <li class="dropdown-header">Varios</li>
-        <li>
-          <a (click)="openReport('admin/cumpleaños')">
-            Cumpleaños
           </a>
         </li>
       </ul>

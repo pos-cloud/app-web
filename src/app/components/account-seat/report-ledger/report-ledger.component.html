@@ -1,0 +1,69 @@
+<section class="container-fluid">
+    <div class="row container-filter">
+        <div class="col-md-2">
+            <label for="startDate" class="control-label">
+                <b>Fecha Desde:</b>
+            </label>
+            <input type="date" class="form-control" name="startDate" min="2000-01-01" [(ngModel)]="startDate" />
+        </div>
+        <div class="col-md-2">
+            <label for="endDate" class="control-label">
+                <b>Fecha Hasta:</b>
+            </label>
+            <input type="date" class="form-control" name="endDate" min="2000-01-01" [(ngModel)]="endDate" />
+        </div>
+        <div class="col-md-2" (click)="refresh()">
+            <label for="action" class="control-label">
+                <b>Acción:</b>
+            </label>
+            <span class="form-control btn-action center-content">
+                <i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar
+            </span>
+        </div>
+    </div>
+    <div class="card  card-large">
+        <div class="card-header">
+            <span>Suma de Saldos</span>
+            <div class="pull-right">
+                <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns"
+                    (eventExport)="exportItems($event)"></app-export-excel>
+            </div>
+        </div>
+        <div class="card-block table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Cuenta</th>
+                        <th class="align-center">Debe</th>
+                        <th class="align-center">Haber</th>
+                        <th class="align-center">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="99" style="padding: 0px">
+                            <app-progressbar [loading]="loading"></app-progressbar>
+                        </td>
+                    </tr>
+                    <tr *ngFor="let item of items">
+                        <td class="flat">{{ item.codigo }}</td>
+                        <td class="flat">{{ item.description }}</td>
+                        <td class="align-right">{{ item.totalDebit | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                        <td class="align-right">{{ item.totalCredit | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                        <td class="align-right">{{ item.total | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                    </tr>
+                </tbody>
+                <!--<tfoot>
+            <tr>
+              <th><strong>Total</strong></th>
+              <th class="align-right"><strong>{{totalItem}}</strong></th>
+              <th class="align-right"><strong>{{totalAmount | currency:'USD':'symbol-narrow':'1.2-2' }}</strong></th>
+            </tr>
+          </tfoot>-->
+            </table>
+        </div>
+        <div class="card-footer">
+        </div>
+    </div>
+</section>
