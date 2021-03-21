@@ -61,6 +61,12 @@ export class AccountPeriodComponent implements OnInit {
 
     public formFields: FormField[] = [
         {
+            name: 'description',
+            tag: 'input',
+            tagType: 'text',
+            class: 'form-group col-md-2'
+        },
+        {
             name: 'status',
             tag: 'select',
             tagType: 'text',
@@ -165,6 +171,7 @@ export class AccountPeriodComponent implements OnInit {
             let project = {
                 _id: 1,
                 operationType: 1,
+                description : 1,
                 status: 1,
                 startDate: 1,
                 endDate: 1
