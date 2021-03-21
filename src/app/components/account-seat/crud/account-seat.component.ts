@@ -73,6 +73,7 @@ export class AccountSeatComponent implements OnInit {
             tap(() => this.loading = true),
             switchMap(async term => {
                 let match: {} = (term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {};
+                match["status"] = "Abierto";
                 return await this.getAllPeriods(match).then(
                     result => {
                         return result;
@@ -105,7 +106,8 @@ export class AccountSeatComponent implements OnInit {
             name: 'date',
             tag: 'input',
             tagType: 'date',
-            class: 'form-group col-md-2'
+            class: 'form-group col-md-2',
+            validators: [Validators.required],
         },
         {
             name: 'period',
@@ -113,7 +115,8 @@ export class AccountSeatComponent implements OnInit {
             tagType: 'text',
             search: this.searchPeriods,
             format: this.formatterPeriods,
-            class: 'form-group col-md-4'
+            class: 'form-group col-md-4',
+            validators: [Validators.required]
         },
         {
             name: 'observation',
