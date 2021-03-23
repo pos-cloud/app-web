@@ -31,7 +31,6 @@ import { Transport } from 'app/components/transport/transport';
 import { PriceList } from 'app/components/price-list/price-list';
 import { PriceListService } from 'app/components/price-list/price-list.service';
 import { Employee } from 'app/components/employee/employee';
-import { Config } from 'app/app.config';
 import { Observable, Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
@@ -40,6 +39,7 @@ import { AccountService } from 'app/components/account/account.service';
 import { Account } from 'app/components/account/account';
 import { AddressService } from 'app/components/address/address.service';
 import { Address } from 'app/components/address/address.model';
+import { Config } from 'app/app.config';
 
 @Component({
     selector: 'app-add-company',
@@ -194,7 +194,6 @@ export class AddCompanyComponent implements OnInit {
         await this._configService.getConfig.subscribe(
             config => {
                 this.config = config;
-                console.log(this.config);
             }
         );
 
