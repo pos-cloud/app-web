@@ -1,0 +1,183 @@
+<section class="container-fluid">
+    <div class="row center-content">
+      <div *ngIf="alertMessage !== ''">
+        <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+          {{alertMessage}}
+        </ngb-alert>
+      </div>
+    </div>
+    <div class="card  list-counter">
+      <div class="card-header">
+        <span>Carritos Abandonados</span>
+        <div class="pull-right">
+            <button class="btn fa fa-trash" (click)="deleteAll()" [disabled]="loading"><i
+                [ngClass]="{'fa fa-trash fa-spin':loading}"></i>Elimitar Todos</button>
+          <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i
+              [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</button>
+        </div>
+      </div>
+      <div class="card-block table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th></th>
+              <th (click)="orderBy('endDate')">Fecha</th>
+              <th (click)="orderBy('type','name')">Tipo</th>
+              <th (click)="orderBy('number')">Número</th>
+              <th (click)="orderBy('company','name')">Cliente</th>
+              <th (click)="orderBy('orderNumber')">Pedido</th>
+              <th (click)="orderBy('state')">Estado</th>
+              <th>Metodo de Pago</th>
+              <th>Entrega</th>
+              <th (click)="orderBy('observation')">Observación</th>
+              <th (click)="orderBy('totalPrice')">Precio Total</th>
+            </tr>
+            <tr class="filters">
+              <th></th>
+              <th><input type="date" class="form-control" [(ngModel)]="filterEndDate" placeholder="Fecha..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo...">
+              </th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número...">
+              </th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Empresa..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterOrderNumber" placeholder="Pedido..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterState" placeholder="Estado..."></th>
+              <th></th>
+              <th></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación...">
+              </th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total...">
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="99" style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
+            <tr *ngFor="let transaction of transactions | filter: filterEndDate:'endDate'
+                                                          | filter: filterType:'name':'type'
+                                                          | filter: filterNumber:'number'
+                                                          | filter: filterCompany:'name':'company'
+                                                          | filter: filterTotalPrice:'totalPrice'
+                                                          | filter : filterState : 'state'
+                                                          | filter : filterOrderNumber : 'orderNumber'
+                                                          | filter : filterObservation : 'observation'
+                                                          | orderBy: orderTerm: propertyTerm
+                                                          | paginate: { itemsPerPage: itemsPerPage,
+                                                                        currentPage: p,
+                                                                        totalItems: transactions.length
+                                                                      }">
+              <td align="left" width="150">
+                <button type="button" class="btn btn-success" (click)="viewTransaction(transaction)" title="Ver"><i
+                    class="fa fa-eye"></i></button>
+                <button type="button" *ngIf="transaction.type.allowEdit && posType=='pedidos-web'" class="btn btn-primary"
+                  (click)="changeCompany(transaction)" title="Editar"><i class="fa fa-pencil"></i></button>
+                <button type="button" class="btn btn-danger" (click)="cancelTransaction(transaction)" title="Eliminar"
+                  *ngIf="transaction.state === 'Abierto'"><i class="fa fa-close"></i></button>
+                <button type="button" class="btn btn-light" (click)="printTransaction(transaction)" title="Imprimir"
+                  *ngIf="posType=='pedidos-web'"><i class="fa fa-print"></i></button>
+              </td>
+              <td (click)="openTransaction(transaction)" *ngIf="transaction.endDate">
+                {{transaction.endDate | dateFormat:'DD/MM/YYYY' }}
+                <b>{{transaction.endDate | dateFormat:'HH:mm:ss' }}</b>
+              </td>
+              <td (click)="openTransaction(transaction)" *ngIf="!transaction.endDate">
+                {{transaction.startDate | dateFormat:'DD/MM/YYYY' }}
+                <b>{{transaction.startDate | dateFormat:'HH:mm:ss' }}</b>
+              </td>
+              <td>{{transaction.type.name}}</td>
+              <td><b>{{transaction.number}}</b></td>
+              <td *ngIf="transaction.company">{{transaction.company.name}}</td>
+              <td *ngIf="!transaction.company">Consumidor Final</td>
+              <td>{{transaction.orderNumber}}</td>
+              <td *ngIf="posType==='pedidos-web'">
+                <div class="btn-group mr-3">
+                  <button type="button" class="btn" [ngClass]="{
+                    'btn-state-close':transaction.state.toString() === 'Cerrado' || transaction.state.toString() === 'Pago Confirmado',
+                    'btn-state-open':transaction.state.toString() === 'Abierto' || transaction.state.toString() === 'Pendiente de pago',
+                    'btn-state-canceled':transaction.state.toString() === 'Anulado' || transaction.state.toString() === 'Pago Rechazado',
+                    'btn-state-sent':transaction.state.toString() === 'Entregado' || transaction.state.toString() === 'Enviado'
+                  }">
+                    {{transaction.state}}
+                  </button>
+                  <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown"
+                    *ngIf="transaction.state !== 'Cerrado'">
+                    <button class="btn dropdown-toggle-split" ngbDropdownToggle [ngClass]="{
+                    'btn-state-close':transaction.state.toString() === 'Cerrado' || transaction.state.toString() === 'Pago Confirmado',
+                    'btn-state-open':transaction.state.toString() === 'Abierto' || transaction.state.toString() === 'Pendiente de pago',
+                    'btn-state-canceled':transaction.state.toString() === 'Anulado' || transaction.state.toString() === 'Pago Rechazado',
+                    'btn-state-sent':transaction.state.toString() === 'Entregado' || transaction.state.toString() === 'Enviado'
+                  }"></button>
+                    <div class="dropdown-menu" ngbDropdownMenu>
+                      <button ngbDropdownItem
+                        *ngIf="transaction.type.electronics && !transaction.CAE && (transaction.state.toString() === 'Pago Confirmado' || transaction.state.toString() === 'Entregado')"
+                        (click)="validateElectronicTransactionAR(transaction, 'Pago Confirmado')">Facturar</button>
+                      <button ngbDropdownItem
+                        *ngIf="(transaction.state.toString() === 'Pendiente de pago' || transaction.state.toString() === 'Entregado') && transaction.balance != 0"
+                        (click)="chargeTransaction(transaction, 'Pago Confirmado')">Confirmar pago</button>
+                      <button ngbDropdownItem
+                        *ngIf="transaction.state.toString() === 'Pendiente de pago' || (transaction.balance !== 0 && transaction.state.toString() === 'Enviado')"
+                        (click)="changeStateOfTransaction(transaction, 'Pago Rechazado')">Rechazar pago</button>
+                      <!-- <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Pago Rechazado' || transaction.state.toString() === 'Pendiente de pago'" (click)="cancelTransaction(transaction)">Eliminar transacción</button> -->
+                      <button ngbDropdownItem
+                        *ngIf="transaction.state.toString() !== 'Enviado' && transaction.state.toString() !== 'Entregado'"
+                        (click)="changeStateOfTransaction(transaction, 'Enviado')">Marcar Pedido Enviado</button>
+                      <button ngbDropdownItem
+                        *ngIf="transaction.state.toString() === 'Enviado' || transaction.state.toString() === 'Pago Confirmado'"
+                        (click)="changeStateOfTransaction(transaction, 'Entregado')">Marcar Pedido Entregado</button>
+                      <button ngbDropdownItem
+                        *ngIf="transaction.balance === 0 && transaction.state.toString() !== 'Enviado' && transaction.type.electronics"
+                        (click)="changeStateOfTransaction(transaction, 'Cerrado')">Cerrar</button>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td *ngIf="posType!=='pedidos-web'">
+                {{transaction.state}}
+              </td>
+              <td>
+                {{transaction.paymentMethodEcommerce}}
+              </td>
+              <td style="white-space: normal;">
+                <b *ngIf="transaction && transaction.shipmentMethod">{{transaction.shipmentMethod.name}} - </b>
+                <span *ngIf="transaction && transaction.deliveryAddress">
+                  {{ transaction.deliveryAddress.name + ' ' + transaction.deliveryAddress.number}}
+                  {{(transaction.deliveryAddress.flat || transaction.deliveryAddress.floor)? ' -' : ''}}
+                  {{(transaction.deliveryAddress.flat)? ' ' + transaction.deliveryAddress.flat : ''}}
+                  {{(transaction.deliveryAddress.floor)? ' ' + transaction.deliveryAddress.floor : ''}}
+                  {{(transaction.deliveryAddress.city)? ', ' + transaction.deliveryAddress.city : ''}}
+                  {{(transaction.deliveryAddress.state)? ', ' + transaction.deliveryAddress.state : ''}}
+                </span>
+              </td>
+              <td style="white-space: normal;">{{transaction.observation}}</td>
+              <td>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+            </tr>
+            <tr align="center" *ngIf="!transactions || transactions.length === 0">
+              <td colspan="8">No se encontraron pedidos</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer">
+        <div class="row">
+          <div class="col-md-10">
+            <pagination-controls class="my-pagination" (pageChange)="p=$event" #api previousLabel="Ant." nextLabel="Sig."
+              autoHide="true">
+            </pagination-controls>
+          </div>
+          <div class="form-group col-md-2">
+            <select class="form-control" [(ngModel)]="itemsPerPage">
+              <option [value]="5">Mostrar 5 Registros</option>
+              <option [value]="10">Mostrar 10 Registros</option>
+              <option [value]="15">Mostrar 15 Registros</option>
+              <option [value]="20">Mostrar 20 Registros</option>
+              <option [value]="50">Mostrar 50 Registros</option>
+              <option [value]="100">Mostrar 100 Registros</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>

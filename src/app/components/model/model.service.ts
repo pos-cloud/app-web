@@ -237,4 +237,28 @@ export class ModelService {
       })
     );
   }
+
+  public deleteAll({
+    where = {},
+  }): Observable<any> {
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+      .set('where', JSON.stringify(where))
+
+    return this._http.delete(this.URL, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 }
