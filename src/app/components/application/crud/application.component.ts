@@ -631,8 +631,6 @@ export class ApplicationComponent implements OnInit {
             })
         }
 
-        console.log(values);
-
         this.objForm.patchValue(values);
     }
 

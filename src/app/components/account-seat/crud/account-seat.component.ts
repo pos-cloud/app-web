@@ -216,7 +216,6 @@ export class AccountSeatComponent implements OnInit {
                 }
             }).subscribe(
                 result => {
-                    console.log(result);
                     this.loading = false;
                     if (result.status === 200) {
                         this.obj = result.result[0];
@@ -334,7 +333,6 @@ export class AccountSeatComponent implements OnInit {
         if(this.obj.items && this.obj.items.length > 0){
             var items = <FormArray>this.objForm.controls.items;
             this.obj.items.forEach(x => {
-                console.log(x);
                 items.push(this._fb.group({
                     '_id': null,
                     'account': x.account,
@@ -512,7 +510,6 @@ export class AccountSeatComponent implements OnInit {
                 sort: { startDate: 1 },
             }).subscribe(
                 result => {
-                    console.log(result);
                     this.loading = false;
                     (result.status === 200) ? resolve(result.result) : reject(result);
                 },
@@ -540,8 +537,6 @@ export class AccountSeatComponent implements OnInit {
 
         let valid = true;
         const item = this.objForm.controls.items as FormArray;
-
-        console.log(item.value);
 
         if (valid) {
             item.push(

@@ -455,12 +455,8 @@ export class ListMovementOfCashesComponent implements OnInit {
     }
 
     onItemSelect(item: any) {
-        console.log(item);
-        //this.transactionTypesSelect.push({ "$oid" : item._id});
     }
     onSelectAll(items: any) {
-        /*this.transactionTypesSelect = [];
-        this.transactionTypesSelect.push({ "$oid" : items._id});*/
     }
 
     public showMessage(message: string, type: string, dismissible: boolean): void {

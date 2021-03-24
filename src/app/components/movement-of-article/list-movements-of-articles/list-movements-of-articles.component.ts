@@ -272,8 +272,6 @@ export class ListMovementsOfArticlesComponent implements OnInit {
 
         project = JSON.parse(project);
 
-        console.log(project);
-
         // AGRUPAMOS EL RESULTADO
         let group = {
             _id: null,
@@ -424,7 +422,6 @@ export class ListMovementsOfArticlesComponent implements OnInit {
 
     public getTransactionTypes(): Promise<TransactionType[]> {
 
-        console.log("entro");
         return new Promise<TransactionType[]>((resolve, reject) => {
 
             let match = {}
@@ -466,12 +463,9 @@ export class ListMovementsOfArticlesComponent implements OnInit {
     }
 
     onItemSelect(item: any) {
-        console.log(item);
-        //this.transactionTypesSelect.push({ "$oid" : item._id});
     }
+    
     onSelectAll(items: any) {
-        /*this.transactionTypesSelect = [];
-        this.transactionTypesSelect.push({ "$oid" : items._id});*/
     }
 
 

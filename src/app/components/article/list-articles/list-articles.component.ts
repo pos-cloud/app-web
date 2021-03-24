@@ -439,7 +439,7 @@ export class ListArticlesComponent implements OnInit {
         model.relations.push("make_relation_description");
         model.relations.push("category_relation_description");
         model.relations.push("providers_relation_code");
-        model.relations.push("currency_relation_code");
+        model.relations.push("currency_relation_name");
         modalRef.componentInstance.model = model;
         modalRef.result.then((result) => {
           if (result === 'import_close') {

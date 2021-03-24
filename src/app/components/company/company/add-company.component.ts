@@ -238,7 +238,6 @@ export class AddCompanyComponent implements OnInit {
 
         this._companyService.getCompany(this.companyId).subscribe(
             result => {
-                console.log(result);
                 if (!result.company) {
                     if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
                 } else {

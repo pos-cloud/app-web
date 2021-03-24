@@ -39,6 +39,7 @@
     "jquery": "^3.4.1",
     "jspdf": "^1.5.3",
     "jsqr": "^1.2.0",
+    "lodash": "^4.17.21",
     "moment": "^2.24.0",
     "ng-multiselect-dropdown": "^0.2.14",
     "ngx-pagination": "^3.3.0",
