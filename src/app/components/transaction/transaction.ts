@@ -68,7 +68,8 @@ export class Transaction {
   public transport: Transport;
   public shipmentMethod: ShipmentMethod;
   public priceList: PriceList;
-  public paymentMethodEcommerce : string;
+  public paymentMethodEcommerce: string;
+  public wooId: string;
   public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public updateUser: User;
@@ -351,6 +352,16 @@ export let attributes = [
     project: null,
     align: 'left',
     required: false,
+  },
+  {
+    name: 'wooId',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    project: null,
+    align: 'left',
+    required : false,
   },
   {
     name: 'branchDestination.name',

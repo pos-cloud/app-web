@@ -279,6 +279,35 @@
                         </div>
                     </ng-template>
                 </ngb-tab>
+                <ngb-tab title="Direcciones">
+                    <ng-template ngbTabContent>
+                        <div class="card-block table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Provincia</th>
+                                        <th>Ciudad</th>
+                                        <th>Nombre</th>
+                                        <th>Número</th>
+                                        <th>Piso</th>
+                                        <th>Depto</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of address">
+                                        <td class="flat">{{ item.state }}</td>
+                                        <td class="flat">{{ item.city }}</td>
+                                        <td class="flat">{{ item.name }}</td>
+                                        <td class="flat">{{ item.number }}</td>
+                                        <td class="flat">{{ item.floor }}</td>
+                                        <td class="flat">{{ item.flat }}</td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
                 <ngb-tab title="Configuración">
                     <ng-template ngbTabContent>
                         <div class="row tab-content">
@@ -376,35 +405,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </ng-template>
-                </ngb-tab>
-                <ngb-tab title="Direcciones App">
-                    <ng-template ngbTabContent>
-                        <div class="card-block table-responsive">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Provincia</th>
-                                        <th>Ciudad</th>
-                                        <th>Nombre</th>
-                                        <th>Número</th>
-                                        <th>Piso</th>
-                                        <th>Depto</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr *ngFor="let item of address">
-                                        <td class="flat">{{ item.state }}</td>
-                                        <td class="flat">{{ item.city }}</td>
-                                        <td class="flat">{{ item.name }}</td>
-                                        <td class="flat">{{ item.number }}</td>
-                                        <td class="flat">{{ item.floor }}</td>
-                                        <td class="flat">{{ item.flat }}</td>
-
-                                    </tr>
-                                </tbody>
-                            </table>
                         </div>
                     </ng-template>
                 </ngb-tab>

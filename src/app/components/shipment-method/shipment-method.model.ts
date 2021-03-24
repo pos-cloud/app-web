@@ -20,6 +20,7 @@ export class ShipmentMethod extends Model {
     }[],
     area: number
   }[];
+  public wooId: string;
 
   constructor() { super(); }
 
@@ -55,7 +56,17 @@ export class ShipmentMethod extends Model {
         project: null,
         align: 'left',
         required: false,
-      }
+      },
+      {
+        name: 'wooId',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required : false,
+      },
     ])
   }
 }

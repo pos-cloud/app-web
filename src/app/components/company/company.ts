@@ -42,6 +42,7 @@ export class Company {
   public transport: Transport;
   public priceList: PriceList;
   public addressNumber: string;
+  public wooId: string;
   public discount : number;
   public account : Account;
   public creationUser: User;
@@ -296,7 +297,16 @@ export let attributes = [
     align: 'left',
     required : false,
   },
- 
+  {
+    name: 'wooId',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    project: null,
+    align: 'left',
+    required : false,
+  },
   {
     name: 'companyType',
     visible: false,
