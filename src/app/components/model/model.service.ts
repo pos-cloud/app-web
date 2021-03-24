@@ -215,4 +215,50 @@ export class ModelService {
       })
     );
   }
+
+  public getFullQuery(
+    query
+  ): Observable<any> {
+
+    const URL = `${this.URL}/fullquery`;
+
+    const headers = new HttpHeaders()
+    .set('Content-Type', 'application/json')
+    .set('Authorization', this._authService.getToken());
+
+    return this._http.post(URL, query, {
+      headers: headers
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
+
+  public deleteAll({
+    where = {},
+  }): Observable<any> {
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+      .set('where', JSON.stringify(where))
+
+    return this._http.delete(this.URL, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 }

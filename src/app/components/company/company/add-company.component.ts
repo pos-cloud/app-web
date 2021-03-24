@@ -31,13 +31,15 @@ import { Transport } from 'app/components/transport/transport';
 import { PriceList } from 'app/components/price-list/price-list';
 import { PriceListService } from 'app/components/price-list/price-list.service';
 import { Employee } from 'app/components/employee/employee';
-import { Config } from 'app/app.config';
 import { Observable, Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { AccountService } from 'app/components/account/account.service';
 import { Account } from 'app/components/account/account';
+import { AddressService } from 'app/components/address/address.service';
+import { Address } from 'app/components/address/address.model';
+import { Config } from 'app/app.config';
 
 @Component({
     selector: 'app-add-company',
@@ -73,6 +75,7 @@ export class AddCompanyComponent implements OnInit {
     public priceLists: PriceList[];
     public orientation: string = 'horizontal';
     private subscription: Subscription = new Subscription();
+    public address : Address[];
 
     public formErrors = {
         'code': '',
@@ -157,6 +160,7 @@ export class AddCompanyComponent implements OnInit {
         public _companyService: CompanyService,
         public _vatConditionService: VATConditionService,
         public _companyGroupService: CompanyGroupService,
+        public _addressService: AddressService,
         public _employeeService: EmployeeService,
         public _stateService: StateService,
         public _configService: ConfigService,
@@ -186,6 +190,12 @@ export class AddCompanyComponent implements OnInit {
     }
 
     async ngOnInit() {
+
+        await this._configService.getConfig.subscribe(
+            config => {
+                this.config = config;
+            }
+        );
 
         let pathLocation: string[] = this._router.url.split('/');
         this.userType = pathLocation[1];
@@ -251,6 +261,7 @@ export class AddCompanyComponent implements OnInit {
                     } else {
                         this.company.birthday = null;
                     }
+                    this.getAddress();
                     this.setValueForm();
                 }
                 this.loading = false;
@@ -872,6 +883,25 @@ export class AddCompanyComponent implements OnInit {
         ).subscribe(result => {
             if (result && result.transports && result.transports.length > 0) {
                 this.transports = result.transports;
+            }
+            this.loading = false;
+        },
+            error => {
+                this.showMessage(error._body, 'danger', false);
+                this.loading = false;
+            });
+    }
+
+    public getAddress(): void {
+        this.loading = true;
+
+        this._addressService.getAll({
+            match : {
+                company : { $oid : this.company._id }
+            } // SKIP
+        }).subscribe(result => {
+            if(result){
+                this.address = result.result
             }
             this.loading = false;
         },

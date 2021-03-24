@@ -40,6 +40,7 @@ import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
+import { AccountSeatService } from 'app/components/account-seat/account-seat.service';
 
 
 @Component({
@@ -122,6 +123,7 @@ export class AddMovementOfCashComponent implements OnInit {
         public _holidayService: HolidayService,
         public _fb: FormBuilder,
         public activeModal: NgbActiveModal,
+        private _accountSeatService : AccountSeatService,
         public alertConfig: NgbAlertConfig,
         public _modalService: NgbModal,
         private _taxService: TaxService,
@@ -1379,12 +1381,12 @@ export class AddMovementOfCashComponent implements OnInit {
                     this.movementOfCash.observation = this.movementOfCashForm.value.observation;
                     this.movementOfCash.expirationDate = moment(this.movementOfCash.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
                     this.movementOfCash.interestPercentage = this.movementOfCashForm.value.interestPercentage;
-
+                    
                     if (this.paymentMethodSelected.checkDetail) {
                         this.movementOfCash.receiver = this.movementOfCashForm.value.receiver;
                         this.movementOfCash.number = this.movementOfCashForm.value.number;
-                        this.movementOfCash.bank = this.movementOfCashForm.value.bank;
                         this.movementOfCash.titular = this.movementOfCashForm.value.titular;
+                        this.movementOfCash.bank = this.movementOfCashForm.value.bank;
                         this.movementOfCash.CUIT = this.movementOfCashForm.value.CUIT;
                         this.movementOfCash.deliveredBy = this.movementOfCashForm.value.deliveredBy;
                         this.movementOfCash.statusCheck = StatusCheck.Closed;
@@ -1395,6 +1397,10 @@ export class AddMovementOfCashComponent implements OnInit {
                         this.movementOfCash.CUIT = '';
                         this.movementOfCash.deliveredBy = '';
                         this.movementOfCash.statusCheck = StatusCheck.Closed;
+                    }
+
+                    if(this.paymentMethodSelected.allowBank){
+                        this.movementOfCash.bank = this.movementOfCashForm.value.bank;
                     }
 
                     if (this.paymentMethodSelected.inputAndOuput && this.transaction.type.movement === Movements.Inflows) {
@@ -1436,6 +1442,20 @@ export class AddMovementOfCashComponent implements OnInit {
                                         }
                                     }
                                 }
+                            }
+                            if (this.transaction.type.allowAccounting) {
+                                this._accountSeatService.addAccountSeatByTransaction(this.transaction._id).subscribe(
+                                    result => {
+                                        if(result && result.status === 200){
+                                            this.showToast(result);
+                                        } else {
+                                            this.showToast(result);
+                                        }
+                                    },
+                                    error => {
+                                        this.showToast(error);
+                                    }
+                                )
                             }
                         }
                     );

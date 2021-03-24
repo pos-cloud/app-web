@@ -76,6 +76,7 @@ import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.compo
 import { ListMovementsOfCancellationsComponent } from './components/movement-of-cancellation/list-movements-of-cancellations/list-movements-of-cancellations.component';
 import { ListHistoriesComponent } from './components/history/list-history/list-histories.component';
 import { ReportTransactionTypeComponent } from './components/report-transaction-type/report-transaction-type.component';
+import { AbandonedCartsComponent } from './components/point-of-sale/abandoned-carts/abandoned-carts.component';
 
 export const _routes: Routes = [
   {
@@ -588,7 +589,7 @@ export const _routes: Routes = [
   },
   {
     path: 'pos/carritos-abandonados',
-    component: PointOfSaleComponent,
+    component: AbandonedCartsComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.app' }
   },

@@ -248,6 +248,8 @@ import { PrintQRComponent } from './components/print/print-qr/print-qr.component
 import { SelectMovementsOfCashesComponent } from './components/movement-of-cash/select-movements-of-cashes/select-movements-of-cashes.component';
 import { MercadopagoService } from './components/mercadopago/mercadopago.service';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { AddressService } from './components/address/address.service';
+import { AbandonedCartsComponent } from './components/point-of-sale/abandoned-carts/abandoned-carts.component';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -418,7 +420,8 @@ export function createTranslateLoader(http: HttpClient) {
     ListMovementsOfCancellationsComponent,
     ReportTransactionTypeComponent,
     PrintQRComponent,
-    SelectMovementsOfCashesComponent
+    SelectMovementsOfCashesComponent,
+    AbandonedCartsComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -609,6 +612,7 @@ export function createTranslateLoader(http: HttpClient) {
     UserService,
     RoomService,
     MakeService,
+    AddressService,
     CategoryService,
     CompanyService,
     ClockService,
