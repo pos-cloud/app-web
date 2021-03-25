@@ -48,6 +48,7 @@ export class ApplicationComponent implements OnInit {
     public focus$: Subject<string>[] = new Array();
     public stateId: number;
     public filesToUpload: any[] = new Array();
+    public filesToUploadHome: any[] = new Array();
     public filename: any[] = new Array();
     public typeFile: any[] = new Array();
     public oldFiles: any[];
@@ -66,6 +67,9 @@ export class ApplicationComponent implements OnInit {
             link: string
         }[]
     }[]
+
+    public filesToArray: Array<File>;
+    public fileNamePrincipal: string;
 
     public from;
     public to;
@@ -683,15 +687,46 @@ export class ApplicationComponent implements OnInit {
         });
     }
 
-    public addResource(resourceForm: NgForm, data): void {
-        this.home.forEach(element => {
+    public addResource(resourceForm: NgForm, data) : void {
+        
+        var order= null;
+        var article= null;
+        var link= null;
+        var banner = null;
+        if(resourceForm.value.order){
+            order = resourceForm.value.order;
+        }
+        if(resourceForm.value.article){
+            article = resourceForm.value.article;
+        }
+        if(resourceForm.value.link){
+            link = resourceForm.value.link;
+        }
+        this.home.forEach(async element => {
             if (element.title === data['title']) {
+                
+                if(this.filesToUploadHome && this.filesToUploadHome.length > 0){
+                    for (let file of this.filesToUploadHome) {
+                        await this._objService.uploadFile("image","application", file)
+                            .then(result => {
+                                if(result.status === 200){
+                                    banner = result.result;
+                                    this.fileNamePrincipal = null;
+                                    this.filesToUploadHome = new Array();
+                                }
+                            })
+                            .catch(error => { this.showToast(error.message, 'danger'); });
+                    }
+                }
+
+                
+
                 element.resources.push({
-                    order: resourceForm.value.order,
-                    link: resourceForm.value.link,
-                    article: resourceForm.value.article,
+                    order: order,
+                    link: link,
+                    article: article,
                     category: null,
-                    banner: null,
+                    banner: banner,
                 });
 
                 element.resources.sort(function (a, b) {
@@ -922,6 +957,13 @@ export class ApplicationComponent implements OnInit {
             ));
         });
     }
+
+    public fileChangeEvent(fileInput: any, eCommerce: boolean): void {
+
+          this.filesToUploadHome = <Array<File>>fileInput.target.files;
+          this.fileNamePrincipal = this.filesToUploadHome[0].name;
+    
+      }
 
     public showToast(result, type?: string, title?: string, message?: string): void {
         if (result) {
