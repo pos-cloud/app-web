@@ -96,6 +96,15 @@ export class AbandonedCartsComponent implements OnInit {
     public user: User;
     public movementsOfCashes: MovementOfCash[];
 
+    public filterEndDate;
+    public filterType;
+    public filterNumber;
+    public filterCompany;
+    public filterOrderNumber;
+    public filterState;
+    filterObservation;
+    filterTotalPrice;
+    p;
     // CAMPOS TRAIDOS DE LA CUENTA CTE.
     @Input() company: Company;
     public companyType: CompanyType;
@@ -146,6 +155,16 @@ export class AbandonedCartsComponent implements OnInit {
                     }
                 }
             ); 
+    }
+
+    public orderBy(term: string, property?: string): void {
+
+        if (this.orderTerm[0] === term) {
+            this.orderTerm[0] = "-" + term;
+        } else {
+            this.orderTerm[0] = term;
+        }
+        this.propertyTerm = property;
     }
 
 
