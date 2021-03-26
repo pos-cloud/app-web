@@ -123,7 +123,7 @@ export class AddMovementOfCashComponent implements OnInit {
         public _holidayService: HolidayService,
         public _fb: FormBuilder,
         public activeModal: NgbActiveModal,
-        private _accountSeatService : AccountSeatService,
+        private _accountSeatService: AccountSeatService,
         public alertConfig: NgbAlertConfig,
         public _modalService: NgbModal,
         private _taxService: TaxService,
@@ -599,15 +599,15 @@ export class AddMovementOfCashComponent implements OnInit {
                                     await this.updateTransaction().then(
                                         transaction => {
                                             if (transaction) {
-                                                this.activeModal.close({ movementsOfCashes: this.movementsOfCashes, movementOfArticle: this.movementOfArticle });
+                                                this.closeModal();
                                             }
                                         }
                                     );
                                 } else {
-                                    this.activeModal.close({ movementsOfCashes: this.movementsOfCashes, movementOfArticle: this.movementOfArticle });
+                                    this.closeModal();
                                 }
                             } else {
-                                this.activeModal.close({ movementsOfCashes: this.movementsOfCashes, movementOfArticle: this.movementOfArticle });
+                                this.closeModal();
                             }
                         } else {
                             this.fastPayment = null;
@@ -825,17 +825,13 @@ export class AddMovementOfCashComponent implements OnInit {
                     transaction => {
                         if (transaction) {
                             this.transaction = transaction;
-                            if (this.checkPrices()) {
-                                this.activeModal.close({ movementsOfCashes: this.movementsOfCashes, movementOfArticle: this.movementOfArticle });
-                            } else {
-                                this.showToast(null, 'info', 'Ocurrió un error al querer finalizar la transacción, inténtelo nuevamente.');
-                            }
+                            this.closeModal();
                         }
                     }
                 );
             } else {
                 if (this.transaction.totalPrice < paid) {
-                    this.activeModal.close({ movementsOfCashes: this.movementsOfCashes, movementOfArticle: this.movementOfArticle });
+                    this.closeModal();
                 } else {
                     this.showToast(null, 'info', 'La suma de métodos de pago debe ser igual o mayor al de la transacción.');
                 }
@@ -846,7 +842,7 @@ export class AddMovementOfCashComponent implements OnInit {
     }
 
     //FUNCIÓN PARA CONTROLAR QUE LA SUMA DE PRECIO DE ARTÍCULOS SEA IGUAL AL TOTAL DE LA TRANSACCIÓN
-    private checkPrices(): boolean {
+    private async closeModal() {
 
         let isValid: boolean = false;
         let totalPrice: number = 0;
@@ -859,9 +855,26 @@ export class AddMovementOfCashComponent implements OnInit {
 
         if (this.roundNumber.transform(totalPrice) === (this.roundNumber.transform(this.transaction.totalPrice + this.transaction.commissionAmount + this.transaction.administrativeExpenseAmount + this.transaction.otherExpenseAmount))) {
             isValid = true;
+        } else {
+            isValid = false;
+            this.showToast(null, "info", "La suma de métodos de pago no coincide con el de la transacción.");
         }
 
-        return isValid;
+        if (isValid && totalPrice > 0 && this.transaction.totalPrice === 0) {
+            this.transaction.totalPrice = this.roundNumber.transform(totalPrice - this.transaction.commissionAmount - this.transaction.administrativeExpenseAmount - this.transaction.otherExpenseAmount);
+            await this.updateTransaction().then(
+                transaction => {
+                    if (transaction) {
+                        this.transaction = transaction;
+                        this.closeModal();
+                    }
+                }
+            );
+        }
+
+        if (isValid) {
+            this.activeModal.close({ movementsOfCashes: this.movementsOfCashes, movementOfArticle: this.movementOfArticle });
+        }
     }
 
     public getMovementsOfCashes(query?: string): Promise<MovementOfCash[]> {
@@ -1381,7 +1394,7 @@ export class AddMovementOfCashComponent implements OnInit {
                     this.movementOfCash.observation = this.movementOfCashForm.value.observation;
                     this.movementOfCash.expirationDate = moment(this.movementOfCash.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
                     this.movementOfCash.interestPercentage = this.movementOfCashForm.value.interestPercentage;
-                    
+
                     if (this.paymentMethodSelected.checkDetail) {
                         this.movementOfCash.receiver = this.movementOfCashForm.value.receiver;
                         this.movementOfCash.number = this.movementOfCashForm.value.number;
@@ -1399,7 +1412,7 @@ export class AddMovementOfCashComponent implements OnInit {
                         this.movementOfCash.statusCheck = StatusCheck.Closed;
                     }
 
-                    if(this.paymentMethodSelected.allowBank){
+                    if (this.paymentMethodSelected.allowBank) {
                         this.movementOfCash.bank = this.movementOfCashForm.value.bank;
                     }
 
@@ -1446,7 +1459,7 @@ export class AddMovementOfCashComponent implements OnInit {
                             if (this.transaction.type.allowAccounting) {
                                 this._accountSeatService.addAccountSeatByTransaction(this.transaction._id).subscribe(
                                     result => {
-                                        if(result && result.status === 200){
+                                        if (result && result.status === 200) {
                                             this.showToast(result);
                                         } else {
                                             this.showToast(result);
