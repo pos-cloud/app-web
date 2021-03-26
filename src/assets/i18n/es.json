@@ -473,5 +473,6 @@
     "tag": "Etiqueta",
     "entryDate": "Fecha de Alta",
     "period.description": "Período",
-    "import": "importar"
+    "import": "importar",
+    "empleado": "empleado"
 }

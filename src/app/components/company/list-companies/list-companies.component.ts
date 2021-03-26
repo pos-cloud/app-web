@@ -423,26 +423,28 @@ export class ListCompaniesComponent implements OnInit {
             case 'import':
                 modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
                 let model: any = new Company();
+                model.relations = new Array();
                 model.model = "company";
                 model.primaryKey = "code";
                 model.code = '';
                 model.name = '';
                 model.fantasyName = '';
                 model.type = '';
-                model.relations = new Array();
-                model.relations.push("vat-condition_relation_description");
                 model.relations.push("identification-type_relation_name");
-                model.relations.push("state_relation_name");
                 model.identificationValue = '';
+                model.grossIncome = '';
                 model.address = '';
+                model.addressNumber = '';
                 model.city = '';
+                model.relations.push("state_relation_name");
+                model.relations.push("country_relation_name");
                 model.phones = '';
                 model.emails = '';
                 model.birthday = '';
                 model.observation = '';
-                model.addressNumber = '';
                 model.gender = '';
-                model.grossIncome = '';
+                model.relations.push("employee_relation_name");
+                model.relations.push("vat-condition_relation_description");
                 modalRef.componentInstance.model = model;
                 modalRef.result.then((result) => {
                     if (result === 'import_close') {

@@ -18,7 +18,7 @@ export class Company {
   public code: number = 1;
   public name: string;
   public fantasyName: string;
-  public entryDate: string  = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+  public entryDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public type: CompanyType = CompanyType.Client;
   public identificationType: IdentificationType;
   public identificationValue: string;
@@ -33,7 +33,7 @@ export class Company {
   public observation: string;
   public allowCurrentAccount: boolean;
   public group: CompanyGroup;
-  public employee : Employee;
+  public employee: Employee;
   public otherFields: CompanyFields[];
   public country: Country;
   public floorNumber: string;
@@ -43,26 +43,26 @@ export class Company {
   public priceList: PriceList;
   public addressNumber: string;
   public wooId: string;
-  public discount : number;
-  public account : Account;
+  public discount: number;
+  public account: Account;
   public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public updateUser: User;
   public updateDate: string;
 
-  constructor() {}
+  constructor() { }
 }
 
 export enum CompanyType {
-  None = <any> null,
-  Client = <any> "Cliente",
-  Provider = <any> "Proveedor",
+  None = <any>null,
+  Client = <any>"Cliente",
+  Provider = <any>"Proveedor",
 }
 
 export enum GenderType {
-  None = <any> null,
-  Male = <any> "Hombre",
-  Female = <any> "Mujer"
+  None = <any>null,
+  Male = <any>"Hombre",
+  Female = <any>"Mujer"
 }
 
 export let attributes = [
@@ -74,7 +74,7 @@ export let attributes = [
     datatype: 'string',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
   {
     name: 'fantasyName',
@@ -84,7 +84,7 @@ export let attributes = [
     datatype: 'string',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
   {
     name: 'vatCondition.description',
@@ -94,7 +94,7 @@ export let attributes = [
     datatype: 'string',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
   {
     name: 'identificationType.name',
@@ -104,7 +104,7 @@ export let attributes = [
     datatype: 'string',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
   {
     name: 'identificationValue',
@@ -114,7 +114,7 @@ export let attributes = [
     datatype: 'string',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
   {
     name: 'address',
@@ -124,7 +124,7 @@ export let attributes = [
     datatype: 'string',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
   {
     name: 'addressNumber',
@@ -134,7 +134,7 @@ export let attributes = [
     datatype: 'string',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
   {
     name: 'city',
@@ -144,7 +144,7 @@ export let attributes = [
     datatype: 'string',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
   {
     name: 'state.name',
@@ -154,7 +154,7 @@ export let attributes = [
     datatype: 'string',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
   {
     name: 'phones',
@@ -164,7 +164,7 @@ export let attributes = [
     datatype: 'string',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
   {
     name: 'emails',
@@ -174,7 +174,7 @@ export let attributes = [
     datatype: 'string',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
   {
     name: 'birthday',
@@ -184,7 +184,7 @@ export let attributes = [
     datatype: 'date',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
   {
     name: 'gender',
@@ -194,7 +194,7 @@ export let attributes = [
     datatype: 'string',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
   {
     name: 'allowCurrentAccount',
@@ -204,7 +204,7 @@ export let attributes = [
     datatype: 'boolean',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
   {
     name: 'priceList.name',
@@ -214,7 +214,7 @@ export let attributes = [
     datatype: 'string',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
   {
     name: 'employee.name',
@@ -224,7 +224,7 @@ export let attributes = [
     datatype: 'string',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
   {
     name: 'employee._id',
@@ -234,7 +234,7 @@ export let attributes = [
     datatype: 'string',
     project: null,
     align: 'left',
-    required : true,
+    required: true,
   },
   {
     name: 'observation',
@@ -244,7 +244,7 @@ export let attributes = [
     datatype: 'string',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
   {
     name: 'discount',
@@ -254,7 +254,7 @@ export let attributes = [
     datatype: 'number',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
   {
     name: 'creationDate',
@@ -264,7 +264,7 @@ export let attributes = [
     datatype: 'date',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
 
   {
@@ -275,7 +275,7 @@ export let attributes = [
     datatype: 'string',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
   {
     name: 'group.description',
@@ -285,7 +285,7 @@ export let attributes = [
     datatype: 'string',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
   {
     name: 'grossIncome',
@@ -295,7 +295,7 @@ export let attributes = [
     datatype: 'string',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
   {
     name: 'wooId',
@@ -305,7 +305,7 @@ export let attributes = [
     datatype: 'string',
     project: null,
     align: 'left',
-    required : false,
+    required: false,
   },
   {
     name: 'companyType',
@@ -315,7 +315,7 @@ export let attributes = [
     datatype: 'string',
     project: `"$type"`,
     align: 'left',
-    required : true,
+    required: true,
   },
   {
     name: 'operationType',
@@ -326,6 +326,6 @@ export let attributes = [
     defaultFilter: `{ "$ne": "D" }`,
     project: null,
     align: 'left',
-    required : true,
+    required: true,
   },
 ];
