@@ -338,7 +338,7 @@ export class ListTransactionsComponent implements OnInit {
         var transactionTypes = [];
         
 
-        if (this.transactionTypesSelect) {
+        if (this.transactionTypesSelect && this.transactionTypesSelect.length > 0) {
             this.transactionTypesSelect.forEach(element => {
                 transactionTypes.push({ "$oid" : element._id});
             });
