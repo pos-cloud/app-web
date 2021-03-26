@@ -448,6 +448,11 @@ export class TransactionType extends Model {
                 filter: true,
                 datatype: 'number',
                 align: 'left',
+            },{
+                name: 'finishState',
+                filter: true,
+                datatype: 'string',
+                align: 'left',
             },
         ])
     }

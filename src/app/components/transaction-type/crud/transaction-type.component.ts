@@ -34,6 +34,7 @@ import { PrinterService } from 'app/components/printer/printer.service';
 import { Printer } from 'app/components/printer/printer';
 import { CompanyService } from 'app/components/company/company.service';
 import Resulteable from 'app/util/Resulteable';
+import { TransactionState } from 'app/components/transaction/transaction';
 
 
 @Component({
@@ -474,6 +475,12 @@ export class TransactionTypeComponent implements OnInit {
             tag: 'select',
             tagType: 'boolean',
             values: ['false', 'true'],
+            class: 'form-group col-md-2'
+        },{
+            name: 'finishState',
+            tag: 'select',
+            tagType: 'string',
+            values: [TransactionState.Closed, TransactionState.Canceled, TransactionState.Delivered, TransactionState.Open, TransactionState.Outstanding, TransactionState.Packing, TransactionState.PaymentConfirmed, TransactionState.PaymentDeclined, TransactionState.Pending, TransactionState.Preparing, TransactionState.Sent],
             class: 'form-group col-md-2'
         }, {
             name: 'Producto',
@@ -929,7 +936,8 @@ export class TransactionTypeComponent implements OnInit {
                 "paymentMethods._id": 1,
                 "paymentMethods.name": 1,
                 "resetOrderNumber": 1,
-                "allowAccounting" : 1
+                "allowAccounting" : 1,
+                "finishState" : 1
             }
 
             this.subscription.add(this._objService.getAll({
