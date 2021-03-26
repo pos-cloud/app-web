@@ -474,5 +474,6 @@
     "entryDate": "Fecha de Alta",
     "period.description": "Período",
     "import": "importar",
-    "finishState" : "Estado al Finalizar"
+    "finishState" : "Estado al Finalizar",
+    "empleado": "empleado"
 }
