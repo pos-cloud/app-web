@@ -2275,6 +2275,15 @@ export class PointOfSaleComponent implements OnInit {
                     this.transaction.printed = 1;
                     print = true;
                 }
+                if (
+                    this.transaction.state === TransactionState.Open ||
+                    this.transaction.state === TransactionState.Pending ||
+                    this.transaction.state === TransactionState.Outstanding ||
+                    this.transaction.state === TransactionState.PaymentDeclined ||
+                    this.transaction.state === TransactionState.Canceled
+                ) {
+                    print = false;
+                }
                 await this.updateTransaction(this.transaction).then(
                     transaction => {
                         if (transaction) {
