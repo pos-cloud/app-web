@@ -291,21 +291,21 @@ export class AddArticleComponent implements OnInit {
   public formatterUnitsOfMeasurement = (x: UnitOfMeasurement) => { return x.name; };
 
   public searchAccounts = (text$: Observable<string>) =>
-  text$.pipe(
-    debounceTime(300),
-    distinctUntilChanged(),
-    tap(() => this.loading = true),
-    switchMap(async term => {
-      let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' } } : {};
-      return await this.getAllAccounts(match).then(
-        result => {
-          return result;
-        }
-      )
-    }),
-    tap(() => this.loading = false)
-  )
-public formatterAccounts = (x: Account) => { return x.description; };
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(() => this.loading = true),
+      switchMap(async term => {
+        let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' } } : {};
+        return await this.getAllAccounts(match).then(
+          result => {
+            return result;
+          }
+        )
+      }),
+      tap(() => this.loading = false)
+    )
+  public formatterAccounts = (x: Account) => { return x.description; };
 
   constructor(
     public _articleService: ArticleService,
@@ -322,7 +322,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
     public _movementsOfArticle: MovementOfArticleService,
     public _articleFields: ArticleFieldService,
     public _applicationService: ApplicationService,
-    public _accountService : AccountService,
+    public _accountService: AccountService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -434,6 +434,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
         if (result && result.articleFields) {
           this.articleFields = result.articleFields;
         }
+        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);
@@ -497,8 +498,8 @@ public formatterAccounts = (x: Account) => { return x.description; };
       'applications': this._fb.array([]),
       'url': [this.article.url, []],
       'forShipping': [this.article.forShipping, []],
-      'salesAccount' : [this.article.salesAccount,[]],
-      'purchaseAccount' : [this.article.purchaseAccount,[]]
+      'salesAccount': [this.article.salesAccount, []],
+      'purchaseAccount': [this.article.purchaseAccount, []]
     });
 
     this.articleForm.valueChanges.subscribe(data => this.onValueChanged(data));
@@ -765,8 +766,8 @@ public formatterAccounts = (x: Account) => { return x.description; };
           }
           this.setValuesForm();
           this.setValuesArray();
-
         }
+        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);
@@ -1070,6 +1071,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
           this.deposits = result.deposits;
           this.getLocations();
         }
+        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);
@@ -1090,6 +1092,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
           this.locations = result.locations;
           this.getCompany();
         }
+        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);
@@ -1197,6 +1200,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
         } else {
           this.lastPricePurchase = 0;
         }
+        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);
@@ -1462,8 +1466,8 @@ public formatterAccounts = (x: Account) => { return x.description; };
       'classification': classification,
       'url': this.article.url,
       'forShipping': this.article.forShipping,
-      'salesAccount' : this.article.salesAccount,
-      'purchaseAccount' : this.article.purchaseAccount
+      'salesAccount': this.article.salesAccount,
+      'purchaseAccount': this.article.purchaseAccount
     };
 
     this.articleForm.patchValue(values);
@@ -1702,12 +1706,12 @@ public formatterAccounts = (x: Account) => { return x.description; };
       match = JSON.parse(match);
       this._articleService.getArticlesV2(project, match, {}, {}).subscribe(
         result => {
+          this.loading = false;
           if (result && result.articles && result.articles.length > 0) {
-            resolve(true)
+            resolve(true);
           } else {
-            resolve(false)
+            resolve(false);
           }
-
         },
         error => {
           this.loading = false;
@@ -1811,7 +1815,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
     return new Promise<Account[]>((resolve, reject) => {
       this.subscription.add(this._accountService.getAll({
         match,
-        sort: { description : 1 },
+        sort: { description: 1 },
       }).subscribe(
         result => {
           this.loading = false;
