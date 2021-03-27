@@ -6,7 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Transaction, attributes } from '../transaction';
-import { TransactionMovement } from '../../transaction-type/transaction-type';
+import { TransactionMovement, TransactionType } from '../../transaction-type/transaction-type';
 import { Config } from '../../../app.config';
 
 import { TransactionService } from '../transaction.service';
@@ -32,6 +32,7 @@ import { ExportExcelComponent } from '../../export/export-excel/export-excel.com
 import { DateFormatPipe } from 'app/main/pipes/date-format.pipe';
 import * as moment from 'moment';
 import 'moment/locale/es';
+import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
 
 @Component({
     selector: 'app-list-transactions',
@@ -74,9 +75,23 @@ export class ListTransactionsComponent implements OnInit {
     public endDate: string;
     public dateSelect: string;
     public stateSelect: string = "";
+    public transactionTypes: TransactionType[];
+    public transactionTypesSelect;
+    public dropdownSettings = {
+        "singleSelection": false,
+        "defaultOpen": false,
+        "idField": "_id",
+        "textField": "name",
+        "selectAllText": "Select All",
+        "unSelectAllText": "UnSelect All",
+        "enableCheckAll": true,
+        "itemsShowLimit": 3,
+        "allowSearchFilter": true
+    }
 
     constructor(
         public _transactionService: TransactionService,
+        public _transactionTypeService: TransactionTypeService,
         public _configService: ConfigService,
         public _router: Router,
         public _modalService: NgbModal,
@@ -87,6 +102,7 @@ export class ListTransactionsComponent implements OnInit {
 
         private _authService: AuthService
     ) {
+        this.transactionTypesSelect = new Array();
         this.filters = new Array();
         for (let field of this.columns) {
             if (field.defaultFilter) {
@@ -101,7 +117,7 @@ export class ListTransactionsComponent implements OnInit {
         this.processParams();
     }
 
-    public ngOnInit(): void {
+    async ngOnInit() {
 
         this.userCountry = Config.country;
         this.getPrinters();
@@ -132,9 +148,65 @@ export class ListTransactionsComponent implements OnInit {
             }
         );
 
+        await this.getTransactionTypes().then(
+            result => {
+                if (result) {
+                    this.transactionTypes = result
+                }
+            }
+        )
+
+
         this.getItems();
 
         this.initDragHorizontalScroll();
+    }
+
+    onItemSelect(item: any) {
+    }
+    
+    onSelectAll(items: any) {
+    }
+
+    public getTransactionTypes(): Promise<TransactionType[]> {
+
+        return new Promise<TransactionType[]>((resolve, reject) => {
+
+            let match = {}
+
+            match = {
+                transactionMovement: this.transactionMovement,
+                operationType: { "$ne": "D" }
+            }
+
+           /* if(this.branchSelectedId){
+                match['branch'] = { "$oid" : this.branchSelectedId }
+            }*/
+
+            this._transactionTypeService.getAll({
+                project: {
+                    _id: 1,
+                    transactionMovement: 1,
+                    requestArticles : 1,
+                    operationType: 1,
+                    name: 1,
+                    branch: 1,
+                },
+                match: match
+            }).subscribe(
+                result => {
+                    if (result) {
+                        resolve(result.result);
+                    } else {
+                        resolve(null);
+                    }
+                },
+                error => {
+                    this.showMessage(error._body, 'danger', false);
+                    resolve(null);
+                }
+            );
+        });
     }
 
     private processParams(): void {
@@ -262,6 +334,16 @@ export class ListTransactionsComponent implements OnInit {
         match += `}`;
 
         match = JSON.parse(match);
+
+        var transactionTypes = [];
+        
+
+        if (this.transactionTypesSelect && this.transactionTypesSelect.length > 0) {
+            this.transactionTypesSelect.forEach(element => {
+                transactionTypes.push({ "$oid" : element._id});
+            });
+            match['type._id'] = { "$in": transactionTypes }
+        }
 
         // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
         let project = `{`;

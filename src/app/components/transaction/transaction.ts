@@ -93,6 +93,16 @@ export enum TransactionState {
 }
 
 export let attributes = [
+    {
+        name: 'type._id',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: true,
+      },
   {
     name: 'type.name',
     visible: true,
