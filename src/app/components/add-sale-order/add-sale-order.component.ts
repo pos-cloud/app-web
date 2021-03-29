@@ -1655,7 +1655,11 @@ export class AddSaleOrderComponent {
                         this.transaction.number = result.number;
                         this.transaction.CAE = result.CAE;
                         this.transaction.CAEExpirationDate = moment(result.CAEExpirationDate, 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DDTHH:mm:ssZ");
-                        this.transaction.state = TransactionState.Closed;
+                        if(this.transaction.type.finishState) {
+                            this.transaction.state = this.transaction.type.finishState;
+                        } else {
+                            this.transaction.state = TransactionState.Closed;
+                        }
                         this.finish();
                     }
                 } else {
@@ -1736,7 +1740,11 @@ export class AddSaleOrderComponent {
                     }
                     this.saveClaim('ERROR FE MX ' + moment().format('DD/MM/YYYY HH:mm') + " : " + msn, JSON.stringify(body));
                 } else {
-                    this.transaction.state = TransactionState.Closed;
+                    if(this.transaction.type.finishState) {
+                        this.transaction.state = this.transaction.type.finishState;
+                    } else {
+                        this.transaction.state = TransactionState.Closed;
+                    }
                     this.transaction.stringSAT = result.stringSAT;
                     this.transaction.CFDStamp = result.CFDStamp;
                     this.transaction.SATStamp = result.SATStamp;
@@ -2642,7 +2650,11 @@ export class AddSaleOrderComponent {
                         this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
                     }
                     this.transaction.expirationDate = this.transaction.endDate;
-                    this.transaction.state = TransactionState.Closed;
+                    if(this.transaction.type.finishState) {
+                        this.transaction.state = this.transaction.type.finishState;
+                    } else {
+                        this.transaction.state = TransactionState.Closed;
+                    }
 
                     await this.updateTransaction().then(
                         async transaction => {
