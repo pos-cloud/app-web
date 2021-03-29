@@ -69,6 +69,10 @@ export class AddTransactionComponent implements OnInit {
         TransactionState.Delivered,
         TransactionState.Sent,
         TransactionState.Preparing,
+        TransactionState.Outstanding,
+        TransactionState.PaymentConfirmed,
+        TransactionState.PaymentDeclined,
+        TransactionState.Pending,
     ];
     public companyName: string = "Consumidor Final";
     public transactionDate: string;
