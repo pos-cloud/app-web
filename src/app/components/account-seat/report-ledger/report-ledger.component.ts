@@ -109,8 +109,6 @@ export class ReportLedgerComponent implements OnInit {
                     as: "items.account"
                 }
             },
-
-            
             {
                 $match: {
                     date : {
