@@ -10,7 +10,7 @@ import 'moment/locale/es';
 // MODELS
 import { PaymentMethod } from '../../payment-method/payment-method';
 import { MovementOfCash, StatusCheck } from '../movement-of-cash';
-import { Transaction } from '../../transaction/transaction';
+import { Transaction, TransactionState } from '../../transaction/transaction';
 import { CurrentAccount, Movements } from '../../transaction-type/transaction-type';
 import { Taxes } from '../../tax/taxes';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
@@ -819,6 +819,7 @@ export class AddMovementOfCashComponent implements OnInit {
                 this.transaction.administrativeExpenseAmount += mov.administrativeExpenseAmount;
                 this.transaction.otherExpenseAmount += mov.otherExpenseAmount;
             }
+
             if (this.transaction.totalPrice === 0 || this.transaction.commissionAmount > 0 || this.transaction.administrativeExpenseAmount > 0 || this.transaction.otherExpenseAmount > 0) {
                 this.transaction.totalPrice = this.roundNumber.transform(paid - this.transaction.commissionAmount - this.transaction.administrativeExpenseAmount - this.transaction.otherExpenseAmount);
                 await this.updateTransaction().then(
@@ -862,6 +863,13 @@ export class AddMovementOfCashComponent implements OnInit {
 
         if (isValid && totalPrice > 0 && this.transaction.totalPrice === 0) {
             this.transaction.totalPrice = this.roundNumber.transform(totalPrice - this.transaction.commissionAmount - this.transaction.administrativeExpenseAmount - this.transaction.otherExpenseAmount);
+            
+            if(this.transaction.type.finishState) {
+                this.transaction.state = this.transaction.type.finishState;
+            } else {
+                this.transaction.state = TransactionState.Closed;
+            }
+            
             await this.updateTransaction().then(
                 transaction => {
                     if (transaction) {
