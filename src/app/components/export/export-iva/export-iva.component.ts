@@ -387,7 +387,7 @@ export class ExportIvaComponent implements OnInit {
             ]
             ],
             'folioNumber': [, []],
-            'otherFields': [, [Validators.required]]
+            'otherFields': [false, [Validators.required]]
 
         });
         this.exportIVAForm.valueChanges

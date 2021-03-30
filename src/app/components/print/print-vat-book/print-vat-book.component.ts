@@ -256,7 +256,7 @@ export class PrintVatBookComponent implements OnInit {
             this.doc.text(this.dateFormat.transform(transaction.endDate, 'DD/MM/YYYY'), 5, row);
             if (transaction.company) {
                 this.doc.text(transaction.company.name.toUpperCase().slice(0, 22), 25, row);
-                this.doc.text(transaction.company.identificationValue.replace(/-/g, ""), 65, row);
+                this.doc.text((transaction.company.identificationValue) ? transaction.company.identificationValue.replace(/-/g, ""): "", 65, row);
             } else {
                 this.doc.text('CONSUMIDOR FINAL', 25, row);
                 this.doc.text('00000000000', 65, row);
