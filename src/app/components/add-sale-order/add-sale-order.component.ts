@@ -2621,25 +2621,6 @@ export class AddSaleOrderComponent {
 
 
         if (isValid) {
-
-            if (this.transaction.type.allowAccounting) {
-                this._accountSeatService.addAccountSeatByTransaction(this.transaction._id).subscribe(
-                    result => {
-                        if(result && result.status === 200){
-                            this.showToast(result);
-                        } else {
-                            this.showToast(result);
-                            isValid = false;
-                        }
-                    },
-                    error => {
-                        isValid = false;
-                        this.showToast(error);
-                    }
-                )
-            }
-        }
-        if (isValid) {
             await this.updateBalance().then(async balance => {
                 if (balance !== null) {
                     this.transaction.balance = balance;
@@ -2675,6 +2656,27 @@ export class AddSaleOrderComponent {
                                         }
                                     });
                                 }
+
+                                if (isValid) {
+
+                                    if (this.transaction.type.allowAccounting) {
+                                        this._accountSeatService.addAccountSeatByTransaction(this.transaction._id).subscribe(
+                                            result => {
+                                                if(result && result.status === 200){
+                                                    this.showToast(result);
+                                                } else {
+                                                    this.showToast(result);
+                                                    isValid = false;
+                                                }
+                                            },
+                                            error => {
+                                                isValid = false;
+                                                this.showToast(error);
+                                            }
+                                        )
+                                    }
+                                }
+                                
                                 let cancellationTypesAutomatic = await this.getCancellationTypesAutomatic();
 
                                 if (!cancellationTypesAutomatic || cancellationTypesAutomatic.length == 0) {

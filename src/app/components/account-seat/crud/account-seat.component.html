@@ -198,12 +198,11 @@
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let field of objForm.get('items')['controls']; let i = index;">
-                                            <td *ngIf='field.value.account.description'>{{field?.value?.account?.description}}</td>
+                                            <td *ngIf='field?.value?.account?.description'>{{field?.value?.account?.description}}</td>
                                             <div *ngFor="let account of accounts; let i = index">
                                                 <td
                                                     *ngIf="field && field.value && field.value.account && field.value.account === account._id ">
                                                     {{account.description}}</td>
-
                                             </div>
                                             <td>{{field?.value?.debit}}</td>
                                             <td>{{field?.value?.credit}}</td>
