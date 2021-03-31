@@ -490,11 +490,26 @@ export class PointOfSaleComponent implements OnInit {
         this.loading = true;
         this._mercadopagoService.verifyPaymentsByClient().subscribe(
             result => {
-                this.showToast(null, 'success', 'Finalizó la verificación de pagos.');
+                this.showToast(null, 'success', 'Finalizó la sincronización de pagos.');
                 this.loading = false;
                 this.refresh();
             }, error => {
-                this.showToast(null, 'success', 'Finalizó la verificación de pagos.');
+                this.showToast(null, 'success', 'Finalizó la sincronización de pagos.');
+                this.loading = false;
+                this.refresh();
+            }
+        )
+    }
+
+    syncWoocommerce() {
+        this.loading = true;
+        this._transactionService.syncWoocommerce().subscribe(
+            result => {
+                this.showToast(null, 'success', 'Finalizó la sincronización de woocommerce.');
+                this.loading = false;
+                this.refresh();
+            }, error => {
+                this.showToast(null, 'success', 'Finalizó la sincronización de woocommerce.');
                 this.loading = false;
                 this.refresh();
             }

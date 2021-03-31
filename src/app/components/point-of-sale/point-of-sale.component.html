@@ -332,10 +332,12 @@
     <div class="card-header">
       <span>Pedidos</span>
       <div class="pull-right">
+        <button class="btn fa fa-wordpress" (click)="syncWoocommerce()" [disabled]="loading"><i
+            [ngClass]="{'fa-spin':loading}"></i>Sincronizar Woocommerce</button>
         <button class="btn fa fa-handshake-o" (click)="verifyPayments()" [disabled]="loading"><i
-            [ngClass]="{'fa fa-handshake-o fa-spin':loading}"></i>Verificar pagos</button>
+            [ngClass]="{'fa-spin':loading}"></i>Sincronizar Mercado Pago</button>
         <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i
-            [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</button>
+            [ngClass]="{'fa-spin':loading}"></i>Actualizar</button>
       </div>
     </div>
     <div class="card-block table-responsive">

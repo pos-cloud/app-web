@@ -379,4 +379,26 @@ export class TransactionService extends ModelService {
       })
     );
   }
+
+  
+
+  public syncWoocommerce(): Observable<any> {
+
+    const URL = `${Config.apiV8URL}woo/sync-transactions`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http.post(URL, {}, {
+      headers: headers
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 }
