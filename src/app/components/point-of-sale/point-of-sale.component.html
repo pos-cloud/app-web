@@ -444,7 +444,7 @@
                       (click)="changeStateOfTransaction(transaction, 'Pago Rechazado')">Rechazar pago</button>
                     <!-- <button ngbDropdownItem *ngIf="transaction.state.toString() === 'Pago Rechazado' || transaction.state.toString() === 'Pendiente de pago'" (click)="cancelTransaction(transaction)">Eliminar transacción</button> -->
                     <button ngbDropdownItem
-                    *ngIf="transaction.state.toString() !== 'Enviado' && transaction.state.toString() !== 'Entregado'"
+                      *ngIf="transaction.state.toString() !== 'Enviado' && transaction.state.toString() !== 'Entregado'"
                       (click)="changeStateOfTransaction(transaction, 'Enviado')">Marcar Pedido Enviado</button>
                     <button ngbDropdownItem
                       *ngIf="transaction.state.toString() === 'Enviado' || transaction.state.toString() === 'Pago Confirmado'"
@@ -465,7 +465,8 @@
             <td style="white-space: normal;">
               <b *ngIf="transaction && transaction.shipmentMethod">{{transaction.shipmentMethod.name}} - </b>
               <span *ngIf="transaction && transaction.deliveryAddress">
-                {{ transaction.deliveryAddress.name + ' ' + transaction.deliveryAddress.number}}
+                {{ transaction.deliveryAddress.name }}
+                {{(transaction.deliveryAddress.number) ? transaction.deliveryAddress.number : ''}}
                 {{(transaction.deliveryAddress.flat || transaction.deliveryAddress.floor)? ' -' : ''}}
                 {{(transaction.deliveryAddress.flat)? ' ' + transaction.deliveryAddress.flat : ''}}
                 {{(transaction.deliveryAddress.floor)? ' ' + transaction.deliveryAddress.floor : ''}}

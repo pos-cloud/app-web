@@ -460,8 +460,6 @@ export class TransactionType extends Model {
     }
 }
 
-
-
 export enum Movements {
     Inflows = <any>"Entrada",
     Outflows = <any>"Salida"
@@ -510,4 +508,3 @@ export enum DescriptionType {
     Description = <any>"Descripción",
     PosDescription = <any>"Descripción Corta"
 }
-
