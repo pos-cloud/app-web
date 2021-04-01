@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 import * as jsPDF from 'jspdf';
@@ -11,7 +11,7 @@ import { CompanyType, Company } from 'app/components/company/company';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { EmployeeService } from 'app/components/employee/employee.service';
 
-import { debounceTime, distinctUntilChanged, tap, switchMap, combineAll } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { CompanyService } from 'app/components/company/company.service';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -170,10 +170,9 @@ export class CurrentAccountDetailsComponent implements OnInit {
             'emails': ['', []],
             'company': ['', []],
             'employee': ['', []],
-            'withDetails': ['', [
+            'withDetails': [false, [
                 Validators.required
             ]]
-
         });
 
         this.companyForm.valueChanges
@@ -1331,7 +1330,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 data[y] = {};
                 let company: Company = items[i]["_id"]["company"]
                 data[y]["Nombre"] = company.name;
-                data[y]["Condición de IVA"] = company.vatCondition.description;
+                data[y]["Condición de IVA"] = (company.vatCondition) ? company.vatCondition.description : '';
                 data[y]["Identificación"] = company.identificationValue;
                 data[y]["Ciudad"] = company.city;
                 data[y]["Dirección"] = company.address;
@@ -1348,7 +1347,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
             }
         }
         this.loading = false;
-        this._companyService.exportAsExcelFile(data, "Resumen de Cuenta de" + this.companyType.toString());
+        this._companyService.exportAsExcelFile(data, "Resumen de Cuenta de" + this.companyType);
 
     }
 
