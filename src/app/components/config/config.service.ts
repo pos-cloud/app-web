@@ -76,9 +76,7 @@ export class ConfigService extends ModelService {
     );
   }
 
-  public generateLicensePayment(
-    payment: number
-  ): Observable<any> {
+  public generateLicensePayment(): Observable<any> {
 
     const URL = `${Config.apiURL}generar-licencia-payment`;
 
@@ -86,12 +84,8 @@ export class ConfigService extends ModelService {
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams()
-      .set('payment', payment.toString());
-
     return this._http.get(URL, {
       headers: headers,
-      params: params
     }).pipe(
       map(res => {
         return res;

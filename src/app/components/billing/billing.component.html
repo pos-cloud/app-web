@@ -1,0 +1,96 @@
+<section class="container-fluid" *ngIf="config">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    Servicios contratados
+                </div>
+                <div class="card-body" *ngIf="!config.services || config.services.length === 0">
+                    No se encontraron servicios
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4" *ngFor="let service of config.services">
+            <div class="card" style="margin-top: 20px">
+                <div class="card-body">
+                    <p><b style="margin-right: 10px;">{{ service.name | capitalize }}</b></p>
+                    <p><b style="margin-right: 10px;">Licencia:</b> {{ service.cost |
+                        currency:'USD':'symbol-narrow':'1.2-2' }}</p>
+                    <p><b style="margin-right: 10px;" *ngIf="service.period">Período:</b> {{ service.period }}</p>
+                    <p *ngIf="service.commissionPercentage > 0">
+                        <b style="margin-right: 10px;">Total Facturado:</b> {{
+                        service.totalCharged |
+                        currency:'USD':'symbol-narrow':'1.2-2' }}
+                    </p>
+                    <p *ngIf="service.commissionPercentage > 0">
+                        <b style="margin-right: 10px;">Comisión:</b> {{
+                        service.commissionPercentage }} %
+                    </p>
+                    <p *ngIf="service.commissionPercentage > 0">
+                        <b style="margin-right: 10px;">Monto Comisión:</b> {{
+                        service.commissionAmount |
+                        currency:'USD':'symbol-narrow':'1.2-2' }}
+                    </p>
+                    <p><b style="margin-right: 10px;">Vencimiento:</b> {{ service.expiration | dateFormat:'DD/MM/YYYY'
+                        }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 20px" *ngIf="config.balance > 0">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header" style="font-size: 20px;">
+                    <div class="row">
+                        <div class="col-md-8">Total a pagar</div>
+                        <div class="col-md-2">{{config.balance | currency:'USD':'symbol-narrow':'1.2-2'}}</div>
+                        <div class="col-md-2"><button class="btn btn-primary"
+                                (click)="showPaymentType = true">Pagar</button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 20px" *ngIf="showPaymentType">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    Seleccione la forma de pago:
+                </div>
+                <div class="card-body">
+                    <div class="row" style="margin-top: 20px;">
+                        <div class="col-md-6 text-center" (click)="paymentSelect('mp')">
+                            <img src="./../../../assets/img/mercadopago-logo.png" width="auto" height="70px">
+                        </div>
+                        <div class="col-md-6 text-center" (click)="paymentSelect('tf')">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <img src="./../../../assets/img/transferencia-bancaria-png-2.png" height="90px">
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 20px;" *ngIf="showTransferData">
+                                <div class="col-md-12">
+                                    <h6 class="title"><b>Datos Bancarios:</b></h6>
+                                    <h6 class="text"><b>Titular:</b> Franco Joel Androetto</h6>
+                                    <h6 class="text"><b>CBU:</b> 0000003100090495315950</h6>
+                                    <h6 class="text"><b>Alias:</b> androettofranco.mp</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 20px;">
+                        <div class="col-md-12 text-center">
+                            <h6 class="text">Una vez realizado el pago enviar el comprobante a:</h6>
+                            <h6 class="text2"> <i class="fa fa-whatsapp" aria-hidden="true"></i> : +54 9 3564 67-7539
+                            </h6>
+                            <h6 class="text2"> <i class="fa fa-envelope-o" aria-hidden="true"></i> :
+                                info@poscloud.com.ar</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

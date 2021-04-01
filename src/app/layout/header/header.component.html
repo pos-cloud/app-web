@@ -436,24 +436,17 @@
       <li class="nav-item" ngbDropdown>
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" (click)="readNotification()">
           <i class="fa fa-bell"></i>
-          <span *ngIf="!readedNotification" class="badge badge-danger">1</span>
+          <span *ngIf="false" class="badge badge-danger">1</span>
         </a>
         <div class="dropdown-menu dropdown-menu-right notification-menu" ngbDropdownMenu>
-          <div class="dropdown-item notification-item" *ngIf="notificationMessage">
+          <div class="dropdown-item notification-item" *ngIf="false">
             <div class="row">
               <div class="col-md-12">
                 <span>{{notificationMessage}}</span>
               </div>
             </div>
-            <div class="row">
-              <div class="col-md-12 center-content">
-                <button class="btn btn-outline-success btn-sm" (click)="openModal('pay-license')">
-                  Renovar
-                </button>
-              </div>
-            </div>
           </div>
-          <div class="dropdown-item notification-item" *ngIf="!notificationMessage">
+          <div class="dropdown-item notification-item" *ngIf="true">
             <div class="row">
               <div class="col-md-12">
                 No hay notificaciones
@@ -467,6 +460,11 @@
           <i class="fa fa-user"></i> {{ identity.employee.name }}
         </a>
         <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu>
+          <div>
+            <a class="dropdown-item" [routerLink]="['admin','billing']" [routerLinkActive]="['active']">
+              Facturación
+            </a>
+          </div>
           <div>
             <button class="dropdown-item" (click)="openModal('view-user')" [routerLinkActive]="['active']">
               Mis Datos

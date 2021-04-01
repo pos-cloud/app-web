@@ -5,24 +5,6 @@
         </ngb-alert>
     </div>
 
-    <!-- LICENSE -->
-    <div class="card ">
-        <div class="card-header">Licencia</div>
-        <div class='card-block'>
-            <div class="row">
-                <div class="form-group col-md-3">
-                    <b>Vence {{ config.expirationLicenseDate | dateFormat:'DD/MM/YYYY' }}</b>
-                </div>
-                <div class="form-group col-md-9">
-                    <button class="btn btn-primary" (click)="openModal('pay-license')">
-                        <span>Renovar Licencia</span>
-                    </button>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
     <!-- COMPANY -->
     <div class="card ">
         <div class="card-header">Datos de la Empresa</div>

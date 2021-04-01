@@ -11,7 +11,6 @@ import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-boots
 import { User } from '../../components/user/user';
 
 // SERVICES
-import { LicensePaymentComponent } from '../../components/payment-method/license-payment/license-payment.component';
 import { AuthService } from 'app/components/login/auth.service';
 import { ConfigService } from 'app/components/config/config.service';
 import { AddUserComponent } from '../../components/user/user/add-user.component';
@@ -187,14 +186,6 @@ export class HeaderComponent {
 						}
 					},
 				);
-				modalRef.result.then((result) => {
-
-				}, (reason) => {
-
-				});
-				break;
-			case 'pay-license':
-				modalRef = this._modalService.open(LicensePaymentComponent, { size: 'lg', backdrop: 'static' });
 				modalRef.result.then((result) => {
 
 				}, (reason) => {

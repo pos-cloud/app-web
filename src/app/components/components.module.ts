@@ -18,27 +18,27 @@ import { AccountSeatModule } from './account-seat/account-seat.module';
 import { VariantValueModule } from './variant-value/variant-value.module';
 
 @NgModule({
-	imports: [
-    DatatableModule,
-    UnitOfMeasurementModule,
-    ExportersModule,
-    ApplicationModule,
-    PermissionModule,
-    CashBoxTypeModule,
-    EmployeeTypeModule,
-    HistoryModule,
-    ShipmentMethodModule,
-    HolidayModule,
-    TransactionTypeModule,
-    CategoryModule,
-    CompanyGroupModule,
-    AccountModule,
-    AccountPeriodModule,
-    AccountSeatModule,
-    VariantValueModule
-	],
-	declarations: [
-	],
+    imports: [
+        DatatableModule,
+        UnitOfMeasurementModule,
+        ExportersModule,
+        ApplicationModule,
+        PermissionModule,
+        CashBoxTypeModule,
+        EmployeeTypeModule,
+        HistoryModule,
+        ShipmentMethodModule,
+        HolidayModule,
+        TransactionTypeModule,
+        CategoryModule,
+        CompanyGroupModule,
+        AccountModule,
+        AccountPeriodModule,
+        AccountSeatModule,
+        VariantValueModule
+    ],
+    declarations: [
+    ],
 })
 
 export class ComponentsModule { }

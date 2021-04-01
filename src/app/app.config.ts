@@ -2,6 +2,7 @@ import { VATCondition } from './components/vat-condition/vat-condition';
 import * as moment from 'moment';
 import { IdentificationType } from './components/identification-type/identification-type';
 import { Currency } from './components/currency/currency';
+import { IService } from './util/service.interface';
 
 export class Config {
 
@@ -33,6 +34,8 @@ export class Config {
   static companyPostalCode: string;
   static footerInvoice: string;
   static licensePaymentDueDate: string;
+  services: IService[];
+  balance: number;
   static country: string;
   static latitude: string;
   static longitude: string;
@@ -83,13 +86,6 @@ export class Config {
     accountSid: string,
     authToken: string
   };
-
-  public ecommerceCost : number
-  public ecommercePlan : {
-    name : string,
-    cost :  number,
-    pergentaje : number,
-}
 
   constructor() {
     Config.updateApiURL();

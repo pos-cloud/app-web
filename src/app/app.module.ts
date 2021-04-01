@@ -108,7 +108,6 @@ import { LoginComponent } from './components/login/login.component';
 import { ClockComponent } from './components/clock/clock.component';
 import { ImportComponent } from './components/import/import.component';
 import { RegisterComponent } from './components/register/register.component';
-import { LicensePaymentComponent } from './components/payment-method/license-payment/license-payment.component'
 
 // directives
 import { DeleteMovementOfCashComponent } from './components/movement-of-cash/delete-movement-of-cash/delete-movement-of-cash.component';
@@ -250,6 +249,7 @@ import { MercadopagoService } from './components/mercadopago/mercadopago.service
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { AddressService } from './components/address/address.service';
 import { AbandonedCartsComponent } from './components/point-of-sale/abandoned-carts/abandoned-carts.component';
+import { BillingComponent } from './components/billing/billing.component';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -358,7 +358,6 @@ export function createTranslateLoader(http: HttpClient) {
     ListCompanyFieldsComponent,
     AddCompanyFieldsComponent,
     PushNotificationComponent,
-    LicensePaymentComponent,
     CancellationTypeComponent,
     ListCancellationTypeComponent,
     MovementOfCancellationComponent,
@@ -421,6 +420,7 @@ export function createTranslateLoader(http: HttpClient) {
     ReportTransactionTypeComponent,
     PrintQRComponent,
     SelectMovementsOfCashesComponent,
+    BillingComponent,
     AbandonedCartsComponent
   ],
   entryComponents: [
@@ -514,7 +514,6 @@ export function createTranslateLoader(http: HttpClient) {
     DeleteCompanyFieldComponent,
     ListCompanyFieldsComponent,
     AddCompanyFieldsComponent,
-    LicensePaymentComponent,
     CancellationTypeComponent,
     MovementOfCancellationComponent,
     CurrencyComponent,
@@ -560,7 +559,8 @@ export function createTranslateLoader(http: HttpClient) {
     EmailTemplateComponent,
     SelectChecksComponent,
     PrintQRComponent,
-    SelectMovementsOfCashesComponent
+    SelectMovementsOfCashesComponent,
+    BillingComponent
   ],
   imports: [
     BrowserModule,

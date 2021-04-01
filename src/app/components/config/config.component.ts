@@ -17,7 +17,6 @@ import { UserService } from '../user/user.service';
 import { IdentificationType } from 'app/components/identification-type/identification-type';
 import { IdentificationTypeService } from 'app/components/identification-type/identification-type.service';
 
-import { LicensePaymentComponent } from 'app/components/payment-method/license-payment/license-payment.component'
 import { Currency } from 'app/components/currency/currency';
 import { CurrencyService } from 'app/components/currency/currency.service';
 import { ToastrService } from 'ngx-toastr';
@@ -454,18 +453,6 @@ export class ConfigComponent implements OnInit {
         this.loadingSystem = false;
       }
     );
-  }
-
-  public openModal(op: string): void {
-
-    let modalRef;
-    switch (op) {
-      case 'pay-license':
-        modalRef = this._modalService.open(LicensePaymentComponent, { size: 'lg', backdrop: 'static' });
-        break;
-      default:
-        break;
-    }
   }
 
   public updateConfig(): Promise<Config> {

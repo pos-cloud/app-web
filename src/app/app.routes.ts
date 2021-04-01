@@ -43,7 +43,6 @@ import { ListPaymentMethodsComponent } from './components/payment-method/list-pa
 import { ListUsesOfCFDIComponent } from './components/use-of-CFDI.component.ts/list-uses-of-CFDI/list-uses-of-CFDI.component';
 import { ListRelationTypesComponent } from './components/relation-type/list-relation-types/list-relation-types.component';
 import { ListCompanyFieldsComponent } from './components/company/list-company-fields/list-company-fields.component';
-import { LicensePaymentComponent } from './components/payment-method/license-payment/license-payment.component'
 import { ListCancellationTypeComponent } from './components/cancellation-type/list-cancellation-types/list-cancellation-types.component';
 import { Routes } from '@angular/router';
 import { ListCurrenciesComponent } from './components/currency/list-currencies/list-currencies.component';
@@ -77,6 +76,7 @@ import { ListMovementsOfCancellationsComponent } from './components/movement-of-
 import { ListHistoriesComponent } from './components/history/list-history/list-histories.component';
 import { ReportTransactionTypeComponent } from './components/report-transaction-type/report-transaction-type.component';
 import { AbandonedCartsComponent } from './components/point-of-sale/abandoned-carts/abandoned-carts.component';
+import { BillingComponent } from './components/billing/billing.component';
 
 export const _routes: Routes = [
   {
@@ -341,6 +341,11 @@ export const _routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'admin/billing',
+    component: BillingComponent,
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'admin/cuentas-corrientes',
     component: CurrentAccountComponent,
     canActivate: [AuthGuard, LicenseGuard],
@@ -500,11 +505,6 @@ export const _routes: Routes = [
   {
     path: 'admin/update-article-price',
     component: UpdateArticlePriceComponent,
-    canActivate: [AuthGuard, LicenseGuard]
-  },
-  {
-    path: 'admin/licence-payment',
-    component: LicensePaymentComponent,
     canActivate: [AuthGuard, LicenseGuard]
   },
   {
