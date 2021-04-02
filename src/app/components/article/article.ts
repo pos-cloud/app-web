@@ -77,6 +77,9 @@ export class Article {
     public salesAccount : Account;
     public purchaseAccount : Account;
     public wooId: string;
+    public minStock : number;
+    public maxStock : number;
+    public pointOfOrder : number;
     public operationType: string;
     public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');

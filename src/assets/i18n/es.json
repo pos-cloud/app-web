@@ -48,6 +48,9 @@
     "article.unitOfMeasurement.abbreviation": "Un. de Medida",
     "article.containsStructure": "¿Tiene Estructura?",
     "article.picture": "Imagen",
+    "article.minStock": "Stock Minimo",
+    "article.maxStock": "Stock Maximo",
+    "article.pointOfOrder": "Punto de Pedido",
     "article.ecommerceEnabled": "¿Habilitado E-commerce?",
     "authentication token missing": "falta el token de autenticación",
     "bad provided credentials": "Credenciales proporcionadas incorrectas",
@@ -475,5 +478,8 @@
     "period.description": "Período",
     "import": "importar",
     "finishState" : "Estado al Finalizar",
-    "empleado": "empleado"
+    "empleado": "empleado",
+    "minStock" : "Stock Minimo",
+    "maxStock" : "Stock Maximo",
+    "pointOfOrder" : "Punto de pedido"
 }

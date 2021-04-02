@@ -313,6 +313,38 @@
                 </ngb-tab>
                 <ngb-tab title="Stock">
                     <ng-template ngbTabContent>
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label for="minStock" class="control-label">Stock Minimo:</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" formControlName="minStock"
+                                        name="minStock" id="minStock" step="1" [readonly]="readonly" />
+                                </div>
+                                <div *ngIf="formErrors.minStock" class="alert alert-danger">
+                                    {{ formErrors.minStock }}
+                                </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="maxStock" class="control-label">Stock Maximo:</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" formControlName="maxStock"
+                                        name="maxStock" id="maxStock" step="1" [readonly]="readonly" />
+                                </div>
+                                <div *ngIf="formErrors.maxStock" class="alert alert-danger">
+                                    {{ formErrors.maxStock }}
+                                </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="pointOfOrder" class="control-label">Punto de pedido:</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" formControlName="pointOfOrder"
+                                        name="pointOfOrder" id="pointOfOrder" step="1" [readonly]="readonly" />
+                                </div>
+                                <div *ngIf="formErrors.pointOfOrder" class="alert alert-danger">
+                                    {{ formErrors.pointOfOrder }}
+                                </div>
+                            </div>
+                        </div>
                         <form #depositForm="ngForm" (ngSubmit)="addDeposit(depositForm)">
                             <div class="row">
                                 <div class="form-group col-md-10">

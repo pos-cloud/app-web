@@ -499,7 +499,10 @@ export class AddArticleComponent implements OnInit {
       'url': [this.article.url, []],
       'forShipping': [this.article.forShipping, []],
       'salesAccount': [this.article.salesAccount, []],
-      'purchaseAccount': [this.article.purchaseAccount, []]
+      'purchaseAccount': [this.article.purchaseAccount, []],
+      'minStock': [this.article.minStock, []],
+      'maxStock': [this.article.maxStock, []],
+      'pointOfOrder': [this.article.pointOfOrder, []]
     });
 
     this.articleForm.valueChanges.subscribe(data => this.onValueChanged(data));
@@ -1467,7 +1470,10 @@ export class AddArticleComponent implements OnInit {
       'url': this.article.url,
       'forShipping': this.article.forShipping,
       'salesAccount': this.article.salesAccount,
-      'purchaseAccount': this.article.purchaseAccount
+      'purchaseAccount': this.article.purchaseAccount,
+      'minStock' : this.article.minStock,
+      'maxStock' : this.article.maxStock,
+      'pointOfOrder' : this.article.pointOfOrder
     };
 
     this.articleForm.patchValue(values);
