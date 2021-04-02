@@ -515,8 +515,7 @@ export class AccountSeatComponent implements OnInit {
             this.subscription.add(this._periodService.getAll({
                 project: {
                     "name": "$description",
-                    startDate: { "$dateToString": { "date": "$startDate", "format": "%d/%m/%Y", "timezone": "-03:00" } },
-                    endDate: { "$dateToString": { "date": "$endDate", "format": "%d/%m/%Y", "timezone": "-03:00" } }
+                    status : 1
                 },
                 match,
                 sort: { startDate: 1 },
