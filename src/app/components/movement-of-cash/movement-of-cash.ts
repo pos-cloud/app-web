@@ -83,6 +83,16 @@ export let attributes = [
         required: false,
     },
     {
+        name: 'type._id',
+        visible: false,
+        disabled: true,
+        filter: false,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: true,
+    },
+    {
         name: 'type.name',
         visible: true,
         disabled: false,
@@ -151,6 +161,16 @@ export let attributes = [
         project: `{ "$dateToString": { "date": "$expirationDate", "format": "%d/%m/%Y", "timezone": "-03:00" } }`,
         align: 'left',
         required: false,
+    },
+    {
+        name: 'expirationDate2',
+        visible: false,
+        disabled: true,
+        filter: false,
+        datatype: 'date',
+        project: `"$expirationDate"`,
+        align: 'left',
+        required: true,
     },
     {
         name: 'statusCheck',

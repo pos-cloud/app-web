@@ -23,6 +23,15 @@
             <label for="transactionType" class="control-label">
                 <b>Tipo</b>
             </label>
+            <ng-multiselect-dropdown [placeholder]="'Metodo de Pago'" [settings]="dropdownSettings"
+                [data]="paymentMethods" [(ngModel)]="paymentMethodSelect" (onSelect)="onItemSelect($event)"
+                (onSelectAll)="onSelectAll($event)">
+            </ng-multiselect-dropdown>
+        </div>
+        <div class="col-md-2">
+            <label for="transactionType" class="control-label">
+                <b>Tipo</b>
+            </label>
             <ng-multiselect-dropdown [placeholder]="'Tipo de Transacción'" [settings]="dropdownSettings"
                 [data]="transactionTypes" [(ngModel)]="transactionTypesSelect" (onSelect)="onItemSelect($event)"
                 (onSelectAll)="onSelectAll($event)">
@@ -44,21 +53,6 @@
             </select>
         </div>
         <div class="col-md-2">
-            <label class="control-label">
-                <b>Estado Transaccion:</b>
-            </label>
-            <select class="form-control" [(ngModel)]="stateSelect">
-                <option value="Cerrado">Cerrado</option>
-                <option value="Abierto">Abierto</option>
-                <option value="Armando">Armando</option>
-                <option value="Entregado">Entregado</option>
-                <option value="Enviado">Enviado</option>
-                <option value="Preparando">Preparando</option>
-                <option value="Pendiente">Pendiente</option>
-                <option value="Anulado">Anulado</option>
-            </select>
-        </div>
-        <div class="col-md-2">
             <label for="dataSelect" class="control-label">
                 <b>Por Fecha Transaccion de :</b>
             </label>
@@ -66,6 +60,7 @@
                 <option value="transaction.creationDate">Creación</option>
                 <option value="transaction.updateDate">Modificación</option>
                 <option value="endDate2">Finalización</option>
+                <option value="expirationDate2">Vencimiento</option>
             </select>
         </div>
         <div class="col-md-2">

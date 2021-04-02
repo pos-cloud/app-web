@@ -18,6 +18,7 @@ import { AuthService } from 'app/components/login/auth.service';
 import { BranchService } from 'app/components/branch/branch.service';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
+import { PaymentMethodService } from 'app/components/payment-method/payment-method.service';
 
 @Component({
     selector: 'app-list-movement-of-cash',
@@ -76,6 +77,8 @@ export class ListMovementOfCashesComponent implements OnInit {
     public selectedItems;
     public transactionTypes: TransactionType[];
     public transactionTypesSelect;
+    public paymentMethods: PaymentMethod[];
+    public paymentMethodSelect;
     public dropdownSettings = {
         "singleSelection": false,
         "defaultOpen": false,
@@ -93,6 +96,7 @@ export class ListMovementOfCashesComponent implements OnInit {
         public _movementOfCashService: MovementOfCashService,
         private _authService: AuthService,
         public _transactionTypeService: TransactionTypeService,
+        public _paymentMethodService : PaymentMethodService,
         private _branchService: BranchService,
         public _router: Router,
         public _modalService: NgbModal,
@@ -145,6 +149,14 @@ export class ListMovementOfCashesComponent implements OnInit {
             result => {
                 if (result) {
                     this.transactionTypes = result
+                }
+            }
+        )
+
+        await this.getPaymentMethods().then(
+            result => {
+                if (result) {
+                    this.paymentMethods = result
                 }
             }
         )
@@ -228,6 +240,15 @@ export class ListMovementOfCashesComponent implements OnInit {
                 transactionTypes.push({ "$oid" : element._id});
             });
             match['transaction.type._id'] = { "$in": transactionTypes }
+        }
+        
+        var paymentMethods = [];
+
+        if (this.paymentMethodSelect) {
+            this.paymentMethodSelect.forEach(element => {
+                paymentMethods.push({ "$oid" : element._id});
+            });
+            match['type._id'] = { "$in": paymentMethods }
         }
 
         // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
@@ -414,6 +435,35 @@ export class ListMovementOfCashesComponent implements OnInit {
                 },
                 match: {
                     transactionMovement: this.transactionMovement,
+                    operationType: { "$ne": "D" }
+                }
+            }).subscribe(
+                result => {
+                    if (result) {
+                        resolve(result.result);
+                    } else {
+                        resolve(null);
+                    }
+                },
+                error => {
+                    this.showMessage(error._body, 'danger', false);
+                    resolve(null);
+                }
+            );
+        });
+    }
+
+    public getPaymentMethods(): Promise<PaymentMethod[]> {
+
+        return new Promise<PaymentMethod[]>((resolve, reject) => {
+
+            this._paymentMethodService.getAll({
+                project: {
+                    _id: 1,
+                    operationType: 1,
+                    name: 1,
+                },
+                match: {
                     operationType: { "$ne": "D" }
                 }
             }).subscribe(
