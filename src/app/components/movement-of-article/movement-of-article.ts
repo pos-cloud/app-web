@@ -45,6 +45,7 @@ export class MovementOfArticle {
     public movementParent: MovementOfArticle;
     public isOptional: boolean = false;
     public isGeneratedByPayment: boolean = false;
+    public account : Account;
     public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     public updateUser: User;

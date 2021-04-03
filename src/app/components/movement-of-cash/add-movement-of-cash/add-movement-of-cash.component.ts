@@ -1464,7 +1464,7 @@ export class AddMovementOfCashComponent implements OnInit {
                                     }
                                 }
                             }
-                            if (this.transaction.type.allowAccounting) {
+                            if (this.transaction.type.allowAccounting && this.transaction.type.currentAccount === CurrentAccount.Charge) {
                                 this._accountSeatService.addAccountSeatByTransaction(this.transaction._id).subscribe(
                                     result => {
                                         if (result && result.status === 200) {

@@ -38,6 +38,10 @@ import { StructureService } from 'app/components/structure/structure.service';
 import { Structure, Utilization } from 'app/components/structure/structure';
 import { ArticleService } from 'app/components/article/article.service';
 import { TaxBase } from '../../tax/tax';
+import { AccountService } from 'app/components/account/account.service';
+import { Observable, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { Account } from 'app/components/account/account';
 
 @Component({
     selector: 'app-add-movement-of-article',
@@ -69,6 +73,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     public stock: number = 0;
     public position: string = '';
     public notes: string[];
+    private subscription: Subscription = new Subscription();
     public structures: Structure[];
     public grouped: { name: string, isRequired: boolean, names: [{ id: string, name: string, color: string, quantity: number, increasePrice: number, utilization: Utilization }] }[] = [];
     public movChild: MovementOfArticle[]
@@ -82,12 +87,31 @@ export class AddMovementOfArticleComponent implements OnInit {
         'notes': { 'maxLength': 'Este campo no puede superar los 180 caracteres.' }
     };
 
+    public searchAccount = (text$: Observable<string>) =>
+        text$.pipe(
+            debounceTime(300),
+            distinctUntilChanged(),
+            tap(() => this.loading = true),
+            switchMap(async term => {
+                let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' } } : {};
+                return await this.getAllAccounts(match).then(
+                    result => {
+                        return result;
+                    }
+                )
+            }),
+            tap(() => this.loading = false)
+        )
+    public formatterAccount = (x: Account) => { return x.description; };
+
+
     constructor(
         private _movementOfArticleService: MovementOfArticleService,
         private _articleStockService: ArticleStockService,
         private _variantService: VariantService,
         private _configService: ConfigService,
         private _priceListService: PriceListService,
+        public _accountService: AccountService,
         public _fb: FormBuilder,
         private _modalService: NgbModal,
         public _router: Router,
@@ -105,7 +129,6 @@ export class AddMovementOfArticleComponent implements OnInit {
         let pathLocation: string[] = this._router.url.split('/');
         this.userType = pathLocation[1];
         this.config$ = this._configService.getConfig;
-
 
         if (this.movementOfArticle.article) {
             this.containsVariants = this.movementOfArticle.article.containsVariants;
@@ -373,7 +396,8 @@ export class AddMovementOfArticleComponent implements OnInit {
             'measure': [this.movementOfArticle.measure, []],
             'quantityMeasure': [this.movementOfArticle.quantityMeasure, []],
             'stock': [this.stock, []],
-            'position': [this.position, []]
+            'position': [this.position, []],
+            'account' : [this.movementOfArticle.account,[]]
         });
 
         this.movementOfArticleForm.valueChanges
@@ -571,6 +595,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         if (!this.movementOfArticle.quantityMeasure) this.movementOfArticle.quantityMeasure = 0;
         if (!this.movementOfArticle.code) this.movementOfArticle.code = "";
         if (!this.movementOfArticle.barcode) this.movementOfArticle.barcode = "";
+        if (!this.movementOfArticle.account) this.movementOfArticle.account = null;
 
         let values = {
             '_id': this.movementOfArticle._id,
@@ -583,7 +608,8 @@ export class AddMovementOfArticleComponent implements OnInit {
             'measure': this.movementOfArticle.measure,
             'quantityMeasure': this.movementOfArticle.quantityMeasure,
             'stock': this.stock,
-            'position': this.position
+            'position': this.position,
+            'account' : this.movementOfArticle.account
         };
 
         this.movementOfArticleForm.setValue(values);
@@ -632,6 +658,8 @@ export class AddMovementOfArticleComponent implements OnInit {
                 this.movementOfArticle.article = this.getArticleBySelectedVariants();
             }
 
+            this.movementOfArticle.account = this.movementOfArticleForm.value.account;
+
             this.calculateUnitPrice();
 
             if (this.containsVariants) {
@@ -675,6 +703,7 @@ export class AddMovementOfArticleComponent implements OnInit {
                         this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
                         this.movementOfArticle.description = this.movementOfArticleForm.value.description;
                         this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
+                        this.movementOfArticle.account = this.movementOfArticleForm.value.account; 
 
                         if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
                             this.movementOfArticle = this.recalculateSalePrice(this.movementOfArticle);
@@ -691,6 +720,7 @@ export class AddMovementOfArticleComponent implements OnInit {
                             this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
                             this.movementOfArticle.description = this.movementOfArticleForm.value.description;
                             this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
+                            this.movementOfArticle.account = this.movementOfArticleForm.value.account;
 
                             if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
                                 this.movementOfArticle = this.recalculateSalePrice(this.movementOfArticle);
@@ -721,6 +751,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
                             this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
                             this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
+                            this.movementOfArticle.account = this.movementOfArticleForm.value.account;
 
                             if (this.transaction && this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Sale) {
                                 this.movementOfArticle = this.recalculateSalePrice(this.movementOfArticle);
@@ -1691,6 +1722,21 @@ export class AddMovementOfArticleComponent implements OnInit {
                 this.loading = false;
             }
         );
+    }
+
+    public getAllAccounts(match: {}): Promise<Account[]> {
+        return new Promise<Account[]>((resolve, reject) => {
+            this.subscription.add(this._accountService.getAll({
+                match,
+                sort: { description: 1 },
+            }).subscribe(
+                result => {
+                    this.loading = false;
+                    (result.status === 200) ? resolve(result.result) : reject(result);
+                },
+                error => reject(error)
+            ));
+        });
     }
 
     public changeOptional(child: string, group) {

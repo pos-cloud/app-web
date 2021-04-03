@@ -25,17 +25,26 @@
             <input type="text" class="form-control" formControlName="barcode" name="barcode" id="barcode" readonly/>
           </div>
         </div>
-        <div class="form-group col-md-3" *ngIf="config && config.modules && config.modules.stock">
+        <div class="form-group col-md-1" *ngIf="config && config.modules && config.modules.stock">
           <label for="stock" class="control-label">Stock:</label>
           <div class="input-group">
             <input type="text" class="form-control" formControlName="stock" name="stock" id="stock" readonly/>
           </div>
         </div>
-        <div class="form-group col-md-3" *ngIf="config && config.modules && config.modules.stock">
+        <div class="form-group col-md-1" *ngIf="config && config.modules && config.modules.stock">
           <label for="position" class="control-label">Posición:</label>
           <div class="input-group">
             <input type="text" class="form-control" formControlName="position" name="position" id="position" readonly/>
           </div>
+        </div>
+        <div class="form-group col-md-4">
+            <ng-template #rtAccount let-r="result" let-t="term">
+                <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+            </ng-template>
+            <label for="account">Cuenta:</label>
+            <input id="account" type="text" ngMdoel class="form-control" name="account" formControlName="account"
+                [ngbTypeahead]="searchAccount" [resultTemplate]="rtAccount"
+                [inputFormatter]="formatterAccount" [focus]="focusEvent" />
         </div>
       </div>
       <div class="row" *ngIf="movementOfArticle.article && movementOfArticle.article.allowMeasure">
