@@ -44,7 +44,7 @@
             <label for="account">Cuenta:</label>
             <input id="account" type="text" ngMdoel class="form-control" name="account" formControlName="account"
                 [ngbTypeahead]="searchAccount" [resultTemplate]="rtAccount"
-                [inputFormatter]="formatterAccount" [focus]="focusEvent" />
+                [inputFormatter]="formatterAccount" />
         </div>
       </div>
       <div class="row" *ngIf="movementOfArticle.article && movementOfArticle.article.allowMeasure">
