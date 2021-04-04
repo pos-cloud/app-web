@@ -153,12 +153,17 @@
                     </tr>
                 </tbody>
                 <tfoot>
-                    <!--<tr>
-            <th [attr.colspan]="getColumnsVisibles() - 2"></th>
-            <th class="align-right"> <strong>Total</strong></th>
-            <th class="align-right"><strong>{{totalItem | number:'1.2-2'}}</strong></th>
-            <th class="align-right"><strong>{{totalAmount | currency:'USD':'symbol-narrow':'1.2-2' }}</strong></th>
-          </tr>-->
+                    <td></td>
+                    <ng-container *ngFor="let column of columns">
+                        <td *ngIf="column.visible && column.datatype === 'number'" [attr.align]="column.align">
+                            <strong>{{column.sum}}</strong>
+                        </td>
+                        <td *ngIf="column.visible && column.datatype === 'currency'" [attr.align]="column.align">
+                            <strong>{{column.sum | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
+                        </td>
+                        <td *ngIf="column.visible && (column.datatype !== 'number' && column.datatype !== 'currency')"
+                            [attr.align]="column.align"></td>
+                    </ng-container>
                 </tfoot>
             </table>
         </div>

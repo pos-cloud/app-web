@@ -306,6 +306,7 @@ export class ListMovementOfCashesComponent implements OnInit {
                     } else {
                         this.items = result[0].items;
                         this.totalItems = result[0].count;
+                        this.getSum();
                     }
                 } else {
                     this.items = new Array();
@@ -318,6 +319,23 @@ export class ListMovementOfCashesComponent implements OnInit {
                 this.totalItems = 0;
             }
         ));
+    }
+
+    public getSum(): any {
+        var total = 0
+        this.columns.forEach(elementC => {
+            if (elementC.datatype === 'number' || elementC.datatype === 'currency') {
+                this.items.forEach(elementI => {
+                    Object.keys(elementI).forEach(elementK => {
+                        if (elementK === elementC.name) {
+                            total = total + elementI[elementK];
+                        }
+                    });
+                });
+            }
+            elementC['sum'] = total;
+            total = 0;
+        });
     }
 
     public exportItems(): void {
