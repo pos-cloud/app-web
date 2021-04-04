@@ -379,7 +379,7 @@ export class TransactionTypeComponent implements OnInit {
             name: 'fixedLetter',
             tag: 'select',
             tagType: 'text',
-            values: ["X", 'A', 'B', "C", "E", "M", "R", "T", " "],
+            values: ["X", 'A', 'B', "C", "D", "E", "M", "R", "T", " "],
             default: "X",
             class: 'form-group col-md-2'
         },
@@ -476,7 +476,7 @@ export class TransactionTypeComponent implements OnInit {
             tagType: 'boolean',
             values: ['false', 'true'],
             class: 'form-group col-md-2'
-        },{
+        }, {
             name: 'finishState',
             tag: 'select',
             tagType: 'string',
@@ -936,8 +936,8 @@ export class TransactionTypeComponent implements OnInit {
                 "paymentMethods._id": 1,
                 "paymentMethods.name": 1,
                 "resetOrderNumber": 1,
-                "allowAccounting" : 1,
-                "finishState" : 1
+                "allowAccounting": 1,
+                "finishState": 1
             }
 
             this.subscription.add(this._objService.getAll({
@@ -961,6 +961,9 @@ export class TransactionTypeComponent implements OnInit {
                                     break;
                                 case 'C':
                                     this.objForm.patchValue({ codeC: code.code });
+                                    break;
+                                case 'D':
+                                    this.objForm.patchValue({ codeD: code.code });
                                     break;
                                 case 'E':
                                     this.objForm.patchValue({ codeE: code.code });
@@ -1026,6 +1029,7 @@ export class TransactionTypeComponent implements OnInit {
             codeA: '',
             codeB: '',
             codeC: '',
+            codeD: '',
             codeE: '',
             codeM: '',
             codeR: '',
@@ -1208,6 +1212,10 @@ export class TransactionTypeComponent implements OnInit {
         this.obj.codes.push({
             letter: 'C',
             code: this.objForm.value.codeC,
+        });
+        this.obj.codes.push({
+            letter: 'D',
+            code: this.objForm.value.codeD,
         });
         this.obj.codes.push({
             letter: 'E',

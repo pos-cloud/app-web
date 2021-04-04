@@ -57,7 +57,7 @@ export class AddTransactionComponent implements OnInit {
     public focusEvent = new EventEmitter<boolean>();
     public posType: string;
     public datePipe = new DateFormatPipe();
-    public letters: string[] = ["", "A", "B", "C", "E", "M", "R", "T", "X"];
+    public letters: string[] = ["", "A", "B", "C","D", "E", "M", "R", "T", "X"];
     public roundNumber = new RoundNumberPipe();
     public transactionMovement: string;
     public employees: Employee[] = new Array();
