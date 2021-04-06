@@ -50,11 +50,17 @@ export class AccountSeat extends Model {
                 filter: true,
                 datatype: 'string',
                 align: 'left',
+            },{
+                name: 'transaction.type.transactionMovement',
+                visible: true,
+                filter: true,
+                datatype: 'string',
+                align: 'left',
             }, {
                 name: 'transaction.origin',
                 visible: true,
                 filter: true,
-                datatype: 'string',
+                datatype: 'number',
                 align: 'left',
             }, {
                 name: 'transaction.letter',
@@ -66,7 +72,7 @@ export class AccountSeat extends Model {
                 name: 'transaction.number',
                 visible: true,
                 filter: true,
-                datatype: 'string',
+                datatype: 'number',
                 align: 'left',
             }
         ])
