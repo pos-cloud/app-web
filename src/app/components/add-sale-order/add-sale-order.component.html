@@ -199,7 +199,7 @@
                                         <span
                                             *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Base'">{{movementOfArticle.basePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
                                         <span
-                                            *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Sin Impuestos'">{{movementOfArticle.salePrice - movementOfArticle.taxes[0]?.taxAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                                            *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Sin Impuestos'">{{movementOfArticle.salePrice - ((movementOfArticle.taxes && movementOfArticle.taxes.length > 0) ? movementOfArticle.taxes[0]?.taxAmount : 0) | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
                                     </div>
                                     <div *ngIf="movementOfArticle.transactionDiscountAmount !== 0">
                                         <span style="text-decoration:line-through;"
@@ -207,7 +207,7 @@
                                         <span style="text-decoration:line-through;"
                                             *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Base'">{{movementOfArticle.basePrice + movementOfArticle.transactionDiscountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
                                         <span style="text-decoration:line-through;"
-                                            *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Sin Impuestos'">{{movementOfArticle.salePrice - movementOfArticle.taxes[0].taxAmount + movementOfArticle.transactionDiscountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                                            *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Sin Impuestos'">{{movementOfArticle.salePrice - ((movementOfArticle.taxes && movementOfArticle.taxes.length > 0) ? movementOfArticle.taxes[0]?.taxAmount : 0) + movementOfArticle.transactionDiscountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
                                     </div>
                                 </td>
                             </ng-container>
