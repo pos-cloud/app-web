@@ -2743,13 +2743,14 @@ export class PrintComponent implements OnInit {
         this.doc.text(observation.slice(0, 45) + "-", 65, row);
         this.doc.text(observation.slice(45, 105) + "-", 35, row += 4);
       } else {
+        row += 3
         this.doc.setFontType('bold');
-        this.doc.text("Observaciones: ", margin, row);
+        this.doc.text("Observaciones: ", margin + 35, row);
         this.doc.setFontType('normal');
         row += 4
 
-        this.doc.text(observation.slice(0, 60) + "-", margin, row);
-        this.doc.text(observation.slice(60, 140) + "-", margin, row += 4);
+        this.doc.text(observation.slice(0, 60) + "-", margin + 35, row);
+        this.doc.text(observation.slice(60, 140) + "-", margin + 35, row += 4);
       }
     } else {
       if (this.transaction.type.requestTransport && this.transaction.transport) {
