@@ -20,6 +20,10 @@ import { IdentificationTypeService } from 'app/components/identification-type/id
 import { Currency } from 'app/components/currency/currency';
 import { CurrencyService } from 'app/components/currency/currency.service';
 import { ToastrService } from 'ngx-toastr';
+import { Observable, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { AccountService } from '../account/account.service';
+import { Account } from '../account/account';
 
 @Component({
   selector: 'app-config',
@@ -54,6 +58,7 @@ export class ConfigComponent implements OnInit {
   public timezones: any;
   public userCountry: string;
   public apiURL: string;
+  private subscription: Subscription = new Subscription();
 
   public formErrors = {
     'emailAccount': '',
@@ -69,12 +74,30 @@ export class ConfigComponent implements OnInit {
     'companyStartOfActivity': { 'dateValid': 'Fecha inválida' },
   };
 
+  public searchAccounts = (text$: Observable<string>) =>
+  text$.pipe(
+    debounceTime(300),
+    distinctUntilChanged(),
+    tap(() => this.loading = true),
+    switchMap(async term => {
+      let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' } } : {};
+      return await this.getAllAccounts(match).then(
+        result => {
+          return result;
+        }
+      )
+    }),
+    tap(() => this.loading = false)
+  )
+public formatterAccounts = (x: Account) => { return x.description; };
+
   constructor(
     public _router: Router,
     public _configService: ConfigService,
     public _vatCondition: VATConditionService,
     public _identificationTypeService: IdentificationTypeService,
     public _currencyService: CurrencyService,
+    public _accountService: AccountService,
     public _userService: UserService,
     public _fb: FormBuilder,
     public _toastr: ToastrService,
@@ -100,6 +123,21 @@ export class ConfigComponent implements OnInit {
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
+  }
+
+  public getAllAccounts(match: {}): Promise<Account[]> {
+    return new Promise<Account[]>((resolve, reject) => {
+      this.subscription.add(this._accountService.getAll({
+        match,
+        sort: { description: 1 },
+      }).subscribe(
+        result => {
+          this.loading = false;
+          (result.status === 200) ? resolve(result.result) : reject(result);
+        },
+        error => reject(error)
+      ));
+    });
   }
 
   public getCountries(): void {
@@ -230,6 +268,8 @@ export class ConfigComponent implements OnInit {
     this.configFormSystem = this._fb.group({
       '_id': [this.config._id, [Validators.required]],
       'article.code.validators.maxLength': [this.config.article.code.validators.maxLength, []],
+      'article.salesAccount.default': [this.config.article.salesAccount.default, []],
+      'article.purchaseAccount.default': [this.config.article.purchaseAccount.default, []],
       'article.isWeigth.default': [this.config.article.isWeigth.default, []],
       'company.vatCondition.default': [this.config.company.vatCondition.default, []],
       'company.allowCurrentAccount.default': [this.config.company.allowCurrentAccount.default, []],
@@ -620,6 +660,8 @@ export class ConfigComponent implements OnInit {
       '_id': this.config._id,
       'article.code.validators.maxLength': this.config.article.code.validators.maxLength,
       'article.isWeigth.default': this.config.article.isWeigth.default,
+      'article.salesAccount.default': this.config.article.salesAccount.default,
+      'article.purchaseAccount.default': this.config.article.purchaseAccount.default,
       'company.allowCurrentAccount.default': this.config.company.allowCurrentAccount.default,
       'company.vatCondition.default': vatConfitionDefault,
       'cashBox.perUser': this.config.cashBox.perUser,

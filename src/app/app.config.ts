@@ -51,6 +51,12 @@ export class Config {
     },
     isWeigth: {
       default: boolean
+    },
+    salesAccount: {
+        default: Account
+    },
+    purchaseAccount: {
+        default: Account
     }
   };
   public company: {

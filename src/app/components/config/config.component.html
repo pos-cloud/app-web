@@ -360,6 +360,32 @@
                 <div class="row">
                     <div class="form-group col-md-12">
                         <div class="input-group">
+                            <ng-template #rtAccounts let-r="result" let-t="term">
+                                <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+                            </ng-template>
+                            <label for="article.salesAccount.default">Cuenta Venta defecto de Producto:</label>
+                            <input id="article.salesAccount.default" type="text" class="form-control" formControlName="article.salesAccount.default"
+                                name="article.salesAccount.default" [ngbTypeahead]="searchAccounts" [resultTemplate]="rtAccounts"
+                                [inputFormatter]="formatterAccounts" [readonly]="readonly" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <div class="input-group">
+                            <ng-template #rtAccounts let-r="result" let-t="term">
+                                <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+                            </ng-template>
+                            <label for="article.purchaseAccount.default">Cuenta Compra defecto de Producto:</label>
+                            <input id="article.purchaseAccount.default" type="text" class="form-control" formControlName="article.purchaseAccount.default"
+                                name="article.purchaseAccount.default" [ngbTypeahead]="searchAccounts" [resultTemplate]="rtAccounts"
+                                [inputFormatter]="formatterAccounts" [readonly]="readonly" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <div class="input-group">
                             <span class="input-group-addon" id="basic-addon1"
                                 *ngIf="configFormCompany.value.country === 'AR'">Cóndicion de IVA
                                 defecto para las
