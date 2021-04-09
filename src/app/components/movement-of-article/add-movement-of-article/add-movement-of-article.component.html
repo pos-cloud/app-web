@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">{{movementOfArticle.article.description}}</h4>
+  <h4 class="modal-title">{{(movementOfArticle.article) ? movementOfArticle.article.description : ''}}</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -10,61 +10,63 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <form [formGroup]="movementOfArticleForm" #formAddMovementOfArticle="ngForm" (ngSubmit)="addMovementOfArticle()" autocomplete="off">
+  <form [formGroup]="movementOfArticleForm" #formAddMovementOfArticle="ngForm" (ngSubmit)="addMovementOfArticle()"
+    autocomplete="off">
     <div class="modal-body">
       <div class="row" *ngIf="(config$ | async) as config">
         <div class="form-group col-md-3">
           <label for="code" class="control-label">Código Interno:</label>
           <div class="input-group">
-            <input type="text" class="form-control" formControlName="code" name="code" id="code" readonly/>
+            <input type="text" class="form-control" formControlName="code" name="code" id="code" readonly />
           </div>
         </div>
         <div class="form-group col-md-3">
           <label for="barcode" class="control-label">Código de Barras:</label>
           <div class="input-group">
-            <input type="text" class="form-control" formControlName="barcode" name="barcode" id="barcode" readonly/>
+            <input type="text" class="form-control" formControlName="barcode" name="barcode" id="barcode" readonly />
           </div>
         </div>
         <div class="form-group col-md-1" *ngIf="config && config.modules && config.modules.stock">
           <label for="stock" class="control-label">Stock:</label>
           <div class="input-group">
-            <input type="text" class="form-control" formControlName="stock" name="stock" id="stock" readonly/>
+            <input type="text" class="form-control" formControlName="stock" name="stock" id="stock" readonly />
           </div>
         </div>
         <div class="form-group col-md-1" *ngIf="config && config.modules && config.modules.stock">
           <label for="position" class="control-label">Posición:</label>
           <div class="input-group">
-            <input type="text" class="form-control" formControlName="position" name="position" id="position" readonly/>
+            <input type="text" class="form-control" formControlName="position" name="position" id="position" readonly />
           </div>
         </div>
         <div class="form-group col-md-4">
-            <ng-template #rtAccount let-r="result" let-t="term">
-                <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
-            </ng-template>
-            <label for="account">Cuenta:</label>
-            <input id="account" type="text" ngMdoel class="form-control" name="account" formControlName="account"
-                [ngbTypeahead]="searchAccount" [resultTemplate]="rtAccount"
-                [inputFormatter]="formatterAccount" />
+          <ng-template #rtAccount let-r="result" let-t="term">
+            <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+          </ng-template>
+          <label for="account">Cuenta:</label>
+          <input id="account" type="text" ngMdoel class="form-control" name="account" formControlName="account"
+            [ngbTypeahead]="searchAccount" [resultTemplate]="rtAccount" [inputFormatter]="formatterAccount" />
         </div>
       </div>
       <div class="row" *ngIf="movementOfArticle.article && movementOfArticle.article.allowMeasure">
         <div class="form-group col-md-6">
           <label class="control-label">Medida:</label>
           <div class="input-group">
-            <input class="form-control"  formControlName="measure" name="measure" id="measure" step="1" (change)="calculateMeasure()" autofocus/>
+            <input class="form-control" formControlName="measure" name="measure" id="measure" step="1"
+              (change)="calculateMeasure()" autofocus />
           </div>
         </div>
         <div class="form-group col-md-3">
           <label class="control-label">Cantidad:</label>
           <div class="input-group">
-            <input type="number" class="form-control" formControlName="quantityMeasure" name="quantityMeasure" id="quantityMeasure" step="1" (change)="calculateMeasure()"/>
+            <input type="number" class="form-control" formControlName="quantityMeasure" name="quantityMeasure"
+              id="quantityMeasure" step="1" (change)="calculateMeasure()" />
           </div>
         </div>
       </div>
       <div class="row" *ngIf="movementOfArticle.article && movementOfArticle.article.allowMeasure">
         <div class="form-group col-md-12">
           <label class="control-label">Cantidad calculada:</label>
-          <input type="number" class="form-control" formControlName="amount" name="amount" readonly/>
+          <input type="number" class="form-control" formControlName="amount" name="amount" readonly />
           <div *ngIf="formErrors.amount" class="alert alert-danger">
             {{ formErrors.amount }}
           </div>
@@ -72,17 +74,17 @@
       </div>
       <div class="row" *ngIf="!movementOfArticle.article || !movementOfArticle.article.allowMeasure">
         <div class="form-group col-md-4">
-          <label for="unitPrice" class="control-label">Precio Unitario:</label>
+          <label for="auxPrice" class="control-label">Precio Unitario:</label>
           <div class="input-group">
             <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-            <input type="number" class="form-control" formControlName="unitPrice" name="unitPrice" id="unitPrice" step="1" [readOnly]="!movementOfArticle.transaction.type.modifyArticle"/>
+            <input type="number" class="form-control" formControlName="auxPrice" name="auxPrice" id="auxPrice"
+              step="1" [readOnly]="!movementOfArticle.transaction.type.modifyArticle" (input)="changeUnitPrice()"/>
           </div>
           <div *ngIf="formErrors.unitPrice" class="alert alert-danger">
             {{ formErrors.unitPrice }}
           </div>
         </div>
-        <div class="form-group col-md-2" 
-              *ngIf="movementOfArticle &&
+        <div class="form-group col-md-2" *ngIf="movementOfArticle &&
                     movementOfArticle.article &&
                     !movementOfArticle.article.containsVariants &&
                     movementOfArticle.article.type &&
@@ -90,15 +92,16 @@
                     movementOfArticle.transaction &&
                     movementOfArticle.transaction.type &&
                     movementOfArticle.transaction.type.updateArticle">
-              <label class="control-label">Editar</label>
-              <div class="input-group">
-                <button type="button" class="btn btn-primary" (click)="openModal('update')" title="Editar"><i class="fa fa-pencil"></i></button>
-              </div>
+          <label class="control-label">Editar</label>
+          <div class="input-group">
+            <button type="button" class="btn btn-primary" (click)="openModal('update')" title="Editar"><i
+                class="fa fa-pencil"></i></button>
+          </div>
         </div>
         <div class="form-group col-md-3">
           <label for="amount" class="control-label">Cantidad:</label>
           <div class="input-group">
-            <input type="number" class="form-control" formControlName="amount" name="amount" autofocus/>
+            <input type="number" class="form-control" formControlName="amount" name="amount" autofocus />
           </div>
           <div *ngIf="formErrors.amount" class="alert alert-danger">
             {{ formErrors.amount }}
@@ -109,6 +112,29 @@
           <div class="input-group">
             <button type="button" class="btn btn-danger btn-big" (click)="subtractAmount()">-</button>
             <button type="button" class="btn btn-success btn-big" (click)="addAmount()">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngIf="!containsVariants || isValidSelectedVariants()">
+        <div class="col-md-4 form-group">
+          <label for="discountRate" class="control-label">Porc. Desc.:</label>
+          <div class="input-group">
+            <input type="number" class="form-control" formControlName="discountRate" name="discountRate" (input)="changeDiscountRate()"/>
+            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
+          </div>
+        </div>
+        <div class="col-md-4 form-group">
+          <label for="discountAmount" class="control-label">Monto Desc.:</label>
+          <div class="input-group">
+            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
+            <input type="number" class="form-control" formControlName="discountAmount" name="discountAmount" (input)="changeDiscountAmount()"/>
+          </div>
+        </div>
+        <div class="col-md-4 form-group">
+          <label for="unitPrice" class="control-label">Monto Total:</label>
+          <div class="input-group">
+            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
+            <input type="number" class="form-control" formControlName="unitPrice" name="unitPrice" readonly/>
           </div>
         </div>
       </div>
@@ -125,13 +151,11 @@
           <span *ngFor="let variantType of variantTypes">
             {{ variantType.name }}:
             <div class="row">
-              <button type="button"
-                      class="btn btn-variant"
-                      *ngFor="let variant of getVariantsByType(variantType)"
-                      [ngClass]="{'btn-primary': variant && variant.value && selectedVariants[variant.type.name] !== null && selectedVariants[variant.type.name] === variant.value.description,
+              <button type="button" class="btn btn-variant" *ngFor="let variant of getVariantsByType(variantType)"
+                [ngClass]="{'btn-primary': variant && variant.value && selectedVariants[variant.type.name] !== null && selectedVariants[variant.type.name] === variant.value.description,
                                   'btn-light': variant && variant.value && selectedVariants[variant.type.name] === null  || selectedVariants[variant.type.name] !== variant.value.description}"
-                      (click)="selectVariant(variant.type, variant.value)" >
-                      {{ variant.value.description }}
+                (click)="selectVariant(variant.type, variant.value)">
+                {{ variant.value.description }}
               </button>
             </div>
           </span>
@@ -142,14 +166,11 @@
           <label for="groups" class="control-label"><b>Seleccione las Opciones:</b></label>
           <div *ngFor="let group of grouped">
             <label for="groups" class="control-label"><b>{{group.name}}</b></label>
-                <button type="button"
-                        class="btn btn-variant"
-                        *ngFor="let child of group.names"
-                        [ngClass]="{'btn-primary': child.color === 'blue',
+            <button type="button" class="btn btn-variant" *ngFor="let child of group.names" [ngClass]="{'btn-primary': child.color === 'blue',
                                     'btn-light': child.color === 'white' }"
-                        (click)="changeOptional(child.name,group.name)">
-                        {{ child.name }}
-                </button>
+              (click)="changeOptional(child.name,group.name)">
+              {{ child.name }}
+            </button>
           </div>
         </div>
       </div>
@@ -161,21 +182,20 @@
       <div class="row">
         <div class="form-group col-md-10">
           <div class="input-group">
-            <textarea type="text" class="form-control" formControlName="notes" name="notes" id="notes" rows="2"></textarea>
+            <textarea type="text" class="form-control" formControlName="notes" name="notes" id="notes"
+              rows="2"></textarea>
           </div>
           <div *ngIf="formErrors.notes" class="alert alert-danger">
             {{ formErrors.notes }}
           </div>
-          <div class="row" style="margin-top: 10px;" *ngIf="movementOfArticle.article && movementOfArticle.article.notes && movementOfArticle.article.notes.length > 0">
+          <div class="row" style="margin-top: 10px;"
+            *ngIf="movementOfArticle.article && movementOfArticle.article.notes && movementOfArticle.article.notes.length > 0">
             <div class="form-group col-md-12">
               <div class="row">
-                <button type="button"
-                        class="btn btn-light btn-note"
-                        *ngFor="let note of  movementOfArticle.article.notes"
-                        [ngClass]="{'btn-primary': notes && notes.indexOf(note) !== -1,
-                                    'btn-light': !notes || notes.indexOf(note) === -1}"
-                        (click)="addNote(note)">
-                        {{note}}
+                <button type="button" class="btn btn-light btn-note"
+                  *ngFor="let note of  movementOfArticle.article.notes" [ngClass]="{'btn-primary': notes && notes.indexOf(note) !== -1,
+                                    'btn-light': !notes || notes.indexOf(note) === -1}" (click)="addNote(note)">
+                  {{note}}
                 </button>
               </div>
             </div>
@@ -190,7 +210,9 @@
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
-      <button type="button" class="btn btn-danger" *ngIf="movementOfArticle && movementOfArticle._id && movementOfArticle._id !== ''" (click)="deleteMovementOfArticle()" [disabled]="false">Eliminar</button>
+      <button type="button" class="btn btn-danger"
+        *ngIf="movementOfArticle && movementOfArticle._id && movementOfArticle._id !== ''"
+        (click)="deleteMovementOfArticle()" [disabled]="false">Eliminar</button>
       <button type="submit" class="btn btn-primary" [disabled]="!movementOfArticleForm.valid || loading">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Guardar</span>

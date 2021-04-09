@@ -76,7 +76,8 @@ export class AddMovementOfArticleComponent implements OnInit {
     private subscription: Subscription = new Subscription();
     public structures: Structure[];
     public grouped: { name: string, isRequired: boolean, names: [{ id: string, name: string, color: string, quantity: number, increasePrice: number, utilization: Utilization }] }[] = [];
-    public movChild: MovementOfArticle[]
+    public movChild: MovementOfArticle[];
+    public auxPrice: number = 0;
 
     public formErrors = { 'description': '', 'amount': '', 'unitPrice': '', 'notes': '' };
 
@@ -129,6 +130,8 @@ export class AddMovementOfArticleComponent implements OnInit {
         let pathLocation: string[] = this._router.url.split('/');
         this.userType = pathLocation[1];
         this.config$ = this._configService.getConfig;
+        this.auxPrice = this.movementOfArticle.unitPrice;
+        this.movementOfArticle.unitPrice = this.movementOfArticle.unitPrice + this.movementOfArticle.discountAmount;
 
         if (this.movementOfArticle.article) {
             this.containsVariants = this.movementOfArticle.article.containsVariants;
@@ -390,14 +393,17 @@ export class AddMovementOfArticleComponent implements OnInit {
             'code': [this.movementOfArticle.code, []],
             'barcode': [this.movementOfArticle.barcode, []],
             'description': [this.movementOfArticle.description, []],
+            'discountRate': [this.movementOfArticle.discountRate, []],
+            'discountAmount': [this.movementOfArticle.discountAmount, []],
             'amount': [this.movementOfArticle.amount, [Validators.required]],
             'notes': [this.movementOfArticle.notes],
-            'unitPrice': [this.movementOfArticle.unitPrice, []],
+            'auxPrice': [this.movementOfArticle.unitPrice, []],
+            'unitPrice': [this.auxPrice, []],
             'measure': [this.movementOfArticle.measure, []],
             'quantityMeasure': [this.movementOfArticle.quantityMeasure, []],
             'stock': [this.stock, []],
             'position': [this.position, []],
-            'account' : [this.movementOfArticle.account,[]]
+            'account': [this.movementOfArticle.account, []]
         });
 
         this.movementOfArticleForm.valueChanges
@@ -593,10 +599,12 @@ export class AddMovementOfArticleComponent implements OnInit {
         if (!this.movementOfArticle.salePrice) this.movementOfArticle.salePrice = 0;
         if (!this.movementOfArticle.measure) this.movementOfArticle.measure = "";
         if (!this.movementOfArticle.quantityMeasure) this.movementOfArticle.quantityMeasure = 0;
+        if (!this.movementOfArticle.discountRate) this.movementOfArticle.discountRate = 0;
+        if (!this.movementOfArticle.discountAmount) this.movementOfArticle.discountAmount = 0;
         if (!this.movementOfArticle.code) this.movementOfArticle.code = "";
         if (!this.movementOfArticle.barcode) this.movementOfArticle.barcode = "";
         if (!this.movementOfArticle.account) this.movementOfArticle.account = null;
-
+        
         let values = {
             '_id': this.movementOfArticle._id,
             'code': this.movementOfArticle.code,
@@ -604,12 +612,15 @@ export class AddMovementOfArticleComponent implements OnInit {
             'description': this.movementOfArticle.description,
             'amount': this.movementOfArticle.amount,
             'notes': this.movementOfArticle.notes,
+            'discountRate': this.movementOfArticle.discountRate,
+            'discountAmount': this.movementOfArticle.discountAmount,
+            'auxPrice': this.auxPrice,
             'unitPrice': this.movementOfArticle.unitPrice,
             'measure': this.movementOfArticle.measure,
             'quantityMeasure': this.movementOfArticle.quantityMeasure,
             'stock': this.stock,
             'position': this.position,
-            'account' : this.movementOfArticle.account
+            'account': this.movementOfArticle.account
         };
 
         this.movementOfArticleForm.setValue(values);
@@ -687,6 +698,30 @@ export class AddMovementOfArticleComponent implements OnInit {
         }
     }
 
+    changeUnitPrice() {
+        (this.movementOfArticleForm.value.auxPrice) ?  this.auxPrice = this.movementOfArticleForm.value.auxPrice : this.auxPrice = 0;
+        this.movementOfArticleForm.patchValue({
+            discountAmount: this.roundNumber.transform(this.auxPrice * this.movementOfArticleForm.value.discountRate / 100),
+            unitPrice: this.roundNumber.transform(this.auxPrice - this.roundNumber.transform(this.auxPrice * this.movementOfArticleForm.value.discountRate / 100))
+        });
+    }
+
+    changeDiscountRate() {
+        (this.movementOfArticleForm.value.auxPrice) ?  this.auxPrice = this.movementOfArticleForm.value.auxPrice : this.auxPrice = 0;
+        this.movementOfArticleForm.patchValue({
+            discountAmount: this.roundNumber.transform(this.auxPrice * this.movementOfArticleForm.value.discountRate / 100),
+            unitPrice: this.roundNumber.transform(this.auxPrice - this.roundNumber.transform(this.auxPrice * this.movementOfArticleForm.value.discountRate / 100))
+        });
+    }
+
+    changeDiscountAmount() {
+        (this.movementOfArticleForm.value.auxPrice) ?  this.auxPrice = this.movementOfArticleForm.value.auxPrice : this.auxPrice = 0;
+        this.movementOfArticleForm.patchValue({
+            discountRate: this.roundNumber.transform(100 * this.movementOfArticleForm.value.discountAmount / this.movementOfArticleForm.value.unitPrice),
+            unitPrice: this.roundNumber.transform(this.auxPrice - this.movementOfArticleForm.value.discountAmount),
+        });
+    }
+
     async movementOfArticleExists() {
 
         this.loading = true;
@@ -699,11 +734,12 @@ export class AddMovementOfArticleComponent implements OnInit {
                 async result => {
                     if (!result.movementsOfArticles) {
                         // Si no existe ningún movimiento del producto guardamos uno nuevo
-
+                        this.movementOfArticle.discountAmount = this.movementOfArticleForm.value.discountAmount;
+                        this.movementOfArticle.discountRate = this.movementOfArticleForm.value.discountRate;
                         this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
                         this.movementOfArticle.description = this.movementOfArticleForm.value.description;
                         this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
-                        this.movementOfArticle.account = this.movementOfArticleForm.value.account; 
+                        this.movementOfArticle.account = this.movementOfArticleForm.value.account;
 
                         if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
                             this.movementOfArticle = this.recalculateSalePrice(this.movementOfArticle);
@@ -715,6 +751,9 @@ export class AddMovementOfArticleComponent implements OnInit {
                             this.verifyStructure();
                         }
                     } else {
+
+                        this.movementOfArticle.discountAmount = this.movementOfArticleForm.value.discountAmount;
+                        this.movementOfArticle.discountRate = this.movementOfArticleForm.value.discountRate;
 
                         if (this.movementOfArticle._id === null || this.movementOfArticle._id === "") {
                             this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
@@ -759,6 +798,8 @@ export class AddMovementOfArticleComponent implements OnInit {
                                 this.movementOfArticle = this.recalculateCostPrice(this.movementOfArticle);
                             }
 
+                            this.movementOfArticle.discountAmount = this.movementOfArticleForm.value.discountAmount;
+                            this.movementOfArticle.discountRate = this.movementOfArticleForm.value.discountRate;
                             if (await this.isValidMovementOfArticle(this.movementOfArticle)) {
                                 this.verifyStructure()
                             }
@@ -1573,18 +1614,18 @@ export class AddMovementOfArticleComponent implements OnInit {
                                 async result => {
                                     if (result) {
                                         if (!this.movementOfArticle._id) {
-                                            this.saveMovementOfArticle()
+                                            this.saveMovementOfArticle();
                                         } else {
-                                            this.updateMovementOfArticle()
+                                            this.updateMovementOfArticle();
                                         }
                                     }
                                 }
                             )
                         } else {
                             if (!this.movementOfArticle._id) {
-                                this.saveMovementOfArticle()
+                                this.saveMovementOfArticle();
                             } else {
-                                this.updateMovementOfArticle()
+                                this.updateMovementOfArticle();
                             }
                         }
                     }
@@ -1592,9 +1633,9 @@ export class AddMovementOfArticleComponent implements OnInit {
             )
         } else {
             if (!this.movementOfArticle._id) {
-                this.saveMovementOfArticle()
+                this.saveMovementOfArticle();
             } else {
-                this.updateMovementOfArticle()
+                this.updateMovementOfArticle();
             }
         }
 

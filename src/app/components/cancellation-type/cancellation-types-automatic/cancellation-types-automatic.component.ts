@@ -303,6 +303,8 @@ export class CancellationTypeAutomaticComponent implements OnInit {
             delete mov._id;
             mov.transaction = transaction;
             mov.quantityForStock = 0;
+            mov.discountAmount = movOfArt.discountAmount;
+            mov.discountRate = movOfArt.discountRate;
             mov.status = MovementOfArticleStatus.Ready;
             if (transaction.type.stockMovement) {
                 mov.stockMovement = transaction.type.stockMovement.toString();

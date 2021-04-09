@@ -22,6 +22,8 @@ export class MovementOfArticle {
     public unitPrice: number = 0.00;
     public markupPercentage: number = 0.00;
     public markupPrice: number = 0.00;
+	public discountRate: number = 0.00;
+	public discountAmount: number = 0.00;
     public transactionDiscountAmount: number = 0.00;
     public salePrice: number = 0.00;
     public roundingAmount: number = 0.00;

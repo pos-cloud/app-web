@@ -285,7 +285,6 @@ export class AbandonedCartsComponent implements OnInit {
         
         this._transactionService.deleteAll({where : where}).subscribe(
             result =>{
-                console.log(result);
                 if(result && result.status === 200){
                     this.showToast(result.message);
                 } else {

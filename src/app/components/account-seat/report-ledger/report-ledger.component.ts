@@ -147,7 +147,6 @@ export class ReportLedgerComponent implements OnInit {
             query
         ).subscribe(
             result => {
-                console.log(result)
                 if (result && result.status === 200) {
                     this.loading = false;
                     this.items = result.result;
