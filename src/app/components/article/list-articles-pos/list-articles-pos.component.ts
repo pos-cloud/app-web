@@ -111,6 +111,8 @@ export class ListArticlesPosComponent implements OnInit {
           this.transaction = transaction;
           if (this.transaction && this.transaction.company && this.transaction.company.priceList && this.transaction.company.type === CompanyType.Client) {
             this.priceList = await this.getPriceList(this.transaction.company.priceList._id)
+          } else if (this.transaction.priceList){
+              this.priceList = this.transaction.priceList;
           }
         }
       );
@@ -288,8 +290,13 @@ export class ListArticlesPosComponent implements OnInit {
           if (article) {
             let increasePrice = 0;
 
-            if (this.transaction && this.transaction.company && this.transaction.company.priceList && this.transaction.company.type === CompanyType.Client) {
-              let priceList = await this.getPriceList(this.transaction.company.priceList._id)
+            if (this.transaction && this.transaction.company && this.transaction.company.priceList && this.transaction.company.type === CompanyType.Client || this.transaction.priceList) {
+              var priceList;
+                if(this.transaction.priceList){
+                    priceList = await this.getPriceList(this.transaction.priceList._id)
+              } else {
+                priceList = await this.getPriceList(this.transaction.company.priceList._id)
+              }
               if (priceList) {
                 if (priceList.allowSpecialRules) {
                   priceList.rules.forEach(rule => {

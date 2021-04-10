@@ -44,6 +44,16 @@
                     <b> Transporte:</b>
                     <span *ngIf="transaction.transport">{{transaction.transport.name}}</span>
                 </div>
+                <div class="col-md-2" *ngIf="transaction && transaction.company && !transaction.company.priceList">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-light" (click)="openModal('priceList')">
+                            Lista de Precio: {{ transaction?.priceList?.name }}
+                        </button>
+                        <button type="button" class="btn btn-light fa fa-pencil"
+                            (click)="openModal('priceList')">
+                        </button>
+                    </div>
+                </div>
                 <div class="col-md-2" *ngIf="transaction && transaction.company && transaction.company.priceList">
                     <b> Lista de Precio:</b>
                     <span *ngIf="transaction.company.priceList.name">{{transaction.company.priceList.name}}</span>

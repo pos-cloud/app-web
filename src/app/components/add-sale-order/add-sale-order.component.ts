@@ -81,6 +81,8 @@ import { TaxService } from '../tax/tax.service';
 import { ListCategoriesPosComponent } from '../category/list-categories-pos/list-categories-pos.component';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { AccountSeatService } from '../account-seat/account-seat.service';
+import { ListPriceListsComponent } from '../price-list/list-price-lists/list-price-lists.component';
+import { SelectPriceListComponent } from '../price-list/select-price-list/select-price-list.component';
 
 @Component({
     selector: 'app-add-sale-order',
@@ -2151,19 +2153,27 @@ export class AddSaleOrderComponent {
                 }, (reason) => {
                 });
                 break;
-            case 'observation':
-                modalRef = this._modalService.open(this.contentChangeObservation).result.then(async (result) => {
-                    if (result !== "cancel" && result !== '') {
-                        if (this.transaction.observation) {
-                            await this.updateTransaction().then(
-                                async transaction => {
-                                    if (transaction) {
-                                        this.transaction = transaction;
-                                        this.lastQuotation = this.transaction.quotation;
-                                    }
-                                }
-                            );
+            case 'priceList':
+                modalRef = this._modalService.open(SelectPriceListComponent).result.then(async (result) => {
+                    if (result && result.priceList) {
+                        if(!this.transaction.priceList){
+                            this.transaction.priceList = result.priceList;
+                            this.newPriceList = result.priceList;
+                        } else {
+                            if(!this.priceList){
+                                this.priceList = this.transaction.priceList;
+                            }
+                            this.transaction.priceList = result.priceList;
+                            this.newPriceList = result.priceList;
                         }
+                        await this.updateTransaction().then(
+                            async transaction => {
+                                if (transaction) {
+                                    this.transaction = transaction;
+                                    this.updatePrices();
+                                }
+                            }
+                        );
                     }
                 }, (reason) => {
                 });

@@ -14,7 +14,7 @@
                 | currency:'USD':'symbol-narrow':'1.2-2' }}
             </b>
             <div
-              *ngIf="transaction && transaction.company && transaction.company.priceList && transaction.company.priceList._id">
+              *ngIf="transaction && transaction.company && transaction.company.priceList && transaction.company.priceList._id || transaction.priceList">
               <b>PL:{{ getRealPrice(article) | currency:'USD':'symbol-narrow':'1.2-2'}} </b>
             </div>
           </span>

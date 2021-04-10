@@ -250,6 +250,7 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { AddressService } from './components/address/address.service';
 import { AbandonedCartsComponent } from './components/point-of-sale/abandoned-carts/abandoned-carts.component';
 import { BillingComponent } from './components/billing/billing.component';
+import { SelectPriceListComponent } from './components/price-list/select-price-list/select-price-list.component';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -421,7 +422,8 @@ export function createTranslateLoader(http: HttpClient) {
     PrintQRComponent,
     SelectMovementsOfCashesComponent,
     BillingComponent,
-    AbandonedCartsComponent
+    AbandonedCartsComponent,
+    SelectPriceListComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -560,7 +562,8 @@ export function createTranslateLoader(http: HttpClient) {
     SelectChecksComponent,
     PrintQRComponent,
     SelectMovementsOfCashesComponent,
-    BillingComponent
+    BillingComponent,
+    SelectPriceListComponent
   ],
   imports: [
     BrowserModule,
