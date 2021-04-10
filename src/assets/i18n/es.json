@@ -482,5 +482,6 @@
     "empleado": "empleado",
     "minStock" : "Stock Minimo",
     "maxStock" : "Stock Maximo",
-    "pointOfOrder" : "Punto de pedido"
+    "pointOfOrder" : "Punto de pedido",
+    "otherFieldsValue" : "Campos Personalizados"
 }

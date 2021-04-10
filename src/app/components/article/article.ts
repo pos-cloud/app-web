@@ -254,7 +254,7 @@ export let attributes = [
         required: false,
     },
     {
-        name: 'otherFieldsValues',
+        name: 'otherFieldsValue',
         visible: false,
         disabled: false,
         filter: true,
