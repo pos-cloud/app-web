@@ -354,6 +354,16 @@ export let attributes = [
         required: false,
     },
     {
+        name: 'providersName',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: `{"$reduce":{"input":"$providers.name","initialValue":"","in":{"$concat":["$$value",{"$cond":{"if":{"$eq":["$$value",""]},"then":"","else":"; "}},{"$concat":[{"$toString":"$$this"},""]}]}}}`,
+        align: 'left',
+        required: false,
+    },
+    {
         name: 'url',
         visible: false,
         disabled: false,

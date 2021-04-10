@@ -18,6 +18,16 @@ export class ArticleStock {
 
 export let attributes = [
     {
+        name: '_id',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: true,
+    },
+    {
         name: 'branch.name',
         visible: true,
         disabled: false,
@@ -196,6 +206,16 @@ export let attributes = [
         project: null,
         align: 'right',
         required: true,
+    },
+    {
+        name: 'providersName',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: `{"$reduce":{"input":"$article.providers.name","initialValue":"","in":{"$concat":["$$value",{"$cond":{"if":{"$eq":["$$value",""]},"then":"","else":"; "}},{"$concat":[{"$toString":"$$this"},""]}]}}}`,
+        align: 'left',
+        required: false,
     },
     {
         name: 'article.costPrice',
