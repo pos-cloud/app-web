@@ -36,6 +36,7 @@ export class PrintTransactionTypeComponent implements OnInit {
     @Input() transactionId: string;
     @Input() articleId: string;
     @Input() priceListId: string;
+    @Input() movementOfArticles : MovementOfArticle[];
     @Input() quantity: number;
     @Input() origin: string;
     @Input() printer: Printer;
@@ -83,6 +84,10 @@ export class PrintTransactionTypeComponent implements OnInit {
 
         if (this.articleId) {
             this.getArticle();
+        }
+
+        if(this.movementOfArticles.length > 0){
+            this.buildPrint();
         }
 
         if (this.origin === 'view') {

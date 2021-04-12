@@ -17,6 +17,7 @@ import { AddCompanyComponent } from '../../company/company/add-company.component
 import { Subscription } from 'rxjs';
 import { UserService } from 'app/components/user/user.service';
 import { Config } from 'app/app.config';
+import { PrintTransactionTypeComponent } from 'app/components/print/print-transaction-type/print-transaction-type.component';
 
 @Component({
     selector: 'app-view-transaction',
@@ -173,6 +174,10 @@ export class ViewTransactionComponent implements OnInit {
                 modalRef.componentInstance.companyId = this.transaction.company._id;
                 modalRef.componentInstance.readonly = true;
                 modalRef.componentInstance.operation = 'view';
+                break;
+            case 'print-label':
+                modalRef = this._modalService.open(PrintTransactionTypeComponent)
+                modalRef.componentInstance.movementOfArticles = this.movementsOfArticles;
                 break;
             default:
                 break;
