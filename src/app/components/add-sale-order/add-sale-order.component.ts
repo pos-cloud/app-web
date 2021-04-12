@@ -1657,7 +1657,7 @@ export class AddSaleOrderComponent {
                         this.transaction.number = result.number;
                         this.transaction.CAE = result.CAE;
                         this.transaction.CAEExpirationDate = moment(result.CAEExpirationDate, 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DDTHH:mm:ssZ");
-                        if(this.transaction.type.finishState) {
+                        if (this.transaction.type.finishState) {
                             this.transaction.state = this.transaction.type.finishState;
                         } else {
                             this.transaction.state = TransactionState.Closed;
@@ -1742,7 +1742,7 @@ export class AddSaleOrderComponent {
                     }
                     this.saveClaim('ERROR FE MX ' + moment().format('DD/MM/YYYY HH:mm') + " : " + msn, JSON.stringify(body));
                 } else {
-                    if(this.transaction.type.finishState) {
+                    if (this.transaction.type.finishState) {
                         this.transaction.state = this.transaction.type.finishState;
                     } else {
                         this.transaction.state = TransactionState.Closed;
@@ -1814,6 +1814,23 @@ export class AddSaleOrderComponent {
                                 }
                             }
                         );
+                    }
+                }, (reason) => {
+                });
+                break;
+            case 'observation':
+                modalRef = this._modalService.open(this.contentChangeObservation).result.then(async (result) => {
+                    if (result !== "cancel" && result !== '') {
+                        if (this.transaction.observation) {
+                            await this.updateTransaction().then(
+                                async transaction => {
+                                    if (transaction) {
+                                        this.transaction = transaction;
+                                        this.lastQuotation = this.transaction.quotation;
+                                    }
+                                }
+                            );
+                        }
                     }
                 }, (reason) => {
                 });
@@ -2156,11 +2173,11 @@ export class AddSaleOrderComponent {
             case 'priceList':
                 modalRef = this._modalService.open(SelectPriceListComponent).result.then(async (result) => {
                     if (result && result.priceList) {
-                        if(!this.transaction.priceList){
+                        if (!this.transaction.priceList) {
                             this.transaction.priceList = result.priceList;
                             this.newPriceList = result.priceList;
                         } else {
-                            if(!this.priceList){
+                            if (!this.priceList) {
                                 this.priceList = this.transaction.priceList;
                             }
                             this.transaction.priceList = result.priceList;
@@ -2641,7 +2658,7 @@ export class AddSaleOrderComponent {
                         this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
                     }
                     this.transaction.expirationDate = this.transaction.endDate;
-                    if(this.transaction.type.finishState) {
+                    if (this.transaction.type.finishState) {
                         this.transaction.state = this.transaction.type.finishState;
                     } else {
                         this.transaction.state = TransactionState.Closed;
@@ -2672,7 +2689,7 @@ export class AddSaleOrderComponent {
                                     if (this.transaction.type.allowAccounting) {
                                         this._accountSeatService.addAccountSeatByTransaction(this.transaction._id).subscribe(
                                             result => {
-                                                if(result && result.status === 200){
+                                                if (result && result.status === 200) {
                                                     this.showToast(result);
                                                 } else {
                                                     this.showToast(result);
@@ -2686,7 +2703,7 @@ export class AddSaleOrderComponent {
                                         )
                                     }
                                 }
-                                
+
                                 let cancellationTypesAutomatic = await this.getCancellationTypesAutomatic();
 
                                 if (!cancellationTypesAutomatic || cancellationTypesAutomatic.length == 0) {
