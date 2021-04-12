@@ -26,11 +26,11 @@
         <a class="nav-link btn" [routerLink]="['pos','delivery']" [routerLinkActive]="['active-primary']">
           <i class="fa fa-motorcycle"></i> Delivery</a>
       </li>
-        <li class="nav-item" *ngIf="identity?.employee?.type?.description !== 'Administrador' &&
+        <!--<li class="nav-item" *ngIf="identity?.employee?.type?.description !== 'Administrador' &&
                 config.modules.app" (click)="makeVisibleReport(false)">
         <a class="nav-link btn" [routerLink]="['pos','pedidos-web']" [routerLinkActive]="['active-primary']">
           <i class="fa fa-shopping-cart"></i> Carritos Finalizados</a>
-      </li>
+      </li>-->
       <li class="nav-item" *ngIf="identity?.employee?.type?.description !== 'Administrador' &&
             config.modules.app" (click)="makeVisibleReport(false)">
         <a class="nav-link btn" [routerLink]="['pos','lector-de-vouchers']" [routerLinkActive]="['active-primary']">
