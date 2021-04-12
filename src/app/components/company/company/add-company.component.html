@@ -369,7 +369,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="form-group col-md-12">
+                                    <div class="form-group col-md-6">
                                         <label for="transport" class="control-label">Transporte asignado</label>
                                         <select class="form-control" formControlName="transport" name="transport"
                                             id="transport">
@@ -383,6 +383,15 @@
                                         </select>
                                         <div *ngIf="formErrors.transport" class="alert alert-danger">
                                             {{ formErrors.transport }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="creditLimit" class="control-label">Limite de Credito</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text"
+                                                    id="basic-addon1">$</span></div>
+                                            <input type="number" class="form-control" formControlName="creditLimit"
+                                                name="creditLimit" id="creditLimit" step="0" [readonly]="readonly" />
                                         </div>
                                     </div>
                                 </div>

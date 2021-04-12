@@ -435,7 +435,9 @@ export class AddCompanyComponent implements OnInit {
             'transport': [this.company.transport, []],
             'priceList': [this.company.priceList, []],
             'discount' : [this.company.discount,[]],
-            'account' : [this.company.account,[]]
+            'account' : [this.company.account,[]],
+            'creditLimit' : [this.company.creditLimit,[]]
+
         });
 
         this.companyForm.valueChanges
@@ -586,6 +588,7 @@ export class AddCompanyComponent implements OnInit {
 
         if (!this.company.discount) this.company.discount = 0;
         if (!this.company.account) this.company.account = null;
+        if (!this.company.creditLimit) this.company.creditLimit = 0;
 
 
         const values = {
@@ -615,7 +618,8 @@ export class AddCompanyComponent implements OnInit {
             'transport': transport,
             'priceList': priceList,
             'discount' : this.company.discount,
-            'account' : this.company.account
+            'account' : this.company.account,
+            'creditLimit' : this.company.creditLimit
         };
 
         this.companyForm.setValue(values);
