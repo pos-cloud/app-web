@@ -52,6 +52,8 @@
     "article.maxStock": "Stock Maximo",
     "article.pointOfOrder": "Punto de Pedido",
     "article.ecommerceEnabled": "¿Habilitado E-commerce?",
+    "article.currency.name" : "Moneda",
+    "article.currency.quotation" : "Cotizacion",
     "authentication token missing": "falta el token de autenticación",
     "bad provided credentials": "Credenciales proporcionadas incorrectas",
     "balanceCanceled": "Saldo Cancelado",
