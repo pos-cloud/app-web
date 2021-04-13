@@ -45,6 +45,7 @@ export class Company {
   public wooId: string;
   public discount: number;
   public account: Account;
+  public creditLimit : number;
   public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public updateUser: User;
