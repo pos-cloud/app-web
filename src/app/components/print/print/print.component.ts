@@ -1921,14 +1921,16 @@ export class PrintComponent implements OnInit {
       if (this.company.name) {
         this.doc.text(this.company.name.slice(0, 32), 42, 55);
       }
-      if (this.company.identificationValue && this.company.identificationValue !== '') {
+      if(this.company.identificationType) {
         this.doc.setFontType('bold');
         this.doc.text(this.company.identificationType.name + ":", margin, 60);
+      }
+      if (this.company.identificationValue && this.company.identificationValue !== '') {
         this.doc.setFontType('normal');
         this.doc.text(this.company.identificationValue, 42, 60);
       }
-      this.doc.setFontType('normal');
       if (this.company.vatCondition && this.company.vatCondition.description) {
+        this.doc.setFontType('normal');
         this.doc.text(this.company.vatCondition.description, 42, 65);
       }
 
