@@ -733,7 +733,7 @@ export class CashBoxComponent implements OnInit {
             result => {
                 if(result && result.status === 200){
                     result.result.forEach(async element => {
-                        element.orderNumber = 1;
+                        element.orderNumber = 0;
                         await this._transactionTypeService.update(element).subscribe(
                             result => {
                                 if(result && result.status === 200){
