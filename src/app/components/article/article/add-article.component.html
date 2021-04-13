@@ -238,7 +238,7 @@
                                 </app-add-article-tax>
                                 <div class="row">
                                     <div class="form-group col-md-12">
-                                        <label for="costPrice" class="control-label">Precio de costo:</label>
+                                        <label for="costPrice" class="control-label">Costo con Impuestos:</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend"><span class="input-group-text"
                                                     id="basic-addon1">$</span></div>
@@ -267,7 +267,16 @@
                                         </div>
                                     </div>
                                     <div class="form-group col-md-4">
-                                        <label for="markupPrice" class="control-label">Utilidad:</label>
+                                        <label for="markupPriceWithoutVAT" class="control-label">Utilidad sin Impuestos:</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text"
+                                                    id="basic-addon1">$</span></div>
+                                            <input type="number" class="form-control" formControlName="markupPriceWithoutVAT"
+                                                name="markupPriceWithoutVAT" id="markupPriceWithoutVAT" step="1" [readonly]="true" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="markupPrice" class="control-label">Utilidad con Impuestos:</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend"><span class="input-group-text"
                                                     id="basic-addon1">$</span></div>
@@ -279,8 +288,17 @@
                                             {{ formErrors.markupPrice }}
                                         </div>
                                     </div>
-                                    <div class="form-group col-md-4">
-                                        <label for="salePrice" class="control-label">Precio de Venta:</label>
+                                    <div class="form-group col-md-6">
+                                        <label for="salePriceWithoutVAT" class="control-label">Precio de Venta sin Impuestos:</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text"
+                                                    id="basic-addon1">$</span></div>
+                                            <input type="number" class="form-control" formControlName="salePriceWithoutVAT"
+                                                name="salePriceWithoutVAT" id="salePriceWithoutVAT" step="1" [readonly]="true" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="salePrice" class="control-label">Precio de Venta con Impuestos:</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend"><span class="input-group-text"
                                                     id="basic-addon1">$</span></div>

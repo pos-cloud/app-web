@@ -113,6 +113,9 @@ export class AddArticleComponent implements OnInit {
   public applications: Application[];
   private subscription: Subscription = new Subscription();
   public focus$: Subject<string>[] = new Array();
+  public totalTaxes: number = 0;
+  public salePriceWithoutVAT: number = 0;
+  public markupPriceWithoutVAT: number = 0;
 
   public html = '';
 
@@ -470,8 +473,10 @@ export class AddArticleComponent implements OnInit {
       'basePrice': [this.article.basePrice, [Validators.required]],
       'costPrice': [this.article.costPrice, [Validators.required]],
       'markupPercentage': [this.article.markupPercentage, [Validators.required]],
+      'markupPriceWithoutVAT': [this.markupPriceWithoutVAT],
       'markupPrice': [this.article.markupPrice, [Validators.required]],
       'salePrice': [this.article.salePrice, [Validators.required]],
+      'salePriceWithoutVAT': [this.salePriceWithoutVAT],
       'category': [this.article.category, [Validators.required, this.validateAutocomplete]],
       'quantityPerMeasure': [this.article.quantityPerMeasure, []],
       'unitOfMeasurement': [this.article.unitOfMeasurement, [this.validateAutocomplete]],
@@ -749,6 +754,10 @@ export class AddArticleComponent implements OnInit {
           this.notes = this.article.notes;
           this.tags = this.article.tags;
           this.taxes = this.article.taxes;
+          this.totalTaxes = 0;
+          for(let tax of this.taxes) {
+            this.totalTaxes += tax.taxAmount;
+          }
           if (this.article.url === '') {
             this.loadURL();
           }
@@ -1239,10 +1248,12 @@ export class AddArticleComponent implements OnInit {
         }
 
         if (this.taxes && this.taxes.length > 0) {
+          this.totalTaxes = 0;
           for (const articleTax of this.taxes) {
             if (articleTax.tax.percentage && articleTax.tax.percentage != 0) {
               articleTax.taxBase = taxedAmount;
               articleTax.taxAmount = this.roundNumber.transform((taxedAmount * articleTax.percentage / 100));
+              this.totalTaxes += articleTax.taxAmount;
             }
             this.articleForm.value.costPrice += (articleTax.taxAmount);
           }
@@ -1276,8 +1287,10 @@ export class AddArticleComponent implements OnInit {
         }
 
         if (this.taxes && this.taxes.length > 0) {
+          this.totalTaxes = 0;
           for (const articleTax of this.taxes) {
             this.articleForm.value.costPrice += (articleTax.taxAmount);
+            this.totalTaxes += articleTax.taxAmount;
           }
         }
 
@@ -1310,8 +1323,10 @@ export class AddArticleComponent implements OnInit {
         }
 
         if (this.taxes && this.taxes.length > 0) {
+          this.totalTaxes = 0;
           for (const articleTax of this.taxes) {
             this.articleForm.value.costPrice += (articleTax.taxAmount);
+            this.totalTaxes += articleTax.taxAmount;
           }
         }
 
@@ -1352,7 +1367,6 @@ export class AddArticleComponent implements OnInit {
     this.articleForm.value.markupPercentage = this.roundNumber.transform(this.articleForm.value.markupPercentage);
     this.articleForm.value.markupPrice = this.roundNumber.transform(this.articleForm.value.markupPrice);
     this.articleForm.value.salePrice = this.roundNumber.transform(this.articleForm.value.salePrice);
-
     this.article = this.articleForm.value;
     this.setValuesForm();
   }
@@ -1433,6 +1447,8 @@ export class AddArticleComponent implements OnInit {
     this.article.markupPercentage = this.roundNumber.transform(this.article.markupPercentage);
     this.article.markupPrice = this.roundNumber.transform(this.article.markupPrice, 3);
     this.article.salePrice = this.roundNumber.transform(this.article.salePrice);
+    this.markupPriceWithoutVAT = this.roundNumber.transform(this.article.basePrice * this.article.markupPercentage / 100);
+    this.salePriceWithoutVAT = this.roundNumber.transform(this.article.basePrice + this.markupPriceWithoutVAT);
 
     let lastPricePurchase: number = 0;
     if (this.lastPricePurchase && this.lastPricePurchase != 0) lastPricePurchase = this.lastPricePurchase;
@@ -1449,7 +1465,9 @@ export class AddArticleComponent implements OnInit {
       'costPrice': this.article.costPrice,
       'markupPercentage': this.article.markupPercentage,
       'markupPrice': this.article.markupPrice,
+      'markupPriceWithoutVAT': this.markupPriceWithoutVAT,
       'salePrice': this.article.salePrice,
+      'salePriceWithoutVAT': this.salePriceWithoutVAT,
       'category': this.article.category,
       'quantityPerMeasure': this.article.quantityPerMeasure,
       'unitOfMeasurement': this.article.unitOfMeasurement,
