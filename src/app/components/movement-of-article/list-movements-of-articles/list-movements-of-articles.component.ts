@@ -223,10 +223,6 @@ export class ListMovementsOfArticlesComponent implements OnInit {
             }
         }
 
-
-
-
-
         match += `"transaction.type.transactionMovement": "${this.transactionMovement}",`;
         match += `"transaction.state": "${this.stateSelect}",`;
         if (this.branchSelectedId) {
@@ -243,11 +239,11 @@ export class ListMovementsOfArticlesComponent implements OnInit {
         match = JSON.parse(match);
 
         var transactionTypes = [];
-        
+
 
         if (this.transactionTypesSelect) {
             this.transactionTypesSelect.forEach(element => {
-                transactionTypes.push({ "$oid" : element._id});
+                transactionTypes.push({ "$oid": element._id });
             });
             match['transaction.type._id'] = { "$in": transactionTypes }
         }
@@ -427,20 +423,20 @@ export class ListMovementsOfArticlesComponent implements OnInit {
             let match = {}
 
             match = {
-                requestArticles : true,
+                requestArticles: true,
                 transactionMovement: this.transactionMovement,
                 operationType: { "$ne": "D" }
             }
 
-            if(this.branchSelectedId){
-                match['branch'] = { "$oid" : this.branchSelectedId }
+            if (this.branchSelectedId) {
+                match['branch'] = { "$oid": this.branchSelectedId }
             }
 
             this._transactionTypeService.getAll({
                 project: {
                     _id: 1,
                     transactionMovement: 1,
-                    requestArticles : 1,
+                    requestArticles: 1,
                     operationType: 1,
                     name: 1,
                     branch: 1,
@@ -464,7 +460,7 @@ export class ListMovementsOfArticlesComponent implements OnInit {
 
     onItemSelect(item: any) {
     }
-    
+
     onSelectAll(items: any) {
     }
 

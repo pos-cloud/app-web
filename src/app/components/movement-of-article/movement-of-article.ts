@@ -21,6 +21,7 @@ export class MovementOfArticle {
     public costPrice: number = 0.00;
     public unitPrice: number = 0.00;
     public markupPercentage: number = 0.00;
+    public markupPriceWithoutVAT: number = 0.00;
     public markupPrice: number = 0.00;
 	public discountRate: number = 0.00;
 	public discountAmount: number = 0.00;
@@ -290,6 +291,16 @@ export let attributes = [
         disabled: false,
         filter: true,
         datatype: 'percent',
+        project: null,
+        align: 'right',
+        required: false,
+    },
+    {
+        name: 'markupPriceWithoutVAT',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'currency',
         project: null,
         align: 'right',
         required: false,

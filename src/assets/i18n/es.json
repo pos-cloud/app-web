@@ -32,7 +32,7 @@
     "article.description": "Descripción",
     "article.make.description": "Marca",
     "article.markupPercentage": "Margen",
-    "article.markupPrice": "Utilidad",
+    "article.markupPrice": "Utilidad con Imp.",
     "article.operationType": "Última Operación Proucto",
     "article.otherFieldsValues": "Campos Personalizados",
     "article.posDescription": "Descripción Corta",
@@ -485,5 +485,6 @@
     "minStock" : "Stock Minimo",
     "maxStock" : "Stock Maximo",
     "pointOfOrder" : "Punto de pedido",
-    "otherFieldsValue" : "Campos Personalizados"
+    "otherFieldsValue" : "Campos Personalizados",
+    "markupPriceWithoutVAT": "Utilidad sin Imp."
 }
