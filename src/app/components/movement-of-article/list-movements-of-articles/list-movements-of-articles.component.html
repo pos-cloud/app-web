@@ -20,6 +20,20 @@
         </div>
         <div class="col-md-2">
             <label for="transactionType" class="control-label">
+                <b>Rubro</b>
+            </label>
+            <ng-multiselect-dropdown
+            [placeholder]="'Rubros'"
+            [settings]="dropdownSettingsCategory"
+            [data]="categories"
+            [(ngModel)]="categoriesSelect"
+            (onSelect)="onItemSelect($event)"
+            (onSelectAll)="onSelectAll($event)"
+          >
+          </ng-multiselect-dropdown>
+        </div>
+        <div class="col-md-2">
+            <label for="transactionType" class="control-label">
                 <b>Tipo</b>
             </label>
             <ng-multiselect-dropdown
