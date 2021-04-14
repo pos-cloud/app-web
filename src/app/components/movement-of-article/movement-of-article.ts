@@ -316,21 +316,6 @@ export let attributes = [
         required: false,
     },
     {
-        name: 'markupPrice2',
-        visible: false,
-        disabled: false,
-        filter: true,
-        datatype: 'currency',
-        project: `{ "$cond": {
-                    "if": { "$gt": [ { "$size" : "$taxes" }, 0 ] },
-                    "then": { "$subtract" : [{ "$subtract" : ["$salePrice",{ "$arrayElemAt" : [ "$taxes.taxAmount", 0 ] }] }, { "$subtract" : ["$basePrice",{ "$arrayElemAt" : [ "$taxes.taxAmount", 0 ] }] } ] },
-                    "else": "$markupPrice"
-                }
-            }`,
-        align: 'right',
-        required: false,
-    },
-    {
         name: 'taxes',
         visible: false,
         disabled: false,
