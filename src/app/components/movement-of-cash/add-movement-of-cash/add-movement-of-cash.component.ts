@@ -11,7 +11,7 @@ import 'moment/locale/es';
 import { PaymentMethod } from '../../payment-method/payment-method';
 import { MovementOfCash, StatusCheck } from '../movement-of-cash';
 import { Transaction, TransactionState } from '../../transaction/transaction';
-import { CurrentAccount, Movements } from '../../transaction-type/transaction-type';
+import { CurrentAccount, Movements, TransactionMovement } from '../../transaction-type/transaction-type';
 import { Taxes } from '../../tax/taxes';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
 import { Bank } from 'app/components/bank/bank';
@@ -41,6 +41,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { AccountSeatService } from 'app/components/account-seat/account-seat.service';
+import { CompanyService } from 'app/components/company/company.service';
 
 
 @Component({
@@ -124,6 +125,7 @@ export class AddMovementOfCashComponent implements OnInit {
         public _fb: FormBuilder,
         public activeModal: NgbActiveModal,
         private _accountSeatService: AccountSeatService,
+        private _companyService: CompanyService,
         public alertConfig: NgbAlertConfig,
         public _modalService: NgbModal,
         private _taxService: TaxService,
@@ -863,13 +865,13 @@ export class AddMovementOfCashComponent implements OnInit {
 
         if (isValid && totalPrice > 0 && this.transaction.totalPrice === 0) {
             this.transaction.totalPrice = this.roundNumber.transform(totalPrice - this.transaction.commissionAmount - this.transaction.administrativeExpenseAmount - this.transaction.otherExpenseAmount);
-            
-            if(this.transaction.type.finishState) {
+
+            if (this.transaction.type.finishState) {
                 this.transaction.state = this.transaction.type.finishState;
             } else {
                 this.transaction.state = TransactionState.Closed;
             }
-            
+
             await this.updateTransaction().then(
                 transaction => {
                     if (transaction) {
@@ -1427,59 +1429,61 @@ export class AddMovementOfCashComponent implements OnInit {
                     if (this.paymentMethodSelected.inputAndOuput && this.transaction.type.movement === Movements.Inflows) {
                         this.movementOfCash.statusCheck = StatusCheck.Available;
                     }
-
-                    await this.saveMovementOfCash().then(
-                        async movementOfCash => {
-                            if (movementOfCash) {
-                                this.movementOfCash = movementOfCash;
-                                if (this.transactionAmount !== this.transaction.totalPrice) {
-                                    this.transaction.totalPrice = this.transactionAmount;
-                                    if (this.transaction.type.requestArticles) {
-                                        this.addMovementOfArticle();
-                                    } else {
-                                        await this.updateTransaction().then(
-                                            transaction => {
-                                                if (transaction) {
-                                                    this.transaction = transaction;
-                                                    if (this.keyboard) this.keyboard.setInput('');
-                                                    this.showToast(null, 'success', 'Operación realizada con éxito');
-                                                    this.getMovementOfCashesByTransaction();
-                                                }
-                                            }
-                                        );
-                                    }
-                                } else {
-                                    this.movementsOfCashes = new Array();
-                                    this.movementsOfCashes.push(this.movementOfCash);
-                                    if (!this.fastPayment) {
-                                        this.showToast(null, 'success', 'Operación realizada con éxito');
-                                        this.getMovementOfCashesByTransaction();
-                                    } else {
-                                        if (this.amountDiscount && this.amountDiscount !== 0) {
+                    
+                    if (await this.validateCredit()) {
+                        await this.saveMovementOfCash().then(
+                            async movementOfCash => {
+                                if (movementOfCash) {
+                                    this.movementOfCash = movementOfCash;
+                                    if (this.transactionAmount !== this.transaction.totalPrice) {
+                                        this.transaction.totalPrice = this.transactionAmount;
+                                        if (this.transaction.type.requestArticles) {
                                             this.addMovementOfArticle();
                                         } else {
+                                            await this.updateTransaction().then(
+                                                transaction => {
+                                                    if (transaction) {
+                                                        this.transaction = transaction;
+                                                        if (this.keyboard) this.keyboard.setInput('');
+                                                        this.showToast(null, 'success', 'Operación realizada con éxito');
+                                                        this.getMovementOfCashesByTransaction();
+                                                    }
+                                                }
+                                            );
+                                        }
+                                    } else {
+                                        this.movementsOfCashes = new Array();
+                                        this.movementsOfCashes.push(this.movementOfCash);
+                                        if (!this.fastPayment) {
                                             this.showToast(null, 'success', 'Operación realizada con éxito');
                                             this.getMovementOfCashesByTransaction();
+                                        } else {
+                                            if (this.amountDiscount && this.amountDiscount !== 0) {
+                                                this.addMovementOfArticle();
+                                            } else {
+                                                this.showToast(null, 'success', 'Operación realizada con éxito');
+                                                this.getMovementOfCashesByTransaction();
+                                            }
                                         }
                                     }
                                 }
-                            }
-                            if (this.transaction.type.allowAccounting && this.transaction.type.currentAccount === CurrentAccount.Charge) {
-                                this._accountSeatService.addAccountSeatByTransaction(this.transaction._id).subscribe(
-                                    result => {
-                                        if (result && result.status === 200) {
-                                            this.showToast(result);
-                                        } else {
-                                            this.showToast(result);
+                                if (this.transaction.type.allowAccounting && this.transaction.type.currentAccount === CurrentAccount.Charge) {
+                                    this._accountSeatService.addAccountSeatByTransaction(this.transaction._id).subscribe(
+                                        result => {
+                                            if (result && result.status === 200) {
+                                                this.showToast(result);
+                                            } else {
+                                                this.showToast(result);
+                                            }
+                                        },
+                                        error => {
+                                            this.showToast(error);
                                         }
-                                    },
-                                    error => {
-                                        this.showToast(error);
-                                    }
-                                )
+                                    )
+                                }
                             }
-                        }
-                    );
+                        );
+                    }
                 } else {
                     let isValid: boolean = true;
                     if ((this.totalInterestAmount + this.totalTaxAmount) > 0 && this.transaction.totalPrice !== 0) {
@@ -1539,7 +1543,7 @@ export class AddMovementOfCashComponent implements OnInit {
             this.transactionAmount = this.transaction.totalPrice;
             this.movementOfCash.amountPaid = this.transactionAmount;
 
-            if (await this.isValidAmount()) {
+            if (await this.isValidAmount() && await this.validateCredit()) {
                 await this.saveMovementOfCash().then(
                     async movementOfCash => {
                         if (movementOfCash) {
@@ -1600,6 +1604,40 @@ export class AddMovementOfCashComponent implements OnInit {
                     resolve(null);
                 }
             );
+        });
+    }
+
+    public validateCredit(): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            if (this.movementOfCash.type.isCurrentAccount && this.transaction.company.creditLimit > 0 && this.transaction.company._id && this.transaction.type.transactionMovement ===  TransactionMovement.Sale) {
+                this._companyService.getSummaryCurrentAccount(this.transaction.company._id).subscribe(
+                    result => {
+                        console.log(result);
+                        if (result && result.status === 200) {
+                            var total = result.result + this.movementOfCash.amountPaid;
+                            console.log(total);
+                            console.log(this.movementOfCash.amountPaid);
+                            console.log(this.transaction.company.creditLimit);
+
+                            if(total > this.transaction.company.creditLimit){
+                                resolve(false);
+                                this.showToast(null,'info',"La empresa supera el limite de credito otorgado");
+                            } else {
+                                resolve(true)
+                            }
+                        } else {
+                            resolve(false);
+                            this.showToast(result);
+                        }
+                    },
+                    error => {
+                        resolve(false);
+                        this.showToast(error);
+                    }
+                )
+            } else {
+                resolve(true);
+            }
         });
     }
 
