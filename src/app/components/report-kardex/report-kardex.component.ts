@@ -25,6 +25,7 @@ import { Subscription } from 'rxjs';
 import { ArticleStockService } from 'app/components/article-stock/article-stock.service';
 import { ToastrService } from 'ngx-toastr';
 import { ArticleStock } from '../article-stock/article-stock';
+import { TransactionState } from '../transaction/transaction';
 
 @Component({
   selector: 'app-report-kardex',
@@ -581,7 +582,12 @@ export class ReportKardexComponent implements OnInit {
     if (this.depositSelectedId) match['deposit._id'] = { $oid: this.depositSelectedId };
     match['endDate'] = { $gte: { $date: this.startDate + 'T00:00:00' + timezone }, $lte: { $date: this.endDate + 'T23:59:59' + timezone } };
     match['article._id'] = { $oid: this.articleSelected._id };
-    match['transaction.state'] = "Cerrado";
+    match['$and'] = [
+      { "transaction.state": { $ne: TransactionState.Open } },
+      { "transaction.state": { $ne: TransactionState.Pending } },
+      { "transaction.state": { $ne: TransactionState.Canceled } },
+      { "transaction.state": { $ne: TransactionState.PaymentDeclined } }
+    ];
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
     let project = `{`;
