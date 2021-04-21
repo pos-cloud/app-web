@@ -186,6 +186,16 @@ export let attributes = [
         required: false,
     },
     {
+        name: 'category._id',
+        visible: false,
+        disabled: true,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: true,
+    },
+    {
         name: 'category.description',
         visible: false,
         disabled: false,

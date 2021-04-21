@@ -224,6 +224,8 @@ export class AddCompanyComponent implements OnInit {
                 this.config = config;
                 this.company.allowCurrentAccount = this.config.company.allowCurrentAccount.default;
                 this.company.vatCondition = this.config.company.vatCondition.default;
+                if(this.company.type === CompanyType.Client) this.company.account = this.config.company.accountClient.default;
+                if(this.company.type === CompanyType.Provider) this.company.account = this.config.company.accountProvider.default;
             }
         );
 

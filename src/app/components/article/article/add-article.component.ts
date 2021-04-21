@@ -364,6 +364,8 @@ export class AddArticleComponent implements OnInit {
         this.validationMessages.code['maxlength'] = `No puede exceder los ${this.config.article.code.validators.maxLength} carácteres.`;
         this.articleForm.controls['code'].setValidators([Validators.maxLength(this.config.article.code.validators.maxLength)]);
         this.article.isWeigth = this.config.article.isWeigth.default;
+        this.article.salesAccount = this.config.article.salesAccount.default;
+        this.article.purchaseAccount = this.config.article.purchaseAccount.default;
       }
     );
 

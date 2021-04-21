@@ -18,6 +18,8 @@ import { BranchService } from 'app/components/branch/branch.service';
 import { AuthService } from 'app/components/login/auth.service';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
+import { Category } from 'app/components/category/category';
+import { CategoryService } from 'app/components/category/category.service';
 
 @Component({
     selector: 'app-list-movements-of-articles',
@@ -60,6 +62,8 @@ export class ListMovementsOfArticlesComponent implements OnInit {
     public selectedItems;
     public transactionTypes: TransactionType[];
     public transactionTypesSelect;
+    public categories: Category[];
+    public categoriesSelect;
     public dropdownSettings = {
         "singleSelection": false,
         "defaultOpen": false,
@@ -72,10 +76,23 @@ export class ListMovementsOfArticlesComponent implements OnInit {
         "allowSearchFilter": true
     }
 
+    public dropdownSettingsCategory = {
+        "singleSelection": false,
+        "defaultOpen": false,
+        "idField": "_id",
+        "textField": "description",
+        "selectAllText": "Select All",
+        "unSelectAllText": "UnSelect All",
+        "enableCheckAll": true,
+        "itemsShowLimit": 3,
+        "allowSearchFilter": true
+    }
+
     constructor(
         public _movementOfArticleService: MovementOfArticleService,
         public _branchService: BranchService,
         public _transactionTypeService: TransactionTypeService,
+        public _categoryService: CategoryService,
         private _authService: AuthService,
         public _router: Router,
         public _modalService: NgbModal,
@@ -135,6 +152,15 @@ export class ListMovementsOfArticlesComponent implements OnInit {
                 }
             }
         )
+
+        await this.getCategories().then(
+            result => {
+                if (result) {
+                    this.categories = result
+                }
+            }
+        )
+
         //this.getItems();
         this.initDragHorizontalScroll();
     }
@@ -246,6 +272,15 @@ export class ListMovementsOfArticlesComponent implements OnInit {
                 transactionTypes.push({ "$oid": element._id });
             });
             match['transaction.type._id'] = { "$in": transactionTypes }
+        }
+
+        var categories = []
+
+        if (this.categoriesSelect) {
+            this.categoriesSelect.forEach(element => {
+                categories.push({ "$oid": element._id });
+            });
+            match['category._id'] = { "$in": categories }
         }
 
         // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
@@ -440,6 +475,41 @@ export class ListMovementsOfArticlesComponent implements OnInit {
                     operationType: 1,
                     name: 1,
                     branch: 1,
+                },
+                match: match
+            }).subscribe(
+                result => {
+                    if (result) {
+                        resolve(result.result);
+                    } else {
+                        resolve(null);
+                    }
+                },
+                error => {
+                    this.showMessage(error._body, 'danger', false);
+                    resolve(null);
+                }
+            );
+        });
+    }
+
+    
+    public getCategories(): Promise<Category[]> {
+
+        return new Promise<Category[]>((resolve, reject) => {
+
+            let match = {}
+
+            match = {
+                operationType: { "$ne": "D" }
+            }
+
+
+            this._categoryService.getAll({
+                project: {
+                    _id: 1,
+                    description: 1,
+                    operationType: 1,
                 },
                 match: match
             }).subscribe(

@@ -3,6 +3,7 @@ import * as moment from 'moment';
 import { IdentificationType } from './components/identification-type/identification-type';
 import { Currency } from './components/currency/currency';
 import { IService } from './util/service.interface';
+import { Account } from './components/account/account';
 
 export class Config {
 
@@ -65,6 +66,12 @@ export class Config {
     },
     vatCondition: {
       default: VATCondition
+    }, 
+    accountClient : {
+        default: Account
+    },
+    accountProvider : {
+        default: Account
     }
   };
   public cashBox: {
