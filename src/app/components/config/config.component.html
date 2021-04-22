@@ -441,7 +441,7 @@
                             <ng-template #rtAccounts let-r="result" let-t="term">
                                 <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
                             </ng-template>
-                            <label for="company.accountProvider.default">Valor Defecto de cuenta para clientes:</label>
+                            <label for="company.accountProvider.default">Valor Defecto de cuenta para proveedores:</label>
                             <input id="company.accountProvider.default" type="text" class="form-control" formControlName="company.accountProvider.default"
                                 name="company.accountProvider.default" [ngbTypeahead]="searchAccounts" [resultTemplate]="rtAccounts"
                                 [inputFormatter]="formatterAccounts" [readonly]="readonly" />
