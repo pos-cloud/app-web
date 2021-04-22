@@ -244,6 +244,16 @@ export let attributes = [
     required: false,
   },
   {
+    name: 'priceList.name',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    project: null,
+    align: 'left',
+    required: false,
+  },
+  {
     name: 'balance',
     visible: true,
     disabled: false,
