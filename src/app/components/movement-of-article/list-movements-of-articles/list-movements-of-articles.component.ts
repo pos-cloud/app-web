@@ -463,10 +463,6 @@ export class ListMovementsOfArticlesComponent implements OnInit {
                 operationType: { "$ne": "D" }
             }
 
-            if (this.branchSelectedId) {
-                match['branch'] = { "$oid": this.branchSelectedId }
-            }
-
             this._transactionTypeService.getAll({
                 project: {
                     _id: 1,
