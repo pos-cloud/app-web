@@ -205,7 +205,8 @@ export class AbandonedCartsComponent implements OnInit {
                 "deliveryAddress.state": 1,
                 "deliveryAddress.observation": 1,
                 "shipmentMethod.name": 1,
-                "paymentMethodEcommerce": 1
+                "paymentMethodEcommerce": 1,
+                "company.name" : 1
             }
 
             let match = {
