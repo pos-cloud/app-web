@@ -177,8 +177,10 @@ export class AppComponent {
     Config.setDatabase(subdominio);
     Config.setApiHost('http://localhost:300'); // TEST
     Config.setApiV8Host('http://localhost:308'); // TEST
-    //Config.setApiHost('https://api.poscloud.com.ar'); // PROD
-    //Config.setApiV8Host('https://apiv8.poscloud.com.ar'); // PROD
+    //Config.setApiHost('http://192.168.88.244:300'); // CETIMA
+    //Config.setApiV8Host('http://192.168.88.244:308'); // CETIMA
+    //Config.setApiHost('https://api.poscloud.com.ar'); // DONWEB
+    //Config.setApiV8Host('https://apiv8.poscloud.com.ar'); // DONWEB
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
