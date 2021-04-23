@@ -424,7 +424,6 @@ export class PrintTransactionTypeComponent implements OnInit {
                             }
                             break;
                         case 'data':
-                            let row = field.positionStartY
                             if (field.font !== 'default') {
                                 this.doc.setFont(field.font)
                             }
@@ -440,60 +439,6 @@ export class PrintTransactionTypeComponent implements OnInit {
                             } catch (e) {
                                 this.doc.text(field.positionStartX, field.positionStartY, field.value)
                             }
-
-                            /*if (field.value.split('.')[0] === "movementOfArticle" && this.movementOfArticle) {
-                                this.movementOfArticle.forEach(async movementOfArticle => {
-                                    try {
-                                        this.doc.text(field.positionStartX, row, (eval(field.value)).toString())
-                                    } catch (e) {
-                                        this.doc.text(field.positionStartX, row, field.value)
-                                    }
-                                    row = row + this.printer.row;
-                                    if (row > this.printer.addPag) {
-                                        this.doc.addPage();
-                                        await this.buildLayout(PositionPrint.Header);
-                                        row = field.positionStartY
-                                    }
-                                });
-                            } else if (field.value.split('.')[0] === "movementOfCash" && this.movementOfCash) {
-                                this.movementOfCash.forEach(async movementOfCash => {
-                                    try {
-                                        this.doc.text(field.positionStartX, row, (eval(field.value)).toString())
-                                    } catch (e) {
-                                        this.doc.text(field.positionStartX, row, field.value)
-                                    }
-                                    row = row + this.printer.row;
-                                    if (row > this.printer.addPag) {
-                                        this.doc.addPage()
-                                        await this.buildLayout(PositionPrint.Header)
-                                        row = field.positionStartY
-                                    }
-                                });
-                            } else if (field.value.split('.')[0] === "movementOfCancellation" && this.movementOfCancellation) {
-                                this.movementOfCancellation.forEach(async movementOfCancellation => {
-                                    try {
-                                        this.doc.text(field.positionStartX, row, (eval(field.value)).toString())
-                                    } catch (e) {
-                                        this.doc.text(field.positionStartX, row, field.value)
-                                    }
-                                    row = row + this.printer.row;
-                                    if (row > this.printer.addPag) {
-                                        this.doc.addPage()
-                                        await this.buildLayout(PositionPrint.Header)
-                                        row = field.positionStartY
-                                    }
-                                });
-                            } else {
-                                try {
-                                    if (field.positionEndX || field.positionEndY) {
-                                        this.doc.text(field.positionStartX, field.positionStartY, eval("this." + field.value).toString().slice(field.positionEndX, field.positionEndY))
-                                    } else {
-                                        this.doc.text(field.positionStartX, field.positionStartY, eval("this." + field.value).toString())
-                                    }
-                                } catch (e) {
-                                    this.doc.text(field.positionStartX, field.positionStartY, field.value)
-                                }
-                            }*/
                             break;
                         case 'dataSum':
                             var sum = 0;
@@ -561,7 +506,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                 for (const movementOfArticle of this.movementOfArticle) {
 
                     for (const field of this.printer.fields) {
-                        if (field.position === PositionPrint.Body) {
+                        if (field.position === PositionPrint.Body && field.value.split('.')[0] === "movementOfArticle") {
 
                             if (field.font !== 'default') {
                                 this.doc.setFont(field.font)
@@ -591,7 +536,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                 for (const movementOfCash of this.movementOfCash) {
 
                     for (const field of this.printer.fields) {
-                        if (field.position === PositionPrint.Body) {
+                        if (field.position === PositionPrint.Body && field.value.split('.')[0] === "movementOfCash") {
 
                             if (field.font !== 'default') {
                                 this.doc.setFont(field.font)
