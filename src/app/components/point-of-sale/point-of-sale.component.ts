@@ -1992,6 +1992,7 @@ export class PointOfSaleComponent implements OnInit {
                 operationType: 1,
                 taxes: 1,
                 CAE: 1,
+                "company.name": 1,
                 "type._id": 1,
                 "type.allowEdit": 1,
                 "type.name": 1,
