@@ -437,7 +437,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                                     this.doc.text(field.positionStartX, field.positionStartY, eval("this." + field.value).toString())
                                 }
                             } catch (e) {
-                                this.doc.text(field.positionStartX, field.positionStartY, field.value)
+                                this.doc.text(field.positionStartX, field.positionStartY, " ")
                             }
                             break;
                         case 'dataSum':
@@ -455,7 +455,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                                 try {
                                     this.doc.text(field.positionStartX, field.positionStartY, sum.toString())
                                 } catch (e) {
-                                    this.doc.text(field.positionStartX, field.positionStartY, field.value)
+                                    this.doc.text(field.positionStartX, field.positionStartY, " ")
                                 }
                             } else if (field.value.split('.')[0] === "movementOfCash" && this.movementOfCash) {
                                 this.movementOfCash.forEach(async movementOfCash => {
@@ -466,7 +466,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                                     try {
                                         this.doc.text(field.positionStartX, field.positionStartY, sum.toString())
                                     } catch (e) {
-                                        this.doc.text(field.positionStartX, field.positionStartY, field.value)
+                                        this.doc.text(field.positionStartX, field.positionStartY, " ")
                                     }
                                 });
                             } else if (field.value.split('.')[0] === "movementOfCancellation" && this.movementOfCancellation) {
@@ -478,7 +478,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                                     try {
                                         this.doc.text(field.positionStartX, field.positionStartY, sum.toString())
                                     } catch (e) {
-                                        this.doc.text(field.positionStartX, field.positionStartY, field.value)
+                                        this.doc.text(field.positionStartX, field.positionStartY, "")
                                     }
                                 });
                             } else {
@@ -520,7 +520,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                             try {
                                 this.doc.text(field.positionStartX, row, (eval(field.value)).toString())
                             } catch (e) {
-                                this.doc.text(field.positionStartX, row, field.value)
+                                this.doc.text(field.positionStartX, row, " ")
                             }
                         }
                     }
@@ -550,7 +550,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                             try {
                                 this.doc.text(field.positionStartX, row, (eval(field.value)).toString())
                             } catch (e) {
-                                this.doc.text(field.positionStartX, row, field.value)
+                                this.doc.text(field.positionStartX, row, " ")
                             }
                         }
                     }
