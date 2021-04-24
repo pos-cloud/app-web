@@ -26,6 +26,7 @@ export class SendEmailComponent implements OnInit {
   @Input() emails;
   @Input() subject;
   @Input() body;
+  @Input() attachments;
 
   public formErrors = {
     'emails': '',
@@ -137,6 +138,7 @@ export class SendEmailComponent implements OnInit {
           Validators.required
         ]
       ],
+      'attachment' : ["",[]]
     });
 
     this.sendEmailForm.valueChanges
@@ -166,6 +168,8 @@ export class SendEmailComponent implements OnInit {
   public sendEmail (): void {
     
     this.loading = true;
+
+    this.sendEmailForm.value.attachment = this.attachments;
 
     this._serviceEmail.sendEmail(this.sendEmailForm.value).subscribe(
       result => {

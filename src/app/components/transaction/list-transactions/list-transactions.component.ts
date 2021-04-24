@@ -69,7 +69,7 @@ export class ListTransactionsComponent implements OnInit {
     public pathLocation: string[];
     private subscription: Subscription = new Subscription();
     public dateFormat = new DateFormatPipe();
-    public employeeClosingId : string;
+    public employeeClosingId: string;
     //cabecera
     public startDate: string;
     public endDate: string;
@@ -164,7 +164,7 @@ export class ListTransactionsComponent implements OnInit {
 
     onItemSelect(item: any) {
     }
-    
+
     onSelectAll(items: any) {
     }
 
@@ -179,15 +179,15 @@ export class ListTransactionsComponent implements OnInit {
                 operationType: { "$ne": "D" }
             }
 
-           /* if(this.branchSelectedId){
-                match['branch'] = { "$oid" : this.branchSelectedId }
-            }*/
+            /* if(this.branchSelectedId){
+                 match['branch'] = { "$oid" : this.branchSelectedId }
+             }*/
 
             this._transactionTypeService.getAll({
                 project: {
                     _id: 1,
                     transactionMovement: 1,
-                    requestArticles : 1,
+                    requestArticles: 1,
                     operationType: 1,
                     name: 1,
                     branch: 1,
@@ -217,7 +217,7 @@ export class ListTransactionsComponent implements OnInit {
                 let pathLocation: string[] = this._router.url.split('/');
                 let listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
                 this.modules = observableOf(Config.modules);
-                
+
                 this.listType = listType.split('?')[0];
 
                 if (this.listType === "Compras") {
@@ -303,7 +303,7 @@ export class ListTransactionsComponent implements OnInit {
                         if (this.columns[i].name.includes('_id')) {
                             match += `"${this.columns[i].name}": { "$oid": "${value}" }`;
                         } else {
-                            if(value.includes('$')){
+                            if (value.includes('$')) {
                                 match += `"${this.columns[i].name}": { ${value} }`;
                             } else {
                                 match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
@@ -317,7 +317,7 @@ export class ListTransactionsComponent implements OnInit {
             }
         }
 
-        if(this.employeeClosingId){
+        if (this.employeeClosingId) {
             match += `"employeeClosing._id": { "$oid" : "${this.employeeClosingId}"},`;
         }
 
@@ -336,11 +336,11 @@ export class ListTransactionsComponent implements OnInit {
         match = JSON.parse(match);
 
         var transactionTypes = [];
-        
+
 
         if (this.transactionTypesSelect && this.transactionTypesSelect.length > 0) {
             this.transactionTypesSelect.forEach(element => {
-                transactionTypes.push({ "$oid" : element._id});
+                transactionTypes.push({ "$oid": element._id });
             });
             match['type._id'] = { "$in": transactionTypes }
         }
@@ -537,6 +537,7 @@ export class ListTransactionsComponent implements OnInit {
                 });
                 break;
             case 'send-email':
+                var attachments = [];
                 if (transaction.type.readLayout) {
                     modalRef = this._modalService.open(PrintTransactionTypeComponent)
                     modalRef.componentInstance.transactionId = transaction._id;
@@ -570,30 +571,49 @@ export class ListTransactionsComponent implements OnInit {
                 }
                 modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(transaction.origin, 4)}-${transaction.letter}-${this.padNumber(transaction.number, 8)}`;
                 if (transaction.type.electronics) {
-                  modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${Config.database}/${transaction._id}">Su comprobante</a>`
+                    modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${Config.database}/${transaction._id}">Su comprobante</a>`
+
+                    attachments.push({
+                        path: `/home/clients/${Config.database}/invoice/${transaction._id}`,
+                        name: `${transaction.origin}-${transaction.letter}-${transaction.number}`
+                    })
+
                 } else {
-                  modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${Config.database}/${transaction._id}">Su comprobante</a>`
-                }
-        
-                if (Config.country === 'MX') {
-                    modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://vps-1883265-x.dattaweb.com:300/api/print/xml/CFDI-33_Factura_` + transaction.number +`">Su comprobante</a>`;
-                }
-        
-                if (transaction.type.defectEmailTemplate) {
-        
-                  if (transaction.type.electronics) {
-                    modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${Config.database}/${transaction._id}">Su comprobante</a>`
-                  } else {
-                    modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${Config.database}/${transaction._id}">Su comprobante</a>`
-                  }
-        
-                  if (Config.country === 'MX') {
-                    modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://vps-1883265-x.dattaweb.com:300/api/print/xml/CFDI-33_Factura_` + transaction.number +`">Su comprobante</a>`;
-                  }
+                    modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${Config.database}/${transaction._id}">Su comprobante</a>`
+
+                    attachments.push({
+                        path: `/home/clients/${Config.database}/others/${transaction._id}`,
+                        name: `${transaction.origin}-${transaction.letter}-${transaction.number}`
+                    })
                 }
 
+                if (Config.country === 'MX') {
+                    modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://vps-1883265-x.dattaweb.com:300/api/print/xml/CFDI-33_Factura_` + transaction.number + `">Su comprobante</a>`;
+                }
+
+                if (transaction.type.defectEmailTemplate) {
+
+                    if (transaction.type.electronics) {
+                        modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${Config.database}/${transaction._id}">Su comprobante</a>`
+                    } else {
+                        modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${Config.database}/${transaction._id}">Su comprobante</a>`
+                    }
+
+                    if (Config.country === 'MX') {
+                        modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://vps-1883265-x.dattaweb.com:300/api/print/xml/CFDI-33_Factura_` + transaction.number + `">Su comprobante</a>`;
+
+                        attachments.push({
+                            path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + transaction.number,
+                            name: `${transaction.origin}-${transaction.letter}-${transaction.number}`
+                        })
+
+                    }
+                }
+
+                modalRef.componentInstance.attachments = attachments
+
                 break;
-            case 'download' :
+            case 'download':
                 if (transaction.type.readLayout) {
                     modalRef = this._modalService.open(PrintTransactionTypeComponent)
                     modalRef.componentInstance.transactionId = transaction._id;
