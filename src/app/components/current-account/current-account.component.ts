@@ -26,7 +26,7 @@ import { ViewTransactionComponent } from '../transaction/view-transaction/view-t
 import { RoundNumberPipe } from 'app/main/pipes/round-number.pipe';
 import { Config } from 'app/app.config';
 import { ConfigService } from 'app/components/config/config.service';
-import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
+import { TransactionMovement, TransactionType } from 'app/components/transaction-type/transaction-type';
 import { CompanyType } from 'app/components/payment-method/payment-method';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
@@ -71,6 +71,20 @@ export class CurrentAccountComponent implements OnInit {
     public invertedView: boolean = false;
     public transactionMovement: TransactionMovement;
     public showBalanceOfTransactions: boolean = false;
+    public selectedItems;
+    public transactionTypes: TransactionType[];
+    public transactionTypesSelect;
+    public dropdownSettings = {
+        "singleSelection": false,
+        "defaultOpen": false,
+        "idField": "_id",
+        "textField": "name",
+        "selectAllText": "Select All",
+        "unSelectAllText": "UnSelect All",
+        "enableCheckAll": true,
+        "itemsShowLimit": 1,
+        "allowSearchFilter": true
+    }
 
     public identity: User;
     public actions = {
@@ -93,6 +107,7 @@ export class CurrentAccountComponent implements OnInit {
         public alertConfig: NgbAlertConfig,
         public _printerService: PrinterService
     ) {
+        this.transactionTypesSelect = new Array();
         this.movementsOfCashes = new Array();
         this.roundNumber = new RoundNumberPipe();
         this.startDate = moment('1990-01-01').format('YYYY-MM-DD');
@@ -147,6 +162,13 @@ export class CurrentAccountComponent implements OnInit {
 
     }
 
+    
+    onItemSelect(item: any) {
+    }
+
+    onSelectAll(items: any) {
+    }
+
     public getSummary(): void {
 
         this.loading = true;
@@ -160,13 +182,22 @@ export class CurrentAccountComponent implements OnInit {
             this.detailsPaymentMethod = Boolean(JSON.parse(this.detailsPaymentMethod));
         }
 
+        var transactionTypes = [];
+
+        if (this.transactionTypesSelect) {
+            this.transactionTypesSelect.forEach(element => {
+                transactionTypes.push({ "$oid": element._id });
+            });
+        }
+
         let query = {
             company: this.companySelected._id,
             startDate: this.startDate + " 00:00:00" + timezone,
             endDate: this.endDate + " 23:59:59" + timezone,
             detailsPaymentMethod: this.detailsPaymentMethod,
             transactionMovement: this.transactionMovement,
-            invertedView: this.invertedView
+            invertedView: this.invertedView,
+            transactionTypes : transactionTypes
         }
 
         this._companyService.getSummaryOfAccountsByCompany(JSON.stringify(query)).subscribe(
@@ -197,7 +228,7 @@ export class CurrentAccountComponent implements OnInit {
         this.loading = true;
 
         this._companyService.getCompany(companyId).subscribe(
-            result => {
+            async result => {
                 if (!result.company) {
                     if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
                 } else {
@@ -207,6 +238,15 @@ export class CurrentAccountComponent implements OnInit {
                     } else {
                         this.transactionMovement = TransactionMovement.Purchase;
                     }
+
+                    await this.getTransactionTypes().then(
+                        result => {
+                            if (result) {
+                                this.transactionTypes = result
+                            }
+                        }
+                    )
+
                     this.getSummary();
                 }
                 this.loading = false;
@@ -438,6 +478,45 @@ export class CurrentAccountComponent implements OnInit {
                     }
                 },
                 error => {
+                    resolve(null);
+                }
+            );
+        });
+    }
+
+    public getTransactionTypes(): Promise<TransactionType[]> {
+
+        return new Promise<TransactionType[]>((resolve, reject) => {
+
+            let match = {}
+
+            match = {
+                operationType: { "$ne": "D" },
+                transactionMovement :  this.transactionMovement,
+                $or : [ {"currentAccount" : "Si"}, { "currentAccount" : "Cobra"} ]
+            }
+
+            this._transactionTypeService.getAll({
+                project: {
+                    _id: 1,
+                    transactionMovement: 1,
+                    operationType: 1,
+                    name: 1,
+                    currentAccount : 1,
+                    branch: 1,
+                },
+                match: match
+            }).subscribe(
+                result => {
+                    if (result) {
+                        resolve(result.result);
+                        this.transactionTypesSelect = result.result
+                    } else {
+                        resolve(null);
+                    }
+                },
+                error => {
+                    this.showMessage(error._body, 'danger', false);
                     resolve(null);
                 }
             );

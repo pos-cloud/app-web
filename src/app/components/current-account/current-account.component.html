@@ -15,7 +15,7 @@
         </ngb-alert>
       </div>
       <div class="row container-filter">
-        <div class="col-md-2 offset-md-1">
+        <div class="col-md-2">
           <label for="detailsPaymentMethod" class="control-label">
             <b>Detallar método de pago</b>
           </label>
@@ -26,7 +26,7 @@
         </div>
         <div class="col-md-2">
           <label for="showBalanceOfTransactions" class="control-label">
-            <b>Mostrar saldo de transacciones</b>
+            <b>Saldo de transacciones</b>
           </label>
           <select class="form-control" [(ngModel)]="showBalanceOfTransactions">
             <option [ngValue]="true">Sí</option>
@@ -45,16 +45,25 @@
           </label>
           <input type="date" class="form-control" name="endDate" min="2000-01-01" [(ngModel)]="endDate" />
         </div>
+        <div class="col-md-2">
+            <label for="transactionType" class="control-label">
+                <b>Tipo</b>
+            </label>
+            <ng-multiselect-dropdown
+            [placeholder]="'Tipo de Transacción'"
+            [settings]="dropdownSettings"
+            [data]="transactionTypes"
+            [(ngModel)]="transactionTypesSelect"
+            (onSelect)="onItemSelect($event)"
+            (onSelectAll)="onSelectAll($event)"
+          >
+          </ng-multiselect-dropdown>
+        </div>
         <div class="col-md-2" (click)="refresh()">
           <label for="btn-action" class="control-label"><b>Acción:</b></label>
           <span class="form-control btn-action center-content">
             <i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar
           </span>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label *ngIf="companySelected" for="company" class="control-label"><b>{{companySelected.type}}:</b></label>
         </div>
       </div>
       <div class="row">
