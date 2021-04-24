@@ -280,6 +280,17 @@ export let attributes = [
         required: true,
     },
     {
+        name: 'article.allowStock',
+        visible: false,
+        disabled: true,
+        filter: true,
+        defaultFilter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: true,
+    },
+    {
         name: 'article._id',
         visible: false,
         disabled: false,

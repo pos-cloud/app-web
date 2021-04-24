@@ -468,6 +468,7 @@ export class AddArticleComponent implements OnInit {
       '_id': [this.article._id, []],
       'order': [this.article.order, []],
       'code': [this.article.code, [Validators.required]],
+      'codeProvider': [this.article.codeProvider, []],
       'codeSAT': [this.article.codeSAT, []],
       'currency': [this.article.currency, []],
       'make': [this.article.make, [this.validateAutocomplete]],
@@ -492,6 +493,7 @@ export class AddArticleComponent implements OnInit {
       'printIn': [this.article.printIn, []],
       'allowPurchase': [this.article.allowPurchase, []],
       'allowSale': [this.article.allowSale, []],
+      'allowStock': [this.article.allowStock, []],
       'allowSaleWithoutStock': [this.article.allowSaleWithoutStock, []],
       'allowMeasure': [this.article.allowMeasure, []],
       'ecommerceEnabled': [this.article.ecommerceEnabled, []],
@@ -1494,7 +1496,9 @@ export class AddArticleComponent implements OnInit {
       'purchaseAccount': this.article.purchaseAccount,
       'minStock' : this.article.minStock,
       'maxStock' : this.article.maxStock,
-      'pointOfOrder' : this.article.pointOfOrder
+      'pointOfOrder' : this.article.pointOfOrder,
+      'codeProvider' : this.article.codeProvider,
+      'allowStock' : this.article.allowStock
     };
 
     this.articleForm.patchValue(values);

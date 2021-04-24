@@ -266,6 +266,16 @@ export let attributes = [
         required: false,
     },
     {
+        name: 'discountRate',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'percent',
+        project: null,
+        align: 'right',
+        required: false,
+    },
+    {
         name: 'basePrice',
         visible: true,
         disabled: false,

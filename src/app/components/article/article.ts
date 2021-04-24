@@ -22,6 +22,7 @@ export class Article {
     public containsStructure: boolean = false;
     public order: number = 1;
     public code: string = "0000000001";
+    public codeProvider : string = "0";
     public codeSAT: string;
     public description: string = '';
     public posDescription: string = '';
@@ -64,6 +65,7 @@ export class Article {
     public posKitchen: Boolean = false;
     public allowPurchase: Boolean = true;
     public allowSale: Boolean = true;
+    public allowStock: Boolean = true;
     public allowSaleWithoutStock: Boolean = false;
     public allowMeasure: Boolean = false;
     public isWeigth: Boolean = false;

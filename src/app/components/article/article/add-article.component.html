@@ -678,6 +678,24 @@
                                 </div>
                                 <div class="row">
                                     <div class="form-group col-md-6">
+                                        <label for="allowStock" class="control-label">¿Habilitado para Stock?</label>
+                                        <select class="form-control" formControlName="allowStock">
+                                            <option [value]="true" [disabled]="readonly">Si</option>
+                                            <option [value]="false" [disabled]="readonly">No</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        <label for="allowSaleWithoutStock" class="control-label">¿Se puede vender sin
+                                            stock disponible?</label>
+                                        <select class="form-control" formControlName="allowSaleWithoutStock">
+                                            <option [value]="true" [disabled]="readonly">Si</option>
+                                            <option [value]="false" [disabled]="readonly">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6">
                                         <label for="isWeigth" class="control-label">¿Es pesable?</label>
                                         <select class="form-control" formControlName="isWeigth">
                                             <option [value]="true" [disabled]="readonly">Si</option>
@@ -727,14 +745,13 @@
                                             {{ formErrors.provider }}
                                         </div>
                                     </div>
-                                    
                                     <div class="form-group col-md-6">
-                                        <label for="allowSaleWithoutStock" class="control-label">¿Se puede vender sin
-                                            stock disponible?</label>
-                                        <select class="form-control" formControlName="allowSaleWithoutStock">
-                                            <option [value]="true" [disabled]="readonly">Si</option>
-                                            <option [value]="false" [disabled]="readonly">No</option>
-                                        </select>
+                                        <label for="codeProvider" class="control-label">Cod Prov:</label>
+                                        <input type="text" class="form-control" formControlName="codeProvider"
+                                            name="codeProvider" id="codeProvider" [readonly]="readonly" />
+                                        <div *ngIf="formErrors.codeProvider" class="alert alert-danger">
+                                            {{ formErrors.codeProvider }}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
