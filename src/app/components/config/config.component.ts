@@ -271,6 +271,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
       'article.salesAccount.default': [this.config.article.salesAccount.default, []],
       'article.purchaseAccount.default': [this.config.article.purchaseAccount.default, []],
       'article.isWeigth.default': [this.config.article.isWeigth.default, []],
+      'article.allowSaleWithoutStock.default': [this.config.article.allowSaleWithoutStock.default, []],
       'company.vatCondition.default': [this.config.company.vatCondition.default, []],
       'company.allowCurrentAccount.default': [this.config.company.allowCurrentAccount.default, []],
       'company.accountClient.default': [this.config.company.accountClient.default, []],

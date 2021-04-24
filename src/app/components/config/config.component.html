@@ -520,6 +520,18 @@
                 <div class="row">
                     <div class="form-group col-md-12">
                         <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">Valor defecto si el artículo se puede vender sin stock:</span>
+                            <select class="form-control" formControlName="article.allowSaleWithoutStock.default"
+                                name="article.allowSaleWithoutStock.default" id="article.allowSaleWithoutStock.default">
+                                <option value="true">Si</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <div class="input-group">
                             <span class="input-group-addon" id="basic-addon1">Prefijo del código de barra de la
                                 balanza:</span>
                             <input type="number" class="form-control" formControlName="tradeBalance.codePrefix"

@@ -53,6 +53,9 @@ export class Config {
     isWeigth: {
       default: boolean
     },
+    allowSaleWithoutStock: {
+        default: boolean
+      },
     salesAccount: {
         default: Account
     },
