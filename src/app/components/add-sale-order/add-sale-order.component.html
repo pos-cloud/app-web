@@ -1,8 +1,8 @@
 <section>
     <div class="row header-transaction">
         <div class="col-md-12">
-            <div class="row">
-                <div class="col-md-2" *ngIf="transaction.table">
+            <div class="box-header-transaction">
+                <div class="item-header" *ngIf="transaction.table">
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-light" (click)="openModal('change-table')">
                             <b>Mesa:</b> {{transaction.table.description}}
@@ -12,11 +12,11 @@
                         </button>
                     </div>
                 </div>
-                <div class="col-md-2" *ngIf="posType==='mostrador' && transaction.type"
+                <div class="item-header" *ngIf="posType==='mostrador' && transaction.type"
                     (click)="openModal('observation')">
                     <b>{{transaction.type.name}} {{ transaction.number }}</b>
                 </div>
-                <div class="col-md-2"
+                <div class="item-header"
                     *ngIf="transaction.type && transaction.type.requestEmployee && transaction.employeeClosing">
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-light" (click)="openModal('change-employee')">
@@ -27,69 +27,40 @@
                         </button>
                     </div>
                 </div>
-                <div class="col-md-2" *ngIf="transaction.type && transaction.type.requestShipmentMethod">
-                    <div class="btn-group">
-                        <b>Método de Envío:</b>
-                        <button *ngIf="transaction.shipmentMethod" type="button" class="btn btn-outline-light"
-                            (click)="openModal('change-shipment-method')">
-                            {{ transaction.shipmentMethod.name }}
-                        </button>
-                        <button type="button" class="btn btn-outline-light fa fa-exchange"
-                            (click)="openModal('change-shipment-method')">
-                        </button>
-                    </div>
-                </div>
-                <div class="col-md-2"
-                    *ngIf="transaction && transaction.company && transaction.type && transaction.type.requestTransport">
-                    <b> Transporte:</b>
-                    <span *ngIf="transaction.transport">{{transaction.transport.name}}</span>
-                </div>
-                <div class="col-md-2" *ngIf="transaction && transaction.company && !transaction.company.priceList">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-outline-light" (click)="openModal('priceList')">
-                            Lista de Precio: {{ transaction?.priceList?.name }}
-                        </button>
-                        <button type="button" class="btn btn-light fa fa-pencil"
-                            (click)="openModal('priceList')">
-                        </button>
-                    </div>
-                </div>
-                <div class="col-md-2" *ngIf="transaction && transaction.company && transaction.company.priceList">
+                <div class="item-header" *ngIf="transaction && transaction.company && transaction.company.priceList">
                     <b> Lista de Precio:</b>
                     <span *ngIf="transaction.company.priceList.name">{{transaction.company.priceList.name}}</span>
                 </div>
-                <div class="col-md-2" *ngIf="transactionMovement && transactionMovement !=='Stock'"
+                <div class="item-header" *ngIf="transactionMovement && transactionMovement !=='Stock'"
                     (click)="openModal('current-account')">
                     <b *ngIf="transactionMovement === 'Venta'">Cliente: </b>
                     <b *ngIf="transactionMovement === 'Compra'">Proveedor: </b>
                     <span *ngIf="!transaction.company && transactionMovement === 'Venta'">Consumidor final</span>
                     <span *ngIf="transaction.company">{{transaction.company.name}}</span>
                 </div>
-                <div class="col-md-2" *ngIf="posType==='resto' && transaction.diners > 0">
+                <div class="item-header" *ngIf="posType==='resto' && transaction.diners > 0">
                     <b>Comensales:</b>
                     {{transaction.diners}}
                 </div>
-                <div class="col-md-2" *ngIf="transaction && !transaction.endDate" (click)="openModal('change-date')">
-                    <b>Inicio:</b>
-                    {{transaction.startDate | dateFormat:'DD/MM/YYYY HH:mm'}}
+                <div class="item-header" *ngIf="transaction && !transaction.endDate">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-light" (click)="openModal('change-date')">
+                            Inicio: {{transaction.startDate | dateFormat:'DD/MM/YYYY HH:mm'}}
+                        </button>
+                        <button type="button" class="btn btn-light fa fa-exchange" (click)="openModal('change-date')">
+                        </button>
+                    </div>
                 </div>
-                <div class="col-md-2" *ngIf="transaction && transaction.endDate" (click)="openModal('change-date')">
-                    <b>Fecha:</b>
-                    {{transaction.endDate | dateFormat:'DD/MM/YYYY'}}
+                <div class="item-header" *ngIf="transaction && transaction.endDate">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-light" (click)="openModal('change-date')">
+                            Fecha: {{transaction.endDate | dateFormat:'DD/MM/YYYY'}}
+                        </button>
+                        <button type="button" class="btn btn-light fa fa-exchange" (click)="openModal('change-date')">
+                        </button>
+                    </div>
                 </div>
-                <!-- <div class="col-md-2" *ngIf="transaction && transaction.type && transaction.type.requestCurrency">
-          <select class="form-control" [(ngModel)]="transaction.currency" (change)="updateTransaction()">
-            <option [ngValue]="null" [selected]="!transaction || !transaction.currency">Seleccionar Moneda</option>
-            <option *ngFor="let currency of currencies"
-                    [ngValue]="currency"
-                    [selected]="(transaction.currency &&
-                                transaction.currency._id &&
-                                transaction.currency._id === currency._id)">
-              {{ currency.name }} ( {{ currency.sign }} )
-            </option>
-          </select>
-        </div> -->
-                <div class="col-md-2" *ngIf="transaction && transaction.type && transaction.type.requestCurrency">
+                <div class="item-header" *ngIf="transaction && transaction.type && transaction.type.requestCurrency">
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-light" (click)="openModal('change-quotation')">
                             Cotización: {{ transaction.quotation | currency:'USD':'symbol-narrow':'1.2-2' }}
@@ -99,25 +70,36 @@
                         </button>
                     </div>
                 </div>
-                <div class="col-md-2"
+                <div class="item-header" *ngIf="transaction.type && transaction.type.requestShipmentMethod">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-light"
+                            (click)="openModal('change-shipment-method')">
+                            Método de Envío: {{ transaction?.shipmentMethod?.name }}
+                        </button>
+                        <button type="button" class="btn btn-light fa fa-exchange"
+                            (click)="openModal('change-shipment-method')">
+                        </button>
+                    </div>
+                </div>
+                <div class="item-header"
                     *ngIf="transaction && transaction.company && transaction.type && transaction.type.requestTransport">
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-light" (click)="openModal('change-transport')">
-                            Transporte
+                            Transporte {{ transaction?.transport?.name }}
                         </button>
                         <button type="button" class="btn btn-light fa fa-exchange"
                             (click)="openModal('change-transport')">
                         </button>
                     </div>
                 </div>
-                <!--<div class="col-md-2" >
+                <!--<div class="item-header" >
           <div class="btn-group">
             <button type="button" class="btn btn-outline-light" (click)="openModal('import')">
               Importar Productos
             </button>
           </div>
         </div>-->
-                <div class="col-md-2"
+                <div class="item-header"
                     *ngIf="userCountry === 'MX' && transaction && transaction.type && transaction.type.electronics">
                     <select class="form-control" (change)="changeUseOfCFDI($event.target.value)">
                         <option [ngValue]="null" [selected]="!transaction.useOfCFDI">Uso de CFDI:</option>
@@ -127,7 +109,7 @@
                         </option>
                     </select>
                 </div>
-                <div class="col-md-2"
+                <div class="item-header"
                     *ngIf="userCountry === 'MX' && transaction && transaction.type && transaction.type.electronics && cancellationTypes.length > 0">
                     <select class="form-control" [(ngModel)]="transaction.relationType" (change)="updateTransaction()">
                         <option [ngValue]="null" [selected]="(!transaction.relationType)">Tipo de Relación:</option>
@@ -205,19 +187,32 @@
                                 <td align="right">
                                     <div>
                                         <span
-                                            *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Final'">{{movementOfArticle.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                                            *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Final'">{{movementOfArticle.salePrice
+                                            | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
                                         <span
-                                            *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Base'">{{movementOfArticle.basePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                                            *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Base'">{{movementOfArticle.basePrice
+                                            | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
                                         <span
-                                            *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Sin Impuestos'">{{movementOfArticle.salePrice - ((movementOfArticle.taxes && movementOfArticle.taxes.length > 0) ? movementOfArticle.taxes[0]?.taxAmount : 0) | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                                            *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Sin Impuestos'">{{movementOfArticle.salePrice
+                                            - ((movementOfArticle.taxes && movementOfArticle.taxes.length > 0) ?
+                                            movementOfArticle.taxes[0]?.taxAmount : 0) |
+                                            currency:'USD':'symbol-narrow':'1.2-2'}}</span>
                                     </div>
                                     <div *ngIf="movementOfArticle.transactionDiscountAmount !== 0">
                                         <span style="text-decoration:line-through;"
-                                            *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Final'">{{movementOfArticle.salePrice + movementOfArticle.transactionDiscountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                                            *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Final'">{{movementOfArticle.salePrice
+                                            + movementOfArticle.transactionDiscountAmount |
+                                            currency:'USD':'symbol-narrow':'1.2-2'}}</span>
                                         <span style="text-decoration:line-through;"
-                                            *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Base'">{{movementOfArticle.basePrice + movementOfArticle.transactionDiscountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                                            *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Base'">{{movementOfArticle.basePrice
+                                            + movementOfArticle.transactionDiscountAmount |
+                                            currency:'USD':'symbol-narrow':'1.2-2'}}</span>
                                         <span style="text-decoration:line-through;"
-                                            *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Sin Impuestos'">{{movementOfArticle.salePrice - ((movementOfArticle.taxes && movementOfArticle.taxes.length > 0) ? movementOfArticle.taxes[0]?.taxAmount : 0) + movementOfArticle.transactionDiscountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
+                                            *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Sin Impuestos'">{{movementOfArticle.salePrice
+                                            - ((movementOfArticle.taxes && movementOfArticle.taxes.length > 0) ?
+                                            movementOfArticle.taxes[0]?.taxAmount : 0) +
+                                            movementOfArticle.transactionDiscountAmount |
+                                            currency:'USD':'symbol-narrow':'1.2-2'}}</span>
                                     </div>
                                 </td>
                             </ng-container>
@@ -242,7 +237,8 @@
                                 <strong>Subtotal</strong>
                             </td>
                             <td align="right">
-                                <strong>{{transaction.totalPrice + transaction.discountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
+                                <strong>{{transaction.totalPrice + transaction.discountAmount |
+                                    currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
                             </td>
                         </tr>
 
@@ -255,7 +251,8 @@
                                 <strong>Descuento</strong>
                             </td>
                             <td align="right">
-                                <strong>({{transaction.discountAmount | currency:'USD':'symbol-narrow':'1.2-2'}})</strong>
+                                <strong>({{transaction.discountAmount |
+                                    currency:'USD':'symbol-narrow':'1.2-2'}})</strong>
                             </td>
                         </tr>
 
@@ -324,9 +321,12 @@
                     class="col-md-12 btn-action btn-large center-content"
                     (click)="!loading ? close('charge') : $event.stopPropagation()"
                     [ngClass]="{'disabled': loading, 'enabled': !loading }">
-                    <span *ngIf="transactionMovement && transactionMovement ==='Compra' && transaction.type.requestPaymentMethods">Pagar</span>
-                    <span *ngIf="transactionMovement && transactionMovement ==='Venta' && transaction.type.requestPaymentMethods">Cobrar</span>
-                    <span *ngIf="transactionMovement && transactionMovement ==='Venta' && !transaction.type.requestPaymentMethods">Finalizar</span>
+                    <span
+                        *ngIf="transactionMovement && transactionMovement ==='Compra' && transaction.type.requestPaymentMethods">Pagar</span>
+                    <span
+                        *ngIf="transactionMovement && transactionMovement ==='Venta' && transaction.type.requestPaymentMethods">Cobrar</span>
+                    <span
+                        *ngIf="transactionMovement && transactionMovement ==='Venta' && !transaction.type.requestPaymentMethods">Finalizar</span>
                 </div>
                 <div *ngIf="transaction.type && transaction.type.fastPayment"
                     class="col-md-6 col-sm-6 col-6 btn-action btn-large center-content"
@@ -391,9 +391,11 @@
                         <span class="breadcrumb-item" [ngClass]="{'active':'areCategoriesVisible'}"
                             (click)="showCategories()" style="padding: 10px;">Rubros</span>
                         <span class="breadcrumb-item active" style="padding: 10px;"
-                            *ngIf="categorySelected && categorySelected.description">{{ categorySelected.description }}</span>
+                            *ngIf="categorySelected && categorySelected.description">{{ categorySelected.description
+                            }}</span>
                         <span class="breadcrumb-item active" style="padding: 10px;"
-                            *ngIf="filterArticle && filterArticle !== '' && !categorySelected">{{ filterArticle }}</span>
+                            *ngIf="filterArticle && filterArticle !== '' && !categorySelected">{{ filterArticle
+                            }}</span>
                     </nav>
                 </div>
                 <div *ngIf="transaction &&
