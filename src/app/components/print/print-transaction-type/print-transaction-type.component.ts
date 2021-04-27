@@ -518,7 +518,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                             }
 
                             try {
-                                this.doc.text(field.positionStartX, row, (eval(field.value)).toString())
+                                this.doc.text(field.positionStartX, row, (eval(field.value)).toString().slice(field.positionEndX, field.positionEndY))
                             } catch (e) {
                                 this.doc.text(field.positionStartX, row, " ")
                             }
@@ -548,7 +548,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                             }
 
                             try {
-                                this.doc.text(field.positionStartX, row, (eval(field.value)).toString())
+                                this.doc.text(field.positionStartX, row, (eval(field.value)).toString().slice(field.positionEndX, field.positionEndY))
                             } catch (e) {
                                 this.doc.text(field.positionStartX, row, " ")
                             }
