@@ -123,6 +123,10 @@ export class ListMovementOfCashesComponent implements OnInit {
         this.pathLocation = this._router.url.split('/');
         this.transactionMovement = this.pathLocation[2].charAt(0).toUpperCase() + this.pathLocation[2].slice(1);
 
+        if(localStorage.getItem('project-list-mov-cash')){
+            this.columns = JSON.parse(localStorage.getItem('project-list-mov-cash'));
+        }
+
         if (!this.branchSelectedId) {
             await this.getBranches({ operationType: { $ne: 'D' } }).then(
                 branches => {
@@ -308,6 +312,7 @@ export class ListMovementOfCashesComponent implements OnInit {
                         this.totalItems = result[0].count;
                         this.getSum();
                     }
+                    localStorage.setItem('project-list-mov-cash', JSON.stringify(this.columns));
                 } else {
                     this.items = new Array();
                     this.totalItems = 0;
