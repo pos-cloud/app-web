@@ -491,7 +491,6 @@ export class CurrentAccountComponent implements OnInit {
             let match = {}
 
             match = {
-                operationType: { "$ne": "D" },
                 transactionMovement :  this.transactionMovement,
                 $or : [ {"currentAccount" : "Si"}, { "currentAccount" : "Cobra"} ]
             }
