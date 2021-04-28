@@ -75,3 +75,14 @@ export enum ZoneType {
   IN = <any>"in",
   OUT = <any>"out"
 }
+
+export interface Zone {
+  name: string,
+  type: ZoneType,
+  cost: number,
+  points: {
+      lat: number,
+      lng: number
+  }[],
+  area: number
+}

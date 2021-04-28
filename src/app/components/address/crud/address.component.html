@@ -1,0 +1,62 @@
+<section class="home page-content-wrapper" style="min-height: 50vh; display: flex; align-items: center;">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-12">
+        <div>
+          <div>
+            <div class="row" style="margin-bottom: 2rem !important;">
+              <div class="col-md-12">
+                <b>Debe completar todos los campos obligatorios (*)</b>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <app-google-places [shipmentMethod]="shipmentMethod" (setAddress)="getAddress($event)" adressType="geocode"
+                  [autocompleteInput]="addressAutocomplete">
+                </app-google-places>
+              </div>
+            </div>
+            <form [formGroup]="addressForm" (ngSubmit)="addAddress()" autocomplete="off">
+              <div class="row" style="margin-top: 20px;">
+                <div class="col-md-12 form-group">
+                  <label for="type">Tipo (*)</label>
+                  <input type="text" class="form-control" placeholder="Tipo (ej: Casa, Trabajo)" formControlName="type"
+                    name="type" id="type" [ngClass]="{'is-invalid':formErrors.type}">
+                  <div class="invalid-feedback" [style.display]="(formErrors.type)? 'block': 'none'">
+                    {{ formErrors.type }}
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-6 form-group">
+                  <label for="floor">Piso</label>
+                  <input type="text" class="form-control" placeholder="Piso" formControlName="floor" name="floor" id="floor">
+                  <span *ngIf="formErrors.floor" class="text-danger">{{ formErrors.floor }}</span>
+                </div>
+                <div class="col-6 form-group">
+                  <label for="flat">Dpto.</label>
+                  <input type="text" class="form-control" placeholder="Departamento" formControlName="flat" name="flat" id="flat">
+                  <span *ngIf="formErrors.flat" class="text-danger">{{ formErrors.flat }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12 form-group">
+                  <label for="observation">Observación</label>
+                  <textarea class="form-control" placeholder="Observación" formControlName="observation"
+                    name="observation" id="observation"></textarea>
+                  <span *ngIf="formErrors.observation" class="text-danger">{{ formErrors.observation }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <button type="button" [disabled]="loading" class="btn btn-light" (click)="cancel()">Cancelar</button>
+                  <button type="submit" [disabled]="loading" class="btn btn-primary">Guardar</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

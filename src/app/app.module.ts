@@ -251,6 +251,8 @@ import { AddressService } from './components/address/address.service';
 import { AbandonedCartsComponent } from './components/point-of-sale/abandoned-carts/abandoned-carts.component';
 import { BillingComponent } from './components/billing/billing.component';
 import { SelectPriceListComponent } from './components/price-list/select-price-list/select-price-list.component';
+import { AutocompleteComponent } from './components/address/google-places.component';
+import { AddressModule } from './components/address/address.module';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -596,7 +598,8 @@ export function createTranslateLoader(http: HttpClient) {
     PipesModule,
     ComponentsModule,
     ExportersModule,
-    NgMultiSelectDropDownModule.forRoot() // https://nileshpatel17.github.io/ng-multiselect-dropdown/
+    NgMultiSelectDropDownModule.forRoot(), // https://nileshpatel17.github.io/ng-multiselect-dropdown/
+    AddressModule,
   ],
   providers: [
     {
@@ -604,6 +607,7 @@ export function createTranslateLoader(http: HttpClient) {
       useClass: AuthInterceptor,
       multi: true
     },
+    AddressService,
     NgbActiveModal,
     NgbAlertConfig,
     ArticleService,
@@ -615,7 +619,6 @@ export function createTranslateLoader(http: HttpClient) {
     UserService,
     RoomService,
     MakeService,
-    AddressService,
     CategoryService,
     CompanyService,
     ClockService,
