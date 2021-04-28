@@ -86,7 +86,7 @@ export class PrintTransactionTypeComponent implements OnInit {
             this.getArticle();
         }
 
-        if(this.movementOfArticles.length > 0){
+        if(this.movementOfArticle && this.movementOfArticles.length > 0){
             this.buildPrint();
         }
 
