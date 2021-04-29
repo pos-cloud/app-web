@@ -36,6 +36,7 @@ export class PaymentMethod {
   public allowBank: boolean;
   public mercadopagoAPIKey: string;
   public mercadopagoClientId: string;
+  public mercadopagoAccessToken: string;
   public whatsappNumber: string;
   public observation: string;
   public applications: Application[];
