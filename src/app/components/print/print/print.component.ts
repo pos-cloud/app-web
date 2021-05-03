@@ -1894,6 +1894,27 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('normal');
   }
 
+  public getTransport() {
+
+    let margin = 5;
+
+    // Lineas divisorias horizontales para el receptor
+    this.doc.line(0, 67, 240, 67);
+    //this.doc.line(0, 80, 240, 80);
+
+    // Detalle receptor
+    this.doc.setFontSize(this.fontSizes.normal);
+    this.doc.setFontType('bold');
+    this.doc.text("Transporte:", margin, 71);
+
+    this.doc.setFontType('normal');
+
+    this.doc.text(this.transaction.transport.name, 42, 71);
+
+    this.doc.setFontSize(this.fontSizes.normal);
+    this.doc.setFontType('normal');
+  }
+
   public getClient() {
 
     let margin = 5;
@@ -2207,6 +2228,9 @@ export class PrintComponent implements OnInit {
     }
     if (this.transaction.type.requestEmployee && this.transaction.employeeClosing && this.transaction.employeeClosing._id) {
       this.getEmployee()
+    }
+    if(this.transaction.transport){
+        this.getTransport();
     }
 
     this.doc.setFontType('normal');
@@ -2732,7 +2756,7 @@ export class PrintComponent implements OnInit {
       }
     }
 
-    if (observation && observation !== '' && !this.transaction.type.requestTransport) {
+    if (observation && observation !== '') {
       if (Config.country === 'MX' &&
         this.transaction.stringSAT &&
         this.transaction.SATStamp &&
@@ -2745,7 +2769,7 @@ export class PrintComponent implements OnInit {
         this.doc.text(observation.slice(0, 45) + "-", 65, row);
         this.doc.text(observation.slice(45, 105) + "-", 35, row += 4);
       } else {
-        row += 3
+        row += 4
         this.doc.setFontType('bold');
         this.doc.text("Observaciones: ", margin + 35, row);
         this.doc.setFontType('normal');
@@ -2753,40 +2777,6 @@ export class PrintComponent implements OnInit {
 
         this.doc.text(observation.slice(0, 60) + "-", margin + 35, row);
         this.doc.text(observation.slice(60, 140) + "-", margin + 35, row += 4);
-      }
-    } else {
-      if (this.transaction.type.requestTransport && this.transaction.transport) {
-        this.doc.setFontType('bold');
-        this.doc.text("TRANSPORTE:", margin, row);
-        this.doc.text("DOMICILIO:", margin, row + 4);
-        this.doc.text("LOCAIDAD:", margin, row + 8);
-        this.doc.text("CUIT:", margin, row + 12);
-        this.doc.text("CANTIDAD DE BULTOS:", margin, row + 16);
-        this.doc.text("VALOR DECLARADO:", margin, row + 20);
-        this.doc.setFontType('normal');
-        if (this.transaction.transport.name) {
-          this.doc.text(this.transaction.transport.name, margin + 25, row);
-        }
-        if (this.transaction.transport.address) {
-          this.doc.text(this.transaction.transport.address, margin + 20, row + 4);
-        }
-        if (this.transaction.transport.city) {
-          this.doc.text(this.transaction.transport.city, margin + 20, row + 8);
-        }
-        if (this.transaction.transport.identificationValue) {
-          this.doc.text(this.transaction.transport.identificationValue, margin + 30, row + 12);
-        }
-        if (this.transaction.taxes) {
-          let priceWhitoutTaxes
-          for (const iterator of this.transaction.taxes) {
-            priceWhitoutTaxes = iterator.taxBase
-          }
-          this.doc.text("$" + parseFloat(this.roundNumber.transform(priceWhitoutTaxes, 2)), margin + 40, row + 20);
-
-        } else {
-          this.doc.text("$" + parseFloat(this.roundNumber.transform(this.transaction.totalPrice, 2)), margin + 40, row + 20);
-        }
-        row += 16;
       }
     }
 
