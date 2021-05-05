@@ -365,7 +365,11 @@ export class PrintPriceListComponent implements OnInit {
             for (let article of this.articles) {
                 this.doc.setFontType('blod')
                 if (article.picture !== 'default.jpg' && await this.getPicture(article.picture)) {
-                    this.doc.addImage(this.imageURL, 'JPEG', 15, row + 8, 60, 40);
+                    try {
+                        this.doc.addImage(this.imageURL, 'JPEG', 15, row + 8, 60, 40);
+                    } catch (error) {
+                        this.doc.text("Imagen no disponible", 15, row + 8);
+                    }
                 }
                 row += 5
                 this.doc.setFontSize(this.fontSizes.extraLarge)
@@ -436,11 +440,18 @@ export class PrintPriceListComponent implements OnInit {
                 }
                 row += 5
                 this.doc.setFontSize(this.fontSizes.extraLarge)
+
+
                 if (increasePrice != 0) {
-                    this.doc.text(95, row + 10, "$" + (this.roundNumber.transform(article.salePrice + (article.salePrice * increasePrice / 100))).toString());
-                } else {
-                    this.doc.text(95, row + 10, "$" + (this.roundNumber.transform(article.salePrice)).toString());
+                    article.salePrice = article.salePrice + (article.salePrice * increasePrice / 100)
                 }
+
+                if (article.currency && article.currency.quotation) {
+                    article.salePrice = article.salePrice * article.currency.quotation
+                }
+
+                this.doc.text(95, row + 15, "$" + (this.roundNumber.transform(article.salePrice)).toString());
+
                 this.doc.setFontSize(this.fontSizes.normal)
 
                 if (article.containsVariants) {
@@ -472,7 +483,7 @@ export class PrintPriceListComponent implements OnInit {
                 //row += 5
                 count++;
                 //4 item por pag
-                if (count === 4) {
+                if (count === 5) {
 
                     this.doc.addPage();
 
