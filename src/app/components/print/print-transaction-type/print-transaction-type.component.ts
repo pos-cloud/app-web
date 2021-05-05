@@ -453,7 +453,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                                     sum = sum + eval(field.value);
                                 });
                                 try {
-                                    this.doc.text(field.positionStartX, field.positionStartY, sum.toString())
+                                    this.doc.text(field.positionStartX, field.positionStartY, this.roundNumber.transform(sum).toString())
                                 } catch (e) {
                                     this.doc.text(field.positionStartX, field.positionStartY, " ")
                                 }
@@ -476,7 +476,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                                         sum = sum + eval("this." + field.value);
                                     }
                                     try {
-                                        this.doc.text(field.positionStartX, field.positionStartY, sum.toString())
+                                        this.doc.text(field.positionStartX, field.positionStartY, this.roundNumber.transform(sum).toString())
                                     } catch (e) {
                                         this.doc.text(field.positionStartX, field.positionStartY, "")
                                     }
