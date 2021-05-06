@@ -434,6 +434,7 @@ export class ListArticlesComponent implements OnInit {
         model.observation = '';
         model.ecommerceEnabled = '';
         model.favourite = '';
+        model.codeProvider = '';
         model.tags = '';
         model.relations = new Array();
         model.relations.push("make_relation_description");
