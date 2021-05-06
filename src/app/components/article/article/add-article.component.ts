@@ -1690,10 +1690,9 @@ export class AddArticleComponent implements OnInit {
             }
           })
       }
-      if (this.article.applications.length > 0) {
+      if (this.article.applications.length > 0 && this.article.type === Type.Final) {
         await this.getArticleURL().then(
           result => {
-
             if (result) {
               this.showMessage("La URL ya esta en uso", "danger", true);
               resolve(false);
@@ -1731,8 +1730,8 @@ export class AddArticleComponent implements OnInit {
 
 
       match += `  "url":"${this.article.url}",
-                        "type": "Final",
-                        "operationType" : { "$ne" : "D" } }`;
+                    "type": "Final",
+                    "operationType" : { "$ne" : "D" } }`;
 
       match = JSON.parse(match);
       this._articleService.getArticlesV2(project, match, {}, {}).subscribe(
