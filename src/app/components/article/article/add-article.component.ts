@@ -116,6 +116,7 @@ export class AddArticleComponent implements OnInit {
   public totalTaxes: number = 0;
   public salePriceWithoutVAT: number = 0;
   public markupPriceWithoutVAT: number = 0;
+  public meliAttrs: any;
 
   public html = '';
 
@@ -756,6 +757,7 @@ export class AddArticleComponent implements OnInit {
         } else {
           this.hideMessage();
           this.article = result.article;
+          this.meliAttrs = this.article.meliAttrs;
           this.notes = this.article.notes;
           this.tags = this.article.tags;
           this.taxes = this.article.taxes;
@@ -1511,6 +1513,7 @@ export class AddArticleComponent implements OnInit {
       this.loadPosDescription();
       this.loadURL();
       this.article = this.articleForm.value;
+      this.article.meliAttrs = this.meliAttrs;
       if (this.article.make && this.article.make.toString() === '') this.article.make = null;
       if (this.article.category && this.article.category.toString() === '') this.article.category = null;
       if (this.article.unitOfMeasurement && this.article.unitOfMeasurement.toString() === '') this.article.unitOfMeasurement = null;
@@ -1549,6 +1552,10 @@ export class AddArticleComponent implements OnInit {
         this.updateArticle();
       }
     }
+  }
+
+  eventAddMeliAttrs(article: Article) {
+    this.meliAttrs = article.meliAttrs;
   }
 
   async saveArticle() {
@@ -1755,6 +1762,7 @@ export class AddArticleComponent implements OnInit {
 
   public cleanForm() {
     this.article = new Article();
+    this.meliAttrs = {};
     this.taxes = new Array();
     this.otherFields = new Array();
     this.filesToUpload = null;

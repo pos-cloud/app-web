@@ -251,6 +251,8 @@ import { AddressService } from './components/address/address.service';
 import { AbandonedCartsComponent } from './components/point-of-sale/abandoned-carts/abandoned-carts.component';
 import { BillingComponent } from './components/billing/billing.component';
 import { SelectPriceListComponent } from './components/price-list/select-price-list/select-price-list.component';
+import { AddMeliAttrsComponent } from './components/article/add-meli-attrs/add-meli-attrs.component';
+import { MeliService } from './main/services/meli.service';
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -423,7 +425,8 @@ export function createTranslateLoader(http: HttpClient) {
     SelectMovementsOfCashesComponent,
     BillingComponent,
     AbandonedCartsComponent,
-    SelectPriceListComponent
+    SelectPriceListComponent,
+    AddMeliAttrsComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -563,7 +566,8 @@ export function createTranslateLoader(http: HttpClient) {
     PrintQRComponent,
     SelectMovementsOfCashesComponent,
     BillingComponent,
-    SelectPriceListComponent
+    SelectPriceListComponent,
+    AddMeliAttrsComponent
   ],
   imports: [
     BrowserModule,
@@ -596,7 +600,7 @@ export function createTranslateLoader(http: HttpClient) {
     PipesModule,
     ComponentsModule,
     ExportersModule,
-    NgMultiSelectDropDownModule.forRoot() // https://nileshpatel17.github.io/ng-multiselect-dropdown/
+    NgMultiSelectDropDownModule.forRoot(), // https://nileshpatel17.github.io/ng-multiselect-dropdown/
   ],
   providers: [
     {
@@ -604,6 +608,7 @@ export function createTranslateLoader(http: HttpClient) {
       useClass: AuthInterceptor,
       multi: true
     },
+    AddressService,
     NgbActiveModal,
     NgbAlertConfig,
     ArticleService,
@@ -615,7 +620,6 @@ export function createTranslateLoader(http: HttpClient) {
     UserService,
     RoomService,
     MakeService,
-    AddressService,
     CategoryService,
     CompanyService,
     ClockService,
@@ -663,7 +667,8 @@ export function createTranslateLoader(http: HttpClient) {
     GalleryService,
     EmailTemplateService,
     PushNotificationsService,
-    MercadopagoService
+    MercadopagoService,
+    MeliService
   ],
   bootstrap: [AppComponent]
 })
