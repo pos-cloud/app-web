@@ -443,6 +443,15 @@
                                         <td
                                             *ngIf="locationAux && locationAux.value && locationAux.value.location && locationAux.value.location === location._id">
                                             {{location.description}}</td>
+                                            <td
+                                            *ngIf="locationAux && locationAux.value && locationAux.value.location && locationAux.value.location === location._id">
+                                            {{location.positionX}}</td>
+                                            <td
+                                            *ngIf="locationAux && locationAux.value && locationAux.value.location && locationAux.value.location === location._id">
+                                            {{location.positionY}}</td>
+                                            <td
+                                            *ngIf="locationAux && locationAux.value && locationAux.value.location && locationAux.value.location === location._id">
+                                            {{location.positionZ}}</td>
                                     </div>
                                     <td align="right" width="10">
                                         <button type="button" class="btn btn-danger btn-sm" (click)="deleteLocation(i)">
