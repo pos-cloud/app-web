@@ -122,6 +122,10 @@ export class ListTransactionsComponent implements OnInit {
         this.userCountry = Config.country;
         this.getPrinters();
 
+        if(localStorage.getItem('project-list-transaction')){
+            this.columns = JSON.parse(localStorage.getItem('project-list-transaction'));
+        }
+
         let pathLocation: string[] = this._router.url.split('/');
         this.listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
         this.modules = observableOf(Config.modules);
@@ -156,7 +160,6 @@ export class ListTransactionsComponent implements OnInit {
             }
         )
 
-
         this.getItems();
 
         this.initDragHorizontalScroll();
@@ -178,10 +181,6 @@ export class ListTransactionsComponent implements OnInit {
                 transactionMovement: this.transactionMovement,
                 operationType: { "$ne": "D" }
             }
-
-            /* if(this.branchSelectedId){
-                 match['branch'] = { "$oid" : this.branchSelectedId }
-             }*/
 
             this._transactionTypeService.getAll({
                 project: {
@@ -403,6 +402,7 @@ export class ListTransactionsComponent implements OnInit {
                         this.items = result[0].items;
                         this.totalItems = result[0].count;
                     }
+                    localStorage.setItem('project-list-transaction', JSON.stringify(this.columns));
                 } else {
                     this.items = new Array();
                     this.totalItems = 0;

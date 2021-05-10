@@ -214,6 +214,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
       'bankReconciliation': [this.paymentMethod.bankReconciliation, []],
       'mercadopagoAPIKey': [this.paymentMethod.mercadopagoAPIKey, []],
       'mercadopagoClientId': [this.paymentMethod.mercadopagoClientId, []],
+      'mercadopagoAccessToken' : [this.paymentMethod.mercadopagoAccessToken,[]],
       'whatsappNumber': [this.paymentMethod.whatsappNumber, []],
       'applications': this._fb.array([]),
       'account' : [this.paymentMethod.account,[]]
@@ -318,6 +319,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
     if (!this.paymentMethod.company) this.paymentMethod.company = null;
     if (!this.paymentMethod.mercadopagoAPIKey) this.paymentMethod.mercadopagoAPIKey = null;
     if (!this.paymentMethod.mercadopagoClientId) this.paymentMethod.mercadopagoClientId = null;
+    if (!this.paymentMethod.mercadopagoAccessToken) this.paymentMethod.mercadopagoAccessToken = null;
     if (!this.paymentMethod.whatsappNumber) this.paymentMethod.whatsappNumber = null;
     if (!this.paymentMethod.observation) this.paymentMethod.observation = '';
     if (!this.paymentMethod.account) this.paymentMethod.account = null;
@@ -352,6 +354,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
       'allowBank': this.paymentMethod.allowBank,
       'mercadopagoAPIKey': this.paymentMethod.mercadopagoAPIKey,
       'mercadopagoClientId': this.paymentMethod.mercadopagoClientId,
+      'mercadopagoAccessToken' : this.paymentMethod.mercadopagoAccessToken,
       'whatsappNumber': this.paymentMethod.whatsappNumber,
       'checkPerson': this.paymentMethod.checkPerson,
       'account' : this.paymentMethod.account

@@ -2339,21 +2339,27 @@ export class AddSaleOrderComponent {
                 });
                 break;
             case 'change-shipment-method':
-                modalRef = this._modalService.open(SelectShipmentMethodComponent);
-                modalRef.result.then(async (result) => {
-                    if (result && result.shipmentMethod) {
-                        this.transaction.shipmentMethod = result.shipmentMethod
-                        await this.updateTransaction().then(
-                            async transaction => {
-                                if (transaction) {
-                                    this.transaction = transaction;
-                                    this.lastQuotation = this.transaction.quotation;
+                if(this.transaction.company) {
+                    modalRef = this._modalService.open(SelectShipmentMethodComponent, { size: 'lg', backdrop: 'static' });
+                    modalRef.componentInstance.company = this.transaction.company;
+                    modalRef.result.then(async (result) => {
+                        if (result && result.shipmentMethod) {
+                            this.transaction.shipmentMethod = result.shipmentMethod;
+                            this.transaction.deliveryAddress = result.address;
+                            await this.updateTransaction().then(
+                                async transaction => {
+                                    if (transaction) {
+                                        this.transaction = transaction;
+                                        this.lastQuotation = this.transaction.quotation;
+                                    }
                                 }
-                            }
-                        );
-                    }
-                }, (reason) => {
-                });
+                            );
+                        }
+                    }, (reason) => {
+                    });
+                } else {
+                    this.showToast(null, "info", "Debe seleccionar una empresa.");
+                }
                 break;
             case 'change-table':
                 modalRef = this._modalService.open(SelectTableComponent);

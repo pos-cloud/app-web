@@ -16,6 +16,8 @@ import { PipesModule } from 'app/main/pipes/pipes.module';
 import { ListShipmentMethodsComponent } from './list-shipment-methods/list-shipment-methods.component';
 import { AgmCoreModule } from '@agm/core';
 import { SelectShipmentMethodComponent } from './select-shipment-method/select-shipment-method.component';
+import { BrowserModule } from '@angular/platform-browser';
+import { AddressModule } from '../address/address.module';
 
 const routes: Routes = [
   {
@@ -29,6 +31,7 @@ const routes: Routes = [
   imports: [
     RouterModule.forChild(routes),
     CommonModule,
+    BrowserModule,
     FormsModule,
     ReactiveFormsModule,
     NgxPaginationModule,
@@ -44,6 +47,7 @@ const routes: Routes = [
       apiKey: "AIzaSyCi1AySMkCMeuptt0rwsgpo6nEgigDVJ4E",
       libraries: ['places', 'drawing', 'geometry']
     }),
+    AddressModule,
   ],
   declarations: [
     ListShipmentMethodsComponent,

@@ -70,6 +70,15 @@
                         </button>
                     </div>
                 </div>
+                <div class="item-header" *ngIf="transaction && transaction.company && !transaction.company.priceList">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-light" (click)="openModal('priceList')">
+                            Lista de Precio: {{ transaction?.priceList?.name }}
+                        </button>
+                        <button type="button" class="btn btn-light fa fa-pencil" (click)="openModal('priceList')">
+                        </button>
+                    </div>
+                </div>
                 <div class="item-header" *ngIf="transaction.type && transaction.type.requestShipmentMethod">
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-light"

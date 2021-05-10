@@ -31,9 +31,9 @@ export class ListLocationsComponent implements OnInit {
   public relationOfBranchEmpty : boolean = true;
   public currentPage: number = 0;
   public displayedColumns = [
-    "positionZ",
-    "positionY",
     "positionX",
+    "positionY",
+    "positionZ",
     "deposit.name"
   ];
   public filters: any[];
@@ -88,7 +88,7 @@ export class ListLocationsComponent implements OnInit {
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
     let project = {
-      positionZ: { $toString: '$number' },
+      positionZ: 1,
       positionY: 1,
       positionX: 1,
       description : 1,

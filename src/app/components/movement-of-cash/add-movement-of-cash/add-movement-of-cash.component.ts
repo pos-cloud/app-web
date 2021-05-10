@@ -1612,13 +1612,8 @@ export class AddMovementOfCashComponent implements OnInit {
             if (this.movementOfCash.type.isCurrentAccount && this.transaction.company.creditLimit > 0 && this.transaction.company._id && this.transaction.type.transactionMovement ===  TransactionMovement.Sale) {
                 this._companyService.getSummaryCurrentAccount(this.transaction.company._id).subscribe(
                     result => {
-                        console.log(result);
                         if (result && result.status === 200) {
                             var total = result.result + this.movementOfCash.amountPaid;
-                            console.log(total);
-                            console.log(this.movementOfCash.amountPaid);
-                            console.log(this.transaction.company.creditLimit);
-
                             if(total > this.transaction.company.creditLimit){
                                 resolve(false);
                                 this.showToast(null,'info',"La empresa supera el limite de credito otorgado");

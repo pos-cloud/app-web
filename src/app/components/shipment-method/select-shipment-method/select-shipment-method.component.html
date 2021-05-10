@@ -1,39 +1,81 @@
 <div class="modal-header">
-    <h4 class="modal-title">Seleccionar Método de Envío</h4>
-    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+  <h4 class="modal-title">Seleccionar Método de Envío</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
     <span aria-hidden="true">&times;</span>
-    </button>
+  </button>
+</div>
+<section class="container-fluid">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
   </div>
-  <section class="container-fluid">
-    <div class="center-content" *ngIf="alertMessage !== ''">
-      <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-        {{alertMessage}}
-      </ngb-alert>
-    </div>
-    <div class="modal-body">
-      <div class="row">
-        <div class="form-group col-md-12">
-          <div class="center-content">
-            <div class="btn-group-vertical">
-              <button type="button" *ngFor="let shipmentMethod of shipmentMethods" 
-                                    class="btn btn-select" 
-                                    [ngClass]="{'btn-primary':shipmentMethod._id===shipmentMethodSelected._id,
-                                                'btn-outline-primary':shipmentMethod._id!==shipmentMethodSelected._id}"
-                (click)="shipmentMethodSelected = shipmentMethod">
-                {{ shipmentMethod.name }}
-              </button>
+  <div class="modal-body">
+    <div class="row">
+      <div class="form-group col-md-12">
+        <div class="center-content">
+          <div class="btn-group-vertical">
+            <div class="row" *ngFor="let shipmentMethod of shipmentMethods">
+              <div class="col-md-12">
+                <div class="row" style="min-width: 400px;">
+                  <div class="col-md-12">
+                    <button type="button" class="btn btn-select" style="width: 100%;"
+                      [ngClass]="{'btn-primary':shipmentMethodSelected && shipmentMethod._id===shipmentMethodSelected._id,
+                                                    'btn-outline-primary':!shipmentMethodSelected || (shipmentMethodSelected && shipmentMethod._id!==shipmentMethodSelected._id)}"
+                      (click)="select(shipmentMethod)">
+                      {{ shipmentMethod.name }}
+                    </button>
+                  </div>
+                </div>
+                <div class="card"
+                  *ngIf="shipmentMethodSelected && shipmentMethod._id===shipmentMethodSelected._id && shipmentMethod.requireAddress">
+                  <div class="card-body">
+                    <div class="row" *ngIf="!showFormAddress">
+                      <div class="col-md-12" *ngFor="let address of addresses">
+                        <button type="button" class="btn btn-select" style="width: 100%;"
+                          [ngClass]="{'btn-primary':addressSelected && address._id===addressSelected._id,
+                                                    'btn-outline-primary':!addressSelected || (addressSelected && address._id!==addressSelected._id)}"
+                          (click)="selectAddress(address)">
+                          <div>
+                            {{address.name}} {{(address.number) ? ' ' + address.number: ''}} {{(address.flat ||
+                              address.floor)? ' -' : ''}}
+                              {{(address.floor)? ' ' + address.floor : ''}} {{(address.flat)? ' ' + address.flat : ''}}
+                          </div>
+                          <small>
+                            {{(address.city) ? address.city + ', ' : ''}}
+                            {{(address.state) ? address.state + ', ' : ''}}
+                            {{(address.country) ? address.country : ''}}
+                          </small>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="row" *ngIf="!showFormAddress" style="margin-top: 10px;">
+                      <div class="col-md-12 text-right">
+                        <button class="btn btn-outline-secondary" (click)="showFormAddress = true">
+                          Agregar dirección
+                        </button>
+                      </div>
+                    </div>
+                    <div class="row" *ngIf="showFormAddress">
+                      <div class="col-md-12">
+                        <app-address [shipmentMethod]="shipmentMethodSelected" [company]="company" (eventAddAddress)="loadAddresses(); showFormAddress = false;"></app-address>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
-      <button type="button" class="btn btn-primary" [disabled]="loading" (click)="selectShipmentMethod()">
-        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
-        <span *ngIf="!loading">Siguiente</span>
-        <span *ngIf="loading">Espere por favor</span>
-      </button>
-    </div>
-  </section>
-  
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-light" (click)="activeModal.close('cancel')">Cancelar</button>
+    <button type="button" class="btn btn-primary" [disabled]="loading" (click)="selectShipmentMethod()">
+      <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+      <span *ngIf="!loading">Siguiente</span>
+      <span *ngIf="loading">Espere por favor</span>
+    </button>
+  </div>
+</section>

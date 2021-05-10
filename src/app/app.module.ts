@@ -251,6 +251,7 @@ import { AddressService } from './components/address/address.service';
 import { AbandonedCartsComponent } from './components/point-of-sale/abandoned-carts/abandoned-carts.component';
 import { BillingComponent } from './components/billing/billing.component';
 import { SelectPriceListComponent } from './components/price-list/select-price-list/select-price-list.component';
+import { AddressModule } from './components/address/address.module';
 import { AddMeliAttrsComponent } from './components/article/add-meli-attrs/add-meli-attrs.component';
 import { MeliService } from './main/services/meli.service';
 
@@ -601,6 +602,7 @@ export function createTranslateLoader(http: HttpClient) {
     ComponentsModule,
     ExportersModule,
     NgMultiSelectDropDownModule.forRoot(), // https://nileshpatel17.github.io/ng-multiselect-dropdown/
+    AddressModule,
   ],
   providers: [
     {
