@@ -896,7 +896,7 @@ export class PrintComponent implements OnInit {
         }
 
         this.doc.setFontType('bold');
-        this.doc.text("Observaciones: " + this.transaction.observation + " " + this.movementsOfCashes[0].observation, 10, 246);
+        this.doc.text("Observaciones: " + this.transaction.observation, 10, 246);
         this.doc.setFontType('normal');
         this.doc.text('', 38, 250);
 
