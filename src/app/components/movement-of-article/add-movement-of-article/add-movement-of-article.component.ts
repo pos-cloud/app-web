@@ -169,7 +169,6 @@ export class AddMovementOfArticleComponent implements OnInit {
             this.movementOfArticle.article.locations.forEach(element => {
                 if (element.location && element.location.deposit && element.location.deposit._id === depositArticle._id) {
                     this.position += `Ubic. ${element.location.description} - ${element.location.positionX} - ${element.location.positionY} - ${element.location.positionZ}`;
-                    this.movementOfArticleForm.patchValue({ 'position': this.position })
                 }
             });
         }

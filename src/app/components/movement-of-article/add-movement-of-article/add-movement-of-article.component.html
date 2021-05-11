@@ -32,13 +32,7 @@
             <input type="text" class="form-control" formControlName="stock" name="stock" id="stock" readonly />
           </div>
         </div>
-        <div class="form-group col-md-1" *ngIf="config && config.modules && config.modules.stock">
-          <label for="position" class="control-label">Posición:</label>
-          <div class="input-group">
-            <input type="text" class="form-control" formControlName="position" name="position" id="position" readonly />
-          </div>
-        </div>
-        <div class="form-group col-md-4">
+        <div class="form-group col-md-5">
           <ng-template #rtAccount let-r="result" let-t="term">
             <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
           </ng-template>
@@ -46,6 +40,14 @@
           <input id="account" type="text" ngMdoel class="form-control" name="account" formControlName="account"
             [ngbTypeahead]="searchAccount" [resultTemplate]="rtAccount" [inputFormatter]="formatterAccount" />
         </div>
+      </div>
+      <div class="row" *ngIf="position">
+          <div class="form-group col-md-12" >
+            <label for="position" class="control-label">Posición:</label>
+            <div class="input-group">
+              <input type="text" class="form-control" formControlName="position" name="position" id="position" readonly />
+            </div>
+          </div>
       </div>
       <div class="row" *ngIf="movementOfArticle.article && movementOfArticle.article.allowMeasure">
         <div class="form-group col-md-6">
