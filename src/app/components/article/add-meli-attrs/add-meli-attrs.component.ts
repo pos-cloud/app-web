@@ -29,7 +29,7 @@ export class AddMeliAttrsComponent implements OnInit {
     @Input() article: Article;
     @Input() readonly: boolean;
     @Output() eventAddMeliAttrs: EventEmitter<Article> = new EventEmitter<Article>();
-    public formFields: FormField[] = new Array();
+    public formFields: FormField[];
     public categorySelected: any;
 
     public searchCategories = (text$: Observable<string>) =>
@@ -66,7 +66,7 @@ export class AddMeliAttrsComponent implements OnInit {
     }
 
     async ngOnInit() {
-        if (!this.article.meliAttrs)
+        if (!this.article.meliAttrs) {
             this.article.meliAttrs = {
                 category: null,
                 description: {
@@ -75,6 +75,8 @@ export class AddMeliAttrsComponent implements OnInit {
                 listing_type_id: 'free',
                 attributes: []
             }
+        }
+        this.categorySelected = this.article.meliAttrs.category;
         this.buildForm();
     }
 
@@ -85,12 +87,14 @@ export class AddMeliAttrsComponent implements OnInit {
     public buildForm(): void {
 
         let fields: {} = {
-            'category': [this.article.meliAttrs.category],
+            'category': [this.categorySelected],
             'description.plain_text': [this.article.meliAttrs.description.plain_text],
             'listing_type_id': [this.article.meliAttrs.listing_type_id],
         };
-        for (let field of this.formFields) {
-            if (field.tag !== 'separator') fields[field.id] = [this.article.meliAttrs[field.id], field.validators]
+        if(this.formFields) {
+            for (let field of this.formFields) {
+                if (field.tag !== 'separator') fields[field.id] = [this.article.meliAttrs[`attrs-${field.id}`], field.validators]
+            }
         }
         this.meliAttrs = this._fb.group(fields);
         this.focusEvent.emit(true);
@@ -164,35 +168,35 @@ export class AddMeliAttrsComponent implements OnInit {
     }
 
     async close() {
-        if ((!this.categorySelected && this.meliAttrs.value.category && this.meliAttrs.value.category.category_id) || 
-        (this.categorySelected && this.meliAttrs.value.category && this.categorySelected.category_id && this.meliAttrs.value.category.category_id && this.categorySelected.category_id !== this.meliAttrs.value.category.category_id)) {
+        if (this.meliAttrs.value.category && ((!this.formFields) || (!this.categorySelected && this.meliAttrs.value.category && this.meliAttrs.value.category.category_id) ||
+            (this.categorySelected && this.meliAttrs.value.category && this.categorySelected.category_id && this.meliAttrs.value.category.category_id && this.categorySelected.category_id !== this.meliAttrs.value.category.category_id))) {
             this.categorySelected = this.meliAttrs.value.category;
+            let fields: FormField[] = new Array();
+            this.formFields = new Array();
             await this._meliService.loadAttrsByCategory(this.meliAttrs.value.category.category_id).toPromise()
                 .then(result => {
                     if (result.status === 200) {
-                        let fields: FormField[] = new Array();
-                        this.formFields = new Array();
+                        let tagType = 'text';
                         for (let field of result.result) {
                             let tag = 'input';
                             let values = new Array();
-                            if (field.value_type == 'list') {
+                            if (field.values && field.values.length > 0) {
                                 tag = 'select';
                                 for (let value of field.values) {
                                     values.push(value.name);
                                 }
+                            } else {
+                                if (field.value_type === 'number_unit') {
+                                    tagType = 'text';
+                                } else if (field.value_type === 'boolean') {
+                                    tag = 'select';
+                                    tagType = 'boolean';
+                                    values = ['true', 'false'];
+                                }
                             }
 
-                            let tagType = 'text';
-                            if (field.value_type === 'number_unit') {
-                                tagType = 'number';
-                            } else if (field.value_type === 'boolean') {
-                                tag = 'select';
-                                tagType = 'boolean';
-                                values = ['true', 'false'];
-                            }
-
-                            let validators: Validators[];
-                            if(field.required) {
+                            let validators: Validators[] = new Array();
+                            if (field.tags && field.tags.required) {
                                 validators.push(Validators.required);
                             }
                             fields.push(
@@ -202,6 +206,7 @@ export class AddMeliAttrsComponent implements OnInit {
                                     tag,
                                     tagType,
                                     values,
+                                    hint: field.hint,
                                     validators,
                                     class: 'form-group col-md-12'
                                 }
@@ -218,15 +223,14 @@ export class AddMeliAttrsComponent implements OnInit {
         this.article.meliAttrs.description.plain_text = this.meliAttrs.value['description.plain_text'];
         this.article.meliAttrs.listing_type_id = this.meliAttrs.value.listing_type_id;
         this.article.meliAttrs.attributes = new Array();
-        for(let field of this.formFields) {
-            if(this.meliAttrs.value[field.id]) {
+        for (let field of this.formFields) {
+            if (this.meliAttrs.value[field.id]) {
                 this.article.meliAttrs.attributes.push({
                     id: field.id.split('attrs-')[1],
                     value_name: this.meliAttrs.value[field.id]
                 });
             }
         }
-        console.log(this.article.meliAttrs);
         this.eventAddMeliAttrs.emit(this.article);
     }
 

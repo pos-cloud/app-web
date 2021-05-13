@@ -9,6 +9,7 @@ export interface FormField {
   default?: any,
   validators?: any[],
   focus?: boolean,
+  hint?: string,
   multiple?: boolean,
   class: string
 }

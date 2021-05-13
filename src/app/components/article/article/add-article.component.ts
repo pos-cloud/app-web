@@ -8,7 +8,7 @@ import { NgbAlertConfig, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-boots
 import * as $ from 'jquery';
 
 // Models
-import { Article, ArticlePrintIn, Type } from '../article';
+import { Article, ArticlePrintIn, IMeliAttrs, Type } from '../article';
 import { ArticleStock } from '../../article-stock/article-stock';
 import { Make } from '../../make/make';
 import { Category } from '../../category/category';
@@ -116,7 +116,7 @@ export class AddArticleComponent implements OnInit {
   public totalTaxes: number = 0;
   public salePriceWithoutVAT: number = 0;
   public markupPriceWithoutVAT: number = 0;
-  public meliAttrs: any;
+  public meliAttrs: IMeliAttrs;
 
   public html = '';
 
@@ -756,13 +756,15 @@ export class AddArticleComponent implements OnInit {
           this.loading = false;
         } else {
           this.hideMessage();
+          console.log(result.result.article.meliAttrs);
           this.article = result.article;
           this.meliAttrs = this.article.meliAttrs;
+          console.log(this.article.meliAttrs, this.meliAttrs);
           this.notes = this.article.notes;
           this.tags = this.article.tags;
           this.taxes = this.article.taxes;
           this.totalTaxes = 0;
-          for(let tax of this.taxes) {
+          for (let tax of this.taxes) {
             this.totalTaxes += tax.taxAmount;
           }
           if (this.article.url === '') {
@@ -1496,11 +1498,11 @@ export class AddArticleComponent implements OnInit {
       'forShipping': this.article.forShipping,
       'salesAccount': this.article.salesAccount,
       'purchaseAccount': this.article.purchaseAccount,
-      'minStock' : this.article.minStock,
-      'maxStock' : this.article.maxStock,
-      'pointOfOrder' : this.article.pointOfOrder,
-      'codeProvider' : this.article.codeProvider,
-      'allowStock' : this.article.allowStock
+      'minStock': this.article.minStock,
+      'maxStock': this.article.maxStock,
+      'pointOfOrder': this.article.pointOfOrder,
+      'codeProvider': this.article.codeProvider,
+      'allowStock': this.article.allowStock
     };
 
     this.articleForm.patchValue(values);
@@ -1761,7 +1763,6 @@ export class AddArticleComponent implements OnInit {
 
   public cleanForm() {
     this.article = new Article();
-    this.meliAttrs = {};
     this.taxes = new Array();
     this.otherFields = new Array();
     this.filesToUpload = null;

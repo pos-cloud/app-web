@@ -4,7 +4,7 @@
       <div class="form-group col-md-12">
         <label for="listing_type_id" class="control-label">Tipo de publicación:</label>
         <select class="form-control" formControlName="listing_type_id">
-          <option *ngFor="let listing_type of ['free']" [ngValue]="listing_type" [disabled]="readonly">
+          <option *ngFor="let listing_type of ['free']" [ngValue]="listing_type" [disabled]="article?.meliId && article?.meliId !== ''">
             {{listing_type}}</option>
         </select>
       </div>
@@ -12,7 +12,7 @@
     <div class="row">
       <div class="form-group col-md-6">
         <ng-template #rtCategories let-r="result" let-t="term">
-          <ngb-highlight [result]="r.category_name +' / '+ r.domain_name" [term]="t"></ngb-highlight>
+          <ngb-highlight [result]="r.category_name" [term]="t"></ngb-highlight>
         </ng-template>
         <label for="category">Categoría:</label>
         <input id="category" type="text" class="form-control" formControlName="category" name="category"
@@ -23,24 +23,27 @@
     <div class="row">
       <div class="col-md-12">
         <label for="description.plain_text" class="control-label">Descripción:</label>
-        <input type="text" class="form-control" formControlName="description.plain_text" name="description.plain_text"
-          id="description.plain_text" [readonly]="readonly" />
+        <textarea type="text" class="form-control" formControlName="description.plain_text" name="description.plain_text"
+          id="description.plain_text" [readonly]="article?.meliId && article?.meliId !== ''"></textarea>
       </div>
     </div>
-    <div class="row">
+    <div class="row mt-2">
       <div *ngFor="let field of formFields" [class]="field.class">
         <!-- SEPARATOR -->
         <div *ngIf="field.tag === 'separator'">
           <hr>
           <b>{{field.name}}</b>
         </div>
-        <label *ngIf="field.tag !== 'separator'" [for]="field.name" class="control-label">{{field.name | translate |
-          capitalize}} <span *ngIf="field?.validators?.length > 0">(Obligatorio)</span>:</label>
+        <label *ngIf="field.tag !== 'separator'" [for]="field.name" class="control-label">
+          {{field.name | translate | capitalize}} <span *ngIf="field?.validators?.length > 0" style="color: red">*</span>:
+          <br>
+          <small>[{{field.id.split('attrs-')[1]}}]</small>
+        </label>
         <div class="input-group">
 
           <!-- INPUT -->
           <input *ngIf="field.tag === 'input' && field.tagType !== 'file'" [type]="field.tagType" class="form-control"
-            [formControlName]="field.id" [name]="field.name" [id]="field.name" [readonly]="readonly"
+            [formControlName]="field.id" [name]="field.name" [id]="field.name" [readonly]="readonly" [placeholder]="(field.hint) ? field.hint : ''"
             (blur)="onValueChanged($event.target.id)" />
 
           <!-- SELECT -->
@@ -58,6 +61,7 @@
               <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
             </ng-template>
             <input [type]="field.tagType" class="form-control" [id]="field.name" [formControlName]="field.id"
+              [placeholder]="field.hint"
               [readonly]="readonly" [name]="field.name" [ngbTypeahead]="field.search" [resultTemplate]="result"
               [inputFormatter]="field.format" (blur)="onValueChanged($event.target.id)" />
           </div>
@@ -65,6 +69,7 @@
           <!-- TEXTAREA -->
           <textarea *ngIf="field.tag === 'textarea'" class="form-control" [formControlName]="field.id"
             [name]="field.name" [id]="field.name" [readonly]="readonly"
+            [placeholder]="field.hint"
             (blur)="onValueChanged($event.target.id)"></textarea>
 
           <!-- HTML -->

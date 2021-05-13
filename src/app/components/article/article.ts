@@ -80,14 +80,7 @@ export class Article {
     public purchaseAccount : Account;
     public wooId: string;
     public meliId: string;
-    public meliAttrs: {
-		category: any,
-		description: {
-			plain_text: string
-		},
-		listing_type_id: string,
-        attributes: any[]
-	};
+    public meliAttrs: IMeliAttrs;
     public minStock : number;
     public maxStock : number;
     public pointOfOrder : number;
@@ -466,3 +459,15 @@ export let attributes = [
         required: true,
     },
 ];
+
+export interface IMeliAttrs {
+    category: any,
+    description: {
+        plain_text: string
+    },
+    listing_type_id: string,
+    attributes: {
+        id: string,
+        value_name: string
+    }[]
+}
