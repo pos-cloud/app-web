@@ -756,7 +756,7 @@ export class AddArticleComponent implements OnInit {
           this.loading = false;
         } else {
           this.hideMessage();
-          console.log(result.result.article.meliAttrs);
+          console.log(result.article.meliAttrs);
           this.article = result.article;
           this.meliAttrs = this.article.meliAttrs;
           console.log(this.article.meliAttrs, this.meliAttrs);

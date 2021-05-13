@@ -91,9 +91,17 @@ export class AddMeliAttrsComponent implements OnInit {
             'description.plain_text': [this.article.meliAttrs.description.plain_text],
             'listing_type_id': [this.article.meliAttrs.listing_type_id],
         };
-        if(this.formFields) {
+
+        if (this.formFields) {
             for (let field of this.formFields) {
-                if (field.tag !== 'separator') fields[field.id] = [this.article.meliAttrs[`attrs-${field.id}`], field.validators]
+                let exists: boolean = false;
+                for (let attr of this.article.meliAttrs.attributes) {
+                    if (`attrs-${attr.id}` === field.id) {
+                        exists = true;
+                        if (field.tag !== 'separator') fields[field.id] = [attr.value_name, field.validators];
+                    }
+                }
+                if (!exists) if (field.tag !== 'separator') fields[field.id] = ['', field.validators];
             }
         }
         this.meliAttrs = this._fb.group(fields);
