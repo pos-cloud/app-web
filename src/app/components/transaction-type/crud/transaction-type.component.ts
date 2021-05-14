@@ -445,6 +445,12 @@ export class TransactionTypeComponent implements OnInit {
             values: ['true', 'false'],
             validators: [Validators.required],
             class: 'form-group col-md-4'
+        },{
+            name: 'allowPriceList',
+            tag: 'select',
+            tagType: 'boolean',
+            values: ['true', 'false'],
+            class: 'form-group col-md-4'
         },
         {
             name: 'requestEmployee',

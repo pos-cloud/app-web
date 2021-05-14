@@ -53,6 +53,7 @@ export class TransactionType extends Model {
     public allowDelete: boolean = false;
     public allowZero: boolean = false;
     public allowCompanyDiscount: boolean = true;
+    public allowPriceList : boolean = true;
     public requestCurrency: boolean = false;
     public requestEmployee: EmployeeType;
     public requestTransport: boolean = false;
