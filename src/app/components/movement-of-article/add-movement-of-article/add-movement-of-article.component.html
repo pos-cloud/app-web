@@ -75,7 +75,7 @@
         </div>
       </div>
       <div class="row" *ngIf="!movementOfArticle.article || !movementOfArticle.article.allowMeasure">
-        <div class="form-group col-md-4">
+        <div class="form-group col-md-4" *ngIf="movementOfArticle.transaction.type.showPrices">
           <label for="auxPrice" class="control-label">Precio Unitario:</label>
           <div class="input-group">
             <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
@@ -117,7 +117,7 @@
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="!containsVariants || isValidSelectedVariants()">
+      <div class="row" *ngIf="(!containsVariants || isValidSelectedVariants()) && movementOfArticle.transaction.type.showPrices">
         <div class="col-md-4 form-group">
           <label for="discountRate" class="control-label">Porc. Desc.:</label>
           <div class="input-group">
