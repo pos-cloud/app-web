@@ -943,7 +943,8 @@ export class TransactionTypeComponent implements OnInit {
                 "paymentMethods.name": 1,
                 "resetOrderNumber": 1,
                 "allowAccounting": 1,
-                "finishState": 1
+                "finishState": 1,
+                "allowPriceList" : 1
             }
 
             this.subscription.add(this._objService.getAll({
