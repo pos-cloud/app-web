@@ -231,6 +231,7 @@ export class AddMeliAttrsComponent implements OnInit {
         this.article.meliAttrs.description.plain_text = this.meliAttrs.value['description.plain_text'];
         this.article.meliAttrs.listing_type_id = this.meliAttrs.value.listing_type_id;
         this.article.meliAttrs.attributes = new Array();
+        if(!this.formFields) this.formFields = new Array();
         for (let field of this.formFields) {
             if (this.meliAttrs.value[field.id]) {
                 this.article.meliAttrs.attributes.push({

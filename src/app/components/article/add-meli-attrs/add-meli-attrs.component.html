@@ -4,7 +4,7 @@
       <div class="form-group col-md-12">
         <label for="listing_type_id" class="control-label">Tipo de publicación:</label>
         <select class="form-control" formControlName="listing_type_id">
-          <option *ngFor="let listing_type of ['free']" [ngValue]="listing_type" [disabled]="article?.meliId && article?.meliId !== ''">
+          <option *ngFor="let listing_type of ['free','bronze','silver','gold','gold_special','gold_premium','gold_pro']" [ngValue]="listing_type" [disabled]="article?.meliId && article?.meliId !== ''">
             {{listing_type}}</option>
         </select>
       </div>
