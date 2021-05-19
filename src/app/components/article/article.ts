@@ -56,7 +56,8 @@ export class Article {
     }];
     public pictures: [{
         _id: string,
-        picture: string
+        picture: string,
+        meliId: string,
     }];
     public url: string;
     public category: Category;

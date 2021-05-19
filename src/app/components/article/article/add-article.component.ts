@@ -871,6 +871,7 @@ export class AddArticleComponent implements OnInit {
         pictures.push(this._fb.group({
           '_id': null,
           'picture': x.picture,
+          'meliId': x.meliId,
         }))
       })
     }
