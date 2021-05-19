@@ -38,7 +38,7 @@ export class ViewReportComponent implements OnInit {
         this.processParams();
     }
 
-    private processParams(): void {
+    public processParams(): void {
         this.loading = true
         this.items = [];
         this.columns = [];
@@ -58,9 +58,7 @@ export class ViewReportComponent implements OnInit {
             result => {
                 if (result.status === 200) {
                     this.items = result.result
-
                     for (var key in this.items[0]) {
-
                         this.columns.push({
                             name: key,
                             visible: true,

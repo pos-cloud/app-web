@@ -22,17 +22,14 @@
                 <app-progressbar [loading]="loading"></app-progressbar>
               </td>
             </tr>
-            <tr *ngFor="let item of items | paginate: { itemsPerPage: itemsPerPage,
-                                                            currentPage: currentPage,
-                                                            totalItems: totalItems
-                                                          }">
+            <tr *ngFor="let item of items">
               <ng-container *ngFor="let column of columns">
                 <td [attr.align]="column.align">
                   {{ getValue(item, column) }}
                 </td>
               </ng-container>
             </tr>
-            <tr align="center" *ngIf="totalItems === 0 && !loading">
+            <tr align="center" *ngIf="items.length === 0 && !loading">
               <td>{{ 'no data found' | translate | capitalize }} </td>
             </tr>
           </tbody>
