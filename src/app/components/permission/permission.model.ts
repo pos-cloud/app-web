@@ -8,12 +8,36 @@ export class Permission extends Model {
     public collections: {
         name: string,
         actions: {
+            view : boolean,
             add: boolean,
             edit: boolean,
             delete: boolean,
             export: boolean
         }
     }[];
+
+    public menu: {
+		sales: {
+			counter: boolean,
+			webOrders: boolean,
+			delivery: boolean,
+			voucherReader: boolean,
+			resto: boolean
+		},
+		money: boolean,
+		production: boolean,
+		purchases: boolean,
+		stock: boolean,
+		articles: boolean,
+		companies: {
+			client: boolean,
+			provider: boolean,
+		},
+		report: boolean,
+		config: boolean,
+		gallery: boolean,
+        resto: boolean
+	}
 
     constructor() { super(); }
 

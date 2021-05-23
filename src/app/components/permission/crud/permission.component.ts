@@ -62,6 +62,124 @@ export class PermissionComponent implements OnInit {
         class: 'form-group col-md-2'
     },
     {
+        name: 'Menu',
+        tag: 'separator',
+        tagType: null,
+        class: 'form-group col-md-12'
+    },
+    {
+        name: 'menu.sales.counter',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
+        name: 'menu.sales.webOrders',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
+        name: 'menu.sales.delivery',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
+        name: 'menu.sales.voucherReader',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
+        name: 'menu.sales.resto',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
+        name: 'menu.purchases',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
+        name: 'menu.stock',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
+        name: 'menu.money',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
+        name: 'menu.production',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
+        name: 'menu.articles',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
+        name: 'menu.companies.client',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
+        name: 'menu.companies.provider',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
+        name: 'menu.resto',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
+        name: 'menu.gallery',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
+        name: 'menu.report',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
+        name: 'menu.config',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
         name: 'Permisos',
         tag: 'separator',
         tagType: null,
