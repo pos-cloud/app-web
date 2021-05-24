@@ -27,7 +27,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="item-header" *ngIf="transaction && transaction.company && transaction.company.priceList">
+                <div class="item-header" *ngIf="transaction && transaction.company && transaction.company.priceList && transaction.type.allowPriceList">
                     <b> Lista de Precio:</b>
                     <span *ngIf="transaction.company.priceList.name">{{transaction.company.priceList.name}}</span>
                 </div>
@@ -70,7 +70,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="item-header" *ngIf="transaction && transaction.company && !transaction.company.priceList">
+                <div class="item-header" *ngIf="transaction && transaction.company && !transaction.company.priceList && transaction.type.allowPriceList">
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-light" (click)="openModal('priceList')">
                             Lista de Precio: {{ transaction?.priceList?.name }}

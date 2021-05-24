@@ -4,185 +4,99 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Permission } from '../permission.model';
-import { PermissionService } from '../permission.service';
+import { Report } from '../report.model';
+import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
+import { ReportService } from '../report.service';
 import { ToastrService } from 'ngx-toastr';
 import { Title } from '@angular/platform-browser';
 import { CapitalizePipe } from 'app/main/pipes/capitalize';
-import { Subscription, Subject } from 'rxjs';
+import { Subscription, Subject, Observable, merge } from 'rxjs';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { FormField } from 'app/util/formField.interface';
 import * as $ from 'jquery';
 import { Config } from 'app/app.config';
+import { Article } from 'app/components/article/article';
+import { Category } from 'app/components/category/category';
+import { ArticleService } from 'app/components/article/article.service';
+import { EmailTemplate } from 'app/components/email-template/email-template';
+import { EmailService } from 'app/components/send-email/send-email.service';
+import { EmailTemplateService } from 'app/components/email-template/email-template.service';
 
 @Component({
-    selector: 'app-permission',
-    templateUrl: './permission.component.html',
-    styleUrls: ['./permission.component.scss'],
+    selector: 'app-report',
+    templateUrl: './report.component.html',
+    styleUrls: ['./report.component.scss'],
     providers: [NgbAlertConfig, TranslateMePipe, TranslatePipe],
     encapsulation: ViewEncapsulation.None
 })
 
-export class PermissionComponent implements OnInit {
+export class ReportComponent implements OnInit {
 
     public objId: string;
     public readonly: boolean;
     public operation: string;
-    public obj: Permission;
+    public obj: Report;
     public objForm: FormGroup;
-    public colecctions: FormArray;
     public loading: boolean = false;
+    public schedule: FormArray;
     public focusEvent = new EventEmitter<boolean>();
-    public title: string = 'permission';
+    public title: string = 'report';
     private subscription: Subscription = new Subscription();
     private capitalizePipe: CapitalizePipe = new CapitalizePipe();
     public focus$: Subject<string>[] = new Array();
     public stateId: number;
     public filesToUpload: any[] = new Array();
+    public filesToUploadHome: any[] = new Array();
     public filename: any[] = new Array();
     public typeFile: any[] = new Array();
-    public tables: string[] = ["empresas", "transacciones"];
     public oldFiles: any[];
     public apiURL: string = Config.apiV8URL;
     public database: string = Config.database;
+    public view;
+    public home: {
+        title: string,
+        view: string,
+        order: number,
+        resources: {
+            article: Article,
+            category: Category,
+            banner: string,
+            order: number,
+            link: string
+        }[]
+    }[]
+
+    public filesToArray: Array<File>;
+    public fileNamePrincipal: string;
+
+    public from;
+    public to;
+
 
     public formFields: FormField[] = [{
-        name: 'Datos de los permisos',
+        name: 'Datos del reporte',
         tag: 'separator',
         tagType: null,
         class: 'form-group col-md-12'
-    }, {
+    },{
         name: 'name',
         tag: 'input',
-        tagType: 'string',
+        tagType: 'text',
         validators: [Validators.required],
-        focus: true,
-        class: 'form-group col-md-2'
-    },
-    {
-        name: 'Menu',
-        tag: 'separator',
-        tagType: null,
-        class: 'form-group col-md-12'
-    },
-    {
-        name: 'menu.sales.counter',
+        class: 'form-group col-md-8'
+    },{
+        name: 'table',
         tag: 'select',
-        tagType: "boolean",
-        values: ['false', 'true'],
-        class: 'form-group col-md-2'
-    },
-    {
-        name: 'menu.sales.webOrders',
-        tag: 'select',
-        tagType: "boolean",
-        values: ['false', 'true'],
-        class: 'form-group col-md-2'
-    },
-    {
-        name: 'menu.sales.delivery',
-        tag: 'select',
-        tagType: "boolean",
-        values: ['false', 'true'],
-        class: 'form-group col-md-2'
-    },
-    {
-        name: 'menu.sales.voucherReader',
-        tag: 'select',
-        tagType: "boolean",
-        values: ['false', 'true'],
-        class: 'form-group col-md-2'
-    },
-    {
-        name: 'menu.sales.resto',
-        tag: 'select',
-        tagType: "boolean",
-        values: ['false', 'true'],
-        class: 'form-group col-md-2'
-    },
-    {
-        name: 'menu.purchases',
-        tag: 'select',
-        tagType: "boolean",
-        values: ['false', 'true'],
-        class: 'form-group col-md-2'
-    },
-    {
-        name: 'menu.stock',
-        tag: 'select',
-        tagType: "boolean",
-        values: ['false', 'true'],
-        class: 'form-group col-md-2'
-    },
-    {
-        name: 'menu.money',
-        tag: 'select',
-        tagType: "boolean",
-        values: ['false', 'true'],
-        class: 'form-group col-md-2'
-    },
-    {
-        name: 'menu.production',
-        tag: 'select',
-        tagType: "boolean",
-        values: ['false', 'true'],
-        class: 'form-group col-md-2'
-    },
-    {
-        name: 'menu.articles',
-        tag: 'select',
-        tagType: "boolean",
-        values: ['false', 'true'],
-        class: 'form-group col-md-2'
-    },
-    {
-        name: 'menu.companies.client',
-        tag: 'select',
-        tagType: "boolean",
-        values: ['false', 'true'],
-        class: 'form-group col-md-2'
-    },
-    {
-        name: 'menu.companies.provider',
-        tag: 'select',
-        tagType: "boolean",
-        values: ['false', 'true'],
-        class: 'form-group col-md-2'
-    },
-    {
-        name: 'menu.resto',
-        tag: 'select',
-        tagType: "boolean",
-        values: ['false', 'true'],
-        class: 'form-group col-md-2'
-    },
-    {
-        name: 'menu.gallery',
-        tag: 'select',
-        tagType: "boolean",
-        values: ['false', 'true'],
-        class: 'form-group col-md-2'
-    },
-    {
-        name: 'menu.report',
-        tag: 'select',
-        tagType: "boolean",
-        values: ['false', 'true'],
-        class: 'form-group col-md-2'
-    },
-    {
-        name: 'menu.config',
-        tag: 'select',
-        tagType: "boolean",
-        values: ['false', 'true'],
-        class: 'form-group col-md-2'
-    },
-    {
-        name: 'Permisos',
-        tag: 'separator',
-        tagType: null,
+        tagType: 'text',
+        values: ["Transaction"],
+        class: 'form-group col-md-4'
+    },{
+        name: 'query',
+        tag: 'textarea',
+        tagType: 'text',
+        validators: [Validators.required],
         class: 'form-group col-md-12'
     }];
     public formErrors: {} = {};
@@ -190,8 +104,44 @@ export class PermissionComponent implements OnInit {
         'required': 'Este campo es requerido.',
     };
 
+    public tinyMCEConfigBody = {
+        selector: "textarea",
+        theme: "modern",
+        paste_data_images: true,
+        plugins: [
+            "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+            "searchreplace wordcount visualblocks visualchars code fullscreen",
+            "insertdatetime media nonbreaking table contextmenu directionality",
+            "emoticons template paste textcolor colorpicker textpattern"
+        ],
+        toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | forecolor backcolor emoticons | print preview fullscreen",
+        image_advtab: true,
+        height: 150,
+        file_picker_types: 'file image media',
+        images_dataimg_filter: function (img) {
+            return img.hasAttribute('internal-blob');
+        },
+        file_picker_callback: function (callback, value, meta) {
+            if (meta.filetype == 'image') {
+                $('#upload').trigger('click');
+                $('#upload').on('change', function () {
+                    var file = this.files[0];
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        callback(e.target['result'], {
+                            alt: ''
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        },
+    }
+
     constructor(
-        private _objService: PermissionService,
+        private _objService: ReportService,
+        private _articleService: ArticleService,
+        private _emailTemplate: EmailTemplateService,
         private _toastr: ToastrService,
         private _title: Title,
         public _fb: FormBuilder,
@@ -200,7 +150,7 @@ export class PermissionComponent implements OnInit {
         public translatePipe: TranslateMePipe,
         private _router: Router,
     ) {
-        this.obj = new Permission();
+        this.obj = new Report();
         for (let field of this.formFields) {
             if (field.tag !== 'separator') {
                 this.formErrors[field.name] = '';
@@ -212,6 +162,8 @@ export class PermissionComponent implements OnInit {
                 }
             }
         }
+
+        this.home = new Array();
     }
 
     public async ngOnInit() {
@@ -246,6 +198,10 @@ export class PermissionComponent implements OnInit {
         this.subscription.unsubscribe();
     }
 
+    public getFiles(fieldName) {
+        return eval('this.obj?.' + fieldName.split('.').join('?.'));
+    }
+
     public onFileSelected(event, model: string) {
         this.filesToUpload[model] = event.target.files;
         this.filename[model] = '';
@@ -261,14 +217,12 @@ export class PermissionComponent implements OnInit {
     public buildForm(): void {
 
         let fields: {} = {
-            _id: [this.obj._id],
-            'collections': this._fb.array([])
+            _id: [this.obj._id]
         };
         for (let field of this.formFields) {
             if (field.tag !== 'separator') fields[field.name] = [this.obj[field.name], field.validators]
         }
         this.objForm = this._fb.group(fields);
-
         this.objForm.valueChanges
             .subscribe(data => this.onValueChanged(data));
         this.focusEvent.emit(true);
@@ -311,7 +265,7 @@ export class PermissionComponent implements OnInit {
                     let entro: boolean = false;
                     for (let f of field.name.split('.')) {
                         sumF += `['${f}']`;
-                        if (eval(`this.obj${sumF}`) == null || eval(`this.obj${sumF}`) == undefined) {
+                        if (eval(`this.obj${sumF}`) == null || eval(`this.obj${sumF}`) == undefined ) {
                             entro = true;
                             eval(`this.obj${sumF} = {}`);
                         }
@@ -335,59 +289,34 @@ export class PermissionComponent implements OnInit {
             }
         }
 
-        if (this.obj.collections && this.obj.collections.length > 0) {
-            let collections = <FormArray>this.objForm.controls.collections;
-            this.obj.collections.forEach(x => {
-
-                collections.push(this._fb.group({
-                    '_id': null,
-                    'name': x.name,
-                    'actions': x.actions
-                }))
-            })
-        }
-
         this.objForm.patchValue(values);
     }
 
-    public addCollection(collectionForm: NgForm): void {
-
-        let valid = true;
-        const collections = this.objForm.controls.collections as FormArray;
-
-        this.objForm.controls.collections.value.forEach(element => {
-            if (collectionForm.value.name == element.name) {
-                this.showToast("", "warning", "Esta regla ya existe")
-                valid = false;
-            }
-        });
-
-        if (collectionForm.value.add === "" || collectionForm.value.edit === "" || collectionForm.value.delete === "" || collectionForm.value.export === "") {
-            this.showToast("", "warning", "Debe completar todos los campos")
-            valid = false;
-        }
-
-        if (valid) {
-            collections.push(
-                this._fb.group({
-                    _id: null,
-                    name: collectionForm.value.name,
-                    actions: {
-                        add: collectionForm.value.add,
-                        edit: collectionForm.value.edit,
-                        delete: collectionForm.value.delete,
-                        export: collectionForm.value.export
+    public deleteFile(typeFile: string, fieldName: string, filename: string) {
+        this._objService.deleteFile(typeFile, fieldName.split('.')[fieldName.split('.').length - 1], filename).subscribe(
+            result => {
+                if (result.status === 200) {
+                    try {
+                        eval('this.obj.' + fieldName + ' = this.obj.' + fieldName + '.filter(item => item !== filename)');
+                    } catch (error) {
+                        eval('this.obj.' + fieldName + ' = null');
                     }
-                })
-            );
-            collectionForm.resetForm();
-        }
-
-    }
-
-    deleteCollection(index) {
-        let control = <FormArray>this.objForm.controls.collections;
-        control.removeAt(index)
+                    this.loading = true;
+                    this.subscription.add(
+                        this._objService.update(this.obj).subscribe(
+                            result => {
+                                this.showToast(result);
+                                this.setValuesForm();
+                            },
+                            error => this.showToast(error)
+                        )
+                    );
+                } else {
+                    this.showToast(result);
+                }
+            },
+            error => this.showToast(error)
+        )
     }
 
     public async addObj() {
@@ -445,9 +374,8 @@ export class PermissionComponent implements OnInit {
                         break;
                     case 'boolean':
                         this.obj[field.name] = this.obj[field.name] == 'true' || this.obj[field.name] == true;
-                        break;
                     case 'text':
-                        if(field.tag === 'autocomplete' && (this.obj[field.name] == "" || (this.obj[field.name] && !this.obj[field.name]['_id']))){
+                        if (field.tag === 'autocomplete' && (this.obj[field.name] == "" || (this.obj[field.name] && !this.obj[field.name]['_id']))) {
                             this.obj[field.name] = null;
                         }
                         break;
@@ -458,6 +386,11 @@ export class PermissionComponent implements OnInit {
         }
 
         if (isValid) {
+            this.obj['design.home'] = new Array();
+            this.home.forEach(element => {
+                this.obj['design.home'].push(element);
+            });
+
             switch (this.operation) {
                 case 'add':
                     this.saveObj();
@@ -474,35 +407,13 @@ export class PermissionComponent implements OnInit {
         }
     }
 
-    public deleteFile(typeFile: string, fieldName: string, filename: string) {
-        this._objService.deleteFile(typeFile, fieldName.split('.')[fieldName.split('.').length - 1], filename).subscribe(
-            result => {
-                if (result.status === 200) {
-                    eval('this.obj.' + fieldName + ' = this.obj.' + fieldName + '.filter(item => item !== filename)');
-                    this.loading = true;
-                    this.subscription.add(
-                        this._objService.update(this.obj).subscribe(
-                            result => {
-                                this.showToast(result);
-                            },
-                            error => this.showToast(error)
-                        )
-                    );
-                } else {
-                    this.showToast(result);
-                }
-            },
-            error => this.showToast(error)
-        )
-    }
-
     public saveObj() {
         this.loading = true;
         this.subscription.add(
             this._objService.save(this.obj).subscribe(
                 result => {
                     this.showToast(result);
-                    if (result.status === 200) this._router.navigate(['/permissions']);
+                    if (result.status === 200) this._router.navigate(['/reports']);
                 },
                 error => this.showToast(error)
             )
@@ -515,7 +426,7 @@ export class PermissionComponent implements OnInit {
             this._objService.update(this.obj).subscribe(
                 result => {
                     this.showToast(result);
-                    if (result.status === 200) this._router.navigate(['/permissions']);
+                    if (result.status === 200) this._router.navigate(['/reports']);
                 },
                 error => this.showToast(error)
             )
@@ -529,13 +440,20 @@ export class PermissionComponent implements OnInit {
                 async result => {
                     this.showToast(result);
                     if (result.status === 200) {
-                        this._router.navigate(['/permissions']);
+                        this._router.navigate(['/reports']);
                     }
                 },
                 error => this.showToast(error)
             )
         );
     }
+
+    public fileChangeEvent(fileInput: any, eCommerce: boolean): void {
+
+          this.filesToUploadHome = <Array<File>>fileInput.target.files;
+          this.fileNamePrincipal = this.filesToUploadHome[0].name;
+    
+      }
 
     public showToast(result, type?: string, title?: string, message?: string): void {
         if (result) {

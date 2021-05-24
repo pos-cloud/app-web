@@ -445,6 +445,12 @@ export class TransactionTypeComponent implements OnInit {
             values: ['true', 'false'],
             validators: [Validators.required],
             class: 'form-group col-md-4'
+        },{
+            name: 'allowPriceList',
+            tag: 'select',
+            tagType: 'boolean',
+            values: ['true', 'false'],
+            class: 'form-group col-md-4'
         },
         {
             name: 'requestEmployee',
@@ -937,7 +943,8 @@ export class TransactionTypeComponent implements OnInit {
                 "paymentMethods.name": 1,
                 "resetOrderNumber": 1,
                 "allowAccounting": 1,
-                "finishState": 1
+                "finishState": 1,
+                "allowPriceList" : 1
             }
 
             this.subscription.add(this._objService.getAll({

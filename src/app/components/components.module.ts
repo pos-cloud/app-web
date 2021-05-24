@@ -16,6 +16,7 @@ import { AccountModule } from './account/account.module';
 import { AccountPeriodModule } from './account-period/account-period.module';
 import { AccountSeatModule } from './account-seat/account-seat.module';
 import { VariantValueModule } from './variant-value/variant-value.module';
+import { ReportModule } from './report/report.module';
 
 @NgModule({
     imports: [
@@ -35,7 +36,8 @@ import { VariantValueModule } from './variant-value/variant-value.module';
         AccountModule,
         AccountPeriodModule,
         AccountSeatModule,
-        VariantValueModule
+        VariantValueModule,
+        ReportModule
     ],
     declarations: [
     ],

@@ -1,0 +1,58 @@
+<section class="container-fluid">
+    <div class="card card-large">
+      <div class="card-header">
+        <span style="color: #607D8B">{{title}}</span>
+        <div class="pull-right">
+         <!-- <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems()"></app-export-excel>-->
+         <button class="btn fa fa-refresh" (click)="processParams()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
+        </div>
+      </div>
+      <div class="card-block table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <ng-container *ngFor="let column of columns">
+                <th>{{ column.name | translate }}</th>
+              </ng-container>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
+            <tr *ngFor="let item of items">
+              <ng-container *ngFor="let column of columns">
+                <td [attr.align]="column.align">
+                  {{ getValue(item, column) }}
+                </td>
+              </ng-container>
+            </tr>
+            <tr align="center" *ngIf="items.length === 0 && !loading">
+              <td>{{ 'no data found' | translate | capitalize }} </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+     <!-- <div class="card-footer">
+        <div class="row">
+          <div class="col-md-10">
+            <pagination-controls class="my-pagination" (pageChange)="pageChange($event)" #api previousLabel="Ant." nextLabel="Sig."
+              autoHide="true">
+            </pagination-controls>
+          </div>
+          <div class="form-group col-md-2">
+            <select class="form-control" [(ngModel)]="itemsPerPage" (change)="changeItemsPerPage()">
+              <option [value]="5">{{'show 5 records' | translate | capitalize}}</option>
+              <option [value]="10">{{'show 10 records' | translate | capitalize}}</option>
+              <option [value]="20">{{'show 20 records' | translate | capitalize}}</option>
+              <option [value]="50">{{'show 50 records' | translate | capitalize}}</option>
+              <option [value]="100">{{'show 100 records' | translate | capitalize}}</option>
+            </select>
+          </div>
+        </div>
+      </div>-->
+    </div>
+  </section>
+  

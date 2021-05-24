@@ -217,7 +217,8 @@ public formatterAccounts = (x: Account) => { return x.description; };
       'mercadopagoAccessToken' : [this.paymentMethod.mercadopagoAccessToken,[]],
       'whatsappNumber': [this.paymentMethod.whatsappNumber, []],
       'applications': this._fb.array([]),
-      'account' : [this.paymentMethod.account,[]]
+      'account' : [this.paymentMethod.account,[]],
+      'expirationDays' : [this.paymentMethod.expirationDays,[]]
     });
 
     this.paymentMethodForm.valueChanges
@@ -323,6 +324,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
     if (!this.paymentMethod.whatsappNumber) this.paymentMethod.whatsappNumber = null;
     if (!this.paymentMethod.observation) this.paymentMethod.observation = '';
     if (!this.paymentMethod.account) this.paymentMethod.account = null;
+    if (!this.paymentMethod.expirationDays) this.paymentMethod.expirationDays = 30;
 
     this.paymentMethodForm.patchValue({
       '_id': this.paymentMethod._id,
@@ -357,7 +359,8 @@ public formatterAccounts = (x: Account) => { return x.description; };
       'mercadopagoAccessToken' : this.paymentMethod.mercadopagoAccessToken,
       'whatsappNumber': this.paymentMethod.whatsappNumber,
       'checkPerson': this.paymentMethod.checkPerson,
-      'account' : this.paymentMethod.account
+      'account' : this.paymentMethod.account,
+      'expirationDays' : this.paymentMethod.expirationDays
     });
   }
 

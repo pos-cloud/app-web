@@ -151,12 +151,17 @@
                 </div>
             </div>
             <div class="row">
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-3">
                     <label for="isCurrentAccount" class="control-label">¿Es de tipo cuenta corriente?</label>
                     <select class="form-control" formControlName="isCurrentAccount">
                         <option [disabled]="readonly" value="true">Si</option>
                         <option [disabled]="readonly" value="false" selected>No</option>
                     </select>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="expirationDays" class="control-label">¿Días de Vencimiento?</label>
+                    <input type="number" class="form-control" formControlName="expirationDays" name="expirationDays"
+                            id="expirationDays" [readonly]="readonly" />
                 </div>
                 <div class="form-group col-md-6">
                     <label for="acceptReturned" class="control-label">¿Acepta vuelto?</label>
