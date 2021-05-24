@@ -152,6 +152,7 @@ export class LoginComponent implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.showMessage("Ingresando...", 'success', false);
+          this._userService.setUserPos(result.user);
           this._authService.loginStorage(result.user);
           this.initSocket();
           await this.getConfigApi().then(
