@@ -82,7 +82,6 @@ export class HeaderComponent {
         // VERIFICAR LOGUEO Y CARGAR DATOS DE USUARIO
         this.config$ = this._configService.getConfig;
         this.identity$ = this._authService.getIdentity;
-        this.user$ = this._userService.getUserPos;
 
         this._router.events.forEach((event: NavigationEvent) => {
             if (event instanceof NavigationStart) {
