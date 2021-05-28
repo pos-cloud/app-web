@@ -32,16 +32,16 @@ export class HeaderComponent {
 
     public config$: any;
     public identity$: Observable<User>;
+    public user$: Observable<User>;
     public online$: Observable<boolean>;
     public online: boolean = true;
-    public hideMenu: boolean;
+    public hideMenu: boolean = true;
     public sessionTimer: any;
     public pathLocation: string[];
     public isReportVisible: boolean;
     public readedNotification: boolean;
     public intervalSocket;
     public notificationMessage: string;
-    public user: User;
     constructor(
         private _authService: AuthService,
         public _configService: ConfigService,
@@ -109,7 +109,7 @@ export class HeaderComponent {
         // });
 
         this.initSocket();
-        this.getUser();
+        
     }
 
     public ngAfterViewInit() {
@@ -117,26 +117,6 @@ export class HeaderComponent {
             this.readedNotification = false;
             this.notificationMessage = localStorage.getItem('notificationMessage');
         }, 3000);
-    }
-
-    public getUser() {
-
-        var identity: User = JSON.parse(sessionStorage.getItem('user'));
-        if (identity) {
-            this._userService.getUser(identity._id).subscribe(
-                result => {
-                    if (result && result.user) {
-                        this.user = result.user;
-                        //console.log(this.user);
-                    } else {
-                        this.showToast("Debe volver a iniciar sesión", "danger");
-                    }
-                },
-                error => {
-                    this.showToast(error._body, "danger");
-                }
-            )
-        }
     }
 
     private initSocket(): void {

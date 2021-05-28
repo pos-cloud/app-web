@@ -95,6 +95,9 @@ export class ListArticleStocksComponent implements OnInit {
 
         this.database = Config.database;
 
+        if(localStorage.getItem('project-list-article-stock')){
+            this.columns = JSON.parse(localStorage.getItem('project-list-article-stock'));
+        }
 
         this.getPriceList()
         let pathLocation: string[] = this._router.url.split('/');
@@ -200,6 +203,7 @@ export class ListArticleStocksComponent implements OnInit {
                         this.totalItems = result[0].count;
                         this.getSum();
                     }
+                    localStorage.setItem('project-list-article-stock', JSON.stringify(this.columns));
                 } else {
                     this.items = new Array();
                     this.totalItems = 0;

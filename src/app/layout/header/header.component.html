@@ -16,35 +16,35 @@
                 <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
                     <i class="fa fa-fax"></i> Ventas</a>
                 <div class="dropdown-menu" ngbDropdownMenu>
-                    <div *ngIf="config.modules.sale.resto && user?.permission?.menu?.sales?.resto">
+                    <div *ngIf="config.modules.sale.resto && identity?.permission?.menu?.sales?.resto">
                         <button class="dropdown-item" [routerLink]="['pos','resto']" [routerLinkActive]="['active']">
                             Resto
                         </button>
                     </div>
-                    <div *ngIf="config.modules.sale.counter && user?.permission?.menu?.sales?.counter">
+                    <div *ngIf="config.modules.sale.counter && identity?.permission?.menu?.sales?.counter">
                         <button class="dropdown-item" [routerLink]="['pos','mostrador','venta']"
                             [routerLinkActive]="['active']">
                             Mostrador
                         </button>
                     </div>
-                    <div *ngIf="config.modules.sale.delivery && user?.permission?.menu?.sales?.delivery">
+                    <div *ngIf="config.modules.sale.delivery && identity?.permission?.menu?.sales?.delivery">
                         <button class="dropdown-item" [routerLink]="['pos','delivery']" [routerLinkActive]="['active']">
                             Delivery
                         </button>
                     </div>
-                    <div *ngIf="user?.permission?.menu?.sales?.voucherReader">
+                    <div *ngIf="identity?.permission?.menu?.sales?.voucherReader">
                         <button class="dropdown-item" [routerLink]="['pos','lector-de-vouchers']"
                             [routerLinkActive]="['active']">
                             Lector de Vouchers
                         </button>
                     </div>
-                    <div *ngIf="config.modules.app && user?.permission?.menu?.sales?.webOrders">
+                    <div *ngIf="config.modules.app && identity?.permission?.menu?.sales?.webOrders">
                         <button class="dropdown-item" [routerLink]="['pos','pedidos-web']"
                             [routerLinkActive]="['active']">
                             Pedidos Web
                         </button>
                     </div>
-                    <div *ngIf="config.modules.app && user?.permission?.menu?.sales?.webOrders">
+                    <div *ngIf="config.modules.app && identity?.permission?.menu?.sales?.webOrders">
                         <button class="dropdown-item" [routerLink]="['pos','carritos-abandonados']"
                             [routerLinkActive]="['active']">
                             Carritos Abandonados
@@ -52,13 +52,13 @@
                     </div>
                 </div>
             </li>
-            <li class="nav-item" *ngIf="user?.permission?.menu?.purchases && config.modules.purchase"
+            <li class="nav-item" *ngIf="identity?.permission?.menu?.purchases && config.modules.purchase"
                 (click)="makeVisibleReport(false)">
                 <a class="nav-link btn" data-toggle="collapse" [routerLink]="['pos','mostrador','compra']"
                     [routerLinkActive]="['active-primary']">
                     <i class="fa fa-clipboard"></i> Compras</a>
             </li>
-            <li class="nav-item" ngbDropdown *ngIf="user?.permission?.menu?.money && config.modules.money"
+            <li class="nav-item" ngbDropdown *ngIf="identity?.permission?.menu?.money && config.modules.money"
                 (click)="makeVisibleReport(false)">
                 <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
                     <i class="fa fa-money"></i> Fondos</a>
@@ -76,8 +76,9 @@
                     </div>
                 </div>
             </li>
-            <li class="nav-item" ngbDropdown *ngIf="user?.permission?.menu?.production &&
-                  (config.modules.production && config.modules.production.kitchen)" (click)="makeVisibleReport(false)">
+            <li class="nav-item" ngbDropdown *ngIf="identity?.permission?.menu?.production &&
+                      (config.modules.production && config.modules.production.kitchen)"
+                (click)="makeVisibleReport(false)">
                 <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
                     <i class="fa fa-paste"></i> Producción</a>
                 <div class="dropdown-menu" ngbDropdownMenu>
@@ -88,13 +89,13 @@
                     </div>
                 </div>
             </li>
-            <li class="nav-item" *ngIf="user?.permission?.menu?.stock && config.modules.stock"
+            <li class="nav-item" *ngIf="identity?.permission?.menu?.stock && config.modules.stock"
                 (click)="makeVisibleReport(false)">
                 <a class="nav-link btn" [routerLink]="['pos','mostrador','stock']"
                     [routerLinkActive]="['active-primary']">
                     <i class="fa fa-dropbox"></i> Stock</a>
             </li>
-            <li class="nav-item" ngbDropdown *ngIf="user?.permission?.menu?.articles"
+            <li class="nav-item" ngbDropdown *ngIf="identity?.permission?.menu?.articles"
                 (click)="makeVisibleReport(false)">
                 <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
                     <i class="fa fa-shopping-basket"></i> Productos</a>
@@ -146,19 +147,19 @@
                 </div>
             </li>
             <li class="nav-item" ngbDropdown
-                *ngIf="user?.permission?.menu?.companies?.client || user?.permission?.menu?.companies?.providers"
+                *ngIf="identity?.permission?.menu?.companies?.client || identity?.permission?.menu?.companies?.providers"
                 (click)="makeVisibleReport(false)">
                 <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
                     <i class="fa fa-male"></i> Empresas</a>
                 <div class="dropdown-menu" ngbDropdownMenu>
-                    <div *ngIf="user?.permission?.menu?.companies?.client">
+                    <div *ngIf="identity?.permission?.menu?.companies?.client">
                         <button class="dropdown-item" [routerLink]="['admin','clientes']"
                             [routerLinkActive]="['active']">
                             Clientes
                         </button>
                         <div *ngIf="(config.modules.sale.resto ||
-                      config.modules.sale.counter ||
-                      config.modules.sale.delivery) || identity.name === 'soporte'">
+                          config.modules.sale.counter ||
+                          config.modules.sale.delivery) || identity.name === 'soporte'">
                             <button class="dropdown-item" (click)="openModal('current','Cliente')">
                                 Resúmenes de Cuentas
                             </button>
@@ -169,7 +170,7 @@
                         </div>
                         <div *ngIf="config.modules.purchase" class="dropdown-divider"></div>
                     </div>
-                    <div *ngIf="config.modules.purchase && user?.permission?.menu?.companies?.provider">
+                    <div *ngIf="config.modules.purchase && identity?.permission?.menu?.companies?.provider">
                         <button class="dropdown-item" [routerLink]="['admin','proveedores']"
                             [routerLinkActive]="['active']">
                             Proveedores
@@ -194,7 +195,8 @@
                     </button>
                 </div>
             </li>
-            <li class="nav-item" ngbDropdown *ngIf="user?.permission?.menu?.resto && config.modules.sale.resto" (click)="makeVisibleReport(false)">
+            <li class="nav-item" ngbDropdown *ngIf="identity?.permission?.menu?.resto && config.modules.sale.resto"
+                (click)="makeVisibleReport(false)">
                 <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
                     <i class="fa fa-cutlery"></i> Resto</a>
                 <div class="dropdown-menu" ngbDropdownMenu>
@@ -206,8 +208,7 @@
                     </button>
                 </div>
             </li>
-            <li class="nav-item" ngbDropdown
-                *ngIf="(user?.permission?.menu?.gallery && config.modules.gallery)"
+            <li class="nav-item" ngbDropdown *ngIf="(identity?.permission?.menu?.gallery && config.modules.gallery)"
                 (click)="makeVisibleReport(false)">
                 <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
                     <i class="fa fa-image"></i> Contenido</a>
@@ -226,16 +227,12 @@
                     </div>
                 </div>
             </li>
-            <li class="nav-item" ngbDropdown
-                *ngIf="user?.permission?.menu?.report"
-                (click)="makeVisibleReport(true)">
+            <li class="nav-item" ngbDropdown *ngIf="identity?.permission?.menu?.report" (click)="makeVisibleReport(true)">
                 <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
                     <i class="fa fa-bar-chart"></i> Reportes
                 </a>
             </li>
-            <li class="nav-item" ngbDropdown
-                *ngIf="user?.permission?.menu?.config"
-                (click)="makeVisibleReport(false)">
+            <li class="nav-item" ngbDropdown *ngIf="identity?.permission?.menu?.config" (click)="makeVisibleReport(false)">
                 <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
                     <i class="fa fa-gears"></i> Configuración</a>
                 <div class="dropdown-menu" ngbDropdownMenu>
@@ -263,14 +260,14 @@
                         Usuarios Web
                     </button>
                     <button *ngIf="(config.modules.sale.resto ||
-                      config.modules.sale.counter ||
-                      config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
+                          config.modules.sale.counter ||
+                          config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
                         [routerLink]="['admin','empleados']" [routerLinkActive]="['active']">
                         Empleados
                     </button>
                     <button *ngIf="(config.modules.sale.resto ||
-                      config.modules.sale.counter ||
-                      config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
+                          config.modules.sale.counter ||
+                          config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
                         [routerLink]="['admin','tipos-de-empleado']" [routerLinkActive]="['active']">
                         Tipos de Empleado
                     </button>
@@ -280,14 +277,14 @@
                     </button>
                     <div class="dropdown-divider"></div>
                     <button *ngIf="(config.modules.sale.resto ||
-                      config.modules.sale.counter ||
-                      config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
+                          config.modules.sale.counter ||
+                          config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
                         [routerLink]="['admin','sucursales']" [routerLinkActive]="['active']">
                         Sucursales
                     </button>
                     <button *ngIf="(config.modules.sale.resto ||
-                      config.modules.sale.counter ||
-                      config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
+                          config.modules.sale.counter ||
+                          config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
                         [routerLink]="['admin','puntos-de-venta']" [routerLinkActive]="['active']">
                         Puntos de venta
                     </button>
@@ -296,8 +293,8 @@
                         {{ 'transaction-types' | translate | capitalize }}
                     </button>
                     <button *ngIf="(config.modules.sale.resto ||
-                      config.modules.sale.counter ||
-                      config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
+                          config.modules.sale.counter ||
+                          config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
                         [routerLink]="['admin','tipos-de-cancelaciones']" [routerLinkActive]="['active']">
                         Tipos de Cancelaciones
                     </button>
@@ -313,15 +310,15 @@
                     </button>
                     <div class="dropdown-divider"></div>
                     <button *ngIf="(config.modules.sale.resto ||
-                      config.modules.sale.counter ||
-                      config.modules.sale.delivery) || identity.name === 'soporte' && config.country === 'MX'"
+                          config.modules.sale.counter ||
+                          config.modules.sale.delivery) || identity.name === 'soporte' && config.country === 'MX'"
                         class="dropdown-item" [routerLink]="['admin','tipos-de-relacion']"
                         [routerLinkActive]="['active']">
                         Tipos de Relaciones
                     </button>
                     <button *ngIf="(config.modules.sale.resto ||
-                      config.modules.sale.counter ||
-                      config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
+                          config.modules.sale.counter ||
+                          config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
                         [routerLink]="['admin','tipos-de-identificacion']" [routerLinkActive]="['active']">
                         Tipos de Identificación
                     </button>
@@ -342,32 +339,32 @@
                         Impuestos
                     </button>
                     <button *ngIf="(config.modules.sale.resto ||
-                      config.modules.sale.counter ||
-                      config.modules.sale.delivery) || identity.name === 'soporte' && config.country === 'MX'"
+                          config.modules.sale.counter ||
+                          config.modules.sale.delivery) || identity.name === 'soporte' && config.country === 'MX'"
                         class="dropdown-item" [routerLink]="['admin','usos-de-cfdi']" [routerLinkActive]="['active']">
                         Usos de CFDI
                     </button>
                     <button *ngIf="(config.modules.sale.resto ||
-                      config.modules.sale.counter ||
-                      config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
+                          config.modules.sale.counter ||
+                          config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
                         [routerLink]="['cash-box-types']" [routerLinkActive]="['active']">
                         Tipos de caja
                     </button>
                     <button *ngIf="(config.modules.sale.resto ||
-                      config.modules.sale.counter ||
-                      config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
+                          config.modules.sale.counter ||
+                          config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
                         [routerLink]="['admin','bancos']" [routerLinkActive]="['active']">
                         Bancos
                     </button>
                     <button *ngIf="(config.modules.sale.resto ||
-                      config.modules.sale.counter ||
-                      config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
+                          config.modules.sale.counter ||
+                          config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
                         [routerLink]="['admin','monedas']" [routerLinkActive]="['active']">
                         Monedas
                     </button>
                     <button *ngIf="(config.modules.sale.resto ||
-                      config.modules.sale.counter ||
-                      config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
+                          config.modules.sale.counter ||
+                          config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
                         [routerLink]="['admin','currency-values']" [routerLinkActive]="['active']">
                         Tipos de Monedas
                     </button>
@@ -380,8 +377,8 @@
                         Países
                     </button>
                     <button *ngIf="(config.modules.sale.resto ||
-                      config.modules.sale.counter ||
-                      config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
+                          config.modules.sale.counter ||
+                          config.modules.sale.delivery) || identity.name === 'soporte'" class="dropdown-item"
                         [routerLink]="['admin','transports']" [routerLinkActive]="['active']">
                         Transportes
                     </button>
