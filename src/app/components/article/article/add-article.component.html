@@ -27,9 +27,6 @@
                                                 <label for="order" class="control-label">Orden:</label>
                                                 <input type="number" class="form-control" formControlName="order"
                                                     name="order" id="order" [readonly]="readonly" />
-                                                <div *ngIf="formErrors.order" class="alert alert-danger">
-                                                    {{ formErrors.order }}
-                                                </div>
                                             </div>
                                             <div class="form-group col-md-5">
                                                 <label for="code" class="control-label">Código Interno:</label>
@@ -124,9 +121,6 @@
                                         <label for="quantityPerMeasure" class="control-label">Cantidad:</label>
                                         <input type="text" class="form-control" formControlName="quantityPerMeasure"
                                             name="quantityPerMeasure" id="quantityPerMeasure" [readonly]="readonly" />
-                                        <div *ngIf="formErrors.quantityPerMeasure" class="alert alert-danger">
-                                            {{ formErrors.quantityPerMeasure }}
-                                        </div>
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label for="printIn" class="control-label">Imprime en:</label>
@@ -167,14 +161,11 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div *ngIf="config.country === 'MX'" class="row">
+                                <div *ngIf="config['country'] === 'MX'" class="row">
                                     <div class="form-group col-md-12">
                                         <label for="codeSAT" class="control-label">Código SAT:</label>
                                         <input type="text" class="form-control" formControlName="codeSAT" name="codeSAT"
                                             id="codeSAT" [readonly]="readonly" />
-                                        <div *ngIf="formErrors.codeSAT" class="alert alert-danger">
-                                            {{ formErrors.codeSAT }}
-                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -338,9 +329,6 @@
                                     <input type="number" class="form-control" formControlName="minStock"
                                         name="minStock" id="minStock" step="1" [readonly]="readonly" />
                                 </div>
-                                <div *ngIf="formErrors.minStock" class="alert alert-danger">
-                                    {{ formErrors.minStock }}
-                                </div>
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="maxStock" class="control-label">Stock Maximo:</label>
@@ -348,18 +336,12 @@
                                     <input type="number" class="form-control" formControlName="maxStock"
                                         name="maxStock" id="maxStock" step="1" [readonly]="readonly" />
                                 </div>
-                                <div *ngIf="formErrors.maxStock" class="alert alert-danger">
-                                    {{ formErrors.maxStock }}
-                                </div>
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="pointOfOrder" class="control-label">Punto de pedido:</label>
                                 <div class="input-group">
                                     <input type="number" class="form-control" formControlName="pointOfOrder"
                                         name="pointOfOrder" id="pointOfOrder" step="1" [readonly]="readonly" />
-                                </div>
-                                <div *ngIf="formErrors.pointOfOrder" class="alert alert-danger">
-                                    {{ formErrors.pointOfOrder }}
                                 </div>
                             </div>
                         </div>
@@ -484,22 +466,19 @@
                                             [disabled]="readonly">
                                             {{articleField.name}} </option>
                                     </select>
-                                    <div *ngIf="formErrors.articleField" class="alert alert-danger">
-                                        {{ formErrors.articleField }}
-                                    </div>
                                 </div>
                                 <div *ngIf="articleFieldSelected" class="form-group col-md-3">
                                     <label for="value" class="control-label">Valor</label>
                                     <select
-                                        *ngIf="articleFieldSelected.datatype === 'Lista' && articleFieldValues.length > 0"
+                                        *ngIf="articleFieldSelected.datatype.toString() === 'Lista' && articleFieldValues.length > 0"
                                         class="form-control" [(ngModel)]="value" name="value">
                                         <option *ngFor="let value of articleFieldValues" [disabled]="readonly">{{value}}
                                         </option>
                                     </select>
                                     <input class="form-control" type="number"
-                                        *ngIf="articleFieldSelected.datatype === 'Porcentaje' || articleFieldSelected.datatype === 'Número'"
+                                        *ngIf="articleFieldSelected.datatype.toString() === 'Porcentaje' || articleFieldSelected.datatype.toString() === 'Número'"
                                         [(ngModel)]="value" name="value">
-                                    <input class="form-control" *ngIf="articleFieldSelected.datatype === 'Alfabético'"
+                                    <input class="form-control" *ngIf="articleFieldSelected.datatype.toString() === 'Alfabético'"
                                         type="text" [(ngModel)]="value" name="value">
                                 </div>
                                 <div class="form-group col-md-2">
@@ -546,9 +525,6 @@
                                 <label for="url" class="control-label">URL:</label>
                                 <input type="text" class="form-control" formControlName="url" name="url" id="url"
                                     (blur)="loadURL()" [readonly]="readonly" />
-                                <div *ngIf="formErrors.url" class="alert alert-danger">
-                                    {{ formErrors.url }}
-                                </div>
                             </div>
                         </div>
                         <div class="row">

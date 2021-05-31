@@ -87,6 +87,7 @@ export class AddMeliAttrsComponent implements OnInit {
     public buildForm(): void {
 
         let fields: {} = {
+            'meliId': [this.article.meliId],
             'category': [this.categorySelected],
             'description.plain_text': [this.article.meliAttrs.description.plain_text],
             'listing_type_id': [this.article.meliAttrs.listing_type_id],
@@ -167,6 +168,7 @@ export class AddMeliAttrsComponent implements OnInit {
     public setValueForm(): void {
 
         const values = {
+            'meliId': this.article.meliId,
             'category': this.article.meliAttrs.category,
             'description.plain_text': this.article.meliAttrs.description.plain_text,
             'listing_type_id': this.article.meliAttrs.listing_type_id,
@@ -227,6 +229,7 @@ export class AddMeliAttrsComponent implements OnInit {
                     }
                 }).catch(error => this.showToast(error));
         }
+        this.article.meliId = this.meliAttrs.value.meliId;
         this.article.meliAttrs.category = this.meliAttrs.value.category;
         this.article.meliAttrs.description.plain_text = this.meliAttrs.value['description.plain_text'];
         this.article.meliAttrs.listing_type_id = this.meliAttrs.value.listing_type_id;

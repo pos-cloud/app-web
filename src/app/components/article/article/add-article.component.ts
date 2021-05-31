@@ -513,7 +513,8 @@ export class AddArticleComponent implements OnInit {
       'purchaseAccount': [this.article.purchaseAccount, []],
       'minStock': [this.article.minStock, []],
       'maxStock': [this.article.maxStock, []],
-      'pointOfOrder': [this.article.pointOfOrder, []]
+      'pointOfOrder': [this.article.pointOfOrder, []],
+      'meliId': [this.article.meliId, []]
     });
 
     this.articleForm.valueChanges.subscribe(data => this.onValueChanged(data));
@@ -756,10 +757,8 @@ export class AddArticleComponent implements OnInit {
           this.loading = false;
         } else {
           this.hideMessage();
-          console.log(result.article.meliAttrs);
           this.article = result.article;
           this.meliAttrs = this.article.meliAttrs;
-          console.log(this.article.meliAttrs, this.meliAttrs);
           this.notes = this.article.notes;
           this.tags = this.article.tags;
           this.taxes = this.article.taxes;
@@ -1558,6 +1557,8 @@ export class AddArticleComponent implements OnInit {
   }
 
   eventAddMeliAttrs(article: Article) {
+    this.article.meliId = article.meliId;
+    this.articleForm.patchValue({ meliId: this.article.meliId });
     this.meliAttrs = article.meliAttrs;
   }
 
@@ -1644,6 +1645,7 @@ export class AddArticleComponent implements OnInit {
                     }
                     this.filesToUpload = null;
                     this.loading = false;
+                    this.articleForm.patchValue({ meliId: this.article.meliId });
                     this.showMessage('El producto se ha actualizado con éxito.', 'success', false);
                   },
                   (error) => {
