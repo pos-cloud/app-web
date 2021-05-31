@@ -257,6 +257,7 @@
                                     <th>Banco</th>
                                     <th>Monto</th>
                                     <th>Saldo</th>
+                                    <th>Vuelto</th>
                                     <th>Observación</th>
                                     <th>Tasa de Servicios Diaria</th>
                                     <th>Gasto Admin.</th>
@@ -277,6 +278,7 @@
                                     <td>{{movementOfCash.amountPaid | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                                     <td>{{(movementOfCash.amountPaid - movementOfCash.balanceCanceled) |
                                         currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                                    <td>{{movementOfCash?.paymentChange | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                                     <td style="white-space: normal;">{{movementOfCash.observation}}</td>
                                     <td>{{movementOfCash.commissionAmount | currency:'USD':'symbol-narrow':'1.2-2'}}
                                     </td>
