@@ -116,7 +116,8 @@ export class SendEmailComponent implements OnInit {
     this.sendEmailForm.setValue({
       'emails': this.emails || '',
       'subject': this.subject || '', 
-      'body': this.body || ''
+      'body': this.body || '',
+      'attachments': this.attachments || ''
     });
   }
 
@@ -138,7 +139,7 @@ export class SendEmailComponent implements OnInit {
           Validators.required
         ]
       ],
-      'attachment' : ["",[]]
+      'attachments' : ["",[]]
     });
 
     this.sendEmailForm.valueChanges
@@ -168,8 +169,7 @@ export class SendEmailComponent implements OnInit {
   public sendEmail (): void {
     
     this.loading = true;
-
-    this.sendEmailForm.value.attachment = this.attachments;
+    this.sendEmailForm.value.attachments = this.attachments;
 
     this._serviceEmail.sendEmail(this.sendEmailForm.value).subscribe(
       result => {
