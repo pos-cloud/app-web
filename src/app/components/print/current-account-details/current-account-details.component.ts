@@ -169,6 +169,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
             'address': ['', []],
             'emails': ['', []],
             'company': ['', []],
+            'endDate': [null, []],
             'employee': ['', []],
             'withDetails': [false, [
                 Validators.required
@@ -584,17 +585,15 @@ export class CurrentAccountDetailsComponent implements OnInit {
             match += `"company.employee._id": { "$oid" : "${this.companyForm.value.employee}"},`
         }
 
-        /*if (this.startDate && this.endDate) {
+        if (this.companyForm.value.endDate) {
 
             let timezone = "-03:00";
             if (Config.timezone && Config.timezone !== '') {
                 timezone = Config.timezone.split('UTC')[1];
             }
 
-            match += `"endDate" : { "$gte": {"$date": "${this.startDate}T00:00:00${timezone}"},
-                                    "$lte": {"$date": "${this.endDate}T00:00:00${timezone}"}
-                                },`
-        }*/
+            match += `"transaction.endDate" : { "$lte": {"$date": "${this.companyForm.value.endDate}T23:59:59${timezone}"}},`
+        }
 
 
         match += `  "balance" : { "$gt" : 0 },`
@@ -640,8 +639,8 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 if (result) {
                     this.items = result;
                     this.print();
-                    this.loading = false;
                 }
+                this.loading = false;
             },
             error => {
                 this.showMessage(error._body, 'danger', false);
@@ -1104,17 +1103,15 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 match += `"transaction.company.employee._id": { "$oid" : "${this.companyForm.value.employee}"},`
             }
 
-            /*if (this.startDate && this.endDate) {
+            if (this.companyForm.value.endDate) {
     
                 let timezone = "-03:00";
                 if (Config.timezone && Config.timezone !== '') {
                     timezone = Config.timezone.split('UTC')[1];
                 }
     
-                match += `"endDate" : { "$gte": {"$date": "${this.startDate}T00:00:00${timezone}"},
-                                        "$lte": {"$date": "${this.endDate}T00:00:00${timezone}"}
-                                    },`
-            }*/
+                match += `"transaction.endDate" : { "$lte": {"$date": "${this.companyForm.value.endDate}T23:59:59${timezone}"}},`
+            }
 
 
             match += `      "$or": [{ "type.isCurrentAccount": true }, { "transaction.type.currentAccount": "Cobra" }],
