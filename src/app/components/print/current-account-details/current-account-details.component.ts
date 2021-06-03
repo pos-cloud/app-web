@@ -18,6 +18,8 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { MovementOfCashService } from 'app/components/movement-of-cash/movement-of-cash.service';
 import { Employee } from 'app/components/employee/employee';
 import { ConfigService } from 'app/components/config/config.service';
+import { TransactionType } from 'app/components/transaction-type/transaction-type';
+import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
 
 var splitRegex = /\r\n|\r|\n/g;
 jsPDF.API.textEx = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
@@ -77,9 +79,6 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
     @Input() companyType: CompanyType;
     @Input() filterCompanyType;
-    @Input() startDate;
-    @Input() endDate;
-
 
     public searchCompanies = (text$: Observable<string>) =>
         text$.pipe(
@@ -128,10 +127,30 @@ export class CurrentAccountDetailsComponent implements OnInit {
     public validationMessages = {
     };
 
+    public transactionTypes: TransactionType[];
+    public transactionTypesSelect;
+    public dropdownSettings = {
+        "singleSelection": false,
+        "defaultOpen": false,
+        "idField": "_id",
+        "textField": "name",
+        "selectAllText": "Select All",
+        "unSelectAllText": "UnSelect All",
+        "enableCheckAll": true,
+        "itemsShowLimit": 1,
+        "allowSearchFilter": true
+    }
+
+    public startDate : string;
+    public endDate : string;
+    public employee;
+    public withDetails;
+
     constructor(
         public _transactionService: TransactionService,
         public _movementOfCashService: MovementOfCashService,
         public _configService: ConfigService,
+        public _transactionTypeService: TransactionTypeService,
         public _employeeService: EmployeeService,
         public _fb: FormBuilder,
         public _router: Router,
@@ -140,6 +159,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
         public alertConfig: NgbAlertConfig,
         private domSanitizer: DomSanitizer
     ) {
+        this.transactionTypesSelect = new Array();
         this.pageWidth = 210 * 100 / 35.27751646284102;
         this.pageHigh = 297 * 100 / 35.27751646284102;
         this.getEmployees();
@@ -152,6 +172,14 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 this.config = config;
             }
         );
+
+        await this.getTransactionTypes().then(
+            result => {
+                if (result) {
+                    this.transactionTypes = result
+                }
+            }
+        )
 
         let pathLocation: string[] = this._router.url.split('/');
         this.userType = pathLocation[1];
@@ -169,7 +197,6 @@ export class CurrentAccountDetailsComponent implements OnInit {
             'address': ['', []],
             'emails': ['', []],
             'company': ['', []],
-            'endDate': [null, []],
             'employee': ['', []],
             'withDetails': [false, [
                 Validators.required
@@ -651,6 +678,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
     }
 
     public print(): void {
+
         let page = 1;
         let row = 15;
         this.doc.setFontSize(this.fontSizes.extraLarge)
@@ -703,7 +731,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
             this.doc.setLineWidth(0.5);
             this.doc.line(0, row, 1000, row);
             row += 5;
-            if (this.companyForm.value.withDetails === 'true') {
+            if (this.withDetails) {
 
                 this.doc.text(5, row, "Fecha");
                 this.doc.text(30, row, "Tipo");
@@ -721,7 +749,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
             let acumulado = 0;
             for (let transaction of this.items[i].transactions) {
 
-                if (this.companyForm.value.withDetails === 'true') {
+                if (this.withDetails) {
                     this.doc.text(5, row, transaction['endDate2']);
                     if (transaction.type.labelPrint) {
                         this.doc.text(30, row, transaction.type.labelPrint);
@@ -835,10 +863,12 @@ export class CurrentAccountDetailsComponent implements OnInit {
                         "transaction.type.movement": 1,
                         "transaction.type.labelPrint": 1,
                         "transaction.type.name": 1,
+                        "transaction.type._id": 1,
                         "transaction.state": 1,
                         "transaction.operationType": 1,
                         "transaction.number": 1,
                         "transaction.origin": 1,
+                        "transaction.totalPrice" : 1,
                         "transaction.letter": 1,
                         "trasaction.expirationDate": 1,
                         "transaction.endDate": 1,
@@ -1095,34 +1125,41 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
             let match = `{`;
 
-
-            if (this.companyForm.value.company) {
-                match += `"transaction.company._id": { "$oid" : "${this.companyForm.value.company._id}"},`
-            }
-            if (this.companyForm.value.employee) {
-                match += `"transaction.company.employee._id": { "$oid" : "${this.companyForm.value.employee}"},`
+            if (this.employee) {
+                match += `"transaction.company.employee._id": { "$oid" : "${this.employee}"},`
             }
 
-            if (this.companyForm.value.endDate) {
+            if (this.startDate && this.endDate) {
     
                 let timezone = "-03:00";
                 if (Config.timezone && Config.timezone !== '') {
                     timezone = Config.timezone.split('UTC')[1];
                 }
+
+                match += `"transaction.endDate" : { "$gte": {"$date": "${this.startDate}T00:00:00${timezone}" }, "$lte": {"$date": "${this.endDate}T23:59:59${timezone}"} },`
     
-                match += `"transaction.endDate" : { "$lte": {"$date": "${this.companyForm.value.endDate}T23:59:59${timezone}"}},`
+                /*match += `"transaction.endDate" : { "$gte": {"$date": "${this.startDate}T00:00:00${timezone}"}},`
+                match += `"transaction.endDate" : { "$lte": {"$date": "${this.endDate}T23:59:59${timezone}"}},`*/
             }
 
 
-            match += `      "$or": [{ "type.isCurrentAccount": true }, { "transaction.type.currentAccount": "Cobra" }],
-                            "transaction.state": "Cerrado",
-                            "transaction.company.type": "${this.companyType}",
-                            "transaction.operationType": { "$ne": "D" },
-                            "transaction.company.operationType": {"$ne": "D"},
-                            "operationType" : { "$ne" : "D" } }`;
-
+            match += `  "$or": [{ "type.isCurrentAccount": true }, { "transaction.type.currentAccount": "Cobra" }],
+                        "transaction.state": "Cerrado",
+                        "transaction.company.type": "${this.companyType}",
+                        "transaction.operationType": { "$ne": "D" },
+                        "transaction.company.operationType": {"$ne": "D"},
+                        "operationType" : { "$ne" : "D" } }`;
 
             match = JSON.parse(match);
+
+            var transactionTypes = [];
+
+            if (this.transactionTypesSelect) {
+                this.transactionTypesSelect.forEach(element => {
+                    transactionTypes.push({ "$oid": element._id });
+                });
+                match['transaction.type._id'] = { "$in": transactionTypes }
+            }
 
             fullQuery.push({ "$match": match })
 
@@ -1234,7 +1271,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 this.doc.setLineWidth(0.5);
                 this.doc.line(0, row, 1000, row);
                 row += 5;
-                if (this.companyForm.value.withDetails === 'true') {
+                if (this.withDetails) {
 
                     this.doc.text(5, row, "Fecha");
                     this.doc.text(30, row, "Tipo");
@@ -1248,10 +1285,10 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 }
 
                 let acumulado = 0;
-                if (this.companyForm.value.withDetails === 'true') {
+                if (this.withDetails) {
                     for (let transaction of this.items[i].transactions) {
 
-                        if (this.companyForm.value.withDetails === 'true') {
+                        if (this.withDetails) {
                             this.doc.text(5, row, transaction['endDate2']);
                             if (transaction.type.labelPrint) {
                                 this.doc.text(30, row, transaction.type.labelPrint);
@@ -1341,6 +1378,28 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 data[y]["Balance"] = this.roundNumber.transform(items[i]["balance"]).toFixed(2);
                 data[y]["Balance"] = parseFloat(data[y]["Balance"].replace('.',','));
                 y++;
+                if(this.withDetails){
+                    y++;
+                    for (let t = 0; t < items[i]['transactions']['length']; t++) {
+                        
+                        const element = items[i]['transactions'][t];
+                        
+                        data[y] = {};
+                        data[y]["Nombre"] = "";
+                        data[y]["Nombre"] = '';
+                        data[y]["Condición de IVA"] = '';
+                        data[y]["Identificación"] = '';
+                        data[y]["Ciudad"] = element['type']['name'];
+                        data[y]["Dirección"] = element['endDate2'];
+                        data[y]["Telefono"] = element['origin'];
+                        data[y]["Correo"] = element['letter'];
+                        data[y]["Empleado"] = element['number'];
+                        data[y]["Balance"] = element['totalPrice'];
+                        y++;
+                    }
+                    y++
+
+                }
             }
         }
         this.loading = false;
@@ -1435,6 +1494,54 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 }
             )
         });
+    }
+
+    public getTransactionTypes(): Promise<TransactionType[]> {
+
+        return new Promise<TransactionType[]>((resolve, reject) => {
+
+            var transactionMovement;
+            if(this.companyType === CompanyType.Client) transactionMovement = 'Venta'
+            if(this.companyType === CompanyType.Provider) transactionMovement = 'Compra'
+
+            let match = {}
+
+            match = {
+                transactionMovement : transactionMovement,
+                $or : [ {"currentAccount" : "Si"}, { "currentAccount" : "Cobra"} ]
+            }
+
+            this._transactionTypeService.getAll({
+                project: {
+                    _id: 1,
+                    transactionMovement: 1,
+                    operationType: 1,
+                    name: 1,
+                    currentAccount : 1,
+                    branch: 1,
+                },
+                match: match
+            }).subscribe(
+                result => {
+                    if (result) {
+                        resolve(result.result);
+                        this.transactionTypesSelect = result.result
+                    } else {
+                        resolve(null);
+                    }
+                },
+                error => {
+                    this.showMessage(error._body, 'danger', false);
+                    resolve(null);
+                }
+            );
+        });
+    }
+
+    onItemSelect(item: any) {
+    }
+
+    onSelectAll(items: any) {
     }
 
     public showMessage(message: string, type: string, dismissible: boolean): void {
