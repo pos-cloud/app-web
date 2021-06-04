@@ -1173,7 +1173,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 },
                 {
                     "$sort": {
-                        "transactions.endDate": 1
+                        "_id.transactions.endDate": 1
                     }
                 },
                 {
