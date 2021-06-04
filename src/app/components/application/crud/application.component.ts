@@ -213,6 +213,11 @@ export class ApplicationComponent implements OnInit {
         tagType: 'text',
         class: 'form-group col-md-4'
     },{
+        name: 'design.colors.font',
+        tag: 'input',
+        tagType: 'text',
+        class: 'form-group col-md-4'
+    },{
         name: 'Correo',
         tag: 'separator',
         tagType: null,

@@ -37,7 +37,8 @@ export class Application extends Model {
             tercery: string,
             backgroud : string,
             backgrounHeader : string,
-            backgroundFooter : string
+            backgroundFooter : string,
+            font : string;
         },
         font: {
             family: string,

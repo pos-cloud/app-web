@@ -454,6 +454,7 @@
     "design.colors.background": "Color Fondo",
     "design.colors.backgroundHeader": "Color Fondo Cabecera",
     "design.colors.backgroundFooter": "Color Fondo Pie",
+    "design.colors.font": "Color Fuente",
     "parent": "Padre",
     "_parent.name": "Padre",
     "surchargeArticle": "Artículo de recargo",
