@@ -34,7 +34,11 @@ export class Application extends Model {
         colors: {
             primary: string,
             secondary: string,
-            tercery: string
+            tercery: string,
+            backgroud : string,
+            backgrounHeader : string,
+            backgroundFooter : string,
+            font : string;
         },
         font: {
             family: string,

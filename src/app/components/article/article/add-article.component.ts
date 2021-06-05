@@ -1576,6 +1576,7 @@ export class AddArticleComponent implements OnInit {
           } else {
             this.hasChanged = true;
             this.article = result.article;
+            this._articleService.setItems(null);
             if (this.filesToUpload) {
               this._articleService.makeFileRequest(this.article._id, this.filesToUpload)
                 .then(
@@ -1631,6 +1632,7 @@ export class AddArticleComponent implements OnInit {
           } else {
             this.hasChanged = true;
             this.article = result.article;
+            this._articleService.setItems(null);
             if (this.filesToUpload) {
               this._articleService.makeFileRequest(this.article._id, this.filesToUpload)
                 .then(

@@ -133,7 +133,7 @@ export let attributes = [
         disabled: false,
         filter: true,
         datatype: 'boolean',
-        project: null,
+        project: `{"$toString":"$article.ecommerceEnabled"}`,
         align: 'left',
         required: false,
     },

@@ -197,7 +197,27 @@ export class ApplicationComponent implements OnInit {
         tag: 'input',
         tagType: 'text',
         class: 'form-group col-md-4'
+    },{
+        name: 'design.colors.background',
+        tag: 'input',
+        tagType: 'text',
+        class: 'form-group col-md-4'
+    },{
+        name: 'design.colors.backgroundHeader',
+        tag: 'input',
+        tagType: 'text',
+        class: 'form-group col-md-4'
     }, {
+        name: 'design.colors.backgroundFooter',
+        tag: 'input',
+        tagType: 'text',
+        class: 'form-group col-md-4'
+    },{
+        name: 'design.colors.font',
+        tag: 'input',
+        tagType: 'text',
+        class: 'form-group col-md-4'
+    },{
         name: 'Correo',
         tag: 'separator',
         tagType: null,
