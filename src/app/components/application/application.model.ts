@@ -62,6 +62,13 @@ export class Application extends Model {
     public auth: {
         requireOPT: boolean
     };
+    public integrations: {
+		meli: {
+            code: { type: String },
+            token: { type: String },
+            refreshToken: { type: String }
+		}
+	};
     public notifications: {
         app: {
             checkout: string,

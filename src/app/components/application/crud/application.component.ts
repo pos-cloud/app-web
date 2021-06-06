@@ -197,12 +197,12 @@ export class ApplicationComponent implements OnInit {
         tag: 'input',
         tagType: 'text',
         class: 'form-group col-md-4'
-    },{
+    }, {
         name: 'design.colors.background',
         tag: 'input',
         tagType: 'text',
         class: 'form-group col-md-4'
-    },{
+    }, {
         name: 'design.colors.backgroundHeader',
         tag: 'input',
         tagType: 'text',
@@ -212,12 +212,12 @@ export class ApplicationComponent implements OnInit {
         tag: 'input',
         tagType: 'text',
         class: 'form-group col-md-4'
-    },{
+    }, {
         name: 'design.colors.font',
         tag: 'input',
         tagType: 'text',
         class: 'form-group col-md-4'
-    },{
+    }, {
         name: 'Correo',
         tag: 'separator',
         tagType: null,
@@ -351,7 +351,7 @@ export class ApplicationComponent implements OnInit {
         name: 'design.font.family',
         tag: 'select',
         tagType: 'text',
-        values: ['Krona One', 'IBM Plex Sans', 'Quicksand', 'Bebas Neue','Sansita','Roboto','Arial','Helvetica Neue','Courier New','Liberation Mono','Monaco','Menlo','Consolas','Segoe UI'],
+        values: ['Krona One', 'IBM Plex Sans', 'Quicksand', 'Bebas Neue', 'Sansita', 'Roboto', 'Arial', 'Helvetica Neue', 'Courier New', 'Liberation Mono', 'Monaco', 'Menlo', 'Consolas', 'Segoe UI'],
         class: 'form-group col-md-3'
     }, {
         name: 'design.font.weight',
@@ -403,7 +403,7 @@ export class ApplicationComponent implements OnInit {
         tagType: 'text',
         default: "",
         class: 'form-group col-md-6'
-    },{
+    }, {
         name: 'design.resources.banners',
         tag: 'input',
         tagType: 'file',
@@ -618,7 +618,7 @@ export class ApplicationComponent implements OnInit {
                     let entro: boolean = false;
                     for (let f of field.name.split('.')) {
                         sumF += `['${f}']`;
-                        if (eval(`this.obj${sumF}`) == null || eval(`this.obj${sumF}`) == undefined ) {
+                        if (eval(`this.obj${sumF}`) == null || eval(`this.obj${sumF}`) == undefined) {
                             entro = true;
                             eval(`this.obj${sumF} = {}`);
                         }
@@ -707,29 +707,29 @@ export class ApplicationComponent implements OnInit {
         });
     }
 
-    public addResource(resourceForm: NgForm, data) : void {
-        
-        var order= null;
-        var article= null;
-        var link= null;
+    public addResource(resourceForm: NgForm, data): void {
+
+        var order = null;
+        var article = null;
+        var link = null;
         var banner = null;
-        if(resourceForm.value.order){
+        if (resourceForm.value.order) {
             order = resourceForm.value.order;
         }
-        if(resourceForm.value.article){
+        if (resourceForm.value.article) {
             article = resourceForm.value.article;
         }
-        if(resourceForm.value.link){
+        if (resourceForm.value.link) {
             link = resourceForm.value.link;
         }
         this.home.forEach(async element => {
             if (element.title === data['title']) {
-                
-                if(this.filesToUploadHome && this.filesToUploadHome.length > 0){
+
+                if (this.filesToUploadHome && this.filesToUploadHome.length > 0) {
                     for (let file of this.filesToUploadHome) {
-                        await this._objService.uploadFile("image","application", file)
+                        await this._objService.uploadFile("image", "application", file)
                             .then(result => {
-                                if(result.status === 200){
+                                if (result.status === 200) {
                                     banner = result.result;
                                     this.fileNamePrincipal = null;
                                     this.filesToUploadHome = new Array();
@@ -739,7 +739,7 @@ export class ApplicationComponent implements OnInit {
                     }
                 }
 
-                
+
 
                 element.resources.push({
                     order: order,
@@ -777,11 +777,12 @@ export class ApplicationComponent implements OnInit {
                 }
             }
         });
-
-
     }
 
-
+    public authMeli() {
+        let stateMeli = this.obj._id + '-DB-' + this.database;
+        window.open(`http://auth.mercadolibre.com.ar/authorization?response_type=code&client_id=3033899131061978&state=${stateMeli}`);
+    }
 
     public getAllArticles(match: {}): Promise<Article[]> {
         return new Promise<Article[]>((resolve, reject) => {
@@ -980,10 +981,10 @@ export class ApplicationComponent implements OnInit {
 
     public fileChangeEvent(fileInput: any, eCommerce: boolean): void {
 
-          this.filesToUploadHome = <Array<File>>fileInput.target.files;
-          this.fileNamePrincipal = this.filesToUploadHome[0].name;
-    
-      }
+        this.filesToUploadHome = <Array<File>>fileInput.target.files;
+        this.fileNamePrincipal = this.filesToUploadHome[0].name;
+
+    }
 
     public showToast(result, type?: string, title?: string, message?: string): void {
         if (result) {
