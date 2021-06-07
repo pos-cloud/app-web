@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Router, RouterStateSnapshot, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 import { BehaviorSubject, of } from "rxjs";
 import { Observable } from "rxjs/Observable";
@@ -7,6 +7,7 @@ import { map, catchError } from "rxjs/operators";
 
 import { User } from 'app/components/user/user';
 import { Config } from 'app/app.config';
+import { ArticleService } from "../article/article.service";
 
 @Injectable()
 export class AuthService {
@@ -16,6 +17,7 @@ export class AuthService {
   constructor(
     private _router: Router,
     private _http: HttpClient,
+    private _articleService: ArticleService,
   ) { }
 
   get getIdentity() {
@@ -86,6 +88,8 @@ export class AuthService {
     sessionStorage.removeItem("session_token");
     sessionStorage.removeItem("user");
     this.identity.next(null);
+    this._articleService.setArticlesPos(null);
+    this._articleService.setItems(null);
     let hostname = window.location.hostname;
     let subdominio = '';
     if (hostname.includes('.poscloud.com.ar')) {
