@@ -27,7 +27,8 @@ export class UpdateVariantTypeComponent implements OnInit {
 
   public formErrors = {
     'order': '',
-    'name': ''
+    'name': '',
+    'meliId': ''
   };
 
   public validationMessages = {
@@ -36,6 +37,8 @@ export class UpdateVariantTypeComponent implements OnInit {
     },
     'name': {
       'required': 'Este campo es requerido.'
+    },
+    'meliId': {
     }
   };
 
@@ -55,7 +58,8 @@ export class UpdateVariantTypeComponent implements OnInit {
     this.variantTypeForm.setValue({
       '_id': this.variantType._id,
       'order': this.variantType.order,
-      'name': this.variantType.name
+      'name': this.variantType.name,
+      'meliId': this.variantType.meliId
     });
   }
 
@@ -74,6 +78,10 @@ export class UpdateVariantTypeComponent implements OnInit {
         ]
       ],
       'name': [this.variantType.name, [
+          Validators.required
+        ]
+      ],
+      'meliId': [this.variantType.meliId, [
           Validators.required
         ]
       ],

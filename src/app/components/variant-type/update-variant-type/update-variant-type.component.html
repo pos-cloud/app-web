@@ -14,18 +14,25 @@
   <form [formGroup]="variantTypeForm" #formUpdateVariantType="ngForm" (ngSubmit)="updateVariantType()" autocomplete="off">
     <div class="modal-body">
       <div class="row">
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-4">
           <label for="order" class="control-label">Orden:</label>
           <input type="number" class="form-control" formControlName="order" order="order" id="order" [focus]="focusEvent" [readonly]="readonly" />
           <div *ngIf="formErrors.order" class="alert alert-danger">
             {{ formErrors.order }}
           </div>
         </div>
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-4">
           <label for="name" class="control-label">Nombre:</label>
           <input type="text" class="form-control" formControlName="name" name="name" id="name" [readonly]="readonly" />
           <div *ngIf="formErrors.name" class="alert alert-danger">
             {{ formErrors.name }}
+          </div>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="meliId" class="control-label">Meli Id:</label>
+          <input type="text" class="form-control" formControlName="meliId" name="meliId" id="meliId" [readonly]="readonly" />
+          <div *ngIf="formErrors.meliId" class="alert alert-danger">
+            {{ formErrors.meliId }}
           </div>
         </div>
       </div>

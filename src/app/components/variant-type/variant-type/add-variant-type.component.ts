@@ -26,7 +26,8 @@ export class AddVariantTypeComponent implements OnInit {
 
   public formErrors = {
     'order': '',
-    'name': ''
+    'name': '',
+    'meliId': ''
   };
 
   public validationMessages = {
@@ -35,6 +36,8 @@ export class AddVariantTypeComponent implements OnInit {
     },
     'name': {
       'required': 'Este campo es requerido.'
+    },
+    'meliId': {
     }
   };
 
@@ -66,6 +69,10 @@ export class AddVariantTypeComponent implements OnInit {
         ]
       ],
       'name': [this.variantType.name, [
+          Validators.required
+        ]
+      ],
+      'meliId': [this.variantType.meliId, [
           Validators.required
         ]
       ],

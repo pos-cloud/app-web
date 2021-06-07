@@ -192,6 +192,7 @@ export class AddMeliAttrsComponent implements OnInit {
                             let values = new Array();
                             if (field.values && field.values.length > 0) {
                                 tag = 'select';
+                                values.push(null);
                                 for (let value of field.values) {
                                     values.push(value.name);
                                 }
@@ -236,7 +237,7 @@ export class AddMeliAttrsComponent implements OnInit {
         this.article.meliAttrs.attributes = new Array();
         if(!this.formFields) this.formFields = new Array();
         for (let field of this.formFields) {
-            if (this.meliAttrs.value[field.id]) {
+            if (this.meliAttrs.value[field.id] && this.meliAttrs.value[field.id] !== 'null') {
                 this.article.meliAttrs.attributes.push({
                     id: field.id.split('attrs-')[1],
                     value_name: this.meliAttrs.value[field.id]
