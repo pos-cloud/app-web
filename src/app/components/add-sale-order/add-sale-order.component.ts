@@ -1649,10 +1649,8 @@ export class AddSaleOrderComponent {
                                 database: this.config['database']
                             }
                         }
-                        this.saveClaim('ERROR FE AR ' + moment().format('DD/MM/YYYY HH:mm') + " : " + msn, JSON.stringify(body));
                     } else if (result.message) {
                         this.showMessage(result.message, 'info', true);
-                        this.saveClaim('ERROR FE AR ' + moment().format('DD/MM/YYYY HH:mm') + " : " + "ERROR AL CONECTAR ", result.message);
                     } else {
                         this.transaction.number = result.number;
                         this.transaction.CAE = result.CAE;
@@ -1677,20 +1675,6 @@ export class AddSaleOrderComponent {
                 this.loading = false;
             }
         )
-    }
-
-    public saveClaim(titulo: string, message: string): void {
-
-        this.loading = true;
-
-        let claim: Claim = new Claim();
-        claim.description = message;
-        claim.name = titulo;
-        claim.priority = ClaimPriority.High;
-        claim.type = ClaimType.Err;
-        claim.listName = 'ERRORES 500';
-
-        this._claimService.saveClaim(claim).subscribe();
     }
 
     public validateElectronicTransactionMX(): void {
@@ -1740,7 +1724,6 @@ export class AddSaleOrderComponent {
                             database: this.config['database']
                         }
                     }
-                    this.saveClaim('ERROR FE MX ' + moment().format('DD/MM/YYYY HH:mm') + " : " + msn, JSON.stringify(body));
                 } else {
                     if (this.transaction.type.finishState) {
                         this.transaction.state = this.transaction.type.finishState;

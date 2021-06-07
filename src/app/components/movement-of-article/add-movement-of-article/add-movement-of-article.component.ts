@@ -671,15 +671,12 @@ export class AddMovementOfArticleComponent implements OnInit {
 
             this.movementOfArticle.account = this.movementOfArticleForm.value.account;
 
-            console.log(this.movementOfArticle.unitPrice);
             this.calculateUnitPrice();
-            console.log(this.movementOfArticle.unitPrice);
 
             if (this.containsVariants) {
                 if (!this.isValidSelectedVariants()) {
                     if (!this.variants || this.variants.length === 0) {
                         if (await this.isValidMovementOfArticle(this.movementOfArticle)) {
-                            console.log(this.movementOfArticle.unitPrice);
                             this.movementOfArticleExists();
                         }
                     } else {
@@ -688,13 +685,11 @@ export class AddMovementOfArticleComponent implements OnInit {
                 } else {
                     this.errVariant = undefined;
                     if (await this.isValidMovementOfArticle(this.movementOfArticle)) {
-                        console.log(this.movementOfArticle.unitPrice);
                         this.movementOfArticleExists();
                     }
                 }
             } else {
                 if (await this.isValidMovementOfArticle(this.movementOfArticle)) {
-                    console.log(this.movementOfArticle.unitPrice);
                     this.movementOfArticleExists();
                 }
             }
@@ -757,7 +752,6 @@ export class AddMovementOfArticleComponent implements OnInit {
                         }
                     } else {
 
-                        console.log(this.movementOfArticle.unitPrice);
                         this.movementOfArticle.discountAmount = this.movementOfArticleForm.value.discountAmount;
                         this.movementOfArticle.discountRate = this.movementOfArticleForm.value.discountRate;
 
@@ -793,7 +787,6 @@ export class AddMovementOfArticleComponent implements OnInit {
                                 this.movementOfArticle = result.movementsOfArticles[0];
                             }
                             this.movementOfArticle.unitPrice = oldUnitPrice;
-                            console.log(this.movementOfArticle.unitPrice);
 
                             this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
                             this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
@@ -844,12 +837,10 @@ export class AddMovementOfArticleComponent implements OnInit {
         if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
             if (this.transaction.type.entryAmount === EntryAmount.SaleWithVAT) {
                 this.movementOfArticle.unitPrice = this.movementOfArticleForm.value.unitPrice;
-                console.log(this.movementOfArticle.unitPrice);
             } else if (this.transaction.type.entryAmount === EntryAmount.SaleWithoutVAT) {
                 if (this.transaction.type.requestTaxes) {
                     if (this.movementOfArticle.taxes && this.movementOfArticle.taxes.length > 0) {
                         this.movementOfArticle.unitPrice = 0;
-                        console.log(this.movementOfArticle.unitPrice);
                         for (const articleTax of this.movementOfArticle.taxes) {
                             articleTax.taxBase = this.movementOfArticleForm.value.unitPrice;
                             if (articleTax.percentage && articleTax.percentage !== 0) {
@@ -858,21 +849,16 @@ export class AddMovementOfArticleComponent implements OnInit {
                                 articleTax.taxAmount = articleTax.taxAmount * this.movementOfArticle.amount;
                             }
                             this.movementOfArticle.unitPrice += (articleTax.taxAmount);
-                            console.log(this.movementOfArticle.unitPrice);
                         }
                         this.movementOfArticle.unitPrice += this.movementOfArticleForm.value.unitPrice;
-                        console.log(this.movementOfArticle.unitPrice);
                     } else {
                         this.movementOfArticle.unitPrice = this.movementOfArticleForm.value.unitPrice;
-                        console.log(this.movementOfArticle.unitPrice);
                     }
                 } else {
                     this.movementOfArticle.unitPrice = this.movementOfArticleForm.value.unitPrice;
-                    console.log(this.movementOfArticle.unitPrice);
                 }
             } else {
                 this.movementOfArticle.unitPrice = this.movementOfArticleForm.value.unitPrice;
-                console.log(this.movementOfArticle.unitPrice);
             }
         } else {
             if (this.transaction.type.entryAmount === EntryAmount.CostWithVAT) {
@@ -880,7 +866,6 @@ export class AddMovementOfArticleComponent implements OnInit {
                     if (this.movementOfArticle.taxes && this.movementOfArticle.taxes.length > 0) {
                         let unitPrice = this.movementOfArticleForm.value.unitPrice;
                         this.movementOfArticle.unitPrice = unitPrice;
-                        console.log(this.movementOfArticle.unitPrice);
                         let impInt: number = 0;
                         for (let taxAux of this.movementOfArticle.article.taxes) {
                             if (taxAux.percentage === 0) {
@@ -899,22 +884,17 @@ export class AddMovementOfArticleComponent implements OnInit {
                                 articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
                             }
                             this.movementOfArticle.unitPrice -= (articleTax.taxAmount);
-                            console.log(this.movementOfArticle.unitPrice);
                         }
                     } else {
                         this.movementOfArticle.unitPrice = this.movementOfArticleForm.value.unitPrice;
-                        console.log(this.movementOfArticle.unitPrice);
                     }
                 } else {
                     this.movementOfArticle.unitPrice = this.movementOfArticleForm.value.unitPrice;
-                    console.log(this.movementOfArticle.unitPrice);
                 }
             } else if (this.transaction.type.entryAmount === EntryAmount.CostWithoutVAT) {
                 this.movementOfArticle.unitPrice = this.movementOfArticleForm.value.unitPrice;
-                console.log(this.movementOfArticle.unitPrice);
             } else {
                 this.movementOfArticle.unitPrice = this.movementOfArticleForm.value.unitPrice;
-                console.log(this.movementOfArticle.unitPrice);
             }
         }
     }
@@ -973,7 +953,6 @@ export class AddMovementOfArticleComponent implements OnInit {
             this.movementOfArticle.markupPercentage = articleSelected.markupPercentage;
             this.movementOfArticle.markupPrice = this.roundNumber.transform(articleSelected.markupPrice);
             this.movementOfArticle.unitPrice = this.roundNumber.transform(articleSelected.salePrice);
-            console.log(this.movementOfArticle.unitPrice);
             this.movementOfArticle.salePrice = this.roundNumber.transform(articleSelected.salePrice);
 
             if (articleSelected.currency &&
@@ -982,7 +961,6 @@ export class AddMovementOfArticleComponent implements OnInit {
                 this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.costPrice * quotation);
                 this.movementOfArticle.markupPrice = this.roundNumber.transform(this.movementOfArticle.markupPrice * quotation);
                 this.movementOfArticle.unitPrice = this.roundNumber.transform(this.movementOfArticle.salePrice * quotation);
-                console.log(this.movementOfArticle.unitPrice);
                 this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.salePrice * quotation);
             }
             if (this.transaction.type.requestTaxes) {
@@ -1071,7 +1049,6 @@ export class AddMovementOfArticleComponent implements OnInit {
 
             if (increasePrice != 0) {
                 this.movementOfArticle.unitPrice = this.roundNumber.transform(this.movementOfArticle.unitPrice + (this.movementOfArticle.unitPrice * increasePrice / 100));
-                console.log(this.movementOfArticle.unitPrice);
             }
 
         } else {
@@ -1120,7 +1097,6 @@ export class AddMovementOfArticleComponent implements OnInit {
             }
             this.movementOfArticle.costPrice += this.roundNumber.transform(taxedAmount);
             this.movementOfArticle.unitPrice = this.movementOfArticle.basePrice;
-            console.log(this.movementOfArticle.unitPrice);
             this.movementOfArticle.salePrice = this.movementOfArticle.costPrice;
         }
         this.setValueForm();
@@ -1687,12 +1663,10 @@ export class AddMovementOfArticleComponent implements OnInit {
 
                         //guardo todas las estrcturas
                         if (await this.saveMovementsOfArticle(this.movChild)) {
-                            console.log(this.movementOfArticle.salePrice);
                             this.activeModal.close('save');
                         }
 
                     } else {
-                        console.log(this.movementOfArticle.salePrice);
                         this.activeModal.close('save');
                     }
                 }
@@ -1735,10 +1709,8 @@ export class AddMovementOfArticleComponent implements OnInit {
                     this._movementOfArticleService.deleteMovementsOfArticles(query).subscribe(
                         result => {
                             if (result && result.movementsOfArticles) {
-                                console.log(this.movementOfArticle.salePrice);
                                 this.activeModal.close('delete');
                             } else {
-                                console.log(this.movementOfArticle.salePrice);
                                 this.activeModal.close('delete');
                             }
                         }
@@ -1776,11 +1748,9 @@ export class AddMovementOfArticleComponent implements OnInit {
 
                         //guardo todas las estrcturas
                         if (await this.saveMovementsOfArticle(this.movChild)) {
-                            console.log(this.movementOfArticle.salePrice);
                             this.activeModal.close('update');
                         }
                     } else {
-                        console.log(this.movementOfArticle.salePrice);
                         this.activeModal.close('update');
 
                     }
