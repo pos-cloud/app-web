@@ -1572,7 +1572,7 @@ export class AddArticleComponent implements OnInit {
         result => {
           if (!result.article) {
             this.loading = false;
-            this.showMessage((result.error.message) ? result.error.message : (result.message) ? result.message : '', 'info', true);
+            this.showMessage((result.error && result.error.message) ? result.error.message : (result.message) ? result.message : '', 'info', true);
           } else {
             this.hasChanged = true;
             this.article = result.article;
@@ -1629,7 +1629,7 @@ export class AddArticleComponent implements OnInit {
       this._articleService.updateArticle(this.article, this.variants).subscribe(
         result => {
           if (!result.article) {
-            this.showMessage((result.error.message) ? result.error.message : (result.message) ? result.message : '', 'info', true);
+            this.showMessage((result.error && result.error.message) ? result.error.message : (result.message) ? result.message : '', 'info', true);
           } else {
             this.hasChanged = true;
             this.article = result.article;
