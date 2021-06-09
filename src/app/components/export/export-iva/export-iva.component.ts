@@ -643,15 +643,6 @@ export class ExportIvaComponent implements OnInit {
                                     }
                                 }
 
-
-
-
-                                
-
-
-
-
-
                                 data[i]['GRAVADO'] = this.roundNumber.transform(partialTaxBase);
                                 data[i]['EXENTO'] = this.roundNumber.transform(transaction.exempt);
                                 data[i]['MONTO IVA'] = this.roundNumber.transform(partialTaxAmountIVA);
@@ -661,7 +652,6 @@ export class ExportIvaComponent implements OnInit {
                                 data[i]['MONTO IMP INT'] = this.roundNumber.transform(partialImpInt);
                                 data[i]['MONTO PERCEP.'] = this.roundNumber.transform(partialTaxAmountPercep);
                                 data[i]['MONTO TOTAL'] = this.roundNumber.transform(partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt + partialImpInt);
-
 
                                 i++;
                                 data[i] = {};
@@ -790,7 +780,17 @@ export class ExportIvaComponent implements OnInit {
 
                         sheet[index] = data;
                     }
-
+                    sheet[0].sort(function (a, b) {
+                        if(a.FECHA == b.FECHA) {
+                            if (a.Numero > b.Numero) {
+                              return 1;
+                            }
+                            if (a.Numero < b.Numero) {
+                              return -1;
+                            }
+                        }
+                        return 0;
+                      });
                     if (sheet.length === 1) {
                         this._companyService.exportAsExcelFile(sheet[0], this.type + '-' + this.exportIVAForm.value.year + '-' + this.exportIVAForm.value.month);
                     } else {
@@ -798,7 +798,7 @@ export class ExportIvaComponent implements OnInit {
                     }
 
                 } else {
-                    this.showMessage("No se encontraron Comprobantes para el período", 'info', true);
+                    this.showMessage("No se encontraron comprobantes para el período indicado", 'info', true);
                 }
             },
             error => {
