@@ -16,6 +16,10 @@ import { Router } from '@angular/router';
 import { FormField } from 'app/util/formField.interface';
 import * as $ from 'jquery';
 import { Config } from 'app/app.config';
+import { TransactionType } from 'app/components/transaction-type/transaction-type';
+import Resulteable from 'app/util/Resulteable';
+import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
+import { async } from '@angular/core/testing';
 
 @Component({
     selector: 'app-permission',
@@ -47,6 +51,7 @@ export class PermissionComponent implements OnInit {
     public oldFiles: any[];
     public apiURL: string = Config.apiV8URL;
     public database: string = Config.database;
+    public transactionTypes: TransactionType[];
 
     public formFields: FormField[] = [{
         name: 'Datos de los permisos',
@@ -178,12 +183,6 @@ export class PermissionComponent implements OnInit {
         tagType: "boolean",
         values: ['false', 'true'],
         class: 'form-group col-md-2'
-    },
-    {
-        name: 'Permisos',
-        tag: 'separator',
-        tagType: null,
-        class: 'form-group col-md-12'
     }];
     public formErrors: {} = {};
     public validationMessages = {
@@ -192,6 +191,7 @@ export class PermissionComponent implements OnInit {
 
     constructor(
         private _objService: PermissionService,
+        private _transactionType : TransactionTypeService,
         private _toastr: ToastrService,
         private _title: Title,
         public _fb: FormBuilder,
@@ -224,18 +224,39 @@ export class PermissionComponent implements OnInit {
         this.buildForm();
         this.objId = pathUrl[3];
         if (this.objId && this.objId !== '') {
-            this.subscription.add(this._objService.getById(this.objId).subscribe(
-                result => {
+            let project = {
+                name : 1,
+                "menu": 1,
+                "collections": 1,
+                "transactionTypes._id": 1,
+                "transactionTypes.name": 1,
+                "transactionTypes.transactionMovement" : 1
+            }
+            this.subscription.add(this._objService.getAll({
+                project: project,
+                match: {
+                    operationType: { $ne: "D" },
+                    _id: { $oid: this.objId }
+                }
+            }).subscribe(
+                async result => {
                     this.loading = false;
                     if (result.status === 200) {
-                        this.obj = result.result;
-                        this.setValuesForm();
+                        this.obj = result.result[0];
+                        
                     }
                     else this.showToast(result);
                 },
                 error => this.showToast(error)
             ));
         }
+        
+        await this.getAllTransactionTypes()
+            .then((result: TransactionType[]) => {
+                this.transactionTypes = result;
+                this.setValuesForm();
+            })
+            .catch((error: Resulteable) => this.showToast(error));
     }
 
     public ngAfterViewInit(): void {
@@ -262,7 +283,8 @@ export class PermissionComponent implements OnInit {
 
         let fields: {} = {
             _id: [this.obj._id],
-            'collections': this._fb.array([])
+            'collections': this._fb.array([]),
+            'transactionTypes': this._fb.array([])
         };
         for (let field of this.formFields) {
             if (field.tag !== 'separator') fields[field.name] = [this.obj[field.name], field.validators]
@@ -347,6 +369,25 @@ export class PermissionComponent implements OnInit {
             })
         }
 
+        if (this.transactionTypes && this.transactionTypes.length > 0) {
+            this.transactionTypes.forEach(x => {
+                let exists: boolean = false;
+                if (this.obj && this.obj.transactionTypes && this.obj.transactionTypes.length > 0) {
+                    this.obj.transactionTypes.forEach(y => {
+                        if (x._id === y._id) {
+                            exists = true;
+                            const control = new FormControl(y);
+                            (this.objForm.controls.transactionTypes as FormArray).push(control);
+                        }
+                    })
+                }
+                if (!exists) {
+                    const control = new FormControl(false);
+                    (this.objForm.controls.transactionTypes as FormArray).push(control);
+                }
+            })
+        }
+
         this.objForm.patchValue(values);
     }
 
@@ -402,6 +443,14 @@ export class PermissionComponent implements OnInit {
             this.onValueChanged();
         }
 
+        //this.obj = Object.assign(this.obj, this.objForm.value);
+            const selectedOrderIds = this.objForm.value.transactionTypes
+                .map((v, i) => (v ? this.transactionTypes[i] : null))
+                .filter(v => v !== null);
+            this.obj.transactionTypes = selectedOrderIds;
+
+
+
         if (isValid) {
             for (let field of this.formFields) {
                 switch (field.tagType) {
@@ -456,6 +505,8 @@ export class PermissionComponent implements OnInit {
                 }
             }
         }
+
+        console.log(this.obj);
 
         if (isValid) {
             switch (this.operation) {
@@ -535,6 +586,21 @@ export class PermissionComponent implements OnInit {
                 error => this.showToast(error)
             )
         );
+    }
+
+    public getAllTransactionTypes(): Promise<TransactionType[]> {
+        return new Promise<TransactionType[]>((resolve, reject) => {
+            this.subscription.add(this._transactionType.getAll({
+                match: { operationType: { "$ne": "D" } },
+                sort: { name: 1 },
+            }).subscribe(
+                result => {
+                    this.loading = false;
+                    (result.status === 200) ? resolve(result.result) : reject(result);
+                },
+                error => reject(error)
+            ));
+        });
     }
 
     public showToast(result, type?: string, title?: string, message?: string): void {
