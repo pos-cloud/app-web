@@ -290,6 +290,8 @@ export class ListArticlesComponent implements OnInit {
         } else {
           this.items = new Array();
           this.totalItems = 0;
+          this._articleService.setItems(null);
+          this._articleService.setArticlesPos(null);
         }
       },
       error => {
