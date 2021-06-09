@@ -113,6 +113,27 @@
 
             </div>
           </div>
+
+          <div class="form-group col-md-12">
+            <hr>
+            <b>Tipo de transacciones aceptadas:</b>
+        </div>
+          
+            <div class="form-group col-md-12" *ngIf="objForm.get('transactionTypes')">
+                <br>
+                <label formArrayName="transactionTypes"
+                    *ngFor="let order of objForm.get('transactionTypes')['controls']; let i = index"
+                    style="margin-right: 20px; font-size: 20px;">
+                    <input type="checkbox" [formControlName]="i" />
+                    {{transactionTypes[i]?.transactionMovement}}/{{transactionTypes[i]?.name}}
+                </label>
+            </div>
+
+          <div class="form-group col-md-12">
+            <hr>
+            <b>Permisos:</b>
+        </div>
+            
           <div class="col-md-12">
             <div class="row" style="width: 100%;">
               <div class="col-md-12">

@@ -1,5 +1,6 @@
 import { IAttribute } from 'app/util/attribute.interface';
 import { Model } from '../model/model.model';
+import { TransactionType } from '../transaction-type/transaction-type';
 
 export class Permission extends Model {
 
@@ -38,6 +39,8 @@ export class Permission extends Model {
 		gallery: boolean,
         resto: boolean
 	}
+
+    transactionTypes : TransactionType[];
 
     constructor() { super(); }
 
