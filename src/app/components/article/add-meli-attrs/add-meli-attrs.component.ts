@@ -53,7 +53,7 @@ export class AddMeliAttrsComponent implements OnInit {
     public validationMessages = {
     }
 
-    public formatterCategories = (x: { category_name: string }) => x.category_name;
+    public formatterCategories = (x: { category_name: string, domain_name: string }) => `${x.category_name} / ${x.domain_name}`;
 
     constructor(
         public _taxService: TaxService,

@@ -23,7 +23,7 @@
     <div class="row">
       <div class="form-group col-md-6">
         <ng-template #rtCategories let-r="result" let-t="term">
-          <ngb-highlight [result]="r.category_name" [term]="t"></ngb-highlight>
+          <ngb-highlight [result]="r.category_name + ' / ' + r.domain_name" [term]="t"></ngb-highlight>
         </ng-template>
         <label for="category">Categoría:</label>
         <input id="category" type="text" class="form-control" formControlName="category" name="category"
