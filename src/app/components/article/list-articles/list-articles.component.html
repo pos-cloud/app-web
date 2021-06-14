@@ -8,11 +8,18 @@
 		<div class="card-header">
 			<span>{{title}}</span>
 			<div class="pull-right">
+			
 				<button class="btn" (click)="openModal('add', null)"
-					*ngIf="articleType && articleType.toString() === 'Final'"><i
-						class="fa fa-plus"></i><span>Agregar</span></button>
-				<button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i
-						[ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
+					*ngIf="articleType && articleType.toString() === 'Final'">
+					<i class="fa fa-plus"></i>
+					<span>Agregar</span>
+				</button>
+
+				<button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading">
+					<i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>
+					<span>Actualizar</span>
+				</button>
+				
 				<button class="btn" (click)="openModal('update-prices',null)"><i class="fa fa-edit"></i><span>Actualizar
 						Precios</span></button>
 				<div class="btn-group" ngbDropdown>
@@ -29,8 +36,17 @@
 						</div>
 					</div>
 				</div>
+
+				<button class="btn" (click)="openModal('excel', null)"><i
+					class="fa fa-upload"></i>
+					<span>Importar Productos excel</span>
+				</button>
+
 				<button class="btn" *ngIf="identity.name === 'soporte'" (click)="openModal('import', null)"><i
-						class="fa fa-upload"></i><span>Importar Productos</span></button>
+						class="fa fa-upload"></i>
+						<span>Importar Productos</span>
+				</button>
+
 				<button class="btn" (click)="openModal('print-list', null)"><i class="fa fa-print"></i><span>Imprimir
 						Lista</span></button>
 				<app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems($event)"></app-export-excel>

@@ -1,0 +1,34 @@
+<div class="modal-header">
+  <h4 class="modal-title">Importar</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+
+  <form [formGroup]="importForm" (ngSubmit)="import()" autocomplete="off" enctype="multipart/form-data">
+
+    <div class="modal-body">
+
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="filePath" class="control-label">Archivo:</label>
+          <input type="file" class="form-control" formControlName="filePath"
+            [focus]="focusEvent" (change)="onFileChange($event)" />
+
+          <div *ngIf="formErrors.filePath" class="alert alert-danger">
+            {{ formErrors.filePath }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="">
+        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+        <span *ngIf="!loading">Importar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </form>
+</section>
