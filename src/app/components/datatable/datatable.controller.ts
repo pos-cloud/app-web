@@ -97,7 +97,7 @@ export class DatatableController {
           if (!this.columns[i].project) {
             if (this.columns[i].datatype !== 'string' && this.columns[i].datatype !== 'boolean') {
               if (this.columns[i].datatype === "date") {
-                project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`
+                project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${timezone}" }}`
               } else {
                 project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
               }
