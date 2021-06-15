@@ -258,27 +258,27 @@ export class ListChecksComponent implements OnInit {
 
     async ngOnInit() {
 
-        if(!this.branchSelectedId) {
+        if (!this.branchSelectedId) {
             await this.getBranches({ operationType: { $ne: 'D' } }).then(
-              branches => {
-                this.branches = branches;
-                if(this.branches && this.branches.length > 1) {
-                  this.branchSelectedId = this.branches[0]._id;
+                branches => {
+                    this.branches = branches;
+                    if (this.branches && this.branches.length > 1) {
+                        this.branchSelectedId = this.branches[0]._id;
+                    }
                 }
-              }
             );
             this._authService.getIdentity.subscribe(
-              async identity => {
-                if(identity && identity.origin) {
-                  this.allowChangeBranch = false;
-                  this.branchSelectedId = identity.origin.branch._id;
-                } else {
-                  this.allowChangeBranch = true;
-                  this.branchSelectedId = null;
+                async identity => {
+                    if (identity && identity.origin) {
+                        this.allowChangeBranch = false;
+                        this.branchSelectedId = identity.origin.branch._id;
+                    } else {
+                        this.allowChangeBranch = true;
+                        this.branchSelectedId = null;
+                    }
                 }
-              }
             );
-          }
+        }
 
         this.pathLocation = this._router.url.split('/');
         this.transactionMovement = this.pathLocation[2].charAt(0).toUpperCase() + this.pathLocation[2].slice(1);
@@ -318,29 +318,29 @@ export class ListChecksComponent implements OnInit {
     public getBranches(match: {} = {}): Promise<Branch[]> {
 
         return new Promise<Branch[]>((resolve, reject) => {
-      
-          this._branchService.getBranches(
-              {}, // PROJECT
-              match, // MATCH
-              { number: 1 }, // SORT
-              {}, // GROUP
-              0, // LIMIT
-              0 // SKIP
-          ).subscribe(
-            result => {
-              if (result && result.branches) {
-                resolve(result.branches);
-              } else {
-                resolve(null);
-              }
-            },
-            error => {
-              this.showMessage(error._body, 'danger', false);
-              resolve(null);
-            }
-          );
+
+            this._branchService.getBranches(
+                {}, // PROJECT
+                match, // MATCH
+                { number: 1 }, // SORT
+                {}, // GROUP
+                0, // LIMIT
+                0 // SKIP
+            ).subscribe(
+                result => {
+                    if (result && result.branches) {
+                        resolve(result.branches);
+                    } else {
+                        resolve(null);
+                    }
+                },
+                error => {
+                    this.showMessage(error._body, 'danger', false);
+                    resolve(null);
+                }
+            );
         });
-      }
+    }
 
     public getItems(): void {
 
@@ -364,8 +364,8 @@ export class ListChecksComponent implements OnInit {
             }
         }
 
-        if(this.branchSelectedId){
-            match += `"transaction.branchDestination._id": { "$oid" : "${this.branchSelectedId}" },`; 
+        if (this.branchSelectedId) {
+            match += `"transaction.branchDestination._id": { "$oid" : "${this.branchSelectedId}" },`;
         }
 
         match += `"statusCheck": "Disponible","type.inputAndOuput" : true`;
@@ -388,11 +388,9 @@ export class ListChecksComponent implements OnInit {
                     if (this.columns[i].datatype !== "string") {
                         if (this.columns[i].datatype === "date") {
                             project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`
-                          } else if (this.columns[i].datatype === "currency" || this.columns[i].datatype === "number") {
-                            project += `"${this.columns[i].name}": { "$toString" : { "$round": [{ "$toDecimal": "$${this.columns[i].name}" }, 2]} }`
-                          } else {
+                        } else {
                             project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
-                          }
+                        }
                     } else {
                         project += `"${this.columns[i].name}": 1`;
                     }

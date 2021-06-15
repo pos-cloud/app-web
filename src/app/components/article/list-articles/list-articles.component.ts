@@ -223,8 +223,6 @@ export class ListArticlesComponent implements OnInit {
           if (this.columns[i].datatype !== "string") {
             if (this.columns[i].datatype === "date") {
               project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`
-            } else if (this.columns[i].datatype === "currency" || this.columns[i].datatype === "number") {
-              project += `"${this.columns[i].name}": { "$toString" : { "$round": [{ "$toDecimal": "$${this.columns[i].name}" }, 2]} }`
             } else {
               project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
             }
