@@ -9,7 +9,7 @@ import { Article, Type, attributes } from "../article";
 import { Config } from "../../../app.config";
 import { ArticleService } from "../article.service";
 import { AddArticleComponent } from "../article/add-article.component";
-import { importExcel } from "../../importExcel/importExcel.component";
+import { importExcelComponent } from "../../import-excel/import-excel.component";
 import { ImportComponent } from "../../import/import.component";
 import { RoundNumberPipe } from "../../../main/pipes/round-number.pipe";
 import { Printer, PrinterPrintIn } from "../../printer/printer";
@@ -442,7 +442,7 @@ export class ListArticlesComponent implements OnInit {
         break;
 
       case "excel":
-        modalRef = this._modalService.open(importExcel, {
+        modalRef = this._modalService.open(importExcelComponent, {
           size: "lg",
           backdrop: "static",
         });
