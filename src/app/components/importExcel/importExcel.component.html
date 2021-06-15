@@ -5,6 +5,10 @@
   </button>
 </div>
 <section class="container-fluid">
+  
+  <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+    {{alertMessage}}
+  </ngb-alert>
 
   <form [formGroup]="importForm" (ngSubmit)="import()" autocomplete="off" enctype="multipart/form-data">
 
@@ -18,6 +22,9 @@
 
           <div *ngIf="formErrors.filePath" class="alert alert-danger">
             {{ formErrors.filePath }}
+          </div>
+          <div>
+
           </div>
         </div>
       </div>

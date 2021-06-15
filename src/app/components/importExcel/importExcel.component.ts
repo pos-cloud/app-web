@@ -45,19 +45,32 @@ export class importExcel implements OnInit {
   ) {
     this.importForm = new FormGroup({
       filePath: new FormControl(),
-      filePath2: new FormControl()
     })
   }
   ngOnInit(): void {
+    this.showMessage('', '', false)
 
   }
   onFileChange(e){
     this.file = <Array<File>>e.target.files;
-    console.log('file', this.file);
+    if(this.file[0].name.substr(-4) != 'xlsx'){
+      this.showMessage('ingresar excel .xlsx', 'danger', true)
+    }else{
+      this.showMessage('', '', false)
+    }
   }
 
   import(){
-    this._importExcelService.import(this.file);
+    this.loading = true;
+    this._importExcelService.import(this.file)
+    .then(async (r)=>{
+      console.log(r)
+      this.showMessage(r.message, 'success', true)
+      this.loading = false;
+    })
+    .catch(async (e)=>{
+      e
+    });
   }
   
   ngAfterViewInit() {
