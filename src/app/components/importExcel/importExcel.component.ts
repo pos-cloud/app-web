@@ -60,6 +60,13 @@ export class importExcel implements OnInit {
     }
   }
 
+  downloadFile(){
+    let link = document.createElement("a");
+    link.download = "filename";
+    link.href = "assets/img/default.jpg";
+    link.click();
+}
+
   import(){
     this.loading = true;
     this._importExcelService.import(this.file)

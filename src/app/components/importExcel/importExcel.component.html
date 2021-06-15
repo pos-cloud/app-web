@@ -29,7 +29,8 @@
         </div>
       </div>
     </div>
-    <div class="modal-footer">
+    <a href="/assets/modelo_producto.xlsx" target="_self" download >Descargar Modelo</a>
+      <div class="modal-footer">
       <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
       <button type="submit" class="btn btn-primary" [disabled]="">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
