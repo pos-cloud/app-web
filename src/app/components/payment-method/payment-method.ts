@@ -4,6 +4,7 @@ import * as moment from 'moment';
 import { Application } from '../application/application.model';
 import { Article } from '../article/article';
 import { Account } from '../account/account';
+import { Currency } from '../currency/currency';
 
 export class PaymentMethod {
 
@@ -33,6 +34,7 @@ export class PaymentMethod {
     public cashBoxImpact: boolean;
     public bankReconciliation: boolean;
     public company: CompanyType;
+    public currency: Currency;
     public allowCurrencyValue: boolean;
     public allowBank: boolean;
     public mercadopagoAPIKey: string;

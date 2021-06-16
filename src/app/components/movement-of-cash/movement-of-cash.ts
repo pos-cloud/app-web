@@ -1,8 +1,7 @@
+import * as moment from 'moment';
 import { PaymentMethod } from '../payment-method/payment-method';
 import { Transaction } from '../transaction/transaction';
 import { Bank } from '../bank/bank';
-
-import * as moment from 'moment';
 
 export interface currencyValue {
     value: number;
@@ -40,6 +39,7 @@ export class MovementOfCash {
     public balanceCanceled: number = 0.00;
     public cancelingTransaction: Transaction;
     public currencyValues: currencyValue[]
+    public operationType: string;
 
     constructor() { }
 }

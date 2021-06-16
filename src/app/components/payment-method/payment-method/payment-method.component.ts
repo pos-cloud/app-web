@@ -18,6 +18,8 @@ import { Article } from 'app/components/article/article';
 import { ArticleService } from 'app/components/article/article.service';
 import { AccountService } from 'app/components/account/account.service';
 import { Account } from 'app/components/account/account';
+import { Currency } from 'app/components/currency/currency';
+import { CurrencyService } from 'app/components/currency/currency.service';
 
 @Component({
   selector: 'app-payment-method',
@@ -110,6 +112,23 @@ export class PaymentMethodComponent implements OnInit {
     )
   public formatterArticles = (x: Article) => { return x.description; };
 
+  public searchCurrencies = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(() => this.loading = true),
+      switchMap(async term => {
+        let match: {} = (term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {};
+        return await this.getAllCurrencies(match).then(
+          result => {
+            return result;
+          }
+        )
+      }),
+      tap(() => this.loading = false)
+    )
+  public formatterCurrencies = (x: Currency) => { return x.name; };
+
   public searchAccounts = (text$: Observable<string>) =>
   text$.pipe(
     debounceTime(300),
@@ -137,7 +156,8 @@ public formatterAccounts = (x: Account) => { return x.description; };
     public _accountService : AccountService,
     public translatePipe: TranslateMePipe,
     private _toastr: ToastrService,
-    private _articleService: ArticleService
+    private _articleService: ArticleService,
+    private _currencyService: CurrencyService
   ) { }
 
   async ngOnInit() {
@@ -208,6 +228,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
       'payFirstQuota': [this.paymentMethod.payFirstQuota, []],
       'cashBoxImpact': [this.paymentMethod.cashBoxImpact, []],
       'company': [this.paymentMethod.company, []],
+      'currency': [this.paymentMethod.currency, []],
       'allowCurrencyValue': [this.paymentMethod.allowCurrencyValue, []],
       'observation': [this.paymentMethod.observation, [],],
       'allowBank': [this.paymentMethod.allowBank, [],],
@@ -254,6 +275,8 @@ public formatterAccounts = (x: Account) => { return x.description; };
     if (!this.paymentMethod.commissionArticle || !this.paymentMethod.commissionArticle._id) this.paymentMethod.commissionArticle = null;
     if (!this.paymentMethod.administrativeExpenseArticle || !this.paymentMethod.administrativeExpenseArticle._id) this.paymentMethod.administrativeExpenseArticle = null;
     if (!this.paymentMethod.otherExpenseArticle || !this.paymentMethod.otherExpenseArticle._id) this.paymentMethod.otherExpenseArticle = null;
+    if (!this.paymentMethod.currency || !this.paymentMethod.currency._id) this.paymentMethod.currency = null;
+
     const selectedOrderIds = this.paymentMethodForm.value.applications
       .map((v, i) => (v ? this.applications[i] : null))
       .filter(v => v !== null);
@@ -269,6 +292,23 @@ public formatterAccounts = (x: Account) => { return x.description; };
           break;
       }
     }
+  }
+
+  public getAllCurrencies(match: {}): Promise<Currency[]> {
+    return new Promise<Currency[]>((resolve, reject) => {
+      match['operationType'] = { $ne: 'D' };
+      this.subscription.add(this._currencyService.getAll({
+        match,
+        sort: { name: 1 },
+        limit: 10,
+      }).subscribe(
+        result => {
+          this.loading = false;
+          (result.status === 200) ? resolve(result.result) : reject(result);
+        },
+        error => reject(error)
+      ));
+    });
   }
 
   public getAllArticles(match: {}): Promise<Article[]> {
@@ -323,6 +363,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
     if (!this.paymentMethod.mercadopagoAccessToken) this.paymentMethod.mercadopagoAccessToken = null;
     if (!this.paymentMethod.whatsappNumber) this.paymentMethod.whatsappNumber = null;
     if (!this.paymentMethod.observation) this.paymentMethod.observation = '';
+    if (!this.paymentMethod.currency) this.paymentMethod.currency = null;
     if (!this.paymentMethod.account) this.paymentMethod.account = null;
     if (!this.paymentMethod.expirationDays) this.paymentMethod.expirationDays = 30;
 
@@ -352,6 +393,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
       'bankReconciliation': this.paymentMethod.bankReconciliation,
       'company': this.paymentMethod.company,
       'observation': this.paymentMethod.observation,
+      'currency': this.paymentMethod.currency,
       'allowCurrencyValue': this.paymentMethod.allowCurrencyValue,
       'allowBank': this.paymentMethod.allowBank,
       'mercadopagoAPIKey': this.paymentMethod.mercadopagoAPIKey,

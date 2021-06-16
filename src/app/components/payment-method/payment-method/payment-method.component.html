@@ -115,8 +115,8 @@
                     <ng-template #result let-r="result" let-t="term">
                         <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
                     </ng-template>
-                    <label
-                        for="administrativeExpenseArticle">{{'administrativeExpenseArticle'| translate | capitalize}}:</label>
+                    <label for="administrativeExpenseArticle">{{'administrativeExpenseArticle'| translate |
+                        capitalize}}:</label>
                     <input id="administrativeExpenseArticle" type="text" class="form-control"
                         formControlName="administrativeExpenseArticle" name="administrativeExpenseArticle"
                         [ngbTypeahead]="searchArticles" [resultTemplate]="result" [inputFormatter]="formatterArticles"
@@ -161,7 +161,7 @@
                 <div class="form-group col-md-3">
                     <label for="expirationDays" class="control-label">¿Días de Vencimiento?</label>
                     <input type="number" class="form-control" formControlName="expirationDays" name="expirationDays"
-                            id="expirationDays" [readonly]="readonly" />
+                        id="expirationDays" [readonly]="readonly" />
                 </div>
                 <div class="form-group col-md-6">
                     <label for="acceptReturned" class="control-label">¿Acepta vuelto?</label>
@@ -244,9 +244,23 @@
                         <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
                     </ng-template>
                     <label for="account">Cuenta Contable:</label>
-                    <input id="account" type="text" class="form-control" formControlName="account"
-                        name="account" [ngbTypeahead]="searchAccounts" [resultTemplate]="rtAccounts"
+                    <input id="account" type="text" class="form-control" formControlName="account" name="account"
+                        [ngbTypeahead]="searchAccounts" [resultTemplate]="rtAccounts"
                         [inputFormatter]="formatterAccounts" [readonly]="readonly" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <ng-template #result let-r="result" let-t="term">
+                        <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+                    </ng-template>
+                    <label for="currency">{{'currency'| translate | capitalize}}:</label>
+                    <input id="currency" type="text" class="form-control" formControlName="currency"
+                        name="currency" [ngbTypeahead]="searchCurrencies" [resultTemplate]="result"
+                        [inputFormatter]="formatterCurrencies" [readonly]="readonly" />
+                    <div class="invalid-feedback" [style.display]="(formErrors['currency'])? 'block': 'none'">
+                        {{ formErrors['currency'] }}
+                    </div>
                 </div>
             </div>
             <div class="row">
@@ -270,7 +284,9 @@
             </div>
             <div class="row">
                 <div class="col-md-12" style="margin-bottom: 15px;">
-                    <b>Para acceder a las credenciales de mercadopago <a href="https://www.mercadopago.com.ar/developers/panel/credentials/production" target="_blank">click aquí</a> y luego en "Credenciales de producción."</b>
+                    <b>Para acceder a las credenciales de mercadopago <a
+                            href="https://www.mercadopago.com.ar/developers/panel/credentials/production"
+                            target="_blank">click aquí</a> y luego en "Credenciales de producción."</b>
                 </div>
             </div>
             <div class="row">
