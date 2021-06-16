@@ -137,6 +137,17 @@
                     </div>
                   </div>
                 </div>
+                <div class="row">
+                    <div class="form-group col-md-4">
+                        <label for="updatePrices" class="control-label">Actualiza Precios</label>
+                        <div class="input-group">
+                          <select class="form-control" formControlName="updatePrices">
+                            <option value="true" [selected]="cancellationType.updatePrices" [disabled]="readonly">Si</option>
+                            <option value="false" [selected]="!cancellationType.updatePrices" [disabled]="readonly">No</option>
+                          </select>
+                        </div>
+                      </div>
+                </div>
               </div>
             </div>
           </ng-template>

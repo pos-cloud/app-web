@@ -114,6 +114,7 @@ export class CancellationTypeComponent implements OnInit {
     if (this.cancellationType.requestCompany === undefined) { this.cancellationType.requestCompany = true; }
     if (!this.cancellationType.stateOrigin) { this.cancellationType.stateOrigin = TransactionState.Closed; }
     if (!this.cancellationType.requestStatusOrigin) { this.cancellationType.requestStatusOrigin = TransactionState.Closed; }
+    if (!this.cancellationType.updatePrices) { this.cancellationType.updatePrices = false; }
 
     let origin;
     if (!this.cancellationType.origin) {
@@ -146,7 +147,8 @@ export class CancellationTypeComponent implements OnInit {
       'requestAutomatic': this.cancellationType.requestAutomatic,
       'requestCompany': this.cancellationType.requestCompany,
       'stateOrigin': this.cancellationType.stateOrigin,
-      'requestStatusOrigin': this.cancellationType.requestStatusOrigin
+      'requestStatusOrigin': this.cancellationType.requestStatusOrigin,
+      'updatePrices' : this.cancellationType.updatePrices
     };
     this.cancellationTypeForm.setValue(values);
   }
@@ -236,7 +238,8 @@ export class CancellationTypeComponent implements OnInit {
       'requestAutomatic': [this.cancellationType.requestAutomatic, [Validators.required]],
       'requestCompany': [this.cancellationType.requestCompany, [Validators.required]],
       'stateOrigin': [this.cancellationType.stateOrigin, [Validators.required]],
-      'requestStatusOrigin': [this.cancellationType.requestStatusOrigin, [Validators.required]]
+      'requestStatusOrigin': [this.cancellationType.requestStatusOrigin, [Validators.required]],
+      'updatePrices': [this.cancellationType.updatePrices, [Validators.required]]
     });
 
     this.cancellationTypeForm.valueChanges
