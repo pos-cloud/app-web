@@ -224,6 +224,7 @@ export class MovementOfCancellationComponent implements OnInit {
             modifyBalance: 1,
             requestCompany: 1,
             stateOrigin: 1,
+            updatePrices : 1,
             requestStatusOrigin: 1
         };
 
@@ -755,7 +756,20 @@ export class MovementOfCancellationComponent implements OnInit {
                                                     movement = await this.recalculateMovArticle(movement, mov.transactionOrigin);
                                                 }
                                             } else {
-                                                this.movsOfArticles.push(mov2);
+                                                if(mov && mov.type && mov.type.updatePrices){
+                                                    if(mov2.article && mov2.article.currency){
+                                                        mov2.salePrice = mov2.article.salePrice*mov2.article.currency.quotation;
+                                                        mov2.costPrice = mov2.article.costPrice*mov2.article.currency.quotation;
+                                                        mov2.unitPrice = (mov2.article.salePrice*mov2.article.currency.quotation) / mov2.amount;
+                                                    } else {
+                                                        mov2.salePrice = mov2.article.salePrice;
+                                                        mov2.costPrice = mov2.article.costPrice;
+                                                        mov2.unitPrice = mov2.article.salePrice / mov2.amount;
+                                                    }
+                                                    this.movsOfArticles.push(mov2);
+                                                } else {
+                                                    this.movsOfArticles.push(mov2);
+                                                }
                                             }
                                         }
                                     }
