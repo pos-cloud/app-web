@@ -332,10 +332,10 @@
     <div class="card-header">
       <span>Pedidos</span>
       <div class="pull-right">
+        <!-- <button class="btn fa fa-mercadolibre" (click)="syncMeli()" [disabled]="loading"><i
+            [ngClass]="{'fa-spin':loading}"></i>Sincronizar Mercadolibre</button> -->
         <button class="btn fa fa-wordpress" (click)="syncWoocommerce()" [disabled]="loading"><i
             [ngClass]="{'fa-spin':loading}"></i>Sincronizar Woocommerce</button>
-        <!--<button class="btn fa fa-handshake-o" (click)="verifyPayments()" [disabled]="loading"><i
-            [ngClass]="{'fa-spin':loading}"></i>Sincronizar Mercado Pago</button>-->
         <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i
             [ngClass]="{'fa-spin':loading}"></i>Actualizar</button>
       </div>

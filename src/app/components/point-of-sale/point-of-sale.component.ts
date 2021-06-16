@@ -494,15 +494,15 @@ export class PointOfSaleComponent implements OnInit {
         ));
     }
 
-    verifyPayments() {
+    syncMeli() {
         this.loading = true;
-        this._mercadopagoService.verifyPaymentsByClient().subscribe(
+        this._transactionService.syncMeli().subscribe(
             result => {
-                this.showToast(null, 'success', 'Finalizó la sincronización de pagos.');
+                this.showToast(result);
                 this.loading = false;
                 this.refresh();
             }, error => {
-                this.showToast(null, 'success', 'Finalizó la sincronización de pagos.');
+                this.showToast(error);
                 this.loading = false;
                 this.refresh();
             }
