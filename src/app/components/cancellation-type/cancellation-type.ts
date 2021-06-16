@@ -13,6 +13,7 @@ export class CancellationType extends Model {
   public requestCompany: boolean = true;
   public requestStatusOrigin: TransactionState = TransactionState.Closed;
   public stateOrigin: TransactionState;
+  public updatePrices: boolean = false;
 
   constructor() { super(); }
 
