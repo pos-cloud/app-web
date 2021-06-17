@@ -38,10 +38,9 @@
                 </div>
                 <div class="form-group col-md-9">
                     <div class="row">
-                        <div
-                            [ngClass]="{'col-md-6':transaction?.type?.showKeyboard, 'col-md-12':!transaction?.type?.showKeyboard}">
+                        <div [ngClass]="{'col-md-6':transaction?.type?.showKeyboard, 'col-md-12':!transaction?.type?.showKeyboard}">
                             <div class="row">
-                                <div class="form-group" [ngClass]="(paymentMethodSelected?.currency)? 'col-md-6': 'col-md-12'">
+                                <div class="form-group" class="col-md-12">
                                     <label
                                         *ngIf="transaction && transaction.type && transaction.type.movement.toString() === 'Entrada'"
                                         for="amountToPay" class="control-label">Importe:</label>
@@ -59,14 +58,26 @@
                                         {{ formErrors.amountToPay }}
                                     </div>
                                 </div>
-                                <div class="form-group col-md-6" *ngIf="paymentMethodSelected?.currency">
+                            </div>
+                            <div class="row" *ngIf="paymentMethodSelected?.currency">
+                                <div class="form-group col-md-6">
                                     <label for="quotationNative" class="control-label">En {{ currencyNative.name
                                         }}:</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend"><span class="input-group-text"
                                                 id="basic-addon1">$</span></div>
                                         <input type="number" class="form-control" formControlName="quotationNative"
-                                            name="quotationNative" min="0" step="1" readonly />
+                                            name="quotationNative" min="0" step="1" (change)="changeQuotationNative()"/>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="quotationAmount" class="control-label">En {{ currencyNative.name
+                                        }}:</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text"
+                                                id="basic-addon1">$</span></div>
+                                        <input type="number" class="form-control" formControlName="quotationAmount"
+                                            name="quotationAmount" min="0" step="1" readonly />
                                     </div>
                                 </div>
                             </div>

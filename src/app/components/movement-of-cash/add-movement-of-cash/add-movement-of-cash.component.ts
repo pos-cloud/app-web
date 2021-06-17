@@ -99,6 +99,7 @@ export class AddMovementOfCashComponent implements OnInit {
     public focus$: Subject<string>[] = new Array();
     public currencyNative: Currency = Config.currency;
     public quotationNative: number = 0;
+    public quotationAmount: number = 0;
 
     public formErrors = {
         'paymentMethod': '', 'amountToPay': '', 'amountPaid': '', 'paymentChange': '', 'observation': '', 'surcharge': '', 'CUIT': '', 'number': ''
@@ -259,7 +260,8 @@ export class AddMovementOfCashComponent implements OnInit {
             'interestPercentage': [this.interestPercentage, []],
             'taxPercentage': [this.movementOfCash.taxPercentage, []],
             'interestType': [this.interestType],
-            'quotationNative': [this.quotationNative]
+            'quotationNative': [this.quotationNative],
+            'quotationAmount': [this.quotationAmount],
         });
 
         this.movementOfCashForm.valueChanges
@@ -274,7 +276,7 @@ export class AddMovementOfCashComponent implements OnInit {
     }
 
     public setValuesForm(amountToPay?: number): void {
-        if(amountToPay) this.amountToPay = amountToPay;
+        if (amountToPay) this.amountToPay = amountToPay;
         if (!this.movementOfCash.observation) this.movementOfCash.observation = '';
         if (!this.movementOfCash.amountPaid) this.movementOfCash.amountPaid = 0.00;
         if (!this.movementOfCash.discount) this.movementOfCash.discount = 0.00;
@@ -308,7 +310,8 @@ export class AddMovementOfCashComponent implements OnInit {
         }
 
         if (this.paymentMethodSelected.currency) {
-            this.quotationNative = this.amountToPay * this.paymentMethodSelected.currency.quotation;
+            this.quotationNative = this.paymentMethodSelected.currency.quotation;
+            this.quotationAmount = this.amountToPay * this.quotationNative;
         }
 
         const values = {
@@ -341,7 +344,8 @@ export class AddMovementOfCashComponent implements OnInit {
             'interestPercentage': this.interestPercentage,
             'taxPercentage': this.movementOfCash.taxPercentage,
             'interestType': this.interestType,
-            'quotationNative': this.quotationNative
+            'quotationNative': this.quotationNative,
+            'quotationAmount': this.quotationAmount
         };
         this.movementOfCashForm.setValue(values);
     }
@@ -580,24 +584,32 @@ export class AddMovementOfCashComponent implements OnInit {
     async getMovementOfCashesByTransaction(op?: string) {
 
         // VERIFICAR SI EL ULTIMO METODO TIENE CURRENCY Y HAY Q DAR DE ALTA AUTOMATICO LO DAMOS AQUI SINO OBTENEMOS TODO
-        if(op !== 'delete' && this.movementsOfCashes && this.movementsOfCashes.length > 0 && this.movementsOfCashes[0].operationType !== 'D' && this.movementsOfCashes[0].type.currency.toString() !== this.currencyNative._id.toString()) {
+        if (op !== 'delete' && this.movementsOfCashes && this.movementsOfCashes.length > 0 && this.movementsOfCashes[0].operationType !== 'D' && this.movementsOfCashes[0].type.currency.toString() !== this.currencyNative._id.toString()) {
             let lastMovement: MovementOfCash = this.movementsOfCashes[0];
-            this.amountPaid = lastMovement.amountPaid * this.paymentMethodSelected.currency.quotation;
-            for(let paymentMethod of this.paymentMethods) {
-                if(paymentMethod.currency && paymentMethod.currency._id.toString() === this.currencyNative._id.toString()) {
+            this.amountPaid = -(lastMovement.amountPaid * this.movementOfCashForm.value.quotationNative);
+            for (let paymentMethod of this.paymentMethods) {
+                if (paymentMethod.currency && paymentMethod.currency._id.toString() === this.currencyNative._id.toString()) {
                     this.paymentMethodSelected = paymentMethod;
                 }
             }
             this.movementOfCash = Object.assign(new MovementOfCash(), lastMovement);
             this.movementOfCash._id = '';
             this.movementOfCash.type = this.paymentMethodSelected;
+            this.transaction.quotation = this.movementOfCashForm.value.quotationNative;
+            await this.updateTransaction().then(
+                transaction => {
+                    if (transaction) {
+                        this.transaction = transaction;
+                    }
+                }
+            );
             this.setValuesForm(this.amountPaid);
             this.addMovementOfCash();
         } else {
             this.loading = true;
-    
+
             let query = 'where="transaction":"' + this.transaction._id + '"';
-    
+
             this._movementOfCashService.getMovementsOfCashes(query).subscribe(
                 async result => {
                     if (!result.movementsOfCashes) {
@@ -620,7 +632,7 @@ export class AddMovementOfCashComponent implements OnInit {
                                 if (this.transaction.totalPrice !== 0) {
                                     if (this.transaction.commissionAmount > 0 || this.transaction.administrativeExpenseAmount > 0 || this.transaction.otherExpenseAmount > 0) {
                                         let amountPaid = 0;
-    
+
                                         if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
                                             for (let movement of this.movementsOfCashes) {
                                                 amountPaid += this.roundNumber.transform(movement.amountPaid);
@@ -1065,6 +1077,15 @@ export class AddMovementOfCashComponent implements OnInit {
     public changeAmountToPay(): void {
         if (this.keyboard) this.keyboard.setInput(this.movementOfCashForm.value.amountToPay.toString());
         this.updateAmounts('amountToPay');
+    }
+
+    public changeQuotationNative() {
+        this.quotationNative = this.movementOfCashForm.value.quotationNative;
+        this.quotationAmount = this.amountToPay * this.quotationNative;
+        this.movementOfCashForm.patchValue({
+            quotationNative: this.quotationNative,
+            quotationAmount: this.quotationAmount
+        });
     }
 
     public updateAmounts(op?: string): void {
