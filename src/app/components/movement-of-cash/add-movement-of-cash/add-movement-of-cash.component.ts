@@ -584,7 +584,13 @@ export class AddMovementOfCashComponent implements OnInit {
     async getMovementOfCashesByTransaction(op?: string) {
 
         // VERIFICAR SI EL ULTIMO METODO TIENE CURRENCY Y HAY Q DAR DE ALTA AUTOMATICO LO DAMOS AQUI SINO OBTENEMOS TODO
-        if (op !== 'delete' && this.movementsOfCashes && this.movementsOfCashes.length > 0 && this.movementsOfCashes[0].operationType !== 'D' && this.movementsOfCashes[0].type.currency.toString() !== this.currencyNative._id.toString()) {
+        if (op !== 'delete' &&
+        this.movementsOfCashes &&
+        this.movementsOfCashes.length > 0 &&
+        this.movementsOfCashes[0].operationType !== 'D' &&
+        this.movementsOfCashes[0].type.currency &&
+        this.currencyNative &&
+        this.movementsOfCashes[0].type.currency.toString() !== this.currencyNative._id.toString()) {
             let lastMovement: MovementOfCash = this.movementsOfCashes[0];
             this.amountPaid = -(lastMovement.amountPaid * this.movementOfCashForm.value.quotationNative);
             for (let paymentMethod of this.paymentMethods) {
