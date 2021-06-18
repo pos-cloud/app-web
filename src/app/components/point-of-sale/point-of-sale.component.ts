@@ -405,6 +405,7 @@ export class PointOfSaleComponent implements OnInit {
                 maxOrderNumber: 1,
                 requestEmployee: 1,
                 requestArticles: 1,
+                requestCurrency : 1,
                 requestCompany: 1,
                 automaticNumbering: 1,
                 company: 1,

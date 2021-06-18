@@ -38,7 +38,8 @@
                 </div>
                 <div class="form-group col-md-9">
                     <div class="row">
-                        <div [ngClass]="{'col-md-6':transaction?.type?.showKeyboard, 'col-md-12':!transaction?.type?.showKeyboard}">
+                        <div
+                            [ngClass]="{'col-md-6':transaction?.type?.showKeyboard, 'col-md-12':!transaction?.type?.showKeyboard}">
                             <div class="row">
                                 <div class="form-group" class="col-md-12">
                                     <label
@@ -48,8 +49,10 @@
                                         *ngIf="transaction && transaction.type && transaction.type.movement.toString() === 'Salida'"
                                         for="amountToPay" class="control-label">Importe a pagar:</label>
                                     <div class="input-group">
-                                        <div class="input-group-prepend"><span class="input-group-text"
-                                                id="basic-addon1">$</span></div>
+                                        <div *ngIf="!paymentMethodSelected?.currency" class="input-group-prepend"><span
+                                                class="input-group-text" id="basic-addon1">$</span></div>
+                                        <div *ngIf="paymentMethodSelected?.currency" class="input-group-prepend"><span
+                                                class="input-group-text" id="basic-addon1">{{paymentMethodSelected.currency.sign}}</span></div>
                                         <input (input)="onInputChange($event)" class="form-control input"
                                             formControlName="amountToPay" name="amountToPay" min="0" step="1"
                                             [focus]="focusEvent" (change)="changeAmountToPay()" />
@@ -61,13 +64,11 @@
                             </div>
                             <div class="row" *ngIf="paymentMethodSelected?.currency">
                                 <div class="form-group col-md-6">
-                                    <label for="quotationNative" class="control-label">En {{ currencyNative.name
-                                        }}:</label>
+                                    <label for="quotationNative" class="control-label">Cotización:</label>
                                     <div class="input-group">
-                                        <div class="input-group-prepend"><span class="input-group-text"
-                                                id="basic-addon1">$</span></div>
                                         <input type="number" class="form-control" formControlName="quotationNative"
-                                            name="quotationNative" min="0" step="1" (change)="changeQuotationNative()"/>
+                                            name="quotationNative" min="0" step="1"
+                                            (change)="changeQuotationNative()" />
                                     </div>
                                 </div>
                                 <div class="form-group col-md-6">
@@ -95,7 +96,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div *ngIf="paymentMethodSelected?.acceptReturned" class="row">
                                 <div class="form-group col-md-12">
                                     <label for="paymentChange" class="control-label">Su vuelto es:</label>
                                     <div class="input-group">
@@ -495,7 +496,7 @@
                         </tr>
                     </tbody>
                     <thead>
-                        <tr>
+                        <tr *ngIf="transaction && transaction.type && !transaction.type.requestCurrency">
                             <td colspan="5" align="right">
                                 <b>TOTALES</b>
                             </td>
