@@ -71,7 +71,6 @@ export class importExcelComponent implements OnInit {
     this.loading = true;
     this._importExcelService.import(this.file)
     .then(async (r)=>{
-      console.log(r)
       this.showMessage(r.message, 'success', true)
       this.loading = false;
     })

@@ -1218,7 +1218,7 @@ export class AddSaleOrderComponent {
                 }
             }
 
-            movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount);
+            movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount + movementOfArticle.discountAmount);
             if (movementOfArticle.article &&
                 movementOfArticle.article.currency &&
                 this.config['currency'] &&
@@ -1305,6 +1305,7 @@ export class AddSaleOrderComponent {
 
             movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * this.transaction.discountPercent / 100), 6);
             movementOfArticle.unitPrice -= this.roundNumber.transform(movementOfArticle.transactionDiscountAmount);
+            movementOfArticle.unitPrice -= this.roundNumber.transform(movementOfArticle.discountAmount);
             movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
             movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
             movementOfArticle.markupPercentage = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.costPrice * 100), 3);

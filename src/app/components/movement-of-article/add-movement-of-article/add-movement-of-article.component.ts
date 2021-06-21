@@ -672,7 +672,6 @@ export class AddMovementOfArticleComponent implements OnInit {
             this.movementOfArticle.account = this.movementOfArticleForm.value.account;
 
             this.calculateUnitPrice();
-
             if (this.containsVariants) {
                 if (!this.isValidSelectedVariants()) {
                     if (!this.variants || this.variants.length === 0) {
@@ -723,7 +722,6 @@ export class AddMovementOfArticleComponent implements OnInit {
     }
 
     async movementOfArticleExists() {
-
         this.loading = true;
 
         if (this.movementOfArticle.article) {
@@ -740,7 +738,6 @@ export class AddMovementOfArticleComponent implements OnInit {
                         this.movementOfArticle.description = this.movementOfArticleForm.value.description;
                         this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
                         this.movementOfArticle.account = this.movementOfArticleForm.value.account;
-
                         if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
                             this.movementOfArticle = this.recalculateSalePrice(this.movementOfArticle);
                         } else {
@@ -760,13 +757,11 @@ export class AddMovementOfArticleComponent implements OnInit {
                             this.movementOfArticle.description = this.movementOfArticleForm.value.description;
                             this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
                             this.movementOfArticle.account = this.movementOfArticleForm.value.account;
-
                             if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
                                 this.movementOfArticle = this.recalculateSalePrice(this.movementOfArticle);
                             } else {
                                 this.movementOfArticle = this.recalculateCostPrice(this.movementOfArticle);
                             }
-
                             if (await this.isValidMovementOfArticle(this.movementOfArticle)) {
                                 this.verifyStructure();
                             }
@@ -775,7 +770,6 @@ export class AddMovementOfArticleComponent implements OnInit {
                             if (this.structures && this.structures.length > 0) {
                                 await this.deleteMovementOfStructure();
                             }
-
                             let oldUnitPrice = this.movementOfArticle.unitPrice;
                             if (result.movementsOfArticles && result.movementsOfArticles.length > 0) {
                                 for (const mov of result.movementsOfArticles) {
@@ -791,7 +785,6 @@ export class AddMovementOfArticleComponent implements OnInit {
                             this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
                             this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
                             this.movementOfArticle.account = this.movementOfArticleForm.value.account;
-
                             if (this.transaction && this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Sale) {
                                 this.movementOfArticle = this.recalculateSalePrice(this.movementOfArticle);
                             } else {
@@ -833,7 +826,6 @@ export class AddMovementOfArticleComponent implements OnInit {
     }
 
     async calculateUnitPrice() {
-
         if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
             if (this.transaction.type.entryAmount === EntryAmount.SaleWithVAT) {
                 this.movementOfArticle.unitPrice = this.movementOfArticleForm.value.unitPrice;
@@ -1558,9 +1550,10 @@ export class AddMovementOfArticleComponent implements OnInit {
                 movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
             }
 
-            movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount);
+            movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount + this.movementOfArticleForm.value.discountAmount);
             movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * this.transaction.discountPercent / 100), 3);
             movementOfArticle.unitPrice -= movementOfArticle.transactionDiscountAmount;
+            movementOfArticle.unitPrice -= this.movementOfArticleForm.value.discountAmount;
             movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
             movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
             movementOfArticle.markupPercentage = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.costPrice * 100), 3);
@@ -1733,7 +1726,6 @@ export class AddMovementOfArticleComponent implements OnInit {
         this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.costPrice);
         this.movementOfArticle.unitPrice = this.roundNumber.transform(this.movementOfArticle.unitPrice, 4);
         this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.salePrice);
-
         this._movementOfArticleService.updateMovementOfArticle(this.movementOfArticle).subscribe(
             async result => {
                 if (!result.movementOfArticle) {

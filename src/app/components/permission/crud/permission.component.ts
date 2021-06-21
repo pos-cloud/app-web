@@ -506,8 +506,6 @@ export class PermissionComponent implements OnInit {
             }
         }
 
-        console.log(this.obj);
-
         if (isValid) {
             switch (this.operation) {
                 case 'add':
