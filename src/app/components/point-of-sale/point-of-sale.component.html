@@ -282,7 +282,7 @@
             <td *ngIf="transactionMovement.toString() !== 'Stock'">
               {{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
             <td
-              *ngIf="transactionMovement.toString() === 'Stock' && transaction.type.stockMovement.toString() !== 'Transferencia' && transaction.depositOrigin">
+              *ngIf="transactionMovement.toString() === 'Stock' && transaction.type?.stockMovement.toString() !== 'Transferencia' && transaction.depositOrigin">
               {{transaction.depositOrigin.name}}</td>
             <td
               *ngIf="transactionMovement.toString() === 'Stock' && transaction.type.stockMovement.toString() === 'Transferencia' && transaction.depositOrigin && transaction.depositDestination">
