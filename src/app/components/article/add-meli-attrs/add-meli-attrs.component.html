@@ -64,7 +64,11 @@
           <!-- INPUT -->
           <input *ngIf="field.tag === 'input' && field.tagType !== 'file'" [type]="field.tagType" class="form-control"
             [formControlName]="field.id" [name]="field.name" [id]="field.name" [readonly]="readonly"
-            [placeholder]="(field.hint) ? field.hint : ''" (blur)="onValueChanged($event.target.id)" />
+            [placeholder]="(field.hint) ? field.hint : ''" (blur)="onValueChanged($event.target.id)" [attr.list]="field.name+'-list'"/>
+
+          <datalist *ngIf="field.tag === 'input' && field.tagType !== 'file' && field.values" [id]="field.name+'-list'">
+            <option *ngFor="let v of field.values" [value]="v"></option>
+          </datalist>
 
           <!-- SELECT -->
           <select *ngIf="field.tag === 'select'" class="form-control" [formControlName]="field.id" [id]="field.name"

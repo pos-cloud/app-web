@@ -241,8 +241,6 @@ export class AddMeliAttrsComponent implements OnInit {
                             let tag = 'input';
                             let values = new Array();
                             if (field.values && field.values.length > 0) {
-                                tag = 'select';
-                                values.push(null);
                                 for (let value of field.values) {
                                     values.push(value.name);
                                 }
