@@ -514,7 +514,8 @@ export class AddArticleComponent implements OnInit {
       'minStock': [this.article.minStock, []],
       'maxStock': [this.article.maxStock, []],
       'pointOfOrder': [this.article.pointOfOrder, []],
-      'meliId': [this.article.meliId, []]
+      'meliId': [this.article.meliId, []],
+      'meliAttrs': [this.article.meliAttrs, []]
     });
 
     this.articleForm.valueChanges.subscribe(data => this.onValueChanged(data));
@@ -1565,7 +1566,6 @@ export class AddArticleComponent implements OnInit {
   async saveArticle() {
 
     this.loading = true;
-
 
     if (await this.isValid()) {
       this._articleService.saveArticle(this.article, this.variants).subscribe(

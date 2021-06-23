@@ -78,4 +78,24 @@ export class MeliService {
             })
         );
     }
+
+    loadSalesTermByCategory(categoryId: string): Observable<any> {
+
+        const URL = `${Config.apiV8URL}meli/sales-term/${categoryId}`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        return this._http.get(URL, {
+            headers: headers,
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return of(err);
+            })
+        );
+    }
 }

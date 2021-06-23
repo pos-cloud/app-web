@@ -58,10 +58,11 @@ export class AddMeliAttrsComponent implements OnInit {
                     plain_text: ''
                 },
                 listing_type_id: 'free',
+                sale_terms: [],
                 attributes: []
             }
         } else {
-            this.rootCategory = this.article.meliAttrs.category.name;
+            this.rootCategory = (this.article.meliAttrs.category) ? this.article.meliAttrs.category.name : '';
         }
         this.categorySelected = this.article.meliAttrs.category;
         this.buildForm();
@@ -80,14 +81,23 @@ export class AddMeliAttrsComponent implements OnInit {
             'description.plain_text': [this.article.meliAttrs.description.plain_text],
             'listing_type_id': [this.article.meliAttrs.listing_type_id],
         };
-
         if (this.formFields) {
             for (let field of this.formFields) {
                 let exists: boolean = false;
-                for (let attr of this.article.meliAttrs.attributes) {
-                    if (`attrs-${attr.id}` === field.id) {
-                        exists = true;
-                        if (field.tag !== 'separator') fields[field.id] = [attr.value_name, field.validators];
+                if (this.article.meliAttrs.attributes) {
+                    for (let attr of this.article.meliAttrs.attributes) {
+                        if (`attrs-${attr.id}` === field.id) {
+                            exists = true;
+                            if (field.tag !== 'separator') fields[field.id] = [attr.value_name, field.validators];
+                        }
+                    }
+                }
+                if (this.article.meliAttrs.sale_terms) {
+                    for (let term of this.article.meliAttrs.sale_terms) {
+                        if (`saleterms-${term.id}` === field.id) {
+                            exists = true;
+                            if (field.tag !== 'separator') fields[field.id] = [term.value_name, field.validators];
+                        }
                     }
                 }
                 if (!exists) if (field.tag !== 'separator') fields[field.id] = ['', field.validators];
@@ -172,12 +182,20 @@ export class AddMeliAttrsComponent implements OnInit {
         this.article.meliAttrs.listing_type_id = this.meliAttrs.value.listing_type_id;
         if (this.formFields) {
             this.article.meliAttrs.attributes = new Array();
+            this.article.meliAttrs.sale_terms = new Array();
             for (let field of this.formFields) {
                 if (this.meliAttrs.value[field.id] && this.meliAttrs.value[field.id] !== 'null') {
-                    this.article.meliAttrs.attributes.push({
-                        id: field.id.split('attrs-')[1],
-                        value_name: this.meliAttrs.value[field.id]
-                    });
+                    if (field.id.includes('attrs-')) {
+                        this.article.meliAttrs.attributes.push({
+                            id: field.id.split('attrs-')[1],
+                            value_name: this.meliAttrs.value[field.id]
+                        });
+                    } else if (field.id.includes('saleterms-')) {
+                        this.article.meliAttrs.sale_terms.push({
+                            id: field.id.split('saleterms-')[1],
+                            value_name: this.meliAttrs.value[field.id]
+                        });
+                    }
                 }
             }
         }
@@ -202,6 +220,7 @@ export class AddMeliAttrsComponent implements OnInit {
                         this.setValueForm();
                         this.rootCategory = '';
                         this.article.meliAttrs.attributes = new Array();
+                        this.article.meliAttrs.sale_terms = new Array();
                         this.formFields = new Array();
                         this.close();
                     }
@@ -272,6 +291,51 @@ export class AddMeliAttrsComponent implements OnInit {
                             );
                         }
                         this.formFields = fields;
+                        this.buildForm();
+                    } else {
+                        this.showToast(result);
+                    }
+                }).catch(error => this.showToast(error));
+
+            await this._meliService.loadSalesTermByCategory(this.meliAttrs.value.category.id).toPromise()
+                .then(result => {
+                    if (result.status === 200) {
+                        let tagType = 'text';
+                        for (let field of result.result) {
+                            let tag = 'input';
+                            let values = new Array();
+                            if (field.values && field.values.length > 0) {
+                                for (let value of field.values) {
+                                    values.push(value.name);
+                                }
+                            } else {
+                                if (field.value_type === 'number_unit') {
+                                    tagType = 'text';
+                                } else if (field.value_type === 'boolean') {
+                                    tag = 'select';
+                                    tagType = 'boolean';
+                                    values = ['true', 'false'];
+                                }
+                            }
+
+                            let validators: Validators[] = new Array();
+                            if (field.tags && field.tags.required) {
+                                validators.push(Validators.required);
+                            }
+                            fields.push(
+                                {
+                                    id: `saleterms-${field.id}`,
+                                    name: field.name,
+                                    tag,
+                                    tagType,
+                                    values,
+                                    hint: field.hint,
+                                    validators,
+                                    class: 'form-group col-md-12'
+                                }
+                            );
+                        }
+                        this.formFields.concat(fields);
                         this.buildForm();
                     } else {
                         this.showToast(result);

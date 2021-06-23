@@ -467,6 +467,10 @@ export interface IMeliAttrs {
         plain_text: string
     },
     listing_type_id: string,
+    sale_terms: {
+        id: string,
+        value_name: string
+    }[],
     attributes: {
         id: string,
         value_name: string

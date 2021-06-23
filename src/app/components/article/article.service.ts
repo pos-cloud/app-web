@@ -186,7 +186,7 @@ export class ArticleService extends ModelService {
 
 		const params = new HttpParams()
 			.set('id', article._id);
-
+			
 		return this._http.put(URL, { article: article, variants: variants }, {
 			headers: headers,
 			params: params

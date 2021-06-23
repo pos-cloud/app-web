@@ -57,7 +57,7 @@
           {{field.name | translate | capitalize}} <span *ngIf="field?.validators?.length > 0"
             style="color: red">*</span>:
           <br>
-          <small>[{{field.id.split('attrs-')[1]}}]</small>
+          <small>[{{(field.id.includes('attrs-')) ? field.id.split('attrs-')[1] : (field.id.includes('saleterms-')) ? field.id.split('saleterms-')[1] : ''}}]</small>
         </label>
         <div class="input-group">
 
