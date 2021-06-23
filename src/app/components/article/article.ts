@@ -439,6 +439,16 @@ export let attributes = [
         required: true,
     },
     {
+        name: 'meliId',
+        visible: false,
+        disabled: false,
+        filter: false,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: true,
+    },
+    {
         name: 'type',
         visible: false,
         disabled: true,

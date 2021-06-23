@@ -507,5 +507,6 @@
     "menu.report" :"Reportes",
     "menu.config" :"Configuracion",
     "menu.money" :"Fondos",
-    "menu.production" :"Produccion"
+    "menu.production" :"Produccion",
+    "meliId": "Id MercadoLibre"
 }
