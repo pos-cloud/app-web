@@ -444,6 +444,7 @@ export class ListCompaniesComponent implements OnInit {
                 model.observation = '';
                 model.gender = '';
                 model.relations.push("employee_relation_name");
+                model.relations.push("transport_relation_name");
                 model.relations.push("vat-condition_relation_description");
                 modalRef.componentInstance.model = model;
                 modalRef.result.then((result) => {

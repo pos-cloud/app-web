@@ -15,7 +15,7 @@ export class MeliService {
         public _authService: AuthService
     ) { }
 
-    getCategories(name: string, limit: number): Observable<any> {
+    getCategories(): Observable<any> {
 
         const URL = `${Config.apiV8URL}meli/categories`;
 
@@ -23,9 +23,28 @@ export class MeliService {
             .set('Content-Type', 'application/json')
             .set('Authorization', this._authService.getToken());
 
+        return this._http.get(URL, {
+            headers: headers
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return of(err);
+            })
+        );
+    }
+
+    getSubcategories(id: string): Observable<any> {
+
+        const URL = `${Config.apiV8URL}meli/subcategories`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
         const params = new HttpParams()
-            .set('name', name)
-            .set('limit', limit.toString());
+            .set('id', id);
 
         return this._http.get(URL, {
             headers: headers,
