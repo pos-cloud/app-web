@@ -752,14 +752,14 @@ export class AddArticleComponent implements OnInit {
     this.loading = true;
 
     this._articleService.getArticle(this.articleId).subscribe(
-      result => {
+      (result: any) => {
         if (!result.article) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.hideMessage();
           this.article = result.article;
-          this.meliAttrs = this.article.meliAttrs;
+          this.meliAttrs = Object.assign({},this.article.meliAttrs);
           this.notes = this.article.notes;
           this.tags = this.article.tags;
           this.taxes = this.article.taxes;
@@ -1557,10 +1557,10 @@ export class AddArticleComponent implements OnInit {
     }
   }
 
-  eventAddMeliAttrs(article: Article) {
-    this.article.meliId = article.meliId;
+  eventAddMeliAttrs(params: any) {
+    this.article.meliId = params.article.meliId;
     this.articleForm.patchValue({ meliId: this.article.meliId });
-    this.meliAttrs = article.meliAttrs;
+    this.meliAttrs = params.meliAttrs;
   }
 
   async saveArticle() {

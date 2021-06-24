@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { RoundNumberPipe } from 'app/main/pipes/round-number.pipe';
-import { Article } from 'app/components/article/article';
+import { Article, IMeliAttrs } from 'app/components/article/article';
 import { TaxService } from 'app/components/tax/tax.service';
 import { MeliService } from 'app/main/services/meli.service';
 import { FormField } from 'app/util/formField.interface';
@@ -20,18 +20,20 @@ import Resulteable from 'app/util/Resulteable';
 
 export class AddMeliAttrsComponent implements OnInit {
 
-    public meliAttrs: FormGroup;
+    public meliAttrsForm: FormGroup;
     public alertMessage: string = '';
     public loading: boolean = false;
     public focusEvent = new EventEmitter<boolean>();
     public roundNumber: RoundNumberPipe = new RoundNumberPipe();
     @Input() article: Article;
+    @Input() meliAttrs: IMeliAttrs;
     @Input() readonly: boolean;
-    @Output() eventAddMeliAttrs: EventEmitter<Article> = new EventEmitter<Article>();
+    @Output() eventAddMeliAttrs: EventEmitter<any> = new EventEmitter<any>();
     public formFields: FormField[];
     public categorySelected: any;
     public categories: any[];
     public rootCategory: string = '';
+    public finishLoad: boolean = false;
 
     public formErrors = {
     };
@@ -50,9 +52,9 @@ export class AddMeliAttrsComponent implements OnInit {
     }
 
     async ngOnInit() {
-        if (!this.article.meliAttrs) {
+        if (!this.meliAttrs) {
             await this.loadCategories();
-            this.article.meliAttrs = {
+            this.meliAttrs = {
                 category: null,
                 description: {
                     plain_text: ''
@@ -62,9 +64,13 @@ export class AddMeliAttrsComponent implements OnInit {
                 attributes: []
             }
         } else {
-            this.rootCategory = (this.article.meliAttrs.category) ? this.article.meliAttrs.category.name : '';
+            if (!this.meliAttrs.category || !this.meliAttrs.category.id) {
+                await this.loadCategories();
+            } else {
+                this.rootCategory = (this.meliAttrs.category) ? this.meliAttrs.category.name : '';
+            }
         }
-        this.categorySelected = this.article.meliAttrs.category;
+        this.categorySelected = this.meliAttrs.category;
         this.buildForm();
         this.loadAttrs();
     }
@@ -78,22 +84,22 @@ export class AddMeliAttrsComponent implements OnInit {
         let fields: {} = {
             'meliId': [this.article.meliId],
             'category': [this.categorySelected],
-            'description.plain_text': [this.article.meliAttrs.description.plain_text],
-            'listing_type_id': [this.article.meliAttrs.listing_type_id],
+            'description.plain_text': [this.meliAttrs.description.plain_text],
+            'listing_type_id': [this.meliAttrs.listing_type_id],
         };
         if (this.formFields) {
             for (let field of this.formFields) {
                 let exists: boolean = false;
-                if (this.article.meliAttrs.attributes) {
-                    for (let attr of this.article.meliAttrs.attributes) {
+                if (this.meliAttrs.attributes) {
+                    for (let attr of this.meliAttrs.attributes) {
                         if (`attrs-${attr.id}` === field.id) {
                             exists = true;
                             if (field.tag !== 'separator') fields[field.id] = [attr.value_name, field.validators];
                         }
                     }
                 }
-                if (this.article.meliAttrs.sale_terms) {
-                    for (let term of this.article.meliAttrs.sale_terms) {
+                if (this.meliAttrs.sale_terms) {
+                    for (let term of this.meliAttrs.sale_terms) {
                         if (`saleterms-${term.id}` === field.id) {
                             exists = true;
                             if (field.tag !== 'separator') fields[field.id] = [term.value_name, field.validators];
@@ -103,16 +109,16 @@ export class AddMeliAttrsComponent implements OnInit {
                 if (!exists) if (field.tag !== 'separator') fields[field.id] = ['', field.validators];
             }
         }
-        this.meliAttrs = this._fb.group(fields);
+        this.meliAttrsForm = this._fb.group(fields);
         this.focusEvent.emit(true);
-        this.meliAttrs.valueChanges.subscribe(data => this.onValueChanged(data));
+        this.meliAttrsForm.valueChanges.subscribe(data => this.onValueChanged(data));
         this.onValueChanged();
         this.focusEvent.emit(true);
     }
 
     public onValueChanged(data?: any): void {
-        if (!this.meliAttrs) { return; }
-        const form = this.meliAttrs;
+        if (!this.meliAttrsForm) { return; }
+        const form = this.meliAttrsForm;
 
         for (const field in this.formErrors) {
             this.formErrors[field] = '';
@@ -126,7 +132,7 @@ export class AddMeliAttrsComponent implements OnInit {
             }
         }
 
-        this.close();
+        if(this.finishLoad) this.close();
     }
 
     public tinyMCEConfigBody = {
@@ -167,39 +173,39 @@ export class AddMeliAttrsComponent implements OnInit {
 
         const values = {
             'meliId': this.article.meliId,
-            'category': this.article.meliAttrs.category,
-            'description.plain_text': this.article.meliAttrs.description.plain_text,
-            'listing_type_id': this.article.meliAttrs.listing_type_id,
+            'category': this.meliAttrs.category,
+            'description.plain_text': this.meliAttrs.description.plain_text,
+            'listing_type_id': this.meliAttrs.listing_type_id,
         };
 
-        this.meliAttrs.patchValue(values);
+        this.meliAttrsForm.patchValue(values);
     }
 
     async close() {
-        this.article.meliId = this.meliAttrs.value.meliId;
-        this.article.meliAttrs.category = this.meliAttrs.value.category;
-        this.article.meliAttrs.description.plain_text = this.meliAttrs.value['description.plain_text'];
-        this.article.meliAttrs.listing_type_id = this.meliAttrs.value.listing_type_id;
+        this.article.meliId = this.meliAttrsForm.value.meliId;
+        this.meliAttrs.category = this.meliAttrsForm.value.category;
+        this.meliAttrs.description.plain_text = this.meliAttrsForm.value['description.plain_text'];
+        this.meliAttrs.listing_type_id = this.meliAttrsForm.value.listing_type_id;
         if (this.formFields) {
-            this.article.meliAttrs.attributes = new Array();
-            this.article.meliAttrs.sale_terms = new Array();
+            this.meliAttrs.attributes = new Array();
+            this.meliAttrs.sale_terms = new Array();
             for (let field of this.formFields) {
-                if (this.meliAttrs.value[field.id] && this.meliAttrs.value[field.id] !== 'null') {
+                if (this.meliAttrsForm.value[field.id] && this.meliAttrsForm.value[field.id] !== 'null') {
                     if (field.id.includes('attrs-')) {
-                        this.article.meliAttrs.attributes.push({
+                        this.meliAttrs.attributes.push({
                             id: field.id.split('attrs-')[1],
-                            value_name: this.meliAttrs.value[field.id]
+                            value_name: this.meliAttrsForm.value[field.id]
                         });
                     } else if (field.id.includes('saleterms-')) {
-                        this.article.meliAttrs.sale_terms.push({
+                        this.meliAttrs.sale_terms.push({
                             id: field.id.split('saleterms-')[1],
-                            value_name: this.meliAttrs.value[field.id]
+                            value_name: this.meliAttrsForm.value[field.id]
                         });
                     }
                 }
             }
         }
-        this.eventAddMeliAttrs.emit(this.article);
+        this.eventAddMeliAttrs.emit({ article: this.article, meliAttrs: this.meliAttrs});
     }
 
     public showMessage(message: string, type: string, dismissible: boolean): void {
@@ -219,8 +225,8 @@ export class AddMeliAttrsComponent implements OnInit {
                         this.categories.unshift(null);
                         this.setValueForm();
                         this.rootCategory = '';
-                        this.article.meliAttrs.attributes = new Array();
-                        this.article.meliAttrs.sale_terms = new Array();
+                        this.meliAttrs.attributes = new Array();
+                        this.meliAttrs.sale_terms = new Array();
                         this.formFields = new Array();
                         this.close();
                     }
@@ -247,12 +253,21 @@ export class AddMeliAttrsComponent implements OnInit {
     }
 
     public async loadAttrs() {
-        if (this.meliAttrs.value.category && ((!this.formFields) || (!this.categorySelected && this.meliAttrs.value.category && this.meliAttrs.value.category.id) ||
-            (this.categorySelected && this.meliAttrs.value.category && this.categorySelected.id && this.meliAttrs.value.category.id && this.categorySelected.id !== this.meliAttrs.value.category.id))) {
-            this.categorySelected = this.meliAttrs.value.category;
+        this.finishLoad = false;
+        if (this.meliAttrsForm.value.category && ((!this.formFields) || (!this.categorySelected && this.meliAttrsForm.value.category && this.meliAttrsForm.value.category.id) ||
+            (this.categorySelected && this.meliAttrsForm.value.category && this.categorySelected.id && this.meliAttrsForm.value.category.id && this.categorySelected.id !== this.meliAttrsForm.value.category.id))) {
+            this.categorySelected = this.meliAttrsForm.value.category;
             let fields: FormField[] = new Array();
             this.formFields = new Array();
-            await this._meliService.loadAttrsByCategory(this.meliAttrs.value.category.id).toPromise()
+            fields.push(
+                {
+                    name: 'Atributos',
+                    tag: 'separator',
+                    tagType: null,
+                    class: 'form-group col-md-12'
+                }
+            );
+            await this._meliService.loadAttrsByCategory(this.meliAttrsForm.value.category.id).toPromise()
                 .then(result => {
                     if (result.status === 200) {
                         let tagType = 'text';
@@ -286,7 +301,7 @@ export class AddMeliAttrsComponent implements OnInit {
                                     values,
                                     hint: field.hint,
                                     validators,
-                                    class: 'form-group col-md-12'
+                                    class: 'form-group col-md-6'
                                 }
                             );
                         }
@@ -297,7 +312,15 @@ export class AddMeliAttrsComponent implements OnInit {
                     }
                 }).catch(error => this.showToast(error));
 
-            await this._meliService.loadSalesTermByCategory(this.meliAttrs.value.category.id).toPromise()
+            fields.push(
+                {
+                    name: 'Términos de venta',
+                    tag: 'separator',
+                    tagType: null,
+                    class: 'form-group col-md-12'
+                }
+            );
+            await this._meliService.loadSalesTermByCategory(this.meliAttrsForm.value.category.id).toPromise()
                 .then(result => {
                     if (result.status === 200) {
                         let tagType = 'text';
@@ -331,7 +354,7 @@ export class AddMeliAttrsComponent implements OnInit {
                                     values,
                                     hint: field.hint,
                                     validators,
-                                    class: 'form-group col-md-12'
+                                    class: 'form-group col-md-6'
                                 }
                             );
                         }
@@ -342,6 +365,7 @@ export class AddMeliAttrsComponent implements OnInit {
                     }
                 }).catch(error => this.showToast(error));
         }
+        this.finishLoad = true;
         this.close();
     }
 

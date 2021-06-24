@@ -38,31 +38,11 @@ export class ImportExcelService {
       }
       xhr.send(formData);
     })
-
-    
-
-    // const headers = new HttpHeaders()
-    //   .set('Content-Type', 'application/json')
-    //   .set('Authorization', this._authService.getToken());
-
-    // return this._http.post(URL, objectToImport, {
-    //   headers: headers
-    // }).pipe(
-    //   map(res => {
-    //     console.log(res)
-    //     return res;
-    //   }),
-    //   catchError((err) => {
-    //     console.log(err)
-    //     return of(err);
-    //   })
-    // );
   }
 
   public progressFunction(evt) {
     if (evt.lengthComputable) {
       let percentage: number = Math.round(evt.loaded / evt.total * 100);
-      // document.getElementsByClassName('labelFile')[0].innerHTML = percentage + "%";
     }
   }
 

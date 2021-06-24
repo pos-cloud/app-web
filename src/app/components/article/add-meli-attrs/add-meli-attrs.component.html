@@ -1,4 +1,4 @@
-<form [formGroup]="meliAttrs" #formAddArticleTax="ngForm" (ngSubmit)="close()" autocomplete="off">
+<form [formGroup]="meliAttrsForm" #formAddArticleTax="ngForm" (ngSubmit)="close()" autocomplete="off">
   <div class="modal-body">
     <div class="row">
       <div class="form-group col-md-12">
@@ -32,7 +32,7 @@
     <div class="row" *ngIf="categories && categories.length > 0">
       <div class="form-group col-md-12">
         <label for="category" class="control-label">Categoría:</label>
-        <select class="form-control" formControlName="category" (change)="getSubcategories(meliAttrs.value.category)">
+        <select class="form-control" formControlName="category" (change)="getSubcategories(meliAttrsForm.value.category)">
           <option *ngFor="let category of categories" [ngValue]="category">
             {{category?.name}}
           </option>
