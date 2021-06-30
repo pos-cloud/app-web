@@ -311,6 +311,7 @@ export class PrintComponent implements OnInit {
             "company.identificationValue" :1,
             "company.identificationType.name" :1,
             "company.vatCondition.description" : 1,
+            "company.vatCondition.observation" : 1,
             "company.address" :1,
             "company.addressNumber": 1,
             "company.phones" :1,
@@ -2744,13 +2745,17 @@ export class PrintComponent implements OnInit {
         // OBSERVATION
         let observation: string = '';
 
-        if (this.transaction.observation) {
+        if(this.company.vatCondition.observation && this.company.vatCondition.observation != '') {
+            observation += this.company.vatCondition.observation + '.- ';
+        }
+
+        if (this.transaction.observation && this.transaction.observation != '') {
             observation += this.transaction.observation + '.- ';
         }
 
         if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
             for (let movementOfCash of this.movementsOfCashes) {
-                if (movementOfCash.observation) {
+                if (movementOfCash.observation && movementOfCash.observation != '') {
                     observation += movementOfCash.observation + '.- ';
                 }
             }
@@ -2764,19 +2769,23 @@ export class PrintComponent implements OnInit {
                 this.doc.setFontType('bold');
                 this.doc.text("Observaciones: ", margin, row);
                 this.doc.setFontType('normal');
-                row += 4
+                row += 4;
 
-                this.doc.text(observation.slice(0, 45) + "-", 65, row);
-                this.doc.text(observation.slice(45, 105) + "-", 35, row += 4);
+                (observation.length > 0) ? this.doc.text(observation.slice(0, 45) + "-", 65, row) : '';
+                (observation.length > 45) ? this.doc.text(observation.slice(45, 105) + "-", 35, row += 4) : '';
             } else {
                 row += 4
                 this.doc.setFontType('bold');
                 this.doc.text("Observaciones: ", margin + 35, row);
                 this.doc.setFontType('normal');
-                row += 4
+                row += 4;
 
-                this.doc.text(observation.slice(0, 60) + "-", margin + 35, row);
-                this.doc.text(observation.slice(60, 140) + "-", margin + 35, row += 4);
+                (observation.length > 0) ? this.doc.text(observation.slice(0, 60) + "-", margin + 35, row): '';
+                (observation.length > 60) ? this.doc.text(observation.slice(60, 120) + "-", margin + 35, row += 4): '';
+                (observation.length > 120) ? this.doc.text(observation.slice(120, 180) + "-", margin + 35, row += 4): '';
+                (observation.length > 180) ? this.doc.text(observation.slice(180, 220) + "-", margin + 35, row += 4): '';
+                (observation.length > 220) ? this.doc.text(observation.slice(220, 260) + "-", margin + 35, row += 4): '';
+                (observation.length > 260) ? this.doc.text(observation.slice(260, 320) + "-", margin + 35, row += 4): '';
             }
         }
 

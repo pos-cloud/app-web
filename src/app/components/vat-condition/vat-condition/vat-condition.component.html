@@ -58,6 +58,13 @@
                     </select>
                 </div>
             </div>
+            <div class="row">
+                <div class="form-group col-md-12">
+                    <label for="observation">Observación:</label>
+                    <textarea class="form-control" formControlName="observation" name="observation"
+                        id="observation"></textarea>
+                </div>
+            </div>
         </div>
         <div class="modal-footer" *ngIf="op !== 'view'">
             <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>

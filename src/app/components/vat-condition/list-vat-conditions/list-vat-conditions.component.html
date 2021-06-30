@@ -9,76 +9,83 @@
     <div class="card-header">Listado de Condiciones de IVA
       <div class="pull-right">
         <button class="btn" (click)="openModal('add', null)"><i class="fa fa-plus"></i><span>Agregar</span></button>
-        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
+        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i
+            [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
       </div>
     </div>
-      <div class="card-block table-responsive">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th><i class="fa fa-bars"></i></th>
-              <th (click)="orderBy('code')">Código </th>
-              <th (click)="orderBy('description')">Descripción </th>
-              <th (click)="orderBy('transactionLetter')">Letra </th>
-              <th (click)="orderBy('discriminate')">Discrimina IVA </th>
-            </tr>
-            <tr class="filters">
-              <th></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="Código..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterDescription" placeholder="Descripción..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterTransactionLetter" placeholder="Letra..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterDiscriminate" placeholder="Discrimina IVA..." ></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let vatCondition of vatConditions | filter: filterDescription:'description'
+    <div class="card-block table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th><i class="fa fa-bars"></i></th>
+            <th (click)="orderBy('code')">Código </th>
+            <th (click)="orderBy('description')">Descripción </th>
+            <th (click)="orderBy('transactionLetter')">Letra </th>
+            <th (click)="orderBy('discriminate')">Discrimina IVA </th>
+            <th (click)="orderBy('observation')">Observación </th>
+          </tr>
+          <tr class="filters">
+            <th></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterCode" placeholder="Código..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterDescription" placeholder="Descripción...">
+            </th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterTransactionLetter" placeholder="Letra...">
+            </th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterDiscriminate"
+                placeholder="Discrimina IVA..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación...">
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let vatCondition of vatConditions | filter: filterDescription:'description'
                                                           | filter: filterCode:'code'
                                                           | filter: filterTransactionLetter:'transactionLetter'
                                                           | filter: filterDiscriminate:'discriminate'
-                                          | orderBy: orderTerm: propertyTerm
-                                          | paginate: { itemsPerPage: itemsPerPage,
-                                                        currentPage: p,
-                                                        totalItems: totalItems
-                                                      }">
-              <td align="left" width="130">
-                <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', vatCondition)" title="Ver"><i class="fa fa-eye"></i></button>
-                <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', vatCondition)" title="Modificar"><i class="fa fa-pencil"></i></button>
-                <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', vatCondition)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
-              </td>
-              <td class="flat">{{vatCondition.code}}</td>
-              <td class="flat">{{vatCondition.description}}</td>
-              <td class="flat">{{vatCondition.transactionLetter}}</td>
-              <td class="flat">{{vatCondition.discriminate}}</td>
-            </tr>
-            <tr align="center" *ngIf="areVATConditionsEmpty && !loading">
-              <td colspan="2">No se encontraron Condiciones de IVA</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="card-footer">
-        <div class="row">
-          <div class="col-md-10">
-            <pagination-controls
-                      class="my-pagination"
-                      (pageChange)="p=$event"
-                      #api
-                      previousLabel="Ant."
-                      nextLabel="Sig."
-                      autoHide="true">
-            </pagination-controls>
-          </div>
-          <div class="form-group col-md-2">
-            <select class="form-control" [(ngModel)]="itemsPerPage">
-              <option [value]="5">Mostrar 5 Registros</option>
-              <option [value]="10">Mostrar 10 Registros</option>
-              <option [value]="15">Mostrar 15 Registros</option>
-              <option [value]="20">Mostrar 20 Registros</option>
-              <option [value]="50">Mostrar 50 Registros</option>
-              <option [value]="100">Mostrar 100 Registros</option>
-            </select>
-          </div>
+                                                          | filter: filterObservation:'observation'
+                                                          | orderBy: orderTerm: propertyTerm
+                                                          | paginate: { itemsPerPage: itemsPerPage,
+                                                                        currentPage: p,
+                                                                        totalItems: totalItems
+                                                                      }">
+            <td align="left" width="130">
+              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', vatCondition)"
+                title="Ver"><i class="fa fa-eye"></i></button>
+              <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', vatCondition)"
+                title="Modificar"><i class="fa fa-pencil"></i></button>
+              <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', vatCondition)"
+                title="Eliminar"><i class="fa fa-trash-o"></i></button>
+            </td>
+            <td class="flat">{{vatCondition.code}}</td>
+            <td class="flat">{{vatCondition.description}}</td>
+            <td class="flat">{{vatCondition.transactionLetter}}</td>
+            <td class="flat">{{vatCondition.discriminate}}</td>
+            <td class="flat">{{vatCondition.observation}}</td>
+          </tr>
+          <tr align="center" *ngIf="areVATConditionsEmpty && !loading">
+            <td colspan="2">No se encontraron Condiciones de IVA</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer">
+      <div class="row">
+        <div class="col-md-10">
+          <pagination-controls class="my-pagination" (pageChange)="p=$event" #api previousLabel="Ant." nextLabel="Sig."
+            autoHide="true">
+          </pagination-controls>
+        </div>
+        <div class="form-group col-md-2">
+          <select class="form-control" [(ngModel)]="itemsPerPage">
+            <option [value]="5">Mostrar 5 Registros</option>
+            <option [value]="10">Mostrar 10 Registros</option>
+            <option [value]="15">Mostrar 15 Registros</option>
+            <option [value]="20">Mostrar 20 Registros</option>
+            <option [value]="50">Mostrar 50 Registros</option>
+            <option [value]="100">Mostrar 100 Registros</option>
+          </select>
         </div>
       </div>
+    </div>
   </div>
 </section>

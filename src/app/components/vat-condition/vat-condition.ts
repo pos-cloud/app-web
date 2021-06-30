@@ -5,6 +5,7 @@ export class VATCondition {
 	public description: string;
 	public discriminate: boolean = false;
 	public transactionLetter: string;
+	public observation: string;
 
 	constructor() { }
 }

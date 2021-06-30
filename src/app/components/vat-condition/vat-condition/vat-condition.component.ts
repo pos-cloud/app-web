@@ -79,42 +79,25 @@ export class VATConditionComponent implements OnInit {
     public buildForm(): void {
 
         this.vatConditionForm = this._fb.group({
-            '_id': [this.vatCondition._id, [
-            ]
-            ],
-            'code': [this.vatCondition.code, [
-                Validators.required,
-            ]
-            ],
-            'description': [this.vatCondition.description, [
-                Validators.required,
-            ]
-            ],
-            'transactionLetter': [this.vatCondition.transactionLetter, [
-            ]
-            ],
-            'discriminate': [this.vatCondition.discriminate, [
-                Validators.required,
-            ]
-            ],
+            '_id': [this.vatCondition._id, []],
+            'code': [this.vatCondition.code, [Validators.required,]],
+            'description': [this.vatCondition.description, [Validators.required,]],
+            'transactionLetter': [this.vatCondition.transactionLetter, []],
+            'discriminate': [this.vatCondition.discriminate, [Validators.required,]],
+            'observation': [this.vatCondition.observation],
         });
 
-        this.vatConditionForm.valueChanges
-            .subscribe(data => this.onValueChanged(data));
-
+        this.vatConditionForm.valueChanges.subscribe(data => this.onValueChanged(data));
         this.onValueChanged();
         this.focusEvent.emit(true);
     }
 
     public onValueChanged(data?: any): void {
-
         if (!this.vatConditionForm) { return; }
         const form = this.vatConditionForm;
-
         for (const field in this.formErrors) {
             this.formErrors[field] = '';
             const control = form.get(field);
-
             if (control && control.dirty && !control.valid) {
                 const messages = this.validationMessages[field];
                 for (const key in control.errors) {
@@ -152,6 +135,7 @@ export class VATConditionComponent implements OnInit {
         if (!this.vatCondition.description) { this.vatCondition.description = ''; }
         if (!this.vatCondition.transactionLetter) { this.vatCondition.transactionLetter = 'C'; }
         if (!this.vatCondition.discriminate) { this.vatCondition.discriminate = false; }
+        if (!this.vatCondition.observation) { this.vatCondition.observation = ''; }
 
         const values = {
             '_id': this.vatCondition._id,
@@ -159,8 +143,8 @@ export class VATConditionComponent implements OnInit {
             'description': this.vatCondition.description,
             'transactionLetter': this.vatCondition.transactionLetter,
             'discriminate': this.vatCondition.discriminate,
+            'observation': this.vatCondition.observation,
         };
-
         this.vatConditionForm.setValue(values);
     }
 
