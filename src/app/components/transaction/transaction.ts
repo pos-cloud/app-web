@@ -595,6 +595,16 @@ export let attributes = [
     required: true,
   },
   {
+    name: 'creationUser.name',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    project: null,
+    align: 'left',
+    required: true,
+  },
+  {
     name: '_id',
     visible: false,
     disabled: false,
