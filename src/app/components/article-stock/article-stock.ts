@@ -208,6 +208,16 @@ export let attributes = [
         required: true,
     },
     {
+        name: 'article.salePrice',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'currency',
+        project: null,
+        align: 'right',
+        required: false,
+    },
+    {
         name: 'article.currency.name',
         visible: false,
         disabled: false,
