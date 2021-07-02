@@ -43,13 +43,9 @@ export class AddArticleTaxComponent implements OnInit {
     };
 
     public validationMessages = {
-        'tax': {
-            'required': 'Este campo es requerido.'
-        },
-        'percentage': {
-        },
-        'taxAmount': {
-        }
+        'tax': { 'required': 'Este campo es requerido.' },
+        'percentage': {},
+        'taxAmount': {}
     };
 
     constructor(
@@ -103,16 +99,9 @@ export class AddArticleTaxComponent implements OnInit {
     public buildForm(): void {
 
         this.articleTaxForm = this._fb.group({
-            'tax': [this.articleTax.tax, [
-                Validators.required
-            ]
-            ],
-            'percentage': [this.articleTax.percentage, [
-            ]
-            ],
-            'taxAmount': [this.articleTax.taxAmount, [
-            ]
-            ]
+            'tax': [this.articleTax.tax, [Validators.required]],
+            'percentage': [this.articleTax.percentage, []],
+            'taxAmount': [this.articleTax.taxAmount, []]
         });
 
         this.articleTaxForm.valueChanges
@@ -151,7 +140,6 @@ export class AddArticleTaxComponent implements OnInit {
             'percentage': this.articleTax.percentage,
             'taxAmount': this.articleTax.taxAmount
         };
-
         this.articleTaxForm.setValue(values);
     }
 
@@ -176,7 +164,6 @@ export class AddArticleTaxComponent implements OnInit {
     }
 
     public changeTax(op: string): void {
-
         if (this.articleTaxForm.value.tax) {
 
             let taxedAmount = 0;
@@ -237,7 +224,6 @@ export class AddArticleTaxComponent implements OnInit {
                 default:
                     break;
             }
-
             this.setValueForm();
         }
     }

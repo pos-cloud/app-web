@@ -32,7 +32,7 @@ import { MovementOfCancellationService } from 'app/components/movement-of-cancel
 import { CancellationTypeService } from 'app/components/cancellation-type/cancellation-type.service';
 import { SelectCompanyComponent } from '../../company/select-company/select-company.component';
 import { Employee } from '../../employee/employee';
-import { TaxClassification } from '../../tax/tax';
+import { TaxBase, TaxClassification } from '../../tax/tax';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 
 @Component({
@@ -141,6 +141,7 @@ export class AddTransactionComponent implements OnInit {
                 async transaction => {
                     if (transaction) {
                         this.transaction = transaction;
+                        this.taxes = this.transaction.taxes;
                         this.getCancellationTypes();
                         if (this.transaction.endDate) {
                             this.transactionDate = this.transaction.endDate;
@@ -218,17 +219,17 @@ export class AddTransactionComponent implements OnInit {
         this.transactionForm.setValue({
             'company': this.companyName,
             'date': moment(this.transactionDate).format('YYYY-MM-DD'),
-            'origin': this.transaction.origin,
+            'origin': (this.transaction.origin) ? this.transaction.origin : 0,
             'letter': this.transaction.letter,
-            'number': this.transaction.number,
-            'basePrice': this.transaction.basePrice,
-            'exempt': this.transaction.exempt,
-            'totalPrice': this.transaction.totalPrice,
+            'number': (this.transaction.number) ? this.transaction.number : 0,
+            'basePrice': (this.transaction.basePrice) ? this.transaction.basePrice : 0,
+            'exempt': (this.transaction.exempt) ? this.transaction.exempt : 0,
+            'totalPrice': (this.transaction.totalPrice) ? this.transaction.totalPrice : 0,
             'observation': this.transaction.observation,
             'employeeOpening': employeeOpening,
             'state': this.transaction.state,
             'VATPeriod': this.transaction.VATPeriod,
-            'balance': this.transaction.balance
+            'balance': (this.transaction.balance) ? this.transaction.balance : 0,
         });
     }
 
@@ -509,8 +510,6 @@ export class AddTransactionComponent implements OnInit {
                     this.hideMessage();
                     this.loading = false;
                     this.employees = result.employees;
-                    // this.transaction.employeeOpening = this.employees[0];
-                    // this.transaction.employeeClosing = this.employees[0];
                     this.setValuesForm();
                 }
             },
@@ -605,17 +604,20 @@ export class AddTransactionComponent implements OnInit {
 
         let transactionTaxes: Taxes[] = new Array();
 
-        if (this.transactionForm.value.exempt > 0 && this.transactionForm.value.basePrice > 0) {
-            this.transactionForm.value.totalPrice = this.transactionForm.value.exempt + this.transactionForm.value.basePrice;
-        }
+        this.transactionForm.value.totalPrice = this.transactionForm.value.basePrice;
 
-        if (this.taxes && this.taxes.length > 0 && this.transaction.basePrice !== 0) {
+        if (this.transactionForm.value.exempt > 0) {
+            this.transactionForm.value.totalPrice += this.transactionForm.value.exempt;
+        }
+        if (this.taxes && this.taxes.length > 0) {
             for (let taxesAux of this.taxes) {
                 let transactionTax: Taxes = new Taxes();
-                transactionTax.percentage = taxesAux.percentage;
                 transactionTax.tax = taxesAux.tax;
-                transactionTax.taxBase = this.transaction.basePrice;
-                if (transactionTax.percentage && transactionTax.percentage !== 0) {
+                transactionTax.taxBase = 0;
+                transactionTax.percentage = 0;
+                if(taxesAux.tax.taxBase == TaxBase.Neto) {
+                    transactionTax.percentage = taxesAux.percentage;
+                    transactionTax.taxBase = this.transaction.basePrice;
                     transactionTax.taxAmount = this.roundNumber.transform((transactionTax.taxBase * transactionTax.percentage / 100));
                 } else {
                     transactionTax.taxAmount = taxesAux.taxAmount;
