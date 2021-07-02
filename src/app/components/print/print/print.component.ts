@@ -2745,7 +2745,7 @@ export class PrintComponent implements OnInit {
         // OBSERVATION
         let observation: string = '';
 
-        if(this.company.vatCondition.observation && this.company.vatCondition.observation != '') {
+        if(this.company && this.company.vatCondition && this.company.vatCondition.observation && this.company.vatCondition.observation != '') {
             observation += this.company.vatCondition.observation + '.- ';
         }
 
