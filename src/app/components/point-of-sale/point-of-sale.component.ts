@@ -2046,6 +2046,14 @@ export class PointOfSaleComponent implements OnInit {
                 this.orderTerm = ['-orderNumber'];
             }
 
+            if(this.user && this.user.permission && this.user.permission.transactionTypes && this.user.permission.transactionTypes.length > 0){
+                var transactionTypes = [];
+                this.user.permission.transactionTypes.forEach(element => {
+                    transactionTypes.push({ "$oid": element });
+                });
+                match['type._id'] = { "$in": transactionTypes }
+            }
+
             this.subscription.add(this._transactionService.getTransactionsV2(
                 project, // PROJECT
                 match, // MATCH
