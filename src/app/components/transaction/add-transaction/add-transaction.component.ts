@@ -570,21 +570,7 @@ export class AddTransactionComponent implements OnInit {
     }
 
     public updatePrices(op: string): void {
-        switch (op) {
-            case "basePrice":
-                this.updateTaxes();
-                break;
-            case "exempt":
-                this.updateTaxes();
-                break;
-            case "taxes":
-                this.updateTaxes();
-                break;
-            case "totalPrice":
-                this.updateTaxes();
-                break;
-        }
-
+        this.updateTaxes(op);
         this.transaction.basePrice = this.roundNumber.transform(this.transactionForm.value.basePrice);
         this.transaction.exempt = this.roundNumber.transform(this.transactionForm.value.exempt);
         this.transaction.totalPrice = this.roundNumber.transform(this.transactionForm.value.totalPrice);
@@ -600,33 +586,36 @@ export class AddTransactionComponent implements OnInit {
         this.setValuesForm();
     }
 
-    public updateTaxes(): void {
+    public updateTaxes(op?: string): void {
 
         let transactionTaxes: Taxes[] = new Array();
 
-        this.transactionForm.value.totalPrice = this.transactionForm.value.basePrice;
+        if(op !== 'totalPrice') {
+            this.transactionForm.value.totalPrice = this.transactionForm.value.basePrice;
 
-        if (this.transactionForm.value.exempt > 0) {
-            this.transactionForm.value.totalPrice += this.transactionForm.value.exempt;
-        }
-        if (this.taxes && this.taxes.length > 0) {
-            for (let taxesAux of this.taxes) {
-                let transactionTax: Taxes = new Taxes();
-                transactionTax.tax = taxesAux.tax;
-                transactionTax.taxBase = 0;
-                transactionTax.percentage = 0;
-                if(taxesAux.tax.taxBase == TaxBase.Neto) {
-                    transactionTax.percentage = taxesAux.percentage;
-                    transactionTax.taxBase = this.transaction.basePrice;
-                    transactionTax.taxAmount = this.roundNumber.transform((transactionTax.taxBase * transactionTax.percentage / 100));
-                } else {
-                    transactionTax.taxAmount = taxesAux.taxAmount;
-                }
-                this.transactionForm.value.totalPrice += transactionTax.taxAmount;
-                transactionTaxes.push(transactionTax);
+            if (this.transactionForm.value.exempt > 0) {
+                this.transactionForm.value.totalPrice += this.transactionForm.value.exempt;
             }
+    
+            if (this.taxes && this.taxes.length > 0) {
+                for (let taxesAux of this.taxes) {
+                    let transactionTax: Taxes = new Taxes();
+                    transactionTax.tax = taxesAux.tax;
+                    transactionTax.taxBase = 0;
+                    transactionTax.percentage = 0;
+                    if(taxesAux.tax.taxBase == TaxBase.Neto) {
+                        transactionTax.percentage = taxesAux.percentage;
+                        transactionTax.taxBase = this.transaction.basePrice;
+                        transactionTax.taxAmount = this.roundNumber.transform((transactionTax.taxBase * transactionTax.percentage / 100));
+                    } else {
+                        transactionTax.taxAmount = taxesAux.taxAmount;
+                    }
+                    this.transactionForm.value.totalPrice += transactionTax.taxAmount;
+                    transactionTaxes.push(transactionTax);
+                }
+            }
+            this.transaction.taxes = transactionTaxes;
         }
-        this.transaction.taxes = transactionTaxes;
     }
 
     public updateTransaction(): Promise<Transaction> {
