@@ -438,8 +438,8 @@ export class AddCompanyComponent implements OnInit {
             'priceList': [this.company.priceList, []],
             'discount' : [this.company.discount,[]],
             'account' : [this.company.account,[]],
-            'creditLimit' : [this.company.creditLimit,[]]
-
+            'creditLimit' : [this.company.creditLimit,[]],
+            'zipCode' : [this.company.zipCode,[]]
         });
 
         this.companyForm.valueChanges
@@ -591,6 +591,7 @@ export class AddCompanyComponent implements OnInit {
         if (!this.company.discount) this.company.discount = 0;
         if (!this.company.account) this.company.account = null;
         if (!this.company.creditLimit) this.company.creditLimit = 0;
+        if (!this.company.zipCode) this.company.zipCode = '';
 
 
         const values = {
@@ -621,7 +622,8 @@ export class AddCompanyComponent implements OnInit {
             'priceList': priceList,
             'discount' : this.company.discount,
             'account' : this.company.account,
-            'creditLimit' : this.company.creditLimit
+            'creditLimit' : this.company.creditLimit,
+            'zipCode' : this.company.zipCode
         };
 
         this.companyForm.setValue(values);
