@@ -46,6 +46,7 @@ export class Company {
     public discount: number;
     public account: Account;
     public creditLimit: number;
+    public zipCode : string;
     public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     public updateUser: User;

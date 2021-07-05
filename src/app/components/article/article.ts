@@ -289,6 +289,16 @@ export let attributes = [
         required: false,
     },
     {
+        name: 'codeProvider',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+    },
+    {
         name: 'allowSale',
         visible: false,
         disabled: false,
