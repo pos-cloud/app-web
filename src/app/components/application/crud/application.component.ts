@@ -781,7 +781,9 @@ export class ApplicationComponent implements OnInit {
 
     public authMeli() {
         let stateMeli = this.obj._id + '-DB-' + this.database;
-        window.open(`http://auth.mercadolibre.com.ar/authorization?response_type=code&client_id=3033899131061978&state=${stateMeli}`);
+        let clientId: string = '3033899131061978'; // PROD
+        // let clientId: string = '3438498871623875'; // TEST
+        window.open(`http://auth.mercadolibre.com.ar/authorization?response_type=code&client_id=${clientId}&state=${stateMeli}`);
     }
 
     public getAllArticles(match: {}): Promise<Article[]> {

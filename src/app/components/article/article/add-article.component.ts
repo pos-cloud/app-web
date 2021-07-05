@@ -1377,7 +1377,7 @@ export class AddArticleComponent implements OnInit {
     this.articleForm.value.markupPercentage = this.roundNumber.transform(this.articleForm.value.markupPercentage);
     this.articleForm.value.markupPrice = this.roundNumber.transform(this.articleForm.value.markupPrice);
     this.articleForm.value.salePrice = this.roundNumber.transform(this.articleForm.value.salePrice);
-    this.article = this.articleForm.value;
+    this.article = Object.assign(this.article, this.articleForm.value);
     this.setValuesForm();
   }
 
@@ -1503,7 +1503,7 @@ export class AddArticleComponent implements OnInit {
       'maxStock': this.article.maxStock,
       'pointOfOrder': this.article.pointOfOrder,
       'codeProvider': this.article.codeProvider,
-      'allowStock': this.article.allowStock
+      'allowStock': this.article.allowStock,
     };
 
     this.articleForm.patchValue(values);
@@ -1515,7 +1515,9 @@ export class AddArticleComponent implements OnInit {
       this.loading = true;
       this.loadPosDescription();
       this.loadURL();
-      this.article = this.articleForm.value;
+      let oldMeliId: string = this.article.meliId;
+      this.article = Object.assign(this.article, this.articleForm.value);
+      this.article.meliId = oldMeliId;
       this.article.meliAttrs = this.meliAttrs;
       if (this.article.make && this.article.make.toString() === '') this.article.make = null;
       if (this.article.category && this.article.category.toString() === '') this.article.category = null;
@@ -1625,7 +1627,6 @@ export class AddArticleComponent implements OnInit {
     this.loading = true;
 
     if (await this.isValid()) {
-
       this._articleService.updateArticle(this.article, this.variants).subscribe(
         result => {
           if (!result.article) {
