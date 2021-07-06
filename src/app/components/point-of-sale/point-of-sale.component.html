@@ -266,12 +266,12 @@
                                                                       totalItems: transactions.length
                                                                     }">
                         <td align="left" width="150">
-                            <button type="button" class="btn btn-light" (click)="printTransaction(transaction)"
-                                title="Ver"><i class="fa fa-print"></i></button>
                             <button type="button" class="btn btn-success" (click)="viewTransaction(transaction)"
                                 title="Ver"><i class="fa fa-eye"></i></button>
                             <button type="button" class="btn btn-danger" (click)="cancelTransaction(transaction)"
                                 title="Eliminar"><i class="fa fa-close"></i></button>
+                            <button type="button" class="btn btn-light" (click)="printTransaction(transaction)"
+                                title="Ver"><i class="fa fa-print"></i></button>
                         </td>
                         <td (click)="openTransaction(transaction)">{{transaction.type.name}}</td>
                         <td (click)="openTransaction(transaction)" *ngIf="transaction.endDate">
