@@ -201,6 +201,8 @@ export class CancellationTypeAutomaticComponent implements OnInit {
                         transactionDestination.type = transactionTypes[0];
                         transactionDestination.state = TransactionState.Pending;
                         transactionDestination.balance = 0;
+                        transactionDestination.transport = this.transaction.transport;
+                        transactionDestination.observation = this.transaction.observation;
 
                         if (transactionDestination.type.fixedOrigin && transactionDestination.type.fixedOrigin !== 0) {
                             transactionDestination.origin = transactionDestination.type.fixedOrigin;
@@ -241,23 +243,27 @@ export class CancellationTypeAutomaticComponent implements OnInit {
                                                 await this.saveMovementsOfArticles(this.copyMovementsOfArticles(transactionDestination)).then(
                                                     async movementsOfArticlesSaved => {
                                                         if (movementsOfArticlesSaved && movementsOfArticlesSaved.length > 0) {
-                                                            await this.copyMovementsOfCashes(transactionDestination).then(
-                                                                async result => {
-                                                                    if (result) {
-                                                                        let movementOfCancellation: MovementOfCancellation = new MovementOfCancellation();
-                                                                        movementOfCancellation.transactionOrigin = this.transaction;
-                                                                        movementOfCancellation.transactionDestination = transactionDestination;
-                                                                        movementOfCancellation.balance = transactionDestination.totalPrice;
-                                                                        await this.saveMovementOfCancellation(movementOfCancellation).then(
-                                                                            async movementOfCancellation => {
-                                                                                if (movementOfCancellation) {
-                                                                                    this.activeModal.close({ transaction: transactionDestination });
+                                                            if(transactionDestination.type.requestPaymentMethods && this.transaction.type.requestPaymentMethods) {
+                                                                await this.copyMovementsOfCashes(transactionDestination).then(
+                                                                    async result => {
+                                                                        if (result) {
+                                                                            let movementOfCancellation: MovementOfCancellation = new MovementOfCancellation();
+                                                                            movementOfCancellation.transactionOrigin = this.transaction;
+                                                                            movementOfCancellation.transactionDestination = transactionDestination;
+                                                                            movementOfCancellation.balance = transactionDestination.totalPrice;
+                                                                            await this.saveMovementOfCancellation(movementOfCancellation).then(
+                                                                                async movementOfCancellation => {
+                                                                                    if (movementOfCancellation) {
+                                                                                        this.activeModal.close({ transaction: transactionDestination });
+                                                                                    }
                                                                                 }
-                                                                            }
-                                                                        );
+                                                                            );
+                                                                        }
                                                                     }
-                                                                }
-                                                            );
+                                                                );
+                                                            } else {
+                                                                this.activeModal.close({ transaction: transactionDestination });
+                                                            }
                                                         }
                                                     }
                                                 );
