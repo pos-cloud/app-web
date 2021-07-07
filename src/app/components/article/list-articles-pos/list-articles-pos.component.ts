@@ -120,15 +120,7 @@ export class ListArticlesPosComponent implements OnInit {
     if (this.transaction.company && this.transaction.company.discount > 0 && this.transaction.type.allowCompanyDiscount) this.discountCompany = this.transaction.company.discount;
     if (this.transaction.company && this.transaction.company.group && this.transaction.company.group.discount > 0 && this.transaction.type.allowCompanyDiscount) this.discountCompanyGroup = this.transaction.company.group.discount;
 
-    this.subscriptionArticlePos.add(this._articleService.getArticlesPos.pipe(first()).subscribe(
-      async articles => {
-        if (articles && articles.length > 0) {
-          this.articles = articles;
-        } else {
-          this.getArticles();
-        }
-      }
-    ));
+    this.getArticles();
   }
 
   public getTransaction(): Promise<Transaction> {
@@ -203,10 +195,8 @@ export class ListArticlesPosComponent implements OnInit {
         this.loading = false;
         if (result && result && result.articles) {
           this.articles = result.articles;
-          this._articleService.setArticlesPos(this.articles);
         } else {
           this.articles = new Array();
-          this._articleService.setArticlesPos(this.articles);
         }
       },
       error => {

@@ -113,44 +113,18 @@ export class ListArticlesComponent implements OnInit {
     });
 
     this.database = Config.database;
-    let datatableHistory: DatatableHistory;
     if ("Variantes" === this.listTitle) {
       this.articleType = Type.Variant;
       this.title = "Listado de Variantes";
-      this.subscription.add(
-        this._articleService.getVariants
-          .pipe(first())
-          .subscribe(async (result) => {
-            datatableHistory = result;
-          })
-      );
     } else if ("Ingredientes" === this.listTitle) {
       this.articleType = Type.Ingredient;
       this.title = "Listado de Ingredientes";
-      this.getItems();
     } else {
       // ENTRA CUANDO SE HACE UNA TRANSACCIÓN O EN LA TABLA
       this.articleType = Type.Final;
       this.title = "Listado de Productos";
-      this.subscription.add(
-        this._articleService.getItems
-          .pipe(first())
-          .subscribe(async (result) => {
-            if (result && result.items && result.items.length > 0) {
-              datatableHistory = result;
-            }
-          })
-      );
     }
-    if (datatableHistory) {
-      this.items = datatableHistory.items;
-      this.totalItems = datatableHistory.count;
-      this.filters = datatableHistory.filters;
-      this.itemsPerPage = datatableHistory.itemsPerPage;
-      this.currentPage = datatableHistory.currentPage;
-    } else {
-      this.getItems();
-    }
+    this.getItems();
     this.initDragHorizontalScroll();
   }
 
@@ -277,18 +251,6 @@ export class ListArticlesComponent implements OnInit {
               } else {
                 this.items = result[0].items;
                 this.totalItems = result[0].count;
-                let datatableHistory: DatatableHistory = {
-                  items: this.items,
-                  count: this.totalItems,
-                  filters: this.filters,
-                  itemsPerPage: this.itemsPerPage,
-                  currentPage: this.currentPage
-                };
-                if (this.articleType === Type.Final) {
-                  this._articleService.setItems(datatableHistory);
-                } else if (this.articleType === Type.Variant) {
-                  this._articleService.setVariants(datatableHistory);
-                }
               }
             } else {
               this.items = new Array();

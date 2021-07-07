@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
-import { of, BehaviorSubject } from "rxjs";
+import { of } from "rxjs";
 import { Observable } from "rxjs/Observable";
 import { map, catchError } from "rxjs/operators";
 
@@ -8,41 +8,21 @@ import { Article } from './article';
 import { Config } from '../../app.config';
 import { AuthService } from '../login/auth.service';
 import { Variant } from 'app/components/variant/variant';
-import { DatatableHistory } from '../datatable/datatable-history.interface';
 import { ModelService } from '../model/model.service';
 
 @Injectable()
 export class ArticleService extends ModelService {
 
-  private variants: BehaviorSubject<DatatableHistory> = new BehaviorSubject<DatatableHistory>(null);
-  private articlesPos: BehaviorSubject<Article[]> = new BehaviorSubject<Article[]>(null);
-
-  constructor(
-    public _http: HttpClient,
-    public _authService: AuthService
-  ) {
-    super(
-      `articles`, // PATH
-      _http,
-      _authService
-    );
-  }
-
-  public setVariants(variants: DatatableHistory): void {
-    this.variants.next(variants);
-  }
-
-  public get getVariants() {
-    return this.variants.asObservable();
-  }
-
-  public setArticlesPos(articlesPos: Article[]): void {
-    this.articlesPos.next(articlesPos);
-  }
-
-  public get getArticlesPos() {
-    return this.articlesPos.asObservable();
-  }
+	constructor(
+		public _http: HttpClient,
+		public _authService: AuthService
+	) {
+		super(
+			`articles`, // PATH
+			_http,
+			_authService
+		);
+	}
 
 	public getArticle(_id: string): Observable<any> {
 
@@ -186,7 +166,7 @@ export class ArticleService extends ModelService {
 
 		const params = new HttpParams()
 			.set('id', article._id);
-			
+
 		return this._http.put(URL, { article: article, variants: variants }, {
 			headers: headers,
 			params: params
@@ -276,9 +256,9 @@ export class ArticleService extends ModelService {
 
 			xhr.send(formData);
 		});
-    }
+	}
 
-    public makeFileRequestArray(files: Array<File>) {
+	public makeFileRequestArray(files: Array<File>) {
 
 		let xhr: XMLHttpRequest = new XMLHttpRequest();
 		xhr.open('POST', Config.apiURL + 'upload-image-article/', true);
@@ -305,9 +285,9 @@ export class ArticleService extends ModelService {
 
 			xhr.send(formData);
 		});
-    }
+	}
 
-    public deleteImage(picture: string): Observable<any> {
+	public deleteImage(picture: string): Observable<any> {
 
 		const URL = `${Config.apiURL}delete-image-article`;
 

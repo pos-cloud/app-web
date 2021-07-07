@@ -1548,9 +1548,6 @@ export class AddArticleComponent implements OnInit {
         this.article.type = Type.Final;
       }
 
-      this._articleService.setArticlesPos(null);
-      this._articleService.setItems(null);
-      this._articleService.setVariants(null);
       if (this.operation === 'add' || this.operation === 'copy') {
         this.saveArticle();
       } else if (this.operation === 'update') {
@@ -1578,8 +1575,6 @@ export class AddArticleComponent implements OnInit {
           } else {
             this.hasChanged = true;
             this.article = result.article;
-            this._articleService.setArticlesPos(null);
-            this._articleService.setItems(null);
             if (this.filesToUpload) {
               this._articleService.makeFileRequest(this.article._id, this.filesToUpload)
                 .then(
@@ -1683,8 +1678,6 @@ export class AddArticleComponent implements OnInit {
         if (!result.article) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
-          this._articleService.setItems(null);
-          this._articleService.setArticlesPos(null);
           this.activeModal.close('delete_close');
         }
         this.loading = false;
