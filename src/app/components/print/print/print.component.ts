@@ -581,9 +581,9 @@ export class PrintComponent implements OnInit {
         this.doc.setFontSize(this.fontSizes.normal);
         if (!this.movementsOfCashes[0].type.allowToFinance) {
             this.doc.text("Detalle", 10, 77);
-            this.doc.text("Vencimiento", 80, 77);
-            this.doc.text("Número", 110, 77);
-            this.doc.text("Banco", 150, 77);
+            this.doc.text("Vencimiento", 50, 77);
+            this.doc.text("Número", 75, 77);
+            this.doc.text("Banco", 100, 77);
         } else {
             this.doc.text("Couta", 10, 77);
             this.doc.text("Vencimiento", 30, 77);
@@ -593,8 +593,9 @@ export class PrintComponent implements OnInit {
         }
         if (this.transaction.type && this.transaction.type.showPrices) {
             this.doc.text("Total", 185, 77);
-            this.doc.setFontType('normal');
+            
         }
+        this.doc.setFontType('normal');
 
         // Detalle de productos
         var row = 85;
@@ -616,21 +617,21 @@ export class PrintComponent implements OnInit {
                     }
 
                     if (this.movementsOfCashes[i].expirationDate) {
-                        this.doc.text(this.dateFormat.transform(this.movementsOfCashes[i].expirationDate, 'DD/MM/YYYY'), 80, row);
+                        this.doc.text(this.dateFormat.transform(this.movementsOfCashes[i].expirationDate, 'DD/MM/YYYY'), 50, row);
                     } else {
-                        this.doc.text("-", 80, row)
+                        this.doc.text("-", 50, row)
                     }
 
                     if (this.movementsOfCashes[i].number) {
-                        this.doc.text(this.movementsOfCashes[i].number, 110, row);
+                        this.doc.text(this.movementsOfCashes[i].number, 75, row);
                     } else {
-                        this.doc.text("-", 110, row);
+                        this.doc.text("-", 75, row);
                     }
 
                     if (this.movementsOfCashes[i].bank) {
-                        this.doc.text(this.movementsOfCashes[i].bank.name, 150, row);
+                        this.doc.text(this.movementsOfCashes[i].bank.name, 100, row);
                     } else {
-                        this.doc.text("-", 150, row);
+                        this.doc.text("-", 100, row);
                     }
                 } else {
                     this.doc.text(this.movementsOfCashes[i].quota.toString(), 10, row);
@@ -744,9 +745,9 @@ export class PrintComponent implements OnInit {
                     this.doc.setFontType('bold');
                     this.doc.setFontSize(this.fontSizes.normal);
                     this.doc.text("Detalle", 10, 77);
-                    this.doc.text("Vencimiento", 45, 77);
-                    this.doc.text("Numero", 80, 77);
-                    this.doc.text("Banco", 105, 77);
+                    this.doc.text("Vencimiento", 50, 77);
+                    this.doc.text("Número", 75, 77);
+                    this.doc.text("Banco", 100, 77);
                     if (this.transaction.type && this.transaction.type.showPrices) {
                         this.doc.text("Total", 185, 77);
                         this.doc.setFontType('normal');
@@ -814,8 +815,8 @@ export class PrintComponent implements OnInit {
                 this.doc.text(movCancelation[index].transactionOrigin.type.name + "   " + this.padString(movCancelation[index].transactionOrigin.origin, 4) + "-" + this.padString(movCancelation[index].transactionOrigin.number, 8), 10, row);
                 //this.doc.text("$ " + this.roundNumber.transform(this.transactions[index].totalPrice), 80, row);
                 this.doc.textEx("$ " + this.roundNumber.transform(movCancelation[index].transactionOrigin.totalPrice), 95, row, 'right', 'middle');
-                this.doc.textEx("$ " + this.roundNumber.transform(movCancelation[index].balance), 125, row, 'right', 'middle');
-                this.doc.textEx("$ " + this.roundNumber.transform(movCancelation[index].transactionOrigin.balance), 165, row, 'right', 'middle');
+                this.doc.textEx("$ " + this.roundNumber.transform(movCancelation[index].balance), 130, row, 'right', 'middle');
+                this.doc.textEx("$ " + this.roundNumber.transform(movCancelation[index].transactionOrigin.balance), 175, row, 'right', 'middle');
 
                 row += 8;
 
