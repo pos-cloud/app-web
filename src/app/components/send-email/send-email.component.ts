@@ -30,8 +30,8 @@ export class SendEmailComponent implements OnInit {
 
   public formErrors = {
     'emails': '',
-    'subject': '',
-    'body': ''
+    'subject': ''
+    // 'body': ''
   };
 
   public validationMessages = {
@@ -40,10 +40,10 @@ export class SendEmailComponent implements OnInit {
     },
     'subject': {
       'required':       'Este campo es requerido.'
-    },
-    'body' : {
-      'required':       'Este campo es requerido.'
     }
+    // 'body' : {
+    //   'required':       'Este campo es requerido.'
+    // }
   };
 
   
@@ -135,10 +135,11 @@ export class SendEmailComponent implements OnInit {
           Validators.required
         ]
       ],
-      'body': [this.body, [
-          Validators.required
-        ]
-      ],
+      'body':["",[]],
+      // 'body': [this.body, [
+      //     Validators.required
+      //   ]
+      // ],
       'attachments' : ["",[]]
     });
 
