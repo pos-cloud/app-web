@@ -626,6 +626,7 @@ export class ListTransactionsComponent implements OnInit {
 
                     }
                 }
+                modalRef.componentInstance.body = " "
                 modalRef.componentInstance.attachments = attachments;
 
                 break;

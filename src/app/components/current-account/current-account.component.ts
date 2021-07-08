@@ -462,7 +462,7 @@ export class CurrentAccountComponent implements OnInit {
                         })
                     }
                 }
-
+                modalRef.componentInstance.body = " "
                 modalRef.componentInstance.attachments = attachments;
 
                 break;

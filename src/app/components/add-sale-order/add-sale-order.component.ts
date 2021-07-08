@@ -1941,6 +1941,7 @@ export class AddSaleOrderComponent {
                         })
                     }
                 }
+                modalRef.componentInstance.body = " "
                 modalRef.componentInstance.attachments = attachments;
 
                 modalRef.result.then((result) => {
