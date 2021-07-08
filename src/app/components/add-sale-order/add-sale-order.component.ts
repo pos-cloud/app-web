@@ -1941,6 +1941,7 @@ export class AddSaleOrderComponent {
                         })
                     }
                 }
+                modalRef.componentInstance.attachments = attachments;
 
                 modalRef.result.then((result) => {
                     this.backFinal();
@@ -1948,7 +1949,6 @@ export class AddSaleOrderComponent {
                     this.backFinal();
                 });
 
-                modalRef.componentInstance.attachments = attachments;
                 break;
             case 'cancel':
                 modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg', backdrop: 'static' });

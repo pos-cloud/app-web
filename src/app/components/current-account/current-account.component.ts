@@ -366,6 +366,8 @@ export class CurrentAccountComponent implements OnInit {
                 break;
             case 'send-email':
                 let transaction: Transaction;
+                var attachments = [];
+
                 await this.getTransaction(transactionId).then(
                     async result => {
                         transaction = result;
@@ -410,26 +412,58 @@ export class CurrentAccountComponent implements OnInit {
                 modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(transaction.origin, 4)}-${transaction.letter}-${this.padNumber(transaction.number, 8)}`;
                 if (transaction.type.electronics) {
                     modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente` + `<a href="http://${Config.apiHost}:300/api/print/invoice/${Config.database}/${transaction._id}">Su comprobante</a>`
+
+                    attachments.push({
+                        filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
+                        path:`/home/clients/${Config.database}/invoice/${transaction._id}.pdf`
+                    })
                 } else {
                     modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://${Config.apiHost}:300/api/print/others/${Config.database}/${transaction._id}">Su comprobante</a>`
+
+                    attachments.push({
+                        filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
+                        path:`/home/clients/${Config.database}/others/${transaction._id}.pdf`
+                    })
                 }
 
                 if (Config.country === 'MX') {
                     modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}:300/api/print/xml/CFDI-33_Factura_` + transaction.number;
+
+                    attachments.push({
+                        filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.xml`,
+                        path:`/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + transaction.number + `.xml`
+                    })
                 }
 
                 if (transaction.type.defectEmailTemplate) {
 
                     if (transaction.type.electronics) {
                         modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.apiHost}:300/api/print/invoice/${Config.database}/${transaction._id}">Su comprobante</a>`
+
+                        attachments.push({
+                            filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
+                            path:`/home/clients/${Config.database}/invoice/${transaction._id}.pdf`
+                        })
                     } else {
                         modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.apiHost}:300/api/print/others/${Config.database}/${transaction._id}">Su comprobante</a>`
+
+                        attachments.push({
+                            filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
+                            path:`/home/clients/${Config.database}/others/${transaction._id}.pdf`
+                        })
                     }
 
                     if (Config.country === 'MX') {
                         modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.apiHost}:300/api/print/xml/CFDI-33_Factura_` + transaction.number;
+
+                        attachments.push({
+                            filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.xml`,
+                            path:`/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + transaction.number + `.xml`
+                        })
                     }
                 }
+
+                modalRef.componentInstance.attachments = attachments;
 
                 break;
             default: ;
