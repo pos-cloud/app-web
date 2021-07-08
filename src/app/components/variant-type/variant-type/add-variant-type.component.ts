@@ -72,9 +72,7 @@ export class AddVariantTypeComponent implements OnInit {
           Validators.required
         ]
       ],
-      'meliId': [this.variantType.meliId, [
-          Validators.required
-        ]
+      'meliId': [this.variantType.meliId, []
       ],
     });
 
