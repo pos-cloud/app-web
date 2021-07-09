@@ -572,7 +572,8 @@ export class ListTransactionsComponent implements OnInit {
                 modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(transaction.origin, 4)}-${transaction.letter}-${this.padNumber(transaction.number, 8)}`;
 
                 if (transaction.type.electronics) {
-                    modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${Config.database}/${transaction._id}">Su comprobante</a>`
+                    // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${Config.database}/${transaction._id}">Su comprobante</a>`
+                    modalRef.componentInstance.body = ' '
 
                     attachments.push({
                         filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
@@ -580,7 +581,9 @@ export class ListTransactionsComponent implements OnInit {
                     })
 
                 } else {
-                    modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${Config.database}/${transaction._id}">Su comprobante</a>`
+                    // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${Config.database}/${transaction._id}">Su comprobante</a>`
+                    modalRef.componentInstance.body = " "
+
 
                    attachments.push({
                         filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
@@ -589,7 +592,9 @@ export class ListTransactionsComponent implements OnInit {
                 }
 
                 if (Config.country === 'MX') {
-                    modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://vps-1883265-x.dattaweb.com:300/api/print/xml/CFDI-33_Factura_` + transaction.number + `">Su comprobante</a>`;
+                    // modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://vps-1883265-x.dattaweb.com:300/api/print/xml/CFDI-33_Factura_` + transaction.number + `">Su comprobante</a>`;
+                    modalRef.componentInstance.body += " "
+
 
                     attachments.push({
                         filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.xml`,
@@ -600,7 +605,8 @@ export class ListTransactionsComponent implements OnInit {
                 if (transaction.type.defectEmailTemplate) {
 
                     if (transaction.type.electronics) {
-                        modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${Config.database}/${transaction._id}">Su comprobante</a>`
+                        // modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${Config.database}/${transaction._id}">Su comprobante</a>`
+                        modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design
 
                         attachments.push({
                             filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
@@ -608,7 +614,8 @@ export class ListTransactionsComponent implements OnInit {
                         })
 
                     } else {
-                        modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${Config.database}/${transaction._id}">Su comprobante</a>`
+                        // modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${Config.database}/${transaction._id}">Su comprobante</a>`
+                        modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design
 
                         attachments.push({
                             filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
@@ -617,7 +624,8 @@ export class ListTransactionsComponent implements OnInit {
                     }
 
                     if (Config.country === 'MX') {
-                        modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://vps-1883265-x.dattaweb.com:300/api/print/xml/CFDI-33_Factura_` + transaction.number + `">Su comprobante</a>`;
+                        // modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://vps-1883265-x.dattaweb.com:300/api/print/xml/CFDI-33_Factura_` + transaction.number + `">Su comprobante</a>`;
+                        modalRef.componentInstance.body += " "
 
                         attachments.push({
                             filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.xml`,
@@ -626,7 +634,6 @@ export class ListTransactionsComponent implements OnInit {
 
                     }
                 }
-                modalRef.componentInstance.body = " "
                 modalRef.componentInstance.attachments = attachments;
 
                 break;
