@@ -22,7 +22,7 @@
 								<div class="row">
 									<div class="form-group col-md-6">
 										<ng-template #rtArticles let-r="result" let-t="term">
-											<ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+											<ngb-highlight [result]="r.code + '-' + r.description" [term]="t"></ngb-highlight>
 										</ng-template>
 										<label for="parent">Producto Padre:</label>
 										<input id="parent" type="text" class="form-control" formControlName="parent"
@@ -31,7 +31,7 @@
 									</div>
 									<div class="form-group col-md-6">
 										<ng-template #rtArticles let-r="result" let-t="term">
-											<ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+											<ngb-highlight [result]="r.code + '-' + r.description" [term]="t"></ngb-highlight>
 										</ng-template>
 										<label for="child">Producto Hijo:</label>
 										<input id="child" type="text" class="form-control" formControlName="child"
