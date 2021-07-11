@@ -179,6 +179,8 @@ export class AppComponent {
     Config.setApiV8Host('http://localhost:308'); // TEST
     //Config.setApiHost('http://192.168.88.244:300'); // CETIMA
     //Config.setApiV8Host('http://192.168.88.244:308'); // CETIMA
+    //Config.setApiHost('http://192.168.88.246:300'); // AGROMADE
+    //Config.setApiV8Host('http://192.168.88.246:308'); // AGROMADE
     //Config.setApiHost('https://api.poscloud.com.ar'); // DONWEB
     //Config.setApiV8Host('https://apiv8.poscloud.com.ar'); // DONWEB
   }
