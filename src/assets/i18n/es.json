@@ -509,5 +509,6 @@
     "menu.config" :"Configuracion",
     "menu.money" :"Fondos",
     "menu.production" :"Produccion",
-    "meliId": "Id MercadoLibre"
+    "meliId": "Id MercadoLibre",
+    "categories": "categorías"
 }

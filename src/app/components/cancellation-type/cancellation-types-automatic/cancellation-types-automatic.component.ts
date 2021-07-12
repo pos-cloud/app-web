@@ -154,8 +154,13 @@ export class CancellationTypeAutomaticComponent implements OnInit {
                 "destination._id": 1,
                 "destination.name": 1,
                 "destination.operationType": 1,
-                "operationType": 1,
-                "requestAutomatic": 1
+                operationType: 1,
+                requestAutomatic: 1,
+                modifyBalance: 1,
+                requestCompany: 1,
+                requestStatusOrigin: 1,
+                stateOrigin: 1,
+                updatePrices: 1,
             }, // PROJECT
             {
                 "origin._id": { $oid: this.transaction.type._id },
@@ -189,7 +194,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
             let match = {
                 _id: { "$oid": this.cancellationTypeSelected.destination._id }
             }
-
+            console.log(this.cancellationTypeSelected);
             await this.getTransactionTypes(match).then(
                 async transactionTypes => {
                     if (transactionTypes && transactionTypes.length > 0) {
@@ -243,7 +248,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
                                                 await this.saveMovementsOfArticles(this.copyMovementsOfArticles(transactionDestination)).then(
                                                     async movementsOfArticlesSaved => {
                                                         if (movementsOfArticlesSaved && movementsOfArticlesSaved.length > 0) {
-                                                            if(transactionDestination.type.requestPaymentMethods && this.transaction.type.requestPaymentMethods) {
+                                                            if (transactionDestination.type.requestPaymentMethods && this.transaction.type.requestPaymentMethods) {
                                                                 await this.copyMovementsOfCashes(transactionDestination).then(
                                                                     async result => {
                                                                         if (result) {
@@ -254,6 +259,15 @@ export class CancellationTypeAutomaticComponent implements OnInit {
                                                                             await this.saveMovementOfCancellation(movementOfCancellation).then(
                                                                                 async movementOfCancellation => {
                                                                                     if (movementOfCancellation) {
+                                                                                        this.transaction.state = this.cancellationTypeSelected.stateOrigin;
+                                                                                        if(this.cancellationTypeSelected.modifyBalance) this.transaction.balance = 0;
+                                                                                        await this.updateTransaction(this.transaction).then(
+                                                                                            async transaction => {
+                                                                                                if (transaction) {
+                                                                                                    this.transaction = transaction;
+                                                                                                }
+                                                                                            }
+                                                                                        );
                                                                                         this.activeModal.close({ transaction: transactionDestination });
                                                                                     }
                                                                                 }
@@ -262,6 +276,15 @@ export class CancellationTypeAutomaticComponent implements OnInit {
                                                                     }
                                                                 );
                                                             } else {
+                                                                this.transaction.state = this.cancellationTypeSelected.stateOrigin;
+                                                                if(this.cancellationTypeSelected.modifyBalance) this.transaction.balance = 0;
+                                                                await this.updateTransaction(this.transaction).then(
+                                                                    async transaction => {
+                                                                        if (transaction) {
+                                                                            this.transaction = transaction;
+                                                                        }
+                                                                    }
+                                                                );
                                                                 this.activeModal.close({ transaction: transactionDestination });
                                                             }
                                                         }
@@ -278,6 +301,29 @@ export class CancellationTypeAutomaticComponent implements OnInit {
             );
         }
     }
+
+    public updateTransaction(transaction: Transaction): Promise<Transaction> {
+        return new Promise<Transaction>((resolve, reject) => {
+            this.loading = true;
+            this._transactionService.updateTransaction(transaction).subscribe(
+                result => {
+                    this.loading = false;
+                    if (!result.transaction) {
+                        if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+                        resolve(null);
+                    } else {
+                        resolve(result.transaction);
+                    }
+                },
+                error => {
+                    this.loading = false;
+                    this.showMessage(error._body, 'danger', false);
+                    resolve(null);
+                }
+            );
+        });
+    }
+
 
     public saveMovementOfCancellation(movementOfCancellation: MovementOfCancellation): Promise<MovementOfCancellation> {
 
