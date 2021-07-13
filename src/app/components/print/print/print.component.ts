@@ -327,7 +327,9 @@ export class PrintComponent implements OnInit {
             "employeeClosing._id" : 1,
             "employeeClosing.name" : 1,
             "employeeOpening._id" : 1,
-            "employeeOpening.name" : 1
+            "employeeOpening.name" : 1,
+            "declaredValue" :1,
+            "package" : 1
         }`;
 
         project = JSON.parse(project)
@@ -2792,16 +2794,27 @@ export class PrintComponent implements OnInit {
 
         if (this.transaction.type.requestTransport && this.transaction.transport) {
 
+            console.log(this.transaction);
+
             this.doc.setFontType('bold');
             this.doc.text("CANTIDAD DE BULTOS:", margin, row + 16);
             this.doc.text("VALOR DECLARADO:", margin, row + 20);
+            if (this.transaction.package) {
+                this.doc.setFontType('normal');
+                this.doc.text(this.transaction.package.toString(), margin + 45, row+ 16);
+            }
+            if (this.transaction.declaredValue) {
+                this.doc.setFontType('normal');
+                this.doc.text(this.transaction.declaredValue.toString(), margin + 45, row + 20);
+            }
             this.doc.setFontType('normal');
             if (this.transaction.transport.name) {
                 this.doc.setFontType('bold');
                 this.doc.text("TRANSPORTE:", margin, row);
                 this.doc.setFontType('normal');
-                this.doc.text(this.transaction.transport.name, margin + 25, row);
+                this.doc.text(this.transaction.transport.name, margin + 26, row);
             }
+            
             if (this.transaction.transport.address) {
                 this.doc.setFontType('bold');
                 this.doc.text("DOMICILIO:", margin, row + 4);
@@ -2812,7 +2825,7 @@ export class PrintComponent implements OnInit {
                 this.doc.setFontType('bold');
                 this.doc.text("LOCALIDAD:", margin, row + 8);
                 this.doc.setFontType('normal');
-                this.doc.text(this.transaction.transport.city, margin + 20, row + 8);
+                this.doc.text(this.transaction.transport.city, margin + 22, row + 8);
             }
             if (this.transaction.transport.identificationValue) {
                 this.doc.setFontType('bold');
@@ -2820,7 +2833,7 @@ export class PrintComponent implements OnInit {
                 this.doc.setFontType('normal');
                 this.doc.text(this.transaction.transport.identificationValue, margin + 30, row + 12);
             }
-            if (this.transaction.taxes) {
+           /* if (this.transaction.taxes) {
                 let priceWhitoutTaxes
                 for (const iterator of this.transaction.taxes) {
                     priceWhitoutTaxes = iterator.taxBase
@@ -2829,7 +2842,7 @@ export class PrintComponent implements OnInit {
 
             } else {
                 this.doc.text("$" + parseFloat(this.roundNumber.transform(this.transaction.totalPrice, 2)), margin + 40, row + 20);
-            }
+            }*/
             row += 16;
         }
 

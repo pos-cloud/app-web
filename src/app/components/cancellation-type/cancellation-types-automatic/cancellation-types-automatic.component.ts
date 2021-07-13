@@ -208,7 +208,9 @@ export class CancellationTypeAutomaticComponent implements OnInit {
                         transactionDestination.balance = 0;
                         transactionDestination.transport = this.transaction.transport;
                         transactionDestination.observation = this.transaction.observation;
-
+                        transactionDestination.declaredValue = this.transaction.declaredValue;
+                        transactionDestination.package = this.transaction.package;
+                        
                         if (transactionDestination.type.fixedOrigin && transactionDestination.type.fixedOrigin !== 0) {
                             transactionDestination.origin = transactionDestination.type.fixedOrigin;
                         }

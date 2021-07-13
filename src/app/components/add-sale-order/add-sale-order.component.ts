@@ -2355,6 +2355,8 @@ export class AddSaleOrderComponent {
                 modalRef.result.then(async (result) => {
                     if (result && result.transport) {
                         this.transaction.transport = result.transport
+                        this.transaction.declaredValue = result.declaredValue
+                        this.transaction.package = result.package
                         await this.updateTransaction().then(
                             async transaction => {
                                 if (transaction) {
