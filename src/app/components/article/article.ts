@@ -469,6 +469,16 @@ export let attributes = [
         required: true,
     },
     {
+        name: 'containsVariants',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'boolean',
+        project: null,
+        align: 'left',
+        required: true,
+    },
+    {
         name: 'operationType',
         visible: false,
         disabled: true,
