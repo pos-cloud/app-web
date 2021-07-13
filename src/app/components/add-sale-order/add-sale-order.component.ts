@@ -1927,7 +1927,7 @@ export class AddSaleOrderComponent {
                         // modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${Config.database}/${this.transaction._id}">Su comprobante</a>`
                         modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design
 
-
+                        attachments = [];
                         attachments.push({
                             filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
                             path:`/home/clients/${Config.database}/invoice/${this.transaction._id}.pdf`
@@ -1936,7 +1936,7 @@ export class AddSaleOrderComponent {
                         // modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${Config.database}/${this.transaction._id}">Su comprobante</a>`
                         modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design
 
-                        
+                        attachments = [];
                         attachments.push({
                             filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
                             path:`/home/clients/${Config.database}/others/${this.transaction._id}.pdf`
@@ -1947,14 +1947,13 @@ export class AddSaleOrderComponent {
                         // modalRef.componentInstance.body += ` y su XML correspondiente en http://vps-1883265-x.dattaweb.com:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number;
                         modalRef.componentInstance.body +=' '
 
-
+                        attachments = [];
                         attachments.push({
                             filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.xml`,
                             path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_${this.transaction.number}.xml`
                         })
                     }
                 }
-
                 modalRef.componentInstance.attachments = attachments;
 
                 modalRef.result.then((result) => {
