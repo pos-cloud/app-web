@@ -2794,8 +2794,6 @@ export class PrintComponent implements OnInit {
 
         if (this.transaction.type.requestTransport && this.transaction.transport) {
 
-            console.log(this.transaction);
-
             this.doc.setFontType('bold');
             this.doc.text("CANTIDAD DE BULTOS:", margin, row + 16);
             this.doc.text("VALOR DECLARADO:", margin, row + 20);
