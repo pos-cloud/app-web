@@ -2831,16 +2831,17 @@ export class PrintComponent implements OnInit {
                 this.doc.setFontType('normal');
                 this.doc.text(this.transaction.transport.identificationValue, margin + 30, row + 12);
             }
-           /* if (this.transaction.taxes) {
-                let priceWhitoutTaxes
-                for (const iterator of this.transaction.taxes) {
-                    priceWhitoutTaxes = iterator.taxBase
+            if(!this.transaction.declaredValue){
+                if (this.transaction.taxes && this.transaction.taxes.length > 0) {
+                    let priceWhitoutTaxes
+                    for (const iterator of this.transaction.taxes) {
+                        priceWhitoutTaxes = iterator.taxBase
+                    }
+                    this.doc.text("$" + parseFloat(this.roundNumber.transform(priceWhitoutTaxes, 2)).toString(), margin + 40, row + 20);
+                } else {
+                    this.doc.text("$" + parseFloat(this.roundNumber.transform(this.transaction.totalPrice, 2)).toString(), margin + 40, row + 20);
                 }
-                this.doc.text("$" + parseFloat(this.roundNumber.transform(priceWhitoutTaxes, 2)), margin + 40, row + 20);
-
-            } else {
-                this.doc.text("$" + parseFloat(this.roundNumber.transform(this.transaction.totalPrice, 2)), margin + 40, row + 20);
-            }*/
+            }
             row += 16;
         }
 
