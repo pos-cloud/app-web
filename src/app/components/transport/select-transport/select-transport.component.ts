@@ -53,7 +53,7 @@ export class SelectTransportComponent implements OnInit {
             this._transportService.getTransports(
                 {}, // PROJECT
                 match, // MATCH
-                { number: 1 }, // SORT
+                { name: 1 }, // SORT
                 {}, // GROUP
                 0, // LIMIT
                 0 // SKIP
