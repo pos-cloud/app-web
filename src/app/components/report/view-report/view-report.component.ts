@@ -59,18 +59,25 @@ export class ViewReportComponent implements OnInit {
                 if (result.status === 200) {
                     this.items = result.result
                     for (var key in this.items[0]) {
-                        this.columns.push({
-                            name: key,
-                            visible: true,
-                            disabled: false,
-                            filter: true,
-                            defaultFilter: null,
-                            datatype: 'string',
-                            project: null,
-                            align: 'left',
-                            required: false,
-                        })
+                        if(key != '_id'){
+                            this.columns.push({
+                                name: key,
+                                visible: true,
+                                disabled: false,
+                                filter: true,
+                                defaultFilter: null,
+                                datatype: 'string',
+                                project: null,
+                                align: 'left',
+                                required: false,
+                            })
+                        }
                     }
+
+                    this.columns.sort(function(a,b){ 
+                        var x = a.name < b.name? -1:1; 
+                        return x; 
+                    });
 
                     this.loading = false;
                 } else {
