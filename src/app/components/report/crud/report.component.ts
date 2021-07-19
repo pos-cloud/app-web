@@ -90,7 +90,7 @@ export class ReportComponent implements OnInit {
         name: 'table',
         tag: 'select',
         tagType: 'text',
-        values: ["Transaction","Movement-Of-Cash"],
+        values: ["Transaction","Movement-Of-Cash","Stock"],
         class: 'form-group col-md-4'
     },{
         name: 'query',
