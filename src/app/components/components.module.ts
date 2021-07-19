@@ -18,6 +18,7 @@ import { AccountSeatModule } from './account-seat/account-seat.module';
 import { VariantValueModule } from './variant-value/variant-value.module';
 import { ReportModule } from './report/report.module';
 import { ImportExcelModule } from './import-excel/import-excel.module';
+import { BusinessRuleModule } from './business-rules/business-rules.module';
 
 @NgModule({
     imports: [
@@ -39,7 +40,8 @@ import { ImportExcelModule } from './import-excel/import-excel.module';
         AccountSeatModule,
         VariantValueModule,
         ReportModule,
-        ImportExcelModule
+        ImportExcelModule,
+        BusinessRuleModule
     ],
     declarations: [
     ],

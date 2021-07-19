@@ -289,6 +289,9 @@
                         Puntos de venta
                     </button>
                     <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" [routerLink]="['business-rules']" [routerLinkActive]="['active']">
+                        {{ 'business-rules' | translate | capitalize }}
+                    </button>
                     <button class="dropdown-item" [routerLink]="['transaction-types']" [routerLinkActive]="['active']">
                         {{ 'transaction-types' | translate | capitalize }}
                     </button>

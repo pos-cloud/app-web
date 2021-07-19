@@ -510,5 +510,10 @@
     "menu.money" :"Fondos",
     "menu.production" :"Produccion",
     "meliId": "Id MercadoLibre",
-    "categories": "categorías"
+    "categories": "categorías",
+    "quantity" : "Cantidad",
+    "article" : "Articulo",
+    "newUser" : "Usuario Nuevo",
+    "business-rule" : "Regla de Negocio",
+    "business-rules" : "Reglas de Negocio"
 }
