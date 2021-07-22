@@ -2260,6 +2260,7 @@ export class PrintComponent implements OnInit {
                     }
                 });
             }
+            this.doc.text("Desc", 175, 77);
             this.doc.text("Total", 192, 77);
         }
         this.doc.setFontType('normal');
@@ -2375,6 +2376,10 @@ export class PrintComponent implements OnInit {
                         } else {
                             this.doc.textEx((this.movementsOfArticles[i].salePrice == 0) ? '' : "$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice / this.movementsOfArticles[i].amount, 2), 160, row, 'right', 'middle');
                             this.doc.textEx((this.movementsOfArticles[i].salePrice == 0) ? '' : "$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice, 2).toFixed(2), 207, row, 'right', 'middle');
+                        }
+
+                        if(this.movementsOfArticles[i].discountRate > 0){
+                            this.doc.text("%" + this.movementsOfArticles[i].discountRate.toString(),175,row);
                         }
 
                     }
