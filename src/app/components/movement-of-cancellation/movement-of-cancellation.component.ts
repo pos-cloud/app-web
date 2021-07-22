@@ -760,11 +760,11 @@ export class MovementOfCancellationComponent implements OnInit {
                                                     if(mov2.article && mov2.article.currency){
                                                         mov2.salePrice = mov2.article.salePrice*mov2.article.currency.quotation;
                                                         mov2.costPrice = mov2.article.costPrice*mov2.article.currency.quotation;
-                                                        mov2.unitPrice = (mov2.article.salePrice*mov2.article.currency.quotation) / mov2.amount;
+                                                        mov2.unitPrice = mov2.article.salePrice*mov2.article.currency.quotation;
                                                     } else {
                                                         mov2.salePrice = mov2.article.salePrice;
                                                         mov2.costPrice = mov2.article.costPrice;
-                                                        mov2.unitPrice = mov2.article.salePrice / mov2.amount;
+                                                        mov2.unitPrice = mov2.article.salePrice;
                                                     }
                                                     this.movsOfArticles.push(mov2);
                                                 } else {
