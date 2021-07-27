@@ -7,6 +7,7 @@ import { ArticleFields } from '../article-field/article-fields';
 import { Deposit } from '../deposit/deposit';
 import * as moment from 'moment';
 import { User } from '../user/user';
+import { Account } from '../account/account';
 
 export class MovementOfArticle {
 

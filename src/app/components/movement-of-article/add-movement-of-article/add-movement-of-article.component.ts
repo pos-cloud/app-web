@@ -562,6 +562,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
         if (this.isValidSelectedVariants()) {
             this.movementOfArticle.article = this.getArticleBySelectedVariants();
+            this.movementOfArticle.unitPrice = this.movementOfArticle.unitPrice + this.movementOfArticle.discountAmount;
             this.changeArticleByVariants(this.movementOfArticle.article);
         }
     }
@@ -613,10 +614,10 @@ export class AddMovementOfArticleComponent implements OnInit {
             'description': this.movementOfArticle.description,
             'amount': this.movementOfArticle.amount,
             'notes': this.movementOfArticle.notes,
-            'discountRate': this.movementOfArticle.discountRate,
-            'discountAmount': this.movementOfArticle.discountAmount,
-            'auxPrice': this.auxPrice,
-            'unitPrice': this.movementOfArticle.unitPrice,
+            'discountRate': this.roundNumber.transform(this.movementOfArticle.discountRate),
+            'discountAmount': this.roundNumber.transform(this.movementOfArticle.discountAmount),
+            'auxPrice': this.roundNumber.transform(this.auxPrice),
+            'unitPrice': this.roundNumber.transform(this.movementOfArticle.unitPrice),
             'measure': this.movementOfArticle.measure,
             'quantityMeasure': this.movementOfArticle.quantityMeasure,
             'stock': this.stock,
@@ -698,7 +699,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     }
 
     changeUnitPrice() {
-        (this.movementOfArticleForm.value.auxPrice) ?  this.auxPrice = this.movementOfArticleForm.value.auxPrice : this.auxPrice = 0;
+        (this.movementOfArticleForm.value.auxPrice) ? this.auxPrice = this.movementOfArticleForm.value.auxPrice : this.auxPrice = 0;
         this.movementOfArticleForm.patchValue({
             discountAmount: this.roundNumber.transform(this.auxPrice * this.movementOfArticleForm.value.discountRate / 100),
             unitPrice: this.roundNumber.transform(this.auxPrice - this.roundNumber.transform(this.auxPrice * this.movementOfArticleForm.value.discountRate / 100))
@@ -706,7 +707,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     }
 
     changeDiscountRate() {
-        (this.movementOfArticleForm.value.auxPrice) ?  this.auxPrice = this.movementOfArticleForm.value.auxPrice : this.auxPrice = 0;
+        (this.movementOfArticleForm.value.auxPrice) ? this.auxPrice = this.movementOfArticleForm.value.auxPrice : this.auxPrice = 0;
         this.movementOfArticleForm.patchValue({
             discountAmount: this.roundNumber.transform(this.auxPrice * this.movementOfArticleForm.value.discountRate / 100),
             unitPrice: this.roundNumber.transform(this.auxPrice - this.roundNumber.transform(this.auxPrice * this.movementOfArticleForm.value.discountRate / 100))
@@ -714,7 +715,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     }
 
     changeDiscountAmount() {
-        (this.movementOfArticleForm.value.auxPrice) ?  this.auxPrice = this.movementOfArticleForm.value.auxPrice : this.auxPrice = 0;
+        (this.movementOfArticleForm.value.auxPrice) ? this.auxPrice = this.movementOfArticleForm.value.auxPrice : this.auxPrice = 0;
         this.movementOfArticleForm.patchValue({
             discountRate: this.roundNumber.transform(100 * this.movementOfArticleForm.value.discountAmount / this.movementOfArticleForm.value.unitPrice),
             unitPrice: this.roundNumber.transform(this.auxPrice - this.movementOfArticleForm.value.discountAmount),
@@ -1041,6 +1042,8 @@ export class AddMovementOfArticleComponent implements OnInit {
 
             if (increasePrice != 0) {
                 this.movementOfArticle.unitPrice = this.roundNumber.transform(this.movementOfArticle.unitPrice + (this.movementOfArticle.unitPrice * increasePrice / 100));
+                this.auxPrice = this.movementOfArticle.unitPrice;
+                this.movementOfArticle.unitPrice = this.movementOfArticle.unitPrice + this.movementOfArticle.discountAmount;
             }
 
         } else {
@@ -1258,7 +1261,6 @@ export class AddMovementOfArticleComponent implements OnInit {
                 }
             }
         }
-
         return articleToReturn;
     }
 
