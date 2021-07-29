@@ -194,7 +194,6 @@ export class CancellationTypeAutomaticComponent implements OnInit {
             let match = {
                 _id: { "$oid": this.cancellationTypeSelected.destination._id }
             }
-            console.log(this.cancellationTypeSelected);
             await this.getTransactionTypes(match).then(
                 async transactionTypes => {
                     if (transactionTypes && transactionTypes.length > 0) {

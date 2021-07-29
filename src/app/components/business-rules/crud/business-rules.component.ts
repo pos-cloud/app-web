@@ -72,7 +72,6 @@ export class BusinessRuleComponent implements OnInit {
                 match["operationType"] = { "$ne": "D" };
                 return await this.getAllArticles(match).then(
                     result => {
-                        console.log(result);
                         return result;
                     }
                 );
@@ -527,7 +526,6 @@ export class BusinessRuleComponent implements OnInit {
                 limit: 10,
             }).subscribe(
                 result => {
-                    console.log(result);
                     this.loading = false;
                     (result.status === 200) ? resolve(result.result) : reject(result);
                 },

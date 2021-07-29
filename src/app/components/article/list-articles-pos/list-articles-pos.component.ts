@@ -111,8 +111,8 @@ export class ListArticlesPosComponent implements OnInit {
           this.transaction = transaction;
           if (this.transaction && this.transaction.company && this.transaction.company.priceList && this.transaction.company.type === CompanyType.Client) {
             this.priceList = await this.getPriceList(this.transaction.company.priceList._id)
-          } else if (this.transaction.priceList){
-              this.priceList = this.transaction.priceList;
+          } else if (this.transaction.priceList) {
+            this.priceList = this.transaction.priceList;
           }
         }
       );
@@ -180,7 +180,8 @@ export class ListArticlesPosComponent implements OnInit {
       "make._id": 1,
       "make.description": 1,
       "make.visibleSale": 1,
-      favourite: 1
+      favourite: 1,
+      quantityPerMeasure: 1,
     }
 
     this._articleService.getArticlesV2(
@@ -241,10 +242,10 @@ export class ListArticlesPosComponent implements OnInit {
         })
       }
     }
-    
+
     increasePrice -= this.discountCompany;
     increasePrice -= this.discountCompanyGroup;
-    
+
     return this.roundNumber.transform(article.salePrice + (article.salePrice * increasePrice / 100));
 
   }
@@ -282,8 +283,8 @@ export class ListArticlesPosComponent implements OnInit {
 
             if (this.transaction && this.transaction.company && this.transaction.company.priceList && this.transaction.company.type === CompanyType.Client || this.transaction.priceList) {
               var priceList;
-                if(this.transaction.priceList){
-                    priceList = await this.getPriceList(this.transaction.priceList._id)
+              if (this.transaction.priceList) {
+                priceList = await this.getPriceList(this.transaction.priceList._id)
               } else {
                 priceList = await this.getPriceList(this.transaction.company.priceList._id)
               }
@@ -623,15 +624,14 @@ export class ListArticlesPosComponent implements OnInit {
     if (this.transaction && this.transaction.type.transactionMovement === TransactionMovement.Sale &&
       this.config.tradeBalance.codePrefix && this.config.tradeBalance.codePrefix !== 0) {
       if (this.filterArticle.slice(0, this.config.tradeBalance.codePrefix.toString().length) === this.config.tradeBalance.codePrefix.toString()) {
-        this.filterArticle = this.padNumber(this.filterArticle.slice((this.config.tradeBalance.codePrefix.toString().length +
-          this.config.tradeBalance.numberOfQuantity),
+        this.filterArticle = this.padNumber(this.filterArticle.slice((this.config.tradeBalance.codePrefix.toString().length),
           (originalFilter.length -
             this.config.tradeBalance.numberOfDecimals -
+            this.config.tradeBalance.numberOfQuantity -
             this.config.tradeBalance.numberOfIntegers - 1)), this.config.article.code.validators.maxLength);
         isCodePrefix = true;
       }
     }
-
     // FILTRA DENTRO DE LA CATEGORIA SI EXISTE
     if (article) {
       // CORTAMOS EL CÓDIGO SI MANDA CANTIDAD *
@@ -696,8 +696,12 @@ export class ListArticlesPosComponent implements OnInit {
             let salePrice = parseFloat(wholePart + "." + decimalPart);
             let amount = 1;
             if (this.config.tradeBalance.numberOfQuantity && this.config.tradeBalance.numberOfQuantity != 0) {
-              amount = parseInt(originalFilter.slice(this.config.tradeBalance.codePrefix.toString().length,
-                this.config.tradeBalance.codePrefix.toString().length + this.config.tradeBalance.numberOfQuantity));
+              amount = parseInt(originalFilter.slice(
+                this.config.tradeBalance.codePrefix.toString().length + article.code.length,
+                this.config.tradeBalance.codePrefix.toString().length + article.code.length + this.config.tradeBalance.numberOfQuantity)
+              );
+              amount = amount / article.quantityPerMeasure;
+              salePrice = article.salePrice * amount;
             }
             await this.getStructureForStock(article, amount, salePrice);
           } else {
