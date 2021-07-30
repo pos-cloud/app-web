@@ -24,8 +24,11 @@ export class importExcelComponent implements OnInit {
   public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
-  public file:  Array<File>;
-
+  public file: Array<File>;
+  public result: Array<any>;
+  public status200: Array<any> = [];
+  public status500: Array<any> = [];
+  public statusCode: Array<any> = [];
   public formErrors = {
     filePath: "",
   };
@@ -35,7 +38,7 @@ export class importExcelComponent implements OnInit {
       required: "Este campo es requerido.",
     },
   };
- 
+
   constructor(
     public _fb: FormBuilder,
     public _router: Router,
@@ -51,38 +54,51 @@ export class importExcelComponent implements OnInit {
     this.showMessage('', '', false)
 
   }
-  onFileChange(e){
+  onFileChange(e) {
     this.file = <Array<File>>e.target.files;
-    if(this.file[0].name.substr(-4) != 'xlsx'){
+    if (this.file[0].name.substr(-4) != 'xlsx') {
       this.showMessage('ingresar excel .xlsx', 'danger', true)
-    }else{
+    } else {
       this.showMessage('', '', false)
     }
   }
 
-  downloadFile(){
+  downloadFile() {
     let link = document.createElement("a");
     link.download = "filename";
     link.href = "assets/img/default.jpg";
     link.click();
-}
+  }
 
-  import(){
+  import() {
+
     this.loading = true;
     this._importExcelService.import(this.file)
-    .then(async (r)=>{
-      this.showMessage(r.message, 'success', true)
-      this.loading = false;
-    })
-    .catch(async (e)=>{
-      e
-    });
+      .then(async (r) => {
+
+        for (let x = 0; x < r.length; x++) {
+
+          if (r[x].status == 200) {
+            this.status200.push(r[x])
+
+          } else if(r[x].message == 'No se encontro el articulo con el codigo' && r[x].status == 500) {
+            this.status500.push(r[x])
+          }else if( r[x].message == 'No se ingreso ningun codigo' && r[x].status == 500){
+            this.statusCode.push(r[x])
+          }
+
+        }
+        this.loading = false;
+      })
+      .catch(async (e) => {
+        e
+      });
   }
-  
+
   ngAfterViewInit() {
   }
 
-  public handleFileInput(files: File) {}
+  public handleFileInput(files: File) { }
 
   public showMessage(
     message: string,

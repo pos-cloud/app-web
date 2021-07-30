@@ -5,11 +5,38 @@
   </button>
 </div>
 <section class="container-fluid">
-  
+
   <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
     {{alertMessage}}
   </ngb-alert>
+  <ul id="lista1" *ngIf="status200?.length > 0">
+    <li>
+      Operación realizada con éxito
+    </li>
+    <li>
+      <span class="separador">: </span> {{ status200?.length }}
+    </li>
 
+  </ul>
+  <ul id="lista2" *ngIf="status500?.length > 0">
+    <li>
+      No se encontro el articulo: {{status500?.length}}
+    </li>
+
+    <p>Codigos:</p>
+    <li *ngFor="let item of status500;">
+      <span class="separador">| </span> {{ item.code }}
+    </li>
+  </ul>
+  <ul id="lista2" *ngIf="statusCode?.length > 0">
+    <li>
+      No se ingreso ningun codigo: {{statusCode?.length}}
+    </li>
+    <li *ngFor="let item of statusCode;">
+      <span class="separador">| </span> {{ item.code }}
+    </li>
+
+  </ul>
   <form [formGroup]="importForm" (ngSubmit)="import()" autocomplete="off" enctype="multipart/form-data">
 
     <div class="modal-body">
@@ -17,8 +44,7 @@
       <div class="row">
         <div class="form-group col-md-12">
           <label for="filePath" class="control-label">Archivo:</label>
-          <input type="file" class="form-control" formControlName="filePath" 
-            (change)="onFileChange($event)" />
+          <input type="file" class="form-control" formControlName="filePath" (change)="onFileChange($event)" />
 
 
           <div *ngIf="formErrors.filePath" class="alert alert-danger">
@@ -30,8 +56,8 @@
         </div>
       </div>
     </div>
-    <a href="/assets/modelo_producto.xlsx" target="_self" download >Descargar Modelo</a>
-      <div class="modal-footer">
+    <a href="/assets/modelo_producto.xlsx" target="_self" download>Descargar Modelo</a>
+    <div class="modal-footer">
       <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
       <button type="submit" class="btn btn-primary" [disabled]="">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
