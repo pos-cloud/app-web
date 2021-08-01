@@ -13,7 +13,7 @@ export class BusinessRule extends Model {
 	public discountAmount: number;
 	public discountPercent: number;
 	public article : Article;
-	public newUser : boolean;
+	public newUser : boolean = false;
 
     constructor() { super(); }
 
@@ -29,6 +29,7 @@ export class BusinessRule extends Model {
                 name: 'startDate',
                 visible: true,
                 filter: true,
+                project: `{ "$dateToString": { "date": "$startDate", "format": "%d/%m/%Y", "timezone": "-03:00" } }`,
                 datatype: 'string',
                 align: 'left',
             },
@@ -36,6 +37,7 @@ export class BusinessRule extends Model {
                 name: 'endDate',
                 visible: true,
                 filter: true,
+                project: `{ "$dateToString": { "date": "$endDate", "format": "%d/%m/%Y", "timezone": "-03:00" } }`,
                 datatype: 'string',
                 align: 'left',
             },

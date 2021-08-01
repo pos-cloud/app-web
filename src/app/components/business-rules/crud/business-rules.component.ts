@@ -104,28 +104,28 @@ export class BusinessRuleComponent implements OnInit {
             class: 'form-group col-md-2',
             validators: [Validators.required],
         },
-        {
+        /*{
             name: 'quantity',
             tag: 'input',
             tagType: 'number',
             class: 'form-group col-md-2'
-        },
+        },*/
         {
             name: 'discountAmount',
             tag: 'input',
             tagType: 'number',
             class: 'form-group col-md-2'
         },
-        {
+       /* {
             name: 'discountPercent',
             tag: 'input',
             tagType: 'number',
             class: 'form-group col-md-2'
-        },
+        },*/
         {
             name: 'newUser',
             tag: 'select',
-            tagType: "boolean",
+            tagType: 'boolean',
             values: ['true', 'false'],
             class: 'form-group col-md-2'
         },
