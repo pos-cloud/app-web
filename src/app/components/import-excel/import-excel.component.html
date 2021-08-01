@@ -20,7 +20,7 @@
   </ul>
   <ul id="lista2" *ngIf="status500?.length > 0">
     <li>
-      No se encontro el articulo: {{status500?.length}}
+      No se encontro el articulo: {{status500?.length}} Errores
     </li>
 
     <p>Codigos:</p>
@@ -30,10 +30,10 @@
   </ul>
   <ul id="lista2" *ngIf="statusCode?.length > 0">
     <li>
-      No se ingreso ningun codigo: {{statusCode?.length}}
+      No se ingreso ningun codigo: {{statusCode?.length}} Filas => 
     </li>
     <li *ngFor="let item of statusCode;">
-      <span class="separador">| </span> {{ item.code }}
+      <span class="separador">| </span> {{ item.filaExcel }}
     </li>
 
   </ul>
