@@ -3712,7 +3712,7 @@ export class PrintComponent implements OnInit {
                 if (movementOfArticle.salePrice > 0) {
 
                     this.row += 6;
-                    this.doc.text(movementOfArticle.description.slice(0, 20), margin, this.row);
+                    this.doc.text(movementOfArticle.description.slice(0, 27), margin, this.row);
                     this.doc.text(this.roundNumber.transform(movementOfArticle.amount) + " x " + this.roundNumber.transform((movementOfArticle.salePrice + (movementOfArticle.transactionDiscountAmount * movementOfArticle.amount)) / movementOfArticle.amount).toString(), margin, this.row + 3);
                     this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice + (movementOfArticle.transactionDiscountAmount * movementOfArticle.amount)).toString(), width - 15, this.row);
 
