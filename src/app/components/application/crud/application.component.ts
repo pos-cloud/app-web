@@ -444,7 +444,12 @@ export class ApplicationComponent implements OnInit {
         tag: 'select',
         tagType: null,
         values: ['true', 'false'],
-        class: 'form-group col-md-12'
+        class: 'form-group col-md-6'
+    },{
+        name: 'auth.messageOPT',
+        tag: 'input',
+        tagType: 'text',
+        class: 'form-group col-md-6'
     }];
     public formErrors: {} = {};
     public validationMessages = {

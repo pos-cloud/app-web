@@ -60,7 +60,8 @@ export class Application extends Model {
         }[]
     };
     public auth: {
-        requireOPT: boolean
+        requireOPT: boolean,
+        messageOPT : { type: String }
     };
     public integrations: {
 		meli: {
