@@ -515,5 +515,6 @@
     "article" : "Articulo",
     "newUser" : "Usuario Nuevo",
     "business-rule" : "Regla de Negocio",
-    "business-rules" : "Reglas de Negocio"
+    "business-rules" : "Reglas de Negocio",
+    "auth.messageOPT" : "Mensaje de Texto"
 }
