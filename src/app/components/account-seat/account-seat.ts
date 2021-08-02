@@ -74,6 +74,12 @@ export class AccountSeat extends Model {
                 filter: true,
                 datatype: 'number',
                 align: 'left',
+            }, {
+                name: 'observation',
+                visible: false,
+                filter: true,
+                datatype: 'string',
+                align: 'left',
             }
         ])
     }
