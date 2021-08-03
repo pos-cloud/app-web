@@ -2563,7 +2563,7 @@ export class AddSaleOrderComponent {
 
         if (isValid &&
             this.transaction.type.electronics &&
-            this.transaction.totalPrice >= 5000 &&
+            this.transaction.totalPrice >= 26228 &&
             !this.transaction.company &&
             this.config['country'] === 'AR') {
             isValid = false;
