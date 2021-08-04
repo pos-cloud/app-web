@@ -119,6 +119,7 @@ export class AddEmployeeComponent implements OnInit {
     if (!this.employee._id) { this.employee._id = ''; }
     if (!this.employee.code) { this.employee.code = 0; }
     if (!this.employee.name) { this.employee.name = ''; }
+    if (!this.employee.type) { this.employee.type = null; }
 
     this.employeeForm.setValue({
       '_id': this.employee._id,
@@ -187,7 +188,7 @@ export class AddEmployeeComponent implements OnInit {
       '_id': [this.employee._id, []],
       'code': [this.employee.code, [Validators.required, Validators.pattern("[0-9]{1,5}")]],
       'name': [this.employee.name, [Validators.required]],
-      'type': [this.employee.type, [Validators.required, this.validateAutocomplete]]
+      'type': [this.employee.type, []]
     });
 
     this.employeeForm.valueChanges.subscribe(data => this.onValueChanged(data));

@@ -3,8 +3,8 @@
       <div class="card-header">
         <span style="color: #607D8B">{{title}}</span>
         <div class="pull-right">
-         <!-- <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems()"></app-export-excel>-->
-         <button class="btn fa fa-refresh" (click)="processParams()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
+            <button class="btn fa fa-refresh" (click)="processParams()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
+            <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems()"></app-export-excel>
         </div>
       </div>
       <div class="card-block table-responsive">

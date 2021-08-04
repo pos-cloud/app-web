@@ -32,7 +32,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-3">
                                 <label for="orientation" class="control-label">Orientacion:</label>
                                 <select class="form-control" formControlName="orientation">
                                     <option value="l" [selected]="printer.orientation === 'l'">Horizontal</option>
@@ -42,20 +42,25 @@
                                     {{ formErrors.orientation }}
                                 </div>
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-3">
                                 <label for="row" class="control-label">Interlineado:</label>
                                 <input type="number" class="form-control" formControlName="row" name="row" id="row" />
                                 <div *ngIf="formErrors.row" class="alert alert-danger">
                                     {{ formErrors.row }}
                                 </div>
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-3">
                                 <label for="addPag" class="control-label">Salto de página:</label>
                                 <input type="number" class="form-control" formControlName="addPag" name="addPag"
                                     id="addPag" />
                                 <div *ngIf="formErrors.addPag" class="alert alert-danger">
                                     {{ formErrors.addPag }}
                                 </div>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="quantity" class="control-label">Cantidad de páginas:</label>
+                                <input type="number" class="form-control" formControlName="quantity" name="quantity"
+                                    id="quantity" />
                             </div>
                         </div>
                         <div class="row">

@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { RoundNumberPipe } from 'app/main/pipes/round-number.pipe';
 import { TranslatePipe } from '@ngx-translate/core';
+import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
 
 @Component({
     selector: 'app-view-report',
@@ -18,13 +19,14 @@ import { TranslatePipe } from '@ngx-translate/core';
 export class ViewReportComponent implements OnInit {
 
     public title: string = '';
-    public columns: any[] = new Array();
+    public columns: any[];
     public items: any[] = new Array();
     public loading = true;
     private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
 
     // EXCEL
     @ViewChild(DatatableComponent, { static: false }) datatableComponent: DatatableComponent;
+    @ViewChild(ExportExcelComponent, { static: false }) exportExcelComponent: ExportExcelComponent;
 
     constructor(
         public _service: ReportService,
@@ -59,7 +61,7 @@ export class ViewReportComponent implements OnInit {
                 if (result.status === 200) {
                     this.items = result.result
                     for (var key in this.items[0]) {
-                        if(key != '_id'){
+                        if (key != '_id') {
                             this.columns.push({
                                 name: key,
                                 visible: true,
@@ -74,10 +76,12 @@ export class ViewReportComponent implements OnInit {
                         }
                     }
 
-                    this.columns.sort(function(a,b){ 
-                        var x = a.name < b.name? -1:1; 
-                        return x; 
+                    this.columns.sort(function (a, b) {
+                        var x = a.name < b.name ? -1 : 1;
+                        return x;
                     });
+
+
 
                     this.loading = false;
                 } else {
@@ -105,6 +109,11 @@ export class ViewReportComponent implements OnInit {
             value = eval(val);
         }
         return value;
+    }
+
+    public exportItems(): void {
+        this.exportExcelComponent.items = this.items;
+        this.exportExcelComponent.export();
     }
 
     public showToast(result, type?: string, title?: string, message?: string): void {

@@ -14,6 +14,7 @@ export class Printer {
     public printIn: PrinterPrintIn = PrinterPrintIn.Counter;
     public url: string;
 
+    public quantity: number = 1;
     public orientation: string; //hporizantal vertical
     public row: number; //espacio entre filas del for
     public addPag: number; // addPage()
