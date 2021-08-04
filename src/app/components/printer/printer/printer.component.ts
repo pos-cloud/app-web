@@ -190,6 +190,7 @@ export class PrinterComponent implements OnInit {
             'pageSize': [this.pageSizes[0], [
             ]
             ],
+            'quantity': [this.printer.quantity, []],
             'url': [this.printer.url, []],
             'orientation': [this.printer.orientation, []],
             'row': [this.printer.row, []],
@@ -322,7 +323,7 @@ export class PrinterComponent implements OnInit {
         if (!this.printer.row) this.printer.row = 0;
         if (!this.printer.addPag) this.printer.addPag = 0;
         if (!this.printer.url) this.printer.url = '';
-
+        if (!this.printer.quantity) this.printer.quantity = 1;
 
         const values = {
             '_id': this.printer._id,
@@ -335,7 +336,8 @@ export class PrinterComponent implements OnInit {
             'orientation': this.printer.orientation,
             'row': this.printer.row,
             'addPag': this.printer.addPag,
-            'url': this.printer.url
+            'url': this.printer.url,
+            'quantity' : this.printer.quantity
         }
 
         if (this.printer.fields && this.printer.fields.length > 0) {

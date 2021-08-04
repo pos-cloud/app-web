@@ -2394,6 +2394,14 @@ export class PrintComponent implements OnInit {
                             row += 5;
                             this.doc.text(this.movementsOfArticles[i].notes.slice(110, 165), 46, row + 5);
                         }
+                        if (this.movementsOfArticles[i].notes.slice(165, 220) != '') {
+                            row += 5;
+                            this.doc.text(this.movementsOfArticles[i].notes.slice(165, 220), 46, row + 5);
+                        }
+                        if (this.movementsOfArticles[i].notes.slice(220, 275) != '') {
+                            row += 5;
+                            this.doc.text(this.movementsOfArticles[i].notes.slice(220, 275), 46, row + 5);
+                        }
                         this.doc.setFontStyle("normal");
                         row += 5;
                     }

@@ -42,6 +42,7 @@ export class PrintTransactionTypeComponent implements OnInit {
     @Input() printer: Printer;
     @Input() source: string;
     public imageURL: any;
+    public page : number = 1;
     public transaction: Transaction;
     public movementOfCash: MovementOfCash[];
     public movementOfArticle: MovementOfArticle[];
@@ -364,7 +365,6 @@ export class PrintTransactionTypeComponent implements OnInit {
 
     async buildPrint() {
 
-
         let pageWidth = this.printer.pageWidth * 100 / 35.27751646284102;
         let pageHigh = this.printer.pageHigh * 100 / 35.27751646284102;
 
@@ -384,10 +384,16 @@ export class PrintTransactionTypeComponent implements OnInit {
             await this.buildLayout(PositionPrint.Header);
             await this.buildBody();
             await this.buildLayout(PositionPrint.Footer);
+            if(this.printer.quantity && this.printer.quantity > 1){
+                for (let index = 0; index < this.printer.quantity - 1; index++) {
+                    this.doc.addPage();
+                    await this.buildLayout(PositionPrint.Header);
+                    await this.buildBody();
+                    await this.buildLayout(PositionPrint.Footer);
+                }
+            }
         }
-
         this.finishImpression();
-
     }
 
     async buildLayout(position: PositionPrint): Promise<boolean> {
