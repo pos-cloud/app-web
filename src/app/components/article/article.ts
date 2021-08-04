@@ -479,6 +479,16 @@ export let attributes = [
         required: true,
     },
     {
+        name: 'containsStructure',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'boolean',
+        project: null,
+        align: 'left',
+        required: true,
+    },
+    {
         name: 'operationType',
         visible: false,
         disabled: true,
