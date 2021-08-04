@@ -595,7 +595,7 @@ export class PrintComponent implements OnInit {
         }
         if (this.transaction.type && this.transaction.type.showPrices) {
             this.doc.text("Total", 185, 77);
-            
+
         }
         this.doc.setFontType('normal');
 
@@ -2378,8 +2378,8 @@ export class PrintComponent implements OnInit {
                             this.doc.textEx((this.movementsOfArticles[i].salePrice == 0) ? '' : "$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice, 2).toFixed(2), 207, row, 'right', 'middle');
                         }
 
-                        if(this.movementsOfArticles[i].discountRate > 0){
-                            this.doc.text("%" + this.movementsOfArticles[i].discountRate.toString(),175,row);
+                        if (this.movementsOfArticles[i].discountRate > 0) {
+                            this.doc.text("%" + this.movementsOfArticles[i].discountRate.toString(), 175, row);
                         }
 
                     }
@@ -2753,7 +2753,7 @@ export class PrintComponent implements OnInit {
         // OBSERVATION
         let observation: string = '';
 
-        if(this.company && this.company.vatCondition && this.company.vatCondition.observation && this.company.vatCondition.observation != '') {
+        if (this.transaction.type.electronics && this.company && this.company.vatCondition && this.company.vatCondition.observation && this.company.vatCondition.observation != '') {
             observation += this.company.vatCondition.observation + '.- ';
         }
 
@@ -2788,12 +2788,12 @@ export class PrintComponent implements OnInit {
                 this.doc.setFontType('normal');
                 row += 4;
 
-                (observation.length > 0) ? this.doc.text(observation.slice(0, 60) + "-", margin + 35, row): '';
-                (observation.length > 60) ? this.doc.text(observation.slice(60, 120) + "-", margin + 35, row += 4): '';
-                (observation.length > 120) ? this.doc.text(observation.slice(120, 180) + "-", margin + 35, row += 4): '';
-                (observation.length > 180) ? this.doc.text(observation.slice(180, 220) + "-", margin + 35, row += 4): '';
-                (observation.length > 220) ? this.doc.text(observation.slice(220, 260) + "-", margin + 35, row += 4): '';
-                (observation.length > 260) ? this.doc.text(observation.slice(260, 320) + "-", margin + 35, row += 4): '';
+                (observation.length > 0) ? this.doc.text(observation.slice(0, 60) + "-", margin + 35, row) : '';
+                (observation.length > 60) ? this.doc.text(observation.slice(60, 120) + "-", margin + 35, row += 4) : '';
+                (observation.length > 120) ? this.doc.text(observation.slice(120, 180) + "-", margin + 35, row += 4) : '';
+                (observation.length > 180) ? this.doc.text(observation.slice(180, 220) + "-", margin + 35, row += 4) : '';
+                (observation.length > 220) ? this.doc.text(observation.slice(220, 260) + "-", margin + 35, row += 4) : '';
+                (observation.length > 260) ? this.doc.text(observation.slice(260, 320) + "-", margin + 35, row += 4) : '';
             }
         }
 
@@ -2804,7 +2804,7 @@ export class PrintComponent implements OnInit {
             this.doc.text("VALOR DECLARADO:", margin, row + 20);
             if (this.transaction.package) {
                 this.doc.setFontType('normal');
-                this.doc.text(this.transaction.package.toString(), margin + 45, row+ 16);
+                this.doc.text(this.transaction.package.toString(), margin + 45, row + 16);
             }
             if (this.transaction.declaredValue) {
                 this.doc.setFontType('normal');
@@ -2817,7 +2817,7 @@ export class PrintComponent implements OnInit {
                 this.doc.setFontType('normal');
                 this.doc.text(this.transaction.transport.name, margin + 26, row);
             }
-            
+
             if (this.transaction.transport.address) {
                 this.doc.setFontType('bold');
                 this.doc.text("DOMICILIO:", margin, row + 4);
@@ -2836,7 +2836,7 @@ export class PrintComponent implements OnInit {
                 this.doc.setFontType('normal');
                 this.doc.text(this.transaction.transport.identificationValue, margin + 30, row + 12);
             }
-            if(!this.transaction.declaredValue){
+            if (!this.transaction.declaredValue) {
                 if (this.transaction.taxes && this.transaction.taxes.length > 0) {
                     let priceWhitoutTaxes
                     for (const iterator of this.transaction.taxes) {
