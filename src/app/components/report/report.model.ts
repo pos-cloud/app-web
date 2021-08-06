@@ -1,7 +1,4 @@
 import { IAttribute } from 'app/util/attribute.interface';
-import { Article } from '../article/article';
-import { Category } from '../category/category';
-import { EmailTemplate } from '../email-template/email-template';
 import { Model } from '../model/model.model';
 
 export class Report extends Model {
@@ -9,6 +6,10 @@ export class Report extends Model {
     public name: string;
     public query: string;
     public table : string;
+    public params : [{
+        name : string,
+        type : string
+    }]
 
     constructor() { super(); }
 

@@ -1,0 +1,33 @@
+<div class="modal-header">
+    <h4 class="modal-title">Parametros</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<section class="container-fluid">
+    <div class="center-content" *ngIf="alertMessage !== ''">
+        <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+            {{alertMessage}}
+        </ngb-alert>
+    </div>
+    <form [formGroup]="objForm" #formCrud="ngForm" (ngSubmit)="sendParams()" autocomplete="off">
+        <div class="modal-body">
+
+            <div *ngFor="let field of report.params">
+                <div class="row">
+                    <b>{{field.name}}</b>
+                    <input [type]="field.type" class="form-control" [formControlName]="field.name" [name]="field.name"
+                        [id]="field.name" [readonly]="readonly" />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
+            <button type="submit" class="btn btn-primary">
+                <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+                <span *ngIf="!loading">Guardar</span>
+                <span *ngIf="loading">Espere por favor</span>
+            </button>
+        </div>
+    </form>
+</section>

@@ -39,8 +39,9 @@ export class ReportComponent implements OnInit {
     public operation: string;
     public obj: Report;
     public objForm: FormGroup;
+    public name;
     public loading: boolean = false;
-    public schedule: FormArray;
+    public param: FormArray;
     public focusEvent = new EventEmitter<boolean>();
     public title: string = 'report';
     private subscription: Subscription = new Subscription();
@@ -90,7 +91,7 @@ export class ReportComponent implements OnInit {
         name: 'table',
         tag: 'select',
         tagType: 'text',
-        values: ["Transaction","Movement-Of-Cash","Stock"],
+        values: ["Transaction","Movement-Of-Cash","Stock","Movimiento de Producto"],
         class: 'form-group col-md-4'
     },{
         name: 'query',
@@ -217,7 +218,8 @@ export class ReportComponent implements OnInit {
     public buildForm(): void {
 
         let fields: {} = {
-            _id: [this.obj._id]
+            _id: [this.obj._id],
+            'params': this._fb.array([])
         };
         for (let field of this.formFields) {
             if (field.tag !== 'separator') fields[field.name] = [this.obj[field.name], field.validators]
@@ -289,7 +291,46 @@ export class ReportComponent implements OnInit {
             }
         }
 
+        if (this.obj.params && this.obj.params.length > 0) {
+            let params = <FormArray>this.objForm.controls.params;
+            this.obj.params.forEach(x => {
+
+                params.push(this._fb.group({
+                    '_id': null,
+                    'name': x.name,
+                    'type': x.type
+                }))
+            })
+        }
+
         this.objForm.patchValue(values);
+    }
+
+    public addParam(paramForm: NgForm): void {
+
+        let valid = true;
+        const params = this.objForm.controls.params as FormArray;
+
+        if (paramForm.value.name === "" || paramForm.value.type === "") {
+            this.showToast("", "warning", "Debe completar todos los campos")
+            valid = false;
+        }
+
+        if (valid) {
+            params.push(
+                this._fb.group({
+                    _id: null,
+                    name: paramForm.value.name,
+                    type: paramForm.value.type
+                })
+            );
+            paramForm.resetForm();
+        }
+    }
+
+    deleteParam(index) {
+        let control = <FormArray>this.objForm.controls.params;
+        control.removeAt(index)
     }
 
     public deleteFile(typeFile: string, fieldName: string, filename: string) {

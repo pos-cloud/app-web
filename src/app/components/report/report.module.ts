@@ -19,6 +19,7 @@ import { NgxTinymceModule } from 'ngx-tinymce';
 import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
 import { ImportExcelModule } from '../import-excel/import-excel.module';
 import { ExportersModule } from '../export/exporters.module';
+import { ParamsReportComponent } from './params-report/params-report.component';
 
 const routes: Routes = [
   {
@@ -74,7 +75,8 @@ const routes: Routes = [
   declarations: [
     ListReportsComponent,
     ReportComponent,
-    ViewReportComponent
+    ViewReportComponent,
+    ParamsReportComponent
   ],
   exports: [
     ReportComponent,
@@ -82,7 +84,8 @@ const routes: Routes = [
   ],
   entryComponents: [
     ReportComponent,
-    ViewReportComponent
+    ViewReportComponent,
+    ParamsReportComponent
   ],
   providers: [
     ReportService

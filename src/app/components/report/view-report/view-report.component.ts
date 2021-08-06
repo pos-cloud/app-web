@@ -7,6 +7,9 @@ import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { RoundNumberPipe } from 'app/main/pipes/round-number.pipe';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
+import { Report } from '../report.model';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ParamsReportComponent } from '../params-report/params-report.component';
 
 @Component({
     selector: 'app-view-report',
@@ -21,6 +24,7 @@ export class ViewReportComponent implements OnInit {
     public title: string = '';
     public columns: any[];
     public items: any[] = new Array();
+    public report: Report;
     public loading = true;
     private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
 
@@ -31,7 +35,9 @@ export class ViewReportComponent implements OnInit {
     constructor(
         public _service: ReportService,
         private _route: ActivatedRoute,
+        private _router: Router,
         private _toastr: ToastrService,
+        private _modalService: NgbModal,
         public translatePipe: TranslateMePipe
     ) { }
 
@@ -47,16 +53,63 @@ export class ViewReportComponent implements OnInit {
         this._route.params.subscribe(params => {
             if (params['name']) {
                 this.title = params['name'];
-                this.getReport(params['name']);
+                this.getReportByName(params['name']);
             } else {
                 this.loading = false;
-                this.showToast("", "Danger", "Error de Ruta", "El reporte tiene nombre")
+                this.showToast("", "Danger", "Error de Ruta", "El reporte no se encontro")
             }
         });
     }
 
-    public getReport(name: string): void {
-        this._service.getReportResult(name).subscribe(
+    public getReportByName(name: string): void {
+        this._service.getAll({
+            project: {
+                name: 1,
+                type: 1,
+                params: 1
+            },
+            match: {
+                name: name
+            }
+        }).subscribe(
+            result => {
+                if (result.status === 200) {
+                    this.report = result.result[0];
+                    if (this.report.params && this.report.params.length > 0) {
+                        this.getParamsValue();
+                    } else {
+                        this.execReport(this.report.name);
+                    }
+                } else {
+                    this.loading = false;
+                    this.showToast(result)
+                }
+            },
+            error => {
+                this.loading = false;
+                this.showToast(error)
+            }
+        );
+    }
+
+    public getParamsValue(): void {
+        let modalRef;
+        modalRef = this._modalService.open(ParamsReportComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.report = this.report;
+        modalRef.result.then((result) => {
+            if(result === 'cancel'){
+                this._router.navigateByUrl('/#/');
+            } else {
+                this.execReport(this.report.name, result);
+            }
+
+        }, (reason) => {
+            this._router.navigateByUrl('/#/');
+        });
+    }
+
+    public execReport(name: string, params? : any): void {
+        this._service.getReportResult(name,params).subscribe(
             result => {
                 if (result.status === 200) {
                     this.items = result.result
@@ -80,9 +133,6 @@ export class ViewReportComponent implements OnInit {
                         var x = a.name < b.name ? -1 : 1;
                         return x;
                     });
-
-
-
                     this.loading = false;
                 } else {
                     this.showToast(result)

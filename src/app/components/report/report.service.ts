@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { ModelService } from '../model/model.service';
 import { AuthService } from '../login/auth.service';
 import { Observable, of } from "rxjs";
@@ -19,14 +19,15 @@ export class ReportService extends ModelService {
     );
   }
 
-  public getReportResult(name: string): Observable<any> {
+  public getReportResult(name: string, params: any): Observable<any> {
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
     return this._http.get(`${this.URL}-view/${name}`, {
-      headers: headers
+      headers: headers,
+      params : params
     }).pipe(
       map(res => {
         return res;
