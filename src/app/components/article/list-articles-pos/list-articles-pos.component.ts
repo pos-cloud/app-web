@@ -182,6 +182,7 @@ export class ListArticlesPosComponent implements OnInit {
       "make.visibleSale": 1,
       favourite: 1,
       quantityPerMeasure: 1,
+      isWeigth: 1,
     }
 
     this._articleService.getArticlesV2(
@@ -694,6 +695,7 @@ export class ListArticlesPosComponent implements OnInit {
               this.config.tradeBalance.numberOfDecimals - 1),
               (originalFilter.length - 1));
             let salePrice = parseFloat(wholePart + "." + decimalPart);
+            if(!article.isWeigth) { salePrice = article.salePrice }
             let amount = 1;
             if (this.config.tradeBalance.numberOfQuantity && this.config.tradeBalance.numberOfQuantity != 0) {
               amount = parseInt(originalFilter.slice(
