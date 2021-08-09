@@ -116,12 +116,12 @@ export class BusinessRuleComponent implements OnInit {
             tagType: 'number',
             class: 'form-group col-md-2'
         },
-       /* {
+        {
             name: 'discountPercent',
             tag: 'input',
             tagType: 'number',
             class: 'form-group col-md-2'
-        },*/
+        },
         {
             name: 'newUser',
             tag: 'select',
