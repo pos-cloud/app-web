@@ -130,6 +130,16 @@ export let attributes = [
         required: true
     },
     {
+        name: 'transactionDestination.endDate2',
+        visible: false,
+        disabled: true,
+        filter: true,
+        datatype: 'string',
+        project: `"$transactionDestination.endDate"`,
+        align: 'left',
+        required: true
+    },
+    {
         name: 'transactionDestination.type.name',
         visible: true,
         disabled: false,
