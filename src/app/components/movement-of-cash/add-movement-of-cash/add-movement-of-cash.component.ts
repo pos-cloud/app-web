@@ -793,6 +793,7 @@ export class AddMovementOfCashComponent implements OnInit {
                 // MANDAMOS LÍMITE DE MONTO A SELECCIONAR
                 modalRef.componentInstance.transactionAmount = this.roundNumber.transform(this.transaction.totalPrice - this.movementOfCashForm.value.amountPaid);
                 modalRef.componentInstance.paymentMethod = this.paymentMethodSelected;
+                modalRef.componentInstance.transactionType = this.transaction.type;
                 modalRef.result.then(async (result) => {
 
                     if (result && result.movementsOfCashes && result.movementsOfCashes.length > 0) {

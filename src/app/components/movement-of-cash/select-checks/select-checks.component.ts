@@ -7,6 +7,7 @@ import { NgbModal, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-boots
 import { TransactionState } from 'app/components/transaction/transaction';
 import { EditCheckComponent } from '../edit-check/edit-check.component';
 import { ViewTransactionComponent } from '../../transaction/view-transaction/view-transaction.component';
+import { TransactionType } from 'app/components/transaction-type/transaction-type';
 
 @Component({
     selector: 'app-select-checks',
@@ -18,6 +19,7 @@ export class SelectChecksComponent implements OnInit {
 
     @Input() transactionAmount: number;
     @Input() paymentMethod: PaymentMethod;
+    @Input() transactionType : TransactionType;
     public movementsOfCashes: MovementOfCash[] = new Array();
     public movementsOfCashesSelected: MovementOfCash[] = new Array();
     public areMovementOfCashesEmpty = true;
@@ -249,7 +251,7 @@ export class SelectChecksComponent implements OnInit {
         if (this.isMovementOfCashSelected(movementOfCash)) {
             this.deleteMovementOfCashSelected(movementOfCash);
         } else {
-            if (this.transactionAmount === 0 || (this.transactionAmount >= (this.totalAmountSelected + movementOfCash.amountPaid))) {
+            if (this.transactionAmount === 0 || (this.transactionAmount >= (this.totalAmountSelected + movementOfCash.amountPaid)) || this.transactionType.allowZero) {
                 this.totalAmountSelected += movementOfCash.amountPaid;
                 this.movementsOfCashesSelected.push(movementOfCash);
             } else {
