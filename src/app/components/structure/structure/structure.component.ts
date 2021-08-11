@@ -28,7 +28,7 @@ export class StructureComponent implements OnInit {
             distinctUntilChanged(),
             tap(() => this.loading = true),
             switchMap(term =>
-                this.getArticles(`where="description": { "$regex": "${term}", "$options": "i" }&limit=10`).then(
+                this.getArticles(`where="code": { "$regex": "${term}", "$options": "i" }&limit=10`).then(
                     articles => {
                         return articles;
                     }
@@ -37,7 +37,7 @@ export class StructureComponent implements OnInit {
             tap(() => this.loading = false)
         )
 
-    public formatterArticles = (x: { description: string }) => x.description;
+    public formatterArticles = (x: { code: string }) => x.code;
 
     public filterKey = '';
     public filteredItems = [];
