@@ -1469,6 +1469,12 @@ export class AddMovementOfCashComponent implements OnInit {
                     this.movementOfCash.expirationDate = moment(this.movementOfCash.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
                     this.movementOfCash.interestPercentage = this.movementOfCashForm.value.interestPercentage;
 
+                    if (this.paymentMethodSelected.allowBank) {
+                        this.movementOfCash.bank = this.movementOfCashForm.value.bank;
+                    } else {
+                        this.movementOfCash.bank = null
+                    }
+
                     if (this.paymentMethodSelected.checkDetail) {
                         this.movementOfCash.receiver = this.movementOfCashForm.value.receiver;
                         this.movementOfCash.number = this.movementOfCashForm.value.number;
@@ -1486,10 +1492,7 @@ export class AddMovementOfCashComponent implements OnInit {
                         this.movementOfCash.statusCheck = StatusCheck.Closed;
                     }
 
-                    if (this.paymentMethodSelected.allowBank) {
-                        this.movementOfCash.bank = this.movementOfCashForm.value.bank;
-                    }
-
+                   
                     if (this.paymentMethodSelected.inputAndOuput && this.transaction.type.movement === Movements.Inflows) {
                         this.movementOfCash.statusCheck = StatusCheck.Available;
                     }
