@@ -275,6 +275,7 @@
     "transaction.type.transactionMovement": "Movimiento",
     "transaction.creationDate": "Fecha de Alta Transacción",
     "transaction.updateDate": "Fecha de Actualización Transacción",
+    "transaction.company.identificationValue" : "Identificacion de Empresa",
     "transaction": "Transacción",
     "transaction-type": "Tipo de Transacción",
     "transaction-types": "Tipos de Transacciones",

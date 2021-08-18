@@ -66,6 +66,20 @@
       </select>
     </div>
     <div class="col-md-2">
+        <label for="transactionType" class="control-label">
+            <b>Tipo</b>
+        </label>
+        <ng-multiselect-dropdown
+        [placeholder]="'Tipo de Transacción'"
+        [settings]="dropdownSettings"
+        [data]="transactionTypes"
+        [(ngModel)]="transactionTypesSelect"
+        (onSelect)="onItemSelect($event)"
+        (onSelectAll)="onSelectAll($event)"
+      >
+      </ng-multiselect-dropdown>
+    </div>
+    <div class="col-md-2">
       <label for="startDate" class="control-label">
         <b>Fecha Desde:</b>
       </label>
