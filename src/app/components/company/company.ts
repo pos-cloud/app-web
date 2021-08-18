@@ -43,6 +43,7 @@ export class Company {
     public priceList: PriceList;
     public addressNumber: string;
     public wooId: string;
+    public meliId: string;
     public discount: number;
     public account: Account;
     public creditLimit: number;
@@ -311,6 +312,16 @@ export let attributes = [
     },
     {
         name: 'wooId',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+    },
+    {
+        name: 'meliId',
         visible: false,
         disabled: false,
         filter: true,

@@ -598,7 +598,7 @@ export class PointOfSaleComponent implements OnInit {
                 if (this.transactionStates.length > 0) {
                     query = {
                         state: { $in: this.transactionStates },
-                        madein: 'pedidos-web',
+                        madein: { $in: ['pedidos-web','mercadolibre'] },
                         operationType: { $ne: 'D' },
                         "type.transactionMovement": this.transactionMovement,
                     }
@@ -620,11 +620,12 @@ export class PointOfSaleComponent implements OnInit {
                             { state: TransactionState.Delivered },
                             { state: TransactionState.Sent }
                         ],
-                        madein: 'pedidos-web',
+                        madein: { $in: ['pedidos-web','mercadolibre'] },
                         operationType: { $ne: 'D' },
                         "type.transactionMovement": this.transactionMovement,
                     }
                 }
+                console.log(query);
                 await this.getTransactionsV2(query).then(
                     transactions => {
                         this.hideMessage();
@@ -1071,11 +1072,8 @@ export class PointOfSaleComponent implements OnInit {
 							&limit=1`;
                 await this.getTransactions(query).then(
                     async transactions => {
-                        if (transactions && transactions.length > 0) {
-                            this.transaction.number = transactions[0].number + 1;
-                        } else {
-                            this.transaction.number = 1;
-                        }
+                        if (transactions && transactions.length > 0) this.transaction.number = transactions[0].number + 1;
+                        else this.transaction.number = 1;
                         await this.assignCurrency().then(
                             async result => {
                                 if (result) {
@@ -2086,7 +2084,7 @@ export class PointOfSaleComponent implements OnInit {
 
             let sort: {} = { startDate: -1 };
 
-            if (this.posType === 'pedidos-web' || this.posType === 'carritos-abandonados') {
+            if (this.posType === 'pedidos-web' || this.posType === 'mercadolibre' || this.posType === 'carritos-abandonados') {
                 sort = { orderNumber: -1 };
                 this.orderTerm = ['-orderNumber'];
             }

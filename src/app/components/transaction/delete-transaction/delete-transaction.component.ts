@@ -1,14 +1,8 @@
 import { Component, Input, EventEmitter } from '@angular/core';
-
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-
-import { Transaction, TransactionState } from '../transaction';
-
+import { Transaction } from '../transaction';
 import { TransactionService } from '../transaction.service';
 import { MovementOfArticleService } from '../../movement-of-article/movement-of-article.service';
-
-import * as moment from 'moment';
-import 'moment/locale/es';
 
 @Component({
   selector: "app-delete-transaction",

@@ -565,7 +565,7 @@ export class PrintComponent implements OnInit {
             this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
             if (this.transaction.type.codes && Config.country === 'AR') {
                 for (let i = 0; i < this.transaction.type.codes.length; i++) {
-                    if (this.transaction.letter === this.transaction.type.codes[i].letter) {
+                    if (this.transaction.type.codes[i].code && this.transaction.letter === this.transaction.type.codes[i].letter) {
                         this.doc.setFontSize('8');
                         this.doc.text("Cod:" + this.padString((this.transaction.type.codes[i].code).toString(), 2), 101, 16);
                     }
