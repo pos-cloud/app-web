@@ -193,6 +193,13 @@
                                 [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
                                 (blur)="onValueChanged($event.target.id)" />
                         </div>
+                        <label *ngIf="field.name === 'electronics'" [for]="'codeZ'" class="control-label">{{'codeZ' | translate | capitalize}}:</label>
+                        <div class="input-group" *ngIf="field.name === 'electronics'">
+                            <input [type]="'text'" class="form-control"
+                                [formControlName]="'codeZ'" [name]="'codeZ'" [id]="'codeZ'" [readonly]="readonly"
+                                [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
+                                (blur)="onValueChanged($event.target.id)" />
+                        </div>
                     </div>
                 </div>
                 <div class="form-group col-md-12" *ngIf="objForm.get('paymentMethods')">

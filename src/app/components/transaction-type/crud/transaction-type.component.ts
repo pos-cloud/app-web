@@ -379,7 +379,7 @@ export class TransactionTypeComponent implements OnInit {
             name: 'fixedLetter',
             tag: 'select',
             tagType: 'text',
-            values: ["X", 'A', 'B', "C", "D", "E", "M", "R", "T", " "],
+            values: ["X", 'A', 'B', "C", "D", "E", "M", "R", "T", "Z", " "],
             default: "X",
             class: 'form-group col-md-2'
         },
@@ -445,7 +445,7 @@ export class TransactionTypeComponent implements OnInit {
             values: ['true', 'false'],
             validators: [Validators.required],
             class: 'form-group col-md-4'
-        },{
+        }, {
             name: 'allowPriceList',
             tag: 'select',
             tagType: 'boolean',
@@ -944,7 +944,7 @@ export class TransactionTypeComponent implements OnInit {
                 "resetOrderNumber": 1,
                 "allowAccounting": 1,
                 "finishState": 1,
-                "allowPriceList" : 1
+                "allowPriceList": 1
             }
 
             this.subscription.add(this._objService.getAll({
@@ -980,6 +980,9 @@ export class TransactionTypeComponent implements OnInit {
                                     break;
                                 case 'R':
                                     this.objForm.patchValue({ codeR: code.code });
+                                    break;
+                                case 'Z':
+                                    this.objForm.patchValue({ codeZ: code.code });
                                     break;
 
                                 case 'T':
@@ -1040,6 +1043,7 @@ export class TransactionTypeComponent implements OnInit {
             codeE: '',
             codeM: '',
             codeR: '',
+            codeZ: '',
             codeT: '',
         };
         for (let field of this.formFields) {
@@ -1235,6 +1239,10 @@ export class TransactionTypeComponent implements OnInit {
         this.obj.codes.push({
             letter: 'R',
             code: this.objForm.value.codeR,
+        });
+        this.obj.codes.push({
+            letter: 'Z',
+            code: this.objForm.value.codeZ,
         });
         this.obj.codes.push({
             letter: 'T',
