@@ -83,6 +83,16 @@ export let attributes = [
         required: false,
     },
     {
+        name: 'transaction.company.identificationValue',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+    },
+    {
         name: 'type._id',
         visible: false,
         disabled: true,
