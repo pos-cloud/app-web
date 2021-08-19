@@ -517,5 +517,7 @@
     "newUser" : "Usuario Nuevo",
     "business-rule" : "Regla de Negocio",
     "business-rules" : "Reglas de Negocio",
-    "auth.messageOPT" : "Mensaje de Texto"
+    "auth.messageOPT" : "Mensaje de Texto",
+    "type.defectEmailTemplate.design": "Template Email",
+    "type.defectEmailTemplate._id": "Identificador Template Email"
 }

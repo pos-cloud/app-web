@@ -466,17 +466,6 @@ export let attributes = [
         required: true,
     },
     {
-        name: 'operationType',
-        visible: false,
-        disabled: true,
-        filter: false,
-        datatype: 'string',
-        defaultFilter: `{ "$ne": "D" }`,
-        project: null,
-        align: 'left',
-        required: true,
-    },
-    {
         name: 'type.allowEdit',
         visible: false,
         disabled: false,
@@ -567,6 +556,16 @@ export let attributes = [
         required: true,
     },
     {
+        name: 'meliId',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+    },
+    {
         name: 'endDate2',
         visible: false,
         disabled: true,
@@ -615,6 +614,17 @@ export let attributes = [
         project: null,
         align: 'left',
         required: true,
-    }
+    },
+    {
+        name: 'operationType',
+        visible: false,
+        disabled: true,
+        filter: false,
+        datatype: 'string',
+        defaultFilter: `{ "$ne": "D" }`,
+        project: null,
+        align: 'left',
+        required: true,
+    },
 ];
 
