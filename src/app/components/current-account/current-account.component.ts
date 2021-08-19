@@ -197,7 +197,7 @@ export class CurrentAccountComponent implements OnInit {
             detailsPaymentMethod: this.detailsPaymentMethod,
             transactionMovement: this.transactionMovement,
             invertedView: this.invertedView,
-            transactionTypes : transactionTypes
+            transactionTypes: transactionTypes
         }
 
         this._companyService.getSummaryOfAccountsByCompany(JSON.stringify(query)).subscribe(
@@ -325,45 +325,6 @@ export class CurrentAccountComponent implements OnInit {
                     }
                 );
                 break;
-            case 'print':
-                if (this.companySelected) {
-                    modalRef = this._modalService.open(PrintComponent);
-                    modalRef.componentInstance.items = this.items;
-                    modalRef.componentInstance.company = this.companySelected;
-                    modalRef.componentInstance.params = { detailsPaymentMethod: this.detailsPaymentMethod };
-                    modalRef.componentInstance.typePrint = 'current-account';
-                    modalRef.componentInstance.balance = this.balance;
-                } else {
-                    this.showMessage("Debe seleccionar una empresa.", 'info', true);
-                }
-                break;
-            case 'print-transaction':
-                modalRef = this._modalService.open(PrintComponent);
-                modalRef.componentInstance.transactionId = transactionId;
-                modalRef.componentInstance.company = this.companySelected;
-                modalRef.componentInstance.typePrint = 'invoice';
-                await this.getTransaction(transactionId).then(
-                    async transaction => {
-                        if (transaction) {
-                            if (transaction.type.defectPrinter) {
-                                modalRef.componentInstance.printer = transaction.type.defectPrinter;
-                            } else {
-                                await this.getPrinters().then(
-                                    printers => {
-                                        if (printers) {
-                                            for (let printer of printers) {
-                                                if (printer.printIn === PrinterPrintIn.Counter) {
-                                                    modalRef.componentInstance.printer = printer;
-                                                }
-                                            }
-                                        }
-                                    }
-                                );
-                            }
-                        }
-                    }
-                );
-                break;
             case 'send-email':
                 let transaction: Transaction;
                 var attachments = [];
@@ -413,9 +374,9 @@ export class CurrentAccountComponent implements OnInit {
                 if (transaction.type.electronics) {
                     // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente` + `<a href="http://${Config.apiHost}:300/api/print/invoice/${Config.database}/${transaction._id}">Su comprobante</a>`
                     modalRef.componentInstance.body = ' '
-                    attachments.push({  
+                    attachments.push({
                         filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-                        path:`/home/clients/${Config.database}/invoice/${transaction._id}.pdf`
+                        path: `/home/clients/${Config.database}/invoice/${transaction._id}.pdf`
                     })
                 } else {
                     // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://${Config.apiHost}:300/api/print/others/${Config.database}/${transaction._id}">Su comprobante</a>`
@@ -423,7 +384,7 @@ export class CurrentAccountComponent implements OnInit {
 
                     attachments.push({
                         filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-                        path:`/home/clients/${Config.database}/others/${transaction._id}.pdf`
+                        path: `/home/clients/${Config.database}/others/${transaction._id}.pdf`
                     })
                 }
 
@@ -432,7 +393,7 @@ export class CurrentAccountComponent implements OnInit {
                     modalRef.componentInstance.body += ' '
                     attachments.push({
                         filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.xml`,
-                        path:`/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + transaction.number + `.xml`
+                        path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + transaction.number + `.xml`
                     })
                 }
 
@@ -445,7 +406,7 @@ export class CurrentAccountComponent implements OnInit {
                         attachments = [];
                         attachments.push({
                             filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-                            path:`/home/clients/${Config.database}/invoice/${transaction._id}.pdf`
+                            path: `/home/clients/${Config.database}/invoice/${transaction._id}.pdf`
                         })
                     } else {
                         // modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.apiHost}:300/api/print/others/${Config.database}/${transaction._id}">Su comprobante</a>`
@@ -454,7 +415,7 @@ export class CurrentAccountComponent implements OnInit {
                         attachments = [];
                         attachments.push({
                             filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-                            path:`/home/clients/${Config.database}/others/${transaction._id}.pdf`
+                            path: `/home/clients/${Config.database}/others/${transaction._id}.pdf`
                         })
                     }
 
@@ -465,14 +426,77 @@ export class CurrentAccountComponent implements OnInit {
                         attachments = [];
                         attachments.push({
                             filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.xml`,
-                            path:`/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + transaction.number + `.xml`
+                            path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + transaction.number + `.xml`
                         })
                     }
                 }
-                
+
                 modalRef.componentInstance.attachments = attachments;
 
                 break;
+            case 'send-email-current':
+                modalRef = this._modalService.open(PrintComponent);
+                modalRef.componentInstance.items = this.items;
+                modalRef.componentInstance.company = this.companySelected;
+                modalRef.componentInstance.params = { detailsPaymentMethod: this.detailsPaymentMethod };
+                modalRef.componentInstance.typePrint = 'current-account';
+                modalRef.componentInstance.source = 'mail';
+                modalRef.componentInstance.balance = this.balance;
+
+                if (this.companySelected) {
+                    modalRef = this._modalService.open(SendEmailComponent, { size: 'lg', backdrop: 'static' });
+                    modalRef.componentInstance.emails = this.companySelected.emails;
+                    modalRef.componentInstance.subject = 'Cuenta Corriente';
+                    modalRef.componentInstance.body = ' ';
+                    modalRef.componentInstance.attachments = {
+                        filename: `current-account.pdf`,
+                        path: `/home/clients/${Config.database}/others/current-account.pdf`
+                    }
+
+                } else {
+                    this.showMessage("Debe seleccionar una empresa.", 'info', true);
+                }
+                break;
+            case 'print':
+                if (this.companySelected) {
+                    modalRef = this._modalService.open(PrintComponent);
+                    modalRef.componentInstance.items = this.items;
+                    modalRef.componentInstance.company = this.companySelected;
+                    modalRef.componentInstance.params = { detailsPaymentMethod: this.detailsPaymentMethod };
+                    modalRef.componentInstance.typePrint = 'current-account';
+                    modalRef.componentInstance.balance = this.balance;
+                } else {
+                    this.showMessage("Debe seleccionar una empresa.", 'info', true);
+                }
+                break;
+            case 'print-transaction':
+                modalRef = this._modalService.open(PrintComponent);
+                modalRef.componentInstance.transactionId = transactionId;
+                modalRef.componentInstance.company = this.companySelected;
+                modalRef.componentInstance.typePrint = 'invoice';
+                await this.getTransaction(transactionId).then(
+                    async transaction => {
+                        if (transaction) {
+                            if (transaction.type.defectPrinter) {
+                                modalRef.componentInstance.printer = transaction.type.defectPrinter;
+                            } else {
+                                await this.getPrinters().then(
+                                    printers => {
+                                        if (printers) {
+                                            for (let printer of printers) {
+                                                if (printer.printIn === PrinterPrintIn.Counter) {
+                                                    modalRef.componentInstance.printer = printer;
+                                                }
+                                            }
+                                        }
+                                    }
+                                );
+                            }
+                        }
+                    }
+                );
+                break;
+
             default: ;
         }
     }
@@ -532,8 +556,8 @@ export class CurrentAccountComponent implements OnInit {
             let match = {}
 
             match = {
-                transactionMovement :  this.transactionMovement,
-                $or : [ {"currentAccount" : "Si"}, { "currentAccount" : "Cobra"} ]
+                transactionMovement: this.transactionMovement,
+                $or: [{ "currentAccount": "Si" }, { "currentAccount": "Cobra" }]
             }
 
             this._transactionTypeService.getAll({
@@ -542,7 +566,7 @@ export class CurrentAccountComponent implements OnInit {
                     transactionMovement: 1,
                     operationType: 1,
                     name: 1,
-                    currentAccount : 1,
+                    currentAccount: 1,
                     branch: 1,
                 },
                 match: match
