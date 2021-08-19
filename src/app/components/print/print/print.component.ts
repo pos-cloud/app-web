@@ -3224,7 +3224,11 @@ export class PrintComponent implements OnInit {
         if (this.transaction && this.transaction.type && this.transaction.type.electronics) {
             this._printService.saveFile(this.doc.output('blob'), 'invoice', this.transactionId);
         } else if (this.source === "mail") {
-            this._printService.saveFile(this.doc.output('blob'), 'others', this.transactionId);
+            if(this.transaction){
+                this._printService.saveFile(this.doc.output('blob'), 'others', this.transactionId);
+            }else if (!this.transaction && this.typePrint === 'current-account' ){
+                this._printService.saveFile(this.doc.output('blob'), 'others', this.typePrint);
+            }
         }
     }
 

@@ -4,6 +4,9 @@
       <div class="pull-right">
         <app-point-of-sale (eventRefreshCurrentAccount)="refresh()" [company]="companySelected" [totalPrice]="balance">
         </app-point-of-sale>
+        <button type="button" class="btn btn-light btn-sm" (click)="openModal('send-email-current')" title="Enviar"><i
+          class="fa fa-envelope"> Enviar</i>
+      </button>
         <button class="btn" (click)="openModal('print')"><i class="fa fa-print"></i> Imprimir</button>
 
       </div>
