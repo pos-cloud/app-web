@@ -122,7 +122,7 @@ export class ListTransactionsComponent implements OnInit {
         this.userCountry = Config.country;
         this.getPrinters();
 
-        if(localStorage.getItem('project-list-transaction')){
+        if (localStorage.getItem('project-list-transaction')) {
             this.columns = JSON.parse(localStorage.getItem('project-list-transaction'));
         }
 
@@ -320,6 +320,7 @@ export class ListTransactionsComponent implements OnInit {
             match += `"employeeClosing._id": { "$oid" : "${this.employeeClosingId}"},`;
         }
 
+        if (match.charAt(match.length - 1) === '}') match += ',';
         match += `"type.transactionMovement": "${this.transactionMovement}",`;
         if (this.stateSelect && this.stateSelect !== '') match += `"state": "${this.stateSelect}",`;
         match += `"${this.dateSelect}" : {
@@ -331,7 +332,6 @@ export class ListTransactionsComponent implements OnInit {
         if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
         match += `}`;
-
         match = JSON.parse(match);
 
         var transactionTypes = [];
@@ -577,7 +577,7 @@ export class ListTransactionsComponent implements OnInit {
 
                     attachments.push({
                         filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-                        path:`/home/clients/${Config.database}/invoice/${transaction._id}.pdf`
+                        path: `/home/clients/${Config.database}/invoice/${transaction._id}.pdf`
                     })
 
                 } else {
@@ -585,9 +585,9 @@ export class ListTransactionsComponent implements OnInit {
                     modalRef.componentInstance.body = " "
 
 
-                   attachments.push({
+                    attachments.push({
                         filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-                        path:`/home/clients/${Config.database}/others/${transaction._id}.pdf`
+                        path: `/home/clients/${Config.database}/others/${transaction._id}.pdf`
                     })
                 }
 
@@ -598,7 +598,7 @@ export class ListTransactionsComponent implements OnInit {
 
                     attachments.push({
                         filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.xml`,
-                        path:`/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + transaction.number + `.xml`
+                        path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + transaction.number + `.xml`
                     })
                 }
 
@@ -610,7 +610,7 @@ export class ListTransactionsComponent implements OnInit {
                         attachments = [];
                         attachments.push({
                             filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-                            path:`/home/clients/${Config.database}/invoice/${transaction._id}.pdf`
+                            path: `/home/clients/${Config.database}/invoice/${transaction._id}.pdf`
                         })
 
                     } else {
@@ -619,7 +619,7 @@ export class ListTransactionsComponent implements OnInit {
                         attachments = [];
                         attachments.push({
                             filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-                            path:`/home/clients/${Config.database}/others/${transaction._id}.pdf`
+                            path: `/home/clients/${Config.database}/others/${transaction._id}.pdf`
                         })
                     }
 
@@ -629,7 +629,7 @@ export class ListTransactionsComponent implements OnInit {
                         attachments = [];
                         attachments.push({
                             filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.xml`,
-                            path:`/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + transaction.number + `.xml`
+                            path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + transaction.number + `.xml`
                         })
 
                     }
