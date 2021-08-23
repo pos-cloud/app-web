@@ -2,6 +2,7 @@ import { Component, OnInit, EventEmitter, ViewEncapsulation } from '@angular/cor
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import * as moment from 'moment';
 import 'moment/locale/es';
+import { User } from "app/components/user/user";
 
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -16,6 +17,7 @@ import { DateFormatPipe } from '../../main/pipes/date-format.pipe';
 import { UserService } from '../user/user.service';
 import { IdentificationType } from 'app/components/identification-type/identification-type';
 import { IdentificationTypeService } from 'app/components/identification-type/identification-type.service';
+import { AuthService } from "app/components/login/auth.service";
 
 import { Currency } from 'app/components/currency/currency';
 import { CurrencyService } from 'app/components/currency/currency.service';
@@ -24,6 +26,7 @@ import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { AccountService } from '../account/account.service';
 import { Account } from '../account/account';
+import { first } from "rxjs/operators";
 
 @Component({
   selector: 'app-config',
@@ -35,6 +38,7 @@ import { Account } from '../account/account';
 
 export class ConfigComponent implements OnInit {
 
+  public identity: User;
   public routeFile: string;
   public filesToUpload: Array<File>;
   public identificationTypes: IdentificationType[];
@@ -93,6 +97,7 @@ export class ConfigComponent implements OnInit {
   public formatterAccounts = (x: Account) => { return x.description; };
 
   constructor(
+    
     public _router: Router,
     public _configService: ConfigService,
     public _vatCondition: VATConditionService,
@@ -103,6 +108,7 @@ export class ConfigComponent implements OnInit {
     public _fb: FormBuilder,
     public _toastr: ToastrService,
     public alertConfig: NgbAlertConfig,
+    private _authService: AuthService,
     public _modalService: NgbModal
   ) {
     this.apiURL = Config.apiURL;
@@ -121,6 +127,9 @@ export class ConfigComponent implements OnInit {
         this.buildFormSystem();
       }
     );
+    this._authService.getIdentity.pipe(first()).subscribe((identity) => {
+      this.identity = identity;
+    });
   }
 
   ngAfterViewInit() {
