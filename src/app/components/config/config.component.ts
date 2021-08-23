@@ -58,6 +58,7 @@ export class ConfigComponent implements OnInit {
   public timezones: any;
   public userCountry: string;
   public apiURL: string;
+  public apiV8URL: string;
   private subscription: Subscription = new Subscription();
 
   public formErrors = {
@@ -75,21 +76,21 @@ export class ConfigComponent implements OnInit {
   };
 
   public searchAccounts = (text$: Observable<string>) =>
-  text$.pipe(
-    debounceTime(300),
-    distinctUntilChanged(),
-    tap(() => this.loading = true),
-    switchMap(async term => {
-      let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' } } : {};
-      return await this.getAllAccounts(match).then(
-        result => {
-          return result;
-        }
-      )
-    }),
-    tap(() => this.loading = false)
-  )
-public formatterAccounts = (x: Account) => { return x.description; };
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(() => this.loading = true),
+      switchMap(async term => {
+        let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' } } : {};
+        return await this.getAllAccounts(match).then(
+          result => {
+            return result;
+          }
+        )
+      }),
+      tap(() => this.loading = false)
+    )
+  public formatterAccounts = (x: Account) => { return x.description; };
 
   constructor(
     public _router: Router,
@@ -105,6 +106,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
     public _modalService: NgbModal
   ) {
     this.apiURL = Config.apiURL;
+    this.apiV8URL = Config.apiV8URL;
     this.getVatConditions();
     this.getCountries();
     this.getCurrencies();
@@ -156,7 +158,19 @@ public formatterAccounts = (x: Account) => { return x.description; };
       }
     )
   }
-
+  public async generateBackUp() {
+    this._configService.generateBackUp()
+      .subscribe(
+        result => {
+          let link = document.createElement("a");
+          link.download = "filename";
+          link.href = this.apiV8URL + "configs/downloadBD/" + result.archive_path;
+          link.click();
+          this.showToast(result.message, "success")
+          // [attr.href]="apiURL + 'config/generateBackUp'"
+        }
+      )
+  }
   public upload() {
 
 
@@ -501,7 +515,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
   public updateConfig(): Promise<Config> {
 
     return new Promise<Config>((resolve, reject) => {
-      
+
       this._configService.updateConfig(this.config).subscribe(
         result => {
           if (!result.configs) {
@@ -655,8 +669,8 @@ public formatterAccounts = (x: Account) => { return x.description; };
       '_id': this.config._id,
       'emailAccount': this.config['emailAccount'],
       'emailPassword': this.config['emailPassword'],
-      'emailHost' : this.config['emailHost'],
-      'emailPort' : this.config['emailPort']
+      'emailHost': this.config['emailHost'],
+      'emailPort': this.config['emailPort']
     });
 
     this.configFormSystem.setValue({
