@@ -759,7 +759,7 @@ export class AddArticleComponent implements OnInit {
         } else {
           this.hideMessage();
           this.article = result.article;
-          this.meliAttrs = Object.assign({},this.article.meliAttrs);
+          this.meliAttrs = Object.assign({}, this.article.meliAttrs);
           this.notes = this.article.notes;
           this.tags = this.article.tags;
           this.taxes = this.article.taxes;
@@ -784,6 +784,7 @@ export class AddArticleComponent implements OnInit {
             this.article.code = '';
             this.article.posDescription = '';
             this.article.url = '';
+            this.article.meliId = '';
           }
           this.setValuesForm();
           this.setValuesArray();
@@ -1620,46 +1621,47 @@ export class AddArticleComponent implements OnInit {
   async updateArticle() {
 
     this.loading = true;
+    let isValid: boolean = await this.isValid();
 
-    if (await this.isValid()) {
-      this._articleService.updateArticle(this.article, this.variants).subscribe(
+    if (isValid) {
+      if (this.filesToUpload) {
+        await this._articleService.makeFileRequest(this.article._id, this.filesToUpload)
+          .then(
+            (result) => {
+              let resultUpload;
+              resultUpload = result;
+              this.article.picture = resultUpload.article.picture;
+              if (this.article.picture && this.article.picture !== 'default.jpg') {
+                this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture + "/" + Config.database;
+              } else {
+                this.imageURL = './../../../assets/img/default.jpg';
+              }
+              this.filesToUpload = null;
+            },
+            (error) => {
+              isValid = false;
+              this.showMessage(error, 'danger', false);
+            }
+          );
+      }
+    }
+
+    if (isValid) {
+      await this._articleService.updateArticle(this.article, this.variants).subscribe(
         result => {
           if (!result.article) {
+            isValid = false;
             this.showMessage((result.error && result.error.message) ? result.error.message : (result.message) ? result.message : '', 'info', true);
           } else {
             this.hasChanged = true;
             this.article = result.article;
+            this.articleForm.patchValue({ meliId: this.article.meliId });
             this._articleService.setItems(null);
-            if (this.filesToUpload) {
-              this._articleService.makeFileRequest(this.article._id, this.filesToUpload)
-                .then(
-                  (result) => {
-                    let resultUpload;
-                    resultUpload = result;
-                    this.article.picture = resultUpload.article.picture;
-                    if (this.article.picture && this.article.picture !== 'default.jpg') {
-                      this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture + "/" + Config.database;
-                    } else {
-                      this.imageURL = './../../../assets/img/default.jpg';
-                    }
-                    this.filesToUpload = null;
-                    this.loading = false;
-                    this.articleForm.patchValue({ meliId: this.article.meliId });
-                    this.showMessage('El producto se ha actualizado con éxito.', 'success', false);
-                  },
-                  (error) => {
-                    this.showMessage(error, 'danger', false);
-                  }
-                );
-            } else {
-              this.filesToUpload = null;
-              this.loading = false;
-              this.showMessage('El producto se ha actualizado con éxito.', 'success', false);
-            }
           }
           this.loading = false;
         },
         error => {
+          isValid = false;
           this.showMessage(error._body, 'danger', false);
           this.loading = false;
         }
