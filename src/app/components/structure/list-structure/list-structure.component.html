@@ -22,7 +22,9 @@
             <th>
               <i class="fa fa-bars"></i>
             </th>
+            <th (click)="orderBy('parent.code')">Codigo Padre</th>
             <th (click)="orderBy('parent.description')">Producto Padre</th>
+            <th (click)="orderBy('child.code')">Codigo Hijo</th>
             <th (click)="orderBy('child.description')">Producto Hijo</th>
             <th (click)="orderBy('utilization')">Descuenta stock al realizar</th>
             <th (click)="orderBy('quantity')">Cantidad</th>
@@ -32,8 +34,11 @@
           </tr>
           <tr class="filters">
             <th>
+                <th><input type="text" class="form-control" [(ngModel)]="filters['parent.code']" (input)="getStructures()" placeholder="Codigo Padre..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['parent.description']" (input)="getStructures()" placeholder="Producto Padre..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['child.code']" (input)="getStructures()" placeholder="Codigo Hijo..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['child.description']" (input)="getStructures()" placeholder="Producto Hijo..."></th>
+
             <th><input type="text" class="form-control" [(ngModel)]="filters['utilization']" (input)="getStructures()" placeholder="Descuenta stock al realizar..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['quantity']" (input)="getStructures()" placeholder="Cantidad..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['optional']" (input)="getStructures()" placeholder="Opcional..."></th>
@@ -67,7 +72,9 @@
                       title="Eliminar"><i class="fa fa-trash-o"></i>
               </button>
             </td>
+            <td>{{structure.parent.code}}</td>
             <td>{{structure.parent.description}}</td>
+            <td>{{structure.child.code}}</td>
             <td>{{structure.child.description}}</td>
             <td>{{structure.utilization}}</td>
             <td align="right">{{structure.quantity}}</td>
