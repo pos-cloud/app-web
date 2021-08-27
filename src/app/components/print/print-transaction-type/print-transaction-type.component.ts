@@ -24,6 +24,7 @@ import { RoundNumberPipe } from 'app/main/pipes/round-number.pipe';
 import { PriceListService } from 'app/components/price-list/price-list.service';
 import { ConfigService } from 'app/components/config/config.service';
 import { PriceList } from 'app/components/price-list/price-list';
+import { PrinterService } from 'app/components/printer/printer.service';
 
 
 @Component({
@@ -40,6 +41,7 @@ export class PrintTransactionTypeComponent implements OnInit {
     @Input() quantity: number;
     @Input() origin: string;
     @Input() printer: Printer;
+    @Input() printerID : string;
     @Input() source: string;
     public imageURL: any;
     public page : number = 1;
@@ -57,6 +59,7 @@ export class PrintTransactionTypeComponent implements OnInit {
 
     constructor(
         public _transactionService: TransactionService,
+        public _printerService : PrinterService,
         public _movementOfCashService: MovementOfCashService,
         public _movementOfArticleService: MovementOfArticleService,
         public _movementOfCancellationService: MovementOfCancellationService,
@@ -78,6 +81,16 @@ export class PrintTransactionTypeComponent implements OnInit {
                 }
             }
         );
+
+        if(this.printerID){
+            await this.getPrinterByID(this.printerID).then(
+                printer => {
+                    if (printer) {
+                        this.printer = printer
+                    }
+                }
+            );
+        }
 
         if (this.transactionId) {
             this.getTransaction();
@@ -214,7 +227,9 @@ export class PrintTransactionTypeComponent implements OnInit {
 
                         this.buildPrint();
 
-                    } else {
+                    } else if (this.printer) {
+                        this.buildPrint();
+                    } else  {
                         this.showMessage("Debe seleccionar Impresora defecto y Lee diseño? en el Tipo de Transaccion:" + this.transaction.type.name, 'danger', false);
                     }
                 }
@@ -628,6 +643,19 @@ export class PrintTransactionTypeComponent implements OnInit {
                 }
             );
         });
+    }
+
+    async getPrinterByID(id) {
+
+        return new Promise<Printer>(async (resolve, reject) => {
+            this._printerService.getById(id).subscribe(
+                result =>{
+                    if(result && result.status === 200){
+                        resolve(result.result);
+                    }
+                }
+            )
+        })
     }
 
     public showMessage(message: string, type: string, dismissible: boolean): void {
