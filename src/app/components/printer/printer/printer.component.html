@@ -126,6 +126,7 @@
                                                 <option value="label" [selected]="label">Etiqueta</option>
                                                 <option value="data" [selected]="data">Dato</option>
                                                 <option value="dataSum" [selected]="dataSum">Dato Sumalizado</option>
+                                                <option value="dataEsp" [selected]="dataSum">Dato Especial</option>
                                                 <option value="line" [selected]="line">Linea</option>
                                                 <option value="image" [selected]="image">Imagen</option>
                                                 <option value="barcode" [selected]="barcode">Código de barra</option>
@@ -159,7 +160,7 @@
                                                 </option>
                                             </select>
                                         </div>
-                                        <div class="form-group col-md-3" *ngIf="type ==='label'">
+                                        <div class="form-group col-md-3" *ngIf="type ==='label' || type === 'dataEsp'">
                                             <label for="value" class="control-label">Valor:</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control" [(ngModel)]="value"

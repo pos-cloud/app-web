@@ -179,6 +179,12 @@ export class ViewTransactionComponent implements OnInit {
                 modalRef.componentInstance.readonly = true;
                 modalRef.componentInstance.operation = 'view';
                 break;
+            case 'edit-company':
+                modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg', backdrop: 'static' });
+                modalRef.componentInstance.companyId = this.transaction.company._id;
+                modalRef.componentInstance.readonly = false;
+                modalRef.componentInstance.operation = 'update';
+                break;
             case 'print-label':
                 let identity: User = JSON.parse(sessionStorage.getItem('user'));
                 let printer: Printer;

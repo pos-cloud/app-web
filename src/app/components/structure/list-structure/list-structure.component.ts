@@ -95,7 +95,9 @@ export class ListStructureComponent implements OnInit {
         // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
         let project = {
             "_id": 1,
+            "parent.code" : 1,
             "parent.description": 1,
+            "child.code" : 1,
             "child.description": 1,
             "optional": 1,
             "quantity": 1,

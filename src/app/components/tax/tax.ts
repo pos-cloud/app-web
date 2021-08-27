@@ -1,6 +1,7 @@
 'use strict'
 
 import { Account } from "../account/account";
+import { Printer } from "../printer/printer";
 
 export class Tax {
 
@@ -15,6 +16,7 @@ export class Tax {
 	public lastNumber: number = 0;
     public debitAccount : Account;
     public creditAccount : Account;
+    public printer : Printer;
 
 	constructor() { }
 }
