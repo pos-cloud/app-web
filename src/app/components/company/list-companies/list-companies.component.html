@@ -26,6 +26,12 @@
                         class="fa fa-plus"></i><span>Agregar</span></button>
                 <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i
                         [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
+
+                        <button class="btn" (click)="openModal('excel', null)"><i
+                            class="fa fa-upload"></i>
+                            <span>Importar Clientes excel</span>
+                        </button>
+
                         <button class="btn" *ngIf="identity.name === 'soporte'" (click)="openModal('import', null)"><i
                             class="fa fa-upload"></i><span>Importar Empresas</span></button>
                 <app-export-excel *ngIf="actions && actions.export" #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns"

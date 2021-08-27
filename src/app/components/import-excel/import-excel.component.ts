@@ -32,7 +32,7 @@ export class importExcelComponent implements OnInit {
   public formErrors = {
     filePath: "",
   };
-
+  public type: string = '';
   public validationMessages = {
     filePath: {
       required: "Este campo es requerido.",
@@ -52,7 +52,9 @@ export class importExcelComponent implements OnInit {
   }
   ngOnInit(): void {
     this.showMessage('', '', false)
-
+    if (this._router.url === '/admin/clientes') {
+      this.type = 'clientes'
+    }
   }
   onFileChange(e) {
     this.file = <Array<File>>e.target.files;
@@ -71,20 +73,21 @@ export class importExcelComponent implements OnInit {
   }
 
   import() {
-
     this.loading = true;
-    this._importExcelService.import(this.file)
+    this._importExcelService.import(this.file, this.type)
       .then(async (r) => {
-
+        console.log(r)
         for (let x = 0; x < r.length; x++) {
-
           if (r[x].status == 200) {
             this.status200.push(r[x])
-
-          } else if(r[x].message == 'No se encontro el articulo con el codigo' && r[x].status == 500) {
+          } else if (r[x].message == 'No se encontro el articulo con el codigo' && r[x].status == 500) {
             this.status500.push(r[x])
-          }else if( r[x].message == 'No se ingreso ningun codigo' && r[x].status == 500){
+          } else if (r[x].message == 'No se ingreso ningun codigo' && r[x].status == 500) {
             this.statusCode.push(r[x])
+          }
+          // CLientes
+          else if(r[x].message == 'err' && r[x].status == 500){
+            this.status500.push(r[x])
           }
 
         }
@@ -93,6 +96,7 @@ export class importExcelComponent implements OnInit {
       .catch(async (e) => {
         e
       });
+
   }
 
   ngAfterViewInit() {
