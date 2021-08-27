@@ -43,6 +43,7 @@ import { Voucher } from 'app/components/voucher-reader/voucher';
 import { UserService } from 'app/components/user/user.service';
 import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
 import { CapitalizePipe } from 'app/main/pipes/capitalize';
+import { TaxClassification } from 'app/components/tax/tax';
 
 var splitRegex = /\r\n|\r|\n/g;
 jsPDF.API.textEx = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
@@ -2681,7 +2682,7 @@ export class PrintComponent implements OnInit {
                         this.doc.setFontType('normal');
                         this.doc.text("$ " + this.roundNumber.transform(tax.taxAmount), 173, rowTotals);
                         subtotal -= this.roundNumber.transform(tax.taxAmount);
-                        neto = neto + this.roundNumber.transform(tax.taxBase);
+                        if(tax.tax.classification === TaxClassification.Tax) neto = neto + this.roundNumber.transform(tax.taxBase);
                     }
                 }
 
