@@ -31,7 +31,23 @@ export class ConfigService extends ModelService {
   get getConfig() {
     return this.config.asObservable();
   }
-
+  public generateBackUp(): Observable<any> {
+    // console.log()
+    const URL = `${Config.apiV8URL}configs/generateBackUp`;
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+    return this._http.get(URL, {
+      headers: headers
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
   public getConfigApi(): Observable<any> {
 
     const URL = `${Config.apiURL}config`;

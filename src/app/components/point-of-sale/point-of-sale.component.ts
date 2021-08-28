@@ -405,7 +405,7 @@ export class PointOfSaleComponent implements OnInit {
                 maxOrderNumber: 1,
                 requestEmployee: 1,
                 requestArticles: 1,
-                requestCurrency : 1,
+                requestCurrency: 1,
                 requestCompany: 1,
                 automaticNumbering: 1,
                 company: 1,
@@ -598,7 +598,7 @@ export class PointOfSaleComponent implements OnInit {
                 if (this.transactionStates.length > 0) {
                     query = {
                         state: { $in: this.transactionStates },
-                        madein: { $in: ['pedidos-web','mercadolibre'] },
+                        madein: { $in: ['pedidos-web', 'mercadolibre'] },
                         operationType: { $ne: 'D' },
                         "type.transactionMovement": this.transactionMovement,
                     }
@@ -620,7 +620,7 @@ export class PointOfSaleComponent implements OnInit {
                             { state: TransactionState.Delivered },
                             { state: TransactionState.Sent }
                         ],
-                        madein: { $in: ['pedidos-web','mercadolibre'] },
+                        madein: { $in: ['pedidos-web', 'mercadolibre'] },
                         operationType: { $ne: 'D' },
                         "type.transactionMovement": this.transactionMovement,
                     }
@@ -858,29 +858,10 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     async assignCurrency(): Promise<boolean> {
-
         return new Promise<boolean>(async (resolve, reject) => {
-
-            await this.getCurrencies().then(
-                currencies => {
-                    if (currencies && Config.currency) {
-                        this.transaction.currency = Config.currency;
-                    }
-                    if (this.transaction.quotation === undefined ||
-                        this.transaction.quotation === null) {
-                        if (currencies && currencies.length > 0) {
-                            for (let currency of currencies) {
-                                if (Config.currency && currency._id !== Config.currency._id) {
-                                    this.transaction.quotation = currency.quotation;
-                                }
-                            }
-                        } else {
-                            this.transaction.quotation = 1;
-                        }
-                    }
-                    resolve(true);
-                }
-            );
+            this.transaction.currency = Config.currency;
+            this.transaction.quotation = 1;
+            resolve(true);
         });
     }
 
@@ -1639,7 +1620,7 @@ export class PointOfSaleComponent implements OnInit {
 
                     attachments.push({
                         filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-                        path:`/home/clients/${Config.database}/invoice/${this.transaction._id}.pdf`
+                        path: `/home/clients/${Config.database}/invoice/${this.transaction._id}.pdf`
                     })
                 } else {
                     // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${Config.database}/${this.transaction._id}">Su comprobante</a>`
@@ -1648,7 +1629,7 @@ export class PointOfSaleComponent implements OnInit {
 
                     attachments.push({
                         filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-                        path:`/home/clients/${Config.database}/others/${this.transaction._id}.pdf`
+                        path: `/home/clients/${Config.database}/others/${this.transaction._id}.pdf`
                     })
                 }
 
@@ -1659,7 +1640,7 @@ export class PointOfSaleComponent implements OnInit {
 
                     attachments.push({
                         filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.xml`,
-                        path:`/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + this.transaction.number + `.xml`
+                        path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + this.transaction.number + `.xml`
                     })
                 }
 
@@ -1672,7 +1653,7 @@ export class PointOfSaleComponent implements OnInit {
                         attachments = [];
                         attachments.push({
                             filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-                            path:`/home/clients/${Config.database}/invoice/${this.transaction._id}.pdf`
+                            path: `/home/clients/${Config.database}/invoice/${this.transaction._id}.pdf`
                         })
                     } else {
                         // modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${Config.database}/${this.transaction._id}">Su comprobante</a>`
@@ -1681,7 +1662,7 @@ export class PointOfSaleComponent implements OnInit {
                         attachments = [];
                         attachments.push({
                             filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-                            path:`/home/clients/${Config.database}/others/${this.transaction._id}.pdf`
+                            path: `/home/clients/${Config.database}/others/${this.transaction._id}.pdf`
                         })
                     }
 
@@ -1692,14 +1673,14 @@ export class PointOfSaleComponent implements OnInit {
                         attachments = [];
                         attachments.push({
                             filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.xml`,
-                            path:`/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + this.transaction.number + `.xml`
+                            path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + this.transaction.number + `.xml`
                         })
                     }
                 }
-                
-                
+
+
                 modalRef.componentInstance.attachments = attachments;
-    
+
                 modalRef.result.then((result) => {
                     this.refresh();
                 }, (reason) => {
@@ -2089,7 +2070,7 @@ export class PointOfSaleComponent implements OnInit {
                 this.orderTerm = ['-orderNumber'];
             }
 
-            if(this.user && this.user.permission && this.user.permission.transactionTypes && this.user.permission.transactionTypes.length > 0){
+            if (this.user && this.user.permission && this.user.permission.transactionTypes && this.user.permission.transactionTypes.length > 0) {
                 var transactionTypes = [];
                 this.user.permission.transactionTypes.forEach(element => {
                     transactionTypes.push({ "$oid": element });

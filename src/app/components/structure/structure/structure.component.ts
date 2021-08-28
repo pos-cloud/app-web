@@ -28,7 +28,7 @@ export class StructureComponent implements OnInit {
             distinctUntilChanged(),
             tap(() => this.loading = true),
             switchMap(term =>
-                this.getArticles(`where="code": { "$regex": "${term}", "$options": "i" }&limit=10`).then(
+                this.getArticles(`where="code": { "$regex": "${term}", "$options": "i" }&limit=20`).then(
                     articles => {
                         return articles;
                     }

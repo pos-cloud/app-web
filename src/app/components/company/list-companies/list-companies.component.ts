@@ -16,7 +16,7 @@ import { ExportExcelComponent } from '../../export/export-excel/export-excel.com
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { first } from 'rxjs/operators';
 import { DatatableHistory } from 'app/components/datatable/datatable-history.interface';
-
+import { importExcelComponent } from "../../import-excel/import-excel.component";
 @Component({
     selector: 'app-list-companies',
     templateUrl: './list-companies.component.html',
@@ -419,6 +419,21 @@ export class ListCompaniesComponent implements OnInit {
                 break;
             case 'account':
                 this._router.navigateByUrl("admin/cuentas-corrientes?companyId=" + company._id + "&companyType=" + this.type)
+                break;
+
+            case "excel":
+                modalRef = this._modalService.open(importExcelComponent, {
+                    size: "lg",
+                    backdrop: "static",
+                });
+                modalRef.result.then(
+                    (result) => {
+                        if (result === "import_close") {
+                            this.getItems();
+                        }
+                    },
+                    (reason) => { }
+                );
                 break;
             case 'import':
                 modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });

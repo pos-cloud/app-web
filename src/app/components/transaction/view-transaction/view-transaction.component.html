@@ -30,6 +30,11 @@
                                         (click)="openModal('view-company')">
                                         <i class="fa fa-eye" style="color: white;"></i>
                                     </span>
+                                    <span *ngIf="transaction && transaction.madein === 'mercadolibre'"
+                                        class="input-group-text bg-primary pointer" id="basic-addon1"
+                                        (click)="openModal('edit-company')">
+                                        <i class="fa fa-pencil" style="color: white;"></i>
+                                    </span>
                                 </div>
                                 <input type="text" class="form-control" name="date" *ngIf="transaction.company"
                                     value="{{transaction.company.name}}" readonly />
@@ -455,6 +460,12 @@
                                 <div class="form-group col-md-6">
                                     <label class="control-label">Id:</label>
                                     <label class="control-label"><b>{{transaction._id}}</b></label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">meli Id:</label>
+                                    <label class="control-label"><b>{{transaction.meliId}}</b></label>
                                 </div>
                             </div>
                         </div>

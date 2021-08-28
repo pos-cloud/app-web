@@ -15,14 +15,24 @@ export class ImportExcelService {
     public _authService: AuthService
   ) { }
 
-  public import(objectToImport: {}): Promise<any> {
-    
-    const URL = `${Config.apiV8URL}articles/save-excel`;
+  public import(objectToImport: {}, type:string): Promise<any> {
+    let URL:string;
+    if(type === 'clientes'){
+      URL = `${Config.apiURL}company/save-excel`
+      // URL = `${Config.apiV8URL}companies/save-excel`
+    }else{
+      URL = `${Config.apiV8URL}articles/save-excel`;
+    }
+    console.log(URL)
 
     let xhr: XMLHttpRequest = new XMLHttpRequest();
 
     xhr.open('POST', URL, true);
     xhr.setRequestHeader('Authorization', this._authService.getToken());
+    if(type ==='clientes'){
+      xhr.setRequestHeader('file',objectToImport[0].name);
+      xhr.setRequestHeader('excel',objectToImport[0]);
+    }
     return new Promise((resolve, reject) => {
       let formData: any = new FormData();
       formData.append('excel', objectToImport[0], objectToImport[0].filename);

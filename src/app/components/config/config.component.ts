@@ -2,6 +2,7 @@ import { Component, OnInit, EventEmitter, ViewEncapsulation } from '@angular/cor
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import * as moment from 'moment';
 import 'moment/locale/es';
+import { User } from "app/components/user/user";
 
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -16,6 +17,7 @@ import { DateFormatPipe } from '../../main/pipes/date-format.pipe';
 import { UserService } from '../user/user.service';
 import { IdentificationType } from 'app/components/identification-type/identification-type';
 import { IdentificationTypeService } from 'app/components/identification-type/identification-type.service';
+import { AuthService } from "app/components/login/auth.service";
 
 import { Currency } from 'app/components/currency/currency';
 import { CurrencyService } from 'app/components/currency/currency.service';
@@ -24,6 +26,7 @@ import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { AccountService } from '../account/account.service';
 import { Account } from '../account/account';
+import { first } from "rxjs/operators";
 
 @Component({
   selector: 'app-config',
@@ -35,6 +38,7 @@ import { Account } from '../account/account';
 
 export class ConfigComponent implements OnInit {
 
+  public identity: User;
   public routeFile: string;
   public filesToUpload: Array<File>;
   public identificationTypes: IdentificationType[];
@@ -58,6 +62,7 @@ export class ConfigComponent implements OnInit {
   public timezones: any;
   public userCountry: string;
   public apiURL: string;
+  public apiV8URL: string;
   private subscription: Subscription = new Subscription();
 
   public formErrors = {
@@ -75,23 +80,24 @@ export class ConfigComponent implements OnInit {
   };
 
   public searchAccounts = (text$: Observable<string>) =>
-  text$.pipe(
-    debounceTime(300),
-    distinctUntilChanged(),
-    tap(() => this.loading = true),
-    switchMap(async term => {
-      let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' } } : {};
-      return await this.getAllAccounts(match).then(
-        result => {
-          return result;
-        }
-      )
-    }),
-    tap(() => this.loading = false)
-  )
-public formatterAccounts = (x: Account) => { return x.description; };
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(() => this.loading = true),
+      switchMap(async term => {
+        let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' } } : {};
+        return await this.getAllAccounts(match).then(
+          result => {
+            return result;
+          }
+        )
+      }),
+      tap(() => this.loading = false)
+    )
+  public formatterAccounts = (x: Account) => { return x.description; };
 
   constructor(
+    
     public _router: Router,
     public _configService: ConfigService,
     public _vatCondition: VATConditionService,
@@ -102,9 +108,11 @@ public formatterAccounts = (x: Account) => { return x.description; };
     public _fb: FormBuilder,
     public _toastr: ToastrService,
     public alertConfig: NgbAlertConfig,
+    private _authService: AuthService,
     public _modalService: NgbModal
   ) {
     this.apiURL = Config.apiURL;
+    this.apiV8URL = Config.apiV8URL;
     this.getVatConditions();
     this.getCountries();
     this.getCurrencies();
@@ -119,6 +127,9 @@ public formatterAccounts = (x: Account) => { return x.description; };
         this.buildFormSystem();
       }
     );
+    this._authService.getIdentity.pipe(first()).subscribe((identity) => {
+      this.identity = identity;
+    });
   }
 
   ngAfterViewInit() {
@@ -156,7 +167,19 @@ public formatterAccounts = (x: Account) => { return x.description; };
       }
     )
   }
-
+  public async generateBackUp() {
+    this._configService.generateBackUp()
+      .subscribe(
+        result => {
+          let link = document.createElement("a");
+          link.download = "filename";
+          link.href = this.apiV8URL + "configs/downloadBD/" + result.archive_path;
+          link.click();
+          this.showToast(result.message, "success")
+          // [attr.href]="apiURL + 'config/generateBackUp'"
+        }
+      )
+  }
   public upload() {
 
 
@@ -501,7 +524,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
   public updateConfig(): Promise<Config> {
 
     return new Promise<Config>((resolve, reject) => {
-      
+
       this._configService.updateConfig(this.config).subscribe(
         result => {
           if (!result.configs) {
@@ -655,8 +678,8 @@ public formatterAccounts = (x: Account) => { return x.description; };
       '_id': this.config._id,
       'emailAccount': this.config['emailAccount'],
       'emailPassword': this.config['emailPassword'],
-      'emailHost' : this.config['emailHost'],
-      'emailPort' : this.config['emailPort']
+      'emailHost': this.config['emailHost'],
+      'emailPort': this.config['emailPort']
     });
 
     this.configFormSystem.setValue({

@@ -520,7 +520,32 @@ export class ListTransactionsComponent implements OnInit {
                                 }
                             }
                         }
+
+                        modalRef.result.then((result) => {
+                            if(transaction.taxes && transaction.taxes.length > 0){
+                                for (const tax of transaction.taxes) {
+                                    if(tax.tax.printer){
+                                        modalRef = this._modalService.open(PrintTransactionTypeComponent)
+                                        modalRef.componentInstance.transactionId = transaction._id;
+                                        modalRef.componentInstance.printerID = tax.tax.printer
+                                    }
+                                }
+                            }
+                        }, (reason) => {
+                            if(transaction.taxes && transaction.taxes.length > 0){
+                                for (const tax of transaction.taxes) {
+                                    if(tax.tax.printer){
+                                        modalRef = this._modalService.open(PrintTransactionTypeComponent)
+                                        modalRef.componentInstance.transactionId = transaction._id;
+                                        modalRef.componentInstance.printerID = tax.tax.printer
+                                    }
+                                }
+                            }
+
+                        });
                     }
+
+                    
                 }
 
                 break;

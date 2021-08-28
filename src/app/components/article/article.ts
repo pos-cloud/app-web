@@ -349,6 +349,16 @@ export let attributes = [
         required: false,
     },
     {
+        name: 'updateDate',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y", "timezone": "-03:00" } }`,
+        align: 'left',
+        required: false,
+    },
+    {
         name: 'ecommerceEnabled',
         visible: false,
         disabled: false,

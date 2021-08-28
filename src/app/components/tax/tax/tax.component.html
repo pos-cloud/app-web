@@ -116,6 +116,15 @@
                 name="creditAccount" [ngbTypeahead]="searchAccounts" [resultTemplate]="rtAccounts"
                 [inputFormatter]="formatterAccounts" [readonly]="readonly" />
         </div>
+        <div class="form-group col-md-4">
+            <ng-template #rtPrinters let-r="result" let-t="term">
+                <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+            </ng-template>
+            <label for="printer">Impresora:</label>
+            <input id="printer" type="text" class="form-control" formControlName="printer"
+                name="printer" [ngbTypeahead]="searchPrinters" [resultTemplate]="rtPrinters"
+                [inputFormatter]="formatterPrinters" [readonly]="readonly" />
+        </div>
       </div>
     </div>
     <div class="modal-footer">

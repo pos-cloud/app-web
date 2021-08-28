@@ -9,6 +9,11 @@
     <div class="card ">
         <div class="card-header">Datos de la Empresa</div>
         <div class="card-block">
+            <div  class=" card-body d-flex justify-content-between align-items-center">
+                <a class="btn btn-primary btn-sm ml-auto" type="button" (click)="generateBackUp()"value="backup">BACKUP</a>
+            </div>
+        </div>
+        <div class="card-block">
             <form [formGroup]="configFormCompany" #formAddConfig="ngForm" (ngSubmit)="addConfigCompany()"
                 autocomplete="off">
                 <div class="row">
