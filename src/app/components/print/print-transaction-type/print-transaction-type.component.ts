@@ -461,6 +461,23 @@ export class PrintTransactionTypeComponent implements OnInit {
                                 this.doc.text(field.positionStartX, field.positionStartY, " ")
                             }
                             break;
+                        case 'dataEsp':
+                            /*if (field.font !== 'default') {
+                                this.doc.setFont(field.font)
+                            }
+                            this.doc.setFontType(field.fontType)
+                            this.doc.setFontSize(field.fontSize)*/
+
+                            try {
+                                if (field.positionEndX || field.positionEndY) {
+                                    this.doc.text(field.positionStartX, field.positionStartY, eval("this." + field.value).toString().slice(field.positionEndX, field.positionEndY))
+                                } else {
+                                    this.doc.text(field.positionStartX, field.positionStartY, eval("this." + field.value).toString())
+                                }
+                            } catch (e) {
+                                this.doc.text(field.positionStartX, field.positionStartY, " ")
+                            }
+                            break;
                         case 'dataSum':
                             var sum = 0;
                             if (field.font !== 'default') {
