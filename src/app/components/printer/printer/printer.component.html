@@ -126,7 +126,7 @@
                                                 <option value="label" [selected]="label">Etiqueta</option>
                                                 <option value="data" [selected]="data">Dato</option>
                                                 <option value="dataSum" [selected]="dataSum">Dato Sumalizado</option>
-                                                <option value="dataEsp" [selected]="dataSum">Dato Especial</option>
+                                                <option value="dataEsp" [selected]="dataSum">Dato Especifico</option>
                                                 <option value="line" [selected]="line">Linea</option>
                                                 <option value="image" [selected]="image">Imagen</option>
                                                 <option value="barcode" [selected]="barcode">Código de barra</option>
@@ -168,7 +168,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row" *ngIf="type === 'data' || type === 'dataSum' || type === 'label'">
+                                    <div class="row" *ngIf="type === 'data' || type === 'dataEsp' || type === 'dataSum' || type === 'label'">
                                         <div class="form-group col-md-4">
                                             <label for="font" class="control-label">Fuente:</label>
                                             <select class="form-control" [(ngModel)]="font" name="font">
@@ -212,7 +212,7 @@
                                             </div>
                                         </div>
                                         <div class="form-group col-md-3"
-                                            *ngIf="type === 'data' || type === 'barcode' || type === 'image' || type === 'line'">
+                                            *ngIf="type === 'data' || type === 'dataEsp' || type === 'barcode' || type === 'image' || type === 'line'">
                                             <label for="positionEndX" class="control-label">X fin (mm):</label>
                                             <div class="input-group">
                                                 <input type="number" class="form-control" [(ngModel)]="positionEndX"
@@ -220,7 +220,7 @@
                                             </div>
                                         </div>
                                         <div class="form-group col-md-3"
-                                            *ngIf="type === 'data' || type === 'barcode' || type === 'image' || type === 'line'">
+                                            *ngIf="type === 'data' || type === 'dataEsp' || type === 'barcode' || type === 'image' || type === 'line'">
                                             <label for="positionEndY" class="control-label">Y fin (mm):</label>
                                             <div class="input-group">
                                                 <input type="number" class="form-control" [(ngModel)]="positionEndY"

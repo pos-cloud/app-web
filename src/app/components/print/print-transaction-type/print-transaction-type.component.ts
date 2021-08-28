@@ -462,11 +462,11 @@ export class PrintTransactionTypeComponent implements OnInit {
                             }
                             break;
                         case 'dataEsp':
-                            /*if (field.font !== 'default') {
+                            if (field.font !== 'default') {
                                 this.doc.setFont(field.font)
                             }
                             this.doc.setFontType(field.fontType)
-                            this.doc.setFontSize(field.fontSize)*/
+                            this.doc.setFontSize(field.fontSize)
 
                             try {
                                 if (field.positionEndX || field.positionEndY) {
