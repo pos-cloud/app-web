@@ -28,7 +28,9 @@ export class ListStructureComponent implements OnInit {
 
     public currentPage: number = 0;
     public displayedColumns = [
+        "parent.code",
         "parent.description",
+        "child.code",
         "child.description",
         "quantity",
         "optional",
