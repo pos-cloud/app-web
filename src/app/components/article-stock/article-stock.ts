@@ -218,6 +218,16 @@ export let attributes = [
         required: false,
     },
     {
+        name: 'article.containsStructure',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'right',
+        required: false,
+    },
+    {
         name: 'article.salePrice',
         visible: false,
         disabled: false,
