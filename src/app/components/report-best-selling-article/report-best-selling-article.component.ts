@@ -531,7 +531,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
             "transaction.state": "Cerrado",
             "transaction.operationType": { "$ne": "D" },
             "operationType": { "$ne": "D" },
-            "transaction.type.movement" : movement
+            "transaction.type.transactionMovement": this.transactionMovement
         }
 
         var transactionTypes = [];
@@ -568,12 +568,8 @@ export class ReportBestSellingArticleComponent implements OnInit {
             fullquery.push({ $limit : this.limit })
         }
 
-
-
         this.subscription.add(this._movementOfArticleService.getFullQuery(fullquery).subscribe(
             result => {
-
-                console.log(result);
 
                 if (result && result.status == 200) {
                     this.hideMessage();
