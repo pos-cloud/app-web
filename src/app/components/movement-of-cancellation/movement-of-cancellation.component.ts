@@ -1106,6 +1106,7 @@ export class MovementOfCancellationComponent implements OnInit {
                         for (let mov of result.movementsOfArticles) {
                             let movementOfArticle = new MovementOfArticle();
 
+                            movementOfArticle.movementParent = mov.movementParent;
                             movementOfArticle.code = mov.code;
                             movementOfArticle.codeSAT = mov.codeSAT;
                             movementOfArticle.description = mov.description;
