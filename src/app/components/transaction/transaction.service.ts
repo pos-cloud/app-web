@@ -11,6 +11,7 @@ import { AuthService } from '../login/auth.service';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { ModelService } from '../model/model.service';
+import { MovementOfCancellation } from "../movement-of-cancellation/movement-of-cancellation";
 
 @Injectable()
 export class TransactionService extends ModelService {
@@ -261,15 +262,43 @@ export class TransactionService extends ModelService {
     );
   }
 
-  public validateElectronicTransactionAR(transaction: Transaction): Observable<any> {
+  public validateElectronicTransactionAR(
+    transaction: Transaction,
+    movementsOfCancellations: MovementOfCancellation[]): Observable<any> {
 
     //const URL = `${Config.apiURL_FE_AR}`;
     const URL = `http://vps-1883265-x.dattaweb.com/libs/fe/ar/index.php`;
+    //const URL = `http://localhost/libs/fe-ar/index.php`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/x-www-form-urlencoded');
 
-    let body = 'transaction=' + JSON.stringify(transaction) + '&' + 'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"' + Config.database + '"}';
+
+    let canceledTransactions: {
+      Tipo: number,
+      PtoVta: number,
+      Nro: number
+    };
+
+    if (movementsOfCancellations && movementsOfCancellations.length) {
+      for (let movementOfCancellation of movementsOfCancellations) {
+        let code: number;
+        for (let cod of movementOfCancellation.transactionOrigin.type.codes) {
+          if (cod.letter === movementOfCancellation.transactionOrigin.letter) {
+            code = cod.code;
+          }
+        }
+        canceledTransactions = {
+          Tipo: code,
+          PtoVta: movementOfCancellation.transactionOrigin.origin,
+          Nro: movementOfCancellation.transactionOrigin.number
+        };
+      }
+    }
+
+    let body = 'transaction=' + JSON.stringify(transaction) + '&' +
+      'canceledTransactions=' + JSON.stringify(canceledTransactions) + '&' +
+      'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"agromade"}';
 
     return this._http.post(URL, body, {
       headers: headers

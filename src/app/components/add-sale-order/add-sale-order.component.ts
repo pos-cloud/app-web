@@ -56,7 +56,6 @@ import { CancellationType } from 'app/components/cancellation-type/cancellation-
 import { ImportComponent } from '../import/import.component';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { ClaimService } from 'app/layout/claim/claim.service';
-import { Claim, ClaimPriority, ClaimType } from 'app/layout/claim/claim';
 import { TransportService } from 'app/components/transport/transport.service';
 import { Transport } from 'app/components/transport/transport';
 import { SelectTransportComponent } from '../transport/select-transport/select-transport.component';
@@ -81,7 +80,6 @@ import { TaxService } from '../tax/tax.service';
 import { ListCategoriesPosComponent } from '../category/list-categories-pos/list-categories-pos.component';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { AccountSeatService } from '../account-seat/account-seat.service';
-import { ListPriceListsComponent } from '../price-list/list-price-lists/list-price-lists.component';
 import { SelectPriceListComponent } from '../price-list/select-price-list/select-price-list.component';
 
 @Component({
@@ -94,25 +92,25 @@ import { SelectPriceListComponent } from '../price-list/select-price-list/select
 
 export class AddSaleOrderComponent {
 
-    public transaction: Transaction;
-    public transactionId: string;
-    public transactionMovement: string;
-    public alertMessage: string = '';
-    public display = true;
-    public movementsOfArticles: MovementOfArticle[];
-    public movementsOfCashes: MovementOfCash[];
-    public usesOfCFDI: UseOfCFDI[];
-    public relationTypes: RelationType[];
-    public printers: Printer[];
-    public currencies: Currency[];
-    public cancellationTypes: CancellationType[];
-    public showButtonCancelation: boolean;
-    public printerSelected: Printer;
-    public printersAux: Printer[];  //Variable utilizada para guardar las impresoras de una operación determinada (Cocina, mostrador, Bar)
-    public userType: string;
-    public posType: string;
-    public loading: boolean;
-    public isCharge: boolean;
+    transaction: Transaction;
+    transactionId: string;
+    transactionMovement: string;
+    alertMessage: string = '';
+    display = true;
+    movementsOfArticles: MovementOfArticle[];
+    movementsOfCashes: MovementOfCash[];
+    usesOfCFDI: UseOfCFDI[];
+    relationTypes: RelationType[];
+    printers: Printer[];
+    currencies: Currency[];
+    cancellationTypes: CancellationType[];
+    showButtonCancelation: boolean;
+    printerSelected: Printer;
+    printersAux: Printer[];  //Variable utilizada para guardar las impresoras de una operación determinada (Cocina, mostrador, Bar)
+    userType: string;
+    posType: string;
+    loading: boolean;
+    isCharge: boolean;
     @ViewChild('contentPrinters', { static: true }) contentPrinters: ElementRef;
     @ViewChild('contentMessage', { static: true }) contentMessage: ElementRef;
     @ViewChild('contentChangeDate', { static: true }) contentChangeDate: ElementRef;
@@ -120,40 +118,41 @@ export class AddSaleOrderComponent {
     @ViewChild('contentChangeQuotation', { static: true }) contentChangeQuotation: ElementRef;
     @ViewChild('containerMovementsOfArticles', { static: true }) containerMovementsOfArticles: ElementRef;
     @ViewChild('containerTaxes', { static: true }) containerTaxes: ElementRef;
-    public paymentAmount: number = 0.00;
-    public typeOfOperationToPrint: string;
-    public kitchenArticlesToPrint: MovementOfArticle[];
-    public kitchenArticlesPrinted: number = 0;
-    public barArticlesToPrint: MovementOfArticle[];
-    public barArticlesPrinted: number = 0;
-    public voucherArticlesToPrint: MovementOfArticle[];
-    public voucherArticlesPrinted: number = 0;
-    public printSelected: Print;
-    public filterArticle: string = '';
-    public focusEvent = new EventEmitter<boolean>();
-    public roundNumber = new RoundNumberPipe();
-    public areMovementsOfArticlesEmpty: boolean = true;
-    public apiURL = Config.apiURL;
-    public userCountry: string = 'AR';
-    public lastQuotation: number = 1;
+    paymentAmount: number = 0.00;
+    typeOfOperationToPrint: string;
+    kitchenArticlesToPrint: MovementOfArticle[];
+    kitchenArticlesPrinted: number = 0;
+    barArticlesToPrint: MovementOfArticle[];
+    barArticlesPrinted: number = 0;
+    voucherArticlesToPrint: MovementOfArticle[];
+    voucherArticlesPrinted: number = 0;
+    printSelected: Print;
+    filterArticle: string = '';
+    focusEvent = new EventEmitter<boolean>();
+    roundNumber = new RoundNumberPipe();
+    areMovementsOfArticlesEmpty: boolean = true;
+    apiURL = Config.apiURL;
+    userCountry: string = 'AR';
+    lastQuotation: number = 1;
     @ViewChild(ListArticlesPosComponent, { static: false }) listArticlesComponent: ListArticlesPosComponent;
     @ViewChild(ListCategoriesPosComponent, { static: false }) listCategoriesComponent: ListCategoriesPosComponent;
-    public categorySelected: Category;
-    public totalTaxesAmount: number = 0;
-    public totalTaxesBase: number = 0;
-    public filtersTaxClassification: TaxClassification[];
-    public fastPayment: PaymentMethod
-    public transports: Transport[];
-    public config: Config;
-    public database: string;
-    public lastMovementOfArticle: MovementOfArticle;
-    public isCancellationAutomatic: boolean = false;
-    public priceList: PriceList;
-    public newPriceList: PriceList;
-    public increasePrice = 0;
-    public lastIncreasePrice = 0;
-    public companyOld: boolean = false;
-    public quantity = 0;
+    categorySelected: Category;
+    totalTaxesAmount: number = 0;
+    totalTaxesBase: number = 0;
+    filtersTaxClassification: TaxClassification[];
+    fastPayment: PaymentMethod
+    transports: Transport[];
+    config: Config;
+    database: string;
+    lastMovementOfArticle: MovementOfArticle;
+    isCancellationAutomatic: boolean = false;
+    priceList: PriceList;
+    newPriceList: PriceList;
+    increasePrice = 0;
+    lastIncreasePrice = 0;
+    companyOld: boolean = false;
+    quantity = 0;
+    movementsOfCancellations: MovementOfCancellation[] = new Array();
 
     constructor(
         public activeModal: NgbActiveModal,
@@ -173,7 +172,6 @@ export class AddSaleOrderComponent {
         private _relationTypeService: RelationTypeService,
         private _movementOfCancellationService: MovementOfCancellationService,
         private _cancellationTypeService: CancellationTypeService,
-        private _claimService: ClaimService,
         private _transportService: TransportService,
         private _accountSeatService: AccountSeatService,
         private _priceListService: PriceListService,
@@ -289,13 +287,24 @@ export class AddSaleOrderComponent {
                                 this.transaction.useOfCFDI = this.transaction.type.defectUseOfCFDI;
                             }
 
-                            this.getCancellationTypes().then(
+                            await this.getCancellationTypes().then(
                                 cancellationTypes => {
                                     if (cancellationTypes) {
                                         this.cancellationTypes = cancellationTypes;
                                         this.showButtonCancelation = true;
                                     } else {
                                         this.showButtonCancelation = false;
+                                    }
+                                }
+                            );
+
+                            await this.getMovementsOfCancellations().then(
+                                movementsOfCancellations => {
+                                    if (movementsOfCancellations && movementsOfCancellations.length > 0) {
+                                        this.movementsOfCancellations = movementsOfCancellations;
+                                        this.showButtonCancelation = false;
+                                    } else {
+                                        this.showButtonCancelation = true;
                                     }
                                 }
                             );
@@ -352,6 +361,33 @@ export class AddSaleOrderComponent {
             ).subscribe(result => {
                 if (result && result.cancellationTypes && result.cancellationTypes.length > 0) {
                     resolve(result.cancellationTypes);
+                } else {
+                    resolve(null);
+                }
+            },
+                error => {
+                    this.showMessage(error._body, 'danger', false);
+                    resolve(null);
+                });
+        });
+    }
+
+    public getMovementsOfCancellations(): Promise<MovementOfCancellation[]> {
+        return new Promise<MovementOfCancellation[]>((resolve, reject) => {
+            this._movementOfCancellationService.getAll({
+                project: {
+                    _id: 1,
+                    'transactionDestination': 1,
+                    'transactionOrigin._id': 1,
+                    'transactionOrigin.type.codes': 1,
+                    'transactionOrigin.letter': 1,
+                    'transactionOrigin.origin': 1,
+                    'transactionOrigin.number': 1
+                },
+                match: { transactionDestination: { $oid: this.transaction._id } }
+            }).subscribe(result => {
+                if (result.status == 200) {
+                    resolve(result.result);
                 } else {
                     resolve(null);
                 }
@@ -1601,7 +1637,7 @@ export class AddSaleOrderComponent {
         this.showMessage("Validando comprobante con AFIP...", 'info', false);
         this.loading = true;
         this.transaction.type.defectEmailTemplate = null;
-        this._transactionService.validateElectronicTransactionAR(this.transaction).subscribe(
+        this._transactionService.validateElectronicTransactionAR(this.transaction, this.movementsOfCancellations).subscribe(
             result => {
                 let msn = '';
                 if (result && result.status != 0) {
@@ -1784,6 +1820,7 @@ export class AddSaleOrderComponent {
                 modalRef.result.then(async (result) => {
                     if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
                         this.showButtonCancelation = false;
+                        this.movementsOfCancellations = result.movementsOfCancellations;
                         await this.daleteMovementsOfCancellations('{"transactionDestination":"' + this.transaction._id + '"}').then(
                             async movementsOfCancellations => {
                                 if (movementsOfCancellations) {
@@ -1897,7 +1934,7 @@ export class AddSaleOrderComponent {
 
                     attachments.push({
                         filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-                        path:`/home/clients/${Config.database}/invoice/${this.transaction._id}.pdf`
+                        path: `/home/clients/${Config.database}/invoice/${this.transaction._id}.pdf`
                     })
 
                 } else {
@@ -1907,7 +1944,7 @@ export class AddSaleOrderComponent {
 
                     attachments.push({
                         filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-                        path:`/home/clients/${Config.database}/others/${this.transaction._id}.pdf`
+                        path: `/home/clients/${Config.database}/others/${this.transaction._id}.pdf`
                     })
                 }
 
@@ -1930,7 +1967,7 @@ export class AddSaleOrderComponent {
                         attachments = [];
                         attachments.push({
                             filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-                            path:`/home/clients/${Config.database}/invoice/${this.transaction._id}.pdf`
+                            path: `/home/clients/${Config.database}/invoice/${this.transaction._id}.pdf`
                         })
                     } else {
                         // modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${Config.database}/${this.transaction._id}">Su comprobante</a>`
@@ -1939,13 +1976,13 @@ export class AddSaleOrderComponent {
                         attachments = [];
                         attachments.push({
                             filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-                            path:`/home/clients/${Config.database}/others/${this.transaction._id}.pdf`
+                            path: `/home/clients/${Config.database}/others/${this.transaction._id}.pdf`
                         })
                     }
 
                     if (Config.country === 'MX') {
                         // modalRef.componentInstance.body += ` y su XML correspondiente en http://vps-1883265-x.dattaweb.com:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number;
-                        modalRef.componentInstance.body +=' '
+                        modalRef.componentInstance.body += ' '
 
                         attachments = [];
                         attachments.push({
@@ -2369,7 +2406,7 @@ export class AddSaleOrderComponent {
                 });
                 break;
             case 'change-shipment-method':
-                if(this.transaction.company) {
+                if (this.transaction.company) {
                     modalRef = this._modalService.open(SelectShipmentMethodComponent, { size: 'lg', backdrop: 'static' });
                     modalRef.componentInstance.company = this.transaction.company;
                     modalRef.result.then(async (result) => {

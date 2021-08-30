@@ -56,6 +56,8 @@ import { ToastrService } from 'ngx-toastr';
 import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
 import { MovementOfCashService } from '../movement-of-cash/movement-of-cash.service';
 import { MercadopagoService } from '../mercadopago/mercadopago.service';
+import { MovementOfCancellation } from '../movement-of-cancellation/movement-of-cancellation';
+import { MovementOfCancellationService } from '../movement-of-cancellation/movement-of-cancellation.service';
 
 @Component({
     selector: 'app-point-of-sale',
@@ -135,7 +137,7 @@ export class PointOfSaleComponent implements OnInit {
         public translatePipe: TranslateMePipe,
         private _toastr: ToastrService,
         private _movementOfCashService: MovementOfCashService,
-        private _mercadopagoService: MercadopagoService
+        private _movementOfCancellationService: MovementOfCancellationService
     ) {
         this.roomSelected = new Room();
         this.transactionTypes = new Array();
@@ -1709,11 +1711,20 @@ export class PointOfSaleComponent implements OnInit {
         transaction.VATPeriod = moment(transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
         transaction.expirationDate = transaction.endDate;
 
+        let movementsOfCancellations: MovementOfCancellation[];
+        await this.getMovementsOfCancellations().then(
+            movementsOfCancellations => {
+                if (movementsOfCancellations) {
+                    movementsOfCancellations = movementsOfCancellations;
+                }
+            }
+        );
+
         if (transaction.type.electronics) {
             this.showMessage("Validando comprobante con AFIP...", 'info', false);
             this.loading = true;
             transaction.type.defectEmailTemplate = null;
-            this._transactionService.validateElectronicTransactionAR(transaction).subscribe(
+            this._transactionService.validateElectronicTransactionAR(transaction, movementsOfCancellations).subscribe(
                 async result => {
                     let msn = '';
                     if (result && result.status != 0) {
@@ -1808,6 +1819,33 @@ export class PointOfSaleComponent implements OnInit {
             this.showMessage("Debe configurar el tipo de transacción como electrónica.", 'danger', false);
             this.loading = false;
         }
+    }
+
+    public getMovementsOfCancellations(): Promise<MovementOfCancellation[]> {
+        return new Promise<MovementOfCancellation[]>((resolve, reject) => {
+            this._movementOfCancellationService.getAll({
+                project: {
+                    _id: 1,
+                    'transactionDestination': 1,
+                    'transactionOrigin._id': 1,
+                    'transactionOrigin.type.codes': 1,
+                    'transactionOrigin.letter': 1,
+                    'transactionOrigin.origin': 1,
+                    'transactionOrigin.number': 1
+                },
+                match: { transactionDestination: { $oid: this.transaction._id } }
+            }).subscribe(result => {
+                if (result.status == 200) {
+                    resolve(result.result);
+                } else {
+                    resolve(null);
+                }
+            },
+                error => {
+                    this.showMessage(error._body, 'danger', false);
+                    resolve(null);
+                });
+        });
     }
 
     public saveClaim(titulo: string, message: string): void {

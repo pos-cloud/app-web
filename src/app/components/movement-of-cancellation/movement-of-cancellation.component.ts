@@ -288,7 +288,7 @@ export class MovementOfCancellationComponent implements OnInit {
 
         match += `],`
 
-        if (this.requestCompany) {
+        if (this.requestCompany && this.transactionDestination.company) {
             match += `"company._id":  "${this.transactionDestination.company._id}",`
         }
 
