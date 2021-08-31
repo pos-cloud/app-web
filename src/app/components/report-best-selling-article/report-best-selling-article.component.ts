@@ -469,6 +469,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
             "article.markupPercentage" : 1,
             "article.markupPrice" : 1,
             "article.salePrice" : 1,
+            "article.operationType" : 1,
             "transaction.operationType": 1,
             "operationType": 1,
             "transaction.endDate": 1,
@@ -531,8 +532,22 @@ export class ReportBestSellingArticleComponent implements OnInit {
             "transaction.state": "Cerrado",
             "transaction.operationType": { "$ne": "D" },
             "operationType": { "$ne": "D" },
-            "transaction.type.transactionMovement": this.transactionMovement
+            "transaction.type.transactionMovement": this.transactionMovement,
+            "article.operationType": { "$ne": "D" }
         }
+
+        for (let i = 0; i < this.columns.length; i++) {
+            if (this.columns[i].visible) {
+                let value = this.filters[this.columns[i].name];
+                if (value && value != "") {
+                    match[this.columns[i].name] = { "$regex": value , "$options": "i"};
+                    /*if (i < this.columns.length - 1) {
+                        match += ',';
+                    }*/
+                }
+            }
+        }
+
 
         var transactionTypes = [];
 
