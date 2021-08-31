@@ -1657,6 +1657,7 @@ export class AddArticleComponent implements OnInit {
             this.article = result.article;
             this.articleForm.patchValue({ meliId: this.article.meliId });
             this._articleService.setItems(null);
+            this.showToast(null, 'success', 'Operación realizada con éxito');
           }
           this.loading = false;
         },
