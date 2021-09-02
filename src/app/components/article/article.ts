@@ -90,6 +90,7 @@ export class Article {
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     public updateUser: User;
     public updateDate: string;
+    public harticle: Article;
 
     constructor() { }
 }
@@ -108,6 +109,16 @@ export enum Type {
 }
 
 export let attributes = [
+    {
+        name: 'creationDate',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'date',
+        project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
+        align: 'left',
+        required: false,
+    },
     {
         name: 'order',
         visible: false,
@@ -354,7 +365,7 @@ export let attributes = [
         disabled: false,
         filter: true,
         datatype: 'string',
-        project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y", "timezone": "-03:00" } }`,
+        project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
         align: 'left',
         required: false,
     },
@@ -424,16 +435,6 @@ export let attributes = [
         disabled: false,
         filter: true,
         datatype: 'boolean',
-        project: null,
-        align: 'left',
-        required: false,
-    },
-    {
-        name: 'creationDate',
-        visible: false,
-        disabled: false,
-        filter: true,
-        datatype: 'date',
         project: null,
         align: 'left',
         required: false,

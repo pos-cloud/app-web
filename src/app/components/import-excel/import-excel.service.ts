@@ -23,7 +23,6 @@ export class ImportExcelService {
     }else{
       URL = `${Config.apiV8URL}articles/save-excel`;
     }
-    console.log(URL)
 
     let xhr: XMLHttpRequest = new XMLHttpRequest();
 

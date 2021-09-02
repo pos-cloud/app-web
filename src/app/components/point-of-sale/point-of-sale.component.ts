@@ -627,7 +627,6 @@ export class PointOfSaleComponent implements OnInit {
                         "type.transactionMovement": this.transactionMovement,
                     }
                 }
-                console.log(query);
                 await this.getTransactionsV2(query).then(
                     transactions => {
                         this.hideMessage();

@@ -202,7 +202,17 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard]
   },
   {
+    path: 'admin/productos/:id',
+    component: ListArticlesComponent,
+    canActivate: [AuthGuard, LicenseGuard]
+  },
+  {
     path: 'admin/variantes',
+    component: ListArticlesComponent,
+    canActivate: [AuthGuard, LicenseGuard]
+  },
+  {
+    path: 'admin/variantes/:id',
     component: ListArticlesComponent,
     canActivate: [AuthGuard, LicenseGuard]
   },

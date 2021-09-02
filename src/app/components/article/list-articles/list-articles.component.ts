@@ -33,7 +33,6 @@ import { Subscription } from "rxjs";
 import { TaxService } from "app/components/tax/tax.service";
 import { Tax } from "app/components/tax/tax";
 import { first } from "rxjs/operators";
-import { DatatableHistory } from "app/components/datatable/datatable-history.interface";
 
 @Component({
   selector: "app-list-articles",
@@ -72,20 +71,21 @@ export class ListArticlesComponent implements OnInit {
     code: 1,
   };
   public columns = attributes;
+  public articleHistoryId: string;
 
   constructor(
     private _articleService: ArticleService,
     private _router: Router,
     private _modalService: NgbModal,
-    public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
     private _printerService: PrinterService,
     private _priceList: PriceListService,
     private _userService: UserService,
     private _authService: AuthService,
     private _taxService: TaxService,
     private _configService: ConfigService,
-    private _claimService: ClaimService
+    private _claimService: ClaimService,
+    public activeModal: NgbActiveModal,
+    public alertConfig: NgbAlertConfig,
   ) {
     this.filters = new Array();
     for (let field of this.columns) {
@@ -101,9 +101,8 @@ export class ListArticlesComponent implements OnInit {
     this.getPriceList();
     let pathLocation: string[] = this._router.url.split("/");
     this.userType = pathLocation[1];
-    this.listTitle =
-      pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
-
+    this.articleHistoryId = pathLocation[3];
+    this.listTitle = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
     this._authService.getIdentity.pipe(first()).subscribe((identity) => {
       this.identity = identity;
     });
@@ -124,8 +123,10 @@ export class ListArticlesComponent implements OnInit {
       this.articleType = Type.Final;
       this.title = "Listado de Productos";
     }
-    this.getItems();
+
+    if (this.articleHistoryId) this.title = "Historial del producto";
     this.initDragHorizontalScroll();
+    this.getItems();
   }
 
   public initDragHorizontalScroll(): void {
@@ -161,7 +162,7 @@ export class ListArticlesComponent implements OnInit {
     this.loading = true;
 
     // FILTRAMOS LA CONSULTA
-    let match = `{`;
+    let match: any = `{`;
     for (let i = 0; i < this.columns.length; i++) {
       if (this.columns[i].visible || this.columns[i].required) {
         let value = this.filters[this.columns[i].name];
@@ -188,7 +189,7 @@ export class ListArticlesComponent implements OnInit {
     }
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-    let project = `{`;
+    let project: any = `{`;
     let j = 0;
     for (let i = 0; i < this.columns.length; i++) {
       if (this.columns[i].visible || this.columns[i].required) {
@@ -229,41 +230,88 @@ export class ListArticlesComponent implements OnInit {
     let skip = !isNaN(page * this.itemsPerPage) ? page * this.itemsPerPage : 0; // SKIP
     let limit = this.itemsPerPage;
 
-    this.subscription.add(
-      this._articleService
-        .getArticlesV2(
-          project, // PROJECT
-          match, // MATCH
-          this.sort, // SORT
-          group, // GROUP
-          limit, // LIMIT
-          skip // SKIP
-        )
-        .subscribe(
-          (result) => {
-            this.loading = false;
-            if (result && result[0] && result[0].items) {
-              if (this.itemsPerPage === 0) {
-                this.exportExcelComponent.items = result[0].items;
-                this.exportExcelComponent.export();
-                this.itemsPerPage = 10;
-                this.getItems();
+    if (!this.articleHistoryId) {
+      this.subscription.add(
+        this._articleService
+          .getArticlesV2(
+            project, // PROJECT
+            match, // MATCH
+            this.sort, // SORT
+            group, // GROUP
+            limit, // LIMIT
+            skip // SKIP
+          )
+          .subscribe(
+            (result) => {
+              this.loading = false;
+              if (result && result[0] && result[0].items) {
+                if (this.itemsPerPage === 0) {
+                  this.exportExcelComponent.items = result[0].items;
+                  this.exportExcelComponent.export();
+                  this.itemsPerPage = 10;
+                  this.getItems();
+                } else {
+                  this.items = result[0].items;
+                  this.totalItems = result[0].count;
+                }
               } else {
-                this.items = result[0].items;
-                this.totalItems = result[0].count;
+                this.items = new Array();
+                this.totalItems = 0;
               }
-            } else {
-              this.items = new Array();
+            },
+            (error) => {
+              this.showMessage(error._body, "danger", false);
+              this.loading = false;
               this.totalItems = 0;
             }
-          },
-          (error) => {
-            this.showMessage(error._body, "danger", false);
-            this.loading = false;
-            this.totalItems = 0;
-          }
-        )
-    );
+          )
+      );
+    } else {
+      for (let column of this.columns) {
+        if (column.name === "creationDate") column.visible = true;
+      }
+      this.subscription.add(
+        this._articleService
+          .getHArticles(
+            {
+              ...project,
+              harticle: 1
+            }, // PROJECT
+            {
+              ...match,
+              harticle: { $oid: this.articleHistoryId }
+            }, // MATCH
+            this.sort, // SORT
+            group, // GROUP
+            limit, // LIMIT
+            skip // SKIP
+          )
+          .subscribe(
+            (result) => {
+              this.loading = false;
+              if (result && result[0] && result[0].items) {
+                if (this.itemsPerPage === 0) {
+                  this.exportExcelComponent.items = result[0].items;
+                  this.exportExcelComponent.export();
+                  this.itemsPerPage = 10;
+                  this.getItems();
+                } else {
+                  this.items = result[0].items;
+                  this.totalItems = result[0].count;
+                }
+              } else {
+                this.items = new Array();
+                this.totalItems = 0;
+              }
+            },
+            (error) => {
+              this.showMessage(error._body, "danger", false);
+              this.loading = false;
+              this.totalItems = 0;
+            }
+          )
+      );
+    }
   }
 
   public exportItems(): void {
@@ -323,6 +371,11 @@ export class ListArticlesComponent implements OnInit {
     }
 
     this.getItems();
+  }
+
+  back() {
+    let pathLocation: string[] = this._router.url.split("/");
+    this._router.navigateByUrl(pathLocation[1] + '/' + pathLocation[2]);
   }
 
   public drop(event: CdkDragDrop<string[]>): void {
@@ -399,10 +452,9 @@ export class ListArticlesComponent implements OnInit {
               this.getItems();
             }
           },
-          (reason) => {}
+          (reason) => { }
         );
         break;
-
       case "excel":
         modalRef = this._modalService.open(importExcelComponent, {
           size: "lg",
@@ -414,7 +466,7 @@ export class ListArticlesComponent implements OnInit {
               this.getItems();
             }
           },
-          (reason) => {}
+          (reason) => { }
         );
         break;
 
@@ -454,7 +506,7 @@ export class ListArticlesComponent implements OnInit {
               this.getItems();
             }
           },
-          (reason) => {}
+          (reason) => { }
         );
         break;
       case "print-label":
@@ -580,6 +632,13 @@ export class ListArticlesComponent implements OnInit {
             this.getItems();
           }
         );
+        break;
+      case "history":
+        if (article.type === Type.Variant) {
+          this._router.navigateByUrl(`/admin/variantes/${article._id}`);
+        } else {
+          this._router.navigateByUrl(`/admin/productos/${article._id}`);
+        }
         break;
       default:
     }

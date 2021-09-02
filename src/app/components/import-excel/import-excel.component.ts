@@ -76,7 +76,6 @@ export class importExcelComponent implements OnInit {
     this.loading = true;
     this._importExcelService.import(this.file, this.type)
       .then(async (r) => {
-        console.log(r)
         for (let x = 0; x < r.length; x++) {
           if (r[x].status == 200) {
             this.status200.push(r[x])

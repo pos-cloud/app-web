@@ -427,7 +427,7 @@ export function createTranslateLoader(http: HttpClient) {
     BillingComponent,
     AbandonedCartsComponent,
     SelectPriceListComponent,
-    AddMeliAttrsComponent
+    AddMeliAttrsComponent,
   ],
   entryComponents: [
     HomeComponent,
@@ -568,7 +568,7 @@ export function createTranslateLoader(http: HttpClient) {
     SelectMovementsOfCashesComponent,
     BillingComponent,
     SelectPriceListComponent,
-    AddMeliAttrsComponent
+    AddMeliAttrsComponent,
   ],
   imports: [
     BrowserModule,

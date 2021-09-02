@@ -34,7 +34,6 @@ export class ParamsReportComponent implements OnInit {
     ) { }
 
     async ngOnInit() {
-        console.log(this.report);
         this.buildForm();
     }
 
@@ -49,8 +48,6 @@ export class ParamsReportComponent implements OnInit {
     }
 
     public sendParams(): void {
-
-        console.log(this.objForm.value);
 
         var params : [{
             name : string,
