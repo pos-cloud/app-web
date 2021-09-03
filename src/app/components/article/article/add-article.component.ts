@@ -418,7 +418,6 @@ export class AddArticleComponent implements OnInit {
       0 // SKIP
     ).subscribe(
       result => {
-        this.loading = false;
         if (result && result[0] && result[0].classifications) {
           this.classifications = result[0].classifications;
         } else {
@@ -427,7 +426,6 @@ export class AddArticleComponent implements OnInit {
       },
       error => {
         this.showMessage(error._body, 'danger', false);
-        this.loading = false;
       }
     );
   }
@@ -441,11 +439,9 @@ export class AddArticleComponent implements OnInit {
         if (result && result.articleFields) {
           this.articleFields = result.articleFields;
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);
-        this.loading = false;
       }
     );
   }
@@ -738,11 +734,9 @@ export class AddArticleComponent implements OnInit {
         } else {
           this.currencies = result.currencies;
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, "danger", false);
-        this.loading = false;
       }
     );
   }
@@ -897,8 +891,6 @@ export class AddArticleComponent implements OnInit {
 
   public getVariantsByArticleParent(): void {
 
-    this.loading = true;
-
     let query = 'where="articleParent":"' + this.article._id + '"';
 
     this._variantService.getVariants(query).subscribe(
@@ -908,11 +900,9 @@ export class AddArticleComponent implements OnInit {
         } else {
           this.variants = this.getUniqueVariants(result.variants);
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);
-        this.loading = false;
       }
     );
   }
@@ -968,8 +958,6 @@ export class AddArticleComponent implements OnInit {
 
   public getLastArticle(): void {
 
-    this.loading = true;
-
     let query = `where="type":"${Type.Final}"&sort="_id":-1&limit=1`;
 
     this._articleService.getArticles(query).subscribe(
@@ -987,11 +975,9 @@ export class AddArticleComponent implements OnInit {
         this.article.code = this.padString(code, this.config.article.code.validators.maxLength);
 
         this.setValuesForm();
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);
-        this.loading = false;
       }
     );
   }
@@ -1023,15 +1009,12 @@ export class AddArticleComponent implements OnInit {
       result => {
         if (!result.articleStock) {
           if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
-          this.loading = false;
         } else {
           this.articleStock = result.articleStock;
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);
-        this.loading = false;
       }
     );
   }
@@ -1050,7 +1033,6 @@ export class AddArticleComponent implements OnInit {
         },
         error => {
           this.showMessage(error._body, 'danger', false);
-          this.loading = false;
         }
       );
     });
@@ -1058,8 +1040,6 @@ export class AddArticleComponent implements OnInit {
   }
 
   public getCategories(query): Promise<Category[]> {
-
-    this.loading = true;
 
     return new Promise<Category[]>((resolve, reject) => {
       this._categoryService.getCategories(query).subscribe(
@@ -1070,11 +1050,9 @@ export class AddArticleComponent implements OnInit {
             this.hideMessage();
             resolve(result.categories)
           }
-          this.loading = false;
         },
         error => {
           this.showMessage(error._body, 'danger', false);
-          this.loading = false;
           resolve(null)
         }
       );
@@ -1083,7 +1061,6 @@ export class AddArticleComponent implements OnInit {
   }
 
   public getDeposits(): void {
-    this.loading = true;
 
     this._depositService.getDeposits().subscribe(
       result => {
@@ -1094,17 +1071,14 @@ export class AddArticleComponent implements OnInit {
           this.deposits = result.deposits;
           this.getLocations();
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);
-        this.loading = false;
       }
     );
   }
 
   public getLocations(): void {
-    this.loading = true;
 
     this._locationService.getLocations().subscribe(
       result => {
@@ -1115,11 +1089,9 @@ export class AddArticleComponent implements OnInit {
           this.locations = result.locations;
           this.getCompany();
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);
-        this.loading = false;
       }
     );
   }
@@ -1127,13 +1099,10 @@ export class AddArticleComponent implements OnInit {
 
   public getCompany(): void {
 
-    this.loading = true;
-
     let query = 'where="type":"' + CompanyType.Provider.toString() + '"';
 
     this._companyService.getCompanies(query).subscribe(
       result => {
-        this.loading = false;
         if (result.companies) {
           this.hideMessage();
           this.companies = result.companies;
@@ -1146,14 +1115,11 @@ export class AddArticleComponent implements OnInit {
       },
       error => {
         this.showMessage(error._body, 'danger', false);
-        this.loading = false;
       }
     );
   }
 
   public getLastPricePurchase(): void {
-
-    this.loading = true;
 
     /// ORDENAMOS LA CONSULTA
     let sortAux = { 'transaction.endDate': -1 };
@@ -1223,11 +1189,9 @@ export class AddArticleComponent implements OnInit {
         } else {
           this.lastPricePurchase = 0;
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);
-        this.loading = false;
       }
     );
   }
@@ -1749,7 +1713,6 @@ export class AddArticleComponent implements OnInit {
       match = JSON.parse(match);
       this._articleService.getArticlesV2(project, match, {}, {}).subscribe(
         result => {
-          this.loading = false;
           if (result && result.articles && result.articles.length > 0) {
             resolve(true);
           } else {
@@ -1757,7 +1720,6 @@ export class AddArticleComponent implements OnInit {
           }
         },
         error => {
-          this.loading = false;
           this.showMessage(error._body, 'danger', false);
           resolve(false);
         }
@@ -1802,7 +1764,6 @@ export class AddArticleComponent implements OnInit {
           this.filesToArray = null;
         },
         (error) => {
-          this.loading = false;
           this.showMessage(error, 'danger', false);
         }
       );
@@ -1831,7 +1792,6 @@ export class AddArticleComponent implements OnInit {
         limit: 10,
       }).subscribe(
         result => {
-          this.loading = false;
           (result.status === 200) ? resolve(result.result) : reject(result);
         },
         error => reject(error)
@@ -1846,7 +1806,6 @@ export class AddArticleComponent implements OnInit {
         sort: { name: 1 },
       }).subscribe(
         result => {
-          this.loading = false;
           (result.status === 200) ? resolve(result.result) : reject(result);
         },
         error => reject(error)
@@ -1861,7 +1820,6 @@ export class AddArticleComponent implements OnInit {
         sort: { description: 1 },
       }).subscribe(
         result => {
-          this.loading = false;
           (result.status === 200) ? resolve(result.result) : reject(result);
         },
         error => reject(error)
@@ -1885,7 +1843,6 @@ export class AddArticleComponent implements OnInit {
       },
       error => {
         this.showMessage(error._body, 'danger', false);
-        this.loading = false;
       }
     )
   }
