@@ -298,7 +298,7 @@ export class TransactionService extends ModelService {
 
     let body = 'transaction=' + JSON.stringify(transaction) + '&' +
       'canceledTransactions=' + JSON.stringify(canceledTransactions) + '&' +
-      'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"agromade"}';
+      'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"' + Config.database + '"}';
 
     return this._http.post(URL, body, {
       headers: headers
