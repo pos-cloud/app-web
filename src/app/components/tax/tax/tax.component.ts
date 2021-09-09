@@ -42,7 +42,7 @@ export class TaxComponent implements OnInit {
             distinctUntilChanged(),
             tap(() => this.loading = true),
             switchMap(async term => {
-                let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' } } : {};
+                let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' }, mode : "Sintetico", operationType : { "$ne" : "D" } } : {};
                 return await this.getAllAccounts(match).then(
                     result => {
                         return result;
@@ -367,6 +367,7 @@ export class TaxComponent implements OnInit {
     }
 
     public getAllAccounts(match: {}): Promise<Account[]> {
+        console.log(match);
         return new Promise<Account[]>((resolve, reject) => {
             this._accountService.getAll({
                 match,
