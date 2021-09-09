@@ -12,6 +12,7 @@ import { MovementOfArticle } from 'app/components/movement-of-article/movement-o
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { ModelService } from '../model/model.service';
 import { MovementOfCancellation } from "../movement-of-cancellation/movement-of-cancellation";
+import { isUndefined } from "util";
 
 @Injectable()
 export class TransactionService extends ModelService {
@@ -268,7 +269,7 @@ export class TransactionService extends ModelService {
 
     //const URL = `${Config.apiURL_FE_AR}`;
     const URL = `http://vps-1883265-x.dattaweb.com/libs/fe/ar/index.php`;
-    //const URL = `http://localhost/libs/fe-ar/index.php`;
+    // const URL = `http://localhost/libs/fe-ar/index.php`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/x-www-form-urlencoded');
@@ -279,26 +280,36 @@ export class TransactionService extends ModelService {
       PtoVta: number,
       Nro: number
     };
+    let body;
 
     if (movementsOfCancellations && movementsOfCancellations.length) {
       for (let movementOfCancellation of movementsOfCancellations) {
         let code: number;
-        for (let cod of movementOfCancellation.transactionOrigin.type.codes) {
-          if (cod.letter === movementOfCancellation.transactionOrigin.letter) {
-            code = cod.code;
+        if (movementOfCancellation.transactionOrigin && movementOfCancellation.transactionOrigin.type && movementOfCancellation.transactionOrigin.type.codes) {
+          for (let cod of movementOfCancellation.transactionOrigin.type.codes) {
+            if (cod.letter === movementOfCancellation.transactionOrigin.letter) {
+              code = cod.code;
+            }
+          }
+          if (code) {
+            canceledTransactions = {
+              Tipo: code,
+              PtoVta: movementOfCancellation.transactionOrigin.origin,
+              Nro: movementOfCancellation.transactionOrigin.number
+            };
           }
         }
-        canceledTransactions = {
-          Tipo: code,
-          PtoVta: movementOfCancellation.transactionOrigin.origin,
-          Nro: movementOfCancellation.transactionOrigin.number
-        };
       }
     }
 
-    let body = 'transaction=' + JSON.stringify(transaction) + '&' +
-      'canceledTransactions=' + JSON.stringify(canceledTransactions) + '&' +
-      'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"' + Config.database + '"}';
+    if (canceledTransactions) {
+      body = 'transaction=' + JSON.stringify(transaction) + '&' +
+        'canceledTransactions=' + JSON.stringify(canceledTransactions) + '&' +
+        'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"' + Config.database + '"}';
+    } else {
+      body = 'transaction=' + JSON.stringify(transaction) + '&' +
+        'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"' + Config.database + '"}';
+    }
 
     return this._http.post(URL, body, {
       headers: headers
