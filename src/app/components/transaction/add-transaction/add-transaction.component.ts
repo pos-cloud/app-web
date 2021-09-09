@@ -34,6 +34,11 @@ import { SelectCompanyComponent } from '../../company/select-company/select-comp
 import { Employee } from '../../employee/employee';
 import { TaxBase, TaxClassification } from '../../tax/tax';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
+import { Account } from 'app/components/account/account';
+import { AccountService } from 'app/components/account/account.service';
+import { Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+
 
 @Component({
     selector: 'app-add-transaction',
@@ -57,7 +62,7 @@ export class AddTransactionComponent implements OnInit {
     public focusEvent = new EventEmitter<boolean>();
     public posType: string;
     public datePipe = new DateFormatPipe();
-    public letters: string[] = ["", "A", "B", "C","D", "E", "M", "R", "T", "X"];
+    public letters: string[] = ["", "A", "B", "C", "D", "E", "M", "R", "T", "X"];
     public roundNumber = new RoundNumberPipe();
     public transactionMovement: string;
     public employees: Employee[] = new Array();
@@ -92,7 +97,8 @@ export class AddTransactionComponent implements OnInit {
         'exempt': '',
         'totalPrice': '',
         'company': '',
-        'employeeOpening': ''
+        'employeeOpening': '',
+        'account' : ''
     };
 
     public validationMessages = {
@@ -105,14 +111,33 @@ export class AddTransactionComponent implements OnInit {
         'basePrice': { 'required': 'Este campo es requerido.' },
         'exempt': { 'required': 'Este campo es requerido.' },
         'totalPrice': { 'required': 'Este campo es requerido.' },
-        'employeeOpening': {}
+        'employeeOpening': {},
+        'account' : {}
     };
+
+    public searchAccounts = (text$: Observable<string>) =>
+        text$.pipe(
+            debounceTime(300),
+            distinctUntilChanged(),
+            tap(() => this.loading = true),
+            switchMap(async term => {
+                let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' }, mode : "Sintetico" } : {};
+                return await this.getAllAccounts(match).then(
+                    result => {
+                        return result;
+                    }
+                )
+            }),
+            tap(() => this.loading = false)
+        )
+    public formatterAccounts = (x: Account) => { return x.description; };
 
     constructor(
         public _transactionService: TransactionService,
         public _transactionTypeService: TransactionTypeService,
         public _companyService: CompanyService,
         public _employeeService: EmployeeService,
+        public _accountService: AccountService,
         public _movementOfCancellationService: MovementOfCancellationService,
         public _fb: FormBuilder,
         public _router: Router,
@@ -180,11 +205,12 @@ export class AddTransactionComponent implements OnInit {
             'basePrice': [this.transaction.basePrice, []],
             'exempt': [this.transaction.exempt, []],
             'totalPrice': [this.transaction.totalPrice, [Validators.required]],
+            'account' : [this.transaction.account,[]],
             'observation': [this.transaction.observation, []],
             'employeeOpening': [this.transaction.employeeOpening, []],
             'state': [this.transaction.state, []],
             'VATPeriod': [this.transaction.VATPeriod, []],
-            'balance': [this.transaction.balance, []],
+            'balance': [this.transaction.balance, []]
         });
 
         this.transactionForm.valueChanges
@@ -230,6 +256,7 @@ export class AddTransactionComponent implements OnInit {
             'state': this.transaction.state,
             'VATPeriod': this.transaction.VATPeriod,
             'balance': (this.transaction.balance) ? this.transaction.balance : 0,
+            'account' : (this.transaction.account) ? this.transaction.account : null
         });
     }
 
@@ -364,7 +391,7 @@ export class AddTransactionComponent implements OnInit {
                                 }
                             }
                             this.balanceTotal = this.roundNumber.transform(this.balanceTotal);
-                            if(this.transaction.state == TransactionState.Open) {
+                            if (this.transaction.state == TransactionState.Open) {
                                 this.transaction.totalPrice = this.balanceTotal;
                             }
                             this.transaction.balance = this.roundNumber.transform(this.transaction.totalPrice - this.balanceTotal);
@@ -524,10 +551,15 @@ export class AddTransactionComponent implements OnInit {
 
     async addTransaction() {
 
+        console.log(this.transactionForm.value.account);
+
         this.transaction.observation = this.transactionForm.value.observation;
         this.transaction.balance = this.transactionForm.value.balance;
         this.transaction.employeeOpening = this.transactionForm.value.employeeOpening;
         this.transaction.employeeClosing = this.transactionForm.value.employeeOpening;
+        this.transaction.account = this.transactionForm.value.account;
+
+        console.log(this.transaction);
 
         if ((this.transaction.type.requestEmployee &&
             this.transaction.employeeOpening) ||
@@ -592,20 +624,20 @@ export class AddTransactionComponent implements OnInit {
 
         let transactionTaxes: Taxes[] = new Array();
 
-        if(op !== 'totalPrice') {
+        if (op !== 'totalPrice') {
             this.transactionForm.value.totalPrice = this.transactionForm.value.basePrice;
 
             if (this.transactionForm.value.exempt > 0) {
                 this.transactionForm.value.totalPrice += this.transactionForm.value.exempt;
             }
-    
+
             if (this.taxes && this.taxes.length > 0) {
                 for (let taxesAux of this.taxes) {
                     let transactionTax: Taxes = new Taxes();
                     transactionTax.tax = taxesAux.tax;
                     transactionTax.taxBase = 0;
                     transactionTax.percentage = 0;
-                    if(taxesAux.tax.taxBase == TaxBase.Neto) {
+                    if (taxesAux.tax.taxBase == TaxBase.Neto) {
                         transactionTax.percentage = taxesAux.percentage;
                         transactionTax.taxBase = this.transaction.basePrice;
                         transactionTax.taxAmount = this.roundNumber.transform((transactionTax.taxBase * transactionTax.percentage / 100));
@@ -678,6 +710,21 @@ export class AddTransactionComponent implements OnInit {
                     this.showMessage(error._body, 'danger', false);
                     resolve(null);
                 }
+            );
+        });
+    }
+
+    public getAllAccounts(match: {}): Promise<Account[]> {
+        return new Promise<Account[]>((resolve, reject) => {
+            this._accountService.getAll({
+                match,
+                sort: { description: 1 },
+            }).subscribe(
+                result => {
+                    this.loading = false;
+                    (result.status === 200) ? resolve(result.result) : reject(result);
+                },
+                error => reject(error)
             );
         });
     }

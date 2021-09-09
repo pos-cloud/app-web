@@ -51,6 +51,17 @@
 					</div>
 				</div>
 			</div>
+            <div class="row" *ngIf="transaction && transaction.type && transaction.type.allowAccounting">
+				<div class="form-group col-md-12">
+                    <ng-template #rtAccounts let-r="result" let-t="term">
+                        <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+                    </ng-template>
+                    <label for="account">Cuenta Contable:</label>
+                    <input id="account" type="text" class="form-control" formControlName="account"
+                        name="account" [ngbTypeahead]="searchAccounts" [resultTemplate]="rtAccounts"
+                        [inputFormatter]="formatterAccounts" [readonly]="readonly" />
+				</div>
+			</div>
 			<div class="row" *ngIf="transaction && transaction.type && !transaction.type.automaticNumbering">
 				<div class="form-group col-md-2" *ngIf="userCountry === 'AR'">
 					<label for="origin" class="control-label">POS:</label>

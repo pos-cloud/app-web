@@ -16,6 +16,7 @@ import { PriceList } from '../price-list/price-list';
 import { Employee } from 'app/components/employee/employee';
 import { Address } from '../address/address.model';
 import { ShipmentMethod } from '../shipment-method/shipment-method.model';
+import { Account } from '../account/account';
 
 export class Transaction {
 
@@ -72,6 +73,7 @@ export class Transaction {
     public wooId: string;
     public declaredValue: number;
     public package: number;
+    public account : Account;
     public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     public updateUser: User;
