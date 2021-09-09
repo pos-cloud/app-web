@@ -317,7 +317,7 @@ export class ListTransactionsComponent implements OnInit {
         }
 
         if (this.employeeClosingId) {
-            match += `"employeeClosing._id": { "$oid" : "${this.employeeClosingId}"},`;
+            match += `,"employeeClosing._id": { "$oid" : "${this.employeeClosingId}"},`;
         }
 
         if (match.charAt(match.length - 1) === '}') match += ',';
@@ -332,6 +332,8 @@ export class ListTransactionsComponent implements OnInit {
         if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
         match += `}`;
+
+        console.log(match);
         match = JSON.parse(match);
 
         var transactionTypes = [];
