@@ -121,7 +121,7 @@ export class AddTransactionComponent implements OnInit {
             distinctUntilChanged(),
             tap(() => this.loading = true),
             switchMap(async term => {
-                let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' }, mode : "Sintetico" } : {};
+                let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' }, mode : "Sintetico", operationType : { $ne :"D" } } : {};
                 return await this.getAllAccounts(match).then(
                     result => {
                         return result;
@@ -551,15 +551,11 @@ export class AddTransactionComponent implements OnInit {
 
     async addTransaction() {
 
-        console.log(this.transactionForm.value.account);
-
         this.transaction.observation = this.transactionForm.value.observation;
         this.transaction.balance = this.transactionForm.value.balance;
         this.transaction.employeeOpening = this.transactionForm.value.employeeOpening;
         this.transaction.employeeClosing = this.transactionForm.value.employeeOpening;
         this.transaction.account = this.transactionForm.value.account;
-
-        console.log(this.transaction);
 
         if ((this.transaction.type.requestEmployee &&
             this.transaction.employeeOpening) ||
