@@ -64,7 +64,10 @@ export class Config {
     }
   };
   public company: {
-    allowCurrentAccount: {
+    allowCurrentAccountProvider: {
+      default: boolean
+    },
+    allowCurrentAccountClient: {
       default: boolean
     },
     vatCondition: {

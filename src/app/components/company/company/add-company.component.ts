@@ -75,7 +75,7 @@ export class AddCompanyComponent implements OnInit {
     public priceLists: PriceList[];
     public orientation: string = 'horizontal';
     private subscription: Subscription = new Subscription();
-    public address : Address[];
+    public address: Address[];
 
     public formErrors = {
         'code': '',
@@ -140,21 +140,21 @@ export class AddCompanyComponent implements OnInit {
     };
 
     public searchAccounts = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      tap(() => this.loading = true),
-      switchMap(async term => {
-        let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' }, mode : "Sintetico", operationType : { "$ne" : "D" } } : {};
-        return await this.getAllAccounts(match).then(
-          result => {
-            return result;
-          }
+        text$.pipe(
+            debounceTime(300),
+            distinctUntilChanged(),
+            tap(() => this.loading = true),
+            switchMap(async term => {
+                let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' }, mode: "Sintetico", operationType: { "$ne": "D" } } : {};
+                return await this.getAllAccounts(match).then(
+                    result => {
+                        return result;
+                    }
+                )
+            }),
+            tap(() => this.loading = false)
         )
-      }),
-      tap(() => this.loading = false)
-    )
-  public formatterAccounts = (x: Account) => { return x.description; };
+    public formatterAccounts = (x: Account) => { return x.description; };
 
     constructor(
         public _companyService: CompanyService,
@@ -165,7 +165,7 @@ export class AddCompanyComponent implements OnInit {
         public _stateService: StateService,
         public _configService: ConfigService,
         public _identificationTypeService: IdentificationTypeService,
-        public _accountService : AccountService,
+        public _accountService: AccountService,
         public _countryService: CountryService,
         public _transportService: TransportService,
         public _priceListService: PriceListService,
@@ -222,10 +222,14 @@ export class AddCompanyComponent implements OnInit {
         await this._configService.getConfig.subscribe(
             config => {
                 this.config = config;
-                this.company.allowCurrentAccount = this.config.company.allowCurrentAccount.default;
+                if (this.company.type === CompanyType.Client) {
+                    this.company.allowCurrentAccount = this.config.company.allowCurrentAccountClient.default;
+                } else if (this.company.type === CompanyType.Provider) {
+                    this.company.allowCurrentAccount = this.config.company.allowCurrentAccountProvider.default;
+                }
                 this.company.vatCondition = this.config.company.vatCondition.default;
-                if(this.company.type === CompanyType.Client) this.company.account = this.config.company.accountClient.default;
-                if(this.company.type === CompanyType.Provider) this.company.account = this.config.company.accountProvider.default;
+                if (this.company.type === CompanyType.Client) this.company.account = this.config.company.accountClient.default;
+                if (this.company.type === CompanyType.Provider) this.company.account = this.config.company.accountProvider.default;
             }
         );
 
@@ -436,10 +440,10 @@ export class AddCompanyComponent implements OnInit {
             'addressNumber': [this.company.addressNumber, []],
             'transport': [this.company.transport, []],
             'priceList': [this.company.priceList, []],
-            'discount' : [this.company.discount,[]],
-            'account' : [this.company.account,[]],
-            'creditLimit' : [this.company.creditLimit,[]],
-            'zipCode' : [this.company.zipCode,[]]
+            'discount': [this.company.discount, []],
+            'account': [this.company.account, []],
+            'creditLimit': [this.company.creditLimit, []],
+            'zipCode': [this.company.zipCode, []]
         });
 
         this.companyForm.valueChanges
@@ -620,10 +624,10 @@ export class AddCompanyComponent implements OnInit {
             'employee': employee,
             'transport': transport,
             'priceList': priceList,
-            'discount' : this.company.discount,
-            'account' : this.company.account,
-            'creditLimit' : this.company.creditLimit,
-            'zipCode' : this.company.zipCode
+            'discount': this.company.discount,
+            'account': this.company.account,
+            'creditLimit': this.company.creditLimit,
+            'zipCode': this.company.zipCode
         };
 
         this.companyForm.setValue(values);
@@ -652,35 +656,35 @@ export class AddCompanyComponent implements OnInit {
 
 
         this.loading = true;
-    
+
         let query = 'sort="code":-1&limit=1';
-    
+
         this._companyService.getCompanies(query).subscribe(
-          result => {
-            let code = 1;
-            if (result.companies) {
-              if (result.companies[0] !== undefined) {
-                code = result.companies[0].code + 1;
-              }
-            }
-    
-            if (this.priceLists && this.priceLists.length > 0 && this.company.type === CompanyType.Client) {
-              this.priceLists.forEach(element => {
-                if (element.default) {
-                  this.company.priceList = element
+            result => {
+                let code = 1;
+                if (result.companies) {
+                    if (result.companies[0] !== undefined) {
+                        code = result.companies[0].code + 1;
+                    }
                 }
-              });
+
+                if (this.priceLists && this.priceLists.length > 0 && this.company.type === CompanyType.Client) {
+                    this.priceLists.forEach(element => {
+                        if (element.default) {
+                            this.company.priceList = element
+                        }
+                    });
+                }
+
+                this.company.identificationType = this.identificationTypes[0];
+                this.otherFields = this.company.otherFields;
+                this.setValueForm();
+                this.loading = false;
+            },
+            error => {
+                this.showMessage(error._body, 'danger', false);
+                this.loading = false;
             }
-    
-            this.company.identificationType = this.identificationTypes[0];
-            this.otherFields = this.company.otherFields;
-            this.setValueForm();
-            this.loading = false;
-          },
-          error => {
-            this.showMessage(error._body, 'danger', false);
-            this.loading = false;
-          }
         );
     }
 
@@ -804,18 +808,18 @@ export class AddCompanyComponent implements OnInit {
 
     public getAllAccounts(match: {}): Promise<Account[]> {
         return new Promise<Account[]>((resolve, reject) => {
-          this.subscription.add(this._accountService.getAll({
-            match,
-            sort: { description : 1 },
-          }).subscribe(
-            result => {
-              this.loading = false;
-              (result.status === 200) ? resolve(result.result) : reject(result);
-            },
-            error => reject(error)
-          ));
+            this.subscription.add(this._accountService.getAll({
+                match,
+                sort: { description: 1 },
+            }).subscribe(
+                result => {
+                    this.loading = false;
+                    (result.status === 200) ? resolve(result.result) : reject(result);
+                },
+                error => reject(error)
+            ));
         });
-      }
+    }
 
     public getPriceLists(): void {
         this.loading = true;
@@ -904,11 +908,11 @@ export class AddCompanyComponent implements OnInit {
         this.loading = true;
 
         this._addressService.getAll({
-            match : {
-                company : { $oid : this.company._id }
+            match: {
+                company: { $oid: this.company._id }
             } // SKIP
         }).subscribe(result => {
-            if(result){
+            if (result) {
                 this.address = result.result
             }
             this.loading = false;

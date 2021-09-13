@@ -418,9 +418,20 @@
                     <div class="form-group col-md-12">
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon1">Valor defecto si permite cuenta corriente
-                                al dar de alta una empresa:</span>
-                            <select class="form-control" formControlName="company.allowCurrentAccount.default"
-                                name="company.allowCurrentAccount.default" id="company.allowCurrentAccount.default">
+                                al dar de alta un proveedor:</span>
+                            <select class="form-control" formControlName="company.allowCurrentAccountProvider.default"
+                                name="company.allowCurrentAccountProvider.default" id="company.allowCurrentAccountProvider.default">
+                                <option value="true">Si</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">Valor defecto si permite cuenta corriente
+                                al dar de alta un cliente :</span>
+                            <select class="form-control" formControlName="company.allowCurrentAccountClient.default"
+                                name="company.allowCurrentAccountClient.default" id="company.allowCurrentAccountClient.default">
                                 <option value="true">Si</option>
                                 <option value="false">No</option>
                             </select>
