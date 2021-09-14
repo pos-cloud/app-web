@@ -122,10 +122,6 @@ export class ListTransactionsComponent implements OnInit {
         this.userCountry = Config.country;
         this.getPrinters();
 
-        if (localStorage.getItem('project-list-transaction')) {
-            this.columns = JSON.parse(localStorage.getItem('project-list-transaction'));
-        }
-
         let pathLocation: string[] = this._router.url.split('/');
         this.listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
         this.modules = observableOf(Config.modules);
