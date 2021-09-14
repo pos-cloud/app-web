@@ -254,7 +254,7 @@ export class ResourceComponent implements OnInit {
                 (result) => {
                     if (result['file']) {
                         this.resource.type = result['file']['mimetype'].split('/')[0]
-                        this.resource.file = result['file']['originalname']
+                        this.resource.file = result['file']['filename']
                         this.updateResource();
                     } else {
                         this.showMessage("Error al guardar el archivo", 'danger', false);
