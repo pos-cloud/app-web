@@ -425,6 +425,7 @@
                     </app-movement-of-cancellation>
                 </ng-template>
             </ngb-tab>
+            <!-- --------- -->
             <ngb-tab title="Auditoría">
                 <ng-template ngbTabContent>
                     <div class="row tab-content">
@@ -470,6 +471,36 @@
                             </div>
                         </div>
                     </div>
+                </ng-template>
+            </ngb-tab>
+
+            <!-- --------- -->
+            <ngb-tab title="Asiento Contable">
+                <ng-template ngbTabContent>
+                    <table width="100%" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Cuenta</th>
+                                <th>Debe</th>
+                                <th>Haber</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let field of objForm.get('items')['controls']; let i = index;">
+                                <td *ngIf='field?.value?.account?.description'>{{field?.value?.account?.description}}</td>
+                                <div *ngFor="let account of accounts; let i = index">
+                                    <td
+                                        *ngIf="field && field.value && field.value.account && field.value.account === account._id ">
+                                        {{account.description}}</td>
+                                </div>
+                                <td>{{field?.value?.debit}}</td>
+                                <td>{{field?.value?.credit}}</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                        </tfoot>
+                    </table>
                 </ng-template>
             </ngb-tab>
         </ngb-tabset>
