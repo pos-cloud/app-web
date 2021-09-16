@@ -260,6 +260,7 @@ export class PrintComponent implements OnInit {
             "endDate": { "$dateToString": { "date": "$endDate", "format": "%d/%m/%Y %HH %MM", "timezone": "${Config.timezone.split('UTC')[1]}" }},
             "endDateAFIP": { "$dateToString": { "date": "$endDate", "format": "%Y-%m-%d", "timezone": "${Config.timezone.split('UTC')[1]}" }},
             "startDate": { "$dateToString": { "date": "$startDate", "format": "%d/%m/%Y %HH %MM", "timezone": "${Config.timezone.split('UTC')[1]}" }},
+            "updateDate": { "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %HH %MM", "timezone": "${Config.timezone.split('UTC')[1]}" }},
             "balance": 1,
             "operationType": 1,
             "origin": 1,
@@ -3262,7 +3263,13 @@ export class PrintComponent implements OnInit {
         this.doc.setFontType('normal');
         this.doc.text("Fecha: " + this.transaction.startDate.substring(0, 5), margin, row);
         row += 5;
-        this.doc.text("Hora: " + this.transaction.startDate.substring(11, 13) + ":" + this.transaction.startDate.substring(15, 17), margin, row);
+        if(this.transaction.updateDate){
+            this.doc.text("Hora: " + this.transaction.updateDate.substring(11, 13) + ":" + this.transaction.updateDate.substring(15, 17), margin, row);
+
+        } else {
+
+            this.doc.text("Hora: " + this.transaction.startDate.substring(11, 13) + ":" + this.transaction.startDate.substring(15, 17), margin, row);
+        }
 
         if (this.transaction.table) {
             row += 5;
