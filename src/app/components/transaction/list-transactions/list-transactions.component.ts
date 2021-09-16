@@ -329,7 +329,6 @@ export class ListTransactionsComponent implements OnInit {
 
         match += `}`;
 
-        console.log(match);
         match = JSON.parse(match);
 
         var transactionTypes = [];

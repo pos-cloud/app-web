@@ -145,8 +145,6 @@ export class ViewTransactionComponent implements OnInit {
                 }
             }
         }
-
-        console.log('1 this.obj :',this.obj )
     }
 
     ngOnInit() {

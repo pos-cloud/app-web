@@ -367,7 +367,6 @@ export class TaxComponent implements OnInit {
     }
 
     public getAllAccounts(match: {}): Promise<Account[]> {
-        console.log(match);
         return new Promise<Account[]>((resolve, reject) => {
             this._accountService.getAll({
                 match,
