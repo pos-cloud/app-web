@@ -32,7 +32,6 @@ export class ConfigService extends ModelService {
     return this.config.asObservable();
   }
   public generateBackUp(): Observable<any> {
-    // console.log()
     const URL = `${Config.apiV8URL}configs/generateBackUp`;
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

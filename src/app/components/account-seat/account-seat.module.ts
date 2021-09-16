@@ -17,6 +17,7 @@ import { AccountSeatService } from './account-seat.service';
 import { AccountSeatComponent } from './crud/account-seat.component';
 import { ReportLedgerComponent } from './report-ledger/report-ledger.component';
 import { ExportersModule } from '../export/exporters.module';
+import { ReportDetailsLedgerComponent } from './report-details-ledger/report-details-ledger.component';
 
 const routes: Routes = [
   {
@@ -54,6 +55,11 @@ const routes: Routes = [
     component: ReportLedgerComponent,
     canActivate: [AuthGuard]
   },
+  {
+    path: 'admin/accountant/details/ledger/:id/:startDate/:endDate/:name',
+    component: ReportDetailsLedgerComponent,
+    canActivate: [AuthGuard]
+  },
 ];
 
 @NgModule({
@@ -77,13 +83,15 @@ const routes: Routes = [
   declarations: [
     AccountSeatComponent,
     ListAccountSeatsComponent,
-    ReportLedgerComponent
+    ReportLedgerComponent,
+    ReportDetailsLedgerComponent
   ],
   exports: [
     AccountSeatComponent
   ],
   entryComponents: [
-    AccountSeatComponent
+    AccountSeatComponent,
+    ReportDetailsLedgerComponent
   ],
   providers: [
     AccountSeatService

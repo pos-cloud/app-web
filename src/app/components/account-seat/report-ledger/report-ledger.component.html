@@ -32,6 +32,9 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
+                        <th>
+                            <i class="fa fa-bars"></i>
+                          </th>
                         <th>Código</th>
                         <th>Cuenta</th>
                         <th class="align-center">Debe</th>
@@ -46,6 +49,9 @@
                         </td>
                     </tr>
                     <tr *ngFor="let item of items">
+                       <td align="left" width="50">
+                            <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view-detail', item.account[0])" title="Ver"><i class="fa fa-eye"></i></button>
+                        </td>
                         <td class="flat">{{ item.codigo }}</td>
                         <td class="flat">{{ item.description }}</td>
                         <td class="align-right">{{ item.totalDebit | currency:'USD':'symbol-narrow':'1.2-2'}}</td>

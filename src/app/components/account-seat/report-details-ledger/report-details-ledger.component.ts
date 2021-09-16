@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewEncapsulation, ViewChild, OnInit, Input } from '@angular/core';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 import { AccountSeatService } from '../account-seat.service';
@@ -8,20 +8,23 @@ import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
 import * as moment from 'moment';
-import { Account } from 'app/components/account/account';
+import { Transaction } from 'app/components/transaction/transaction';
+import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
 
 @Component({
-    selector: 'app-report-ledger',
-    templateUrl: './report-ledger.component.html',
-    styleUrls: ['./report-ledger.component.scss'],
+    selector: 'app-report-details-ledger',
+    templateUrl: './report-details-ledger.component.html',
+    styleUrls: ['./report-details-ledger.component.scss'],
     providers: [NgbAlertConfig, TranslateMePipe, TranslatePipe],
     encapsulation: ViewEncapsulation.None
 })
 
-export class ReportLedgerComponent implements OnInit {
+export class ReportDetailsLedgerComponent implements OnInit {
 
-    public title: string = 'report-ledger';
+    public accountId : string;
+    public title: string = 'report-details-ledger';
     public items = [];
+    public nameAccount : string;
     public loading = true;
     public startDate: string;
     public endDate: string;
@@ -73,17 +76,22 @@ export class ReportLedgerComponent implements OnInit {
     constructor(
         public _service: AccountSeatService,
         private _toastr: ToastrService,
+        public _modalService: NgbModal,
         private _router: Router,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,
         public translatePipe: TranslateMePipe,
     ) {
         this.items = new Array()
-        this.startDate = moment().startOf('month').format('YYYY-MM-DD');
-        this.endDate = moment().endOf('month').format('YYYY-MM-DD');
     }
 
     async ngOnInit() {
+
+        let pathUrl: string[] = this._router.url.split('/');
+        this.accountId = pathUrl[5]
+        this.startDate = pathUrl[6]
+        this.endDate = pathUrl[7]
+        this.nameAccount = pathUrl[8].split('%20').join(' ')
 
         this.getItems();
     }
@@ -99,19 +107,28 @@ export class ReportLedgerComponent implements OnInit {
 
         query.push(
 
-            { $unwind: "$items" },
-
-            { $unwind: { path: "$account", preserveNullAndEmptyArrays: true } },
             {
                 $lookup: {
-                    from: "accounts",
-                    localField: "items.account",
+                    from: "transactions",
+                    localField: "transaction",
                     foreignField: "_id",
-                    as: "items.account"
+                    as: "transaction"
                 }
             },
+            { $unwind: { path: "$transaction", preserveNullAndEmptyArrays: true } },
+
+            {
+                $lookup: {
+                    from: "transaction-types",
+                    localField: "transaction.type",
+                    foreignField: "_id",
+                    as: "transaction.type"
+                }
+            },
+            { $unwind: { path: "$transaction.type", preserveNullAndEmptyArrays: true } },
             {
                 $match: {
+                    "items" : { "$elemMatch" : { "account" : { "$oid" :  this.accountId }}},
                     date : {
                         "$gte" : { "$date" : this.startDate + "T00:00:00" + timezone },
                         "$lte" : { "$date" : this.endDate + "T23:59:59" + timezone }
@@ -119,29 +136,18 @@ export class ReportLedgerComponent implements OnInit {
                 }
             },
             {
-                $group: {
-                    _id: {
-                        account: "$items.account",
-                    },
-                    totalDebit: { $sum: "$items.debit" },
-                    totalCredit: { $sum: "$items.credit" },
-                }
-            },
-            {
-                $project: {
-                    account: "$_id.account",
-                    codigo: { $arrayElemAt: [ "$_id.account.code", 0 ] },
-                    description: { $arrayElemAt: [ "$_id.account.description", 0 ] },
-                    totalDebit: "$totalDebit",
-                    totalCredit: "$totalCredit",
-                    total : { $subtract : [ "$totalDebit","$totalCredit" ] }
-                }
-            },
-            {
-                $sort : {
-                    codigo : 1
+                $project : {
+                    date : { "$dateToString": { "date": "$date", "format": "%d/%m/%Y", "timezone": "-03:00" } },
+                    observation : 1,
+                    "transaction.type.transactionMovement" : 1,
+                    "transaction.type.name" : 1,
+                    "transaction.origin" : 1,
+                    "transaction.letter" : 1,
+                    "transaction.number" : 1,
+                    "items" : 1
                 }
             }
+            
         );
 
         this._service.getFullQuery(
@@ -162,16 +168,6 @@ export class ReportLedgerComponent implements OnInit {
 
     }
 
-    async openModal(op: string, account: Account) {
-        let modalRef;
-        switch (op) {
-            case 'view-detail':
-                this._router.navigateByUrl('admin/accountant/details/ledger/' + account._id + '/' + this.startDate + '/' + this.endDate + '/' + account.description);
-                break;
-            default:
-                break;
-        }
-    }
 
     public refresh() {
         this.getItems();
@@ -181,6 +177,18 @@ export class ReportLedgerComponent implements OnInit {
 		this.exportExcelComponent.items = this.items;
 		this.exportExcelComponent.export();
 	}
+
+    public openModal(op: string, transaction: Transaction): void {
+
+        let modalRef;
+        switch (op) {
+            case 'view':
+                modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg', backdrop: 'static' });
+                modalRef.componentInstance.transactionId = transaction._id;
+                break;
+            default: ;
+        }
+    };
 
     public showToast(result, type?: string, title?: string, message?: string): void {
         if (result) {

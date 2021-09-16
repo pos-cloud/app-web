@@ -1,0 +1,58 @@
+<section class="container-fluid">
+    <div class="card  card-large">
+        <div class="card-header">
+            <span>Mayor de {{nameAccount}} entre {{startDate}} y {{endDate}}</span>
+            <div class="pull-right">
+                <button type="button" class="btn" [routerLink]="['/admin/accountant/ledger']"><i
+                    class="fa fa-arrow-left"></i><span>{{'return' | translate | capitalize}}</span></button>
+            </div>
+        </div>
+        <div class="card-block table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                         <th>
+                            <i class="fa fa-bars"></i>
+                          </th>
+                        <th>Fecha</th>
+                        <th>Observacion</th>
+                        <th>Movimiento</th>
+                        <th>Tipo</th>
+                        <th>Origen</th>
+                        <th>Numero</th>
+                        <th>Letra</th>
+                        <th class="align-right">Debe</th>
+                        <th class="align-right">Haber</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="99" style="padding: 0px">
+                            <app-progressbar [loading]="loading"></app-progressbar>
+                        </td>
+                    </tr>
+                    <ng-container *ngFor="let item of items">
+                        
+                        <tr *ngFor="let item2 of item.items"> 
+                            <td *ngIf="item2.account == accountId">
+                                <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', item.transaction)"
+                                    title="Ver"><i class="fa fa-eye"></i></button>
+                            </td>
+                            <td *ngIf="item2.account == accountId" class="flat">{{ item.date }}</td>
+                            <td *ngIf="item2.account == accountId" class="flat">{{ item.observation }}</td>
+                            <td *ngIf="item2.account == accountId" class="flat">{{ item.transaction?.type?.transactionMovement }}</td>
+                            <td *ngIf="item2.account == accountId" class="flat">{{ item.transaction?.type?.name }}</td>
+                            <td *ngIf="item2.account == accountId" class="flat">{{ item.transaction?.origin }}</td>
+                            <td *ngIf="item2.account == accountId" class="flat">{{ item.transaction?.number }}</td>
+                            <td *ngIf="item2.account == accountId" class="flat">{{ item.transaction?.letter }}</td>
+                            <td *ngIf="item2.account == accountId" class="align-right">{{ item2.debit }}</td>
+                            <td *ngIf="item2.account == accountId" class="align-right">{{ item2.credit }}</td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer">
+        </div>
+    </div>
+</section>
