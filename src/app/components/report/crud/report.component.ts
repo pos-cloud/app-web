@@ -91,7 +91,7 @@ export class ReportComponent implements OnInit {
         name: 'table',
         tag: 'select',
         tagType: 'text',
-        values: ["Transaction","Movement-Of-Cash","Stock","Movimiento de Producto"],
+        values: ["Transaction","Movement-Of-Cash","Stock","Movimiento de Producto","Movimiento de Cancelacion"],
         class: 'form-group col-md-4'
     },{
         name: 'query',
