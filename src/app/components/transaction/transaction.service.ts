@@ -265,21 +265,20 @@ export class TransactionService extends ModelService {
 
   public validateElectronicTransactionAR(
     transaction: Transaction,
-    movementsOfCancellations: MovementOfCancellation[]): Observable<any> {
+    movementsOfCancellations: MovementOfCancellation[],
+    canceledTransactions: {
+      Tipo: number,
+      PtoVta: number,
+      Nro: number
+    } = null): Observable<any> {
 
     //const URL = `${Config.apiURL_FE_AR}`;
     const URL = `http://vps-1883265-x.dattaweb.com/libs/fe/ar/index.php`;
-    // const URL = `http://localhost/libs/fe-ar/index.php`;
+    //const URL = `http://localhost/libs/fe-ar/index.php`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/x-www-form-urlencoded');
 
-
-    let canceledTransactions: {
-      Tipo: number,
-      PtoVta: number,
-      Nro: number
-    };
     let body;
 
     if (movementsOfCancellations && movementsOfCancellations.length) {

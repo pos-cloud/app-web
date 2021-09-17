@@ -52,9 +52,6 @@
                             <input type="text" class="form-control" formControlName="companyFantasyName"
                                 name="companyFantasyName" id="companyFantasyName" aria-describedby="basic-addon1">
                         </div>
-                        <div *ngIf="formErrors.companyFantasyName" class="alert alert-danger">
-                            {{ formErrors.companyFantasyName }}
-                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -77,9 +74,6 @@
                             <input type="text" class="form-control" formControlName="companyIdentificationValue"
                                 name="companyIdentificationValue" id="companyIdentificationValue"
                                 aria-describedby="basic-addon1">
-                        </div>
-                        <div *ngIf="formErrors.companyIdentificationValue" class="alert alert-danger">
-                            {{ formErrors.companyIdentificationValue }}
                         </div>
                     </div>
                 </div>
@@ -132,9 +126,6 @@
                             <input type="text" class="form-control" formControlName="companyPhone" name="companyPhone"
                                 id="companyPhone" aria-describedby="basic-addon1">
                         </div>
-                        <div *ngIf="formErrors.companyPhone" class="alert alert-danger">
-                            {{ formErrors.companyPhone}}
-                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -157,9 +148,6 @@
                             <input type="text" class="form-control" formControlName="companyPostalCode"
                                 name="companyPostalCode" id="companyPostalCode" aria-describedby="basic-addon1">
                         </div>
-                        <div *ngIf="formErrors.companyPostalCode" class="alert alert-danger">
-                            {{ formErrors.companyPostalCode }}
-                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -168,9 +156,6 @@
                             <span class="input-group-addon" id="basic-addon1">Dirección:</span>
                             <input type="text" class="form-control" formControlName="companyAddress"
                                 name="companyAddress" id="companyAddress" aria-describedby="basic-addon1">
-                        </div>
-                        <div *ngIf="formErrors.companyAddress" class="alert alert-danger">
-                            {{ formErrors.companyAddress }}
                         </div>
                     </div>
                 </div>
@@ -223,9 +208,6 @@
                             <span class="input-group-addon" id="basic-addon1">Pie de Impresión:</span>
                             <input type="text" class="form-control" formControlName="footerInvoice" name="footerInvoice"
                                 id="footerInvoice" aria-describedby="basic-addon1">
-                        </div>
-                        <div *ngIf="formErrors.footerInvoice" class="alert alert-danger">
-                            {{ formErrors.footerInvoice}}
                         </div>
                     </div>
                 </div>
@@ -286,18 +268,12 @@
                             <input type="text" class="form-control" formControlName="emailHost"
                                 name="emailHost" id="emailHost" aria-describedby="basic-addon1">
                         </div>
-                        <div *ngIf="formErrors.emailHost" class="alert alert-danger">
-                            {{ formErrors.emailHost }}
-                        </div>
                     </div>
                     <div class="form-group col-md-4">
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon1">Puerto:</span>
                             <input type="number" class="form-control" formControlName="emailPort"
                                 name="emailPort" id="emailPort" aria-describedby="basic-addon1">
-                        </div>
-                        <div *ngIf="formErrors.emailPort" class="alert alert-danger">
-                            {{ formErrors.emailPort }}
                         </div>
                     </div>
                 </div>
@@ -316,7 +292,7 @@
     </div>
 
     <!-- AFIP -->
-    <div class="card " *ngIf="config.country === 'AR'">
+    <div class="card " *ngIf="config['country'] === 'AR'">
         <div class="card-header">Generar Certificado para Factura Electrónica</div>
         <div class='card-block'>
             <form (ngSubmit)="generateCRS()" autocomplete="off">
@@ -371,7 +347,7 @@
                             <label for="article.salesAccount.default">Cuenta Venta defecto de Producto:</label>
                             <input id="article.salesAccount.default" type="text" class="form-control" formControlName="article.salesAccount.default"
                                 name="article.salesAccount.default" [ngbTypeahead]="searchAccounts" [resultTemplate]="rtAccounts"
-                                [inputFormatter]="formatterAccounts" [readonly]="readonly" />
+                                [inputFormatter]="formatterAccounts" />
                         </div>
                     </div>
                 </div>
@@ -384,7 +360,7 @@
                             <label for="article.purchaseAccount.default">Cuenta Compra defecto de Producto:</label>
                             <input id="article.purchaseAccount.default" type="text" class="form-control" formControlName="article.purchaseAccount.default"
                                 name="article.purchaseAccount.default" [ngbTypeahead]="searchAccounts" [resultTemplate]="rtAccounts"
-                                [inputFormatter]="formatterAccounts" [readonly]="readonly" />
+                                [inputFormatter]="formatterAccounts" />
                         </div>
                     </div>
                 </div>
@@ -402,8 +378,7 @@
                             <select class="form-control" formControlName="company.vatCondition.default"
                                 name="company.vatCondition.default" id="company.vatCondition.default">
                                 <option [ngValue]="null"
-                                    [selected]="!config.company || !config.company.vatCondition || !config.company.vatCondition.default"
-                                    [disabled]="readonly"></option>
+                                    [selected]="!config.company || !config.company.vatCondition || !config.company.vatCondition.default"></option>
                                 <option *ngFor="let vatCondition of vatConditions"
                                     [selected]="(config.company && config.company.vatCondition && config.company.vatCondition.default && config.company.vatCondition.default._id && vatCondition._id===config.company.vatCondition.default._id) ||
                                     (config.company && config.company.vatCondition && config.company.vatCondition.default && vatCondition._id===config.company.vatCondition.default)"
@@ -447,7 +422,7 @@
                             <label for="company.accountClient.default">Valor Defecto de cuenta para clientes:</label>
                             <input id="company.accountClient.default" type="text" class="form-control" formControlName="company.accountClient.default"
                                 name="company.accountClient.default" [ngbTypeahead]="searchAccounts" [resultTemplate]="rtAccounts"
-                                [inputFormatter]="formatterAccounts" [readonly]="readonly" />
+                                [inputFormatter]="formatterAccounts" />
                         </div>
                     </div>
                 </div>
@@ -460,7 +435,7 @@
                             <label for="company.accountProvider.default">Valor Defecto de cuenta para proveedores:</label>
                             <input id="company.accountProvider.default" type="text" class="form-control" formControlName="company.accountProvider.default"
                                 name="company.accountProvider.default" [ngbTypeahead]="searchAccounts" [resultTemplate]="rtAccounts"
-                                [inputFormatter]="formatterAccounts" [readonly]="readonly" />
+                                [inputFormatter]="formatterAccounts" />
                         </div>
                     </div>
                 </div>

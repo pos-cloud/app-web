@@ -55,7 +55,6 @@ import { Currency } from 'app/components/currency/currency';
 import { CancellationType } from 'app/components/cancellation-type/cancellation-type';
 import { ImportComponent } from '../import/import.component';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
-import { ClaimService } from 'app/layout/claim/claim.service';
 import { TransportService } from 'app/components/transport/transport.service';
 import { Transport } from 'app/components/transport/transport';
 import { SelectTransportComponent } from '../transport/select-transport/select-transport.component';
@@ -105,6 +104,7 @@ export class AddSaleOrderComponent {
     currencies: Currency[];
     cancellationTypes: CancellationType[];
     showButtonCancelation: boolean;
+    showButtonInformCancellation: boolean;
     printerSelected: Printer;
     printersAux: Printer[];  //Variable utilizada para guardar las impresoras de una operación determinada (Cocina, mostrador, Bar)
     userType: string;
@@ -116,6 +116,7 @@ export class AddSaleOrderComponent {
     @ViewChild('contentChangeDate', { static: true }) contentChangeDate: ElementRef;
     @ViewChild('contentChangeObservation', { static: true }) contentChangeObservation: ElementRef;
     @ViewChild('contentChangeQuotation', { static: true }) contentChangeQuotation: ElementRef;
+    @ViewChild('contentInformCancellation', { static: true }) contentInformCancellation: ElementRef;
     @ViewChild('containerMovementsOfArticles', { static: true }) containerMovementsOfArticles: ElementRef;
     @ViewChild('containerTaxes', { static: true }) containerTaxes: ElementRef;
     paymentAmount: number = 0.00;
@@ -153,6 +154,22 @@ export class AddSaleOrderComponent {
     companyOld: boolean = false;
     quantity = 0;
     movementsOfCancellations: MovementOfCancellation[] = new Array();
+    canceledTransactions: {
+        typeId: string,
+        origin: number,
+        letter: string,
+        number: number
+    } = {
+            typeId: null,
+            origin: 0,
+            letter: 'X',
+            number: 0
+        };
+    canceledTransactionsAFIP: {
+        Tipo: number,
+        PtoVta: number,
+        Nro: number
+    };
 
     constructor(
         public activeModal: NgbActiveModal,
@@ -291,6 +308,7 @@ export class AddSaleOrderComponent {
                                 cancellationTypes => {
                                     if (cancellationTypes) {
                                         this.cancellationTypes = cancellationTypes;
+                                        this.showButtonInformCancellation = true;
                                         this.showButtonCancelation = true;
                                     } else {
                                         this.showButtonCancelation = false;
@@ -352,7 +370,7 @@ export class AddSaleOrderComponent {
         return new Promise<CancellationType[]>((resolve, reject) => {
 
             this._cancellationTypeService.getCancellationTypes(
-                { "destination._id": 1, "operationType": 1 }, // PROJECT
+                { "destination._id": 1, "origin._id": 1, "origin.name": 1, "operationType": 1 }, // PROJECT
                 { "destination._id": { $oid: this.transaction.type._id }, "operationType": { "$ne": "D" } }, // MATCH
                 { order: 1 }, // SORT
                 {}, // GROUP
@@ -1632,12 +1650,19 @@ export class AddSaleOrderComponent {
         );
     }
 
-    public validateElectronicTransactionAR(): void {
+    public async validateElectronicTransactionAR() {
 
         this.showMessage("Validando comprobante con AFIP...", 'info', false);
         this.loading = true;
         this.transaction.type.defectEmailTemplate = null;
-        this._transactionService.validateElectronicTransactionAR(this.transaction, this.movementsOfCancellations).subscribe(
+
+        await this.getMovementsOfCancellations().then(
+            movementsOfCancellations => {
+                this.movementsOfCancellations = movementsOfCancellations;
+            }
+        );
+
+        this._transactionService.validateElectronicTransactionAR(this.transaction, this.movementsOfCancellations, this.canceledTransactionsAFIP).subscribe(
             result => {
                 let msn = '';
                 if (result && result.status != 0) {
@@ -1818,13 +1843,13 @@ export class AddSaleOrderComponent {
                 modalRef.componentInstance.transactionDestinationId = this.transaction._id;
                 modalRef.componentInstance.selectionView = true;
                 modalRef.result.then(async (result) => {
-                    if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
+                    if(result) this.movementsOfCancellations = result.movementsOfCancellations;
+                    if (this.movementsOfCancellations && this.movementsOfCancellations.length > 0) {
                         this.showButtonCancelation = false;
-                        this.movementsOfCancellations = result.movementsOfCancellations;
                         await this.daleteMovementsOfCancellations('{"transactionDestination":"' + this.transaction._id + '"}').then(
                             async movementsOfCancellations => {
                                 if (movementsOfCancellations) {
-                                    await this.saveMovementsOfCancellations(result.movementsOfCancellations).then(
+                                    await this.saveMovementsOfCancellations(this.movementsOfCancellations).then(
                                         movementsOfCancellations => {
                                             if (movementsOfCancellations) {
                                                 this.focusEvent.emit(true);
@@ -2256,6 +2281,14 @@ export class AddSaleOrderComponent {
                                 }
                             }
                         );
+                    }
+                }, (reason) => {
+                });
+                break;
+            case 'change-information-cancellation':
+                modalRef = this._modalService.open(this.contentInformCancellation).result.then(async (result) => {
+                    if (result !== "cancel" && result !== '') {
+                        this.checkInformationCancellation();
                     }
                 }, (reason) => {
                 });
@@ -2798,47 +2831,6 @@ export class AddSaleOrderComponent {
         }
 
         this.loading = false;
-    }
-
-    public getTransactionsV2(
-        match: {},
-        sort: {} = { endDate: -1 },
-        group: {} = {},
-        limit: number = 0
-    ): Promise<Transaction[]> {
-
-        return new Promise<Transaction[]>((resolve, reject) => {
-
-            this.loading = true;
-
-            let project = {
-                type: 1,
-                endDate: 1,
-                orderNumber: 1,
-                operationType: 1,
-                state: 1,
-            }
-
-            this._transactionService.getTransactionsV2(
-                project, // PROJECT
-                match, // MATCH
-                sort, // SORT
-                group, // GROUP
-                limit, // LIMIT
-                0 // SKIP
-            ).subscribe(
-                result => {
-                    this.loading = false;
-                    this.hideMessage();
-                    resolve(result.transactions);
-                },
-                error => {
-                    this.showMessage(error._body, 'danger', false);
-                    this.loading = false;
-                    resolve(new Array());
-                }
-            );
-        });
     }
 
     public async changeArticlesStatusToPending(): Promise<boolean> {
@@ -3422,6 +3414,51 @@ export class AddSaleOrderComponent {
                 this.showMessage(error._body, 'danger', false);
             }
         );
+    }
+
+    public checkInformationCancellation() {
+
+        if (this.canceledTransactions && this.canceledTransactions.typeId) {
+            this.loading = true;
+
+            let query = `where= "type":"${this.canceledTransactions.typeId}",
+            "origin":${this.canceledTransactions.origin},
+            "letter":"${this.canceledTransactions.letter}",
+            "company":"${this.transaction.company._id}",
+            "operationType":{"$ne":"D"}
+            &limit=1`;
+
+            this._transactionService.getTransactions(query).subscribe(
+                result => {
+                    this.loading = false;
+                    if (!result.transactions) {
+                        this.canceledTransactionsAFIP = null;
+                        this.showMessage('Debe informar un comprobante válido', 'info', false);
+                    } else {
+                        let code;
+                        for (let cod of result.transactions[0].type.codes) {
+                            if (cod.letter === this.canceledTransactions.letter) {
+                                code = cod.code;
+                            }
+                        }
+                        if (code) {
+                            this.canceledTransactionsAFIP = {
+                                Tipo: code,
+                                PtoVta: this.canceledTransactions.origin,
+                                Nro: this.canceledTransactions.number
+                            };
+                        }
+                    }
+                },
+                error => {
+                    this.canceledTransactionsAFIP = null;
+                    this.loading = false;
+                    this.showMessage(error._body, 'danger', false);
+                }
+            );
+        } else {
+            this.showMessage('Debe informar todos los campos del comprobante a informar', 'info', true);
+        }
     }
 
     public setPrintBill(): void {
