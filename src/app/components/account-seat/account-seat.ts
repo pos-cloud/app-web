@@ -86,6 +86,12 @@ export class AccountSeat extends Model {
                 filter: true,
                 datatype: 'string',
                 align: 'left',
+            },{
+                name: 'transaction.totalPrice',
+                visible: true,
+                filter: true,
+                datatype: 'currency',
+                align: 'right',
             }
         ])
     }

@@ -12,6 +12,8 @@ import { Printer } from 'app/components/printer/printer';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { TranslatePipe } from '@ngx-translate/core';
+import { User } from 'app/components/user/user';
+import { UserService } from 'app/components/user/user.service';
 
 @Component({
 	selector: 'app-list-cash-boxes',
@@ -41,6 +43,7 @@ export class ListCashBoxesComponent implements OnInit {
 		public _modalService: NgbModal,
 		public alertConfig: NgbAlertConfig,
 		public translatePipe: TranslateMePipe,
+        private _userService: UserService,
 		private _toastr: ToastrService,
 		public activeModal: NgbActiveModal,
 		public _transactionTypeService: TransactionTypeService
@@ -51,6 +54,7 @@ export class ListCashBoxesComponent implements OnInit {
 		let pathLocation: string[] = this._router.url.split('/');
 		this.userType = pathLocation[1];
 		this.getCashBoxes();
+
 	}
 
 	public getBadge(term: string): boolean {
@@ -62,12 +66,14 @@ export class ListCashBoxesComponent implements OnInit {
 		this.activeModal.close({ cashBoxId: cashBoxSelected._id });
 	}
 
-	public getCashBoxes(): void {
+	async getCashBoxes() {
 
 		this.loading = true;
+        let user : User = await this.getUser();
+        let query = 'where="employee":"' + user.employee._id + '"';
 
-		this._cashBoxService.getCashBoxes().subscribe(
-			result => {
+		this._cashBoxService.getCashBoxes(query).subscribe(
+			async result => {
 				if (!result.cashBoxes) {
 					if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
 					this.loading = false;
@@ -88,6 +94,29 @@ export class ListCashBoxesComponent implements OnInit {
 			}
 		);
 	}
+
+    public getUser(): Promise<User> {
+
+        return new Promise<User>((resolve, reject) => {
+
+            var identity: User = JSON.parse(sessionStorage.getItem('user'));
+            var user;
+            if (identity) {
+                this._userService.getUser(identity._id).subscribe(
+                    result => {
+                        if (result && result.user) {
+                            resolve(result.user)
+                        } else {
+                            this.showMessage("Debe volver a iniciar sesión", "danger", false);
+                        }
+                    },
+                    error => {
+                        this.showMessage(error._body, "danger", false);
+                    }
+                )
+            }
+        });
+    }
 
 	public orderBy(term: string, property?: string): void {
 
