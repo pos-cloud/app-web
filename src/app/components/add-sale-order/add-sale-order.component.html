@@ -2,7 +2,7 @@
     <div class="row header-transaction">
         <div class="col-md-12">
             <div class="box-header-transaction">
-                <div class="item-header" *ngIf="transaction.table">
+                <div class="item-header" *ngIf="transaction?.table">
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-light" (click)="openModal('change-table')">
                             <b>Mesa:</b> {{transaction.table.description}}
@@ -12,7 +12,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="item-header" *ngIf="posType==='mostrador' && transaction.type"
+                <div class="item-header" *ngIf="posType==='mostrador' && transaction?.type"
                     (click)="openModal('observation')">
                     <b>{{transaction.type.name}} {{ transaction.number }}</b>
                 </div>
@@ -43,7 +43,7 @@
                     <b>Comensales:</b>
                     {{transaction.diners}}
                 </div>
-                <div class="item-header" *ngIf="transaction && !transaction.endDate">
+                <div class="item-header" *ngIf="!transaction?.endDate">
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-light" (click)="openModal('change-date')">
                             Inicio: {{transaction.startDate | dateFormat:'DD/MM/YYYY HH:mm'}}
@@ -52,7 +52,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="item-header" *ngIf="transaction && transaction.endDate">
+                <div class="item-header" *ngIf="transaction?.endDate">
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-light" (click)="openModal('change-date')">
                             Fecha: {{transaction.endDate | dateFormat:'DD/MM/YYYY'}}
@@ -61,7 +61,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="item-header" *ngIf="transaction && transaction.type && transaction.type.requestCurrency">
+                <div class="item-header" *ngIf="transaction?.type?.requestCurrency">
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-light" (click)="openModal('change-quotation')">
                             Cotización: {{ transaction.quotation | currency:'USD':'symbol-narrow':'1.2-2' }}
@@ -72,7 +72,7 @@
                     </div>
                 </div>
                 <div class="item-header"
-                    *ngIf="transaction && transaction.company && !transaction.company.priceList && transaction.type.allowPriceList">
+                    *ngIf="!transaction?.company?.priceList && transaction?.type?.allowPriceList">
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-light" (click)="openModal('priceList')">
                             Lista de Precio: {{ transaction?.priceList?.name }}
@@ -81,7 +81,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="item-header" *ngIf="transaction.type && transaction.type.requestShipmentMethod">
+                <div class="item-header" *ngIf="transaction?.type?.requestShipmentMethod">
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-light"
                             (click)="openModal('change-shipment-method')">
@@ -93,7 +93,7 @@
                     </div>
                 </div>
                 <div class="item-header"
-                    *ngIf="transaction && transaction.company && transaction.type && transaction.type.requestTransport">
+                    *ngIf="transaction?.company && transaction?.type?.requestTransport">
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-light" (click)="openModal('change-transport')">
                             Transporte {{ transaction?.transport?.name }}
@@ -111,7 +111,7 @@
           </div>
         </div>-->
                 <div class="item-header"
-                    *ngIf="userCountry === 'MX' && transaction && transaction.type && transaction.type.electronics">
+                    *ngIf="userCountry === 'MX' && transaction?.type?.electronics">
                     <select class="form-control" (change)="changeUseOfCFDI($event.target.value)">
                         <option [ngValue]="null" [selected]="!transaction.useOfCFDI">Uso de CFDI:</option>
                         <option *ngFor="let useOfCFDI of usesOfCFDI" [value]="useOfCFDI._id" [selected]="((transaction.useOfCFDI && transaction.useOfCFDI._id && useOfCFDI._id===transaction.useOfCFDI._id) ||
@@ -121,7 +121,7 @@
                     </select>
                 </div>
                 <div class="item-header"
-                    *ngIf="userCountry === 'MX' && transaction && transaction.type && transaction.type.electronics && cancellationTypes.length > 0">
+                    *ngIf="userCountry === 'MX' && transaction?.type?.electronics && cancellationTypes.length > 0">
                     <select class="form-control" [(ngModel)]="transaction.relationType" (change)="updateTransaction()">
                         <option [ngValue]="null" [selected]="(!transaction.relationType)">Tipo de Relación:</option>
                         <option *ngFor="let relationType of relationTypes" [ngValue]="relationType" [selected]="(transaction.relationType &&
@@ -143,7 +143,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="item-header" *ngIf="showButtonInformCancellation">
+                <div class="item-header" *ngIf="showButtonInformCancellation && transaction?.type?.electronics">
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-light"
                             (click)="openModal('change-information-cancellation')">
