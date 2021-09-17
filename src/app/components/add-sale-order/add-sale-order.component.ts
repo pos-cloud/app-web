@@ -280,7 +280,8 @@ export class AddSaleOrderComponent {
                             this.transaction.transport = this.transaction.company.transport
                         }
                         if (this.transaction.state === TransactionState.Closed ||
-                            this.transaction.state === TransactionState.Canceled) {
+                            this.transaction.state === TransactionState.Canceled ||
+                            this.transaction.CAE) {
                             if (this.posType === 'resto' && this.transaction.table) {
                                 this.transaction.table.employee = null;
                                 this.transaction.table.state = TableState.Available;
@@ -370,7 +371,7 @@ export class AddSaleOrderComponent {
         return new Promise<CancellationType[]>((resolve, reject) => {
 
             this._cancellationTypeService.getCancellationTypes(
-                { "destination._id": 1, "origin._id": 1, "origin.name": 1, "operationType": 1 }, // PROJECT
+                { "destination._id": 1, "destination.name": 1, "origin._id": 1, "origin.name": 1, "operationType": 1 }, // PROJECT
                 { "destination._id": { $oid: this.transaction.type._id }, "operationType": { "$ne": "D" } }, // MATCH
                 { order: 1 }, // SORT
                 {}, // GROUP
@@ -1717,6 +1718,13 @@ export class AddSaleOrderComponent {
                         this.transaction.number = result.number;
                         this.transaction.CAE = result.CAE;
                         this.transaction.CAEExpirationDate = moment(result.CAEExpirationDate, 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DDTHH:mm:ssZ");
+                        if (this.canceledTransactions) {
+                            let name: string;
+                            for (let canc of this.cancellationTypes) {
+                                if (canc.origin._id === this.canceledTransactions.typeId) name = canc.origin.name;
+                            }
+                            this.transaction.observation += ` Corresponde a ${name} ${this.canceledTransactions.origin}-${this.canceledTransactions.letter}-${this.canceledTransactions.number}`;
+                        }
                         if (this.transaction.type.finishState) {
                             this.transaction.state = this.transaction.type.finishState;
                         } else {
@@ -1843,7 +1851,7 @@ export class AddSaleOrderComponent {
                 modalRef.componentInstance.transactionDestinationId = this.transaction._id;
                 modalRef.componentInstance.selectionView = true;
                 modalRef.result.then(async (result) => {
-                    if(result) this.movementsOfCancellations = result.movementsOfCancellations;
+                    if (result) this.movementsOfCancellations = result.movementsOfCancellations;
                     if (this.movementsOfCancellations && this.movementsOfCancellations.length > 0) {
                         this.showButtonCancelation = false;
                         await this.daleteMovementsOfCancellations('{"transactionDestination":"' + this.transaction._id + '"}').then(

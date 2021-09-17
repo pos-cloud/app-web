@@ -281,7 +281,7 @@ export class TransactionService extends ModelService {
 
     let body;
 
-    if (movementsOfCancellations && movementsOfCancellations.length) {
+    if (movementsOfCancellations && movementsOfCancellations.length && !canceledTransactions) {
       for (let movementOfCancellation of movementsOfCancellations) {
         let code: number;
         if (movementOfCancellation.transactionOrigin && movementOfCancellation.transactionOrigin.type && movementOfCancellation.transactionOrigin.type.codes) {
