@@ -10,6 +10,7 @@ export class Gallery {
     public name: string = '';
     public colddown: number;
     public speed: number;
+    public barcode: boolean = false;
     public resources: [{
         resource: Resource,
         order: number

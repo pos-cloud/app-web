@@ -50,6 +50,15 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="form-group col-md-3">
+                                        <label for="barcode" class="control-label">Tiene Lector Codigo de Barra</label>
+                                        <select class="form-control" formControlName="barcode">
+                                            <option [ngValue]="true" [disabled]="readonly">Si</option>
+                                            <option [ngValue]="false" [disabled]="readonly">No</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </ng-template>
