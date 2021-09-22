@@ -468,7 +468,7 @@ export class ExportIvaComponent implements OnInit {
                                 data[i]['FECHA'] = this.dateFormat.transform(transaction.endDate, 'DD/MM/YYYY');
                                 if (transaction.company) {
                                     data[i]['RAZÓN SOCIAL'] = transaction.company.name.toUpperCase();
-                                    data[i]['IDENTIFICADOR'] = transaction.company.identificationValue.replace(/-/g, "");
+                                    data[i]['IDENTIFICADOR'] = (transaction.company.identificationValue) ? transaction.company.identificationValue.replace(/-/g, "") : '';
                                 } else {
                                     data[i]['RAZÓN SOCIAL'] = 'CONSUMIDOR FINAL';
                                     data[i]['IDENTIFICADOR'] = '00000000000';
