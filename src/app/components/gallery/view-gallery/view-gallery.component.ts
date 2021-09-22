@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Inject } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject, ViewEncapsulation, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GalleryService } from 'app/components/gallery/gallery.service';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -15,7 +15,8 @@ import { User } from 'app/components/user/user';
 @Component({
     selector: 'app-view-gallery',
     templateUrl: './view-gallery.component.html',
-    styleUrls: ['./view-gallery.component.css']
+    styleUrls: ['./view-gallery.component.scss'],
+    encapsulation: ViewEncapsulation.None
 })
 
 
@@ -36,6 +37,7 @@ export class ViewGalleryComponent implements OnInit {
         private _galleryService: GalleryService,
         public alertConfig: NgbAlertConfig,
         private socket: Socket,
+        private elementRef: ElementRef,
         @Inject(DOCUMENT) private document: any
     ) {
         this.initSocket();
@@ -105,6 +107,7 @@ export class ViewGalleryComponent implements OnInit {
             name: 1,
             resources: 1,
             colddown: 1,
+            barcode : 1,
             operationType: 1
         };
 

@@ -274,6 +274,7 @@
     "transaction.type.name": "Tipo de Transacción",
     "transaction.type.transactionMovement": "Movimiento",
     "transaction.creationDate": "Fecha de Alta Transacción",
+    "transaction.totalPrice" : "Precio Total",
     "transaction.updateDate": "Fecha de Actualización Transacción",
     "transaction.company.identificationValue" : "Identificacion de Empresa",
     "transaction": "Transacción",

@@ -80,6 +80,7 @@ export class GalleryComponent implements OnInit {
             ]],
             'colddown': [this.gallery.colddown, []],
             'speed': [this.gallery.speed, []],
+            'barcode' : [this.gallery.barcode,[]],
             'resources': this._fb.array([])
         });
 
@@ -181,7 +182,8 @@ export class GalleryComponent implements OnInit {
             '_id': this.gallery._id,
             'name': this.gallery.name,
             'colddown': this.gallery.colddown,
-            'speed': this.gallery.speed
+            'speed': this.gallery.speed,
+            'barcode' : this.gallery.barcode ? this.gallery.barcode : false
 
         };
 
