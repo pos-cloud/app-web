@@ -70,7 +70,10 @@ export class ListCashBoxesComponent implements OnInit {
 
 		this.loading = true;
         let user : User = await this.getUser();
-        let query = 'where="employee":"' + user.employee._id + '"';
+        let query = ''
+        if(user && user.employee && user.employee.type && user.employee.type.description !== "Administrador"){
+            query = 'where="employee":"' + user.employee._id + '"';
+        }
 
 		this._cashBoxService.getCashBoxes(query).subscribe(
 			async result => {
