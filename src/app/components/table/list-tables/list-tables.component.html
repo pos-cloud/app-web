@@ -113,7 +113,7 @@
             <h5><b>Comensales: {{amountOfDinersNow}}/{{amountOfDiners}}</b></h5>
         </div>
     </div>
-    <div class="row" style="padding-left: 10px;">
+    <div class="row" style="padding-left: 10px;margin-bottom: 100px;">
         <div *ngFor="let table of tables | orderBy:[orderTerm] | filter: filterRoom:'description':'room'">
             <div class="itable" [ngClass]="{
                                         'itable-pending-busy': table.state === 'Ocupada' && table.lastTransaction.state.toString() === 'Pendiente de pago',

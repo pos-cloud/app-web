@@ -267,6 +267,7 @@ export class ListTablesComponent implements OnInit {
                     }
                 }, (reason) => {
                 });
+                break;
             case 'print-qr':
                 modalRef = this._modalService.open(PrintQRComponent)
                 modalRef.componentInstance.tables = this.tables;
