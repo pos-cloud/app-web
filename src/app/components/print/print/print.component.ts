@@ -2014,16 +2014,16 @@ export class PrintComponent implements OnInit {
         this.doc.setFontSize(this.fontSizes.normal);
         this.doc.text("Fecha", margin, 77);
         this.doc.text("Tipo Comp.", 25, 77);
-        this.doc.text("Nro. Comprobante", 70, 77);
-        if (this.params.detailsPaymentMethod) {
+        this.doc.text("Nro. Comprobante", 90, 77);
+        /*if (this.params.detailsPaymentMethod) {
             this.doc.text("Monto", 90, 77);
             this.doc.text("Método", 110, 77);
         } else {
             this.doc.text("Monto", 110, 77);
-        }
+        }*/
         this.doc.text("Debe", 145, 77);
         this.doc.text("Haber", 165, 77);
-        this.doc.text("Saldo", 185, 77);
+        this.doc.text("Saldo", 195, 77);
         this.doc.setFontType('normal');
 
         // Nombre del comprobante
@@ -2049,20 +2049,32 @@ export class PrintComponent implements OnInit {
                     this.doc.text(item.transactionTypeName.slice(0, 15), 25, row);
                 }
                 if (Config.country === 'AR') {
-                    this.doc.text(this.padString(item.transactionOrigin, 4) + "-" + item.transactionLetter + "-" + this.padString(item.transactionNumber, 10), 70, row);
+                    this.doc.text(this.padString(item.transactionOrigin, 4) + "-" + item.transactionLetter + "-" + this.padString(item.transactionNumber, 10), 90, row);
                 } else {
-                    this.doc.text(item.transactionLetter + "-" + this.padString(item.transactionNumber, 10), 70, row);
+                    this.doc.text(item.transactionLetter + "-" + this.padString(item.transactionNumber, 10), 90, row);
                 }
-                if (this.params.detailsPaymentMethod) {
-                    this.doc.text("$ " + this.roundNumber.transform(item.transactionTotalPrice), 90, row);
+                item.transactionTotalPrice = this.roundNumber.transform(item.transactionTotalPrice, 2).toFixed(2);
+
+                /*if (this.params.detailsPaymentMethod) {
+                this.doc.textEx("$ " + new Intl.NumberFormat("de-DE", { minimumFractionDigits: 2 }).format(item.transactionTotalPrice), 99, row, 'right', 'middle');
                     this.doc.text(item.paymentMethodName.slice(0, 22), 110, row);
                 } else {
-                    this.doc.text("$ " + this.roundNumber.transform(item.transactionTotalPrice), 110, row);
-                }
-                this.doc.text("$ " + this.roundNumber.transform(item.debe), 145, row);
-                this.doc.text("$ " + this.roundNumber.transform(item.haber), 165, row);
+                    this.doc.textEx("$ " + new Intl.NumberFormat("de-DE", { minimumFractionDigits: 2 }).format(item.transactionTotalPrice), 125, row, 'right', 'middle');
+                }*/
+
+                item.debe = this.roundNumber.transform(item.debe, 2).toFixed(2);
+                item.haber = this.roundNumber.transform(item.haber, 2).toFixed(2);
+                item.balance = this.roundNumber.transform(item.balance, 2).toFixed(2);
+
+                this.doc.textEx("$ " + new Intl.NumberFormat("de-DE", { minimumFractionDigits: 2 }).format(item.debe), 160, row, 'right', 'middle');
+                this.doc.textEx("$ " + new Intl.NumberFormat("de-DE", { minimumFractionDigits: 2 }).format(item.haber), 180, row, 'right', 'middle');
                 this.doc.setFontType('bold');
-                this.doc.text("$ " + this.roundNumber.transform(item.balance), 185, row);
+                this.doc.textEx("$ " + new Intl.NumberFormat("de-DE", { minimumFractionDigits: 2 }).format(item.balance), 205, row, 'right', 'middle');
+
+                /* this.doc.text("$ " + this.roundNumber.transform(item.debe), 145, row);
+                 this.doc.text("$ " + this.roundNumber.transform(item.haber), 165, row);
+                 this.doc.setFontType('bold');
+                 this.doc.text("$ " + this.roundNumber.transform(item.balance), 185, row);*/
                 this.doc.setFontType('normal');
 
                 row += 8;
@@ -2074,7 +2086,7 @@ export class PrintComponent implements OnInit {
 
                     this.doc.setFontType("bold");
                     this.doc.text("TRANSPORTE:".toString(), 25, row);
-                    this.doc.text("$" + this.roundNumber.transform(item.balance).toString(), 185, row);
+                    this.doc.textEx("$ " + new Intl.NumberFormat("de-DE", { minimumFractionDigits: 2 }).format(item.balance), 194, row, 'right', 'middle');
 
                     this.getGreeting();
                     this.getFooter();
@@ -2084,7 +2096,7 @@ export class PrintComponent implements OnInit {
 
                     this.doc.setFontType("bold");
                     this.doc.text("TRANSPORTE:".toString(), 25, row);
-                    this.doc.text("$" + this.roundNumber.transform(item.balance).toString(), 185, row);
+                    this.doc.textEx("$ " + new Intl.NumberFormat("de-DE", { minimumFractionDigits: 2 }).format(item.balance), 194, row, 'right', 'middle');
                     row += 5;
 
                     this.getHeader(false);
@@ -2118,7 +2130,8 @@ export class PrintComponent implements OnInit {
         this.doc.setFontType('bold');
         this.doc.setFontSize(this.fontSizes.large);
         this.doc.text("Saldo de la Cuenta Corriente", margin, 246);
-        this.doc.text("$ " + this.roundNumber.transform(this.balance), 175, 246);
+        this.balance = this.roundNumber.transform(this.balance, 2).toFixed(2);
+        this.doc.textEx("$ " + new Intl.NumberFormat("de-DE", { minimumFractionDigits: 2 }).format(this.balance), 175, 246, 'right', 'middle');
         this.doc.line(0, 250, 240, 250);
 
         this.getGreeting();
@@ -2683,7 +2696,7 @@ export class PrintComponent implements OnInit {
                         this.doc.setFontType('normal');
                         this.doc.text("$ " + this.roundNumber.transform(tax.taxAmount), 173, rowTotals);
                         subtotal -= this.roundNumber.transform(tax.taxAmount);
-                        if(tax.tax.classification === TaxClassification.Tax) neto = neto + this.roundNumber.transform(tax.taxBase);
+                        if (tax.tax.classification === TaxClassification.Tax) neto = neto + this.roundNumber.transform(tax.taxBase);
                     }
                 }
 
@@ -3226,9 +3239,9 @@ export class PrintComponent implements OnInit {
         if (this.transaction && this.transaction.type && this.transaction.type.electronics) {
             this._printService.saveFile(this.doc.output('blob'), 'invoice', this.transactionId);
         } else if (this.source === "mail") {
-            if(this.transaction){
+            if (this.transaction) {
                 this._printService.saveFile(this.doc.output('blob'), 'others', this.transactionId);
-            }else if (!this.transaction && this.typePrint === 'current-account' ){
+            } else if (!this.transaction && this.typePrint === 'current-account') {
                 this._printService.saveFile(this.doc.output('blob'), 'others', this.typePrint);
             }
         }
@@ -3242,9 +3255,9 @@ export class PrintComponent implements OnInit {
 
 
         //jackson
-        //this.doc.line(0, row, 80, row);
-        //row += 40
-        //this.doc.line(0, row, 80, row);
+        this.doc.line(0, row, 80, row);
+        row += 40
+        this.doc.line(0, row, 80, row);
 
         this.doc.setFontType('bold');
         this.doc.setFontSize(this.fontSizes.large);
@@ -3263,7 +3276,7 @@ export class PrintComponent implements OnInit {
         this.doc.setFontType('normal');
         this.doc.text("Fecha: " + this.transaction.startDate.substring(0, 5), margin, row);
         row += 5;
-        if(this.transaction.updateDate){
+        if (this.transaction.updateDate) {
             this.doc.text("Hora: " + this.transaction.updateDate.substring(11, 13) + ":" + this.transaction.updateDate.substring(15, 17), margin, row);
 
         } else {
@@ -3301,8 +3314,8 @@ export class PrintComponent implements OnInit {
         this.doc.setFontType('normal');
         this.doc.setFontSize(this.fontSizes.normal);
         //jacksonburgs
-        //this.doc.setFontType('bold');
-        //this.doc.setFontSize(this.fontSizes.large);
+        this.doc.setFontType('bold');
+        this.doc.setFontSize(this.fontSizes.large);
         if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
             for (let movementOfArticle of this.movementsOfArticles) {
                 row += 5;
