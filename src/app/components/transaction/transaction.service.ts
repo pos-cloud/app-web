@@ -301,6 +301,25 @@ export class TransactionService extends ModelService {
       }
     }
 
+    delete transaction.relationType;
+    delete transaction.useOfCFDI;
+    delete transaction.cashBox;
+    delete transaction.currency;
+    delete transaction.table;
+    delete transaction.employeeOpening;
+    delete transaction.employeeClosing;
+    delete transaction.deliveryAddress;
+    delete transaction.branchOrigin;
+    delete transaction.branchDestination;
+    delete transaction.depositOrigin;
+    delete transaction.depositDestination;
+    delete transaction.transport;
+    delete transaction.shipmentMethod;
+    delete transaction.priceList;
+    delete transaction.account;
+    delete transaction.creationUser;
+    delete transaction.updateUser;
+
     if (canceledTransactions) {
       body = 'transaction=' + JSON.stringify(transaction) + '&' +
         'canceledTransactions=' + JSON.stringify(canceledTransactions) + '&' +
