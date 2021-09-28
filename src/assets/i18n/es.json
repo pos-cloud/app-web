@@ -443,6 +443,7 @@
     "sunday": "Domingo",
     "codes": "Códigos",
     "category": "Categoría",
+    "category.parent.description" : "Categoría Padre",
     "visibleOnSale": "Visible para la venta",
     "visibleOnPurchase": "Visible para la compra",
     "visibleInvoice": "Visible en la factura",
