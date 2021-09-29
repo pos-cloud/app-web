@@ -283,7 +283,7 @@ export class PosKitchenComponent {
             this._movementOfArticleService.getMovementsOfArticlesV2(
                 project, // PROJECT
                 match, // MATCH
-                {}, // SORT
+                { "transaction.endDate" : -1 }, // SORT
                 {}, // GROUP
                 0, // LIMIT
                 0 // SKIP
