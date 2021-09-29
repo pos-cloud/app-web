@@ -477,4 +477,22 @@ export class TransactionService extends ModelService {
       })
     );
   }
+
+  public setOrderNumber(transaction: Transaction): Observable<any> {
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http.post(`${Config.apiV8URL}set-order-number/`,{ transaction : transaction }, {
+      headers: headers
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 }
