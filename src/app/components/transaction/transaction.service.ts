@@ -319,6 +319,13 @@ export class TransactionService extends ModelService {
     delete transaction.account;
     delete transaction.creationUser;
     delete transaction.updateUser;
+    delete transaction.company.priceList;
+    delete transaction.tracking;
+    delete transaction.type.audits;
+    delete transaction.type.fastPayment;
+    delete transaction.type.defectPrinter;
+    delete transaction.type.paymentMethods;
+    delete transaction.type.requestEmployee;
 
     if (canceledTransactions) {
       body = 'transaction=' + JSON.stringify(transaction) + '&' +
@@ -328,7 +335,7 @@ export class TransactionService extends ModelService {
       body = 'transaction=' + JSON.stringify(transaction) + '&' +
         'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"' + Config.database + '"}';
     }
-
+    
     return this._http.post(URL, body, {
       headers: headers
     }).pipe(

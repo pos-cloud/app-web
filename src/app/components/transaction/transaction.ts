@@ -78,6 +78,7 @@ export class Transaction {
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     public updateUser: User;
     public updateDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+    public tracking: { date: string, state: TransactionState }[];
 
     constructor() { }
 }
