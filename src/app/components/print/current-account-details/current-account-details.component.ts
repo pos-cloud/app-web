@@ -20,6 +20,8 @@ import { Employee } from 'app/components/employee/employee';
 import { ConfigService } from 'app/components/config/config.service';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
+import { CompanyGroup } from 'app/components/company-group/company-group';
+import { CompanyGroupService } from 'app/components/company-group/company-group.service';
 
 var splitRegex = /\r\n|\r|\n/g;
 jsPDF.API.textEx = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
@@ -113,6 +115,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
     public withImage: boolean = false;
     public items = [];
     public employees: Employee[];
+    public companyGroups: CompanyGroup[];
     public Client
     public Provider;
     public fontSizes = JSON.parse(`{"xsmall" : 5,
@@ -141,10 +144,11 @@ export class CurrentAccountDetailsComponent implements OnInit {
         "allowSearchFilter": true
     }
 
-    public startDate : string;
-    public endDate : string;
+    public startDate: string;
+    public endDate: string;
     public employee;
     public withDetails;
+    public companyGroup : string;
 
     constructor(
         public _transactionService: TransactionService,
@@ -152,6 +156,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
         public _configService: ConfigService,
         public _transactionTypeService: TransactionTypeService,
         public _employeeService: EmployeeService,
+        public _companyGroup: CompanyGroupService,
         public _fb: FormBuilder,
         public _router: Router,
         public _companyService: CompanyService,
@@ -163,6 +168,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
         this.pageWidth = 210 * 100 / 35.27751646284102;
         this.pageHigh = 297 * 100 / 35.27751646284102;
         this.getEmployees();
+        this.getGroups();
     }
 
     async ngOnInit() {
@@ -198,6 +204,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
             'emails': ['', []],
             'company': ['', []],
             'employee': ['', []],
+            'companyGroup': ['', []],
             'withDetails': [false, [
                 Validators.required
             ]]
@@ -321,6 +328,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 "company.phones": 1,
                 "company.emails": 1,
                 "company.type": 1,
+                "company.group" : 1,
                 "company.identificationType.name": 1,
                 "company.identificationValue": 1,
                 "company.vatCondition.description": 1,
@@ -612,6 +620,10 @@ export class CurrentAccountDetailsComponent implements OnInit {
             match += `"company.employee._id": { "$oid" : "${this.companyForm.value.employee}"},`
         }
 
+        if(this.companyGroup){
+            match += `"company.group" : { "$oid" : "${this.companyGroup}" },`
+        }
+
         if (this.companyForm.value.endDate) {
 
             let timezone = "-03:00";
@@ -859,6 +871,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                         "transaction.company.employee.name": 1,
                         "transaction.company.operationType": 1,
                         "transaction.company.state.name": 1,
+                        "transaction.company.group" : 1,
                         "transaction.type.currentAccount": 1,
                         "transaction.type.movement": 1,
                         "transaction.type.labelPrint": 1,
@@ -868,7 +881,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                         "transaction.operationType": 1,
                         "transaction.number": 1,
                         "transaction.origin": 1,
-                        "transaction.totalPrice" : 1,
+                        "transaction.totalPrice": 1,
                         "transaction.letter": 1,
                         "trasaction.expirationDate": 1,
                         "transaction.endDate": 1,
@@ -1129,15 +1142,19 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 match += `"transaction.company.employee._id": { "$oid" : "${this.employee}"},`
             }
 
+            if(this.companyGroup){
+                match += `"transaction.company.group" : { "$oid" : "${this.companyGroup}" },`
+            }
+
             if (this.startDate && this.endDate) {
-    
+
                 let timezone = "-03:00";
                 if (Config.timezone && Config.timezone !== '') {
                     timezone = Config.timezone.split('UTC')[1];
                 }
 
                 match += `"transaction.endDate" : { "$gte": {"$date": "${this.startDate}T00:00:00${timezone}" }, "$lte": {"$date": "${this.endDate}T23:59:59${timezone}"} },`
-    
+
                 /*match += `"transaction.endDate" : { "$gte": {"$date": "${this.startDate}T00:00:00${timezone}"}},`
                 match += `"transaction.endDate" : { "$lte": {"$date": "${this.endDate}T23:59:59${timezone}"}},`*/
             }
@@ -1370,20 +1387,20 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 data[y]["Dirección"] = company.address;
                 data[y]["Telefono"] = company.phones;
                 data[y]["Correo"] = company.emails;
-                if(company.employee){
+                if (company.employee) {
                     data[y]["Empleado"] = company.employee.name;
                 } else {
                     data[y]["Empleado"] = "";
                 }
                 data[y]["Balance"] = this.roundNumber.transform(items[i]["balance"]).toFixed(2);
-                data[y]["Balance"] = parseFloat(data[y]["Balance"].replace('.',','));
+                data[y]["Balance"] = parseFloat(data[y]["Balance"].replace('.', ','));
                 y++;
-                if(this.withDetails){
+                if (this.withDetails) {
                     y++;
                     for (let t = 0; t < items[i]['transactions']['length']; t++) {
-                        
+
                         const element = items[i]['transactions'][t];
-                        
+
                         data[y] = {};
                         data[y]["Nombre"] = "";
                         data[y]["Nombre"] = '';
@@ -1496,19 +1513,50 @@ export class CurrentAccountDetailsComponent implements OnInit {
         });
     }
 
+    public getGroups() {
+
+        let project = {
+            description: 1,
+            operationType: 1
+        }
+
+        let match = {
+            "operationType": { "$ne": "D" }
+        }
+
+            this._companyGroup.getAll({
+                project: project,
+                match: match,
+                sort: { description: 1 },
+                limit: 10
+            }).subscribe(
+                result => {
+                    if(result && result.status === 200){
+                        this.companyGroups = result.result;
+                    } else {
+                        this.companyGroups = [];
+                    }
+                },
+                error => {
+                    this.showMessage(error._body, 'danger', false);
+                    this.loading = false;
+                }
+            )
+    }
+
     public getTransactionTypes(): Promise<TransactionType[]> {
 
         return new Promise<TransactionType[]>((resolve, reject) => {
 
             var transactionMovement;
-            if(this.companyType === CompanyType.Client) transactionMovement = 'Venta'
-            if(this.companyType === CompanyType.Provider) transactionMovement = 'Compra'
+            if (this.companyType === CompanyType.Client) transactionMovement = 'Venta'
+            if (this.companyType === CompanyType.Provider) transactionMovement = 'Compra'
 
             let match = {}
 
             match = {
-                transactionMovement : transactionMovement,
-                $or : [ {"currentAccount" : "Si"}, { "currentAccount" : "Cobra"} ]
+                transactionMovement: transactionMovement,
+                $or: [{ "currentAccount": "Si" }, { "currentAccount": "Cobra" }]
             }
 
             this._transactionTypeService.getAll({
@@ -1517,7 +1565,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     transactionMovement: 1,
                     operationType: 1,
                     name: 1,
-                    currentAccount : 1,
+                    currentAccount: 1,
                     branch: 1,
                 },
                 match: match
