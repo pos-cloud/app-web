@@ -1726,7 +1726,31 @@ export class PointOfSaleComponent implements OnInit {
             this._transactionService.validateElectronicTransactionAR(transaction, movementsOfCancellations).subscribe(
                 async result => {
                     let msn = '';
-                    if (result && result.status != 0) {
+                    if (result && result.CAE) {
+                        transaction.number = result.number;
+                        transaction.CAE = result.CAE;
+                        transaction.CAEExpirationDate = moment(result.CAEExpirationDate, 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DDTHH:mm:ssZ");
+                        transaction.state = state;
+                        await this.updateTransaction(transaction).then(
+                            transaction => {
+                                if (transaction) {
+                                    if (this.transaction && this.transaction.type.printable) {
+                                        this.refresh();
+                                        if (this.transaction.type.defectPrinter) {
+                                            this.printerSelected = this.printerSelected;
+                                            this.openModal("print");
+                                        } else {
+                                            this.openModal("printers");
+                                        }
+                                    } else if (this.transaction && this.transaction.type.requestEmailTemplate) {
+                                        this.openModal('send-email');
+                                    } else {
+                                        this.refresh();
+                                    }
+                                }
+                            }
+                        );
+                    } else if (result && result.status != 0) {
                         if (result.status === 'err') {
                             if (result.code && result.code !== '') {
                                 msn += result.code + " - ";
@@ -1777,29 +1801,10 @@ export class PointOfSaleComponent implements OnInit {
                             this.showMessage(result.message, 'info', true);
                             this.saveClaim('ERROR FE AR ' + moment().format('DD/MM/YYYY HH:mm') + " : " + "ERROR AL CONECTAR ", result.message);
                         } else {
-                            transaction.number = result.number;
-                            transaction.CAE = result.CAE;
-                            transaction.CAEExpirationDate = moment(result.CAEExpirationDate, 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DDTHH:mm:ssZ");
-                            transaction.state = state;
-                            await this.updateTransaction(transaction).then(
-                                transaction => {
-                                    if (transaction) {
-                                        if (this.transaction && this.transaction.type.printable) {
-                                            this.refresh();
-                                            if (this.transaction.type.defectPrinter) {
-                                                this.printerSelected = this.printerSelected;
-                                                this.openModal("print");
-                                            } else {
-                                                this.openModal("printers");
-                                            }
-                                        } else if (this.transaction && this.transaction.type.requestEmailTemplate) {
-                                            this.openModal('send-email');
-                                        } else {
-                                            this.refresh();
-                                        }
-                                    }
-                                }
-                            );
+                            if (msn === '') {
+                                msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
+                            }
+                            this.showMessage(msn, 'info', true);
                         }
                     } else {
                         if (msn === '') {

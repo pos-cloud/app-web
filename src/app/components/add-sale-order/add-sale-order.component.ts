@@ -1666,7 +1666,24 @@ export class AddSaleOrderComponent {
         this._transactionService.validateElectronicTransactionAR(this.transaction, this.movementsOfCancellations, this.canceledTransactionsAFIP).subscribe(
             result => {
                 let msn = '';
-                if (result && result.status != 0) {
+                if (result && result.CAE) {
+                    this.transaction.number = result.number;
+                    this.transaction.CAE = result.CAE;
+                    this.transaction.CAEExpirationDate = moment(result.CAEExpirationDate, 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DDTHH:mm:ssZ");
+                    if (this.canceledTransactions) {
+                        let name: string;
+                        for (let canc of this.cancellationTypes) {
+                            if (canc.origin._id === this.canceledTransactions.typeId) name = canc.origin.name;
+                        }
+                        this.transaction.observation += ` Corresponde a ${name} ${this.canceledTransactions.origin}-${this.canceledTransactions.letter}-${this.canceledTransactions.number}`;
+                    }
+                    if (this.transaction.type.finishState) {
+                        this.transaction.state = this.transaction.type.finishState;
+                    } else {
+                        this.transaction.state = TransactionState.Closed;
+                    }
+                    this.finish();
+                } else if (result && result.status != 0) {
                     if (result.status === 'err') {
                         if (result.code && result.code !== '') {
                             msn += result.code + " - ";
@@ -1715,22 +1732,10 @@ export class AddSaleOrderComponent {
                     } else if (result.message) {
                         this.showMessage(result.message, 'info', true);
                     } else {
-                        this.transaction.number = result.number;
-                        this.transaction.CAE = result.CAE;
-                        this.transaction.CAEExpirationDate = moment(result.CAEExpirationDate, 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DDTHH:mm:ssZ");
-                        if (this.canceledTransactions) {
-                            let name: string;
-                            for (let canc of this.cancellationTypes) {
-                                if (canc.origin._id === this.canceledTransactions.typeId) name = canc.origin.name;
-                            }
-                            this.transaction.observation += ` Corresponde a ${name} ${this.canceledTransactions.origin}-${this.canceledTransactions.letter}-${this.canceledTransactions.number}`;
+                        if (msn === '') {
+                            msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
                         }
-                        if (this.transaction.type.finishState) {
-                            this.transaction.state = this.transaction.type.finishState;
-                        } else {
-                            this.transaction.state = TransactionState.Closed;
-                        }
-                        this.finish();
+                        this.showMessage(msn, 'info', true);
                     }
                 } else {
                     if (msn === '') {
