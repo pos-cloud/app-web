@@ -273,8 +273,8 @@ export class TransactionService extends ModelService {
     } = null): Observable<any> {
 
     //const URL = `${Config.apiURL_FE_AR}`;
-    const URL = `http://vps-1883265-x.dattaweb.com/libs/fe/ar/index.php`;
-    //const URL = `http://localhost/libs/fe-ar/index.php`;
+    // const URL = `http://vps-1883265-x.dattaweb.com/libs/fe/ar/index.php`;
+    const URL = `http://localhost/libs/fe-ar/index.php`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/x-www-form-urlencoded');
@@ -319,13 +319,16 @@ export class TransactionService extends ModelService {
     delete transaction.account;
     delete transaction.creationUser;
     delete transaction.updateUser;
-    delete transaction.company.priceList;
     delete transaction.tracking;
-    delete transaction.type.audits;
-    delete transaction.type.fastPayment;
-    delete transaction.type.defectPrinter;
-    delete transaction.type.paymentMethods;
-    delete transaction.type.requestEmployee;
+    if(transaction.company) delete transaction.company.priceList;
+    if(transaction.type) {
+      delete transaction.type.audits;
+      delete transaction.type.fastPayment;
+      delete transaction.type.defectPrinter;
+      delete transaction.type.paymentMethods;
+      delete transaction.type.requestEmployee;
+    }
+    
 
     if (canceledTransactions) {
       body = 'transaction=' + JSON.stringify(transaction) + '&' +
