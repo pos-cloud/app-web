@@ -272,6 +272,8 @@ export class TransactionService extends ModelService {
       Nro: number
     } = null): Observable<any> {
 
+      let transactionAux = Object.assign(new Transaction(), transaction);
+
     //const URL = `${Config.apiURL_FE_AR}`;
     const URL = `http://vps-1883265-x.dattaweb.com/libs/fe/ar/index.php`;
     //const URL = `http://localhost/libs/fe-ar/index.php`;
@@ -301,44 +303,44 @@ export class TransactionService extends ModelService {
       }
     }
 
-    delete transaction.relationType;
-    delete transaction.useOfCFDI;
-    delete transaction.cashBox;
-    delete transaction.currency;
-    delete transaction.table;
-    delete transaction.employeeOpening;
-    delete transaction.employeeClosing;
-    delete transaction.deliveryAddress;
-    delete transaction.branchOrigin;
-    delete transaction.branchDestination;
-    delete transaction.depositOrigin;
-    delete transaction.depositDestination;
-    delete transaction.transport;
-    delete transaction.shipmentMethod;
-    delete transaction.priceList;
-    delete transaction.account;
-    delete transaction.creationUser;
-    delete transaction.updateUser;
-    delete transaction.tracking;
-    if(transaction.company) delete transaction.company.priceList;
-    if(transaction.type) {
-      delete transaction.type.audits;
-      delete transaction.type.fastPayment;
-      delete transaction.type.defectPrinter;
-      delete transaction.type.paymentMethods;
-      delete transaction.type.requestEmployee;
+    delete transactionAux.relationType;
+    delete transactionAux.useOfCFDI;
+    delete transactionAux.cashBox;
+    delete transactionAux.currency;
+    delete transactionAux.table;
+    delete transactionAux.employeeOpening;
+    delete transactionAux.employeeClosing;
+    delete transactionAux.deliveryAddress;
+    delete transactionAux.branchOrigin;
+    delete transactionAux.branchDestination;
+    delete transactionAux.depositOrigin;
+    delete transactionAux.depositDestination;
+    delete transactionAux.transport;
+    delete transactionAux.shipmentMethod;
+    delete transactionAux.priceList;
+    delete transactionAux.account;
+    delete transactionAux.creationUser;
+    delete transactionAux.updateUser;
+    delete transactionAux.tracking;
+    if (transactionAux.company) delete transactionAux.company.priceList;
+    if (transactionAux.type) {
+      delete transactionAux.type.audits;
+      delete transactionAux.type.fastPayment;
+      delete transactionAux.type.defectPrinter;
+      delete transactionAux.type.paymentMethods;
+      delete transactionAux.type.requestEmployee;
     }
-    
+
 
     if (canceledTransactions) {
-      body = 'transaction=' + JSON.stringify(transaction) + '&' +
+      body = 'transaction=' + JSON.stringify(transactionAux) + '&' +
         'canceledTransactions=' + JSON.stringify(canceledTransactions) + '&' +
         'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"' + Config.database + '"}';
     } else {
-      body = 'transaction=' + JSON.stringify(transaction) + '&' +
+      body = 'transaction=' + JSON.stringify(transactionAux) + '&' +
         'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"' + Config.database + '"}';
     }
-    
+
     return this._http.post(URL, body, {
       headers: headers
     }).pipe(
@@ -494,7 +496,7 @@ export class TransactionService extends ModelService {
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    return this._http.post(`${Config.apiV8URL}set-order-number/`,{ transaction : transaction }, {
+    return this._http.post(`${Config.apiV8URL}set-order-number/`, { transaction: transaction }, {
       headers: headers
     }).pipe(
       map(res => {
