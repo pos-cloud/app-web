@@ -94,6 +94,7 @@
     "credit": "Haber",
     "currency.name": "Moneda",
     "database not indicated in loggingIn": "base de datos no indicada en loggingIn",
+    "clientId not indicated in loggingIn": "Id de cliente no indicada en loggingIn",
     "database not indicated in registration": "Base de datos no indicada en el registro",
     "date": "Fecha",
     "debit": "Debe",
