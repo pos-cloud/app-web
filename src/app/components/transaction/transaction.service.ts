@@ -273,8 +273,8 @@ export class TransactionService extends ModelService {
     } = null): Observable<any> {
 
     //const URL = `${Config.apiURL_FE_AR}`;
-    // const URL = `http://vps-1883265-x.dattaweb.com/libs/fe/ar/index.php`;
-    const URL = `http://localhost/libs/fe-ar/index.php`;
+    const URL = `http://vps-1883265-x.dattaweb.com/libs/fe/ar/index.php`;
+    //const URL = `http://localhost/libs/fe-ar/index.php`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/x-www-form-urlencoded');
