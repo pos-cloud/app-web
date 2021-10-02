@@ -3745,9 +3745,9 @@ export class PrintComponent implements OnInit {
                 if (movementOfArticle.salePrice > 0) {
 
                     this.row += 6;
-                    this.doc.text(movementOfArticle.description.slice(0, 27), margin, this.row);
+                    this.doc.text(movementOfArticle.description.slice(0, 25), margin, this.row);
                     this.doc.text(this.roundNumber.transform(movementOfArticle.amount) + " x " + this.roundNumber.transform((movementOfArticle.salePrice + (movementOfArticle.transactionDiscountAmount * movementOfArticle.amount)) / movementOfArticle.amount).toString(), margin, this.row + 3);
-                    this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice + (movementOfArticle.transactionDiscountAmount * movementOfArticle.amount)).toString(), width - 15, this.row);
+                    this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice + (movementOfArticle.transactionDiscountAmount * movementOfArticle.amount)).toString(), width - 13, this.row);
 
                     if (movementOfArticle.notes && movementOfArticle.notes !== "") {
                         this.row += 6;
@@ -3798,13 +3798,16 @@ export class PrintComponent implements OnInit {
         }
 
         if (this.movementsOfCashes) {
+            this.row += 5;
+            this.doc.setFontType('bold');
+            this.doc.text("Forma de Pago:", margin, this.row)
+
             this.movementsOfCashes.forEach(element => {
                 this.row += 5;
-                this.doc.setFontType('bold');
-                this.doc.text("Forma de Pago: " + element.type.name, margin, this.row)
-                this.doc.setFontStyle("normal");
+                this.doc.setFontType('normal');
+                this.doc.text(`${element.type.name} : $ ${parseFloat(this.roundNumber.transform(element.amountPaid))}`, margin, this.row);
+
                 if (element && element.paymentChange > 0) {
-                    this.row += 5;
                     this.doc.text("Paga con: $ " + (element.paymentChange + element.amountPaid).toString(), margin, this.row)
                     this.row += 5;
                     this.doc.text("Su vuelto es: $ " + element.paymentChange.toString(), margin, this.row)
