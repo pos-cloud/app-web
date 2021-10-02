@@ -92,6 +92,17 @@
                         </button>
                     </div>
                 </div>
+                <div class="item-header" *ngIf="transaction?.type?.optionalAFIP">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-light"
+                            (click)="openModal('change-optional-afip')">
+                            Opcional AFIP: {{ transaction?.opctionalAFIP?.value }}
+                        </button>
+                        <button type="button" class="btn btn-light fa fa-exchange"
+                            (click)="openModal('change-optional-afip')">
+                        </button>
+                    </div>
+                </div>
                 <div class="item-header"
                     *ngIf="transaction?.company && transaction?.type?.requestTransport">
                     <div class="btn-group">
@@ -521,6 +532,30 @@
     <div class="modal-footer">
         <button type="button" class="btn btn-light" (click)="c('cancel')">Cancelar</button>
         <button type="submit" class="btn btn-primary" (click)="c('y')">
+            <span>Cambiar</span>
+        </button>
+    </div>
+</ng-template>
+
+<!--MODAL CAMBIAR OPCIONAL-->
+<ng-template #contentOptionalAFIP let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">Opcional</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('close_click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <input type="text" class="form-control" [(ngModel)]="optionalAFIP" placeholder="Opcional"
+                    [focus]="focusEvent">
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="c('cancel')">Cancelar</button>
+        <button type="submit" class="btn btn-primary" (click)="c(optionalAFIP)">
             <span>Cambiar</span>
         </button>
     </div>

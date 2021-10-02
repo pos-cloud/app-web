@@ -91,6 +91,7 @@ import { SelectPriceListComponent } from '../price-list/select-price-list/select
 
 export class AddSaleOrderComponent {
 
+    public optional : string = '';
     transaction: Transaction;
     transactionId: string;
     transactionMovement: string;
@@ -114,6 +115,7 @@ export class AddSaleOrderComponent {
     @ViewChild('contentPrinters', { static: true }) contentPrinters: ElementRef;
     @ViewChild('contentMessage', { static: true }) contentMessage: ElementRef;
     @ViewChild('contentChangeDate', { static: true }) contentChangeDate: ElementRef;
+    @ViewChild('contentOptionalAFIP', { static: true }) contentChangeOptionalAFIP: ElementRef;
     @ViewChild('contentChangeObservation', { static: true }) contentChangeObservation: ElementRef;
     @ViewChild('contentChangeQuotation', { static: true }) contentChangeQuotation: ElementRef;
     @ViewChild('contentInformCancellation', { static: true }) contentInformCancellation: ElementRef;
@@ -2269,6 +2271,29 @@ export class AddSaleOrderComponent {
                                 }
                             );
                         }
+                    }
+                }, (reason) => {
+                });
+                break;
+            case 'change-optional-afip':
+                modalRef = this._modalService.open(this.contentChangeOptionalAFIP).result.then(async (result) => {
+                    if (result !== "cancel" && result !== '') {
+                        console.log(result);
+                        this.transaction.opctionalAFIP = {
+                            id : this.transaction.type.optionalAFIP,
+                            value : result
+                        }
+                        this.optional = result.value;
+
+                        console.log(this.transaction);
+                        await this.updateTransaction().then(
+                            async transaction => {
+                                if (transaction) {
+                                    this.transaction = transaction;
+                                    this.lastQuotation = this.transaction.quotation;
+                                }
+                            }
+                        );
                     }
                 }, (reason) => {
                 });
