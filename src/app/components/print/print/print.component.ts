@@ -2001,12 +2001,12 @@ export class PrintComponent implements OnInit {
         }
     }
 
-    public toPrintCurrentAccount(): void {
+    async toPrintCurrentAccount() {
 
         let transport = 0;
         let margin = 5;
 
-        this.getHeader(false);
+        await this.getHeader(true);
         this.getClient();
 
         // Encabezado de la tabla de Detalle de transacciones
