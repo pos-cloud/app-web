@@ -514,6 +514,7 @@
     "menu.money" :"Fondos",
     "menu.production" :"Produccion",
     "meliId": "Id MercadoLibre",
+    "optionalAFIP" : "Opcional AFIP",
     "categories": "categorías",
     "quantity" : "Cantidad",
     "article" : "Articulo",

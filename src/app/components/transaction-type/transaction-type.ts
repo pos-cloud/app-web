@@ -88,6 +88,7 @@ export class TransactionType extends Model {
     public resetOrderNumber : string;
     public allowAccounting : boolean = false;
     public finishState : TransactionState;
+    public optionalAFIP : string;
     public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     public updateUser: User;
@@ -423,6 +424,11 @@ export class TransactionType extends Model {
                 align: 'left',
             }, {
                 name: 'company.name',
+                filter: true,
+                datatype: 'string',
+                align: 'left',
+            },{
+                name: 'optionalAFIP',
                 filter: true,
                 datatype: 'string',
                 align: 'left',
