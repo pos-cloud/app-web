@@ -30,13 +30,24 @@
   </ul>
   <ul id="lista2" *ngIf="statusCode?.length > 0">
     <li>
-      No se ingreso ningun codigo: {{statusCode?.length}} Filas => 
+      <!-- No se ingreso ningun codigo: {{statusCode?.length}} Filas => -->
+      {{statusCode[0].message}}: {{statusCode?.length}} Filas =>
     </li>
     <li *ngFor="let item of statusCode;">
       <span class="separador">| </span> {{ item.filaExcel }}
     </li>
 
   </ul>
+
+  <!-- <ul id="lista2" *ngIf="statusCode?.length > 0">
+    <li>
+      Articulos existentes: {{statusCode?.length}} Filas =>
+    </li>
+    <li *ngFor="let item of statusCode;">
+      <span class="separador">| </span> {{ item.filaExcel }}
+    </li>
+
+  </ul> -->
   <form [formGroup]="importForm" (ngSubmit)="import()" autocomplete="off" enctype="multipart/form-data">
 
     <div class="modal-body">
@@ -56,7 +67,8 @@
         </div>
       </div>
     </div>
-    <a href="/assets/modelo_producto.xlsx" target="_self" download>Descargar Modelo</a>
+    <a href="/assets/modelo_producto_actualizar.xlsx" target="_self" download>Descargar Modelo Actulizar</a><br>
+    <a href="/assets/modelo_producto_crear.xlsx" target="_self" download>Descargar Modelo Crear</a>
     <div class="modal-footer">
       <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
       <button type="submit" class="btn btn-primary" [disabled]="">
