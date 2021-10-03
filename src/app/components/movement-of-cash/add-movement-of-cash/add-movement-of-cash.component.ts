@@ -585,12 +585,12 @@ export class AddMovementOfCashComponent implements OnInit {
 
         // VERIFICAR SI EL ULTIMO METODO TIENE CURRENCY Y HAY Q DAR DE ALTA AUTOMATICO LO DAMOS AQUI SINO OBTENEMOS TODO
         if (op !== 'delete' &&
-        this.movementsOfCashes &&
-        this.movementsOfCashes.length > 0 &&
-        this.movementsOfCashes[0].operationType !== 'D' &&
-        this.movementsOfCashes[0].type.currency &&
-        this.currencyNative &&
-        this.movementsOfCashes[0].type.currency.toString() !== this.currencyNative._id.toString()) {
+            this.movementsOfCashes &&
+            this.movementsOfCashes.length > 0 &&
+            this.movementsOfCashes[0].operationType !== 'D' &&
+            this.movementsOfCashes[0].type.currency &&
+            this.currencyNative &&
+            this.movementsOfCashes[0].type.currency.toString() !== this.currencyNative._id.toString()) {
             let lastMovement: MovementOfCash = this.movementsOfCashes[0];
             this.amountPaid = -(lastMovement.amountPaid * this.movementOfCashForm.value.quotationNative);
             for (let paymentMethod of this.paymentMethods) {
@@ -894,45 +894,38 @@ export class AddMovementOfCashComponent implements OnInit {
 
     //FUNCIÓN PARA CONTROLAR QUE LA SUMA DE PRECIO DE ARTÍCULOS SEA IGUAL AL TOTAL DE LA TRANSACCIÓN
     private async closeModal() {
+        try {
+            let totalPrice: number = 0;
 
-        let isValid: boolean = false;
-        let totalPrice: number = 0;
-
-        if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
-            for (let movementOfCash of this.movementsOfCashes) {
-                totalPrice += this.roundNumber.transform(movementOfCash.amountPaid);
-            }
-        }
-
-        if (this.roundNumber.transform(totalPrice) === (this.roundNumber.transform(this.transaction.totalPrice + this.transaction.commissionAmount + this.transaction.administrativeExpenseAmount + this.transaction.otherExpenseAmount))) {
-            isValid = true;
-        } else {
-            isValid = false;
-            this.showToast(null, "info", "La suma de métodos de pago no coincide con el de la transacción.");
-        }
-
-        if (isValid && totalPrice > 0 && this.transaction.totalPrice === 0) {
-            this.transaction.totalPrice = this.roundNumber.transform(totalPrice - this.transaction.commissionAmount - this.transaction.administrativeExpenseAmount - this.transaction.otherExpenseAmount);
-
-            if (this.transaction.type.finishState) {
-                this.transaction.state = this.transaction.type.finishState;
-            } else {
-                this.transaction.state = TransactionState.Closed;
-            }
-
-            await this.updateTransaction().then(
-                transaction => {
-                    if (transaction) {
-                        this.transaction = transaction;
-                        this.closeModal();
-                    }
+            if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
+                for (let movementOfCash of this.movementsOfCashes) {
+                    totalPrice += this.roundNumber.transform(movementOfCash.amountPaid);
                 }
-            );
-        }
+            }
 
-        if (isValid) {
+            if (!(this.roundNumber.transform(totalPrice) === (this.roundNumber.transform(this.transaction.totalPrice + this.transaction.commissionAmount + this.transaction.administrativeExpenseAmount + this.transaction.otherExpenseAmount))))
+                throw new Error("La suma de métodos de pago no coincide con el de la transacción.");
+
+            if (totalPrice > 0 && this.transaction.totalPrice === 0) {
+                this.transaction.totalPrice = this.roundNumber.transform(totalPrice - this.transaction.commissionAmount - this.transaction.administrativeExpenseAmount - this.transaction.otherExpenseAmount);
+
+                if (this.transaction.type.finishState) {
+                    this.transaction.state = this.transaction.type.finishState;
+                } else {
+                    this.transaction.state = TransactionState.Closed;
+                }
+
+                await this.updateTransaction().then(
+                    transaction => {
+                        if (transaction) {
+                            this.transaction = transaction;
+                        }
+                    }
+                );
+            }
+
             this.activeModal.close({ movementsOfCashes: this.movementsOfCashes, movementOfArticle: this.movementOfArticle });
-        }
+        } catch (error) { this.showToast(null, "info", error.message); }
     }
 
     public getMovementsOfCashes(query?: string): Promise<MovementOfCash[]> {
@@ -1175,104 +1168,90 @@ export class AddMovementOfCashComponent implements OnInit {
     async isValidAmount(isCopy: boolean = false) {
 
         return new Promise(async resolve => {
-
-            let isValid: boolean = true;
-
-            if (isValid && this.paymentMethodSelected.checkDetail && !isCopy) {
-                let query = `where="number":"${this.movementOfCashForm.value.number}","type":"${this.paymentMethodSelected._id}","statusCheck":"Disponible"`;
-                await this.getMovementsOfCashes(query).then(
-                    movementsOfCashes => {
-                        if (movementsOfCashes && movementsOfCashes.length > 0) {
-                            isValid = false;
-                            this.showToast(null, 'info', `El ${this.paymentMethodSelected.name} número ${this.movementOfCashForm.value.number} ya existe`);
+            try {
+                if (this.paymentMethodSelected.checkDetail && !isCopy) {
+                    let query = `where="number":"${this.movementOfCashForm.value.number}","type":"${this.paymentMethodSelected._id}","statusCheck":"Disponible"`;
+                    await this.getMovementsOfCashes(query).then(
+                        movementsOfCashes => {
+                            if (movementsOfCashes && movementsOfCashes.length > 0) {
+                                throw new Error(`El ${this.paymentMethodSelected.name} número ${this.movementOfCashForm.value.number} ya existe`);
+                            }
                         }
-                    }
-                );
-            }
+                    );
+                }
 
-            if (isValid && this.transaction.totalPrice !== 0 &&
-                this.roundNumber.transform(this.amountPaid + this.amountToPay) > this.roundNumber.transform(this.transactionAmount + this.totalInterestAmount + this.totalTaxAmount) &&
-                !this.paymentMethodSelected.acceptReturned) {
-                isValid = false;
-                this.showToast(null, 'info', "El medio de pago " + this.paymentMethodSelected.name + " no acepta vuelto, por lo tanto el monto a pagar no puede ser mayor que el de la transacción.");
-            }
+                if (this.transaction.totalPrice !== 0 &&
+                    this.roundNumber.transform(this.amountPaid + this.amountToPay) > this.roundNumber.transform(this.transactionAmount + this.totalInterestAmount + this.totalTaxAmount) &&
+                    !this.paymentMethodSelected.acceptReturned) {
+                    throw new Error("El medio de pago " + this.paymentMethodSelected.name + " no acepta vuelto, por lo tanto el monto a pagar no puede ser mayor que el de la transacción.");
+                }
 
-            if (isValid && this.movementOfCash.discount && this.movementOfCash.discount > 0 &&
-                this.amountToPay > this.roundNumber.transform((this.transaction.totalPrice * this.movementOfCash.discount / 100) + this.transaction.totalPrice) &&
-                !this.paymentMethodSelected.acceptReturned) {
-                isValid = false;
-                this.showToast(null, 'info', "El monto ingresado no puede ser mayor a " + this.roundNumber.transform((this.transaction.totalPrice * this.movementOfCash.discount / 100)) + '.');
-            }
+                if (this.movementOfCash.discount && this.movementOfCash.discount > 0 &&
+                    this.amountToPay > this.roundNumber.transform((this.transaction.totalPrice * this.movementOfCash.discount / 100) + this.transaction.totalPrice) &&
+                    !this.paymentMethodSelected.acceptReturned) {
+                    throw new Error("El monto ingresado no puede ser mayor a " + this.roundNumber.transform((this.transaction.totalPrice * this.movementOfCash.discount / 100)) + '.');
+                }
 
-            if (isValid && this.movementOfCash.surcharge && this.movementOfCash.surcharge > 0 &&
-                this.amountToPay > this.roundNumber.transform((this.transaction.totalPrice * this.movementOfCash.surcharge / 100) + this.transaction.totalPrice) &&
-                !this.paymentMethodSelected.acceptReturned) {
-                isValid = false;
-                this.showToast(null, 'info', "El monto ingresado no puede ser mayor a " + this.roundNumber.transform((this.transaction.totalPrice * this.movementOfCash.surcharge / 100) + this.transaction.totalPrice) + '.');
-            }
+                if (this.movementOfCash.surcharge && this.movementOfCash.surcharge > 0 &&
+                    this.amountToPay > this.roundNumber.transform((this.transaction.totalPrice * this.movementOfCash.surcharge / 100) + this.transaction.totalPrice) &&
+                    !this.paymentMethodSelected.acceptReturned) {
+                    throw new Error("El monto ingresado no puede ser mayor a " + this.roundNumber.transform((this.transaction.totalPrice * this.movementOfCash.surcharge / 100) + this.transaction.totalPrice) + '.');
+                }
 
-            if (isValid && (!this.movementOfCash.expirationDate || !moment(this.movementOfCash.expirationDate).isValid())) {
-                isValid = false;
-                this.showToast(null, 'info', 'Debe ingresar fecha de vencimiento de pago válida');
-            }
+                if ((!this.movementOfCash.expirationDate || !moment(this.movementOfCash.expirationDate).isValid())) {
+                    throw new Error('Debe ingresar fecha de vencimiento de pago válida');
+                }
 
-            if (isValid && (!this.movementOfCash || !this.paymentMethodSelected)) {
-                isValid = false;
-                this.showToast(null, 'info', 'Debe seleccionar un medio de pago válido');
-            }
+                if ((!this.movementOfCash || !this.paymentMethodSelected)) {
+                    throw new Error('Debe seleccionar un medio de pago válido');
+                }
 
-            if (isValid && this.paymentMethodSelected.checkDetail &&
-                (!this.paymentMethodSelected.inputAndOuput ||
-                    this.transaction.type.movement === Movements.Inflows) &&
-                (!this.movementOfCashForm.value.number || this.movementOfCashForm.value.number === '')) {
-                isValid = false;
-                this.showToast(null, 'info', 'Debe completar el numero de comprobante');
-            } else if (isValid && this.paymentMethodSelected.checkDetail &&
-                this.paymentMethodSelected.inputAndOuput &&
-                this.transaction.type.movement === Movements.Outflows &&
-                !isCopy) {
-                isValid = false;
-                this.showToast(null, 'info', 'Debe seleccionar los métodos de pago en cartera a utilizar.');
-            }
+                if (this.paymentMethodSelected.checkDetail &&
+                    (!this.paymentMethodSelected.inputAndOuput ||
+                        this.transaction.type.movement === Movements.Inflows) &&
+                    (!this.movementOfCashForm.value.number || this.movementOfCashForm.value.number === '')) {
+                    throw new Error('Debe completar el numero de comprobante');
+                } else if (this.paymentMethodSelected.checkDetail &&
+                    this.paymentMethodSelected.inputAndOuput &&
+                    this.transaction.type.movement === Movements.Outflows &&
+                    !isCopy) {
+                    throw new Error('Debe seleccionar los métodos de pago en cartera a utilizar.');
+                }
 
-            if (isValid && this.paymentMethodSelected.allowToFinance) {
-                let amountTotal = 0;
-                if (this.movementsOfCashesToFinance && this.movementsOfCashesToFinance.length > 0) {
-                    for (let mov of this.movementsOfCashesToFinance) {
-                        amountTotal = this.roundNumber.transform(amountTotal + mov.amountPaid);
-                        if (!moment(mov.expirationDate).isValid()) {
-                            isValid = false;
-                            this.showToast(null, 'info', 'Debe ingresar fechas de vencimiento de pago válidas');
-                        } else {
-                            if ((moment(mov.expirationDate).diff(moment(this.transaction.startDate), 'days') < 0)) {
-                                isValid = false;
-                                this.showToast(null, 'info', 'La fecha de vencimiento de pago no puede ser menor a la fecha de la transacción');
+                if (this.paymentMethodSelected.allowToFinance) {
+                    let amountTotal = 0;
+                    if (this.movementsOfCashesToFinance && this.movementsOfCashesToFinance.length > 0) {
+                        for (let mov of this.movementsOfCashesToFinance) {
+                            amountTotal = this.roundNumber.transform(amountTotal + mov.amountPaid);
+                            if (!moment(mov.expirationDate).isValid()) {
+                                throw new Error('Debe ingresar fechas de vencimiento de pago válidas');
+                            } else {
+                                if ((moment(mov.expirationDate).diff(moment(this.transaction.startDate), 'days') < 0)) {
+                                    throw new Error('La fecha de vencimiento de pago no puede ser menor a la fecha de la transacción');
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            if (isValid && this.paymentMethodSelected.isCurrentAccount &&
-                !this.transaction.company) {
-                isValid = false;
-                this.showToast(null, 'info', "Debe seleccionar una empresa para poder efectuarse un pago con el método " + this.paymentMethodSelected.name + ".");
-            }
+                if (this.paymentMethodSelected.isCurrentAccount &&
+                    !this.transaction.company) {
+                    throw new Error("Debe seleccionar una empresa para poder efectuarse un pago con el método " + this.paymentMethodSelected.name + ".");
+                }
 
-            if (isValid && this.paymentMethodSelected.isCurrentAccount &&
-                this.transaction.company &&
-                !this.transaction.company.allowCurrentAccount) {
-                isValid = false;
-                this.showToast(null, 'info', "La empresa seleccionada no esta habilitada para cobrar con el método " + this.paymentMethodSelected.name + ".");
-            }
+                if (this.paymentMethodSelected.isCurrentAccount &&
+                    this.transaction.company &&
+                    !this.transaction.company.allowCurrentAccount) {
+                    throw new Error("La empresa seleccionada no esta habilitada para cobrar con el método " + this.paymentMethodSelected.name + ".");
+                }
 
-            if (isValid && this.paymentMethodSelected.isCurrentAccount &&
-                this.transaction.type.currentAccount === CurrentAccount.Charge) {
-                isValid = false;
-                this.showToast(null, 'info', "No se puede elegir el medio de pago " + this.paymentMethodSelected.name + " para el tipo de transacción " + this.transaction.type.name + " .");
-            }
+                if (this.paymentMethodSelected.isCurrentAccount &&
+                    this.transaction.type.currentAccount === CurrentAccount.Charge) {
+                    throw new Error("No se puede elegir el medio de pago " + this.paymentMethodSelected.name + " para el tipo de transacción " + this.transaction.type.name + " .");
+                }
 
-            resolve(isValid);
+                resolve(true);
+            } catch (error) { resolve(false); this.showToast(null, 'info', error.message) }
         });
     }
 
@@ -1406,249 +1385,247 @@ export class AddMovementOfCashComponent implements OnInit {
     }
 
     async areValidAmounts(): Promise<boolean> {
-
         return new Promise<boolean>((resolve, reject) => {
+            try {
+                let paid = 0;
 
-            let paid = 0;
+                for (let mov of this.movementsOfCashes) {
+                    paid += mov.amountPaid;
 
-            for (let mov of this.movementsOfCashes) {
-                paid += mov.amountPaid;
+                    if (!mov.expirationDate || !moment(mov.expirationDate).isValid()) {
+                        throw new Error('Debe ingresar fecha de vencimiento de pago válida');
+                    }
 
-                if (!mov.expirationDate || !moment(mov.expirationDate).isValid()) {
-                    this.showToast(null, 'info', 'Debe ingresar fecha de vencimiento de pago válida');
-                    resolve(false);
+                    if (mov.type.isCurrentAccount &&
+                        !this.transaction.company) {
+                        throw new Error("Debe seleccionar una empresa para poder efectuarse un pago con el método " + mov.type.name + ".");
+                    }
+
+                    if (mov.type.isCurrentAccount &&
+                        this.transaction.company &&
+                        !this.transaction.company.allowCurrentAccount) {
+                        throw new Error("La empresa seleccionada no esta habilitada para cobrar con el método " + mov.type.name + ".");
+                    }
+
+                    if (mov.type.isCurrentAccount &&
+                        this.transaction.type.currentAccount === CurrentAccount.Charge) {
+                        throw new Error("No se puede elegir el medio de pago " + mov.type.name + " para el tipo de transacción " + this.transaction.type.name + " .");
+                    }
                 }
 
-                if (mov.type.isCurrentAccount &&
-                    !this.transaction.company) {
-                    this.showToast(null, 'info', "Debe seleccionar una empresa para poder efectuarse un pago con el método " + mov.type.name + ".");
-                    resolve(false);
+                if (this.roundNumber.transform(paid) > this.roundNumber.transform(this.transactionAmount) && !this.transaction.type.allowZero) {
+                    throw new Error("La suma de monto de medios de pago no puede ser mayor al de la transacción.");
                 }
 
-                if (mov.type.isCurrentAccount &&
-                    this.transaction.company &&
-                    !this.transaction.company.allowCurrentAccount) {
-                    this.showToast(null, 'info', "La empresa seleccionada no esta habilitada para cobrar con el método " + mov.type.name + ".");
-                    resolve(false);
+                if (this.transaction.totalPrice !== 0 && this.roundNumber.transform(paid) <= 0) {
+                    throw new Error("La suma de monto de medios de pago no puede ser menor o igual a 0.");
                 }
 
-                if (mov.type.isCurrentAccount &&
-                    this.transaction.type.currentAccount === CurrentAccount.Charge) {
-                    this.showToast(null, 'info', "No se puede elegir el medio de pago " + mov.type.name + " para el tipo de transacción " + this.transaction.type.name + " .");
-                    resolve(false);
-                }
-            }
+                resolve(true);
 
-            if (this.roundNumber.transform(paid) > this.roundNumber.transform(this.transactionAmount) && !this.transaction.type.allowZero) {
-                this.showToast(null, 'info', "La suma de monto de medios de pago no puede ser mayor al de la transacción.");
-                resolve(false);
-            }
-
-            if (this.transaction.totalPrice !== 0 && this.roundNumber.transform(paid) <= 0) {
-                this.showToast(null, 'info', "La suma de monto de medios de pago no puede ser menor o igual a 0.");
-                resolve(false);
-            }
-
-            resolve(true);
+            } catch (error) { resolve(false); this.showToast(null, 'info', error.message) }
         });
     }
 
     async addMovementOfCash() {
-        if (!this.fastPayment) {
-            if (await this.isValidAmount()) {
-                if (!this.paymentMethodSelected.allowToFinance) {
-                    if (this.roundNumber.transform(this.amountPaid + this.amountToPay) > this.roundNumber.transform(this.transactionAmount)) {
-                        this.movementOfCash.amountPaid = this.roundNumber.transform(this.amountToPay - this.roundNumber.transform(parseFloat(this.movementOfCashForm.value.paymentChange)));
-                    } else {
-                        this.movementOfCash.amountPaid = this.amountToPay;
-                    }
-                    this.movementOfCash.transaction = this.transaction;
-                    this.movementOfCash.paymentChange = this.movementOfCashForm.value.paymentChange;
-                    this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
-                    this.movementOfCash.observation = this.movementOfCashForm.value.observation;
-                    this.movementOfCash.expirationDate = moment(this.movementOfCash.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
-                    this.movementOfCash.interestPercentage = this.movementOfCashForm.value.interestPercentage;
+        this.loading = true;
+        try {
+            if (!this.fastPayment) {
+                if (await this.isValidAmount()) {
+                    if (!this.paymentMethodSelected.allowToFinance) {
+                        if (this.roundNumber.transform(this.amountPaid + this.amountToPay) > this.roundNumber.transform(this.transactionAmount)) {
+                            this.movementOfCash.amountPaid = this.roundNumber.transform(this.amountToPay - this.roundNumber.transform(parseFloat(this.movementOfCashForm.value.paymentChange)));
+                        } else {
+                            this.movementOfCash.amountPaid = this.amountToPay;
+                        }
+                        this.movementOfCash.transaction = this.transaction;
+                        this.movementOfCash.paymentChange = this.movementOfCashForm.value.paymentChange;
+                        this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
+                        this.movementOfCash.observation = this.movementOfCashForm.value.observation;
+                        this.movementOfCash.expirationDate = moment(this.movementOfCash.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
+                        this.movementOfCash.interestPercentage = this.movementOfCashForm.value.interestPercentage;
 
-                    if (this.paymentMethodSelected.allowBank) {
-                        this.movementOfCash.bank = this.movementOfCashForm.value.bank;
-                    } else {
-                        this.movementOfCash.bank = null
-                    }
+                        if (this.paymentMethodSelected.allowBank) {
+                            this.movementOfCash.bank = this.movementOfCashForm.value.bank;
+                        } else {
+                            this.movementOfCash.bank = null
+                        }
 
-                    if (this.paymentMethodSelected.checkDetail) {
-                        this.movementOfCash.receiver = this.movementOfCashForm.value.receiver;
-                        this.movementOfCash.number = this.movementOfCashForm.value.number;
-                        this.movementOfCash.titular = this.movementOfCashForm.value.titular;
-                        this.movementOfCash.bank = this.movementOfCashForm.value.bank;
-                        this.movementOfCash.CUIT = this.movementOfCashForm.value.CUIT;
-                        this.movementOfCash.deliveredBy = this.movementOfCashForm.value.deliveredBy;
-                        this.movementOfCash.statusCheck = StatusCheck.Closed;
-                    } else {
-                        this.movementOfCash.receiver = '';
-                        this.movementOfCash.number = '';
-                        this.movementOfCash.titular = '';
-                        this.movementOfCash.CUIT = '';
-                        this.movementOfCash.deliveredBy = '';
-                        this.movementOfCash.statusCheck = StatusCheck.Closed;
-                    }
+                        if (this.paymentMethodSelected.checkDetail) {
+                            this.movementOfCash.receiver = this.movementOfCashForm.value.receiver;
+                            this.movementOfCash.number = this.movementOfCashForm.value.number;
+                            this.movementOfCash.titular = this.movementOfCashForm.value.titular;
+                            this.movementOfCash.bank = this.movementOfCashForm.value.bank;
+                            this.movementOfCash.CUIT = this.movementOfCashForm.value.CUIT;
+                            this.movementOfCash.deliveredBy = this.movementOfCashForm.value.deliveredBy;
+                            this.movementOfCash.statusCheck = StatusCheck.Closed;
+                        } else {
+                            this.movementOfCash.receiver = '';
+                            this.movementOfCash.number = '';
+                            this.movementOfCash.titular = '';
+                            this.movementOfCash.CUIT = '';
+                            this.movementOfCash.deliveredBy = '';
+                            this.movementOfCash.statusCheck = StatusCheck.Closed;
+                        }
 
-                   
-                    if (this.paymentMethodSelected.inputAndOuput && this.transaction.type.movement === Movements.Inflows) {
-                        this.movementOfCash.statusCheck = StatusCheck.Available;
-                    }
 
-                    if (await this.validateCredit()) {
-                        await this.saveMovementOfCash().then(
-                            async movementOfCash => {
-                                if (movementOfCash) {
-                                    this.movementOfCash = movementOfCash;
-                                    if (this.transactionAmount !== this.transaction.totalPrice) {
-                                        this.transaction.totalPrice = this.transactionAmount;
-                                        if (this.transaction.type.requestArticles) {
-                                            this.addMovementOfArticle();
-                                        } else {
-                                            await this.updateTransaction().then(
-                                                transaction => {
-                                                    if (transaction) {
-                                                        this.transaction = transaction;
-                                                        if (this.keyboard) this.keyboard.setInput('');
-                                                        this.showToast(null, 'success', 'Operación realizada con éxito');
-                                                        this.getMovementOfCashesByTransaction();
-                                                    }
-                                                }
-                                            );
-                                        }
-                                    } else {
-                                        this.movementsOfCashes = new Array();
-                                        this.movementsOfCashes.push(this.movementOfCash);
-                                        if (!this.fastPayment) {
-                                            this.showToast(null, 'success', 'Operación realizada con éxito');
-                                            this.getMovementOfCashesByTransaction();
-                                        } else {
-                                            if (this.amountDiscount && this.amountDiscount !== 0) {
+                        if (this.paymentMethodSelected.inputAndOuput && this.transaction.type.movement === Movements.Inflows) {
+                            this.movementOfCash.statusCheck = StatusCheck.Available;
+                        }
+
+                        if (await this.validateCredit()) {
+                            await this.saveMovementOfCash().then(
+                                async movementOfCash => {
+                                    if (movementOfCash) {
+                                        this.movementOfCash = movementOfCash;
+                                        if (this.transactionAmount !== this.transaction.totalPrice) {
+                                            this.transaction.totalPrice = this.transactionAmount;
+                                            if (this.transaction.type.requestArticles) {
                                                 this.addMovementOfArticle();
                                             } else {
+                                                await this.updateTransaction().then(
+                                                    transaction => {
+                                                        if (transaction) {
+                                                            this.transaction = transaction;
+                                                            if (this.keyboard) this.keyboard.setInput('');
+                                                            this.showToast(null, 'success', 'Operación realizada con éxito');
+                                                            this.getMovementOfCashesByTransaction();
+                                                        }
+                                                    }
+                                                );
+                                            }
+                                        } else {
+                                            this.movementsOfCashes = new Array();
+                                            this.movementsOfCashes.push(this.movementOfCash);
+                                            if (!this.fastPayment) {
                                                 this.showToast(null, 'success', 'Operación realizada con éxito');
                                                 this.getMovementOfCashesByTransaction();
+                                            } else {
+                                                if (this.amountDiscount && this.amountDiscount !== 0) {
+                                                    this.addMovementOfArticle();
+                                                } else {
+                                                    this.showToast(null, 'success', 'Operación realizada con éxito');
+                                                    this.getMovementOfCashesByTransaction();
+                                                }
                                             }
                                         }
                                     }
-                                }
-                                if (this.transaction.type.allowAccounting) {
-                                    this._accountSeatService.addAccountSeatByTransaction(this.transaction._id).subscribe(
-                                        result => {
-                                            if (result && result.status === 200) {
-                                                this.showToast(result);
-                                            } else {
-                                                this.showToast(result);
+                                    if (this.transaction.type.allowAccounting) {
+                                        this._accountSeatService.addAccountSeatByTransaction(this.transaction._id).subscribe(
+                                            result => {
+                                                if (result && result.status === 200) {
+                                                    this.showToast(result);
+                                                } else {
+                                                    this.showToast(result);
+                                                }
+                                            },
+                                            error => {
+                                                this.showToast(error);
                                             }
-                                        },
-                                        error => {
-                                            this.showToast(error);
-                                        }
-                                    )
+                                        )
+                                    }
                                 }
-                            }
-                        );
-                    }
-                } else {
-                    let isValid: boolean = true;
-                    if ((this.totalInterestAmount + this.totalTaxAmount) > 0 && this.transaction.totalPrice !== 0) {
-                        this.transaction.totalPrice += (this.totalInterestAmount + this.totalTaxAmount);
-                        await this.updateTransaction().then(
-                            transaction => {
-                                if (transaction) {
-                                    this.transaction = transaction;
-                                } else {
-                                    isValid = false;
-                                }
-                            }
-                        );
-                    }
-                    if (isValid) {
-                        for (let mov of this.movementsOfCashesToFinance) {
-                            mov.expirationDate = moment(mov.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
+                            );
                         }
-                        await this.saveMovementsOfCashes().then(
-                            movementsOfCashes => {
-                                if (movementsOfCashes && movementsOfCashes.length > 0) {
-                                    this.showToast(null, 'success', 'Operación realizada con éxito');
-                                    this.getMovementOfCashesByTransaction();
-                                }
-                            }
-                        );
-                    }
-                }
-            } else {
-                this.fastPayment = null;
-            }
-        } else {
-            this.movementOfCash.transaction = this.transaction;
-            this.movementOfCash.type = this.fastPayment;
-            this.paymentMethodSelected = this.fastPayment;
-            this.movementOfCash.expirationDate = moment(this.movementOfCash.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
-            this.movementOfCash.receiver = '';
-            this.movementOfCash.number = '';
-            this.movementOfCash.titular = '';
-            this.movementOfCash.CUIT = '';
-            this.movementOfCash.deliveredBy = '';
-            this.movementOfCash.statusCheck == StatusCheck.Closed;
-            this.movementOfCash.discount = this.movementOfCash.type.discount;
-            this.movementOfCash.surcharge = this.movementOfCash.type.surcharge;
-            this.movementOfCash.interestPercentage = this.movementOfCashForm.value.interestPercentage;
-            if (this.fastPayment.observation) {
-                this.movementOfCash.observation = this.fastPayment.observation;
-            }
-            if (this.movementOfCash.discount &&
-                this.movementOfCash.discount !== 0) {
-                this.amountDiscount = -this.roundNumber.transform(this.transaction.totalPrice * this.movementOfCash.discount / 100);
-            } else if (this.movementOfCash.surcharge &&
-                this.movementOfCash.surcharge !== 0) {
-                this.amountDiscount = this.roundNumber.transform(this.transaction.totalPrice * this.movementOfCash.surcharge / 100);
-            }
-            this.transaction.totalPrice = this.transaction.totalPrice + this.amountDiscount;
-            this.transactionAmount = this.transaction.totalPrice;
-            this.movementOfCash.amountPaid = this.transactionAmount;
-
-            if (await this.isValidAmount() && await this.validateCredit()) {
-                await this.saveMovementOfCash().then(
-                    async movementOfCash => {
-                        if (movementOfCash) {
-                            this.movementOfCash = movementOfCash;
-                            if (this.transactionAmount !== this.transaction.totalPrice) {
-                                this.transaction.totalPrice = this.transactionAmount;
-                                if (this.transaction.type.requestArticles) {
-                                    this.addMovementOfArticle();
-                                } else {
-                                    await this.updateTransaction().then(
-                                        transaction => {
-                                            if (transaction) {
-                                                this.transaction = transaction;
-                                                this.getMovementOfCashesByTransaction();
-                                            }
-                                        }
-                                    );
-                                }
-                            } else {
-                                this.movementsOfCashes = new Array();
-                                this.movementsOfCashes.push(this.movementOfCash);
-                                if (!this.fastPayment) {
-                                    this.getMovementOfCashesByTransaction();
-                                } else {
-                                    if (this.amountDiscount && this.amountDiscount !== 0) {
-                                        this.addMovementOfArticle();
+                    } else {
+                        let isValid: boolean = true;
+                        if ((this.totalInterestAmount + this.totalTaxAmount) > 0 && this.transaction.totalPrice !== 0) {
+                            this.transaction.totalPrice += (this.totalInterestAmount + this.totalTaxAmount);
+                            await this.updateTransaction().then(
+                                transaction => {
+                                    if (transaction) {
+                                        this.transaction = transaction;
                                     } else {
+                                        isValid = false;
+                                    }
+                                }
+                            );
+                        }
+                        if (isValid) {
+                            for (let mov of this.movementsOfCashesToFinance) {
+                                mov.expirationDate = moment(mov.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
+                            }
+                            await this.saveMovementsOfCashes().then(
+                                movementsOfCashes => {
+                                    if (movementsOfCashes && movementsOfCashes.length > 0) {
+                                        this.showToast(null, 'success', 'Operación realizada con éxito');
                                         this.getMovementOfCashesByTransaction();
                                     }
                                 }
-                            }
+                            );
                         }
                     }
-                );
+                } else {
+                    this.fastPayment = null;
+                }
             } else {
-                this.fastPayment = null;
+                this.movementOfCash.transaction = this.transaction;
+                this.movementOfCash.type = this.fastPayment;
+                this.paymentMethodSelected = this.fastPayment;
+                this.movementOfCash.expirationDate = moment(this.movementOfCash.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
+                this.movementOfCash.receiver = '';
+                this.movementOfCash.number = '';
+                this.movementOfCash.titular = '';
+                this.movementOfCash.CUIT = '';
+                this.movementOfCash.deliveredBy = '';
+                this.movementOfCash.statusCheck == StatusCheck.Closed;
+                this.movementOfCash.discount = this.movementOfCash.type.discount;
+                this.movementOfCash.surcharge = this.movementOfCash.type.surcharge;
+                this.movementOfCash.interestPercentage = this.movementOfCashForm.value.interestPercentage;
+                if (this.fastPayment.observation) {
+                    this.movementOfCash.observation = this.fastPayment.observation;
+                }
+                if (this.movementOfCash.discount &&
+                    this.movementOfCash.discount !== 0) {
+                    this.amountDiscount = -this.roundNumber.transform(this.transaction.totalPrice * this.movementOfCash.discount / 100);
+                } else if (this.movementOfCash.surcharge &&
+                    this.movementOfCash.surcharge !== 0) {
+                    this.amountDiscount = this.roundNumber.transform(this.transaction.totalPrice * this.movementOfCash.surcharge / 100);
+                }
+                this.transaction.totalPrice = this.transaction.totalPrice + this.amountDiscount;
+                this.transactionAmount = this.transaction.totalPrice;
+                this.movementOfCash.amountPaid = this.transactionAmount;
+
+                if (await this.isValidAmount() && await this.validateCredit()) {
+                    await this.saveMovementOfCash()
+                        .then(async movementOfCash => {
+                            if (movementOfCash) {
+                                this.movementOfCash = movementOfCash;
+                                if (this.transactionAmount !== this.transaction.totalPrice) {
+                                    this.transaction.totalPrice = this.transactionAmount;
+                                    if (this.transaction.type.requestArticles) {
+                                        this.addMovementOfArticle();
+                                    } else {
+                                        await this.updateTransaction().then(
+                                            transaction => {
+                                                if (transaction) {
+                                                    this.transaction = transaction;
+                                                    this.getMovementOfCashesByTransaction();
+                                                }
+                                            }
+                                        );
+                                    }
+                                } else {
+                                    this.movementsOfCashes = new Array();
+                                    this.movementsOfCashes.push(this.movementOfCash);
+                                    if (!this.fastPayment) {
+                                        this.getMovementOfCashesByTransaction();
+                                    } else {
+                                        if (this.amountDiscount && this.amountDiscount !== 0) {
+                                            this.addMovementOfArticle();
+                                        } else {
+                                            this.getMovementOfCashesByTransaction();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        );
+                } else {
+                    this.fastPayment = null;
+                }
             }
-        }
+        } catch (error) { this.showToast(error) }
     }
 
     public cancel(): void {
