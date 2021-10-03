@@ -417,6 +417,12 @@ export class TransactionTypeComponent implements OnInit {
             class: 'form-group col-md-2'
         },
         {
+            name: "optionalAFIP",
+            tag: 'input',
+            tagType: "text",
+            class: 'form-group col-md-2'
+        },
+        {
             name: 'Personalizado',
             tag: 'separator',
             tagType: null,
@@ -944,7 +950,8 @@ export class TransactionTypeComponent implements OnInit {
                 "resetOrderNumber": 1,
                 "allowAccounting": 1,
                 "finishState": 1,
-                "allowPriceList": 1
+                "allowPriceList": 1,
+                optionalAFIP : 1
             }
 
             this.subscription.add(this._objService.getAll({

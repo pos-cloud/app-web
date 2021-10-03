@@ -46,13 +46,17 @@
 
 				<button *ngIf="!articleHistoryId" class="btn" (click)="openModal('excel', null)"><i
 						class="fa fa-upload"></i>
-					<span>Importar Productos excel</span>
+					<span>Actualizar Productos excel</span>
+				</button>
+				<button *ngIf="!articleHistoryId" class="btn" (click)="openModal('excel-create', null)"><i
+						class="fa fa-upload"></i>
+					<span>Crear Productos excel</span>
 				</button>
 
-				<button class="btn" *ngIf="!articleHistoryId && identity.name === 'soporte'"
+				<!-- <button class="btn" *ngIf="!articleHistoryId && identity.name === 'soporte'"
 					(click)="openModal('import', null)"><i class="fa fa-upload"></i>
 					<span>Importar Productos</span>
-				</button>
+				</button> -->
 
 				<button class="btn" *ngIf="!articleHistoryId" (click)="openModal('print-list', null)"><i
 						class="fa fa-print"></i><span>Imprimir
@@ -97,10 +101,9 @@
 						<td align="left" width="100" *ngIf="!articleHistoryId">
 							<button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', item)"
 								title="Ver"><i class="fa fa-eye"></i></button>
-							<button type="button" class="btn btn-primary btn-sm"
-								(click)="openModal('update', item)" title="Editar"><i class="fa fa-pencil"></i></button>
-							<button type="button"
-								*ngIf="item && item.type && item.type.toString() !== 'Variante'"
+							<button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', item)"
+								title="Editar"><i class="fa fa-pencil"></i></button>
+							<button type="button" *ngIf="item && item.type && item.type.toString() !== 'Variante'"
 								class="btn btn-danger btn-sm" (click)="openModal('delete', item)" title="Eliminar"><i
 									class="fa fa-trash-o"></i></button>
 							<button *ngIf="priceLists && priceLists.length > 0" type="button"
@@ -109,11 +112,10 @@
 							<button *ngIf="priceLists && priceLists.length == 0" type="button"
 								class="btn btn-light btn-sm" (click)="openModal('print-label', item)"
 								title="Imprimir Etiqueta"><i class="fa fa-barcode"></i></button>
-							<button type="button" class="btn btn-light btn-sm"
-								(click)="openModal('copy', item)" title="Copiar"><i class="fa fa-copy"></i></button>
-							<button type="button" class="btn btn-light btn-sm"
-								(click)="openModal('history', item)" title="Historial de Cambios"><i
-									class="fa fa-history"></i></button>
+							<button type="button" class="btn btn-light btn-sm" (click)="openModal('copy', item)"
+								title="Copiar"><i class="fa fa-copy"></i></button>
+							<button type="button" class="btn btn-light btn-sm" (click)="openModal('history', item)"
+								title="Historial de Cambios"><i class="fa fa-history"></i></button>
 						</td>
 						<ng-container *ngFor="let column of columns">
 							<td *ngIf="column.visible" [attr.align]="column.align">{{getValue(item, column)}}</td>

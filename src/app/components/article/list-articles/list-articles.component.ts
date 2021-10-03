@@ -469,6 +469,22 @@ export class ListArticlesComponent implements OnInit {
           (reason) => { }
         );
         break;
+      case "excel-create":
+        modalRef = this._modalService.open(importExcelComponent,{
+          size: "lg",
+          backdrop: "static"
+        });
+        modalRef.componentInstance.type = 'create-article';
+        // console.log(modalRef.componentInstance)
+        modalRef.result.then(
+          (result) => {
+            if (result === "import_close") {
+              this.getItems();
+            }
+          },
+          (reason) => { }
+        );
+        break;
 
       case "import":
         modalRef = this._modalService.open(ImportComponent, {
