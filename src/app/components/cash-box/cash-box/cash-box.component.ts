@@ -134,7 +134,7 @@ export class CashBoxComponent implements OnInit {
                                 if (this.transactionType.cashOpening) {
                                     this.showMessage("La caja ya se encuentra abierta.", 'info', true);
                                 } else if (this.transactionType.cashClosing) {
-                                    let query = 'where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled + '"}}{"state":{"$ne": "' + TransactionState.PaymentDeclined + '"}},{"cashBox":"' + this.cashBox._id + '"}]';
+                                    let query = 'where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled + '"}},{"state":{"$ne": "' + TransactionState.PaymentDeclined + '"}},{"cashBox":"' + this.cashBox._id + '"}]';
                                     await this.getTransactions(query).then(
                                         async transactions => {
                                             if (transactions) {
