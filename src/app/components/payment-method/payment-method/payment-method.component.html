@@ -46,12 +46,12 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <ng-template #result let-r="result" let-t="term">
+                    <ng-template #rtResult let-r="result" let-t="term">
                         <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
                     </ng-template>
                     <label for="discountArticle">{{'discountArticle'| translate | capitalize}}:</label>
                     <input id="discountArticle" type="text" class="form-control" formControlName="discountArticle"
-                        name="discountArticle" [ngbTypeahead]="searchArticles" [resultTemplate]="result"
+                        name="discountArticle" [ngbTypeahead]="searchArticles" [resultTemplate]="rtResult"
                         [inputFormatter]="formatterArticles" [readonly]="readonly" />
                     <div class="invalid-feedback" [style.display]="(formErrors['discountArticle'])? 'block': 'none'">
                         {{ formErrors['discountArticle'] }}
@@ -68,12 +68,12 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <ng-template #result let-r="result" let-t="term">
+                    <ng-template #rtResult let-r="result" let-t="term">
                         <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
                     </ng-template>
                     <label for="surchargeArticle">{{'surchargeArticle'| translate | capitalize}}:</label>
                     <input id="surchargeArticle" type="text" class="form-control" formControlName="surchargeArticle"
-                        name="surchargeArticle" [ngbTypeahead]="searchArticles" [resultTemplate]="result"
+                        name="surchargeArticle" [ngbTypeahead]="searchArticles" [resultTemplate]="rtResult"
                         [inputFormatter]="formatterArticles" [readonly]="readonly" />
                     <div class="invalid-feedback" [style.display]="(formErrors['surchargeArticle'])? 'block': 'none'">
                         {{ formErrors['surchargeArticle'] }}
@@ -90,12 +90,12 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <ng-template #result let-r="result" let-t="term">
+                    <ng-template #rtResult let-r="result" let-t="term">
                         <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
                     </ng-template>
                     <label for="commissionArticle">{{'commissionArticle'| translate | capitalize}}:</label>
                     <input id="commissionArticle" type="text" class="form-control" formControlName="commissionArticle"
-                        name="commissionArticle" [ngbTypeahead]="searchArticles" [resultTemplate]="result"
+                        name="commissionArticle" [ngbTypeahead]="searchArticles" [resultTemplate]="rtResult"
                         [inputFormatter]="formatterArticles" [readonly]="readonly" />
                     <div class="invalid-feedback" [style.display]="(formErrors['commissionArticle'])? 'block': 'none'">
                         {{ formErrors['commissionArticle'] }}
@@ -112,14 +112,14 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <ng-template #result let-r="result" let-t="term">
+                    <ng-template #rtResult let-r="result" let-t="term">
                         <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
                     </ng-template>
                     <label for="administrativeExpenseArticle">{{'administrativeExpenseArticle'| translate |
                         capitalize}}:</label>
                     <input id="administrativeExpenseArticle" type="text" class="form-control"
                         formControlName="administrativeExpenseArticle" name="administrativeExpenseArticle"
-                        [ngbTypeahead]="searchArticles" [resultTemplate]="result" [inputFormatter]="formatterArticles"
+                        [ngbTypeahead]="searchArticles" [resultTemplate]="rtResult" [inputFormatter]="formatterArticles"
                         [readonly]="readonly" />
                     <div class="invalid-feedback"
                         [style.display]="(formErrors['administrativeExpenseArticle'])? 'block': 'none'">
@@ -137,13 +137,13 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <ng-template #result let-r="result" let-t="term">
+                    <ng-template #rtResult let-r="result" let-t="term">
                         <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
                     </ng-template>
                     <label for="otherExpenseArticle">{{'otherExpenseArticle'| translate | capitalize}}:</label>
                     <input id="otherExpenseArticle" type="text" class="form-control"
                         formControlName="otherExpenseArticle" name="otherExpenseArticle" [ngbTypeahead]="searchArticles"
-                        [resultTemplate]="result" [inputFormatter]="formatterArticles" [readonly]="readonly" />
+                        [resultTemplate]="rtResult" [inputFormatter]="formatterArticles" [readonly]="readonly" />
                     <div class="invalid-feedback"
                         [style.display]="(formErrors['otherExpenseArticle'])? 'block': 'none'">
                         {{ formErrors['otherExpenseArticle'] }}
