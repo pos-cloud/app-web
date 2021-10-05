@@ -192,7 +192,6 @@ export class MovementOfCancellationComponent implements OnInit {
             this._transactionService.getTransaction(transactionId).subscribe(
                 result => {
                     if (!result.transaction) {
-                        this.showToast(null, 'danger', result.message);
                         this.totalItems = 0;
                         resolve(null);
                     } else {
