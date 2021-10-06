@@ -87,7 +87,7 @@
 				<div class="form-group col-md-12">
 					<label for="VATPeriod" class="control-label">Período de IVA:</label>
 					<input type="text" class="form-control" formControlName="VATPeriod" name="VATPeriod"
-						[readonly]="readonly || transaction.type.transactionMovement.toString() === 'Venta'" />
+						[readonly]="readonly" />
 					<div *ngIf="formErrors.VATPeriod" class="alert alert-danger">
 						{{ formErrors.VATPeriod }}
 					</div>
