@@ -95,20 +95,10 @@ export class LoginComponent implements OnInit {
   }
 
   public buildForm(): void {
-
     this.loginForm = this._fb.group({
-      'company': [this.company, [
-        Validators.required
-      ]
-      ],
-      'user': [this.user, [
-        Validators.required
-      ]
-      ],
-      'password': [this.password, [
-        Validators.required
-      ]
-      ]
+      'company': [this.company, [Validators.required]],
+      'user': [this.user, [Validators.required]],
+      'password': [this.password, [Validators.required]]
     });
 
     this.loginForm.valueChanges
@@ -151,21 +141,25 @@ export class LoginComponent implements OnInit {
         if (!result.user) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
-          this.showMessage("Ingresando...", 'success', false);
-          this._authService.loginStorage(result.user);
-          this.initSocket();
-          await this.getConfigApi().then(
-            config => {
-              if (config) {
-                this._configService.setConfig(config);
-                this.setConfigurationSettings(config);
+          if (result.user.employee) {
+            this.showMessage("Ingresando...", 'success', false);
+            this._authService.loginStorage(result.user);
+            this.initSocket();
+            await this.getConfigApi().then(
+              config => {
+                if (config) {
+                  this._configService.setConfig(config);
+                  this.setConfigurationSettings(config);
+                }
               }
-            }
-          );
+            );
 
-          let returnURL = '/';
-          this._route.queryParams.subscribe(params => returnURL = params['return'] || '/');
-          this._router.navigateByUrl(returnURL);
+            let returnURL = '/';
+            this._route.queryParams.subscribe(params => returnURL = params['return'] || '/');
+            this._router.navigateByUrl(returnURL);
+          } else {
+            this.showMessage('El usuario y/o contraseña son incorrectos', 'info', true);
+          }
         }
       },
       error => {
@@ -174,7 +168,6 @@ export class LoginComponent implements OnInit {
         } else {
           this.showMessage(error._body, 'danger', false);
         }
-        this.loading = false;
       }
     );
   }
@@ -248,10 +241,12 @@ export class LoginComponent implements OnInit {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
+    this.loading = false;
   }
 
   public hideMessage(): void {
     this.alertMessage = '';
+    this.loading = false;
   }
 
   public showToast(message: string, type: string = 'success'): void {
@@ -272,5 +267,6 @@ export class LoginComponent implements OnInit {
         this._toastr.success('', message);
         break;
     }
+    this.loading = false;
   }
 }
