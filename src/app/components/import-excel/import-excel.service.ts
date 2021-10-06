@@ -20,7 +20,7 @@ export class ImportExcelService {
     if (type === 'clientes') {
       URL = `${Config.apiURL}company/save-excel`
       // URL = `${Config.apiV8URL}companies/save-excel`
-    } else if (type === 'create-article') {
+    } else if (type === 'alta-producto') {
       URL = `${Config.apiURL}article/create-article-excel`;
     }
     else {
@@ -31,7 +31,7 @@ export class ImportExcelService {
 
     xhr.open('POST', URL, true);
     xhr.setRequestHeader('Authorization', this._authService.getToken());
-    if (type === 'clientes' || type ==='create-article') {
+    if (type === 'clientes' || type ==='alta-producto') {
       xhr.setRequestHeader('file', objectToImport[0].name);
       xhr.setRequestHeader('excel', objectToImport[0]);
     }

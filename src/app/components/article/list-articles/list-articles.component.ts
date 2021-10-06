@@ -475,7 +475,7 @@ export class ListArticlesComponent implements OnInit {
           size: "lg",
           backdrop: "static"
         });
-        modalRef.componentInstance.type = 'alta-producto';
+        modalRef.componentInstance.type = 'create-article';
         // console.log(modalRef.componentInstance)
         modalRef.result.then(
           (result) => {
