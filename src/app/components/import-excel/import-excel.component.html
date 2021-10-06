@@ -1,5 +1,7 @@
 <div class="modal-header">
   <h4 class="modal-title">Importar</h4>
+  <h4 *ngIf='type === "actualizar-producto"' class="modal-title">: Actualizar Articulos</h4>
+  <h4 *ngIf='type === "alta-producto"' class="modal-title">: Crear Articulos</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -67,8 +69,10 @@
         </div>
       </div>
     </div>
-    <a href="/assets/modelo_producto_actualizar.xlsx" target="_self" download>Descargar Modelo Actulizar</a><br>
-    <a href="/assets/modelo_producto_crear.xlsx" target="_self" download>Descargar Modelo Crear</a>
+    <a *ngIf='type === "actualizar-producto"' href="/assets/modelo_producto_actualizar.xlsx" target="_self"
+      download>Descargar Modelo Actulizar</a><br>
+    <a *ngIf='type === "alta-producto"' href="/assets/modelo_producto_crear.xlsx" target="_self" download>Descargar
+      Modelo Crear</a>
     <div class="modal-footer">
       <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
       <button type="submit" class="btn btn-primary" [disabled]="">

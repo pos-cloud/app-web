@@ -395,7 +395,7 @@ export class ListArticlesComponent implements OnInit {
     this.activeModal.close({ article: articleSelected });
   }
 
-  async openModal(op: string, article?: Article) {
+  async openModal(op: string, article?: Article, type?: string) {
     let modalRef;
     switch (op) {
       case "view":
@@ -460,6 +460,7 @@ export class ListArticlesComponent implements OnInit {
           size: "lg",
           backdrop: "static",
         });
+        modalRef.componentInstance.type = type;
         modalRef.result.then(
           (result) => {
             if (result === "import_close") {
@@ -474,7 +475,7 @@ export class ListArticlesComponent implements OnInit {
           size: "lg",
           backdrop: "static"
         });
-        modalRef.componentInstance.type = 'create-article';
+        modalRef.componentInstance.type = 'alta-producto';
         // console.log(modalRef.componentInstance)
         modalRef.result.then(
           (result) => {
