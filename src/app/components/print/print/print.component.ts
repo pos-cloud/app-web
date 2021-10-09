@@ -3808,9 +3808,10 @@ export class PrintComponent implements OnInit {
                 this.doc.text(`${element.type.name} : $ ${parseFloat(this.roundNumber.transform(element.amountPaid))}`, margin, this.row);
 
                 if (element && element.paymentChange > 0) {
-                    this.doc.text("Paga con: $ " + (element.paymentChange + element.amountPaid).toString(), margin, this.row)
                     this.row += 5;
-                    this.doc.text("Su vuelto es: $ " + element.paymentChange.toString(), margin, this.row)
+                    this.doc.text("Paga con: $ " + (element.paymentChange + element.amountPaid).toString(), margin + 5, this.row)
+                    this.row += 5;
+                    this.doc.text("Su vuelto es: $ " + element.paymentChange.toString(), margin + 5, this.row)
                     this.row += 5;
                 }
             });
