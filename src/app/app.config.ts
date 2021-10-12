@@ -64,12 +64,15 @@ export class Config {
     }
   };
   public company: {
-    allowCurrentAccountProvider: {
+    allowCurrentAccount:{
       default: boolean
-    },
-    allowCurrentAccountClient: {
-      default: boolean
-    },
+    }
+    // allowCurrentAccountProvider: {
+    //   default: boolean
+    // },
+    // allowCurrentAccountClient: {
+    //   default: boolean
+    // },
     vatCondition: {
       default: VATCondition
     }, 

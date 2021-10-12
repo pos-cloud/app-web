@@ -296,8 +296,9 @@ export class ConfigComponent implements OnInit {
       'article.isWeigth.default': [this.config.article.isWeigth.default, []],
       'article.allowSaleWithoutStock.default': [this.config.article.allowSaleWithoutStock.default, []],
       'company.vatCondition.default': [this.config.company.vatCondition.default, []],
-      'company.allowCurrentAccountProvider.default': [this.config.company.allowCurrentAccountProvider.default, []],
-      'company.allowCurrentAccountClient.default': [this.config.company.allowCurrentAccountClient.default, []],
+      'company.allowCurrentAccount.default': [this.config.company.allowCurrentAccount.default, []],
+      // 'company.allowCurrentAccountProvider.default': [this.config.company.allowCurrentAccountProvider.default, []],
+      // 'company.allowCurrentAccountClient.default': [this.config.company.allowCurrentAccountClient.default, []],
       'company.accountClient.default': [this.config.company.accountClient.default, []],
       'company.accountProvider.default': [this.config.company.accountProvider.default, []],
       'cashBox.perUser': [this.config.cashBox.perUser, []],
@@ -622,8 +623,9 @@ export class ConfigComponent implements OnInit {
 
     if (this.config.article.code.validators.maxLength === undefined) this.config.article.code.validators.maxLength = 10;
     if (this.config.article.isWeigth.default === undefined) this.config.article.isWeigth.default = false;
-    if (this.config.company.allowCurrentAccountProvider.default === undefined) this.config.company.allowCurrentAccountProvider.default = false;
-    if (this.config.company.allowCurrentAccountClient.default === undefined) this.config.company.allowCurrentAccountClient.default = false;
+    if (this.config.company.allowCurrentAccount.default === undefined) this.config.company.allowCurrentAccount.default = false;
+    // if (this.config.company.allowCurrentAccountProvider.default === undefined) this.config.company.allowCurrentAccountProvider.default = false;
+    // if (this.config.company.allowCurrentAccountClient.default === undefined) this.config.company.allowCurrentAccountClient.default = false;
     if (this.config.cashBox.perUser === undefined) this.config.cashBox.perUser = false;
     if (this.config.reports.summaryOfAccounts.invertedViewClient === undefined) this.config.reports.summaryOfAccounts.invertedViewClient = false;
     if (this.config.reports.summaryOfAccounts.invertedViewProvider === undefined) this.config.reports.summaryOfAccounts.invertedViewProvider = false;
@@ -690,8 +692,9 @@ export class ConfigComponent implements OnInit {
       'article.isWeigth.default': this.config.article.isWeigth.default,
       'article.salesAccount.default': this.config.article.salesAccount.default,
       'article.purchaseAccount.default': this.config.article.purchaseAccount.default,
-      'company.allowCurrentAccountProvider.default': this.config.company.allowCurrentAccountProvider.default,
-      'company.allowCurrentAccountClient.default': this.config.company.allowCurrentAccountClient.default,
+      'company.allowCurrentAccount.default': this.config.company.allowCurrentAccount.default,
+      // 'company.allowCurrentAccountProvider.default': this.config.company.allowCurrentAccountProvider.default,
+      // 'company.allowCurrentAccountClient.default': this.config.company.allowCurrentAccountClient.default,
       'company.vatCondition.default': vatConfitionDefault,
       'company.accountClient.default': this.config.company.accountClient.default,
       'company.accountProvider.default': this.config.company.accountProvider.default,

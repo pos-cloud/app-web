@@ -222,11 +222,12 @@ export class AddCompanyComponent implements OnInit {
         await this._configService.getConfig.subscribe(
             config => {
                 this.config = config;
-                if (this.company.type === CompanyType.Client) {
-                    this.company.allowCurrentAccount = this.config.company.allowCurrentAccountClient.default;
-                } else if (this.company.type === CompanyType.Provider) {
-                    this.company.allowCurrentAccount = this.config.company.allowCurrentAccountProvider.default;
-                }
+                this.company.allowCurrentAccount = this.config.company.allowCurrentAccount.default;
+                // if (this.company.type === CompanyType.Client) {
+                //     this.company.allowCurrentAccount = this.config.company.allowCurrentAccount.default;
+                // } else if (this.company.type === CompanyType.Provider) {
+                //     this.company.allowCurrentAccount = this.config.company.allowCurrentAccount.default;
+                // }
                 this.company.vatCondition = this.config.company.vatCondition.default;
                 if (this.company.type === CompanyType.Client) this.company.account = this.config.company.accountClient.default;
                 if (this.company.type === CompanyType.Provider) this.company.account = this.config.company.accountProvider.default;
