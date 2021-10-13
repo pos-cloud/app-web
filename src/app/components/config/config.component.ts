@@ -288,7 +288,6 @@ export class ConfigComponent implements OnInit {
         authToken: ''
       }
     }
-    console.log(this.config)
     this.configFormSystem = this._fb.group({
       '_id': [this.config._id, [Validators.required]],
       'article.code.validators.maxLength': [this.config.article.code.validators.maxLength, []],
