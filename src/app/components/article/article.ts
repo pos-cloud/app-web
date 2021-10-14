@@ -115,7 +115,7 @@ export let attributes = [
         disabled: false,
         filter: true,
         datatype: 'date',
-        project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
+        project: `{ "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
         align: 'left',
         required: false,
     },
