@@ -29,7 +29,7 @@
                                                     name="order" id="order" [readonly]="readonly" />
                                             </div>
                                             <div class="form-group col-md-5">
-                                                <label for="code" class="control-label">Código Interno:</label>
+                                                <label for="code" class="control-label">Código Interno (*):</label>
                                                 <input type="text" class="form-control" formControlName="code"
                                                     name="code" id="code" (blur)="autocompleteCode()"
                                                     [focus]="focusEvent" [readonly]="readonly" />
@@ -60,7 +60,7 @@
                                                 <ng-template #rtCategories let-r="result" let-t="term">
                                                     <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
                                                 </ng-template>
-                                                <label for="category">Rubro:</label>
+                                                <label for="category">Rubro (*):</label>
                                                 <input id="category" type="text" class="form-control"
                                                     formControlName="category" name="category"
                                                     [ngbTypeahead]="searchCategories" [resultTemplate]="rtCategories"
@@ -69,11 +69,11 @@
                                         </div>
                                         <div class="row">
                                             <div class="form-group col-md-8">
-                                                <label for="description" class="control-label">Descripción:</label>
+                                                <label for="description" class="control-label">Descripción (*):</label>
                                                 <input type="text" class="form-control" formControlName="description"
                                                     name="description" id="description" (blur)="loadPosDescription()"
                                                     [readonly]="readonly || (article && article.type && article.type.toString() === 'Variante')" />
-                                                <div *ngIf="formErrors.description" class="alert alert-danger">
+                                                <div class="alert alert-danger" [style.display]="(formErrors['description'])? 'block': 'none'">
                                                     {{ formErrors.description }}
                                                 </div>
                                             </div>
@@ -190,7 +190,7 @@
                             <div class="form-group col-md-12">
                                 <div class="row">
                                     <div class="form-group col-md-6">
-                                        <label for="basePrice" class="control-label">Precio Base:</label>
+                                        <label for="basePrice" class="control-label">Precio Base (*):</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend"><span class="input-group-text"
                                                     id="basic-addon1">$</span></div>
@@ -229,7 +229,7 @@
                                 </app-add-article-tax>
                                 <div class="row">
                                     <div class="form-group col-md-12">
-                                        <label for="costPrice" class="control-label">Costo con Impuestos:</label>
+                                        <label for="costPrice" class="control-label">Costo con Impuestos (*):</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend"><span class="input-group-text"
                                                     id="basic-addon1">$</span></div>
@@ -245,7 +245,7 @@
 
                                 <div class="row">
                                     <div class="form-group col-md-4">
-                                        <label for="markupPercentage" class="control-label">Margen:</label>
+                                        <label for="markupPercentage" class="control-label">Margen (*):</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend"><span class="input-group-text"
                                                     id="basic-addon1">%</span></div>
@@ -267,7 +267,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group col-md-4">
-                                        <label for="markupPrice" class="control-label">Utilidad con Impuestos:</label>
+                                        <label for="markupPrice" class="control-label">Utilidad con Impuestos (*):</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend"><span class="input-group-text"
                                                     id="basic-addon1">$</span></div>
@@ -289,7 +289,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label for="salePrice" class="control-label">Precio de Venta con Impuestos:</label>
+                                        <label for="salePrice" class="control-label">Precio de Venta con Impuestos (*):</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend"><span class="input-group-text"
                                                     id="basic-addon1">$</span></div>
@@ -794,7 +794,7 @@
         </div>
         <div class="modal-footer" *ngIf="operation !== 'view'">
             <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
-            <button type="submit" class="btn btn-primary" [disabled]="!articleForm.valid || loading"
+            <button type="submit" class="btn btn-primary" [disabled]="loading"
                 *ngIf="operation !== 'delete'">
                 <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
                 <span *ngIf="!loading">Guardar</span>

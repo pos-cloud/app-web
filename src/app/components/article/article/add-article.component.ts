@@ -17,8 +17,8 @@ import { Config } from '../../../app.config';
 import { Taxes } from '../../tax/taxes';
 import { Deposit } from '../../deposit/deposit';
 import { Location } from '../../location/location';
-import { UnitOfMeasurement } from 'app/components/unit-of-measurement/unit-of-measurement.model';
-import { Currency } from 'app/components/currency/currency';
+import { UnitOfMeasurement } from './../../../components/unit-of-measurement/unit-of-measurement.model';
+import { Currency } from './../../../components/currency/currency';
 import { Company, CompanyType } from '../../company/company'
 
 // Services
@@ -29,9 +29,9 @@ import { CategoryService } from '../../category/category.service';
 import { VariantService } from '../../variant/variant.service';
 import { DepositService } from '../../deposit/deposit.service';
 import { LocationService } from '../../location/location.service';
-import { CurrencyService } from 'app/components/currency/currency.service';
-import { CompanyService } from 'app/components/company/company.service';
-import { UnitOfMeasurementService } from 'app/components/unit-of-measurement/unit-of-measurement.service';
+import { CurrencyService } from './../../../components/currency/currency.service';
+import { CompanyService } from './../../../components/company/company.service';
+import { UnitOfMeasurementService } from './../../../components/unit-of-measurement/unit-of-measurement.service';
 
 // Pipes
 import { DecimalPipe } from '@angular/common';
@@ -39,21 +39,21 @@ import { SlicePipe } from '@angular/common';
 import { ArticleFields } from '../../article-field/article-fields';
 import { ArticleFieldType, ArticleField } from '../../article-field/article-field';
 import { RoundNumberPipe } from '../../../main/pipes/round-number.pipe';
-import { MovementOfArticleService } from 'app/components/movement-of-article/movement-of-article.service';
-import { ArticleFieldService } from 'app/components/article-field/article-field.service';
-import { ClassificationService } from 'app/components/classification/classification.service';
-import { Classification } from 'app/components/classification/classification';
-import { ConfigService } from 'app/components/config/config.service';
-import { TaxClassification } from 'app/components/tax/tax';
-import { Application } from 'app/components/application/application.model';
-import { ApplicationService } from 'app/components/application/application.service';
+import { MovementOfArticleService } from './../../../components/movement-of-article/movement-of-article.service';
+import { ArticleFieldService } from './../../../components/article-field/article-field.service';
+import { ClassificationService } from './../../../components/classification/classification.service';
+import { Classification } from './../../../components/classification/classification';
+import { ConfigService } from './../../../components/config/config.service';
+import { TaxClassification } from './../../../components/tax/tax';
+import { Application } from './../../../components/application/application.model';
+import { ApplicationService } from './../../../components/application/application.service';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
-import Resulteable from 'app/util/Resulteable';
-import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import Resulteable from './../../../util/Resulteable';
+import { TranslateMePipe } from './../../../main/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
-import { Account } from 'app/components/account/account';
-import { AccountService } from 'app/components/account/account.service';
+import { Account } from './../../../components/account/account';
+import { AccountService } from './../../../components/account/account.service';
 
 @Component({
   selector: 'app-add-article',
@@ -194,58 +194,26 @@ export class AddArticleComponent implements OnInit {
   };
 
   public validationMessages = {
-    'code': {
-      'required': 'Este campo es requerido.'
-    },
-    'make': {
-      'required': 'Este campo es requerido.',
-      'validateAutocomplete': 'Debe ingresar un valor válido'
-    },
-    'description': {
-      'required': 'Este campo es requerido.'
-    },
-    'posDescription': {
-      'maxlength': 'No puede exceder los 20 carácteres.'
-    },
-    'basePrice': {
-      'required': 'Este campo es requerido.'
-    },
-    'costPrice': {
-      'required': 'Este campo es requerido.'
-    },
-    'markupPercentage': {
-      'required': 'Este campo es requerido.'
-    },
-    'markupPrice': {
-      'required': 'Este campo es requerido.'
-    },
-    'salePrice': {
-      'required': 'Este campo es requerido.'
-    },
-    'category': {
-      'required': 'Este campo es requerido.',
-      'validateAutocomplete': 'Debe ingresar un valor válido'
-    },
-    'deposit': {
-      'required': 'Este campo es requerido'
-    },
-    'location': {
-    },
-    'unitOfMeasurement': {
-      'validateAutocomplete': 'Debe ingresar un valor válido'
-    },
-    'currency': {
-      'maxlength': 'No puede exceder los 14 dígitos.'
-    },
-    'note': {
-    },
-    'tag': {
-    }
+    'code': { 'required': 'Este campo es requerido.' },
+    'make': { 'required': 'Este campo es requerido.', 'validateAutocomplete': 'Debe ingresar un valor válido' },
+    'description': { 'required': 'Este campo es requerido.' },
+    'posDescription': { 'maxlength': 'No puede exceder los 20 carácteres.' },
+    'basePrice': { 'required': 'Este campo es requerido.' },
+    'costPrice': { 'required': 'Este campo es requerido.' },
+    'markupPercentage': { 'required': 'Este campo es requerido.' },
+    'markupPrice': { 'required': 'Este campo es requerido.' },
+    'salePrice': { 'required': 'Este campo es requerido.' },
+    'category': { 'required': 'Este campo es requerido.', 'validateAutocomplete': 'Debe ingresar un valor válido' },
+    'deposit': { 'required': 'Este campo es requerido' },
+    'location': {},
+    'unitOfMeasurement': { 'validateAutocomplete': 'Debe ingresar un valor válido' },
+    'currency': { 'maxlength': 'No puede exceder los 14 dígitos.' },
+    'note': {},
+    'tag': {}
   };
 
   public searchCategories = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(300),
+    text$.pipe(debounceTime(300),
       distinctUntilChanged(),
       tap(() => this.loading = true),
       switchMap(async term =>
@@ -300,7 +268,7 @@ export class AddArticleComponent implements OnInit {
       distinctUntilChanged(),
       tap(() => this.loading = true),
       switchMap(async term => {
-        let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' }, mode : "Analitico", operationType : { "$ne" : "D" } } : {};
+        let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' }, mode: "Analitico", operationType: { "$ne": "D" } } : {};
         return await this.getAllAccounts(match).then(
           result => {
             return result;
@@ -432,8 +400,6 @@ export class AddArticleComponent implements OnInit {
 
   public getArticleFields() {
 
-    this.loading = true;
-
     this._articleFields.getArticleFields().subscribe(
       result => {
         if (result && result.articleFields) {
@@ -519,19 +485,19 @@ export class AddArticleComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  public onValueChanged(data?: any): void {
-
+  public onValueChanged(fieldID?: any): void {
     if (!this.articleForm) { return; }
     const form = this.articleForm;
-
     for (const field in this.formErrors) {
-      this.formErrors[field] = '';
-      const control = form.get(field);
-
-      if (control && control.dirty && !control.valid) {
-        const messages = this.validationMessages[field];
-        for (const key in control.errors) {
-          this.formErrors[field] += messages[key] + ' ';
+      if (!fieldID || field === fieldID) {
+        this.formErrors[field] = '';
+        const control = form.get(field);
+        if (control && !control.valid) {
+          const messages = this.validationMessages;
+          for (const key in control.errors) {
+            if (messages[key] && messages[key] != 'undefined')
+              this.formErrors[field] += messages[key] + ' ';
+          }
         }
       }
     }
@@ -726,8 +692,6 @@ export class AddArticleComponent implements OnInit {
 
   public getCurrencies(): void {
 
-    this.loading = true;
-
     this._currencyService.getCurrencies('sort="name":1').subscribe(
       result => {
         if (!result.currencies) {
@@ -749,7 +713,6 @@ export class AddArticleComponent implements OnInit {
       (result: any) => {
         if (!result.article) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.loading = false;
         } else {
           this.hideMessage();
           this.article = result.article;
@@ -1477,46 +1440,51 @@ export class AddArticleComponent implements OnInit {
   public addArticle(): void {
 
     if (!this.readonly) {
-      this.loading = true;
-      this.loadPosDescription();
-      this.loadURL();
-      let oldMeliId: string = this.article.meliId;
-      this.article = Object.assign(this.article, this.articleForm.value);
-      this.article.meliId = oldMeliId;
-      this.article.meliAttrs = this.meliAttrs;
-      if (this.article.make && this.article.make.toString() === '') this.article.make = null;
-      if (this.article.category && this.article.category.toString() === '') this.article.category = null;
-      if (this.article.unitOfMeasurement && this.article.unitOfMeasurement.toString() === '') this.article.unitOfMeasurement = null;
-      this.article.notes = this.notes;
-      this.article.tags = this.tags;
-      this.autocompleteCode();
-      if (this.variants && this.variants.length > 0) {
-        this.article.containsVariants = true;
+      if (this.articleForm.valid) {
+        this.loading = true;
+        this.loadPosDescription();
+        this.loadURL();
+        let oldMeliId: string = this.article.meliId;
+        this.article = Object.assign(this.article, this.articleForm.value);
+        this.article.meliId = oldMeliId;
+        this.article.meliAttrs = this.meliAttrs;
+        if (this.article.make && this.article.make.toString() === '') this.article.make = null;
+        if (this.article.category && this.article.category.toString() === '') this.article.category = null;
+        if (this.article.unitOfMeasurement && this.article.unitOfMeasurement.toString() === '') this.article.unitOfMeasurement = null;
+        this.article.notes = this.notes;
+        this.article.tags = this.tags;
+        this.autocompleteCode();
+        if (this.variants && this.variants.length > 0) {
+          this.article.containsVariants = true;
+        } else {
+          this.article.containsVariants = false;
+        }
+
+        this.article.taxes = this.taxes;
+        const selectedOrderIds = this.articleForm.value.applications
+          .map((v, i) => (v ? this.applications[i] : null))
+          .filter(v => v !== null);
+        this.article.applications = selectedOrderIds;
+
+        const pathLocation: string[] = this._router.url.split('/');
+        if (pathLocation[2] === "productos") {
+          this.article.type = Type.Final;
+        } else if (pathLocation[2] === "variantes") {
+          this.article.type = Type.Variant;
+        } else if (pathLocation[2] === "ingredientes") {
+          this.article.type = Type.Ingredient;
+        } else {
+          this.article.type = Type.Final;
+        }
+
+        if (this.operation === 'add' || this.operation === 'copy') {
+          this.saveArticle();
+        } else if (this.operation === 'update') {
+          this.updateArticle();
+        }
       } else {
-        this.article.containsVariants = false;
-      }
-
-      this.article.taxes = this.taxes;
-      const selectedOrderIds = this.articleForm.value.applications
-        .map((v, i) => (v ? this.applications[i] : null))
-        .filter(v => v !== null);
-      this.article.applications = selectedOrderIds;
-
-      const pathLocation: string[] = this._router.url.split('/');
-      if (pathLocation[2] === "productos") {
-        this.article.type = Type.Final;
-      } else if (pathLocation[2] === "variantes") {
-        this.article.type = Type.Variant;
-      } else if (pathLocation[2] === "ingredientes") {
-        this.article.type = Type.Ingredient;
-      } else {
-        this.article.type = Type.Final;
-      }
-
-      if (this.operation === 'add' || this.operation === 'copy') {
-        this.saveArticle();
-      } else if (this.operation === 'update') {
-        this.updateArticle();
+        this.showToast({ message: "Completa los campos requeridos con (*)" });
+        this.onValueChanged();
       }
     }
   }
@@ -1535,7 +1503,6 @@ export class AddArticleComponent implements OnInit {
       this._articleService.saveArticle(this.article, this.variants).subscribe(
         result => {
           if (!result.article) {
-            this.loading = false;
             this.showMessage((result.error && result.error.message) ? result.error.message : (result.message) ? result.message : '', 'info', true);
           } else {
             this.hasChanged = true;
@@ -1552,19 +1519,14 @@ export class AddArticleComponent implements OnInit {
                     } else {
                       this.imageURL = './../../../assets/img/default.jpg';
                     }
-                    this.loading = false;
                     this.showMessage('El producto se ha añadido con éxito.', 'success', false);
                     if (this.userType === 'pos') {
                       this.activeModal.close({ article: this.article });
                     }
                   },
-                  (error) => {
-                    this.loading = false;
-                    this.showMessage(error, 'danger', false);
-                  }
+                  (error) => this.showMessage(error, 'danger', false)
                 );
             } else {
-              this.loading = false;
               this.showMessage('El producto se ha añadido con éxito.', 'success', false);
               if (this.userType === 'pos') {
                 this.activeModal.close({ article: this.article });
@@ -1572,10 +1534,7 @@ export class AddArticleComponent implements OnInit {
             }
           }
         },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
-        }
+        error => this.showMessage(error._body, 'danger', false)
       );
     } else {
       this.loading = false;
@@ -1601,6 +1560,7 @@ export class AddArticleComponent implements OnInit {
                 this.imageURL = './../../../assets/img/default.jpg';
               }
               this.filesToUpload = null;
+              this.loading = false;
             },
             (error) => {
               isValid = false;
@@ -1649,10 +1609,7 @@ export class AddArticleComponent implements OnInit {
         }
         this.loading = false;
       },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
+      error => this.showMessage(error._body, 'danger', false)
     );
   }
 
@@ -1713,6 +1670,7 @@ export class AddArticleComponent implements OnInit {
       match = JSON.parse(match);
       this._articleService.getArticlesV2(project, match, {}, {}).subscribe(
         result => {
+          this.loading = false;
           if (result && result.articles && result.articles.length > 0) {
             resolve(true);
           } else {
@@ -1868,10 +1826,12 @@ export class AddArticleComponent implements OnInit {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
+    this.loading = false;
   }
 
   public hideMessage(): void {
     this.alertMessage = '';
+    this.loading = false;
   }
 
   public showToast(result, type?: string, title?: string, message?: string): void {
