@@ -408,7 +408,7 @@ export class TransactionService extends ModelService {
 
   public updateBalance(transaction: Transaction): Observable<any> {
 
-    const URL = `${Config.apiURL}update-balance`;
+    const URL = `${Config.apiV8URL}transactions/update-balance/${transaction._id}`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

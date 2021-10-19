@@ -25,7 +25,7 @@ export class History extends Model {
         filter: true,
         defaultFilter: null,
         datatype: 'string',
-        project: null,
+        project: `{ "$toString": "$doc._id" }`,
         align: 'left',
         required: false,
       },

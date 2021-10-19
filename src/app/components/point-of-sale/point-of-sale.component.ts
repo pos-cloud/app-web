@@ -22,42 +22,42 @@ import { AddMovementOfCashComponent } from '../movement-of-cash/add-movement-of-
 import { SelectEmployeeComponent } from '../employee/select-employee/select-employee.component';
 import { ViewTransactionComponent } from '../transaction/view-transaction/view-transaction.component';
 import { CashBoxComponent } from '../cash-box/cash-box/cash-box.component';
-import { Currency } from 'app/components/currency/currency';
-import { CurrencyService } from 'app/components/currency/currency.service';
-import { Config } from 'app/app.config';
-import { CashBox, CashBoxState } from 'app/components/cash-box/cash-box';
-import { CashBoxService } from 'app/components/cash-box/cash-box.service';
-import { Company, CompanyType } from 'app/components/company/company';
-import { Table, TableState } from 'app/components/table/table';
-import { TableService } from 'app/components/table/table.service';
-import { AuthService } from 'app/components/login/auth.service';
-import { DepositService } from 'app/components/deposit/deposit.service';
-import { Deposit } from 'app/components/deposit/deposit';
-import { BranchService } from 'app/components/branch/branch.service';
-import { Branch } from 'app/components/branch/branch';
+import { Currency } from './../../components/currency/currency';
+import { CurrencyService } from './../../components/currency/currency.service';
+import { Config } from './../../app.config';
+import { CashBox, CashBoxState } from './../../components/cash-box/cash-box';
+import { CashBoxService } from './../../components/cash-box/cash-box.service';
+import { Company, CompanyType } from './../../components/company/company';
+import { Table, TableState } from './../../components/table/table';
+import { TableService } from './../../components/table/table.service';
+import { AuthService } from './../../components/login/auth.service';
+import { DepositService } from './../../components/deposit/deposit.service';
+import { Deposit } from './../../components/deposit/deposit';
+import { BranchService } from './../../components/branch/branch.service';
+import { Branch } from './../../components/branch/branch';
 import { SelectBranchComponent } from '../branch/select-branch/select-branch.component';
-import { Origin } from 'app/components/origin/origin';
-import { OriginService } from 'app/components/origin/origin.service';
+import { Origin } from './../../components/origin/origin';
+import { OriginService } from './../../components/origin/origin.service';
 import { SelectOriginComponent } from '../origin/select-origin/select-origin.component';
 import { SelectDepositComponent } from '../deposit/select-deposit/select-deposit.component';
-import { ConfigService } from 'app/components/config/config.service';
+import { ConfigService } from './../../components/config/config.service';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { Subscription } from 'rxjs';
-import { User } from 'app/components/user/user';
-import { UserService } from 'app/components/user/user.service';
+import { User } from './../../components/user/user';
+import { UserService } from './../../components/user/user.service';
 import { SelectCompanyComponent } from '../company/select-company/select-company.component';
-import { Claim, ClaimPriority, ClaimType } from 'app/layout/claim/claim';
-import { ClaimService } from 'app/layout/claim/claim.service';
+import { Claim, ClaimPriority, ClaimType } from './../../layout/claim/claim';
+import { ClaimService } from './../../layout/claim/claim.service';
 import { EmailService } from '../send-email/send-email.service';
 import { SendEmailComponent } from '../send-email/send-email.component';
 import { EmployeeType } from '../employee-type/employee-type.model';
-import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import { TranslateMePipe } from './../../main/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
 import { MovementOfCashService } from '../movement-of-cash/movement-of-cash.service';
-import { MercadopagoService } from '../mercadopago/mercadopago.service';
 import { MovementOfCancellation } from '../movement-of-cancellation/movement-of-cancellation';
 import { MovementOfCancellationService } from '../movement-of-cancellation/movement-of-cancellation.service';
+import Resulteable from '../../util/Resulteable';
 
 @Component({
     selector: 'app-point-of-sale',
@@ -111,8 +111,8 @@ export class PointOfSaleComponent implements OnInit {
 
     // CAMPOS TRAIDOS DE LA CUENTA CTE.
     @Input() company: Company;
-    public companyType: CompanyType;
     @Input() totalPrice: number;
+    public companyType: CompanyType;
 
     constructor(
         public alertConfig: NgbAlertConfig,
@@ -1936,92 +1936,66 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     async finishTransaction(state: TransactionState = TransactionState.Closed) {
-        let isValid: boolean = true;
-
-        if (isValid) {
+        try {
             if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
                 for (let movementOfCash of this.movementsOfCashes) {
                     if (movementOfCash.balanceCanceled > 0) {
                         movementOfCash.cancelingTransaction = this.transaction;
-                        await this.updateMovementOfCash(movementOfCash).then(
-                            movementOfCash => {
-                                if (!movementOfCash) {
-                                    isValid = false;
-                                }
-                            }
-                        );
+                        await this.updateMovementOfCash(movementOfCash);
                     }
                 }
             }
-        }
 
-        if (isValid) {
-            await this.updateBalance().then(
-                async balance => {
-                    if (balance !== null) {
-                        this.transaction.balance = balance;
-                        if (this.posType === 'resto' || this.posType === "delivery") {
-                            this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-                            this.transaction.VATPeriod = moment().format('YYYYMM');
-                        } else {
-                            if (!this.transaction.endDate) {
-                                this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-                            }
-                            if (this.transaction.type.transactionMovement !== TransactionMovement.Purchase || !this.transaction.VATPeriod) {
-                                this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
-                            }
-                        }
-                        this.transaction.expirationDate = this.transaction.endDate;
-                        this.transaction.state = state;
-                        let print: boolean = false;
-                        if (this.transaction.type.printable && this.transaction.printed === 0) {
-                            this.transaction.printed = 1;
-                            print = true;
-                        }
-                        await this.updateTransaction(this.transaction).then(
-                            transaction => {
-                                if (transaction) {
-                                    this.transaction = transaction;
-                                    if (print) {
-                                        this.refresh();
-                                        if (this.transaction.type.defectPrinter) {
-                                            this.printerSelected = this.printerSelected;
-                                            this.openModal("print");
-                                        } else {
-                                            this.openModal("printers");
-                                        }
-                                    } else {
-                                        if (this.posType !== 'delivery' && this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
-                                            this.transactionTypeId = this.transaction.type._id;
-                                            this.transaction = undefined;
-                                        }
-                                        this.refresh();
-                                    }
-                                }
-                            }
-                        );
-                    }
-                });
-        }
+            let result: Resulteable = await this._transactionService.updateBalance(this.transaction).toPromise();
+            if (result.status !== 200) throw result;
+            this.transaction.balance = result.result.balance;
+
+            if (this.posType === 'resto' || this.posType === "delivery") {
+                this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+                this.transaction.VATPeriod = moment().format('YYYYMM');
+            } else {
+                if (!this.transaction.endDate) {
+                    this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+                }
+                if (this.transaction.type.transactionMovement !== TransactionMovement.Purchase || !this.transaction.VATPeriod) {
+                    this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
+                }
+            }
+            this.transaction.expirationDate = this.transaction.endDate;
+            this.transaction.state = state;
+            let print: boolean = false;
+            if (this.transaction.type.printable && this.transaction.printed === 0) {
+                this.transaction.printed = 1;
+                print = true;
+            }
+            this.transaction = await this.updateTransaction(this.transaction);
+            if (print) {
+                this.refresh();
+                if (this.transaction.type.defectPrinter) {
+                    this.printerSelected = this.printerSelected;
+                    this.openModal("print");
+                } else {
+                    this.openModal("printers");
+                }
+            } else {
+                if (this.posType !== 'delivery' && this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+                    this.transactionTypeId = this.transaction.type._id;
+                    this.transaction = undefined;
+                }
+                this.refresh();
+            }
+        } catch(error) { this.showToast(error) }
     }
 
     public updateMovementOfCash(movementOfCash: MovementOfCash): Promise<MovementOfCash> {
-
         return new Promise<MovementOfCash>((resolve, reject) => {
-
             this._movementOfCashService.updateMovementOfCash(movementOfCash).subscribe(
                 async result => {
                     if (result && result.movementOfCash) {
                         resolve(result.movementOfCash);
-                    } else {
-                        if (result && result.message && result.message !== "") this.showMessage(result.message, "info", true);
-                        resolve(null);
-                    }
+                    } else reject(result);
                 },
-                error => {
-                    this.showMessage(error.body, "info", true);
-                    resolve(null);
-                }
+                error => reject(error)
             )
         });
     }
@@ -2208,22 +2182,13 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     public updateTransaction(transaction: Transaction): Promise<Transaction> {
-
         return new Promise<Transaction>((resolve, reject) => {
-
             this._transactionService.updateTransaction(transaction).subscribe(
                 result => {
-                    if (!result.transaction) {
-                        if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                        resolve(null);
-                    } else {
-                        resolve(result.transaction);
-                    }
+                    if (result.transaction) resolve(result.transaction);
+                    else reject(result);
                 },
-                error => {
-                    this.showMessage(error._body, 'danger', false);
-                    resolve(null);
-                }
+                error => reject(error)
             );
         });
     }

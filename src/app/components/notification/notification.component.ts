@@ -55,7 +55,6 @@ export class PushNotificationComponent implements OnInit, OnChanges, OnDestroy {
 
   public show () {
     if (!this.checkCompatibility()) {
-        return console.log('Notification API not available in this browser.');
     }
 
     return this.requestPermission((permission) => {

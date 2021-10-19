@@ -23,35 +23,37 @@ import { EmployeeService } from '../../employee/employee.service';
 //Pipes
 import { DateFormatPipe } from '../../../main/pipes/date-format.pipe';
 import { RoundNumberPipe } from '../../../main/pipes/round-number.pipe';
-import { CashBoxService } from 'app/components/cash-box/cash-box.service';
-import { UserService } from 'app/components/user/user.service';
-import { Config } from 'app/app.config';
+import { CashBoxService } from './../../../components/cash-box/cash-box.service';
+import { UserService } from './../../../components/user/user.service';
+import { Config } from './../../../app.config';
 import { MovementOfCancellationComponent } from '../../movement-of-cancellation/movement-of-cancellation.component';
-import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
-import { MovementOfCancellationService } from 'app/components/movement-of-cancellation/movement-of-cancellation.service';
-import { CancellationTypeService } from 'app/components/cancellation-type/cancellation-type.service';
+import { MovementOfCancellation } from './../../../components/movement-of-cancellation/movement-of-cancellation';
+import { MovementOfCancellationService } from './../../../components/movement-of-cancellation/movement-of-cancellation.service';
+import { CancellationTypeService } from './../../../components/cancellation-type/cancellation-type.service';
 import { SelectCompanyComponent } from '../../company/select-company/select-company.component';
 import { Employee } from '../../employee/employee';
 import { TaxBase, TaxClassification } from '../../tax/tax';
-import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
-import { Account } from 'app/components/account/account';
-import { AccountService } from 'app/components/account/account.service';
+import { MovementOfCash } from './../../../components/movement-of-cash/movement-of-cash';
+import { Account } from './../../../components/account/account';
+import { AccountService } from './../../../components/account/account.service';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
-
+import Resulteable from './../../../util/Resulteable';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateMePipe } from './../../../main/pipes/translate-me';
 
 @Component({
     selector: 'app-add-transaction',
     templateUrl: './add-transaction.component.html',
     styleUrls: ['./add-transaction.component.css'],
-    providers: [NgbAlertConfig, DateFormatPipe]
+    providers: [NgbAlertConfig, DateFormatPipe, TranslateMePipe]
 })
 
 export class AddTransactionComponent implements OnInit {
 
+    @Input() transactionId: string;
     public transactionForm: FormGroup;
     public companies: Company[];
-    @Input() transactionId: string;
     public transaction: Transaction;
     public taxes: Taxes[] = new Array();
     private movementsOfCancellations: MovementOfCancellation[];
@@ -98,7 +100,7 @@ export class AddTransactionComponent implements OnInit {
         'totalPrice': '',
         'company': '',
         'employeeOpening': '',
-        'account' : ''
+        'account': ''
     };
 
     public validationMessages = {
@@ -112,7 +114,7 @@ export class AddTransactionComponent implements OnInit {
         'exempt': { 'required': 'Este campo es requerido.' },
         'totalPrice': { 'required': 'Este campo es requerido.' },
         'employeeOpening': {},
-        'account' : {}
+        'account': {}
     };
 
     public searchAccounts = (text$: Observable<string>) =>
@@ -121,7 +123,7 @@ export class AddTransactionComponent implements OnInit {
             distinctUntilChanged(),
             tap(() => this.loading = true),
             switchMap(async term => {
-                let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' }, mode : "Analitico", operationType : { $ne :"D" } } : {};
+                let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' }, mode: "Analitico", operationType: { $ne: "D" } } : {};
                 return await this.getAllAccounts(match).then(
                     result => {
                         return result;
@@ -147,6 +149,8 @@ export class AddTransactionComponent implements OnInit {
         public _cashBoxService: CashBoxService,
         public _userService: UserService,
         public _cancellationTypeService: CancellationTypeService,
+        public translatePipe: TranslateMePipe,
+        private _toastr: ToastrService,
     ) {
         this.transaction = new Transaction();
         this.transactionDate = this.transaction.startDate;
@@ -205,7 +209,7 @@ export class AddTransactionComponent implements OnInit {
             'basePrice': [this.transaction.basePrice, []],
             'exempt': [this.transaction.exempt, []],
             'totalPrice': [this.transaction.totalPrice, [Validators.required]],
-            'account' : [this.transaction.account,[]],
+            'account': [this.transaction.account, []],
             'observation': [this.transaction.observation, []],
             'employeeOpening': [this.transaction.employeeOpening, []],
             'state': [this.transaction.state, []],
@@ -256,7 +260,7 @@ export class AddTransactionComponent implements OnInit {
             'state': this.transaction.state,
             'VATPeriod': this.transaction.VATPeriod,
             'balance': (this.transaction.balance) ? this.transaction.balance : 0,
-            'account' : (this.transaction.account) ? this.transaction.account : null
+            'account': (this.transaction.account) ? this.transaction.account : null
         });
     }
 
@@ -278,7 +282,7 @@ export class AddTransactionComponent implements OnInit {
         }
     }
 
-    public loadVATPeriod(){
+    public loadVATPeriod() {
         var vatPeriod = moment(this.transactionForm.value.date).format('YYYYMM')
         this.transactionForm.patchValue({ 'VATPeriod': vatPeriod });
     }
@@ -418,14 +422,8 @@ export class AddTransactionComponent implements OnInit {
                         if (result.company) {
                             this.transaction.company = result.company;
                             this.companyName = this.transaction.company.name;
-                            await this.updateTransaction().then(
-                                transaction => {
-                                    if (transaction) {
-                                        this.transaction = transaction;
-                                        this.setValuesForm();
-                                    }
-                                }
-                            );
+                            this.transaction = await this.updateTransaction();
+                            this.setValuesForm();
                         }
                     }, (reason) => {
 
@@ -463,72 +461,19 @@ export class AddTransactionComponent implements OnInit {
     }
 
     async finishTransaction() {
-
-        let isValid: boolean = true;
-
-        if (this.movementsOfCancellations && this.movementsOfCancellations.length > 0) {
-            await this.daleteMovementsOfCancellations('{"transactionDestination":"' + this.transaction._id + '"}').then(
-                async movementsOfCancellations => {
-                    if (movementsOfCancellations) {
-                        await this.saveMovementsOfCancellations(this.movementsOfCancellations).then(
-                            movementsOfCancellations => {
-                                if (!movementsOfCancellations) {
-                                    isValid = false;
-                                }
-                            }
-                        );
-                    }
-                }
-            );
-        }
-
-        if (isValid) {
-            if (this.transaction.state === TransactionState.Closed && this.balanceTotal !== -1) {
-                await this.updateBalance().then(
-                    async balance => {
-                        if (balance !== null) {
-                            this.transaction.balance = balance;
-                            await this.updateTransaction().then(
-                                transaction => {
-                                    if (transaction) {
-                                        this.transaction = transaction;
-                                        this.activeModal.close({ transaction: this.transaction, movementsOfCashes: this.movementsOfCashes });
-                                    }
-                                }
-                            );
-                        }
-                    });
-            } else {
-                await this.updateTransaction().then(
-                    transaction => {
-                        if (transaction) {
-                            this.transaction = transaction;
-                            this.activeModal.close({ transaction: this.transaction, movementsOfCashes: this.movementsOfCashes });
-                        }
-                    }
-                );
+        try {
+            if (this.movementsOfCancellations && this.movementsOfCancellations.length > 0) {
+                await this.daleteMovementsOfCancellations('{"transactionDestination":"' + this.transaction._id + '"}');
+                await this.saveMovementsOfCancellations(this.movementsOfCancellations);
             }
-        }
-    }
-
-    public updateBalance(): Promise<number> {
-
-        return new Promise<number>((resolve, reject) => {
-            this._transactionService.updateBalance(this.transaction).subscribe(
-                async result => {
-                    if (!result.transaction) {
-                        if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                        resolve(null);
-                    } else {
-                        resolve(result.transaction.balance);
-                    }
-                },
-                error => {
-                    this.showMessage(error._body, 'danger', false);
-                    reject(null);
-                }
-            )
-        });
+            if (this.transaction.state === TransactionState.Closed && this.balanceTotal !== -1) {
+                let result: Resulteable = await this._transactionService.updateBalance(this.transaction).toPromise();
+                if (result.status !== 200) throw result;
+                this.transaction.balance = result.result.balance;
+            }
+            this.transaction = await this.updateTransaction();
+            this.activeModal.close({ transaction: this.transaction, movementsOfCashes: this.movementsOfCashes });
+        } catch (error) { this.showToast(error); }
     }
 
     public getEmployees(query: string): void {
@@ -674,43 +619,33 @@ export class AddTransactionComponent implements OnInit {
     }
 
     public saveMovementsOfCancellations(movementsOfCancellations: MovementOfCancellation[]): Promise<MovementOfCancellation[]> {
-
         return new Promise<MovementOfCancellation[]>((resolve, reject) => {
-
             this._movementOfCancellationService.saveMovementsOfCancellations(movementsOfCancellations).subscribe(
                 async result => {
                     if (!result.movementsOfCancellations) {
-                        if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                        resolve(null);
+                        if (result.message && result.message !== '')
+                            reject(result.message);
                     } else {
                         resolve(result.movementsOfCancellations);
                     }
                 },
-                error => {
-                    this.showMessage(error._body, 'danger', false);
-                    resolve(null);
-                }
+                error => reject(error)
             );
         });
     }
 
     public daleteMovementsOfCancellations(query: string): Promise<boolean> {
-
         return new Promise((resolve, reject) => {
-
             this._movementOfCancellationService.deleteMovementsOfCancellations(query).subscribe(
                 async result => {
                     if (!result.movementsOfCancellations) {
-                        if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                        resolve(null);
+                        if (result.message && result.message !== '')
+                            reject(result.message);
                     } else {
                         resolve(result.movementsOfCancellations);
                     }
                 },
-                error => {
-                    this.showMessage(error._body, 'danger', false);
-                    resolve(null);
-                }
+                error => reject(error)
             );
         });
     }
@@ -738,5 +673,35 @@ export class AddTransactionComponent implements OnInit {
 
     public hideMessage(): void {
         this.alertMessage = '';
+    }
+
+    public showToast(result, type?: string, title?: string, message?: string): void {
+        if (result) {
+            if (result.status === 0) {
+                type = 'info';
+                title = 'el servicio se encuentra en mantenimiento, inténtelo nuevamente en unos minutos';
+            } else if (result.status === 200) {
+                type = 'success';
+                title = result.message;
+            } else if (result.status >= 500) {
+                type = 'danger';
+                title = (result.error && result.error.message) ? result.error.message : result.message;
+            } else {
+                type = 'info';
+                title = (result.error && result.error.message) ? result.error.message : result.message;
+            }
+        }
+        switch (type) {
+            case 'success':
+                this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+            case 'danger':
+                this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+            default:
+                this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+        }
+        this.loading = false;
     }
 }

@@ -476,7 +476,6 @@ export class ListArticlesComponent implements OnInit {
           backdrop: "static"
         });
         modalRef.componentInstance.type = 'create-article';
-        // console.log(modalRef.componentInstance)
         modalRef.result.then(
           (result) => {
             if (result === "import_close") {

@@ -25,11 +25,9 @@ export class PushNotificationsService {
         let self = this;
         return new Observable(function(obs) {
             if (!('Notification' in window)) {
-                console.log('Notifications are not available in this environment');
                 obs.complete();
             }
             if (self.permission !== 'granted') {
-                console.log("The user hasn't granted you permission to send push notifications");
                 obs.complete();
             }
             let _notify = new Notification(title, options);

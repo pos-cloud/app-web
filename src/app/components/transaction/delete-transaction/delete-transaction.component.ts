@@ -3,12 +3,14 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Transaction } from '../transaction';
 import { TransactionService } from '../transaction.service';
 import { MovementOfArticleService } from '../../movement-of-article/movement-of-article.service';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateMePipe } from 'app/main/pipes/translate-me';
 
 @Component({
   selector: "app-delete-transaction",
   templateUrl: "./delete-transaction.component.html",
   styleUrls: ["./delete-transaction.component.css"],
-  providers: [NgbAlertConfig]
+  providers: [NgbAlertConfig, TranslateMePipe]
 })
 export class DeleteTransactionComponent {
 
@@ -22,7 +24,9 @@ export class DeleteTransactionComponent {
     public _transactionService: TransactionService,
     public _movementOfArticle: MovementOfArticleService,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    private _toastr: ToastrService,
+    public translatePipe: TranslateMePipe
   ) {
     alertConfig.type = "danger";
     alertConfig.dismissible = true;
@@ -30,7 +34,7 @@ export class DeleteTransactionComponent {
   }
 
   public ngOnInit(): void {
-    if(this.transactionId) {
+    if (this.transactionId) {
       this.getTransaction();
     }
   }
@@ -46,17 +50,13 @@ export class DeleteTransactionComponent {
     this._transactionService.getTransaction(this.transactionId).subscribe(
       result => {
         if (!result.transaction) {
-          this.showMessage(result.message, 'danger', false);
+          this.showToast(null, 'info', result.message);
         } else {
-          this.hideMessage();
           this.transaction = result.transaction;
         }
         this.loading = false;
       },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
+      error => this.showToast(error)
     );
   }
 
@@ -68,32 +68,47 @@ export class DeleteTransactionComponent {
       !this.transaction.SATStamp &&
       !this.transaction.stringSAT &&
       !this.transaction.CFDStamp) {
-      this._transactionService.deleteTransaction(this.transaction._id).subscribe(
+      this._transactionService.delete(this.transaction._id).subscribe(
         result => {
-          this.activeModal.close("delete_close");
-          this.loading = false;
+          this.showToast(result);
+          if(result.status === 200) this.activeModal.close("delete_close");
         },
         error => {
-          this.showMessage(error._body, "danger", false);
-          this.loading = false;
+          this.showToast(error);
         }
       );
     } else {
-      this.showMessage('No se puede eliminar una transacción electrónica ya validada.', 'info', true);
+      this.showToast(null, 'info', 'No se puede eliminar una transacción electrónica ya validada.');
     }
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
-    this.alertMessage = message;
-    this.alertConfig.type = type;
-    this.alertConfig.dismissible = dismissible;
-  }
-
-  public hideMessage(): void {
-    this.alertMessage = "";
+  public showToast(result, type?: string, title?: string, message?: string): void {
+    if (result) {
+      if (result.status === 0) {
+        type = 'info';
+        title = 'el servicio se encuentra en mantenimiento, inténtelo nuevamente en unos minutos';
+      } else if (result.status === 200) {
+        type = 'success';
+        title = result.message;
+      } else if (result.status >= 500) {
+        type = 'danger';
+        title = (result.error && result.error.message) ? result.error.message : result.message;
+      } else {
+        type = 'info';
+        title = (result.error && result.error.message) ? result.error.message : result.message;
+      }
+    }
+    switch (type) {
+      case 'success':
+        this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        break;
+      case 'danger':
+        this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        break;
+      default:
+        this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        break;
+    }
+    this.loading = false;
   }
 }

@@ -523,5 +523,7 @@
     "business-rules" : "Reglas de Negocio",
     "auth.messageOPT" : "Mensaje de Texto",
     "type.defectEmailTemplate.design": "Template Email",
-    "type.defectEmailTemplate._id": "Identificador Template Email"
+    "type.defectEmailTemplate._id": "Identificador Template Email",
+    "movements-of-cash": "Movimiento de medio",
+    "movements-of-cashes": "Movimientos de medios"
 }

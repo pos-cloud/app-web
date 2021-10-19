@@ -80,6 +80,7 @@ import { ListCategoriesPosComponent } from '../category/list-categories-pos/list
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { AccountSeatService } from '../account-seat/account-seat.service';
 import { SelectPriceListComponent } from '../price-list/select-price-list/select-price-list.component';
+import Resulteable from 'app/util/Resulteable';
 
 @Component({
     selector: 'app-add-sale-order',
@@ -91,7 +92,7 @@ import { SelectPriceListComponent } from '../price-list/select-price-list/select
 
 export class AddSaleOrderComponent {
 
-    public optional : string = '';
+    public optional: string = '';
     transaction: Transaction;
     transactionId: string;
     transactionMovement: string;
@@ -523,29 +524,22 @@ export class AddSaleOrderComponent {
     }
 
     public updateTransaction(): Promise<Transaction> {
-
         return new Promise<Transaction>((resolve, reject) => {
-
-            this.loading = true;
-
             this.transaction.exempt = this.roundNumber.transform(this.transaction.exempt);
             this.transaction.discountAmount = this.roundNumber.transform(this.transaction.discountAmount, 6);
             this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
-
             this._transactionService.updateTransaction(this.transaction).subscribe(
                 result => {
-                    this.loading = false;
                     if (!result.transaction) {
                         if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                        resolve(null);
+                        reject(result.message);
                     } else {
                         resolve(result.transaction);
                     }
                 },
                 error => {
-                    this.loading = false;
                     this.showMessage(error._body, 'danger', false);
-                    resolve(null);
+                    reject(error);
                 }
             );
         });
@@ -1057,66 +1051,47 @@ export class AddSaleOrderComponent {
     }
 
     async isValidMovementOfArticle(movementOfArticle: MovementOfArticle, verificaStock: boolean = true): Promise<boolean> {
-
         return new Promise<boolean>(async (resolve, reject) => {
+            try {
+                if (this.transaction.type &&
+                    this.transaction.type.transactionMovement === TransactionMovement.Sale &&
+                    movementOfArticle.article &&
+                    !movementOfArticle.article.allowSale)
+                    throw new Error(`El producto ${movementOfArticle.article.description} (${movementOfArticle.article.code}) no esta habilitado para la venta`);
 
-            this.loading = true;
+                if (this.transaction.type &&
+                    this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
+                    movementOfArticle.article &&
+                    !movementOfArticle.article.allowPurchase)
+                    throw new Error(`El producto ${movementOfArticle.article.description} (${movementOfArticle.article.code}) no esta habilitado para la compra`);
 
-            let isValid = true;
-
-            if (this.transaction.type &&
-                this.transaction.type.transactionMovement === TransactionMovement.Sale &&
-                movementOfArticle.article &&
-                !movementOfArticle.article.allowSale) {
-                isValid = false;
-                this.showMessage("El producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + ") no esta habilitado para la venta", 'info', true);
-            }
-
-            if (this.transaction.type &&
-                this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
-                movementOfArticle.article &&
-                !movementOfArticle.article.allowPurchase) {
-                isValid = false;
-                this.showMessage("El producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + ") no esta habilitado para la compra", 'info', true);
-            }
-
-            if (verificaStock &&
-                movementOfArticle.article &&
-                this.config['modules'].stock &&
-                this.transaction.type &&
-                this.transaction.type.modifyStock &&
-                (this.transaction.type.stockMovement === StockMovement.Outflows || this.transaction.type.stockMovement === StockMovement.Transfer) &&
-                !movementOfArticle.article.allowSaleWithoutStock) {
-                await this.getArticleStock(movementOfArticle).then(
-                    articleStock => {
-                        if (!articleStock || (movementOfArticle.amount + movementOfArticle.quantityForStock) > articleStock.realStock) {
-                            if (this.transaction.type.stockMovement === StockMovement.Transfer && movementOfArticle.deposit && movementOfArticle.deposit._id.toString() === this.transaction.depositDestination._id.toString()) {
-                            } else {
-                                isValid = false;
-                                let realStock = 0;
-                                if (articleStock) {
-                                    realStock = articleStock.realStock;
-                                }
-                                this.showMessage("No tiene el stock suficiente del producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + "). Stock Actual: " + realStock, 'info', true);
-                            }
+                if (verificaStock &&
+                    movementOfArticle.article &&
+                    this.config['modules'].stock &&
+                    this.transaction.type &&
+                    this.transaction.type.modifyStock &&
+                    (this.transaction.type.stockMovement === StockMovement.Outflows || this.transaction.type.stockMovement === StockMovement.Transfer) &&
+                    !movementOfArticle.article.allowSaleWithoutStock) {
+                    let articleStocks: ArticleStock[] = await this.getArticleStock(movementOfArticle);
+                    let articleStock: ArticleStock;
+                    if (articleStocks && articleStocks.length > 0) articleStock = articleStocks[0];
+                    if (!articleStock || (movementOfArticle.amount + movementOfArticle.quantityForStock) > articleStock.realStock) {
+                        if ((this.transaction.type.stockMovement === StockMovement.Transfer && movementOfArticle.deposit && movementOfArticle.deposit._id.toString() === this.transaction.depositDestination._id.toString())) {
+                            let realStock = 0;
+                            if (articleStock) realStock = articleStock.realStock;
+                            throw new Error(`No tiene el stock suficiente del producto ${movementOfArticle.article.description} (${movementOfArticle.article.code}). Stock Actual: ${realStock}`);
                         }
                     }
-                );
-            }
-            this.loading = false;
-            resolve(isValid);
+                }
+                resolve(true);
+            } catch (error) { this.showToast(error); resolve(false); }
         });
     }
 
-    public getArticleStock(movementOfArticle: MovementOfArticle): Promise<ArticleStock> {
-
-        return new Promise<ArticleStock>((resolve, reject) => {
-
-            this.loading = true;
-
+    public getArticleStock(movementOfArticle: MovementOfArticle): Promise<ArticleStock[]> {
+        return new Promise<ArticleStock[]>((resolve, reject) => {
             let depositID;
             let query;
-
             if (movementOfArticle.article.deposits && movementOfArticle.article.deposits.length > 0) {
                 movementOfArticle.article.deposits.forEach(element => {
                     if (element.deposit.branch._id === this.transaction.branchOrigin._id) {
@@ -1124,7 +1099,6 @@ export class AddSaleOrderComponent {
                     }
                 });
             }
-
             if (depositID) {
                 query = `where= "article": "${movementOfArticle.article._id}",
                         "branch": "${this.transaction.branchOrigin._id}",
@@ -1137,18 +1111,10 @@ export class AddSaleOrderComponent {
 
             this._articleStockService.getArticleStocks(query).subscribe(
                 result => {
-                    this.loading = false;
-                    if (!result.articleStocks || result.articleStocks.length <= 0) {
-                        resolve(null);
-                    } else {
-                        resolve(result.articleStocks[0]);
-                    }
+                    if (result.articleStocks) resolve(result.articleStocks);
+                    else reject(result)
                 },
-                error => {
-                    this.loading = false;
-                    this.showMessage(error._body, 'danger', false);
-                    resolve(null);
-                }
+                error => reject(error)
             );
         });
     }
@@ -1411,9 +1377,7 @@ export class AddSaleOrderComponent {
     }
 
     public getMovementOfArticleByArticle(articleId: string): MovementOfArticle {
-
         let movementOfArticle: MovementOfArticle;
-
         if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
             for (let movementOfArticleAux of this.movementsOfArticles) {
                 if (movementOfArticleAux.article && movementOfArticleAux.article._id === articleId) {
@@ -1421,16 +1385,12 @@ export class AddSaleOrderComponent {
                 }
             }
         }
-
         return movementOfArticle;
     }
 
     public updateMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
-
         return new Promise<MovementOfArticle>(async (resolve, reject) => {
-
             this.loading = true;
-
             movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice);
             movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice);
             movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice);
@@ -1445,7 +1405,7 @@ export class AddSaleOrderComponent {
                     this.loading = false;
                     if (!result.movementOfArticle) {
                         if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                        resolve(null);
+                        reject(result.message);
                     } else {
                         this.containerMovementsOfArticles.nativeElement.scrollTop = this.containerMovementsOfArticles.nativeElement.scrollHeight;
                         resolve(result.movementOfArticle);
@@ -1454,7 +1414,7 @@ export class AddSaleOrderComponent {
                 error => {
                     this.loading = false;
                     this.showMessage(error._body, 'danger', false);
-                    resolve(null);
+                    reject(error);
                 }
             );
         });
@@ -1503,12 +1463,13 @@ export class AddSaleOrderComponent {
                             movementOfArticle['taxes'] && movementOfArticle['taxes'].length > 0 &&
                             oldMovementOfArticle['taxes'][0].taxAmount !== movementOfArticle['taxes'][0].taxAmount)
                     ) {
-                        let result = await this.updateMovementOfArticle(movementOfArticle);
-                        if (!result) {
-                            isUpdateValid = false;
-                            break;
-                        }
-
+                        try {
+                            let result = await this.updateMovementOfArticle(movementOfArticle);
+                            if (!result) {
+                                isUpdateValid = false;
+                                break;
+                            }
+                        } catch (error) { isUpdateValid = false; }
                     }
                 }
             }
@@ -1881,7 +1842,7 @@ export class AddSaleOrderComponent {
                 break;
             case 'observation':
                 modalRef = this._modalService.open(this.contentChangeObservation).result.then(async (result) => {
-                    if (result !== "cancel" && result !== '') {
+                    if (result !== 'cancel' && result !== '') {
                         if (this.transaction.observation) {
                             await this.updateTransaction().then(
                                 async transaction => {
@@ -2235,7 +2196,7 @@ export class AddSaleOrderComponent {
 
                 if (this.countPrinters() > 1) {
                     modalRef = this._modalService.open(this.contentPrinters, { size: 'lg', backdrop: 'static' }).result.then((result) => {
-                        if (result !== "cancel" && result !== '') {
+                        if (result !== 'cancel' && result !== '') {
                             this.distributeImpressions(result);
                         }
                     }, (reason) => {
@@ -2249,7 +2210,7 @@ export class AddSaleOrderComponent {
                 break;
             case 'errorMessage':
                 modalRef = this._modalService.open(this.contentMessage, { size: 'lg', backdrop: 'static' }).result.then((result) => {
-                    if (result !== "cancel" && result !== '') {
+                    if (result !== 'cancel' && result !== '') {
                         this.backFinal();
                     }
                 }, (reason) => {
@@ -2257,7 +2218,7 @@ export class AddSaleOrderComponent {
                 break;
             case 'change-date':
                 modalRef = this._modalService.open(this.contentChangeDate).result.then(async (result) => {
-                    if (result !== "cancel" && result !== '') {
+                    if (result !== 'cancel' && result !== '') {
                         if (this.transaction.endDate && moment(this.transaction.endDate, 'YYYY-MM-DD').isValid()) {
                             this.transaction.endDate = moment(this.transaction.endDate, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
                             this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
@@ -2277,15 +2238,13 @@ export class AddSaleOrderComponent {
                 break;
             case 'change-optional-afip':
                 modalRef = this._modalService.open(this.contentChangeOptionalAFIP).result.then(async (result) => {
-                    if (result !== "cancel" && result !== '') {
-                        console.log(result);
+                    if (result !== 'cancel' && result !== '') {
                         this.transaction.opctionalAFIP = {
-                            id : this.transaction.type.optionalAFIP,
-                            value : result
+                            id: this.transaction.type.optionalAFIP,
+                            value: result
                         }
                         this.optional = result.value;
 
-                        console.log(this.transaction);
                         await this.updateTransaction().then(
                             async transaction => {
                                 if (transaction) {
@@ -2325,7 +2284,7 @@ export class AddSaleOrderComponent {
                 break;
             case 'change-information-cancellation':
                 modalRef = this._modalService.open(this.contentInformCancellation).result.then(async (result) => {
-                    if (result !== "cancel" && result !== '') {
+                    if (result !== 'cancel' && result !== '') {
                         this.checkInformationCancellation();
                     }
                 }, (reason) => {
@@ -2333,7 +2292,7 @@ export class AddSaleOrderComponent {
                 break;
             case 'change-quotation':
                 modalRef = this._modalService.open(this.contentChangeQuotation).result.then(async (result) => {
-                    if (result !== "cancel" && result !== '') {
+                    if (result !== 'cancel' && result !== '') {
                         this.updatePrices();
                     } else {
                         this.transaction.quotation = this.lastQuotation;
@@ -2531,176 +2490,128 @@ export class AddSaleOrderComponent {
     }
 
     async updateArticlesCostPrice(): Promise<number> {
-
         return new Promise<number>(async (resolve, reject) => {
-
-            let unitPrice: number = 0;
-            let countArticle = 0;
-
-            for (const element of this.movementsOfArticles) {
-                if (element && element.article && element.article._id) {
-                    if (this.transaction.quotation > 1) {
-                        unitPrice = this.roundNumber.transform((element.basePrice / element.amount) / this.transaction.quotation);
-                    } else {
-                        unitPrice = this.roundNumber.transform(element.basePrice / element.amount);
+            try {
+                let unitPrice: number = 0;
+                let countArticle = 0;
+                for (const mov of this.movementsOfArticles) {
+                    if (mov && mov.article && mov.article._id) {
+                        if (this.transaction.quotation > 1) unitPrice = this.roundNumber.transform((mov.basePrice / mov.amount) / this.transaction.quotation);
+                        else unitPrice = this.roundNumber.transform(mov.basePrice / mov.amount);
+                        unitPrice = this.roundNumber.transform(unitPrice + mov.transactionDiscountAmount);
+                        if (unitPrice !== mov.article.basePrice)
+                            if (await this.updateArticleCostPrice(mov.article, unitPrice))
+                                countArticle++;
                     }
-
-                    unitPrice = this.roundNumber.transform(unitPrice + element.transactionDiscountAmount);
-
-                    if (unitPrice !== element.article.basePrice) {
-                        if (await this.updateArticleCostPrice(element.article, unitPrice)) {
-                            countArticle++;
-                        }
-                    }
-
                 }
-            }
-
-            resolve(countArticle);
+                resolve(countArticle);
+            } catch (error) { reject(error); }
         })
     }
 
     async updateArticleCostPrice(article: Article, basePrice: number): Promise<boolean> {
-
         return new Promise<boolean>(async (resolve, reject) => {
+            try {
+                if (basePrice && article) {
+                    let taxedAmount = 0;
+                    article.costPrice = 0;
+                    article.basePrice = basePrice;
+                    taxedAmount = basePrice;
 
-            this.loading = true;
-
-            if (basePrice && article) {
-                let taxedAmount = 0;
-                article.costPrice = 0;
-                article.basePrice = basePrice;
-                taxedAmount = basePrice;
-
-                if (article.otherFields && article.otherFields.length > 0) {
-                    for (const field of article.otherFields) {
-                        if (field.articleField.datatype === ArticleFieldType.Percentage) {
-                            field.amount = this.roundNumber.transform((basePrice * parseFloat(field.value) / 100));
-                        } else if (field.articleField.datatype === ArticleFieldType.Number) {
-                            field.amount = parseFloat(field.value);
-                        }
-                        if (field.articleField.modifyVAT) {
-                            taxedAmount += field.amount;
-                        } else {
-                            if (field.amount) {
-                                article.costPrice += field.amount;
+                    if (article.otherFields && article.otherFields.length > 0) {
+                        for (const field of article.otherFields) {
+                            if (field.articleField.datatype === ArticleFieldType.Percentage) {
+                                field.amount = this.roundNumber.transform((basePrice * parseFloat(field.value) / 100));
+                            } else if (field.articleField.datatype === ArticleFieldType.Number) {
+                                field.amount = parseFloat(field.value);
+                            }
+                            if (field.articleField.modifyVAT) {
+                                taxedAmount += field.amount;
+                            } else {
+                                if (field.amount) {
+                                    article.costPrice += field.amount;
+                                }
                             }
                         }
                     }
-                }
 
-                if (article.taxes && article.taxes.length > 0) {
-                    for (const articleTax of article.taxes) {
-                        if (articleTax.tax.percentage && articleTax.tax.percentage != 0) {
-                            articleTax.taxBase = this.roundNumber.transform(taxedAmount);
-                            articleTax.taxAmount = this.roundNumber.transform((taxedAmount * articleTax.percentage / 100));
+                    if (article.taxes && article.taxes.length > 0) {
+                        for (const articleTax of article.taxes) {
+                            if (articleTax.tax.percentage && articleTax.tax.percentage != 0) {
+                                articleTax.taxBase = this.roundNumber.transform(taxedAmount);
+                                articleTax.taxAmount = this.roundNumber.transform((taxedAmount * articleTax.percentage / 100));
+                            }
+                            article.costPrice += (articleTax.taxAmount);
                         }
-                        article.costPrice += (articleTax.taxAmount);
                     }
-                }
-                article.costPrice += taxedAmount;
+                    article.costPrice += taxedAmount;
 
-                if (!(taxedAmount === 0 && article.salePrice !== 0)) {
-                    article.markupPrice = this.roundNumber.transform((article.costPrice * article.markupPercentage / 100));
-                    article.salePrice = article.costPrice + article.markupPrice;
-                }
-
-                this._articleService.updateArticle(article, null).subscribe(
-                    result => {
-                        this.loading = false;
-                        if (result && result.article) {
-                            resolve(true);
-                        }
-                    },
-                    error => {
-                        this.loading = false;
-                        this.showMessage(error._body, 'danger', false);
-                        resolve(null);
+                    if (!(taxedAmount === 0 && article.salePrice !== 0)) {
+                        article.markupPrice = this.roundNumber.transform((article.costPrice * article.markupPercentage / 100));
+                        article.salePrice = article.costPrice + article.markupPrice;
                     }
-                )
-            } else {
-                this.loading = false;
-                resolve(false);
-            }
+
+                    await this._articleService.updateArticle(article, null).toPromise()
+                        .then(result => {
+                            if (result && !result.article && result.message) throw new Error(result.message);
+                        })
+                }
+                resolve(true);
+            } catch (error) { reject(error) };
         });
     }
 
     async isValidCharge(): Promise<boolean> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                if (this.movementsOfArticles && this.movementsOfArticles.length <= 0) throw new Error('No existen productos en la transacción');
 
-        let isValid = true;
+                await this.areValidMovementOfArticle();
 
-        if (this.movementsOfArticles && this.movementsOfArticles.length <= 0) {
-            isValid = false;
-            this.showMessage("No existen productos en la transacción.", 'info', true);
-        } else {
-            if (await !this.areValidMovementOfArticle()) {
-                isValid = false;
-            }
-        }
+                if (this.transaction.type.requestPaymentMethods &&
+                    this.fastPayment &&
+                    this.fastPayment.isCurrentAccount &&
+                    !this.transaction.company)
+                    throw new Error(`Debe seleccionar una empresa para poder efectuarse un pago con el método ${this.fastPayment.name}`);
 
-        if (this.transaction.type.requestPaymentMethods &&
-            this.fastPayment &&
-            this.fastPayment.isCurrentAccount &&
-            !this.transaction.company) {
-            isValid = false;
-            this.showMessage("Debe seleccionar una empresa para poder efectuarse un pago con el método " + this.fastPayment.name + ".", "info", true);
-        }
+                if (this.transaction.type.requestPaymentMethods &&
+                    this.fastPayment &&
+                    this.fastPayment.isCurrentAccount &&
+                    this.transaction.company &&
+                    !this.transaction.company.allowCurrentAccount)
+                    throw new Error(`La empresa seleccionada no esta habilitada para cobrar con el método ${this.fastPayment.name}`);
 
-        if (this.transaction.type.requestPaymentMethods &&
-            this.fastPayment &&
-            this.fastPayment.isCurrentAccount &&
-            this.transaction.company &&
-            !this.transaction.company.allowCurrentAccount) {
-            isValid = false;
-            this.showMessage("La empresa seleccionada no esta habilitada para cobrar con el método " + this.fastPayment.name + ".", "info", true);
-        }
+                if (this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
+                    !this.transaction.company)
+                    throw new Error(`Debe seleccionar un proveedor para la transacción`);
 
-        if (isValid &&
-            this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
-            !this.transaction.company) {
-            isValid = false;
-            this.showMessage("Debe seleccionar un proveedor para la transacción.", 'info', true);
-        }
+                if (this.transaction.type.transactionMovement === TransactionMovement.Sale &&
+                    !this.transaction.company && this.transaction.type.requestCompany)
+                    throw new Error(`Debe seleccionar un cliente para la transacción`);
 
-        if (isValid &&
-            this.transaction.type.transactionMovement === TransactionMovement.Sale &&
-            !this.transaction.company && this.transaction.type.requestCompany) {
-            isValid = false;
-            this.showMessage("Debe seleccionar un cliente para la transacción.", 'info', true);
-        }
+                if (this.transaction.type.electronics &&
+                    this.transaction.totalPrice >= 26228 &&
+                    !this.transaction.company &&
+                    this.config['country'] === 'AR')
+                    throw new Error(`Debe indentificar al cliente para transacciones electrónicos con monto mayor a $5.000,00`);
 
-        if (isValid &&
-            this.transaction.type.electronics &&
-            this.transaction.totalPrice >= 26228 &&
-            !this.transaction.company &&
-            this.config['country'] === 'AR') {
-            isValid = false;
-            this.showMessage("Debe indentificar al cliente para transacciones electrónicos con monto mayor a $5.000,00.", 'info', true);
-        }
+                if (this.transaction.type.electronics &&
+                    this.transaction.company && (
+                        !this.transaction.company.identificationType ||
+                        !this.transaction.company.identificationValue ||
+                        this.transaction.company.identificationValue === '')
+                )
+                    throw new Error(`El cliente ingresado no tiene número de identificación`);
 
-        if (isValid &&
-            this.transaction.type.electronics &&
-            this.transaction.company && (
-                !this.transaction.company.identificationType ||
-                !this.transaction.company.identificationValue ||
-                this.transaction.company.identificationValue === '')
-        ) {
-            isValid = false;
-            this.showMessage("El cliente ingresado no tiene número de identificación", 'info', true);
-            this.loading = false;
-        }
+                if (this.transaction.type.fixedOrigin &&
+                    this.transaction.type.fixedOrigin === 0 &&
+                    this.transaction.type.electronics &&
+                    this.config['country'] === 'MX')
+                    throw new Error(`Debe configurar un punto de venta para transacciones electrónicos. Lo puede hacer en /Configuración/Tipos de Transacción`);
 
-        if (isValid &&
-            this.transaction.type.fixedOrigin &&
-            this.transaction.type.fixedOrigin === 0 &&
-            this.transaction.type.electronics &&
-            this.config['country'] === 'MX') {
-            isValid = false;
-            this.showMessage("Debe configurar un punto de venta para transacciones electrónicos. Lo puede hacer en /Configuración/Tipos de Transacción.", 'info', true);
-            this.loading = false;
-        }
-
-        return isValid;
+                resolve(true);
+            } catch (error) { this.showToast(error); resolve(false); }
+        });
     }
 
     public getPrinters(): Promise<Printer[]> {
@@ -2729,168 +2640,107 @@ export class AddSaleOrderComponent {
     }
 
     async areValidMovementOfArticle(): Promise<boolean> {
-
         return new Promise<boolean>(async (resolve, reject) => {
-
-            this.loading = true;
-
-            let areValid: boolean = true;
-
-            for (let movementOfArticle of this.movementsOfArticles) {
-                if (await this.isValidMovementOfArticle(movementOfArticle)) {
-                } else {
-                    areValid = false;
+            try {
+                let isValid: boolean = true;
+                for (let movementOfArticle of this.movementsOfArticles) {
+                    if (isValid) isValid = await this.isValidMovementOfArticle(movementOfArticle);
                 }
-            }
-
-            this.loading = false;
-            resolve(areValid);
+                resolve(isValid);
+            } catch (error) { resolve(false); }
         });
     }
 
     async finish() {
-
-        this.loading = true;
-
-        let isValid: boolean = true;
-
-        if (!this.movementsOfArticles || this.movementsOfArticles.length === 0) {
-            isValid = false;
-            this.showToast(null, "info", "No se encontraron productos en la transacción");
-        }
-        // ACTUALIZACIÓN DE PRECIOS DE COSTOS
-        if (isValid && this.transaction.type.updatePrice) {
-            let count = await this.updateArticlesCostPrice();
-            if (count === 1) {
-                this.showToast(null, "info", "Se actualizó : 1 producto");
-            } else {
-                if (count > 1) {
-                    this.showToast(null, "info", "Se actualizaron : " + await this.updateArticlesCostPrice() + " productos");
-                }
-            }
-        }
-        // FIN DE ACTUALIZACIÓN DE PRECIOS DE COSTOS
-        // ACTUALIZACIÓN DE A PREPARAR SI APARECE EN COCINA LOS ARTICULOS
-        if (isValid && this.transaction.type.posKitchen) {
-            isValid = await this.changeArticlesStatusToPending();
-        }
-        // FIN DE ACTUALIZACIÓN DE A PREPARAR SI APARECE EN COCINA LOS ARTICULOS
-
-        // ACTUALIZACIÓN DE STOCK
-        if (isValid &&
-            this.config['modules'].stock &&
-            this.transaction.type.modifyStock) {
+        try {
             this.loading = true;
-            if (await this.areValidMovementOfArticle()) {
-                isValid = await this.updateStockByTransaction();
-            } else {
-                isValid = false;
-            }
-            this.loading = false;
-        }
-        // FIN DE ACTUALIZACIÓN DE STOCK'
 
+            if (!this.movementsOfArticles || this.movementsOfArticles.length === 0)
+                throw new Error('No se encontraron productos en la transacción');
 
-        if (isValid) {
-            await this.updateBalance().then(async balance => {
-                if (balance !== null) {
-                    this.transaction.balance = balance;
-                    if (!this.transaction.endDate) {
-                        this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+            // ACTUALIZACIÓN DE PRECIOS DE COSTOS
+            if (this.transaction.type.updatePrice) {
+                let count = await this.updateArticlesCostPrice();
+                if (count === 1) {
+                    this.showToast(null, "info", "Se actualizó : 1 producto");
+                } else {
+                    if (count > 1) {
+                        this.showToast(null, "info", "Se actualizaron : " + count + " productos");
                     }
-                    if (this.transaction.type.transactionMovement !== TransactionMovement.Purchase || !this.transaction.VATPeriod) {
-                        this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
-                    }
-                    this.transaction.expirationDate = this.transaction.endDate;
-                    if (this.transaction.type.finishState) {
-                        this.transaction.state = this.transaction.type.finishState;
-                    } else {
-                        this.transaction.state = TransactionState.Closed;
-                    }
-
-                    await this.updateTransaction().then(
-                        async transaction => {
-                            if (transaction) {
-                                this.transaction = transaction;
-
-                                if (this.transaction.table) {
-                                    let table: Table = await this.getTable((this.transaction.table._id) ? this.transaction.table._id : this.transaction.table.toString());
-                                    if (this.transaction.type.finishCharge) {
-                                        table.employee = null;
-                                        table.state = TableState.Available;
-                                    } else {
-                                        table.state = TableState.Pending;
-                                    }
-                                    await this.updateTable(table).then(table => {
-                                        if (table) {
-                                            this.transaction.table = table;
-                                        }
-                                    });
-                                }
-
-                                if (isValid) {
-
-                                    if (this.transaction.type.allowAccounting) {
-                                        this._accountSeatService.addAccountSeatByTransaction(this.transaction._id).subscribe(
-                                            result => {
-                                                if (result && result.status === 200) {
-                                                    this.showToast(result);
-                                                } else {
-                                                    this.showToast(result);
-                                                    isValid = false;
-                                                }
-                                            },
-                                            error => {
-                                                isValid = false;
-                                                this.showToast(error);
-                                            }
-                                        )
-                                    }
-                                }
-
-                                let cancellationTypesAutomatic = await this.getCancellationTypesAutomatic();
-
-                                if (!cancellationTypesAutomatic || cancellationTypesAutomatic.length == 0) {
-                                    if (this.transaction && this.transaction.type.printable) {
-                                        this.print();
-                                    } else if (this.transaction && this.transaction.type.requestEmailTemplate) {
-                                        this.openModal('send-email');
-                                    } else {
-                                        this.backFinal();
-                                    }
-                                } else {
-                                    this.openModal('cancelation-type-automatic');
-                                }
-                            }
-                        }
-                    );
                 }
-            });
-        }
+            }
 
-        this.loading = false;
+            // ACTUALIZACIÓN DE A PREPARAR SI APARECE EN COCINA LOS ARTICULOS
+            if (this.transaction.type.posKitchen) {
+                await this.changeArticlesStatusToPending();
+            }
+
+            // ACTUALIZACIÓN DE STOCK
+            if (this.config['modules'].stock &&
+                this.transaction.type.modifyStock) {
+                if (await this.areValidMovementOfArticle()) await this.updateStockByTransaction();
+            }
+
+            let result: Resulteable = await this._transactionService.updateBalance(this.transaction).toPromise();
+            if(result.status !== 200) throw result;
+            this.transaction.balance = result.result.balance;
+
+            if (!this.transaction.endDate) {
+                this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+            }
+            if (this.transaction.type.transactionMovement !== TransactionMovement.Purchase || !this.transaction.VATPeriod) {
+                this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
+            }
+            this.transaction.expirationDate = this.transaction.endDate;
+            if (this.transaction.type.finishState) {
+                this.transaction.state = this.transaction.type.finishState;
+            } else {
+                this.transaction.state = TransactionState.Closed;
+            }
+
+            this.transaction = await this.updateTransaction();
+
+            if (this.transaction.table) {
+                let table: Table = await this.getTable((this.transaction.table._id) ? this.transaction.table._id : this.transaction.table.toString());
+                if (this.transaction.type.finishCharge) {
+                    table.employee = null;
+                    table.state = TableState.Available;
+                } else {
+                    table.state = TableState.Pending;
+                }
+                this.transaction.table = await this.updateTable(table);
+            }
+
+            if (this.transaction.type.allowAccounting) await this._accountSeatService.addAccountSeatByTransaction(this.transaction._id);
+
+            let cancellationTypesAutomatic = await this.getCancellationTypesAutomatic();
+
+            if (!cancellationTypesAutomatic || cancellationTypesAutomatic.length == 0) {
+                if (this.transaction && this.transaction.type.printable) {
+                    this.print();
+                } else if (this.transaction && this.transaction.type.requestEmailTemplate) {
+                    this.openModal('send-email');
+                } else {
+                    this.backFinal();
+                }
+            } else {
+                this.openModal('cancelation-type-automatic');
+            }
+
+            this.loading = false;
+        } catch (error) { this.showToast(error) };
     }
 
     public async changeArticlesStatusToPending(): Promise<boolean> {
-
         return new Promise<boolean>(async (resolve, reject) => {
-
-            let isValid: boolean = true;
-
-            for (let mov of this.movementsOfArticles) {
-                if (mov.article.posKitchen) {
-                    mov.status = MovementOfArticleStatus.Pending;
-                    await this.updateMovementOfArticle(mov).then(
-                        movementOfArticle => {
-                            if (!movementOfArticle) {
-                                isValid = false;
-                            }
-                        }
-                    );
-                }
-            }
-
-            resolve(isValid);
+            try {
+                for (let mov of this.movementsOfArticles)
+                    if (mov.article.posKitchen) {
+                        mov.status = MovementOfArticleStatus.Pending;
+                        await this.updateMovementOfArticle(mov);
+                    }
+                resolve(true);
+            } catch (error) { reject(error); }
         });
     }
 
@@ -2910,31 +2760,6 @@ export class AddSaleOrderComponent {
         } else {
             this.openModal('printers');
         }
-    }
-
-    public updateBalance(): Promise<number> {
-
-        return new Promise<number>((resolve, reject) => {
-
-            this.loading = true;
-
-            this._transactionService.updateBalance(this.transaction).subscribe(
-                async result => {
-                    this.loading = false;
-                    if (!result.transaction) {
-                        if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                        resolve(null);
-                    } else {
-                        resolve(result.transaction.balance);
-                    }
-                },
-                error => {
-                    this.loading = false;
-                    this.showMessage(error._body, 'danger', false);
-                    reject(null);
-                }
-            )
-        });
     }
 
     public updateStockByTransaction(): Promise<boolean> {
@@ -3351,7 +3176,6 @@ export class AddSaleOrderComponent {
                 }
             }
         );
-
     }
 
     public getUser(): Promise<User> {
@@ -3563,15 +3387,18 @@ export class AddSaleOrderComponent {
 
     public showToast(result, type?: string, title?: string, message?: string): void {
         if (result) {
-            if (result.status === 200) {
+            if (result.status === 0) {
+                type = 'info';
+                title = 'el servicio se encuentra en mantenimiento, inténtelo nuevamente en unos minutos';
+            } else if (result.status === 200) {
                 type = 'success';
                 title = result.message;
-            } else if (result.status >= 400) {
+            } else if (result.status >= 500) {
                 type = 'danger';
                 title = (result.error && result.error.message) ? result.error.message : result.message;
             } else {
                 type = 'info';
-                title = result.message;
+                title = (result.error && result.error.message) ? result.error.message : result.message;
             }
         }
         switch (type) {
