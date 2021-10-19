@@ -1638,7 +1638,7 @@ export class AddSaleOrderComponent {
                         for (let canc of this.cancellationTypes) {
                             if (canc.origin._id === this.canceledTransactions.typeId) name = canc.origin.name;
                         }
-                        this.transaction.observation += ` Corresponde a ${name} ${this.canceledTransactions.origin}-${this.canceledTransactions.letter}-${this.canceledTransactions.number}`;
+                        if(name) this.transaction.observation += ` Corresponde a ${name} ${this.canceledTransactions.origin}-${this.canceledTransactions.letter}-${this.canceledTransactions.number}`;
                     }
                     if (this.transaction.type.finishState) {
                         this.transaction.state = this.transaction.type.finishState;
