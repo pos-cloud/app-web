@@ -3,6 +3,7 @@
     <div class="card ">
         <div class="card-header">Seleccionar Transacciones a Cancelar
             <div class="pull-right">
+                <span>Saldo Seleccionado: {{ balanceSelected | currency:'USD':'symbol-narrow':'1.2-2' }}</span>
                 <button class="btn fa fa-minus-square" (click)="deleteAllMovements()"><span>Deseleccionar
                         todo</span></button>
                 <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i
@@ -113,12 +114,12 @@
                     <b>Saldo Seleccionado: {{ balanceSelected | currency:'USD':'symbol-narrow':'1.2-2' }}</b>
                 </div>
                 <div class="col-md-2">
-                    <button class="btn btn-default" (click)="activeModal.close()">
+                    <button class="btn btn-default" (click)="activeModal.close()" [disabled]="loading">
                         Cancelar
                     </button>
                 </div>
                 <div class="col-md-2">
-                    <button class="btn btn-primary" (click)="finish()">
+                    <button class="btn btn-primary" (click)="finish()" [disabled]="loading">
                         Aceptar
                     </button>
                 </div>
