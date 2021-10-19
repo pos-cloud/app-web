@@ -525,5 +525,6 @@
     "type.defectEmailTemplate.design": "Template Email",
     "type.defectEmailTemplate._id": "Identificador Template Email",
     "movements-of-cash": "Movimiento de medio",
-    "movements-of-cashes": "Movimientos de medios"
+    "movements-of-cashes": "Movimientos de medios",
+    "variant-value": "Valor de la Variante"
 }

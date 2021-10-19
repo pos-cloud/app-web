@@ -70,21 +70,10 @@ export class UpdateVariantTypeComponent implements OnInit {
   public buildForm(): void {
 
     this.variantTypeForm = this._fb.group({
-      '_id': [this.variantType._id, [
-        ]
-      ],
-      'order': [this.variantType.order, [
-          Validators.required
-        ]
-      ],
-      'name': [this.variantType.name, [
-          Validators.required
-        ]
-      ],
-      'meliId': [this.variantType.meliId, [
-          Validators.required
-        ]
-      ],
+      '_id': [this.variantType._id, []],
+      'order': [this.variantType.order, [Validators.required]],
+      'name': [this.variantType.name, [Validators.required]],
+      'meliId': [this.variantType.meliId, []],
     });
 
     this.variantTypeForm.valueChanges
