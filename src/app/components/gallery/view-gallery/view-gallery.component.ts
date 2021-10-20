@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Inject, ViewEncapsulation, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject, ViewEncapsulation, EventEmitter, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GalleryService } from 'app/components/gallery/gallery.service';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -9,13 +9,17 @@ import { DOCUMENT } from '@angular/common';
 import { NguCarousel, NguCarouselConfig } from '@ngu/carousel';
 import 'hammerjs';
 import { Gallery } from 'app/components/gallery/gallery';
-import { User } from 'app/components/user/user';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import { ArticleService } from 'app/components/article/article.service';
+import { Article } from 'app/components/article/article';
 
 
 @Component({
     selector: 'app-view-gallery',
     templateUrl: './view-gallery.component.html',
     styleUrls: ['./view-gallery.component.scss'],
+    providers: [NgbAlertConfig, TranslateMePipe],
     encapsulation: ViewEncapsulation.None
 })
 
@@ -32,25 +36,40 @@ export class ViewGalleryComponent implements OnInit {
     public intervalSocket;
     public viewBotton = true;
     public elem;
+    public filterArticle: string;
+    public article : Article = null;
+    focusEvent = new EventEmitter<boolean>();
+    public apiURL = Config.apiURL;
+    public database: string;
+
     constructor(
         private _route: ActivatedRoute,
         private _galleryService: GalleryService,
+        private _articleService: ArticleService,
         public alertConfig: NgbAlertConfig,
+        private _toastr: ToastrService,
         private socket: Socket,
         private elementRef: ElementRef,
-        @Inject(DOCUMENT) private document: any
+        public translatePipe: TranslateMePipe,
     ) {
         this.initSocket();
     }
 
     ngOnInit() {
+        this.database = Config.database;
+        this.focusEvent.emit(true);
         this.elem = document.documentElement;
-
         this._route.params.subscribe(params => {
             if (params['name']) {
                 this.getGallery(params['name']);
             }
         });
+
+      /*  setInterval(() => {
+            this.article = null;
+            this.filterArticle = "";
+            this.focusEvent.emit(true);
+        }, 20000)*/
 
     }
 
@@ -61,39 +80,39 @@ export class ViewGalleryComponent implements OnInit {
   
           if (identity && Config.database && Config.database !== '') {
               if (!this.socket.ioSocket.connected) {*/
-  
-                  // INICIAMOS SOCKET
-                  this.socket.emit('start', {
-                      database: Config.database,
-                      clientType: 'pos'
-                  });
-                  // ESCUCHAMOS SOCKET
-                  this.socket.on('gallery', (mnj) => {
-                      switch (mnj) {
-                          case 'start':
-                              this.loading = true;
-                              break;
-                          case 'stop':
-                              this.loading = false;
-                              break;
-                          default:
-                              break;
-                      }
-                  });
-  
-               /*   if (this.intervalSocket) {
-                      clearInterval(this.intervalSocket);
-                  }
-              }
-  
-              // INICIAR CONTADOR PARA VERIFICAR CONEXION DE SOCKET
-              this.intervalSocket = setInterval(() => {
-                  if (!this.socket.ioSocket.connected) {
-                      this.initSocket();
-                  }
-              }, 5000);
-          }*/
-      }
+
+        // INICIAMOS SOCKET
+        this.socket.emit('start', {
+            database: Config.database,
+            clientType: 'pos'
+        });
+        // ESCUCHAMOS SOCKET
+        this.socket.on('gallery', (mnj) => {
+            switch (mnj) {
+                case 'start':
+                    this.loading = true;
+                    break;
+                case 'stop':
+                    this.loading = false;
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        /*   if (this.intervalSocket) {
+               clearInterval(this.intervalSocket);
+           }
+       }
+ 
+       // INICIAR CONTADOR PARA VERIFICAR CONEXION DE SOCKET
+       this.intervalSocket = setInterval(() => {
+           if (!this.socket.ioSocket.connected) {
+               this.initSocket();
+           }
+       }, 5000);
+   }*/
+    }
 
     public getGallery(name: string): void {
 
@@ -107,7 +126,7 @@ export class ViewGalleryComponent implements OnInit {
             name: 1,
             resources: 1,
             colddown: 1,
-            barcode : 1,
+            barcode: 1,
             operationType: 1
         };
 
@@ -137,6 +156,10 @@ export class ViewGalleryComponent implements OnInit {
 
                     });
 
+                    if (this.gallery.barcode) {
+                        this.focusEvent.emit(true);
+                    }
+
                     this.carouselBanner = {
                         grid: { xs: 1, sm: 1, md: 1, lg: 1, all: 0 },
                         slide: 1,
@@ -165,6 +188,47 @@ export class ViewGalleryComponent implements OnInit {
         );
     }
 
+    public getArticle(): void {
+
+        if (this.filterArticle) {
+
+            this._articleService.getAll({
+                project: {
+                    code: 1,
+                    barcode: 1,
+                    description: 1,
+                    "make.description": 1,
+                    "category.description": 1,
+                    posDescription: 1,
+                    observation : 1,
+                    salePrice : 1,
+                    operationType : 1,
+                },
+                match : {
+                    barcode : this.filterArticle,
+                    operationType : { $ne : "D" }
+                }
+            }).subscribe(
+                result =>{
+                    if(result && result.status === 200 && result.result && result.result.length > 0){
+                        this.article = result.result[0];
+                        this.filterArticle = "";
+                    } else {
+                        this.article = null;
+                        this.filterArticle = "";
+                    }
+                },
+                error =>{
+                    this.article = null;
+                    this.filterArticle = "";
+                }
+            )
+        } else {
+            this.article = null;
+            this.filterArticle = "";
+        }
+    }
+
     public openFullscreen() {
 
         if (this.elem.requestFullscreen) {
@@ -188,6 +252,33 @@ export class ViewGalleryComponent implements OnInit {
         this.alertMessage = message;
         this.alertConfig.type = type;
         this.alertConfig.dismissible = dismissible;
+    }
+
+    public showToast(result, type?: string, title?: string, message?: string): void {
+        if (result) {
+            if (result.status === 200) {
+                type = 'success';
+                title = result.message;
+            } else if (result.status >= 400) {
+                type = 'danger';
+                title = (result.error && result.error.message) ? result.error.message : result.message;
+            } else {
+                type = 'info';
+                title = result.message;
+            }
+        }
+        switch (type) {
+            case 'success':
+                this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+            case 'danger':
+                this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+            default:
+                this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+        }
+        this.loading = false;
     }
 
 }

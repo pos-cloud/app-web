@@ -2,15 +2,33 @@
     --size: 100vh;
 }
 app-view-gallery {
+
+    .row {
+        margin-right: 0px !important;
+    }
     .tile {
         /*min-height: 200px;*/
         background-color: #ccc;
         background-size: cover !important;
-        height: var(--size);
+        height:  100vh;
         display: flex;
         background-position: center center;
         align-items: center;
         justify-content: center;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     }
+    .barcode {
+        height: 20vh;
+        input {
+            display: block;
+        }
+    }
+
+    div {
+        text-align: center;
+        img {
+            image-rendering: auto;
+        }
+    }
+
 }

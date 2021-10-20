@@ -1,6 +1,26 @@
-<button *ngIf="viewBotton" (click)="openFullscreen()" > fullscreen </button>
-<ngu-carousel *ngIf="loading" #myCarousel [inputs]="carouselBanner" id="mygallery" [dataSource]="images" >
-	<div *nguCarouselDef="let item;" class="item">
-		<div class="tile" [style.background-image]="'url('+ item +')'"></div>
-	</div>
+<button *ngIf="viewBotton" (click)="openFullscreen()"> fullscreen </button>
+<ngu-carousel *ngIf="loading" #myCarousel [inputs]="carouselBanner" id="mygallery" [dataSource]="images">
+    <div *nguCarouselDef="let item;" class="item">
+        <div class="tile" [style.background-image]="'url('+ item +')'"></div>
+    </div>
 </ngu-carousel>
+<div class="barcode" *ngIf="gallery && gallery.barcode">
+    <div class="row">
+        <div class="col-4">
+            <label> Ingrese codigo de barra </label>
+            <input type="text" class="form-control" [(ngModel)]="filterArticle" (keydown.enter)="getArticle()"
+                [focus]="focusEvent">
+        </div>
+        <div *ngIf="article" class="col-4">
+            <img *ngIf="article.picture == 'default.jpg' || article.picture == undefined"
+                src="./../../../assets/img/default.jpg" height="400" width="600">
+            <img *ngIf="article.picture !== 'default.jpg' && article.picture !== undefined"
+                [src]="apiURL + 'get-image-article/'+article.picture+'/'+database" height="400" width="600">
+        </div>
+        <div *ngIf="article" class="col-4">
+            <h1>{{article.description}}</h1>
+            <h3>{{article.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</h3>
+            <p [innerHTML]="article?.observation"></p>
+        </div>
+    </div>
+</div>
