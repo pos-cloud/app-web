@@ -728,7 +728,6 @@ export class MovementOfCancellationComponent implements OnInit {
     async finish() {
         try {
             this.loading = true;
-            if (this.balanceSelected === 0) throw new Error('El saldo seleccionado debe ser mayor o igual a 0');
             for (let mov of this.movementsOfCancellations) {
                 if ((mov.balance <= mov.transactionOrigin.balance) || !this.modifyBalance(mov.transactionOrigin)) {
                     for (const type of this.cancellationTypes) {
