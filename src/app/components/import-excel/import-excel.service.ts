@@ -17,21 +17,23 @@ export class ImportExcelService {
 
   public import(objectToImport: {}, type: string): Promise<any> {
     let URL: string;
+
+
     if (type === 'clientes') {
       URL = `${Config.apiURL}company/save-excel`
-      // URL = `${Config.apiV8URL}companies/save-excel`
     } else if (type === 'alta-producto') {
-      URL = `${Config.apiURL}article/create-article-excel`;
+      URL = `${Config.apiV8URL}articles/create-article-excel`;
     }
     else {
-      URL = `${Config.apiV8URL}articles/save-excel`;
+      URL = `${Config.apiV8URL}articles/update-article-excel`;
     }
 
     let xhr: XMLHttpRequest = new XMLHttpRequest();
 
     xhr.open('POST', URL, true);
     xhr.setRequestHeader('Authorization', this._authService.getToken());
-    if (type === 'clientes' || type ==='alta-producto') {
+
+    if (type === 'clientes') {
       xhr.setRequestHeader('file', objectToImport[0].name);
       xhr.setRequestHeader('excel', objectToImport[0]);
     }
