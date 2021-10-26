@@ -399,7 +399,6 @@ export class ListTransactionsComponent implements OnInit {
                         this.items = result[0].items;
                         this.totalItems = result[0].count;
                     }
-                    localStorage.setItem('project-list-transaction', JSON.stringify(this.columns));
                 } else {
                     this.items = new Array();
                     this.totalItems = 0;
