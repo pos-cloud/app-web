@@ -447,14 +447,7 @@ export class AddSaleOrderComponent {
 
     async changeUseOfCFDI(useOfCFDI) {
         this.transaction.useOfCFDI = useOfCFDI;
-        await this.updateTransaction().then(
-            async transaction => {
-                if (transaction) {
-                    this.transaction = transaction;
-                    this.lastQuotation = this.transaction.quotation;
-                }
-            }
-        );
+        this.transaction = await this.updateTransaction();
     }
 
     async changeTransport(transport) {
@@ -1638,7 +1631,7 @@ export class AddSaleOrderComponent {
                         for (let canc of this.cancellationTypes) {
                             if (canc.origin._id === this.canceledTransactions.typeId) name = canc.origin.name;
                         }
-                        if(name) this.transaction.observation += ` Corresponde a ${name} ${this.canceledTransactions.origin}-${this.canceledTransactions.letter}-${this.canceledTransactions.number}`;
+                        if (name) this.transaction.observation += ` Corresponde a ${name} ${this.canceledTransactions.origin}-${this.canceledTransactions.letter}-${this.canceledTransactions.number}`;
                     }
                     if (this.transaction.type.finishState) {
                         this.transaction.state = this.transaction.type.finishState;
@@ -2682,7 +2675,7 @@ export class AddSaleOrderComponent {
             }
 
             let result: Resulteable = await this._transactionService.updateBalance(this.transaction).toPromise();
-            if(result.status !== 200) throw result;
+            if (result.status !== 200) throw result;
             this.transaction.balance = result.result.balance;
 
             if (!this.transaction.endDate) {
@@ -2849,7 +2842,7 @@ export class AddSaleOrderComponent {
 
     async close(op?: string) {
 
-        if(this.transaction.type.orderNumber > 0 && !this.transaction.orderNumber){
+        if (this.transaction.type.orderNumber > 0 && !this.transaction.orderNumber) {
             await this.asignOrderNumber()
         }
 
@@ -3274,7 +3267,7 @@ export class AddSaleOrderComponent {
         );
     }
 
-    public assignTransactionNumber() {
+    public async assignTransactionNumber() {
 
         this.loading = true;
 
@@ -3286,13 +3279,14 @@ export class AddSaleOrderComponent {
                     &limit=1`;
 
         this._transactionService.getTransactions(query).subscribe(
-            result => {
+            async result => {
                 this.loading = false;
                 if (!result.transactions) {
                     this.transaction.number = 1;
                 } else {
                     this.transaction.number = result.transactions[0].number + 1;
                 }
+                this.transaction = await this.updateTransaction();
                 this.finish();
             },
             error => {

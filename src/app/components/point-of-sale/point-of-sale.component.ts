@@ -858,14 +858,6 @@ export class PointOfSaleComponent implements OnInit {
         });
     }
 
-    async assignCurrency(): Promise<boolean> {
-        return new Promise<boolean>(async (resolve, reject) => {
-            this.transaction.currency = Config.currency;
-            this.transaction.quotation = 1;
-            resolve(true);
-        });
-    }
-
     async assignBranch(): Promise<boolean> {
 
         return new Promise<boolean>(async (resolve, reject) => {
@@ -1035,132 +1027,87 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     async nextStepTransaction() {
-
-        if (this.transaction && (!this.transaction._id || this.transaction._id === "")) {
-            let result;
-            if (this.transaction.type.transactionMovement === TransactionMovement.Stock &&
-                this.transaction.type.stockMovement === StockMovement.Transfer &&
-                (!this.transaction.depositDestination || !this.transaction.depositOrigin)) {
-                this.openModal('transfer');
-            } else {
-                result = await this.assignBranch();
+        try {
+            if (this.transaction && (!this.transaction._id || this.transaction._id === "")) {
+                let result;
+                if (this.transaction.type.transactionMovement === TransactionMovement.Stock &&
+                    this.transaction.type.stockMovement === StockMovement.Transfer &&
+                    (!this.transaction.depositDestination || !this.transaction.depositOrigin)) {
+                    this.openModal('transfer');
+                } else {
+                    result = await this.assignBranch();
+                }
+                if (result) {
+                    this.transaction.currency = Config.currency;
+                    this.transaction.quotation = 1;
+                    this.transaction = await this.saveTransaction();
+                    if (this.posType === 'resto' && this.tableSelected) {
+                        this.tableSelected.lastTransaction = this.transaction;
+                        this.tableSelected.state = TableState.Busy;
+                        this.tableSelected = await this.updateTable();
+                    }
+                }
             }
-            if (result) {
-                // CONSULTAR ULTIMA TRANSACCIÓN PARA ENUMARAR LA SIGUIENTE
-                let query = `where= "type":"${this.transaction.type._id}",
-							"origin":${this.transaction.origin},
-							"letter":"${this.transaction.letter}"
-							&sort="number":-1
-							&limit=1`;
-                await this.getTransactions(query).then(
-                    async transactions => {
-                        if (transactions && transactions.length > 0) this.transaction.number = transactions[0].number + 1;
-                        else this.transaction.number = 1;
-                        await this.assignCurrency().then(
-                            async result => {
-                                if (result) {
-                                    // CONSULTAR ULTIMO NÚMERO DE PEDIDO PARA ENUMARAR EL SIGUIENTE
-                                    if (this.transaction.type.maxOrderNumber > 0) {
-                                        let query = `where= "type":"${this.transaction.type._id}"
-													&sort="startDate":-1
-													&limit=1`;
-                                        await this.getTransactions(query).then(
-                                            async transactions => {
-                                                let orderNumber = 1;
-                                                if (transactions && transactions.length > 0) {
-                                                    orderNumber = transactions[0].orderNumber + 1;
-                                                    if (orderNumber > this.transaction.type.maxOrderNumber) {
-                                                        orderNumber = 1;
-                                                    }
-                                                }
-                                                this.transaction.orderNumber = orderNumber;
-                                            }
-                                        );
-                                    }
-                                    await this.saveTransaction().then(
-                                        async transaction => {
-                                            if (transaction) {
-                                                this.transaction = transaction;
-                                                if (this.posType === 'resto' && this.tableSelected) {
-                                                    this.tableSelected.lastTransaction = this.transaction;
-                                                    this.tableSelected.state = TableState.Busy;
-                                                    await this.updateTable().then(
-                                                        table => {
-                                                            if (table) {
-                                                                this.tableSelected = table;
-                                                            }
-                                                        }
-                                                    );
-                                                }
-                                            }
-                                        }
-                                    );
-                                }
-                            }
-                        );
+    
+            if (this.transaction && this.transaction._id && this.transaction._id !== "") {
+                await this.updateTransaction(this.transaction).then(
+                    transaction => {
+                        if (transaction) {
+                            this.transaction = transaction;
+                        }
                     }
                 );
-            }
-        }
-
-        if (this.transaction && this.transaction._id && this.transaction._id !== "") {
-            await this.updateTransaction(this.transaction).then(
-                transaction => {
-                    if (transaction) {
-                        this.transaction = transaction;
-                    }
-                }
-            );
-            if (!this.transaction.branchDestination ||
-                !this.transaction.branchOrigin ||
-                !this.transaction.depositDestination ||
-                !this.transaction.depositOrigin) {
-                let branchAssigned = await this.assignBranch();
-                if (branchAssigned) {
-                    this.nextStepTransaction();
-                }
-            } else if (!this.transaction.employeeClosing &&
-                this.transaction.type.requestEmployee &&
-                this.transaction.type.requestArticles &&
-                (this.posType === 'mostrador' ||
-                    (this.posType === 'resto' && this.transaction.table))) {
-                this.openModal('select-employee');
-            } else if (!this.transaction.company &&
-                (this.transaction.type.requestCompany || (this.transaction.type.requestArticles && this.posType === 'cuentas-corrientes')) && !this.transaction.type.company) {
-                if (!this.company) {
-                    if (this.transaction.type.company) {
-                        this.transaction.company = this.transaction.type.company
+                if (!this.transaction.branchDestination ||
+                    !this.transaction.branchOrigin ||
+                    !this.transaction.depositDestination ||
+                    !this.transaction.depositOrigin) {
+                    let branchAssigned = await this.assignBranch();
+                    if (branchAssigned) {
                         this.nextStepTransaction();
-                    } else {
-                        this.openModal('company');
                     }
+                } else if (!this.transaction.employeeClosing &&
+                    this.transaction.type.requestEmployee &&
+                    this.transaction.type.requestArticles &&
+                    (this.posType === 'mostrador' ||
+                        (this.posType === 'resto' && this.transaction.table))) {
+                    this.openModal('select-employee');
+                } else if (!this.transaction.company &&
+                    (this.transaction.type.requestCompany || (this.transaction.type.requestArticles && this.posType === 'cuentas-corrientes')) && !this.transaction.type.company) {
+                    if (!this.company) {
+                        if (this.transaction.type.company) {
+                            this.transaction.company = this.transaction.type.company
+                            this.nextStepTransaction();
+                        } else {
+                            this.openModal('company');
+                        }
+                    } else {
+                        this.transaction.company = this.company;
+                        this.nextStepTransaction();
+                    }
+                } else if (this.transaction.type.automaticNumbering && this.transaction.type.requestArticles) {
+                    let route = '/pos/' + this.posType + '/editar-transaccion';
+                    if (this.posType === "cuentas-corrientes") {
+                        route = '/pos/mostrador/editar-transaccion';
+                    }
+    
+                    let queryParams = {
+                        transactionId: this.transaction._id,
+                        returnURL: this.removeParam(this._router.url, 'automaticCreation')
+                    };
+    
+                    if (this.transaction.type.automaticCreation && this.posType !== 'resto') {
+                        queryParams['automaticCreation'] = this.transaction.type._id;
+                    }
+    
+                    this._router.navigate(
+                        [route], {
+                        queryParams
+                    });
                 } else {
-                    this.transaction.company = this.company;
-                    this.nextStepTransaction();
+                    this.openModal('transaction');
                 }
-            } else if (this.transaction.type.automaticNumbering && this.transaction.type.requestArticles) {
-                let route = '/pos/' + this.posType + '/editar-transaccion';
-                if (this.posType === "cuentas-corrientes") {
-                    route = '/pos/mostrador/editar-transaccion';
-                }
-
-                let queryParams = {
-                    transactionId: this.transaction._id,
-                    returnURL: this.removeParam(this._router.url, 'automaticCreation')
-                };
-
-                if (this.transaction.type.automaticCreation && this.posType !== 'resto') {
-                    queryParams['automaticCreation'] = this.transaction.type._id;
-                }
-
-                this._router.navigate(
-                    [route], {
-                    queryParams
-                });
-            } else {
-                this.openModal('transaction');
             }
-        }
+        } catch(error) { this.showToast(error); } 
     }
 
     private removeParam(sourceURL: string, key: string) {
@@ -1867,22 +1814,14 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     public updateTable(): Promise<Table> {
-
         return new Promise<Table>((resolve, reject) => {
-
             this._tableService.updateTable(this.tableSelected).subscribe(
                 result => {
-                    if (!result.table) {
-                        if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                        resolve(null);
-                    } else {
+                    if (result.table) {
                         resolve(result.table);
-                    }
+                    } else reject(result);
                 },
-                error => {
-                    this.showMessage(error._body, 'danger', false);
-                    resolve(null);
-                }
+                error => reject(error)
             );
         });
     }
@@ -1984,7 +1923,7 @@ export class PointOfSaleComponent implements OnInit {
                 }
                 this.refresh();
             }
-        } catch(error) { this.showToast(error) }
+        } catch (error) { this.showToast(error) }
     }
 
     public updateMovementOfCash(movementOfCash: MovementOfCash): Promise<MovementOfCash> {
@@ -2137,25 +2076,15 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     public saveTransaction(): Promise<Transaction> {
-
         return new Promise<Transaction>((resolve, reject) => {
-
             (this.posType === 'cuentas-corrientes') ? this.transaction.madein = 'mostrador' : this.transaction.madein = this.posType;
-
             this._transactionService.saveTransaction(this.transaction).subscribe(
                 result => {
-                    if (!result.transaction) {
-                        if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                        resolve(null);
-                    } else {
-                        this.hideMessage();
+                    if (result.transaction) {
                         resolve(result.transaction);
-                    }
+                    } else reject(result);
                 },
-                error => {
-                    this.showMessage(error._body, 'danger', false);
-                    resolve(null);
-                }
+                error => reject(error)
             );
         });
     }
