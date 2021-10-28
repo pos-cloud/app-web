@@ -310,6 +310,7 @@
     "transactionOrigin.type.transactionMovement": "TO Movimiento",
     "transactions": "Transacciones",
     "transactionType": "Tipo de Transacción",
+    "transaction.observation" : "Observación",
     "transport.name": "Nombre de Transporte",
     "true": "Si",
     "type.allowDelete": "Permite Eliminar",
