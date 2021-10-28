@@ -64,14 +64,18 @@
                                                 <input id="category" type="text" class="form-control"
                                                     formControlName="category" name="category"
                                                     [ngbTypeahead]="searchCategories" [resultTemplate]="rtCategories"
-                                                    [inputFormatter]="formatterCategories" [readonly]="readonly" />
+                                                    [inputFormatter]="formatterCategories" [readonly]="readonly"
+                                                    (blur)="onValueChanged($event.target.id)"/>
+                                                <div *ngIf="formErrors.category" class="alert alert-danger">
+                                                    {{ formErrors.category }}
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="form-group col-md-8">
                                                 <label for="description" class="control-label">Descripción (*):</label>
                                                 <input type="text" class="form-control" formControlName="description"
-                                                    name="description" id="description" (blur)="loadPosDescription()"
+                                                    name="description" id="description" (blur)="loadPosDescription(); onValueChanged($event.target.id)"
                                                     [readonly]="readonly || (article && article.type && article.type.toString() === 'Variante')" />
                                                 <div class="alert alert-danger" [style.display]="(formErrors['description'])? 'block': 'none'">
                                                     {{ formErrors.description }}
@@ -82,7 +86,7 @@
                                                     Corta:</label>
                                                 <input type="text" class="form-control" formControlName="posDescription"
                                                     name="posDescription" id="posDescription"
-                                                    (blur)="loadPosDescription()"
+                                                    (blur)="loadPosDescription(); onValueChanged($event.target.id)"
                                                     [readonly]="readonly || (article && article.type && article.type.toString() === 'Variante')" />
                                                 <div *ngIf="formErrors.posDescription" class="alert alert-danger">
                                                     {{ formErrors.posDescription }}
@@ -196,7 +200,7 @@
                                                     id="basic-addon1">$</span></div>
                                             <input type="number" class="form-control" formControlName="basePrice"
                                                 name="basePrice" id="basePrice" step="1"
-                                                (blur)="updatePrices('basePrice')" [readonly]="readonly" />
+                                                (blur)="updatePrices('basePrice'); onValueChanged($event.target.id)" [readonly]="readonly" />
                                         </div>
                                         <div *ngIf="formErrors.basePrice" class="alert alert-danger">
                                             {{ formErrors.basePrice }}
@@ -235,7 +239,7 @@
                                                     id="basic-addon1">$</span></div>
                                             <input type="number" class="form-control" formControlName="costPrice"
                                                 name="costPrice" id="costPrice" step="1"
-                                                (blur)="updatePrices('costPrice')" readonly />
+                                                (blur)="updatePrices('costPrice'); onValueChanged($event.target.id)" readonly />
                                         </div>
                                         <div *ngIf="formErrors.costPrice" class="alert alert-danger">
                                             {{ formErrors.costPrice }}
@@ -251,7 +255,7 @@
                                                     id="basic-addon1">%</span></div>
                                             <input type="number" class="form-control" formControlName="markupPercentage"
                                                 name="markupPercentage" id="markupPercentage" step="1"
-                                                (blur)="updatePrices('markupPercentage')" [readonly]="readonly" />
+                                                (blur)="updatePrices('markupPercentage'); onValueChanged($event.target.id)" [readonly]="readonly" />
                                         </div>
                                         <div *ngIf="formErrors.markupPercentage" class="alert alert-danger">
                                             {{ formErrors.markupPercentage }}
@@ -273,7 +277,7 @@
                                                     id="basic-addon1">$</span></div>
                                             <input type="number" class="form-control" formControlName="markupPrice"
                                                 name="markupPrice" id="markupPrice" step="1"
-                                                (blur)="updatePrices('markupPrice')" [readonly]="readonly" />
+                                                (blur)="updatePrices('markupPrice'); onValueChanged($event.target.id)" [readonly]="readonly" />
                                         </div>
                                         <div *ngIf="formErrors.markupPrice" class="alert alert-danger">
                                             {{ formErrors.markupPrice }}
@@ -295,7 +299,7 @@
                                                     id="basic-addon1">$</span></div>
                                             <input type="number" class="form-control" formControlName="salePrice"
                                                 name="salePrice" id="salePrice" step="1"
-                                                (blur)="updatePrices('salePrice')" [readonly]="readonly" />
+                                                (blur)="updatePrices('salePrice'); onValueChanged($event.target.id)" [readonly]="readonly" />
                                         </div>
                                         <div *ngIf="formErrors.salePrice" class="alert alert-danger">
                                             {{ formErrors.salePrice }}

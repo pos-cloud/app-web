@@ -195,7 +195,7 @@ export class AddArticleComponent implements OnInit {
 
   public validationMessages = {
     'code': { 'required': 'Este campo es requerido.' },
-    'make': { 'required': 'Este campo es requerido.', 'validateAutocomplete': 'Debe ingresar un valor válido' },
+    'make': { 'validateAutocomplete': 'Debe ingresar un valor válido' },
     'description': { 'required': 'Este campo es requerido.' },
     'posDescription': { 'maxlength': 'No puede exceder los 20 carácteres.' },
     'basePrice': { 'required': 'Este campo es requerido.' },
@@ -481,22 +481,25 @@ export class AddArticleComponent implements OnInit {
     });
 
     this.articleForm.valueChanges.subscribe(data => this.onValueChanged(data));
-    this.onValueChanged();
     this.focusEvent.emit(true);
   }
 
   public onValueChanged(fieldID?: any): void {
     if (!this.articleForm) { return; }
     const form = this.articleForm;
-    for (const field in this.formErrors) {
-      if (!fieldID || field === fieldID) {
-        this.formErrors[field] = '';
-        const control = form.get(field);
-        if (control && !control.valid) {
-          const messages = this.validationMessages;
-          for (const key in control.errors) {
-            if (messages[key] && messages[key] != 'undefined')
-              this.formErrors[field] += messages[key] + ' ';
+    console.log(!fieldID || typeof fieldID === "string");
+    console.log(fieldID, typeof fieldID);
+    if(!fieldID || typeof fieldID === "string") {
+      for (const field in this.formErrors) {
+        if (!fieldID || field === fieldID) {
+          this.formErrors[field] = '';
+          const control = form.get(field);
+          if (control && !control.valid) {
+            for (const key in control.errors) {
+              if (this.validationMessages[field][key] && this.validationMessages[field][key] != 'undefined') {
+                this.formErrors[field] += this.validationMessages[field][key] + ' ';
+              }
+            }
           }
         }
       }
@@ -1483,7 +1486,7 @@ export class AddArticleComponent implements OnInit {
           this.updateArticle();
         }
       } else {
-        this.showToast({ message: "Completa los campos requeridos con (*)" });
+        this.showToast({ message: "Revisa los errores en el formulario." });
         this.onValueChanged();
       }
     }
