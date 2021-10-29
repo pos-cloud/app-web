@@ -151,13 +151,17 @@ export class ListTablesComponent implements OnInit {
     }
 
     public async selectTable(table: Table) {
+        this.loading = true;
         table = await this.getTable(table._id);
         if (table) {
             if (table.state === TableState.Pending) {
                 this.openModal('change-state', table)
             } else {
+                this.loading = false;
                 this.eventTableSelected.emit(table);
             }
+        } else {
+            this.loading = false;
         }
     }
 
@@ -257,10 +261,12 @@ export class ListTablesComponent implements OnInit {
                 });
                 break;
             case 'change-state':
+                this.loading = false;
                 modalRef = this._modalService.open(this.contentChangeState);
                 this.table = table;
                 modalRef.result.then(async (result) => {
                     if (result !== "cancel" && result !== '') {
+                        this.loading = true;
                         this.table.state = TableState.Available;
                         this.table.lastTransaction = null;
                         this.updateTable();
