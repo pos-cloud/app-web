@@ -257,7 +257,7 @@ export class PrintComponent implements OnInit {
 
         let project = `{
             "_id": 1,
-            "endDate": { "$dateToString": { "date": "$endDate", "format": "%d/%m/%Y %HH %MM", "timezone": "${Config.timezone.split('UTC')[1]}" }},
+            "endDate": { "$dateToString": { "date": "$endDate", "format": "%d/%m/%Y %HH %MM %SS", "timezone": "${Config.timezone.split('UTC')[1]}" }},
             "endDateAFIP": { "$dateToString": { "date": "$endDate", "format": "%Y-%m-%d", "timezone": "${Config.timezone.split('UTC')[1]}" }},
             "startDate": { "$dateToString": { "date": "$startDate", "format": "%d/%m/%Y %HH %MM", "timezone": "${Config.timezone.split('UTC')[1]}" }},
             "updateDate": { "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %HH %MM", "timezone": "${Config.timezone.split('UTC')[1]}" }},
@@ -3627,7 +3627,7 @@ export class PrintComponent implements OnInit {
 
         this.doc.text("Fecha: " + this.transaction.endDate.substring(0, 5), (width / 1.6), this.row);
         this.row += 5;
-        this.doc.text("Hora: " + this.transaction.endDate.substring(11, 13) + ":" + this.transaction.endDate.substring(15, 17), (width / 1.6), this.row);
+        this.doc.text("Hora: " + this.transaction.endDate.substring(11, 13) + ":" + this.transaction.endDate.substring(15, 17) + ":" + this.transaction.endDate.substring(19, 21), (width / 1.6), this.row);
 
         this.doc.setFontType('normal');
 
