@@ -1168,9 +1168,7 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     public getTransaction(transactionId: string): Promise<Transaction> {
-
         return new Promise<Transaction>((resolve, reject) => {
-
             this._transactionService.getTransaction(transactionId).subscribe(
                 async result => {
                     if (!result.transaction) {
@@ -2123,9 +2121,8 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     async selectTable(table: Table) {
-
+        this.loading = true;
         this.tableSelected = await this.getTable(table._id);
-
         if (this.tableSelected.state !== TableState.Disabled &&
             this.tableSelected.state !== TableState.Reserved) {
             if (this.tableSelected.state === TableState.Busy ||
@@ -2134,13 +2131,7 @@ export class PointOfSaleComponent implements OnInit {
                     this.transaction = await this.getTransaction(this.tableSelected.lastTransaction._id);
                     if (this.transaction) {
                         this.transaction.state = TransactionState.Open;
-                        await this.updateTransaction(this.transaction).then(
-                            transaction => {
-                                if (transaction) {
-                                    this.transaction = transaction;
-                                }
-                            }
-                        );
+                        this.transaction = await this.updateTransaction(this.transaction);
                         this.nextStepTransaction();
                     } else {
                         this.hideMessage();
@@ -2158,7 +2149,6 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     public checkFreeTable(): void {
-
         // Consultamos si existen transacciones abiertas por si perdio la relación.
         this.getTransactions(`where="table":"${this.tableSelected._id}","state":"Abierto"`).then(
             async transactions => {
@@ -2182,14 +2172,9 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     public getTable(tableId: string) {
-
         return new Promise<Table>((resolve, reject) => {
-
-            this.loading = true;
-
             this._tableService.getTable(tableId).subscribe(
                 result => {
-                    this.loading = false;
                     if (!result.table) {
                         if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
                         resolve(null);
@@ -2199,7 +2184,6 @@ export class PointOfSaleComponent implements OnInit {
                 },
                 error => {
                     this.showMessage(error._body, 'danger', false);
-                    this.loading = false;
                     resolve(null);
                 }
             );
@@ -2400,6 +2384,7 @@ export class PointOfSaleComponent implements OnInit {
         this.alertMessage = message;
         this.alertConfig.type = type;
         this.alertConfig.dismissible = dismissible;
+        this.loading = false;
     }
 
     public hideMessage(): void {

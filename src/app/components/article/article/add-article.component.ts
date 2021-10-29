@@ -487,8 +487,6 @@ export class AddArticleComponent implements OnInit {
   public onValueChanged(fieldID?: any): void {
     if (!this.articleForm) { return; }
     const form = this.articleForm;
-    console.log(!fieldID || typeof fieldID === "string");
-    console.log(fieldID, typeof fieldID);
     if(!fieldID || typeof fieldID === "string") {
       for (const field in this.formErrors) {
         if (!fieldID || field === fieldID) {

@@ -19,7 +19,7 @@
     <div class="row tables-container table-responsive">
         <div *ngIf="roomSelected">
             <app-list-tables (eventBackToRoom)="changeRoom($room)" (eventTableSelected)="selectTable($event)"
-                [filterRoom]="roomSelected.description"></app-list-tables>
+                [filterRoom]="roomSelected.description" [loading]="loading"></app-list-tables>
         </div>
     </div>
     <div class="row header-bottom">

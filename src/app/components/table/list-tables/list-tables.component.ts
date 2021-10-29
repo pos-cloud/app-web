@@ -11,15 +11,17 @@ import { TransactionTypeService } from '../../transaction-type/transaction-type.
 import { UserService } from '../../user/user.service';
 
 import { TableComponent } from '../table/table.component';
-import { TransactionType } from 'app/components/transaction-type/transaction-type';
-import { TransactionState } from 'app/components/transaction/transaction';
-import { PrintQRComponent } from 'app/components/print/print-qr/print-qr.component';
+import { TransactionType } from './../../../components/transaction-type/transaction-type';
+import { TransactionState } from './../../../components/transaction/transaction';
+import { PrintQRComponent } from './../../../components/print/print-qr/print-qr.component';
+import { TranslateMePipe } from '../../../main/pipes/translate-me';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: 'app-list-tables',
     templateUrl: './list-tables.component.html',
     styleUrls: ['./list-tables.component.scss'],
-    providers: [NgbAlertConfig],
+    providers: [NgbAlertConfig, TranslateMePipe],
     encapsulation: ViewEncapsulation.None
 })
 
@@ -36,7 +38,7 @@ export class ListTablesComponent implements OnInit {
     public areFiltersVisible: boolean = false;
     public amountOfDinersNow: number = 0;
     public amountOfDiners: number = 0;
-    public loading: boolean = false;
+    @Input() loading: boolean = false;
     @Input() filterRoom: string;
     @Output() eventTableSelected: EventEmitter<Table> = new EventEmitter<Table>();
     public itemsPerPage = 10;
@@ -57,7 +59,9 @@ export class ListTablesComponent implements OnInit {
         private _route: ActivatedRoute,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,
-        public _modalService: NgbModal
+        public _modalService: NgbModal,
+        public translatePipe: TranslateMePipe,
+        private _toastr: ToastrService,
     ) {
         if (this.filterRoom === undefined) {
             this.filterRoom = '';
@@ -95,8 +99,6 @@ export class ListTablesComponent implements OnInit {
 
     public getTables(): void {
 
-        this.loading = true;
-
         let project = {
             description: 1,
             "room._id": 1,
@@ -114,24 +116,18 @@ export class ListTablesComponent implements OnInit {
             operationType: 1
         }
 
-        let match = {}
+        let match = { operationType: { $ne: "D" } }
 
-        if (this.states) {
-            match = { state: { $in: this.states }, operationType: { $ne: "D" } }
-        } else {
-            match = { operationType: { $ne: "D" } }
-        }
+        if (this.states) match['state'] = { $in: this.states };
 
 
         this._tableService.getTablesV2(project, match, { description: 1 }, {}).subscribe(result => {
             if (!result.tables) {
                 if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                this.loading = false;
                 this.tables = new Array();
                 this.areTablesEmpty = true;
             } else {
                 this.hideMessage();
-                this.loading = false;
                 this.tables = result.tables;
                 this.totalItems = this.tables.length;
                 this.areTablesEmpty = false;
@@ -143,7 +139,6 @@ export class ListTablesComponent implements OnInit {
                     this.showMessage("Error al conectar con el servidor. Corroborar que este encendido.", 'danger', false);
                 } else {
                     this.showMessage(error._body, 'danger', false);
-                    this.loading = false;
                 }
             }
         );
@@ -152,39 +147,22 @@ export class ListTablesComponent implements OnInit {
 
     public async selectTable(table: Table) {
         this.loading = true;
-        table = await this.getTable(table._id);
-        if (table) {
-            if (table.state === TableState.Pending) {
-                this.openModal('change-state', table)
-            } else {
-                this.loading = false;
-                this.eventTableSelected.emit(table);
-            }
-        } else {
-            this.loading = false;
-        }
+        try {
+            table = await this.getTable(table._id);
+            if (table.state === TableState.Pending) this.openModal('change-state', table)
+            else this.eventTableSelected.emit(table);
+        } catch (error) { this.showToast(error); }
     }
 
 
     public getTable(tableId: string): Promise<Table> {
         return new Promise<Table>((resolve, reject) => {
-            this.loading = true;
             this._tableService.getTable(tableId).subscribe(
                 result => {
-                    this.loading = false;
-                    if (!result.table) {
-                        if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                        resolve(null);
-                    } else {
-                        this.hideMessage();
-                        resolve(result.table);
-                    }
+                    if (result.table) resolve(result.table);
+                    else reject(result)
                 },
-                error => {
-                    this.showMessage(error._body, 'danger', false);
-                    this.loading = false;
-                    resolve(null);
-                }
+                error => reject(error)
             );
         });
     }
@@ -261,17 +239,18 @@ export class ListTablesComponent implements OnInit {
                 });
                 break;
             case 'change-state':
-                this.loading = false;
-                modalRef = this._modalService.open(this.contentChangeState);
+                modalRef = this._modalService.open(this.contentChangeState, { backdrop: 'static' });
                 this.table = table;
                 modalRef.result.then(async (result) => {
                     if (result !== "cancel" && result !== '') {
-                        this.loading = true;
                         this.table.state = TableState.Available;
                         this.table.lastTransaction = null;
                         this.updateTable();
+                    } else {
+                        this.loading = false;
                     }
                 }, (reason) => {
+                    this.loading = false;
                 });
                 break;
             case 'print-qr':
@@ -310,5 +289,32 @@ export class ListTablesComponent implements OnInit {
 
     public hideMessage(): void {
         this.alertMessage = '';
+    }
+
+    public showToast(result, type?: string, title?: string, message?: string): void {
+        if (result) {
+            if (result.status === 200) {
+                type = 'success';
+                title = result.message;
+            } else if (result.status >= 400) {
+                type = 'danger';
+                title = (result.error && result.error.message) ? result.error.message : result.message;
+            } else {
+                type = 'info';
+                title = result.message;
+            }
+        }
+        switch (type) {
+            case 'success':
+                this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+            case 'danger':
+                this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+            default:
+                this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+        }
+        this.loading = false;
     }
 }

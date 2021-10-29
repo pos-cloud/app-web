@@ -195,11 +195,11 @@ export class AddSaleOrderComponent {
         private _transportService: TransportService,
         private _accountSeatService: AccountSeatService,
         private _priceListService: PriceListService,
-        private _toastr: ToastrService,
         private _configService: ConfigService,
         private _structureService: StructureService,
         private _jsonDiffPipe: JsonDiffPipe,
-        public translatePipe: TranslateMePipe
+        private _toastr: ToastrService,
+        public translatePipe: TranslateMePipe,
     ) {
         this.initVariables();
         this.processParams();
