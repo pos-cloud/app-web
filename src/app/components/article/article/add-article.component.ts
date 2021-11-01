@@ -1338,15 +1338,15 @@ export class AddArticleComponent implements OnInit {
     }
 
     let providers;
-    if (!this.article.providers || this.article.providers.length === 0) {
-      providers = null;
-    } else {
-      if (this.article.providers[0]._id) {
-        providers = this.article.providers[0]._id;
-      } else {
-        providers = this.article.providers;
-      }
-    }
+    // if (!this.article.providers || this.article.providers.length === 0) {
+    //   providers = null;
+    // } else {
+    //   if (this.article.providers[0]._id) {
+    //     providers = this.article.providers[0]._id;
+    //   } else {
+    //     providers = this.article.providers;
+    //   }
+    // }
 
     let provider;
     if (!this.article.provider || this.article.provider === null) {
