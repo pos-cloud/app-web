@@ -22,7 +22,7 @@ export class Article {
     public containsStructure: boolean = false;
     public order: number = 1;
     public code: string = "0000000001";
-    public codeProvider : string = "0";
+    public codeProvider: string = "0";
     public codeSAT: string;
     public description: string = '';
     public posDescription: string = '';
@@ -75,23 +75,24 @@ export class Article {
     public forShipping: Boolean = false;
     public picture: string = 'default.jpg';
     public providers: Company[];
+    public provider: Company;
     public classification: Classification;
     public applications: Application[];
-    public salesAccount : Account;
-    public purchaseAccount : Account;
+    public salesAccount: Account;
+    public purchaseAccount: Account;
     public wooId: string;
     public meliId: string;
     public meliAttrs: IMeliAttrs;
-    public minStock : number;
-    public maxStock : number;
-    public pointOfOrder : number;
+    public minStock: number;
+    public maxStock: number;
+    public pointOfOrder: number;
     public operationType: string;
     public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     public updateUser: User;
     public updateDate: string;
     public harticle: Article;
-
+    
     constructor() { }
 }
 
@@ -406,6 +407,16 @@ export let attributes = [
         filter: true,
         datatype: 'string',
         project: `{"$reduce":{"input":"$providers.name","initialValue":"","in":{"$concat":["$$value",{"$cond":{"if":{"$eq":["$$value",""]},"then":"","else":"; "}},{"$concat":[{"$toString":"$$this"},""]}]}}}`,
+        align: 'left',
+        required: false,
+    },
+    {
+        name: 'providerName',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: `{"$reduce":{"input":"$provider.name","initialValue":"","in":{"$concat":["$$value",{"$cond":{"if":{"$eq":["$$value",""]},"then":"","else":"; "}},{"$concat":[{"$toString":"$$this"},""]}]}}}`,
         align: 'left',
         required: false,
     },

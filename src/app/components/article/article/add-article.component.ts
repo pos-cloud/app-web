@@ -190,6 +190,7 @@ export class AddArticleComponent implements OnInit {
     'barcode': '',
     'currency': '',
     'providers': '',
+    'provider': '',
     'note': ''
   };
 
@@ -463,7 +464,8 @@ export class AddArticleComponent implements OnInit {
       'posKitchen': [this.article.posKitchen, []],
       'isWeigth': [this.article.isWeigth, []],
       'favourite': [this.article.favourite, []],
-      'providers': [this.article.providers, []],
+      'providers': [this.article.provider, []],
+      'provider': [this.article.provider, []],
       'lastPricePurchase': [0.00, []],
       'lastDatePurchase': [0.00, []],
       'classification': [this.article.classification, []],
@@ -487,7 +489,7 @@ export class AddArticleComponent implements OnInit {
   public onValueChanged(fieldID?: any): void {
     if (!this.articleForm) { return; }
     const form = this.articleForm;
-    if(!fieldID || typeof fieldID === "string") {
+    if (!fieldID || typeof fieldID === "string") {
       for (const field in this.formErrors) {
         if (!fieldID || field === fieldID) {
           this.formErrors[field] = '';
@@ -1346,6 +1348,21 @@ export class AddArticleComponent implements OnInit {
       }
     }
 
+    let provider;
+    if (!this.article.provider || this.article.provider === null) {
+      provider = null;
+      providers = null;
+    } else {
+      if (this.article.provider._id) {
+        provider = this.article.provider._id;
+        providers = this.article.provider._id;
+
+      } else {
+        provider = this.article.provider;
+        providers = this.article.provider;
+      }
+    }
+
     let classification;
     if (!this.article.classification) {
       classification = null;
@@ -1421,7 +1438,8 @@ export class AddArticleComponent implements OnInit {
       'ecommerceEnabled': this.article.ecommerceEnabled,
       'posKitchen': this.article.posKitchen,
       'favourite': this.article.favourite,
-      'providers': providers,
+      'providers': provider,
+      'provider': provider,
       'lastPricePurchase': lastPricePurchase,
       'classification': classification,
       'url': this.article.url,
@@ -1478,6 +1496,11 @@ export class AddArticleComponent implements OnInit {
           this.article.type = Type.Final;
         }
 
+        if (this.article.providers === undefined) {
+          this.article.providers[0] = this.article.provider
+        } else {
+          this.article.providers = [this.article.provider]
+        }
         if (this.operation === 'add' || this.operation === 'copy') {
           this.saveArticle();
         } else if (this.operation === 'update') {

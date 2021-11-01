@@ -18,6 +18,7 @@ export class CompanyService extends ModelService {
 
   private clients: BehaviorSubject<DatatableHistory> = new BehaviorSubject<DatatableHistory>(null);
   private providers: BehaviorSubject<DatatableHistory> = new BehaviorSubject<DatatableHistory>(null);
+  private provider: BehaviorSubject<DatatableHistory> = new BehaviorSubject<DatatableHistory>(null);
 
   constructor(
     public _http: HttpClient,
@@ -40,10 +41,11 @@ export class CompanyService extends ModelService {
 
   public setProviders(providers: DatatableHistory): void {
     this.providers.next(providers);
+    this.provider.next(providers);
   }
 
   public get getProviders() {
-    return this.providers.asObservable();
+    return this.provider.asObservable();
   }
 
   public getCompany(_id: string): Observable<any> {
