@@ -80,7 +80,8 @@ export class PosKitchenComponent {
             $inc: { printed: 1 }
         },
             {
-                creationDate: 1
+                transactionEndDate: 1,
+                creationDate: 1,
             }).then(
                 async movementOfArticle => {
                     if (movementOfArticle) {
