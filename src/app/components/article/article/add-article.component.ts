@@ -1338,15 +1338,15 @@ export class AddArticleComponent implements OnInit {
     }
 
     let providers;
-    // if (!this.article.providers || this.article.providers.length === 0) {
-    //   providers = null;
-    // } else {
-    //   if (this.article.providers[0]._id) {
-    //     providers = this.article.providers[0]._id;
-    //   } else {
-    //     providers = this.article.providers;
-    //   }
-    // }
+    if (!this.article.providers || this.article.providers.length === 0) {
+      providers = null;
+    } else {
+      if (this.article.providers[0]._id) {
+        providers = this.article.providers[0]._id;
+      } else {
+        providers = this.article.providers;
+      }
+    }
 
     let provider;
     if (!this.article.provider || this.article.provider === null) {
@@ -1496,11 +1496,14 @@ export class AddArticleComponent implements OnInit {
           this.article.type = Type.Final;
         }
 
-        if (this.article.providers === undefined) {
-          this.article.providers[0] = this.article.provider
-        } else {
+        if (this.article.provider == null) {
+          this.article.providers = []
+        } else if (this.article.providers == undefined) {
+          this.article.providers = [this.article.provider]
+        } else if (this.article.providers == []) {
           this.article.providers = [this.article.provider]
         }
+
         if (this.operation === 'add' || this.operation === 'copy') {
           this.saveArticle();
         } else if (this.operation === 'update') {
