@@ -221,6 +221,32 @@ export class MovementOfArticleService extends ModelService {
     );
   }
 
+  public updateMovementsOfArticlesByWhere(where: {}, set: {}, sort: {}): Observable<any> {
+
+    const URL = `${Config.apiURL}movements-of-articles-by-where`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+      .set('where', JSON.stringify(where))
+      .set('set', JSON.stringify(set))
+      .set('sort', JSON.stringify(sort));
+
+    return this._http.put(URL, null, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
+
   public deleteMovementOfArticle(_id: string): Observable<any> {
 
     const URL = `${Config.apiURL}movement-of-article`;
