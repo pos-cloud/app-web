@@ -268,7 +268,7 @@ export class PosPackingComponent {
             this._transactionService.getTransactionsV2(
                 project, // PROJECT
                 match, // MATCH
-                { startDate: 1 }, // SORT
+                { endDate: 1 }, // SORT
                 {}, // GROUP
                 this.limit, // LIMIT
                 0 // SKIP
