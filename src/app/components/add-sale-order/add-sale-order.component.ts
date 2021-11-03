@@ -2721,7 +2721,8 @@ export class AddSaleOrderComponent {
             // GUARDAMOS LA FECHA DE TRANSACCION EN LOS MOV DE ARTICULOS.
             await this.updateMovementsOfArticlesByWhere(
                 {
-                    transaction: this.transaction._id
+                    transaction: this.transaction._id,
+                    operationType: { $ne: 'D' }
                 },
                 {
                     transactionEndDate: this.transaction.endDate
