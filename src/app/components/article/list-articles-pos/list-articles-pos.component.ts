@@ -341,10 +341,7 @@ export class ListArticlesPosComponent implements OnInit {
                         movementOfArticle.modifyStock = this.transaction.type.modifyStock;
                         movementOfArticle.otherFields = article.otherFields;
                         if (amount && amount > 0) movementOfArticle.amount = amount;
-
-                        if (this.transaction.type.stockMovement) {
-                            movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
-                        }
+                        movementOfArticle.stockMovement = this.transaction.type.stockMovement;
 
                         let quotation = 1;
                         if (this.transaction.quotation) {

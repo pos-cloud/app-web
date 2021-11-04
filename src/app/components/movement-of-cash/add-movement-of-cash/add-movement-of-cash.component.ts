@@ -1715,9 +1715,7 @@ export class AddMovementOfCashComponent implements OnInit {
         movementOfArticle.markupPercentage = 0.00;
         movementOfArticle.transaction = this.transaction;
         movementOfArticle.modifyStock = this.transaction.type.modifyStock;
-        if (this.transaction.type.stockMovement) {
-            movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
-        }
+        movementOfArticle.stockMovement = this.transaction.type.stockMovement;
 
         let taxes: Taxes[] = new Array();
         let tax: Taxes = new Taxes();

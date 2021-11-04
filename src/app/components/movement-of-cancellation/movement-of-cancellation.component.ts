@@ -842,10 +842,7 @@ export class MovementOfCancellationComponent implements OnInit {
                 movementOfArticle.modifyStock = transaction.type.modifyStock;
                 movementOfArticle.otherFields = article.otherFields;
                 movementOfArticle.amount = 1;
-
-                if (transaction.type.stockMovement) {
-                    movementOfArticle.stockMovement = transaction.type.stockMovement.toString();
-                }
+                movementOfArticle.stockMovement = transaction.type.stockMovement;
 
                 let quotation = 1;
                 if (transaction.quotation) {
@@ -1050,9 +1047,7 @@ export class MovementOfCancellationComponent implements OnInit {
                                     movementOfArticle.transaction = new Transaction();
                                     movementOfArticle.transaction._id = this.transactionDestination._id;
                                     movementOfArticle.modifyStock = this.transactionDestination.type.modifyStock;
-                                    if (this.transactionDestination.type.stockMovement) {
-                                        movementOfArticle.stockMovement = this.transactionDestination.type.stockMovement.toString();
-                                    }
+                                    movementOfArticle.stockMovement = this.transactionDestination.type.stockMovement;
 
                                     movementOfArticle.measure = mov.measure;
                                     movementOfArticle.quantityMeasure = mov.quantityMeasure;

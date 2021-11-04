@@ -897,9 +897,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         this.movementOfArticle = new MovementOfArticle();
         this.movementOfArticle.transaction = this.transaction;
         this.movementOfArticle.modifyStock = this.transaction.type.modifyStock;
-        if (this.transaction.type.stockMovement) {
-            this.movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
-        }
+        this.movementOfArticle.stockMovement = this.transaction.type.stockMovement;
         this.movementOfArticle.article = articleSelected;
         this.movementOfArticle.code = articleSelected.code;
         this.movementOfArticle.codeSAT = articleSelected.codeSAT;

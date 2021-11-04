@@ -8,6 +8,7 @@ import { Deposit } from '../deposit/deposit';
 import * as moment from 'moment';
 import { User } from '../user/user';
 import { Account } from '../account/account';
+import { StockMovement } from '../transaction-type/transaction-type';
 
 export class MovementOfArticle {
 
@@ -45,7 +46,7 @@ export class MovementOfArticle {
     public measure: string;
     public quantityMeasure: number = 1;
     public modifyStock: boolean;
-    public stockMovement: string;
+    public stockMovement: StockMovement;
     public movementParent: MovementOfArticle;
     public isOptional: boolean = false;
     public isGeneratedByPayment: boolean = false;

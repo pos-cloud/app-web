@@ -1,5 +1,5 @@
 //Paquetes Angular
-import { Component, ElementRef, ViewChild, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, ViewChild, EventEmitter, ViewEncapsulation, ResolvedReflectiveFactory } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
 //Paquetes de terceros
@@ -733,9 +733,7 @@ export class AddSaleOrderComponent {
                         movementOfArticle._id = '';
                         movementOfArticle.transaction = this.transaction;
                         movementOfArticle.modifyStock = this.transaction.type.modifyStock;
-                        if (this.transaction.type.stockMovement) {
-                            movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
-                        }
+                        movementOfArticle.stockMovement = this.transaction.type.stockMovement;
                         movementOfArticle.printed = 0;
                         if (child && child.length === 0) {
                             if (await this.isValidMovementOfArticle(movementOfArticle)) {
@@ -813,9 +811,7 @@ export class AddSaleOrderComponent {
                     movementOfArticle._id = '';
                     movementOfArticle.transaction = this.transaction;
                     movementOfArticle.modifyStock = this.transaction.type.modifyStock;
-                    if (this.transaction.type.stockMovement) {
-                        movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
-                    }
+                    movementOfArticle.stockMovement = this.transaction.type.stockMovement;
                     movementOfArticle.printed = 0;
                     movementOfArticle.amount = 1;
                     this.openModal("movement_of_article", movementOfArticle);
@@ -1043,7 +1039,7 @@ export class AddSaleOrderComponent {
         });
     }
 
-    async isValidMovementOfArticle(movementOfArticle: MovementOfArticle, verificaStock: boolean = true): Promise<boolean> {
+    async isValidMovementOfArticle(movementOfArticle: MovementOfArticle, verifyStock: boolean = true): Promise<boolean> {
         return new Promise<boolean>(async (resolve, reject) => {
             try {
                 if (this.transaction.type &&
@@ -1057,27 +1053,32 @@ export class AddSaleOrderComponent {
                     movementOfArticle.article &&
                     !movementOfArticle.article.allowPurchase)
                     throw new Error(`El producto ${movementOfArticle.article.description} (${movementOfArticle.article.code}) no esta habilitado para la compra`);
+                if (verifyStock && !await this.hasStock(movementOfArticle)) throw new Error(`No tiene el stock suficiente del producto ${movementOfArticle.article.description} (${movementOfArticle.article.code}).`);
+                resolve(true);
+            } catch (error) { this.showToast(error); resolve(false); }
+        });
+    }
 
-                if (verificaStock &&
-                    movementOfArticle.article &&
+    async hasStock(movementOfArticle: MovementOfArticle): Promise<boolean> {
+        return new Promise<boolean>(async (resolve, reject) => {
+            try {
+                let has: boolean = true;
+                if (movementOfArticle.article &&
                     this.config['modules'].stock &&
-                    this.transaction.type &&
-                    this.transaction.type.modifyStock &&
-                    (this.transaction.type.stockMovement === StockMovement.Outflows || this.transaction.type.stockMovement === StockMovement.Transfer) &&
+                    movementOfArticle.modifyStock &&
+                    (movementOfArticle.stockMovement === StockMovement.Outflows || movementOfArticle.stockMovement === StockMovement.Transfer) &&
                     !movementOfArticle.article.allowSaleWithoutStock) {
                     let articleStocks: ArticleStock[] = await this.getArticleStock(movementOfArticle);
                     let articleStock: ArticleStock;
                     if (articleStocks && articleStocks.length > 0) articleStock = articleStocks[0];
                     if (!articleStock || (movementOfArticle.amount + movementOfArticle.quantityForStock) > articleStock.realStock) {
-                        if ((this.transaction.type.stockMovement === StockMovement.Transfer && movementOfArticle.deposit && movementOfArticle.deposit._id.toString() === this.transaction.depositDestination._id.toString())) {
-                            let realStock = 0;
-                            if (articleStock) realStock = articleStock.realStock;
-                            throw new Error(`No tiene el stock suficiente del producto ${movementOfArticle.article.description} (${movementOfArticle.article.code}). Stock Actual: ${realStock}`);
+                        if (!(this.transaction.type.stockMovement === StockMovement.Transfer && movementOfArticle.deposit && movementOfArticle.deposit._id.toString() === this.transaction.depositDestination._id.toString())) {
+                            has = false;
                         }
                     }
                 }
-                resolve(true);
-            } catch (error) { this.showToast(error); resolve(false); }
+                resolve(has);
+            } catch (error) { reject(error); }
         });
     }
 
@@ -1878,9 +1879,7 @@ export class AddSaleOrderComponent {
             case 'movement_of_article':
                 movementOfArticle.transaction = this.transaction;
                 movementOfArticle.modifyStock = this.transaction.type.modifyStock;
-                if (this.transaction.type.stockMovement) {
-                    movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
-                }
+                movementOfArticle.stockMovement = this.transaction.type.stockMovement;
                 modalRef = this._modalService.open(AddMovementOfArticleComponent, { size: 'lg', backdrop: 'static' });
                 modalRef.componentInstance.movementOfArticle = movementOfArticle;
                 modalRef.componentInstance.transaction = this.transaction;

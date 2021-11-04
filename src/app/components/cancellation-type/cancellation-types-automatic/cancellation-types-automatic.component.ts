@@ -359,9 +359,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
             mov.discountAmount = movOfArt.discountAmount;
             mov.discountRate = movOfArt.discountRate;
             mov.status = MovementOfArticleStatus.Ready;
-            if (transaction.type.stockMovement) {
-                mov.stockMovement = transaction.type.stockMovement.toString();
-            }
+            mov.stockMovement = transaction.type.stockMovement;
             if (this.transaction.type.requestTaxes && !transaction.type.requestTaxes) {
 
                 mov.costPrice = movOfArt.costPrice;
