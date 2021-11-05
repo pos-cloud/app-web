@@ -1071,7 +1071,13 @@ export class AddSaleOrderComponent {
                     let articleStocks: ArticleStock[] = await this.getArticleStock(movementOfArticle);
                     let articleStock: ArticleStock;
                     if (articleStocks && articleStocks.length > 0) articleStock = articleStocks[0];
-                    if (!articleStock || (movementOfArticle.amount + movementOfArticle.quantityForStock) > articleStock.realStock) {
+                    let totalStock: number = movementOfArticle.amount;
+                    this.movementsOfArticles.forEach((mov: MovementOfArticle) => {
+                        if(mov.article._id.toString() === movementOfArticle.article._id.toString()) {
+                            totalStock += mov.amount - mov.quantityForStock;
+                        }
+                    });
+                    if (!articleStock || totalStock > articleStock.realStock) {
                         if (!(this.transaction.type.stockMovement === StockMovement.Transfer && movementOfArticle.deposit && movementOfArticle.deposit._id.toString() === this.transaction.depositDestination._id.toString())) {
                             has = false;
                         }
