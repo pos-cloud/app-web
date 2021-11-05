@@ -199,7 +199,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
                     if (transactionTypes && transactionTypes.length > 0) {
 
                         // CAMBIAMOS DATOS NECESARIO
-                        let transactionDestination = new Transaction();
+                        let transactionDestination: Transaction = new Transaction();
                         Object.assign(transactionDestination, this.transaction);
                         transactionDestination._id = '';
                         transactionDestination.type = transactionTypes[0];
@@ -209,6 +209,8 @@ export class CancellationTypeAutomaticComponent implements OnInit {
                         transactionDestination.observation = this.transaction.observation;
                         transactionDestination.declaredValue = this.transaction.declaredValue;
                         transactionDestination.package = this.transaction.package;
+                        transactionDestination.CAE = null;
+                        transactionDestination.CAEExpirationDate = null;
                         
                         if (transactionDestination.type.fixedOrigin && transactionDestination.type.fixedOrigin !== 0) {
                             transactionDestination.origin = transactionDestination.type.fixedOrigin;
