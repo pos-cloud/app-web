@@ -62,9 +62,11 @@ export class AccountSeatComponent implements OnInit {
     public oldFiles: any[];
     public apiURL: string = Config.apiV8URL;
     public database: string = Config.database;
-    public debit;
-    public credit;
+    public debit = 0 ;
+    public credit = 0;
     public accounts: Account[];
+    public totalDebit = 0;
+    public totalHaber = 0;
 
     public searchPeriods = (text$: Observable<string>) =>
         text$.pipe(
@@ -90,7 +92,7 @@ export class AccountSeatComponent implements OnInit {
             distinctUntilChanged(),
             tap(() => this.loading = true),
             switchMap(async term => {
-                let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' }, mode : "Analitico", operationType : { "$ne" : "D" } } : {};
+                let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' }, mode: "Analitico", operationType: { "$ne": "D" } } : {};
                 return await this.getAllAccounts(match).then(
                     result => {
                         return result;
@@ -210,23 +212,61 @@ export class AccountSeatComponent implements OnInit {
         this.objId = pathUrl[3];
         if (this.objId && this.objId !== '') {
 
-            let project = {
-                _id: 1,
-                operationType: 1,
-                date: 1,
-                observation: 1,
-                "period._id": 1,
-                "period.name": "$period.description",
-                "items" : 1
-            }
+            let query = [];
 
-            this.subscription.add(this._objService.getAll({
-                project: project,
-                match: {
-                    operationType: { $ne: "D" },
-                    _id: { $oid: this.objId }
+            query.push(
+
+                { $lookup: { from: "account-periods", foreignField: "_id", localField: "period", as: "period" } },
+                { $unwind: { path: "$period", preserveNullAndEmptyArrays: true } },
+                {
+                    $lookup: {
+                        from: "accounts",
+                        localField: "items.account",
+                        foreignField: "_id",
+                        as: "accountDetails"
+                    }
                 },
-            }).subscribe(
+                {
+                    $addFields: {
+                        items: {
+                            $map: {
+                                input: "$items",
+                                as: "t",
+                                in: {
+                                    $mergeObjects: [
+                                        "$$t",
+                                        {
+                                            account: {
+                                                $arrayElemAt: [
+                                                    {
+                                                        $filter: {
+                                                            input: "$accountDetails",
+                                                            as: "td",
+                                                            cond: {
+                                                                $eq: ["$$td._id", "$$t.account"]
+                                                            }
+                                                        }
+                                                    }, 0
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    $match: {
+                        operationType: { $ne: "D" },
+                        _id: { $oid: this.objId }
+                    }
+                }
+            );
+
+            this.subscription.add(this._objService.getFullQuery(
+                query
+            ).subscribe(
                 result => {
                     this.loading = false;
                     if (result.status === 200) {
@@ -345,6 +385,9 @@ export class AccountSeatComponent implements OnInit {
         if (this.obj.items && this.obj.items.length > 0) {
             var items = <FormArray>this.objForm.controls.items;
             this.obj.items.forEach(x => {
+                console.log(x);
+                this.totalDebit = this.totalDebit + +x.debit;
+                this.totalHaber = this.totalHaber + +x.credit;
                 items.push(this._fb.group({
                     '_id': null,
                     'account': x.account,
@@ -515,7 +558,7 @@ export class AccountSeatComponent implements OnInit {
             this.subscription.add(this._periodService.getAll({
                 project: {
                     "name": "$description",
-                    status : 1
+                    status: 1
                 },
                 match,
                 sort: { startDate: 1 },
@@ -564,7 +607,14 @@ export class AccountSeatComponent implements OnInit {
         let valid = true;
         const item = this.objForm.controls.items as FormArray;
 
+     
+        console.log(this.totalDebit);
+        console.log(this.totalHaber);
+
         if (valid) {
+            this.totalDebit = this.totalDebit + parseFloat(itemForm.value.debit);
+            this.totalHaber = this.totalHaber + parseFloat(itemForm.value.credit);
+            
             item.push(
                 this._fb.group({
                     _id: null,
@@ -573,13 +623,26 @@ export class AccountSeatComponent implements OnInit {
                     credit: itemForm.value.credit
                 })
             );
-            itemForm.resetForm();
+
+            itemForm.setValue({
+                debit : 0,
+                credit : 0,
+                account : null
+            })
         }
     }
 
     deleteItem(index) {
         let control = <FormArray>this.objForm.controls.items;
         control.removeAt(index)
+        
+        this.totalDebit = 0;
+        this.totalHaber = 0;
+
+        control.controls.forEach(element => {
+            this.totalDebit = this.totalDebit + +element.value.debit;
+            this.totalHaber = this.totalHaber + +element.value.credit;
+        });
     }
 
     public showToast(result, type?: string, title?: string, message?: string): void {
