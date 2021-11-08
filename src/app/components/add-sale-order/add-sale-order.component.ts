@@ -1073,7 +1073,7 @@ export class AddSaleOrderComponent {
                     if (articleStocks && articleStocks.length > 0) articleStock = articleStocks[0];
                     let totalStock: number = movementOfArticle.amount;
                     this.movementsOfArticles.forEach((mov: MovementOfArticle) => {
-                        if(mov.article._id.toString() === movementOfArticle.article._id.toString()) {
+                        if(mov._id.toString() !== movementOfArticle._id.toString() && mov.article._id.toString() === movementOfArticle.article._id.toString()) {
                             totalStock += mov.amount - mov.quantityForStock;
                         }
                     });
