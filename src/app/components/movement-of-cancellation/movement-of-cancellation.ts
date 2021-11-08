@@ -280,5 +280,15 @@ export let attributes = [
         project: null,
         align: 'left',
         required: true,
+    },
+    {
+        name: 'transactionDestination.state',
+        visible: false,
+        disabled: false,
+        filter: false,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: true,
     }
 ];

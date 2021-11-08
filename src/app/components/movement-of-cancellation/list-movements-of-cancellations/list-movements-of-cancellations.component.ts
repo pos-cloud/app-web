@@ -46,7 +46,8 @@ export class ListMovementsOfCancellationsComponent implements OnInit {
 	public startDate: string;
 	public endDate: string;
 	public dateSelect: string;
-    public stateSelect : string = "Cerrado";
+    public stateSelectOrigin : string = "Cerrado";
+    public stateSelectDestination : string = "Cerrado";
 
     constructor(
         public _movementOfCancellationService: MovementOfCancellationService,
@@ -162,7 +163,8 @@ export class ListMovementsOfCancellationsComponent implements OnInit {
         }
 
         match += `"transactionOrigin.type.transactionMovement": "${this.transactionMovement}",`;
-		match += `"transactionOrigin.state": "${this.stateSelect}",`;
+		match += `"transactionOrigin.state": "${this.stateSelectOrigin}",`;
+        match += `"transactionDestination.state": "${this.stateSelectDestination}",`;
 		match += `"${this.dateSelect}" : {
                     "$gte" : { "$date" : "${this.startDate}T00:00:00${this.timezone}" },
                     "$lte" : { "$date" : "${this.endDate}T23:59:59${this.timezone}" }
