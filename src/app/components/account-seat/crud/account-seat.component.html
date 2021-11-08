@@ -107,7 +107,7 @@
                             <!-- AUTOCOMPLETE -->
                             <div *ngIf="field.tag === 'autocomplete'" style="width: 100%;">
                                 <ng-template #result let-r="result" let-t="term">
-                                    <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+                                    <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
                                 </ng-template>
                                 <input [type]="field.tagType" class="form-control" [id]="field.name"
                                     [formControlName]="field.name" [readonly]="readonly" [name]="field.name"
@@ -163,7 +163,7 @@
                                             <label for="debit" class="control-label">{{'debit' | translate |
                                                 capitalize}}:</label>
                                             <div class="input-group">
-                                                <input type="number" class="form-control" name="debit"
+                                                <input type="number" class="form-control" name="debit" value = "0"
                                                     [(ngModel)]="debit" />
                                             </div>
                                         </div>
@@ -171,7 +171,7 @@
                                             <label for="credit" class="control-label">{{'credit' | translate |
                                                 capitalize}}:</label>
                                             <div class="input-group">
-                                                <input type="number" class="form-control" name="credit"
+                                                <input type="number" class="form-control" name="credit" value = "0"
                                                     [(ngModel)]="credit" />
                                             </div>
                                         </div>
@@ -198,14 +198,15 @@
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let field of objForm.get('items')['controls']; let i = index;">
-                                            <td *ngIf='field?.value?.account?.description'>{{field?.value?.account?.description}}</td>
-                                            <div *ngFor="let account of accounts; let i = index">
+                                            <td *ngIf='field?.value?.account?.description'>
+                                                {{field?.value?.account?.description}}</td>
+                                            <!--<div *ngFor="let account of accounts; let i = index">
                                                 <td
                                                     *ngIf="field && field.value && field.value.account && field.value.account === account._id ">
                                                     {{account.description}}</td>
-                                            </div>
-                                            <td>{{field?.value?.debit}}</td>
-                                            <td>{{field?.value?.credit}}</td>
+                                            </div>-->
+                                            <td>{{field?.value?.debit | currency:'ARS':'symbol-narrow':'1.2-2'}}</td>
+                                            <td>{{field?.value?.credit | currency:'ARS':'symbol-narrow':'1.2-2'}}</td>
                                             <td align="right" width="10">
                                                 <button type="button" class="btn btn-danger btn-sm"
                                                     (click)="deleteItem(i)">
@@ -215,6 +216,14 @@
                                         </tr>
                                     </tbody>
                                     <tfoot>
+                                        <td></td>
+                                        <td class="align-right">
+                                            <strong>{{ totalDebit | currency:'ARS':'symbol-narrow':'1.2-2'}}</strong>
+                                        </td>
+                                        <td class="align-right">
+                                            <strong>{{ totalHaber | currency:'ARS':'symbol-narrow':'1.2-2' }}</strong>
+                                        </td>
+
                                     </tfoot>
                                 </table>
                             </div>

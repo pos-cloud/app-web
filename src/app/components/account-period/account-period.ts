@@ -7,7 +7,7 @@ export class AccountPeriod extends Model {
     public description : string;
     public status: StatusPeriod;
     public startDate: string;
-    public endDate: Account;
+    public endDate: string;
 
     constructor() { super(); }
 
