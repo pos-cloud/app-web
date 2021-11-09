@@ -431,6 +431,7 @@ export class MovementOfCancellationComponent implements OnInit {
                     'transactionOrigin.type.name': 1,
                     'transactionOrigin.type.movement': 1,
                     'transactionOrigin.type.transactionMovement': 1,
+                    'transactionOrigin.type.electronics': 1,
                     'transactionOrigin.number': 1,
                     'transactionOrigin.operationType': 1,
                     'transactionOrigin.balance': 1

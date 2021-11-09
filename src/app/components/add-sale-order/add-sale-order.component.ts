@@ -404,7 +404,8 @@ export class AddSaleOrderComponent {
                     'transactionOrigin.type.codes': 1,
                     'transactionOrigin.letter': 1,
                     'transactionOrigin.origin': 1,
-                    'transactionOrigin.number': 1
+                    'transactionOrigin.number': 1,
+                    'transactionOrigin.electronics': 1
                 },
                 match: { transactionDestination: { $oid: this.transaction._id } }
             }).subscribe(result => {
