@@ -402,10 +402,10 @@ export class AddSaleOrderComponent {
                     'transactionDestination': 1,
                     'transactionOrigin._id': 1,
                     'transactionOrigin.type.codes': 1,
+                    'transactionOrigin.type.electronics': 1,
                     'transactionOrigin.letter': 1,
                     'transactionOrigin.origin': 1,
-                    'transactionOrigin.number': 1,
-                    'transactionOrigin.electronics': 1
+                    'transactionOrigin.number': 1
                 },
                 match: { transactionDestination: { $oid: this.transaction._id } }
             }).subscribe(result => {
@@ -1621,11 +1621,7 @@ export class AddSaleOrderComponent {
         this.loading = true;
         this.transaction.type.defectEmailTemplate = null;
 
-        await this.getMovementsOfCancellations().then(
-            movementsOfCancellations => {
-                this.movementsOfCancellations = movementsOfCancellations;
-            }
-        );
+        this.movementsOfCancellations = await this.getMovementsOfCancellations();
 
         this._transactionService.validateElectronicTransactionAR(this.transaction, this.movementsOfCancellations, this.canceledTransactionsAFIP).subscribe(
             result => {

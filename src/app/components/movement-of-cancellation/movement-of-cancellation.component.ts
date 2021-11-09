@@ -354,16 +354,12 @@ export class MovementOfCancellationComponent implements OnInit {
                         }
                         if (this.totalPrice > 0 && this.balanceSelected === 0) {
                             if (!this.movementsOfCancellations || this.movementsOfCancellations.length === 0) {
-                                await this.getMovementsOfCancellations().then(
-                                    movementsOfCancellations => {
-                                        this.movementsOfCancellations = movementsOfCancellations;
-                                        if (this.movementsOfCancellations && this.movementsOfCancellations.length > 0) {
-                                            for (let mov of this.movementsOfCancellations) {
-                                                mov['saved'] = true;
-                                            }
-                                        }
+                                this.movementsOfCancellations = await this.getMovementsOfCancellations();
+                                if (this.movementsOfCancellations && this.movementsOfCancellations.length > 0) {
+                                    for (let mov of this.movementsOfCancellations) {
+                                        mov['saved'] = true;
                                     }
-                                );
+                                }
                             }
 
                             if (this.movementsOfCancellations && this.movementsOfCancellations.length > 0) {
