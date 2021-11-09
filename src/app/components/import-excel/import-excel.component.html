@@ -7,7 +7,6 @@
   </button>
 </div>
 <section class="container-fluid">
-
   <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
     {{alertMessage}}
   </ngb-alert>
@@ -17,6 +16,15 @@
     </li>
     <li>
       <span class="separador">: </span> {{ status200?.length }}
+    </li>
+
+  </ul>
+  <ul id="lista1" *ngIf="countArticles > 0">
+    <li>
+      Articulos actualizados con éxito
+    </li>
+    <li>
+      <span class="separador">: </span> {{ countArticles }}
     </li>
 
   </ul>
@@ -55,6 +63,14 @@
     <div class="modal-body">
 
       <div class="row">
+        <div *ngIf='type === "actualizar-producto"' class="form-group col-md-12">
+          <label for="selectProvider">Filtrar por proveedor:</label>
+          <select   formControlName='selectProvider' name="selectProvider" id="selectProvider">
+            <option [ngValue]='null'></option>
+            <option *ngFor="let provider of providers" [ngValue]='provider._id'>
+            {{provider.name}}</option>
+          </select>
+        </div>
         <div class="form-group col-md-12">
           <label for="filePath" class="control-label">Archivo:</label>
           <input type="file" class="form-control" formControlName="filePath" (change)="onFileChange($event)" />

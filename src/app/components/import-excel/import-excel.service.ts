@@ -15,7 +15,7 @@ export class ImportExcelService {
     public _authService: AuthService
   ) { }
 
-  public import(objectToImport: {}, type: string): Promise<any> {
+  public import(objectToImport: {}, type: string, idProvider: string = null): Promise<any> {
     let URL: string;
 
 
@@ -40,6 +40,7 @@ export class ImportExcelService {
     return new Promise((resolve, reject) => {
       let formData: any = new FormData();
       formData.append('excel', objectToImport[0], objectToImport[0].filename);
+      formData.append('idProvider', idProvider);
       xhr.upload.addEventListener("progress", this.progressFunction, false);
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4) {
@@ -82,4 +83,40 @@ export class ImportExcelService {
       })
     );
   }
+    public getCompaniesV2(
+    project: {},
+    match: {},
+    sort: {},
+    group: {},
+    limit: number = 0,
+    skip: number = 0
+  ): Observable<any> {
+
+    const URL = `${Config.apiURL}v2/companies`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+      .set('project', JSON.stringify(project))
+      .set('match', JSON.stringify(match))
+      .set('sort', JSON.stringify(sort))
+      .set('group', JSON.stringify(group))
+      .set('limit', limit.toString())
+      .set('skip', skip.toString());
+
+    return this._http.get(URL, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
+
 }

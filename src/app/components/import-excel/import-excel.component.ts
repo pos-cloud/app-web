@@ -1,14 +1,10 @@
 import { Component, OnInit, EventEmitter, Input } from "@angular/core";
-import {
-  FormGroup,
-  FormBuilder,
-  Validators,
-  FormControl,
-} from "@angular/forms";
+import { FormGroup, FormBuilder, Validators, FormControl } from "@angular/forms";
 import { Router } from "@angular/router";
 
 import { NgbAlertConfig, NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
+import { CompanyService } from "../company/company.service";
 // import { ImportService } from './import.service';
 import { ImportExcelService } from './import-excel.service';
 
@@ -21,6 +17,7 @@ import { ImportExcelService } from './import-excel.service';
 export class importExcelComponent implements OnInit {
   public filePath: string = ""; //Ruta de archivo a importar
   public importForm: FormGroup;
+  public providers: Array<object>;
   public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
@@ -38,6 +35,7 @@ export class importExcelComponent implements OnInit {
       required: "Este campo es requerido.",
     },
   };
+  countArticles: any;
 
   constructor(
     public _fb: FormBuilder,
@@ -45,9 +43,11 @@ export class importExcelComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _importExcelService: ImportExcelService,
+    public _companyService: CompanyService,
   ) {
     this.importForm = new FormGroup({
       filePath: new FormControl(),
+      selectProvider: new FormControl()
     })
   }
   ngOnInit(): void {
@@ -55,6 +55,7 @@ export class importExcelComponent implements OnInit {
     if (this._router.url === '/admin/clientes') {
       this.type = 'clientes'
     }
+    this.getProviders()
   }
   onFileChange(e) {
     this.file = <Array<File>>e.target.files;
@@ -71,25 +72,38 @@ export class importExcelComponent implements OnInit {
     link.href = "assets/img/default.jpg";
     link.click();
   }
+  public getProviders(): void {
 
+    this._importExcelService.getCompaniesV2(
+      { _id: 1, name: 1, type: 1 },
+      { type: 'Proveedor', operationType: { $ne: 'D' } },
+      { name: 1 },
+      {}
+    ).subscribe(r => {
+      this.providers = r.companies
+    })
+
+  }
   import() {
-    this.loading = true;
-    this._importExcelService.import(this.file, this.type)
-      .then(async (r) => {  
+    // this.loading = true;
+    // console.log()
+    this._importExcelService.import(this.file, this.type, this.importForm.value.selectProvider)
+      .then(async (r) => {
         for (let x = 0; x < r.length; x++) {
           if (r[x].status == 200) {
             this.status200.push(r[x])
+            this.countArticles = r[x].countArticle 
           } else if (r[x].message == 'No se encontro el articulo con el codigo' && r[x].status == 500) {
             this.status500.push(r[x])
           } else if (r[x].message == 'No se ingreso ningun codigo' && r[x].status == 500) {
             this.statusCode.push(r[x])
           }
           // CLientes
-          else if(r[x].message == 'err' && r[x].status == 500){
+          else if (r[x].message == 'err' && r[x].status == 500) {
             this.status500.push(r[x])
           }
           // create article
-          else if(r[x].message == 'articulo existente' && r[x].status == 500){
+          else if (r[x].message == 'articulo existente' && r[x].status == 500) {
             this.statusCode.push(r[x])
           }
         }
