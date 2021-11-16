@@ -479,7 +479,8 @@ export class AddArticleComponent implements OnInit {
       'maxStock': [this.article.maxStock, []],
       'pointOfOrder': [this.article.pointOfOrder, []],
       'meliId': [this.article.meliId, []],
-      'meliAttrs': [this.article.meliAttrs, []]
+      'meliAttrs': [this.article.meliAttrs, []],
+      'wooId': [this.article.wooId, []],
     });
 
     this.articleForm.valueChanges.subscribe(data => this.onValueChanged(data));
@@ -745,6 +746,7 @@ export class AddArticleComponent implements OnInit {
             this.article.posDescription = '';
             this.article.url = '';
             this.article.meliId = '';
+            this.article.wooId = '';
           }
           this.setValuesForm();
           this.setValuesArray();
@@ -1607,6 +1609,7 @@ export class AddArticleComponent implements OnInit {
             this.hasChanged = true;
             this.article = result.article;
             this.articleForm.patchValue({ meliId: this.article.meliId });
+            this.articleForm.patchValue({ wooId: this.article.wooId });
             this._articleService.setItems(null);
             this.showToast(null, 'success', 'Operación realizada con éxito');
           }

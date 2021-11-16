@@ -97,7 +97,8 @@
                                     <div class="form-group col-md-3">
                                         <div class="custom-file">
                                             <label *ngIf="!readonly" class="custom-file-label btn btn-action"
-                                                for="customFileLang">{{fileNamePrincipal?fileNamePrincipal:'Buscar Imagen'}}</label>
+                                                for="customFileLang">{{fileNamePrincipal?fileNamePrincipal:'Buscar
+                                                Imagen'}}</label>
                                             <input *ngIf="!readonly" type="file" class="custom-file-input" lang="es"
                                                 accept="image/*" id="customFileLang"
                                                 (change)="fileChangeEvent($event,false)" />
@@ -110,8 +111,8 @@
                                         <ng-template #result let-r="result" let-t="term">
                                             <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
                                         </ng-template>
-                                        <label
-                                            for="unitOfMeasurement">{{'unitOfMeasurement'| translate | capitalize}}:</label>
+                                        <label for="unitOfMeasurement">{{'unitOfMeasurement'| translate |
+                                            capitalize}}:</label>
                                         <input id="unitOfMeasurement" type="text" class="form-control"
                                             formControlName="unitOfMeasurement" name="unitOfMeasurement"
                                             [ngbTypeahead]="searchUnitsOfMeasurement" [resultTemplate]="result"
@@ -262,12 +263,14 @@
                                         </div>
                                     </div>
                                     <div class="form-group col-md-4">
-                                        <label for="markupPriceWithoutVAT" class="control-label">Utilidad sin Impuestos:</label>
+                                        <label for="markupPriceWithoutVAT" class="control-label">Utilidad sin
+                                            Impuestos:</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend"><span class="input-group-text"
                                                     id="basic-addon1">$</span></div>
-                                            <input type="number" class="form-control" formControlName="markupPriceWithoutVAT"
-                                                name="markupPriceWithoutVAT" id="markupPriceWithoutVAT" step="1" [readonly]="true" />
+                                            <input type="number" class="form-control"
+                                                formControlName="markupPriceWithoutVAT" name="markupPriceWithoutVAT"
+                                                id="markupPriceWithoutVAT" step="1" [readonly]="true" />
                                         </div>
                                     </div>
                                     <div class="form-group col-md-4">
@@ -284,12 +287,14 @@
                                         </div>
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label for="salePriceWithoutVAT" class="control-label">Precio de Venta sin Impuestos:</label>
+                                        <label for="salePriceWithoutVAT" class="control-label">Precio de Venta sin
+                                            Impuestos:</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend"><span class="input-group-text"
                                                     id="basic-addon1">$</span></div>
-                                            <input type="number" class="form-control" formControlName="salePriceWithoutVAT"
-                                                name="salePriceWithoutVAT" id="salePriceWithoutVAT" step="1" [readonly]="true" />
+                                            <input type="number" class="form-control"
+                                                formControlName="salePriceWithoutVAT" name="salePriceWithoutVAT"
+                                                id="salePriceWithoutVAT" step="1" [readonly]="true" />
                                         </div>
                                     </div>
                                     <div class="form-group col-md-6">
@@ -330,15 +335,15 @@
                             <div class="form-group col-md-4">
                                 <label for="minStock" class="control-label">Stock Minimo:</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" formControlName="minStock"
-                                        name="minStock" id="minStock" step="1" [readonly]="readonly" />
+                                    <input type="number" class="form-control" formControlName="minStock" name="minStock"
+                                        id="minStock" step="1" [readonly]="readonly" />
                                 </div>
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="maxStock" class="control-label">Stock Maximo:</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" formControlName="maxStock"
-                                        name="maxStock" id="maxStock" step="1" [readonly]="readonly" />
+                                    <input type="number" class="form-control" formControlName="maxStock" name="maxStock"
+                                        id="maxStock" step="1" [readonly]="readonly" />
                                 </div>
                             </div>
                             <div class="form-group col-md-4">
@@ -429,13 +434,13 @@
                                         <td
                                             *ngIf="locationAux && locationAux.value && locationAux.value.location && locationAux.value.location === location._id">
                                             {{location.description}}</td>
-                                            <td
+                                        <td
                                             *ngIf="locationAux && locationAux.value && locationAux.value.location && locationAux.value.location === location._id">
                                             {{location.positionX}}</td>
-                                            <td
+                                        <td
                                             *ngIf="locationAux && locationAux.value && locationAux.value.location && locationAux.value.location === location._id">
                                             {{location.positionY}}</td>
-                                            <td
+                                        <td
                                             *ngIf="locationAux && locationAux.value && locationAux.value.location && locationAux.value.location === location._id">
                                             {{location.positionZ}}</td>
                                     </div>
@@ -482,8 +487,9 @@
                                     <input class="form-control" type="number"
                                         *ngIf="articleFieldSelected.datatype.toString() === 'Porcentaje' || articleFieldSelected.datatype.toString() === 'Número'"
                                         [(ngModel)]="value" name="value">
-                                    <input class="form-control" *ngIf="articleFieldSelected.datatype.toString() === 'Alfabético'"
-                                        type="text" [(ngModel)]="value" name="value">
+                                    <input class="form-control"
+                                        *ngIf="articleFieldSelected.datatype.toString() === 'Alfabético'" type="text"
+                                        [(ngModel)]="value" name="value">
                                 </div>
                                 <div class="form-group col-md-2">
                                     <button type="summit" class="btn btn-success btn-sm especial">
@@ -586,7 +592,8 @@
                                             <label for="sel"> Agregar Imagenes:</label>
                                             <div class="custom-file">
                                                 <label class="custom-file-label btn btn-action"
-                                                    for="customFileLang">{{fileNameArray?fileNameArray:'Buscar Imagen'}}</label>
+                                                    for="customFileLang">{{fileNameArray?fileNameArray:'Buscar
+                                                    Imagen'}}</label>
                                                 <input type="file" class="custom-file-input" language="es"
                                                     accept="image/*" id="customFileLang"
                                                     (change)="fileChangeEvent($event,true)" />
@@ -623,12 +630,22 @@
                             </div>
                         </div>
                         <hr>
-                        <h4>Integración con Mercado Libre</h4>
+                        <h4>Integración con Woocommerce</h4>
                         <div class="row">
-                            <div class="col-md-12">
-                                <app-add-meli-attrs [article]="article" [meliAttrs]="meliAttrs" (eventAddMeliAttrs)="eventAddMeliAttrs($event)" [readonly]="readonly"></app-add-meli-attrs>
+                            <div class="form-group col-md-12">
+                                <label for="wooId" class="control-label">Id Woocommerce:</label>
+                                <input type="text" class="form-control" formControlName="wooId" name="wooId" id="wooId"
+                                    [readonly]="readonly" />
+                                <div *ngIf="formErrors.wooId" class="alert alert-danger">
+                                    {{ formErrors.wooId }}
+                                </div>
                             </div>
                         </div>
+                        <hr>
+                        <h4>Integración con Mercado Libre</h4>
+                        <app-add-meli-attrs [article]="article" [meliAttrs]="meliAttrs"
+                            (eventAddMeliAttrs)="eventAddMeliAttrs($event)" [readonly]="readonly">
+                        </app-add-meli-attrs>
                     </ng-template>
                 </ngb-tab>
                 <ngb-tab title="Configuraciones">
@@ -649,8 +666,9 @@
                                             <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
                                         </ng-template>
                                         <label for="purchaseAccount">Cuenta Contable:</label>
-                                        <input id="purchaseAccount" type="text" class="form-control" formControlName="purchaseAccount"
-                                            name="purchaseAccount" [ngbTypeahead]="searchAccounts" [resultTemplate]="rtAccounts"
+                                        <input id="purchaseAccount" type="text" class="form-control"
+                                            formControlName="purchaseAccount" name="purchaseAccount"
+                                            [ngbTypeahead]="searchAccounts" [resultTemplate]="rtAccounts"
                                             [inputFormatter]="formatterAccounts" [readonly]="readonly" />
                                     </div>
                                 </div>
@@ -667,8 +685,9 @@
                                             <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
                                         </ng-template>
                                         <label for="salesAccount">Cuenta Contable:</label>
-                                        <input id="salesAccount" type="text" class="form-control" formControlName="salesAccount"
-                                            name="salesAccount" [ngbTypeahead]="searchAccounts" [resultTemplate]="rtAccounts"
+                                        <input id="salesAccount" type="text" class="form-control"
+                                            formControlName="salesAccount" name="salesAccount"
+                                            [ngbTypeahead]="searchAccounts" [resultTemplate]="rtAccounts"
                                             [inputFormatter]="formatterAccounts" [readonly]="readonly" />
                                     </div>
                                 </div>
@@ -790,8 +809,8 @@
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label class="control-label">El día:</label>
-                                        <label *ngIf="article.updateDate"
-                                            class="control-label"><b>{{article.updateDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
+                                        <label *ngIf="article.updateDate" class="control-label"><b>{{article.updateDate
+                                                | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
                                         <label *ngIf="!article.updateDate" class="control-label"><b>-</b></label>
                                     </div>
                                 </div>
