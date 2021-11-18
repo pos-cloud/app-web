@@ -516,12 +516,15 @@ export class PointOfSaleComponent implements OnInit {
         this.loading = true;
         this._transactionService.syncWoocommerce().subscribe(
             result => {
-                this.showToast(null, 'success', 'Finalizó la sincronización de woocommerce.');
-                this.loading = false;
-                this.refresh();
+                if(result.status === 200) {
+                    this.showToast(null, 'success', 'Finalizó la sincronización de woocommerce.');
+                    this.refresh();
+                } else {
+                    this.showToast(result);
+                    this.refresh();
+                }
             }, error => {
-                this.showToast(null, 'success', 'Finalizó la sincronización de woocommerce.');
-                this.loading = false;
+                this.showToast(error);
                 this.refresh();
             }
         )
@@ -600,7 +603,7 @@ export class PointOfSaleComponent implements OnInit {
                 if (this.transactionStates.length > 0) {
                     query = {
                         state: { $in: this.transactionStates },
-                        madein: { $in: ['pedidos-web', 'mercadolibre'] },
+                        madein: { $in: ['pedidos-web', 'mercadolibre', 'woocommerce'] },
                         operationType: { $ne: 'D' },
                         "type.transactionMovement": this.transactionMovement,
                     }
@@ -622,7 +625,7 @@ export class PointOfSaleComponent implements OnInit {
                             { state: TransactionState.Delivered },
                             { state: TransactionState.Sent }
                         ],
-                        madein: { $in: ['pedidos-web', 'mercadolibre'] },
+                        madein: { $in: ['pedidos-web', 'mercadolibre', 'woocommerce'] },
                         operationType: { $ne: 'D' },
                         "type.transactionMovement": this.transactionMovement,
                     }
@@ -2018,7 +2021,7 @@ export class PointOfSaleComponent implements OnInit {
 
             let sort: {} = { startDate: -1 };
 
-            if (this.posType === 'pedidos-web' || this.posType === 'mercadolibre' || this.posType === 'carritos-abandonados') {
+            if (this.posType === 'pedidos-web' || this.posType === 'mercadolibre' || this.posType === 'woocommerce' || this.posType === 'carritos-abandonados') {
                 sort = { orderNumber: -1 };
                 this.orderTerm = ['-orderNumber'];
             }
