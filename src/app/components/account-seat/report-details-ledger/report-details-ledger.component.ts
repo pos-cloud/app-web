@@ -30,7 +30,7 @@ export class ReportDetailsLedgerComponent implements OnInit {
     public endDate: string;
     public columns = [
         {
-			name: 'codigo',
+			name: 'date',
 			visible: true,
 			disabled: false,
 			filter: true,
@@ -38,7 +38,7 @@ export class ReportDetailsLedgerComponent implements OnInit {
 			align: 'left'
 		},
 		{
-			name: 'description',
+			name: 'observation',
 			visible: true,
 			disabled: false,
 			filter: true,
@@ -46,7 +46,7 @@ export class ReportDetailsLedgerComponent implements OnInit {
 			align: 'left'
 		},
 		{
-			name: 'totalDebit',
+			name: 'transaction.origin',
 			visible: true,
 			disabled: false,
 			filter: true,
@@ -54,7 +54,7 @@ export class ReportDetailsLedgerComponent implements OnInit {
 			align: 'left'
 		},
 		{
-			name: 'totalCredit',
+			name: 'transaction.letter',
 			visible: true,
 			disabled: false,
 			filter: true,
@@ -62,13 +62,37 @@ export class ReportDetailsLedgerComponent implements OnInit {
 			align: 'left'
 		},
 		{
-			name: 'total',
+			name: 'transaction.number',
 			visible: true,
 			disabled: false,
 			filter: true,
 			datatype: 'string',
 			align: 'left'
 		},
+        {
+			name: 'transaction.type.transactionMovement',
+			visible: true,
+			disabled: false,
+			filter: true,
+			datatype: 'string',
+			align: 'left'
+		},
+        {
+			name: 'transaction.type.name',
+			visible: true,
+			disabled: false,
+			filter: true,
+			datatype: 'string',
+			align: 'left'
+		},
+        {
+			name: 'item[0].debit',
+			visible: true,
+			disabled: false,
+			filter: true,
+			datatype: 'string',
+			align: 'left'
+		}
 	];
     // EXCEL
 	@ViewChild(ExportExcelComponent, { static: false }) exportExcelComponent: ExportExcelComponent;
@@ -139,11 +163,12 @@ export class ReportDetailsLedgerComponent implements OnInit {
                 $project : {
                     date : { "$dateToString": { "date": "$date", "format": "%d/%m/%Y", "timezone": "-03:00" } },
                     observation : 1,
-                    "transaction.type.transactionMovement" : 1,
-                    "transaction.type.name" : 1,
+                    "transaction._id" : 1,
                     "transaction.origin" : 1,
                     "transaction.letter" : 1,
                     "transaction.number" : 1,
+                    "transaction.type.transactionMovement" : 1,
+                    "transaction.type.name" : 1,
                     "items" : 1
                 }
             }
