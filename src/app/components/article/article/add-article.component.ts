@@ -1453,6 +1453,7 @@ export class AddArticleComponent implements OnInit {
       'pointOfOrder': this.article.pointOfOrder,
       'codeProvider': this.article.codeProvider,
       'allowStock': this.article.allowStock,
+      'wooId': this.article.wooId,
     };
 
     this.articleForm.patchValue(values);
@@ -1465,7 +1466,7 @@ export class AddArticleComponent implements OnInit {
         this.loading = true;
         this.loadPosDescription();
         this.loadURL();
-        let oldMeliId: string = this.article.meliId;
+        const oldMeliId: string = this.article.meliId;
         this.article = Object.assign(this.article, this.articleForm.value);
         this.article.meliId = oldMeliId;
         this.article.meliAttrs = this.meliAttrs;
