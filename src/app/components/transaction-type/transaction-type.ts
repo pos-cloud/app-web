@@ -13,6 +13,7 @@ import { ShipmentMethod } from '../shipment-method/shipment-method.model';
 import { Model } from '../model/model.model';
 import { IAttribute } from 'app/util/attribute.interface';
 import { TransactionState } from '../transaction/transaction';
+import { CashBoxType } from '../cash-box-type/cash-box-type.model';
 
 export class TransactionType extends Model {
 
@@ -89,6 +90,7 @@ export class TransactionType extends Model {
     public allowAccounting : boolean = false;
     public finishState : TransactionState;
     public optionalAFIP : string;
+    public cashBoxType : CashBoxType;
     public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     public updateUser: User;

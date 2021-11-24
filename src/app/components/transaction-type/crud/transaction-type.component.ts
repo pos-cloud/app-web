@@ -35,6 +35,8 @@ import { Printer } from 'app/components/printer/printer';
 import { CompanyService } from 'app/components/company/company.service';
 import Resulteable from 'app/util/Resulteable';
 import { TransactionState } from 'app/components/transaction/transaction';
+import { CashBoxTypeService } from 'app/components/cash-box-type/cash-box-type.service';
+import { CashBoxType } from 'app/components/cash-box-type/cash-box-type.model';
 
 
 @Component({
@@ -233,6 +235,26 @@ export class TransactionTypeComponent implements OnInit {
 
     public formatterCompanies = (x: { name: string }) => x.name;
 
+    public searchCashBoxTypes = (text$: Observable<string>) => {
+        const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+        const inputFocus$ = this.focus$['cashBoxType'];
+        return merge(debouncedText$, inputFocus$).pipe(
+            tap(() => this.loading = true),
+            switchMap(async term => {
+                let match: {} = (term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {};
+                match["operationType"] = { "$ne": "D" };
+                return await this.getCashBoxTypes(match).then(
+                    result => {
+                        return result;
+                    }
+                );
+            }),
+            tap(() => this.loading = false),
+        )
+    }
+
+    public formatterCashBoxType = (x: { name: string }) => x.name;
+
 
     public formFields: FormField[] = [
         {
@@ -414,6 +436,16 @@ export class TransactionTypeComponent implements OnInit {
             name: "orderNumber",
             tag: 'input',
             tagType: "number",
+            class: 'form-group col-md-2'
+        },
+        {
+            name: 'cashBoxType',
+            tag: 'autocomplete',
+            tagType: 'text',
+            search: this.searchCashBoxTypes,
+            format: this.formatterCashBoxType,
+            values: null,
+            focus: false,
             class: 'form-group col-md-2'
         },
         {
@@ -839,6 +871,7 @@ export class TransactionTypeComponent implements OnInit {
         public _paymentMethod: PaymentMethodService,
         public _emailTemplate: EmailTemplateService,
         public _shipmentMethod: ShipmentMethodService,
+        public _cashBoxType : CashBoxTypeService,
         public _printer: PrinterService,
         public _company: CompanyService,
         public translatePipe: TranslateMePipe,
@@ -944,14 +977,15 @@ export class TransactionTypeComponent implements OnInit {
                 "application._id": 1,
                 "application.name": 1,
                 "requestEmployee._id": 1,
-                "requestEmployee.description": 1,
+                "requestEmployee.name" : "$requestEmployee.description",
                 "paymentMethods._id": 1,
                 "paymentMethods.name": 1,
                 "resetOrderNumber": 1,
                 "allowAccounting": 1,
                 "finishState": 1,
                 "allowPriceList": 1,
-                optionalAFIP : 1
+                optionalAFIP : 1,
+                "cashBoxType.name" :1
             }
 
             this.subscription.add(this._objService.getAll({
@@ -1437,6 +1471,24 @@ export class TransactionTypeComponent implements OnInit {
                 limit: 10,
             }).subscribe(
                 result => {
+                    this.loading = false;
+                    (result.status === 200) ? resolve(result.result) : reject(result);
+                },
+                error => reject(error)
+            ));
+        });
+    }
+
+    public getCashBoxTypes(match: {}): Promise<CashBoxType[]> {
+        return new Promise<CashBoxType[]>((resolve, reject) => {
+            this.subscription.add(this._cashBoxType.getAll({
+                project: { name: 1, operationType: 1 },
+                match,
+                sort: { name: 1 },
+                limit: 10,
+            }).subscribe(
+                result => {
+                    console.log(result);
                     this.loading = false;
                     (result.status === 200) ? resolve(result.result) : reject(result);
                 },
