@@ -2858,31 +2858,7 @@ export class AddSaleOrderComponent {
         });
     }
 
-    public asignOrderNumber(): Promise<boolean> {
-        return new Promise<boolean>((resolve, reject) => {
-            if (this.transaction.type && this.transaction.type.order && this.transaction.type.order >= 1) {
-                this._transactionService.setOrderNumber(this.transaction).subscribe(
-                    result => {
-                        this.loading = false;
-                        resolve(true);
-                    },
-                    error => {
-                        if (error) {
-                            reject(false);
-                        }
-                    }
-                )
-            } else {
-                resolve(true);
-            }
-        });
-    }
-
     async close(op?: string) {
-
-        if (this.transaction.type.orderNumber > 0 && !this.transaction.orderNumber) {
-            await this.asignOrderNumber()
-        }
 
         if (op === 'charge') {
             this.isCharge = true;
