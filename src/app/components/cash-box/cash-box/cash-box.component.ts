@@ -558,7 +558,7 @@ export class CashBoxComponent implements OnInit {
 
             this._transactionService.getTransactions(query).subscribe(
                 result => {
-                    if (!result.transactions) {
+                    if (!result.transactions || result.transactions.length === 0) {
                         resolve(null);
                     } else {
                         resolve(result.transactions);
@@ -580,7 +580,7 @@ export class CashBoxComponent implements OnInit {
 
             this._transactionService.getTransactions(query).subscribe(
                 result => {
-                    if (!result.transactions) {
+                    if (!result.transactions || result.transactions.length === 0) {
                         resolve(null);
                     } else {
                         resolve(result.transactions[0]);

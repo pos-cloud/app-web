@@ -81,6 +81,7 @@ import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { AccountSeatService } from '../account-seat/account-seat.service';
 import { SelectPriceListComponent } from '../price-list/select-price-list/select-price-list.component';
 import Resulteable from 'app/util/Resulteable';
+import { CompanyNewsComponent } from '../company/company-news/company-news.component';
 
 @Component({
     selector: 'app-add-sale-order',
@@ -264,81 +265,63 @@ export class AddSaleOrderComponent {
     }
 
     public async initComponent() {
+        try {
+            this.loading = true;
 
-        this.loading = true;
-
-        if (this.transactionId) {
-            await this.getTransaction().then(
-                async transaction => {
-                    if (transaction) {
-                        this.transaction = transaction;
-
-                        if (!this.transaction.company && this.transaction.type.company) {
-                            this.transaction.company = this.transaction.type.company;
-                        }
-
-                        if (this.transaction &&
-                            this.transaction.company &&
-                            this.transaction.company.transport) {
-                            this.transaction.transport = this.transaction.company.transport
-                        }
-                        if (this.transaction.state === TransactionState.Closed ||
-                            this.transaction.state === TransactionState.Canceled ||
-                            this.transaction.CAE) {
-                            if (this.posType === 'resto' && this.transaction.table) {
-                                this.transaction.table.employee = null;
-                                this.transaction.table.state = TableState.Available;
-                                await this.updateTable(this.transaction.table).then(table => {
-                                    if (table) {
-                                        this.transaction.table = table;
-                                        this.backFinal();
-                                    }
-                                });
-                            } else {
-                                this.backFinal();
-                            }
-                        } else {
-                            this.transactionMovement = '' + this.transaction.type.transactionMovement;
-                            this.filtersTaxClassification = [TaxClassification.Withholding, TaxClassification.Perception];
-                            this.lastQuotation = this.transaction.quotation;
-
-                            if (this.userCountry === 'MX' &&
-                                this.transaction.type.defectUseOfCFDI &&
-                                !this.transaction.useOfCFDI) {
-                                this.transaction.useOfCFDI = this.transaction.type.defectUseOfCFDI;
-                            }
-
-                            await this.getCancellationTypes().then(
-                                cancellationTypes => {
-                                    if (cancellationTypes) {
-                                        this.cancellationTypes = cancellationTypes;
-                                        this.showButtonInformCancellation = true;
-                                        this.showButtonCancelation = true;
-                                    } else {
-                                        this.showButtonCancelation = false;
-                                    }
-                                }
-                            );
-
-                            await this.getMovementsOfCancellations().then(
-                                movementsOfCancellations => {
-                                    if (movementsOfCancellations && movementsOfCancellations.length > 0) {
-                                        this.movementsOfCancellations = movementsOfCancellations;
-                                        this.showButtonCancelation = false;
-                                    } else {
-                                        this.showButtonCancelation = true;
-                                    }
-                                }
-                            );
-                            this.getTransports();
-                            this.getMovementsOfTransaction();
-                        }
-                    }
+            if (this.transactionId) {
+                this.transaction = await this.getTransaction();
+                if (!this.transaction.company && this.transaction.type.company) {
+                    this.transaction.company = this.transaction.type.company;
                 }
-            );
-        }
 
-        this.loading = false;
+                if (this.transaction &&
+                    this.transaction.company &&
+                    this.transaction.company.transport) {
+                    this.transaction.transport = this.transaction.company.transport
+                }
+                if (this.transaction.state === TransactionState.Closed ||
+                    this.transaction.state === TransactionState.Canceled ||
+                    this.transaction.CAE) {
+                    if (this.posType === 'resto' && this.transaction.table) {
+                        this.transaction.table.employee = null;
+                        this.transaction.table.state = TableState.Available;
+                        this.transaction.table = await this.updateTable(this.transaction.table);
+                    }
+                    this.backFinal();
+                } else {
+                    this.transactionMovement = '' + this.transaction.type.transactionMovement;
+                    this.filtersTaxClassification = [TaxClassification.Withholding, TaxClassification.Perception];
+                    this.lastQuotation = this.transaction.quotation;
+
+                    if (this.userCountry === 'MX' &&
+                        this.transaction.type.defectUseOfCFDI &&
+                        !this.transaction.useOfCFDI) {
+                        this.transaction.useOfCFDI = this.transaction.type.defectUseOfCFDI;
+                    }
+
+                    this.cancellationTypes = await this.getCancellationTypes();
+                    if (this.cancellationTypes) {
+                        this.cancellationTypes = this.cancellationTypes;
+                        this.showButtonInformCancellation = true;
+                        this.showButtonCancelation = true;
+                    } else {
+                        this.showButtonCancelation = false;
+                    }
+
+                    this.movementsOfCancellations = await this.getMovementsOfCancellations();
+                    if (this.movementsOfCancellations && this.movementsOfCancellations.length > 0) {
+                        this.showButtonCancelation = false;
+                    } else {
+                        this.showButtonCancelation = true;
+                    }
+                    this.getTransports();
+
+                    this.getMovementsOfTransaction();
+                }
+            }
+
+            this.loading = false;
+        } catch (error) { this.showToast(error); }
     }
 
     ngAfterViewInit() {
@@ -493,26 +476,14 @@ export class AddSaleOrderComponent {
     }
 
     public getTransaction(): Promise<Transaction> {
-
         return new Promise<Transaction>((resolve, reject) => {
-
-            this.loading = true;
-
             this._transactionService.getTransaction(this.transactionId).subscribe(
                 async result => {
-                    this.loading = false;
-                    if (!result.transaction) {
-                        this.showMessage(result.message, 'danger', false);
-                        resolve(null);
-                    } else {
+                    if (result.transaction) {
                         resolve(result.transaction);
-                    }
+                    } else reject(result);
                 },
-                error => {
-                    this.loading = false;
-                    this.showMessage(error._body, 'danger', false);
-                    resolve(null);
-                }
+                error => reject(error)
             );
         });
     }
@@ -1074,7 +1045,7 @@ export class AddSaleOrderComponent {
                     if (articleStocks && articleStocks.length > 0) articleStock = articleStocks[0];
                     let totalStock: number = movementOfArticle.amount;
                     this.movementsOfArticles.forEach((mov: MovementOfArticle) => {
-                        if(mov._id.toString() !== movementOfArticle._id.toString() && mov.article._id.toString() === movementOfArticle.article._id.toString()) {
+                        if (mov._id.toString() !== movementOfArticle._id.toString() && mov.article._id.toString() === movementOfArticle.article._id.toString()) {
                             totalStock += mov.amount - mov.quantityForStock;
                         }
                     });
@@ -1432,7 +1403,6 @@ export class AddSaleOrderComponent {
 
         let totalPriceAux: number = 0;
         let discountAmountAux: number = 0;
-        this.transaction.discountPercent = 0;
 
         if (discountPercent !== undefined) this.transaction.discountPercent = this.roundNumber.transform(discountPercent, 6);
 
@@ -1440,7 +1410,6 @@ export class AddSaleOrderComponent {
         if (this.transaction.company && this.transaction.company.group && this.transaction.company.group.discount > 0 && this.transaction.type.allowCompanyDiscount) this.transaction.discountPercent += this.transaction.company.group.discount;
 
         let isUpdateValid: boolean = true;
-
         if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
             for (let movementOfArticle of this.movementsOfArticles) {
                 // BORRAMOS TAXES ID PARA COMPARAR
@@ -3282,32 +3251,27 @@ export class AddSaleOrderComponent {
     }
 
     public async assignTransactionNumber() {
+        try {
+            let query = `where= "type":"${this.transaction.type._id}",
+            "origin":${this.transaction.origin},
+            "letter":"${this.transaction.letter}",
+            "_id":{"$ne":"${this.transaction._id}"}
+            &sort="number":-1
+            &limit=1`;
 
-        this.loading = true;
-
-        let query = `where= "type":"${this.transaction.type._id}",
-                    "origin":${this.transaction.origin},
-                    "letter":"${this.transaction.letter}",
-                    "_id":{"$ne":"${this.transaction._id}"}
-                    &sort="number":-1
-                    &limit=1`;
-
-        this._transactionService.getTransactions(query).subscribe(
-            async result => {
-                this.loading = false;
-                if (!result.transactions) {
-                    this.transaction.number = 1;
-                } else {
-                    this.transaction.number = result.transactions[0].number + 1;
-                }
-                this.transaction = await this.updateTransaction();
-                this.finish();
-            },
-            error => {
-                this.loading = false;
-                this.showMessage(error._body, 'danger', false);
-            }
-        );
+            this._transactionService.getTransactions(query).subscribe(
+                async result => {
+                    if (!result.transactions || result.transactions.length === 0) {
+                        this.transaction.number = 1;
+                    } else {
+                        this.transaction.number = result.transactions[0].number + 1;
+                    }
+                    this.transaction = await this.updateTransaction();
+                    this.finish();
+                },
+                error => { throw error }
+            );
+        } catch (error) { this.showToast(error); };
     }
 
     public checkInformationCancellation() {
@@ -3325,7 +3289,7 @@ export class AddSaleOrderComponent {
             this._transactionService.getTransactions(query).subscribe(
                 result => {
                     this.loading = false;
-                    if (!result.transactions) {
+                    if (!result.transactions || result.transactions.length === 0) {
                         this.canceledTransactionsAFIP = null;
                         this.showMessage('Debe informar un comprobante válido', 'info', false);
                     } else {

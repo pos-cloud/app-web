@@ -23,12 +23,14 @@ import { Config } from 'app/app.config';
 import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
 import { MovementOfCancellationService } from 'app/components/movement-of-cancellation/movement-of-cancellation.service';
 import { TaxBase } from 'app/components/tax/tax';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateMePipe } from 'app/main/pipes/translate-me';
 
 @Component({
     selector: 'app-cancellation-types-automatic',
     templateUrl: './cancellation-types-automatic.component.html',
     styleUrls: ['./cancellation-types-automatic.component.scss'],
-    providers: [NgbAlertConfig]
+    providers: [NgbAlertConfig, TranslateMePipe]
 })
 
 export class CancellationTypeAutomaticComponent implements OnInit {
@@ -57,7 +59,9 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         private _router: Router,
         public activeModal: NgbActiveModal,
         private _transactionTypeService: TransactionTypeService,
-        private _movementOfCancellationService: MovementOfCancellationService
+        private _movementOfCancellationService: MovementOfCancellationService,
+        private _toastr: ToastrService,
+        public translatePipe: TranslateMePipe,
     ) {
         this.cancellationTypes = new Array();
     }
@@ -186,165 +190,104 @@ export class CancellationTypeAutomaticComponent implements OnInit {
     }
 
     public async finishSelection() {
-        if (!this.cancellationTypeSelected) {
-            this.activeModal.close();
-        } else {
-            // CAMBIAMOS EL TIPO
+        try {
+            if (!this.cancellationTypeSelected) {
+                this.activeModal.close();
+            } else {
+                // CAMBIAMOS EL TIPO
+                let match = {
+                    _id: { "$oid": this.cancellationTypeSelected.destination._id }
+                }
+                let transactionType: TransactionType = await this.getTransactionType(match);
+                // CAMBIAMOS DATOS NECESARIO
+                let transactionDestination: Transaction = new Transaction();
+                transactionDestination = Object.assign(transactionDestination, this.transaction);
+                transactionDestination._id = '';
+                transactionDestination.type = transactionType;
+                transactionDestination.state = TransactionState.Pending;
+                transactionDestination.balance = 0;
+                transactionDestination.transport = this.transaction.transport;
+                transactionDestination.observation = this.transaction.observation;
+                transactionDestination.declaredValue = this.transaction.declaredValue;
+                transactionDestination.package = this.transaction.package;
+                transactionDestination.discountAmount = this.transaction.discountAmount;
+                transactionDestination.discountPercent = this.transaction.discountPercent;
+                transactionDestination.CAE = null;
+                transactionDestination.CAEExpirationDate = null;
 
-            let match = {
-                _id: { "$oid": this.cancellationTypeSelected.destination._id }
-            }
-            await this.getTransactionTypes(match).then(
-                async transactionTypes => {
-                    if (transactionTypes && transactionTypes.length > 0) {
+                if (transactionDestination.type.fixedOrigin && transactionDestination.type.fixedOrigin !== 0) {
+                    transactionDestination.origin = transactionDestination.type.fixedOrigin;
+                }
 
-                        // CAMBIAMOS DATOS NECESARIO
-                        let transactionDestination: Transaction = new Transaction();
-                        Object.assign(transactionDestination, this.transaction);
-                        transactionDestination._id = '';
-                        transactionDestination.type = transactionTypes[0];
-                        transactionDestination.state = TransactionState.Pending;
-                        transactionDestination.balance = 0;
-                        transactionDestination.transport = this.transaction.transport;
-                        transactionDestination.observation = this.transaction.observation;
-                        transactionDestination.declaredValue = this.transaction.declaredValue;
-                        transactionDestination.package = this.transaction.package;
-                        transactionDestination.CAE = null;
-                        transactionDestination.CAEExpirationDate = null;
-                        
-                        if (transactionDestination.type.fixedOrigin && transactionDestination.type.fixedOrigin !== 0) {
-                            transactionDestination.origin = transactionDestination.type.fixedOrigin;
-                        }
+                if (transactionDestination.type.fixedLetter && transactionDestination.type.fixedLetter !== '') {
+                    transactionDestination.letter = transactionDestination.type.fixedLetter;
+                }
 
-                        if (transactionDestination.type.fixedLetter && transactionDestination.type.fixedLetter !== '') {
-                            transactionDestination.letter = transactionDestination.type.fixedLetter;
-                        }
+                if (!transactionDestination.type.cashBoxImpact) {
+                    transactionDestination.cashBox = null;
+                }
 
-                        if (!transactionDestination.type.cashBoxImpact) {
-                            transactionDestination.cashBox = null;
-                        }
-
-                        // CONSULTAR ULTIMA TRANSACCIÓN PARA ENUMARAR LA SIGUIENTE
-                        let query = `where= "type":"${transactionDestination.type._id}",
+                // CONSULTAR ULTIMA TRANSACCIÓN PARA ENUMARAR LA SIGUIENTE
+                let query = `where= "type":"${transactionDestination.type._id}",
                     "origin":${transactionDestination.origin},
                     "letter":"${transactionDestination.letter}"
                     &sort="number":-1
                     &limit=1`;
 
-                        await this.getTransactions(query).then(
-                            async transactions => {
-                                if (transactions && transactions.length > 0) {
-                                    transactionDestination.number = transactions[0].number + 1;
-                                } else {
-                                    transactionDestination.number = 1;
-                                }
-                                await this.saveTransaction(transactionDestination).then(
-                                    async transaction => {
-                                        if (transaction) {
-                                            transactionDestination = transaction;
+                let transactions: Transaction[] = await this.getTransactions(query);
 
-                                            // SI REQUIERE ARTÍCULOS GUARDAMOS ARTÍCULOS
-                                            if (transactionDestination &&
-                                                this.movementsOfArticles &&
-                                                this.movementsOfArticles.length > 0 &&
-                                                transactionDestination.type.requestArticles) {
-                                                await this.saveMovementsOfArticles(this.copyMovementsOfArticles(transactionDestination)).then(
-                                                    async movementsOfArticlesSaved => {
-                                                        if (movementsOfArticlesSaved && movementsOfArticlesSaved.length > 0) {
-                                                            if (transactionDestination.type.requestPaymentMethods && this.transaction.type.requestPaymentMethods) {
-                                                                await this.copyMovementsOfCashes(transactionDestination).then(
-                                                                    async result => {
-                                                                        if (result) {
-                                                                            let movementOfCancellation: MovementOfCancellation = new MovementOfCancellation();
-                                                                            movementOfCancellation.transactionOrigin = this.transaction;
-                                                                            movementOfCancellation.transactionDestination = transactionDestination;
-                                                                            movementOfCancellation.balance = transactionDestination.totalPrice;
-                                                                            await this.saveMovementOfCancellation(movementOfCancellation).then(
-                                                                                async movementOfCancellation => {
-                                                                                    if (movementOfCancellation) {
-                                                                                        this.transaction.state = this.cancellationTypeSelected.stateOrigin;
-                                                                                        if(this.cancellationTypeSelected.modifyBalance) this.transaction.balance = 0;
-                                                                                        await this.updateTransaction(this.transaction).then(
-                                                                                            async transaction => {
-                                                                                                if (transaction) {
-                                                                                                    this.transaction = transaction;
-                                                                                                }
-                                                                                            }
-                                                                                        );
-                                                                                        this.activeModal.close({ transaction: transactionDestination });
-                                                                                    }
-                                                                                }
-                                                                            );
-                                                                        }
-                                                                    }
-                                                                );
-                                                            } else {
-                                                                this.transaction.state = this.cancellationTypeSelected.stateOrigin;
-                                                                if(this.cancellationTypeSelected.modifyBalance) this.transaction.balance = 0;
-                                                                await this.updateTransaction(this.transaction).then(
-                                                                    async transaction => {
-                                                                        if (transaction) {
-                                                                            this.transaction = transaction;
-                                                                        }
-                                                                    }
-                                                                );
-                                                                this.activeModal.close({ transaction: transactionDestination });
-                                                            }
-                                                        }
-                                                    }
-                                                );
-                                            }
-                                        }
-                                    }
-                                );
-                            }
-                        );
-                    }
+                if (transactions && transactions.length > 0) {
+                    transactionDestination.number = transactions[0].number + 1;
+                } else {
+                    transactionDestination.number = 1;
                 }
-            );
-        }
+                transactionDestination = await this.saveTransaction(transactionDestination);
+                // SI REQUIERE ARTÍCULOS GUARDAMOS ARTÍCULOS
+                if (transactionDestination.type.requestArticles && this.transaction.type.requestArticles) {
+                    await this.saveMovementsOfArticles(this.copyMovementsOfArticles(transactionDestination));
+                }
+
+                if (transactionDestination.type.requestPaymentMethods && this.transaction.type.requestPaymentMethods) {
+                    await this.copyMovementsOfCashes(transactionDestination);
+                }
+
+                let movementOfCancellation: MovementOfCancellation = new MovementOfCancellation();
+                movementOfCancellation.transactionOrigin = this.transaction;
+                movementOfCancellation.transactionDestination = transactionDestination;
+                movementOfCancellation.balance = transactionDestination.totalPrice;
+                await this.saveMovementOfCancellation(movementOfCancellation);
+                this.transaction.state = this.cancellationTypeSelected.stateOrigin;
+                if (this.cancellationTypeSelected.modifyBalance) this.transaction.balance = 0;
+                this.transaction = await this.updateTransaction(this.transaction);
+
+                this.activeModal.close({ transaction: transactionDestination });
+            }
+        } catch (error) { this.showToast(error); }
     }
 
     public updateTransaction(transaction: Transaction): Promise<Transaction> {
         return new Promise<Transaction>((resolve, reject) => {
-            this.loading = true;
             this._transactionService.updateTransaction(transaction).subscribe(
                 result => {
-                    this.loading = false;
-                    if (!result.transaction) {
-                        if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                        resolve(null);
-                    } else {
+                    if (result.transaction) {
                         resolve(result.transaction);
-                    }
+                    } else reject(result);
                 },
-                error => {
-                    this.loading = false;
-                    this.showMessage(error._body, 'danger', false);
-                    resolve(null);
-                }
+                error => reject(error)
             );
         });
     }
 
 
     public saveMovementOfCancellation(movementOfCancellation: MovementOfCancellation): Promise<MovementOfCancellation> {
-
         return new Promise<MovementOfCancellation>((resolve, reject) => {
-
             this._movementOfCancellationService.saveMovementOfCancellation(movementOfCancellation).subscribe(
                 async result => {
-                    if (!result.movementOfCancellation) {
-                        if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                        resolve(null);
-                    } else {
+                    if (result.movementOfCancellation) {
                         resolve(result.movementOfCancellation);
-                    }
+                    } else reject(result);
                 },
-                error => {
-                    this.showMessage(error._body, 'danger', false);
-                    resolve(null);
-                }
+                error => reject(error)
             );
         });
     }
@@ -354,12 +297,13 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         let movsOfArts = new Array();
         for (let movOfArt of this.movementsOfArticles) {
             let mov = new MovementOfArticle();
-            Object.assign(mov, movOfArt);
+            mov = Object.assign(mov, movOfArt);
             delete mov._id;
             mov.transaction = transaction;
             mov.quantityForStock = 0;
             mov.discountAmount = movOfArt.discountAmount;
             mov.discountRate = movOfArt.discountRate;
+            mov.transactionDiscountAmount = movOfArt.transactionDiscountAmount;
             mov.status = MovementOfArticleStatus.Ready;
             mov.stockMovement = transaction.type.stockMovement;
             if (this.transaction.type.requestTaxes && !transaction.type.requestTaxes) {
@@ -408,52 +352,34 @@ export class CancellationTypeAutomaticComponent implements OnInit {
             }
             movsOfArts.push(mov);
         }
-
         return movsOfArts;
     }
 
     public async copyMovementsOfCashes(transaction: Transaction): Promise<boolean> {
-
         return new Promise<boolean>(async (resolve, reject) => {
-
-            let endProcess: boolean = true;
-
-            if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
-                for (let movOfCash of this.movementsOfCashes) {
-                    let mov = new MovementOfCash();
-                    Object.assign(mov, movOfCash);
-                    mov.transaction = transaction;
-                    await this.updateMovementOfCash(mov).then(
-                        movementOfCash => {
-                            if (!movementOfCash) {
-                                endProcess = false;
-                            }
-                        }
-                    );
+            try {
+                if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
+                    for (let movOfCash of this.movementsOfCashes) {
+                        let mov = new MovementOfCash();
+                        Object.assign(mov, movOfCash);
+                        mov.transaction = transaction;
+                        await this.updateMovementOfCash(mov);
+                    }
                 }
-            }
-
-            resolve(endProcess);
+                resolve(true);
+            } catch (error) { reject(error); }
         });
     }
 
     public updateMovementOfCash(movementOfCash: MovementOfCash): Promise<MovementOfCash> {
-
         return new Promise<MovementOfCash>((resolve, reject) => {
-
             this._movementOfCashService.updateMovementOfCash(movementOfCash).subscribe(
                 async result => {
-                    if (result && result.movementOfCash) {
+                    if (result.movementOfCash) {
                         resolve(result.movementOfCash);
-                    } else {
-                        if (result && result.message && result.message !== "") this.showMessage(result.message, "info", true);
-                        resolve(null);
-                    }
+                    } else reject(result)
                 },
-                error => {
-                    this.showMessage(error.body, "info", true);
-                    resolve(null);
-                }
+                error => reject(error)
             )
         });
     }
@@ -596,76 +522,46 @@ export class CancellationTypeAutomaticComponent implements OnInit {
     }
 
     public saveMovementsOfArticles(movemenstOfarticles: MovementOfArticle[]): Promise<MovementOfArticle[]> {
-
         return new Promise((resolve, reject) => {
-
             this._movementOfArticleService.saveMovementsOfArticles(movemenstOfarticles).subscribe(
                 result => {
-                    if (!result.movementsOfArticles) {
-                        if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                        resolve(null);
-                    } else {
+                    if (result.movementsOfArticles) {
                         resolve(result.movementsOfArticles);
-                    }
+                    } else reject(result)
                 },
-                error => {
-                    this.showMessage(error._body, 'danger', false);
-                    resolve(null);
-                }
+                error => reject(error)
             );
         });
     }
 
     public getTransactions(query: string): Promise<Transaction[]> {
-
         return new Promise<Transaction[]>((resolve, reject) => {
-
             this._transactionService.getTransactions(query).subscribe(
                 result => {
-                    if (!result.transactions) {
-                        resolve(null);
-                    } else {
+                    if (result.transactions) {
                         resolve(result.transactions);
-                    }
+                    } else reject(result);
                 },
-                error => {
-                    this.showMessage(error._body, 'danger', false);
-                    resolve(null);
-                }
+                error => reject(error)
             );
         });
     }
 
     public saveTransaction(transaction: Transaction): Promise<Transaction> {
-
         return new Promise<Transaction>((resolve, reject) => {
-
             this._transactionService.saveTransaction(transaction).subscribe(
                 result => {
-                    if (!result.transaction) {
-                        if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                        resolve(null);
-                    } else {
-                        this.hideMessage();
-                        resolve(result.transaction);
-                    }
+                    if (result.transaction) resolve(result.transaction)
+                    else reject(result);
                 },
-                error => {
-                    this.showMessage(error._body, 'danger', false);
-                    resolve(null);
-                }
+                error => reject(error)
             );
         });
     }
 
-    public getTransactionTypes(match): Promise<TransactionType[]> {
-
-        return new Promise<TransactionType[]>((resolve, reject) => {
-
-            this.loading = true;
-
+    public getTransactionType(match): Promise<TransactionType> {
+        return new Promise<TransactionType>((resolve, reject) => {
             match["operationType"] = { "$ne": "D" };
-
             this._transactionTypeService.getAll({
                 project: {
                     _id: 1,
@@ -681,18 +577,10 @@ export class CancellationTypeAutomaticComponent implements OnInit {
                 match
             }).subscribe(
                 result => {
-                    this.loading = false;
-                    if (result.status != 200) {
-                        resolve(null);
-                    } else {
-                        resolve(result.result);
-                    }
+                    if (result.status == 200 && result.result.length > 0) resolve(result.result[0]);
+                    else reject(result)
                 },
-                error => {
-                    this.loading = false;
-                    this.showMessage(error._body, 'danger', false);
-                    resolve(null);
-                }
+                error => reject(error)
             );
         });
     }
@@ -705,5 +593,35 @@ export class CancellationTypeAutomaticComponent implements OnInit {
 
     public hideMessage(): void {
         this.alertMessage = '';
+    }
+
+    showToast(result, type?: string, title?: string, message?: string): void {
+        if (result) {
+            if (result.status === 0) {
+                type = 'info';
+                title = 'el servicio se encuentra en mantenimiento, inténtelo nuevamente en unos minutos';
+            } else if (result.status === 200) {
+                type = 'success';
+                title = result.message;
+            } else if (result.status >= 500) {
+                type = 'danger';
+                title = (result.error && result.error.message) ? result.error.message : result.message;
+            } else {
+                type = 'info';
+                title = (result.error && result.error.message) ? result.error.message : result.message;
+            }
+        }
+        switch (type) {
+            case 'success':
+                this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+            case 'danger':
+                this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+            default:
+                this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+        }
+        this.loading = false;
     }
 }
