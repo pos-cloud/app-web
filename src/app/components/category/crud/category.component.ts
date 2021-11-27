@@ -56,7 +56,6 @@ export class CategoryComponent implements OnInit {
     public imageURL: string;
     public applications: Application[];
 
-
     public searchCategories = (text$: Observable<string>) => {
         const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
         const inputFocus$ = this.focus$['parent'];
@@ -167,6 +166,12 @@ export class CategoryComponent implements OnInit {
             class: 'form-group col-md-3'
         },
         {
+            name: 'wooId',
+            tag: 'input',
+            tagType: 'text',
+            class: 'form-group col-md-4'
+        },
+        {
             name: 'observation',
             tag: 'input',
             tagType: 'text',
@@ -261,6 +266,7 @@ export class CategoryComponent implements OnInit {
                 visibleOnSale: 1,
                 isRequiredOptional: 1,
                 favourite: 1,
+                wooId: 1,
                 'parent._id': 1,
                 'parent.name':'$parent.description',
                 'applications._id': 1,

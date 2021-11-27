@@ -19,6 +19,7 @@ export class Category extends Model {
     public isRequiredOptional: boolean = false;
     public wooId: string;
     public parent: Category;
+    public observation: string;
     public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     public updateUser: User;
