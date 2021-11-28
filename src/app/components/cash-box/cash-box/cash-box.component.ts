@@ -708,6 +708,16 @@ export class CashBoxComponent implements OnInit {
 
     public resetOrderNumber() {
 
+        let match = {
+            operationType : { "$ne" : "D" },
+            resetOrderNumber : "Caja",
+            orderNumber : { "$gte" : 0 }
+        }
+
+        if(this.cashBox.type){
+            match["cashBoxType._id"] = { "$oid" : this.cashBox.type._id }
+        }
+
         this._transactionTypeService.getAll({
             project : {
                 resetOrderNumber : 1,
@@ -722,13 +732,10 @@ export class CashBoxComponent implements OnInit {
                 movement: 1,
                 modifyStock: 1,
                 requestArticles: 1,
-                requestTaxes: 1
+                requestTaxes: 1,
+                "cashBoxType._id" : 1
             },
-            match : {
-                operationType : { "$ne" : "D" },
-                resetOrderNumber : "Caja",
-                orderNumber : { "$gte" : 0 }
-            }
+            match : match
         }).subscribe(
             result => {
                 if(result && result.status === 200){
