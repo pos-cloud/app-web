@@ -33,6 +33,8 @@ import { DateFormatPipe } from 'app/main/pipes/date-format.pipe';
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
+import { User } from 'app/components/user/user';
+import { UserService } from 'app/components/user/user.service';
 
 @Component({
     selector: 'app-list-transactions',
@@ -70,6 +72,7 @@ export class ListTransactionsComponent implements OnInit {
     private subscription: Subscription = new Subscription();
     public dateFormat = new DateFormatPipe();
     public employeeClosingId: string;
+    public updateUserId: string;
     //cabecera
     public startDate: string;
     public endDate: string;
@@ -93,6 +96,7 @@ export class ListTransactionsComponent implements OnInit {
         public _transactionService: TransactionService,
         public _transactionTypeService: TransactionTypeService,
         public _configService: ConfigService,
+        public _userService: UserService,
         public _router: Router,
         public _modalService: NgbModal,
         private _route: ActivatedRoute,
@@ -206,9 +210,9 @@ export class ListTransactionsComponent implements OnInit {
 
     private processParams(): void {
         this._route.queryParams.subscribe(params => {
-            if (params['employeeClosingId']) {
+            if (params['employeeClosingId'] || params['updateUserId']) {
                 this.employeeClosingId = params['employeeClosingId'];
-
+                this.updateUserId = params['updateUserId'];
                 let pathLocation: string[] = this._router.url.split('/');
                 let listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
                 this.modules = observableOf(Config.modules);
@@ -314,6 +318,10 @@ export class ListTransactionsComponent implements OnInit {
 
         if (this.employeeClosingId) {
             match += `,"employeeClosing._id": { "$oid" : "${this.employeeClosingId}"},`;
+        }
+
+        if (this.updateUserId) {
+            match += `,"updateUser._id": { "$oid" : "${this.updateUserId}"},`;
         }
 
         if (match.charAt(match.length - 1) === '}') match += ',';
@@ -474,7 +482,7 @@ export class ListTransactionsComponent implements OnInit {
         this.getItems();
     }
 
-    public openModal(op: string, transaction: Transaction): void {
+    async openModal(op: string, transaction: Transaction) {
 
         let modalRef;
         switch (op) {
@@ -497,6 +505,7 @@ export class ListTransactionsComponent implements OnInit {
                 if (transaction.type.expirationDate && moment(transaction.type.expirationDate).diff(moment(), 'days') <= 0) {
                     this.showMessage("El documento esta vencido", "danger", true)
                 } else {
+
                     if (transaction.type.readLayout) {
                         modalRef = this._modalService.open(PrintTransactionTypeComponent)
                         modalRef.componentInstance.transactionId = transaction._id;
@@ -505,22 +514,35 @@ export class ListTransactionsComponent implements OnInit {
                         modalRef.componentInstance.company = transaction.company;
                         modalRef.componentInstance.transactionId = transaction._id;
                         modalRef.componentInstance.typePrint = 'invoice';
-                        if (transaction.type.defectPrinter) {
-                            modalRef.componentInstance.printer = transaction.type.defectPrinter;
-                        } else {
-                            if (this.printers && this.printers.length > 0) {
-                                for (let printer of this.printers) {
-                                    if (printer.printIn === PrinterPrintIn.Counter) {
-                                        modalRef.componentInstance.printer = printer;
+                        await this.getUser().then(
+                            async user => {
+                                if (user && user.printers && user.printers.length > 0) {
+                                    for (const element of user.printers) {
+                                        if (element && element.printer && element.printer.printIn === PrinterPrintIn.Counter) {
+                                            modalRef.componentInstance.printer = element.printer;
+
+                                        }
+                                    }
+                                } else {
+                                    if (transaction.type.defectPrinter) {
+                                        modalRef.componentInstance.printer = transaction.type.defectPrinter;
+                                    } else {
+                                        if (this.printers && this.printers.length > 0) {
+                                            for (let printer of this.printers) {
+                                                if (printer.printIn === PrinterPrintIn.Counter) {
+                                                    modalRef.componentInstance.printer = printer;
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
-                        }
+                        );
 
                         modalRef.result.then((result) => {
-                            if(transaction.taxes && transaction.taxes.length > 0){
+                            if (transaction.taxes && transaction.taxes.length > 0) {
                                 for (const tax of transaction.taxes) {
-                                    if(tax.tax.printer){
+                                    if (tax.tax.printer) {
                                         modalRef = this._modalService.open(PrintTransactionTypeComponent)
                                         modalRef.componentInstance.transactionId = transaction._id;
                                         modalRef.componentInstance.printerID = tax.tax.printer
@@ -528,9 +550,9 @@ export class ListTransactionsComponent implements OnInit {
                                 }
                             }
                         }, (reason) => {
-                            if(transaction.taxes && transaction.taxes.length > 0){
+                            if (transaction.taxes && transaction.taxes.length > 0) {
                                 for (const tax of transaction.taxes) {
-                                    if(tax.tax.printer){
+                                    if (tax.tax.printer) {
                                         modalRef = this._modalService.open(PrintTransactionTypeComponent)
                                         modalRef.componentInstance.transactionId = transaction._id;
                                         modalRef.componentInstance.printerID = tax.tax.printer
@@ -541,7 +563,7 @@ export class ListTransactionsComponent implements OnInit {
                         });
                     }
 
-                    
+
                 }
 
                 break;
@@ -676,6 +698,29 @@ export class ListTransactionsComponent implements OnInit {
             default: ;
         }
     };
+
+    public getUser(): Promise<User> {
+
+        return new Promise<User>((resolve, reject) => {
+
+            var identity: User = JSON.parse(sessionStorage.getItem('user'));
+            var user;
+            if (identity) {
+                this._userService.getUser(identity._id).subscribe(
+                    result => {
+                        if (result && result.user) {
+                            resolve(result.user)
+                        } else {
+                            this.showMessage("Debe volver a iniciar sesión", "danger", false);
+                        }
+                    },
+                    error => {
+                        this.showMessage(error._body, "danger", false);
+                    }
+                )
+            }
+        });
+    }
 
     public padNumber(n, length): string {
 
