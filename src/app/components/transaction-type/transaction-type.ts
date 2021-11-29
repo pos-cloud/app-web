@@ -15,6 +15,7 @@ import { IAttribute } from 'app/util/attribute.interface';
 import { TransactionState } from '../transaction/transaction';
 import { CashBoxType } from '../cash-box-type/cash-box-type.model';
 
+
 export class TransactionType extends Model {
 
     public _id: string;
@@ -89,7 +90,7 @@ export class TransactionType extends Model {
     public resetOrderNumber : string;
     public allowAccounting : boolean = false;
     public finishState : TransactionState;
-    public optionalAFIP : string;
+    public optionalAFIP: optionalAFIP;
     public cashBoxType : CashBoxType;
     public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
@@ -516,4 +517,10 @@ export enum DescriptionType {
     Code = <any>"Código",
     Description = <any>"Descripción",
     PosDescription = <any>"Descripción Corta"
+}
+
+export interface optionalAFIP {
+    id : string,
+    name : string,
+    value : string
 }

@@ -2229,8 +2229,8 @@ export class AddSaleOrderComponent {
                 modalRef = this._modalService.open(this.contentChangeOptionalAFIP).result.then(async (result) => {
                     if (result !== 'cancel' && result !== '') {
                         this.transaction.opctionalAFIP = {
-                            id: this.transaction.type.optionalAFIP,
-                            value: result
+                            id: this.transaction.type.optionalAFIP.id,
+                            value: this.transaction.type.optionalAFIP.value
                         }
                         this.optional = result.value;
 

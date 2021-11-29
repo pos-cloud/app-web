@@ -896,6 +896,7 @@ export class ApplicationComponent implements OnInit {
                     case 'boolean':
                         this.obj[field.name] = this.obj[field.name] == 'true' || this.obj[field.name] == true;
                     case 'text':
+                        if (this.obj[field.name] === "null") this.obj[field.name] = null;
                         if (field.tag === 'autocomplete' && (this.obj[field.name] == "" || (this.obj[field.name] && !this.obj[field.name]['_id']))) {
                             this.obj[field.name] = null;
                         }

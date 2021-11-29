@@ -5,3 +5,8 @@ interface NodeModule {
 }
 
 declare var tinymce: any;
+
+declare module "*.json" {
+    const value: any;
+    export default value;
+  }

@@ -1,0 +1,98 @@
+[
+    {
+        "id": "2",
+        "name": "RG Empresas Promovidas - Indentificador de proyecto vinculado a R\u00e9gimen de Promoci\u00f3n Industrial"
+    },
+    {
+        "id": "91",
+        "name": "RG Bienes Usados 3411 - Nombre y Apellido o Denominaci\u00f3n del vendedor del bien usado."
+    },
+    {
+        "id": "92",
+        "name": "RG Bienes Usados 3411 - Nacionalidad del vendedor del bien usado."
+    },
+    {
+        "id": "93",
+        "name": "RG Bienes Usados 3411 - Domicilio del vendedor del bien usado."
+    },
+    {
+        "id": "5",
+        "name": "Excepcion computo IVA Credito Fiscal"
+    },
+    {
+        "id": "61",
+        "name": "RG 3668 Impuesto al Valor Agregado - Art.12 IVA Firmante Doc Tipo"
+    },
+    {
+        "id": "62",
+        "name": "RG 3668 Impuesto al Valor Agregado - Art.12 IVA Firmante Doc Nro"
+    },
+    {
+        "id": "7",
+        "name": "RG 3668 Impuesto al Valor Agregado - Art.12 IVA Car\u00e1cter del Firmante"
+    },
+    {
+        "id": "10",
+        "name": "RG 3.368 Establecimientos de educaci\u00f3n p\u00fablica de gesti\u00f3n privada - Actividad Comprendida"
+    },
+    {
+        "id": "1011",
+        "name": "RG 3.368 Establecimientos de educaci\u00f3n p\u00fablica de gesti\u00f3n privada - Tipo de Documento"
+    },
+    {
+        "id": "1012",
+        "name": "RG 3.368 Establecimientos de educaci\u00f3n p\u00fablica de gesti\u00f3n privada - N\u00famero de Documento"
+    },
+    {
+        "id": "11",
+        "name": "RG 2.820 Operaciones econ\u00f3micas vinculadas con bienes inmuebles - Actividad Comprendida"
+    },
+    {
+        "id": "12",
+        "name": "RG 3.687 Locaci\u00f3n temporaria de inmuebles con fines tur\u00edsticos - Actividad Comprendida"
+    },
+    {
+        "id": "13",
+        "name": "RG 2.863 Representantes de Modelos"
+    },
+    {
+        "id": "14",
+        "name": "RG 2.863 Agencias de publicidad"
+    },
+    {
+        "id": "15",
+        "name": "RG 2.863 Personas f\u00edsicas que desarrollen actividad de modelaje"
+    },
+    {
+        "id": "17",
+        "name": "RG 4004-E Locaci\u00f3n de inmuebles destino 'casa-habitaci\u00f3n'. Dato 2 (dos) = facturaci\u00f3n directa \/ Dato 1 (uno) = facturaci\u00f3n a trav\u00e9s de intermediario"
+    },
+    {
+        "id": "1801",
+        "name": "RG 4004-E Locaci\u00f3n de inmuebles destino 'casa-habitaci\u00f3n'. Clave \u00danica de Identificaci\u00f3n Tributaria (CUIT)."
+    },
+    {
+        "id": "1802",
+        "name": "RG 4004-E Locaci\u00f3n de inmuebles destino 'casa-habitaci\u00f3n'. Apellido y nombres, denominaci\u00f3n y\/o raz\u00f3n social."
+    },
+    {
+        "id": "2101",
+        "name": "Factura de Cr\u00e9dito Electr\u00f3nica MiPyMEs (FCE) - CBU del Emisor"
+    },
+    {
+        "id": "2102",
+        "name": "Factura de Cr\u00e9dito Electr\u00f3nica MiPyMEs (FCE) - Alias del Emisor"
+    },
+    {
+        "id": "22",
+        "name": "Factura de Cr\u00e9dito Electr\u00f3nica MiPyMEs (FCE) - Anulaci\u00f3n"
+    },
+    {
+        "id": "23",
+        "name": "Factura de Cr\u00e9dito Electr\u00f3nica MiPyMEs (FCE) - Referencia Comercial"
+    },
+    {
+        "id": "27",
+        "name": "Factura de Credito Electronica MiPyMEs (FCE) - Transferencia"
+    }
+]

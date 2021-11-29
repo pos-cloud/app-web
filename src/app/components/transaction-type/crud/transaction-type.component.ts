@@ -15,7 +15,7 @@ import { FormField } from 'app/util/formField.interface';
 import * as $ from 'jquery';
 import { Config } from 'app/app.config';
 import { TransactionTypeService } from '../transaction-type.service';
-import { TransactionMovement, TransactionType, CurrentAccount, Movements, EntryAmount, PriceType, DescriptionType, StockMovement, CodeAFIP } from '../transaction-type';
+import { TransactionMovement, TransactionType, CurrentAccount, Movements, EntryAmount, PriceType, DescriptionType, StockMovement, optionalAFIP } from '../transaction-type';
 import { BranchService } from 'app/components/branch/branch.service';
 import { Branch } from 'app/components/branch/branch';
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
@@ -37,6 +37,7 @@ import Resulteable from 'app/util/Resulteable';
 import { TransactionState } from 'app/components/transaction/transaction';
 import { CashBoxTypeService } from 'app/components/cash-box-type/cash-box-type.service';
 import { CashBoxType } from 'app/components/cash-box-type/cash-box-type.model';
+import * as optionalAFIP2 from 'assets/datos/optionalAFIP.json';  
 
 
 @Component({
@@ -253,7 +254,22 @@ export class TransactionTypeComponent implements OnInit {
         )
     }
 
-    public formatterCashBoxType = (x: { name: string }) => x.name;
+    public formatterCashBoxType = (x: {  name: string }) =>  x.name;
+
+    public searchOptionalAFIP = (text$: Observable<string>) => {
+
+        const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+        const inputFocus$ = this.focus$['optionalAFIP'];
+        return merge(debouncedText$, inputFocus$).pipe(
+            tap(() => this.loading = true),
+            switchMap(async term => {
+                return optionalAFIP2.default
+            }),
+            tap(() => this.loading = false),
+        )
+    }
+
+    public formatterOptionalAFIP = (x: {  name: string }) => x.name ;
 
 
     public formFields: FormField[] = [
@@ -450,6 +466,14 @@ export class TransactionTypeComponent implements OnInit {
         },
         {
             name: "optionalAFIP",
+            tag: 'autocomplete',
+            tagType: 'text',
+            search: this.searchOptionalAFIP,
+            format: this.formatterOptionalAFIP,
+            class: 'form-group col-md-2'
+        },
+        {
+            name: "optionalAFIP.value",
             tag: 'input',
             tagType: "text",
             class: 'form-group col-md-2'
@@ -658,7 +682,6 @@ export class TransactionTypeComponent implements OnInit {
             values: ['false', 'true'],
             class: 'form-group col-md-2'
         },
-
         {
             name: 'Correo',
             tag: 'separator',
@@ -984,7 +1007,9 @@ export class TransactionTypeComponent implements OnInit {
                 "allowAccounting": 1,
                 "finishState": 1,
                 "allowPriceList": 1,
-                optionalAFIP : 1,
+                "optionalAFIP.id" : 1,
+                "optionalAFIP.name" : 1,
+                "optionalAFIP.value" : 1,
                 "cashBoxType.name" :1
             }
 
@@ -1290,6 +1315,16 @@ export class TransactionTypeComponent implements OnInit {
             code: this.objForm.value.codeT,
         });
 
+        
+
+        this.obj.optionalAFIP = {
+            id : this.objForm.value.optionalAFIP.id || null,
+            name : this.objForm.value.optionalAFIP.name || null,
+            value : this.objForm.value["optionalAFIP.value"] || null
+        }
+
+        delete this.obj["optionalAFIP.value"]
+
         if (isValid) {
             switch (this.operation) {
                 case 'add':
@@ -1488,7 +1523,6 @@ export class TransactionTypeComponent implements OnInit {
                 limit: 10,
             }).subscribe(
                 result => {
-                    console.log(result);
                     this.loading = false;
                     (result.status === 200) ? resolve(result.result) : reject(result);
                 },
@@ -1545,7 +1579,7 @@ export class TransactionTypeComponent implements OnInit {
             ));
         });
     }
-
+    
     public showToast(result, type?: string, title?: string, message?: string): void {
         if (result) {
             if (result.status === 200) {
