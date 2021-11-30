@@ -132,7 +132,7 @@
                     </select>
                 </div>
                 <div class="item-header"
-                    *ngIf="userCountry === 'MX' && transaction?.type?.electronics && cancellationTypes.length > 0">
+                    *ngIf="userCountry === 'MX' && transaction?.type?.electronics">
                     <select class="form-control" [(ngModel)]="transaction.relationType" (change)="updateTransaction()">
                         <option [ngValue]="null" [selected]="(!transaction.relationType)">Tipo de Relación:</option>
                         <option *ngFor="let relationType of relationTypes" [ngValue]="relationType" [selected]="(transaction.relationType &&
