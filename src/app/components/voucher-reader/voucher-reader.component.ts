@@ -93,7 +93,7 @@ export class VoucherReaderComponent implements OnInit {
                         if (this.config.voucher.readingLimit === 0 || vouchers[0].readings < this.config.voucher.readingLimit) {
                             await this.getTransactions({
                                 _id: { $oid: this.voucher.token },
-                                state: { $ne: 'Anulado' },
+                                $or : [{ state: 'Cerrado' }, { state: 'Armando' }, { state: 'Entregado' },{ state: 'Preparando' }],
                                 operationType: { $ne: 'D' }
                             }).then(
                                 async transactions => {
@@ -176,7 +176,7 @@ export class VoucherReaderComponent implements OnInit {
                 operationType: 1,
                 state: 1,
             }
-
+            
             this._transactionService.getTransactionsV2(
                 project, // PROJECT
                 match, // MATCH
