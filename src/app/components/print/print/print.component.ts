@@ -3504,8 +3504,6 @@ export class PrintComponent implements OnInit {
                 row += 5;
                 this.centerText(3, 5, 15, 0, row, this.roundNumber.transform(movementOfArticle.amount - movementOfArticle.printed).toString());
                 if (movementOfArticle.article) {
-                    this.doc.text(movementOfArticle.article.posDescription, 20, row);
-                } else {
                     this.doc.text(movementOfArticle.description, 20, row);
                 }
 
