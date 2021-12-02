@@ -1601,8 +1601,10 @@ export class AddSaleOrderComponent {
                     this.transaction.CAEExpirationDate = moment(result.CAEExpirationDate, 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DDTHH:mm:ssZ");
                     if (this.canceledTransactions) {
                         let name: string;
-                        for (let canc of this.cancellationTypes) {
-                            if (canc.origin._id === this.canceledTransactions.typeId) name = canc.origin.name;
+                        if(this.cancellationTypes && this.cancellationTypes.length > 0) {
+                            for (let canc of this.cancellationTypes) {
+                                if (canc.origin._id === this.canceledTransactions.typeId) name = canc.origin.name;
+                            }
                         }
                         if (name) this.transaction.observation += ` Corresponde a ${name} ${this.canceledTransactions.origin}-${this.canceledTransactions.letter}-${this.canceledTransactions.number}`;
                     }
