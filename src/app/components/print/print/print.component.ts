@@ -3815,6 +3815,17 @@ export class PrintComponent implements OnInit {
             });
         }
 
+        if (this.transaction.shipmentMethod) {
+            this.row += 5;
+            this.doc.setFontType('bold');
+            this.doc.text("Forma de Entrega:", margin, this.row)
+
+            this.row += 5;
+            this.doc.setFontType('normal');
+            this.doc.text(`${this.transaction.shipmentMethod.name}`, margin, this.row);
+            
+        }
+
         this.doc.setFontStyle('bold');
         this.row += 5;
 
