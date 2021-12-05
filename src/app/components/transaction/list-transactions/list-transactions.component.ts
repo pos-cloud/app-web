@@ -72,7 +72,7 @@ export class ListTransactionsComponent implements OnInit {
     private subscription: Subscription = new Subscription();
     public dateFormat = new DateFormatPipe();
     public employeeClosingId: string;
-    public updateUserId: string;
+    public origin : string;
     //cabecera
     public startDate: string;
     public endDate: string;
@@ -210,9 +210,9 @@ export class ListTransactionsComponent implements OnInit {
 
     private processParams(): void {
         this._route.queryParams.subscribe(params => {
-            if (params['employeeClosingId'] || params['updateUserId']) {
+            if (params['employeeClosingId'] || params['origin']) {
                 this.employeeClosingId = params['employeeClosingId'];
-                this.updateUserId = params['updateUserId'];
+                this.origin  = params['origin'];
                 let pathLocation: string[] = this._router.url.split('/');
                 let listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
                 this.modules = observableOf(Config.modules);
@@ -320,8 +320,8 @@ export class ListTransactionsComponent implements OnInit {
             match += `,"employeeClosing._id": { "$oid" : "${this.employeeClosingId}"},`;
         }
 
-        if (this.updateUserId) {
-            match += `,"updateUser._id": { "$oid" : "${this.updateUserId}"},`;
+        if (this.origin ) {
+            match += `,"origin": "${this.origin}",`;
         }
 
         if (match.charAt(match.length - 1) === '}') match += ',';
