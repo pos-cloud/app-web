@@ -190,7 +190,6 @@ export class ViewGalleryComponent implements OnInit {
 
     public getArticle(): void {
 
-
         if (this.filterArticle) {
 
             this._articleService.getAll({
