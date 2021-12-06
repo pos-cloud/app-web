@@ -190,6 +190,7 @@ export class ViewGalleryComponent implements OnInit {
 
     public getArticle(): void {
 
+
         if (this.filterArticle) {
 
             this._articleService.getAll({
@@ -203,6 +204,7 @@ export class ViewGalleryComponent implements OnInit {
                     observation : 1,
                     salePrice : 1,
                     operationType : 1,
+                    picture : 1
                 },
                 match : {
                     barcode : this.filterArticle,
