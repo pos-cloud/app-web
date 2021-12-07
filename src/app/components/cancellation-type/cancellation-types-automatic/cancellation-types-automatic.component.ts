@@ -212,6 +212,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
                 transactionDestination.package = this.transaction.package;
                 transactionDestination.discountAmount = this.transaction.discountAmount;
                 transactionDestination.discountPercent = this.transaction.discountPercent;
+                transactionDestination.orderNumber = this.transaction.orderNumber;
                 transactionDestination.CAE = null;
                 transactionDestination.CAEExpirationDate = null;
 
