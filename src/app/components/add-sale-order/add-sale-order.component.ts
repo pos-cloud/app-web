@@ -9,7 +9,7 @@ import 'moment/locale/es';
 
 //Modelos
 import { Transaction, TransactionState } from '../transaction/transaction';
-import { TransactionMovement, StockMovement, TransactionType } from '../transaction-type/transaction-type';
+import { TransactionMovement, StockMovement, TransactionType, optionalAFIP } from '../transaction-type/transaction-type';
 import { Taxes } from '../tax/taxes';
 import { ArticlePrintIn, Article } from '../article/article';
 import { ArticleStock } from '../article-stock/article-stock';
@@ -114,6 +114,7 @@ export class AddSaleOrderComponent {
     posType: string;
     loading: boolean;
     isCharge: boolean;
+    optionalAFIP : optionalAFIP;
     @ViewChild('contentPrinters', { static: true }) contentPrinters: ElementRef;
     @ViewChild('contentMessage', { static: true }) contentMessage: ElementRef;
     @ViewChild('contentChangeDate', { static: true }) contentChangeDate: ElementRef;
@@ -270,6 +271,11 @@ export class AddSaleOrderComponent {
 
             if (this.transactionId) {
                 this.transaction = await this.getTransaction();
+
+                if(this.transaction.type.optionalAFIP && !this.transaction.optionalAFIP){
+                    this.transaction.optionalAFIP = this.transaction.type.optionalAFIP;
+                }
+
                 if (!this.transaction.company && this.transaction.type.company) {
                     this.transaction.company = this.transaction.type.company;
                 }
@@ -2230,17 +2236,17 @@ export class AddSaleOrderComponent {
             case 'change-optional-afip':
                 modalRef = this._modalService.open(this.contentChangeOptionalAFIP).result.then(async (result) => {
                     if (result !== 'cancel' && result !== '') {
-                        this.transaction.opctionalAFIP = {
+                        this.transaction.optionalAFIP = {
                             id: this.transaction.type.optionalAFIP.id,
-                            value: this.transaction.type.optionalAFIP.value
+                            value: result ? result : this.transaction.type.optionalAFIP.value
                         }
-                        this.optional = result.value;
 
                         await this.updateTransaction().then(
                             async transaction => {
                                 if (transaction) {
                                     this.transaction = transaction;
                                     this.lastQuotation = this.transaction.quotation;
+                                    console.log(this.transaction.optionalAFIP);
                                 }
                             }
                         );

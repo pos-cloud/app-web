@@ -71,6 +71,16 @@
                         </button>
                     </div>
                 </div>
+                <div class="item-header" *ngIf="transaction?.type?.optionalAFIP">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-light" (click)="openModal('change-optional-afip')">
+                            Opcional AFIP : {{ transaction?.optionalAFIP?.value }}
+                        </button>
+                        <button type="button" class="btn btn-light fa fa-pencil"
+                            (click)="openModal('change-optional-afip')">
+                        </button>
+                    </div>
+                </div>
                 <div class="item-header"
                     *ngIf="!transaction?.company?.priceList && transaction?.type?.allowPriceList">
                     <div class="btn-group">
@@ -89,17 +99,6 @@
                         </button>
                         <button type="button" class="btn btn-light fa fa-exchange"
                             (click)="openModal('change-shipment-method')">
-                        </button>
-                    </div>
-                </div>
-                <div class="item-header" *ngIf="transaction?.type?.optionalAFIP">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-outline-light"
-                            (click)="openModal('change-optional-afip')">
-                            Opcional AFIP: {{ transaction?.opctionalAFIP?.value }}
-                        </button>
-                        <button type="button" class="btn btn-light fa fa-exchange"
-                            (click)="openModal('change-optional-afip')">
                         </button>
                     </div>
                 </div>
@@ -126,7 +125,7 @@
                     <select class="form-control" (change)="changeUseOfCFDI($event.target.value)">
                         <option [ngValue]="null" [selected]="!transaction.useOfCFDI">Uso de CFDI:</option>
                         <option *ngFor="let useOfCFDI of usesOfCFDI" [value]="useOfCFDI._id" [selected]="((transaction.useOfCFDI && transaction.useOfCFDI._id && useOfCFDI._id===transaction.useOfCFDI._id) ||
-                                (transaction.useOfCFDI && useOfCFDI._id===transaction.useOfCFDI))">
+                                (transaction.useOfCFDI && useOfCFDI._id === transaction.useOfCFDI))">
                             {{ useOfCFDI.description }}
                         </option>
                     </select>
@@ -548,14 +547,14 @@
     <div class="modal-body container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <input type="text" class="form-control" [(ngModel)]="optionalAFIP" placeholder="Opcional"
+                <input type="text" class="form-control" [(ngModel)]="transaction.optionalAFIP.value" placeholder="Opcional"
                     [focus]="focusEvent">
             </div>
         </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-light" (click)="c('cancel')">Cancelar</button>
-        <button type="submit" class="btn btn-primary" (click)="c(optionalAFIP)">
+        <button type="submit" class="btn btn-primary" (click)="c(transaction.optionalAFIP.value)">
             <span>Cambiar</span>
         </button>
     </div>

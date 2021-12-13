@@ -74,7 +74,7 @@ export class Transaction {
     public declaredValue: number;
     public package: number;
     public account : Account;
-    public opctionalAFIP : {
+    public optionalAFIP : {
         id : string,
         value : string
     } 

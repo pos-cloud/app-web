@@ -1010,7 +1010,8 @@ export class TransactionTypeComponent implements OnInit {
                 "optionalAFIP.id" : 1,
                 "optionalAFIP.name" : 1,
                 "optionalAFIP.value" : 1,
-                "cashBoxType.name" :1
+                "cashBoxType.name" :1,
+                "cashBoxType._id" :1,
             }
 
             this.subscription.add(this._objService.getAll({
