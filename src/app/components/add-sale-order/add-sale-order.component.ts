@@ -82,6 +82,7 @@ import { AccountSeatService } from '../account-seat/account-seat.service';
 import { SelectPriceListComponent } from '../price-list/select-price-list/select-price-list.component';
 import Resulteable from 'app/util/Resulteable';
 import { CompanyNewsComponent } from '../company/company-news/company-news.component';
+import { updateFor } from 'typescript';
 
 @Component({
     selector: 'app-add-sale-order',
@@ -1410,10 +1411,17 @@ export class AddSaleOrderComponent {
         let totalPriceAux: number = 0;
         let discountAmountAux: number = 0;
 
-        if (discountPercent !== undefined) this.transaction.discountPercent = this.roundNumber.transform(discountPercent, 6);
 
-        if (this.transaction.company && this.transaction.company.discount > 0 && this.transaction.type.allowCompanyDiscount) this.transaction.discountPercent += this.transaction.company.discount;
-        if (this.transaction.company && this.transaction.company.group && this.transaction.company.group.discount > 0 && this.transaction.type.allowCompanyDiscount) this.transaction.discountPercent += this.transaction.company.group.discount;
+        if(!discountPercent && this.transaction.discountPercent === 0) {
+            if (this.transaction.company && this.transaction.company.discount > 0 && this.transaction.type.allowCompanyDiscount) this.transaction.discountPercent += this.transaction.company.discount;
+            if (this.transaction.company && this.transaction.company.group && this.transaction.company.group.discount > 0 && this.transaction.type.allowCompanyDiscount) this.transaction.discountPercent += this.transaction.company.group.discount;
+        }
+
+        if (discountPercent !== undefined) {
+            this.transaction.discountPercent = this.roundNumber.transform(discountPercent, 6);
+            if (this.transaction.company && this.transaction.company.discount > 0 && this.transaction.type.allowCompanyDiscount) this.transaction.discountPercent += this.transaction.company.discount;
+            if (this.transaction.company && this.transaction.company.group && this.transaction.company.group.discount > 0 && this.transaction.type.allowCompanyDiscount) this.transaction.discountPercent += this.transaction.company.group.discount;
+        }
 
         let isUpdateValid: boolean = true;
         if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
@@ -2246,7 +2254,6 @@ export class AddSaleOrderComponent {
                                 if (transaction) {
                                     this.transaction = transaction;
                                     this.lastQuotation = this.transaction.quotation;
-                                    console.log(this.transaction.optionalAFIP);
                                 }
                             }
                         );
