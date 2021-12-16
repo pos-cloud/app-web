@@ -2093,52 +2093,58 @@ export class AddSaleOrderComponent {
                             modalRef.componentInstance.fastPayment = fastPayment;
                         }
                         modalRef.result.then((result) => {
-                            this.movementsOfCashes = result.movementsOfCashes;
+                            if(result != 'cancel'){
 
-                            if (this.movementsOfCashes) {
-
-
-                                if (result.movementOfArticle) {
-                                    this.movementsOfArticles.push(result.movementOfArticle);
-                                }
-
-                                if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-                                    if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
-                                        this.transaction.origin = this.transaction.type.fixedOrigin;
+                                this.movementsOfCashes = result.movementsOfCashes;
+    
+                                if (this.movementsOfCashes) {
+    
+    
+                                    if (result.movementOfArticle) {
+                                        this.movementsOfArticles.push(result.movementOfArticle);
                                     }
-
-                                    this.assignLetter();
-                                    if (this.transaction.type.electronics) {
-                                        if (this.config['country'] === 'MX') {
-                                            if (!this.transaction.CFDStamp &&
-                                                !this.transaction.SATStamp &&
-                                                !this.transaction.stringSAT) {
-                                                this.validateElectronicTransactionMX();
-                                            } else {
-                                                this.finish(); //SE FINALIZA POR ERROR EN LA FE
-                                            }
-                                        } else if (this.config['country'] === 'AR') {
-                                            if (!this.transaction.CAE) {
-                                                this.validateElectronicTransactionAR();
-                                            } else {
-                                                this.finish(); //SE FINALIZA POR ERROR EN LA FE
-                                            }
-                                        } else {
-                                            this.showMessage("Facturación electrónica no esta habilitada para tu país.", "info", true);
+    
+                                    if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+                                        if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
+                                            this.transaction.origin = this.transaction.type.fixedOrigin;
                                         }
-                                    } else if (this.transaction.type.electronics && this.transaction.CAE) {
-                                        this.finish(); //SE FINALIZA POR ERROR EN LA FE
+    
+                                        this.assignLetter();
+                                        if (this.transaction.type.electronics) {
+                                            if (this.config['country'] === 'MX') {
+                                                if (!this.transaction.CFDStamp &&
+                                                    !this.transaction.SATStamp &&
+                                                    !this.transaction.stringSAT) {
+                                                    this.validateElectronicTransactionMX();
+                                                } else {
+                                                    this.finish(); //SE FINALIZA POR ERROR EN LA FE
+                                                }
+                                            } else if (this.config['country'] === 'AR') {
+                                                if (!this.transaction.CAE) {
+                                                    this.validateElectronicTransactionAR();
+                                                } else {
+                                                    this.finish(); //SE FINALIZA POR ERROR EN LA FE
+                                                }
+                                            } else {
+                                                this.showMessage("Facturación electrónica no esta habilitada para tu país.", "info", true);
+                                            }
+                                        } else if (this.transaction.type.electronics && this.transaction.CAE) {
+                                            this.finish(); //SE FINALIZA POR ERROR EN LA FE
+                                        } else {
+                                            if (this.transaction.type.fixedLetter !== this.transaction.letter) {
+                                                this.assignTransactionNumber();
+                                            } else {
+                                                this.finish();
+                                            }
+                                        }
                                     } else {
-                                        if (this.transaction.type.fixedLetter !== this.transaction.letter) {
-                                            this.assignTransactionNumber();
-                                        } else {
-                                            this.finish();
-                                        }
+                                        this.finish();
                                     }
-                                } else {
-                                    this.finish();
                                 }
+                            } else {
+                                this.voucherArticlesToPrint = [];
                             }
+
                         }, (reason) => {
                         });
                     } else {
@@ -3062,30 +3068,38 @@ export class AddSaleOrderComponent {
 
         this.loading = true;
 
-        this.voucherArticlesToPrint[this.voucherArticlesPrinted].printed = this.voucherArticlesToPrint[this.voucherArticlesPrinted].amount;
-        this._movementOfArticleService.updateMovementOfArticle(this.voucherArticlesToPrint[this.voucherArticlesPrinted]).subscribe(
-            async result => {
-                if (!result.movementOfArticle) {
-                    if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                } else {
-                    this.voucherArticlesPrinted++;
-                    if (this.voucherArticlesPrinted < this.voucherArticlesToPrint.length) {
-                        this.updateMovementOfArticlePrintedVoucher();
+        if(this.voucherArticlesToPrint[this.voucherArticlesPrinted] && this.voucherArticlesToPrint[this.voucherArticlesPrinted].amount){
+            this.voucherArticlesToPrint[this.voucherArticlesPrinted].printed = this.voucherArticlesToPrint[this.voucherArticlesPrinted].amount;
+            this._movementOfArticleService.updateMovementOfArticle(this.voucherArticlesToPrint[this.voucherArticlesPrinted]).subscribe(
+                async result => {
+                    if (!result.movementOfArticle) {
+                        if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
                     } else {
-                        if (this.isCharge) {
-                            this.openModal('charge')
+                        this.voucherArticlesPrinted++;
+                        if (this.voucherArticlesPrinted < this.voucherArticlesToPrint.length) {
+                            this.updateMovementOfArticlePrintedVoucher();
                         } else {
-                            this.backFinal();
+                            if (this.isCharge) {
+                                this.openModal('charge')
+                            } else {
+                                this.backFinal();
+                            }
                         }
                     }
+                    this.loading = false;
+                },
+                error => {
+                    this.showMessage(error._body, 'danger', false);
+                    this.loading = false;
                 }
-                this.loading = false;
-            },
-            error => {
-                this.showMessage(error._body, 'danger', false);
-                this.loading = false;
+            );
+        } else {
+            if (this.isCharge) {
+                this.openModal('charge')
+            } else {
+                this.backFinal();
             }
-        );
+        }
     }
 
     public countPrinters(): number {
