@@ -3154,7 +3154,7 @@ export class PrintComponent implements OnInit {
             this.doc.setFontType('bold');
             this.doc.text("* * * * * * * * * * * * * * * *",margin,row)
             row += 3;
-            this.doc.text("Tu Orden: " + this.transaction.orderNumber.toString(), margin + 10, row);
+            this.doc.text("Tu Orden: " + number.toString(), margin + 10, row);
             row += 4;
             this.doc.text("* * * * * * * * * * * * * * * *",margin,row)
             row += 3;
