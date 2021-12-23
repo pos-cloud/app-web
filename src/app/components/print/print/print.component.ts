@@ -3150,11 +3150,17 @@ export class PrintComponent implements OnInit {
 
         row += 3;
         if(this.transaction.orderNumber || this.transaction.table){
-            var number = this.transaction.table.description ? this.transaction.table.description : this.transaction.orderNumber
+            var printNumber = "";
+            if(this.transaction.table && this.transaction.table.description){
+                printNumber = this.transaction.table.description
+            } else {
+                printNumber = this.transaction.orderNumber.toString();
+            }
+
             this.doc.setFontType('bold');
             this.doc.text("* * * * * * * * * * * * * * * *",margin,row)
             row += 3;
-            this.doc.text("Tu Orden: " + number.toString(), margin + 10, row);
+            this.doc.text("Tu Orden: " + printNumber.toString(), margin + 10, row);
             row += 4;
             this.doc.text("* * * * * * * * * * * * * * * *",margin,row)
             row += 3;
