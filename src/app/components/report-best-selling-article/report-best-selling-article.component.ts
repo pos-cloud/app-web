@@ -332,41 +332,6 @@ export class ReportBestSellingArticleComponent implements OnInit {
             movement = Movements.Inflows.toString();
             this.title = 'Productos más comprados'
         }
-/*
-        let timezone = "-03:00";
-        if (Config.timezone && Config.timezone !== '') {
-            timezone = Config.timezone.split('UTC')[1];
-        }
-
-        let match = `{`;
-        for (let i = 0; i < this.columns.length; i++) {
-            if (this.columns[i].visible) {
-                let value = this.filters[this.columns[i].name];
-                if (value && value != "") {
-                    match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
-                    if (i < this.columns.length - 1) {
-                        match += ',';
-                    }
-                }
-            }
-        }
-        if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}') match += `,`;
-        match += `"article.operationType": { "$ne": "D" } }`;
-        match = JSON.parse(match);
-
-        let query = {
-            type: this.transactionMovement,
-            movement: movement,
-            currentAccount: "Si",
-            modifyStock: true,
-            startDate: this.startDate + " " + this.startTime + timezone,
-            endDate: this.endDate + " " + this.endTime + timezone,
-            match: match,
-            sort: this.sort,
-            limit: this.limit,
-            branch: this.branchSelectedId
-        }*/
-
         let fullquery = [];
 
         fullquery.push({
@@ -442,6 +407,19 @@ export class ReportBestSellingArticleComponent implements OnInit {
         });
 
         fullquery.push({
+            $lookup:
+            {
+                from: "branches",
+                localField: "transaction.branchDestination",
+                foreignField: "_id",
+                as: "transaction.branchDestination"
+            }
+        });
+        fullquery.push({
+            $unwind: "$transaction.branchDestination"
+        });
+
+        fullquery.push({
             $lookup: {
                 from: "transaction-types",
                 localField: "transaction.type",
@@ -451,29 +429,29 @@ export class ReportBestSellingArticleComponent implements OnInit {
         },
             { $unwind: { path: "$transaction.type", preserveNullAndEmptyArrays: true } })
 
-
         let project = {
             "transaction.type.stockMovement": 1,
             "transaction.type._id": 1,
             "transaction.type.transactionMovement": 1,
-            "transaction.type.movement" : 1,
-            "article.category.description" : 1,
-            "article.make.description" :1,
-            "article.code" : 1,
-            "article.description" :1,
+            "transaction.type.movement": 1,
+            "article.category.description": 1,
+            "article.make.description": 1,
+            "article.code": 1,
+            "article.description": 1,
             "article.posDescription": 1,
-            "article.quantityPerMeasure" : 1,
-            "article.unitOfMeasurement.abbreviation" : 1,
-            "article.taxes[0].percentage" : 1,
-            "article.costPrice" : 1,
-            "article.markupPercentage" : 1,
-            "article.markupPrice" : 1,
-            "article.salePrice" : 1,
-            "article.operationType" : 1,
+            "article.quantityPerMeasure": 1,
+            "article.unitOfMeasurement.abbreviation": 1,
+            "article.taxes[0].percentage": 1,
+            "article.costPrice": 1,
+            "article.markupPercentage": 1,
+            "article.markupPrice": 1,
+            "article.salePrice": 1,
+            "article.operationType": 1,
             "transaction.operationType": 1,
             "operationType": 1,
             "transaction.endDate": 1,
             "transaction.state": 1,
+            "transaction.branchDestination" : 1,
             records: { $sum: 1 },
             amount: {
                 $cond: {
@@ -536,11 +514,15 @@ export class ReportBestSellingArticleComponent implements OnInit {
             "article.operationType": { "$ne": "D" }
         }
 
+        if(this.branchSelectedId){
+            match["transaction.branchDestination._id"] = { "$oid" : this.branchSelectedId }
+        }
+
         for (let i = 0; i < this.columns.length; i++) {
             if (this.columns[i].visible) {
                 let value = this.filters[this.columns[i].name];
                 if (value && value != "") {
-                    match[this.columns[i].name] = { "$regex": value , "$options": "i"};
+                    match[this.columns[i].name] = { "$regex": value, "$options": "i" };
                     /*if (i < this.columns.length - 1) {
                         match += ',';
                     }*/
@@ -562,7 +544,6 @@ export class ReportBestSellingArticleComponent implements OnInit {
             _id: "$article",
             count: { $sum: "$amount" },
             total: { $sum: "$salePrice" }
-
         }
 
         fullquery.push(
@@ -579,8 +560,8 @@ export class ReportBestSellingArticleComponent implements OnInit {
             { $sort: this.sort }
         )
 
-        if(this.limit && this.limit > 0){
-            fullquery.push({ $limit : this.limit })
+        if (this.limit && this.limit > 0) {
+            fullquery.push({ $limit: this.limit })
         }
 
         this.subscription.add(this._movementOfArticleService.getFullQuery(fullquery).subscribe(
