@@ -3149,9 +3149,14 @@ export class PrintComponent implements OnInit {
         // FIN FORMA DE PAGO
 
         row += 3;
-        if(this.transaction.orderNumber){
+        if(this.transaction.orderNumber || this.transaction.table){
+            var number = this.transaction.orderNumber ? this.transaction.orderNumber : this.transaction.table.description
             this.doc.setFontType('bold');
-            this.doc.text("Tu Orden: " + this.transaction.orderNumber.toString(), margin, row);
+            this.doc.text("* * * * * * * * * * * * * * * *",margin,row)
+            row += 3;
+            this.doc.text("Tu Orden: " + this.transaction.orderNumber.toString(), margin + 10, row);
+            row += 4;
+            this.doc.text("* * * * * * * * * * * * * * * *",margin,row)
             row += 3;
         }
 

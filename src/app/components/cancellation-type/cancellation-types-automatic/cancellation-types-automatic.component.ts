@@ -213,6 +213,9 @@ export class CancellationTypeAutomaticComponent implements OnInit {
                 transactionDestination.discountAmount = this.transaction.discountAmount;
                 transactionDestination.discountPercent = this.transaction.discountPercent;
                 transactionDestination.orderNumber = this.transaction.orderNumber;
+                if(this.transaction.table){
+                    transactionDestination.table = this.transaction.table;
+                }
                 transactionDestination.CAE = null;
                 transactionDestination.CAEExpirationDate = null;
 
@@ -573,6 +576,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
                     stockMovement: 1,
                     requestTaxes: 1,
                     transactionMovement: 1,
+                    table : 1,
                     operationType: 1,
                 },
                 match
