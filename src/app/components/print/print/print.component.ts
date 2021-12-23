@@ -3150,7 +3150,7 @@ export class PrintComponent implements OnInit {
 
         row += 3;
         if(this.transaction.orderNumber || this.transaction.table){
-            var number = this.transaction.orderNumber ? this.transaction.orderNumber : this.transaction.table.description
+            var number = this.transaction.table.description ? this.transaction.table.description : this.transaction.orderNumber
             this.doc.setFontType('bold');
             this.doc.text("* * * * * * * * * * * * * * * *",margin,row)
             row += 3;
