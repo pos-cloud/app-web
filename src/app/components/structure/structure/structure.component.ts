@@ -28,7 +28,7 @@ export class StructureComponent implements OnInit {
             distinctUntilChanged(),
             tap(() => this.loading = true),
             switchMap(term =>
-                this.getArticles(`where="code": { "$regex": "${term}", "$options": "i" }&limit=20`).then(
+                this.getArticles(`where="description": { "$regex": "${term}", "$options": "i" }&limit=20`).then(
                     articles => {
                         return articles;
                     }
@@ -37,7 +37,7 @@ export class StructureComponent implements OnInit {
             tap(() => this.loading = false)
         )
 
-    public formatterArticles = (x: { code: string }) => x.code;
+    public formatterArticles = (x: { description: string }) => x.description;
 
     public filterKey = '';
     public filteredItems = [];
@@ -65,7 +65,8 @@ export class StructureComponent implements OnInit {
     public formErrors = {
         'parent': '',
         'child': '',
-        'quantity': ''
+        'quantity': '',
+        'increasePrice' : ''
     };
     public validationMessages = {
         'parent': {
