@@ -66,12 +66,26 @@
       </select>
     </div>
     <div class="col-md-2">
+        <label for="category" class="control-label">
+            <b>Rubro</b>
+        </label>
+        <ng-multiselect-dropdown
+        [placeholder]="'Rubro'"
+        [settings]="dropdownSettingsCategories"
+        [data]="categories"
+        [(ngModel)]="categoriesSelect"
+        (onSelect)="onItemSelect($event)"
+        (onSelectAll)="onSelectAll($event)"
+      >
+      </ng-multiselect-dropdown>
+    </div>
+    <div class="col-md-2">
         <label for="transactionType" class="control-label">
             <b>Tipo</b>
         </label>
         <ng-multiselect-dropdown
         [placeholder]="'Tipo de Transacción'"
-        [settings]="dropdownSettings"
+        [settings]="dropdownSettingsTransactionType"
         [data]="transactionTypes"
         [(ngModel)]="transactionTypesSelect"
         (onSelect)="onItemSelect($event)"

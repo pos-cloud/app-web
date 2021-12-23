@@ -23,6 +23,8 @@ import { Subscription } from 'rxjs';
 import { TransactionService } from '../transaction/transaction.service';
 import { TransactionTypeService } from '../transaction-type/transaction-type.service';
 import { MovementOfArticleService } from '../movement-of-article/movement-of-article.service';
+import { Category } from '../category/category';
+import { CategoryService } from '../category/category.service';
 
 @Component({
     selector: 'app-report-best-selling-article',
@@ -67,11 +69,25 @@ export class ReportBestSellingArticleComponent implements OnInit {
     public selectedItems;
     public transactionTypes: TransactionType[];
     public transactionTypesSelect;
-    public dropdownSettings = {
+    public dropdownSettingsTransactionType = {
         "singleSelection": false,
         "defaultOpen": false,
         "idField": "_id",
         "textField": "name",
+        "selectAllText": "Select All",
+        "unSelectAllText": "UnSelect All",
+        "enableCheckAll": true,
+        "itemsShowLimit": 3,
+        "allowSearchFilter": true
+    }
+
+    public categories: Category[];
+    public categoriesSelect;
+    public dropdownSettingsCategories = {
+        "singleSelection": false,
+        "defaultOpen": false,
+        "idField": "_id",
+        "textField": "description",
         "selectAllText": "Select All",
         "unSelectAllText": "UnSelect All",
         "enableCheckAll": true,
@@ -200,6 +216,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
         public _router: Router,
         public _modalService: NgbModal,
         public _transactionTypeService: TransactionTypeService,
+        public _categoriesService : CategoryService,
         public alertConfig: NgbAlertConfig,
         private _branchService: BranchService,
         private _authService: AuthService
@@ -248,6 +265,14 @@ export class ReportBestSellingArticleComponent implements OnInit {
             result => {
                 if (result) {
                     this.transactionTypes = result
+                }
+            }
+        )
+
+        await this.getCategories().then(
+            result => {
+                if (result) {
+                    this.categories = result
                 }
             }
         )
@@ -447,6 +472,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
             "article.markupPrice": 1,
             "article.salePrice": 1,
             "article.operationType": 1,
+            "article.category._id" : 1,
             "transaction.operationType": 1,
             "operationType": 1,
             "transaction.endDate": 1,
@@ -538,6 +564,15 @@ export class ReportBestSellingArticleComponent implements OnInit {
                 transactionTypes.push({ "$oid": element._id });
             });
             match['transaction.type._id'] = { "$in": transactionTypes }
+        }
+
+        var categories = [];
+
+        if (this.categoriesSelect) {
+            this.categoriesSelect.forEach(element => {
+                categories.push({ "$oid": element._id });
+            });
+            match['article.category._id'] = { "$in": categories }
         }
 
         let group = {
@@ -673,6 +708,39 @@ export class ReportBestSellingArticleComponent implements OnInit {
                     operationType: 1,
                     name: 1,
                     branch: 1,
+                },
+                match: match
+            }).subscribe(
+                result => {
+                    if (result) {
+                        resolve(result.result);
+                    } else {
+                        resolve(null);
+                    }
+                },
+                error => {
+                    this.showMessage(error._body, 'danger', false);
+                    resolve(null);
+                }
+            );
+        });
+    }
+
+    public getCategories(): Promise<Category[]> {
+
+        return new Promise<Category[]>((resolve, reject) => {
+
+            let match = {}
+
+            match = {
+                operationType: { "$ne": "D" }
+            }
+
+            this._categoriesService.getAll({
+                project: {
+                    _id: 1,
+                    operationType: 1,
+                    description: 1,
                 },
                 match: match
             }).subscribe(
