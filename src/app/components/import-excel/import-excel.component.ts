@@ -85,10 +85,11 @@ export class importExcelComponent implements OnInit {
 
   }
   import() {
-    // this.loading = true;
+    this.loading = true;
     // console.log()
     this._importExcelService.import(this.file, this.type, this.importForm.value.selectProvider)
       .then(async (r) => {
+        // console.log(r)
         for (let x = 0; x < r.length; x++) {
           if (r[x].status == 200) {
             this.status200.push(r[x])
