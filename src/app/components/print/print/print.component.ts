@@ -3191,7 +3191,7 @@ export class PrintComponent implements OnInit {
             this.doc.setFontType('bold');
             this.doc.text("CAE: " + this.transaction.CAE, margin, row);
             let imgdata = 'data:image/png;base64,' + this.barcode64;
-            this.doc.addImage(imgdata, 'PNG', margin + 40, row - 3, 20, 20);
+            this.doc.addImage(imgdata, 'PNG', margin + 40, row - 3, 20, 40);
             row += 4;
             this.doc.text("Fecha Vto: " + this.transaction.CAEExpirationDate.split('T')[0], margin, row)
 
