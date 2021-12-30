@@ -3010,18 +3010,32 @@ export class PrintComponent implements OnInit {
         row += 3;
 
         if (this.transaction.company && this.transaction.company._id) {
+            
+            let company : Company = this.transaction.company;
             this.doc.setFontType('bold');
-            this.doc.text("Razón Social : " + this.transaction.company.name, margin, row);
+            if(company.name){
+                this.doc.text("Razón Social : " + company.name, margin, row);
+            }
             row += 3;
-            this.doc.text(this.transaction.company.identificationType.name + " :" + this.transaction.company.identificationValue, margin, row);
+            if(company.identificationType && company.identificationType.name && company.identificationValue){
+                this.doc.text(this.transaction.company.identificationType.name + " :" + this.transaction.company.identificationValue, margin, row);
+            }
             row += 3;
-            this.doc.text("Condición de IVA : " + this.transaction.company.vatCondition.description, margin, row);
+            if(company.vatCondition && company.vatCondition.description){
+                this.doc.text("Condición de IVA : " + this.transaction.company.vatCondition.description, margin, row);
+            }
             row += 3;
-            this.doc.text("Dirección : " + this.transaction.company.address + " " + this.transaction.company.addressNumber, margin, row);
+            if(company.address && company.addressNumber){
+                this.doc.text("Dirección : " + this.transaction.company.address + " " + this.transaction.company.addressNumber, margin, row);
+            }
             row += 3;
-            this.doc.text("Telefono : " + this.transaction.company.phones, margin, row);
+            if(company.phones){
+                this.doc.text("Telefono : " + this.transaction.company.phones, margin, row);
+            }
             row += 3;
-            this.doc.text("Localidad : " + this.transaction.company.city, margin, row);
+            if(company.city){
+                this.doc.text("Localidad : " + this.transaction.company.city, margin, row);
+            }
             this.doc.setFontType('normal');
 
         } else {
