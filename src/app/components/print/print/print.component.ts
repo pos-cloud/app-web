@@ -2942,7 +2942,7 @@ export class PrintComponent implements OnInit {
 
         //Cabecera del ticket
         var margin = 5;
-        var row = 5;
+        var row = 40;
         let width = this.printer.pageWidth;
 
         if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
@@ -2954,7 +2954,7 @@ export class PrintComponent implements OnInit {
                 this.centerText(margin, margin, width, 0, row, this.config[0].companyName);
             }
             this.doc.setFontType('small');
-            this.doc.setFontSize(this.fontSizes.small);
+            this.doc.setFontSize(this.fontSizes.normal);
             row += 3;
             this.centerText(margin, margin, width, 0, row, this.config[0].companyAddress);
             row += 3;
@@ -2967,7 +2967,7 @@ export class PrintComponent implements OnInit {
         } else {
             row += 15;
             this.doc.setFontType('small');
-            this.doc.setFontSize(this.fontSizes.small);
+            this.doc.setFontSize(this.fontSizes.normal);
         }
 
         //LADO IZQUIERDO
@@ -2993,17 +2993,18 @@ export class PrintComponent implements OnInit {
         this.doc.setFontSize(15)
         this.doc.setFontType('blod')
         if (this.transaction.type.labelPrint) {
-            this.doc.text(this.transaction.type.labelPrint, 45, 25)
+            this.doc.text(this.transaction.type.labelPrint, 45, 60)
         } else {
-            this.doc.text(this.transaction.type.name, 45, 25)
+            this.doc.text(this.transaction.type.name, 45, 60)
         }
         this.doc.setFontSize(8)
+        
         if (Config.country === 'AR') {
-            this.doc.text("N°:" + this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 8), 45, 30);
+            this.doc.text("N°:" + this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 8), 45, 65);
         } else {
-            this.doc.text("N°:" + this.padString(this.transaction.number, 8), 45, 30);
+            this.doc.text("N°:" + this.padString(this.transaction.number, 8), 45, 65);
         }
-        this.doc.text(this.transaction.endDate.split(' ')[0], 45, 35)
+        this.doc.text(this.transaction.endDate.split(' ')[0], 45, 70)
 
         row += 3;
         this.doc.line(0, row, width, row);
@@ -3015,26 +3016,27 @@ export class PrintComponent implements OnInit {
             this.doc.setFontType('bold');
             if(company.name){
                 this.doc.text("Razón Social : " + company.name, margin, row);
+                row += 3;
             }
-            row += 3;
             if(company.identificationType && company.identificationType.name && company.identificationValue){
                 this.doc.text(this.transaction.company.identificationType.name + " :" + this.transaction.company.identificationValue, margin, row);
+                row += 3;
             }
-            row += 3;
             if(company.vatCondition && company.vatCondition.description){
                 this.doc.text("Condición de IVA : " + this.transaction.company.vatCondition.description, margin, row);
+                row += 3;
             }
-            row += 3;
             if(company.address && company.addressNumber){
                 this.doc.text("Dirección : " + this.transaction.company.address + " " + this.transaction.company.addressNumber, margin, row);
+                row += 3;
             }
-            row += 3;
             if(company.phones){
                 this.doc.text("Telefono : " + this.transaction.company.phones, margin, row);
+                row += 3;
             }
-            row += 3;
             if(company.city){
                 this.doc.text("Localidad : " + this.transaction.company.city, margin, row);
+                row += 3;
             }
             this.doc.setFontType('normal');
 
@@ -3191,7 +3193,7 @@ export class PrintComponent implements OnInit {
             this.doc.setFontType('bold');
             this.doc.text("CAE: " + this.transaction.CAE, margin, row);
             let imgdata = 'data:image/png;base64,' + this.barcode64;
-            this.doc.addImage(imgdata, 'PNG', margin + 40, row - 3, 20, 40);
+            this.doc.addImage(imgdata, 'PNG', margin + 40, row - 3, 20, 20);
             row += 4;
             this.doc.text("Fecha Vto: " + this.transaction.CAEExpirationDate.split('T')[0], margin, row)
 
@@ -3237,9 +3239,9 @@ export class PrintComponent implements OnInit {
             this.finishImpression();
         } else {
             if (this.branchImagen && this.branchImagen !== 'default.jpg') {
-                await this.getBranchPicture(1, 1, width - 2, 18, true);
+                await this.getBranchPicture(1, 10, width - 4, 45, true);
             } else {
-                await this.getCompanyPicture(1, 1, width - 2, 18, true);
+                await this.getCompanyPicture(1, 10, width - 4, 45, true);
             }
         }
     }
@@ -3381,6 +3383,8 @@ export class PrintComponent implements OnInit {
 
             }
         }
+
+        row += 10;
 
         this.finishImpression();
     }
@@ -3620,8 +3624,8 @@ export class PrintComponent implements OnInit {
 
     async toPrintRoll() {
         //Cabecera del ticket
-
         var margin = 5;
+        this.row = 30;
 
         let width = this.printer.pageWidth;
 
@@ -3882,9 +3886,9 @@ export class PrintComponent implements OnInit {
             this.finishImpression();
         } else {
             if (this.branchImagen && this.branchImagen !== 'default.jpg') {
-                await this.getBranchPicture(3, 3, this.printer.pageWidth - 5, 26, false);
+                await this.getBranchPicture(5, 5, this.printer.pageWidth - 4, 45, false);
             } else {
-                await this.getCompanyPicture(3, 3, this.printer.pageWidth - 5, 26, false);
+                await this.getCompanyPicture(5, 5, this.printer.pageWidth - 4, 45, false);
             }
             if (this.transaction.type.numberPrint && this.count < this.transaction.type.numberPrint) {
                 this.row += 5;
