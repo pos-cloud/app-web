@@ -2117,28 +2117,28 @@ export class AddSaleOrderComponent {
                                                     !this.transaction.stringSAT) {
                                                     this.validateElectronicTransactionMX();
                                                 } else {
-                                                    this.finish(); //SE FINALIZA POR ERROR EN LA FE
+                                                    this.close('charge'); //SE FINALIZA POR ERROR EN LA FE
                                                 }
                                             } else if (this.config['country'] === 'AR') {
                                                 if (!this.transaction.CAE) {
                                                     this.validateElectronicTransactionAR();
                                                 } else {
-                                                    this.finish(); //SE FINALIZA POR ERROR EN LA FE
+                                                    this.close('charge'); //SE FINALIZA POR ERROR EN LA FE
                                                 }
                                             } else {
                                                 this.showMessage("Facturación electrónica no esta habilitada para tu país.", "info", true);
                                             }
                                         } else if (this.transaction.type.electronics && this.transaction.CAE) {
-                                            this.finish(); //SE FINALIZA POR ERROR EN LA FE
+                                            this.close('charge'); //SE FINALIZA POR ERROR EN LA FE
                                         } else {
                                             if (this.transaction.type.fixedLetter !== this.transaction.letter) {
                                                 this.assignTransactionNumber();
                                             } else {
-                                                this.finish();
+                                                this.close('charge');
                                             }
                                         }
                                     } else {
-                                        this.finish();
+                                        this.close('charge');
                                     }
                                 }
                             } else {
@@ -2153,16 +2153,16 @@ export class AddSaleOrderComponent {
                             if (this.transaction.type.electronics && !this.transaction.CAE) {
                                 this.validateElectronicTransactionAR();
                             } else if (this.transaction.type.electronics && this.transaction.CAE) {
-                                this.finish(); //SE FINALIZA POR ERROR EN LA FE
+                                this.close('charge'); //SE FINALIZA POR ERROR EN LA FE
                             } else {
                                 if (this.transaction.type.fixedLetter !== this.transaction.letter) {
                                     this.assignTransactionNumber();
                                 } else {
-                                    this.finish();
+                                    this.close('charge');
                                 }
                             }
                         } else {
-                            this.finish();
+                            this.close('charge');
                         }
                     }
                 }
@@ -2777,6 +2777,7 @@ export class AddSaleOrderComponent {
 
         if (this.transaction.type.defectPrinter) {
             this.printerSelected = this.transaction.type.defectPrinter;
+            this.typeOfOperationToPrint = "charge";
             this.distributeImpressions(this.transaction.type.defectPrinter);
         } else {
             this.openModal('printers');
@@ -2883,8 +2884,8 @@ export class AddSaleOrderComponent {
             this.typeOfOperationToPrint = "voucher";
             this.distributeImpressions()
         } else {
-            if (this.isCharge) {
-                this.openModal('charge')
+            if(this.isCharge){
+                this.finish();
             } else {
                 this.backFinal();
             }
@@ -3014,7 +3015,7 @@ export class AddSaleOrderComponent {
                             this.distributeImpressions(null)
                         } else {
                             if (this.isCharge) {
-                                this.openModal('charge')
+                                this.finish();
                             } else {
                                 this.backFinal();
                             }
@@ -3048,9 +3049,9 @@ export class AddSaleOrderComponent {
                             this.distributeImpressions(null)
                         } else {
                             if (this.isCharge) {
-                                this.openModal('charge')
+                                this.finish();
                             } else {
-                                this.backFinal();
+                                this.backFinal()
                             }
                         }
                     }
@@ -3080,7 +3081,7 @@ export class AddSaleOrderComponent {
                             this.updateMovementOfArticlePrintedVoucher();
                         } else {
                             if (this.isCharge) {
-                                this.openModal('charge')
+                                this.finish()
                             } else {
                                 this.backFinal();
                             }
@@ -3296,7 +3297,7 @@ export class AddSaleOrderComponent {
                         this.transaction.number = result.transactions[0].number + 1;
                     }
                     this.transaction = await this.updateTransaction();
-                    this.finish();
+                    this.close('charge');
                 },
                 error => { throw error }
             );
