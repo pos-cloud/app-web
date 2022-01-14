@@ -263,6 +263,10 @@ const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", o
 //   return new TranslateHttpLoader(http);
 // }
 
+import { APP_INITIALIZER, ErrorHandler } from "@angular/core";
+import { Router } from "@angular/router";
+import * as Sentry from "@sentry/angular";
+
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -609,6 +613,22 @@ export function createTranslateLoader(http: HttpClient) {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
+    },
+    {
+      provide: ErrorHandler,
+      useValue: Sentry.createErrorHandler({
+        showDialog: true,
+      }),
+    },
+    {
+      provide: Sentry.TraceService,
+      deps: [Router],
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: () => () => {},
+      deps: [Sentry.TraceService],
+      multi: true,
     },
     AddressService,
     NgbActiveModal,
