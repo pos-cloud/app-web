@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
-import * as jsPDF from 'jspdf';
+import jsPDF from 'jspdf';
 
 import { DateFormatPipe } from '../../../main/pipes/date-format.pipe';
 import { RoundNumberPipe } from '../../../main/pipes/round-number.pipe';
@@ -24,7 +24,7 @@ import { CompanyGroup } from 'app/components/company-group/company-group';
 import { CompanyGroupService } from 'app/components/company-group/company-group.service';
 
 var splitRegex = /\r\n|\r|\n/g;
-jsPDF.API.textEx = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
+jsPDF.API['textEx'] = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
     var fontSize = this.internal.getFontSize() / this.internal.scaleFactor;
 
     // As defined in jsPDF source code

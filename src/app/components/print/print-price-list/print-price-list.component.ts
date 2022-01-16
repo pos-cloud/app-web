@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 
 
-import * as jsPDF from 'jspdf';
+import jsPDF from 'jspdf';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { DateFormatPipe } from '../../../main/pipes/date-format.pipe';

@@ -12,7 +12,6 @@ import { MovementOfArticle } from 'app/components/movement-of-article/movement-o
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { ModelService } from '../model/model.service';
 import { MovementOfCancellation } from "../movement-of-cancellation/movement-of-cancellation";
-import { isUndefined } from "util";
 
 @Injectable()
 export class TransactionService extends ModelService {

@@ -165,7 +165,7 @@
                         <div class="row" style="width: 100%;">
                             <div class="col-md-12">
                                 <!--Array horarios-->
-                                <form (ngSubmit)="addSchedule(schedulesForm)">
+                                <form #schedulesForm="ngForm" (ngSubmit)="addSchedule(schedulesForm)">
                                     <div class="row" style="width: 100%;">
 
                                         <div class="form-group col-md-2">
@@ -247,7 +247,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <form (ngSubmit)="addSection(sectionForm)">
+                                <form #sectionForm="ngForm" (ngSubmit)="addSection(sectionForm)">
                                     <div class="row">
                                         <div class="form-group col-md-2">
                                             <label for="order"

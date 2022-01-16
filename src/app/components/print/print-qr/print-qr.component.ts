@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import * as jsPDF from 'jspdf';
+import jsPDF from 'jspdf';
 
 //servicios
 import { MovementOfCancellationService } from 'app/components/movement-of-cancellation/movement-of-cancellation.service';
@@ -34,7 +34,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 
 var splitRegex = /\r\n|\r|\n/g;
-jsPDF.API.textEx = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
+jsPDF.API['textEx'] = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
     var fontSize = this.internal.getFontSize() / this.internal.scaleFactor;
 
     // As defined in jsPDF source code
@@ -119,8 +119,8 @@ export class PrintQRComponent implements OnInit {
 
     async ngOnInit() {
 
-        let orientation = "p";
-        let units = 'mm';
+        const orientation = "p";
+        const units = 'mm';
         var margin = 5;
 
         if (!this.printer) {

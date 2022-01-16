@@ -4,7 +4,7 @@ import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ArticleStock } from 'app/components/article-stock/article-stock';
 
 //terceros
-import * as jsPDF from 'jspdf';
+import jsPDF from 'jspdf';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DateFormatPipe } from 'app/main/pipes/date-format.pipe';
 import { Config } from 'app/app.config';

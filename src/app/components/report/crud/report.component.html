@@ -145,7 +145,7 @@
                         <div class="row" style="width: 100%;">
                             <div class="col-md-12">
                                 <!--Array horarios-->
-                                <form (ngSubmit)="addParam(paramForm)">
+                                <form #paramForm="ngForm" (ngSubmit)="addParam(paramForm)">
                                     <div class="row" style="width: 100%;">
 
                                         <div class="form-group col-md-2">

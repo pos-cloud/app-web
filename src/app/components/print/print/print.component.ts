@@ -15,7 +15,7 @@ import { Article } from '../../article/article';
 
 //Paquetes de terceros
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import * as jsPDF from 'jspdf';
+import jsPDF from 'jspdf';
 
 //Servicios
 import { PrinterService } from '../../printer/printer.service';
@@ -46,7 +46,7 @@ import { CapitalizePipe } from 'app/main/pipes/capitalize';
 import { TaxClassification } from 'app/components/tax/tax';
 
 var splitRegex = /\r\n|\r|\n/g;
-jsPDF.API.textEx = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
+jsPDF.API['textEx'] = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
     var fontSize = this.internal.getFontSize() / this.internal.scaleFactor;
 
     // As defined in jsPDF source code
@@ -192,9 +192,9 @@ export class PrintComponent implements OnInit {
             this.printer.pageHigh = 297;
         }
 
-        let orientation = "p";
+        const orientation = 'p';
 
-        let units = 'mm';
+        const units = 'mm';
         let pageWidth = this.printer.pageWidth * 100 / 35.27751646284102;
         let pageHigh = this.printer.pageHigh * 100 / 35.27751646284102;
 

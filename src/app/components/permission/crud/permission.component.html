@@ -138,7 +138,7 @@
             <div class="row" style="width: 100%;">
               <div class="col-md-12">
                 <!--Array permisos-->
-                <form (ngSubmit)="addCollection(collectionsForm)">
+                <form #collectionsForm="ngForm" (ngSubmit)="addCollection(collectionsForm)">
                   <div class="row" style="width: 100%;">
                     <div class="form-group col-md-3">
                       <label class="control-label">Tabla:</label>

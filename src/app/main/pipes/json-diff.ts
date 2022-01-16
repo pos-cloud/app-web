@@ -1,5 +1,4 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { AssertionError } from 'assert';
 import { SequenceMatcher } from './sequenceMatcher';
 
 @Pipe({
@@ -121,9 +120,6 @@ export class JsonDiffPipe implements PipeTransform {
 					for (i = l = ref1 = i1, ref2 = i2; ref1 <= ref2 ? l < ref2 : l > ref2; i = ref1 <= ref2 ? ++l : --l) {
 						item = seq1[i];
 						if (this.isScalarized(item, originals1)) {
-							if (!this.isScalarized(item, originals2)) {
-								throw new AssertionError({ message: "internal bug: isScalarized(item, originals1) != isScalarized(item, originals2) for item " + (JSON.stringify(item)) });
-							}
 							item1 = this.descalarize(item, originals1);
 							item2 = this.descalarize(item, originals2);
 							change = this.diff(item1, item2);

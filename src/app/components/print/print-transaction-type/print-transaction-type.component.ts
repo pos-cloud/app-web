@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import * as jsPDF from 'jspdf';
+import jsPDF from 'jspdf';
 
 //servicios
 import { MovementOfCancellationService } from 'app/components/movement-of-cancellation/movement-of-cancellation.service';
@@ -380,14 +380,16 @@ export class PrintTransactionTypeComponent implements OnInit {
 
     async buildPrint() {
 
-        let pageWidth = this.printer.pageWidth * 100 / 35.27751646284102;
-        let pageHigh = this.printer.pageHigh * 100 / 35.27751646284102;
+        const pageWidth = this.printer.pageWidth * 100 / 35.27751646284102;
+        const pageHigh = this.printer.pageHigh * 100 / 35.27751646284102;
+        const units: any = 'mm';
+        const orientation: any = this.printer.orientation;
 
-        this.doc = new jsPDF({
-            orientation: this.printer.orientation,
-            unit: 'mm',
-            format: [pageWidth, pageHigh]
-        })
+        this.doc = new jsPDF(
+            orientation,
+            units,
+            [pageWidth, pageHigh]
+        )
 
         if (this.quantity) {
             await this.buildLayout(PositionPrint.Header);

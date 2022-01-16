@@ -148,7 +148,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <form (ngSubmit)="addItem(itemForm)">
+                                <form #itemForm="ngForm" (ngSubmit)="addItem(itemForm)">
                                     <div class="row">
                                         <div class="form-group col-md-6">
                                             <ng-template #rtAccount let-r="result" let-t="term">

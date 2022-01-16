@@ -20,8 +20,6 @@ import { Config } from 'app/app.config';
 import { Article } from 'app/components/article/article';
 import { Category } from 'app/components/category/category';
 import { ArticleService } from 'app/components/article/article.service';
-import { EmailTemplate } from 'app/components/email-template/email-template';
-import { EmailService } from 'app/components/send-email/send-email.service';
 import { EmailTemplateService } from 'app/components/email-template/email-template.service';
 
 @Component({
