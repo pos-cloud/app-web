@@ -407,7 +407,7 @@ td {
   white-space: nowrap;
 }
 
-.my-pagination /deep/ .ngx-pagination {
+.my-pagination ::ng-deep .ngx-pagination {
   color: black;
 }
 
