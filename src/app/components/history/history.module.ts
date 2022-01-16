@@ -23,31 +23,28 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes),
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgxPaginationModule,
-    DirectivesModule,
-    DragDropModule,
-    ProgressbarModule,
-    PipesModule,
-    TranslateModule,
-    NgbDropdownModule,
-    NgbModule,
-    DatatableModule
-  ],
-  declarations: [
-    ListHistoriesComponent,
-  ],
-  exports: [
-  ],
-  entryComponents: [
-  ],
-  providers: [
-    HistoryService
-  ]
+    imports: [
+        RouterModule.forChild(routes),
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgxPaginationModule,
+        DirectivesModule,
+        DragDropModule,
+        ProgressbarModule,
+        PipesModule,
+        TranslateModule,
+        NgbDropdownModule,
+        NgbModule,
+        DatatableModule
+    ],
+    declarations: [
+        ListHistoriesComponent,
+    ],
+    exports: [],
+    providers: [
+        HistoryService
+    ]
 })
 
 export class HistoryModule { }

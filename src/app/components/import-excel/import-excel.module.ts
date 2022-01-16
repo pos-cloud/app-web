@@ -20,34 +20,31 @@ import { ImportExcelService } from './import-excel.service';
 // ];
 
 @NgModule({
-  imports: [
-    // RouterModule.forChild(routes),
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgxPaginationModule,
-    DirectivesModule,
-    DragDropModule,
-    ProgressbarModule,
-    PipesModule,
-    TranslateModule,
-    NgbDropdownModule,
-    NgbModule,
-    DatatableModule,
-    NgxTinymceModule
-  ],
-  declarations: [
-    importExcelComponent
-  ],
-  exports: [
-    importExcelComponent
-  ],
-  entryComponents: [
-    importExcelComponent
-  ],
-  providers: [
-    ImportExcelService
-  ]
+    imports: [
+        // RouterModule.forChild(routes),
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgxPaginationModule,
+        DirectivesModule,
+        DragDropModule,
+        ProgressbarModule,
+        PipesModule,
+        TranslateModule,
+        NgbDropdownModule,
+        NgbModule,
+        DatatableModule,
+        NgxTinymceModule
+    ],
+    declarations: [
+        importExcelComponent
+    ],
+    exports: [
+        importExcelComponent
+    ],
+    providers: [
+        ImportExcelService
+    ]
 })
 
 export class ImportExcelModule { }

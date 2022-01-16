@@ -63,39 +63,35 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes),
-    CommonModule,
-    ExportersModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgxPaginationModule,
-    DirectivesModule,
-    DragDropModule,
-    ProgressbarModule,
-    PipesModule,
-    TranslateModule,
-    NgbDropdownModule,
-    NgbModule,
-    DatatableModule,
-    NgxTinymceModule
-  ],
-  declarations: [
-    AccountSeatComponent,
-    ListAccountSeatsComponent,
-    ReportLedgerComponent,
-    ReportDetailsLedgerComponent
-  ],
-  exports: [
-    AccountSeatComponent
-  ],
-  entryComponents: [
-    AccountSeatComponent,
-    ReportDetailsLedgerComponent
-  ],
-  providers: [
-    AccountSeatService
-  ]
+    imports: [
+        RouterModule.forChild(routes),
+        CommonModule,
+        ExportersModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgxPaginationModule,
+        DirectivesModule,
+        DragDropModule,
+        ProgressbarModule,
+        PipesModule,
+        TranslateModule,
+        NgbDropdownModule,
+        NgbModule,
+        DatatableModule,
+        NgxTinymceModule
+    ],
+    declarations: [
+        AccountSeatComponent,
+        ListAccountSeatsComponent,
+        ReportLedgerComponent,
+        ReportDetailsLedgerComponent
+    ],
+    exports: [
+        AccountSeatComponent
+    ],
+    providers: [
+        AccountSeatService
+    ]
 })
 
 export class AccountSeatModule { }

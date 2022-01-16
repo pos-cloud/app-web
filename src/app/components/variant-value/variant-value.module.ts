@@ -45,35 +45,32 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes),
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgxPaginationModule,
-    DirectivesModule,
-    DragDropModule,
-    ProgressbarModule,
-    PipesModule,
-    TranslateModule,
-    NgbDropdownModule,
-    NgbModule,
-    DatatableModule,
-    NgxTinymceModule
-  ],
-  declarations: [
-    ListVariantValuesComponent,
-    VariantValueComponent
-  ],
-  exports: [
-    VariantValueComponent
-  ],
-  entryComponents: [
-    VariantValueComponent
-  ],
-  providers: [
-    VariantValueService
-  ]
+    imports: [
+        RouterModule.forChild(routes),
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgxPaginationModule,
+        DirectivesModule,
+        DragDropModule,
+        ProgressbarModule,
+        PipesModule,
+        TranslateModule,
+        NgbDropdownModule,
+        NgbModule,
+        DatatableModule,
+        NgxTinymceModule
+    ],
+    declarations: [
+        ListVariantValuesComponent,
+        VariantValueComponent
+    ],
+    exports: [
+        VariantValueComponent
+    ],
+    providers: [
+        VariantValueService
+    ]
 })
 
 export class VariantValueModule { }

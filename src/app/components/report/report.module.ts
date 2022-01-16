@@ -55,41 +55,36 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes),
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgxPaginationModule,
-    DirectivesModule,
-    DragDropModule,
-    ProgressbarModule,
-    PipesModule,
-    TranslateModule,
-    NgbDropdownModule,
-    NgbModule,
-    DatatableModule,
-    NgxTinymceModule,
-    ExportersModule
-  ],
-  declarations: [
-    ListReportsComponent,
-    ReportComponent,
-    ViewReportComponent,
-    ParamsReportComponent
-  ],
-  exports: [
-    ReportComponent,
-    ViewReportComponent
-  ],
-  entryComponents: [
-    ReportComponent,
-    ViewReportComponent,
-    ParamsReportComponent
-  ],
-  providers: [
-    ReportService
-  ]
+    imports: [
+        RouterModule.forChild(routes),
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgxPaginationModule,
+        DirectivesModule,
+        DragDropModule,
+        ProgressbarModule,
+        PipesModule,
+        TranslateModule,
+        NgbDropdownModule,
+        NgbModule,
+        DatatableModule,
+        NgxTinymceModule,
+        ExportersModule
+    ],
+    declarations: [
+        ListReportsComponent,
+        ReportComponent,
+        ViewReportComponent,
+        ParamsReportComponent
+    ],
+    exports: [
+        ReportComponent,
+        ViewReportComponent
+    ],
+    providers: [
+        ReportService
+    ]
 })
 
 export class ReportModule { }

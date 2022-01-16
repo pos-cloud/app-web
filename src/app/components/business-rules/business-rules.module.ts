@@ -45,35 +45,32 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes),
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgxPaginationModule,
-    DirectivesModule,
-    DragDropModule,
-    ProgressbarModule,
-    PipesModule,
-    TranslateModule,
-    NgbDropdownModule,
-    NgbModule,
-    DatatableModule,
-    NgxTinymceModule
-  ],
-  declarations: [
-    BusinessRuleComponent,
-    ListBusinessRulesComponent
-  ],
-  exports: [
-    BusinessRuleComponent
-  ],
-  entryComponents: [
-    BusinessRuleComponent
-  ],
-  providers: [
-    BusinessRuleService
-  ]
+    imports: [
+        RouterModule.forChild(routes),
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgxPaginationModule,
+        DirectivesModule,
+        DragDropModule,
+        ProgressbarModule,
+        PipesModule,
+        TranslateModule,
+        NgbDropdownModule,
+        NgbModule,
+        DatatableModule,
+        NgxTinymceModule
+    ],
+    declarations: [
+        BusinessRuleComponent,
+        ListBusinessRulesComponent
+    ],
+    exports: [
+        BusinessRuleComponent
+    ],
+    providers: [
+        BusinessRuleService
+    ]
 })
 
 export class BusinessRuleModule { }

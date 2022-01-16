@@ -45,35 +45,32 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes),
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgxPaginationModule,
-    DirectivesModule,
-    DragDropModule,
-    ProgressbarModule,
-    PipesModule,
-    TranslateModule,
-    NgbDropdownModule,
-    NgbModule,
-    DatatableModule,
-    NgxTinymceModule
-  ],
-  declarations: [
-    ListApplicationsComponent,
-    ApplicationComponent
-  ],
-  exports: [
-    ApplicationComponent
-  ],
-  entryComponents: [
-    ApplicationComponent
-  ],
-  providers: [
-    ApplicationService
-  ]
+    imports: [
+        RouterModule.forChild(routes),
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgxPaginationModule,
+        DirectivesModule,
+        DragDropModule,
+        ProgressbarModule,
+        PipesModule,
+        TranslateModule,
+        NgbDropdownModule,
+        NgbModule,
+        DatatableModule,
+        NgxTinymceModule
+    ],
+    declarations: [
+        ListApplicationsComponent,
+        ApplicationComponent
+    ],
+    exports: [
+        ApplicationComponent
+    ],
+    providers: [
+        ApplicationService
+    ]
 })
 
 export class ApplicationModule { }

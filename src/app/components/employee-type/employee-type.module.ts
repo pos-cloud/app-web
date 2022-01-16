@@ -24,34 +24,31 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes),
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgxPaginationModule,
-    DirectivesModule,
-    DragDropModule,
-    ProgressbarModule,
-    PipesModule,
-    TranslateModule,
-    NgbDropdownModule,
-    NgbModule,
-    DatatableModule
-  ],
-  declarations: [
-    ListEmployeeTypesComponent,
-    EmployeeTypeComponent
-  ],
-  exports: [
-    EmployeeTypeComponent
-  ],
-  entryComponents: [
-    EmployeeTypeComponent
-  ],
-  providers: [
-    EmployeeTypeService
-  ]
+    imports: [
+        RouterModule.forChild(routes),
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgxPaginationModule,
+        DirectivesModule,
+        DragDropModule,
+        ProgressbarModule,
+        PipesModule,
+        TranslateModule,
+        NgbDropdownModule,
+        NgbModule,
+        DatatableModule
+    ],
+    declarations: [
+        ListEmployeeTypesComponent,
+        EmployeeTypeComponent
+    ],
+    exports: [
+        EmployeeTypeComponent
+    ],
+    providers: [
+        EmployeeTypeService
+    ]
 })
 
 export class EmployeeTypeModule { }

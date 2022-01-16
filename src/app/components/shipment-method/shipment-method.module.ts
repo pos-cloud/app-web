@@ -28,43 +28,39 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes),
-    CommonModule,
-    BrowserModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgxPaginationModule,
-    DirectivesModule,
-    DragDropModule,
-    ProgressbarModule,
-    PipesModule,
-    TranslateModule,
-    NgbDropdownModule,
-    NgbModule,
-    DatatableModule,
-    AgmCoreModule.forRoot({
-      apiKey: "AIzaSyCi1AySMkCMeuptt0rwsgpo6nEgigDVJ4E",
-      libraries: ['places', 'drawing', 'geometry']
-    }),
-    AddressModule,
-  ],
-  declarations: [
-    ListShipmentMethodsComponent,
-    ShipmentMethodComponent,
-    SelectShipmentMethodComponent
-  ],
-  exports: [
-    ShipmentMethodComponent,
-    SelectShipmentMethodComponent
-  ],
-  entryComponents: [
-    ShipmentMethodComponent,
-    SelectShipmentMethodComponent
-  ],
-  providers: [
-    ShipmentMethodService
-  ]
+    imports: [
+        RouterModule.forChild(routes),
+        CommonModule,
+        BrowserModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgxPaginationModule,
+        DirectivesModule,
+        DragDropModule,
+        ProgressbarModule,
+        PipesModule,
+        TranslateModule,
+        NgbDropdownModule,
+        NgbModule,
+        DatatableModule,
+        AgmCoreModule.forRoot({
+            apiKey: "AIzaSyCi1AySMkCMeuptt0rwsgpo6nEgigDVJ4E",
+            libraries: ['places', 'drawing', 'geometry']
+        }),
+        AddressModule,
+    ],
+    declarations: [
+        ListShipmentMethodsComponent,
+        ShipmentMethodComponent,
+        SelectShipmentMethodComponent
+    ],
+    exports: [
+        ShipmentMethodComponent,
+        SelectShipmentMethodComponent
+    ],
+    providers: [
+        ShipmentMethodService
+    ]
 })
 
 export class ShipmentMethodModule { }

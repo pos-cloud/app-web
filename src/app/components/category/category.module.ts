@@ -45,35 +45,32 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes),
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgxPaginationModule,
-    DirectivesModule,
-    DragDropModule,
-    ProgressbarModule,
-    PipesModule,
-    TranslateModule,
-    NgbDropdownModule,
-    NgbModule,
-    DatatableModule,
-    NgxTinymceModule
-  ],
-  declarations: [
-    ListCategoriesComponent,
-    CategoryComponent
-  ],
-  exports: [
-    CategoryComponent
-  ],
-  entryComponents: [
-    CategoryComponent
-  ],
-  providers: [
-    CategoryService
-  ]
+    imports: [
+        RouterModule.forChild(routes),
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgxPaginationModule,
+        DirectivesModule,
+        DragDropModule,
+        ProgressbarModule,
+        PipesModule,
+        TranslateModule,
+        NgbDropdownModule,
+        NgbModule,
+        DatatableModule,
+        NgxTinymceModule
+    ],
+    declarations: [
+        ListCategoriesComponent,
+        CategoryComponent
+    ],
+    exports: [
+        CategoryComponent
+    ],
+    providers: [
+        CategoryService
+    ]
 })
 
 export class CategoryModule { }

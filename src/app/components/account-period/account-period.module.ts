@@ -45,35 +45,32 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes),
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgxPaginationModule,
-    DirectivesModule,
-    DragDropModule,
-    ProgressbarModule,
-    PipesModule,
-    TranslateModule,
-    NgbDropdownModule,
-    NgbModule,
-    DatatableModule,
-    NgxTinymceModule
-  ],
-  declarations: [
-    AccountPeriodComponent,
-    ListAccountPeriodsComponent
-  ],
-  exports: [
-    AccountPeriodComponent
-  ],
-  entryComponents: [
-    AccountPeriodComponent
-  ],
-  providers: [
-    AccountPeriodService
-  ]
+    imports: [
+        RouterModule.forChild(routes),
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgxPaginationModule,
+        DirectivesModule,
+        DragDropModule,
+        ProgressbarModule,
+        PipesModule,
+        TranslateModule,
+        NgbDropdownModule,
+        NgbModule,
+        DatatableModule,
+        NgxTinymceModule
+    ],
+    declarations: [
+        AccountPeriodComponent,
+        ListAccountPeriodsComponent
+    ],
+    exports: [
+        AccountPeriodComponent
+    ],
+    providers: [
+        AccountPeriodService
+    ]
 })
 
 export class AccountPeriodModule { }

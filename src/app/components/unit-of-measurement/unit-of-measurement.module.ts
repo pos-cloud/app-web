@@ -24,34 +24,31 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes),
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgxPaginationModule,
-    DirectivesModule,
-    DragDropModule,
-    ProgressbarModule,
-    PipesModule,
-    TranslateModule,
-    NgbDropdownModule,
-    NgbModule,
-    DatatableModule
-  ],
-  declarations: [
-    ListUnitOfMeasurementsComponent,
-    UnitOfMeasurementComponent
-  ],
-  exports: [
-    UnitOfMeasurementComponent
-  ],
-  entryComponents: [
-    UnitOfMeasurementComponent
-  ],
-  providers: [
-    UnitOfMeasurementService
-  ]
+    imports: [
+        RouterModule.forChild(routes),
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgxPaginationModule,
+        DirectivesModule,
+        DragDropModule,
+        ProgressbarModule,
+        PipesModule,
+        TranslateModule,
+        NgbDropdownModule,
+        NgbModule,
+        DatatableModule
+    ],
+    declarations: [
+        ListUnitOfMeasurementsComponent,
+        UnitOfMeasurementComponent
+    ],
+    exports: [
+        UnitOfMeasurementComponent
+    ],
+    providers: [
+        UnitOfMeasurementService
+    ]
 })
 
 export class UnitOfMeasurementModule { }

@@ -8,31 +8,26 @@ import { AgmCoreModule } from '@agm/core';
 import { AddressService } from './address.service';
 
 @NgModule({
-  declarations: [
-    AddressComponent,
-    AutocompleteComponent,
-  ],
-  exports: [
-    AddressComponent,
-    AutocompleteComponent,
-  ],
-  entryComponents: [
-    AddressComponent,
-    AutocompleteComponent
-  ],
-  imports: [
-    BrowserModule,
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    AgmCoreModule.forRoot({
-      apiKey: "AIzaSyCi1AySMkCMeuptt0rwsgpo6nEgigDVJ4E",
-      libraries: ['places', 'geocoding']
-    }),
-  ],
-  schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
-  providers: [
-  ]
+    declarations: [
+        AddressComponent,
+        AutocompleteComponent,
+    ],
+    exports: [
+        AddressComponent,
+        AutocompleteComponent,
+    ],
+    imports: [
+        BrowserModule,
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        AgmCoreModule.forRoot({
+            apiKey: "AIzaSyCi1AySMkCMeuptt0rwsgpo6nEgigDVJ4E",
+            libraries: ['places', 'geocoding']
+        }),
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    providers: []
 })
 
 export class AddressModule { }

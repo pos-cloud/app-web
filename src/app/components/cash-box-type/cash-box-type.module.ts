@@ -24,34 +24,31 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes),
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgxPaginationModule,
-    DirectivesModule,
-    DragDropModule,
-    ProgressbarModule,
-    PipesModule,
-    TranslateModule,
-    NgbDropdownModule,
-    NgbModule,
-    DatatableModule
-  ],
-  declarations: [
-    ListCashBoxTypesComponent,
-    CashBoxTypeComponent
-  ],
-  exports: [
-    CashBoxTypeComponent
-  ],
-  entryComponents: [
-    CashBoxTypeComponent
-  ],
-  providers: [
-    CashBoxTypeService
-  ]
+    imports: [
+        RouterModule.forChild(routes),
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgxPaginationModule,
+        DirectivesModule,
+        DragDropModule,
+        ProgressbarModule,
+        PipesModule,
+        TranslateModule,
+        NgbDropdownModule,
+        NgbModule,
+        DatatableModule
+    ],
+    declarations: [
+        ListCashBoxTypesComponent,
+        CashBoxTypeComponent
+    ],
+    exports: [
+        CashBoxTypeComponent
+    ],
+    providers: [
+        CashBoxTypeService
+    ]
 })
 
 export class CashBoxTypeModule { }

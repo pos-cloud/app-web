@@ -45,35 +45,32 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes),
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgxPaginationModule,
-    DirectivesModule,
-    DragDropModule,
-    ProgressbarModule,
-    PipesModule,
-    TranslateModule,
-    NgbDropdownModule,
-    NgbModule,
-    DatatableModule,
-    NgxTinymceModule
-  ],
-  declarations: [
-    ListCompaniesGroupComponent,
-    CompanyGroupComponent
-  ],
-  exports: [
-    CompanyGroupComponent
-  ],
-  entryComponents: [
-    CompanyGroupComponent
-  ],
-  providers: [
-    CompanyGroupService
-  ]
+    imports: [
+        RouterModule.forChild(routes),
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgxPaginationModule,
+        DirectivesModule,
+        DragDropModule,
+        ProgressbarModule,
+        PipesModule,
+        TranslateModule,
+        NgbDropdownModule,
+        NgbModule,
+        DatatableModule,
+        NgxTinymceModule
+    ],
+    declarations: [
+        ListCompaniesGroupComponent,
+        CompanyGroupComponent
+    ],
+    exports: [
+        CompanyGroupComponent
+    ],
+    providers: [
+        CompanyGroupService
+    ]
 })
 
 export class CompanyGroupModule { }
