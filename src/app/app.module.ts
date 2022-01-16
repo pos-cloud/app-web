@@ -581,7 +581,7 @@ export function createTranslateLoader(http: HttpClient) {
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule.forRoot(_routes, { useHash: true }),
+    RouterModule.forRoot(_routes, { useHash: true, relativeLinkResolution: 'legacy' }),
     NgbModule,
     NgbCollapseModule,
     NgxPaginationModule,

@@ -19,7 +19,7 @@ import { Config } from 'app/app.config';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import Resulteable from 'app/util/Resulteable';
 import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
-import { async } from '@angular/core/testing';
+import { waitForAsync } from '@angular/core/testing';
 
 @Component({
     selector: 'app-permission',
