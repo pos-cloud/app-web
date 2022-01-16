@@ -44,7 +44,7 @@ export class ListMovementsOfArticlesComponent implements OnInit {
     public timezone: string = "-03:00";
     private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
     private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
-    @ViewChild(ExportExcelComponent, { static: false }) exportExcelComponent: ExportExcelComponent;
+    @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
     public columns = attributes;
     public pathLocation: string[];
     private subscription: Subscription = new Subscription();

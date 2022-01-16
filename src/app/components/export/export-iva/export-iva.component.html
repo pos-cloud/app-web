@@ -10,7 +10,7 @@
         {{alertMessage}}
       </ngb-alert>
     </div>
-    <form [formGroup]="exportIVAForm" #formExportIVA="ngForm" (ngSubmit)="exportPDF()" autocomplete="off">
+    <form [formGroup]="exportIVAForm" (ngSubmit)="exportPDF()" autocomplete="off">
       <div class="modal-body">
         <div class = "row">
           <div class="form-group col-md-6">

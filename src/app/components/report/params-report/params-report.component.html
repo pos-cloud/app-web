@@ -10,7 +10,7 @@
             {{alertMessage}}
         </ngb-alert>
     </div>
-    <form [formGroup]="objForm" #formCrud="ngForm" (ngSubmit)="sendParams()" autocomplete="off">
+    <form [formGroup]="objForm" (ngSubmit)="sendParams()" autocomplete="off">
         <div class="modal-body">
 
             <div *ngFor="let field of report.params">

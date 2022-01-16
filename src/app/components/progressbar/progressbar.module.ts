@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ProgressbarComponent } from './progressbar.component';
 import { NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
@@ -13,6 +13,9 @@ import { CommonModule } from '@angular/common';
 	],
 	exports: [
 		ProgressbarComponent
+	],
+	schemas: [
+		NO_ERRORS_SCHEMA
 	]
 })
 

@@ -13,7 +13,7 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <form [formGroup]="countryForm" #formCancellationType="ngForm" (ngSubmit)="addCountry()" autocomplete="off">
+  <form [formGroup]="countryForm" (ngSubmit)="addCountry()" autocomplete="off">
     <div class="modal-body">
       <ngb-tabset [orientation]="orientation">
         <ngb-tab title="Datos principales">

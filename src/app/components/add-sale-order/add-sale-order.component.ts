@@ -141,8 +141,8 @@ export class AddSaleOrderComponent {
     apiURL = Config.apiURL;
     userCountry: string = 'AR';
     lastQuotation: number = 1;
-    @ViewChild(ListArticlesPosComponent, { static: false }) listArticlesComponent: ListArticlesPosComponent;
-    @ViewChild(ListCategoriesPosComponent, { static: false }) listCategoriesComponent: ListCategoriesPosComponent;
+    @ViewChild(ListArticlesPosComponent) listArticlesComponent: ListArticlesPosComponent;
+    @ViewChild(ListCategoriesPosComponent) listCategoriesComponent: ListCategoriesPosComponent;
     categorySelected: Category;
     totalTaxesAmount: number = 0;
     totalTaxesBase: number = 0;

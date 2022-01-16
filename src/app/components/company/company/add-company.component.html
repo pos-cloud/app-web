@@ -10,7 +10,7 @@
             {{alertMessage}}
         </ngb-alert>
     </div>
-    <form [formGroup]="companyForm" #formAddCompany="ngForm" (ngSubmit)="addCompany()" autocomplete="off">
+    <form [formGroup]="companyForm" (ngSubmit)="addCompany()" autocomplete="off">
         <div class="modal-body">
             <ngb-tabset [orientation]="orientation">
                 <ngb-tab title="Datos principales">

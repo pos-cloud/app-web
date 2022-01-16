@@ -1,4 +1,4 @@
-import {Directive, Input, EventEmitter, ElementRef, Renderer, Inject} from '@angular/core';
+import { Directive, Input, EventEmitter, ElementRef, Inject, Renderer2 } from '@angular/core';
  
 @Directive({
   selector: '[focus]'
@@ -9,7 +9,7 @@ export class FocusDirective {
   public inputType: string;
   @Input('focus') focusEvent: EventEmitter<boolean>;
 
-  constructor(@Inject(ElementRef) public element: ElementRef, public renderer: Renderer) {
+  constructor(@Inject(ElementRef) public element: ElementRef, public renderer: Renderer2) {
   }
  
   ngOnInit() {
@@ -20,7 +20,7 @@ export class FocusDirective {
           this.element.nativeElement.type = "text";
         }
         this.setSelectionRange(this.element.nativeElement,0,999);
-        this.renderer.invokeElementMethod(this.element.nativeElement, 'focus', []);
+        this.element.nativeElement.focus();
       });
     }
   }

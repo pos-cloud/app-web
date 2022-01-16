@@ -20,7 +20,7 @@
             </div>
         </div>
         <div class="card-body scroll">
-            <form [formGroup]="objForm" #formCrud="ngForm" autocomplete="off">
+            <form [formGroup]="objForm" autocomplete="off">
                 <div class="row">
                     <div *ngFor="let field of formFields" [class]="field.class">
                         <!-- SEPARATOR -->
@@ -148,7 +148,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <form #itemForm="ngForm" (ngSubmit)="addItem(itemForm)">
+                                <form (ngSubmit)="addItem(itemForm)">
                                     <div class="row">
                                         <div class="form-group col-md-6">
                                             <ng-template #rtAccount let-r="result" let-t="term">

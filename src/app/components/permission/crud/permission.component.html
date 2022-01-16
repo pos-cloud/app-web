@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="card-body scroll">
-      <form [formGroup]="objForm" #formCrud="ngForm" autocomplete="off">
+      <form [formGroup]="objForm" autocomplete="off">
         <div class="row">
           <div *ngFor="let field of formFields" [class]="field.class">
             <!-- SEPARATOR -->
@@ -138,7 +138,7 @@
             <div class="row" style="width: 100%;">
               <div class="col-md-12">
                 <!--Array permisos-->
-                <form #collectionsForm="ngForm" (ngSubmit)="addCollection(collectionsForm)">
+                <form (ngSubmit)="addCollection(collectionsForm)">
                   <div class="row" style="width: 100%;">
                     <div class="form-group col-md-3">
                       <label class="control-label">Tabla:</label>

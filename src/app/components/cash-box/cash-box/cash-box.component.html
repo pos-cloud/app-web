@@ -10,7 +10,7 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <form [formGroup]="cashBoxForm" #formAddMovementOfCash="ngForm" autocomplete="off" (ngSubmit)="addMovementOfCash()">
+  <form [formGroup]="cashBoxForm" autocomplete="off" (ngSubmit)="addMovementOfCash()">
     <div class="modal-body">
       <div class="row form-group col-md-12">
         <div class="form-group col-md-4">
@@ -36,7 +36,7 @@
           </div>
         </div>
         <div *ngIf="selectPayment && selectPayment.allowCurrencyValue">
-          <form #fieldForm="ngForm" (ngSubmit)="addCurrencyValue(fieldForm.value)">
+          <form (ngSubmit)="addCurrencyValue(fieldForm.value)">
             <div class="row">
               <div class="col-md-5">
                 <label class="control-label">Valor de Moneda:</label>

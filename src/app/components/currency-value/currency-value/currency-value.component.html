@@ -12,7 +12,7 @@
         {{alertMessage}}
       </ngb-alert>
     </div>
-    <form [formGroup]="currencyValueForm" #formBank="ngForm" (ngSubmit)="addCurrencyValue()" autocomplete="off">
+    <form [formGroup]="currencyValueForm" (ngSubmit)="addCurrencyValue()" autocomplete="off">
       <div class="modal-body">
         <ngb-tabset [orientation]="orientation">
           <ngb-tab title="Datos principales">

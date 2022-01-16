@@ -10,7 +10,7 @@
 			{{alertMessage}}
 		</ngb-alert>
 	</div>
-	<form [formGroup]="transportForm" #addTransportForm="ngForm" (ngSubmit)="addTransport()" autocomplete="off">
+	<form [formGroup]="transportForm" (ngSubmit)="addTransport()" autocomplete="off">
 		<div class="modal-body">
 			<ngb-tabset [orientation]="orientation">
 				<ngb-tab title="Datos principales">

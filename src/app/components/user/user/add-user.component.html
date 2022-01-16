@@ -10,7 +10,7 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <form [formGroup]="userForm" #formAddUser="ngForm" (ngSubmit)="addUser()" autocomplete="off">
+  <form [formGroup]="userForm" (ngSubmit)="addUser()" autocomplete="off">
     <div class="modal-body">
       <ngb-tabset>
         <ngb-tab title="Datos principales">
@@ -187,7 +187,7 @@
         <ngb-tab title="Impresoras">
           <ng-template ngbTabContent>
             <div class="row tab-content">
-              <form #printerForm="ngForm" (ngSubmit)="addPrinter(printerForm)">
+              <form (ngSubmit)="addPrinter(printerForm)">
                 <div class="row">
                   <div class="form-group col-md-8">
                     <label for="printer" class="control-label">Impresora</label>

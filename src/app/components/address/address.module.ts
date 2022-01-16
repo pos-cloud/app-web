@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AddressComponent } from './crud/address.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -30,6 +30,7 @@ import { AddressService } from './address.service';
       libraries: ['places', 'geocoding']
     }),
   ],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   providers: [
   ]
 })

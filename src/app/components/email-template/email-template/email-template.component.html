@@ -12,7 +12,7 @@
             {{alertMessage}}
         </ngb-alert>
     </div>
-    <form [formGroup]="emailTemplateForm" #formBank="ngForm" (ngSubmit)="addEmailTemplate()" autocomplete="off">
+    <form [formGroup]="emailTemplateForm" (ngSubmit)="addEmailTemplate()" autocomplete="off">
         <div class="modal-body">
             <ngb-tabset [orientation]="orientation">
                 <ngb-tab title="Datos principales">

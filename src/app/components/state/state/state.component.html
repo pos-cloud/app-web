@@ -25,7 +25,7 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <form [formGroup]="stateForm" #formCancellationType="ngForm" (ngSubmit)="addState()" autocomplete="off">
+  <form [formGroup]="stateForm" (ngSubmit)="addState()" autocomplete="off">
     <div class="modal-body">
       <ngb-tabset [orientation]="orientation">
         <ngb-tab title="Datos principales">

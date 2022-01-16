@@ -13,7 +13,7 @@
             {{alertMessage}}
         </ngb-alert>
     </div>
-    <form [formGroup]="articleForm" #formAddArticle="ngForm" (ngSubmit)="addArticle()" autocomplete="off">
+    <form [formGroup]="articleForm" (ngSubmit)="addArticle()" autocomplete="off">
         <div class="modal-body">
             <ngb-tabset [orientation]="orientation" (tabChange)="loadURL()">
                 <ngb-tab title="Datos principales">
@@ -354,7 +354,7 @@
                                 </div>
                             </div>
                         </div>
-                        <form #depositForm="ngForm" (ngSubmit)="addDeposit(depositForm)">
+                        <form (ngSubmit)="addDeposit(depositForm)">
                             <div class="row">
                                 <div class="form-group col-md-10">
                                     <label for="deposit" class="control-label">Agregar Depósito:</label>
@@ -399,7 +399,7 @@
                             <tfoot>
                             </tfoot>
                         </table>
-                        <form #locationForm="ngForm" (ngSubmit)="addLocation(locationForm)">
+                        <form (ngSubmit)="addLocation(locationForm)">
                             <div class="row">
                                 <div class="form-group col-md-10">
                                     <label for="location" class="control-label">Agregar Ubicación:</label>
@@ -465,7 +465,7 @@
                 </ngb-tab>
                 <ngb-tab title="Campos Personalizados">
                     <ng-template ngbTabContent>
-                        <form #otherFieldForm="ngForm" (ngSubmit)="addOtherField(otherFieldForm)">
+                        <form (ngSubmit)="addOtherField(otherFieldForm)">
                             <div class="row">
                                 <div class="form-group col-md-5">
                                     <label for="articleField" class="control-label">Campo</label>
@@ -586,7 +586,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <form #pictureForm="ngForm" (ngSubmit)="addPicture(pictureForm)">
+                                <form (ngSubmit)="addPicture(pictureForm)">
                                     <div class="row">
                                         <div class="form-group col-md-10">
                                             <label for="sel"> Agregar Imagenes:</label>

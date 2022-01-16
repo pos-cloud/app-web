@@ -10,7 +10,7 @@
             {{alertMessage}}
         </ngb-alert>
     </div>
-    <form [formGroup]="galleryForm" #addGalleryForm="ngForm" (ngSubmit)="addGallery()" autocomplete="off">
+    <form [formGroup]="galleryForm" (ngSubmit)="addGallery()" autocomplete="off">
         <div class="modal-body">
             <ngb-tabset [orientation]="orientation">
                 <ngb-tab title="Datos principales">
@@ -66,7 +66,7 @@
                 <ngb-tab title="Recursos">
                     <ng-template ngbTabContent>
                         <div class="row tab-content">
-                            <form #resourceForm="ngForm" (ngSubmit)="addResource(resourceForm)">
+                            <form (ngSubmit)="addResource(resourceForm)">
                                 <div class="row">
                                     <div class="form-group col-md-7">
                                         <label for="resource" class="control-label">Recurso:</label>

@@ -10,7 +10,7 @@
 			{{alertMessage}}
 		</ngb-alert>
 	</div>
-	<form [formGroup]="transferForm" #formTransfer="ngForm" (ngSubmit)="selectTransfer()" autocomplete="off">
+	<form [formGroup]="transferForm" (ngSubmit)="selectTransfer()" autocomplete="off">
 		<div class="modal-body">
       <div *ngIf="op === 'transfer'" class="row">
         <div class="form-group col-md-6">

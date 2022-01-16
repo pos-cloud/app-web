@@ -49,7 +49,7 @@ export class ReportKardexComponent implements OnInit {
 
   public title = 'Kardex de Producto';
   public columns: any[];
-  @ViewChild(ExportExcelComponent, { static: false }) exportExcelComponent: ExportExcelComponent;
+  @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
   public orderTerm: string[] = ['transaction.endDate'];
   public currentPage: number = 1;
   public itemsPerPage = 5;

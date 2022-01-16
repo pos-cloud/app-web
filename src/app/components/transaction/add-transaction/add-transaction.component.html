@@ -10,7 +10,7 @@
 			{{alertMessage}}
 		</ngb-alert>
 	</div>
-	<form [formGroup]="transactionForm" #formAddTransaction="ngForm" (ngSubmit)="addTransaction()" autocomplete="off">
+	<form [formGroup]="transactionForm" (ngSubmit)="addTransaction()" autocomplete="off">
 		<div class="modal-body">
 			<div class="row" *ngIf="transaction && transaction.type && transaction.type.requestCompany">
 				<div class="form-group col-md-12">

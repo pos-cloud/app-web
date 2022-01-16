@@ -29,8 +29,8 @@ export class ViewReportComponent implements OnInit {
     private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
 
     // EXCEL
-    @ViewChild(DatatableComponent, { static: false }) datatableComponent: DatatableComponent;
-    @ViewChild(ExportExcelComponent, { static: false }) exportExcelComponent: ExportExcelComponent;
+    @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
+    @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
 
     constructor(
         public _service: ReportService,

@@ -45,7 +45,7 @@ export class DatatableComponent {
   @Input() _service: any;
 
   // EXCEL
-  @ViewChild(ExportExcelComponent, { static: false }) exportExcelComponent: ExportExcelComponent;
+  @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
 
   constructor(
     private _title: Title,

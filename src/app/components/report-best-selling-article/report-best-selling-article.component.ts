@@ -62,7 +62,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
     public title: string;
     private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
     private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
-    @ViewChild(ExportExcelComponent, { static: false }) exportExcelComponent: ExportExcelComponent;
+    @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
     private subscription: Subscription = new Subscription();
 
 

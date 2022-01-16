@@ -252,7 +252,7 @@ export class ListChecksComponent implements OnInit {
     private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
     public sort = { "expirationDate": 1 };
     public timezone = "-03:00";
-    @ViewChild(ExportExcelComponent, { static: false }) exportExcelComponent: ExportExcelComponent;
+    @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
     public items: any[] = new Array();
 
     constructor(

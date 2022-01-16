@@ -10,7 +10,7 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <form [formGroup]="cancellationTypeForm" #formCancellationType="ngForm" (ngSubmit)="addCancellationType()" autocomplete="off">
+  <form [formGroup]="cancellationTypeForm" (ngSubmit)="addCancellationType()" autocomplete="off">
     <div class="modal-body">
       <ngb-tabset [orientation]="orientation">
         <ngb-tab title="Datos principales">

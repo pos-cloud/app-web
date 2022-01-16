@@ -95,7 +95,7 @@ export class ReportDetailsLedgerComponent implements OnInit {
 		}
 	];
     // EXCEL
-	@ViewChild(ExportExcelComponent, { static: false }) exportExcelComponent: ExportExcelComponent;
+	@ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
 
     constructor(
         public _service: AccountSeatService,

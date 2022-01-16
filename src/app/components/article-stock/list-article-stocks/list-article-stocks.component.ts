@@ -46,7 +46,7 @@ export class ListArticleStocksComponent implements OnInit {
     public currentPage: number = 1;
     public sort = { "realStock": -1 };
     public columns = attributes;
-    @ViewChild(ExportExcelComponent, { static: false }) exportExcelComponent: ExportExcelComponent;
+    @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
     private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
     private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
     public title = "Inventario";

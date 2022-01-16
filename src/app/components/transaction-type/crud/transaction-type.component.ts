@@ -263,7 +263,7 @@ export class TransactionTypeComponent implements OnInit {
         return merge(debouncedText$, inputFocus$).pipe(
             tap(() => this.loading = true),
             switchMap(async term => {
-                return optionalAFIP2.default
+                return false
             }),
             tap(() => this.loading = false),
         )

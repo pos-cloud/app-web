@@ -10,7 +10,7 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <form [formGroup]="movementOfArticleForm" #formAddMovementOfArticle="ngForm" (ngSubmit)="addMovementOfArticle()"
+  <form [formGroup]="movementOfArticleForm" (ngSubmit)="addMovementOfArticle()"
     autocomplete="off">
     <div class="modal-body">
       <div class="row" *ngIf="(config$ | async) as config">

@@ -14,7 +14,7 @@
             </div>
         </div>
         <div class="card-block">
-            <form [formGroup]="configFormCompany" #formAddConfig="ngForm" (ngSubmit)="addConfigCompany()"
+            <form [formGroup]="configFormCompany" (ngSubmit)="addConfigCompany()"
                 autocomplete="off">
                 <div class="row">
                     <div class="form-group col-md-2">
@@ -230,7 +230,7 @@
     <div class="card ">
         <div class="card-header">Email</div>
         <div class='card-block'>
-            <form [formGroup]="configFormEmail" #formAddEmail="ngForm" (ngSubmit)="addConfigEmail()" autocomplete="off">
+            <form [formGroup]="configFormEmail" (ngSubmit)="addConfigEmail()" autocomplete="off">
                 <div class="row">
                     <div class="form-group col-md-12">
                         <div class="input-group">
@@ -324,7 +324,7 @@
     <div class="card ">
         <div class="card-header">Sistema</div>
         <div class='card-block'>
-            <form [formGroup]="configFormSystem" #formAddConfigSystem="ngForm" (ngSubmit)="addConfigSystem()"
+            <form [formGroup]="configFormSystem" (ngSubmit)="addConfigSystem()"
                 autocomplete="off">
                 <div class="row">
                     <div class="form-group col-md-12">

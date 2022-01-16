@@ -10,7 +10,7 @@
 			{{alertMessage}}
 		</ngb-alert>
 	</div>
-	<form [formGroup]="sendEmailForm" #formSendEmail="ngForm" (ngSubmit)="sendEmail()" autocomplete="off">
+	<form [formGroup]="sendEmailForm" (ngSubmit)="sendEmail()" autocomplete="off">
 		<div class="modal-body">
 			<div class = "row">
 				<label for="emails" class="control-label">Destinatarios:</label>

@@ -25,7 +25,7 @@ export class AutocompleteComponent implements AfterViewInit {
 
   @Input() adressType: string;
   @Output() setAddress: EventEmitter<any> = new EventEmitter();
-  @ViewChild("addresstext", { static: false }) addresstext: any;
+  @ViewChild("addresstext") addresstext: any;
   @Input("shipmentMethod") shipmentMethod: ShipmentMethod;
   @Input() autocompleteInput: string;
   public loading: boolean = false;

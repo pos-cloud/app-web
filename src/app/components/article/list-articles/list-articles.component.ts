@@ -52,7 +52,7 @@ export class ListArticlesComponent implements OnInit {
   public apiURL = Config.apiURL;
   public timezone = "-03:00";
   public itemsPerPage = 10;
-  @ViewChild(ExportExcelComponent, { static: false })
+  @ViewChild(ExportExcelComponent)
   exportExcelComponent: ExportExcelComponent;
   public roundNumber = new RoundNumberPipe();
   public articleType: Type;

@@ -28,7 +28,7 @@ import { ArticleService } from '../../article/article.service';
 import { MovementOfCashService } from '../../movement-of-cash/movement-of-cash.service';
 
 //Pipes
-import { CurrencyPipe, DeprecatedDecimalPipe } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 import { DateFormatPipe } from '../../../main/pipes/date-format.pipe';
 import { RoundNumberPipe } from '../../../main/pipes/round-number.pipe';
 import { CashBox } from '../../cash-box/cash-box';
@@ -1183,7 +1183,7 @@ export class PrintComponent implements OnInit {
 
         this.loading = true;
         this.showMessage("Imprimiendo, Espere un momento...", 'info', false);
-        let decimalPipe = new DeprecatedDecimalPipe('es-AR');
+        let decimalPipe = new CurrencyPipe('es-AR');
 
         //Cabecera del ticket
         var margin = 5;
@@ -1440,7 +1440,7 @@ export class PrintComponent implements OnInit {
 
         this.loading = true;
         this.showMessage("Imprimiendo, Espere un momento...", 'info', false);
-        let decimalPipe = new DeprecatedDecimalPipe('es-AR');
+        let decimalPipe = new CurrencyPipe('es-AR');
 
         let margin = 8;
 

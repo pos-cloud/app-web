@@ -46,7 +46,7 @@ export class ListReportsComponent {
   }];
 
   // EXCEL
-  @ViewChild(DatatableComponent, { static: false }) datatableComponent: DatatableComponent;
+  @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
   constructor(
     public _service: ReportService,

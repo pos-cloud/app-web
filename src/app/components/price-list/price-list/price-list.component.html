@@ -10,7 +10,7 @@
             {{alertMessage}}
         </ngb-alert>
     </div>
-    <form [formGroup]="priceListForm" #addPriceListForm="ngForm" (ngSubmit)="addPriceList()" autocomplete="off">
+    <form [formGroup]="priceListForm" (ngSubmit)="addPriceList()" autocomplete="off">
         <div class="modal-body">
             <ngb-tabset [orientation]="orientation">
                 <ngb-tab title="Datos principales">
@@ -69,7 +69,7 @@
                 <ngb-tab [disabled]="!viewRules" title="Reglas Especiales">
                     <ng-template ngbTabContent>
                         <div class="row tab-content">
-                            <form #ruleForm="ngForm" (ngSubmit)="addRule(ruleForm)">
+                            <form (ngSubmit)="addRule(ruleForm)">
                                 <div class="row">
                                     <div class="form-group col-md-4">
                                         <label class="control-label">Rubro:</label>
@@ -153,8 +153,7 @@
                     <ng-template ngbTabContent>
                         <div class="row tab-content">
                             <div class="col-md-12">
-
-                                <form #exceptionForm="ngForm" (ngSubmit)="addException(exceptionForm)">
+                                <form (ngSubmit)="addException(exceptionForm)">
                                     <div class="row">
                                         <div class="form-group col-md-8">
                                             <ng-template #rtArticles let-r="result" let-t="term">

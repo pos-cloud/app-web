@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -266,6 +266,7 @@ const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", o
 import { APP_INITIALIZER, ErrorHandler } from "@angular/core";
 import { Router } from "@angular/router";
 import * as Sentry from "@sentry/angular";
+import { CommonModule } from '@angular/common';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -577,6 +578,7 @@ export function createTranslateLoader(http: HttpClient) {
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule.forRoot(_routes, { useHash: true }),
@@ -621,9 +623,10 @@ export function createTranslateLoader(http: HttpClient) {
       }),
     },
     {
-      provide: Sentry.TraceService,
-      deps: [Router],
-    },
+    provide: Sentry.TraceService,
+    deps: [Router],
+    useValue: undefined
+},
     {
       provide: APP_INITIALIZER,
       useFactory: () => () => {},
@@ -691,6 +694,10 @@ export function createTranslateLoader(http: HttpClient) {
     PushNotificationsService,
     MercadopagoService,
     MeliService
+  ],
+  schemas: [
+    CUSTOM_ELEMENTS_SCHEMA,
+    NO_ERRORS_SCHEMA
   ],
   bootstrap: [AppComponent]
 })

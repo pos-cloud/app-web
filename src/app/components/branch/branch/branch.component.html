@@ -21,7 +21,7 @@
             {{alertMessage}}
         </ngb-alert>
     </div>
-    <form [formGroup]="branchForm" #formCancellationType="ngForm" (ngSubmit)="addBranch()" autocomplete="off">
+    <form [formGroup]="branchForm" (ngSubmit)="addBranch()" autocomplete="off">
         <div class="modal-body">
             <ngb-tabset [orientation]="orientation">
                 <ngb-tab title="Datos principales">

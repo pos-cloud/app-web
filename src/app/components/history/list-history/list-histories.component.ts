@@ -40,7 +40,7 @@ export class ListHistoriesComponent {
   }];
 
   // EXCEL
-  @ViewChild(DatatableComponent, { static: false }) datatableComponent: DatatableComponent;
+  @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
   private subscription: Subscription = new Subscription();
 
   constructor(
