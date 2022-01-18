@@ -24,8 +24,12 @@ import { CurrencyPipe } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { Config } from '../../../app.config';
-import { ConfigService } from 'app/components/config/config.service';
 import { AddArticleStockComponent } from '../article-stock/add-article-stock.component';
+import { BranchService } from 'app/components/branch/branch.service';
+import { DepositService } from 'app/components/deposit/deposit.service';
+import Resulteable from 'app/util/Resulteable';
+import { Branch } from 'app/components/branch/branch';
+import { Deposit } from 'app/components/deposit/deposit';
 
 @Component({
     selector: 'app-list-article-stocks',
@@ -37,49 +41,67 @@ import { AddArticleStockComponent } from '../article-stock/add-article-stock.com
 
 export class ListArticleStocksComponent implements OnInit {
 
-    // TABLA
-    public listTitle: string;
-    public orderTerm: string[] = ["-realStock"];
-    public totalItems: number = 0;
-    public items: any[] = new Array();
-    public itemsPerPage = 10;
-    public currentPage: number = 1;
-    public sort = { "realStock": -1 };
-    public columns = attributes;
     @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
+    @Output() eventAddItem: EventEmitter<ArticleStock> = new EventEmitter<ArticleStock>();
+
+    private subscription: Subscription = new Subscription();
     private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
     private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
-    public title = "Inventario";
-    public articleStocks: ArticleStock[] = new Array();
-    public priceLists: PriceList[] = new Array();
-    public priceListId: string;
-    public alertMessage: string = '';
-    public userType: string;
-    public propertyTerm: string;
-    public areFiltersVisible: boolean = false;
-    public loading: boolean = false;
-    @Output() eventAddItem: EventEmitter<ArticleStock> = new EventEmitter<ArticleStock>();
-    private subscription: Subscription = new Subscription();
-    public printers: Printer[];
-    public database: string;
+    
+    listTitle: string;
+    orderTerm: string[] = ["-realStock"];
+    totalItems: number = 0;
+    items: any[] = new Array();
+    itemsPerPage = 10;
+    currentPage: number = 1;
+    sort = { realStock: -1 };
+    columns = attributes;
+    title = 'Inventario';
+    articleStocks: ArticleStock[] = new Array();
+    priceLists: PriceList[] = new Array();
+    branches: Branch[] = new Array();
+    branchesSelected: Branch[] = new Array();
+    deposits: Deposit[] = new Array();
+    depositsSelected: Deposit[] = new Array();
+    priceListId: string;
+    alertMessage: string = '';
+    userType: string;
+    propertyTerm: string;
+    areFiltersVisible: boolean = false;
+    loading: boolean = false;
+    printers: Printer[];
+    database: string;
 
-    public totalRealStock = 0;
-    public totalCost = 0;
-    public totalTotal = 0;
+    totalRealStock = 0;
+    totalCost = 0;
+    totalTotal = 0;
 
-    public filters: any[];
-    public filterValue: string;
+    filters: any[];
+    filterValue: string;
+
+    dropdownSettings = {
+        singleSelection: true,
+        defaultOpen: false,
+        idField: "_id",
+        textField: "name",
+        selectAllText: "Select All",
+        unSelectAllText: "UnSelect All",
+        enableCheckAll: true,
+        itemsShowLimit: 3,
+        allowSearchFilter: true
+    }
 
     constructor(
         private _articleStockService: ArticleStockService,
         private _priceList: PriceListService,
         private _router: Router,
-        public _modalService: NgbModal,
-        public _userService: UserService,
-        public alertConfig: NgbAlertConfig,
         private _toastr: ToastrService,
-        private _configService: ConfigService,
-        private _printerService: PrinterService
+        private _printerService: PrinterService,
+        private _userService: UserService,
+        private _branchService: BranchService,
+        private _depositService: DepositService,
+        private _modalService: NgbModal,
+        public alertConfig: NgbAlertConfig,
     ) {
         this.filters = new Array();
         for (let field of this.columns) {
@@ -98,118 +120,137 @@ export class ListArticleStocksComponent implements OnInit {
         this.getPriceList()
         let pathLocation: string[] = this._router.url.split('/');
         this.userType = pathLocation[1];
+        this.getBranches();
+    }
+
+    refresh(): void {
         this.getItems();
     }
 
-    public refresh(): void {
-        this.getItems();
-    }
-
-    public drop(event: CdkDragDrop<string[]>): void {
+    drop(event: CdkDragDrop<string[]>): void {
         moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
     }
 
-    public exportItems(): void {
+    exportItems(): void {
         this.itemsPerPage = 0;
         this.getItems();
     }
 
-    public getItems(): void {
+    onBranchSelect(branch: Branch) {
+        this.depositsSelected = new Array();
+        this.getDeposits(branch._id);
+    }
 
-        this.loading = true;
+    getItems(): void {
+        try {
+            this.loading = true;
 
-        // FILTRAMOS LA CONSULTA
-        let match = `{`;
-        for (let i = 0; i < this.columns.length; i++) {
-            if (this.columns[i].visible || this.columns[i].required) {
-                let value = this.filters[this.columns[i].name];
-                if (value && value != "" && value !== {}) {
-                    if (this.columns[i].defaultFilter) {
-                        match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
-                    } else {
-                        match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
-                    }
-                    if (i < this.columns.length - 1) {
-                        match += ',';
+            if(this.branchesSelected.length === 0) { throw new Error('Debe seleccionar una sucursal.'); }
+
+            if(this.depositsSelected.length === 0) { throw new Error('Debe seleccionar un depósito.'); }
+
+            // FILTRAMOS LA CONSULTA
+            let match = `{`;
+            for (let i = 0; i < this.columns.length; i++) {
+                if (this.columns[i].visible || this.columns[i].required) {
+                    let value = this.filters[this.columns[i].name];
+                    if (value && value != "" && value !== {}) {
+                        if (this.columns[i].defaultFilter) {
+                            match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
+                        } else {
+                            match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
+                        }
+                        if (i < this.columns.length - 1) {
+                            match += ',';
+                        }
                     }
                 }
             }
-        }
-
-        if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
-
-        match += `}`;
-
-        match = JSON.parse(match);
-
-        // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-        let project = `{`;
-        let j = 0;
-        for (let i = 0; i < this.columns.length; i++) {
-            if (this.columns[i].visible || this.columns[i].required) {
-                if (j > 0) {
-                    project += `,`;
-                }
-                j++;
-                if (this.columns[i].project === null) {
-					project += `"${this.columns[i].name}": 1`;
-				} else {
-					project += `"${this.columns[i].name}": ${this.columns[i].project}`;
-				}
+    
+            if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
+    
+            match += `}`;
+    
+            match = JSON.parse(match);
+    
+            let branchesAux = [];
+    
+            if (this.branchesSelected && this.branchesSelected.length > 0) {
+                this.branchesSelected.forEach(branch => {
+                    branchesAux.push({ $oid: branch._id });
+                });
+                match['branch'] = { $in: branchesAux }
             }
-        }
-        project += `}`;
-
-        project = JSON.parse(project);
-
-        // AGRUPAMOS EL RESULTADO
-        let group = {
-            _id: null,
-            count: { $sum: 1 },
-            items: { $push: "$$ROOT" }
-        };
-
-        let page = 0;
-        if (this.currentPage != 0) {
-            page = this.currentPage - 1;
-        }
-        let skip = !isNaN(page * this.itemsPerPage) ?
-            (page * this.itemsPerPage) :
-            0 // SKIP
-        let limit = this.itemsPerPage;
-
-        this.subscription.add(this._articleStockService.getArticleStocksV2(
-            project, // PROJECT
-            match, // MATCH
-            this.sort, // SORT
-            group, // GROUP
-            limit, // LIMIT
-            skip // SKIP
-        ).subscribe(
-            result => {
-                this.loading = false;
-                if (result && result[0] && result[0].items) {
-                    if (this.itemsPerPage === 0) {
-                        this.exportExcelComponent.items = result[0].items;
-                        this.exportExcelComponent.export();
-                        this.itemsPerPage = 10;
-                        this.getItems();
-                    } else {
-                        this.items = result[0].items;
-                        this.totalItems = result[0].count;
-                        this.getSum();
+    
+            // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+            let project = `{`;
+            let j = 0;
+            for (let i = 0; i < this.columns.length; i++) {
+                if (this.columns[i].visible || this.columns[i].required) {
+                    if (j > 0) {
+                        project += `,`;
                     }
-                } else {
-                    this.items = new Array();
+                    j++;
+                    if (this.columns[i].project === null) {
+                        project += `"${this.columns[i].name}": 1`;
+                    } else {
+                        project += `"${this.columns[i].name}": ${this.columns[i].project}`;
+                    }
+                }
+            }
+            project += `}`;
+    
+            project = JSON.parse(project);
+    
+            // AGRUPAMOS EL RESULTADO
+            let group = {
+                _id: null,
+                count: { $sum: 1 },
+                items: { $push: "$$ROOT" }
+            };
+    
+            let page = 0;
+            if (this.currentPage != 0) {
+                page = this.currentPage - 1;
+            }
+            let skip = !isNaN(page * this.itemsPerPage) ?
+                (page * this.itemsPerPage) :
+                0 // SKIP
+            let limit = this.itemsPerPage;
+    
+            this.subscription.add(this._articleStockService.getArticleStocksV2(
+                project, // PROJECT
+                match, // MATCH
+                this.sort, // SORT
+                group, // GROUP
+                limit, // LIMIT
+                skip // SKIP
+            ).subscribe(
+                result => {
+                    this.loading = false;
+                    if (result && result[0] && result[0].items) {
+                        if (this.itemsPerPage === 0) {
+                            this.exportExcelComponent.items = result[0].items;
+                            this.exportExcelComponent.export();
+                            this.itemsPerPage = 10;
+                            this.getItems();
+                        } else {
+                            this.items = result[0].items;
+                            this.totalItems = result[0].count;
+                            this.getSum();
+                        }
+                    } else {
+                        this.items = new Array();
+                        this.totalItems = 0;
+                    }
+                },
+                error => {
+                    this.showMessage(error._body, 'danger', false);
+                    this.loading = false;
                     this.totalItems = 0;
                 }
-            },
-            error => {
-                this.showMessage(error._body, 'danger', false);
-                this.loading = false;
-                this.totalItems = 0;
-            }
-        ));
+            ));
+        } catch(error) { this.showToast(error, 'danger'); }
     }
 
     public getSum(): any {
@@ -446,6 +487,24 @@ export class ListArticleStocksComponent implements OnInit {
         )
     }
 
+    public getBranches(): void {
+        this._branchService.getAll({ match: { operationType: { $ne: 'D' } }}).subscribe(
+            (result: Resulteable) => {
+                if(result.status === 200) this.branches = result.result;
+            },
+            error => this.showToast(error)
+        )
+    }
+
+    public getDeposits(branchId: string): void {
+        this._depositService.getAll({ match: { branch: { $oid: branchId }, operationType: { $ne: 'D' } }}).subscribe(
+            (result: Resulteable) => {
+                if(result.status === 200) this.deposits = result.result;
+            },
+            error => this.showToast(error)
+        )
+    }
+
     public ngOnDestroy(): void {
         this.subscription.unsubscribe();
     }
@@ -478,5 +537,6 @@ export class ListArticleStocksComponent implements OnInit {
                 this._toastr.success('', message);
                 break;
         }
+        this.loading = false;
     }
 }

@@ -4,6 +4,37 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
+  <div class="row container-filter">
+    <div class="col-md-2">
+      <label for="branch" class="control-label">
+          <b>{{'branch' | translate | capitalize}}</b>
+      </label>
+      <ng-multiselect-dropdown
+        [placeholder]="'branch' | translate"
+        [settings]="dropdownSettings"
+        [data]="branches"
+        [(ngModel)]="branchesSelected"
+        (onSelect)="onBranchSelect($event)"
+      ></ng-multiselect-dropdown>
+    </div>
+    <div class="col-md-2">
+      <label for="deposit" class="control-label">
+          <b>{{'deposit' | translate | capitalize}}</b>
+      </label>
+      <ng-multiselect-dropdown
+        [placeholder]="'deposit' | translate"
+        [settings]="dropdownSettings"
+        [data]="deposits"
+        [(ngModel)]="depositsSelected"
+      ></ng-multiselect-dropdown>
+    </div>
+    <div class="col-md-2" (click)="getItems()">
+        <label for="btn-action" class="control-label"><b>Acción:</b></label>
+        <span class="form-control btn-action center-content">
+            <i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar
+        </span>
+    </div>
+  </div>
   <div class="card  card-large">
     <div class="card-header">
       <span>{{title}}</span>
