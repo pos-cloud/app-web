@@ -79,7 +79,7 @@ export class LoginComponent implements OnInit {
     this.buildForm();
   }
 
-  ngAfterViewInit(): void {
+  ngAfterContentInit(): void {
     this.focusEvent.emit(true);
   }
 
