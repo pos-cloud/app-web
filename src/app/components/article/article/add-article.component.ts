@@ -336,7 +336,7 @@ export class AddArticleComponent implements OnInit {
         this.article.isWeigth = this.config.article.isWeigth.default;
         this.article.salesAccount = this.config.article.salesAccount.default;
         this.article.purchaseAccount = this.config.article.purchaseAccount.default;
-        this.article.allowSaleWithoutStock = this.config.article.allowSaleWithoutStock.default;
+        this.article.allowSaleWithoutStock = this.config.article.allowSaleWithoutStock.default || false;
       }
     );
 
