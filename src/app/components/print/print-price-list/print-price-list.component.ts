@@ -339,21 +339,21 @@ export class PrintPriceListComponent implements OnInit {
         var row = 8;
         let count = 0;
         var margin = 5;
-        this.doc.setFontType('bold');
+        this.doc.setFontType("",'bold');
 
         this.doc.setFontSize(12);
         if (this.config[0].companyFantasyName) {
             this.doc.text(this.config[0].companyFantasyName, 5, row);
         }
 
-        this.doc.setFontType('normal');
+        this.doc.setFontType("",'normal');
         row += 5;
         if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
             this.doc.text(this.config[0].companyIdentificationType.name + ":", margin, row);
             this.doc.text(this.config[0].companyIdentificationValue, 25, row);
         }
 
-        this.doc.setFontType('bold');
+        this.doc.setFontType("",'bold');
         this.centerText(margin, margin, 210, 0, row, "LISTA DE PRECIOS AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
 
         row += 3;
@@ -363,7 +363,7 @@ export class PrintPriceListComponent implements OnInit {
 
         if (this.articles && this.articles.length > 0) {
             for (let article of this.articles) {
-                this.doc.setFontType('blod')
+                this.doc.setFontType("",'blod')
                 if (article.picture !== 'default.jpg' && await this.getPicture(article.picture)) {
                     try {
                         this.doc.addImage(this.imageURL, 'JPEG', 15, row + 8, 60, 40);
@@ -490,21 +490,21 @@ export class PrintPriceListComponent implements OnInit {
 
                     var row = 8;
                     var margin = 5;
-                    this.doc.setFontType('bold');
+                    this.doc.setFontType("",'bold');
 
                     this.doc.setFontSize(12);
                     if (this.config[0].companyFantasyName) {
                         this.doc.text(this.config[0].companyFantasyName, 5, row);
                     }
 
-                    this.doc.setFontType('normal');
+                    this.doc.setFontType("",'normal');
                     row += 5;
                     if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
                         this.doc.text(this.config[0].companyIdentificationType.name + ":", margin, row);
                         this.doc.text(this.config[0].companyIdentificationValue, 25, row);
                     }
 
-                    this.doc.setFontType('bold');
+                    this.doc.setFontType("",'bold');
                     this.centerText(margin, margin, 210, 0, row, "LISTA DE PRECIOS AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
 
                     row += 3;
@@ -522,35 +522,35 @@ export class PrintPriceListComponent implements OnInit {
         this.loading = true;
         var row = 15;
         var margin = 5;
-        this.doc.setFontType('bold');
+        this.doc.setFontType("",'bold');
 
         this.doc.setFontSize(12);
         if (this.config[0].companyFantasyName) {
             this.doc.text(this.config[0].companyFantasyName, 5, row);
         }
 
-        this.doc.setFontType('normal');
+        this.doc.setFontType("",'normal');
         row += 5;
         if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
             this.doc.text(this.config[0].companyIdentificationType.name + ":", margin, row);
             this.doc.text(this.config[0].companyIdentificationValue, 25, row);
         }
 
-        this.doc.setFontType('bold');
+        this.doc.setFontType("",'bold');
         this.centerText(margin, margin, 210, 0, row, "LISTA DE PRECIOS AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
         row += 3;
         this.doc.line(0, row, 400, row);
 
         row += 5;
         // Encabezado de la tabla de Detalle de Productos
-        this.doc.setFontType('bold');
+        this.doc.setFontType("",'bold');
         this.doc.setFontSize(this.fontSizes.normal);
         this.doc.text("Código", 5, row);
         this.doc.text("Descripción", 30, row);
         this.doc.text("Marca", 100, row);
         this.doc.text("Rubro", 145, row);
         this.doc.text("Precio", 190, row);
-        this.doc.setFontType('normal');
+        this.doc.setFontType("",'normal');
 
         row += 3;
         this.doc.line(0, row, 400, row);
@@ -628,21 +628,21 @@ export class PrintPriceListComponent implements OnInit {
 
                     var row = 15;
                     var margin = 5;
-                    this.doc.setFontType('bold');
+                    this.doc.setFontType("",'bold');
 
                     this.doc.setFontSize(12);
                     if (this.config[0].companyFantasyName) {
                         this.doc.text(this.config[0].companyFantasyName, 5, row);
                     }
 
-                    this.doc.setFontType('normal');
+                    this.doc.setFontType("",'normal');
                     row += 5;
                     if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
                         this.doc.text(this.config[0].companyIdentificationType.name + ":", margin, row);
                         this.doc.text(this.config[0].companyIdentificationValue, 25, row);
                     }
 
-                    this.doc.setFontType('bold');
+                    this.doc.setFontType("",'bold');
                     this.centerText(margin, margin, 210, 0, row, "LISTA DE PRECIOS AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
 
                     row += 3;
@@ -650,14 +650,14 @@ export class PrintPriceListComponent implements OnInit {
                     row += 5;
 
                     // Encabezado de la tabla de Detalle de Productos
-                    this.doc.setFontType('bold');
+                    this.doc.setFontType("",'bold');
                     this.doc.setFontSize(this.fontSizes.normal);
                     this.doc.text("Código", 5, row);
                     this.doc.text("Descripción", 30, row);
                     this.doc.text("Marca", 100, row);
                     this.doc.text("Rubro", 140, row);
                     this.doc.text("Precio", 190, row);
-                    this.doc.setFontType('normal');
+                    this.doc.setFontType("",'normal');
 
                     row += 3;
                     this.doc.line(0, row, 400, row);

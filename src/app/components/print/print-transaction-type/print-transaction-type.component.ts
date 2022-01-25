@@ -422,7 +422,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                             if (field.font !== 'default') {
                                 this.doc.setFont(field.font)
                             }
-                            this.doc.setFontType(field.fontType)
+                            this.doc.setFontType("",field.fontType)
                             this.doc.setFontSize(field.fontSize)
                             this.doc.text(field.positionStartX, field.positionStartY, field.value)
                             break;
@@ -450,7 +450,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                             if (field.font !== 'default') {
                                 this.doc.setFont(field.font)
                             }
-                            this.doc.setFontType(field.fontType)
+                            this.doc.setFontType("",field.fontType)
                             this.doc.setFontSize(field.fontSize)
 
                             try {
@@ -467,7 +467,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                             if (field.font !== 'default') {
                                 this.doc.setFont(field.font)
                             }
-                            this.doc.setFontType(field.fontType)
+                            this.doc.setFontType("",field.fontType)
                             this.doc.setFontSize(field.fontSize)
 
                             try {
@@ -485,7 +485,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                             if (field.font !== 'default') {
                                 this.doc.setFont(field.font)
                             }
-                            this.doc.setFontType(field.fontType)
+                            this.doc.setFontType("",field.fontType)
                             this.doc.setFontSize(field.fontSize)
 
                             if (field.value.split('.')[0] === "movementOfArticle" && this.movementOfArticle) {
@@ -551,7 +551,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                             if (field.font !== 'default') {
                                 this.doc.setFont(field.font)
                             }
-                            this.doc.setFontType(field.fontType)
+                            this.doc.setFontType("",field.fontType)
                             this.doc.setFontSize(field.fontSize)
                             if (row < field.positionStartY) {
                                 row = field.positionStartY
@@ -581,7 +581,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                             if (field.font !== 'default') {
                                 this.doc.setFont(field.font)
                             }
-                            this.doc.setFontType(field.fontType)
+                            this.doc.setFontType("",field.fontType)
                             this.doc.setFontSize(field.fontSize)
                             if (row < field.positionStartY) {
                                 row = field.positionStartY

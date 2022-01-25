@@ -142,21 +142,21 @@ export class PrintArticlesStockComponent implements OnInit {
 
     var row = 10;
     var margin = 5;
-    this.doc.setFontType('bold');
+    this.doc.setFontType("",'bold');
 
     this.doc.setFontSize(12);
     if (this.config['companyName']) {
       this.doc.text(this.config['companyName'], 5, row);
     }
 
-    this.doc.setFontType('normal');
+    this.doc.setFontType("",'normal');
     row += 5;
     if (this.config['companyIdentificationType'] && this.config['companyIdentificationValue']) {
       this.doc.text(this.config['companyIdentificationType']['name']  + ":", margin, row);
       this.doc.text(this.config['companyIdentificationValue'], 25, row);
     }
 
-    this.doc.setFontType('bold');
+    this.doc.setFontType("",'bold');
     this.doc.text("INVENTARIO AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY') ,80,row);
 
     row += 3;
@@ -164,14 +164,14 @@ export class PrintArticlesStockComponent implements OnInit {
     row += 5;
 
     // Encabezado de la tabla de Detalle de Productos
-    this.doc.setFontType('bold');
+    this.doc.setFontType("",'bold');
     this.doc.setFontSize(this.fontSizes.normal);
     this.doc.text("Código", 5, row);
     this.doc.text("Descripción", 40, row);
     this.doc.text("Marca", 110, row);
     this.doc.text("Rubro", 165, row);
     this.doc.text("Stock", 195, row);
-    this.doc.setFontType('normal');
+    this.doc.setFontType("",'normal');
 
     row += 3;
     this.doc.line(0, row, 400, row);
@@ -205,21 +205,21 @@ export class PrintArticlesStockComponent implements OnInit {
 
           var row = 15;
           var margin = 5;
-          this.doc.setFontType('bold');
+          this.doc.setFontType("",'bold');
 
           this.doc.setFontSize(12);
           if (this.config['companyName']) {
             this.doc.text(this.config['companyName'], 5, row);
           }
 
-          this.doc.setFontType('normal');
+          this.doc.setFontType("",'normal');
           row += 5;
           if (this.config['companyIdentificationType'] && this.config['companyIdentificationValue']) {
             this.doc.text(this.config['companyIdentificationType']['name']  + ":", margin, row);
             this.doc.text(this.config['companyIdentificationValue'], 25, row);
           }
 
-          this.doc.setFontType('bold');
+          this.doc.setFontType("",'bold');
           this.doc.text("INVENTARIO AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY') ,80,row);
 
           row += 3;
@@ -227,14 +227,14 @@ export class PrintArticlesStockComponent implements OnInit {
           row += 5;
 
           // Encabezado de la tabla de Detalle de Productos
-          this.doc.setFontType('bold');
+          this.doc.setFontType("",'bold');
           this.doc.setFontSize(this.fontSizes.normal);
           this.doc.text("Código", 5, row);
           this.doc.text("Descripción", 40, row);
           this.doc.text("Marca", 110, row);
           this.doc.text("Rubro", 165, row);
           this.doc.text("Stock", 195, row);
-          this.doc.setFontType('normal');
+          this.doc.setFontType("",'normal');
 
           row += 3;
           this.doc.line(0, row, 400, row);

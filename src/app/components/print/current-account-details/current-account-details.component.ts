@@ -802,12 +802,12 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
             }
 
-            this.doc.setFontType("bold");
+            this.doc.setFontType("","bold");
             this.doc.text(120, row, "Total");
             this.doc.textEx("$ " + this.roundNumber.transform(acumulado).toFixed(2).toString(), 180, row, 'right', 'middle');
 
 
-            this.doc.setFontType("normal");
+            this.doc.setFontType("","normal");
             row += 5;
             if (row > 220) {
                 page += 1;
@@ -1343,12 +1343,12 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     }
                 }
 
-                this.doc.setFontType("bold");
+                this.doc.setFontType("","bold");
                 this.doc.text(120, row, "Total");
                 this.doc.textEx("$ " + this.roundNumber.transform(this.items[i].price).toFixed(2).toString(), 155, row, 'right', 'middle');
                 total = total + this.items[i].price
 
-                this.doc.setFontType("normal");
+                this.doc.setFontType("","normal");
                 row += 5;
                 if (row > 220) {
                     page += 1;
