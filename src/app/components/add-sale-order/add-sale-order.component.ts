@@ -1432,7 +1432,7 @@ export class AddSaleOrderComponent {
                 }
                 let oldMovementOfArticle: {} = {};
                 oldMovementOfArticle = Object.assign(oldMovementOfArticle, movementOfArticle);
-                if (!movementOfArticle.movementParent) {
+                if (!movementOfArticle.movementParent || (movementOfArticle.movementParent && movementOfArticle.isOptional)) {
                     this.transaction.discountPercent = this.roundNumber.transform(this.transaction.discountPercent, 6);
                     if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
                         movementOfArticle = await this.recalculateSalePrice(movementOfArticle);
