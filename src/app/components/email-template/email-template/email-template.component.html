@@ -14,10 +14,11 @@
     </div>
     <form [formGroup]="emailTemplateForm" (ngSubmit)="addEmailTemplate()" autocomplete="off">
         <div class="modal-body">
-            <ngb-tabset [orientation]="orientation">
-                <ngb-tab title="Datos principales">
-                    <ng-template ngbTabContent>
-                        <div class="row tab-content">
+            <ul ngbNav #nav="ngbNav" class="nav-tabs" [orientation]="orientation">
+                <li ngbNavItem>
+                    <a ngbNavLink>Datos principales</a>
+                    <ng-template ngbNavContent>
+                        <div class="row">
                             <div class="form-group col-md-12">
                                 <div class="row">
                                     <div class="form-group col-md-12">
@@ -41,10 +42,11 @@
                             </div>
                         </div>
                     </ng-template>
-                </ngb-tab>
-                <ngb-tab *ngIf="this.operation !== 'add'" title="Auditoría">
-                    <ng-template ngbTabContent>
-                        <div class="row tab-content">
+                </li>
+                <li ngbNavItem>
+                    <a ngbNavLink *ngIf="this.operation !== 'add'">Auditoría</a>
+                    <ng-template ngbNavContent>
+                        <div class="row">
                             <div class="form-group col-md-12">
                                 <div class="row">
                                     <div class="form-group col-md-6">
@@ -75,8 +77,9 @@
                             </div>
                         </div>
                     </ng-template>
-                </ngb-tab>
-            </ngb-tabset>
+                </li>
+            </ul>
+            <div [ngbNavOutlet]="nav" class="mt-2"></div>
         </div>
         <div class="modal-footer" *ngIf="operation !== 'view'">
             <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>

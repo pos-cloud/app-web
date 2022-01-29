@@ -12,10 +12,11 @@
     </div>
     <form [formGroup]="priceListForm" (ngSubmit)="addPriceList()" autocomplete="off">
         <div class="modal-body">
-            <ngb-tabset [orientation]="orientation">
-                <ngb-tab title="Datos principales">
-                    <ng-template ngbTabContent>
-                        <div class="row tab-content">
+            <ul ngbNav #nav="ngbNav" class="nav-tabs" [orientation]="orientation">
+                <li ngbNavItem>
+                    <a ngbNavLink>Datos principales</a>
+                    <ng-template ngbNavContent>
+                        <div class="row">
                             <div class="form-group col-md-12">
                                 <div class="row">
                                     <div class="form-group col-md-12">
@@ -52,23 +53,24 @@
                                         </div>
                                     </div>
                                     <div class="form-group col-md-6 center-content">
-										<label class="form-check-label" for="Opcional">
-											¿Es asignada automaticamente al dar de alta un cliente?
-										</label>
-										<div class="form-check input-group center-content">
-											<input [(ngModel)]="checkboxModel" class="form-check-input big-checkbox"
-												type="checkbox" formControlName="default" value="" id="default"
-												name="default" [disabled]="readonly">
-										</div>
-									</div>
+                                        <label class="form-check-label" for="Opcional">
+                                            ¿Es asignada automaticamente al dar de alta un cliente?
+                                        </label>
+                                        <div class="form-check input-group center-content">
+                                            <input [(ngModel)]="checkboxModel" class="form-check-input big-checkbox"
+                                                type="checkbox" formControlName="default" value="" id="default"
+                                                name="default" [disabled]="readonly">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </ng-template>
-                </ngb-tab>
-                <ngb-tab [disabled]="!viewRules" title="Reglas Especiales">
-                    <ng-template ngbTabContent>
-                        <div class="row tab-content">
+                </li>
+                <li ngbNavItem [disabled]="!viewRules">
+                    <a ngbNavLink>Reglas Especiales</a>
+                    <ng-template ngbNavContent>
+                        <div class="row">
                             <form (ngSubmit)="addRule(ruleForm)">
                                 <div class="row">
                                     <div class="form-group col-md-4">
@@ -84,7 +86,8 @@
                                     <div class="form-group col-md-4">
                                         <label for="make" class="control-label">Marca</label>
                                         <select class="form-control" ngModel name="make">
-                                            <option [ngValue]="null" [disabled]="readonly"> Todas las marcas</option>
+                                            <option [ngValue]="null" [disabled]="readonly"> Todas las marcas
+                                            </option>
                                             <option *ngFor="let make of makes" [ngValue]="make._id"
                                                 [disabled]="readonly">
                                                 {{make.description}}</option>
@@ -148,10 +151,11 @@
                             </div>
                         </div>
                     </ng-template>
-                </ngb-tab>
-                <ngb-tab title="Excepciones">
-                    <ng-template ngbTabContent>
-                        <div class="row tab-content">
+                </li>
+                <li ngbNavItem>
+                    <a ngbNavLink>Excepciones</a>
+                    <ng-template ngbNavContent>
+                        <div class="row">
                             <div class="col-md-12">
                                 <form (ngSubmit)="addException(exceptionForm)">
                                     <div class="row">
@@ -210,10 +214,11 @@
                             </div>
                         </div>
                     </ng-template>
-                </ngb-tab>
-                <ngb-tab *ngIf="this.operation !== 'add'" title="Auditoría">
-                    <ng-template ngbTabContent>
-                        <div class="row tab-content">
+                </li>
+                <li ngbNavItem>
+                    <a ngbNavLink *ngIf="this.operation !== 'add'">Auditoría</a>
+                    <ng-template ngbNavContent>
+                        <div class="row">
                             <div class="form-group col-md-12">
                                 <div class="row">
                                     <div class="form-group col-md-6">
@@ -237,15 +242,17 @@
                                     <div class="form-group col-md-6">
                                         <label class="control-label">El día:</label>
                                         <label *ngIf="priceList.updateDate"
-                                            class="control-label"><b>{{priceList.updateDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
+                                            class="control-label"><b>{{priceList.updateDate | dateFormat:'DD/MM/YYYY
+                                                HH:mm:ss'}}</b></label>
                                         <label *ngIf="!priceList.updateDate" class="control-label"><b>-</b></label>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </ng-template>
-                </ngb-tab>
-            </ngb-tabset>
+                </li>
+            </ul>
+            <div [ngbNavOutlet]="nav" class="mt-2"></div>
         </div>
         <div class="modal-footer" *ngIf="operation !== 'view'">
             <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>

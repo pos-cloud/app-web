@@ -12,10 +12,11 @@
     </div>
     <form [formGroup]="companyForm" (ngSubmit)="addCompany()" autocomplete="off">
         <div class="modal-body">
-            <ngb-tabset [orientation]="orientation">
-                <ngb-tab title="Datos principales">
-                    <ng-template ngbTabContent>
-                        <div class="row tab-content">
+            <ul ngbNav #nav="ngbNav" class="nav-tabs" [orientation]="orientation">
+                <li ngbNavItem>
+                    <a ngbNavLink>Datos principales</a>
+                    <ng-template ngbNavContent>
+                        <div class="row">
                             <div class="form-group col-md-12">
                                 <div class="row">
                                     <div class="form-group col-md-6">
@@ -233,7 +234,8 @@
                                         <label for="gender" class="control-label">Género:</label>
                                         <select class="form-control" formControlName="gender">
                                             <option *ngFor="let gender of genders" [ngValue]="gender"
-                                                [disabled]="readonly">{{gender}} </option>
+                                                [disabled]="readonly">
+                                                {{gender}} </option>
                                         </select>
                                         <div *ngIf="formErrors.gender" class="alert alert-danger">
                                             {{ formErrors.gender }}
@@ -261,33 +263,37 @@
                             </div>
                         </div>
                     </ng-template>
-                </ngb-tab>
-                <ngb-tab *ngIf="operation != 'add'" title="Novedades">
-                    <ng-template ngbTabContent>
+                </li>
+                <li ngbNavItem>
+                    <a ngbNavLink *ngIf="operation != 'add'">Novedades</a>
+                    <ng-template ngbNavContent>
                         <app-company-news [company]="company"></app-company-news>
                     </ng-template>
-                </ngb-tab>
-                <ngb-tab *ngIf="operation != 'add'" title="Contacto">
-                    <ng-template ngbTabContent>
-                        <div class="row tab-content">
+                </li>
+                <li ngbNavItem>
+                    <a ngbNavLink *ngIf="operation != 'add'">Contacto</a>
+                    <ng-template ngbNavContent>
+                        <div class="row">
                             <div class="form-group col-md-12">
                                 <app-company-contact [company]="company"></app-company-contact>
                             </div>
                         </div>
                     </ng-template>
-                </ngb-tab>
-                <ngb-tab title="Campos Personalizados">
-                    <ng-template ngbTabContent>
-                        <div class="row tab-content">
+                </li>
+                <li ngbNavItem>
+                    <a ngbNavLink>Campos Personalizados</a>
+                    <ng-template ngbNavContent>
+                        <div class="row">
                             <div class="form-group col-md-12">
                                 <app-add-company-fields (eventAddCompanyFields)="addCompanyFields($event)"
                                     [fields]="otherFields"></app-add-company-fields>
                             </div>
                         </div>
                     </ng-template>
-                </ngb-tab>
-                <ngb-tab title="Direcciones">
-                    <ng-template ngbTabContent>
+                </li>
+                <li ngbNavItem>
+                    <a ngbNavLink>Direcciones</a>
+                    <ng-template ngbNavContent>
                         <div class="card-block table-responsive">
                             <table class="table table-striped">
                                 <thead>
@@ -314,10 +320,11 @@
                             </table>
                         </div>
                     </ng-template>
-                </ngb-tab>
-                <ngb-tab title="Configuración">
-                    <ng-template ngbTabContent>
-                        <div class="row tab-content">
+                </li>
+                <li ngbNavItem>
+                    <a ngbNavLink>Configuración</a>
+                    <ng-template ngbNavContent>
+                        <div class="row">
                             <div class="form-group col-md-12">
                                 <div class="row">
                                     <div class="form-group col-md-6">
@@ -423,8 +430,9 @@
                             </div>
                         </div>
                     </ng-template>
-                </ngb-tab>
-            </ngb-tabset>
+                </li>
+            </ul>
+            <div [ngbNavOutlet]="nav" class="mt-2"></div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>

@@ -12,9 +12,10 @@
     </div>
     <form [formGroup]="employeeForm" (ngSubmit)="addEmployee()" autocomplete="off">
         <div class="modal-body">
-            <ngb-tabset [orientation]="orientation">
-                <ngb-tab title="Datos">
-                    <ng-template ngbTabContent>
+            <ul ngbNav #nav="ngbNav" class="nav-tabs" [orientation]="orientation">
+                <li ngbNavItem>
+                    <a ngbNavLink>Datos</a>
+                    <ng-template ngbNavContent>
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label for="code" class="control-label">Legajo:</label>
@@ -28,14 +29,14 @@
                             </div>
                             <div class="form-group col-md-6">
                                 <ng-template #result let-r="result" let-t="term">
-                                  <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+                                    <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
                                 </ng-template>
                                 <label for="type">{{'type'| translate | capitalize}}:</label>
                                 <input id="type" type="text" class="form-control" formControlName="type" name="type"
-                                  [ngbTypeahead]="searchEmployeeTypes" [resultTemplate]="result" [inputFormatter]="formatterEmployeeTypes"
-                                  [readonly]="readonly" />
+                                    [ngbTypeahead]="searchEmployeeTypes" [resultTemplate]="result"
+                                    [inputFormatter]="formatterEmployeeTypes" [readonly]="readonly" />
                                 <div class="invalid-feedback" [style.display]="(formErrors['type'])? 'block': 'none'">
-                                  {{ formErrors['type'] }}
+                                    {{ formErrors['type'] }}
                                 </div>
                             </div>
                         </div>
@@ -52,11 +53,11 @@
                             </div>
                         </div>
                     </ng-template>
-                </ngb-tab>
-
-                <ngb-tab title="Auditoría">
-                    <ng-template ngbTabContent>
-                        <div class="row tab-content">
+                </li>
+                <li ngbNavItem>
+                    <a ngbNavLink>Auditoría</a>
+                    <ng-template ngbNavContent>
+                        <div class="row">
                             <div class="form-group col-md-12">
                                 <div class="row">
                                     <div class="form-group col-md-6">
@@ -80,7 +81,8 @@
                                     <div class="form-group col-md-6">
                                         <label class="control-label">El día:</label>
                                         <label *ngIf="employee.updateDate"
-                                            class="control-label"><b>{{employee.updateDate | dateFormat:'DD/MM/YYYY hh:mm:ss'}}</b></label>
+                                            class="control-label"><b>{{employee.updateDate | dateFormat:'DD/MM/YYYY
+                                                hh:mm:ss'}}</b></label>
                                         <label *ngIf="!employee.updateDate" class="control-label"><b>-</b></label>
                                     </div>
                                 </div>
@@ -93,8 +95,9 @@
                             </div>
                         </div>
                     </ng-template>
-                </ngb-tab>
-            </ngb-tabset>
+                </li>
+            </ul>
+            <div [ngbNavOutlet]="nav" class="mt-2"></div>
         </div>
         <div class="modal-footer" *ngIf="operation !== 'view'">
             <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>

@@ -1,43 +1,46 @@
 <div class="modal-header">
-	<h4 class="modal-title">Transporte</h4>
-	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
-	<span aria-hidden="true">&times;</span>
-	</button>
+  <h4 class="modal-title">Transporte</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
 </div>
 <section class="container-fluid">
-	<div class="center-content"  *ngIf="alertMessage !== ''">
-		<ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-			{{alertMessage}}
-		</ngb-alert>
-	</div>
-	<form [formGroup]="transportForm" (ngSubmit)="addTransport()" autocomplete="off">
-		<div class="modal-body">
-			<ngb-tabset [orientation]="orientation">
-				<ngb-tab title="Datos principales">
-					<ng-template ngbTabContent>
-            <div class="row tab-content">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <form [formGroup]="transportForm" (ngSubmit)="addTransport()" autocomplete="off">
+    <div class="modal-body">
+      <ul ngbNav #nav="ngbNav" class="nav-tabs" [orientation]="orientation">
+        <li ngbNavItem>
+          <a ngbNavLink>Datos principales</a>
+          <ng-template ngbNavContent>
+            <div class="row">
               <div class="form-group col-md-12">
                 <div class="row">
                   <div class="form-group col-md-6">
-                      <label class="control-label">Nombre:</label>
-                      <div class="input-group">
-                        <input type="text" class="form-control" formControlName="name" name="name" [focus]="focusEvent" [readonly]="readonly"/>
-                      </div>
-                      <div *ngIf="formErrors.name" class="alert alert-danger">
-                        {{ formErrors.name }}
-                      </div>
+                    <label class="control-label">Nombre:</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" formControlName="name" name="name" [focus]="focusEvent"
+                        [readonly]="readonly" />
+                    </div>
+                    <div *ngIf="formErrors.name" class="alert alert-danger">
+                      {{ formErrors.name }}
+                    </div>
                   </div>
                   <div class="form-group col-md-6">
-                    <label for="vatCondition" class="control-label" *ngIf="config.country === 'AR'">Condición de IVA:</label>
-                    <label for="vatCondition" class="control-label" *ngIf="config.country !== 'AR'">Régimen Fiscal:</label>
+                    <label for="vatCondition" class="control-label" *ngIf="config.country === 'AR'">Condición de
+                      IVA:</label>
+                    <label for="vatCondition" class="control-label" *ngIf="config.country !== 'AR'">Régimen
+                      Fiscal:</label>
                     <select class="form-control" formControlName="vatCondition">
                       <option [ngValue]="null" [selected]="!transport || !transport.vatCondition"></option>
-                            <option *ngFor="let vatCondition of vatConditions"
-                                    [selected]="(transport.vatCondition && transport.vatCondition._id && vatCondition._id===transport.vatCondition._id) ||
-                                                (transport.vatCondition && vatCondition._id===transport.vatCondition)"
-                                    [value]="vatCondition._id"
-                                    [disabled]="readonly">
-                                    {{vatCondition.description}}</option>
+                      <option *ngFor="let vatCondition of vatConditions"
+                        [selected]="(transport.vatCondition && transport.vatCondition._id && vatCondition._id===transport.vatCondition._id) ||
+                                                  (transport.vatCondition && vatCondition._id===transport.vatCondition)" [value]="vatCondition._id"
+                        [disabled]="readonly">
+                        {{vatCondition.description}}</option>
 
                     </select>
                     <div *ngIf="formErrors.vatCondition" class="alert alert-danger">
@@ -48,10 +51,9 @@
                 <div class="row">
                   <div class="form-group col-md-6">
                     <label for="identificationType" class="control-label">Tipo de Identificación</label>
-                    <select class="form-control" formControlName="identificationType" >
-                      <option *ngFor="let identificationType of identificationTypes"
-                              [ngValue]="identificationType._id"
-                              [disabled]="readonly">
+                    <select class="form-control" formControlName="identificationType">
+                      <option *ngFor="let identificationType of identificationTypes" [ngValue]="identificationType._id"
+                        [disabled]="readonly">
                         {{identificationType.name}}
                       </option>
                     </select>
@@ -62,7 +64,8 @@
                   <div class="form-group col-md-6">
                     <label for="identificationValue" class="control-label">Nro. de identificación</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="identificationValue" name="identificationValue" id="identificationValue" [readonly]="readonly"/>
+                      <input type="text" class="form-control" formControlName="identificationValue"
+                        name="identificationValue" id="identificationValue" [readonly]="readonly" />
                     </div>
                     <div *ngIf="formErrors.identificationValue" class="alert alert-danger">
                       {{ formErrors.identificationValue }}
@@ -73,7 +76,8 @@
                   <div class="form-group col-md-6">
                     <label for="address" class="control-label">Dirección:</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="address" name="address" id="address" [readonly]="readonly"/>
+                      <input type="text" class="form-control" formControlName="address" name="address" id="address"
+                        [readonly]="readonly" />
                     </div>
                     <div *ngIf="formErrors.address" class="alert alert-danger">
                       {{ formErrors.address }}
@@ -82,7 +86,8 @@
                   <div class="form-group col-md-2">
                     <label for="addressNumber" class="control-label">Número:</label>
                     <div class="input-group">
-                      <input type="number" class="form-control" formControlName="addressNumber" name="addressNumber" id="addressNumber" [readonly]="readonly"/>
+                      <input type="number" class="form-control" formControlName="addressNumber" name="addressNumber"
+                        id="addressNumber" [readonly]="readonly" />
                     </div>
                     <div *ngIf="formErrors.addressNumber" class="alert alert-danger">
                       {{ formErrors.addressNumber }}
@@ -92,14 +97,13 @@
                 <div class="row">
                   <div class="form-group col-md-4">
                     <label for="country" class="control-label">País:</label>
-                    <select class="form-control" formControlName="country" name="country" id="country" (change)="getStates()">
+                    <select class="form-control" formControlName="country" name="country" id="country"
+                      (change)="getStates()">
                       <option [ngValue]="null" [selected]="!transport || !transport.country"></option>
-                            <option *ngFor="let country of countries"
-                                    [selected]="(transport.country && transport.country._id && country._id===transport.country._id) ||
-                                                (transport.country && country._id===transport.country)"
-                                    [value]="country._id"
-                                    [disabled]="readonly">
-                                    {{country.name}}</option>
+                      <option *ngFor="let country of countries" [selected]="(transport.country && transport.country._id && country._id===transport.country._id) ||
+                                                  (transport.country && country._id===transport.country)"
+                        [value]="country._id" [disabled]="readonly">
+                        {{country.name}}</option>
 
                     </select>
                     <div *ngIf="formErrors.country" class="alert alert-danger">
@@ -111,12 +115,10 @@
                     <label for="state" class="control-label" *ngIf="config.country === 'AR'">Provincia:</label>
                     <select class="form-control" formControlName="state">
                       <option [ngValue]="null" [selected]="!transport || !transport.state"></option>
-                            <option *ngFor="let state of states"
-                                    [selected]="(transport.state && transport.state._id && state._id===transport.state._id) ||
-                                                (transport.state && state._id===transport.state)"
-                                    [value]="state._id"
-                                    [disabled]="readonly">
-                                    {{state.name}}</option>
+                      <option *ngFor="let state of states" [selected]="(transport.state && transport.state._id && state._id===transport.state._id) ||
+                                                  (transport.state && state._id===transport.state)" [value]="state._id"
+                        [disabled]="readonly">
+                        {{state.name}}</option>
 
                     </select>
                     <div *ngIf="formErrors.state" class="alert alert-danger">
@@ -126,7 +128,8 @@
                   <div class="form-group col-md-4">
                     <label for="city" class="control-label">Ciudad:</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="city" name="city" id="city" [readonly]="readonly"/>
+                      <input type="text" class="form-control" formControlName="city" name="city" id="city"
+                        [readonly]="readonly" />
                     </div>
                     <div *ngIf="formErrors.city" class="alert alert-danger">
                       {{ formErrors.city }}
@@ -137,7 +140,8 @@
                   <div class="form-group col-md-6">
                     <label for="phones" class="control-label">Teléfonos:</label>
                     <div class="input-group">
-                      <input type="number" class="form-control" formControlName="phones" name="phones" id="phones" [readonly]="readonly"/>
+                      <input type="number" class="form-control" formControlName="phones" name="phones" id="phones"
+                        [readonly]="readonly" />
                     </div>
                     <div *ngIf="formErrors.phones" class="alert alert-danger">
                       {{ formErrors.phones }}
@@ -146,17 +150,19 @@
                   <div class="form-group col-md-6">
                     <label for="emails" class="control-label">Emails:</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="emails" name="emails" id="emails"  [readonly]="readonly"/>
+                      <input type="text" class="form-control" formControlName="emails" name="emails" id="emails"
+                        [readonly]="readonly" />
                     </div>
                     <div *ngIf="formErrors.emails" class="alert alert-danger">
                       {{ formErrors.emails }}
                     </div>
                   </div>
                 </div>
-                <div class = "row">
+                <div class="row">
                   <div class="form-group col-md-12">
                     <label for="observation" class="control-label">Observación:</label>
-                    <textarea class="form-control" formControlName="observation" name="observation" id="observation" [readonly]="readonly"></textarea>
+                    <textarea class="form-control" formControlName="observation" name="observation" id="observation"
+                      [readonly]="readonly"></textarea>
                     <div *ngIf="formErrors.observation" class="alert alert-danger">
                       {{ formErrors.observation }}
                     </div>
@@ -164,56 +170,60 @@
                 </div>
               </div>
             </div>
-					</ng-template>
-        </ngb-tab>
-        <ngb-tab *ngIf="this.operation !== 'add'" title="Auditoría">
-            <ng-template ngbTabContent>
-              <div class="row tab-content">
-                <div class="form-group col-md-12">
-                  <div class="row">
-                    <div class="form-group col-md-6">
-                        <label class="control-label">Creado por:</label>
-                        <label *ngIf="transport.creationUser" class="control-label"><b>{{transport.creationUser.name}}</b></label>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label class="control-label">El día:</label>
-                        <label *ngIf="transport.creationDate" class="control-label"> <b>{{transport.creationDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
-                    </div>
+          </ng-template>
+        </li>
+        <li ngbNavItem>
+          <a ngbNavLink *ngIf="this.operation !== 'add'">Auditoría</a>
+          <ng-template ngbNavContent>
+            <div class="row">
+              <div class="form-group col-md-12">
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    <label class="control-label">Creado por:</label>
+                    <label *ngIf="transport.creationUser"
+                      class="control-label"><b>{{transport.creationUser.name}}</b></label>
                   </div>
-                  <div class="row">
-                    <div class="form-group col-md-6">
-                        <label class="control-label">Última modificación por:</label>
-                        <label *ngIf="transport.updateUser" class="control-label"><b>{{transport.updateUser.name}}</b></label>
-                        <label *ngIf="!transport.updateUser" class="control-label"><b>-</b></label>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label class="control-label">El día:</label>
-                        <label *ngIf="transport.updateDate" class="control-label"><b>{{transport.updateDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
-                        <label *ngIf="!transport.updateDate" class="control-label"><b>-</b></label>
-                    </div>
+                  <div class="form-group col-md-6">
+                    <label class="control-label">El día:</label>
+                    <label *ngIf="transport.creationDate" class="control-label"> <b>{{transport.creationDate |
+                        dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    <label class="control-label">Última modificación por:</label>
+                    <label *ngIf="transport.updateUser"
+                      class="control-label"><b>{{transport.updateUser.name}}</b></label>
+                    <label *ngIf="!transport.updateUser" class="control-label"><b>-</b></label>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label class="control-label">El día:</label>
+                    <label *ngIf="transport.updateDate" class="control-label"><b>{{transport.updateDate |
+                        dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
+                    <label *ngIf="!transport.updateDate" class="control-label"><b>-</b></label>
                   </div>
                 </div>
               </div>
-            </ng-template>
-        </ngb-tab>
-      </ngb-tabset>
+            </div>
+          </ng-template>
+        </li>
+      </ul>
+      <div [ngbNavOutlet]="nav" class="mt-2"></div>
     </div>
     <div class="modal-footer" *ngIf="operation !== 'view'">
-        <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
-        <button type="submit" class="btn btn-primary" [disabled]="!transportForm.valid || loading" *ngIf="operation !== 'delete'">
-          <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
-          <span *ngIf="!loading">Guardar</span>
-          <span *ngIf="loading">Espere por favor</span>
-        </button>
-        <button type="button" 
-                class="btn btn-danger" 
-                *ngIf="operation === 'delete'" 
-                [disabled]="!transportForm.valid || loading" 
-                (click)="deleteTransport()">
-          <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
-          <span *ngIf="!loading">Eliminar</span>
-          <span *ngIf="loading">Espere por favor</span>
-        </button>
-      </div>
-	</form>
+      <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!transportForm.valid || loading"
+        *ngIf="operation !== 'delete'">
+        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+        <span *ngIf="!loading">Guardar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+      <button type="button" class="btn btn-danger" *ngIf="operation === 'delete'"
+        [disabled]="!transportForm.valid || loading" (click)="deleteTransport()">
+        <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
+        <span *ngIf="!loading">Eliminar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </form>
 </section>

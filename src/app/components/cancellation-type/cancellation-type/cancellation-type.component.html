@@ -12,19 +12,21 @@
   </div>
   <form [formGroup]="cancellationTypeForm" (ngSubmit)="addCancellationType()" autocomplete="off">
     <div class="modal-body">
-      <ngb-tabset [orientation]="orientation">
-        <ngb-tab title="Datos principales">
-          <ng-template ngbTabContent>
-            <div class="row tab-content">
+      <ul ngbNav #nav="ngbNav" class="nav-tabs" [orientation]="orientation">
+        <li ngbNavItem>
+          <a ngbNavLink>Datos principales</a>
+          <ng-template ngbNavContent>
+            <div class="row">
               <div class="form-group col-md-12">
                 <div class="row">
                   <div class="form-group col-md-6">
                     <label for="origin" class="control-label">Transacción Cancelada</label>
                     <select class="form-control" formControlName="origin" (change)="getDestinations()">
                       <option *ngFor="let origin of origins" [selected]="(cancellationType.origin && cancellationType.origin._id && origin._id===cancellationType.origin._id) ||
-                                          (cancellationType.origin && origin._id===cancellationType.origin)" [value]="origin._id"
-                        [disabled]="readonly">
-                        <b>{{origin.transactionMovement}}</b> - {{origin.name}}</option>
+                                          (cancellationType.origin && origin._id===cancellationType.origin)"
+                        [value]="origin._id" [disabled]="readonly">
+                        <b>{{origin.transactionMovement}}</b> - {{origin.name}}
+                      </option>
                     </select>
                     <div *ngIf="formErrors.origin" class="alert alert-danger">
                       {{ formErrors.origin }}
@@ -33,9 +35,10 @@
                   <div class="form-group col-md-6">
                     <label for="destination" class="control-label">Transacción Cancelatoria</label>
                     <select class="form-control" formControlName="destination">
-                      <option *ngFor="let destination of destinations" [selected]="(cancellationType.destination && cancellationType.destination._id && destination._id===cancellationType.destination._id) ||
-                                            (cancellationType.destination && destination._id===cancellationType.destination)"
-                        [value]="destination._id" [disabled]="readonly">
+                      <option *ngFor="let destination of destinations"
+                        [selected]="(cancellationType.destination && cancellationType.destination._id && destination._id===cancellationType.destination._id) ||
+                                            (cancellationType.destination && destination._id===cancellationType.destination)" [value]="destination._id"
+                        [disabled]="readonly">
                         <b>{{destination.transactionMovement}}</b> - {{destination.name}}
                       </option>
                     </select>
@@ -46,7 +49,8 @@
                 </div>
                 <div class="row">
                   <div class="form-group col-md-6">
-                    <label for="stateOrigin" class="control-label">¿Estado en que queda la transaccion cancelada?</label>
+                    <label for="stateOrigin" class="control-label">¿Estado en que queda la transaccion
+                      cancelada?</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="stateOrigin">
                         <option value="Armando">Armando</option>
@@ -69,8 +73,10 @@
                     <label for="modifyBalance" class="control-label">¿Modifica el saldo?</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="modifyBalance">
-                        <option value="true" [selected]="cancellationType.modifyBalance" [disabled]="readonly">Si</option>
-                        <option value="false" [selected]="!cancellationType.modifyBalance" [disabled]="readonly">No</option>
+                        <option value="true" [selected]="cancellationType.modifyBalance" [disabled]="readonly">Si
+                        </option>
+                        <option value="false" [selected]="!cancellationType.modifyBalance" [disabled]="readonly">No
+                        </option>
                       </select>
                       <button type="button" class="btn btn-light" placement="right"
                         ngbPopover="¿Al cancelar la transacción modifica el saldo asignado a la misma?">
@@ -82,8 +88,10 @@
                     <label for="requestAutomatic" class="control-label">¿Solicita al final?</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="requestAutomatic">
-                        <option value="true" [selected]="cancellationType.requestAutomatic" [disabled]="readonly">Si</option>
-                        <option value="false" [selected]="!cancellationType.requestAutomatic" [disabled]="readonly">No</option>
+                        <option value="true" [selected]="cancellationType.requestAutomatic" [disabled]="readonly">Si
+                        </option>
+                        <option value="false" [selected]="!cancellationType.requestAutomatic" [disabled]="readonly">No
+                        </option>
                       </select>
                       <button type="button" class="btn btn-light" placement="right"
                         ngbPopover="¿Al finalizar la transacción, solicita realizar automáticamente la transacción cancelatoria?">
@@ -97,13 +105,16 @@
                     <label for="automaticSelection" class="control-label">¿Selecciona automaticamente?</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="automaticSelection">
-                        <option value="true" [selected]="cancellationType.automaticSelection" [disabled]="readonly">Si</option>
-                        <option value="false" [selected]="!cancellationType.automaticSelection" [disabled]="readonly">No</option>
+                        <option value="true" [selected]="cancellationType.automaticSelection" [disabled]="readonly">Si
+                        </option>
+                        <option value="false" [selected]="!cancellationType.automaticSelection" [disabled]="readonly">No
+                        </option>
                       </select>
                       <button type="button" class="btn btn-light" placement="right"
                         ngbPopover="¿Al buscar transacciones a cancelar selecciona automaticamente las transacciones pendientes?">
                         <b>?</b>
-                      </button></div>
+                      </button>
+                    </div>
                   </div>
                   <div class="form-group col-md-4">
                     <label for="requestStatusOrigin" class="control-label">Acota por estado</label>
@@ -129,8 +140,10 @@
                     <label for="requestCompany" class="control-label">Acota por Empresa</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="requestCompany">
-                        <option value="true" [selected]="cancellationType.requestCompany" [disabled]="readonly">Si</option>
-                        <option value="false" [selected]="!cancellationType.requestCompany" [disabled]="readonly">No</option>
+                        <option value="true" [selected]="cancellationType.requestCompany" [disabled]="readonly">Si
+                        </option>
+                        <option value="false" [selected]="!cancellationType.requestCompany" [disabled]="readonly">No
+                        </option>
                       </select>
                       <button type="button" class="btn btn-light" placement="right"
                         ngbPopover="¿Filtra los documentos a cancelar por empresa?">
@@ -140,23 +153,26 @@
                   </div>
                 </div>
                 <div class="row">
-                    <div class="form-group col-md-4">
-                        <label for="updatePrices" class="control-label">Actualiza Precios</label>
-                        <div class="input-group">
-                          <select class="form-control" formControlName="updatePrices">
-                            <option value="true" [selected]="cancellationType.updatePrices" [disabled]="readonly">Si</option>
-                            <option value="false" [selected]="!cancellationType.updatePrices" [disabled]="readonly">No</option>
-                          </select>
-                        </div>
-                      </div>
+                  <div class="form-group col-md-4">
+                    <label for="updatePrices" class="control-label">Actualiza Precios</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="updatePrices">
+                        <option value="true" [selected]="cancellationType.updatePrices" [disabled]="readonly">Si
+                        </option>
+                        <option value="false" [selected]="!cancellationType.updatePrices" [disabled]="readonly">No
+                        </option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </ng-template>
-        </ngb-tab>
-        <ngb-tab *ngIf="this.operation !== 'add'" title="Auditoría">
-          <ng-template ngbTabContent>
-            <div class="row tab-content">
+        </li>
+        <li ngbNavItem>
+          <a ngbNavLink *ngIf="this.operation !== 'add'">Auditoría</a>
+          <ng-template ngbNavContent>
+            <div class="row">
               <div class="form-group col-md-12">
                 <div class="row">
                   <div class="form-group col-md-6">
@@ -179,16 +195,17 @@
                   </div>
                   <div class="form-group col-md-6">
                     <label class="control-label">El día:</label>
-                    <label *ngIf="cancellationType.updateDate"
-                      class="control-label"><b>{{cancellationType.updateDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
+                    <label *ngIf="cancellationType.updateDate" class="control-label"><b>{{cancellationType.updateDate |
+                        dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
                     <label *ngIf="!cancellationType.updateDate" class="control-label"><b>-</b></label>
                   </div>
                 </div>
               </div>
             </div>
           </ng-template>
-        </ngb-tab>
-      </ngb-tabset>
+        </li>
+      </ul>
+      <div [ngbNavOutlet]="nav" class="mt-2"></div>
     </div>
     <div class="modal-footer" *ngIf="operation !== 'view'">
       <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>

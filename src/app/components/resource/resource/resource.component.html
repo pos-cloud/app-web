@@ -14,10 +14,11 @@
     </div>
     <form [formGroup]="resourceForm" (ngSubmit)="addResource()" autocomplete="off">
         <div class="modal-body">
-            <ngb-tabset [orientation]="orientation">
-                <ngb-tab title="Datos principales">
-                    <ng-template ngbTabContent>
-                        <div class="row tab-content">
+            <ul ngbNav #nav="ngbNav" class="nav-tabs" [orientation]="orientation">
+                <li ngbNavItem>
+                    <a ngbNavLink>Datos principales</a>
+                    <ng-template ngbNavContent>
+                        <div class="row">
                             <div class="form-group col-md-12">
                                 <div class="row">
                                     <div class="form-group col-md-6">
@@ -38,31 +39,34 @@
                                             <label *ngIf="!readonly" class="custom-file-label btn btn-action"
                                                 for="customFileLang">Cambiar Imagen</label>
                                             <input *ngIf="!readonly" type="file" class="custom-file-input" lang="es"
-                                                 id="customFileLang"
-                                                (change)="onFileSelected($event)" />
+                                                id="customFileLang" (change)="onFileSelected($event)" />
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <picture *ngIf="(resource && resource.type == 'image' && src) || (src && typeSelectFile == 'image')"> 
+                                    <picture
+                                        *ngIf="(resource && resource.type == 'image' && src) || (src && typeSelectFile == 'image')">
                                         <img width="600" height="400" [src]="src">
                                     </picture>
-    
-                                    <audio controls *ngIf="(resource && resource.type == 'audio' && src) || (src && typeSelectFile == 'audio')">
+
+                                    <audio controls
+                                        *ngIf="(resource && resource.type == 'audio' && src) || (src && typeSelectFile == 'audio')">
                                         <source [src]="src" type="audio/ogg" />
                                     </audio>
-    
-                                    <video controls width="600" height="400" *ngIf="(resource && resource.type == 'video' && src) || (src && typeSelectFile == 'video')">
+
+                                    <video controls width="600" height="400"
+                                        *ngIf="(resource && resource.type == 'video' && src) || (src && typeSelectFile == 'video')">
                                         <source [src]="src" type="video/mp4" />
                                     </video>
                                 </div>
                             </div>
                         </div>
                     </ng-template>
-                </ngb-tab>
-                <ngb-tab *ngIf="this.operation !== 'add'" title="Auditoría">
-                    <ng-template ngbTabContent>
-                        <div class="row tab-content">
+                </li>
+                <li ngbNavItem>
+                    <a ngbNavLink *ngIf="this.operation !== 'add'">Auditoría</a>
+                    <ng-template ngbNavContent>
+                        <div class="row">
                             <div class="form-group col-md-12">
                                 <div class="row">
                                     <div class="form-group col-md-6">
@@ -86,7 +90,8 @@
                                     <div class="form-group col-md-6">
                                         <label class="control-label">El día:</label>
                                         <label *ngIf="resource.updateDate"
-                                            class="control-label"><b>{{resource.updateDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
+                                            class="control-label"><b>{{resource.updateDate | dateFormat:'DD/MM/YYYY
+                                                HH:mm:ss'}}</b></label>
                                         <label *ngIf="!resource.updateDate" class="control-label"><b>-</b></label>
                                     </div>
                                 </div>
@@ -99,8 +104,9 @@
                             </div>
                         </div>
                     </ng-template>
-                </ngb-tab>
-            </ngb-tabset>
+                </li>
+            </ul>
+            <div [ngbNavOutlet]="nav" class="mt-2"></div>
         </div>
         <div class="modal-footer" *ngIf="operation !== 'view'">
             <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>

@@ -14,9 +14,10 @@
         </ngb-alert>
     </div>
     <div class="modal-body">
-        <ngb-tabset [orientation]="orientation">
-            <ngb-tab title="Datos">
-                <ng-template ngbTabContent>
+        <ul ngbNav #nav="ngbNav" class="nav-tabs" [orientation]="orientation">
+            <li ngbNavItem>
+                <a ngbNavLink>Datos</a>
+                <ng-template ngbNavContent>
                     <div class="row"
                         *ngIf="transaction && transaction.type && transaction.type.transactionMovement.toString() !== 'Stock'">
                         <div class="form-group col-md-8">
@@ -128,7 +129,8 @@
                             <label for="totalPrice" class="control-label">Importe Total:</label>
                             <div class="input-group">
                                 <div class="input-group-prepend"><span class="input-group-text"
-                                        id="basic-addon1">$</span></div>
+                                        id="basic-addon1">$</span>
+                                </div>
                                 <input type="number" class="form-control" name="totalPrice" min="0" step="1"
                                     value="{{transaction.totalPrice}}" readonly />
                             </div>
@@ -137,7 +139,8 @@
                             <label for="balance" class="control-label">Saldo:</label>
                             <div class="input-group">
                                 <div class="input-group-prepend"><span class="input-group-text"
-                                        id="basic-addon1">$</span></div>
+                                        id="basic-addon1">$</span>
+                                </div>
                                 <input type="number" class="form-control" name="balance" min="0" step="1"
                                     value="{{transaction.balance}}" readonly />
                             </div>
@@ -146,7 +149,8 @@
                             <label for="balance" class="control-label">Cotización:</label>
                             <div class="input-group">
                                 <div class="input-group-prepend"><span class="input-group-text"
-                                        id="basic-addon1">$</span></div>
+                                        id="basic-addon1">$</span>
+                                </div>
                                 <input type="number" class="form-control" name="balance" min="0" step="1"
                                     value="{{transaction.quotation}}" readonly />
                             </div>
@@ -157,15 +161,15 @@
                             <label for="observation" class="control-label">Observación:</label>
                             <textarea type="text" class="form-control" name="observation" id="observation" rows="2"
                                 readonly>
-                {{transaction.observation}}
-              </textarea>
+                    {{transaction.observation}}
+                  </textarea>
                         </div>
                     </div>
                 </ng-template>
-            </ngb-tab>
-            <ngb-tab [disabled]="areMovementsOfArticlesEmpty">
-                <ng-template ngbTabTitle>Productos</ng-template>
-                <ng-template ngbTabContent>
+            </li>
+            <li ngbNavItem [disabled]="areMovementsOfArticlesEmpty">
+                <a ngbNavLink>Productos</a>
+                <ng-template ngbNavContent>
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
@@ -223,10 +227,10 @@
                         </table>
                     </div>
                 </ng-template>
-            </ngb-tab>
-            <ngb-tab [disabled]="!transaction.taxes || transaction.taxes.length === 0">
-                <ng-template ngbTabTitle>Impuestos</ng-template>
-                <ng-template ngbTabContent>
+            </li>
+            <li ngbNavItem [disabled]="!transaction.taxes || transaction.taxes.length === 0">
+                <a ngbNavLink>Impuestos</a>
+                <ng-template ngbNavContent>
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
@@ -248,9 +252,10 @@
                         </table>
                     </div>
                 </ng-template>
-            </ngb-tab>
-            <ngb-tab title="Métodos de Pago" [disabled]="areMovementsOfCashesEmpty">
-                <ng-template ngbTabContent>
+            </li>
+            <li ngbNavItem [disabled]="areMovementsOfCashesEmpty">
+                <a ngbNavLink>Métodos de Pago</a>
+                <ng-template ngbNavContent>
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
@@ -274,26 +279,35 @@
                             </thead>
                             <tbody>
                                 <tr *ngFor="let movementOfCash of movementsOfCashes | orderBy: orderTerm: propertyTerm">
-                                    <td (click)="pushCurrencyValue(movementOfCash)">{{movementOfCash.type.name}}</td>
+                                    <td (click)="pushCurrencyValue(movementOfCash)">{{movementOfCash.type.name}}
+                                    </td>
                                     <td>{{movementOfCash.number}}</td>
                                     <td>{{movementOfCash.quota}}</td>
                                     <td>{{movementOfCash.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
                                     <td *ngIf="movementOfCash.bank">{{movementOfCash.bank.name}}</td>
                                     <td *ngIf="!movementOfCash.bank"></td>
-                                    <td>{{movementOfCash.amountPaid | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                                    <td>{{movementOfCash.amountPaid | currency:'USD':'symbol-narrow':'1.2-2'}}
+                                    </td>
                                     <td>{{(movementOfCash.amountPaid - movementOfCash.balanceCanceled) |
                                         currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-                                    <td>{{movementOfCash?.paymentChange | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                                    <td>{{movementOfCash?.paymentChange |
+                                        currency:'USD':'symbol-narrow':'1.2-2'}}
+                                    </td>
                                     <td style="white-space: normal;">{{movementOfCash.observation}}</td>
-                                    <td>{{movementOfCash.commissionAmount | currency:'USD':'symbol-narrow':'1.2-2'}}
+                                    <td>{{movementOfCash.commissionAmount |
+                                        currency:'USD':'symbol-narrow':'1.2-2'}}
                                     </td>
                                     <td>{{movementOfCash.administrativeExpenseAmount |
                                         currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-                                    <td>{{movementOfCash.otherExpenseAmount | currency:'USD':'symbol-narrow':'1.2-2'}}
+                                    <td>{{movementOfCash.otherExpenseAmount |
+                                        currency:'USD':'symbol-narrow':'1.2-2'}}
                                     </td>
                                     <td>{{movementOfCash.capital | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-                                    <td>{{movementOfCash.interestAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-                                    <td>{{movementOfCash.taxAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                                    <td>{{movementOfCash.interestAmount |
+                                        currency:'USD':'symbol-narrow':'1.2-2'}}
+                                    </td>
+                                    <td>{{movementOfCash.taxAmount | currency:'USD':'symbol-narrow':'1.2-2'}}
+                                    </td>
                                 </tr>
 
                                 <tr align="center " *ngIf="movementsOfCashes.length === 0">
@@ -313,7 +327,9 @@
                                 <tr *ngFor="let currency of currencyValue">
                                     <td>{{currency.quantity}}</td>
                                     <td>{{currency.value}}</td>
-                                    <td>{{currency.quantity*currency.value | currency:'USD':'symbol-narrow':'1.2-2' }}
+                                    <td>{{currency.quantity*currency.value |
+                                        currency:'USD':'symbol-narrow':'1.2-2'
+                                        }}
                                     </td>
                                     <td></td>
                                 </tr>
@@ -321,9 +337,10 @@
                         </table>
                     </div>
                 </ng-template>
-            </ngb-tab>
-            <ngb-tab title="Entrega">
-                <ng-template ngbTabContent>
+            </li>
+            <li ngbNavItem>
+                <a ngbNavLink>Entrega</a>
+                <ng-template ngbNavContent>
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
@@ -351,15 +368,18 @@
                                     <td>{{transaction?.deliveryAddress?.flat}}</td>
                                     <td>{{transaction?.deliveryAddress?.floor}}</td>
                                     <td>{{transaction?.deliveryAddress?.postalCode}}</td>
-                                    <td style="white-space: normal;">{{transaction?.deliveryAddress?.observation}}</td>
+                                    <td style="white-space: normal;">
+                                        {{transaction?.deliveryAddress?.observation}}
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </ng-template>
-            </ngb-tab>
-            <ngb-tab title="AFIP" *ngIf="transaction.type && transaction.type.electronics && userCountry === 'AR'">
-                <ng-template ngbTabContent>
+            </li>
+            <li ngbNavItem>
+                <a ngbNavLink *ngIf="transaction.type && transaction.type.electronics && userCountry === 'AR'">AFIP</a>
+                <ng-template ngbNavContent>
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
@@ -375,9 +395,10 @@
                         </table>
                     </div>
                 </ng-template>
-            </ngb-tab>
-            <ngb-tab title="SAT" *ngIf="transaction.type && transaction.type.electronics && userCountry === 'MX'">
-                <ng-template ngbTabContent>
+            </li>
+            <li ngbNavItem>
+                <a ngbNavLink *ngIf="transaction.type && transaction.type.electronics && userCountry === 'MX'">SAT</a>
+                <ng-template ngbNavContent>
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
@@ -411,24 +432,26 @@
                         </table>
                     </div>
                 </ng-template>
-            </ngb-tab>
-            <ngb-tab title="Transacciones Canceladas">
-                <ng-template ngbTabContent>
+            </li>
+            <li ngbNavItem>
+                <a ngbNavLink>Transacciones Canceladas</a>
+                <ng-template ngbNavContent>
                     <app-movement-of-cancellation [transactionDestinationViewId]="transaction._id"
                         [selectionView]="false">
                     </app-movement-of-cancellation>
                 </ng-template>
-            </ngb-tab>
-            <ngb-tab title="Transacciones Cancelatorias">
-                <ng-template ngbTabContent>
+            </li>
+            <li ngbNavItem>
+                <a ngbNavLink>Transacciones Cancelatorias</a>
+                <ng-template ngbNavContent>
                     <app-movement-of-cancellation [transactionOriginViewId]="transaction._id" [selectionView]="false">
                     </app-movement-of-cancellation>
                 </ng-template>
-            </ngb-tab>
-            <!-- --------- -->
-            <ngb-tab title="Auditoría">
-                <ng-template ngbTabContent>
-                    <div class="row tab-content">
+            </li>
+            <li ngbNavItem>
+                <a ngbNavLink>Auditoría</a>
+                <ng-template ngbNavContent>
+                    <div class="row">
                         <div class="form-group col-md-12">
                             <div class="row">
                                 <div class="form-group col-md-6">
@@ -439,7 +462,8 @@
                                 <div class="form-group col-md-6">
                                     <label class="control-label">El día:</label>
                                     <label *ngIf="transaction.creationDate" class="control-label">
-                                        <b>{{transaction.creationDate | dateFormat:'DD/MM/YYYY hh:mm:ss'}}</b></label>
+                                        <b>{{transaction.creationDate | dateFormat:'DD/MM/YYYY
+                                            hh:mm:ss'}}</b></label>
                                 </div>
                             </div>
                             <div class="row">
@@ -452,7 +476,8 @@
                                 <div class="form-group col-md-6">
                                     <label class="control-label">El día:</label>
                                     <label *ngIf="transaction.updateDate"
-                                        class="control-label"><b>{{transaction.updateDate | dateFormat:'DD/MM/YYYY
+                                        class="control-label"><b>{{transaction.updateDate |
+                                            dateFormat:'DD/MM/YYYY
                                             hh:mm:ss'}}</b></label>
                                     <label *ngIf="!transaction.updateDate" class="control-label"><b>-</b></label>
                                 </div>
@@ -472,11 +497,10 @@
                         </div>
                     </div>
                 </ng-template>
-            </ngb-tab>
-
-            <!-- --------- -->
-            <ngb-tab title="Asiento Contable">
-                <ng-template ngbTabContent>
+            </li>
+            <li ngbNavItem>
+                <a ngbNavLink>Asiento Contable</a>
+                <ng-template ngbNavContent>
                     <table width="100%" class="table table-striped">
                         <thead>
                             <tr>
@@ -488,7 +512,8 @@
                         </thead>
                         <tbody>
                             <tr *ngFor="let field of objForm.get('items')['controls']; let i = index;">
-                                <td *ngIf='field?.value?.account?.description'>{{field?.value?.account?.description}}</td>
+                                <td *ngIf='field?.value?.account?.description'>
+                                    {{field?.value?.account?.description}}</td>
                                 <div *ngFor="let account of accounts; let i = index">
                                     <td
                                         *ngIf="field && field.value && field.value.account && field.value.account === account._id ">
@@ -502,8 +527,9 @@
                         </tfoot>
                     </table>
                 </ng-template>
-            </ngb-tab>
-        </ngb-tabset>
+            </li>
+        </ul>
+        <div [ngbNavOutlet]="nav" class="mt-2"></div>
     </div>
     <div class="modal-footer">
     </div>
