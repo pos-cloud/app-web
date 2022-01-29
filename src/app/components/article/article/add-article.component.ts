@@ -65,62 +65,64 @@ import { AccountService } from './../../../components/account/account.service';
 
 export class AddArticleComponent implements OnInit {
 
-  public article: Article;
   @Input() articleId: string;
   @Input() operation: string;
   @Input() readonly: boolean;
-  public articleStock: ArticleStock;
-  public articles: Article[];
-  public config: Config;
-  public articleForm: FormGroup;
-  public currencies: Currency[] = new Array();
-  public makes: Make[] = new Array();
-  public classifications: Classification[] = new Array();
-  public companies: Company[] = new Array();
-  public deposits: Deposit[] = new Array();
-  public locations: Location[] = new Array();
-  public categories: Category[] = new Array();
-  public variants: Variant[] = new Array();
-  public unitsOfMeasurement: UnitOfMeasurement[] = new Array();
-  public taxes: Taxes[] = new Array();
-  public otherFields: ArticleFields[] = new Array();
-  public printIns: ArticlePrintIn[] = [ArticlePrintIn.Counter, ArticlePrintIn.Kitchen, ArticlePrintIn.Bar, ArticlePrintIn.Voucher];
-  public alertMessage = '';
-  public userType: string;
-  public loading = false;
-  public focusEvent = new EventEmitter<boolean>();
-  public focusNoteEvent = new EventEmitter<boolean>();
-  public focusTagEvent = new EventEmitter<boolean>();
-  public apiURL = Config.apiURL;
-  public filesToUpload: Array<File>;
-  public filesToArray: Array<File>;
-  public hasChanged = false;
-  public roundNumber: RoundNumberPipe = new RoundNumberPipe();
-  public imageURL: string;
-  public articleType: string;
-  public filtersTaxClassification: TaxClassification[] = [TaxClassification.Tax];
-  public lastPricePurchase: number = 0.00;
-  public lastDatePurchase: string;
-  public otherFieldsAlfabetico = false;
-  public otherFieldsNumber = false;
-  public orientation: string = 'horizontal';
-  public notes: string[];
-  public tags: string[];
-  public fileNamePrincipal: string;
-  public fileNameArray: string;
-  public formErrorsNote: string;
-  public formErrorsTag: string;
-  public applications: Application[];
+
   private subscription: Subscription = new Subscription();
-  public focus$: Subject<string>[] = new Array();
-  public totalTaxes: number = 0;
-  public salePriceWithoutVAT: number = 0;
-  public markupPriceWithoutVAT: number = 0;
-  public meliAttrs: IMeliAttrs;
 
-  public html = '';
+  article: Article;
+  articleStock: ArticleStock;
+  articles: Article[];
+  config: Config;
+  articleForm: FormGroup;
+  currencies: Currency[] = new Array();
+  makes: Make[] = new Array();
+  classifications: Classification[] = new Array();
+  companies: Company[] = new Array();
+  deposits: Deposit[] = new Array();
+  locations: Location[] = new Array();
+  categories: Category[] = new Array();
+  variants: Variant[] = new Array();
+  unitsOfMeasurement: UnitOfMeasurement[] = new Array();
+  taxes: Taxes[] = new Array();
+  otherFields: ArticleFields[] = new Array();
+  printIns: ArticlePrintIn[] = [ArticlePrintIn.Counter, ArticlePrintIn.Kitchen, ArticlePrintIn.Bar, ArticlePrintIn.Voucher];
+  alertMessage = '';
+  userType: string;
+  loading = false;
+  focusEvent = new EventEmitter<boolean>();
+  focusNoteEvent = new EventEmitter<boolean>();
+  focusTagEvent = new EventEmitter<boolean>();
+  apiURL = Config.apiURL;
+  filesToUpload: Array<File>;
+  filesToArray: Array<File>;
+  hasChanged = false;
+  roundNumber: RoundNumberPipe = new RoundNumberPipe();
+  imageURL: string;
+  articleType: string;
+  filtersTaxClassification: TaxClassification[] = [TaxClassification.Tax];
+  lastPricePurchase: number = 0.00;
+  lastDatePurchase: string;
+  otherFieldsAlfabetico = false;
+  otherFieldsNumber = false;
+  orientation: string = 'horizontal';
+  notes: string[];
+  tags: string[];
+  fileNamePrincipal: string;
+  fileNameArray: string;
+  formErrorsNote: string;
+  formErrorsTag: string;
+  applications: Application[];
+  focus$: Subject<string>[] = new Array();
+  totalTaxes: number = 0;
+  salePriceWithoutVAT: number = 0;
+  markupPriceWithoutVAT: number = 0;
+  meliAttrs: IMeliAttrs;
 
-  public tinyMCEConfigBody = {
+  html = '';
+
+  tinyMCEConfigBody = {
     selector: "textarea",
     theme: "modern",
     paste_data_images: true,

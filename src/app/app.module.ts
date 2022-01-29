@@ -6,7 +6,7 @@ import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from '@angular/common
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
 // paquetes de terceros
-import { NgbModule, NgbActiveModal, NgbAlertConfig, NgbCollapseModule, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap'; // https://ng-bootstrap.github.io/
+import { NgbModule, NgbActiveModal, NgbAlertConfig, NgbCollapseModule, NgbAlertModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap'; // https://ng-bootstrap.github.io/
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { PushNotificationComponent } from './../app/components/notification/notification.component';
@@ -443,6 +443,7 @@ export function createTranslateLoader(http: HttpClient) {
         RouterModule.forRoot(_routes, { useHash: true, relativeLinkResolution: 'legacy' }),
         NgbModule,
         NgbCollapseModule,
+        NgbNavModule,
         NgxPaginationModule,
         NgbAlertModule,
         HttpClientModule,

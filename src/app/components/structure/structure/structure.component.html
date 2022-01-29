@@ -14,9 +14,10 @@
 	</div>
 	<form [formGroup]="structureForm" (ngSubmit)="addStructure()" autocomplete="off">
 		<div class="modal-body">
-			<ngb-tabset [orientation]="orientation">
-				<ngb-tab title="Datos principales">
-					<ng-template ngbTabContent>
+			<ul ngbNav #nav="ngbNav" class="nav-tabs" [orientation]="orientation">
+				<li ngbNavItem>
+					<a ngbNavLink>Datos principales</a>
+					<ng-template ngbNavContent>
 						<div class="row tab-content">
 							<div class="form-group col-md-12">
 								<div class="row">
@@ -86,14 +87,14 @@
 											{{ formErrors.increasePrice}}
 										</div>
 									</div>
-
 								</div>
 							</div>
 						</div>
 					</ng-template>
-				</ngb-tab>
-				<ngb-tab *ngIf="this.operation !== 'add'" title="Auditoría">
-					<ng-template ngbTabContent>
+				</li>
+				<li ngbNavItem>
+					<a ngbNavLink *ngIf="this.operation !== 'add'">Auditoría</a>
+					<ng-template ngbNavContent>
 						<div class="row tab-content">
 							<div class="form-group col-md-12">
 								<div class="row">
@@ -125,8 +126,9 @@
 							</div>
 						</div>
 					</ng-template>
-				</ngb-tab>
-			</ngb-tabset>
+				</li>
+			</ul>
+			<div [ngbNavOutlet]="nav" class="mt-2"></div>
 		</div>
 		<div class="modal-footer" *ngIf="operation !== 'view'">
 			<button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>

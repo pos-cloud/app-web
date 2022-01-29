@@ -20,9 +20,50 @@ import { Observable } from 'rxjs';
 
 export class StructureComponent implements OnInit {
 
-    public utilizations: Utilization[] = [Utilization.Sale, Utilization.Production];
+    @Input() operation: string;
+    @Input() readonly: boolean;
+    @Input() structureId: string;
+    
+    utilizations: Utilization[] = [Utilization.Sale, Utilization.Production];
+    filterKey = '';
+    filteredItems = [];
+    articles: Article[];
+    structures: Structure[];
+    alertMessage: string = '';
+    userType: string;
+    structure: Structure;
+    areStructureEmpty: boolean = true;
+    orderTerm: string[] = ['parent'];
+    propertyTerm: string;
+    areFiltersVisible: boolean = false;
+    loading: boolean = false;
+    focusEvent = new EventEmitter<boolean>();
+    userCountry: string;
+    orientation: string = 'horizontal';
+    result;
+    structureForm: FormGroup;
+    searching: boolean = false;
+    checkboxModel;
 
-    public searchArticles = (text$: Observable<string>) =>
+    formErrors = {
+        'parent': '',
+        'child': '',
+        'quantity': '',
+        'increasePrice' : ''
+    };
+    validationMessages = {
+        'parent': {
+            'required': 'Este campo es requerido.'
+        },
+        'child': {
+            'required': 'Este campo es requerido.'
+        },
+        'quantity': {
+            'required': 'Este campo es requerido.'
+        }
+    };
+
+    searchArticles = (text$: Observable<string>) =>
         text$.pipe(
             debounceTime(300),
             distinctUntilChanged(),
@@ -37,48 +78,7 @@ export class StructureComponent implements OnInit {
             tap(() => this.loading = false)
         )
 
-    public formatterArticles = (x: { description: string }) => x.description;
-
-    public filterKey = '';
-    public filteredItems = [];
-    @Input() operation: string;
-    @Input() readonly: boolean;
-    @Input() structureId: string;
-    public articles: Article[];
-    public structures: Structure[];
-    public alertMessage: string = '';
-    public userType: string;
-    public structure: Structure;
-    public areStructureEmpty: boolean = true;
-    public orderTerm: string[] = ['parent'];
-    public propertyTerm: string;
-    public areFiltersVisible: boolean = false;
-    public loading: boolean = false;
-    public focusEvent = new EventEmitter<boolean>();
-    public userCountry: string;
-    public orientation: string = 'horizontal';
-    public result;
-    public structureForm: FormGroup;
-    public searching: boolean = false;
-    public checkboxModel;
-
-    public formErrors = {
-        'parent': '',
-        'child': '',
-        'quantity': '',
-        'increasePrice' : ''
-    };
-    public validationMessages = {
-        'parent': {
-            'required': 'Este campo es requerido.'
-        },
-        'child': {
-            'required': 'Este campo es requerido.'
-        },
-        'quantity': {
-            'required': 'Este campo es requerido.'
-        }
-    };
+    formatterArticles = (x: { description: string }) => x.description;
 
     constructor(
         public alertConfig: NgbAlertConfig,
