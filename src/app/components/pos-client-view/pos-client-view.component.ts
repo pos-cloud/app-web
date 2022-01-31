@@ -14,6 +14,8 @@ import { ActivatedRoute } from '@angular/router';
 
 export class PosClientViewComponent {
 
+    public viewBotton: boolean = true;
+    public elem;
     public loading: boolean = false;
     public transactions: Transaction[];
     public transactionStates: string[];
@@ -40,6 +42,7 @@ export class PosClientViewComponent {
     }
 
     public ngOnInit() {
+        this.elem = document.documentElement;
         this.processParams();
         this.initInterval();
     }
@@ -210,5 +213,24 @@ export class PosClientViewComponent {
                 }
             );
         });
+    }
+
+    public openFullscreen() {
+
+        if (this.elem.requestFullscreen) {
+            this.elem.requestFullscreen();
+        } else if (this.elem.mozRequestFullScreen) {
+            /* Firefox */
+            this.elem.mozRequestFullScreen();
+        } else if (this.elem.webkitRequestFullscreen) {
+            /* Chrome, Safari and Opera */
+            this.elem.webkitRequestFullscreen();
+        } else if (this.elem.msRequestFullscreen) {
+            /* IE/Edge */
+            this.elem.msRequestFullscreen();
+        }
+
+        this.viewBotton = false;
+
     }
 }
