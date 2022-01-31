@@ -94,7 +94,7 @@ export class AddMovementOfArticleComponent implements OnInit {
             distinctUntilChanged(),
             tap(() => this.loading = true),
             switchMap(async term => {
-                let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' }, mode : "Analitico", operationType : { "$ne" : "D" } } : {};
+                let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' }, mode: "Analitico", operationType: { "$ne": "D" } } : {};
                 return await this.getAllAccounts(match).then(
                     result => {
                         return result;
@@ -640,6 +640,8 @@ export class AddMovementOfArticleComponent implements OnInit {
     }
 
     async addMovementOfArticle() {
+        this.loading = true;
+
         if (this.movementOfArticleForm.value.amount >= 0) {
             if (this.movementOfArticleForm.value.measure) {
                 this.movementOfArticle.measure = this.movementOfArticleForm.value.measure;
@@ -680,6 +682,7 @@ export class AddMovementOfArticleComponent implements OnInit {
                             this.movementOfArticleExists();
                         }
                     } else {
+                        this.loading = false
                         this.errVariant = "Debe seleccionar una variante";
                     }
                 } else {
@@ -694,6 +697,7 @@ export class AddMovementOfArticleComponent implements OnInit {
                 }
             }
         } else {
+            this.loading = false
             this.showMessage("La cantidad del producto debe ser mayor o igual a 0.", "info", true);
         }
     }
@@ -798,10 +802,7 @@ export class AddMovementOfArticleComponent implements OnInit {
                                 this.verifyStructure()
                             }
                         }
-
-
                     }
-                    this.loading = false;
                 },
                 error => {
                     this.showMessage(error._body, 'danger', false);
@@ -1645,6 +1646,7 @@ export class AddMovementOfArticleComponent implements OnInit {
             async result => {
                 if (!result.movementOfArticle) {
                     if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+                    this.loading = false;
                 } else {
                     //pregunto si hay movchild
                     if (this.movChild && this.movChild.length > 0) {
@@ -1663,7 +1665,6 @@ export class AddMovementOfArticleComponent implements OnInit {
                         this.activeModal.close('save');
                     }
                 }
-                this.loading = false;
             },
             error => {
                 this.showMessage(error._body, 'danger', false);
