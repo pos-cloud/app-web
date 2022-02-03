@@ -1313,10 +1313,11 @@ export class PrintComponent implements OnInit {
         this.doc.setFont('','bold');
         this.doc.text("Detalle de Apertura:", margin, row += 5);
         this.doc.setFont('','normal');
+        console.log(openingAmounts);
         if (Object.keys(openingAmounts).length > 0) {
             for (let k of Object.keys(openingAmounts)) {
                 this.doc.text('- ' + k, margin + 5, row += 5);
-                this.doc.text('$ ' + decimalPipe.transform(openingAmounts[k], '1.2-2'), 60, row);
+                this.doc.text('$ ' + openingAmounts[k].toString(), 60, row);
                 openCash += openingAmounts[k];
             }
         } else {
@@ -1326,7 +1327,7 @@ export class PrintComponent implements OnInit {
         }
         this.doc.setFont('','bold');
         this.doc.text("Total:", margin + 10, row += 5);
-        this.doc.text('$ ' + decimalPipe.transform(openCash, '1.2-2'), 60, row);
+        this.doc.text('$ ' + openCash.toString(), 60, row);
         this.doc.setFont('','normal');
 
         this.doc.setFont('','bold');
@@ -1335,7 +1336,7 @@ export class PrintComponent implements OnInit {
         if (Object.keys(inputAmounts).length > 0) {
             for (let k of Object.keys(inputAmounts)) {
                 this.doc.text('- ' + k, margin + 5, row += 5);
-                this.doc.text('$ ' + decimalPipe.transform(inputAmounts[k], '1.2-2'), 60, row);
+                this.doc.text('$ ' + inputAmounts[k].toString(), 60, row);
                 input += inputAmounts[k];
                 this.doc.setFont('','italic');
                 if (amountsInput[k] === 1) {
@@ -1352,7 +1353,7 @@ export class PrintComponent implements OnInit {
         }
         this.doc.setFont('','bold');
         this.doc.text("Total:", margin + 10, row += 5);
-        this.doc.text('$ ' + decimalPipe.transform(input, '1.2-2'), 60, row);
+        this.doc.text('$ ' + input.toString(), 60, row);
         this.doc.setFont('','normal');
 
         this.doc.setFont('','bold');
@@ -1361,7 +1362,7 @@ export class PrintComponent implements OnInit {
         if (Object.keys(outputAmounts).length > 0) {
             for (let k of Object.keys(outputAmounts)) {
                 this.doc.text('- ' + k, margin + 5, row += 5);
-                this.doc.text('$ ' + decimalPipe.transform(outputAmounts[k], '1.2-2'), 60, row);
+                this.doc.text('$ ' + outputAmounts[k].toString(), 60, row);
                 output += outputAmounts[k];
                 this.doc.setFont('','italic');
                 if (amountsOutput[k] === 1) {
@@ -1378,7 +1379,7 @@ export class PrintComponent implements OnInit {
         }
         this.doc.setFont('','bold');
         this.doc.text("Total:", margin + 10, row += 5);
-        this.doc.text('$ ' + decimalPipe.transform(output, '1.2-2'), 60, row);
+        this.doc.text('$ ' + output.toString(), 60, row);
         this.doc.setFont('','normal');
 
         this.doc.setFont('','bold');
@@ -1387,7 +1388,7 @@ export class PrintComponent implements OnInit {
         if (Object.keys(closingAmounts).length > 0) {
             for (let k of Object.keys(closingAmounts)) {
                 this.doc.text('- ' + k, margin + 5, row += 5);
-                this.doc.text('$ ' + decimalPipe.transform(closingAmounts[k], '1.2-2'), 60, row);
+                this.doc.text('$ ' + closingAmounts[k].toString(), 60, row);
                 closeCash += closingAmounts[k];
             }
         } else {
@@ -1397,7 +1398,7 @@ export class PrintComponent implements OnInit {
         }
         this.doc.setFont('','bold');
         this.doc.text("Total:", margin + 10, row += 5);
-        this.doc.text('$ ' + decimalPipe.transform(closeCash, '1.2-2'), 60, row);
+        this.doc.text('$ ' + closeCash.toString(), 60, row);
         this.doc.setFont('','normal');
 
         this.doc.setFont('','bold');
@@ -1418,12 +1419,12 @@ export class PrintComponent implements OnInit {
                 if (!inputAmounts[k]) inputAmounts[k] = 0;
                 if (!outputAmounts[k]) outputAmounts[k] = 0;
                 if (!closingAmounts[k]) closingAmounts[k] = 0;
-                this.doc.text('$ ' + decimalPipe.transform(closingAmounts[k] - ((openingAmounts[k] + inputAmounts[k]) - outputAmounts[k]), '1.2-2'), 60, row);
+                this.doc.text('$ ' +(closingAmounts[k] - ((openingAmounts[k] + inputAmounts[k]) - outputAmounts[k])).toString(), 60, row);
             }
         }
         this.doc.setFont('','bold');
         this.doc.text("Total:", margin + 10, row += 5);
-        this.doc.text('$ ' + decimalPipe.transform(closeCash - ((openCash + input) - output), '1.2-2'), 60, row);
+        this.doc.text('$ ' + (closeCash - ((openCash + input) - output)).toString(), 60, row);
         this.doc.setFont('','normal');
 
         // Pie de la impresión
@@ -1584,7 +1585,7 @@ export class PrintComponent implements OnInit {
         if (Object.keys(openingAmounts).length > 0) {
             for (let k of Object.keys(openingAmounts)) {
                 this.doc.text('- ' + k, margin + 5, row += 5);
-                this.doc.text('$ ' + decimalPipe.transform(openingAmounts[k], '1.2-2'), 60, row);
+                this.doc.text('$ ' + openingAmounts[k].toString(), 60, row);
                 openCash += openingAmounts[k];
             }
         } else {
@@ -1594,7 +1595,7 @@ export class PrintComponent implements OnInit {
         }
         this.doc.setFont('','bold');
         this.doc.text("Total:", margin + 10, row += 5);
-        this.doc.text('$ ' + decimalPipe.transform(openCash, '1.2-2'), 60, row);
+        this.doc.text('$ ' + openCash.toString(), 60, row);
         this.doc.setFont('','normal');
 
         this.doc.setFont('','bold');
@@ -1603,7 +1604,7 @@ export class PrintComponent implements OnInit {
         if (Object.keys(inputAmounts).length > 0) {
             for (let k of Object.keys(inputAmounts)) {
                 this.doc.text('- ' + k, margin + 5, row += 5);
-                this.doc.text('$ ' + decimalPipe.transform(inputAmounts[k], '1.2-2'), 60, row);
+                this.doc.text('$ ' + inputAmounts[k].toString(), 60, row);
                 input += inputAmounts[k];
                 this.doc.setFont('','italic');
                 if (amountsInput[k] === 1) {
@@ -1620,7 +1621,7 @@ export class PrintComponent implements OnInit {
         }
         this.doc.setFont('','bold');
         this.doc.text("Total:", margin + 10, row += 5);
-        this.doc.text('$ ' + decimalPipe.transform(input, '1.2-2'), 60, row);
+        this.doc.text('$ ' + input.toString(), 60, row);
         this.doc.setFont('','normal');
 
         this.doc.setFont('','bold');
@@ -1629,7 +1630,7 @@ export class PrintComponent implements OnInit {
         if (Object.keys(outputAmounts).length > 0) {
             for (let k of Object.keys(outputAmounts)) {
                 this.doc.text('- ' + k, margin + 5, row += 5);
-                this.doc.text('$ ' + decimalPipe.transform(outputAmounts[k], '1.2-2'), 60, row);
+                this.doc.text('$ ' + outputAmounts[k].toString(), 60, row);
                 output += outputAmounts[k];
                 this.doc.setFont('','italic');
                 if (amountsOutput[k] === 1) {
@@ -1646,7 +1647,7 @@ export class PrintComponent implements OnInit {
         }
         this.doc.setFont('','bold');
         this.doc.text("Total:", margin + 10, row += 5);
-        this.doc.text('$ ' + decimalPipe.transform(output, '1.2-2'), 60, row);
+        this.doc.text('$ ' + output.toString(), 60, row);
         this.doc.setFont('','normal');
 
         this.doc.setFont('','bold');
@@ -1655,7 +1656,7 @@ export class PrintComponent implements OnInit {
         if (Object.keys(closingAmounts).length > 0) {
             for (let k of Object.keys(closingAmounts)) {
                 this.doc.text('- ' + k, margin + 5, row += 5);
-                this.doc.text('$ ' + decimalPipe.transform(closingAmounts[k], '1.2-2'), 60, row);
+                this.doc.text('$ ' + closingAmounts[k].toString(), 60, row);
                 closeCash += closingAmounts[k];
             }
         } else {
@@ -1665,7 +1666,7 @@ export class PrintComponent implements OnInit {
         }
         this.doc.setFont('','bold');
         this.doc.text("Total:", margin + 10, row += 5);
-        this.doc.text('$ ' + decimalPipe.transform(closeCash, '1.2-2'), 60, row);
+        this.doc.text('$ ' + closeCash.toString(), 60, row);
         this.doc.setFont('','normal');
 
         this.doc.setFont('','bold');
@@ -1688,13 +1689,13 @@ export class PrintComponent implements OnInit {
                 let dif: number = this.roundNumber.transform(closingAmounts[k] - ((openingAmounts[k] + inputAmounts[k]) - outputAmounts[k]));
                 if (dif != 0) {
                     this.doc.text('- ' + k, margin + 5, row += 5);
-                    this.doc.text('$ ' + decimalPipe.transform(closingAmounts[k] - ((openingAmounts[k] + inputAmounts[k]) - outputAmounts[k]), '1.2-2'), 60, row);
+                    this.doc.text('$ ' + (closingAmounts[k] - ((openingAmounts[k] + inputAmounts[k]) - outputAmounts[k])).toString(), 60, row);
                 }
             }
         }
         this.doc.setFont('','bold');
         this.doc.text("Total:", margin + 10, row += 5);
-        this.doc.text('$ ' + decimalPipe.transform(closeCash - ((openCash + input) - output), '1.2-2'), 60, row);
+        this.doc.text('$ ' + (closeCash - ((openCash + input) - output)).toString(), 60, row);
         this.doc.setFont('','normal');
 
         // Pie de la impresión
@@ -3505,9 +3506,10 @@ export class PrintComponent implements OnInit {
             this.doc.setFont('','normal');
             this.doc.setFontSize(this.fontSizes.normal);
             if (this.branchImagen && this.branchImagen !== 'default.jpg') {
-                await this.getBranchPicture(3, 3, this.printer.pageWidth - 5, 26, false);
+                await this.getBranchPicture(3, 3, this.printer.pageWidth - 4, 40, false);
             } else {
-                await this.getCompanyPicture(3, 3, this.printer.pageWidth - 5, 26, false);
+                await this.getCompanyPicture(3, 3, this.printer.pageWidth - 4, 40, false);
+
             }
         }
 
@@ -3791,7 +3793,7 @@ export class PrintComponent implements OnInit {
         if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
             for (let movementOfArticle of this.movementsOfArticles) {
                 if (movementOfArticle.salePrice > 0) {
-
+                    this.doc.setFont("","normal");
                     this.row += 6;
                     this.doc.text(movementOfArticle.description.slice(0, 25), margin, this.row);
                     this.doc.text(this.roundNumber.transform(movementOfArticle.amount) + " x " + this.roundNumber.transform((movementOfArticle.salePrice + (movementOfArticle.transactionDiscountAmount * movementOfArticle.amount)) / movementOfArticle.amount).toString(), margin, this.row + 3);
@@ -3807,8 +3809,8 @@ export class PrintComponent implements OnInit {
 
                         if (note && note.length > 0) {
                             for (const iterator of note) {
-                                this.doc.text(iterator, 5, this.row);
-                                this.row += 5
+                                this.row += 4
+                                this.doc.text("- "+iterator.trim(), 7, this.row);
                             }
                         } else {
 
@@ -3827,8 +3829,10 @@ export class PrintComponent implements OnInit {
                         if (movArticle && movArticle.length > 0) {
                             this.doc.setFont("","italic");
                             for (const iterator of movArticle) {
-                                this.row += 6
-                                this.doc.text(iterator.description, 5, this.row);
+                                if(iterator.salePrice === 0){
+                                    this.row += 6
+                                    this.doc.text("- "+iterator.description.trim(), 7, this.row);
+                                }
                             }
                         }
                     }
@@ -3925,7 +3929,8 @@ export class PrintComponent implements OnInit {
                 description: 1,
                 "category._id": 1,
                 "category.isRequiredOptional": 1,
-                operationType: 1
+                operationType: 1,
+                salePrice : 1
             }
 
             let match = {
