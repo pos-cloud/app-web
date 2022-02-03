@@ -1112,10 +1112,12 @@ export class AddMovementOfArticleComponent implements OnInit {
                         if (count > 1) {
                             this.showMessage(`Solo puede seleccionar un opcional de ${group.name}`, 'info', true);
                             resolve(false)
+                            this.loading = false
                         }
                         if (count == 0) {
                             this.showMessage(`Debe seleccionar un opcional de ${group.name}`, 'info', true);
                             resolve(false)
+                            this.loading = false
                         }
                     }
 
