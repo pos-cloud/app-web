@@ -725,11 +725,14 @@ export class ReportBestSellingArticleComponent implements OnInit {
             );
         });
     }
-    
+
     onItemSelect(item: any) {
     }
 
-    public getCategories(): Promise<Category[]> {
+    onSelectAll(items: any) {
+    }
+
+    getCategories(): Promise<Category[]> {
 
         return new Promise<Category[]>((resolve, reject) => {
 

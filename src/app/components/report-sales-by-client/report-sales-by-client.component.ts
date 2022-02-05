@@ -356,6 +356,9 @@ export class ReportSalesByClientComponent implements OnInit {
 
     onItemSelect(item: any) {
     }
+    
+    onSelectAll(items: any) {
+    }
 
     public orderBy(term: string): void {
 
