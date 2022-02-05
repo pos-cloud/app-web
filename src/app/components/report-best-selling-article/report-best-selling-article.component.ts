@@ -725,6 +725,9 @@ export class ReportBestSellingArticleComponent implements OnInit {
             );
         });
     }
+    
+    onItemSelect(item: any) {
+    }
 
     public getCategories(): Promise<Category[]> {
 
