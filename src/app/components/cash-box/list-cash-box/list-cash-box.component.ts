@@ -172,11 +172,12 @@ export class ListCashBoxComponent implements OnInit {
         match += `"operationType": { "$ne": "D" },
               "transaction.state": "${TransactionState.Closed}",
               "transaction.operationType": { "$ne": "D" },
-              "type.cashBoxImpact" : true,
-              "transaction.cashBox._id" : { "$oid" : "${this.cashBoxSelected._id}"}}`;
+              "type.cashBoxImpact" : true }`;
 
 
         match = JSON.parse(match);
+
+        if(this.cashBoxSelected) match['transaction.cashBox._id'] = { "$oid" : this.cashBoxSelected._id};
 
         // CAMPOS A TRAER
         let project = {
