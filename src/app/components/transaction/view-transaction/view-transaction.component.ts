@@ -89,30 +89,8 @@ export class ViewTransactionComponent implements OnInit {
     public validationMessages = {
         'required': 'Este campo es requerido.',
     };
-    public formFields: FormField[] = [
-        {
-            name: 'date',
-            tag: 'input',
-            tagType: 'date',
-            class: 'form-group col-md-2',
-            validators: [Validators.required],
-        },
-        {
-            name: 'period',
-            tag: 'autocomplete',
-            tagType: 'text',
-            search: this.searchPeriods,
-            format: this.formatterPeriods,
-            class: 'form-group col-md-4',
-            validators: [Validators.required]
-        },
-        {
-            name: 'observation',
-            tag: 'input',
-            tagType: 'text',
-            class: 'form-group col-md-6'
-        }
-    ];
+    public formFields: FormField[] = [];
+    
     constructor(
         public _transactionService: TransactionService,
         public _movementOfArticleService: MovementOfArticleService,
@@ -267,7 +245,7 @@ export class ViewTransactionComponent implements OnInit {
             }
         }
 
-        if (this.obj.items && this.obj.items.length > 0) {
+        if (this.obj && this.obj.items && this.obj.items.length > 0) {
             var items = <FormArray>this.objForm.controls.items;
             this.obj.items.forEach(x => {
                 items.push(this._fb.group({
