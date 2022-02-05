@@ -199,11 +199,8 @@
                                             title="Imprimir Etiqueta"><i class="fa fa-barcode"></i></button>
                                     </td>
                                     <td>{{movementOfArticle.amount}}</td>
-                                    <td *ngIf="movementOfArticle.category">{{movementOfArticle.category.description}}
-                                    </td>
-                                    <td *ngIf="!movementOfArticle.category"></td>
-                                    <td *ngIf="movementOfArticle.make">{{movementOfArticle.make.description}}</td>
-                                    <td *ngIf="!movementOfArticle.make"></td>
+                                    <td>{{movementOfArticle?.category?.description}}</td>
+                                    <td>{{movementOfArticle?.make?.description}}</td>
                                     <td>{{movementOfArticle.code}}</td>
                                     <td>{{movementOfArticle.description}}
                                         <strong *ngIf="movementOfArticle.notes">
@@ -211,7 +208,7 @@
                                             {{movementOfArticle.notes}}
                                         </strong>
                                     </td>
-                                    <td>{{movementOfArticle.article.posDescription}}</td>
+                                    <td>{{movementOfArticle?.article?.posDescription}}</td>
                                     <td>{{movementOfArticle.unitPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                                     <td>{{movementOfArticle.discountRate | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                                     <td>{{movementOfArticle.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
