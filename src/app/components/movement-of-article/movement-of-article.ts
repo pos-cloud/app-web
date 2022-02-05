@@ -228,6 +228,16 @@ export let attributes = [
         required: false,
     },
     {
+        name: 'observation',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+    },
+    {
         name: 'make.description',
         visible: false,
         disabled: false,
