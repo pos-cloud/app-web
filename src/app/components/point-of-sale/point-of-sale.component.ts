@@ -657,7 +657,7 @@ export class PointOfSaleComponent implements OnInit {
 
                 if (this.user.branch && this.user.branch._id) {
                     match = {
-                        level: { "$lt": this.user.level },
+                        level: { '$lt': this.user.level },
                         "$or": [
                             { branch: { "$exists": false } },
                             { branch: null },
@@ -668,7 +668,7 @@ export class PointOfSaleComponent implements OnInit {
                     }
                 } else {
                     match = {
-                        level: { "$lt": this.user.level },
+                        level: { '$lt': this.user.level },
                         transactionMovement: this.transactionMovement,
                         "allowAPP": false
                     }
@@ -692,7 +692,7 @@ export class PointOfSaleComponent implements OnInit {
                     query['branchOrigin'] = { $oid: this.identity.origin.branch._id };
                 }
 
-                query['type.level'] = { $lt: this.user.level };
+                query['type.level'] = { '$lt': this.user.level };
                 query['operationType'] = { $ne: 'D' };
 
                 await this.getTransactionsV2(query).then(
@@ -707,7 +707,7 @@ export class PointOfSaleComponent implements OnInit {
 
                 if (this.user.branch && this.user.branch._id) {
                     match = {
-                        level: { "$lt": this.user.level },
+                        level: { '$lt': this.user.level },
                         "$or": [
                             { branch: { "$exists": false } },
                             { branch: null },
@@ -718,7 +718,7 @@ export class PointOfSaleComponent implements OnInit {
                     }
                 } else {
                     match = {
-                        level: { "$lt": this.user.level },
+                        level: { '$lt': this.user.level },
                         transactionMovement: this.transactionMovement,
                         "allowAPP": false
                     }
