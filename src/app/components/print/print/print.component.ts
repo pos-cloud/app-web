@@ -195,8 +195,8 @@ export class PrintComponent implements OnInit {
         const orientation = 'p';
 
         const units = 'mm';
-        let pageWidth = this.printer.pageWidth * 100 / 35.27751646284102;
-        let pageHigh = this.printer.pageHigh * 100 / 35.27751646284102;
+        let pageWidth = this.printer.pageWidth;
+        let pageHigh = this.printer.pageHigh;
 
 
         this.doc = new jsPDF(orientation, units, [pageWidth, pageHigh]);
