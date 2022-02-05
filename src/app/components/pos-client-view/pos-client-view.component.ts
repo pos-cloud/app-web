@@ -18,7 +18,7 @@ export class PosClientViewComponent {
     public elem;
     public loading: boolean = false;
     public transactions: Transaction[];
-    public transactionStates: string[];
+    public transactionStates: string[] = new Array();
     public validTransactionStates: string[] = [
         TransactionState.Delivered.toString(),
         TransactionState.Pending.toString(),
@@ -98,14 +98,19 @@ export class PosClientViewComponent {
     }
 
     public async loadTransactions() {
-        if (this.transactionStates.includes(TransactionState.Preparing.toString()) &&
+        let query = {};
+        if (this.transactionStates && this.transactionStates.includes(TransactionState.Preparing.toString()) &&
             !this.transactionStates.includes(TransactionState.Packing.toString())) {
             this.transactionStates.push(TransactionState.Packing.toString());
+            query['state'] = { $in: this.transactionStates };
         }
-        let query = { state: { $in: this.transactionStates }, operationType: { $ne: "D" } };
+
         if (this.originsToFilter && this.originsToFilter.length > 0) {
             query['origin'] = { $in: this.originsToFilter };
         }
+
+        query['operationType'] = { $ne: "D" };
+
         this.transactions = await this.getTransactions(query);
         // CHANGE STATES PACKING TO PREPARING FOR VIEW
         for (let trans of this.transactions) {
