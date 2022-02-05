@@ -677,7 +677,7 @@ export class AddCompanyComponent implements OnInit {
                     });
                 }
 
-                this.company.identificationType = this.identificationTypes[0];
+                this.company.identificationType = this.identificationTypes[0] || null;
                 this.otherFields = this.company.otherFields;
                 this.setValueForm();
                 this.loading = false;
