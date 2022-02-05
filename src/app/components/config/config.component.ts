@@ -624,6 +624,7 @@ export class ConfigComponent implements OnInit {
     if (this.config.article.code.validators.maxLength === undefined) this.config.article.code.validators.maxLength = 10;
     if (this.config.article.isWeigth.default === undefined) this.config.article.isWeigth.default = false;
     // if (this.config.company.allowCurrentAccount.default === undefined) this.config.company.allowCurrentAccount.default = false;
+    
     if (this.config.company.allowCurrentAccountProvider.default === undefined) this.config.company.allowCurrentAccountProvider.default = false;
     if (this.config.company.allowCurrentAccountClient.default === undefined) this.config.company.allowCurrentAccountClient.default = false;
     if (this.config.cashBox.perUser === undefined) this.config.cashBox.perUser = false;
@@ -692,6 +693,7 @@ export class ConfigComponent implements OnInit {
       'article.isWeigth.default': this.config.article.isWeigth.default,
       'article.salesAccount.default': this.config.article.salesAccount.default,
       'article.purchaseAccount.default': this.config.article.purchaseAccount.default,
+      'article.allowSaleWithoutStock.default': this.config.article.allowSaleWithoutStock.default,
       // 'company.allowCurrentAccount.default': this.config.company.allowCurrentAccount.default,
       'company.allowCurrentAccountProvider.default': this.config.company.allowCurrentAccountProvider.default,
       'company.allowCurrentAccountClient.default': this.config.company.allowCurrentAccountClient.default,
