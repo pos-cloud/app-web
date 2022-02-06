@@ -2578,19 +2578,6 @@ export class AddSaleOrderComponent {
 
                 await this.areValidMovementOfArticle();
 
-                if (this.transaction.type.requestPaymentMethods &&
-                    this.fastPayment &&
-                    this.fastPayment.isCurrentAccount &&
-                    !this.transaction.company)
-                    throw new Error(`Debe seleccionar una empresa para poder efectuarse un pago con el método ${this.fastPayment.name}`);
-
-                if (this.transaction.type.requestPaymentMethods &&
-                    this.fastPayment &&
-                    this.fastPayment.isCurrentAccount &&
-                    this.transaction.company &&
-                    !this.transaction.company.allowCurrentAccount)
-                    throw new Error(`La empresa seleccionada no esta habilitada para cobrar con el método ${this.fastPayment.name}`);
-
                 if (this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
                     !this.transaction.company)
                     throw new Error(`Debe seleccionar un proveedor para la transacción`);

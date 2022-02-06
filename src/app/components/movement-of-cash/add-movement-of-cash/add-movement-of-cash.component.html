@@ -318,17 +318,17 @@
                     </div>
                     <div class="row">
                         <div class="form-group col-md-2">
-                            <label for="quotas" class="control-label">Cant. Cuotas:</label>
+                            <label for="quota" class="control-label">Cant. Cuotas:</label>
                             <div class="input-group">
                                 <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1"><i
                                             class="fa fa-list-ol"></i></span></div>
-                                <input type="number" class="form-control" formControlName="quotas" name="quotas" min="0"
-                                    step="1" (change)="calculateQuotas('quotas')" />
+                                <input type="number" class="form-control" formControlName="quota" name="quota" min="0"
+                                    step="1" (change)="calculateQuotas('quota')" />
                             </div>
                         </div>
                         <div class="form-group col-md-2">
                             <label for="period" class="control-label">Período:</label>
-                            <select class="form-control" formControlName="period" (change)="calculateQuotas('quotas')">
+                            <select class="form-control" formControlName="period" (change)="calculateQuotas('quota')">
                                 <option value="Mensual">Meses</option>
                                 <option value="Anual">Años</option>
                                 <option value="Diario">Días</option>
@@ -340,7 +340,7 @@
                                 <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1"><i
                                             class="fa fa-calendar"></i></span></div>
                                 <input type="number" class="form-control" formControlName="days" name="days" min="0"
-                                    step="1" (change)="calculateQuotas('quotas')" />
+                                    step="1" (change)="calculateQuotas('quota')" />
                             </div>
                         </div>
                         <div class="form-group col-md-2">
@@ -349,13 +349,13 @@
                                 <div class="input-group-prepend"><span class="input-group-text"
                                         id="basic-addon1">%</span></div>
                                 <input type="number" class="form-control" formControlName="interestPercentage"
-                                    name="interestPercentage" min="0" step="1" (change)="calculateQuotas('quotas')" />
+                                    name="interestPercentage" min="0" step="1" (change)="calculateQuotas('quota')" />
                             </div>
                         </div>
                         <div class="form-group col-md-3">
                             <label for="interestType" class="control-label">Tipo de cálculo:</label>
                             <select class="form-control" formControlName="interestType"
-                                (change)="calculateQuotas('quotas')">
+                                (change)="calculateQuotas('quota')">
                                 <option value="Interés Simple">Interés Simple</option>
                                 <option value="Francés">Francés</option>
                             </select>
@@ -368,7 +368,7 @@
                                 <div class="input-group-prepend"><span class="input-group-text"
                                         id="basic-addon1">%</span></div>
                                 <input type="number" class="form-control" formControlName="taxPercentage"
-                                    name="taxPercentage" min="0" step="1" (blur)="calculateQuotas('quotas')" />
+                                    name="taxPercentage" min="0" step="1" (blur)="calculateQuotas('quota')" />
                             </div>
                         </div>
                     </div>
