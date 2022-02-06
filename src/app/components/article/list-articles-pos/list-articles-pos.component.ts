@@ -175,6 +175,7 @@ export class ListArticlesPosComponent implements OnInit {
             favourite: 1,
             quantityPerMeasure: 1,
             isWeigth: 1,
+            codeProvider : 1
         }
 
         if (this.transaction && this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Sale) {
