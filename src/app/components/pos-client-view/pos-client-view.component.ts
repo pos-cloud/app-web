@@ -14,25 +14,24 @@ import { ActivatedRoute } from '@angular/router';
 
 export class PosClientViewComponent {
 
-    public viewBotton: boolean = true;
-    public elem;
-    public loading: boolean = false;
-    public transactions: Transaction[];
-    public transactionStates: string[] = new Array();
-    public validTransactionStates: string[] = [
+     viewBotton: boolean = true;
+     elem;
+     loading: boolean = false;
+     transactions: Transaction[];
+     transactionStates: string[] = new Array();
+     validTransactionStates: string[] = [
         TransactionState.Delivered.toString(),
         TransactionState.Pending.toString(),
         TransactionState.Sent.toString(),
         TransactionState.Preparing.toString(),
     ];
-    public originsToFilter: number[];
-
+     originsToFilter: number[];
     // DISEÑO
-    public colors: string[] = ["orange:white", "green:white"];
-    public colorNumber: number = 0;
-    public limit: number = 9;
-    public fontSize: number = 100;
-    public column: number = 6;
+     colors: string[] = ["orange:white", "green:white"];
+     colorNumber: number = 0;
+     limit: number = 9;
+     fontSize: number = 100;
+     column: number = 6;
 
     constructor(
         private _route: ActivatedRoute,
@@ -99,9 +98,7 @@ export class PosClientViewComponent {
 
     public async loadTransactions() {
         let query = {};
-        if (this.transactionStates && this.transactionStates.includes(TransactionState.Preparing.toString()) &&
-            !this.transactionStates.includes(TransactionState.Packing.toString())) {
-            this.transactionStates.push(TransactionState.Packing.toString());
+        if (this.transactionStates) {
             query['state'] = { $in: this.transactionStates };
         }
 
