@@ -24,22 +24,22 @@
                                 <div class="row">
                                     <div class="form-group col-md-2">
                                         <label for="order" class="control-label">Orden:</label>
-                                        <input type="number" class="form-control" formControlName="order"
-                                            name="order" id="order" [readonly]="readonly" />
+                                        <input type="number" class="form-control" formControlName="order" name="order"
+                                            id="order" [readonly]="readonly" />
                                     </div>
                                     <div class="form-group col-md-5">
                                         <label for="code" class="control-label">Código Interno (*):</label>
-                                        <input type="text" class="form-control" formControlName="code"
-                                            name="code" id="code" (blur)="autocompleteCode()"
-                                            [focus]="focusEvent" [readonly]="readonly" />
+                                        <input type="text" class="form-control" formControlName="code" name="code"
+                                            id="code" (blur)="autocompleteCode()" [focus]="focusEvent"
+                                            [readonly]="readonly" />
                                         <div *ngIf="formErrors.code" class="alert alert-danger">
                                             {{ formErrors.code }}
                                         </div>
                                     </div>
                                     <div class="form-group col-md-5">
                                         <label for="barcode" class="control-label">Código de Barras:</label>
-                                        <input type="text" class="form-control" formControlName="barcode"
-                                            name="barcode" id="barcode" [readonly]="readonly" />
+                                        <input type="text" class="form-control" formControlName="barcode" name="barcode"
+                                            id="barcode" [readonly]="readonly" />
                                         <div *ngIf="formErrors.barcode" class="alert alert-danger">
                                             {{ formErrors.barcode }}
                                         </div>
@@ -62,11 +62,10 @@
                                             </ngb-highlight>
                                         </ng-template>
                                         <label for="category">Rubro (*):</label>
-                                        <input id="category" type="text" class="form-control"
-                                            formControlName="category" name="category"
-                                            [ngbTypeahead]="searchCategories" [resultTemplate]="rtCategories"
-                                            [inputFormatter]="formatterCategories" [readonly]="readonly"
-                                            (blur)="onValueChanged($event.target.id)" />
+                                        <input id="category" type="text" class="form-control" formControlName="category"
+                                            name="category" [ngbTypeahead]="searchCategories"
+                                            [resultTemplate]="rtCategories" [inputFormatter]="formatterCategories"
+                                            [readonly]="readonly" (blur)="onValueChanged($event.target.id)" />
                                         <div *ngIf="formErrors.category" class="alert alert-danger">
                                             {{ formErrors.category }}
                                         </div>
@@ -104,8 +103,7 @@
                                         for="customFileLang">{{fileNamePrincipal?fileNamePrincipal:'Buscar
                                         Imagen'}}</label>
                                     <input *ngIf="!readonly" type="file" class="custom-file-input" lang="es"
-                                        accept="image/*" id="customFileLang"
-                                        (change)="fileChangeEvent($event,false)" />
+                                        accept="image/*" id="customFileLang" (change)="fileChangeEvent($event,false)" />
                                     <img class="img-article" [src]="imageURL" height="120" width="120">
                                 </div>
                             </div>
@@ -180,8 +178,8 @@
                         <div class="row">
                             <div class="form-group col-md-12 center-content">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" formControlName="favourite"
-                                        value="" id="favourite" name="favourite">
+                                    <input class="form-check-input" type="checkbox" formControlName="favourite" value=""
+                                        id="favourite" name="favourite">
                                     <label class="form-check-label" for="favourite"
                                         title="Si es un producto destacado, aparecerá primero en la lista de produtos en el pedido para agregar">
                                         <b>Producto destacado</b>
@@ -647,22 +645,30 @@
                             </div>
                         </div>
                         <hr>
-                        <h4>Integración con Woocommerce</h4>
-                        <div class="row">
+                        <div class="row" *ngIf="articleForm?.value?.ecommerceEnabled">
                             <div class="form-group col-md-12">
-                                <label for="wooId" class="control-label">Id Woocommerce:</label>
-                                <input type="text" class="form-control" formControlName="wooId" name="wooId" id="wooId"
-                                    [readonly]="readonly" />
-                                <div *ngIf="formErrors.wooId" class="alert alert-danger">
-                                    {{ formErrors.wooId }}
+                                <h4>Integración con Woocommerce</h4>
+                                <div class="row">
+                                    <div class="form-group col-md-12">
+                                        <label for="wooId" class="control-label">Id Woocommerce:</label>
+                                        <input type="text" class="form-control" formControlName="wooId" name="wooId"
+                                            id="wooId" [readonly]="readonly" />
+                                        <div *ngIf="formErrors.wooId" class="alert alert-danger">
+                                            {{ formErrors.wooId }}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <hr>
-                        <h4>Integración con Mercado Libre</h4>
-                        <app-add-meli-attrs [article]="article" [meliAttrs]="meliAttrs"
-                            (eventAddMeliAttrs)="eventAddMeliAttrs($event)" [readonly]="readonly">
-                        </app-add-meli-attrs>
+                        <div class="row" *ngIf="articleForm?.value?.ecommerceEnabled">
+                            <div class="form-group col-md-12">
+                                <h4>Integración con Mercado Libre</h4>
+                                <app-add-meli-attrs [article]="article" [meliAttrs]="meliAttrs"
+                                    (eventAddMeliAttrs)="eventAddMeliAttrs($event)" [readonly]="readonly">
+                                </app-add-meli-attrs>
+                            </div>
+                        </div>
                     </ng-template>
                 </li>
                 <li ngbNavItem>
@@ -833,8 +839,7 @@
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label class="control-label">El día:</label>
-                                        <label *ngIf="article.updateDate"
-                                            class="control-label"><b>{{article.updateDate
+                                        <label *ngIf="article.updateDate" class="control-label"><b>{{article.updateDate
                                                 | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
                                         <label *ngIf="!article.updateDate" class="control-label"><b>-</b></label>
                                     </div>

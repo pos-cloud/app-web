@@ -20,26 +20,23 @@ import Resulteable from 'app/util/Resulteable';
 
 export class AddMeliAttrsComponent implements OnInit {
 
-    public meliAttrsForm: FormGroup;
-    public alertMessage: string = '';
-    public loading: boolean = false;
-    public focusEvent = new EventEmitter<boolean>();
-    public roundNumber: RoundNumberPipe = new RoundNumberPipe();
     @Input() article: Article;
     @Input() meliAttrs: IMeliAttrs;
     @Input() readonly: boolean;
     @Output() eventAddMeliAttrs: EventEmitter<any> = new EventEmitter<any>();
-    public formFields: FormField[];
-    public categorySelected: any;
-    public categories: any[];
-    public rootCategory: string = '';
-    public finishLoad: boolean = false;
-
-    public formErrors = {
-    };
-
-    public validationMessages = {
-    }
+    meliAttrsForm: FormGroup;
+    alertMessage: string = '';
+    loading: boolean = false;
+    focusEvent = new EventEmitter<boolean>();
+    roundNumber: RoundNumberPipe = new RoundNumberPipe();
+    formFields: FormField[];
+    categorySelected: any;
+    categories: any[];
+    rootCategory: string = '';
+    finishLoad: boolean = false;
+    plans: string[] = ['free','bronze','silver','gold','gold_special','gold_premium','gold_pro'];
+    formErrors = {};
+    validationMessages = {}
 
     constructor(
         public _taxService: TaxService,

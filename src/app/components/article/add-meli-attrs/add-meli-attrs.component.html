@@ -4,8 +4,7 @@
       <div class="form-group col-md-12">
         <label for="meliId" class="control-label">ID Mercado Lire:</label>
         <div class="input-group">
-          <input type="text" class="form-control" formControlName="meliId" name="meliId" id="meliId"
-            [readonly]="readonly" />
+          <input type="text" class="form-control" formControlName="meliId" name="meliId" id="meliId" />
         </div>
       </div>
     </div>
@@ -13,10 +12,9 @@
       <div class="form-group col-md-12">
         <label for="listing_type_id" class="control-label">Tipo de publicación:</label>
         <select class="form-control" formControlName="listing_type_id">
-          <option
-            *ngFor="let listing_type of ['free','bronze','silver','gold','gold_special','gold_premium','gold_pro']"
-            [ngValue]="listing_type" [disabled]="article?.meliId && article?.meliId !== ''">
-            {{listing_type}}</option>
+          <option *ngFor="let listing_type_id of plans" [ngValue]="listing_type_id" [disabled]="article?.meliId && article?.meliId !== ''">
+            {{listing_type_id}}
+          </option>
         </select>
       </div>
     </div>
