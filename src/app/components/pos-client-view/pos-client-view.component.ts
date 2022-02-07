@@ -113,8 +113,10 @@ export class PosClientViewComponent {
 
         this.transactions = await this.getTransactions(query);
         // CHANGE STATES PACKING TO PREPARING FOR VIEW
-        for (let trans of this.transactions) {
-            if (trans.state === TransactionState.Packing) trans.state = TransactionState.Preparing;
+        if(this.transactions && this.transactions.length > 0) {
+            for (let trans of this.transactions) {
+                if (trans.state === TransactionState.Packing) trans.state = TransactionState.Preparing;
+            }
         }
     }
 
