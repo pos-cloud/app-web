@@ -316,13 +316,15 @@ export class ExportIvaComponent implements OnInit {
                         var value: any = [];
                         for (let index2 = 0; index2 < valuesField.length; index2++) {
                             value[index2] = {};
-                            value[index2]['name'] = valuesField[index2]
-                            for (const iterator of this.taxes) {
-                                value[index2][iterator.name] = 0;
+                            value[index2]['name'] = valuesField[index2];
+                            if (this.taxes && this.taxes.length > 0) {
+                                for (const iterator of this.taxes) {
+                                    value[index2][iterator.name] = 0;
+                                }
                             }
                             //value[index2]['total'] = 0;
                         }
-                        this.dataArticleFields[index]['value'] = value
+                        this.dataArticleFields[index]['value'] = value;
                     }
 
                 } else {
@@ -560,18 +562,18 @@ export class ExportIvaComponent implements OnInit {
                                         for (let index = 0; index < this.dataIVA.length; index++) {
                                             if (transaction.company && transaction.company.vatCondition && this.dataIVA[index]['_id'] === transaction.company.vatCondition) {
                                                 this.dataIVA[index]['gravado'] = this.dataIVA[index]['gravado'] + transactionTax.taxBase;
-                                                this.dataIVA[index]['iva10'] +=  partialIVA10;
-                                                this.dataIVA[index]['iva21'] +=  partialIVA21;
-                                                this.dataIVA[index]['iva27'] +=  partialIVA27;
+                                                this.dataIVA[index]['iva10'] += partialIVA10;
+                                                this.dataIVA[index]['iva21'] += partialIVA21;
+                                                this.dataIVA[index]['iva27'] += partialIVA27;
                                             }
                                         }
 
                                         for (let index = 0; index < this.dataState.length; index++) {
                                             if (transaction.company && transaction.company.state && this.dataState[index]['_id'] === transaction.company.state) {
                                                 this.dataState[index]['gravado'] = this.dataState[index]['gravado'] + transactionTax.taxBase;
-                                                this.dataState[index]['iva10'] +=  partialIVA10;
-                                                this.dataState[index]['iva21'] +=  partialIVA21;
-                                                this.dataState[index]['iva27'] +=  partialIVA27;
+                                                this.dataState[index]['iva10'] += partialIVA10;
+                                                this.dataState[index]['iva21'] += partialIVA21;
+                                                this.dataState[index]['iva27'] += partialIVA27;
                                             }
                                         }
                                     }
@@ -580,22 +582,22 @@ export class ExportIvaComponent implements OnInit {
                                     if (this.exportIVAForm.value.otherFields === "true") {
 
                                         var movementOfArticles: MovementOfArticle[] = await this.getMovementOfArticle(transaction._id)
-    
+
                                         if (movementOfArticles && movementOfArticles.length > 0) {
                                             for (const movementOfArticle of movementOfArticles) {
-    
+
                                                 //preguntamos si tiene la mierda de other fields tanto el movimiento como el data article fields jijiji
                                                 if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0 && this.dataArticleFields && this.dataArticleFields.length > 0) {
                                                     //si dice que si hay que recorrer para ver cuantos
                                                     for (const otherField of movementOfArticle.otherFields) {
-    
+
                                                         //preguntamos si el otherfield discrimina en IVA
                                                         if (otherField.articleField.discriminateVAT) {
-    
+
                                                             //guardamos los dos datos que necesitamos id y valor
                                                             var id = otherField.articleField._id;
                                                             var valor = otherField.value;
-    
+
                                                             //ahora recorremos la mierda del data
                                                             for (let index = 0; index < this.dataArticleFields.length; index++) {
                                                                 //primero preguntamos si el id son iguales para entrar a los valores
@@ -606,7 +608,7 @@ export class ExportIvaComponent implements OnInit {
                                                                         if (valor === this.dataArticleFields[index]['value'][index2]['name']) {
                                                                             //perfecto si entra aca updateamos el data en su valor
                                                                             //this.dataArticleFields[index]['value'][index2]['total'] = this.dataArticleFields[index]['value'][index2]['total'] + partialTaxBase;
-    
+
                                                                             for (const tax of movementOfArticle.taxes) {
                                                                                 for (const tax2 of Object.keys(this.dataArticleFields[index]['value'][index2])) {
                                                                                     if (tax.tax.name === tax2) {
@@ -614,19 +616,19 @@ export class ExportIvaComponent implements OnInit {
                                                                                     }
                                                                                 }
                                                                             }
-    
-    
+
+
                                                                         }
                                                                     }
                                                                 }
                                                             }
                                                         }
-    
+
                                                     }
                                                 }
-    
+
                                             }
-    
+
                                             for (let index = 0; index < this.dataClassification.length; index++) {
                                                 if (movementOfArticles && movementOfArticles.length !== 0) {
                                                     for (const element of movementOfArticles) {
@@ -636,7 +638,7 @@ export class ExportIvaComponent implements OnInit {
                                                     }
                                                 }
                                             }
-    
+
                                         } else {
                                             movementOfArticles = new Array()
                                         }
@@ -781,16 +783,16 @@ export class ExportIvaComponent implements OnInit {
                         sheet[index] = data;
                     }
                     sheet[0].sort(function (a, b) {
-                        if(a.FECHA == b.FECHA) {
+                        if (a.FECHA == b.FECHA) {
                             if (a.Numero > b.Numero) {
-                              return 1;
+                                return 1;
                             }
                             if (a.Numero < b.Numero) {
-                              return -1;
+                                return -1;
                             }
                         }
                         return 0;
-                      });
+                    });
                     if (sheet.length === 1) {
                         this._companyService.exportAsExcelFile(sheet[0], this.type + '-' + this.exportIVAForm.value.year + '-' + this.exportIVAForm.value.month);
                     } else {
