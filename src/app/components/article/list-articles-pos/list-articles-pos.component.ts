@@ -108,11 +108,13 @@ export class ListArticlesPosComponent implements OnInit {
         if ((!this.transaction || !this.transaction._id || this.transaction._id === '') && this.transactionId) {
             await this.getTransaction().then(
                 async transaction => {
-                    this.transaction = transaction;
-                    if (this.transaction && this.transaction.company && this.transaction.company.priceList && this.transaction.company.type === CompanyType.Client) {
-                        this.priceList = await this.getPriceList(this.transaction.company.priceList._id)
-                    } else if (this.transaction.priceList) {
-                        this.priceList = this.transaction.priceList;
+                    if(transaction) {
+                        this.transaction = transaction;
+                        if (this.transaction && this.transaction.company && this.transaction.company.priceList && this.transaction.company.type === CompanyType.Client) {
+                            this.priceList = await this.getPriceList(this.transaction.company.priceList._id)
+                        } else if (this.transaction.priceList) {
+                            this.priceList = this.transaction.priceList;
+                        }
                     }
                 }
             );
@@ -290,7 +292,7 @@ export class ListArticlesPosComponent implements OnInit {
 
                         if (this.transaction && this.transaction.company && this.transaction.company.priceList && this.transaction.company.type === CompanyType.Client || this.transaction.priceList) {
                             var priceList;
-                            if (this.transaction.priceList) {
+                            if (this.transaction && this.transaction.priceList) {
                                 priceList = await this.getPriceList(this.transaction.priceList._id)
                             } else {
                                 priceList = await this.getPriceList(this.transaction.company.priceList._id)
