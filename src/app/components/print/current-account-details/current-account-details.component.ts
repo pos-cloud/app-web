@@ -165,8 +165,8 @@ export class CurrentAccountDetailsComponent implements OnInit {
         private domSanitizer: DomSanitizer
     ) {
         this.transactionTypesSelect = new Array();
-        this.pageWidth = 210 * 100 / 35.27751646284102;
-        this.pageHigh = 297 * 100 / 35.27751646284102;
+        this.pageWidth = 210
+        this.pageHigh = 297
         this.getEmployees();
         this.getGroups();
     }
@@ -802,12 +802,12 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
             }
 
-            this.doc.setFontType("","bold");
+            this.doc.setFont("","bold");
             this.doc.text(120, row, "Total");
             this.doc.textEx("$ " + this.roundNumber.transform(acumulado).toFixed(2).toString(), 180, row, 'right', 'middle');
 
 
-            this.doc.setFontType("","normal");
+            this.doc.setFont("","normal");
             row += 5;
             if (row > 220) {
                 page += 1;
@@ -1343,12 +1343,12 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     }
                 }
 
-                this.doc.setFontType("","bold");
+                this.doc.setFont("","bold");
                 this.doc.text(120, row, "Total");
                 this.doc.textEx("$ " + this.roundNumber.transform(this.items[i].price).toFixed(2).toString(), 155, row, 'right', 'middle');
                 total = total + this.items[i].price
 
-                this.doc.setFontType("","normal");
+                this.doc.setFont("","normal");
                 row += 5;
                 if (row > 220) {
                     page += 1;

@@ -75,8 +75,8 @@ export class PrintVatBookComponent implements OnInit {
         public _configService: ConfigService,
         private domSanitizer: DomSanitizer
     ) {
-        this.pageWidth = 210 * 100 / 35.27751646284102;
-        this.pageHigh = 297 * 100 / 35.27751646284102;
+        this.pageWidth = 210
+        this.pageHigh = 297
         this.getVATConditions();
     }
 
@@ -198,14 +198,14 @@ export class PrintVatBookComponent implements OnInit {
 
 
         var row = 10;
-        this.doc.setFontType("",'bold');
+        this.doc.setFont("",'bold');
 
         this.doc.setFontSize(12);
         if (this.companyName) {
             this.doc.text(this.companyName, 5, row);
         }
 
-        this.doc.setFontType("",'normal');
+        this.doc.setFont("",'normal');
         row += 5;
 
         if (this.config && this.config[0] && this.config[0].identificationType) {
@@ -213,7 +213,7 @@ export class PrintVatBookComponent implements OnInit {
             this.doc.text(this.config[0].identificationValue, 25, row);
         }
 
-        this.doc.setFontType("",'bold');
+        this.doc.setFont("",'bold');
         this.doc.text("N° DE FOLIO:" + folio.toString(), 240, row);
         this.centerText(5, 5, 300, 0, row, "LIBRO DE IVA " + this.params.split("&")[0].toString().toUpperCase() + "S - PERÍODO " + this.params.split("&")[1].toString().toUpperCase());
 
@@ -235,7 +235,7 @@ export class PrintVatBookComponent implements OnInit {
         this.doc.text("PERCEP.", 230, row);
         this.doc.text("TOTAL", 260, row);
         this.doc.setFontSize(8);
-        this.doc.setFontType("",'normal');
+        this.doc.setFont("",'normal');
 
         row += 3;
         this.doc.line(0, row, 400, row);
@@ -437,21 +437,21 @@ export class PrintVatBookComponent implements OnInit {
                 this.doc.addPage();
 
                 var row = 10;
-                this.doc.setFontType("",'bold');
+                this.doc.setFont("",'bold');
 
                 this.doc.setFontSize(12);
                 if (this.companyName) {
                     this.doc.text(this.companyName, 5, row);
                 }
 
-                this.doc.setFontType("",'normal');
+                this.doc.setFont("",'normal');
                 row += 5;
                 if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
                     this.doc.text(this.config[0].companyIdentificationType.name + ":", 5, row);
                     this.doc.text(this.config[0].companyIdentificationValue, 25, row);
                 }
 
-                this.doc.setFontType("",'bold');
+                this.doc.setFont("",'bold');
                 folio = folio + 1;
                 this.doc.text("N° DE FOLIO:" + folio.toString(), 240, row);
                 this.centerText(5, 5, 300, 0, row, "LIBRO DE IVA " + this.params.split("&")[0].toString().toUpperCase() + "S - PERÍODO " + this.params.split("&")[1].toString().toUpperCase());
@@ -473,7 +473,7 @@ export class PrintVatBookComponent implements OnInit {
                 this.doc.text("PERCEP.", 230, row);
                 this.doc.text("TOTAL", 260, row);
                 this.doc.setFontSize(8);
-                this.doc.setFontType("",'normal');
+                this.doc.setFont("",'normal');
 
                 row += 3;
                 this.doc.line(0, row, 400, row);
@@ -483,7 +483,7 @@ export class PrintVatBookComponent implements OnInit {
 
         this.doc.line(0, row, 400, row);
         row += 5;
-        this.doc.setFontType("",'bold');
+        this.doc.setFont("",'bold');
 
         let printTaxBase = "0,00";
         if ((this.roundNumber.transform(totalTaxBase)).toString().split(".")[1]) {
@@ -558,7 +558,7 @@ export class PrintVatBookComponent implements OnInit {
         this.doc.text(printTaxAmountPercep, 230, row);
         this.doc.text(printAmount, 260, row);
 
-        this.doc.setFontType("",'normal');
+        this.doc.setFont("",'normal');
         row += 3;
         this.doc.line(0, row, 400, row);
 
@@ -568,25 +568,25 @@ export class PrintVatBookComponent implements OnInit {
             this.doc.addPage();
 
             var row = 10;
-            this.doc.setFontType("",'bold');
+            this.doc.setFont("",'bold');
 
             this.doc.setFontSize(12);
             if (this.companyName) {
                 this.doc.text(this.companyName, 5, row);
             }
 
-            this.doc.setFontType("",'normal');
+            this.doc.setFont("",'normal');
             row += 5;
             if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
                 this.doc.text(this.config[0].companyIdentificationType.name + ":", 5, row);
                 this.doc.text(this.config[0].companyIdentificationValue, 25, row);
             }
 
-            this.doc.setFontType("",'bold');
+            this.doc.setFont("",'bold');
             folio = folio + 1;
             this.doc.text("N° DE FOLIO:" + folio.toString(), 240, row);
             this.centerText(5, 5, 300, 0, row, "LIBRO DE IVA " + this.params.split("&")[0].toString().toUpperCase() + "S - PERÍODO " + this.params.split("&")[1].toString().toUpperCase());
-            this.doc.setFontType("",'normal');
+            this.doc.setFont("",'normal');
 
             row += 3;
             this.doc.line(0, row, 400, row);
@@ -599,24 +599,24 @@ export class PrintVatBookComponent implements OnInit {
         this.doc.line(10, row, 105, row);
         row += 5;
 
-        this.doc.setFontType("",'bold');
+        this.doc.setFont("",'bold');
         this.doc.setFontSize(9);
         this.doc.text("TOTALES POR IMPUESTO", 35, row);
         this.doc.setFontSize(8);
-        this.doc.setFontType("",'normal');
+        this.doc.setFont("",'normal');
 
         row += 3;
         // LINEA HORIZONTAL DEBAJO ENCABEZADO
         this.doc.line(10, row, 105, row);
         row += 5;
 
-        this.doc.setFontType("",'bold');
+        this.doc.setFont("",'bold');
         this.doc.setFontSize(9);
         this.doc.text("IMPUESTO", 15, row);
         this.doc.text("GRAVADO", 55, row);
         this.doc.text("MONTO", 85, row);
         this.doc.setFontSize(8);
-        this.doc.setFontType("",'normal');
+        this.doc.setFont("",'normal');
 
         row += 3;
         // LINEA HORIZONTAL DEBAJO ENCABEZADO
@@ -668,23 +668,23 @@ export class PrintVatBookComponent implements OnInit {
         this.doc.line(10, row, 105, row);
         row += 5;
 
-        this.doc.setFontType("",'bold');
+        this.doc.setFont("",'bold');
         this.doc.setFontSize(9);
         this.doc.text("TOTALES POR CLASIFICACIÓN", 35, row);
         this.doc.setFontSize(8);
-        this.doc.setFontType("",'normal');
+        this.doc.setFont("",'normal');
 
         row += 3;
         // LINEA HORIZONTAL DEBAJO ENCABEZADO
         this.doc.line(10, row, 105, row);
         row += 5;
 
-        this.doc.setFontType("",'bold');
+        this.doc.setFont("",'bold');
         this.doc.setFontSize(9);
         this.doc.text("CLASIFICACION", 15, row);
         this.doc.text("MONTO", 85, row);
         this.doc.setFontSize(8);
-        this.doc.setFontType("",'normal');
+        this.doc.setFont("",'normal');
 
         row += 3;
         // LINEA HORIZONTAL DEBAJO ENCABEZADO
@@ -715,23 +715,23 @@ export class PrintVatBookComponent implements OnInit {
         this.doc.line(140, row, 245, row);
         row += 5;
 
-        this.doc.setFontType("",'bold');
+        this.doc.setFont("",'bold');
         this.doc.setFontSize(9);
         this.doc.text("TOTALES POR REGIMEN", 175, row);
         this.doc.setFontSize(8);
-        this.doc.setFontType("",'normal');
+        this.doc.setFont("",'normal');
 
         row += 3;
         // LINEA HORIZONTAL DEBAJO ENCABEZADO
         this.doc.line(140, row, 245, row);
         row += 5;
 
-        this.doc.setFontType("",'bold');
+        this.doc.setFont("",'bold');
         this.doc.setFontSize(9);
         this.doc.text("REGIMEN", 145, row);
         this.doc.text("MONTO", 225, row);
         this.doc.setFontSize(8);
-        this.doc.setFontType("",'normal');
+        this.doc.setFont("",'normal');
 
         row += 3;
         // LINEA HORIZONTAL DEBAJO ENCABEZADO
