@@ -461,10 +461,9 @@ export class ExportIvaComponent implements OnInit {
 
                         for (let transaction of result.transactions) {
 
-                            if (transaction.branchDestination.name === this.branches[index].name) {
-
-
-
+                            if (transaction.branchDestination &&
+                                this.branches[index] &&
+                                transaction.branchDestination.name === this.branches[index].name) {
                                 data[i] = {};
                                 //DATOS PRINCIPALES
                                 data[i]['FECHA'] = this.dateFormat.transform(transaction.endDate, 'DD/MM/YYYY');
