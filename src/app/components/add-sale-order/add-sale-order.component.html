@@ -184,7 +184,7 @@
                         <tr>
                             <th width="90px">Cantidad</th>
                             <th width="100%">Descripción</th>
-                            <th align="right" width="100px" *ngIf="transaction.type && transaction.type.showPrices">
+                            <th align="right" width="100px" *ngIf="transaction?.type?.showPrices">
                                 Monto</th>
                         </tr>
                     </thead>
@@ -204,42 +204,42 @@
                                 </td>
                                 <td>
                                     <span
-                                        *ngIf="transaction.type && transaction.type.showDescriptionType.toString() === 'Descripción'">{{movementOfArticle.description}}</span>
+                                        *ngIf="transaction?.type?.showDescriptionType?.toString() === 'Descripción'">{{movementOfArticle.description}}</span>
                                     <span
-                                        *ngIf="transaction.type && transaction.type.showDescriptionType.toString() === 'Descripción Corta'">{{movementOfArticle.article.posDescription}}</span>
+                                        *ngIf="transaction?.type?.showDescriptionType?.toString() === 'Descripción Corta'">{{movementOfArticle.article.posDescription}}</span>
                                     <span
-                                        *ngIf="transaction.type && transaction.type.showDescriptionType.toString() === 'Código'">{{movementOfArticle.code}}</span>
+                                        *ngIf="transaction?.type?.showDescriptionType?.toString() === 'Código'">{{movementOfArticle.code}}</span>
                                     <div *ngIf="movementOfArticle.make && movementOfArticle.make.visibleSale"
                                         style="font-size: 13px">{{movementOfArticle.make.description}}</div>
-                                    <div *ngIf="movementOfArticle.notes">
-                                        <strong>{{movementOfArticle.notes}}</strong>
+                                    <div>
+                                        <strong>{{movementOfArticle?.notes}}</strong>
                                     </div>
                                 </td>
                                 <td align="right">
                                     <div>
                                         <span
-                                            *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType.toString()==='Precio Final'">{{movementOfArticle.salePrice
+                                            *ngIf="transaction?.type?.showPriceType?.toString()==='Precio Final'">{{movementOfArticle.salePrice
                                             | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
                                         <span
-                                            *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType.toString()==='Precio Base'">{{movementOfArticle.basePrice
+                                            *ngIf="transaction?.type?.showPriceType?.toString()==='Precio Base'">{{movementOfArticle.basePrice
                                             | currency:'USD':'symbol-narrow':'1.2-2'}}</span>
                                         <span
-                                            *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType.toString()==='Precio Sin Impuestos'">{{movementOfArticle.salePrice
+                                            *ngIf="transaction?.type?.showPriceType?.toString()==='Precio Sin Impuestos'">{{movementOfArticle.salePrice
                                             - ((movementOfArticle.taxes && movementOfArticle.taxes.length > 0) ?
                                             movementOfArticle.taxes[0]?.taxAmount : 0) |
                                             currency:'USD':'symbol-narrow':'1.2-2'}}</span>
                                     </div>
-                                    <div *ngIf="movementOfArticle.transactionDiscountAmount !== 0">
+                                    <div *ngIf="movementOfArticle?.transactionDiscountAmount !== 0">
                                         <span style="text-decoration:line-through;"
-                                            *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType.toString()==='Precio Final'">{{movementOfArticle.salePrice
+                                            *ngIf="transaction?.type?.showPriceType?.toString()==='Precio Final'">{{movementOfArticle.salePrice
                                             + movementOfArticle.transactionDiscountAmount |
                                             currency:'USD':'symbol-narrow':'1.2-2'}}</span>
                                         <span style="text-decoration:line-through;"
-                                            *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType.toString()==='Precio Base'">{{movementOfArticle.basePrice
+                                            *ngIf="transaction?.type?.showPriceType?.toString()==='Precio Base'">{{movementOfArticle.basePrice
                                             + movementOfArticle.transactionDiscountAmount |
                                             currency:'USD':'symbol-narrow':'1.2-2'}}</span>
                                         <span style="text-decoration:line-through;"
-                                            *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType.toString()==='Precio Sin Impuestos'">{{movementOfArticle.salePrice
+                                            *ngIf="transaction?.type?.showPriceType?.toString()==='Precio Sin Impuestos'">{{movementOfArticle.salePrice
                                             - ((movementOfArticle.taxes && movementOfArticle.taxes.length > 0) ?
                                             movementOfArticle.taxes[0]?.taxAmount : 0) +
                                             movementOfArticle.transactionDiscountAmount |
