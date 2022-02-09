@@ -175,7 +175,7 @@ export class PrintComponent implements OnInit {
     async ngOnInit() {
 
 
-        if (!this.printer) {
+        if (!this.printer || !this.printer.printIn) {
             this.printer = new Printer();
             this.printer.name = "PDF";
             this.printer.printIn = PrinterPrintIn.Counter;
@@ -195,8 +195,12 @@ export class PrintComponent implements OnInit {
         const orientation = 'p';
 
         const units = 'mm';
-        let pageWidth = this.printer.pageWidth;
-        let pageHigh = this.printer.pageHigh;
+        let pageWidth;
+        let pageHigh;
+        if(this.printer) {
+            pageWidth = this.printer.pageWidth;
+            pageHigh = this.printer.pageHigh;
+        }
 
 
         this.doc = new jsPDF(orientation, units, [pageWidth, pageHigh]);
