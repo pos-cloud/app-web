@@ -296,7 +296,7 @@ export class AddSaleOrderComponent {
                     }
                     this.backFinal();
                 } else {
-                    this.transactionMovement = '' + this.transaction.type.transactionMovement;
+                    this.transactionMovement = '' + this.transaction.type.transactionMovement || '';
                     this.filtersTaxClassification = [TaxClassification.Withholding, TaxClassification.Perception];
                     this.lastQuotation = this.transaction.quotation;
 
