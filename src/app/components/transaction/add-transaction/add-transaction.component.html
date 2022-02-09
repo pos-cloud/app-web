@@ -23,7 +23,7 @@
 				</div>
 				<div class="col-md-2" align="right">
 					<button type="button" class="btn btn-light" (click)="changeCompany()"
-						[disabled]="readonly || !transaction.electronics || transaction.state.toString() === 'Cerrado' || existsCancellations">
+						[disabled]="readonly || !transaction.electronics || transaction?.state?.toString() === 'Cerrado' || existsCancellations">
 						Cambiar
 					</button>
 				</div>
@@ -101,7 +101,7 @@
 						<div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
 						<input type="number" class="form-control" formControlName="basePrice" name="basePrice" min="0"
 							step="1" (blur)="updatePrices('basePrice')"
-							[readonly]="readonly || transaction.state.toString() === 'Cerrado' || transaction.state.toString() === 'Anulado'" />
+							[readonly]="readonly || transaction?.state?.toString() === 'Cerrado' || transaction?.state?.toString() === 'Anulado'" />
 					</div>
 					<div *ngIf="formErrors.basePrice" class="alert alert-danger">
 						{{ formErrors.basePrice }}
@@ -113,7 +113,7 @@
 						<div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
 						<input type="number" class="form-control" formControlName="exempt" name="exempt" min="0"
 							step="1" (blur)="updatePrices('exempt')"
-							[readonly]="readonly || transaction.state.toString() === 'Cerrado' || transaction.state.toString() === 'Anulado'" />
+							[readonly]="readonly || transaction?.state?.toString() === 'Cerrado' || transaction?.state?.toString() === 'Anulado'" />
 					</div>
 					<div *ngIf="formErrors.exempt" class="alert alert-danger">
 						{{ formErrors.exempt }}
@@ -125,7 +125,7 @@
 				*ngIf="transaction && transaction.type && transaction.type.requestTaxes && !transaction.type.requestArticles">
 			</app-add-article-tax>
 			<div class="row"
-				*ngIf="showButtonCancelation && transaction && transaction.company && ((transaction.state.toString() !== 'Cerrado' && transaction.state.toString() !== 'Anulado') || transaction.balance != 0)">
+				*ngIf="showButtonCancelation && transaction && transaction.company && ((transaction?.state?.toString() !== 'Cerrado' && transaction?.state?.toString() !== 'Anulado') || transaction.balance != 0)">
 				<div class="col-md-12 center-content">
 					<button type="button" class="btn btn-light" (click)="openModal('list-cancellations')">
 						Buscar Transacciones a Cancelar
@@ -143,14 +143,14 @@
 						<div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
 						<input type="number" class="form-control" formControlName="totalPrice" name="totalPrice" min="0"
 							step="1" (blur)="updatePrices('totalPrice')"
-							[readonly]="readonly || transaction.state.toString() === 'Cerrado' || transaction.state.toString() === 'Anulado' || !transaction.type || transaction.type.requestArticles" />
+							[readonly]="readonly || transaction?.state?.toString() === 'Cerrado' || transaction?.state?.toString() === 'Anulado' || !transaction.type || transaction.type.requestArticles" />
 					</div>
 					<div *ngIf="formErrors.totalPrice" class="alert alert-danger">
 						{{ formErrors.totalPrice }}
 					</div>
 				</div>
 			</div>
-			<div class="row" *ngIf="transaction.state.toString() !== 'Abierto'">
+			<div class="row" *ngIf="transaction?.state?.toString() !== 'Abierto'">
 				<div class="col-md-12">
 					<label for="balance" class="control-label">Saldo:</label>
 					<div class="input-group">

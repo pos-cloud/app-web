@@ -2200,6 +2200,7 @@ export class PointOfSaleComponent implements OnInit {
         if (this.transaction) {
             let oldState = this.transaction.state;
             this.transaction.state = state;
+            let newState = (this.transaction.state || '').toString();
             if (this.transaction.type.allowAPP) {
                 if (this.transaction.company) {
                     await this.getUsers({ company: { $oid: this.transaction.company._id } })
@@ -2207,7 +2208,7 @@ export class PointOfSaleComponent implements OnInit {
                             if (users && users.length > 0) email = users[0].email;
                         });
                 }
-                if (email && this.transaction.state.toString() === TransactionState.PaymentConfirmed.toString()) {
+                if (email && newState === TransactionState.PaymentConfirmed.toString()) {
                     this.transaction.balance = 0;
                     if (this.transaction.type.application.email.statusTransaction.paymentConfirmed.enabled) {
                         this.sendEmail(
@@ -2216,7 +2217,7 @@ export class PointOfSaleComponent implements OnInit {
                             email);
                     }
                     if (oldState === TransactionState.Delivered) this.transaction.state = TransactionState.Closed;
-                } else if (email && this.transaction.state.toString() === TransactionState.PaymentDeclined.toString()) {
+                } else if (email && newState === TransactionState.PaymentDeclined.toString()) {
                     this.transaction.balance = 0;
                     if (this.transaction.type.application.email.statusTransaction.paymentDeclined.enabled) {
                         this.sendEmail(
@@ -2224,7 +2225,7 @@ export class PointOfSaleComponent implements OnInit {
                             `Hola ${transaction.company.name} rechazamos el pago de tu compra.</br><b>Lamentamos el incoveniente por no poder finalizar la compra. Puedes realizar de nuevo el pedido cuando desees, te esperamos.</b>`,
                             email);
                     }
-                } else if (email && this.transaction.state.toString() === TransactionState.Sent.toString()) {
+                } else if (email && newState === TransactionState.Sent.toString()) {
                     if (this.transaction.type.application.email.statusTransaction.sent.enabled) {
                         this.sendEmail(
                             `Tu Pedido Número ${this.transaction.orderNumber} está en camino.`,
@@ -2236,7 +2237,7 @@ export class PointOfSaleComponent implements OnInit {
                         </b>`,
                             email)
                     }
-                } else if (email && this.transaction.state.toString() === TransactionState.Delivered.toString()) {
+                } else if (email && newState === TransactionState.Delivered.toString()) {
                     if (this.transaction.type.application.email.statusTransaction.delivered.enabled) {
                         this.sendEmail(
                             `Tu Pedido Número ${this.transaction.orderNumber} ha sido entregado.`,
