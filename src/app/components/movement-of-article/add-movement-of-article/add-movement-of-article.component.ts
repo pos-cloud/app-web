@@ -141,7 +141,7 @@ export class AddMovementOfArticleComponent implements OnInit {
             }
         }
         this.buildForm();
-        if (this.movementOfArticle.article.containsStructure) {
+        if (this.movementOfArticle.article && this.movementOfArticle.article.containsStructure) {
             this.loadStructure();
         }
     }
