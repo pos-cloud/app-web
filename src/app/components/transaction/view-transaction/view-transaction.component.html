@@ -18,8 +18,7 @@
             <li ngbNavItem>
                 <a ngbNavLink>Datos</a>
                 <ng-template ngbNavContent>
-                    <div class="row"
-                        *ngIf="transaction?.type?.transactionMovement?.toString() !== 'Stock'">
+                    <div class="row" *ngIf="transaction?.type?.transactionMovement?.toString() !== 'Stock'">
                         <div class="form-group col-md-8">
                             <label for="company" class="control-label"
                                 *ngIf="transaction?.type?.transactionMovement?.toString() === 'Venta'">Cliente</label>
@@ -37,8 +36,8 @@
                                         <i class="fa fa-pencil" style="color: white;"></i>
                                     </span>
                                 </div>
-                                <input type="text" class="form-control" name="date" *ngIf="transaction.company"
-                                    value="{{transaction.company.name}}" readonly />
+                                <input type="text" class="form-control" name="date" *ngIf="transaction?.company"
+                                    value="{{transaction?.company?.name}}" readonly />
                                 <input type="text" class="form-control" name="date" *ngIf="!transaction.company"
                                     value="Consumidor Final" readonly />
                             </div>
@@ -54,7 +53,7 @@
                             <label for="employeeOpening" class="control-label">{{
                                 transaction?.type?.requestEmployee?.description }}</label>
                             <input type="text" class="form-control" name="date" *ngIf="transaction?.employeeClosing"
-                                value="{{transaction.employeeClosing.name}}" readonly />
+                                value="{{transaction?.employeeClosing?.name}}" readonly />
                             <input type="text" class="form-control" name="date" *ngIf="!transaction?.employeeClosing"
                                 value="" readonly />
                         </div>
@@ -63,29 +62,29 @@
                         <div class="form-group col-md-4">
                             <label for="date" class="control-label">Fecha:</label>
                             <input type="text" class="form-control" name="date"
-                                value="{{transaction.endDate | dateFormat:'DD/MM/YYYY'}}" readonly
-                                *ngIf="transaction.endDate" />
+                                value="{{transaction?.endDate | dateFormat:'DD/MM/YYYY'}}" readonly
+                                *ngIf="transaction?.endDate" />
                             <input type="text" class="form-control" name="date"
-                                value="{{transaction.startDate | dateFormat:'DD/MM/YYYY'}}" readonly
-                                *ngIf="!transaction.endDate" />
+                                value="{{transaction?.startDate | dateFormat:'DD/MM/YYYY'}}" readonly
+                                *ngIf="!transaction?.endDate" />
                         </div>
                         <div class="form-group col-md-3" *ngIf="userCountry === 'AR'">
                             <label for="origin" class="control-label">Punto de venta:</label>
                             <input type="origin" class="form-control" name="origin" min="0"
-                                value="{{transaction.origin}}" readonly />
+                                value="{{transaction?.origin}}" readonly />
                         </div>
                         <div class="form-group col-md-2">
                             <label for="letter" class="control-label">Tipo:</label>
-                            <input type="text" class="form-control" name="letter" value="{{transaction.letter}}"
+                            <input type="text" class="form-control" name="letter" value="{{transaction?.letter}}"
                                 readonly />
                         </div>
                         <div class="form-group col-md-3">
                             <label for="number" class="control-label">Número:</label>
                             <input type="number" class="form-control" name="number" min="0"
-                                value="{{transaction.number}}" readonly />
+                                value="{{transaction?.number}}" readonly />
                         </div>
                     </div>
-                    <div class="row" *ngIf="transaction.branchDestination">
+                    <div class="row" *ngIf="transaction?.branchDestination">
                         <div class="form-group col-md-4">
                             <label for="letter" class="control-label">Sucursal:</label>
                             <input type="text" class="form-control" name="letter"
@@ -105,22 +104,22 @@
                     <div class="row">
                         <div class="form-group col-md-4">
                             <label for="exempt" class="control-label">Importe Exento:</label>
-                            <input type="text" class="form-control" name="exempt" value="{{transaction.exempt}}"
+                            <input type="text" class="form-control" name="exempt" value="{{transaction?.exempt}}"
                                 readonly />
                         </div>
                         <div class="form-group col-md-4">
                             <label for="discountAmount" class="control-label">Descuento ($):</label>
                             <input type="text" class="form-control" name="discountAmount"
-                                value="{{transaction.discountAmount}}" readonly />
+                                value="{{transaction?.discountAmount}}" readonly />
                         </div>
                         <div class="form-group col-md-2">
                             <label for="discountPercent" class="control-label">Descuento (%):</label>
                             <input type="text" class="form-control" name="discountPercent"
-                                value="{{transaction.discountPercent}}%" readonly />
+                                value="{{transaction?.discountPercent}}%" readonly />
                         </div>
                         <div class="form-group col-md-2">
                             <label for="VATPeriod" class="control-label">Período de IVA:</label>
-                            <input type="text" class="form-control" name="VATPeriod" value="{{transaction.VATPeriod}}"
+                            <input type="text" class="form-control" name="VATPeriod" value="{{transaction?.VATPeriod}}"
                                 readonly />
                         </div>
                     </div>
@@ -132,7 +131,7 @@
                                         id="basic-addon1">$</span>
                                 </div>
                                 <input type="number" class="form-control" name="totalPrice" min="0" step="1"
-                                    value="{{transaction.totalPrice}}" readonly />
+                                    value="{{transaction?.totalPrice}}" readonly />
                             </div>
                         </div>
                         <div class="form-group col-md-4">
@@ -142,7 +141,7 @@
                                         id="basic-addon1">$</span>
                                 </div>
                                 <input type="number" class="form-control" name="balance" min="0" step="1"
-                                    value="{{transaction.balance}}" readonly />
+                                    value="{{transaction?.balance}}" readonly />
                             </div>
                         </div>
                         <div class="form-group col-md-4">
@@ -152,7 +151,7 @@
                                         id="basic-addon1">$</span>
                                 </div>
                                 <input type="number" class="form-control" name="balance" min="0" step="1"
-                                    value="{{transaction.quotation}}" readonly />
+                                    value="{{transaction?.quotation}}" readonly />
                             </div>
                         </div>
                     </div>
@@ -161,7 +160,7 @@
                             <label for="observation" class="control-label">Observación:</label>
                             <textarea type="text" class="form-control" name="observation" id="observation" rows="2"
                                 readonly>
-                    {{transaction.observation}}
+                    {{transaction?.observation}}
                   </textarea>
                         </div>
                     </div>
@@ -191,27 +190,28 @@
                                 <tr *ngFor="let movementOfArticle of movementsOfArticles">
                                     <td align="left" width="100">
                                         <button type="button" class="btn btn-success btn-sm"
-                                            *ngIf="movementOfArticle.article && movementOfArticle.article._id"
+                                            *ngIf="movementOfArticle?.article?._id"
                                             (click)="openModal('view-article', movementOfArticle)" title="Ver"><i
                                                 class="fa fa-eye"></i></button>
                                         <button type="button" class="btn btn-light btn-sm"
                                             (click)="openModal('print-label', movementOfArticle)"
                                             title="Imprimir Etiqueta"><i class="fa fa-barcode"></i></button>
                                     </td>
-                                    <td>{{movementOfArticle.amount}}</td>
+                                    <td>{{movementOfArticle?.amount}}</td>
                                     <td>{{movementOfArticle?.category?.description}}</td>
                                     <td>{{movementOfArticle?.make?.description}}</td>
-                                    <td>{{movementOfArticle.code}}</td>
-                                    <td>{{movementOfArticle.description}}
-                                        <strong *ngIf="movementOfArticle.notes">
+                                    <td>{{movementOfArticle?.code}}</td>
+                                    <td>{{movementOfArticle?.description}}
+                                        <strong>
                                             <br>
-                                            {{movementOfArticle.notes}}
+                                            {{movementOfArticle?.notes}}
                                         </strong>
                                     </td>
                                     <td>{{movementOfArticle?.article?.posDescription}}</td>
-                                    <td>{{movementOfArticle.unitPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-                                    <td>{{movementOfArticle.discountRate | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-                                    <td>{{movementOfArticle.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                                    <td>{{movementOfArticle?.unitPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                                    <td>{{movementOfArticle?.discountRate | currency:'USD':'symbol-narrow':'1.2-2'}}
+                                    </td>
+                                    <td>{{movementOfArticle?.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                                     <td>{{movementOfArticle?.deposit?.name}}</td>
                                 </tr>
                                 <tr align="center " *ngIf="areMovementsOfArticlesEmpty ">
@@ -224,7 +224,7 @@
                     </div>
                 </ng-template>
             </li>
-            <li ngbNavItem [disabled]="!transaction.taxes || transaction.taxes.length === 0">
+            <li ngbNavItem [disabled]="transaction?.taxes?.length === 0">
                 <a ngbNavLink>Impuestos</a>
                 <ng-template ngbNavContent>
                     <div class="table-responsive">
@@ -241,8 +241,8 @@
                                 <tr *ngFor="let tax of transaction.taxes">
                                     <td>{{tax?.tax?.name}}</td>
                                     <td>{{tax.percentage}}</td>
-                                    <td>{{tax.taxBase | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-                                    <td>{{tax.taxAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                                    <td>{{tax?.taxBase | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                                    <td>{{tax?.taxAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -277,35 +277,35 @@
                                 <tr *ngFor="let movementOfCash of movementsOfCashes | orderBy: orderTerm: propertyTerm">
                                     <td (click)="pushCurrencyValue(movementOfCash)">{{movementOfCash?.type?.name}}
                                     </td>
-                                    <td>{{movementOfCash.number}}</td>
-                                    <td>{{movementOfCash.quota}}</td>
+                                    <td>{{movementOfCash?.number}}</td>
+                                    <td>{{movementOfCash?.quota}}</td>
                                     <td>{{movementOfCash.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
                                     <td>{{movementOfCash?.bank?.name}}</td>
                                     <td>{{movementOfCash.amountPaid | currency:'USD':'symbol-narrow':'1.2-2'}}
                                     </td>
-                                    <td>{{(movementOfCash.amountPaid - movementOfCash.balanceCanceled) |
+                                    <td>{{(movementOfCash?.amountPaid - movementOfCash?.balanceCanceled) |
                                         currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                                     <td>{{movementOfCash?.paymentChange |
                                         currency:'USD':'symbol-narrow':'1.2-2'}}
                                     </td>
-                                    <td style="white-space: normal;">{{movementOfCash.observation}}</td>
-                                    <td>{{movementOfCash.commissionAmount |
+                                    <td style="white-space: normal;">{{movementOfCash?.observation}}</td>
+                                    <td>{{movementOfCash?.commissionAmount |
                                         currency:'USD':'symbol-narrow':'1.2-2'}}
                                     </td>
-                                    <td>{{movementOfCash.administrativeExpenseAmount |
+                                    <td>{{movementOfCash?.administrativeExpenseAmount |
                                         currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-                                    <td>{{movementOfCash.otherExpenseAmount |
+                                    <td>{{movementOfCash?.otherExpenseAmount |
                                         currency:'USD':'symbol-narrow':'1.2-2'}}
                                     </td>
-                                    <td>{{movementOfCash.capital | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-                                    <td>{{movementOfCash.interestAmount |
+                                    <td>{{movementOfCash?.capital | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                                    <td>{{movementOfCash?.interestAmount |
                                         currency:'USD':'symbol-narrow':'1.2-2'}}
                                     </td>
-                                    <td>{{movementOfCash.taxAmount | currency:'USD':'symbol-narrow':'1.2-2'}}
                                     </td>
+                                    <td>{{movementOfCash?.taxAmount | currency:'USD':'symbol-narrow':'1.2-2'}}
                                 </tr>
 
-                                <tr align="center " *ngIf="movementsOfCashes.length === 0">
+                                <tr align="center " *ngIf="movementsOfCashes?.length === 0">
                                     <td colspan="10">No existen método de pagos en la transacción</td>
                                 </tr>
                             </tbody>
@@ -320,9 +320,9 @@
                             </thead>
                             <tbody>
                                 <tr *ngFor="let currency of currencyValue">
-                                    <td>{{currency.quantity}}</td>
-                                    <td>{{currency.value}}</td>
-                                    <td>{{currency.quantity*currency.value |
+                                    <td>{{currency?.quantity}}</td>
+                                    <td>{{currency?.value}}</td>
+                                    <td>{{currency?.quantity * currency?.value |
                                         currency:'USD':'symbol-narrow':'1.2-2'
                                         }}
                                     </td>
@@ -392,7 +392,7 @@
                 </ng-template>
             </li>
             <li ngbNavItem>
-                <a ngbNavLink *ngIf="transaction.type && transaction.type.electronics && userCountry === 'MX'">SAT</a>
+                <a ngbNavLink *ngIf="transaction?.type?.electronics && userCountry === 'MX'">SAT</a>
                 <ng-template ngbNavContent>
                     <div class="table-responsive">
                         <table class="table table-striped">
@@ -402,7 +402,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <td>{{transaction.SATStamp}}</td>
+                                <td>{{transaction?.SATStamp}}</td>
                             </tbody>
                         </table>
                         <table class="table table-striped">
@@ -412,7 +412,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <td>{{transaction.CFDStamp}}</td>
+                                <td>{{transaction?.CFDStamp}}</td>
                             </tbody>
                         </table>
                         <table class="table table-striped">
@@ -422,7 +422,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <td>{{transaction.stringSAT}}</td>
+                                <td>{{transaction?.stringSAT}}</td>
                             </tbody>
                         </table>
                     </div>
@@ -444,56 +444,6 @@
                 </ng-template>
             </li>
             <li ngbNavItem>
-                <a ngbNavLink>Auditoría</a>
-                <ng-template ngbNavContent>
-                    <div class="row">
-                        <div class="form-group col-md-12">
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label class="control-label">Creado por:</label>
-                                    <label *ngIf="transaction.creationUser"
-                                        class="control-label"><b>{{transaction?.creationUser?.name}}</b></label>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label class="control-label">El día:</label>
-                                    <label *ngIf="transaction.creationDate" class="control-label">
-                                        <b>{{transaction.creationDate | dateFormat:'DD/MM/YYYY
-                                            hh:mm:ss'}}</b></label>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label class="control-label">Última modificación por:</label>
-                                    <label *ngIf="transaction.updateUser"
-                                        class="control-label"><b>{{transaction?.updateUser?.name}}</b></label>
-                                    <label *ngIf="!transaction.updateUser" class="control-label"><b>-</b></label>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label class="control-label">El día:</label>
-                                    <label *ngIf="transaction.updateDate"
-                                        class="control-label"><b>{{transaction.updateDate |
-                                            dateFormat:'DD/MM/YYYY
-                                            hh:mm:ss'}}</b></label>
-                                    <label *ngIf="!transaction.updateDate" class="control-label"><b>-</b></label>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label class="control-label">Id:</label>
-                                    <label class="control-label"><b>{{transaction._id}}</b></label>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label class="control-label">Id de Mercadolibre:</label>
-                                    <label class="control-label"><b>{{transaction.meliId}}</b></label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </ng-template>
-            </li>
-            <li ngbNavItem>
                 <a ngbNavLink>Asiento Contable</a>
                 <ng-template ngbNavContent>
                     <table width="100%" class="table table-striped">
@@ -507,12 +457,13 @@
                         </thead>
                         <tbody>
                             <tr *ngFor="let field of objForm.get('items')['controls']; let i = index;">
-                                <td *ngIf='field?.value?.account?.description'>
-                                    {{field?.value?.account?.description}}</td>
+                                <td>
+                                    {{field?.value?.account?.description}}
+                                </td>
                                 <div *ngFor="let account of accounts; let i = index">
-                                    <td
-                                        *ngIf="field && field.value && field.value.account && field.value.account === account._id ">
-                                        {{account.description}}</td>
+                                    <td *ngIf="field?.value?.account === account._id ">
+                                        {{account?.description}}
+                                    </td>
                                 </div>
                                 <td>{{field?.value?.debit}}</td>
                                 <td>{{field?.value?.credit}}</td>
@@ -521,6 +472,51 @@
                         <tfoot>
                         </tfoot>
                     </table>
+                </ng-template>
+            </li>
+            <li ngbNavItem>
+                <a ngbNavLink>Auditoría</a>
+                <ng-template ngbNavContent>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">Creado por:</label>
+                                    <label class="control-label"><b>{{transaction?.creationUser?.name}}</b></label>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">El día:</label>
+                                    <label class="control-label">
+                                        <b>
+                                            {{transaction?.creationDate | dateFormat:'DD/MM/YYYY hh:mm:ss'}}
+                                        </b>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">Última modificación por:</label>
+                                    <label class="control-label"><b>{{transaction?.updateUser?.name}}</b></label>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">El día:</label>
+                                    <label class="control-label"><b>{{transaction.updateDate | dateFormat:'DD/MM/YYYY hh:mm:ss'}}</b></label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">Id:</label>
+                                    <label class="control-label"><b>{{transaction?._id}}</b></label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">Id de Mercadolibre:</label>
+                                    <label class="control-label"><b>{{transaction?.meliId}}</b></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </ng-template>
             </li>
         </ul>
