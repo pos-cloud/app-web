@@ -98,9 +98,6 @@ export class PrinterComponent implements OnInit {
         if (this.printerId) {
             this.getPrinter();
         }
-
-
-
     }
 
     public getDocuments(): void {
@@ -170,26 +167,12 @@ export class PrinterComponent implements OnInit {
 
         this.printerForm = this._fb.group({
             '_id': [this.printer._id, []],
-            'name': [this.printer.name, [
-                Validators.required
-            ]
-            ],
-            'type': [this.printer.type, [
-                Validators.required
-            ]
-            ],
-            'pageWidth': [this.printer.pageWidth, [
-            ]
-            ],
-            'pageHigh': [this.printer.pageHigh, [
-            ]
-            ],
-            'printIn': [this.printer.printIn, [
-            ]
-            ],
-            'pageSize': [this.pageSizes[0], [
-            ]
-            ],
+            'name': [this.printer.name, [Validators.required]],
+            'type': [this.printer.type, [Validators.required]],
+            'pageWidth': [this.printer.pageWidth, []],
+            'pageHigh': [this.printer.pageHigh, []],
+            'printIn': [this.printer.printIn, []],
+            'pageSize': [this.pageSizes[0], []],
             'quantity': [this.printer.quantity, []],
             'url': [this.printer.url, []],
             'orientation': [this.printer.orientation, []],
@@ -337,7 +320,7 @@ export class PrinterComponent implements OnInit {
             'row': this.printer.row,
             'addPag': this.printer.addPag,
             'url': this.printer.url,
-            'quantity' : this.printer.quantity
+            'quantity': this.printer.quantity
         }
 
         if (this.printer.fields && this.printer.fields.length > 0) {

@@ -297,14 +297,14 @@
         <div class="modal-footer" *ngIf="operation !== 'view'">
             <button type="button" class="btn btn-light" (click)="buildPDF()"><i class="fa fa-eye"></i></button>
             <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
-            <button type="submit" class="btn btn-primary" [disabled]="!printerForm.valid || loading"
+            <button type="submit" class="btn btn-primary" [disabled]="!printerForm?.valid || loading"
                 *ngIf="operation !== 'delete'">
                 <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
                 <span *ngIf="!loading">Guardar</span>
                 <span *ngIf="loading">Espere por favor</span>
             </button>
             <button type="button" class="btn btn-danger" *ngIf="operation === 'delete'"
-                [disabled]="!printerForm.valid || loading" (click)="deletePrinter()">
+                [disabled]="!printerForm?.valid || loading" (click)="deletePrinter()">
                 <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
                 <span *ngIf="!loading">Eliminar</span>
                 <span *ngIf="loading">Espere por favor</span>
