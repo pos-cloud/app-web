@@ -657,14 +657,14 @@ export class AddArticleComponent implements OnInit {
     let valid = true;
     const locations = this.articleForm.controls.locations as FormArray;
 
-    if (locationForm.value.location == '' || locationForm.value.location == null) {
+    if (locationForm && locationForm.value && locationForm.value.location == '' || locationForm.value.location == null) {
       this.showMessage("Debe seleccionar una ubicación.", "info", true);
       valid = false;
     }
 
     this.articleForm.controls.locations.value.forEach(element => {
 
-      if (locationForm.value.location == element.location) {
+      if (locationForm && locationForm.value && locationForm.value.location == element.location) {
         valid = false;
         this.showMessage("La ubicación ya existe.", "info", true);
       }
@@ -674,7 +674,7 @@ export class AddArticleComponent implements OnInit {
       locations.push(
         this._fb.group({
           _id: null,
-          location: locationForm.value.location,
+          location: locationForm.value.location || null,
         })
       );
       locationForm.resetForm();

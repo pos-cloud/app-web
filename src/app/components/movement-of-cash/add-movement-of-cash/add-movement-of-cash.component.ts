@@ -243,8 +243,8 @@ export class AddMovementOfCashComponent implements OnInit {
             'amountDiscount': [this.amountDiscount, []],
             'paymentChange': [this.movementOfCash.paymentChange, []],
             'observation': [this.movementOfCash.observation, []],
-            'discount': [this.movementOfCash.type.discount, []],
-            'surcharge': [this.movementOfCash.type.surcharge, []],
+            'discount': [this.movementOfCash.type.discount || 0, []],
+            'surcharge': [this.movementOfCash.type.surcharge || 0, []],
             'commissionAmount': [this.movementOfCash.commissionAmount, []],
             'administrativeExpenseAmount': [this.movementOfCash.administrativeExpenseAmount, []],
             'otherExpenseAmount': [this.movementOfCash.otherExpenseAmount, []],
@@ -985,21 +985,9 @@ export class AddMovementOfCashComponent implements OnInit {
                     }
                     this.movementOfCash.type = this.paymentMethods[0];
                     this.paymentMethodSelected = this.movementOfCash.type;
-                    if (this.movementOfCash.type.discount) {
-                        this.movementOfCash.discount = this.movementOfCash.type.discount;
-                    } else {
-                        this.movementOfCash.discount = 0;
-                    }
-                    if (this.movementOfCash.type.surcharge) {
-                        this.movementOfCash.surcharge = this.movementOfCash.type.surcharge;
-                    } else {
-                        this.movementOfCash.surcharge = 0;
-                    }
-                    if (this.movementOfCash.type.commission) {
-                        this.percentageCommission = this.movementOfCash.type.commission;
-                    } else {
-                        this.percentageCommission = 0;
-                    }
+                    this.movementOfCash.discount = this.paymentMethodSelected.discount || 0;
+                    this.movementOfCash.surcharge = this.paymentMethodSelected.surcharge || 0;
+                    this.percentageCommission = this.paymentMethodSelected.commission || 0;
                     this.getMovementOfCashesByTransaction();
                 } else {
                     this.showToast(result.result)
@@ -1431,8 +1419,8 @@ export class AddMovementOfCashComponent implements OnInit {
                 this.movementOfCash.CUIT = '';
                 this.movementOfCash.deliveredBy = '';
                 this.movementOfCash.statusCheck == StatusCheck.Closed;
-                this.movementOfCash.discount = this.movementOfCash.type.discount;
-                this.movementOfCash.surcharge = this.movementOfCash.type.surcharge;
+                this.movementOfCash.discount = this.movementOfCash.type.discount || 0;
+                this.movementOfCash.surcharge = this.movementOfCash.type.surcharge || 0;
                 this.movementOfCash.interestPercentage = this.movementOfCashForm.value.interestPercentage;
                 if (this.fastPayment.observation) {
                     this.movementOfCash.observation = this.fastPayment.observation;
