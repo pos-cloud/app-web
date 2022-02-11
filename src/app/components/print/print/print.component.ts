@@ -1321,7 +1321,7 @@ export class PrintComponent implements OnInit {
         if (Object.keys(openingAmounts).length > 0) {
             for (let k of Object.keys(openingAmounts)) {
                 this.doc.text('- ' + k, margin + 5, row += 5);
-                this.doc.text('$ ' + openingAmounts[k].toString(), 60, row);
+                this.doc.text('$ ' + openingAmounts[k].toLocaleString('de-DE'), 60, row);
                 openCash += openingAmounts[k];
             }
         } else {
@@ -1331,7 +1331,7 @@ export class PrintComponent implements OnInit {
         }
         this.doc.setFont('','bold');
         this.doc.text("Total:", margin + 10, row += 5);
-        this.doc.text('$ ' + openCash.toString(), 60, row);
+        this.doc.text('$ ' + openCash.toLocaleString('de-DE'), 60, row);
         this.doc.setFont('','normal');
 
         this.doc.setFont('','bold');
@@ -1357,7 +1357,7 @@ export class PrintComponent implements OnInit {
         }
         this.doc.setFont('','bold');
         this.doc.text("Total:", margin + 10, row += 5);
-        this.doc.text('$ ' + input.toString(), 60, row);
+        this.doc.text('$ ' + input.toLocaleString('de-DE'), 60, row);
         this.doc.setFont('','normal');
 
         this.doc.setFont('','bold');
@@ -1366,7 +1366,7 @@ export class PrintComponent implements OnInit {
         if (Object.keys(outputAmounts).length > 0) {
             for (let k of Object.keys(outputAmounts)) {
                 this.doc.text('- ' + k, margin + 5, row += 5);
-                this.doc.text('$ ' + outputAmounts[k].toString(), 60, row);
+                this.doc.text('$ ' + outputAmounts[k].toLocaleString('de-DE'), 60, row);
                 output += outputAmounts[k];
                 this.doc.setFont('','italic');
                 if (amountsOutput[k] === 1) {
@@ -1383,7 +1383,7 @@ export class PrintComponent implements OnInit {
         }
         this.doc.setFont('','bold');
         this.doc.text("Total:", margin + 10, row += 5);
-        this.doc.text('$ ' + output.toString(), 60, row);
+        this.doc.text('$ ' + output.toLocaleString('de-DE'), 60, row);
         this.doc.setFont('','normal');
 
         this.doc.setFont('','bold');
@@ -1392,7 +1392,7 @@ export class PrintComponent implements OnInit {
         if (Object.keys(closingAmounts).length > 0) {
             for (let k of Object.keys(closingAmounts)) {
                 this.doc.text('- ' + k, margin + 5, row += 5);
-                this.doc.text('$ ' + closingAmounts[k].toString(), 60, row);
+                this.doc.text('$ ' + closingAmounts[k].toLocaleString('de-DE'), 60, row);
                 closeCash += closingAmounts[k];
             }
         } else {
@@ -1402,7 +1402,7 @@ export class PrintComponent implements OnInit {
         }
         this.doc.setFont('','bold');
         this.doc.text("Total:", margin + 10, row += 5);
-        this.doc.text('$ ' + closeCash.toString(), 60, row);
+        this.doc.text('$ ' + closeCash.toFixed(2).toLocaleString() , 60, row);
         this.doc.setFont('','normal');
 
         this.doc.setFont('','bold');
@@ -1423,12 +1423,12 @@ export class PrintComponent implements OnInit {
                 if (!inputAmounts[k]) inputAmounts[k] = 0;
                 if (!outputAmounts[k]) outputAmounts[k] = 0;
                 if (!closingAmounts[k]) closingAmounts[k] = 0;
-                this.doc.text('$ ' +(closingAmounts[k] - ((openingAmounts[k] + inputAmounts[k]) - outputAmounts[k])).toString(), 60, row);
+                this.doc.text('$ ' +(closingAmounts[k] - ((openingAmounts[k] + inputAmounts[k]) - outputAmounts[k])).toLocaleString('de-DE'), 60, row);
             }
         }
         this.doc.setFont('','bold');
         this.doc.text("Total:", margin + 10, row += 5);
-        this.doc.text('$ ' + (closeCash - ((openCash + input) - output)).toString(), 60, row);
+        this.doc.text('$ ' + (closeCash - ((openCash + input) - output)).toLocaleString('de-DE'), 60, row);
         this.doc.setFont('','normal');
 
         // Pie de la impresión
@@ -1589,7 +1589,7 @@ export class PrintComponent implements OnInit {
         if (Object.keys(openingAmounts).length > 0) {
             for (let k of Object.keys(openingAmounts)) {
                 this.doc.text('- ' + k, margin + 5, row += 5);
-                this.doc.text('$ ' + openingAmounts[k].toString(), 60, row);
+                this.doc.text('$ ' + openingAmounts[k].toLocaleString('de-DE'), 60, row);
                 openCash += openingAmounts[k];
             }
         } else {
@@ -1599,7 +1599,7 @@ export class PrintComponent implements OnInit {
         }
         this.doc.setFont('','bold');
         this.doc.text("Total:", margin + 10, row += 5);
-        this.doc.text('$ ' + openCash.toString(), 60, row);
+        this.doc.text('$ ' + openCash.toLocaleString('de-DE'), 60, row);
         this.doc.setFont('','normal');
 
         this.doc.setFont('','bold');
@@ -1608,7 +1608,7 @@ export class PrintComponent implements OnInit {
         if (Object.keys(inputAmounts).length > 0) {
             for (let k of Object.keys(inputAmounts)) {
                 this.doc.text('- ' + k, margin + 5, row += 5);
-                this.doc.text('$ ' + inputAmounts[k].toString(), 60, row);
+                this.doc.text('$ ' + inputAmounts[k].toLocaleString('de-DE'), 60, row);
                 input += inputAmounts[k];
                 this.doc.setFont('','italic');
                 if (amountsInput[k] === 1) {
@@ -1625,7 +1625,7 @@ export class PrintComponent implements OnInit {
         }
         this.doc.setFont('','bold');
         this.doc.text("Total:", margin + 10, row += 5);
-        this.doc.text('$ ' + input.toString(), 60, row);
+        this.doc.text('$ ' + input.toLocaleString('de-DE'), 60, row);
         this.doc.setFont('','normal');
 
         this.doc.setFont('','bold');
@@ -1634,7 +1634,7 @@ export class PrintComponent implements OnInit {
         if (Object.keys(outputAmounts).length > 0) {
             for (let k of Object.keys(outputAmounts)) {
                 this.doc.text('- ' + k, margin + 5, row += 5);
-                this.doc.text('$ ' + outputAmounts[k].toString(), 60, row);
+                this.doc.text('$ ' + outputAmounts[k].toLocaleString('de-DE'), 60, row);
                 output += outputAmounts[k];
                 this.doc.setFont('','italic');
                 if (amountsOutput[k] === 1) {
@@ -1651,7 +1651,7 @@ export class PrintComponent implements OnInit {
         }
         this.doc.setFont('','bold');
         this.doc.text("Total:", margin + 10, row += 5);
-        this.doc.text('$ ' + output.toString(), 60, row);
+        this.doc.text('$ ' + output.toLocaleString('de-DE'), 60, row);
         this.doc.setFont('','normal');
 
         this.doc.setFont('','bold');
@@ -1660,7 +1660,7 @@ export class PrintComponent implements OnInit {
         if (Object.keys(closingAmounts).length > 0) {
             for (let k of Object.keys(closingAmounts)) {
                 this.doc.text('- ' + k, margin + 5, row += 5);
-                this.doc.text('$ ' + closingAmounts[k].toString(), 60, row);
+                this.doc.text('$ ' + closingAmounts[k].toLocaleString('de-DE'), 60, row);
                 closeCash += closingAmounts[k];
             }
         } else {
@@ -1670,7 +1670,7 @@ export class PrintComponent implements OnInit {
         }
         this.doc.setFont('','bold');
         this.doc.text("Total:", margin + 10, row += 5);
-        this.doc.text('$ ' + closeCash.toString(), 60, row);
+        this.doc.text('$ ' + closeCash.toLocaleString('de-DE'), 60, row);
         this.doc.setFont('','normal');
 
         this.doc.setFont('','bold');
@@ -1693,13 +1693,13 @@ export class PrintComponent implements OnInit {
                 let dif: number = this.roundNumber.transform(closingAmounts[k] - ((openingAmounts[k] + inputAmounts[k]) - outputAmounts[k]));
                 if (dif != 0) {
                     this.doc.text('- ' + k, margin + 5, row += 5);
-                    this.doc.text('$ ' + (closingAmounts[k] - ((openingAmounts[k] + inputAmounts[k]) - outputAmounts[k])).toString(), 60, row);
+                    this.doc.text('$ ' + (closingAmounts[k] - ((openingAmounts[k] + inputAmounts[k]) - outputAmounts[k])).toLocaleString('de-DE'), 60, row);
                 }
             }
         }
         this.doc.setFont('','bold');
         this.doc.text("Total:", margin + 10, row += 5);
-        this.doc.text('$ ' + (closeCash - ((openCash + input) - output)).toString(), 60, row);
+        this.doc.text('$ ' + (closeCash - ((openCash + input) - output)).toLocaleString('de-DE'), 60, row);
         this.doc.setFont('','normal');
 
         // Pie de la impresión
