@@ -111,7 +111,7 @@
                     <ng-template ngbNavContent>
                         <div class="row">
                             <div class="col-md-12">
-                                <form (ngSubmit)="addField(fieldForm)">
+                                <form #fieldForm="ngForm" (ngSubmit)="addField(fieldForm)">
                                     <div class="row">
                                         <div class="form-group col-md-3">
                                             <label for="position" class="control-label">Posicion:</label>
@@ -233,7 +233,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="form-group col-md-5">
-                                            <button type="summit" [disabled]="!fieldForm?.valid"
+                                            <button type="summit"
                                                 class="btn btn-success btn">
                                                 <i class="fa fa-plus"></i>
                                             </button>
