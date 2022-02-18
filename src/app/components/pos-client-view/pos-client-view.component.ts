@@ -85,7 +85,7 @@ export class PosClientViewComponent {
                 // RECORRER ESTADOS INSERTADOS
                 Object.keys(params).map(key => {
                     for (const s of params[key].split(',')) {
-                        if (this.validTransactionStates.includes(s)) {
+                        if (this.validTransactionStates && this.validTransactionStates.includes(s)) {
                             this.transactionStates.push(s);
 
                         }
