@@ -50,7 +50,7 @@ export class AddMeliAttrsComponent implements OnInit {
 
     async ngOnInit() {
         if (!this.meliAttrs) {
-            await this.loadCategories();
+            this.loadCategories();
             this.meliAttrs = {
                 category: null,
                 description: {
@@ -62,7 +62,7 @@ export class AddMeliAttrsComponent implements OnInit {
             }
         } else {
             if (!this.meliAttrs.category || !this.meliAttrs.category.id) {
-                await this.loadCategories();
+                this.loadCategories();
             } else {
                 this.rootCategory = (this.meliAttrs.category) ? this.meliAttrs.category.name : '';
             }
