@@ -173,8 +173,6 @@ export class PrintComponent implements OnInit {
     }
 
     async ngOnInit() {
-
-
         if (!this.printer || !this.printer.printIn) {
             this.printer = new Printer();
             this.printer.name = "PDF";
@@ -3846,7 +3844,7 @@ export class PrintComponent implements OnInit {
 
         //Pie de la tabla de productos
         this.row += 5;
-        this.doc.line(0, this.row, 240, this.row);
+        this.doc.line(0, this.row, width, this.row);
         if (this.transaction.discountAmount > 0) {
             this.row += 5;
             this.doc.text("DESCUENTO", margin, this.row);
