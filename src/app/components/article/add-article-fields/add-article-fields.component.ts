@@ -18,24 +18,24 @@ import { ArticleFields } from 'app/components/article-field/article-fields';
 
 export class AddArticleFieldsComponent implements OnInit {
 
-  public field: ArticleFields;
-  public articleFields: ArticleField[];
-  public articleFieldsCustom : ArticleField[] = new Array();
-  public articleFieldsPrice : ArticleField[] = new Array();
   @Input() fields: ArticleFields[];
   @Input() location: string;
-  public articleFieldsForm: FormGroup;
-  public alertMessage: string = '';
-  public loading: boolean = false;
-  public focusEvent = new EventEmitter<boolean>();
   @Output() eventAddArticleFields: EventEmitter<ArticleFields[]> = new EventEmitter<ArticleFields[]>();
+  field: ArticleFields;
+  articleFields: ArticleField[];
+  articleFieldsCustom : ArticleField[] = new Array();
+  articleFieldsPrice : ArticleField[] = new Array();
+  articleFieldsForm: FormGroup;
+  alertMessage: string = '';
+  loading: boolean = false;
+  focusEvent = new EventEmitter<boolean>();
 
-  public formErrors = {
+  formErrors = {
     'articleField': '',
     'value': '',
   };
 
-  public validationMessages = {
+  validationMessages = {
     'articleField': {
       'required': 'Este campo es requerido.'
     },

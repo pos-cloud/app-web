@@ -212,7 +212,7 @@ export let attributes = [
     },
     {
         name: 'currency.name',
-        visible: true,
+        visible: false,
         disabled: false,
         filter: true,
         datatype: 'string',
