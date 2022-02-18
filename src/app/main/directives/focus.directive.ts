@@ -15,12 +15,14 @@ export class FocusDirective {
   ngOnInit() {
     if(this.focusEvent) {
       this.focusEvent.subscribe(event => {
-        this.inputType = this.element.nativeElement.type;
-        if (this.inputType != "text") {
-          this.element.nativeElement.type = "text";
+        if(this.element.nativeElement) {
+          this.inputType = this.element.nativeElement.type;
+          if (this.inputType && this.inputType != "text") {
+            this.element.nativeElement.type = "text";
+          }
+          this.setSelectionRange(this.element.nativeElement,0,999);
+          this.element.nativeElement.focus();
         }
-        this.setSelectionRange(this.element.nativeElement,0,999);
-        this.element.nativeElement.focus();
       });
     }
   }
