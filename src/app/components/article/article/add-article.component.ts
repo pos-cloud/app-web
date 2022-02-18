@@ -76,6 +76,8 @@ export class AddArticleComponent implements OnInit {
   articles: Article[];
   config: Config;
   articleForm: FormGroup;
+  public newDeposit: FormGroup;
+  public newLocation: FormGroup;
   currencies: Currency[] = new Array();
   makes: Make[] = new Array();
   classifications: Classification[] = new Array();
@@ -485,6 +487,13 @@ export class AddArticleComponent implements OnInit {
       'wooId': [this.article.wooId, []],
     });
 
+    this.newDeposit = this._fb.group({
+      'deposit': [null, []]
+    })
+    this.newLocation = this._fb.group({
+      'location': [null, []]
+    })
+
     this.articleForm.valueChanges.subscribe(data => this.onValueChanged(data));
     this.focusEvent.emit(true);
   }
@@ -570,13 +579,14 @@ export class AddArticleComponent implements OnInit {
     })
   }
 
-  async addDeposit(depositForm: NgForm) {
-
+  async addDeposit(depositForm: any) {
+    // console.log(depositForm)
+    depositForm = this.newDeposit
     let valid = true;
     const deposits = this.articleForm.controls.deposits as FormArray;
 
-
     let deposit = await this.getDeposit(depositForm.value.deposit)
+
 
     for (const element of this.articleForm.controls.deposits.value) {
 
@@ -610,7 +620,7 @@ export class AddArticleComponent implements OnInit {
           capacity: 0
         })
       );
-      depositForm.resetForm();
+      // depositForm.resetForm();
     }
 
   }
@@ -625,20 +635,20 @@ export class AddArticleComponent implements OnInit {
 
 
       this.articleForm.controls.otherFields.value.forEach(element => {
-  
-  
+
+
         if (otherFieldsForm.value.articleField._id == element.articleField) {
           valid = false;
           this.showMessage("El campo ya existe", "info", true);
         }
-  
+
       });
-  
+
       if (otherFieldsForm.value && otherFieldsForm.value.value == '' || otherFieldsForm.value.value == null) {
         this.showMessage("Debe ingresar un valor", "info", true);
         valid = false;
       }
-  
+
       if (valid) {
         otherFields.push(
           this._fb.group({
@@ -654,8 +664,8 @@ export class AddArticleComponent implements OnInit {
     }
   }
 
-  async addLocation(locationForm: NgForm) {
-
+  async addLocation(locationForm: any) {
+    locationForm = this.newLocation
     let valid = true;
     const locations = this.articleForm.controls.locations as FormArray;
 
@@ -679,7 +689,7 @@ export class AddArticleComponent implements OnInit {
           location: locationForm.value.location || null,
         })
       );
-      locationForm.resetForm();
+      // locationForm.resetForm();
     }
   }
 

@@ -365,11 +365,11 @@
                                 </div>
                             </div>
                         </div>
-                        <form (ngSubmit)="addDeposit(depositForm)">
+                        <form [formGroup]="newDeposit" (ngSubmit)="addDeposit(depositForm)">
                             <div class="row">
                                 <div class="form-group col-md-10">
                                     <label for="deposit" class="control-label">Agregar Depósito:</label>
-                                    <select class="form-control" ngModel name="deposit">
+                                    <select formControlName="deposit" class="form-control" ngModel name="deposit">
                                         <option *ngFor="let deposit of deposits" [value]="deposit._id"
                                             [disabled]="readonly">
                                             Sucursal {{deposit.branch.name}} - Depósito
@@ -410,11 +410,11 @@
                             <tfoot>
                             </tfoot>
                         </table>
-                        <form (ngSubmit)="addLocation(locationForm)">
+                        <form [formGroup]="newLocation" (ngSubmit)="addLocation(locationForm)">
                             <div class="row">
                                 <div class="form-group col-md-10">
                                     <label for="location" class="control-label">Agregar Ubicación:</label>
-                                    <select class="form-control" ngModel name="location">
+                                    <select formControlName="location" class="form-control" ngModel name="location">
                                         <option *ngFor="let location of locations" [value]="location._id"
                                             [disabled]="readonly">
                                             {{location.description}} -
