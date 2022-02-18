@@ -204,17 +204,19 @@ export class SelectCompanyComponent implements OnInit {
     };
 
     public selectCompany(companySelected: Company): void {
-        this._companyService.getCompany(companySelected._id).subscribe(
-            result => {
-                if (result && result.company) {
-                    this.activeModal.close({ company: result.company });
+        if(companySelected) {
+            this._companyService.getCompany(companySelected._id).subscribe(
+                result => {
+                    if (result && result.company) {
+                        this.activeModal.close({ company: result.company });
+                    }
+                },
+                error => {
+                    this.showMessage(error._body, 'danger', false);
+                    this.loading = false;
                 }
-            },
-            error => {
-                this.showMessage(error._body, 'danger', false);
-                this.loading = false;
-            }
-        )
+            )
+        }
     }
 
     public ngOnDestroy(): void {
