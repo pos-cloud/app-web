@@ -45,6 +45,7 @@ import { ToastrService } from 'ngx-toastr';
 export class CashBoxComponent implements OnInit {
 
     public cashBoxForm: FormGroup;
+    public formAddCurrencyValue: FormGroup;
     public paymentMethods: PaymentMethod[];
     public currencyValues: CurrencyValue[];
     public transaction: Transaction;
@@ -187,6 +188,12 @@ export class CashBoxComponent implements OnInit {
             ]
             ]
         });
+        this.formAddCurrencyValue = this._fb.group({
+            'currencyValue':[null,[
+                Validators.required
+            ]],
+            'currencyAmount':[0,[]]
+        })
 
         this.cashBoxForm.valueChanges
             .subscribe(data => this.onValueChanged(data));
@@ -225,7 +232,7 @@ export class CashBoxComponent implements OnInit {
             'paymentMethod': paymentMethod,
             'amount': 0,
         };
-
+        
         this.cashBoxForm.setValue(values);
     }
 
@@ -493,7 +500,9 @@ export class CashBoxComponent implements OnInit {
 
     }
 
-    public addCurrencyValue(e): void {
+    public addCurrencyValue(e: any): void {
+        // allowCurrencyValue
+        e = this.formAddCurrencyValue.value
         if (e && parseInt(e.currencyValue) && e.currencyAmount) {
             if (!this.currencyValuesForm) this.currencyValuesForm = new Array();
             this.currencyValuesForm.push({ value: parseInt(e.currencyValue), quantity: e.currencyAmount });

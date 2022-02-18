@@ -36,11 +36,11 @@
           </div>
         </div>
         <div *ngIf="selectPayment && selectPayment.allowCurrencyValue">
-          <form (ngSubmit)="addCurrencyValue(fieldForm.value)">
+          <form [formGroup]="formAddCurrencyValue" (ngSubmit)="addCurrencyValue()" >
             <div class="row">
               <div class="col-md-5">
                 <label class="control-label">Valor de Moneda:</label>
-                <select class="form-control" [(ngModel)]="currencyValue" name="currencyValue">
+                <select formControlName="currencyValue" class="form-control" [(ngModel)]="currencyValue" name="currencyValue" >
                   <option *ngFor="let currencyValue of currencyValues">
                     {{currencyValue.value}}
                   </option>
@@ -50,7 +50,7 @@
                 <label for="amount" class="control-label">Cantidad:</label>
                 <div class="input-group">
                   <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-                  <input type="number" class="form-control" [(ngModel)]="currencyAmount" name="currencyAmount"
+                  <input formControlName='currencyAmount' type="number" class="form-control" [(ngModel)]="currencyAmount" name="currencyAmount"
                     min="0" />
                 </div>
               </div>
