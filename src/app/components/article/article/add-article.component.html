@@ -478,7 +478,7 @@
                 <li ngbNavItem>
                     <a ngbNavLink>Campos Personalizados</a>
                     <ng-template ngbNavContent>
-                        <form (ngSubmit)="addOtherField(otherFieldForm)">
+                        <form #otherFieldForm="ngForm" (ngSubmit)="addOtherField(otherFieldForm)">
                             <div class="row">
                                 <div class="form-group col-md-5">
                                     <label for="articleField" class="control-label">Campo</label>

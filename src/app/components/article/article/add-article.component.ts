@@ -618,38 +618,40 @@ export class AddArticleComponent implements OnInit {
   async addOtherField(otherFieldsForm: NgForm) {
 
     let valid = true;
+    console.log(otherFieldsForm);
+    if(otherFieldsForm) {
 
-    const otherFields = this.articleForm.controls.otherFields as FormArray;
+      const otherFields = this.articleForm.controls.otherFields as FormArray;
 
 
-    this.articleForm.controls.otherFields.value.forEach(element => {
-
-
-      if (otherFieldsForm.value.articleField._id == element.articleField) {
+      this.articleForm.controls.otherFields.value.forEach(element => {
+  
+  
+        if (otherFieldsForm.value.articleField._id == element.articleField) {
+          valid = false;
+          this.showMessage("El campo ya existe", "info", true);
+        }
+  
+      });
+  
+      if (otherFieldsForm.value && otherFieldsForm.value.value == '' || otherFieldsForm.value.value == null) {
+        this.showMessage("Debe ingresar un valor", "info", true);
         valid = false;
-        this.showMessage("El campo ya existe", "info", true);
       }
-
-    });
-
-    if (otherFieldsForm.value.value == '' || otherFieldsForm.value.value == null) {
-      this.showMessage("Debe ingresar un valor", "info", true);
-      valid = false;
+  
+      if (valid) {
+        otherFields.push(
+          this._fb.group({
+            _id: null,
+            value: otherFieldsForm.value.value,
+            articleField: otherFieldsForm.value.articleField._id,
+            amount: otherFieldsForm.value.amount
+          })
+        );
+        otherFieldsForm.resetForm();
+        this.value = '';
+      }
     }
-
-    if (valid) {
-      otherFields.push(
-        this._fb.group({
-          _id: null,
-          value: otherFieldsForm.value.value,
-          articleField: otherFieldsForm.value.articleField._id,
-          amount: otherFieldsForm.value.amount
-        })
-      );
-      otherFieldsForm.resetForm();
-      this.value = '';
-    }
-
   }
 
   async addLocation(locationForm: NgForm) {
