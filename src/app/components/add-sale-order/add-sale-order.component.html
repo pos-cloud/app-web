@@ -12,7 +12,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="item-header" *ngIf="posType==='mostrador' && transaction?.type"
+                <div class="item-header" *ngIf="transaction?.type"
                     (click)="openModal('observation')">
                     <b>{{transaction.type.name}} {{ transaction.number }}</b>
                 </div>
