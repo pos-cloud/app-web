@@ -37,6 +37,15 @@
           </select>
         </div>
         <div class="col-md-2">
+          <label for="showBalanceOfCero" class="control-label" >
+            <b>Borrar saldo Doc. en 0</b>
+          </label>
+          <select class="form-control" [(ngModel)]="showBalanceOfCero" disabled="{{ !showBalanceOfTransactions }}">
+            <option *ngIf="showBalanceOfTransactions" [ngValue]="true">Sí</option>
+            <option [ngValue]="false">No</option>
+          </select>
+        </div>
+        <div class="col-md-2">
           <label for="startDate" class="control-label">
             <b>Fecha Desde:</b>
           </label>

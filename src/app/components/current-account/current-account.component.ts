@@ -71,6 +71,7 @@ export class CurrentAccountComponent implements OnInit {
     public invertedView: boolean = false;
     public transactionMovement: TransactionMovement;
     public showBalanceOfTransactions: boolean = false;
+    public showBalanceOfCero: boolean = false;
     public selectedItems;
     public transactionTypes: TransactionType[];
     public transactionTypesSelect;
@@ -162,7 +163,7 @@ export class CurrentAccountComponent implements OnInit {
 
     }
 
-    
+
     onItemSelect(item: any) {
     }
 
@@ -189,8 +190,8 @@ export class CurrentAccountComponent implements OnInit {
                 transactionTypes.push({ "$oid": element._id });
             });
         }
-
-        let query = {
+        let query: {}
+        query = {
             company: this.companySelected._id,
             startDate: this.startDate + " 00:00:00" + timezone,
             endDate: this.endDate + " 23:59:59" + timezone,
@@ -199,7 +200,18 @@ export class CurrentAccountComponent implements OnInit {
             invertedView: this.invertedView,
             transactionTypes: transactionTypes
         }
-
+        if (this.showBalanceOfTransactions && this.showBalanceOfCero) {
+            query = {
+                company: this.companySelected._id,
+                startDate: this.startDate + " 00:00:00" + timezone,
+                endDate: this.endDate + " 23:59:59" + timezone,
+                detailsPaymentMethod: this.detailsPaymentMethod,
+                transactionMovement: this.transactionMovement,
+                invertedView: this.invertedView,
+                transactionTypes: transactionTypes,
+                transactionBalance: { $gt: 0 }
+            }
+        }
         this._companyService.getSummaryOfAccountsByCompany(JSON.stringify(query)).subscribe(
             result => {
                 if (!result) {
@@ -209,6 +221,10 @@ export class CurrentAccountComponent implements OnInit {
                 } else {
                     this.hideMessage();
                     this.items = result;
+                    if (this.showBalanceOfTransactions && this.showBalanceOfCero) {
+                        this.items = result.filter(e => e.debe > e.haber)
+                    }
+
                     this.totalItems = this.items.length;
                     this.currentPage = parseFloat(this.roundNumber.transform(this.totalItems / this.itemsPerPage + 0.5, 0).toFixed(0));
                     this.getBalance();
@@ -510,7 +526,6 @@ export class CurrentAccountComponent implements OnInit {
     }
 
     public getTransaction(transactionId: string): Promise<Transaction> {
-
         return new Promise<Transaction>((resolve, reject) => {
 
             this._transactionService.getTransaction(transactionId).subscribe(
