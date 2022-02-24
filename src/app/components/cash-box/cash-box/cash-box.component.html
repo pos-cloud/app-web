@@ -41,7 +41,7 @@
               <div class="col-md-5">
                 <label class="control-label">Valor de Moneda:</label>
                 <select formControlName="currencyValue" class="form-control" [(ngModel)]="currencyValue" name="currencyValue" >
-                  <option *ngFor="let currencyValue of currencyValues">
+                  <option *ngFor="let currencyValue of currencyValues" [value]="currencyValue.value">
                     {{currencyValue.value}}
                   </option>
                 </select>
