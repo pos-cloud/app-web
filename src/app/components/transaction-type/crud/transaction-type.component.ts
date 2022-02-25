@@ -37,7 +37,7 @@ import Resulteable from 'app/util/Resulteable';
 import { TransactionState } from 'app/components/transaction/transaction';
 import { CashBoxTypeService } from 'app/components/cash-box-type/cash-box-type.service';
 import { CashBoxType } from 'app/components/cash-box-type/cash-box-type.model';
-import * as optionalAFIP2 from 'assets/datos/optionalAFIP.json';  
+import * as optionalAFIP2 from 'assets/datos/optionalAFIP.json';
 
 
 @Component({
@@ -254,7 +254,7 @@ export class TransactionTypeComponent implements OnInit {
         )
     }
 
-    public formatterCashBoxType = (x: {  name: string }) =>  x.name;
+    public formatterCashBoxType = (x: { name: string }) => x.name;
 
     public searchOptionalAFIP = (text$: Observable<string>) => {
 
@@ -269,7 +269,7 @@ export class TransactionTypeComponent implements OnInit {
         )
     }
 
-    public formatterOptionalAFIP = (x: {  name: string }) => x.name ;
+    public formatterOptionalAFIP = (x: { name: string }) => x.name;
 
 
     public formFields: FormField[] = [
@@ -894,7 +894,7 @@ export class TransactionTypeComponent implements OnInit {
         public _paymentMethod: PaymentMethodService,
         public _emailTemplate: EmailTemplateService,
         public _shipmentMethod: ShipmentMethodService,
-        public _cashBoxType : CashBoxTypeService,
+        public _cashBoxType: CashBoxTypeService,
         public _printer: PrinterService,
         public _company: CompanyService,
         public translatePipe: TranslateMePipe,
@@ -1000,18 +1000,18 @@ export class TransactionTypeComponent implements OnInit {
                 "application._id": 1,
                 "application.name": 1,
                 "requestEmployee._id": 1,
-                "requestEmployee.name" : "$requestEmployee.description",
+                "requestEmployee.name": "$requestEmployee.description",
                 "paymentMethods._id": 1,
                 "paymentMethods.name": 1,
                 "resetOrderNumber": 1,
                 "allowAccounting": 1,
                 "finishState": 1,
                 "allowPriceList": 1,
-                "optionalAFIP.id" : 1,
-                "optionalAFIP.name" : 1,
-                "optionalAFIP.value" : 1,
-                "cashBoxType.name" :1,
-                "cashBoxType._id" :1,
+                "optionalAFIP.id": 1,
+                "optionalAFIP.name": 1,
+                "optionalAFIP.value": 1,
+                "cashBoxType.name": 1,
+                "cashBoxType._id": 1,
             }
 
             this.subscription.add(this._objService.getAll({
@@ -1024,37 +1024,39 @@ export class TransactionTypeComponent implements OnInit {
                 result => {
                     this.loading = false;
                     if (result.status === 200) {
-                        this.obj = result.result[0];
-                        for (let code of this.obj.codes) {
-                            switch (code.letter) {
-                                case 'A':
-                                    this.objForm.patchValue({ codeA: code.code });
-                                    break;
-                                case 'B':
-                                    this.objForm.patchValue({ codeB: code.code });
-                                    break;
-                                case 'C':
-                                    this.objForm.patchValue({ codeC: code.code });
-                                    break;
-                                case 'D':
-                                    this.objForm.patchValue({ codeD: code.code });
-                                    break;
-                                case 'E':
-                                    this.objForm.patchValue({ codeE: code.code });
-                                    break;
-                                case 'M':
-                                    this.objForm.patchValue({ codeM: code.code });
-                                    break;
-                                case 'R':
-                                    this.objForm.patchValue({ codeR: code.code });
-                                    break;
-                                case 'Z':
-                                    this.objForm.patchValue({ codeZ: code.code });
-                                    break;
-
-                                case 'T':
-                                    this.objForm.patchValue({ codeT: code.code });
-                                    break;
+                        this.obj = result.result[0] || null;
+                        if(this.obj.codes) {
+                            for (let code of this.obj.codes) {
+                                switch (code.letter) {
+                                    case 'A':
+                                        this.objForm.patchValue({ codeA: code.code });
+                                        break;
+                                    case 'B':
+                                        this.objForm.patchValue({ codeB: code.code });
+                                        break;
+                                    case 'C':
+                                        this.objForm.patchValue({ codeC: code.code });
+                                        break;
+                                    case 'D':
+                                        this.objForm.patchValue({ codeD: code.code });
+                                        break;
+                                    case 'E':
+                                        this.objForm.patchValue({ codeE: code.code });
+                                        break;
+                                    case 'M':
+                                        this.objForm.patchValue({ codeM: code.code });
+                                        break;
+                                    case 'R':
+                                        this.objForm.patchValue({ codeR: code.code });
+                                        break;
+                                    case 'Z':
+                                        this.objForm.patchValue({ codeZ: code.code });
+                                        break;
+    
+                                    case 'T':
+                                        this.objForm.patchValue({ codeT: code.code });
+                                        break;
+                                }
                             }
                         }
                         this.setValuesForm();
@@ -1316,12 +1318,12 @@ export class TransactionTypeComponent implements OnInit {
             code: this.objForm.value.codeT,
         });
 
-        
+
 
         this.obj.optionalAFIP = {
-            id : this.objForm.value.optionalAFIP.id || null,
-            name : this.objForm.value.optionalAFIP.name || null,
-            value : this.objForm.value["optionalAFIP.value"] || null
+            id: (this.objForm.value.optionalAFIP && this.objForm.value.optionalAFIP.id) ? this.objForm.value.optionalAFIP.id : null,
+            name: (this.objForm.value.optionalAFIP && this.objForm.value.optionalAFIP.name) ? this.objForm.value.optionalAFIP.name : null,
+            value: (this.objForm.value.optionalAFIP && this.objForm.value.optionalAFIP.value) ? this.objForm.value.optionalAFIP.value : null
         }
 
         delete this.obj["optionalAFIP.value"]
@@ -1580,7 +1582,7 @@ export class TransactionTypeComponent implements OnInit {
             ));
         });
     }
-    
+
     public showToast(result, type?: string, title?: string, message?: string): void {
         if (result) {
             if (result.status === 200) {
