@@ -1472,7 +1472,6 @@ export class AddMovementOfCashComponent implements OnInit {
 
     public saveMovementOfCash(): Promise<MovementOfCash> {
         return new Promise<MovementOfCash>((resolve, reject) => {
-            console.log(this.movementOfCash);
             this._movementOfCashService.save(this.movementOfCash).subscribe(
                 result => {
                     if (result.status === 200) {
