@@ -10,36 +10,37 @@ export interface currencyValue {
 
 export class MovementOfCash {
 
-    public _id: string;
-    public date: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-    public quota: number = 1;
-    public expirationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-    public discount: number = 0.00;
-    public surcharge: number = 0.00;
-    public commissionAmount: number = 0.00;
-    public administrativeExpenseAmount: number = 0.00;
-    public otherExpenseAmount: number = 0.00;
-    public statusCheck: StatusCheck = null;
-    public capital: number = 0.00;
-    public interestPercentage: number = 0.00;
-    public interestAmount: number = 0.00;
-    public taxPercentage: number = 0.00;
-    public taxAmount: number = 0.00;
-    public amountPaid: number = 0.00;
-    public observation: string;
-    public type: PaymentMethod;
-    public transaction: Transaction;
-    public receiver: string;
-    public number: string;
-    public bank: Bank;
-    public titular: string;
-    public CUIT: string;
-    public deliveredBy: string;
-    public paymentChange: number = 0.00;
-    public balanceCanceled: number = 0.00;
-    public cancelingTransaction: Transaction;
-    public currencyValues: currencyValue[]
-    public operationType: string;
+    _id: string;
+    date: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+    quota: number = 1;
+    expirationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+    discount: number = 0.00;
+    surcharge: number = 0.00;
+    commissionAmount: number = 0.00;
+    administrativeExpenseAmount: number = 0.00;
+    otherExpenseAmount: number = 0.00;
+    statusCheck: StatusCheck = null;
+    capital: number = 0.00;
+    interestPercentage: number = 0.00;
+    interestAmount: number = 0.00;
+    taxPercentage: number = 0.00;
+    taxAmount: number = 0.00;
+    amountPaid: number = 0.00;
+    amountDiscount: number = 0.00;
+    observation: string;
+    type: PaymentMethod;
+    transaction: Transaction;
+    receiver: string;
+    number: string;
+    bank: Bank;
+    titular: string;
+    CUIT: string;
+    deliveredBy: string;
+    paymentChange: number = 0.00;
+    balanceCanceled: number = 0.00;
+    cancelingTransaction: Transaction;
+    currencyValues: currencyValue[]
+    operationType: string;
 
     constructor() { }
 }

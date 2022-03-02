@@ -1485,30 +1485,30 @@ export class AddMovementOfCashComponent implements OnInit {
 
     public validateCredit(): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
-            if (this.movementOfCash.type.isCurrentAccount && this.transaction.company.creditLimit > 0 && this.transaction.company._id && this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-                this._companyService.getSummaryCurrentAccount(this.transaction.company._id).subscribe(
-                    result => {
-                        if (result && result.status === 200) {
-                            var total = result.result + this.movementOfCash.amountPaid;
-                            if (total > this.transaction.company.creditLimit) {
-                                resolve(false);
-                                this.showToast(null, 'info', "La empresa supera el limite de credito otorgado");
-                            } else {
-                                resolve(true)
-                            }
-                        } else {
-                            resolve(false);
-                            this.showToast(result);
-                        }
-                    },
-                    error => {
-                        resolve(false);
-                        this.showToast(error);
-                    }
-                )
-            } else {
-                resolve(true);
-            }
+            try {
+                if (!this.transaction.company)
+                    throw new Error('Debe seleccionar una empresa para este método de pago');
+                if (this.movementOfCash.type.isCurrentAccount &&
+                    (this.transaction.company.creditLimit || 0) > 0
+                    && this.transaction.company._id &&
+                    this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+                    this._companyService.getSummaryCurrentAccount(this.transaction.company._id).subscribe(
+                        result => {
+                            if (result && result.status === 200) {
+                                var total = result.result + this.movementOfCash.amountPaid;
+                                if (total > (this.transaction.company.creditLimit || 0)) {
+                                    throw new Error('La empresa supera el limite de crédito otorgado');
+                                } else {
+                                    resolve(true)
+                                }
+                            } else throw result;
+                        },
+                        error => { throw error }
+                    )
+                } else {
+                    resolve(true);
+                }
+            } catch (error) { this.showToast(error); resolve(false); }
         });
     }
 
