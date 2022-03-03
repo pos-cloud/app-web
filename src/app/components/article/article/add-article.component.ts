@@ -580,7 +580,6 @@ export class AddArticleComponent implements OnInit {
   }
 
   async addDeposit(depositForm: any) {
-    // console.log(depositForm)
     depositForm = this.newDeposit
     let valid = true;
     const deposits = this.articleForm.controls.deposits as FormArray;
@@ -628,7 +627,6 @@ export class AddArticleComponent implements OnInit {
   async addOtherField(otherFieldsForm: NgForm) {
 
     let valid = true;
-    console.log(otherFieldsForm);
     if(otherFieldsForm) {
 
       const otherFields = this.articleForm.controls.otherFields as FormArray;

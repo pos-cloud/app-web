@@ -385,7 +385,6 @@ export class AccountSeatComponent implements OnInit {
         if (this.obj.items && this.obj.items.length > 0) {
             var items = <FormArray>this.objForm.controls.items;
             this.obj.items.forEach(x => {
-                console.log(x);
                 this.totalDebit = this.totalDebit + +x.debit;
                 this.totalHaber = this.totalHaber + +x.credit;
                 items.push(this._fb.group({
@@ -603,14 +602,9 @@ export class AccountSeatComponent implements OnInit {
     }
 
     public addItem(itemForm: NgForm): void {
-
         let valid = true;
         const item = this.objForm.controls.items as FormArray;
-
      
-        console.log(this.totalDebit);
-        console.log(this.totalHaber);
-
         if (valid) {
             this.totalDebit = this.totalDebit + parseFloat(itemForm.value.debit);
             this.totalHaber = this.totalHaber + parseFloat(itemForm.value.credit);

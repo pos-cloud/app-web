@@ -1315,7 +1315,6 @@ export class PrintComponent implements OnInit {
         this.doc.setFont('', 'bold');
         this.doc.text("Detalle de Apertura:", margin, row += 5);
         this.doc.setFont('', 'normal');
-        console.log(openingAmounts);
         if (Object.keys(openingAmounts).length > 0) {
             for (let k of Object.keys(openingAmounts)) {
                 this.doc.text('- ' + k, margin + 5, row += 5);
