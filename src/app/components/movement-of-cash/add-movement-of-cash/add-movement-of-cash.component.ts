@@ -1486,7 +1486,8 @@ export class AddMovementOfCashComponent implements OnInit {
     public validateCredit(): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
             try {
-                if (!this.transaction.company)
+
+                if (this.movementOfCash.type.isCurrentAccount && !this.transaction.company)
                     throw new Error('Debe seleccionar una empresa para este método de pago');
                 if (this.movementOfCash.type.isCurrentAccount &&
                     (this.transaction.company.creditLimit || 0) > 0
