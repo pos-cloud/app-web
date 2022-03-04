@@ -47,19 +47,27 @@ export class MovementOfCancellationComponent implements OnInit {
     @Input() totalPrice: number = 0;
     @Input() selectionView: boolean = false;
     @Input() movementsOfCancellations: MovementOfCancellation[] = new Array();
-    public focusEvent = new EventEmitter<boolean>();
-    public movsOfArticles: MovementOfArticle[] = new Array();
-    public transactionDestination: Transaction;
-    public requestCompany: boolean = false;
-    public transactionMovement: TransactionMovement;
-    public transactions: Transaction[];
-    public cancellationTypes: CancellationType[];
-    public alertMessage: string = '';
-    public loading: boolean = false;
-    public totalItems: number = -1;
-    public orderTerm: string[] = ['endDate'];
-    public existingCanceled = [];
-    public displayedColumns = [
+    @Input() movementsOfCashes: MovementOfCash[] = new Array();
+    focusEvent = new EventEmitter<boolean>();
+    movsOfArticles: MovementOfArticle[] = new Array();
+    transactionDestination: Transaction;
+    requestCompany: boolean = false;
+    transactionMovement: TransactionMovement;
+    transactions: Transaction[];
+    cancellationTypes: CancellationType[];
+    alertMessage: string = '';
+    loading: boolean = false;
+    totalItems: number = -1;
+    orderTerm: string[] = ['endDate'];
+    existingCanceled = [];
+    filters: any[];
+    filterValue: string;
+    roundNumber = new RoundNumberPipe();
+    userCountry: string;
+    balanceSelected: number = 0;
+    userType: string;
+    automaticSelectionReady: boolean = false;
+    displayedColumns = [
         '_id',
         'endDate',
         'number',
@@ -76,30 +84,22 @@ export class MovementOfCancellationComponent implements OnInit {
         'company.state.name',
         'company.group.description'
     ];
-    public filters: any[];
-    public filterValue: string;
-    public roundNumber = new RoundNumberPipe();
-    public userCountry: string;
-    public balanceSelected: number = 0;
-    public userType: string;
-    public automaticSelectionReady: boolean = false;
-    @Input() movementsOfCashes: MovementOfCash[] = new Array();
 
     constructor(
+        private _cancellationTypeService: CancellationTypeService,
+        private _movementOfCancellation: MovementOfCancellationService,
+        private _transactionService: TransactionService,
+        private _companyService: CompanyService,
+        private _movementOfCashService: MovementOfCashService,
+        private _movementOfArticleService: MovementOfArticleService,
+        private _movementOfCancellationService: MovementOfCancellationService,
+        private _articleService: ArticleService,
+        private _toastr: ToastrService,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,
-        public _cancellationTypeService: CancellationTypeService,
-        public _movementOfCancellation: MovementOfCancellationService,
-        public _transactionService: TransactionService,
-        public _companyService: CompanyService,
         public _modalService: NgbModal,
-        public _movementOfCashService: MovementOfCashService,
-        public _movementOfArticleService: MovementOfArticleService,
-        public _movementOfCancellationService: MovementOfCancellationService,
         public _router: Router,
-        public _articleService: ArticleService,
         public translatePipe: TranslateMePipe,
-        private _toastr: ToastrService,
     ) {
         this.userCountry = Config.country;
         const pathLocation: string[] = this._router.url.split('/');
@@ -127,7 +127,7 @@ export class MovementOfCancellationComponent implements OnInit {
         this.focusEvent.emit(true);
     }
 
-    public getCancellationsOfMovements() {
+    getCancellationsOfMovements() {
 
         this.loading = true;
 
@@ -183,7 +183,7 @@ export class MovementOfCancellationComponent implements OnInit {
             });
     }
 
-    public getTransaction(transactionId: string): Promise<Transaction> {
+    getTransaction(transactionId: string): Promise<Transaction> {
 
         return new Promise<Transaction>((resolve, reject) => {
 
@@ -209,7 +209,7 @@ export class MovementOfCancellationComponent implements OnInit {
         });
     }
 
-    public getCancellationTypes(): void {
+    getCancellationTypes(): void {
 
         this.loading = true;
 
@@ -229,7 +229,7 @@ export class MovementOfCancellationComponent implements OnInit {
 
         this._cancellationTypeService.getCancellationTypes(
             project, // PROJECT
-            { "destination._id": { $oid: this.transactionDestination.type._id }, "operationType": { "$ne": "D" } }, // MATCH
+            { "destination._id": { $oid: this.transactionDestination.type._id }, "origin": { $exists: true }, "operationType": { "$ne": "D" } }, // MATCH
             {}, // SORT
             {}, // GROUP
             0, // LIMIT
@@ -273,6 +273,7 @@ export class MovementOfCancellationComponent implements OnInit {
             }
         }
         match += `"$or": [`
+
         for (let index = 0; index < this.cancellationTypes.length; index++) {
             match += `{ "$and":[{ "type._id"  : "${this.cancellationTypes[index].origin._id}"},{"state":"${this.cancellationTypes[index].requestStatusOrigin}"}]}`;
             if (this.cancellationTypes[index].requestCompany) {
@@ -393,7 +394,7 @@ export class MovementOfCancellationComponent implements OnInit {
         );
     }
 
-    public getMovementsOfCashes(query: string): Promise<MovementOfCash[]> {
+    getMovementsOfCashes(query: string): Promise<MovementOfCash[]> {
         return new Promise<MovementOfCash[]>((resolve, reject) => {
             this.loading = true;
             this._movementOfCashService.getMovementsOfCashes(query).subscribe(
@@ -413,7 +414,7 @@ export class MovementOfCancellationComponent implements OnInit {
         });
     }
 
-    public getMovementsOfCancellations(): Promise<MovementOfCancellation[]> {
+    getMovementsOfCancellations(): Promise<MovementOfCancellation[]> {
 
         return new Promise<MovementOfCancellation[]>((resolve, reject) => {
 
@@ -472,7 +473,7 @@ export class MovementOfCancellationComponent implements OnInit {
         }
     }
 
-    public orderBy(term: string): void {
+    orderBy(term: string): void {
 
         if (this.orderTerm[0] === term) {
             this.orderTerm[0] = "-" + term;
@@ -483,7 +484,7 @@ export class MovementOfCancellationComponent implements OnInit {
         this.getTransactions();
     }
 
-    public openModal(op: string, transaction: Transaction): void {
+    openModal(op: string, transaction: Transaction): void {
 
         let modalRef;
         switch (op) {
@@ -521,7 +522,7 @@ export class MovementOfCancellationComponent implements OnInit {
         }
     }
 
-    public assignMovementsOfCashes(movs: MovementOfCash[]) {
+    assignMovementsOfCashes(movs: MovementOfCash[]) {
         for (let mov of movs) {
             let exists: boolean = false;
             for (let m of this.movementsOfCashes) {
@@ -617,7 +618,7 @@ export class MovementOfCancellationComponent implements OnInit {
         this.recalculateBalanceSelected();
     }
 
-    public getMovementOfCashes(match: {}): Promise<MovementOfCash[]> {
+    getMovementOfCashes(match: {}): Promise<MovementOfCash[]> {
         return new Promise<MovementOfCash[]>((resolve, reject) => {
             this.loading = true;
             /// ORDENAMOS LA CONSULTA
@@ -650,7 +651,7 @@ export class MovementOfCancellationComponent implements OnInit {
         });
     }
 
-    public recalculateBalanceSelected(): void {
+    recalculateBalanceSelected(): void {
         this.balanceSelected = 0;
         for (let mov of this.movementsOfCancellations) {
             if (!this.isMovementClosed(mov.transactionOrigin)) {
@@ -673,7 +674,7 @@ export class MovementOfCancellationComponent implements OnInit {
         return closed;
     }
 
-    public modifyBalance(transaction: Transaction) {
+    modifyBalance(transaction: Transaction) {
 
         let modify: boolean = false;
 
@@ -686,7 +687,7 @@ export class MovementOfCancellationComponent implements OnInit {
         return modify;
     }
 
-    public deleteAllMovements(): void {
+    deleteAllMovements(): void {
         for (let trans of this.transactions) {
             this.deleteTransactionSelected(trans);
         }
