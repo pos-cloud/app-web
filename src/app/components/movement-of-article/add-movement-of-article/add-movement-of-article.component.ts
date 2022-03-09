@@ -536,7 +536,7 @@ export class AddMovementOfArticleComponent implements OnInit {
                 let el = array[i];
                 exists = false;
                 for (let j = 0; j < uniqueArray.length; j++) {
-                    if (array[i].value._id === uniqueArray[j].value._id) {
+                    if (array[i].value && uniqueArray[j].value && array[i].value._id === uniqueArray[j].value._id) {
                         exists = true;
                     }
                 }
