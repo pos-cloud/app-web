@@ -1651,126 +1651,39 @@ export class PointOfSaleComponent implements OnInit {
 
     public async validateElectronicTransactionAR(transaction: Transaction, state: TransactionState = TransactionState.Closed) {
 
-        transaction = await this.getTransaction(transaction._id);
+        this.showMessage("Validando comprobante con AFIP...", 'info', false);
+        this.loading = true;
+        this.transaction.type.defectEmailTemplate = null;
 
-        // ACTUALIZAMOS LA FECHA DE LA FACTURA AL DÍA DE HOY
-        transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-        transaction.VATPeriod = moment(transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
-        transaction.expirationDate = transaction.endDate;
-
-        let movementsOfCancellations: MovementOfCancellation[];
-        await this.getMovementsOfCancellations().then(
-            movementsOfCancellations => {
-                if (movementsOfCancellations) {
-                    movementsOfCancellations = movementsOfCancellations;
-                }
-            }
-        );
-
-        if (transaction.type.electronics) {
-            this.showMessage("Validando comprobante con AFIP...", 'info', false);
-            this.loading = true;
-            transaction.type.defectEmailTemplate = null;
-            this._transactionService.validateElectronicTransactionAR(transaction, movementsOfCancellations).subscribe(
-                async result => {
-                    let msn = '';
-                    if (result && result.CAE) {
-                        transaction.number = result.number;
-                        transaction.CAE = result.CAE;
-                        transaction.CAEExpirationDate = moment(result.CAEExpirationDate, 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DDTHH:mm:ssZ");
-                        transaction.state = state;
-                        await this.updateTransaction(transaction).then(
-                            transaction => {
-                                if (transaction) {
-                                    if (this.transaction && this.transaction.type.printable) {
-                                        this.refresh();
-                                        if (this.transaction.type.defectPrinter) {
-                                            this.printerSelected = this.printerSelected;
-                                            this.openModal("print");
-                                        } else {
-                                            this.openModal("printers");
-                                        }
-                                    } else if (this.transaction && this.transaction.type.requestEmailTemplate) {
-                                        this.openModal('send-email');
-                                    } else {
-                                        this.refresh();
-                                    }
-                                }
-                            }
-                        );
-                    } else if (result && result.status != 0) {
-                        if (result.status === 'err') {
-                            if (result.code && result.code !== '') {
-                                msn += result.code + " - ";
-                            }
-                            if (result.message && result.message !== '') {
-                                msn += result.message + ". ";
-                            }
-                            if (result.observationMessage && result.observationMessage !== '') {
-                                msn += result.observationMessage + ". ";
-                            }
-                            if (result.observationMessage2 && result.observationMessage2 !== '') {
-                                msn += result.observationMessage2 + ". ";
-                            }
-                            if (msn === '') {
-                                msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
-                            }
-                            this.showMessage(msn, 'info', true);
-                            let body = {
-                                transaction: {
-                                    origin: transaction.origin,
-                                    letter: transaction.letter,
-                                    number: transaction.number,
-                                    startDate: transaction.startDate,
-                                    endDate: transaction.endDate,
-                                    expirationDate: transaction.expirationDate,
-                                    VATPeriod: transaction.VATPeriod,
-                                    state: transaction.state,
-                                    basePrice: transaction.basePrice,
-                                    exempt: transaction.exempt,
-                                    discountAmount: transaction.discountAmount,
-                                    discountPercent: transaction.discountPercent,
-                                    totalPrice: transaction.totalPrice,
-                                    roundingAmount: transaction.roundingAmount,
-                                    CAE: transaction.CAE,
-                                    CAEExpirationDate: transaction.CAEExpirationDate,
-                                    type: transaction.type,
-                                    company: transaction.company,
-                                    priceList: transaction.priceList
-                                },
-                                config: {
-                                    companyIdentificationValue: this.config['companyIdentificationValue'],
-                                    vatCondition: this.config['companyVatCondition'].code,
-                                    database: this.config['database']
-                                }
-                            }
-                            this.saveClaim('ERROR FE AR ' + moment().format('DD/MM/YYYY HH:mm') + " : " + msn, JSON.stringify(body));
-                        } else if (result.message) {
-                            this.showMessage(result.message, 'info', true);
-                            this.saveClaim('ERROR FE AR ' + moment().format('DD/MM/YYYY HH:mm') + " : " + "ERROR AL CONECTAR ", result.message);
+        this._transactionService.validateElectronicTransactionAR(this.transaction, null).subscribe(
+            (result: Resulteable) => {
+                if (result.status === 200) {
+                    let transactionResponse: Transaction = result.result;
+                    this.transaction.CAE = transactionResponse.CAE;
+                    this.transaction.CAEExpirationDate = transactionResponse.CAEExpirationDate;
+                    this.transaction.number = transactionResponse.number;
+                    this.transaction.state = transactionResponse.state;
+                    
+                    if (this.transaction && this.transaction.type.printable) {
+                        this.refresh();
+                        if (this.transaction.type.defectPrinter) {
+                            this.printerSelected = this.printerSelected;
+                            this.openModal("print");
                         } else {
-                            if (msn === '') {
-                                msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
-                            }
-                            this.showMessage(msn, 'info', true);
+                            this.openModal("printers");
                         }
+                    } else if (this.transaction && this.transaction.type.requestEmailTemplate) {
+                        this.openModal('send-email');
                     } else {
-                        if (msn === '') {
-                            msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
-                        }
-                        this.showMessage(msn, 'info', true);
+                        this.refresh();
                     }
-                    this.loading = false;
-                },
-                error => {
-                    this.showMessage("Ha ocurrido un error en el servidor. Comuníquese con Soporte.", 'danger', false);
-                    this.loading = false;
-                }
-            )
-        } else {
-            this.showMessage("Debe configurar el tipo de transacción como electrónica.", 'danger', false);
-            this.loading = false;
-        }
+                } else this.showToast(result);
+            },
+            error => {
+                this.showMessage("Ha ocurrido un error en el servidor. Comuníquese con Soporte.", 'danger', false);
+                this.loading = false;
+            }
+        )
     }
 
     public getMovementsOfCancellations(): Promise<MovementOfCancellation[]> {

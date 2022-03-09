@@ -81,8 +81,6 @@ import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { AccountSeatService } from '../account-seat/account-seat.service';
 import { SelectPriceListComponent } from '../price-list/select-price-list/select-price-list.component';
 import Resulteable from 'app/util/Resulteable';
-import { CompanyNewsComponent } from '../company/company-news/company-news.component';
-import { updateFor } from 'typescript';
 
 @Component({
     selector: 'app-add-sale-order',
@@ -94,7 +92,18 @@ import { updateFor } from 'typescript';
 
 export class AddSaleOrderComponent {
 
-    public optional: string = '';
+    @ViewChild('contentPrinters', { static: true }) contentPrinters: ElementRef;
+    @ViewChild('contentMessage', { static: true }) contentMessage: ElementRef;
+    @ViewChild('contentChangeDate', { static: true }) contentChangeDate: ElementRef;
+    @ViewChild('contentOptionalAFIP', { static: true }) contentChangeOptionalAFIP: ElementRef;
+    @ViewChild('contentChangeObservation', { static: true }) contentChangeObservation: ElementRef;
+    @ViewChild('contentChangeQuotation', { static: true }) contentChangeQuotation: ElementRef;
+    @ViewChild('contentInformCancellation', { static: true }) contentInformCancellation: ElementRef;
+    @ViewChild('containerMovementsOfArticles', { static: true }) containerMovementsOfArticles: ElementRef;
+    @ViewChild('containerTaxes', { static: true }) containerTaxes: ElementRef;
+    @ViewChild(ListArticlesPosComponent) listArticlesComponent: ListArticlesPosComponent;
+    @ViewChild(ListCategoriesPosComponent) listCategoriesComponent: ListCategoriesPosComponent;
+    optional: string = '';
     transaction: Transaction;
     transactionId: string;
     transactionMovement: string;
@@ -115,16 +124,7 @@ export class AddSaleOrderComponent {
     posType: string;
     loading: boolean;
     isCharge: boolean;
-    optionalAFIP : optionalAFIP;
-    @ViewChild('contentPrinters', { static: true }) contentPrinters: ElementRef;
-    @ViewChild('contentMessage', { static: true }) contentMessage: ElementRef;
-    @ViewChild('contentChangeDate', { static: true }) contentChangeDate: ElementRef;
-    @ViewChild('contentOptionalAFIP', { static: true }) contentChangeOptionalAFIP: ElementRef;
-    @ViewChild('contentChangeObservation', { static: true }) contentChangeObservation: ElementRef;
-    @ViewChild('contentChangeQuotation', { static: true }) contentChangeQuotation: ElementRef;
-    @ViewChild('contentInformCancellation', { static: true }) contentInformCancellation: ElementRef;
-    @ViewChild('containerMovementsOfArticles', { static: true }) containerMovementsOfArticles: ElementRef;
-    @ViewChild('containerTaxes', { static: true }) containerTaxes: ElementRef;
+    optionalAFIP: optionalAFIP;
     paymentAmount: number = 0.00;
     typeOfOperationToPrint: string;
     kitchenArticlesToPrint: MovementOfArticle[];
@@ -141,8 +141,6 @@ export class AddSaleOrderComponent {
     apiURL = Config.apiURL;
     userCountry: string = 'AR';
     lastQuotation: number = 1;
-    @ViewChild(ListArticlesPosComponent) listArticlesComponent: ListArticlesPosComponent;
-    @ViewChild(ListCategoriesPosComponent) listCategoriesComponent: ListCategoriesPosComponent;
     categorySelected: Category;
     totalTaxesAmount: number = 0;
     totalTaxesBase: number = 0;
@@ -162,24 +160,13 @@ export class AddSaleOrderComponent {
     movementsOfCancellations: MovementOfCancellation[] = new Array();
     canceledTransactions: {
         typeId: string,
+        code: number,
         origin: number,
         letter: string,
         number: number
-    } = {
-            typeId: null,
-            origin: 0,
-            letter: 'X',
-            number: 0
-        };
-    canceledTransactionsAFIP: {
-        Tipo: number,
-        PtoVta: number,
-        Nro: number
     };
 
     constructor(
-        public activeModal: NgbActiveModal,
-        public alertConfig: NgbAlertConfig,
         private _transactionService: TransactionService,
         private _movementOfArticleService: MovementOfArticleService,
         private _articleStockService: ArticleStockService,
@@ -203,12 +190,14 @@ export class AddSaleOrderComponent {
         private _jsonDiffPipe: JsonDiffPipe,
         private _toastr: ToastrService,
         public translatePipe: TranslateMePipe,
+        public activeModal: NgbActiveModal,
+        public alertConfig: NgbAlertConfig,
     ) {
         this.initVariables();
         this.processParams();
     }
 
-    public initVariables(): void {
+    initVariables(): void {
         this.transaction = new Transaction();
         this.transaction.type = new TransactionType();
         this.movementsOfArticles = new Array();
@@ -266,14 +255,14 @@ export class AddSaleOrderComponent {
         this.initComponent();
     }
 
-    public async initComponent() {
+    async initComponent() {
         try {
             this.loading = true;
 
             if (this.transactionId) {
                 this.transaction = await this.getTransaction();
 
-                if(this.transaction.type.optionalAFIP && !this.transaction.optionalAFIP){
+                if (this.transaction.type.optionalAFIP && !this.transaction.optionalAFIP) {
                     this.transaction.optionalAFIP = this.transaction.type.optionalAFIP;
                 }
 
@@ -339,7 +328,7 @@ export class AddSaleOrderComponent {
         }, 1000);
     }
 
-    public getPriceList(id: string): Promise<PriceList> {
+    getPriceList(id: string): Promise<PriceList> {
 
         return new Promise<PriceList>((resolve, reject) => {
 
@@ -359,7 +348,7 @@ export class AddSaleOrderComponent {
         });
     }
 
-    public getCancellationTypes(): Promise<CancellationType[]> {
+    getCancellationTypes(): Promise<CancellationType[]> {
 
         return new Promise<CancellationType[]>((resolve, reject) => {
 
@@ -384,7 +373,7 @@ export class AddSaleOrderComponent {
         });
     }
 
-    public getMovementsOfCancellations(): Promise<MovementOfCancellation[]> {
+    getMovementsOfCancellations(): Promise<MovementOfCancellation[]> {
         return new Promise<MovementOfCancellation[]>((resolve, reject) => {
             this._movementOfCancellationService.getAll({
                 project: {
@@ -412,7 +401,7 @@ export class AddSaleOrderComponent {
         });
     }
 
-    public getUsesOfCFDI(): Promise<UseOfCFDI[]> {
+    getUsesOfCFDI(): Promise<UseOfCFDI[]> {
 
         return new Promise<UseOfCFDI[]>((resolve, reject) => {
 
@@ -457,7 +446,7 @@ export class AddSaleOrderComponent {
         );
     }
 
-    public getRelationTypes(): Promise<RelationType[]> {
+    getRelationTypes(): Promise<RelationType[]> {
 
         return new Promise<RelationType[]>((resolve, reject) => {
 
@@ -482,7 +471,7 @@ export class AddSaleOrderComponent {
         });
     }
 
-    public getTransaction(): Promise<Transaction> {
+    getTransaction(): Promise<Transaction> {
         return new Promise<Transaction>((resolve, reject) => {
             this._transactionService.getTransaction(this.transactionId).subscribe(
                 async result => {
@@ -495,7 +484,7 @@ export class AddSaleOrderComponent {
         });
     }
 
-    public updateTransaction(): Promise<Transaction> {
+    updateTransaction(): Promise<Transaction> {
         return new Promise<Transaction>((resolve, reject) => {
             this.transaction.exempt = this.roundNumber.transform(this.transaction.exempt);
             this.transaction.discountAmount = this.roundNumber.transform(this.transaction.discountAmount, 6);
@@ -517,7 +506,7 @@ export class AddSaleOrderComponent {
         });
     }
 
-    public saveMovementsOfCancellations(movementsOfCancellations: MovementOfCancellation[]): Promise<MovementOfCancellation[]> {
+    saveMovementsOfCancellations(movementsOfCancellations: MovementOfCancellation[]): Promise<MovementOfCancellation[]> {
 
         for (let mov of movementsOfCancellations) {
             let transOrigin = new Transaction();
@@ -551,7 +540,7 @@ export class AddSaleOrderComponent {
         });
     }
 
-    public daleteMovementsOfCancellations(query: string): Promise<boolean> {
+    daleteMovementsOfCancellations(query: string): Promise<boolean> {
 
         return new Promise((resolve, reject) => {
 
@@ -602,7 +591,7 @@ export class AddSaleOrderComponent {
         );
     }
 
-    public updateTable(table): Promise<Table> {
+    updateTable(table): Promise<Table> {
 
         return new Promise<Table>((resolve, reject) => {
 
@@ -627,7 +616,7 @@ export class AddSaleOrderComponent {
         });
     }
 
-    public getMovementsOfTransaction(): void {
+    getMovementsOfTransaction(): void {
 
         this.hideMessage();
 
@@ -659,7 +648,7 @@ export class AddSaleOrderComponent {
         );
     }
 
-    public updateQuantity(): void {
+    updateQuantity(): void {
         this.quantity = 0;
         if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
             for (let movementOfArticle of this.movementsOfArticles) {
@@ -919,7 +908,7 @@ export class AddSaleOrderComponent {
     }
 
 
-    public getMovementsOfArticles(query?: string): Promise<MovementOfArticle[]> {
+    getMovementsOfArticles(query?: string): Promise<MovementOfArticle[]> {
 
         return new Promise<MovementOfArticle[]>((resolve, reject) => {
 
@@ -943,7 +932,7 @@ export class AddSaleOrderComponent {
         });
     }
 
-    public saveMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
+    saveMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
 
         return new Promise<MovementOfArticle>((resolve, reject) => {
 
@@ -1067,7 +1056,7 @@ export class AddSaleOrderComponent {
         });
     }
 
-    public getArticleStock(movementOfArticle: MovementOfArticle): Promise<ArticleStock[]> {
+    getArticleStock(movementOfArticle: MovementOfArticle): Promise<ArticleStock[]> {
         return new Promise<ArticleStock[]>((resolve, reject) => {
             let depositID;
             let query;
@@ -1098,7 +1087,7 @@ export class AddSaleOrderComponent {
         });
     }
 
-    public recalculateCostPrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
+    recalculateCostPrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
 
         let quotation = 1;
 
@@ -1173,7 +1162,7 @@ export class AddSaleOrderComponent {
         return movementOfArticle;
     }
 
-    public recalculateSalePrice(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
+    recalculateSalePrice(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
 
         return new Promise<MovementOfArticle>(async (resolve, reject) => {
 
@@ -1355,7 +1344,7 @@ export class AddSaleOrderComponent {
         });
     }
 
-    public getMovementOfArticleByArticle(articleId: string): MovementOfArticle {
+    getMovementOfArticleByArticle(articleId: string): MovementOfArticle {
         let movementOfArticle: MovementOfArticle;
         if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
             for (let movementOfArticleAux of this.movementsOfArticles) {
@@ -1367,7 +1356,7 @@ export class AddSaleOrderComponent {
         return movementOfArticle;
     }
 
-    public updateMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
+    updateMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
         return new Promise<MovementOfArticle>(async (resolve, reject) => {
             this.loading = true;
             movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice);
@@ -1412,7 +1401,7 @@ export class AddSaleOrderComponent {
         let discountAmountAux: number = 0;
 
 
-        if(!discountPercent && this.transaction.discountPercent === 0) {
+        if (!discountPercent && this.transaction.discountPercent === 0) {
             if (this.transaction.company && this.transaction.company.discount > 0 && this.transaction.type.allowCompanyDiscount) this.transaction.discountPercent += this.transaction.company.discount;
             if (this.transaction.company && this.transaction.company.group && this.transaction.company.group.discount > 0 && this.transaction.type.allowCompanyDiscount) this.transaction.discountPercent += this.transaction.company.group.discount;
         }
@@ -1598,106 +1587,32 @@ export class AddSaleOrderComponent {
         );
     }
 
-    public async validateElectronicTransactionAR() {
+    async validateElectronicTransactionAR() {
 
         this.showMessage("Validando comprobante con AFIP...", 'info', false);
         this.loading = true;
         this.transaction.type.defectEmailTemplate = null;
 
-        this.movementsOfCancellations = await this.getMovementsOfCancellations();
-
-        this._transactionService.validateElectronicTransactionAR(this.transaction, this.movementsOfCancellations, this.canceledTransactionsAFIP).subscribe(
-            result => {
-                let msn = '';
-                if (result && result.CAE) {
-                    this.transaction.number = result.number;
-                    this.transaction.CAE = result.CAE;
-                    this.transaction.CAEExpirationDate = moment(result.CAEExpirationDate, 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DDTHH:mm:ssZ");
-                    if (this.canceledTransactions) {
-                        let name: string;
-                        if(this.cancellationTypes && this.cancellationTypes.length > 0) {
-                            for (let canc of this.cancellationTypes) {
-                                if (canc.origin._id === this.canceledTransactions.typeId) name = canc.origin.name;
-                            }
-                        }
-                        if (name) this.transaction.observation += ` Corresponde a ${name} ${this.canceledTransactions.origin}-${this.canceledTransactions.letter}-${this.canceledTransactions.number}`;
-                    }
-                    if (this.transaction.type.finishState) {
-                        this.transaction.state = this.transaction.type.finishState;
-                    } else {
-                        this.transaction.state = TransactionState.Closed;
-                    }
+        this._transactionService.validateElectronicTransactionAR(this.transaction, this.canceledTransactions).subscribe(
+            (result: Resulteable) => {
+                if (result.status === 200) {
+                    let transactionResponse: Transaction = result.result;
+                    console.log(transactionResponse);
+                    this.transaction.CAE = transactionResponse.CAE;
+                    this.transaction.CAEExpirationDate = transactionResponse.CAEExpirationDate;
+                    this.transaction.number = transactionResponse.number;
+                    this.transaction.state = transactionResponse.state;
+                    console.log(this.transaction.CAE);
                     this.finish();
-                } else if (result && result.status != 0) {
-                    if (result.status === 'err') {
-                        if (result.code && result.code !== '') {
-                            msn += result.code + " - ";
-                        }
-                        if (result.message && result.message !== '') {
-                            msn += result.message + ". ";
-                        }
-                        if (result.observationMessage && result.observationMessage !== '') {
-                            msn += result.observationMessage + ". ";
-                        }
-                        if (result.observationMessage2 && result.observationMessage2 !== '') {
-                            msn += result.observationMessage2 + ". ";
-                        }
-                        if (msn === '') {
-                            msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
-                        }
-                        this.showMessage(msn, 'info', true);
-                        let body = {
-                            transaction: {
-                                origin: this.transaction.origin,
-                                letter: this.transaction.letter,
-                                number: this.transaction.number,
-                                startDate: this.transaction.startDate,
-                                endDate: this.transaction.endDate,
-                                expirationDate: this.transaction.expirationDate,
-                                VATPeriod: this.transaction.VATPeriod,
-                                state: this.transaction.state,
-                                basePrice: this.transaction.basePrice,
-                                exempt: this.transaction.exempt,
-                                discountAmount: this.transaction.discountAmount,
-                                discountPercent: this.transaction.discountPercent,
-                                totalPrice: this.transaction.totalPrice,
-                                roundingAmount: this.transaction.roundingAmount,
-                                CAE: this.transaction.CAE,
-                                CAEExpirationDate: this.transaction.CAEExpirationDate,
-                                type: this.transaction.type,
-                                company: this.transaction.company,
-                                priceList: this.transaction.priceList
-                            },
-                            config: {
-                                companyIdentificationValue: this.config['companyIdentificationValue'],
-                                vatCondition: this.config['companyVatCondition'].code,
-                                database: this.config['database']
-                            }
-                        }
-                    } else if (result.message) {
-                        this.showMessage(result.message, 'info', true);
-                    } else {
-                        if (msn === '') {
-                            msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
-                        }
-                        this.showMessage(msn, 'info', true);
-                    }
-                } else {
-                    if (msn === '') {
-                        msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
-                    }
-                    this.showMessage(msn, 'info', true);
-                }
-                this.loading = false;
+                } else this.showToast(result);
             },
             error => {
-                this.showMessage("Ha ocurrido un error en el servidor. Comuníquese con Soporte.", 'danger', false);
-                this.loading = false;
+                this.showToast(error)
             }
         )
     }
 
-    public updateMovementsOfArticlesByWhere(where: {}, set: {}, sort: {}): Promise<MovementOfArticle> {
+    updateMovementsOfArticlesByWhere(where: {}, set: {}, sort: {}): Promise<MovementOfArticle> {
 
         return new Promise<MovementOfArticle>((resolve, reject) => {
 
@@ -1722,7 +1637,7 @@ export class AddSaleOrderComponent {
         });
     }
 
-    public validateElectronicTransactionMX(): void {
+    validateElectronicTransactionMX(): void {
 
         this.showMessage("Validando comprobante con SAT...", 'info', false);
 
@@ -2093,22 +2008,22 @@ export class AddSaleOrderComponent {
                             modalRef.componentInstance.fastPayment = fastPayment;
                         }
                         modalRef.result.then((result) => {
-                            if(result != 'cancel'){
+                            if (result != 'cancel') {
 
                                 this.movementsOfCashes = result.movementsOfCashes;
-    
+
                                 if (this.movementsOfCashes) {
-    
-    
+
+
                                     if (result.movementOfArticle) {
                                         this.movementsOfArticles.push(result.movementOfArticle);
                                     }
-    
+
                                     if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
                                         if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
                                             this.transaction.origin = this.transaction.type.fixedOrigin;
                                         }
-    
+
                                         this.assignLetter();
                                         if (this.transaction.type.electronics) {
                                             if (this.config['country'] === 'MX') {
@@ -2270,7 +2185,7 @@ export class AddSaleOrderComponent {
             case 'priceList':
                 modalRef = this._modalService.open(SelectPriceListComponent).result.then(async (result) => {
                     if (result && result.priceList) {
-                        if(this.transaction) {
+                        if (this.transaction) {
                             if (!this.transaction.priceList) {
                                 this.transaction.priceList = result.priceList;
                                 this.newPriceList = result.priceList;
@@ -2613,7 +2528,7 @@ export class AddSaleOrderComponent {
         });
     }
 
-    public getPrinters(): Promise<Printer[]> {
+    getPrinters(): Promise<Printer[]> {
 
         return new Promise<Printer[]>(async (resolve, reject) => {
 
@@ -2652,6 +2567,7 @@ export class AddSaleOrderComponent {
 
     async finish() {
         try {
+            console.log(this.transaction.CAE);
             this.loading = true;
 
             if (!this.movementsOfArticles || this.movementsOfArticles.length === 0)
@@ -2741,7 +2657,7 @@ export class AddSaleOrderComponent {
         } catch (error) { this.showToast(error) };
     }
 
-    public async changeArticlesStatusToPending(): Promise<boolean> {
+    async changeArticlesStatusToPending(): Promise<boolean> {
         return new Promise<boolean>(async (resolve, reject) => {
             try {
                 for (let mov of this.movementsOfArticles)
@@ -2754,7 +2670,7 @@ export class AddSaleOrderComponent {
         });
     }
 
-    public async print() {
+    async print() {
 
         await this.getPrinters().then(
             printers => {
@@ -2773,7 +2689,7 @@ export class AddSaleOrderComponent {
         }
     }
 
-    public updateStockByTransaction(): Promise<boolean> {
+    updateStockByTransaction(): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
             this.loading = true;
             this._articleStockService.updateStockByTransaction(this.transaction).subscribe(
@@ -2795,7 +2711,7 @@ export class AddSaleOrderComponent {
         });
     }
 
-    public getCancellationTypesAutomatic(): Promise<CancellationType[]> {
+    getCancellationTypesAutomatic(): Promise<CancellationType[]> {
 
         return new Promise<CancellationType[]>((resolve, reject) => {
 
@@ -2873,7 +2789,7 @@ export class AddSaleOrderComponent {
             this.typeOfOperationToPrint = "voucher";
             this.distributeImpressions()
         } else {
-            if(this.isCharge){
+            if (this.isCharge) {
                 this.finish();
             } else {
                 this.backFinal();
@@ -2881,7 +2797,7 @@ export class AddSaleOrderComponent {
         }
     }
 
-    public backFinal(): void {
+    backFinal(): void {
 
         this._route.queryParams.subscribe(params => {
             if (params['returnURL']) {
@@ -2921,7 +2837,7 @@ export class AddSaleOrderComponent {
         return rtn;
     }
 
-    public getTable(tableId: string): Promise<Table> {
+    getTable(tableId: string): Promise<Table> {
         return new Promise<Table>((resolve, reject) => {
             this.loading = true;
             this._tableService.getTable(tableId).subscribe(
@@ -2981,7 +2897,7 @@ export class AddSaleOrderComponent {
         );
     }
 
-    public updateMovementOfArticlePrintedBar(): void {
+    updateMovementOfArticlePrintedBar(): void {
 
         this.loading = true;
 
@@ -3019,7 +2935,7 @@ export class AddSaleOrderComponent {
         );
     }
 
-    public updateMovementOfArticlePrintedKitchen(): void {
+    updateMovementOfArticlePrintedKitchen(): void {
 
         this.loading = true;
 
@@ -3054,11 +2970,11 @@ export class AddSaleOrderComponent {
         );
     }
 
-    public updateMovementOfArticlePrintedVoucher(): void {
+    updateMovementOfArticlePrintedVoucher(): void {
 
         this.loading = true;
 
-        if(this.voucherArticlesToPrint[this.voucherArticlesPrinted] && this.voucherArticlesToPrint[this.voucherArticlesPrinted].amount){
+        if (this.voucherArticlesToPrint[this.voucherArticlesPrinted] && this.voucherArticlesToPrint[this.voucherArticlesPrinted].amount) {
             this.voucherArticlesToPrint[this.voucherArticlesPrinted].printed = this.voucherArticlesToPrint[this.voucherArticlesPrinted].amount;
             this._movementOfArticleService.updateMovementOfArticle(this.voucherArticlesToPrint[this.voucherArticlesPrinted]).subscribe(
                 async result => {
@@ -3092,7 +3008,7 @@ export class AddSaleOrderComponent {
         }
     }
 
-    public countPrinters(): number {
+    countPrinters(): number {
 
         let numberOfPrinters: number = 0;
         this.printersAux = new Array();
@@ -3197,7 +3113,7 @@ export class AddSaleOrderComponent {
         );
     }
 
-    public getUser(): Promise<User> {
+    getUser(): Promise<User> {
 
         return new Promise<User>((resolve, reject) => {
 
@@ -3220,7 +3136,7 @@ export class AddSaleOrderComponent {
         });
     }
 
-    public assignLetter() {
+    async assignLetter() {
 
         if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
             this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
@@ -3241,10 +3157,12 @@ export class AddSaleOrderComponent {
             }
         }
 
+        this.transaction = await this.updateTransaction();
+
         this.loading = true;
     }
 
-    public getTransports(): void {
+    getTransports(): void {
 
         this.loading = true;
 
@@ -3269,7 +3187,7 @@ export class AddSaleOrderComponent {
         );
     }
 
-    public async assignTransactionNumber() {
+    async assignTransactionNumber() {
         try {
             let query = `where= "type":"${this.transaction.type._id}",
             "origin":${this.transaction.origin},
@@ -3293,42 +3211,33 @@ export class AddSaleOrderComponent {
         } catch (error) { this.showToast(error); };
     }
 
-    public checkInformationCancellation() {
+    checkInformationCancellation() {
 
         if (this.canceledTransactions && this.canceledTransactions.typeId) {
             this.loading = true;
 
-            let query = `where= "type":"${this.canceledTransactions.typeId}",
-            "origin":${this.canceledTransactions.origin},
-            "letter":"${this.canceledTransactions.letter}",
-            "company":"${this.transaction.company._id}",
-            "operationType":{"$ne":"D"}
-            &limit=1`;
+            let query = `where= "type":"${this.canceledTransactions.typeId}","origin":${this.canceledTransactions.origin},"letter":"${this.canceledTransactions.letter}","operationType":{"$ne":"D"}`;
+
+            if(this.transaction.company) {
+                query += `,"company":"${this.transaction.company._id}"`;
+            }
+
+            query += `&limit=1`;
 
             this._transactionService.getTransactions(query).subscribe(
                 result => {
                     this.loading = false;
                     if (!result.transactions || result.transactions.length === 0) {
-                        this.canceledTransactionsAFIP = null;
                         this.showMessage('Debe informar un comprobante válido', 'info', false);
                     } else {
-                        let code;
                         for (let cod of result.transactions[0].type.codes) {
                             if (cod.letter === this.canceledTransactions.letter) {
-                                code = cod.code;
+                                this.canceledTransactions.code = cod.code;
                             }
-                        }
-                        if (code) {
-                            this.canceledTransactionsAFIP = {
-                                Tipo: code,
-                                PtoVta: this.canceledTransactions.origin,
-                                Nro: this.canceledTransactions.number
-                            };
                         }
                     }
                 },
                 error => {
-                    this.canceledTransactionsAFIP = null;
                     this.loading = false;
                     this.showMessage(error._body, 'danger', false);
                 }
@@ -3338,7 +3247,7 @@ export class AddSaleOrderComponent {
         }
     }
 
-    public setPrintBill(): void {
+    setPrintBill(): void {
         if (this.movementsOfArticles && this.movementsOfArticles.length !== 0) {
             this.typeOfOperationToPrint = 'bill';
             this.openModal('printers');
@@ -3348,7 +3257,7 @@ export class AddSaleOrderComponent {
         }
     }
 
-    public filterArticles(): void {
+    filterArticles(): void {
 
         this.listArticlesComponent.filterArticle = this.filterArticle;
         if (this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*') {
@@ -3361,7 +3270,7 @@ export class AddSaleOrderComponent {
         }
     }
 
-    public showCategories(): void {
+    showCategories(): void {
 
         this.categorySelected = null;
         if (!(this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*')) {
@@ -3376,7 +3285,7 @@ export class AddSaleOrderComponent {
         }
     }
 
-    public showArticles(category?: Category): void {
+    showArticles(category?: Category): void {
 
         if (category) {
             this.categorySelected = category;
@@ -3390,17 +3299,19 @@ export class AddSaleOrderComponent {
         }
     }
 
-    public showMessage(message: string, type: string, dismissible: boolean): void {
+    showMessage(message: string, type: string, dismissible: boolean): void {
         this.alertMessage = message;
         this.alertConfig.type = type;
         this.alertConfig.dismissible = dismissible;
+        this.loading = false;
     }
 
-    public hideMessage(): void {
+    hideMessage(): void {
         this.alertMessage = '';
+        this.loading = false;
     }
 
-    public showToast(result, type?: string, title?: string, message?: string): void {
+    showToast(result, type?: string, title?: string, message?: string): void {
         if (result) {
             if (result.status === 0) {
                 type = 'info';
@@ -3427,10 +3338,11 @@ export class AddSaleOrderComponent {
                 this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
                 break;
         }
+        this.hideMessage();
         this.loading = false;
     }
 
-    public padNumber(n, length): string {
+    padNumber(n, length): string {
 
         var n = n.toString();
         while (n.length < length)

@@ -861,11 +861,7 @@ export class AddMovementOfCashComponent implements OnInit {
             if (this.transaction.type.allowAccounting) {
                 this._accountSeatService.addAccountSeatByTransaction(this.transaction._id).subscribe(
                     result => {
-                        if (result && result.status === 200) {
-                            this.showToast(result);
-                        } else {
-                            this.showToast(result);
-                        }
+                        this.showToast(result);
                     },
                     error => {
                         this.showToast(error);
