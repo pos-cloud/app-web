@@ -552,7 +552,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     async selectVariant(type: VariantType, value: VariantValue) {
 
         let key = type.name;
-        if (value.description === this.selectedVariants[key]) {
+        if (value && value.description === this.selectedVariants[key]) {
             this.selectedVariants[key] = null;
         } else {
             this.selectedVariants[key] = value.description;
@@ -1243,7 +1243,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
         if (this.variants && this.variants.length > 0) {
             for (let variant of this.variants) {
-                if (variant.value.description === this.selectedVariants[variant.type.name]) {
+                if (variant.value && variant.value.description === this.selectedVariants[variant.type.name]) {
                     articles.push(variant.articleChild);
                 }
             }
