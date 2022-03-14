@@ -120,7 +120,7 @@
           <div class="row">
             <div class="col-md-12" align="right">
               <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
-              <button type="submit" class="btn btn-primary" [disabled]="!registerForm.valid || loading">
+              <button type="submit" class="btn btn-primary" [disabled]="!registerForm?.valid || loading">
                 <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
                 <span *ngIf="!loading">Registrar</span>
                 <span *ngIf="loading">Espere por favor</span>

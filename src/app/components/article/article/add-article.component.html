@@ -865,7 +865,7 @@
                 <span *ngIf="loading">Espere por favor</span>
             </button>
             <button type="button" class="btn btn-danger" *ngIf="operation === 'delete'"
-                [disabled]="!articleForm.valid || loading" (click)="deleteArticle()">
+                [disabled]="!articleForm?.valid || loading" (click)="deleteArticle()">
                 <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
                 <span *ngIf="!loading">Eliminar</span>
                 <span *ngIf="loading">Espere por favor</span>

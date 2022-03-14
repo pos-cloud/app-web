@@ -68,14 +68,14 @@
         </div>
         <div class="modal-footer" *ngIf="op !== 'view'">
             <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
-            <button type="submit" class="btn btn-primary" [disabled]="!vatConditionForm.valid || loading"
+            <button type="submit" class="btn btn-primary" [disabled]="!vatConditionForm?.valid || loading"
                 *ngIf="op !== 'delete'">
                 <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
                 <span *ngIf="!loading">Guardar</span>
                 <span *ngIf="loading">Espere por favor</span>
             </button>
             <button type="button" class="btn btn-danger" *ngIf="op === 'delete'"
-                [disabled]="!vatConditionForm.valid || loading" (click)="deleteVATCondition()">
+                [disabled]="!vatConditionForm?.valid || loading" (click)="deleteVATCondition()">
                 <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
                 <span *ngIf="!loading">Eliminar</span>
                 <span *ngIf="loading">Espere por favor</span>

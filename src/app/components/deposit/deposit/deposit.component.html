@@ -52,7 +52,7 @@
     </div>
     <div class="modal-footer" *ngIf="operation !== 'view'">
       <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="!depositForm.valid || loading" *ngIf="operation !== 'delete'">
+      <button type="submit" class="btn btn-primary" [disabled]="!depositForm?.valid || loading" *ngIf="operation !== 'delete'">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Guardar</span>
         <span *ngIf="loading">Espere por favor</span>
@@ -60,7 +60,7 @@
       <button type="button" 
               class="btn btn-danger" 
               *ngIf="operation === 'delete'" 
-              [disabled]="!depositForm.valid || loading" 
+              [disabled]="!depositForm?.valid || loading" 
               (click)="deleteDeposit()">
         <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Eliminar</span>

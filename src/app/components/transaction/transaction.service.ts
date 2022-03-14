@@ -262,86 +262,22 @@ export class TransactionService extends ModelService {
     );
   }
 
-  public validateElectronicTransactionAR(
-    transaction: Transaction,
-    movementsOfCancellations: MovementOfCancellation[],
-    canceledTransactions: {
-      Tipo: number,
-      PtoVta: number,
-      Nro: number
-    } = null): Observable<any> {
+  public validateElectronicTransactionAR(transaction: Transaction, canceledTransactions: {
+    typeId: string,
+    code: number,
+    origin: number,
+    letter: string,
+    number: number
+  }): Observable<any> {
 
-      let transactionAux = Object.assign(new Transaction(), transaction);
-
-    //const URL = `${Config.apiURL_FE_AR}`;
-    const URL = `http://vps-1883265-x.dattaweb.com/libs/fe/ar/index.php`;
-    //const URL = `http://localhost/libs/fe-ar/index.php`;
+    const URL = `${Config.apiV8URL}transactions/validate-electronic/${transaction._id}`;
 
     const headers = new HttpHeaders()
-      .set('Content-Type', 'application/x-www-form-urlencoded');
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-    let body;
-
-    if (movementsOfCancellations && movementsOfCancellations.length && !canceledTransactions) {
-      for (let movementOfCancellation of movementsOfCancellations) {
-        let code: number;
-        if (movementOfCancellation.transactionOrigin && movementOfCancellation.transactionOrigin.type && movementOfCancellation.transactionOrigin.type.codes && movementOfCancellation.transactionOrigin.type.electronics) {
-          for (let cod of movementOfCancellation.transactionOrigin.type.codes) {
-            if (cod.letter === movementOfCancellation.transactionOrigin.letter) {
-              code = cod.code;
-            }
-          }
-          if (code) {
-            canceledTransactions = {
-              Tipo: code,
-              PtoVta: movementOfCancellation.transactionOrigin.origin,
-              Nro: movementOfCancellation.transactionOrigin.number
-            };
-          }
-        }
-      }
-    }
-
-    delete transactionAux.relationType;
-    delete transactionAux.useOfCFDI;
-    delete transactionAux.cashBox;
-    delete transactionAux.currency;
-    delete transactionAux.table;
-    delete transactionAux.employeeOpening;
-    delete transactionAux.employeeClosing;
-    delete transactionAux.deliveryAddress;
-    delete transactionAux.branchOrigin;
-    delete transactionAux.branchDestination;
-    delete transactionAux.depositOrigin;
-    delete transactionAux.depositDestination;
-    delete transactionAux.transport;
-    delete transactionAux.shipmentMethod;
-    delete transactionAux.priceList;
-    delete transactionAux.account;
-    delete transactionAux.creationUser;
-    delete transactionAux.updateUser;
-    delete transactionAux.tracking;
-    if (transactionAux.company) delete transactionAux.company.priceList;
-    if (transactionAux.type) {
-      delete transactionAux.type.audits;
-      delete transactionAux.type.fastPayment;
-      delete transactionAux.type.defectPrinter;
-      delete transactionAux.type.paymentMethods;
-      delete transactionAux.type.requestEmployee;
-    }
-
-
-    if (canceledTransactions) {
-      body = 'transaction=' + JSON.stringify(transactionAux) + '&' +
-        'canceledTransactions=' + JSON.stringify(canceledTransactions) + '&' +
-        'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"' + Config.database + '"}';
-    } else {
-      body = 'transaction=' + JSON.stringify(transactionAux) + '&' +
-        'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"' + Config.database + '"}';
-    }
-
-    return this._http.post(URL, body, {
-      headers: headers
+    return this._http.post(URL, { canceledTransactions }, {
+      headers: headers,
     }).pipe(
       map(res => {
         return res;

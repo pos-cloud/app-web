@@ -243,7 +243,7 @@ export class AddMovementOfCashComponent implements OnInit {
             'amountDiscount': [this.amountDiscount],
             'paymentChange': [this.movementOfCash.paymentChange, []],
             'observation': [this.movementOfCash.observation, []],
-            'discount': [this.movementOfCash.type.discount || 0, []],
+            'discount': [(this.movementOfCash.type) ? this.movementOfCash.type.discount || 0 : 0, []],
             'surcharge': [this.movementOfCash.type.surcharge || 0, []],
             'commissionAmount': [this.movementOfCash.commissionAmount, []],
             'administrativeExpenseAmount': [this.movementOfCash.administrativeExpenseAmount, []],
@@ -861,11 +861,7 @@ export class AddMovementOfCashComponent implements OnInit {
             if (this.transaction.type.allowAccounting) {
                 this._accountSeatService.addAccountSeatByTransaction(this.transaction._id).subscribe(
                     result => {
-                        if (result && result.status === 200) {
-                            this.showToast(result);
-                        } else {
-                            this.showToast(result);
-                        }
+                        this.showToast(result);
                     },
                     error => {
                         this.showToast(error);
@@ -1415,7 +1411,7 @@ export class AddMovementOfCashComponent implements OnInit {
                     this.movementOfCash.CUIT = '';
                     this.movementOfCash.deliveredBy = '';
                     this.movementOfCash.statusCheck == StatusCheck.Closed;
-                    this.movementOfCash.discount = this.movementOfCash.type.discount || 0;
+                    this.movementOfCash.discount = (this.movementOfCash.type) ? this.movementOfCash.type.discount || 0 : 0;
                     this.movementOfCash.surcharge = this.movementOfCash.type.surcharge || 0;
                     this.movementOfCash.interestPercentage = this.movementOfCashForm.value.interestPercentage;
                     if (this.fastPayment.observation) {

@@ -254,6 +254,8 @@ import { SelectPriceListComponent } from './components/price-list/select-price-l
 import { AddressModule } from './components/address/address.module';
 import { AddMeliAttrsComponent } from './components/article/add-meli-attrs/add-meli-attrs.component';
 import { MeliService } from './main/services/meli.service';
+import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
+
 
 // const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} }; // TEST
 const configSocket: SocketIoConfig = { url: "http://demo.poscloud.com.ar:300", options: {} }; // PROD
@@ -433,6 +435,7 @@ export function createTranslateLoader(http: HttpClient) {
         AbandonedCartsComponent,
         SelectPriceListComponent,
         AddMeliAttrsComponent,
+        KardexCheckComponent,
     ],
     imports: [
         BrowserModule,

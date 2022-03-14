@@ -44,7 +44,7 @@
 		</div>
 		<div class="modal-footer">
 			<button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
-			<button type="submit" class="btn btn-primary" [disabled]="!sendEmailForm.valid || loading" >
+			<button type="submit" class="btn btn-primary" [disabled]="!sendEmailForm?.valid || loading" >
 				<i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
 				<span *ngIf="!loading">Enviar</span>
 				<span *ngIf="loading">Espere por favor</span>

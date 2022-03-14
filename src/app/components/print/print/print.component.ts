@@ -587,9 +587,9 @@ export class PrintComponent implements OnInit {
         this.doc.setFontSize(this.fontSizes.normal);
         if (!this.movementsOfCashes[0].type.allowToFinance) {
             this.doc.text("Detalle", 10, 77);
-            this.doc.text("Vencimiento", 50, 77);
-            this.doc.text("Número", 75, 77);
-            this.doc.text("Banco", 100, 77);
+            this.doc.text("Vencimiento", 75, 77);
+            this.doc.text("Número", 100, 77);
+            this.doc.text("Banco", 125, 77);
         } else {
             this.doc.text("Couta", 10, 77);
             this.doc.text("Vencimiento", 30, 77);
@@ -623,21 +623,21 @@ export class PrintComponent implements OnInit {
                     }
 
                     if (this.movementsOfCashes[i].expirationDate) {
-                        this.doc.text(this.dateFormat.transform(this.movementsOfCashes[i].expirationDate, 'DD/MM/YYYY'), 50, row);
+                        this.doc.text(this.dateFormat.transform(this.movementsOfCashes[i].expirationDate, 'DD/MM/YYYY'), 75, row);
                     } else {
-                        this.doc.text("-", 50, row)
+                        this.doc.text("-", 75, row)
                     }
 
                     if (this.movementsOfCashes[i].number) {
-                        this.doc.text(this.movementsOfCashes[i].number, 75, row);
+                        this.doc.text(this.movementsOfCashes[i].number, 100, row);
                     } else {
-                        this.doc.text("-", 75, row);
+                        this.doc.text("-", 100, row);
                     }
 
                     if (this.movementsOfCashes[i].bank) {
-                        this.doc.text(this.movementsOfCashes[i].bank.name, 100, row);
+                        this.doc.text(this.movementsOfCashes[i].bank.name, 125, row);
                     } else {
-                        this.doc.text("-", 100, row);
+                        this.doc.text("-", 125, row);
                     }
                 } else {
                     this.doc.text(this.movementsOfCashes[i].quota.toString(), 10, row);
@@ -751,9 +751,9 @@ export class PrintComponent implements OnInit {
                     this.doc.setFont('', 'bold');
                     this.doc.setFontSize(this.fontSizes.normal);
                     this.doc.text("Detalle", 10, 77);
-                    this.doc.text("Vencimiento", 50, 77);
-                    this.doc.text("Número", 75, 77);
-                    this.doc.text("Banco", 100, 77);
+                    this.doc.text("Vencimiento", 75, 77);
+                    this.doc.text("Número", 100, 77);
+                    this.doc.text("Banco", 125, 77);
                     if (this.transaction.type && this.transaction.type.showPrices) {
                         this.doc.text("Total", 185, 77);
                         this.doc.setFont('', 'normal');

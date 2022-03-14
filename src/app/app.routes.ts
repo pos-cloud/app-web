@@ -77,6 +77,8 @@ import { ListHistoriesComponent } from './components/history/list-history/list-h
 import { ReportTransactionTypeComponent } from './components/report-transaction-type/report-transaction-type.component';
 import { AbandonedCartsComponent } from './components/point-of-sale/abandoned-carts/abandoned-carts.component';
 import { BillingComponent } from './components/billing/billing.component';
+import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
+
 
 export const _routes: Routes = [
   {
@@ -110,6 +112,11 @@ export const _routes: Routes = [
   {
     path: 'admin/cumpleaños',
     component: ReportBirthdayComponent,
+    canActivate: [AuthGuard, LicenseGuard]
+  },
+  {
+    path: 'cheque',
+    component: KardexCheckComponent,
     canActivate: [AuthGuard, LicenseGuard]
   },
   {
