@@ -177,15 +177,24 @@ export class AppComponent {
                 .replace(/https/g, "");
         }
 
-        if (hostname.includes('192.168.0.88')) subdominio = "jacksonburgs"; isLocal = true
-        if (hostname.includes('192.168.88.90')) subdominio = "granpaso"; isLocal = true
-        if (hostname.includes('eldesafioll.con-ip')) subdominio = "eldesafio"; isLocal = true
+        if (hostname.includes('192.168.0.88')) {
+            subdominio = "jacksonburgs";
+            isLocal = true;
+        }
+        if (hostname.includes('192.168.88.90')) {
+            subdominio = "granpaso";
+            isLocal = true;
+        }
+        if (hostname.includes('eldesafioll.con-ip')) {
+            subdominio = "eldesafio";
+            isLocal = true;
+        }
 
         Config.setDatabase(subdominio);
         if (environment.production) {
-            if(isLocal){
-                Config.setApiHost('http://'+ hostname +':300'); // LOCAL
-                Config.setApiV8Host('http://'+ hostname +':308'); // LOCAL
+            if (isLocal) {
+                Config.setApiHost('http://' + hostname + ':300'); // LOCAL
+                Config.setApiV8Host('http://' + hostname + ':308'); // LOCAL
             } else {
                 Config.setApiHost('https://api.poscloud.com.ar'); // DONWEB
                 Config.setApiV8Host('https://apiv8.poscloud.com.ar'); // DONWEB
