@@ -3,14 +3,14 @@ image: node:16.10.0
 pipelines:
   branches:
     master:
-      - step:
-        name: Install, Unit tests, e2e tests, Build
-        caches:
-          - node
-        deployment: production
-        script:
-          - npm install
-          - npm install -g @angular/cli 
-          - ng build --configuration production 
-          - echo "$(ls -la dist/)" 
-          - scp -P 5641 -r dist/ root@179.43.121.110:/home/poscloud/public_html/poscloud2 
+       - step:
+           name: Install, Unit tests, e2e tests, Build
+           caches:
+             - node
+           deployment: production
+           script:
+             - npm install
+             - npm install -g @angular/cli 
+             - ng build --configuration production 
+             - echo "$(ls -la dist/)" 
+             - scp -P 5641 -r dist/ root@179.43.121.110:/home/poscloud/public_html/poscloud2
