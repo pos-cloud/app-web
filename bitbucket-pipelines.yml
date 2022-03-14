@@ -11,6 +11,6 @@ pipelines:
         script:
           - npm install
           - npm install -g @angular/cli 
-          - ng build --prod 
+          - ng build --configuration production 
           - echo "$(ls -la dist/)" 
           - scp -P 5641 -r dist/ root@179.43.121.110:/home/poscloud/public_html/poscloud2 
