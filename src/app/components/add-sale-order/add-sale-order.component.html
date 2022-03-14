@@ -569,23 +569,23 @@
             <div class="col-md-3" *ngIf="cancellationTypes?.length > 0">
                 <label for="type">Transacción</label>
                 <select class="form-control" [(ngModel)]="canceledTransactions.typeId">
-                    <option [ngValue]="null" [selected]="!canceledTransactions.typeId">Tipo de transacción:</option>
+                    <option [ngValue]="" [selected]="!canceledTransactions?.typeId">Tipo de transacción:</option>
                     <option *ngFor="let canc of cancellationTypes" [value]="canc.origin._id">
                         {{ canc?.origin?.name }}
                     </option>
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3" *ngIf="cancellationTypes?.length > 0">
                 <label for="origin">Pto Venta</label>
                 <input type="number" class="form-control" [(ngModel)]="canceledTransactions.origin"
                     placeholder="Pto Venta" [focus]="focusEvent">
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3" *ngIf="cancellationTypes?.length > 0">
                 <label for="letter">Letra</label>
                 <input type="text" class="form-control" [(ngModel)]="canceledTransactions.letter" placeholder="Letra"
                     [focus]="focusEvent">
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3" *ngIf="cancellationTypes?.length > 0">
                 <label for="number">Número</label>
                 <input type="number" class="form-control" [(ngModel)]="canceledTransactions.number" placeholder="Número"
                     [focus]="focusEvent">
