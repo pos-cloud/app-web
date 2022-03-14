@@ -414,7 +414,7 @@
                                                         | orderBy: orderTerm: propertyTerm
                                                         | paginate: { itemsPerPage: itemsPerPage,
                                                                       currentPage: p,
-                                                                      totalItems: transactions.length
+                                                                      totalItems: transactions?.length
                                                                     }">
                         <td align="left" width="150">
                             <button type="button" class="btn btn-success" (click)="viewTransaction(transaction)"
