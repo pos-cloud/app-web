@@ -52,7 +52,7 @@
           <label for="amountToApply" class="control-label">Monto de descuento:</label>
           <div class="input-group">
             <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-            <input type="number" class="form-control" formControlName="amountToApply" name="amountToApply" min="0" step="1" (change)="updateDiscounts('amountToApply')"
+            <input type="number" class="form-control" formControlName="amountToApply" name="amountToApply" step="1" (change)="updateDiscounts('amountToApply')"
             />
           </div>
           <div *ngIf="formErrors.amountToApply" class="alert alert-danger">
