@@ -1,13 +1,15 @@
-image: node:8
-pipelines: 
-  default: 
-    - step: 
-       caches: 
-         - node 
-       script: # Modify the commands below to build your repository. 
-          #- echo "$(ls -la)" 
-          - npm install 
-          - npm install -g @angular/cli 
-          - ng build --prod 
-          - echo "$(ls -la dist/)" 
-          - scp -r dist/ root@179.43.121.110:5641:/home/poscloud/public_html/poscloud2
+image: node:10.15.3
+
+pipelines:
+ default:
+   - step:
+       name: Install, Unit tests, e2e tests, Build
+       caches:
+         - node
+       deployment: testing
+       script:
+         - npm install
+         - npm install -g @angular/cli 
+         - ng build --prod 
+         - echo "$(ls -la dist/)" 
+         - scp -r dist/ root@179.43.121.110:5641:/home/poscloud/public_html/poscloud2
