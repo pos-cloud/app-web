@@ -164,7 +164,13 @@ export class AddSaleOrderComponent {
         origin: number,
         letter: string,
         number: number
-    };
+    } = {
+            typeId: '',
+            code: 0,
+            origin: 0,
+            letter: '',
+            number: 0
+        };
 
     constructor(
         private _transactionService: TransactionService,
@@ -1592,6 +1598,8 @@ export class AddSaleOrderComponent {
         this.showMessage("Validando comprobante con AFIP...", 'info', false);
         this.loading = true;
         this.transaction.type.defectEmailTemplate = null;
+
+        this.canceledTransactions = (this.canceledTransactions.typeId && this.canceledTransactions.typeId != '') ? this.canceledTransactions : null;
 
         this._transactionService.validateElectronicTransactionAR(this.transaction, this.canceledTransactions).subscribe(
             (result: Resulteable) => {
@@ -3218,7 +3226,7 @@ export class AddSaleOrderComponent {
 
             let query = `where= "type":"${this.canceledTransactions.typeId}","origin":${this.canceledTransactions.origin},"letter":"${this.canceledTransactions.letter}","operationType":{"$ne":"D"}`;
 
-            if(this.transaction.company) {
+            if (this.transaction.company) {
                 query += `,"company":"${this.transaction.company._id}"`;
             }
 
