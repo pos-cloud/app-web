@@ -40,7 +40,8 @@ export class ApplyDiscountComponent implements OnInit {
       'required': 'Este campo es requerido.'
     },
     'percentageToApply': {
-      'required': 'Este campo es requerido.'
+      'required': 'Este campo es requerido.',
+      'max':'El descuento tiene que ser menor al 100%'
     },
     'totalAmount': {
       'required': 'Este campo es requerido.'
@@ -64,10 +65,10 @@ export class ApplyDiscountComponent implements OnInit {
     this.amountToApply -= discountCompany;
     this.amountToApply -= discountCompanyGroup;
     this.amountToApply = this.roundNumber.transform(this.amountToApply);
-    if ( this.amountToApply &&
-        this.amountToApply !== 0 &&
-        this.percentageToApply &&
-        this.percentageToApply === 0) {
+    if (this.amountToApply &&
+      this.amountToApply !== 0 &&
+      this.percentageToApply &&
+      this.percentageToApply === 0) {
       this.percentageToApply = (this.amountToApply * 100 / this.totalPrice);
     }
 
@@ -83,7 +84,7 @@ export class ApplyDiscountComponent implements OnInit {
     this.discountForm = this._fb.group({
       'totalPrice': [this.roundNumber.transform(this.totalPrice, 6), [Validators.required]],
       'amountToApply': [this.roundNumber.transform(this.amountToApply, 6), [Validators.required]],
-      'percentageToApply': [this.roundNumber.transform(this.percentageToApply, 6), [Validators.required]],
+      'percentageToApply': [this.roundNumber.transform(this.percentageToApply, 6), [Validators.required, Validators.max(99)]],
       'percentageToApplyCompany': [this.roundNumber.transform(this.percentageToApplyCompany, 6), [Validators.required]],
       'percentageToApplyCompanyGroup': [this.roundNumber.transform(this.percentageToApplyCompanyGroup, 6), [Validators.required]],
       'totalAmount': [this.roundNumber.transform(this.totalPrice - this.amountToApply, 6), [Validators.required]]
@@ -116,8 +117,10 @@ export class ApplyDiscountComponent implements OnInit {
   public updateDiscounts(op: string): void {
 
     if (op === 'percentageToApply') {
-      this.amountToApply = this.roundNumber.transform((this.totalPrice * this.discountForm.value.percentageToApply / 100), 6);
-      this.percentageToApply = this.roundNumber.transform(this.discountForm.value.percentageToApply, 6);
+      if (!(this.discountForm.value.percentageToApply >= 100)) {
+        this.amountToApply = this.roundNumber.transform((this.totalPrice * this.discountForm.value.percentageToApply / 100), 6);
+        this.percentageToApply = this.roundNumber.transform(this.discountForm.value.percentageToApply, 6);
+      }
     } else if (op === 'amountToApply') {
       this.percentageToApply = this.roundNumber.transform((this.discountForm.value.amountToApply * 100 / this.totalPrice), 6);
       this.amountToApply = this.roundNumber.transform(this.discountForm.value.amountToApply, 6);
@@ -149,12 +152,12 @@ export class ApplyDiscountComponent implements OnInit {
       this.discountForm.value.amountToApply !== 0) {
       this.amountToApply = this.discountForm.value.amountToApply;
       this.percentageToApply = this.roundNumber.transform(this.amountToApply * 100 / this.totalPrice, 6);
-    } else if ( this.discountForm.value.percentageToApply !== 0 &&
-                this.discountForm.value.amountToApply === 0) {
+    } else if (this.discountForm.value.percentageToApply !== 0 &&
+      this.discountForm.value.amountToApply === 0) {
       this.percentageToApply = this.roundNumber.transform(this.discountForm.value.percentageToApply, 6);
       this.amountToApply = this.roundNumber.transform((this.totalPrice * this.percentageToApply / 100), 6);
-    } else if ( this.discountForm.value.percentageToApply === 0 &&
-                this.discountForm.value.amountToApply === 0) {
+    } else if (this.discountForm.value.percentageToApply === 0 &&
+      this.discountForm.value.amountToApply === 0) {
       this.amountToApply = 0;
       this.percentageToApply = 0;
     }
