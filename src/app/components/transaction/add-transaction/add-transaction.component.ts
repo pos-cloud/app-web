@@ -463,17 +463,23 @@ export class AddTransactionComponent implements OnInit {
     async finishTransaction() {
         try {
             if (this.movementsOfCancellations && this.movementsOfCancellations.length > 0) {
+
                 await this.daleteMovementsOfCancellations('{"transactionDestination":"' + this.transaction._id + '"}');
                 await this.saveMovementsOfCancellations(this.movementsOfCancellations);
             }
             if (this.transaction.state === TransactionState.Closed && this.balanceTotal !== -1) {
+
                 let result: Resulteable = await this._transactionService.updateBalance(this.transaction).toPromise();
                 if (result.status !== 200) throw result;
                 this.transaction.balance = result.result.balance;
             }
-            this.transaction = await this.updateTransaction();
+            this.transaction = await this.updateTransaction()
+
             this.activeModal.close({ transaction: this.transaction, movementsOfCashes: this.movementsOfCashes });
-        } catch (error) { this.showToast(error); }
+        } catch (error) {
+
+            this.showToast(error);
+        }
     }
 
     public getEmployees(query: string): void {
@@ -498,7 +504,33 @@ export class AddTransactionComponent implements OnInit {
             }
         );
     }
-
+    async getTransactions(): Promise<boolean> {
+        let match = {
+            "operationType": { "$ne": "D" },
+            "letter": this.transactionForm.value.letter,
+            "number": this.transactionForm.value.number,
+            "origin": this.transactionForm.value.origin
+        };
+        // CAMPOS A TRAER
+        let project = {
+            "origin": 1,
+            "letter": 1,
+            "number": 1,
+            "operationType": 1
+        };
+        return new Promise((resolve, reject) => {
+            this._transactionService.getTransactionsV2(project, match, {}, {}, 1, 0).subscribe(
+                async r => {
+                    if(r.transactions.length > 0){
+                        resolve(true)
+                    }else{
+                        resolve(false)
+                    }
+                }
+            )
+        })
+ 
+    }
     async addTransaction() {
 
         this.transaction.observation = this.transactionForm.value.observation;
@@ -532,7 +564,12 @@ export class AddTransactionComponent implements OnInit {
                         this.transaction.state = this.transactionForm.value.state;
                     }
 
-                    this.finishTransaction();
+                    const existsTransaction = await this.getTransactions()
+                    if(!existsTransaction){
+                        this.finishTransaction();
+                    }else{
+                        this.showMessage('La transacción \"' + this.transactionForm.value.origin + '-' + this.transactionForm.value.letter + '-' + this.transactionForm.value.number + '\" ya existe', 'danger', false);
+                    }
                 } else {
                     this.showMessage("El importe total ingresado debe ser mayor a 0.", "info", true);
                 }
