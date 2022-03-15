@@ -689,11 +689,6 @@
                         Cumpleaños
                     </a>
                 </li>
-                <li>
-                    <a (click)="openReport('cheque')">
-                        kardex de cheque
-                    </a>
-                </li>
             </ul>
         </div>
         <div class="col-md-3" style="width: 300px" *ngIf="!config.modules.stock">
@@ -724,6 +719,11 @@
                 <li>
                     <a (click)="openReport('report/cartera-de-cheques')">
                         Cartera de Cheques
+                    </a>
+                </li>
+                <li>
+                    <a (click)="openReport('cheque')">
+                        kardex de cheque
                     </a>
                 </li>
                 <li>
