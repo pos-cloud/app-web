@@ -318,7 +318,20 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 "path": "$company.state",
                 "preserveNullAndEmptyArrays": true
             }
+        },{
+            "$lookup": {
+                "from": "company-groups",
+                "foreignField": "_id",
+                "localField": "company.group",
+                "as": "company.group"
+            }
         }, {
+            "$unwind": {
+                "path": "$company.group",
+                "preserveNullAndEmptyArrays": true
+            }
+        },
+         {
             "$project": {
                 "_id": 1,
                 "company._id": 1,
@@ -704,6 +717,13 @@ export class CurrentAccountDetailsComponent implements OnInit {
             row += 5;
             this.doc.setFontSize(this.fontSizes.large)
             this.doc.text(5, row, this.items[i]._id.company.name)
+
+            if(this.items[i]._id.company.group){
+                this.doc.text(150, row, this.items[i]._id.company.group.description)
+            }else{
+                this.doc.text(150, row, 'sin grupo')
+            }
+            
             row += 5;
             this.doc.setFontSize(this.fontSizes.normal)
             if (this.items[i]._id.company.identificationType && this.items[i]._id.company.identificationValue) {
