@@ -39,7 +39,7 @@
           <label for="percentageToApply" class="control-label">Porcentaje de descuento:</label>
           <div class="input-group">
             <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
-            <input type="number" class="form-control" formControlName="percentageToApply" name="percentageToApply" step="1" (change)="updateDiscounts('percentageToApply')"
+            <input maxlength="100" type="number" class="form-control" formControlName="percentageToApply" name="percentageToApply" step="1" (change)="updateDiscounts('percentageToApply')"
               autofocus/>
           </div>
           <div *ngIf="formErrors.percentageToApply" class="alert alert-danger">
