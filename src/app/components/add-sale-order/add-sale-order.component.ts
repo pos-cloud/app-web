@@ -1599,18 +1599,20 @@ export class AddSaleOrderComponent {
         this.loading = true;
         this.transaction.type.defectEmailTemplate = null;
 
-        this.canceledTransactions = (this.canceledTransactions.typeId && this.canceledTransactions.typeId != '') ? this.canceledTransactions : null;
-
+        this.canceledTransactions =
+            (this.canceledTransactions &&
+                this.canceledTransactions.typeId &&
+                this.canceledTransactions.typeId != '')
+                ? this.canceledTransactions
+                : null;
         this._transactionService.validateElectronicTransactionAR(this.transaction, this.canceledTransactions).subscribe(
             (result: Resulteable) => {
                 if (result.status === 200) {
                     let transactionResponse: Transaction = result.result;
-                    console.log(transactionResponse);
                     this.transaction.CAE = transactionResponse.CAE;
                     this.transaction.CAEExpirationDate = transactionResponse.CAEExpirationDate;
                     this.transaction.number = transactionResponse.number;
                     this.transaction.state = transactionResponse.state;
-                    console.log(this.transaction.CAE);
                     this.finish();
                 } else this.showToast(result);
             },
@@ -2001,8 +2003,11 @@ export class AddSaleOrderComponent {
                 });
                 break;
             case 'charge':
-
                 this.typeOfOperationToPrint = "charge";
+
+                if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+                    this.assignLetter();
+                }
 
                 if (await this.isValidCharge() &&
                     await this.areValidMovementOfArticle()) {
@@ -2032,7 +2037,6 @@ export class AddSaleOrderComponent {
                                             this.transaction.origin = this.transaction.type.fixedOrigin;
                                         }
 
-                                        this.assignLetter();
                                         if (this.transaction.type.electronics) {
                                             if (this.config['country'] === 'MX') {
                                                 if (!this.transaction.CFDStamp &&
@@ -2575,7 +2579,6 @@ export class AddSaleOrderComponent {
 
     async finish() {
         try {
-            console.log(this.transaction.CAE);
             this.loading = true;
 
             if (!this.movementsOfArticles || this.movementsOfArticles.length === 0)
@@ -3145,7 +3148,6 @@ export class AddSaleOrderComponent {
     }
 
     async assignLetter() {
-
         if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
             this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
         } else {
@@ -3166,7 +3168,6 @@ export class AddSaleOrderComponent {
         }
 
         this.transaction = await this.updateTransaction();
-
         this.loading = true;
     }
 
