@@ -507,7 +507,7 @@ export class AddTransactionComponent implements OnInit {
     async getTransactions(): Promise<boolean> {
         let match = {
             "operationType": { "$ne": "D" },
-            "type": this.transaction.type._id,
+            "type": {"$oid": this.transaction.type._id},
             "letter": this.transactionForm.value.letter,
             "number": this.transactionForm.value.number,
             "origin": this.transactionForm.value.origin
