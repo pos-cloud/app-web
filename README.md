@@ -1,7 +1,7 @@
 # ADMIN PARA POSCLOUD
 
 ### Tech stack
-- [Angular](https://nodejs.org/es/)
+- [Angular](https://angular.io/)
 - [Typescript](https://www.typescriptlang.org/)
 
 ## Build the complete project
