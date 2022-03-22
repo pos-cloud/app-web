@@ -2547,13 +2547,16 @@ export class PrintComponent implements OnInit {
             this.doc.line(0, row, 200, row)
             row += 5
             for (let index = 0; index < movCancelation.length; index++) {
-                this.doc.setFont('', 'normal');
-                this.doc.text(movCancelation[index].transactionOrigin.type.name + "   " + this.padString(movCancelation[index].transactionOrigin.origin, 4) + "-" + this.padString(movCancelation[index].transactionOrigin.number, 8), 10, row);
-                //this.doc.text("$ " + this.roundNumber.transform(this.transactions[index].totalPrice), 80, row);
-                this.doc.textEx("$ " + this.roundNumber.transform(movCancelation[index].transactionOrigin.totalPrice), 95, row, 'right', 'middle');
-                this.doc.text(movCancelation[index].transactionOrigin.company.name, 110, row);
+                if (movCancelation[index].transactionOrigin.type) {
 
-                row += 5;
+                    this.doc.setFont('', 'normal');
+                    this.doc.text(movCancelation[index].transactionOrigin.type.name + "   " + this.padString(movCancelation[index].transactionOrigin.origin, 4) + "-" + this.padString(movCancelation[index].transactionOrigin.number, 8), 10, row);
+                    //this.doc.text("$ " + this.roundNumber.transform(this.transactions[index].totalPrice), 80, row);
+                    this.doc.textEx("$ " + this.roundNumber.transform(movCancelation[index].transactionOrigin.totalPrice), 95, row, 'right', 'middle');
+                    this.doc.text(movCancelation[index].transactionOrigin.company.name, 110, row);
+
+                    row += 5;
+                }
 
                 if (row > 240) {
                     this.doc.setFont('', "bold");
