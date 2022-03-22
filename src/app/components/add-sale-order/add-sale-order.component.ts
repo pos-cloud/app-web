@@ -3168,7 +3168,6 @@ export class AddSaleOrderComponent {
         }
 
         this.transaction = await this.updateTransaction();
-        this.loading = true;
     }
 
     getTransports(): void {
