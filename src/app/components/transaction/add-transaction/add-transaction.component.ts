@@ -507,7 +507,7 @@ export class AddTransactionComponent implements OnInit {
     async getTransactions(): Promise<boolean> {
         let match = {
             "operationType": { "$ne": "D" },
-            "type": {"$oid": this.transaction.type._id},
+            "type": { "$oid": this.transaction.type._id },
             "letter": this.transactionForm.value.letter,
             "number": this.transactionForm.value.number,
             "origin": this.transactionForm.value.origin
@@ -523,15 +523,15 @@ export class AddTransactionComponent implements OnInit {
         return new Promise((resolve, reject) => {
             this._transactionService.getTransactionsV2(project, match, {}, {}, 1, 0).subscribe(
                 async r => {
-                    if(r.transactions.length > 0){
+                    if (r.transactions.length > 0) {
                         resolve(true)
-                    }else{
+                    } else {
                         resolve(false)
                     }
                 }
             )
         })
- 
+
     }
     async addTransaction() {
 
@@ -567,10 +567,16 @@ export class AddTransactionComponent implements OnInit {
                     }
 
                     const existsTransaction = await this.getTransactions()
-                    if(!existsTransaction){
+                    if (!existsTransaction) {
                         this.finishTransaction();
-                    }else{
-                        this.showMessage('La transacción \"' + this.transactionForm.value.origin + '-' + this.transactionForm.value.letter + '-' + this.transactionForm.value.number + '\" ya existe', 'danger', false);
+                    } else {
+                        let err = {
+                            'status': 500,
+                            'message':'La transacción \"' + this.transactionForm.value.origin + '-' + this.transactionForm.value.letter + '-' + this.transactionForm.value.number + '\" ya existe'
+                        }
+                        
+                        this.showToast(err)
+                        // this.showMessage('La transacción \"' + this.transactionForm.value.origin + '-' + this.transactionForm.value.letter + '-' + this.transactionForm.value.number + '\" ya existe', 'danger', false);
                     }
                 } else {
                     this.showMessage("El importe total ingresado debe ser mayor a 0.", "info", true);
