@@ -35,6 +35,8 @@ import 'moment/locale/es';
 import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
 import { User } from 'app/components/user/user';
 import { UserService } from 'app/components/user/user.service';
+import { Branch } from 'app/components/branch/branch';
+import { BranchService } from 'app/components/branch/branch.service';
 
 @Component({
     selector: 'app-list-transactions',
@@ -72,7 +74,7 @@ export class ListTransactionsComponent implements OnInit {
     private subscription: Subscription = new Subscription();
     public dateFormat = new DateFormatPipe();
     public employeeClosingId: string;
-    public origin : string;
+    public origin: string;
     //cabecera
     public startDate: string;
     public endDate: string;
@@ -92,6 +94,10 @@ export class ListTransactionsComponent implements OnInit {
         "allowSearchFilter": true
     }
 
+    public branchSelectedId: String;
+    public allowChangeBranch: boolean;
+    public branches: Branch[];
+
     constructor(
         public _transactionService: TransactionService,
         public _transactionTypeService: TransactionTypeService,
@@ -103,7 +109,7 @@ export class ListTransactionsComponent implements OnInit {
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,
         public _printerService: PrinterService,
-
+        public _branchService: BranchService,
         private _authService: AuthService
     ) {
         this.transactionTypesSelect = new Array();
@@ -126,6 +132,12 @@ export class ListTransactionsComponent implements OnInit {
         this.userCountry = Config.country;
         this.getPrinters();
 
+        await this.getBranches({ operationType: { $ne: 'D' } }).then(
+            branches => {
+                this.branches = branches;
+            }
+        );
+
         let pathLocation: string[] = this._router.url.split('/');
         this.listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
         this.modules = observableOf(Config.modules);
@@ -143,11 +155,17 @@ export class ListTransactionsComponent implements OnInit {
         this._authService.getIdentity.subscribe(
             async identity => {
                 if (identity && identity.origin) {
+                    this.branchSelectedId = identity.origin.branch._id;
+                    this.allowChangeBranch = false;
+
                     for (let index = 0; index < this.columns.length; index++) {
                         if (this.columns[index].name === "branchDestination") {
                             this.columns[index].defaultFilter = `{ "${identity.origin.branch._id}" }`;
                         }
                     }
+                } else {
+                    this.allowChangeBranch = true;
+                    this.branchSelectedId = null;
                 }
             }
         );
@@ -163,6 +181,32 @@ export class ListTransactionsComponent implements OnInit {
         this.getItems();
 
         this.initDragHorizontalScroll();
+    }
+    public getBranches(match: {} = {}): Promise<Branch[]> {
+
+        return new Promise<Branch[]>((resolve, reject) => {
+
+            this._branchService.getBranches(
+                {}, // PROJECT
+                match, // MATCH
+                { number: 1 }, // SORT
+                {}, // GROUP
+                0, // LIMIT
+                0 // SKIP
+            ).subscribe(
+                result => {
+                    if (result && result.branches) {
+                        resolve(result.branches);
+                    } else {
+                        resolve(null);
+                    }
+                },
+                error => {
+                    this.showMessage(error._body, 'danger', false);
+                    resolve(null);
+                }
+            );
+        });
     }
 
     onItemSelect(item: any) {
@@ -212,7 +256,7 @@ export class ListTransactionsComponent implements OnInit {
         this._route.queryParams.subscribe(params => {
             if (params['employeeClosingId'] || params['origin']) {
                 this.employeeClosingId = params['employeeClosingId'];
-                this.origin  = params['origin'];
+                this.origin = params['origin'];
                 let pathLocation: string[] = this._router.url.split('/');
                 let listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
                 this.modules = observableOf(Config.modules);
@@ -320,8 +364,11 @@ export class ListTransactionsComponent implements OnInit {
             match += `,"employeeClosing._id": { "$oid" : "${this.employeeClosingId}"},`;
         }
 
-        if (this.origin ) {
+        if (this.origin) {
             match += `,"origin": "${this.origin}",`;
+        }
+        if (this.branchSelectedId) {
+            match += `,"branchOrigin": {"$oid": "${this.branchSelectedId}"},`;
         }
 
         if (match.charAt(match.length - 1) === '}') match += ',';
@@ -367,6 +414,7 @@ export class ListTransactionsComponent implements OnInit {
 
             }
         }
+        project += `,"branchOrigin":1`
         project += `}`;
 
         project = JSON.parse(project);

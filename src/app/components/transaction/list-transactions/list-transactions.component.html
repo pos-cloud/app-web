@@ -6,6 +6,21 @@
     </div>
     <div class="row container-filter">
         <div class="col-md-2">
+            <label for="branch" class="control-label">
+                <b>Sucursal</b>
+            </label>
+            <select class="form-control" [(ngModel)]="branchSelectedId">
+                <option [ngValue]="null" [disabled]="!allowChangeBranch" [selected]="!branchSelectedId">
+                    Todas
+                </option>
+                <option *ngFor="let branch of branches" [ngValue]="branch._id" [disabled]="!allowChangeBranch"
+                    [selected]="(branch && branch._id && branch._id === branchSelectedId) ||
+                    (branch === branchSelectedId)">
+                    {{branch.number}} - {{branch.name}}
+                </option>
+            </select>
+        </div>
+        <div class="col-md-2">
             <label class="control-label">
                 <b>Estado:</b>
             </label>
