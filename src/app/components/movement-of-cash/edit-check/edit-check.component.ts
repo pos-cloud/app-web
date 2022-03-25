@@ -7,10 +7,14 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 import { BankService } from 'app/components/bank/bank.service';
 import { Bank } from 'app/components/bank/bank';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateMePipe } from 'app/main/pipes/translate-me';
+
 @Component({
     selector: 'app-edit-check',
     templateUrl: './edit-check.component.html',
-    styleUrls: ['./edit-check.component.css']
+    styleUrls: ['./edit-check.component.css'],
+    providers: [NgbAlertConfig, TranslateMePipe],
 })
 export class EditCheckComponent implements OnInit {
 
@@ -39,12 +43,13 @@ export class EditCheckComponent implements OnInit {
     };
 
     constructor(
+        private _toastr: ToastrService,
+        private _movementOfCashService: MovementOfCashService,
+        private _bankService: BankService,
         public _fb: FormBuilder,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,
-        public _movementOfCashService: MovementOfCashService,
-        public _bankService: BankService
-
+        public translatePipe: TranslateMePipe,
     ) {
         this.getBanks();
         this.movementOfCash = new MovementOfCash();
@@ -52,11 +57,9 @@ export class EditCheckComponent implements OnInit {
     }
 
     ngOnInit() {
-
         if (this.movementOfCashId) {
             this.getMovementOfCash()
         }
-
         this.buildForm();
     }
 
@@ -68,17 +71,14 @@ export class EditCheckComponent implements OnInit {
         this._movementOfCashService.getMovementOfCash(this.movementOfCashId).subscribe(
             result => {
                 if (!result.movementOfCash) {
-                    if (result.message && result.message !== '') this.showMessage(result.message, 'success', true);
+                    if (result.message && result.message !== '') this.showToast(null, 'info', result.message);
                 } else {
                     this.movementOfCash = result.movementOfCash;
                     this.setValueForm();
                 }
                 this.loading = false;
             },
-            error => {
-                this.showMessage(error._body, 'danger', false);
-                this.loading = false;
-            }
+            error => this.showToast(error)
         );
     }
 
@@ -107,14 +107,8 @@ export class EditCheckComponent implements OnInit {
     public buildForm(): void {
 
         this.checkForm = this._fb.group({
-            'expirationDate': [moment(this.movementOfCash.expirationDate).format('YYYY-MM-DD'), [
-                Validators.required
-            ]
-            ],
-            'statusCheck': [this.movementOfCash.statusCheck, [
-                Validators.required
-            ]
-            ],
+            'expirationDate': [moment(this.movementOfCash.expirationDate).format('YYYY-MM-DD'), [Validators.required]],
+            'statusCheck': [this.movementOfCash.statusCheck, [Validators.required]],
             'bank': [this.movementOfCash.bank, []],
             'deliveredBy': [this.movementOfCash.deliveredBy, []],
             'receiver': [this.movementOfCash.receiver, []],
@@ -157,21 +151,9 @@ export class EditCheckComponent implements OnInit {
         this.movementOfCash.titular = this.checkForm.value.titular;
         this.movementOfCash.CUIT = this.checkForm.value.CUIT;
 
-        this._movementOfCashService.updateMovementOfCash(this.movementOfCash).subscribe(
-            result => {
-                if (!result.movementOfCash) {
-                    if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
-                    this.loading = false;
-                } else {
-                    this.movementOfCash = result.movementOfCash;
-                    this.showMessage("Se actualizo con éxito", 'success', true);
-                }
-                this.loading = false;
-            },
-            error => {
-                this.showMessage(error._body, 'danger', false);
-                this.loading = false;
-            }
+        this._movementOfCashService.update(this.movementOfCash).subscribe(
+            async result => this.showToast(result),
+            error => this.showToast(error)
         )
     }
 
@@ -179,16 +161,14 @@ export class EditCheckComponent implements OnInit {
 
         this.loading = true;
 
-        let project = {
-            "_id": 1,
-            "name": 1,
-            "code": 1,
-            "operationType": 1,
-        };
-
         this._bankService.getBanks(
-            project, // PROJECT
-            { "operationType": { "$ne": "D" } }, // MATCH
+            {
+                _id: 1,
+                name: 1,
+                code: 1,
+                operationType: 1,
+            }, // PROJECT
+            { operationType: { '$ne': 'D' } }, // MATCH
             { name: 1 }, // SORT
             {}, // GROUP
             0, // LIMIT
@@ -201,20 +181,36 @@ export class EditCheckComponent implements OnInit {
                 this.banks = new Array();
             }
         },
-            error => {
-                this.showMessage(error._body, 'danger', false);
-                this.loading = false;
-            });
+            error => this.showToast(error));
     }
 
-    public showMessage(message: string, type: string, dismissible: boolean): void {
-        this.alertMessage = message;
-        this.alertConfig.type = type;
-        this.alertConfig.dismissible = dismissible;
+    showToast(result, type?: string, title?: string, message?: string): void {
+        if (result) {
+            if (result.status === 0) {
+                type = 'info';
+                title = 'el servicio se encuentra en mantenimiento, inténtelo nuevamente en unos minutos';
+            } else if (result.status === 200) {
+                type = 'success';
+                title = result.message;
+            } else if (result.status >= 500) {
+                type = 'danger';
+                title = (result.error && result.error.message) ? result.error.message : result.message;
+            } else {
+                type = 'info';
+                title = (result.error && result.error.message) ? result.error.message : result.message;
+            }
+        }
+        switch (type) {
+            case 'success':
+                this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+            case 'danger':
+                this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+            default:
+                this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+        }
+        this.loading = false;
     }
-
-    public hideMessage(): void {
-        this.alertMessage = '';
-    }
-
 }

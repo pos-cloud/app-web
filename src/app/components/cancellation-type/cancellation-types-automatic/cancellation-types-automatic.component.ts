@@ -25,6 +25,7 @@ import { MovementOfCancellationService } from 'app/components/movement-of-cancel
 import { TaxBase } from 'app/components/tax/tax';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import Resulteable from 'app/util/Resulteable';
 
 @Component({
     selector: 'app-cancellation-types-automatic',
@@ -377,10 +378,10 @@ export class CancellationTypeAutomaticComponent implements OnInit {
 
     public updateMovementOfCash(movementOfCash: MovementOfCash): Promise<MovementOfCash> {
         return new Promise<MovementOfCash>((resolve, reject) => {
-            this._movementOfCashService.updateMovementOfCash(movementOfCash).subscribe(
-                async result => {
-                    if (result.movementOfCash) {
-                        resolve(result.movementOfCash);
+            this._movementOfCashService.update(movementOfCash).subscribe(
+                async (result: Resulteable) => {
+                    if (result.status === 200) {
+                        resolve(result.result);
                     } else reject(result)
                 },
                 error => reject(error)

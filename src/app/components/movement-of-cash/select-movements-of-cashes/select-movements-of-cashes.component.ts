@@ -155,20 +155,14 @@ export class SelectMovementsOfCashesComponent implements OnInit {
 
   public updateMovementOfCash(movementOfCash: MovementOfCash): Promise<MovementOfCash> {
     return new Promise<MovementOfCash>((resolve, reject) => {
-      this._movementOfCashService.updateMovementOfCash(movementOfCash).subscribe(
-        result => {
-          if (result.status !== 200) {
-            this.showToast(result.status.toString(), result.message, 'danger');
-            resolve(null);
-          } else {
-            resolve(result);
-          }
+      this._movementOfCashService.update(movementOfCash).subscribe(
+        async result => {
+          if (result.status === 200) {
+            resolve(result.result);
+          } else reject(result)
         },
-        error => {
-          this.showToast('500', error._body, 'danger');
-          resolve(null);
-        }
-      );
+        error => reject(error)
+      )
     });
   }
 
@@ -189,11 +183,7 @@ export class SelectMovementsOfCashesComponent implements OnInit {
           this.loading = false;
           resolve(result.transactions[0]);
         },
-        error => {
-          this.showToast(error);
-          this.loading = false;
-          resolve(null);
-        }
+        error => reject(error)
       ));
     })
   }
@@ -229,44 +219,31 @@ export class SelectMovementsOfCashesComponent implements OnInit {
   }
 
   public async finish() {
-    let isValid: boolean = true;
-    let totalAmount: number = 0;
-    if (isValid && this.amountOfInterestCalculated > 0) {
-      for (let mov of this.movementsOfCashes) {
-        totalAmount += mov.amountPaid;
-        let lastBalanceSelected = mov.balanceCanceled;
-        delete mov.balanceCanceled;
-        await this.updateMovementOfCash(mov).then(
-          movementOfCash => {
-            if (!movementOfCash) {
-              isValid = false;
-            }
-          }
-        );
-        mov.balanceCanceled = lastBalanceSelected;
-      }
-    }
-
-    if (isValid) await this.getTransaction({ _id: { $oid: this.transactionId } }).then(
-      async transaction => {
-        if (this.amountOfInterestCalculated > 0) {
-          transaction.totalPrice = totalAmount;
-          await this.updateTransaction(transaction).then(
-            async transaction => {
-              if (!transaction) {
-                isValid = false;
-              }
-            }
-          );
+    try {
+      let totalAmount: number = 0;
+      if (this.amountOfInterestCalculated > 0) {
+        for (let mov of this.movementsOfCashes) {
+          totalAmount += mov.amountPaid;
+          let lastBalanceSelected = mov.balanceCanceled;
+          delete mov.balanceCanceled;
+          await this.updateMovementOfCash(mov);
+          mov.balanceCanceled = lastBalanceSelected;
         }
       }
-    ).catch(err => { isValid = false; this.showToast(err.message, '', 'danger') });
 
-    if (isValid) {
+      await this.getTransaction({ _id: { $oid: this.transactionId } }).then(
+        async transaction => {
+          if (this.amountOfInterestCalculated > 0) {
+            transaction.totalPrice = totalAmount;
+            transaction = await this.updateTransaction(transaction);
+          }
+        }
+      );
+
       this.activeModal.close({
         movementsOfCashes: this.movementsOfCashes
       });
-    }
+    } catch (error) { this.showToast(error) }
   }
 
   public ngOnDestroy(): void {

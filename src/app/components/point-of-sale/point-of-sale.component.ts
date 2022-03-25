@@ -516,7 +516,7 @@ export class PointOfSaleComponent implements OnInit {
         this.loading = true;
         this._transactionService.syncWoocommerce().subscribe(
             result => {
-                if(result.status === 200) {
+                if (result.status === 200) {
                     this.showToast(null, 'success', 'Finalizó la sincronización de woocommerce.');
                     this.refresh();
                 } else {
@@ -1051,7 +1051,7 @@ export class PointOfSaleComponent implements OnInit {
                     }
                 }
             }
-    
+
             if (this.transaction && this.transaction._id && this.transaction._id !== "") {
                 await this.updateTransaction(this.transaction).then(
                     transaction => {
@@ -1092,16 +1092,16 @@ export class PointOfSaleComponent implements OnInit {
                     if (this.posType === "cuentas-corrientes") {
                         route = '/pos/mostrador/editar-transaccion';
                     }
-    
+
                     let queryParams = {
                         transactionId: this.transaction._id,
                         returnURL: this.removeParam(this._router.url, 'automaticCreation')
                     };
-    
+
                     if (this.transaction.type.automaticCreation && this.posType !== 'resto') {
                         queryParams['automaticCreation'] = this.transaction.type._id;
                     }
-    
+
                     this._router.navigate(
                         [route], {
                         queryParams
@@ -1110,7 +1110,7 @@ export class PointOfSaleComponent implements OnInit {
                     this.openModal('transaction');
                 }
             }
-        } catch(error) { this.showToast(error); } 
+        } catch (error) { this.showToast(error); }
     }
 
     private removeParam(sourceURL: string, key: string) {
@@ -1663,7 +1663,7 @@ export class PointOfSaleComponent implements OnInit {
                     this.transaction.CAEExpirationDate = transactionResponse.CAEExpirationDate;
                     this.transaction.number = transactionResponse.number;
                     this.transaction.state = transactionResponse.state;
-                    
+
                     if (this.transaction && this.transaction.type.printable) {
                         this.refresh();
                         if (this.transaction.type.defectPrinter) {
@@ -1842,11 +1842,11 @@ export class PointOfSaleComponent implements OnInit {
 
     public updateMovementOfCash(movementOfCash: MovementOfCash): Promise<MovementOfCash> {
         return new Promise<MovementOfCash>((resolve, reject) => {
-            this._movementOfCashService.updateMovementOfCash(movementOfCash).subscribe(
+            this._movementOfCashService.update(movementOfCash).subscribe(
                 async result => {
-                    if (result && result.movementOfCash) {
-                        resolve(result.movementOfCash);
-                    } else reject(result);
+                    if (result.status === 200) {
+                        resolve(result.result);
+                    } else reject(result)
                 },
                 error => reject(error)
             )
