@@ -33,6 +33,7 @@ import { PrinterPrintIn, Printer } from 'app/components/printer/printer';
 import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
+import Resulteable from 'app/util/Resulteable';
 
 @Component({
     selector: 'app-cash-box',
@@ -672,23 +673,20 @@ export class CashBoxComponent implements OnInit {
     }
 
     public saveTransaction(): Promise<Transaction> {
-
         return new Promise<Transaction>((resolve, reject) => {
-
             (this.posType === 'cuentas-corrientes') ? this.transaction.madein = 'mostrador' : this.transaction.madein = this.posType;
-
-            this._transactionService.saveTransaction(this.transaction).subscribe(
-                result => {
-                    if (!result.transaction) {
-                        if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                        resolve(null);
+            this._transactionService.save(this.transaction).subscribe(
+                (result: Resulteable) => {
+                    if (result.status === 200) {
+                        resolve(result.result);
                     } else {
-                        resolve(result.transaction);
-                    }
+                        this.showToast(result);
+                        reject(result);
+                    };
                 },
                 error => {
-                    this.showMessage(error._body, 'danger', false);
-                    resolve(null);
+                    this.showToast(error)
+                    reject(error);
                 }
             );
         });

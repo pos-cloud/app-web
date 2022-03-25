@@ -516,7 +516,7 @@ export class PointOfSaleComponent implements OnInit {
         this.loading = true;
         this._transactionService.syncWoocommerce().subscribe(
             result => {
-                if(result.status === 200) {
+                if (result.status === 200) {
                     this.showToast(null, 'success', 'Finalizó la sincronización de woocommerce.');
                     this.refresh();
                 } else {
@@ -1051,15 +1051,9 @@ export class PointOfSaleComponent implements OnInit {
                     }
                 }
             }
-    
+
             if (this.transaction && this.transaction._id && this.transaction._id !== "") {
-                await this.updateTransaction(this.transaction).then(
-                    transaction => {
-                        if (transaction) {
-                            this.transaction = transaction;
-                        }
-                    }
-                );
+                this.transaction = await this.updateTransaction(this.transaction);
                 if (!this.transaction.branchDestination ||
                     !this.transaction.branchOrigin ||
                     !this.transaction.depositDestination ||
@@ -1092,16 +1086,16 @@ export class PointOfSaleComponent implements OnInit {
                     if (this.posType === "cuentas-corrientes") {
                         route = '/pos/mostrador/editar-transaccion';
                     }
-    
+
                     let queryParams = {
                         transactionId: this.transaction._id,
                         returnURL: this.removeParam(this._router.url, 'automaticCreation')
                     };
-    
+
                     if (this.transaction.type.automaticCreation && this.posType !== 'resto') {
                         queryParams['automaticCreation'] = this.transaction.type._id;
                     }
-    
+
                     this._router.navigate(
                         [route], {
                         queryParams
@@ -1110,7 +1104,7 @@ export class PointOfSaleComponent implements OnInit {
                     this.openModal('transaction');
                 }
             }
-        } catch(error) { this.showToast(error); } 
+        } catch (error) { this.showToast(error); }
     }
 
     private removeParam(sourceURL: string, key: string) {
@@ -1278,13 +1272,8 @@ export class PointOfSaleComponent implements OnInit {
                                 async transaction => {
                                     if (transaction) {
                                         transaction.state = TransactionState.Delivered;
-                                        await this.updateTransaction(transaction).then(
-                                            async transaction => {
-                                                if (transaction) {
-                                                    this.refresh();
-                                                }
-                                            }
-                                        );
+                                        await this.updateTransaction(transaction);
+                                        this.refresh();
                                     }
                                 }
                             );
@@ -1319,13 +1308,8 @@ export class PointOfSaleComponent implements OnInit {
                                 async transaction => {
                                     if (transaction) {
                                         transaction.state = TransactionState.Delivered;
-                                        await this.updateTransaction(transaction).then(
-                                            async transaction => {
-                                                if (transaction) {
-                                                    this.refresh();
-                                                }
-                                            }
-                                        );
+                                        await this.updateTransaction(transaction);
+                                        this.refresh();
                                     }
                                 }
                             );
@@ -1461,14 +1445,8 @@ export class PointOfSaleComponent implements OnInit {
                             this.transaction.employeeClosing = result.employee;
                             if (this.posType === "delivery") {
                                 this.transaction.state = TransactionState.Sent;
-                                await this.updateTransaction(this.transaction).then(
-                                    transaction => {
-                                        if (transaction) {
-                                            this.transaction = transaction;
-                                            this.refresh();
-                                        }
-                                    }
-                                );
+                                this.transaction = await this.updateTransaction(this.transaction);
+                                this.refresh();
                             } else if (this.posType === 'resto' && this.tableSelected) {
                                 this.tableSelected.employee = result.employee;
                                 this.tableSelected.diners = result.diners;
@@ -1519,7 +1497,7 @@ export class PointOfSaleComponent implements OnInit {
                 modalRef.result.then(
                     async (result) => {
                         if (result && result.transaction) {
-                            this.updateTransaction(result.transaction)
+                            await this.updateTransaction(result.transaction);
                             this.refresh();
                         } else {
                             this.refresh();
@@ -1663,7 +1641,7 @@ export class PointOfSaleComponent implements OnInit {
                     this.transaction.CAEExpirationDate = transactionResponse.CAEExpirationDate;
                     this.transaction.number = transactionResponse.number;
                     this.transaction.state = transactionResponse.state;
-                    
+
                     if (this.transaction && this.transaction.type.printable) {
                         this.refresh();
                         if (this.transaction.type.defectPrinter) {
@@ -1992,13 +1970,19 @@ export class PointOfSaleComponent implements OnInit {
     public saveTransaction(): Promise<Transaction> {
         return new Promise<Transaction>((resolve, reject) => {
             (this.posType === 'cuentas-corrientes') ? this.transaction.madein = 'mostrador' : this.transaction.madein = this.posType;
-            this._transactionService.saveTransaction(this.transaction).subscribe(
-                result => {
-                    if (result.transaction) {
-                        resolve(result.transaction);
-                    } else reject(result);
+            this._transactionService.save(this.transaction).subscribe(
+                (result: Resulteable) => {
+                    if (result.status === 200) {
+                        resolve(result.result);
+                    } else {
+                        this.showToast(result);
+                        reject(result);
+                    };
                 },
-                error => reject(error)
+                error => {
+                    this.showToast(error)
+                    reject(error);
+                }
             );
         });
     }
@@ -2026,12 +2010,19 @@ export class PointOfSaleComponent implements OnInit {
 
     public updateTransaction(transaction: Transaction): Promise<Transaction> {
         return new Promise<Transaction>((resolve, reject) => {
-            this._transactionService.updateTransaction(transaction).subscribe(
-                result => {
-                    if (result.transaction) resolve(result.transaction);
-                    else reject(result);
+            this._transactionService.update(transaction).subscribe(
+                (result: Resulteable) => {
+                    if (result.status === 200) {
+                        resolve(result.result);
+                    } else {
+                        this.showToast(result);
+                        reject(result);
+                    };
                 },
-                error => reject(error)
+                error => {
+                    this.showToast(error)
+                    reject(error);
+                }
             );
         });
     }

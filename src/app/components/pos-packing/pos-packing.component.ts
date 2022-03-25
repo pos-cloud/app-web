@@ -12,12 +12,15 @@ import { PrinterService } from 'app/components/printer/printer.service';
 import { JsonDiffPipe } from 'app/main/pipes/json-diff';
 import { User } from 'app/components/user/user';
 import { UserService } from 'app/components/user/user.service';
+import Resulteable from 'app/util/Resulteable';
+import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: 'app-pos-packing',
     templateUrl: './pos-packing.component.html',
     styleUrls: ['./pos-packing.component.scss'],
-    providers: [NgbAlertConfig],
+    providers: [NgbAlertConfig, TranslateMePipe],
     encapsulation: ViewEncapsulation.None
 })
 
@@ -44,7 +47,9 @@ export class PosPackingComponent {
         private _movementOfArticleService: MovementOfArticleService,
         private _printerService: PrinterService,
         private _userService: UserService,
-        private _jsonDiffPipe: JsonDiffPipe
+        private _jsonDiffPipe: JsonDiffPipe,
+        public translatePipe: TranslateMePipe,
+        private _toastr: ToastrService,
     ) {
         this.transactionsToPacking = new Array();
         this.processParams();
@@ -471,23 +476,19 @@ export class PosPackingComponent {
     }
 
     public updateTransaction(transaction: Transaction): Promise<Transaction> {
-
         return new Promise<Transaction>((resolve, reject) => {
-
-            this.loading = true;
-
-            this._transactionService.updateTransaction(transaction).subscribe(
-                result => {
-                    this.loading = false;
-                    if (!result.transaction) {
-                        resolve(null);
+            this._transactionService.update(transaction).subscribe(
+                (result: Resulteable) => {
+                    if (result.status === 200) {
+                        resolve(result.result);
                     } else {
-                        resolve(result.transaction);
-                    }
+                        this.showToast(result);
+                        reject(result);
+                    };
                 },
                 error => {
-                    this.loading = false;
-                    resolve(null);
+                    this.showToast(error)
+                    reject(error);
                 }
             );
         });
@@ -524,5 +525,32 @@ export class PosPackingComponent {
 
     public hideMessage(): void {
         this.alertMessage = '';
+    }
+
+    public showToast(result, type?: string, title?: string, message?: string): void {
+        if (result) {
+            if (result.status === 200) {
+                type = 'success';
+                title = result.message;
+            } else if (result.status >= 400) {
+                type = 'danger';
+                title = (result.error && result.error.message) ? result.error.message : result.message;
+            } else {
+                type = 'info';
+                title = result.message;
+            }
+        }
+        switch (type) {
+            case 'success':
+                this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+            case 'danger':
+                this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+            default:
+                this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+                break;
+        }
+        this.loading = false;
     }
 }

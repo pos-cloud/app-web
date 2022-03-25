@@ -211,7 +211,6 @@ export class KardexCheckComponent implements OnInit {
                         this.items = result[0].items;
                         this.totalItems = result[0].count;
                     }
-                    console.log('check',result[0].items)
                 } else {
                     this.items = new Array();
                     this.totalItems = 0;
@@ -244,11 +243,8 @@ export class KardexCheckComponent implements OnInit {
                 break;
             case 'edit':
                 modalRef = this._modalService.open(AddTransactionComponent, { size: 'lg', backdrop: 'static' });
-                // console.log(transaction)
                 modalRef.componentInstance.transactionId = transaction._id;
-                // console.log('aaaaaaaaaaaaaaaa')
                 modalRef.result.then((result) => {
-                    // console.log('result',result)
                     if (result.transaction) {
                         this.getItems();
                     }
@@ -261,13 +257,6 @@ export class KardexCheckComponent implements OnInit {
 
     getCheck() {
         this.loading = true;
-        // FILTRAMOS LA CONSULTA
-        // let match = `{
-        //     "operationType":{"$ne":"D"}, 
-        //     "transaction.operationType":{"$ne":"D"},
-        //     "statusCheck":"Disponible",
-        //     "type.inputAndOuput":true,
-        //     "number": "${this.number}" }`;
         let match =
             `{ 
             "number": "${this.numberCheck}",
@@ -363,15 +352,11 @@ export class KardexCheckComponent implements OnInit {
             .subscribe(
                 res => {
                     if (res.count == 0) {
-                        // No se encontro
-                        console.log('no se encontro')
                     } else {
                         this.check = res[0].items[0]
                         this.items = res[0].items.map(r => {
                             return r.transaction
                         })
-                        // console.log(this.items)
-                        // this.getItems()
                     }
                     this.loading = false;
 
