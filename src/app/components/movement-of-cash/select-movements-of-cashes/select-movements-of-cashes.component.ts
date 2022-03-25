@@ -12,6 +12,7 @@ import { MovementOfCash } from '../movement-of-cash';
 import { MovementOfCashService } from '../movement-of-cash.service';
 import { Transaction } from 'app/components/transaction/transaction';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import Resulteable from 'app/util/Resulteable';
 
 @Component({
   selector: 'app-select-movements-of-cashes',
@@ -200,20 +201,20 @@ export class SelectMovementsOfCashesComponent implements OnInit {
 
   public updateTransaction(transaction: Transaction): Promise<Transaction> {
     return new Promise<Transaction>((resolve, reject) => {
-      this._transactionService.updateTransaction(transaction).subscribe(
-        result => {
-          if (result.status !== 200) {
-            this.showToast(result.status.toString(), result.message, 'info');
-            resolve(null);
-          } else {
-            resolve(result.result);
-          }
+      this._transactionService.update(transaction).subscribe(
+        (result: Resulteable) => {
+            if (result.status === 200) {
+                resolve(result.result);
+            } else {
+                this.showToast(result);
+                reject(result);
+            };
         },
         error => {
-          this.showToast('500', error._body, 'danger');
-          resolve(null);
+            this.showToast(error)
+            reject(error);
         }
-      );
+    );
     });
   }
 

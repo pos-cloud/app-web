@@ -25,6 +25,7 @@ import { MovementOfCancellationService } from 'app/components/movement-of-cancel
 import { TaxBase } from 'app/components/tax/tax';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import Resulteable from 'app/util/Resulteable';
 
 @Component({
     selector: 'app-cancellation-types-automatic',
@@ -271,13 +272,19 @@ export class CancellationTypeAutomaticComponent implements OnInit {
 
     public updateTransaction(transaction: Transaction): Promise<Transaction> {
         return new Promise<Transaction>((resolve, reject) => {
-            this._transactionService.updateTransaction(transaction).subscribe(
-                result => {
-                    if (result.transaction) {
-                        resolve(result.transaction);
-                    } else reject(result);
+            this._transactionService.update(this.transaction).subscribe(
+                (result: Resulteable) => {
+                    if (result.status === 200) {
+                        resolve(result.result);
+                    } else {
+                        this.showToast(result);
+                        reject(result);
+                    };
                 },
-                error => reject(error)
+                error => {
+                    this.showToast(error)
+                    reject(error);
+                }
             );
         });
     }

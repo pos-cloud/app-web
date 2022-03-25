@@ -1655,13 +1655,19 @@ export class AddMovementOfCashComponent implements OnInit {
             this.transaction.exempt = this.roundNumber.transform(this.transaction.exempt);
             this.transaction.discountAmount = this.roundNumber.transform(this.transaction.discountAmount);
             this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
-            this._transactionService.updateTransaction(this.transaction).subscribe(
-                async result => {
-                    if (result.transaction) {
-                        resolve(result.transaction);
-                    } else reject(result)
+            this._transactionService.update(this.transaction).subscribe(
+                (result: Resulteable) => {
+                    if (result.status === 200) {
+                        resolve(result.result);
+                    } else {
+                        this.showToast(result);
+                        reject(result);
+                    };
                 },
-                error => reject(error)
+                error => {
+                    this.showToast(error)
+                    reject(error);
+                }
             );
         });
     }

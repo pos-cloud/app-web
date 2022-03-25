@@ -495,17 +495,17 @@ export class AddSaleOrderComponent {
             this.transaction.exempt = this.roundNumber.transform(this.transaction.exempt);
             this.transaction.discountAmount = this.roundNumber.transform(this.transaction.discountAmount, 6);
             this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
-            this._transactionService.updateTransaction(this.transaction).subscribe(
-                result => {
-                    if (!result.transaction) {
-                        if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                        reject(result.message);
+            this._transactionService.update(this.transaction).subscribe(
+                (result: Resulteable) => {
+                    if (result.status === 200) {
+                        resolve(result.result);
                     } else {
-                        resolve(result.transaction);
-                    }
+                        this.showToast(result);
+                        reject(result);
+                    };
                 },
                 error => {
-                    this.showMessage(error._body, 'danger', false);
+                    this.showToast(error)
                     reject(error);
                 }
             );

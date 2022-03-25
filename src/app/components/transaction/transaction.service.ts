@@ -317,30 +317,6 @@ export class TransactionService extends ModelService {
     );
   }
 
-  public updateTransaction(transaction: Transaction): Observable<any> {
-
-    const URL = `${Config.apiURL}transaction`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams()
-      .set('id', transaction._id);
-
-    return this._http.put(URL, transaction, {
-      headers: headers,
-      params: params
-    }).pipe(
-      map(res => {
-        return res;
-      }),
-      catchError((err) => {
-        return of(err);
-      })
-    );
-  }
-
   public updateBalance(transaction: Transaction): Observable<any> {
 
     const URL = `${Config.apiV8URL}transactions/update-balance/${transaction._id}`;
@@ -351,30 +327,6 @@ export class TransactionService extends ModelService {
 
     return this._http.put(URL, transaction, {
       headers: headers,
-    }).pipe(
-      map(res => {
-        return res;
-      }),
-      catchError((err) => {
-        return of(err);
-      })
-    );
-  }
-
-  public deleteTransaction(_id: string): Observable<any> {
-
-    const URL = `${Config.apiURL}transaction`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams()
-      .set('id', _id);
-
-    return this._http.delete(URL, {
-      headers: headers,
-      params: params
     }).pipe(
       map(res => {
         return res;
