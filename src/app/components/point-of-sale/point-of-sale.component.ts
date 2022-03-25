@@ -1970,13 +1970,19 @@ export class PointOfSaleComponent implements OnInit {
     public saveTransaction(): Promise<Transaction> {
         return new Promise<Transaction>((resolve, reject) => {
             (this.posType === 'cuentas-corrientes') ? this.transaction.madein = 'mostrador' : this.transaction.madein = this.posType;
-            this._transactionService.saveTransaction(this.transaction).subscribe(
-                result => {
-                    if (result.transaction) {
-                        resolve(result.transaction);
-                    } else reject(result);
+            this._transactionService.save(this.transaction).subscribe(
+                (result: Resulteable) => {
+                    if (result.status === 200) {
+                        resolve(result.result);
+                    } else {
+                        this.showToast(result);
+                        reject(result);
+                    };
                 },
-                error => reject(error)
+                error => {
+                    this.showToast(error)
+                    reject(error);
+                }
             );
         });
     }

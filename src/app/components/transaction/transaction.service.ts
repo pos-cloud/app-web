@@ -242,26 +242,6 @@ export class TransactionService extends ModelService {
     );
   }
 
-  public saveTransaction(transaction: Transaction): Observable<any> {
-
-    const URL = `${Config.apiURL}transaction`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http.post(URL, transaction, {
-      headers: headers
-    }).pipe(
-      map(res => {
-        return res;
-      }),
-      catchError((err) => {
-        return of(err);
-      })
-    );
-  }
-
   public validateElectronicTransactionAR(transaction: Transaction, canceledTransactions: {
     typeId: string,
     code: number,
