@@ -1820,11 +1820,11 @@ export class PointOfSaleComponent implements OnInit {
 
     public updateMovementOfCash(movementOfCash: MovementOfCash): Promise<MovementOfCash> {
         return new Promise<MovementOfCash>((resolve, reject) => {
-            this._movementOfCashService.updateMovementOfCash(movementOfCash).subscribe(
+            this._movementOfCashService.update(movementOfCash).subscribe(
                 async result => {
-                    if (result && result.movementOfCash) {
-                        resolve(result.movementOfCash);
-                    } else reject(result);
+                    if (result.status === 200) {
+                        resolve(result.result);
+                    } else reject(result)
                 },
                 error => reject(error)
             )

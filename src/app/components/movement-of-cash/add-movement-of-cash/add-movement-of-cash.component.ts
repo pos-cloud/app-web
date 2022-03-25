@@ -62,50 +62,50 @@ export class AddMovementOfCashComponent implements OnInit {
 
     @Input() transaction: Transaction;
     @Input() fastPayment: PaymentMethod;
-    public movementOfCash: MovementOfCash;
-    public movementsOfCashes: MovementOfCash[];
-    public movementsOfCashesToFinance: MovementOfCash[];
-    public paymentMethods: PaymentMethod[];
-    public paymentMethodSelected: PaymentMethod;
-    public movementOfCashForm: FormGroup;
-    public paymentChange: string = '0.00';
-    public alertMessage: string = '';
-    public loading: boolean = false;
-    public focusEvent = new EventEmitter<boolean>();
-    public transactionAmount: number = 0.00;
-    public amountToPay: number = 0.00;
-    public amountPaid: number = 0.00;
-    public amountDiscount: number = 0.00;
+    movementOfCash: MovementOfCash;
+    movementsOfCashes: MovementOfCash[];
+    movementsOfCashesToFinance: MovementOfCash[];
+    paymentMethods: PaymentMethod[];
+    paymentMethodSelected: PaymentMethod;
+    movementOfCashForm: FormGroup;
+    paymentChange: string = '0.00';
+    alertMessage: string = '';
+    loading: boolean = false;
+    focusEvent = new EventEmitter<boolean>();
+    transactionAmount: number = 0.00;
+    amountToPay: number = 0.00;
+    amountPaid: number = 0.00;
+    amountDiscount: number = 0.00;
     private subscription: Subscription = new Subscription();
-    public percentageCommission: number = 0.00;
-    public percentageAdministrativeExpense: number = 0.00;
-    public percentageOtherExpense: number = 0.00;
-    public daysCommission: number = 0;
-    public roundNumber = new RoundNumberPipe();
-    public quotas: number = 1;
-    public days: number = 1;
-    public period: string = 'Mensual';
-    public interestPercentage: number = 0;
-    public orderTerm: string[] = ['expirationDate'];
-    public propertyTerm: string;
-    public holidays: Holiday[];
-    public banks: Bank[];
-    public movementOfArticle: MovementOfArticle;
-    public keyboard: Keyboard;
-    public lastVatOfExpenses: number = 0;
-    public interestType: string = 'Interés Simple';
-    public totalInterestAmount: number = 0;
-    public totalTaxAmount: number = 0;
-    public focus$: Subject<string>[] = new Array();
-    public currencyNative: Currency = Config.currency;
-    public quotationNative: number = 0;
-    public quotationAmount: number = 0;
+    percentageCommission: number = 0.00;
+    percentageAdministrativeExpense: number = 0.00;
+    percentageOtherExpense: number = 0.00;
+    daysCommission: number = 0;
+    roundNumber = new RoundNumberPipe();
+    quotas: number = 1;
+    days: number = 1;
+    period: string = 'Mensual';
+    interestPercentage: number = 0;
+    orderTerm: string[] = ['expirationDate'];
+    propertyTerm: string;
+    holidays: Holiday[];
+    banks: Bank[];
+    movementOfArticle: MovementOfArticle;
+    keyboard: Keyboard;
+    lastVatOfExpenses: number = 0;
+    interestType: string = 'Interés Simple';
+    totalInterestAmount: number = 0;
+    totalTaxAmount: number = 0;
+    focus$: Subject<string>[] = new Array();
+    currencyNative: Currency = Config.currency;
+    quotationNative: number = 0;
+    quotationAmount: number = 0;
 
-    public formErrors = {
+    formErrors = {
         'paymentMethod': '', 'amountToPay': '', 'amountPaid': '', 'paymentChange': '', 'observation': '', 'surcharge': '', 'CUIT': '', 'number': ''
     };
 
-    public validationMessages = {
+    validationMessages = {
         'paymentMethod': {
             'required': 'Este campo es requerido.',
             'payValid': 'El monto ingresado es incorrecto para este medio de pago.'
@@ -123,22 +123,22 @@ export class AddMovementOfCashComponent implements OnInit {
     };
 
     constructor(
-        public _paymentMethodService: PaymentMethodService,
-        public _movementOfCashService: MovementOfCashService,
-        public _transactionService: TransactionService,
-        public _bankService: BankService,
-        public _holidayService: HolidayService,
-        public _fb: FormBuilder,
-        public activeModal: NgbActiveModal,
+        private _paymentMethodService: PaymentMethodService,
+        private _movementOfCashService: MovementOfCashService,
+        private _transactionService: TransactionService,
+        private _bankService: BankService,
+        private _holidayService: HolidayService,
         private _accountSeatService: AccountSeatService,
         private _companyService: CompanyService,
+        private _taxService: TaxService,
+        private _movementOfArticleService: MovementOfArticleService,
+        private _toastr: ToastrService,
+        private _currencyService: CurrencyService,
+        public activeModal: NgbActiveModal,
+        public _fb: FormBuilder,
         public alertConfig: NgbAlertConfig,
         public _modalService: NgbModal,
-        private _taxService: TaxService,
-        public _movementOfArticleService: MovementOfArticleService,
         public translatePipe: TranslateMePipe,
-        private _toastr: ToastrService,
-        private _currencyService: CurrencyService
     ) {
         this.movementOfCash = new MovementOfCash();
         this.paymentMethods = new Array();
@@ -191,7 +191,7 @@ export class AddMovementOfCashComponent implements OnInit {
         }
     }
 
-    public ngOnDestroy(): void {
+    ngOnDestroy(): void {
         this.subscription.unsubscribe();
     }
 
@@ -229,7 +229,7 @@ export class AddMovementOfCashComponent implements OnInit {
         }
     };
 
-    public buildForm(): void {
+    buildForm(): void {
         this.movementOfCashForm = this._fb.group({
             'date': this.transaction.endDate || this.transaction.startDate,
             'transactionAmount': [parseFloat(this.roundNumber.transform(this.transactionAmount)).toFixed(2), [Validators.required]],
@@ -270,12 +270,12 @@ export class AddMovementOfCashComponent implements OnInit {
             .subscribe(data => this.onValueChanged(data));
     }
 
-    public changePaymentMethod(paymentMethod: PaymentMethod): void {
+    changePaymentMethod(paymentMethod: PaymentMethod): void {
         this.paymentMethodSelected = paymentMethod;
         this.updateAmounts('paymentMethod');
     }
 
-    public setValuesForm(amountToPay?: number): void {
+    setValuesForm(amountToPay?: number): void {
         if (amountToPay) this.amountToPay = amountToPay;
         if (!this.movementOfCash.observation) this.movementOfCash.observation = '';
         if (!this.movementOfCash.amountPaid) this.movementOfCash.amountPaid = 0.00;
@@ -384,7 +384,7 @@ export class AddMovementOfCashComponent implements OnInit {
         }
     }
 
-    public searchBanks = (text$: Observable<string>) =>
+    searchBanks = (text$: Observable<string>) =>
         text$.pipe(
             debounceTime(300),
             distinctUntilChanged(),
@@ -408,9 +408,9 @@ export class AddMovementOfCashComponent implements OnInit {
             tap(() => this.loading = false)
         )
 
-    public formatterBanks = (x: Bank) => x.name;
+    formatterBanks = (x: Bank) => x.name;
 
-    public getBanks(match: {}): Promise<Bank[]> {
+    getBanks(match: {}): Promise<Bank[]> {
         this.loading = true;
         return new Promise<Bank[]>((resolve, reject) => {
             match["operationType"] = { "$ne": "D" };
@@ -435,7 +435,7 @@ export class AddMovementOfCashComponent implements OnInit {
         });
     }
 
-    public calculateQuotas(field: string, newValue?: any, movement?: MovementOfCash): void {
+    calculateQuotas(field: string, newValue?: any, movement?: MovementOfCash): void {
         this.quotas = this.movementOfCashForm.value.quota;
         this.days = this.movementOfCashForm.value.days;
         this.period = this.movementOfCashForm.value.period;
@@ -659,7 +659,7 @@ export class AddMovementOfCashComponent implements OnInit {
         } catch (error) { this.showToast(error); }
     }
 
-    public isChargedFinished(): boolean {
+    isChargedFinished(): boolean {
 
         let chargedFinished: boolean = false;
         let amountPaid = 0;
@@ -873,7 +873,7 @@ export class AddMovementOfCashComponent implements OnInit {
         } catch (error) { this.showToast(null, "info", error.message); }
     }
 
-    public getMovementsOfCashes(query?: string): Promise<MovementOfCash[]> {
+    getMovementsOfCashes(query?: string): Promise<MovementOfCash[]> {
 
         return new Promise<MovementOfCash[]>((resolve, reject) => {
 
@@ -893,7 +893,7 @@ export class AddMovementOfCashComponent implements OnInit {
         });
     }
 
-    public updateMovementOfCash(movementOfCash: MovementOfCash): Promise<MovementOfCash> {
+    updateMovementOfCash(movementOfCash: MovementOfCash): Promise<MovementOfCash> {
         return new Promise<MovementOfCash>((resolve, reject) => {
             this._movementOfCashService.update(movementOfCash).subscribe(
                 async result => {
@@ -906,7 +906,7 @@ export class AddMovementOfCashComponent implements OnInit {
         });
     }
 
-    public getMovementsOfArticles(query?: string): Promise<MovementOfArticle[]> {
+    getMovementsOfArticles(query?: string): Promise<MovementOfArticle[]> {
 
         return new Promise<MovementOfArticle[]>((resolve, reject) => {
 
@@ -926,7 +926,7 @@ export class AddMovementOfCashComponent implements OnInit {
         });
     }
 
-    public deleteMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
+    deleteMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
         return new Promise<MovementOfArticle>((resolve, reject) => {
             this._movementOfArticleService.deleteMovementOfArticle(movementOfArticle._id).subscribe(
                 result => {
@@ -939,7 +939,7 @@ export class AddMovementOfCashComponent implements OnInit {
         });
     }
 
-    public async getPaymentMethods() {
+    async getPaymentMethods() {
 
         this.loading = true;
 
@@ -991,12 +991,12 @@ export class AddMovementOfCashComponent implements OnInit {
         ));
     }
 
-    public changeAmountToPay(): void {
+    changeAmountToPay(): void {
         if (this.keyboard) this.keyboard.setInput(this.movementOfCashForm.value.amountToPay.toString());
         this.updateAmounts('amountToPay');
     }
 
-    public changeQuotationNative() {
+    changeQuotationNative() {
         this.quotationNative = this.movementOfCashForm.value.quotationNative;
         this.quotationAmount = this.amountToPay * this.quotationNative;
         this.movementOfCashForm.patchValue({
@@ -1005,7 +1005,7 @@ export class AddMovementOfCashComponent implements OnInit {
         });
     }
 
-    public updateAmounts(op?: string): void {
+    updateAmounts(op?: string): void {
 
         if (op === 'amountToPay') {
             if (typeof this.movementOfCashForm.value.amountToPay === 'string') this.movementOfCashForm.value.amountToPay = parseFloat(this.movementOfCashForm.value.amountToPay);
@@ -1168,7 +1168,7 @@ export class AddMovementOfCashComponent implements OnInit {
         return total;
     }
 
-    public async changePercentageCommission(commissionAmount: number = null) {
+    async changePercentageCommission(commissionAmount: number = null) {
         this.movementOfCash = Object.assign(this.movementOfCashForm.value);
         this.daysCommission = moment(moment(this.movementOfCashForm.value.expirationDate).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days') + 4;
         if (moment(this.movementOfCashForm.value.expirationDate).day() === 6) {
@@ -1203,7 +1203,7 @@ export class AddMovementOfCashComponent implements OnInit {
         if (this.paymentMethodSelected && this.paymentMethodSelected.allowToFinance) this.calculateQuotas('quotas');
     }
 
-    public changePercentageAdministrativeExpense(administrativeExpenseAmount: number = null) {
+    changePercentageAdministrativeExpense(administrativeExpenseAmount: number = null) {
         if (administrativeExpenseAmount != null) {
             this.movementOfCash.administrativeExpenseAmount = administrativeExpenseAmount;
             this.percentageAdministrativeExpense = this.roundNumber.transform(100 * (this.movementOfCash.administrativeExpenseAmount / this.amountToPay));
@@ -1219,7 +1219,7 @@ export class AddMovementOfCashComponent implements OnInit {
         if (this.paymentMethodSelected && this.paymentMethodSelected.allowToFinance) this.calculateQuotas('quotas');
     }
 
-    public changePercentageOtherExpense(otherExpenseAmount: number = null) {
+    changePercentageOtherExpense(otherExpenseAmount: number = null) {
         if (otherExpenseAmount != null) {
             this.movementOfCash.otherExpenseAmount = otherExpenseAmount;
             this.percentageOtherExpense = this.roundNumber.transform(100 * (this.movementOfCash.otherExpenseAmount / this.amountToPay));
@@ -1235,7 +1235,7 @@ export class AddMovementOfCashComponent implements OnInit {
         if (this.paymentMethodSelected && this.paymentMethodSelected.allowToFinance) this.calculateQuotas('quotas');
     }
 
-    public changeVatOfExpenses() {
+    changeVatOfExpenses() {
         this.movementOfCash.taxPercentage = this.movementOfCashForm.value.taxPercentage;
         if (this.lastVatOfExpenses > 0) {
             if (this.paymentMethodSelected.commission > 0) this.movementOfCash.commissionAmount = this.roundNumber.transform(this.movementOfCash.commissionAmount / (this.lastVatOfExpenses / 100 + 1));
@@ -1254,7 +1254,7 @@ export class AddMovementOfCashComponent implements OnInit {
         if (this.paymentMethodSelected && this.paymentMethodSelected.allowToFinance) this.calculateQuotas('quotas');
     }
 
-    public getHolidays(): Promise<Holiday[]> {
+    getHolidays(): Promise<Holiday[]> {
         return new Promise<Holiday[]>((resolve, reject) => {
             this.subscription.add(this._holidayService.getAll({
                 match: { operationType: { $ne: "D" } }
@@ -1272,7 +1272,7 @@ export class AddMovementOfCashComponent implements OnInit {
         });
     }
 
-    public getBusinessDays(startDate, endDate) {
+    getBusinessDays(startDate, endDate) {
         var startDateMoment = moment(startDate);
         var endDateMoment = moment(endDate)
         var days = Math.round(startDateMoment.diff(endDateMoment, 'days') - startDateMoment.diff(endDateMoment, 'days') / 7 * 2);
@@ -1314,7 +1314,7 @@ export class AddMovementOfCashComponent implements OnInit {
 
     async addMovementOfCash() {
         try {
-            if(this.movementOfCashForm.valid) {
+            if (this.movementOfCashForm.valid) {
                 this.loading = true;
                 if (!this.fastPayment) {
                     if (await this.isValidAmount()) {
@@ -1330,13 +1330,13 @@ export class AddMovementOfCashComponent implements OnInit {
                             this.movementOfCash.observation = this.movementOfCashForm.value.observation;
                             this.movementOfCash.expirationDate = moment(this.movementOfCash.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
                             this.movementOfCash.interestPercentage = this.movementOfCashForm.value.interestPercentage;
-    
+
                             if (this.paymentMethodSelected.allowBank) {
                                 this.movementOfCash.bank = this.movementOfCashForm.value.bank;
                             } else {
                                 this.movementOfCash.bank = null
                             }
-    
+
                             if (this.paymentMethodSelected.checkDetail) {
                                 this.movementOfCash.receiver = this.movementOfCashForm.value.receiver;
                                 this.movementOfCash.number = this.movementOfCashForm.value.number;
@@ -1353,12 +1353,12 @@ export class AddMovementOfCashComponent implements OnInit {
                                 this.movementOfCash.deliveredBy = '';
                                 this.movementOfCash.statusCheck = StatusCheck.Closed;
                             }
-    
-    
+
+
                             if (this.paymentMethodSelected.inputAndOuput && this.transaction.type.movement === Movements.Inflows) {
                                 this.movementOfCash.statusCheck = StatusCheck.Available;
                             }
-    
+
                             if (await this.validateCredit()) {
                                 this.movementOfCash = await this.saveMovementOfCash();
                                 if (this.transactionAmount !== this.transaction.totalPrice) {
@@ -1427,7 +1427,7 @@ export class AddMovementOfCashComponent implements OnInit {
                     this.transaction.totalPrice = this.transaction.totalPrice + this.amountDiscount;
                     this.transactionAmount = this.transaction.totalPrice;
                     this.movementOfCash.amountPaid = this.transactionAmount;
-    
+
                     if (await this.isValidAmount() && await this.validateCredit()) {
                         this.movementOfCash = await this.saveMovementOfCash();
                         if (this.transactionAmount !== this.transaction.totalPrice) {
@@ -1462,11 +1462,11 @@ export class AddMovementOfCashComponent implements OnInit {
         } catch (error) { this.showToast(error) }
     }
 
-    public cancel(): void {
+    cancel(): void {
         this.activeModal.close('cancel');
     }
 
-    public saveMovementOfCash(): Promise<MovementOfCash> {
+    saveMovementOfCash(): Promise<MovementOfCash> {
         return new Promise<MovementOfCash>((resolve, reject) => {
             this._movementOfCashService.save(this.movementOfCash).subscribe(
                 result => {
@@ -1479,7 +1479,7 @@ export class AddMovementOfCashComponent implements OnInit {
         });
     }
 
-    public validateCredit(): Promise<boolean> {
+    validateCredit(): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
             try {
 
@@ -1509,7 +1509,7 @@ export class AddMovementOfCashComponent implements OnInit {
         });
     }
 
-    public saveMovementsOfCashes(): Promise<MovementOfCash[]> {
+    saveMovementsOfCashes(): Promise<MovementOfCash[]> {
 
         return new Promise<MovementOfCash[]>((resolve, reject) => {
             this._movementOfCashService.saveMovementsOfCashes(this.movementsOfCashesToFinance).subscribe(
@@ -1589,7 +1589,7 @@ export class AddMovementOfCashComponent implements OnInit {
         } catch (error) { this.showToast(error) }
     }
 
-    public async cleanForm() {
+    async cleanForm() {
         let oldMovementOfCash: MovementOfCash = new MovementOfCash();
         oldMovementOfCash = Object.assign(oldMovementOfCash, this.movementOfCash);
         this.movementOfCash = new MovementOfCash();
@@ -1637,7 +1637,7 @@ export class AddMovementOfCashComponent implements OnInit {
         });
     }
 
-    public saveMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
+    saveMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
         return new Promise<MovementOfArticle>((resolve, reject) => {
             this._movementOfArticleService.saveMovementOfArticle(movementOfArticle).subscribe(
                 result => {
@@ -1672,7 +1672,7 @@ export class AddMovementOfCashComponent implements OnInit {
         });
     }
 
-    public orderBy(term: string, property?: string): void {
+    orderBy(term: string, property?: string): void {
 
         if (this.orderTerm[0] === term) {
             this.orderTerm[0] = '-' + term;
@@ -1682,7 +1682,7 @@ export class AddMovementOfCashComponent implements OnInit {
         this.propertyTerm = property;
     }
 
-    public showToast(result, type?: string, title?: string, message?: string): void {
+    showToast(result, type?: string, title?: string, message?: string): void {
         if (result) {
             if (result.status === 200) {
                 type = 'success';

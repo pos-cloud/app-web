@@ -2161,14 +2161,8 @@ export class AddSaleOrderComponent {
                             this.transaction.endDate = moment(this.transaction.endDate, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
                             this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
                             this.transaction.expirationDate = this.transaction.endDate;
-                            await this.updateTransaction().then(
-                                async transaction => {
-                                    if (transaction) {
-                                        this.transaction = transaction;
-                                        this.lastQuotation = this.transaction.quotation;
-                                    }
-                                }
-                            );
+                            this.transaction = await this.updateTransaction();
+                            this.lastQuotation = this.transaction.quotation;
                         }
                     }
                 }, (reason) => {
