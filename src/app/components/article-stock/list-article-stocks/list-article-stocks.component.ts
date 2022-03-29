@@ -47,7 +47,7 @@ export class ListArticleStocksComponent implements OnInit {
     private subscription: Subscription = new Subscription();
     private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
     private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
-    
+
     listTitle: string;
     orderTerm: string[] = ["-realStock"];
     totalItems: number = 0;
@@ -145,9 +145,9 @@ export class ListArticleStocksComponent implements OnInit {
         try {
             this.loading = true;
 
-            if(this.branchesSelected.length === 0) { throw new Error('Debe seleccionar una sucursal.'); }
+            if (this.branchesSelected.length === 0) { throw new Error('Debe seleccionar una sucursal.'); }
 
-            if(this.depositsSelected.length === 0) { throw new Error('Debe seleccionar un depósito.'); }
+            if (this.depositsSelected.length === 0) { throw new Error('Debe seleccionar un depósito.'); }
 
             // FILTRAMOS LA CONSULTA
             let match = `{`;
@@ -166,22 +166,31 @@ export class ListArticleStocksComponent implements OnInit {
                     }
                 }
             }
-    
+
             if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
-    
+
             match += `}`;
-    
+
             match = JSON.parse(match);
-    
+
             let branchesAux = [];
-    
+
             if (this.branchesSelected && this.branchesSelected.length > 0) {
                 this.branchesSelected.forEach(branch => {
                     branchesAux.push({ $oid: branch._id });
                 });
                 match['branch'] = { $in: branchesAux }
             }
-    
+
+            let depositsAux = [];
+
+            if (this.depositsSelected && this.depositsSelected.length > 0) {
+                this.depositsSelected.forEach(deposit => {
+                    depositsAux.push({ $oid: deposit._id });
+                });
+                match['deposit'] = { $in: depositsAux }
+            }
+
             // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
             let project = `{`;
             let j = 0;
@@ -199,16 +208,16 @@ export class ListArticleStocksComponent implements OnInit {
                 }
             }
             project += `}`;
-    
+
             project = JSON.parse(project);
-    
+
             // AGRUPAMOS EL RESULTADO
             let group = {
                 _id: null,
                 count: { $sum: 1 },
                 items: { $push: "$$ROOT" }
             };
-    
+
             let page = 0;
             if (this.currentPage != 0) {
                 page = this.currentPage - 1;
@@ -217,7 +226,8 @@ export class ListArticleStocksComponent implements OnInit {
                 (page * this.itemsPerPage) :
                 0 // SKIP
             let limit = this.itemsPerPage;
-    
+            console.log(project);
+            console.log(match);
             this.subscription.add(this._articleStockService.getArticleStocksV2(
                 project, // PROJECT
                 match, // MATCH
@@ -227,6 +237,7 @@ export class ListArticleStocksComponent implements OnInit {
                 skip // SKIP
             ).subscribe(
                 result => {
+                    console.log(result);
                     this.loading = false;
                     if (result && result[0] && result[0].items) {
                         if (this.itemsPerPage === 0) {
@@ -250,22 +261,22 @@ export class ListArticleStocksComponent implements OnInit {
                     this.totalItems = 0;
                 }
             ));
-        } catch(error) { this.showToast(error, 'danger'); }
+        } catch (error) { this.showToast(error, 'danger'); }
     }
 
     public getSum(): any {
         var total = 0
         this.columns.forEach(elementC => {
-            if(elementC.datatype === 'number' || elementC.datatype === 'currency'){
+            if (elementC.datatype === 'number' || elementC.datatype === 'currency') {
                 this.items.forEach(elementI => {
                     Object.keys(elementI).forEach(elementK => {
-                        if(elementK === elementC.name){
+                        if (elementK === elementC.name) {
                             total = total + elementI[elementK];
                         }
                     });
                 });
             }
-            elementC['sum']= total;
+            elementC['sum'] = total;
             total = 0;
         });
     }
@@ -488,18 +499,18 @@ export class ListArticleStocksComponent implements OnInit {
     }
 
     public getBranches(): void {
-        this._branchService.getAll({ match: { operationType: { $ne: 'D' } }}).subscribe(
+        this._branchService.getAll({ match: { operationType: { $ne: 'D' } } }).subscribe(
             (result: Resulteable) => {
-                if(result.status === 200) this.branches = result.result;
+                if (result.status === 200) this.branches = result.result;
             },
             error => this.showToast(error)
         )
     }
 
     public getDeposits(branchId: string): void {
-        this._depositService.getAll({ match: { branch: { $oid: branchId }, operationType: { $ne: 'D' } }}).subscribe(
+        this._depositService.getAll({ match: { branch: { $oid: branchId }, operationType: { $ne: 'D' } } }).subscribe(
             (result: Resulteable) => {
-                if(result.status === 200) this.deposits = result.result;
+                if (result.status === 200) this.deposits = result.result;
             },
             error => this.showToast(error)
         )
