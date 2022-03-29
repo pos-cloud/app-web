@@ -507,6 +507,7 @@ export class AddTransactionComponent implements OnInit {
     async getTransactions(): Promise<boolean> {
         let match = {
             "operationType": { "$ne": "D" },
+            "_id": { "$ne": { "$oid": this.transaction._id } },
             "type": { "$oid": this.transaction.type._id },
             "letter": this.transactionForm.value.letter,
             "number": this.transactionForm.value.number,
@@ -565,16 +566,14 @@ export class AddTransactionComponent implements OnInit {
                     if (this.transactionForm.value.state) {
                         this.transaction.state = this.transactionForm.value.state;
                     }
-
                     const existsTransaction = await this.getTransactions()
                     if (!existsTransaction) {
                         this.finishTransaction();
                     } else {
                         let err = {
                             'status': 500,
-                            'message':'La transacción \"' + this.transactionForm.value.origin + '-' + this.transactionForm.value.letter + '-' + this.transactionForm.value.number + '\" ya existe'
+                            'message': 'La transacción \"' + this.transactionForm.value.origin + '-' + this.transactionForm.value.letter + '-' + this.transactionForm.value.number + '\" ya existe'
                         }
-                        
                         this.showToast(err)
                         // this.showMessage('La transacción \"' + this.transactionForm.value.origin + '-' + this.transactionForm.value.letter + '-' + this.transactionForm.value.number + '\" ya existe', 'danger', false);
                     }
