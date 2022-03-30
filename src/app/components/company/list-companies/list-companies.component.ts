@@ -170,7 +170,7 @@ export class ListCompaniesComponent implements OnInit {
 
                 let pathLocation: string[] = this._router.url.split('/');
 
-                var listType = pathLocation[2].split('?')[0];
+                let listType = pathLocation[2].split('?')[0];
 
                 if (listType === "clientes") {
                     this.type = CompanyType.Client;

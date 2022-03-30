@@ -132,7 +132,7 @@ export class ListCategoriesPosComponent implements OnInit {
 
         return new Promise<Category[]>((resolve, reject) => {
 
-            var project = {
+            let project = {
                 "_id": 1,
                 "visibleOnSale": 1,
                 "visibleOnPurchase": 1,
@@ -143,7 +143,7 @@ export class ListCategoriesPosComponent implements OnInit {
                 "order": 1
             }
 
-            var match = `{`;
+            let match = `{`;
 
             if (this.transactionMovement === TransactionMovement.Sale) {
                 match += `"visibleOnSale":true,"parent": { "$oid" : "${categoryId}"},`;
@@ -157,7 +157,7 @@ export class ListCategoriesPosComponent implements OnInit {
 
             match = JSON.parse(match);
 
-            var sort = {
+            let sort = {
                 order: -1
             }
 

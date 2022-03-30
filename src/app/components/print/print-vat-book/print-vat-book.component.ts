@@ -190,14 +190,14 @@ export class PrintVatBookComponent implements OnInit {
     async toPrintVAT() {
 
         // ENCABEZADO
-        var folio = 1;
+        let folio = 1;
 
         if (this.params.split("&")[2] && !isNaN(this.params.split("&")[2])) {
             folio = parseInt(this.params.split("&")[2]);
         }
 
 
-        var row = 10;
+        let row = 10;
         this.doc.setFont("",'bold');
 
         this.doc.setFontSize(12);
@@ -436,7 +436,7 @@ export class PrintVatBookComponent implements OnInit {
 
                 this.doc.addPage();
 
-                var row = 10;
+                row = 10;
                 this.doc.setFont("",'bold');
 
                 this.doc.setFontSize(12);
@@ -567,7 +567,7 @@ export class PrintVatBookComponent implements OnInit {
 
             this.doc.addPage();
 
-            var row = 10;
+            row = 10;
             this.doc.setFont("",'bold');
 
             this.doc.setFontSize(12);
@@ -792,13 +792,13 @@ export class PrintVatBookComponent implements OnInit {
     public centerText(lMargin, rMargin, pdfInMM, startPdf, height, text): void {
 
         if (text) {
-            var pageCenter = pdfInMM / 2;
+            let pageCenter = pdfInMM / 2;
 
-            var lines = this.doc.splitTextToSize(text, (pdfInMM - lMargin - rMargin));
-            var dim = this.doc.getTextDimensions(text);
-            var lineHeight = dim.h;
+            let lines = this.doc.splitTextToSize(text, (pdfInMM - lMargin - rMargin));
+            let dim = this.doc.getTextDimensions(text);
+            let lineHeight = dim.h;
             if (lines && lines.length > 0) {
-                for (var i = 0; i < lines.length; i++) {
+                for (let i = 0; i < lines.length; i++) {
                     let lineTop = (lineHeight / 2) * i;
                     this.doc.text(text, pageCenter + startPdf, height, lineTop, 'center')
                 }
@@ -807,7 +807,7 @@ export class PrintVatBookComponent implements OnInit {
     }
 
     public padString(n, length) {
-        var n = n.toString();
+        let n = n.toString();
         while (n.length < length)
             n = "0" + n;
         return n;

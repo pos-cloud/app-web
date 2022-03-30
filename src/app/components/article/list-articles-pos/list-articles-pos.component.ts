@@ -291,7 +291,7 @@ export class ListArticlesPosComponent implements OnInit {
                         let increasePrice = 0;
 
                         if (this.transaction && this.transaction.company && this.transaction.company.priceList && this.transaction.company.type === CompanyType.Client || this.transaction.priceList) {
-                            var priceList;
+                            let priceList;
                             if (this.transaction && this.transaction.priceList) {
                                 priceList = await this.getPriceList(this.transaction.priceList._id)
                             } else {
@@ -550,10 +550,10 @@ export class ListArticlesPosComponent implements OnInit {
             async result => {
                 this.loading = false;
 
-                var parent: MovementOfArticle;
-                var child: MovementOfArticle[] = new Array();
+                let parent: MovementOfArticle;
+                let child: MovementOfArticle[] = new Array();
                 if (result && result[0] && result[0].structures) {
-                    var structures: Structure[] = result[0].structures
+                    let structures: Structure[] = result[0].structures
                     if (structures.length > 0) {
                         parent = await this.addItem(articleSelected, amount, salePrice)
                         for (const iterator of structures) {
@@ -641,7 +641,7 @@ export class ListArticlesPosComponent implements OnInit {
         // FILTRA DENTRO DE LA CATEGORIA SI EXISTE
         if (article) {
             // CORTAMOS EL CÓDIGO SI MANDA CANTIDAD *
-            var amount = 1;
+            let amount = 1;
             if (this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*') {
                 amount = parseFloat(this.filterArticle.slice(1, this.filterArticle.length));
             }
@@ -660,7 +660,7 @@ export class ListArticlesPosComponent implements OnInit {
 
                 this.hideMessage();
 
-                var count = 1;
+                let count = 1;
 
                 if (this.filteredArticles.length === 1) {
                     article = this.filteredArticles[0];
@@ -727,7 +727,7 @@ export class ListArticlesPosComponent implements OnInit {
 
 
     public padNumber(n, length) {
-        var n = n.toString();
+        n = n.toString();
         while (n.length < length)
             n = "0" + n;
         return n;

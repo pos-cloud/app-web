@@ -557,7 +557,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
         }
 
 
-        var transactionTypes = [];
+        let transactionTypes = [];
 
         if (this.transactionTypesSelect) {
             this.transactionTypesSelect.forEach(element => {
@@ -566,7 +566,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
             match['transaction.type._id'] = { "$in": transactionTypes }
         }
 
-        var categories = [];
+        let categories = [];
 
         if (this.categoriesSelect) {
             this.categoriesSelect.forEach(element => {

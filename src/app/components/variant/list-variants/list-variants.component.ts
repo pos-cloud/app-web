@@ -163,10 +163,10 @@ export class ListVariantsComponent implements OnInit {
 
   public variantExists(variant: Variant): boolean {
 
-    var exists: boolean = false;
+    let exists: boolean = false;
 
     if (this.variantsLocals && this.variantsLocals.length > 0) {
-      for(var variantAux of this.variantsLocals) {
+      for(let variantAux of this.variantsLocals) {
         if ( variantAux.type._id === variant.type._id &&
             variantAux.value._id === variant.value._id) {
               exists = true;
@@ -177,7 +177,7 @@ export class ListVariantsComponent implements OnInit {
 
     if (!exists) {
       if (this.variants && this.variants.length > 0) {
-        for (var variantAux of this.variants) {
+        for (let variantAux of this.variants) {
           if (variantAux.type._id === variant.type._id &&
             variantAux.value._id === variant.value._id) {
             exists = true;
@@ -196,7 +196,7 @@ export class ListVariantsComponent implements OnInit {
     let variantToDelete: number = -1;
 
     if (this.variantsLocals && this.variantsLocals.length > 0) {
-      for (var variantAux of this.variantsLocals) {
+      for (let variantAux of this.variantsLocals) {
         if (variantAux.type._id === variant.type._id &&
           variantAux.value._id === variant.value._id) {
           variantToDelete = i;

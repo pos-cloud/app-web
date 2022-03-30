@@ -140,8 +140,8 @@ export class PrintArticlesStockComponent implements OnInit {
 
   public toPrintInventario(articleStocks: ArticleStock[]): void {
 
-    var row = 10;
-    var margin = 5;
+    let row = 10;
+    let margin = 5;
     this.doc.setFont("",'bold');
 
     this.doc.setFontSize(12);
@@ -203,8 +203,8 @@ export class PrintArticlesStockComponent implements OnInit {
 
           this.doc.addPage();
 
-          var row = 15;
-          var margin = 5;
+          let row = 15;
+          let margin = 5;
           this.doc.setFont("",'bold');
 
           this.doc.setFontSize(12);
@@ -256,13 +256,13 @@ export class PrintArticlesStockComponent implements OnInit {
   public centerText(lMargin, rMargin, pdfInMM, startPdf, height, text): void {
 
     if (text) {
-      var pageCenter = pdfInMM / 2;
+      let pageCenter = pdfInMM / 2;
 
-      var lines = this.doc.splitTextToSize(text, (pdfInMM - lMargin - rMargin));
-      var dim = this.doc.getTextDimensions(text);
-      var lineHeight = dim.h;
+      let lines = this.doc.splitTextToSize(text, (pdfInMM - lMargin - rMargin));
+      let dim = this.doc.getTextDimensions(text);
+      let lineHeight = dim.h;
       if(lines && lines.length > 0) {
-        for (var i = 0; i < lines.length; i++) {
+        for (let i = 0; i < lines.length; i++) {
           let lineTop = (lineHeight / 2) * i;
           this.doc.text(text, pageCenter + startPdf, height, lineTop, 'center')
         }

@@ -178,7 +178,7 @@ export class AddCompanyFieldsComponent implements OnInit {
     let companyTaxToDelete: number = -1;
 
     if (this.fields && this.fields.length > 0) {
-      for (var companyTaxAux of this.fields) {
+      for (let companyTaxAux of this.fields) {
         if (companyField.companyField._id === companyTaxAux.companyField._id &&
             companyField.value === companyTaxAux.value) {
           companyTaxToDelete = i;

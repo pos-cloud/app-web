@@ -83,15 +83,12 @@ export class PrintService {
 	}
 
 	public saveFile(file, folder, name) {
-
 		return new Promise((resolve, reject) => {
-			var data = new FormData();
+			let data = new FormData();
 			data.append('file', file);
-			var xhr = new XMLHttpRequest();
-
+			let xhr = new XMLHttpRequest();
 			xhr.open('POST', Config.apiURL + 'upload-file/' + folder + '/' + name, true);
 			xhr.setRequestHeader('Authorization', this._authService.getToken());
-
 			xhr.onreadystatechange = function () {
 				if (xhr.readyState == 4) {
 					if (xhr.status == 200) {
@@ -101,9 +98,7 @@ export class PrintService {
 					}
 				}
 			}
-
 			xhr.send(data);
-
 		});
 	}
 }

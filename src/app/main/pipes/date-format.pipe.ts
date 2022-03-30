@@ -13,7 +13,7 @@ export class DateFormatPipe implements PipeTransform {
 				formatDefecto = 'YYYY-MM-DDTHH:mm:ssZ';
 				// formatDefecto = 'DD/MM/YYYY HH:mm:ss';
 			}
-			var date = moment(new Date(value)).format(format);
+			let date = moment(new Date(value)).format(format);
 			return date;
 		}
 	}

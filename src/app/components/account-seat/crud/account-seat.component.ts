@@ -153,8 +153,8 @@ export class AccountSeatComponent implements OnInit {
             if (meta.filetype == 'image') {
                 $('#upload').trigger('click');
                 $('#upload').on('change', function () {
-                    var file = this.files[0];
-                    var reader = new FileReader();
+                    let file = this.files[0];
+                    let reader = new FileReader();
                     reader.onload = function (e) {
                         callback(e.target['result'], {
                             alt: ''
@@ -383,7 +383,7 @@ export class AccountSeatComponent implements OnInit {
         }
 
         if (this.obj.items && this.obj.items.length > 0) {
-            var items = <FormArray>this.objForm.controls.items;
+            let items = <FormArray>this.objForm.controls.items;
             this.obj.items.forEach(x => {
                 this.totalDebit = this.totalDebit + +x.debit;
                 this.totalHaber = this.totalHaber + +x.credit;

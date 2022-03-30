@@ -121,32 +121,13 @@ export class KardexCheckComponent implements OnInit {
             }
         }
 
-        // match += `${idTransaction}`
-        // if (this.employeeClosingId) {
-        //     match += `,"employeeClosing._id": { "$oid" : "${this.employeeClosingId}"},`;
-        // }
-
-        // if (this.origin ) {
-        //     match += `,"origin": "${this.origin}",`;
-        // }
-
-        // if (match.charAt(match.length - 1) === '}') match += ',';
-        // match += `"type.transactionMovement": "${this.transactionMovement}",`;
-        // if (this.stateSelect && this.stateSelect !== '') match += `"state": "${this.stateSelect}",`;
-
-        // match += `"${this.dateSelect}" : {
-        //             "$gte" : { "$date" : "${this.startDate}T00:00:00${this.timezone}" },
-        //             "$lte" : { "$date" : "${this.endDate}T23:59:59${this.timezone}" }
-        //         }`
-
-
         if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
         match += `}`;
 
         match = JSON.parse(match);
 
-        var transactionTypes = [];
+        let transactionTypes = [];
 
 
         if (this.transactionTypesSelect && this.transactionTypesSelect.length > 0) {

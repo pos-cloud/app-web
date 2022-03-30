@@ -221,8 +221,8 @@ export class PointOfSaleComponent implements OnInit {
 
         return new Promise<User>((resolve, reject) => {
 
-            var identity: User = JSON.parse(sessionStorage.getItem('user'));
-            var user;
+            let identity: User = JSON.parse(sessionStorage.getItem('user'));
+            let user;
             if (identity) {
                 this._userService.getUser(identity._id).subscribe(
                     result => {
@@ -436,7 +436,7 @@ export class PointOfSaleComponent implements OnInit {
             match["operationType"] = { "$ne": "D" }
 
             if (this.user && this.user.permission && this.user.permission.transactionTypes && this.user.permission.transactionTypes.length > 0) {
-                var transactionTypes = [];
+                let transactionTypes = [];
                 this.user.permission.transactionTypes.forEach(element => {
                     transactionTypes.push({ "$oid": element });
                 });
@@ -599,7 +599,7 @@ export class PointOfSaleComponent implements OnInit {
                     }
                 );
             } else if (this.posType === 'pedidos-web') {
-                var query;
+                let query;
                 if (this.transactionStates.length > 0) {
                     query = {
                         state: { $in: this.transactionStates },
@@ -1507,7 +1507,7 @@ export class PointOfSaleComponent implements OnInit {
                     });
                 break;
             case 'send-email':
-                var attachments = [];
+                let attachments = [];
                 if (this.transaction.type.readLayout) {
                     modalRef = this._modalService.open(PrintTransactionTypeComponent)
                     modalRef.componentInstance.transactionId = this.transaction._id;
@@ -1620,8 +1620,7 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     public padNumber(n, length): string {
-
-        var n = n.toString();
+        n = n.toString();
         while (n.length < length)
             n = "0" + n;
         return n;
@@ -1918,7 +1917,7 @@ export class PointOfSaleComponent implements OnInit {
             }
 
             if (this.user && this.user.permission && this.user.permission.transactionTypes && this.user.permission.transactionTypes.length > 0) {
-                var transactionTypes = [];
+                let transactionTypes = [];
                 this.user.permission.transactionTypes.forEach(element => {
                     transactionTypes.push({ "$oid": element });
                 });

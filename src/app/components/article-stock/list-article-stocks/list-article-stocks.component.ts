@@ -265,7 +265,7 @@ export class ListArticleStocksComponent implements OnInit {
     }
 
     public getSum(): any {
-        var total = 0
+        let total = 0
         this.columns.forEach(elementC => {
             if (elementC.datatype === 'number' || elementC.datatype === 'currency') {
                 this.items.forEach(elementI => {

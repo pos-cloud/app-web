@@ -141,27 +141,12 @@ export class AddArticleComponent implements OnInit {
     images_dataimg_filter: function (img) {
       return img.hasAttribute('internal-blob');
     },
-    /*file_picker_callback: function (callback, value, meta) {
-        if (meta.filetype == 'image') {
-            $('#upload').trigger('click');
-            $('#upload').on('change', function () {
-                var file = this.files[0];
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    callback(e.target['result'], {
-                        alt: ''
-                    });
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-    },*/
     file_picker_callback: function (callback, value, meta) {
       if (meta.filetype == 'image') {
         $('#upload').trigger('click');
         $('#upload').on('change', function () {
-          var file = this.files[0];
-          var reader = new FileReader();
+          let file = this.files[0];
+          let reader = new FileReader();
           reader.onload = function (e) {
 
             callback(e.target['result'], {
@@ -896,7 +881,7 @@ export class AddArticleComponent implements OnInit {
   }
 
   public padString(n, length) {
-    var n = n.toString();
+    n = n.toString();
     while (n.length < length) {
       n = '0' + n;
     }

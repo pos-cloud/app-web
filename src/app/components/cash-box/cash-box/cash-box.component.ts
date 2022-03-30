@@ -441,8 +441,7 @@ export class CashBoxComponent implements OnInit {
 
         return new Promise<User>((resolve, reject) => {
 
-            var identity: User = JSON.parse(sessionStorage.getItem('user'));
-            var user;
+            let identity: User = JSON.parse(sessionStorage.getItem('user'));
             if (identity) {
                 this._userService.getUser(identity._id).subscribe(
                     result => {

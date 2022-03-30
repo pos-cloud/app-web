@@ -222,7 +222,7 @@ export class ReportSalesByClientComponent implements OnInit {
             "state" : this.stateSelect
         }
 
-        var transactionTypes = [];
+        let transactionTypes = [];
 
         if (this.transactionTypesSelect) {
             this.transactionTypesSelect.forEach(element => {
