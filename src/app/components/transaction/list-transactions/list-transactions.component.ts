@@ -386,7 +386,7 @@ export class ListTransactionsComponent implements OnInit {
 
         match = JSON.parse(match);
 
-        var transactionTypes = [];
+        let transactionTypes = [];
 
 
         if (this.transactionTypesSelect && this.transactionTypesSelect.length > 0) {
@@ -628,7 +628,7 @@ export class ListTransactionsComponent implements OnInit {
                 });
                 break;
             case 'send-email':
-                var attachments = [];
+                let attachments = [];
                 if (transaction.type.readLayout) {
                     modalRef = this._modalService.open(PrintTransactionTypeComponent)
                     modalRef.componentInstance.transactionId = transaction._id;
@@ -740,7 +740,7 @@ export class ListTransactionsComponent implements OnInit {
                     modalRef.componentInstance.typePrint = 'invoice';
                     modalRef.componentInstance.source = "mail";
                 }
-                var url = `http://${Config.apiHost}.poscloud.com.ar:300/api/print/others/${transaction._id}`;
+                let url = `http://${Config.apiHost}.poscloud.com.ar:300/api/print/others/${transaction._id}`;
                 window.open(url);
                 break;
             default: ;
@@ -751,8 +751,8 @@ export class ListTransactionsComponent implements OnInit {
 
         return new Promise<User>((resolve, reject) => {
 
-            var identity: User = JSON.parse(sessionStorage.getItem('user'));
-            var user;
+            let identity: User = JSON.parse(sessionStorage.getItem('user'));
+            let user;
             if (identity) {
                 this._userService.getUser(identity._id).subscribe(
                     result => {
@@ -772,7 +772,7 @@ export class ListTransactionsComponent implements OnInit {
 
     public padNumber(n, length): string {
 
-        var n = n.toString();
+        let n = n.toString();
         while (n.length < length)
             n = "0" + n;
         return n;

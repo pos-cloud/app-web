@@ -454,7 +454,7 @@ export class AddMovementOfCashComponent implements OnInit {
                 this.totalInterestAmount = 0;
                 this.totalTaxAmount = 0;
                 for (let i = 0; i < this.quotas; i++) {
-                    var mov: MovementOfCash = new MovementOfCash();
+                    let mov: MovementOfCash = new MovementOfCash();
                     mov.expirationDate = mov.date;
                     mov.transaction = this.transaction;
                     mov.type = this.paymentMethodSelected;
@@ -1273,9 +1273,9 @@ export class AddMovementOfCashComponent implements OnInit {
     }
 
     getBusinessDays(startDate, endDate) {
-        var startDateMoment = moment(startDate);
-        var endDateMoment = moment(endDate)
-        var days = Math.round(startDateMoment.diff(endDateMoment, 'days') - startDateMoment.diff(endDateMoment, 'days') / 7 * 2);
+        let startDateMoment = moment(startDate);
+        let endDateMoment = moment(endDate)
+        let days = Math.round(startDateMoment.diff(endDateMoment, 'days') - startDateMoment.diff(endDateMoment, 'days') / 7 * 2);
         if (endDateMoment.day() === 6) {
             days--;
         }
@@ -1492,7 +1492,7 @@ export class AddMovementOfCashComponent implements OnInit {
                     this._companyService.getSummaryCurrentAccount(this.transaction.company._id).subscribe(
                         result => {
                             if (result && result.status === 200) {
-                                var total = result.result + this.movementOfCash.amountPaid;
+                                let total = result.result + this.movementOfCash.amountPaid;
                                 if (total > (this.transaction.company.creditLimit || 0)) {
                                     throw new Error('La empresa supera el limite de crédito otorgado');
                                 } else {

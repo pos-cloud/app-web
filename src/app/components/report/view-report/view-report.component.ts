@@ -113,7 +113,7 @@ export class ViewReportComponent implements OnInit {
             result => {
                 if (result.status === 200) {
                     this.items = result.result
-                    for (var key in this.items[0]) {
+                    for (let key in this.items[0]) {
                         if (key != '_id') {
                             this.columns.push({
                                 name: key,
@@ -130,7 +130,7 @@ export class ViewReportComponent implements OnInit {
                     }
 
                     this.columns.sort(function (a, b) {
-                        var x = a.name < b.name ? -1 : 1;
+                        let x = a.name < b.name ? -1 : 1;
                         return x;
                     });
                     this.loading = false;

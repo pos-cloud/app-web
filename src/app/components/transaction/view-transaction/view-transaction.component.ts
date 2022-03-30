@@ -246,7 +246,7 @@ export class ViewTransactionComponent implements OnInit {
         }
 
         if (this.obj && this.obj.items && this.obj.items.length > 0) {
-            var items = <FormArray>this.objForm.controls.items;
+            let items = <FormArray>this.objForm.controls.items;
             this.obj.items.forEach(x => {
                 items.push(this._fb.group({
                     '_id': null,

@@ -33,15 +33,15 @@ import Resulteable from 'app/util/Resulteable';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 
-var splitRegex = /\r\n|\r|\n/g;
+let splitRegex = /\r\n|\r|\n/g;
 jsPDF.API['textEx'] = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
-    var fontSize = this.internal.getFontSize() / this.internal.scaleFactor;
+    let fontSize = this.internal.getFontSize() / this.internal.scaleFactor;
 
     // As defined in jsPDF source code
-    var lineHeightProportion = 1.15;
+    let lineHeightProportion = 1.15;
 
-    var splittedText: string[];
-    var lineCount: number = 1;
+    let splittedText: string[];
+    let lineCount: number = 1;
     if (vAlign === 'middle' || vAlign === 'bottom'
         || hAlign === 'center' || hAlign === 'right') {
 
@@ -62,11 +62,11 @@ jsPDF.API['textEx'] = function (text: any, x: number, y: number, hAlign?: string
     if (hAlign === 'center'
         || hAlign === 'right') {
 
-        var alignSize = fontSize;
+        let alignSize = fontSize;
         if (hAlign === 'center') alignSize *= 0.5;
 
         if (lineCount > 1) {
-            for (var iLine = 0; iLine < splittedText.length; iLine++) {
+            for (let iLine = 0; iLine < splittedText.length; iLine++) {
                 this.text(splittedText[iLine],
                     x - this.getStringUnitWidth(splittedText[iLine]) * alignSize,
                     y);
@@ -121,7 +121,7 @@ export class PrintQRComponent implements OnInit {
 
         const orientation = "p";
         const units = 'mm';
-        var margin = 5;
+        let margin = 5;
 
         if (!this.printer) {
             this.printer = new Printer();
@@ -148,7 +148,7 @@ export class PrintQRComponent implements OnInit {
         if (applications && applications.length > 0) {
             for (let application of applications) {
                 for (let table of this.tables) {
-                    var row = 10;
+                    let row = 10;
                     this.doc.setTextColor(255);
                     this.doc.setFontSize(this.fontSizes.large);
                     this.doc.setDrawColor(0);
@@ -219,7 +219,7 @@ export class PrintQRComponent implements OnInit {
                 .subscribe(res => {
                     const reader = new FileReader();
                     reader.onloadend = () => {
-                        var base64data = reader.result;
+                        let base64data = reader.result;
                         resolve(base64data);
                     }
 
@@ -231,13 +231,13 @@ export class PrintQRComponent implements OnInit {
     public centerText(lMargin, rMargin, pdfInMM, startPdf, height, text): void {
 
         if (text) {
-            var pageCenter = pdfInMM / 2;
+            let pageCenter = pdfInMM / 2;
 
-            var lines = this.doc.splitTextToSize(text, (pdfInMM - lMargin - rMargin));
-            var dim = this.doc.getTextDimensions(text);
-            var lineHeight = dim.h;
+            let lines = this.doc.splitTextToSize(text, (pdfInMM - lMargin - rMargin));
+            let dim = this.doc.getTextDimensions(text);
+            let lineHeight = dim.h;
             if (lines && lines.length > 0) {
-                for (var i = 0; i < lines.length; i++) {
+                for (let i = 0; i < lines.length; i++) {
                     let lineTop = (lineHeight / 2) * i;
                     this.doc.text(text, pageCenter + startPdf, height, lineTop, 'center')
                 }

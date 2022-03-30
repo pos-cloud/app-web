@@ -11,13 +11,13 @@ export class JsonDiffPipe implements PipeTransform {
 	}
 
 	diff = function (obj1, obj2) {
-		var change, ref, score;
+		let change, ref, score;
 		ref = this.diffWithScore(obj1, obj2), score = ref[0], change = ref[1];
 		return change;
 	};
 	
 	diffWithScore = function (obj1, obj2) {
-		var type1, type2;
+		let type1, type2;
 		type1 = this.extendedTypeOf(obj1);
 		type2 = this.extendedTypeOf(obj2);
 		if (type1 === type2) {
@@ -41,7 +41,7 @@ export class JsonDiffPipe implements PipeTransform {
 	};
 	
 	extendedTypeOf = function (obj) {
-		var result;
+		let result;
 		result = typeof obj;
 		if (obj == null) {
 			return 'null';
@@ -53,7 +53,7 @@ export class JsonDiffPipe implements PipeTransform {
 	};
 	
 	objectDiff = function (obj1, obj2) {
-		var change, key, ref, ref1, result, score, subscore, value1, value2;
+		let change, key, ref, ref1, result, score, subscore, value1, value2;
 		result = {};
 		score = 0;
 		for (key in obj1) {
@@ -97,7 +97,7 @@ export class JsonDiffPipe implements PipeTransform {
 	};
 	
 	arrayDiff = function (obj1, obj2) {
-		var allEqual, change, i, i1, i2, item, item1, item2, j, j1, j2, k, l, len, m, n, o, op, opcodes, originals1, originals2, p, q, ref, ref1, ref10, ref11, ref12, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, result, score, seq1, seq2;
+		let allEqual, change, i, i1, i2, item, item1, item2, j, j1, j2, k, l, len, m, n, o, op, opcodes, originals1, originals2, p, q, ref, ref1, ref10, ref11, ref12, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, result, score, seq1, seq2;
 		originals1 = {
 			__next: 1
 		};
@@ -168,7 +168,7 @@ export class JsonDiffPipe implements PipeTransform {
 	};
 	
 	scalarize = function (array, originals, fuzzyOriginals) {
-		var bestMatch, index, item, k, len, proxy, results;
+		let bestMatch, index, item, k, len, proxy, results;
 		results = [];
 		for (index = k = 0, len = array.length; k < len; index = ++k) {
 			item = array[index];
@@ -203,7 +203,7 @@ export class JsonDiffPipe implements PipeTransform {
 	};
 	
 	findMatchingObject = function (item, index, fuzzyOriginals) {
-		var bestMatch, candidate, indexDistance, key, matchIndex, score;
+		let bestMatch, candidate, indexDistance, key, matchIndex, score;
 		bestMatch = null;
 		matchIndex = 0;
 		for (key in fuzzyOriginals) {
@@ -229,7 +229,7 @@ export class JsonDiffPipe implements PipeTransform {
 	};
 	
 	diffScore = function (obj1, obj2) {
-		var change, ref, score;
+		let change, ref, score;
 		ref = this.diffWithScore(obj1, obj2), score = ref[0], change = ref[1];
 		return score;
 	};

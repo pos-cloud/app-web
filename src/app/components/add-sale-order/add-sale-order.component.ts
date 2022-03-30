@@ -668,8 +668,8 @@ export class AddSaleOrderComponent {
     async addItem(event) {
 
         if (event && event['parent']) {
-            var itemData: MovementOfArticle = event['parent'];
-            var child: MovementOfArticle[] = event['child']
+            let itemData: MovementOfArticle = event['parent'];
+            let child: MovementOfArticle[] = event['child']
 
             this.showCategories();
 
@@ -721,10 +721,10 @@ export class AddSaleOrderComponent {
                             }
                         } else {
 
-                            var movsArticle: MovementOfArticle[] = new Array();
+                            let movsArticle: MovementOfArticle[] = new Array();
 
                             for (const movArticle of child) {
-                                var stock: boolean = await this.getUtilization(movementOfArticle.article._id, movArticle.article._id)
+                                let stock: boolean = await this.getUtilization(movementOfArticle.article._id, movArticle.article._id)
                                 if (await this.isValidMovementOfArticle(movArticle, stock)) {
                                     movsArticle.push(movArticle)
                                 }
@@ -975,7 +975,7 @@ export class AddSaleOrderComponent {
 
             this.loading = true;
 
-            var movsArticles: MovementOfArticle[] = new Array();
+            let movsArticles: MovementOfArticle[] = new Array();
 
             for (const movArticle of movementsOfArticles) {
 
@@ -1825,7 +1825,7 @@ export class AddSaleOrderComponent {
                 }
                 break;
             case 'send-email':
-                var attachments = [];
+                let attachments = [];
                 if (this.transaction.type.readLayout) {
                     modalRef = this._modalService.open(PrintTransactionTypeComponent)
                     modalRef.componentInstance.transactionId = this.transaction._id;
@@ -3122,8 +3122,7 @@ export class AddSaleOrderComponent {
 
         return new Promise<User>((resolve, reject) => {
 
-            var identity: User = JSON.parse(sessionStorage.getItem('user'));
-            var user;
+            let identity: User = JSON.parse(sessionStorage.getItem('user'));
             if (identity) {
                 this._userService.getUser(identity._id).subscribe(
                     result => {
@@ -3345,8 +3344,7 @@ export class AddSaleOrderComponent {
     }
 
     padNumber(n, length): string {
-
-        var n = n.toString();
+        n = n.toString();
         while (n.length < length)
             n = "0" + n;
         return n;
