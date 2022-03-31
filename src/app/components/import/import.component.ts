@@ -130,7 +130,7 @@ export class ImportComponent  implements OnInit {
           if (result.message) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           } else {
-            var message = '';
+            let message = '';
             if (result.records === 0) {
               message = "No se encontraron Registross para importar.";
             } else if (result.records === 1) {
@@ -177,7 +177,7 @@ export class ImportComponent  implements OnInit {
             if (result.message) {
               if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             } else {
-              var message = '';
+              let message = '';
               if (result.records === 0) {
                 message = "No se encontraron Registross para importar.";
               } else if (result.records === 1) {

@@ -48,15 +48,6 @@ export class ParamsReportComponent implements OnInit {
     }
 
     public sendParams(): void {
-
-        var params : [{
-            name : string,
-            value : any
-        }]
-
-        params = this.objForm.value
-
-
         this.activeModal.close(this.objForm.value);
     }
 

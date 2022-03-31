@@ -206,7 +206,7 @@ export class CompanyService extends ModelService {
     type: string, startDate: string, endDate: string
   ): Observable<any> {
 
-    var query = '{"type":"' + type + '","startDate":"' + startDate + '", "endDate":"' + endDate + '"}';
+    let query = '{"type":"' + type + '","startDate":"' + startDate + '", "endDate":"' + endDate + '"}';
 
     const URL = `${Config.apiURL}quantity-of-companies-by-type`;
 

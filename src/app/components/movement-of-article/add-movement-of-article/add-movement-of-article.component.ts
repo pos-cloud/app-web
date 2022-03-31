@@ -248,7 +248,7 @@ export class AddMovementOfArticleComponent implements OnInit {
                             await this.getOptional().then(
                                 result => {
                                     if (result) {
-                                        var movementsOfArticles: MovementOfArticle[] = result;
+                                        let movementsOfArticles: MovementOfArticle[] = result;
                                         for (const movArticle of movementsOfArticles) {
                                             for (let x = 0; x < this.grouped.length; x++) {
                                                 if (this.grouped[x].name === movArticle.category.description) {
@@ -1100,8 +1100,9 @@ export class AddMovementOfArticleComponent implements OnInit {
 
         return new Promise<boolean>((resolve, reject) => {
 
+            let taxAmount = 0;
             if (this.grouped && this.grouped.length > 0) {
-                var count = 0;
+                let count = 0;
                 for (const group of this.grouped) {
                     if (group.isRequired) {
                         for (const name of group.names) {
@@ -1141,7 +1142,6 @@ export class AddMovementOfArticleComponent implements OnInit {
                 movArticle.article.taxes.length > 0 &&
                 movArticle.taxes &&
                 movArticle.taxes.length > 0) {
-                var taxAmount = 0;
                 for (let tax of movArticle.article.taxes) {
                     if (tax.percentage === 0 && tax.taxAmount > 0) {
                         taxAmount += tax.taxAmount;
@@ -1283,7 +1283,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     async getMovsWithoutOptional() {
 
         return new Promise<boolean>(async (resolve, reject) => {
-            var isFinish: boolean = false;
+            let isFinish: boolean = false;
             for (const iterator of this.structures) {
                 if (!iterator.optional) {
                     if (!isFinish) {
@@ -1305,7 +1305,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
         return new Promise<Boolean>(async (resolve, reject) => {
 
-            var isFinish: boolean = false;
+            let isFinish: boolean = false;
             if (this.grouped && this.grouped.length > 0) {
                 for (const name of this.grouped) {
                     for (const names of name.names) {
@@ -1338,12 +1338,12 @@ export class AddMovementOfArticleComponent implements OnInit {
                 async result => {
                     if (result.article) {
 
-                        var movArticle = new MovementOfArticle();
+                        let movArticle = new MovementOfArticle();
                         //traigo todo lo del padre transaccion etc...
                         //movArticle = this.movementOfArticle;
                         movArticle = Object.assign(movArticle, this.movementOfArticle);
 
-                        var article: Article = result.article;
+                        let article: Article = result.article;
 
                         movArticle._id = null;
 
@@ -1380,7 +1380,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
                         movArticle = await this.recalculateSalePrice(movArticle);
 
-                        var stock;
+                        let stock;
                         if (utilization && utilization === Utilization.Sale) {
                             stock = true;
                         } else {

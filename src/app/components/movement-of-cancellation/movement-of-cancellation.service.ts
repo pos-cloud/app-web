@@ -23,30 +23,6 @@ export class MovementOfCancellationService extends ModelService {
     );
   }
 
-  public getMovementOfCancellation(_id: string): Observable<any> {
-
-    const URL = `${Config.apiURL}movement-of-cancellation`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams()
-      .set('id', _id);
-
-    return this._http.get(URL, {
-      headers: headers,
-      params: params
-    }).pipe(
-      map(res => {
-        return res;
-      }),
-      catchError((err) => {
-        return of(err);
-      })
-    );
-  }
-
   public getMovementsOfCancellations(
     project: {},
     match: {},
@@ -113,54 +89,6 @@ export class MovementOfCancellationService extends ModelService {
 
     return this._http.post(URL, { movementsOfCancellations: movementsOfCancellations }, {
       headers: headers
-    }).pipe(
-      map(res => {
-        return res;
-      }),
-      catchError((err) => {
-        return of(err);
-      })
-    );
-  }
-
-  public updateMovementOfCancellation(movementOfCancellation: MovementOfCancellation): Observable<any> {
-
-    const URL = `${Config.apiURL}movement-of-cancellation`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams()
-      .set('id', movementOfCancellation._id);
-
-    return this._http.put(URL, movementOfCancellation, {
-      headers: headers,
-      params: params
-    }).pipe(
-      map(res => {
-        return res;
-      }),
-      catchError((err) => {
-        return of(err);
-      })
-    );
-  }
-
-  public deleteMovementOfCancellation(_id: string): Observable<any> {
-
-    const URL = `${Config.apiURL}movement-of-cancellation`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams()
-      .set('id', _id);
-
-    return this._http.delete(URL, {
-      headers: headers,
-      params: params
     }).pipe(
       map(res => {
         return res;

@@ -99,11 +99,8 @@ export class ListCashBoxesComponent implements OnInit {
 	}
 
     public getUser(): Promise<User> {
-
         return new Promise<User>((resolve, reject) => {
-
-            var identity: User = JSON.parse(sessionStorage.getItem('user'));
-            var user;
+            let identity: User = JSON.parse(sessionStorage.getItem('user'));
             if (identity) {
                 this._userService.getUser(identity._id).subscribe(
                     result => {

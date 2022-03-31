@@ -282,10 +282,10 @@ export class AddTransactionComponent implements OnInit {
         }
     }
 
-    public loadVATPeriod() {
+    // public loadVATPeriod() {
         // var vatPeriod = moment(this.transactionForm.value.date).format('YYYYMM')
         // this.transactionForm.patchValue({ 'VATPeriod': vatPeriod });
-    }
+    // }
 
     public getCancellationTypes(): void {
 
@@ -643,20 +643,19 @@ export class AddTransactionComponent implements OnInit {
     }
 
     public updateTransaction(): Promise<Transaction> {
-
         return new Promise<Transaction>((resolve, reject) => {
-            this._transactionService.updateTransaction(this.transaction).subscribe(
-                result => {
-                    if (!result.transaction) {
-                        if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                        resolve(null);
+            this._transactionService.update(this.transaction).subscribe(
+                (result: Resulteable) => {
+                    if (result.status === 200) {
+                        resolve(result.result);
                     } else {
-                        resolve(result.transaction);
-                    }
+                        this.showToast(result);
+                        reject(result);
+                    };
                 },
                 error => {
-                    this.showMessage(error._body, 'danger', false);
-                    resolve(null);
+                    this.showToast(error)
+                    reject(error);
                 }
             );
         });

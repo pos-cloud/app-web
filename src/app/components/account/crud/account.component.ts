@@ -149,8 +149,8 @@ export class AccountComponent implements OnInit {
             if (meta.filetype == 'image') {
                 $('#upload').trigger('click');
                 $('#upload').on('change', function () {
-                    var file = this.files[0];
-                    var reader = new FileReader();
+                    let file = this.files[0];
+                    let reader = new FileReader();
                     reader.onload = function (e) {
                         callback(e.target['result'], {
                             alt: ''

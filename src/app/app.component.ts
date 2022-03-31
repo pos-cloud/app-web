@@ -79,9 +79,9 @@ export class AppComponent {
     }
 
     public execNotification() {
-        var message: string;
+        let message: string;
         if (this.config && this.config['expirationLicenseDate']) {
-            var days = moment(moment(this.config['expirationLicenseDate']).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days');
+            let days = moment(moment(this.config['expirationLicenseDate']).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days');
             days++;
             if (!this.config['demo']) {
                 if (days <= 0) {

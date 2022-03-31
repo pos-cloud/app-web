@@ -477,8 +477,8 @@ export class ApplicationComponent implements OnInit {
             if (meta.filetype == 'image') {
                 $('#upload').trigger('click');
                 $('#upload').on('change', function () {
-                    var file = this.files[0];
-                    var reader = new FileReader();
+                    let file = this.files[0];
+                    let reader = new FileReader();
                     reader.onload = function (e) {
                         callback(e.target['result'], {
                             alt: ''
@@ -706,18 +706,18 @@ export class ApplicationComponent implements OnInit {
         }
 
         this.home.sort(function (a, b) {
-            var textA = a.order;
-            var textB = b.order;
+            let textA = a.order;
+            let textB = b.order;
             return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
         });
     }
 
     public addResource(resourceForm: NgForm, data): void {
 
-        var order = null;
-        var article = null;
-        var link = null;
-        var banner = null;
+        let order = null;
+        let article = null;
+        let link = null;
+        let banner = null;
         if (resourceForm.value.order) {
             order = resourceForm.value.order;
         }
@@ -755,8 +755,8 @@ export class ApplicationComponent implements OnInit {
                 });
 
                 element.resources.sort(function (a, b) {
-                    var textA = a.order;
-                    var textB = b.order;
+                    let textA = a.order;
+                    let textB = b.order;
                     return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
                 });
             }
@@ -767,7 +767,7 @@ export class ApplicationComponent implements OnInit {
     }
 
     public deleteSection(item): void {
-        var i = this.home.indexOf(item);
+        let i = this.home.indexOf(item);
         if (i !== -1) {
             this.home.splice(i, 1);
         }
@@ -776,7 +776,7 @@ export class ApplicationComponent implements OnInit {
     public deleteResource(item, data): void {
         this.home.forEach(element => {
             if (element.title === data['title']) {
-                var i = element.resources.indexOf(item);
+                let i = element.resources.indexOf(item);
                 if (i !== -1) {
                     element.resources.splice(i, 1);
                 }

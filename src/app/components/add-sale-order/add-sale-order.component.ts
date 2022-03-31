@@ -495,17 +495,17 @@ export class AddSaleOrderComponent {
             this.transaction.exempt = this.roundNumber.transform(this.transaction.exempt);
             this.transaction.discountAmount = this.roundNumber.transform(this.transaction.discountAmount, 6);
             this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
-            this._transactionService.updateTransaction(this.transaction).subscribe(
-                result => {
-                    if (!result.transaction) {
-                        if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-                        reject(result.message);
+            this._transactionService.update(this.transaction).subscribe(
+                (result: Resulteable) => {
+                    if (result.status === 200) {
+                        resolve(result.result);
                     } else {
-                        resolve(result.transaction);
-                    }
+                        this.showToast(result);
+                        reject(result);
+                    };
                 },
                 error => {
-                    this.showMessage(error._body, 'danger', false);
+                    this.showToast(error)
                     reject(error);
                 }
             );
@@ -668,8 +668,8 @@ export class AddSaleOrderComponent {
     async addItem(event) {
 
         if (event && event['parent']) {
-            var itemData: MovementOfArticle = event['parent'];
-            var child: MovementOfArticle[] = event['child']
+            let itemData: MovementOfArticle = event['parent'];
+            let child: MovementOfArticle[] = event['child']
 
             this.showCategories();
 
@@ -721,10 +721,10 @@ export class AddSaleOrderComponent {
                             }
                         } else {
 
-                            var movsArticle: MovementOfArticle[] = new Array();
+                            let movsArticle: MovementOfArticle[] = new Array();
 
                             for (const movArticle of child) {
-                                var stock: boolean = await this.getUtilization(movementOfArticle.article._id, movArticle.article._id)
+                                let stock: boolean = await this.getUtilization(movementOfArticle.article._id, movArticle.article._id)
                                 if (await this.isValidMovementOfArticle(movArticle, stock)) {
                                     movsArticle.push(movArticle)
                                 }
@@ -975,7 +975,7 @@ export class AddSaleOrderComponent {
 
             this.loading = true;
 
-            var movsArticles: MovementOfArticle[] = new Array();
+            let movsArticles: MovementOfArticle[] = new Array();
 
             for (const movArticle of movementsOfArticles) {
 
@@ -1825,7 +1825,7 @@ export class AddSaleOrderComponent {
                 }
                 break;
             case 'send-email':
-                var attachments = [];
+                let attachments = [];
                 if (this.transaction.type.readLayout) {
                     modalRef = this._modalService.open(PrintTransactionTypeComponent)
                     modalRef.componentInstance.transactionId = this.transaction._id;
@@ -2161,14 +2161,8 @@ export class AddSaleOrderComponent {
                             this.transaction.endDate = moment(this.transaction.endDate, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
                             this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
                             this.transaction.expirationDate = this.transaction.endDate;
-                            await this.updateTransaction().then(
-                                async transaction => {
-                                    if (transaction) {
-                                        this.transaction = transaction;
-                                        this.lastQuotation = this.transaction.quotation;
-                                    }
-                                }
-                            );
+                            this.transaction = await this.updateTransaction();
+                            this.lastQuotation = this.transaction.quotation;
                         }
                     }
                 }, (reason) => {
@@ -3128,8 +3122,7 @@ export class AddSaleOrderComponent {
 
         return new Promise<User>((resolve, reject) => {
 
-            var identity: User = JSON.parse(sessionStorage.getItem('user'));
-            var user;
+            let identity: User = JSON.parse(sessionStorage.getItem('user'));
             if (identity) {
                 this._userService.getUser(identity._id).subscribe(
                     result => {
@@ -3168,7 +3161,6 @@ export class AddSaleOrderComponent {
         }
 
         this.transaction = await this.updateTransaction();
-        this.loading = true;
     }
 
     getTransports(): void {
@@ -3352,8 +3344,7 @@ export class AddSaleOrderComponent {
     }
 
     padNumber(n, length): string {
-
-        var n = n.toString();
+        n = n.toString();
         while (n.length < length)
             n = "0" + n;
         return n;

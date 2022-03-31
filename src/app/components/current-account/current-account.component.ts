@@ -183,7 +183,7 @@ export class CurrentAccountComponent implements OnInit {
             this.detailsPaymentMethod = Boolean(JSON.parse(this.detailsPaymentMethod));
         }
 
-        var transactionTypes = [];
+        let transactionTypes = [];
 
         if (this.transactionTypesSelect) {
             this.transactionTypesSelect.forEach(element => {
@@ -343,7 +343,7 @@ export class CurrentAccountComponent implements OnInit {
                 break;
             case 'send-email':
                 let transaction: Transaction;
-                var attachments = [];
+                let attachments = [];
 
                 await this.getTransaction(transactionId).then(
                     async result => {
@@ -518,8 +518,7 @@ export class CurrentAccountComponent implements OnInit {
     }
 
     public padNumber(n, length): string {
-
-        var n = n.toString();
+        n = n.toString();
         while (n.length < length)
             n = "0" + n;
         return n;

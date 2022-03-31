@@ -141,27 +141,12 @@ export class AddArticleComponent implements OnInit {
     images_dataimg_filter: function (img) {
       return img.hasAttribute('internal-blob');
     },
-    /*file_picker_callback: function (callback, value, meta) {
-        if (meta.filetype == 'image') {
-            $('#upload').trigger('click');
-            $('#upload').on('change', function () {
-                var file = this.files[0];
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    callback(e.target['result'], {
-                        alt: ''
-                    });
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-    },*/
     file_picker_callback: function (callback, value, meta) {
       if (meta.filetype == 'image') {
         $('#upload').trigger('click');
         $('#upload').on('change', function () {
-          var file = this.files[0];
-          var reader = new FileReader();
+          let file = this.files[0];
+          let reader = new FileReader();
           reader.onload = function (e) {
 
             callback(e.target['result'], {
@@ -220,7 +205,7 @@ export class AddArticleComponent implements OnInit {
   public searchCategories = (text$: Observable<string>) =>
     text$.pipe(debounceTime(300),
       distinctUntilChanged(),
-      tap(() => this.loading = true),
+      tap(() => null),
       switchMap(async term =>
         await this.getCategories(`where="description": { "$regex": "${term}", "$options": "i" }&sort="description":1&limit=10`).then(
           categories => {
@@ -228,7 +213,7 @@ export class AddArticleComponent implements OnInit {
           }
         )
       ),
-      tap(() => this.loading = false)
+      tap(() => null)
     )
 
   public formatterCategories = (x: { description: string }) => x.description;
@@ -237,7 +222,7 @@ export class AddArticleComponent implements OnInit {
     text$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
-      tap(() => this.loading = true),
+      tap(() => null),
       switchMap(term =>
         this.getMakes(`where="description": { "$regex": "${term}", "$options": "i" }&sort="description":1&limit=10`).then(
           makes => {
@@ -245,7 +230,7 @@ export class AddArticleComponent implements OnInit {
           }
         )
       ),
-      tap(() => this.loading = false)
+      tap(() => null)
     )
 
   public formatterMakes = (x: { description: string }) => x.description;
@@ -254,7 +239,7 @@ export class AddArticleComponent implements OnInit {
     text$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
-      tap(() => this.loading = true),
+      tap(() => null),
       switchMap(async term => {
         let match: {} = (term && term !== '') ? { name: { $regex: term, $options: 'i' } } : {};
         return await this.getAllUnitsOfMeasurement(match).then(
@@ -263,7 +248,7 @@ export class AddArticleComponent implements OnInit {
           }
         )
       }),
-      tap(() => this.loading = false)
+      tap(() => null)
     )
   public formatterUnitsOfMeasurement = (x: UnitOfMeasurement) => { return x.name; };
 
@@ -271,7 +256,7 @@ export class AddArticleComponent implements OnInit {
     text$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
-      tap(() => this.loading = true),
+      tap(() => null),
       switchMap(async term => {
         let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' }, mode: "Analitico", operationType: { "$ne": "D" } } : {};
         return await this.getAllAccounts(match).then(
@@ -280,7 +265,7 @@ export class AddArticleComponent implements OnInit {
           }
         )
       }),
-      tap(() => this.loading = false)
+      tap(() => null)
     )
   public formatterAccounts = (x: Account) => { return x.description; };
 
@@ -397,9 +382,7 @@ export class AddArticleComponent implements OnInit {
           this.classifications = new Array();
         }
       },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-      }
+      error => this.showToast(error)
     );
   }
 
@@ -411,9 +394,7 @@ export class AddArticleComponent implements OnInit {
           this.articleFields = result.articleFields;
         }
       },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-      }
+      error => this.showToast(error)
     );
   }
 
@@ -593,7 +574,7 @@ export class AddArticleComponent implements OnInit {
 
       if (depositAux.branch._id === deposit.branch._id) {
         valid = false;
-        this.showMessage("Solo puede tener un depósito por sucursal.", "info", true);
+        this.showToast(null, 'info', "Solo puede tener un depósito por sucursal.");
       }
     }
 
@@ -601,13 +582,13 @@ export class AddArticleComponent implements OnInit {
 
       if (depositForm.value.deposit == element.deposit) {
         valid = false;
-        this.showMessage("El depósito ya existe", "info", true);
+        this.showToast(null, 'info', "El depósito ya existe");
       }
 
     });
 
     if (depositForm.value.deposit == '' || depositForm.value.deposit == 0 || depositForm.value.deposit == null) {
-      this.showMessage("Debe seleccionar un depósito", "info", true);
+      this.showToast(null, 'info', "Debe seleccionar un depósito");
       valid = false;
     }
 
@@ -627,7 +608,7 @@ export class AddArticleComponent implements OnInit {
   async addOtherField(otherFieldsForm: NgForm) {
 
     let valid = true;
-    if(otherFieldsForm) {
+    if (otherFieldsForm) {
 
       const otherFields = this.articleForm.controls.otherFields as FormArray;
 
@@ -637,13 +618,13 @@ export class AddArticleComponent implements OnInit {
 
         if (otherFieldsForm.value.articleField._id == element.articleField) {
           valid = false;
-          this.showMessage("El campo ya existe", "info", true);
+          this.showToast(null, 'info', "El campo ya existe");
         }
 
       });
 
       if (otherFieldsForm.value && otherFieldsForm.value.value == '' || otherFieldsForm.value.value == null) {
-        this.showMessage("Debe ingresar un valor", "info", true);
+        this.showToast(null, 'info', "Debe ingresar un valor");
         valid = false;
       }
 
@@ -668,7 +649,7 @@ export class AddArticleComponent implements OnInit {
     const locations = this.articleForm.controls.locations as FormArray;
 
     if (locationForm && locationForm.value && locationForm.value.location == '' || locationForm.value.location == null) {
-      this.showMessage("Debe seleccionar una ubicación.", "info", true);
+      this.showToast(null, 'info', "Debe seleccionar una ubicación.");
       valid = false;
     }
 
@@ -676,7 +657,7 @@ export class AddArticleComponent implements OnInit {
 
       if (locationForm && locationForm.value && locationForm.value.location == element.location) {
         valid = false;
-        this.showMessage("La ubicación ya existe.", "info", true);
+        this.showToast(null, 'info', "La ubicación ya existe.");
       }
     });
 
@@ -715,22 +696,17 @@ export class AddArticleComponent implements OnInit {
           this.currencies = result.currencies;
         }
       },
-      error => {
-        this.showMessage(error._body, "danger", false);
-      }
+      error => this.showToast(error)
     );
   }
 
   public getArticle(): void {
 
-    this.loading = true;
-
     this._articleService.getArticle(this.articleId).subscribe(
       (result: any) => {
         if (!result.article) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.showToast(result);
         } else {
-          this.hideMessage();
           this.article = result.article;
           this.meliAttrs = Object.assign({}, this.article.meliAttrs);
           this.notes = this.article.notes;
@@ -763,12 +739,8 @@ export class AddArticleComponent implements OnInit {
           this.setValuesForm();
           this.setValuesArray();
         }
-        this.loading = false;
       },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
+      error => this.showToast(error)
     );
   }
 
@@ -881,9 +853,7 @@ export class AddArticleComponent implements OnInit {
           this.variants = this.getUniqueVariants(result.variants);
         }
       },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-      }
+      error => this.showToast(error)
     );
   }
 
@@ -911,7 +881,7 @@ export class AddArticleComponent implements OnInit {
   }
 
   public padString(n, length) {
-    var n = n.toString();
+    n = n.toString();
     while (n.length < length) {
       n = '0' + n;
     }
@@ -956,9 +926,7 @@ export class AddArticleComponent implements OnInit {
 
         this.setValuesForm();
       },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-      }
+      error => this.showToast(error)
     );
   }
 
@@ -988,14 +956,12 @@ export class AddArticleComponent implements OnInit {
     this._articleStockService.saveArticleStock(this.articleStock).subscribe(
       result => {
         if (!result.articleStock) {
-          if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+          this.showToast(result);
         } else {
           this.articleStock = result.articleStock;
         }
       },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-      }
+      error => this.showToast(error)
     );
   }
 
@@ -1011,9 +977,7 @@ export class AddArticleComponent implements OnInit {
             resolve(result.makes)
           }
         },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-        }
+        error => this.showToast(error)
       );
     });
 
@@ -1027,14 +991,10 @@ export class AddArticleComponent implements OnInit {
           if (!result.categories) {
             resolve(null)
           } else {
-            this.hideMessage();
             resolve(result.categories)
           }
         },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null)
-        }
+        error => this.showToast(error)
       );
     });
 
@@ -1047,14 +1007,11 @@ export class AddArticleComponent implements OnInit {
         if (!result.deposits) {
           this.getLocations();
         } else {
-          this.hideMessage();
           this.deposits = result.deposits;
           this.getLocations();
         }
       },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-      }
+      error => this.showToast(error)
     );
   }
 
@@ -1065,14 +1022,11 @@ export class AddArticleComponent implements OnInit {
         if (!result.locations) {
           this.getCompany();
         } else {
-          this.hideMessage();
           this.locations = result.locations;
           this.getCompany();
         }
       },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-      }
+      error => this.showToast(error)
     );
   }
 
@@ -1084,7 +1038,6 @@ export class AddArticleComponent implements OnInit {
     this._companyService.getCompanies(query).subscribe(
       result => {
         if (result.companies) {
-          this.hideMessage();
           this.companies = result.companies;
         }
         if (this.operation === 'add' || this.operation === 'copy') {
@@ -1093,9 +1046,7 @@ export class AddArticleComponent implements OnInit {
           this.setValuesForm();
         };
       },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-      }
+      error => this.showToast(error)
     );
   }
 
@@ -1170,9 +1121,7 @@ export class AddArticleComponent implements OnInit {
           this.lastPricePurchase = 0;
         }
       },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-      }
+      error => this.showToast(error)
     );
   }
 
@@ -1475,7 +1424,6 @@ export class AddArticleComponent implements OnInit {
 
     if (!this.readonly) {
       if (this.articleForm.valid) {
-        this.loading = true;
         this.loadPosDescription();
         this.loadURL();
         const oldMeliId: string = this.article.meliId;
@@ -1545,7 +1493,7 @@ export class AddArticleComponent implements OnInit {
       this._articleService.saveArticle(this.article, this.variants).subscribe(
         result => {
           if (!result.article) {
-            this.showMessage((result.error && result.error.message) ? result.error.message : (result.message) ? result.message : '', 'info', true);
+            this.showToast(null, 'info', (result.error && result.error.message) ? result.error.message : (result.message) ? result.message : '');
           } else {
             this.hasChanged = true;
             this.article = result.article;
@@ -1561,22 +1509,20 @@ export class AddArticleComponent implements OnInit {
                     } else {
                       this.imageURL = './../../../assets/img/default.jpg';
                     }
-                    this.showMessage('El producto se ha añadido con éxito.', 'success', false);
-                    if (this.userType === 'pos') {
-                      this.activeModal.close({ article: this.article });
-                    }
+                    this.showToast(null, 'sucess', 'El producto se ha añadido con éxito.');
+                    this.activeModal.close({ article: this.article });
                   },
-                  (error) => this.showMessage(error, 'danger', false)
+                  (error) => this.showToast(error)
                 );
             } else {
-              this.showMessage('El producto se ha añadido con éxito.', 'success', false);
+              this.showToast(null, 'sucess', 'El producto se ha añadido con éxito.');
               if (this.userType === 'pos') {
                 this.activeModal.close({ article: this.article });
               }
             }
           }
         },
-        error => this.showMessage(error._body, 'danger', false)
+        error => this.showToast(error)
       );
     } else {
       this.loading = false;
@@ -1602,11 +1548,10 @@ export class AddArticleComponent implements OnInit {
                 this.imageURL = './../../../assets/img/default.jpg';
               }
               this.filesToUpload = null;
-              this.loading = false;
             },
             (error) => {
               isValid = false;
-              this.showMessage(error, 'danger', false);
+              this.showToast(error);
             }
           );
       }
@@ -1617,7 +1562,7 @@ export class AddArticleComponent implements OnInit {
         result => {
           if (!result.article) {
             isValid = false;
-            this.showMessage((result.error && result.error.message) ? result.error.message : (result.message) ? result.message : '', 'info', true);
+            this.showToast(null, 'info', (result.error && result.error.message) ? result.error.message : (result.message) ? result.message : '');
           } else {
             this.hasChanged = true;
             this.article = result.article;
@@ -1625,17 +1570,11 @@ export class AddArticleComponent implements OnInit {
             this.articleForm.patchValue({ wooId: this.article.wooId });
             this._articleService.setItems(null);
             this.showToast(null, 'success', 'Operación realizada con éxito');
+            this.activeModal.close();
           }
-          this.loading = false;
         },
-        error => {
-          isValid = false;
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
-        }
+        error => this.showToast(error)
       );
-    } else {
-      this.loading = false;
     }
   }
 
@@ -1646,13 +1585,12 @@ export class AddArticleComponent implements OnInit {
     this._articleService.deleteArticle(this.article._id).subscribe(
       result => {
         if (!result.article) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.showToast(result);
         } else {
           this.activeModal.close('delete_close');
         }
-        this.loading = false;
       },
-      error => this.showMessage(error._body, 'danger', false)
+      error => this.showToast(error)
     );
   }
 
@@ -1662,7 +1600,7 @@ export class AddArticleComponent implements OnInit {
         await this.getCategories(`where="parent": "${this.article.category._id}"`).then(
           result => {
             if (result && result.length > 0) {
-              this.showMessage("Debe seleccionar una categoría valida", "danger", true);
+              this.showToast(null, 'danger', "Debe seleccionar una categoría valida");
               resolve(false);
             }
           })
@@ -1671,7 +1609,7 @@ export class AddArticleComponent implements OnInit {
         await this.getArticleURL().then(
           result => {
             if (result) {
-              this.showMessage("La URL ya esta en uso", "danger", true);
+              this.showToast(null, 'danger', "La URL ya esta en uso");
               resolve(false);
             } else {
               resolve(true);
@@ -1687,8 +1625,6 @@ export class AddArticleComponent implements OnInit {
   async getArticleURL(): Promise<boolean> {
 
     return new Promise<boolean>((resolve, reject) => {
-
-      this.loading = true;
 
       let project = {
         _id: 1,
@@ -1713,17 +1649,13 @@ export class AddArticleComponent implements OnInit {
       match = JSON.parse(match);
       this._articleService.getArticlesV2(project, match, {}, {}).subscribe(
         result => {
-          this.loading = false;
           if (result && result.articles && result.articles.length > 0) {
             resolve(true);
           } else {
             resolve(false);
           }
         },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(false);
-        }
+        error => this.showToast(error)
       );
     });
   }
@@ -1764,9 +1696,7 @@ export class AddArticleComponent implements OnInit {
           this.addPictureArray(resultUpload['file']['filename']);
           this.filesToArray = null;
         },
-        (error) => {
-          this.showMessage(error, 'danger', false);
-        }
+        (error) => this.showToast(error)
       );
   }
 
@@ -1836,15 +1766,13 @@ export class AddArticleComponent implements OnInit {
             let control = <FormArray>this.articleForm.controls.pictures;
             control.removeAt(index)
           } else {
-            this.showMessage("La imagen no se pudo eliminar", 'danger', true);
+            this.showToast(null, 'danger', "La imagen no se pudo eliminar");
           }
         } else {
-          this.showMessage("La imagen no se encontro", 'danger', true);
+          this.showToast(null, 'danger', "La imagen no se encontro");
         }
       },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-      }
+      error => this.showToast(error)
     )
   }
 
@@ -1863,18 +1791,6 @@ export class AddArticleComponent implements OnInit {
 
   public manageVariants(variants: Variant[]): void {
     this.variants = variants;
-  }
-
-  public showMessage(message: string, type: string, dismissible: boolean): void {
-    this.alertMessage = message;
-    this.alertConfig.type = type;
-    this.alertConfig.dismissible = dismissible;
-    this.loading = false;
-  }
-
-  public hideMessage(): void {
-    this.alertMessage = '';
-    this.loading = false;
   }
 
   public showToast(result, type?: string, title?: string, message?: string): void {

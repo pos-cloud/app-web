@@ -735,7 +735,7 @@ export class ReportKardexComponent implements OnInit {
 
     this.loading = true;
 
-    var query = `where= "article": "${this.articleSelected._id}",
+    let query = `where= "article": "${this.articleSelected._id}",
                         "branch": "${this.branchSelectedId}",
                         "deposit": "${this.depositSelectedId}"`;
 

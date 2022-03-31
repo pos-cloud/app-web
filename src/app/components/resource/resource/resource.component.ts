@@ -239,7 +239,7 @@ export class ResourceComponent implements OnInit {
 
         this.selectedFile = <File>event.target.files[0];
 
-        var reader = new FileReader();
+        let reader = new FileReader();
         reader.readAsDataURL(this.selectedFile);
         reader.onload = (_event) => {
             this.src = reader.result;

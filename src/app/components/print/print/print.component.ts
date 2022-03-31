@@ -45,15 +45,15 @@ import { MovementOfCancellation } from 'app/components/movement-of-cancellation/
 import { CapitalizePipe } from 'app/main/pipes/capitalize';
 import { TaxClassification } from 'app/components/tax/tax';
 
-var splitRegex = /\r\n|\r|\n/g;
+let splitRegex = /\r\n|\r|\n/g;
 jsPDF.API['textEx'] = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
-    var fontSize = this.internal.getFontSize() / this.internal.scaleFactor;
+    let fontSize = this.internal.getFontSize() / this.internal.scaleFactor;
 
     // As defined in jsPDF source code
-    var lineHeightProportion = 1.15;
+    let lineHeightProportion = 1.15;
 
-    var splittedText: string[];
-    var lineCount: number = 1;
+    let splittedText: string[];
+    let lineCount: number = 1;
     if (vAlign === 'middle' || vAlign === 'bottom'
         || hAlign === 'center' || hAlign === 'right') {
 
@@ -74,11 +74,11 @@ jsPDF.API['textEx'] = function (text: any, x: number, y: number, hAlign?: string
     if (hAlign === 'center'
         || hAlign === 'right') {
 
-        var alignSize = fontSize;
+        let alignSize = fontSize;
         if (hAlign === 'center') alignSize *= 0.5;
 
         if (lineCount > 1) {
-            for (var iLine = 0; iLine < splittedText.length; iLine++) {
+            for (let iLine = 0; iLine < splittedText.length; iLine++) {
                 this.text(splittedText[iLine],
                     x - this.getStringUnitWidth(splittedText[iLine]) * alignSize,
                     y);
@@ -521,7 +521,7 @@ export class PrintComponent implements OnInit {
 
     public async toPrintPayment() {
 
-        var transport = 0;
+        let transport = 0;
 
         // Encabezado de la transacción
         if (!this.transaction.type.isPreprinted) {
@@ -604,14 +604,14 @@ export class PrintComponent implements OnInit {
         this.doc.setFont('', 'normal');
 
         // Detalle de productos
-        var row = 85;
+        let row = 85;
         let commissionAmount: number = 0.00;
         let administrativeExpenseAmount: number = 0.00;
         let otherExpenseAmount: number = 0.00;
 
         if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
 
-            for (var i = 0; i < this.movementsOfCashes.length; i++) {
+            for (let i = 0; i < this.movementsOfCashes.length; i++) {
 
                 commissionAmount += this.movementsOfCashes[0].commissionAmount;
                 administrativeExpenseAmount += this.movementsOfCashes[0].administrativeExpenseAmount;
@@ -760,7 +760,7 @@ export class PrintComponent implements OnInit {
                     }
 
                     // Detalle de productos
-                    var row = 85;
+                    row = 85;
 
                     this.doc.setFont('', "bold");
                     this.doc.text("TRANSPORTE:".toString(), 25, row);
@@ -1170,7 +1170,7 @@ export class PrintComponent implements OnInit {
         datos['codAut'] = this.transaction.CAE;
 
 
-        var objJsonB64 = btoa(JSON.stringify(datos));
+        let objJsonB64 = btoa(JSON.stringify(datos));
         url += objJsonB64;
 
         this.getBarcode64(`qr?value=${url}`, 'invoice');
@@ -1188,8 +1188,8 @@ export class PrintComponent implements OnInit {
         let decimalPipe = new CurrencyPipe('es-AR');
 
         //Cabecera del ticket
-        var margin = 5;
-        var row = 10;
+        let margin = 5;
+        let row = 10;
         this.doc.setFont('', 'bold');
         this.doc.setFontSize(this.fontSizes.large);
         this.centerText(margin, margin, 80, 0, row, this.config[0].companyName);
@@ -1454,7 +1454,7 @@ export class PrintComponent implements OnInit {
         this.doc.setFontSize(this.fontSizes.normal);
 
         // Detalle de cierre
-        var row = 55;
+        let row = 55;
 
         // Detalle de la caja
         this.doc.setFont('', 'bold');
@@ -1989,13 +1989,13 @@ export class PrintComponent implements OnInit {
     public centerText(lMargin, rMargin, pdfInMM, startPdf, height, text): void {
 
         if (text) {
-            var pageCenter = pdfInMM / 2;
+            let pageCenter = pdfInMM / 2;
 
-            var lines = this.doc.splitTextToSize(text, (pdfInMM - lMargin - rMargin));
-            var dim = this.doc.getTextDimensions(text);
-            var lineHeight = dim.h;
+            let lines = this.doc.splitTextToSize(text, (pdfInMM - lMargin - rMargin));
+            let dim = this.doc.getTextDimensions(text);
+            let lineHeight = dim.h;
             if (lines && lines.length > 0) {
-                for (var i = 0; i < lines.length; i++) {
+                for (let i = 0; i < lines.length; i++) {
                     let lineTop = (lineHeight / 2) * i;
                     this.doc.text(text, pageCenter + startPdf, height, lineTop, 'center')
                 }
@@ -2033,7 +2033,7 @@ export class PrintComponent implements OnInit {
         this.doc.text("Cuenta Corriente", 140, 10);
 
         // Detalle de comprobantes
-        var row = 85;
+        let row = 85;
 
         this.doc.setFontSize(this.fontSizes.normal);
         if (this.items && this.items.length > 0) {
@@ -2057,13 +2057,6 @@ export class PrintComponent implements OnInit {
                 }
                 item.transactionTotalPrice = this.roundNumber.transform(item.transactionTotalPrice, 2).toFixed(2);
 
-                /*if (this.params.detailsPaymentMethod) {
-                this.doc.textEx("$ " + new Intl.NumberFormat("de-DE", { minimumFractionDigits: 2 }).format(item.transactionTotalPrice), 99, row, 'right', 'middle');
-                    this.doc.text(item.paymentMethodName.slice(0, 22), 110, row);
-                } else {
-                    this.doc.textEx("$ " + new Intl.NumberFormat("de-DE", { minimumFractionDigits: 2 }).format(item.transactionTotalPrice), 125, row, 'right', 'middle');
-                }*/
-
                 item.debe = this.roundNumber.transform(item.debe, 2).toFixed(2);
                 item.haber = this.roundNumber.transform(item.haber, 2).toFixed(2);
                 item.balance = this.roundNumber.transform(item.balance, 2).toFixed(2);
@@ -2072,11 +2065,6 @@ export class PrintComponent implements OnInit {
                 this.doc.textEx("$ " + new Intl.NumberFormat("de-DE", { minimumFractionDigits: 2 }).format(item.haber), 180, row, 'right', 'middle');
                 this.doc.setFont('', 'bold');
                 this.doc.textEx("$ " + new Intl.NumberFormat("de-DE", { minimumFractionDigits: 2 }).format(item.balance), 205, row, 'right', 'middle');
-
-                /* this.doc.text("$ " + this.roundNumber.transform(item.debe), 145, row);
-                 this.doc.text("$ " + this.roundNumber.transform(item.haber), 165, row);
-                 this.doc.setFont('','bold');
-                 this.doc.text("$ " + this.roundNumber.transform(item.balance), 185, row);*/
                 this.doc.setFont('', 'normal');
 
                 row += 8;
@@ -2121,7 +2109,7 @@ export class PrintComponent implements OnInit {
                     this.doc.text("Cuenta Corriente", 140, 10);
 
                     // Detalle de comprobantes
-                    var row = 95;
+                    row = 95;
 
                     this.doc.setFontSize(this.fontSizes.normal);
                 }
@@ -2144,7 +2132,7 @@ export class PrintComponent implements OnInit {
 
     async toPrintInvoice() {
 
-        var transport = 0;
+        let transport = 0;
 
         // Encabezado de la transacción
         if (!this.transaction.type.isPreprinted) {
@@ -2283,12 +2271,12 @@ export class PrintComponent implements OnInit {
         this.doc.setFont('', 'normal');
 
         // Detalle de productos
-        var row = 85;
-        var margin = 5;
-        var totalArticle = 0;
+        let row = 85;
+        let margin = 5;
+        let totalArticle = 0;
 
         if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
-            for (var i = 0; i < this.movementsOfArticles.length; i++) {
+            for (let i = 0; i < this.movementsOfArticles.length; i++) {
                 if (this.movementsOfArticles[i].amount > 0) {
 
                     if (this.movementsOfArticles[i].amount) {
@@ -2547,13 +2535,16 @@ export class PrintComponent implements OnInit {
             this.doc.line(0, row, 200, row)
             row += 5
             for (let index = 0; index < movCancelation.length; index++) {
-                this.doc.setFont('', 'normal');
-                this.doc.text(movCancelation[index].transactionOrigin.type.name + "   " + this.padString(movCancelation[index].transactionOrigin.origin, 4) + "-" + this.padString(movCancelation[index].transactionOrigin.number, 8), 10, row);
-                //this.doc.text("$ " + this.roundNumber.transform(this.transactions[index].totalPrice), 80, row);
-                this.doc.textEx("$ " + this.roundNumber.transform(movCancelation[index].transactionOrigin.totalPrice), 95, row, 'right', 'middle');
-                this.doc.text(movCancelation[index].transactionOrigin.company.name, 110, row);
+                if (movCancelation[index].transactionOrigin.type) {
 
-                row += 5;
+                    this.doc.setFont('', 'normal');
+                    this.doc.text(movCancelation[index].transactionOrigin.type.name + "   " + this.padString(movCancelation[index].transactionOrigin.origin, 4) + "-" + this.padString(movCancelation[index].transactionOrigin.number, 8), 10, row);
+                    //this.doc.text("$ " + this.roundNumber.transform(this.transactions[index].totalPrice), 80, row);
+                    this.doc.textEx("$ " + this.roundNumber.transform(movCancelation[index].transactionOrigin.totalPrice), 95, row, 'right', 'middle');
+                    this.doc.text(movCancelation[index].transactionOrigin.company.name, 110, row);
+
+                    row += 5;
+                }
 
                 if (row > 240) {
                     this.doc.setFont('', "bold");
@@ -2680,7 +2671,7 @@ export class PrintComponent implements OnInit {
             let neto = 0;
 
             rowTotals += space;
-            var rowNet;
+            let rowNet;
             if (this.transaction.company &&
                 this.transaction.company.vatCondition &&
                 this.transaction.company.vatCondition.discriminate &&
@@ -2943,8 +2934,8 @@ export class PrintComponent implements OnInit {
     async toPrintInvoiceRoll() {
 
         //Cabecera del ticket
-        var margin = 5;
-        var row = 40;
+        let margin = 5;
+        let row = 40;
         let width = this.printer.pageWidth;
 
         if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
@@ -3168,7 +3159,7 @@ export class PrintComponent implements OnInit {
 
         row += 3;
         if (this.transaction.orderNumber || this.transaction.table) {
-            var printNumber = "";
+            let printNumber = "";
             if (this.transaction.table && this.transaction.table.description) {
                 printNumber = this.transaction.table.description
             } else {
@@ -3286,8 +3277,8 @@ export class PrintComponent implements OnInit {
     public toPrintKitchen() {
 
         //Cabecera del ticket
-        var margin = 5;
-        var row = 5;
+        let margin = 5;
+        let row = 5;
 
 
         //jackson
@@ -3365,9 +3356,9 @@ export class PrintComponent implements OnInit {
                 if (movementOfArticle.notes && movementOfArticle.notes !== '') {
                     row += 5;
                     this.doc.setFont("", "italic");
-                    var slice = 0;
+                    let slice = 0;
 
-                    var note = movementOfArticle.notes.split(';')
+                    let note = movementOfArticle.notes.split(';')
 
                     if (note && note.length > 0) {
                         for (const iterator of note) {
@@ -3408,8 +3399,8 @@ export class PrintComponent implements OnInit {
     public toPrintBar() {
 
         //Cabecera del ticket
-        var margin = 5;
-        var row = 5;
+        let margin = 5;
+        let row = 5;
         this.doc.setFont('', 'bold');
         this.doc.setFontSize(this.fontSizes.large);
         this.centerText(3, 5, 80, 0, row, "BAR");
@@ -3463,7 +3454,7 @@ export class PrintComponent implements OnInit {
                     //aca logica de nota
                     row += 5;
                     this.doc.setFont("", "italic");
-                    var slice = 0
+                    let slice = 0
                     while (movementOfArticle.notes.length > slice) {
                         this.doc.text(movementOfArticle.notes.slice(slice, this.printer.pageWidth - 30 + slice) + "-", 5, row);
                         row += 4
@@ -3484,8 +3475,8 @@ export class PrintComponent implements OnInit {
     public async toPrintVoucher() {
 
         //Cabecera del ticket
-        var margin = 5;
-        var row = 10;
+        let margin = 5;
+        let row = 10;
 
         if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
 
@@ -3563,7 +3554,7 @@ export class PrintComponent implements OnInit {
                 if (movementOfArticle.notes && movementOfArticle.notes !== '') {
                     row += 5;
                     this.doc.setFont("", "italic");
-                    var slice = 0;
+                    let slice = 0;
                     while (movementOfArticle.notes.length > slice) {
                         this.doc.text(movementOfArticle.notes.slice(slice, this.printer.pageWidth - 30 + slice) + "-", 5, row);
                         row += 4;
@@ -3641,7 +3632,7 @@ export class PrintComponent implements OnInit {
 
     async toPrintRoll() {
         //Cabecera del ticket
-        var margin = 5;
+        let margin = 5;
         this.row = 30;
 
         let width = this.printer.pageWidth;
@@ -3804,9 +3795,9 @@ export class PrintComponent implements OnInit {
                         this.row += 6;
                         this.doc.setFont("", "italic");
                         this.doc.setTextColor(0, 0, 0);
-                        var slice = 0
+                        let slice = 0
 
-                        var note = movementOfArticle.notes.split(';')
+                        let note = movementOfArticle.notes.split(';')
 
                         if (note && note.length > 0) {
                             for (const iterator of note) {
@@ -3825,7 +3816,7 @@ export class PrintComponent implements OnInit {
                         }
                     }
                     if (movementOfArticle.article && movementOfArticle.article.containsStructure) {
-                        var movArticle: MovementOfArticle[] = await this.getMovArticleChild(movementOfArticle._id)
+                        let movArticle: MovementOfArticle[] = await this.getMovArticleChild(movementOfArticle._id)
 
                         if (movArticle && movArticle.length > 0) {
                             this.doc.setFont("", "italic");
@@ -3888,7 +3879,7 @@ export class PrintComponent implements OnInit {
 
             this.row += 5
             this.doc.setFont('', 'normal');
-            slice = 0
+            let slice = 0
             while (this.transaction.observation.length > slice) {
                 this.doc.text(this.transaction.observation.slice(slice, this.printer.pageWidth - 30 + slice) + "-", 5, this.row);
                 this.row += 4
@@ -4007,7 +3998,7 @@ export class PrintComponent implements OnInit {
     }
 
     public padString(n, length) {
-        var n = n.toString();
+        n = n.toString();
         while (n.length < length)
             n = "0" + n;
         return n;
