@@ -282,10 +282,10 @@ export class AddTransactionComponent implements OnInit {
         }
     }
 
-    // public loadVATPeriod() {
-        // var vatPeriod = moment(this.transactionForm.value.date).format('YYYYMM')
-        // this.transactionForm.patchValue({ 'VATPeriod': vatPeriod });
-    // }
+    public loadVATPeriod() {
+        var vatPeriod = moment(this.transactionForm.value.date).format('YYYYMM')
+        this.transactionForm.patchValue({ 'VATPeriod': vatPeriod });
+    }
 
     public getCancellationTypes(): void {
 
