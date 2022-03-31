@@ -727,7 +727,10 @@ export class MovementOfCancellationComponent implements OnInit {
         try {
             this.loading = true;
             for (let mov of this.movementsOfCancellations) {
-                if ((mov.balance <= mov.transactionOrigin.balance) || !this.modifyBalance(mov.transactionOrigin)) {
+                console.log(mov.balance);
+                console.log(mov.transactionOrigin.balance);
+                console.log(this.modifyBalance(mov.transactionOrigin));
+                if ((this.roundNumber.transform(mov.balance) <= this.roundNumber.transform(mov.transactionOrigin.balance)) || !this.modifyBalance(mov.transactionOrigin)) {
                     for (const type of this.cancellationTypes) {
                         if (type.origin._id === mov.transactionOrigin.type._id) {
                             mov.type = type;
