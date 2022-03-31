@@ -771,8 +771,7 @@ export class ListTransactionsComponent implements OnInit {
     }
 
     public padNumber(n, length): string {
-
-        let n = n.toString();
+        n = n.toString();
         while (n.length < length)
             n = "0" + n;
         return n;

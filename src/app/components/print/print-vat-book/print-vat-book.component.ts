@@ -807,7 +807,7 @@ export class PrintVatBookComponent implements OnInit {
     }
 
     public padString(n, length) {
-        let n = n.toString();
+        n = n.toString();
         while (n.length < length)
             n = "0" + n;
         return n;

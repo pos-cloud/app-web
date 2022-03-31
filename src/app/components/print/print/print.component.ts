@@ -760,7 +760,7 @@ export class PrintComponent implements OnInit {
                     }
 
                     // Detalle de productos
-                    let row = 85;
+                    row = 85;
 
                     this.doc.setFont('', "bold");
                     this.doc.text("TRANSPORTE:".toString(), 25, row);
