@@ -263,7 +263,11 @@ export class TransactionTypeComponent implements OnInit {
         return merge(debouncedText$, inputFocus$).pipe(
             tap(() => this.loading = true),
             switchMap(async term => {
-                return false
+                return await this.getOptionalAfip().then(
+                    result => {
+                        return result;
+                    }
+                );
             }),
             tap(() => this.loading = false),
         )
@@ -1319,11 +1323,10 @@ export class TransactionTypeComponent implements OnInit {
         });
 
 
-
         this.obj.optionalAFIP = {
             id: (this.objForm.value.optionalAFIP && this.objForm.value.optionalAFIP.id) ? this.objForm.value.optionalAFIP.id : null,
             name: (this.objForm.value.optionalAFIP && this.objForm.value.optionalAFIP.name) ? this.objForm.value.optionalAFIP.name : null,
-            value: (this.objForm.value.optionalAFIP && this.objForm.value.optionalAFIP.value) ? this.objForm.value.optionalAFIP.value : null
+            value: (this.objForm.value.optionalAFIP && this.objForm.value.optionalAFIP.value || this.objForm.value['optionalAFIP.value']) ? this.objForm.value['optionalAFIP.value'] || this.objForm.value.optionalAFIP.value : null
         }
 
         delete this.obj["optionalAFIP.value"]
@@ -1534,6 +1537,15 @@ export class TransactionTypeComponent implements OnInit {
         });
     }
 
+    public getOptionalAfip(): Promise<CashBoxType[]> {
+        return new Promise<CashBoxType[]>((resolve, reject) => {
+            this.subscription.add(this._objService.getJSON().subscribe(data => {
+                console.log(data);
+                resolve(data);
+            }));
+        });
+    }
+    
     public getPrinters(match: {}): Promise<Printer[]> {
         return new Promise<Printer[]>((resolve, reject) => {
             this.subscription.add(this._printer.getAll({
