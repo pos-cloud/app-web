@@ -33,14 +33,11 @@ import { Tax } from 'app/components/tax/tax';
 import { first } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 
-import { ToastrService } from 'ngx-toastr';
-import { TranslateMePipe } from 'app/main/pipes/translate-me';
-
 @Component({
     selector: 'app-list-articles-pos',
     templateUrl: './list-articles-pos.component.html',
     styleUrls: ['./list-articles-pos.component.scss'],
-    providers: [NgbAlertConfig, RoundNumberPipe, TranslateMePipe],
+    providers: [NgbAlertConfig, RoundNumberPipe],
     encapsulation: ViewEncapsulation.None,
 })
 
@@ -72,6 +69,7 @@ export class ListArticlesPosComponent implements OnInit {
     private subscriptionArticlePos: Subscription = new Subscription();
     public discountCompany: number = 0;
     public discountCompanyGroup: number = 0;
+
     constructor(
         private _articleService: ArticleService,
         private _router: Router,
@@ -83,11 +81,7 @@ export class ListArticlesPosComponent implements OnInit {
         private _claimService: ClaimService,
         private _priceListService: PriceListService,
         private _transactionService: TransactionService,
-        public _structureService: StructureService,
-        private _toastr: ToastrService,
-        public translatePipe: TranslateMePipe
-
-
+        public _structureService: StructureService
     ) {
         this.articles = new Array();
         this.filteredArticles = new Array();
@@ -114,7 +108,7 @@ export class ListArticlesPosComponent implements OnInit {
         if ((!this.transaction || !this.transaction._id || this.transaction._id === '') && this.transactionId) {
             await this.getTransaction().then(
                 async transaction => {
-                    if (transaction) {
+                    if(transaction) {
                         this.transaction = transaction;
                         if (this.transaction && this.transaction.company && this.transaction.company.priceList && this.transaction.company.type === CompanyType.Client) {
                             this.priceList = await this.getPriceList(this.transaction.company.priceList._id)
@@ -183,7 +177,7 @@ export class ListArticlesPosComponent implements OnInit {
             favourite: 1,
             quantityPerMeasure: 1,
             isWeigth: 1,
-            codeProvider: 1
+            codeProvider : 1
         }
 
         if (this.transaction && this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Sale) {
@@ -726,48 +720,12 @@ export class ListArticlesPosComponent implements OnInit {
                 }
             } else {
                 this.filteredArticles = this.filterPipe.transform(this.filteredArticles, Type.Final.toString(), 'type');
-                this.showToast(null, 'warning', 'No se encontro ningun producto.');
-                this.beep()
                 this.eventAddItem.emit(null);
             }
         }
     }
 
-    beep() {
-        var snd = new Audio("data:audio/wav;base64,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qJrx4KOQjahZxWbcZgztj2c49nKmkId44S71j0c8eV9yDK6uPRzx5X18eDvjvQ6yKo9ZSS6l//8elePK/Lf//IInrOF/FvDoADYAGBMGb7FtErm5MXMlmPAJQVgWta7Zx2go+8xJ0UiCb8LHHdftWyLJE0QIAIsI+UbXu67dZMjmgDGCGl1H+vpF4NSDckSIkk7Vd+sxEhBQMRU8j/12UIRhzSaUdQ+rQU5kGeFxm+hb1oh6pWWmv3uvmReDl0UnvtapVaIzo1jZbf/pD6ElLqSX+rUmOQNpJFa/r+sa4e/pBlAABoAAAAA3CUgShLdGIxsY7AUABPRrgCABdDuQ5GC7DqPQCgbbJUAoRSUj+NIEig0YfyWUho1VBBBA//uQZB4ABZx5zfMakeAAAAmwAAAAF5F3P0w9GtAAACfAAAAAwLhMDmAYWMgVEG1U0FIGCBgXBXAtfMH10000EEEEEECUBYln03TTTdNBDZopopYvrTTdNa325mImNg3TTPV9q3pmY0xoO6bv3r00y+IDGid/9aaaZTGMuj9mpu9Mpio1dXrr5HERTZSmqU36A3CumzN/9Robv/Xx4v9ijkSRSNLQhAWumap82WRSBUqXStV/YcS+XVLnSS+WLDroqArFkMEsAS+eWmrUzrO0oEmE40RlMZ5+ODIkAyKAGUwZ3mVKmcamcJnMW26MRPgUw6j+LkhyHGVGYjSUUKNpuJUQoOIAyDvEyG8S5yfK6dhZc0Tx1KI/gviKL6qvvFs1+bWtaz58uUNnryq6kt5RzOCkPWlVqVX2a/EEBUdU1KrXLf40GoiiFXK///qpoiDXrOgqDR38JB0bw7SoL+ZB9o1RCkQjQ2CBYZKd/+VJxZRRZlqSkKiws0WFxUyCwsKiMy7hUVFhIaCrNQsKkTIsLivwKKigsj8XYlwt/WKi2N4d//uQRCSAAjURNIHpMZBGYiaQPSYyAAABLAAAAAAAACWAAAAApUF/Mg+0aohSIRobBAsMlO//Kk4soosy1JSFRYWaLC4qZBYWFRGZdwqKiwkNBVmoWFSJkWFxX4FFRQWR+LsS4W/rFRb/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////VEFHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU291bmRib3kuZGUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjAwNGh0dHA6Ly93d3cuc291bmRib3kuZGUAAAAAAAAAACU=");
-        snd.play();
 
-    }
-    showToast(result, type?: string, title?: string, message?: string): void {
-        if (result) {
-            if (result.status === 0) {
-                type = 'info';
-                title = 'el servicio se encuentra en mantenimiento, inténtelo nuevamente en unos minutos';
-            } else if (result.status === 200) {
-                type = 'success';
-                title = result.message;
-            } else if (result.status >= 500) {
-                type = 'danger';
-                title = (result.error && result.error.message) ? result.error.message : result.message;
-            } else {
-                type = 'info';
-                title = (result.error && result.error.message) ? result.error.message : result.message;
-            }
-        }
-        switch (type) {
-            case 'success':
-                this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
-                break;
-            case 'danger':
-                this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
-                break;
-            default:
-                this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
-                break;
-        }
-        this.hideMessage();
-        this.loading = false;
-    }
     public padNumber(n, length) {
         n = n.toString();
         while (n.length < length)
