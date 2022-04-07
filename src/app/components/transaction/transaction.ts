@@ -73,11 +73,11 @@ export class Transaction {
     public wooId: string;
     public declaredValue: number;
     public package: number;
-    public account : Account;
-    public optionalAFIP : {
-        id : string,
-        value : string
-    } 
+    public account: Account;
+    public optionalAFIP: {
+        id: string,
+        value: string
+    }
     public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     public updateUser: User;
@@ -184,6 +184,16 @@ export let attributes = [
     },
     {
         name: 'company.fantasyName',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+    },
+    {
+        name: 'company.address',
         visible: false,
         disabled: false,
         filter: true,
