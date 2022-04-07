@@ -109,9 +109,7 @@ export class AddCompanyComponent implements OnInit {
             'required': 'Este campo es requerido.',
             'pattern': 'Signos no validos'
         },
-        'fantasyName': {
-            'pattern': 'Signos no validos'
-        },
+        'fantasyName': {},
         'type': {
             'required': 'Este campo es requerido.'
         },
@@ -395,9 +393,7 @@ export class AddCompanyComponent implements OnInit {
                 Validators.pattern('^[a-zA-Z ]+$')
             ]
             ],
-            'fantasyName': [this.company.fantasyName, [
-                Validators.pattern('^[a-zA-Z ]+$')
-            ]
+            'fantasyName': [this.company.fantasyName, []
             ],
             'type': [this.company.type, [
                 Validators.required
