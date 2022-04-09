@@ -23,6 +23,6 @@ jobs:
       - uses: actions/checkout@v2
       - run: docker build -t admin-poscloud .
       - run: docker run -d -it --name pos admin-poscloud
-      - run: rm -R /var/www/poscloud/ docker 
+      - run: rm -R /var/www/poscloud/ 
       - run: cp pos:/app/dist/ /var/www/poscloud/
       - run: forever restartall
