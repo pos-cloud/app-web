@@ -51,9 +51,9 @@ export class LicenseGuard implements CanActivate {
 
   public checkLicense(config: Config, next: ActivatedRouteSnapshot) {
     if (config && config['licensePaymentDueDate']) {
-      var days = moment(moment(config['licensePaymentDueDate']).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days');
+      let days = moment(moment(config['licensePaymentDueDate']).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days');
       days++;
-      var daysOfPay = moment(config['licensePaymentDueDate'], 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days');
+      let daysOfPay = moment(config['licensePaymentDueDate'], 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days');
       if (days >= 1 && daysOfPay > 0) {
         if (!next.data.module) {
           return true;

@@ -237,7 +237,7 @@ export class ListMovementOfCashesComponent implements OnInit {
 
         match = JSON.parse(match);
 
-        var transactionTypes = [];
+        let transactionTypes = [];
         
         if (this.transactionTypesSelect) {
             this.transactionTypesSelect.forEach(element => {
@@ -246,7 +246,7 @@ export class ListMovementOfCashesComponent implements OnInit {
             match['transaction.type._id'] = { "$in": transactionTypes }
         }
         
-        var paymentMethods = [];
+        let paymentMethods = [];
 
         if (this.paymentMethodSelect) {
             this.paymentMethodSelect.forEach(element => {
@@ -327,7 +327,7 @@ export class ListMovementOfCashesComponent implements OnInit {
     }
 
     public getSum(): any {
-        var total = 0
+        let total = 0
         this.columns.forEach(elementC => {
             if (elementC.datatype === 'number' || elementC.datatype === 'currency') {
                 this.items.forEach(elementI => {

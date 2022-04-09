@@ -187,7 +187,7 @@ export class AddArticleFieldsComponent implements OnInit {
     let articleTaxToDelete: number = -1;
 
     if (this.fields && this.fields.length > 0) {
-      for (var articleTaxAux of this.fields) {
+      for (let articleTaxAux of this.fields) {
         if (articleField.articleField._id === articleTaxAux.articleField._id &&
             articleField.value === articleTaxAux.value) {
           articleTaxToDelete = i;

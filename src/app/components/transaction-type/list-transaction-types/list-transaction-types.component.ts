@@ -51,7 +51,6 @@ export class ListTransactionTypesComponent {
 
   constructor(
     public _service: TransactionTypeService,
-    private _modalService: NgbModal,
     private _router: Router,
   ) { }
 

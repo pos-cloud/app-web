@@ -481,7 +481,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                             }
                             break;
                         case 'dataSum':
-                            var sum = 0;
+                            let sum = 0;
                             if (field.font !== 'default') {
                                 this.doc.setFont(field.font)
                             }
@@ -541,7 +541,7 @@ export class PrintTransactionTypeComponent implements OnInit {
 
     async buildBody(): Promise<boolean> {
         return new Promise<boolean>(async (resolve, reject) => {
-            var row = 0;
+            let row = 0;
             if (this.movementOfArticle && this.movementOfArticle.length > 0) {
                 for (const movementOfArticle of this.movementOfArticle) {
 

@@ -336,9 +336,9 @@ export class PrintPriceListComponent implements OnInit {
     async printPriceListWithImagen() {
 
         this.loading = true;
-        var row = 8;
+        let row = 8;
         let count = 0;
-        var margin = 5;
+        let margin = 5;
         this.doc.setFont("",'bold');
 
         this.doc.setFontSize(12);
@@ -429,7 +429,7 @@ export class PrintPriceListComponent implements OnInit {
                     this.doc.text(160, row + 8, "$" + (this.roundNumber.transform(article.salePrice)).toString());
                 }*/
                 this.doc.setFontSize(this.fontSizes.normal)
-                var rowAux = row;
+                let rowAux = row;
                 row += 5
                 this.doc.text(95, row, 'Categoría: ' + article.category.description)
                 if (article.otherFields && article.otherFields.length > 0) {
@@ -459,7 +459,7 @@ export class PrintPriceListComponent implements OnInit {
                     for (let variant of variants) {
                         this.doc.text(150, rowAux, variant["_id"]["type"]["name"]);
                         for (let value of variant["value"]) {
-                            var stock = await this.getStock(value['id'])
+                            let stock = await this.getStock(value['id'])
                             rowAux += 5;
                             if (stock) {
                                 this.doc.text(150, rowAux, value["description"] + " /STK: " + stock.toString());
@@ -471,7 +471,7 @@ export class PrintPriceListComponent implements OnInit {
                     row = rowAux;
                 } else {
                     row += 7
-                    var stock = await this.getStock(article._id)
+                    let stock = await this.getStock(article._id)
                     if (stock) {
                         this.doc.text(95, row, "/STK: " + stock.toString())
                     } else {
@@ -488,8 +488,8 @@ export class PrintPriceListComponent implements OnInit {
                     this.doc.addPage();
 
 
-                    var row = 8;
-                    var margin = 5;
+                    let row = 8;
+                    let margin = 5;
                     this.doc.setFont("",'bold');
 
                     this.doc.setFontSize(12);
@@ -520,8 +520,8 @@ export class PrintPriceListComponent implements OnInit {
     async printPriceListWithoutImagen() {
 
         this.loading = true;
-        var row = 15;
-        var margin = 5;
+        let row = 15;
+        let margin = 5;
         this.doc.setFont("",'bold');
 
         this.doc.setFontSize(12);
@@ -626,8 +626,8 @@ export class PrintPriceListComponent implements OnInit {
 
                     this.doc.addPage();
 
-                    var row = 15;
-                    var margin = 5;
+                    let row = 15;
+                    let margin = 5;
                     this.doc.setFont("",'bold');
 
                     this.doc.setFontSize(12);
@@ -789,7 +789,7 @@ export class PrintPriceListComponent implements OnInit {
             ).subscribe(
                 result => {
                     if (result && result.articleStocks && result.articleStocks.length > 0) {
-                        var stock = 0;
+                        let stock = 0;
                         result.articleStocks.forEach(element => {
                             stock += element.realStock
                         });
@@ -818,13 +818,13 @@ export class PrintPriceListComponent implements OnInit {
     public centerText(lMargin, rMargin, pdfInMM, startPdf, height, text): void {
 
         if (text) {
-            var pageCenter = pdfInMM / 2;
+            let pageCenter = pdfInMM / 2;
 
-            var lines = this.doc.splitTextToSize(text, (pdfInMM - lMargin - rMargin));
-            var dim = this.doc.getTextDimensions(text);
-            var lineHeight = dim.h;
+            let lines = this.doc.splitTextToSize(text, (pdfInMM - lMargin - rMargin));
+            let dim = this.doc.getTextDimensions(text);
+            let lineHeight = dim.h;
             if (lines && lines.length > 0) {
-                for (var i = 0; i < lines.length; i++) {
+                for (let i = 0; i < lines.length; i++) {
                     let lineTop = (lineHeight / 2) * i;
                     this.doc.text(text, pageCenter + startPdf, height, lineTop, 'center')
                 }

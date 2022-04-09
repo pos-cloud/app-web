@@ -48,7 +48,7 @@ export class AutocompleteComponent implements AfterViewInit {
         this.invokeEvent(this.place);
       } else {
         if ((this.autocompleteInput && this.autocompleteInput.split(',').length > 2)) {
-          var geocoder = new google.maps.Geocoder();
+          let geocoder = new google.maps.Geocoder();
           geocoder.geocode({ 'address': this.autocompleteInput }, (results, status) => {
             this.invokeEvent(results[0]);
           });
@@ -198,12 +198,12 @@ export class AutocompleteComponent implements AfterViewInit {
     }
 
     // Checar si el punto está adentro del poligono o en el borde
-    var intersections = 0;
+    let intersections = 0;
 
     if (vertices.length > 0) {
-      for (var i = 1; i < vertices.length; i++) {
-        var vertex1 = vertices[i - 1];
-        var vertex2 = vertices[i];
+      for (let i = 1; i < vertices.length; i++) {
+        let vertex1 = vertices[i - 1];
+        let vertex2 = vertices[i];
         if (vertices[i] &&
           vertex1['lat'] &&
           vertex1['lng'] &&
@@ -218,7 +218,7 @@ export class AutocompleteComponent implements AfterViewInit {
             return "boundary";
           }
           if (point['lng'] > Math.min(vertex1['lng'], vertex2['lng']) && point['lng'] <= Math.max(vertex1['lng'], vertex2['lng']) && point['lat'] <= Math.max(vertex1['lat'], vertex2['lat']) && vertex1['lng'] != vertex2['lng']) {
-            var xinters = (point['lng'] - vertex1['lng']) * (vertex2['lat'] - vertex1['lat']) / (vertex2['lng'] - vertex1['lng']) + vertex1['lat'];
+            let xinters = (point['lng'] - vertex1['lng']) * (vertex2['lat'] - vertex1['lat']) / (vertex2['lng'] - vertex1['lng']) + vertex1['lat'];
             if (xinters == point['lat']) { // Checar si el punto está en un segmento (otro que horizontal)
               return "boundary";
             }
@@ -239,7 +239,7 @@ export class AutocompleteComponent implements AfterViewInit {
 
   isPointOnVertex(point, vertices) {
     if (vertices.length > 0) {
-      for (var i = 0; i < vertices.length; i++) {
+      for (let i = 0; i < vertices.length; i++) {
         if (vertices[i] &&
           point['lat'] &&
           vertices[i]['lat'] &&

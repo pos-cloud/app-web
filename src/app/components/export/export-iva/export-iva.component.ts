@@ -118,12 +118,12 @@ export class ExportIvaComponent implements OnInit {
 
         this.loading = true;
 
-        var project = {
+        let project = {
             "_id": 1,
             "name": 1
         }
 
-        var match = {
+        let match = {
             "operationType ": { "$ne": "D" }
         }
 
@@ -313,7 +313,7 @@ export class ExportIvaComponent implements OnInit {
                         this.dataArticleFields[index]['_id'] = this.articleFields[index]._id
                         this.dataArticleFields[index]['name'] = this.articleFields[index].name
                         let valuesField = this.articleFields[index].value.split(';')
-                        var value: any = [];
+                        let value: any = [];
                         for (let index2 = 0; index2 < valuesField.length; index2++) {
                             value[index2] = {};
                             value[index2]['name'] = valuesField[index2];
@@ -580,7 +580,7 @@ export class ExportIvaComponent implements OnInit {
 
                                     if (this.exportIVAForm.value.otherFields === "true") {
 
-                                        var movementOfArticles: MovementOfArticle[] = await this.getMovementOfArticle(transaction._id)
+                                        let movementOfArticles: MovementOfArticle[] = await this.getMovementOfArticle(transaction._id)
 
                                         if (movementOfArticles && movementOfArticles.length > 0) {
                                             for (const movementOfArticle of movementOfArticles) {
@@ -594,8 +594,8 @@ export class ExportIvaComponent implements OnInit {
                                                         if (otherField.articleField.discriminateVAT) {
 
                                                             //guardamos los dos datos que necesitamos id y valor
-                                                            var id = otherField.articleField._id;
-                                                            var valor = otherField.value;
+                                                            let id = otherField.articleField._id;
+                                                            let valor = otherField.value;
 
                                                             //ahora recorremos la mierda del data
                                                             for (let index = 0; index < this.dataArticleFields.length; index++) {
@@ -810,7 +810,7 @@ export class ExportIvaComponent implements OnInit {
     }
 
     public padString(n, length) {
-        var n = n.toString();
+        n = n.toString();
         while (n.length < length)
             n = "0" + n;
         return n;

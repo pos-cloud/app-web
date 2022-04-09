@@ -45,7 +45,7 @@
 				<div class="form-group col-md-12">
 					<label for="date" class="control-label">Fecha:</label>
 					<input type="date" class="form-control" formControlName="date" name="date" min="2000-01-01"
-						[readonly]="readonly" [focus]="focusEvent" (blur)="loadVATPeriod()"/>
+						[readonly]="readonly" [focus]="focusEvent" (blur)="loadVATPeriod()" />
 					<div *ngIf="formErrors.date" class="alert alert-danger">
 						{{ formErrors.date }}
 					</div>

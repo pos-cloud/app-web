@@ -742,7 +742,7 @@ export class ListArticlesComponent implements OnInit {
   }
 
   public padNumber(n, length) {
-    var n = n.toString();
+    n = n.toString();
     while (n.length < length) n = "0" + n;
     return n;
   }

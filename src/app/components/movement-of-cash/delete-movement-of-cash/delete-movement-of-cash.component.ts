@@ -36,7 +36,7 @@ export class DeleteMovementOfCashComponent implements OnInit {
 
         this.loading = true;
 
-        this._movementOfCashService.deleteMovementOfCash(this.movementOfCash._id).subscribe(
+        this._movementOfCashService.delete(this.movementOfCash._id).subscribe(
             result => {
                 this.activeModal.close('delete_close');
                 this.loading = false;

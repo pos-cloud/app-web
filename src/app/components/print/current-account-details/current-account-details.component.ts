@@ -23,15 +23,15 @@ import { TransactionTypeService } from 'app/components/transaction-type/transact
 import { CompanyGroup } from 'app/components/company-group/company-group';
 import { CompanyGroupService } from 'app/components/company-group/company-group.service';
 
-var splitRegex = /\r\n|\r|\n/g;
+let splitRegex = /\r\n|\r|\n/g;
 jsPDF.API['textEx'] = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
-    var fontSize = this.internal.getFontSize() / this.internal.scaleFactor;
+    let fontSize = this.internal.getFontSize() / this.internal.scaleFactor;
 
     // As defined in jsPDF source code
-    var lineHeightProportion = 1.5;
+    let lineHeightProportion = 1.5;
 
-    var splittedText: string[];
-    var lineCount: number = 1;
+    let splittedText: string[];
+    let lineCount: number = 1;
     if (vAlign === 'middle' || vAlign === 'bottom'
         || hAlign === 'center' || hAlign === 'right') {
 
@@ -52,11 +52,11 @@ jsPDF.API['textEx'] = function (text: any, x: number, y: number, hAlign?: string
     if (hAlign === 'center'
         || hAlign === 'right') {
 
-        var alignSize = fontSize;
+        let alignSize = fontSize;
         if (hAlign === 'center') alignSize *= 0.5;
 
         if (lineCount > 1) {
-            for (var iLine = 0; iLine < splittedText.length; iLine++) {
+            for (let iLine = 0; iLine < splittedText.length; iLine++) {
                 this.text(splittedText[iLine],
                     x - this.getStringUnitWidth(splittedText[iLine]) * alignSize,
                     y);
@@ -711,7 +711,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
         row += 5;
         this.doc.setFontSize(this.fontSizes.large)
         this.doc.text(180, 280, "Hoja:" + page)
-        for (var i = 0; i < this.items.length; i++) {
+        for (let i = 0; i < this.items.length; i++) {
             this.doc.setLineWidth(1)
             this.doc.line(0, row, 1000, row)
             row += 5;
@@ -853,7 +853,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 timezone = Config.timezone.split('UTC')[1];
             }
 
-            var fullQuery = []
+            let fullQuery = []
 
             fullQuery.push(
                 { "$lookup": { "from": "payment-methods", "foreignField": "_id", "localField": "type", "as": "type" } },
@@ -1189,7 +1189,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
             match = JSON.parse(match);
 
-            var transactionTypes = [];
+            let transactionTypes = [];
 
             if (this.transactionTypesSelect) {
                 this.transactionTypesSelect.forEach(element => {
@@ -1260,8 +1260,8 @@ export class CurrentAccountDetailsComponent implements OnInit {
         row += 5;
         this.doc.setFontSize(this.fontSizes.large)
         this.doc.text(180, 280, "Hoja:" + page)
-        var total = 0;
-        for (var i = 0; i < this.items.length; i++) {
+        let total = 0;
+        for (let i = 0; i < this.items.length; i++) {
             if (this.items[i].price !== 0) {
 
                 this.doc.setLineWidth(1)
@@ -1453,13 +1453,13 @@ export class CurrentAccountDetailsComponent implements OnInit {
     public centerText(lMargin, rMargin, pdfInMM, startPdf, height, text): void {
 
         if (text) {
-            var pageCenter = pdfInMM / 2;
+            let pageCenter = pdfInMM / 2;
 
-            var lines = this.doc.splitTextToSize(text, (pdfInMM - lMargin - rMargin));
-            var dim = this.doc.getTextDimensions(text);
-            var lineHeight = dim.h;
+            let lines = this.doc.splitTextToSize(text, (pdfInMM - lMargin - rMargin));
+            let dim = this.doc.getTextDimensions(text);
+            let lineHeight = dim.h;
             if (lines && lines.length > 0) {
-                for (var i = 0; i < lines.length; i++) {
+                for (let i = 0; i < lines.length; i++) {
                     let lineTop = (lineHeight / 2) * i;
                     this.doc.text(text, pageCenter + startPdf, height, lineTop, 'center')
                 }
@@ -1472,7 +1472,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
     }
 
     public padString(n, length) {
-        var n = n.toString();
+        n = n.toString();
         while (n.length < length)
             n = "0" + n;
         return n;
@@ -1568,7 +1568,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
         return new Promise<TransactionType[]>((resolve, reject) => {
 
-            var transactionMovement;
+            let transactionMovement;
             if (this.companyType === CompanyType.Client) transactionMovement = 'Venta'
             if (this.companyType === CompanyType.Provider) transactionMovement = 'Compra'
 

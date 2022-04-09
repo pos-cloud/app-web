@@ -240,9 +240,9 @@ export class AddArticleTaxComponent implements OnInit {
 
     public taxExists(): boolean {
 
-        var exists: boolean = false;
+        let exists: boolean = false;
         if (this.articleTaxes && this.articleTaxes.length > 0) {
-            for (var taxArticleAux of this.articleTaxes) {
+            for (let taxArticleAux of this.articleTaxes) {
                 if (taxArticleAux.tax._id === this.articleTax.tax._id) {
                     exists = true;
                     this.showMessage("El impuesto " + this.articleTax.tax.name + " con porcentaje " + this.articleTax.percentage + " ya existe", 'info', true);
@@ -258,7 +258,7 @@ export class AddArticleTaxComponent implements OnInit {
         let articleTaxToDelete: number = -1;
 
         if (this.articleTaxes && this.articleTaxes.length > 0) {
-            for (var articleTaxAux of this.articleTaxes) {
+            for (let articleTaxAux of this.articleTaxes) {
                 if (articleTax.tax._id === articleTaxAux.tax._id) {
                     articleTaxToDelete = i;
                 }
