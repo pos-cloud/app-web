@@ -21,10 +21,6 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-            node-version: ${{ matrix.node-version }}
       - run: docker build -t admin-poscloud .
       - run: docker run -d -it --name pos admin-poscloud
       - run: rm -R /var/www/poscloud/ docker 
