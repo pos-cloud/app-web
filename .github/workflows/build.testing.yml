@@ -11,14 +11,13 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run onss
-    runs-on:
-      label: dev
+    runs-on: dev
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
       - run: docker build -t admin-poscloud Dockerfile.testing
-      - run: docker run -d -it --name pos admin-poscloud
-      - run: rm -R /var/www/poscloud/ 
-      - run: docker cp pos:/app/dist/ /var/www/poscloud/
-      - run: docker stop pos
-      - run: docker rm pos
+      - run: docker run -d -it --name postest admin-poscloudtest
+      - run: rm -R /var/www/poscloudtest/ 
+      - run: docker cp postest:/app/dist/ /var/www/poscloudtest/
+      - run: docker stop postest
+      - run: docker rm postest
