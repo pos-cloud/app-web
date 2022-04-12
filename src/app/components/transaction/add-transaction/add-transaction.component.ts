@@ -283,8 +283,9 @@ export class AddTransactionComponent implements OnInit {
     }
 
     public loadVATPeriod() {
-        var vatPeriod = moment(this.transactionForm.value.date).format('YYYYMM')
+        let vatPeriod = moment(this.transactionForm.value.date).format('YYYYMM')
         this.transactionForm.patchValue({ 'VATPeriod': vatPeriod });
+
     }
 
     public getCancellationTypes(): void {
@@ -607,6 +608,8 @@ export class AddTransactionComponent implements OnInit {
         this.transactionDate = this.transactionForm.value.date;
 
         this.transaction.observation = this.transactionForm.value.observation;
+
+        this.transaction.VATPeriod ? this.transaction.VATPeriod = moment(this.transactionForm.value.date).format('YYYYMM') : null
         this.setValuesForm();
     }
 
