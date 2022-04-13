@@ -8,4 +8,3 @@ RUN ng build
 
 FROM nginx:lastest
 COPY --from=build-step /app/dist/system /usr/share/nginx/html
-EXPOSE 80
