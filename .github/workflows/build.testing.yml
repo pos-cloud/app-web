@@ -15,5 +15,6 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
+      - run: docker rm -f admin-poscloud
       - run: docker build -t admin-poscloud -f Dockerfile.testing .
-      - run: docker run -d -it -p 80:80 admin-poscloud
+      - run: docker run --name admin-poscloud -d -it -p 80:80 admin-poscloud
