@@ -7,4 +7,4 @@ RUN npm install -g @angular/cli
 RUN ng build
 
 FROM nginx:stable
-COPY --from=build-step /app/dist/system /usr/share/nginx/html
+COPY --from=build-step /app/dist /usr/share/nginx/html
