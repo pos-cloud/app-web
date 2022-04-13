@@ -16,4 +16,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: docker build -t admin-poscloud -f Dockerfile.testing .
-      - run: docker run -d -it -p 80>80 admin-poscloud
+      - run: docker run -d -it -p 80:80 admin-poscloud
