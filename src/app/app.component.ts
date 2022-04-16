@@ -168,8 +168,13 @@ export class AppComponent {
         let isLocal = false;
         let hostname = window.location.hostname;
         let subdominio = '';
-        if (hostname.includes('.poscloud.com.ar')) {
-            subdominio = hostname.split('.poscloud.com.ar')[0]
+        if (hostname.includes('.poscloud.com.ar') || hostname.includes('.poscloud.ar')) {
+            if(hostname.includes('.poscloud.com.ar')){
+                subdominio = hostname.split('.poscloud.com.ar')[0]
+            } else {
+                subdominio = hostname.split('.poscloud.ar')[0]
+            }
+            subdominio = subdominio
                 .replace(/\//g, "")
                 .replace(/:/g, "")
                 .replace(/http/g, "")
