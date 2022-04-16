@@ -168,8 +168,8 @@ export class AppComponent {
         let isLocal = false;
         let hostname = window.location.hostname;
         let subdominio = '';
-        if (hostname.includes('.poscloud.com.ar' || '.poscloud.ar')) {
-            subdominio = hostname.split('.poscloud.com.ar' || 'poscloud.ar')[0]
+        if (hostname.includes('.poscloud.com.ar')) {
+            subdominio = hostname.split('.poscloud.com.ar')[0]
                 .replace(/\//g, "")
                 .replace(/:/g, "")
                 .replace(/http/g, "")
@@ -209,6 +209,9 @@ export class AppComponent {
                 Config.setApiV8Host('http://localhost:308'); // DEV
             }
         }
+
+        console.log(environment.production);
+        console.log(subdominio);
     }
 
     public showMessage(message: string, type: string, dismissible: boolean): void {
