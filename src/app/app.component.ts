@@ -205,13 +205,9 @@ export class AppComponent {
                 Config.setApiV8Host('https://apiv8.poscloud.com.ar'); // DONWEB
             }
         } else {
-            Config.setDatabase('');
+            Config.setDatabase(subdominio);
             Config.setApiHost('http://181.13.244.217:300'); // TEST
             Config.setApiV8Host('http://181.13.244.217:308'); // TEST
-            if(subdominio === ""){
-                Config.setApiHost('http://localhost:300'); // DEV
-                Config.setApiV8Host('http://localhost:308'); // DEV
-            }
         }
 
         console.log(environment.production);
