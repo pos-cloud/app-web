@@ -205,7 +205,6 @@ export class AppComponent {
                 Config.setApiV8Host('https://apiv8.poscloud.com.ar'); // DONWEB
             }
         } else {
-            Config.setDatabase('');
             if(subdominio === "testing"){
                 Config.setApiHost('http://181.13.244.217:300'); // TEST
                 Config.setApiV8Host('http://181.13.244.217:308'); // TEST
