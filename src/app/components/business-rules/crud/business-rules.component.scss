@@ -1,9 +1,13 @@
 app-business-rules {
-  .img-file {
-    width: 100%;
-    height: 150px;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-  }
+	.img-file {
+		width: 100%;
+		height: 150px;
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: contain;
+	}
+
+	.card {
+		min-height: 85vh !important;
+	}
 }
