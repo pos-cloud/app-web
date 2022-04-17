@@ -1,9 +1,9 @@
-name: CI
+name: Test
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [ testing ]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -11,13 +11,10 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run onss
-    runs-on: self-hosted
+    runs-on: dev
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
-      - run: docker build -t admin-poscloud .
-      - run: docker run -d -it --name pos admin-poscloud
-      - run: rm -R /var/www/poscloud/ 
-      - run: docker cp pos:/app/dist/ /var/www/poscloud/
-      - run: docker stop pos
-      - run: docker rm pos
+      - run: docker rm -f admin-poscloud
+      - run: docker build -t admin-poscloud -f Dockerfile.testing .
+      - run: docker run --net pos --name admin-poscloud -d -it -p 80:80 admin-poscloud

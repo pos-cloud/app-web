@@ -168,8 +168,13 @@ export class AppComponent {
         let isLocal = false;
         let hostname = window.location.hostname;
         let subdominio = '';
-        if (hostname.includes('.poscloud.com.ar')) {
-            subdominio = hostname.split('.poscloud.com.ar')[0]
+        if (hostname.includes('.poscloud.com.ar') || hostname.includes('.poscloud.ar')) {
+            if(hostname.includes('.poscloud.com.ar')){
+                subdominio = hostname.split('.poscloud.com.ar')[0]
+            } else {
+                subdominio = hostname.split('.poscloud.ar')[0]
+            }
+            subdominio = subdominio
                 .replace(/\//g, "")
                 .replace(/:/g, "")
                 .replace(/http/g, "")
@@ -190,8 +195,8 @@ export class AppComponent {
             isLocal = true;
         }
 
-        Config.setDatabase(subdominio);
         if (environment.production) {
+            Config.setDatabase(subdominio);
             if (isLocal) {
                 Config.setApiHost('http://' + hostname + ':300'); // LOCAL
                 Config.setApiV8Host('http://' + hostname + ':308'); // LOCAL
@@ -200,9 +205,17 @@ export class AppComponent {
                 Config.setApiV8Host('https://apiv8.poscloud.com.ar'); // DONWEB
             }
         } else {
-            Config.setApiHost('http://localhost:300'); // TEST
-            Config.setApiV8Host('http://localhost:308'); // TEST
+            if(subdominio === "testing"){
+                Config.setApiHost('http://181.13.244.217:300'); // TEST
+                Config.setApiV8Host('http://181.13.244.217:308'); // TEST
+            } else {
+                Config.setApiHost('http://localhost:300'); // TEST
+                Config.setApiV8Host('http://localhost:308'); // TEST
+            }
         }
+
+        console.log(environment.production);
+        console.log(subdominio);
     }
 
     public showMessage(message: string, type: string, dismissible: boolean): void {
