@@ -390,7 +390,7 @@ export class AddCompanyComponent implements OnInit {
             ],
             'name': [this.company.name, [
                 Validators.required,
-                Validators.pattern('^[a-zA-Z ]+$')
+                Validators.pattern('^[a-zA-Z .]+$')
             ]
             ],
             'fantasyName': [this.company.fantasyName, []
