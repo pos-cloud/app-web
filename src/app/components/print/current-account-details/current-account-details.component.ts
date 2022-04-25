@@ -22,6 +22,7 @@ import { TransactionType } from 'app/components/transaction-type/transaction-typ
 import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
 import { CompanyGroup } from 'app/components/company-group/company-group';
 import { CompanyGroupService } from 'app/components/company-group/company-group.service';
+import { Transaction } from 'app/components/transaction/transaction';
 
 let splitRegex = /\r\n|\r|\n/g;
 jsPDF.API['textEx'] = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
@@ -148,7 +149,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
     public endDate: string;
     public employee;
     public withDetails;
-    public companyGroup : string;
+    public companyGroup: string;
 
     constructor(
         public _transactionService: TransactionService,
@@ -318,7 +319,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 "path": "$company.state",
                 "preserveNullAndEmptyArrays": true
             }
-        },{
+        }, {
             "$lookup": {
                 "from": "company-groups",
                 "foreignField": "_id",
@@ -331,297 +332,297 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 "preserveNullAndEmptyArrays": true
             }
         },
-         {
-            "$project": {
-                "_id": 1,
-                "company._id": 1,
-                "company.name": 1,
-                "company.address": 1,
-                "company.city": 1,
-                "company.phones": 1,
-                "company.emails": 1,
-                "company.type": 1,
-                "company.group" : 1,
-                "company.identificationType.name": 1,
-                "company.identificationValue": 1,
-                "company.vatCondition.description": 1,
-                "company.employee._id": 1,
-                "company.employee.name": 1,
-                "company.operationType": 1,
-                "company.state.name": 1,
-                "endDate": 1,
-                "endDate2": {
-                    "$dateToString": {
-                        "date": "$endDate",
-                        "format": "%d/%m/%Y",
-                        "timezone": timezone
-                    }
-                },
-                "type.name": 1,
-                "type.currentAccount": 1,
-                "type.movement": 1,
-                "number": 1,
-                "letter": 1,
-                "origin": 1,
-                "expirationDate": {
-                    "$dateToString": {
-                        "date": "$expirationDate",
-                        "format": "%d/%m/%Y",
-                        "timezone": timezone
-                    }
-                },
-                "state": 1,
-                "balance": 1,
-                "operationType": 1,
-                "type.labelPrint": 1,
-                "totalPrice": {
-                    "$switch": {
-                        "branches": [{
-                            "case": {
-                                "$and": [{
-                                    "$eq": [this.companyType, "Cliente"]
-                                }, {
-                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, false]
-                                }, {
-                                    "$eq": ["$type.movement", "Entrada"]
-                                }, {
-                                    "$eq": ["$type.currentAccount", "Si"]
-                                }]
-                            },
-                            "then": {
-                                "$multiply": ["$totalPrice", 1]
-                            }
-                        }, {
-                            "case": {
-                                "$and": [{
-                                    "$eq": [this.companyType, "Cliente"]
-                                }, {
-                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, false]
-                                }, {
-                                    "$eq": ["$type.movement", "Salida"]
-                                }, {
-                                    "$eq": ["$type.currentAccount", "Si"]
-                                }]
-                            },
-                            "then": {
-                                "$multiply": ["$totalPrice", -1]
-                            }
-                        }, {
-                            "case": {
-                                "$and": [{
-                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, false]
-                                }, {
-                                    "$eq": [this.companyType, "Cliente"]
-                                }, {
-                                    "$eq": ["$type.movement", "Entrada"]
-                                }, {
-                                    "$eq": ["$type.currentAccount", "Cobra"]
-                                }]
-                            },
-                            "then": {
-                                "$multiply": ["$totalPrice", -1]
-                            }
-                        }, {
-                            "case": {
-                                "$and": [{
-                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, false]
-                                }, {
-                                    "$eq": [this.companyType, "Cliente"]
-                                }, {
-                                    "$eq": ["$type.movement", "Salida"]
-                                }, {
-                                    "$eq": ["$type.currentAccount", "Cobra"]
-                                }]
-                            },
-                            "then": {
-                                "$multiply": ["$totalPrice", 1]
-                            }
-                        }, {
-                            "case": {
-                                "$and": [{
-                                    "$eq": [this.companyType, "Cliente"]
-                                }, {
-                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, true]
-                                }, {
-                                    "$eq": ["$type.movement", "Entrada"]
-                                }, {
-                                    "$eq": ["$type.currentAccount", "Si"]
-                                }]
-                            },
-                            "then": {
-                                "$multiply": ["$totalPrice", -1]
-                            }
-                        }, {
-                            "case": {
-                                "$and": [{
-                                    "$eq": [this.companyType, "Cliente"]
-                                }, {
-                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, true]
-                                }, {
-                                    "$eq": ["$type.movement", "Salida"]
-                                }, {
-                                    "$eq": ["$type.currentAccount", "Si"]
-                                }]
-                            },
-                            "then": {
-                                "$multiply": ["$totalPrice", 1]
-                            }
-                        }, {
-                            "case": {
-                                "$and": [{
-                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, true]
-                                }, {
-                                    "$eq": [this.companyType, "Cliente"]
-                                }, {
-                                    "$eq": ["$type.movement", "Entrada"]
-                                }, {
-                                    "$eq": ["$type.currentAccount", "Cobra"]
-                                }]
-                            },
-                            "then": {
-                                "$multiply": ["$totalPrice", 1]
-                            }
-                        }, {
-                            "case": {
-                                "$and": [{
-                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, true]
-                                }, {
-                                    "$eq": [this.companyType, "Cliente"]
-                                }, {
-                                    "$eq": ["$type.movement", "Salida"]
-                                }, {
-                                    "$eq": ["$type.currentAccount", "Cobra"]
-                                }]
-                            },
-                            "then": {
-                                "$multiply": ["$totalPrice", -1]
-                            }
-                        }, {
-                            "case": {
-                                "$and": [{
-                                    "$eq": [this.companyType, "Proveedor"]
-                                }, {
-                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, false]
-                                }, {
-                                    "$eq": ["$type.movement", "Entrada"]
-                                }, {
-                                    "$eq": ["$type.currentAccount", "Si"]
-                                }]
-                            },
-                            "then": {
-                                "$multiply": ["$totalPrice", -1]
-                            }
-                        }, {
-                            "case": {
-                                "$and": [{
-                                    "$eq": [this.companyType, "Proveedor"]
-                                }, {
-                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, false]
-                                }, {
-                                    "$eq": ["$type.movement", "Salida"]
-                                }, {
-                                    "$eq": ["$type.currentAccount", "Si"]
-                                }]
-                            },
-                            "then": {
-                                "$multiply": ["$totalPrice", 1]
-                            }
-                        }, {
-                            "case": {
-                                "$and": [{
-                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, false]
-                                }, {
-                                    "$eq": [this.companyType, "Proveedor"]
-                                }, {
-                                    "$eq": ["$type.movement", "Entrada"]
-                                }, {
-                                    "$eq": ["$type.currentAccount", "Cobra"]
-                                }]
-                            },
-                            "then": {
-                                "$multiply": ["$totalPrice", 1]
-                            }
-                        }, {
-                            "case": {
-                                "$and": [{
-                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, false]
-                                }, {
-                                    "$eq": [this.companyType, "Proveedor"]
-                                }, {
-                                    "$eq": ["$type.movement", "Salida"]
-                                }, {
-                                    "$eq": ["$type.currentAccount", "Cobra"]
-                                }]
-                            },
-                            "then": {
-                                "$multiply": ["$totalPrice", -1]
-                            }
-                        }, {
-                            "case": {
-                                "$and": [{
-                                    "$eq": [this.companyType, "Proveedor"]
-                                }, {
-                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, true]
-                                }, {
-                                    "$eq": ["$type.movement", "Entrada"]
-                                }, {
-                                    "$eq": ["$type.currentAccount", "Si"]
-                                }]
-                            },
-                            "then": {
-                                "$multiply": ["$totalPrice", 1]
-                            }
-                        }, {
-                            "case": {
-                                "$and": [{
-                                    "$eq": [this.companyType, "Proveedor"]
-                                }, {
-                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, true]
-                                }, {
-                                    "$eq": ["$type.movement", "Salida"]
-                                }, {
-                                    "$eq": ["$type.currentAccount", "Si"]
-                                }]
-                            },
-                            "then": {
-                                "$multiply": ["$totalPrice", -1]
-                            }
-                        }, {
-                            "case": {
-                                "$and": [{
-                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, true]
-                                }, {
-                                    "$eq": [this.companyType, "Proveedor"]
-                                }, {
-                                    "$eq": ["$type.movement", "Entrada"]
-                                }, {
-                                    "$eq": ["$type.currentAccount", "Cobra"]
-                                }]
-                            },
-                            "then": {
-                                "$multiply": ["$totalPrice", -1]
-                            }
-                        }, {
-                            "case": {
-                                "$and": [{
-                                    "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, true]
-                                }, {
-                                    "$eq": [this.companyType, "Proveedor"]
-                                }, {
-                                    "$eq": ["$type.movement", "Salida"]
-                                }, {
-                                    "$eq": ["$type.currentAccount", "Cobra"]
-                                }]
-                            },
-                            "then": {
-                                "$multiply": ["$totalPrice", 1]
-                            }
-                        }],
-                        "default": 0
+            {
+                "$project": {
+                    "_id": 1,
+                    "company._id": 1,
+                    "company.name": 1,
+                    "company.address": 1,
+                    "company.city": 1,
+                    "company.phones": 1,
+                    "company.emails": 1,
+                    "company.type": 1,
+                    "company.group": 1,
+                    "company.identificationType.name": 1,
+                    "company.identificationValue": 1,
+                    "company.vatCondition.description": 1,
+                    "company.employee._id": 1,
+                    "company.employee.name": 1,
+                    "company.operationType": 1,
+                    "company.state.name": 1,
+                    "endDate": 1,
+                    "endDate2": {
+                        "$dateToString": {
+                            "date": "$endDate",
+                            "format": "%d/%m/%Y",
+                            "timezone": timezone
+                        }
+                    },
+                    "type.name": 1,
+                    "type.currentAccount": 1,
+                    "type.movement": 1,
+                    "number": 1,
+                    "letter": 1,
+                    "origin": 1,
+                    "expirationDate": {
+                        "$dateToString": {
+                            "date": "$expirationDate",
+                            "format": "%d/%m/%Y",
+                            "timezone": timezone
+                        }
+                    },
+                    "state": 1,
+                    "balance": 1,
+                    "operationType": 1,
+                    "type.labelPrint": 1,
+                    "totalPrice": {
+                        "$switch": {
+                            "branches": [{
+                                "case": {
+                                    "$and": [{
+                                        "$eq": [this.companyType, "Cliente"]
+                                    }, {
+                                        "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, false]
+                                    }, {
+                                        "$eq": ["$type.movement", "Entrada"]
+                                    }, {
+                                        "$eq": ["$type.currentAccount", "Si"]
+                                    }]
+                                },
+                                "then": {
+                                    "$multiply": ["$totalPrice", 1]
+                                }
+                            }, {
+                                "case": {
+                                    "$and": [{
+                                        "$eq": [this.companyType, "Cliente"]
+                                    }, {
+                                        "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, false]
+                                    }, {
+                                        "$eq": ["$type.movement", "Salida"]
+                                    }, {
+                                        "$eq": ["$type.currentAccount", "Si"]
+                                    }]
+                                },
+                                "then": {
+                                    "$multiply": ["$totalPrice", -1]
+                                }
+                            }, {
+                                "case": {
+                                    "$and": [{
+                                        "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, false]
+                                    }, {
+                                        "$eq": [this.companyType, "Cliente"]
+                                    }, {
+                                        "$eq": ["$type.movement", "Entrada"]
+                                    }, {
+                                        "$eq": ["$type.currentAccount", "Cobra"]
+                                    }]
+                                },
+                                "then": {
+                                    "$multiply": ["$totalPrice", -1]
+                                }
+                            }, {
+                                "case": {
+                                    "$and": [{
+                                        "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, false]
+                                    }, {
+                                        "$eq": [this.companyType, "Cliente"]
+                                    }, {
+                                        "$eq": ["$type.movement", "Salida"]
+                                    }, {
+                                        "$eq": ["$type.currentAccount", "Cobra"]
+                                    }]
+                                },
+                                "then": {
+                                    "$multiply": ["$totalPrice", 1]
+                                }
+                            }, {
+                                "case": {
+                                    "$and": [{
+                                        "$eq": [this.companyType, "Cliente"]
+                                    }, {
+                                        "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, true]
+                                    }, {
+                                        "$eq": ["$type.movement", "Entrada"]
+                                    }, {
+                                        "$eq": ["$type.currentAccount", "Si"]
+                                    }]
+                                },
+                                "then": {
+                                    "$multiply": ["$totalPrice", -1]
+                                }
+                            }, {
+                                "case": {
+                                    "$and": [{
+                                        "$eq": [this.companyType, "Cliente"]
+                                    }, {
+                                        "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, true]
+                                    }, {
+                                        "$eq": ["$type.movement", "Salida"]
+                                    }, {
+                                        "$eq": ["$type.currentAccount", "Si"]
+                                    }]
+                                },
+                                "then": {
+                                    "$multiply": ["$totalPrice", 1]
+                                }
+                            }, {
+                                "case": {
+                                    "$and": [{
+                                        "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, true]
+                                    }, {
+                                        "$eq": [this.companyType, "Cliente"]
+                                    }, {
+                                        "$eq": ["$type.movement", "Entrada"]
+                                    }, {
+                                        "$eq": ["$type.currentAccount", "Cobra"]
+                                    }]
+                                },
+                                "then": {
+                                    "$multiply": ["$totalPrice", 1]
+                                }
+                            }, {
+                                "case": {
+                                    "$and": [{
+                                        "$eq": [this.config.reports.summaryOfAccounts.invertedViewClient, true]
+                                    }, {
+                                        "$eq": [this.companyType, "Cliente"]
+                                    }, {
+                                        "$eq": ["$type.movement", "Salida"]
+                                    }, {
+                                        "$eq": ["$type.currentAccount", "Cobra"]
+                                    }]
+                                },
+                                "then": {
+                                    "$multiply": ["$totalPrice", -1]
+                                }
+                            }, {
+                                "case": {
+                                    "$and": [{
+                                        "$eq": [this.companyType, "Proveedor"]
+                                    }, {
+                                        "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, false]
+                                    }, {
+                                        "$eq": ["$type.movement", "Entrada"]
+                                    }, {
+                                        "$eq": ["$type.currentAccount", "Si"]
+                                    }]
+                                },
+                                "then": {
+                                    "$multiply": ["$totalPrice", -1]
+                                }
+                            }, {
+                                "case": {
+                                    "$and": [{
+                                        "$eq": [this.companyType, "Proveedor"]
+                                    }, {
+                                        "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, false]
+                                    }, {
+                                        "$eq": ["$type.movement", "Salida"]
+                                    }, {
+                                        "$eq": ["$type.currentAccount", "Si"]
+                                    }]
+                                },
+                                "then": {
+                                    "$multiply": ["$totalPrice", 1]
+                                }
+                            }, {
+                                "case": {
+                                    "$and": [{
+                                        "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, false]
+                                    }, {
+                                        "$eq": [this.companyType, "Proveedor"]
+                                    }, {
+                                        "$eq": ["$type.movement", "Entrada"]
+                                    }, {
+                                        "$eq": ["$type.currentAccount", "Cobra"]
+                                    }]
+                                },
+                                "then": {
+                                    "$multiply": ["$totalPrice", 1]
+                                }
+                            }, {
+                                "case": {
+                                    "$and": [{
+                                        "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, false]
+                                    }, {
+                                        "$eq": [this.companyType, "Proveedor"]
+                                    }, {
+                                        "$eq": ["$type.movement", "Salida"]
+                                    }, {
+                                        "$eq": ["$type.currentAccount", "Cobra"]
+                                    }]
+                                },
+                                "then": {
+                                    "$multiply": ["$totalPrice", -1]
+                                }
+                            }, {
+                                "case": {
+                                    "$and": [{
+                                        "$eq": [this.companyType, "Proveedor"]
+                                    }, {
+                                        "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, true]
+                                    }, {
+                                        "$eq": ["$type.movement", "Entrada"]
+                                    }, {
+                                        "$eq": ["$type.currentAccount", "Si"]
+                                    }]
+                                },
+                                "then": {
+                                    "$multiply": ["$totalPrice", 1]
+                                }
+                            }, {
+                                "case": {
+                                    "$and": [{
+                                        "$eq": [this.companyType, "Proveedor"]
+                                    }, {
+                                        "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, true]
+                                    }, {
+                                        "$eq": ["$type.movement", "Salida"]
+                                    }, {
+                                        "$eq": ["$type.currentAccount", "Si"]
+                                    }]
+                                },
+                                "then": {
+                                    "$multiply": ["$totalPrice", -1]
+                                }
+                            }, {
+                                "case": {
+                                    "$and": [{
+                                        "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, true]
+                                    }, {
+                                        "$eq": [this.companyType, "Proveedor"]
+                                    }, {
+                                        "$eq": ["$type.movement", "Entrada"]
+                                    }, {
+                                        "$eq": ["$type.currentAccount", "Cobra"]
+                                    }]
+                                },
+                                "then": {
+                                    "$multiply": ["$totalPrice", -1]
+                                }
+                            }, {
+                                "case": {
+                                    "$and": [{
+                                        "$eq": [this.config.reports.summaryOfAccounts.invertedViewProvider, true]
+                                    }, {
+                                        "$eq": [this.companyType, "Proveedor"]
+                                    }, {
+                                        "$eq": ["$type.movement", "Salida"]
+                                    }, {
+                                        "$eq": ["$type.currentAccount", "Cobra"]
+                                    }]
+                                },
+                                "then": {
+                                    "$multiply": ["$totalPrice", 1]
+                                }
+                            }],
+                            "default": 0
+                        }
                     }
                 }
-            }
-        });
+            });
 
         let match = `{`;
 
@@ -633,7 +634,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
             match += `"company.employee._id": { "$oid" : "${this.companyForm.value.employee}"},`
         }
 
-        if(this.companyGroup){
+        if (this.companyGroup) {
             match += `"company.group" : { "$oid" : "${this.companyGroup}" },`
         }
 
@@ -718,12 +719,12 @@ export class CurrentAccountDetailsComponent implements OnInit {
             this.doc.setFontSize(this.fontSizes.large)
             this.doc.text(5, row, this.items[i]._id.company.name)
 
-            if(this.items[i]._id.company.group){
+            if (this.items[i]._id.company.group) {
                 this.doc.text(150, row, this.items[i]._id.company.group.description)
-            }else{
+            } else {
                 this.doc.text(150, row, 'sin grupo')
             }
-            
+
             row += 5;
             this.doc.setFontSize(this.fontSizes.normal)
             if (this.items[i]._id.company.identificationType && this.items[i]._id.company.identificationValue) {
@@ -822,12 +823,12 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
             }
 
-            this.doc.setFont("","bold");
+            this.doc.setFont("", "bold");
             this.doc.text(120, row, "Total");
             this.doc.textEx("$ " + this.roundNumber.transform(acumulado).toFixed(2).toString(), 180, row, 'right', 'middle');
 
 
-            this.doc.setFont("","normal");
+            this.doc.setFont("", "normal");
             row += 5;
             if (row > 220) {
                 page += 1;
@@ -891,7 +892,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                         "transaction.company.employee.name": 1,
                         "transaction.company.operationType": 1,
                         "transaction.company.state.name": 1,
-                        "transaction.company.group" : 1,
+                        "transaction.company.group": 1,
                         "transaction.type.currentAccount": 1,
                         "transaction.type.movement": 1,
                         "transaction.type.labelPrint": 1,
@@ -1162,7 +1163,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 match += `"transaction.company.employee._id": { "$oid" : "${this.employee}"},`
             }
 
-            if(this.companyGroup){
+            if (this.companyGroup) {
                 match += `"transaction.company.group" : { "$oid" : "${this.companyGroup}" },`
             }
 
@@ -1363,12 +1364,12 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     }
                 }
 
-                this.doc.setFont("","bold");
+                this.doc.setFont("", "bold");
                 this.doc.text(120, row, "Total");
                 this.doc.textEx("$ " + this.roundNumber.transform(this.items[i].price).toFixed(2).toString(), 155, row, 'right', 'middle');
                 total = total + this.items[i].price
 
-                this.doc.setFont("","normal");
+                this.doc.setFont("", "normal");
                 row += 5;
                 if (row > 220) {
                     page += 1;
@@ -1390,7 +1391,15 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
 
     }
-
+    async endDateTransactions(transaction: Transaction[]): Promise<string> {
+        return new Promise((resolve, reject) => {
+            let maxDate: string = '0'
+            transaction.forEach(e => {
+                (Date.parse(maxDate.slice(0, 10)) < Date.parse(e.endDate.slice(0, 10))) ? (maxDate = e.endDate) : null
+            });
+            resolve(maxDate.slice(0, 10))
+        })
+    }
     async printTotalExcel() {
         this.loading = true;
         let data: any = [];
@@ -1400,6 +1409,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
             if (this.roundNumber.transform(items[i]["balance"]).toFixed(2) !== "0.00") {
                 data[y] = {};
                 let company: Company = items[i]["_id"]["company"]
+
                 data[y]["Nombre"] = company.name;
                 data[y]["Condición de IVA"] = (company.vatCondition) ? company.vatCondition.description : '';
                 data[y]["Identificación"] = company.identificationValue;
@@ -1414,6 +1424,16 @@ export class CurrentAccountDetailsComponent implements OnInit {
                 }
                 data[y]["Balance"] = this.roundNumber.transform(items[i]["balance"]).toFixed(2);
                 data[y]["Balance"] = parseFloat(data[y]["Balance"].replace('.', ','));
+
+
+                if (items[i]["transactions"]) {
+                    // recorrer transaction y buscar el endate mas nuevo
+                    // await endDateTransactions(items[i]["transactions"])
+                    console.log(items[i]["transactions"])
+                    data[y]["Ultimo movimiento"] = await this.endDateTransactions(items[i]["transactions"])
+                    console.log(data[y]["Ultimo movimiento"])
+
+                }
                 y++;
                 if (this.withDetails) {
                     y++;
@@ -1544,24 +1564,24 @@ export class CurrentAccountDetailsComponent implements OnInit {
             "operationType": { "$ne": "D" }
         }
 
-            this._companyGroup.getAll({
-                project: project,
-                match: match,
-                sort: { description: 1 },
-                limit: 10
-            }).subscribe(
-                result => {
-                    if(result && result.status === 200){
-                        this.companyGroups = result.result;
-                    } else {
-                        this.companyGroups = [];
-                    }
-                },
-                error => {
-                    this.showMessage(error._body, 'danger', false);
-                    this.loading = false;
+        this._companyGroup.getAll({
+            project: project,
+            match: match,
+            sort: { description: 1 },
+            limit: 10
+        }).subscribe(
+            result => {
+                if (result && result.status === 200) {
+                    this.companyGroups = result.result;
+                } else {
+                    this.companyGroups = [];
                 }
-            )
+            },
+            error => {
+                this.showMessage(error._body, 'danger', false);
+                this.loading = false;
+            }
+        )
     }
 
     public getTransactionTypes(): Promise<TransactionType[]> {
