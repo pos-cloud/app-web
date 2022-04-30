@@ -30,7 +30,7 @@
                                     <div class="form-group col-md-5">
                                         <label for="code" class="control-label">Código Interno (*):</label>
                                         <input type="text" class="form-control" formControlName="code" name="code"
-                                            id="code" (blur)="autocompleteCode()" [focus]="focusEvent"
+                                            id="code" [focus]="focusEvent"
                                             [readonly]="readonly" />
                                         <div *ngIf="formErrors.code" class="alert alert-danger">
                                             {{ formErrors.code }}
