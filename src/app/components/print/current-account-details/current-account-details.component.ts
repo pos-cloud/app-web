@@ -1394,9 +1394,11 @@ export class CurrentAccountDetailsComponent implements OnInit {
     async endDateTransactions(transaction: Transaction[]): Promise<string> {
         return new Promise((resolve, reject) => {
             let maxDate: string = '0'
-            transaction.forEach(e => {
-                (Date.parse(maxDate.slice(0, 10)) < Date.parse(e.endDate.slice(0, 10))) ? (maxDate = e.endDate) : null
-            });
+            transaction
+                .filter(e => e.endDate)
+                .forEach(e => {
+                    (Date.parse(maxDate.slice(0, 10)) < Date.parse(e.endDate.slice(0, 10))) ? (maxDate = e.endDate) : null
+                });
             resolve(maxDate.slice(0, 10))
         })
     }
@@ -1428,11 +1430,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
                 if (items[i]["transactions"]) {
                     // recorrer transaction y buscar el endate mas nuevo
-                    // await endDateTransactions(items[i]["transactions"])
-                    console.log(items[i]["transactions"])
                     data[y]["Ultimo movimiento"] = await this.endDateTransactions(items[i]["transactions"])
-                    console.log(data[y]["Ultimo movimiento"])
-
                 }
                 y++;
                 if (this.withDetails) {
