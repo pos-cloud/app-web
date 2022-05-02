@@ -29,7 +29,7 @@ export class PriceListComponent implements OnInit {
             distinctUntilChanged(),
             tap(() => this.loading = true),
             switchMap(term =>
-                this.getArticles2(`where="description": { "$regex": "${term}", "$options": "i" }&limit=10`).then(
+                this.getArticles2(`where="description": { "$regex": "${term}", "$options": "i" }&limit=10&skip=1`).then(
                     articles => {
                         return articles;
                     }

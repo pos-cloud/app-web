@@ -512,7 +512,8 @@ export class AddTransactionComponent implements OnInit {
             "type": { "$oid": this.transaction.type._id },
             "letter": this.transactionForm.value.letter,
             "number": this.transactionForm.value.number,
-            "origin": this.transactionForm.value.origin
+            "origin": this.transactionForm.value.origin,
+            "company.name": this.transactionForm.value.company
         };
         // CAMPOS A TRAER
         let project = {
@@ -520,7 +521,8 @@ export class AddTransactionComponent implements OnInit {
             "letter": 1,
             "number": 1,
             "type": 1,
-            "operationType": 1
+            "operationType": 1,
+            "company.name": 1
         };
         return new Promise((resolve, reject) => {
             this._transactionService.getTransactionsV2(project, match, {}, {}, 1, 0).subscribe(
@@ -573,7 +575,7 @@ export class AddTransactionComponent implements OnInit {
                     } else {
                         let err = {
                             'status': 500,
-                            'message': 'La transacción \"' + this.transactionForm.value.origin + '-' + this.transactionForm.value.letter + '-' + this.transactionForm.value.number + '\" ya existe'
+                            'message': 'La transacción \"' + this.transactionForm.value.origin + '-' + this.transactionForm.value.letter + '-' + this.transactionForm.value.number + '\" ya existe para '+ this.transactionForm.value.company
                         }
                         this.showToast(err)
                         // this.showMessage('La transacción \"' + this.transactionForm.value.origin + '-' + this.transactionForm.value.letter + '-' + this.transactionForm.value.number + '\" ya existe', 'danger', false);

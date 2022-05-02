@@ -888,15 +888,6 @@ export class AddArticleComponent implements OnInit {
     return n;
   }
 
-  public autocompleteCode() {
-    if (!isNaN(this.articleForm.value.code)) {
-      this.article.code = this.padString(this.articleForm.value.code, this.config.article.code.validators.maxLength);
-    } else {
-      this.article.code = this.articleForm.value.code;
-    }
-    this.setValuesForm();
-  }
-
   public validateAutocomplete(c: FormControl) {
     let result = (c.value && Object.keys(c.value)[0] === '0') ? {
       validateAutocomplete: {
@@ -1435,7 +1426,6 @@ export class AddArticleComponent implements OnInit {
         if (this.article.unitOfMeasurement && this.article.unitOfMeasurement.toString() === '') this.article.unitOfMeasurement = null;
         this.article.notes = this.notes;
         this.article.tags = this.tags;
-        this.autocompleteCode();
         if (this.variants && this.variants.length > 0) {
           this.article.containsVariants = true;
         } else {
