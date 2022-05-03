@@ -2006,7 +2006,7 @@ export class AddSaleOrderComponent {
         this.typeOfOperationToPrint = "charge";
 
         if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-          this.assignLetter();
+          this.transaction = await this.assignLetter();
         }
 
         if (await this.isValidCharge() &&
@@ -2076,7 +2076,7 @@ export class AddSaleOrderComponent {
             });
           } else {
             if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-              this.assignLetter();
+              this.transaction = await this.assignLetter();
               if (this.transaction.type.electronics && !this.transaction.CAE) {
                 this.validateElectronicTransactionAR();
               } else if (this.transaction.type.electronics && this.transaction.CAE) {
@@ -3140,7 +3140,7 @@ export class AddSaleOrderComponent {
     });
   }
 
-  async assignLetter() {
+  async assignLetter(): Promise<Transaction> {
     if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
       this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
     } else {
@@ -3160,7 +3160,7 @@ export class AddSaleOrderComponent {
       }
     }
 
-    this.transaction = await this.updateTransaction();
+    return this.updateTransaction();
   }
 
   getTransports(): void {
