@@ -18,5 +18,5 @@ jobs:
       - run: npm install
       - run: npm install -g @angular/cli
       - run: ng build
-      - run: rm -f /var/www/html/*
+      - run: rm -Rf /var/www/html/*
       - run: cp -Rf dist/* /var/www/html/
