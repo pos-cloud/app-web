@@ -15,6 +15,8 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
-      - run: docker rm -f admin-poscloud
-      - run: docker build -t admin-poscloud -f Dockerfile.testing .
-      - run: docker run --net pos --name admin-poscloud -d -it -p 80:80 admin-poscloud
+      - run: npm install
+      - run: npm install -g @angular/cli
+      - run: ng build
+      - run: rm -Rf /var/www/html/*
+      - run: cp -Rf dist/* /var/www/html/
