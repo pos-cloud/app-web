@@ -25,6 +25,7 @@ export class PosClientViewComponent {
      validTransactionStates: string[] = [
         TransactionState.Delivered.toString(),
         TransactionState.Pending.toString(),
+        TransactionState.Packing.toString(),
         TransactionState.Sent.toString(),
         TransactionState.Preparing.toString(),
     ];
@@ -86,23 +87,22 @@ export class PosClientViewComponent {
                         this.originsToFilter.push(parseInt(origin));
                     }
                 }
-                this.transactionStates = new Array();
-                // RECORRER ESTADOS INSERTADOS
-                Object.keys(params).map(key => {
-                    for (const s of params[key].split(',')) {
-                        if (this.validTransactionStates && this.validTransactionStates.includes(s)) {
-                            this.transactionStates.push(s);
 
-                        }
+                //RECORRER LOS ESTADOS
+                this.transactionStates = new Array();
+                if (params['state']) {
+                    for (let state of params['state'].split(',')) {
+                        this.transactionStates.push(state);
                     }
-                    this.loadTransactions();
-                });
+                }
+                this.loadTransactions();
             }
         });
     }
 
     public async loadTransactions() {
         let query = {};
+        console.log(this.transactionStates);
         if (this.transactionStates) {
             query['state'] = { $in: this.transactionStates };
         }
@@ -112,6 +112,7 @@ export class PosClientViewComponent {
         }
 
         query['operationType'] = { $ne: "D" };
+        query['shipmentMethod'] = { $ne: { $oid : "5e6fbdd32891ec64814aa95d" }}
 
         this.transactions = await this.getTransactions(query);
         // CHANGE STATES PACKING TO PREPARING FOR VIEW
@@ -198,6 +199,7 @@ export class PosClientViewComponent {
                 orderNumber: 1,
                 state: 1,
                 operationType: 1,
+                shipmentMethod: 1,
             }
 
             this._transactionService.getTransactionsV2(

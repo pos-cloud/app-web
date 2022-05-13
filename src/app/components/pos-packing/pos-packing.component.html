@@ -30,7 +30,10 @@
                             </div>
                             <div class="col-md-4 center-content"
 								*ngIf="transaction && transaction._id && transaction._id !== '' && transaction.shipmentMethod && transaction.shipmentMethod.name">
-								<button class="btn" style="width: 100%; background-color: #fe2e2e; color: white;">
+								<button *ngIf="transaction.shipmentMethod.name === 'Auto'" class="btn" style="width: 100%; background-color: #f3f714; color: black;">
+									<span>{{ transaction.shipmentMethod.name }}</span>
+								</button>
+                                <button *ngIf="transaction.shipmentMethod.name === 'P/ Llevar'" class="btn" style="width: 100%; background-color: #1c47e1; color: white;">
 									<span>{{ transaction.shipmentMethod.name }}</span>
 								</button>
 							</div>
