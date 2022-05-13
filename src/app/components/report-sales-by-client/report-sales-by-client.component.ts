@@ -165,21 +165,10 @@ export class ReportSalesByClientComponent implements OnInit {
             timezone = Config.timezone.split('UTC')[1];
         }
 
-        /*let query = {
-            type: this.transactionMovement,
-            movement: movement,
-            currentAccount: "Si",
-            modifyStock: true,
-            startDate: this.startDate + " " + this.startTime + timezone,
-            endDate: this.endDate + " " + this.endTime + timezone,
-            sort: this.sort,
-            limit: this.limit,
-            branch: this.branchSelectedId
-        }*/
-
         let project = {
             "operationType": 1,
             "company.operationType": 1,
+            "branchDestination._id" : 1,
             "company.type": 1,
             "company.name": 1,
             "endDate": 1,
@@ -222,6 +211,9 @@ export class ReportSalesByClientComponent implements OnInit {
             "state" : this.stateSelect
         }
 
+        if(this.branchSelectedId){
+            match["branchDestination._id"] = { "$oid" : this.branchSelectedId }
+        }
         let transactionTypes = [];
 
         if (this.transactionTypesSelect) {
@@ -235,14 +227,6 @@ export class ReportSalesByClientComponent implements OnInit {
             _id: "$company",
             count: { $sum: "$count" },
             total: { $sum: "$totalPrice" }
-        }
-
-        let asd = {
-            project: project,
-            match: match,
-            group: group,
-            limit: 0,
-            skip: 0
         }
 
         let fullquery  = [];
@@ -266,6 +250,16 @@ export class ReportSalesByClientComponent implements OnInit {
                 }
             },
             { $unwind: { path: "$type", preserveNullAndEmptyArrays: true } },
+
+            {
+                $lookup: {
+                    from: "branches",
+                    localField: "branchDestination",
+                    foreignField: "_id",
+                    as: "branchDestination"
+                }
+            },
+            { $unwind: { path: "$branchDestination", preserveNullAndEmptyArrays: true } },
 
             { $project : project },
             { $match : match },

@@ -280,7 +280,7 @@ export class CashBoxComponent implements OnInit {
     }
 
     async openCashBox() {
-
+        this.loading = true;
         if (!this.cashBox || !this.cashBox._id) {
             await this.getCashBoxes('sort="number":-1&limit=1').then(
                 async cashBoxes => {
@@ -334,6 +334,7 @@ export class CashBoxComponent implements OnInit {
                 }
             );
         } else {
+            this.loading = false;
             this.showMessage("La caja ya se encuentra abierta.", 'info', true);
         }
     }
@@ -641,6 +642,7 @@ export class CashBoxComponent implements OnInit {
                                                 if (cashBox) {
                                                     this.cashBox = cashBox;
                                                     this.openModal("print");
+                                                    this.loading = false;
                                                 }
                                             }
                                         );
