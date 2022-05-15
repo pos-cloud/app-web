@@ -1,21 +1,31 @@
-name: Test
-# Controls when the workflow will run
+name: Build and Deploy
+
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ testing ]
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+    branches:
+      - testing
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run onss
-    runs-on: dev
-    # Steps represent a sequence of tasks that will be executed as part of the job
+  build-and-deploy:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - run: npm install
-      - run: ng build
-      - run: rm -Rf /var/www/html/*
-      - run: cp -Rf dist/* /var/www/html/
+    - name: Checkout
+      uses: actions/checkout@v1
+    - uses: actions/setup-node@v1 #this installs node and npm for us
+      with:
+        node-version: '10.x'
+    - uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-    
+    - name: Build
+      run: |
+        npm install
+        npm run-script deploy
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@releases/v3
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: dist/angular-ci-cd
