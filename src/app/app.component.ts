@@ -213,7 +213,6 @@ export class AppComponent {
                 Config.setApiV8Host('http://localhost:308'); // TEST
             }
         }
-
         console.log(environment.production);
         console.log(subdominio);
         console.log(hostname);
