@@ -9,8 +9,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "deploy": "ng build --prod --base-href=/system/",
-    "build:prod": "ng build --base-href=/system/",
+    "build:dev": "ng build --configuration develop",
+    "build:prod": "ng build --configuration production",
     "test:headless": "ng test --watch=false --browsers=ChromeHeadless"
   },
   "private": true,
