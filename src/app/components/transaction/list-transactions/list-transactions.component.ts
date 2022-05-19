@@ -365,7 +365,7 @@ export class ListTransactionsComponent implements OnInit {
         }
 
         if (this.origin) {
-            match += `,"origin": "${this.origin}",`;
+            match += `,"origin": "${this.origin}"`;
         }
         if (this.branchSelectedId) {
             match += `,"branchOrigin": {"$oid": "${this.branchSelectedId}"},`;
@@ -384,6 +384,7 @@ export class ListTransactionsComponent implements OnInit {
 
         match += `}`;
 
+        console.log(match);
         match = JSON.parse(match);
 
         let transactionTypes = [];
