@@ -3,10 +3,10 @@
 <section style="margin: 20px;">
 	<div class="row">
 		<ng-container *ngFor="let state of transactionStates; let i = index">
-			<div [className]="'col-md-' + column" *ngIf="state !== 'Armando'">
+			<div [className]="'col-md-' + column">
 				<div class="card">
 					<div class="card-title"
-						[style.backgroundColor]="(this.colors && this.colors[i].split(':')[0]) ? this.colors[i].split(':')[0] : 'white'"
+						[style.backgroundColor]="(this.colors && this.colors[i]?.split(':')[0]) ? this.colors[i]?.split(':')[0] : 'white'"
 						[style.color]="(this.colors && this.colors[i].split(':')[1]) ? (this.colors[i].split(':')[1]) : 'black'">
 						{{ state | translate }}
 					</div>

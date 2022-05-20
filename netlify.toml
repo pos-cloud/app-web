@@ -1,0 +1,5 @@
+[context.main]
+command = "npm run build:prod"
+
+[context.testing]
+command = "npm run build:dev"

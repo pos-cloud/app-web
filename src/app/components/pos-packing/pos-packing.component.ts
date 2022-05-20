@@ -417,6 +417,9 @@ export class PosPackingComponent {
                         if (transaction.state === TransactionState.Packing) {
                             // PONEMOS LA TRANSACCION EN ESTADO EN ENTREGADO
                             transaction.state = TransactionState.Delivered;
+                            if(transaction?.shipmentMethod?.name === 'Auto'){
+                                transaction.state = TransactionState.Closed;
+                            }
                             await this.updateTransaction(transaction).then(
                                 async transaction => {
                                     if (transaction) {

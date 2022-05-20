@@ -206,14 +206,13 @@ export class AppComponent {
             }
         } else {
             if(subdominio === "testing"){
-                Config.setApiHost('http://181.13.244.217:300'); // TEST
-                Config.setApiV8Host('http://181.13.244.217:308'); // TEST
+                Config.setApiHost('https://tapi.poscloud.com.ar'); // TEST
+                Config.setApiV8Host('https://tapiv2.poscloud.com.ar'); // TEST
             } else {
                 Config.setApiHost('http://localhost:300'); // TEST
                 Config.setApiV8Host('http://localhost:308'); // TEST
             }
         }
-
         console.log(environment.production);
         console.log(subdominio);
         console.log(hostname);
