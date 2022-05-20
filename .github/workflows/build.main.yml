@@ -11,9 +11,9 @@ jobs:
         os: [ granpaso, eldesafio ]
         include:
         - os: granpaso
-          TARGET: ${{ matrix.TARGET }}
+          TARGET: granpaso
         - os: eldesafio
-          TARGET: ${{ matrix.TARGET }}
+          TARGET: eldesafio
     steps:
       - uses: actions/checkout@v3
       - run: npm install
