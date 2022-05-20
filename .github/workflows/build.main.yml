@@ -5,7 +5,10 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    runs-on: [ granpaso, eldesafio ]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix: 
+        on: [ granpaso, eldesafio ]
     steps:
       - uses: actions/checkout@v3
       - run: npm install
