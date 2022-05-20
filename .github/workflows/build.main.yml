@@ -8,7 +8,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix: 
-        on: [ granpaso, eldesafio ]
+        os: [ granpaso, eldesafio ]
+        include:
+        - os: granpaso
+          TARGET: ${{ matrix.TARGET }}
+        - os: eldesafio
+          TARGET: ${{ matrix.TARGET }}
     steps:
       - uses: actions/checkout@v3
       - run: npm install
