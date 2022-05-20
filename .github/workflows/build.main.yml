@@ -1,0 +1,14 @@
+name: Main
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: granpaso
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm install
+      - run: npm run build:prod
+      - run: rm -Rf /var/www/poscloud/*
+      - run: cp -Rf dist/* /var/www/poscloud/
