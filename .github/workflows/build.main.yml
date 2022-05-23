@@ -13,10 +13,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix: 
-        os: [ granpaso, eldesafio, jacksonburgs ]
+        os: [ eldesafio, jacksonburgs ]
         include:
-        - os: granpaso
-          TARGET: granpaso
         - os: eldesafio
           TARGET: eldesafio
         - os: jacksonburgs
