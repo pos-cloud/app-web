@@ -1,3 +1,8 @@
+# https://serverfault.com/questions/1052695/must-not-run-with-sudo-while-trying-to-create-a-runner-using-github-actions
+# https://stackoverflow.com/questions/64859065/how-to-overcome-must-not-with-sudo-error-in-setting-up-github-actions-config-o
+# https://github.community/t/create-matrix-with-multiple-os-and-env-for-each-one/16895/2
+#
+#
 name: Main
 on:
   push:
@@ -8,10 +13,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix: 
-        os: [ granpaso, eldesafio, jacksonburgs ]
+        os: [ eldesafio, jacksonburgs ]
         include:
-        - os: granpaso
-          TARGET: granpaso
         - os: eldesafio
           TARGET: eldesafio
         - os: jacksonburgs
@@ -20,5 +23,5 @@ jobs:
       - uses: actions/checkout@v3
       - run: npm install
       - run: npm run build:prod
-      - run: rm -Rf /var/www/poscloud/*
-      - run: cp -Rf dist/* /var/www/poscloud/
+      - run: rm -Rf /var/www/html/*
+      - run: cp -Rf dist/* /var/www/html/

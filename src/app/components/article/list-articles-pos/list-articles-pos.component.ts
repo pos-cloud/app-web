@@ -640,7 +640,7 @@ export class ListArticlesPosComponent implements OnInit {
                     (originalFilter.length -
                         this.config.tradeBalance.numberOfDecimals -
                         this.config.tradeBalance.numberOfQuantity -
-                        this.config.tradeBalance.numberOfIntegers - 1)), this.config.article.code.validators.maxLength);
+                        this.config.tradeBalance.numberOfIntegers - 1)), 4);
                 isCodePrefix = true;
             }
         }
