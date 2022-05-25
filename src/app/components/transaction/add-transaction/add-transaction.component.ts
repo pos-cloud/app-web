@@ -602,6 +602,9 @@ export class AddTransactionComponent implements OnInit {
         this.transaction.exempt = this.roundNumber.transform(this.transactionForm.value.exempt);
         this.transaction.totalPrice = this.roundNumber.transform(this.transactionForm.value.totalPrice);
         this.transaction.origin = this.transactionForm.value.origin;
+        this.transaction.employeeOpening = this.transactionForm.value.employeeOpening;
+        this.transaction.employeeClosing = this.transactionForm.value.employeeOpening;
+
         if (this.transactionMovement && (this.transactionMovement !== TransactionMovement.Sale.toString())) {
             this.transaction.letter = this.transactionForm.value.letter;
             this.transaction.number = this.transactionForm.value.number;
