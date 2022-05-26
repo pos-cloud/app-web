@@ -1310,153 +1310,155 @@ export class AddMovementOfCashComponent implements OnInit {
   }
 
   async addMovementOfCash() {
-    try {
-      if (this.movementOfCashForm.valid) {
-        this.loading = true;
-        if (!this.fastPayment) {
-          if (await this.isValidAmount()) {
-            if (!this.paymentMethodSelected.allowToFinance) {
-              if (this.roundNumber.transform(this.amountPaid + this.amountToPay) > this.roundNumber.transform(this.transactionAmount)) {
-                this.movementOfCash.amountPaid = this.roundNumber.transform(this.amountToPay - this.roundNumber.transform(parseFloat(this.movementOfCashForm.value.paymentChange)));
-              } else {
-                this.movementOfCash.amountPaid = this.amountToPay;
-              }
-              this.movementOfCash.transaction = this.transaction;
-              this.movementOfCash.paymentChange = this.movementOfCashForm.value.paymentChange;
-              this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
-              this.movementOfCash.observation = this.movementOfCashForm.value.observation;
-              this.movementOfCash.expirationDate = moment(this.movementOfCash.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
-              this.movementOfCash.interestPercentage = this.movementOfCashForm.value.interestPercentage;
-
-              if (this.paymentMethodSelected.allowBank) {
-                this.movementOfCash.bank = this.movementOfCashForm.value.bank;
-              } else {
-                this.movementOfCash.bank = null
-              }
-
-              if (this.paymentMethodSelected.checkDetail) {
-                this.movementOfCash.receiver = this.movementOfCashForm.value.receiver;
-                this.movementOfCash.number = this.movementOfCashForm.value.number;
-                this.movementOfCash.titular = this.movementOfCashForm.value.titular;
-                this.movementOfCash.bank = this.movementOfCashForm.value.bank;
-                this.movementOfCash.CUIT = this.movementOfCashForm.value.CUIT;
-                this.movementOfCash.deliveredBy = this.movementOfCashForm.value.deliveredBy;
-                this.movementOfCash.statusCheck = StatusCheck.Closed;
-              } else {
-                this.movementOfCash.receiver = '';
-                this.movementOfCash.number = '';
-                this.movementOfCash.titular = '';
-                this.movementOfCash.CUIT = '';
-                this.movementOfCash.deliveredBy = '';
-                this.movementOfCash.statusCheck = StatusCheck.Closed;
-              }
-
-
-              if (this.paymentMethodSelected.inputAndOuput && this.transaction.type.movement === Movements.Inflows) {
-                this.movementOfCash.statusCheck = StatusCheck.Available;
-              }
-
-              if (await this.validateCredit()) {
-                this.movementOfCash = await this.saveMovementOfCash();
-                if (this.transactionAmount !== this.transaction.totalPrice) {
-                  this.transaction.totalPrice = this.transactionAmount;
-                  if (this.transaction.type.requestArticles) {
-                    this.addMovementOfArticle();
-                  } else {
-                    this.transaction = await this.updateTransaction();
-                    if (this.keyboard) this.keyboard.setInput('');
-                    this.getMovementOfCashesByTransaction();
-                  }
+    if(!this.loading) {
+      try {
+        if (this.movementOfCashForm.valid) {
+          this.loading = true;
+          if (!this.fastPayment) {
+            if (await this.isValidAmount()) {
+              if (!this.paymentMethodSelected.allowToFinance) {
+                if (this.roundNumber.transform(this.amountPaid + this.amountToPay) > this.roundNumber.transform(this.transactionAmount)) {
+                  this.movementOfCash.amountPaid = this.roundNumber.transform(this.amountToPay - this.roundNumber.transform(parseFloat(this.movementOfCashForm.value.paymentChange)));
                 } else {
-                  this.movementsOfCashes = new Array();
-                  this.movementsOfCashes.push(this.movementOfCash);
-                  if (!this.fastPayment) {
-                    this.getMovementOfCashesByTransaction();
-                  } else {
-                    if (this.amountDiscount && this.amountDiscount !== 0) {
+                  this.movementOfCash.amountPaid = this.amountToPay;
+                }
+                this.movementOfCash.transaction = this.transaction;
+                this.movementOfCash.paymentChange = this.movementOfCashForm.value.paymentChange;
+                this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
+                this.movementOfCash.observation = this.movementOfCashForm.value.observation;
+                this.movementOfCash.expirationDate = moment(this.movementOfCash.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
+                this.movementOfCash.interestPercentage = this.movementOfCashForm.value.interestPercentage;
+  
+                if (this.paymentMethodSelected.allowBank) {
+                  this.movementOfCash.bank = this.movementOfCashForm.value.bank;
+                } else {
+                  this.movementOfCash.bank = null
+                }
+  
+                if (this.paymentMethodSelected.checkDetail) {
+                  this.movementOfCash.receiver = this.movementOfCashForm.value.receiver;
+                  this.movementOfCash.number = this.movementOfCashForm.value.number;
+                  this.movementOfCash.titular = this.movementOfCashForm.value.titular;
+                  this.movementOfCash.bank = this.movementOfCashForm.value.bank;
+                  this.movementOfCash.CUIT = this.movementOfCashForm.value.CUIT;
+                  this.movementOfCash.deliveredBy = this.movementOfCashForm.value.deliveredBy;
+                  this.movementOfCash.statusCheck = StatusCheck.Closed;
+                } else {
+                  this.movementOfCash.receiver = '';
+                  this.movementOfCash.number = '';
+                  this.movementOfCash.titular = '';
+                  this.movementOfCash.CUIT = '';
+                  this.movementOfCash.deliveredBy = '';
+                  this.movementOfCash.statusCheck = StatusCheck.Closed;
+                }
+  
+  
+                if (this.paymentMethodSelected.inputAndOuput && this.transaction.type.movement === Movements.Inflows) {
+                  this.movementOfCash.statusCheck = StatusCheck.Available;
+                }
+  
+                if (await this.validateCredit()) {
+                  this.movementOfCash = await this.saveMovementOfCash();
+                  if (this.transactionAmount !== this.transaction.totalPrice) {
+                    this.transaction.totalPrice = this.transactionAmount;
+                    if (this.transaction.type.requestArticles) {
                       this.addMovementOfArticle();
                     } else {
+                      this.transaction = await this.updateTransaction();
+                      if (this.keyboard) this.keyboard.setInput('');
                       this.getMovementOfCashesByTransaction();
+                    }
+                  } else {
+                    this.movementsOfCashes = new Array();
+                    this.movementsOfCashes.push(this.movementOfCash);
+                    if (!this.fastPayment) {
+                      this.getMovementOfCashesByTransaction();
+                    } else {
+                      if (this.amountDiscount && this.amountDiscount !== 0) {
+                        this.addMovementOfArticle();
+                      } else {
+                        this.getMovementOfCashesByTransaction();
+                      }
                     }
                   }
                 }
-              }
-            } else {
-              if ((this.totalInterestAmount + this.totalTaxAmount) > 0 && this.transaction.totalPrice !== 0) {
-                this.transaction.totalPrice += (this.totalInterestAmount + this.totalTaxAmount);
-                this.transaction = await this.updateTransaction();
-              }
-              for (let mov of this.movementsOfCashesToFinance) {
-                mov.expirationDate = moment(mov.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
-              }
-              let movementsOfCashes: MovementOfCash[] = await this.saveMovementsOfCashes();
-              if (movementsOfCashes && movementsOfCashes.length > 0) {
-                this.getMovementOfCashesByTransaction();
-              }
-            }
-          } else {
-            this.fastPayment = null;
-          }
-        } else {
-          this.movementOfCash.transaction = this.transaction;
-          this.movementOfCash.type = this.fastPayment;
-          this.paymentMethodSelected = this.fastPayment;
-          this.movementOfCash.expirationDate = moment(this.movementOfCash.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
-          this.movementOfCash.receiver = '';
-          this.movementOfCash.number = '';
-          this.movementOfCash.titular = '';
-          this.movementOfCash.CUIT = '';
-          this.movementOfCash.deliveredBy = '';
-          this.movementOfCash.statusCheck == StatusCheck.Closed;
-          this.movementOfCash.discount = (this.movementOfCash.type) ? this.movementOfCash.type.discount || 0 : 0;
-          this.movementOfCash.surcharge = this.movementOfCash.type.surcharge || 0;
-          this.movementOfCash.interestPercentage = this.movementOfCashForm.value.interestPercentage;
-          if (this.fastPayment.observation) {
-            this.movementOfCash.observation = this.fastPayment.observation;
-          }
-          if (this.movementOfCash.discount &&
-            this.movementOfCash.discount !== 0) {
-            this.amountDiscount = -this.roundNumber.transform(this.transaction.totalPrice * this.movementOfCash.discount / 100);
-          } else if (this.movementOfCash.surcharge &&
-            this.movementOfCash.surcharge !== 0) {
-            this.amountDiscount = this.roundNumber.transform(this.transaction.totalPrice * this.movementOfCash.surcharge / 100);
-          }
-          this.transaction.totalPrice = this.transaction.totalPrice + this.amountDiscount;
-          this.transactionAmount = this.transaction.totalPrice;
-          this.movementOfCash.amountPaid = this.transactionAmount;
-
-          if (await this.isValidAmount() && await this.validateCredit()) {
-            this.movementOfCash = await this.saveMovementOfCash();
-            if (this.transactionAmount !== this.transaction.totalPrice) {
-              this.transaction.totalPrice = this.transactionAmount;
-              if (this.transaction.type.requestArticles) {
-                this.addMovementOfArticle();
               } else {
-                this.transaction = await this.updateTransaction();
-                this.getMovementOfCashesByTransaction();
-              }
-            } else {
-              this.movementsOfCashes = new Array();
-              this.movementsOfCashes.push(this.movementOfCash);
-              if (!this.fastPayment) {
-                this.getMovementOfCashesByTransaction();
-              } else {
-                if (this.amountDiscount && this.amountDiscount !== 0) {
-                  this.addMovementOfArticle();
-                } else {
+                if ((this.totalInterestAmount + this.totalTaxAmount) > 0 && this.transaction.totalPrice !== 0) {
+                  this.transaction.totalPrice += (this.totalInterestAmount + this.totalTaxAmount);
+                  this.transaction = await this.updateTransaction();
+                }
+                for (let mov of this.movementsOfCashesToFinance) {
+                  mov.expirationDate = moment(mov.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
+                }
+                let movementsOfCashes: MovementOfCash[] = await this.saveMovementsOfCashes();
+                if (movementsOfCashes && movementsOfCashes.length > 0) {
                   this.getMovementOfCashesByTransaction();
                 }
               }
+            } else {
+              this.fastPayment = null;
             }
           } else {
-            this.fastPayment = null;
+            this.movementOfCash.transaction = this.transaction;
+            this.movementOfCash.type = this.fastPayment;
+            this.paymentMethodSelected = this.fastPayment;
+            this.movementOfCash.expirationDate = moment(this.movementOfCash.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
+            this.movementOfCash.receiver = '';
+            this.movementOfCash.number = '';
+            this.movementOfCash.titular = '';
+            this.movementOfCash.CUIT = '';
+            this.movementOfCash.deliveredBy = '';
+            this.movementOfCash.statusCheck == StatusCheck.Closed;
+            this.movementOfCash.discount = (this.movementOfCash.type) ? this.movementOfCash.type.discount || 0 : 0;
+            this.movementOfCash.surcharge = this.movementOfCash.type.surcharge || 0;
+            this.movementOfCash.interestPercentage = this.movementOfCashForm.value.interestPercentage;
+            if (this.fastPayment.observation) {
+              this.movementOfCash.observation = this.fastPayment.observation;
+            }
+            if (this.movementOfCash.discount &&
+              this.movementOfCash.discount !== 0) {
+              this.amountDiscount = -this.roundNumber.transform(this.transaction.totalPrice * this.movementOfCash.discount / 100);
+            } else if (this.movementOfCash.surcharge &&
+              this.movementOfCash.surcharge !== 0) {
+              this.amountDiscount = this.roundNumber.transform(this.transaction.totalPrice * this.movementOfCash.surcharge / 100);
+            }
+            this.transaction.totalPrice = this.transaction.totalPrice + this.amountDiscount;
+            this.transactionAmount = this.transaction.totalPrice;
+            this.movementOfCash.amountPaid = this.transactionAmount;
+  
+            if (await this.isValidAmount() && await this.validateCredit()) {
+              this.movementOfCash = await this.saveMovementOfCash();
+              if (this.transactionAmount !== this.transaction.totalPrice) {
+                this.transaction.totalPrice = this.transactionAmount;
+                if (this.transaction.type.requestArticles) {
+                  this.addMovementOfArticle();
+                } else {
+                  this.transaction = await this.updateTransaction();
+                  this.getMovementOfCashesByTransaction();
+                }
+              } else {
+                this.movementsOfCashes = new Array();
+                this.movementsOfCashes.push(this.movementOfCash);
+                if (!this.fastPayment) {
+                  this.getMovementOfCashesByTransaction();
+                } else {
+                  if (this.amountDiscount && this.amountDiscount !== 0) {
+                    this.addMovementOfArticle();
+                  } else {
+                    this.getMovementOfCashesByTransaction();
+                  }
+                }
+              }
+            } else {
+              this.fastPayment = null;
+            }
           }
+        } else {
+          this.onValueChanged();
+          throw new Error('Verificar errores en el formulario');
         }
-      } else {
-        this.onValueChanged();
-        throw new Error('Verificar errores en el formulario');
-      }
-    } catch (error) { this.showToast(error) }
+      } catch (error) { this.showToast(error) }
+    }
   }
 
   cancel(): void {
