@@ -46,32 +46,33 @@ import { TranslateMePipe } from 'app/main/pipes/translate-me';
 
 export class ListArticlesPosComponent implements OnInit {
 
-    public identity: User;
-    public articles: Article[];
-    public alertMessage: string = '';
-    public userType: string = '';
-    public orderTerm: string[] = ["description"];
-    public propertyTerm: string;
-    public areFiltersVisible: boolean = false;
-    public loading: boolean = false;
     @Output() eventAddItem = new EventEmitter<{ parent: MovementOfArticle, child: MovementOfArticle[] }>();
     @Input() areArticlesVisible: boolean = false;
     @Input() filterArticle: string = '';
     @Input() transactionId: string;
     @Input() transaction: Transaction;
-    public apiURL = Config.apiURL;
-    public itemsPerPage = 10;
-    public roundNumber = new RoundNumberPipe();
-    public articleType: Type;
-    public currentPage: number = 0;
-    public priceList: PriceList;
-    public database: string;
-    public filterPipe: FilterPipe = new FilterPipe();
-    public filteredArticles: Article[];
-    public config: Config;
+    @Input() loading: boolean = false;
     private subscriptionArticlePos: Subscription = new Subscription();
-    public discountCompany: number = 0;
-    public discountCompanyGroup: number = 0;
+    identity: User;
+    articles: Article[];
+    alertMessage: string = '';
+    userType: string = '';
+    orderTerm: string[] = ["description"];
+    propertyTerm: string;
+    areFiltersVisible: boolean = false;
+    apiURL = Config.apiURL;
+    itemsPerPage = 10;
+    roundNumber = new RoundNumberPipe();
+    articleType: Type;
+    currentPage: number = 0;
+    priceList: PriceList;
+    database: string;
+    filterPipe: FilterPipe = new FilterPipe();
+    filteredArticles: Article[];
+    config: Config;
+    discountCompany: number = 0;
+    discountCompanyGroup: number = 0;
+
     constructor(
         private _articleService: ArticleService,
         private _router: Router,
