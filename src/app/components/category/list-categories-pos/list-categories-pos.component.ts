@@ -19,22 +19,23 @@ import { TransactionMovement } from 'app/components/transaction-type/transaction
 
 export class ListCategoriesPosComponent implements OnInit {
 
-    public categories: Category[] = new Array();
-    public areCategoriesEmpty: boolean = true;
-    public alertMessage: string = '';
-    public userType: string;
-    public orderTerm: string[] = ['order'];
-    public propertyTerm: string;
-    public areFiltersVisible: boolean = false;
     @Output() eventAddItem: EventEmitter<Category> = new EventEmitter<Category>();
     @Output() eventSelectCategory: EventEmitter<Category> = new EventEmitter<Category>();
     @Input() areCategoriesVisible: boolean = true;
     @Input() transactionMovement: TransactionMovement;
-    public apiURL = Config.apiURL;
-    public loading: boolean = false;
-    public itemsPerPage = 10;
-    public totalItems = 0;
-    public database: string;
+    @Input() loading: boolean = false;
+    categories: Category[] = new Array();
+    areCategoriesEmpty: boolean = true;
+    alertMessage: string = '';
+    userType: string;
+    orderTerm: string[] = ['order'];
+    propertyTerm: string;
+    areFiltersVisible: boolean = false;
+    apiURL = Config.apiURL;
+    itemsPerPage = 10;
+    totalItems = 0;
+    database: string;
+    
     constructor(
         public _categoryService: CategoryService,
         public _router: Router,

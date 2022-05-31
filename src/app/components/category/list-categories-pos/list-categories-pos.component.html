@@ -1,7 +1,7 @@
 <section class="container-fluid">
 	<div class="row" *ngIf="areCategoriesVisible" class="categories-list">
 		<div *ngFor="let category of categories | orderBy: orderTerm: propertyTerm ">
-			<div class="icategory" (click)="selectCategory(category)">
+			<div class="icategory" (click)="(loading) ? $event.stopPropagation() : selectCategory(category)">
 				<img *ngIf="category.picture == 'default.jpg' || category.picture == undefined"
 					src="./../../../assets/img/default.jpg" height="120" width="120">
 				<img *ngIf="category.picture !== 'default.jpg' && category.picture !== undefined"

@@ -11,7 +11,7 @@
         </ngb-alert>
     </div>
     <form [formGroup]="movementOfCashForm" autocomplete="off"
-        (ngSubmit)="addMovementOfCash()">
+        (ngSubmit)="(loading) ? $event.stopPropagation() : addMovementOfCash()">
         <div class="modal-body">
             <div class="row">
                 <div class="form-group col-md-12">
@@ -28,7 +28,7 @@
                     <div class="btn-group-vertical">
                         <button type="button" *ngFor="let paymentMethod of paymentMethods" class="btn btn-select"
                             [ngClass]="{'btn-primary':paymentMethod._id===paymentMethodSelected._id, 'btn-outline-primary':paymentMethod._id!==paymentMethodSelected._id}"
-                            (click)="changePaymentMethod(paymentMethod)">
+                            (click)="(loading) ? $event.stopPropagation() : changePaymentMethod(paymentMethod)">
                             {{ paymentMethod.name }}
                         </button>
                     </div>
@@ -148,7 +148,7 @@
                       paymentMethodSelected.inputAndOuput &&
                       transaction.type.movement.toString() === 'Salida'" class="form-group col-md-6">
                 <button type="button" class="btn btn-outline-primary"
-                    (click)="openModal('list-movements-of-cashes',null)">Buscar en Cartera</button>
+                    (click)="(loading) ? $event.stopPropagation() : openModal('list-movements-of-cashes',null)">Buscar en Cartera</button>
             </div>
             <div *ngIf="paymentMethodSelected &&
                     paymentMethodSelected.checkDetail &&
@@ -468,7 +468,7 @@
                         <tr *ngFor="let movement of movementsOfCashes | orderBy: orderTerm: propertyTerm">
                             <td align="left" width="130">
                                 <button type="button" class="btn btn-danger btn-sm" title="Eliminar"
-                                    (click)="openModal('delete', movement)">
+                                    (click)="(loading) ? $event.stopPropagation() : openModal('delete', movement)">
                                     <i class="fa fa-trash-o"></i>
                                 </button>
                             </td>
@@ -522,14 +522,14 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-light" (click)="cancel()">Cancelar</button>
+            <button type="button" class="btn btn-light" (click)="(loading) ? $event.stopPropagation() : cancel()">Cancelar</button>
             <button type="submit" class="btn btn-primary" [disabled]="loading">
                 <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
                 <span *ngIf="!loading">Guardar</span>
                 <span *ngIf="loading">Espere por favor</span>
             </button>
             <button type="button" class="btn btn-success" [disabled]="loading"
-                *ngIf="transaction.type.allowZero" (click)="finish()">
+                *ngIf="transaction.type.allowZero" (click)="(loading) ? $event.stopPropagation() : finish()">
                 <i class="fa" [ngClass]="{'fa-check':!loading, 'fa-spinner fa-spin':loading}"></i>
                 <span *ngIf="!loading">Finalizar</span>
                 <span *ngIf="loading">Espere por favor</span>
