@@ -61,6 +61,13 @@
                         </button>
                     </div>
                 </div>
+                <div class="item-header">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-light" (click)="openModal('apply-bussiness-rule-code')">
+                            Regla de negocio
+                        </button>
+                    </div>
+                </div>
                 <div class="item-header" *ngIf="transaction?.type?.requestCurrency">
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-light" (click)="openModal('change-quotation')">
@@ -113,13 +120,6 @@
                         </button>
                     </div>
                 </div>
-                <!--<div class="item-header" >
-          <div class="btn-group">
-            <button type="button" class="btn btn-outline-light" (click)="openModal('import')">
-              Importar Productos
-            </button>
-          </div>
-        </div>-->
                 <div class="item-header"
                     *ngIf="userCountry === 'MX' && transaction?.type?.electronics">
                     <select class="form-control" (change)="changeUseOfCFDI($event.target.value)">
@@ -661,6 +661,30 @@
                 <textarea type="text" class="form-control" [(ngModel)]="transaction.observation"
                     placeholder="Observación" [focus]="focusEvent">
         </textarea>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="c('cancel')">Cancelar</button>
+        <button type="submit" class="btn btn-primary" (click)="c('y')">
+            <span>Aceptar</span>
+        </button>
+    </div>
+</ng-template>
+
+<!--MODAL BUSINESS RULES CODE-->
+<ng-template #contentBusinessRulesCode let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">Código Regla de Negocio</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('close_click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <input type="text" class="form-control" [(ngModel)]="businessRulesCode"
+                    placeholder="Código" />
             </div>
         </div>
     </div>
