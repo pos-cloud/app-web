@@ -406,7 +406,8 @@
                         <input type="text" class="form-control" [(ngModel)]="filterArticle"
                             (keydown.enter)="filterArticles()"
                             placeholder="Filtrar Productos por Cód. de Barras, Cód. Interno o Descripción y luego presione Enter."
-                            [focus]="focusEvent">
+                            [focus]="focusEvent"
+                            [readonly]="loading">
                         <button type="button" class="btn btn-outline-light mr-2" placement="left"
                             popoverClass="popover-class"
                             ngbPopover="Ingresar texto y luego presionar enter para filtrar.
@@ -446,13 +447,13 @@
             <div class="row" *ngIf="display">
                 <div class="col-md-12">
                     <app-list-articles-pos (eventAddItem)="addItem($event)" [transaction]="transaction"
-                        [transactionId]="transactionId"></app-list-articles-pos>
+                        [transactionId]="transactionId" [loading]="loading"></app-list-articles-pos>
                 </div>
             </div>
             <div class="row" *ngIf="display">
                 <div class="col-md-12">
                     <app-list-categories-pos (eventSelectCategory)="showArticles($event)"
-                        [transactionMovement]="transaction.type.transactionMovement"></app-list-categories-pos>
+                        [transactionMovement]="transaction.type.transactionMovement" [loading]="loading"></app-list-categories-pos>
                 </div>
             </div>
         </div>

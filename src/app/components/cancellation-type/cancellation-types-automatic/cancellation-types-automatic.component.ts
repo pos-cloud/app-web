@@ -192,6 +192,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
 
     public async finishSelection() {
         try {
+            this.loading = true;
             if (!this.cancellationTypeSelected) {
                 this.activeModal.close();
             } else {
@@ -264,7 +265,6 @@ export class CancellationTypeAutomaticComponent implements OnInit {
                 this.transaction.state = this.cancellationTypeSelected.stateOrigin;
                 if (this.cancellationTypeSelected.modifyBalance) this.transaction.balance = 0;
                 this.transaction = await this.updateTransaction(this.transaction);
-
                 this.activeModal.close({ transaction: transactionDestination });
             }
         } catch (error) { this.showToast(error); }
