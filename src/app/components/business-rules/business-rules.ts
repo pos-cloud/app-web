@@ -1,30 +1,49 @@
-import { Model } from '../model/model.model';
-import { IAttribute } from 'app/util/attribute.interface';
-import { Article } from '../article/article';
+import {IAttribute} from 'app/util/attribute.interface';
+
+import {Article} from '../article/article';
+import {Model} from '../model/model.model';
 
 export class BusinessRule extends Model {
-
   _id: string;
+  code: string;
   name: string;
-  startDate: string;
-  endDate: string;
-  quantity: number;
-  discountAmount: number;
-  discountPercent: number;
+  description: string;
+  termsAndConditions: string;
+  startDate: Date;
+  endDate: Date;
+  minAmount: number;
+  minQuantity: number;
+  transactionAmountLimit: number;
+  totalStock: number;
+  currentStock: number;
+  madeIn: string;
+  active: boolean;
+  discountType: DiscountType;
+  discountValue: number;
   article: Article;
-  newUser: boolean = false;
+  item: Article;
 
-  constructor() { super(); }
+  constructor() {
+    super();
+  }
 
   static getAttributes(): IAttribute[] {
     return Model.getAttributes([
+      {
+        name: 'code',
+        visible: true,
+        filter: true,
+        datatype: 'string',
+        align: 'left',
+      },
       {
         name: 'name',
         visible: true,
         filter: true,
         datatype: 'string',
         align: 'left',
-      }, {
+      },
+      {
         name: 'startDate',
         visible: true,
         filter: true,
@@ -41,27 +60,38 @@ export class BusinessRule extends Model {
         align: 'left',
       },
       {
-        name: 'quantity',
+        name: 'active',
         visible: true,
         filter: true,
-        datatype: 'string',
+        datatype: 'boolean',
         align: 'left',
-      }
-    ])
+      },
+      {
+        name: 'totalStock',
+        visible: true,
+        filter: true,
+        datatype: 'number',
+        align: 'right',
+      },
+    ]);
   }
 }
 
+export enum DiscountType {
+  Percentage = 'percentage',
+  Amount = 'amount',
+}
+
 export enum Types {
-  Asset = <any>"Activo",
-  Passive = <any>"Pasivo",
-  netWorth = <any>"Patrimonio Neto",
-  Result = <any>"Resultado",
-  Compensatory = <any>"Compensatoria",
-  Other = <any>"Otro"
+  Asset = <any>'Activo',
+  Passive = <any>'Pasivo',
+  netWorth = <any>'Patrimonio Neto',
+  Result = <any>'Resultado',
+  Compensatory = <any>'Compensatoria',
+  Other = <any>'Otro',
 }
 
 export enum Modes {
-  Synthetic = <any>"Sintetico",
-  Analytical = <any>"Analitico"
+  Synthetic = <any>'Sintetico',
+  Analytical = <any>'Analitico',
 }
-

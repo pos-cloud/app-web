@@ -21,7 +21,9 @@ export class BusinessRuleService extends ModelService {
   apply(code: string, transactionId: string): Observable<any> {
     const URL = `${Config.apiV8URL}business-rules/apply`;
 
-    const headers = new HttpHeaders().set('Content-Type', 'application/json');
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
     return this._http.post(URL, {code, transactionId}, {headers}).pipe(
       map((res) => {

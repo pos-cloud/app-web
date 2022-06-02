@@ -2139,28 +2139,7 @@ export class AddSaleOrderComponent {
           });
         break;
       case 'apply-bussiness-rule-code':
-        modalRef = this._modalService
-          .open(this.contentBusinessRulesCode)
-          .result.then(async (result) => {
-            if (result !== 'cancel' && this.businessRulesCode) {
-              await this._businessRulesService
-                .apply(result.businessRulesCode, this.transactionId)
-                .subscribe(
-                  async (result) => {
-                    if (result.status === 200) {
-                      this.getMovementsOfTransaction();
-                    }
-                  },
-                  (error) => {
-                    this.showMessage(
-                      'Ha ocurrido un error en el servidor. Comuníquese con Soporte.',
-                      'danger',
-                      false,
-                    );
-                  },
-                );
-            }
-          });
+        modalRef = this._modalService.open(this.contentBusinessRulesCode);
         break;
       case 'movement_of_article':
         movementOfArticle.transaction = this.transaction;
@@ -2857,6 +2836,21 @@ export class AddSaleOrderComponent {
         });
         break;
       default:
+    }
+  }
+
+  async applyBusinessRuleCode() {
+    if (this.businessRulesCode) {
+      await this._businessRulesService
+        .apply(this.businessRulesCode, this.transactionId)
+        .subscribe(
+          async (result) => {
+            if (result.status === 200) {
+              this.getMovementsOfTransaction();
+            } else this.showToast(result);
+          },
+          (error) => this.showToast(error),
+        );
     }
   }
 

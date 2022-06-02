@@ -35,27 +35,27 @@ import {BusinessRule} from '../business-rules';
   encapsulation: ViewEncapsulation.None,
 })
 export class BusinessRuleComponent implements OnInit {
-  public objId: string;
-  public readonly: boolean;
-  public operation: string;
-  public obj: BusinessRule;
-  public objForm: FormGroup;
-  public loading: boolean = false;
-  public schedule: FormArray;
-  public focusEvent = new EventEmitter<boolean>();
-  public title: string = 'business-rule';
   private subscription: Subscription = new Subscription();
   private capitalizePipe: CapitalizePipe = new CapitalizePipe();
-  public focus$: Subject<string>[] = new Array();
-  public stateId: number;
-  public filesToUpload: any[] = new Array();
-  public filename: any[] = new Array();
-  public typeFile: any[] = new Array();
-  public oldFiles: any[];
-  public apiURL: string = Config.apiV8URL;
-  public database: string = Config.database;
+  objId: string;
+  readonly: boolean;
+  operation: string;
+  obj: BusinessRule;
+  objForm: FormGroup;
+  loading: boolean = false;
+  schedule: FormArray;
+  focusEvent = new EventEmitter<boolean>();
+  title: string = 'business-rule';
+  focus$: Subject<string>[] = new Array();
+  stateId: number;
+  filesToUpload: any[] = new Array();
+  filename: any[] = new Array();
+  typeFile: any[] = new Array();
+  oldFiles: any[];
+  apiURL: string = Config.apiV8URL;
+  database: string = Config.database;
 
-  public searchArticle = (text$: Observable<string>) => {
+  searchArticle = (text$: Observable<string>) => {
     const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
     const inputFocus$ = this.focus$['article'];
 
@@ -78,9 +78,9 @@ export class BusinessRuleComponent implements OnInit {
     );
   };
 
-  public formatterArticle = (x: {name: string}) => x.name;
+  formatterArticle = (x: {name: string}) => x.name;
 
-  public formFields: FormField[] = [
+  formFields: FormField[] = [
     {
       name: 'name',
       tag: 'input',
@@ -92,40 +92,53 @@ export class BusinessRuleComponent implements OnInit {
       name: 'startDate',
       tag: 'input',
       tagType: 'date',
-      class: 'form-group col-md-2',
-      validators: [Validators.required],
+      class: 'form-group col-md-3',
     },
     {
       name: 'endDate',
       tag: 'input',
       tagType: 'date',
+      class: 'form-group col-md-3',
+    },
+    {
+      name: 'minAmount',
+      tag: 'input',
+      tagType: 'number',
+      class: 'form-group col-md-2',
+    },
+    {
+      name: 'minQuantity',
+      tag: 'input',
+      tagType: 'number',
+      class: 'form-group col-md-2',
+    },
+    {
+      name: 'transactionAmountLimit',
+      tag: 'input',
+      tagType: 'number',
+      class: 'form-group col-md-2',
+    },
+    {
+      name: 'totalStock',
+      tag: 'input',
+      tagType: 'number',
       class: 'form-group col-md-2',
       validators: [Validators.required],
     },
-    /*{
-            name: 'quantity',
-            tag: 'input',
-            tagType: 'number',
-            class: 'form-group col-md-2'
-        },*/
     {
-      name: 'discountAmount',
-      tag: 'input',
-      tagType: 'number',
-      class: 'form-group col-md-2',
-    },
-    {
-      name: 'discountPercent',
-      tag: 'input',
-      tagType: 'number',
-      class: 'form-group col-md-2',
-    },
-    {
-      name: 'newUser',
+      name: 'discountType',
       tag: 'select',
-      tagType: 'boolean',
-      values: ['true', 'false'],
+      tagType: 'text',
       class: 'form-group col-md-2',
+      values: ['percentage', 'amount'],
+      validators: [Validators.required],
+    },
+    {
+      name: 'discountValue',
+      tag: 'input',
+      tagType: 'number',
+      class: 'form-group col-md-2',
+      validators: [Validators.required],
     },
     {
       name: 'article',
@@ -136,14 +149,25 @@ export class BusinessRuleComponent implements OnInit {
       values: null,
       focus: false,
       class: 'form-group col-md-6',
+      validators: [Validators.required],
+    },
+    {
+      name: 'item',
+      tag: 'autocomplete',
+      tagType: 'text',
+      search: this.searchArticle,
+      format: this.formatterArticle,
+      values: null,
+      focus: false,
+      class: 'form-group col-md-6',
     },
   ];
-  public formErrors: {} = {};
-  public validationMessages = {
+  formErrors: {} = {};
+  validationMessages = {
     required: 'Este campo es requerido.',
   };
 
-  public tinyMCEConfigBody = {
+  tinyMCEConfigBody = {
     selector: 'textarea',
     theme: 'modern',
     paste_data_images: true,
@@ -183,7 +207,6 @@ export class BusinessRuleComponent implements OnInit {
     private _objService: BusinessRuleService,
     private _toastr: ToastrService,
     private _title: Title,
-    public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _branchService: BranchService,
@@ -196,6 +219,7 @@ export class BusinessRuleComponent implements OnInit {
     public _company: CompanyService,
     public translatePipe: TranslateMePipe,
     private _router: Router,
+    public _fb: FormBuilder,
   ) {
     this.obj = new BusinessRule();
     for (let field of this.formFields) {
@@ -211,7 +235,7 @@ export class BusinessRuleComponent implements OnInit {
     }
   }
 
-  public async ngOnInit() {
+  async ngOnInit() {
     let pathUrl: string[] = this._router.url.split('/');
 
     this.operation = pathUrl[2];
@@ -264,19 +288,19 @@ export class BusinessRuleComponent implements OnInit {
     }
   }
 
-  public ngAfterViewInit(): void {
+  ngAfterViewInit(): void {
     this.focusEvent.emit(true);
   }
 
-  public ngOnDestroy(): void {
+  ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
 
-  public getFiles(fieldName) {
+  getFiles(fieldName) {
     return eval('this.obj?.' + fieldName.split('.').join('?.'));
   }
 
-  public onFileSelected(event, model: string) {
+  onFileSelected(event, model: string) {
     this.filesToUpload[model] = event.target.files;
     this.filename[model] = '';
     let i: number = 0;
@@ -289,7 +313,7 @@ export class BusinessRuleComponent implements OnInit {
     this.typeFile[model] = this.filesToUpload[model][0].type.split('/')[0];
   }
 
-  public buildForm(): void {
+  buildForm(): void {
     let fields: {} = {
       _id: [this.obj._id],
     };
@@ -303,7 +327,7 @@ export class BusinessRuleComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  public onValueChanged(fieldID?: any): void {
+  onValueChanged(fieldID?: any): void {
     if (!this.objForm) {
       return;
     }
@@ -325,7 +349,7 @@ export class BusinessRuleComponent implements OnInit {
     }
   }
 
-  public validateAutocomplete(c: FormControl) {
+  validateAutocomplete(c: FormControl) {
     let result =
       c.value && Object.keys(c.value)[0] === '0'
         ? {
@@ -338,7 +362,7 @@ export class BusinessRuleComponent implements OnInit {
     return result;
   }
 
-  public setValuesForm(): void {
+  setValuesForm(): void {
     let values: {} = {
       _id: this.obj._id,
     };
@@ -385,7 +409,7 @@ export class BusinessRuleComponent implements OnInit {
     this.objForm.patchValue(values);
   }
 
-  public async addObj() {
+  async addObj() {
     let isValid: boolean = true;
 
     isValid = this.operation === 'delete' ? true : this.objForm.valid;
@@ -502,7 +526,7 @@ export class BusinessRuleComponent implements OnInit {
     }
   }
 
-  public deleteFile(typeFile: string, fieldName: string, filename: string) {
+  deleteFile(typeFile: string, fieldName: string, filename: string) {
     this._objService
       .deleteFile(
         typeFile,
@@ -541,7 +565,7 @@ export class BusinessRuleComponent implements OnInit {
       );
   }
 
-  public saveObj() {
+  saveObj() {
     this.loading = true;
     this.subscription.add(
       this._objService.save(this.obj).subscribe(
@@ -554,7 +578,7 @@ export class BusinessRuleComponent implements OnInit {
     );
   }
 
-  public updateObj() {
+  updateObj() {
     this.loading = true;
     this.subscription.add(
       this._objService.update(this.obj).subscribe(
@@ -567,7 +591,7 @@ export class BusinessRuleComponent implements OnInit {
     );
   }
 
-  public deleteObj() {
+  deleteObj() {
     this.loading = true;
     this.subscription.add(
       this._objService.delete(this.obj._id).subscribe(
@@ -582,7 +606,7 @@ export class BusinessRuleComponent implements OnInit {
     );
   }
 
-  public getAllArticles(match: {}): Promise<Article[]> {
+  getAllArticles(match: {}): Promise<Article[]> {
     return new Promise<Article[]>((resolve, reject) => {
       this.subscription.add(
         this._articleService
@@ -607,7 +631,7 @@ export class BusinessRuleComponent implements OnInit {
     });
   }
 
-  public showToast(result, type?: string, title?: string, message?: string): void {
+  showToast(result, type?: string, title?: string, message?: string): void {
     if (result) {
       if (result.status === 200) {
         type = 'success';
