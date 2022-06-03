@@ -2841,14 +2841,17 @@ export class AddSaleOrderComponent {
 
   async applyBusinessRuleCode() {
     if (this.businessRulesCode) {
+      this.loading = true;
       await this._businessRulesService
         .apply(this.businessRulesCode, this.transactionId)
         .subscribe(
           async (result) => {
+            this.showToast(result);
             if (result.status === 200) {
+              this.businessRulesCode = null;
               this._modalService.dismissAll();
               this.getMovementsOfTransaction();
-            } else this.showToast(result);
+            }
           },
           (error) => this.showToast(error),
         );

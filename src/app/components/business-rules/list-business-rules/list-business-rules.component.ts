@@ -15,7 +15,7 @@ import {BusinessRule} from '../business-rules';
 })
 export class ListBusinessRulesComponent {
   public title: string = 'business-rules';
-  public sort = {code: 1};
+  public sort = {active: -1, endDate: -1};
   public columns = BusinessRule.getAttributes();
   public rowButtons: IButton[] = [
     {

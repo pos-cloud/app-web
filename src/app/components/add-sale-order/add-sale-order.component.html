@@ -688,8 +688,8 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-light" (click)="c('cancel')">Cancelar</button>
-        <button type="submit" class="btn btn-primary" (click)="applyBusinessRuleCode()">
+        <button type="button" class="btn btn-light" (click)="!loading ? c('cancel') : $event.stopPropagation()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" (click)="!loading ? applyBusinessRuleCode() : $event.stopPropagation()">
             <span>Aceptar</span>
         </button>
     </div>
