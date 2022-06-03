@@ -67,7 +67,7 @@ export class BusinessRule extends Model {
         align: 'left',
       },
       {
-        name: 'totalStock',
+        name: 'currentStock',
         visible: true,
         filter: true,
         datatype: 'number',

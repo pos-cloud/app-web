@@ -1,15 +1,15 @@
-import { User } from '../user/user';
+import {IAttribute} from 'app/util/attribute.interface';
 import * as moment from 'moment';
-import { IAttribute } from 'app/util/attribute.interface';
+
+import {User} from '../user/user';
 
 export class Model {
-
   public _id: string;
   public audits: [
     {
-      date: string,
-      user: User
-    }
+      date: string;
+      user: User;
+    },
   ];
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public updateDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
@@ -17,11 +17,9 @@ export class Model {
   public updateUser: User;
   public operationType: string;
 
-  constructor() { }
+  constructor() {}
 
-  static getAttributes(
-    atrributes: IAttribute[]
-  ): IAttribute[] {
+  static getAttributes(atrributes: IAttribute[]): IAttribute[] {
     return [
       ...atrributes,
       {
@@ -33,7 +31,7 @@ export class Model {
         datatype: 'string',
         project: null,
         align: 'left',
-        required: false
+        required: false,
       },
       {
         name: 'creationDate',
@@ -44,7 +42,7 @@ export class Model {
         datatype: 'string',
         project: `{ "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y", "timezone": "-03:00" } }`,
         align: 'left',
-        required: false
+        required: false,
       },
       {
         name: 'creationUser.name',
@@ -89,7 +87,7 @@ export class Model {
         project: null,
         align: 'left',
         required: true,
-      }
-    ]
+      },
+    ];
   }
 }

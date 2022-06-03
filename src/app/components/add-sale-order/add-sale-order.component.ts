@@ -2846,6 +2846,7 @@ export class AddSaleOrderComponent {
         .subscribe(
           async (result) => {
             if (result.status === 200) {
+              this._modalService.dismissAll();
               this.getMovementsOfTransaction();
             } else this.showToast(result);
           },

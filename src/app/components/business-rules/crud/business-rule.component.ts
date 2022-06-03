@@ -123,7 +123,7 @@ export class BusinessRuleComponent implements OnInit {
       tag: 'input',
       tagType: 'number',
       class: 'form-group col-md-2',
-      validators: [Validators.required],
+      validators: [Validators.required, Validators.min(1)],
     },
     {
       name: 'discountType',
@@ -141,6 +141,14 @@ export class BusinessRuleComponent implements OnInit {
       validators: [Validators.required],
     },
     {
+      name: 'active',
+      tag: 'select',
+      tagType: 'boolean',
+      class: 'form-group col-md-2',
+      values: ['true', 'false'],
+      validators: [Validators.required],
+    },
+    {
       name: 'article',
       tag: 'autocomplete',
       tagType: 'text',
@@ -148,7 +156,7 @@ export class BusinessRuleComponent implements OnInit {
       format: this.formatterArticle,
       values: null,
       focus: false,
-      class: 'form-group col-md-6',
+      class: 'form-group col-md-5',
       validators: [Validators.required],
     },
     {
@@ -159,12 +167,13 @@ export class BusinessRuleComponent implements OnInit {
       format: this.formatterArticle,
       values: null,
       focus: false,
-      class: 'form-group col-md-6',
+      class: 'form-group col-md-5',
     },
   ];
   formErrors: {} = {};
   validationMessages = {
     required: 'Este campo es requerido.',
+    min: 'El campo debe ser mayor a 0.',
   };
 
   tinyMCEConfigBody = {
@@ -251,16 +260,20 @@ export class BusinessRuleComponent implements OnInit {
     if (this.objId && this.objId !== '') {
       let project = {
         _id: 1,
-        operationType: 1,
         name: 1,
         startDate: 1,
         endDate: 1,
-        quantity: 1,
-        discountAmount: 1,
-        discountPercent: 1,
-        newUser: 1,
+        minAmount: 1,
+        minQuantity: 1,
+        transactionAmountLimit: 1,
+        totalStock: 1,
+        discountType: 1,
+        discountValue: 1,
+        active: 1,
         'article._id': 1,
         'article.name': '$article.description',
+        'item._id': 1,
+        'item.name': '$item.description',
       };
 
       this.subscription.add(
