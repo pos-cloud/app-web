@@ -80,6 +80,31 @@ export class BusinessRuleComponent implements OnInit {
 
   formatterArticle = (x: {name: string}) => x.name;
 
+  searchItem = (text$: Observable<string>) => {
+    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    const inputFocus$ = this.focus$['article'];
+
+    return merge(debouncedText$, inputFocus$).pipe(
+      tap(() => (this.loading = true)),
+      switchMap(async (term) => {
+        let match: {} =
+          term && term !== '' ? {description: {$regex: term, $options: 'i'}} : {};
+
+        if (this.operation === 'update' && this.obj._id) {
+          match['_id'] = {$ne: {$oid: this.obj._id}};
+        }
+        match['operationType'] = {$ne: 'D'};
+
+        return await this.getAllArticles(match).then((result) => {
+          return result;
+        });
+      }),
+      tap(() => (this.loading = false)),
+    );
+  };
+
+  formatterItem = (x: {name: string}) => x.name;
+
   formFields: FormField[] = [
     {
       name: 'name',
@@ -150,6 +175,7 @@ export class BusinessRuleComponent implements OnInit {
     },
     {
       name: 'article',
+      label: 'discountArticle',
       tag: 'autocomplete',
       tagType: 'text',
       search: this.searchArticle,
@@ -163,8 +189,8 @@ export class BusinessRuleComponent implements OnInit {
       name: 'item',
       tag: 'autocomplete',
       tagType: 'text',
-      search: this.searchArticle,
-      format: this.formatterArticle,
+      search: this.searchItem,
+      format: this.formatterItem,
       values: null,
       focus: false,
       class: 'form-group col-md-5',

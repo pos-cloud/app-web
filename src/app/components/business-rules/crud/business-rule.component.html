@@ -26,10 +26,10 @@
                         <!-- SEPARATOR -->
                         <div *ngIf="field.tag === 'separator'">
                             <hr>
-                            <b>{{field.name}}</b>
+                            <b>{{(field.label || field.name) | translate | capitalize}}</b>
                         </div>
                         <label *ngIf="field.tag !== 'separator'" [for]="field.name"
-                            class="control-label">{{field.name | translate | capitalize}}:</label>
+                            class="control-label">{{(field.label || field.name) | translate | capitalize}}:</label>
                         <div class="input-group">
 
                             <!-- FILE -->
