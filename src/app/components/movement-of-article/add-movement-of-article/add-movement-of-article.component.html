@@ -211,10 +211,10 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
+      <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')" [disabled]="loading">Cancelar</button>
       <button type="button" class="btn btn-danger"
         *ngIf="movementOfArticle && movementOfArticle._id && movementOfArticle._id !== ''"
-        (click)="deleteMovementOfArticle()" [disabled]="false">Eliminar</button>
+        (click)="deleteMovementOfArticle()" [disabled]="loading">Eliminar</button>
       <button type="submit" class="btn btn-primary" [disabled]="!movementOfArticleForm?.valid || loading">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Guardar</span>

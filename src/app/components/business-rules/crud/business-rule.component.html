@@ -26,10 +26,10 @@
                         <!-- SEPARATOR -->
                         <div *ngIf="field.tag === 'separator'">
                             <hr>
-                            <b>{{field.name}}</b>
+                            <b>{{(field.label || field.name) | translate | capitalize}}</b>
                         </div>
                         <label *ngIf="field.tag !== 'separator'" [for]="field.name"
-                            class="control-label">{{field.name | translate | capitalize}}:</label>
+                            class="control-label">{{(field.label || field.name) | translate | capitalize}}:</label>
                         <div class="input-group">
 
                             <!-- FILE -->
@@ -96,7 +96,7 @@
                                 [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
                                 (blur)="onValueChanged($event.target.id)">
                                 <option *ngFor="let v of field.values" [value]="v" [disabled]="readonly"
-                                    [selected]="obj[field.name] && obj[field.name] == v">
+                                    [selected]="obj[field.name] == v">
                                     {{ v | translate | capitalize}}
                                 </option>
                             </select>
