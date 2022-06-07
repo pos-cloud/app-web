@@ -169,6 +169,12 @@ export class BusinessRuleComponent implements OnInit {
       focus: false,
       class: 'form-group col-md-5',
     },
+    {
+      name: 'description',
+      tag: 'textarea',
+      tagType: 'text',
+      class: 'form-group col-md-12',
+    },
   ];
   formErrors: {} = {};
   validationMessages = {

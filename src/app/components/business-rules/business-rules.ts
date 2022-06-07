@@ -73,6 +73,14 @@ export class BusinessRule extends Model {
         datatype: 'number',
         align: 'right',
       },
+      {
+        name: 'description',
+        visible: false,
+        filter: true,
+        required: true,
+        datatype: 'string',
+        align: 'left',
+      },
     ]);
   }
 }
