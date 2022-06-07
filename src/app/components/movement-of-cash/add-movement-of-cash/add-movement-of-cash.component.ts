@@ -15,20 +15,20 @@ import {Config} from 'app/app.config';
 
 // COMPONENTS
 
-import { Subscription, Observable, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
-import { AccountSeatService } from 'app/components/account-seat/account-seat.service';
-import { Bank } from 'app/components/bank/bank';
-import { BankService } from 'app/components/bank/bank.service';
+import {AccountSeatService} from 'app/components/account-seat/account-seat.service';
+import {Bank} from 'app/components/bank/bank';
+import {BankService} from 'app/components/bank/bank.service';
 import {CompanyService} from 'app/components/company/company.service';
 import {Currency} from 'app/components/currency/currency';
 import {CurrencyService} from 'app/components/currency/currency.service';
-import { Holiday } from 'app/components/holiday/holiday.model';
-import { HolidayService } from 'app/components/holiday/holiday.service';
-import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import {Holiday} from 'app/components/holiday/holiday.model';
+import {HolidayService} from 'app/components/holiday/holiday.service';
+import {TranslateMePipe} from 'app/main/pipes/translate-me';
 import Resulteable from 'app/util/Resulteable';
 import * as moment from 'moment';
-import { ToastrService } from 'ngx-toastr';
+import {ToastrService} from 'ngx-toastr';
+import {Subscription, Observable, Subject} from 'rxjs';
+import {debounceTime, distinctUntilChanged, tap, switchMap} from 'rxjs/operators';
 import Keyboard from 'simple-keyboard';
 
 import {RoundNumberPipe} from '../../../main/pipes/round-number.pipe';
@@ -1162,16 +1162,14 @@ export class AddMovementOfCashComponent implements OnInit {
     movementOfArticle: MovementOfArticle,
   ): Promise<MovementOfArticle> {
     return new Promise<MovementOfArticle>((resolve, reject) => {
-      this._movementOfArticleService
-        .deleteMovementOfArticle(movementOfArticle._id)
-        .subscribe(
-          (result) => {
-            if (result.movementOfArticle) {
-              resolve(movementOfArticle);
-            } else reject(result);
-          },
-          (error) => reject(error),
-        );
+      this._movementOfArticleService.delete(movementOfArticle._id).subscribe(
+        (result) => {
+          if (result.status === 200) {
+            resolve(movementOfArticle);
+          } else reject(result);
+        },
+        (error) => reject(error),
+      );
     });
   }
 

@@ -1,88 +1,77 @@
-//Angular
 import {Component, OnInit, Input, EventEmitter, ViewEncapsulation} from '@angular/core';
 import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
-
-//Terceros
 import {NgbAlertConfig, NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
-
-//Models
 import {Account} from 'app/components/account/account';
 import {AccountService} from 'app/components/account/account.service';
 import {ArticleService} from 'app/components/article/article.service';
 import {CompanyType} from 'app/components/company/company';
 import {ConfigService} from 'app/components/config/config.service';
 import {Deposit} from 'app/components/deposit/deposit';
+import {PriceList} from 'app/components/price-list/price-list';
+import {PriceListService} from 'app/components/price-list/price-list.service';
+import {Structure, Utilization} from 'app/components/structure/structure';
+import {StructureService} from 'app/components/structure/structure.service';
 import {Transaction} from 'app/components/transaction/transaction';
 import {OrderByPipe} from 'app/main/pipes/order-by.pipe';
+import {TranslateMePipe} from 'app/main/pipes/translate-me';
+import {ToastrService} from 'ngx-toastr';
+import {Observable, Subscription} from 'rxjs';
+import {debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
+
 import {Config} from '../../../app.config';
-import {ArticleStock} from '../../article-stock/article-stock';
-import { Article } from '../../article/article';
-import { MovementOfArticle, MovementOfArticleStatus } from '../movement-of-article';
-import {Variant} from '../../variant/variant';
-import {VariantValue} from '../../variant-value/variant-value';
-import {VariantType} from '../../variant-type/variant-type';
-
-//Services
-import {MovementOfArticleService} from '../movement-of-article.service';
-import {VariantService} from '../../variant/variant.service';
-import {ArticleStockService} from '../../article-stock/article-stock.service';
-
-//Pipes
 import {RoundNumberPipe} from '../../../main/pipes/round-number.pipe';
+import {ArticleFieldType} from '../../article-field/article-field';
+import {ArticleFields} from '../../article-field/article-fields';
+import {ArticleStock} from '../../article-stock/article-stock';
+import {ArticleStockService} from '../../article-stock/article-stock.service';
+import {Article} from '../../article/article';
+import {AddArticleComponent} from '../../article/article/add-article.component';
+import {TaxBase} from '../../tax/tax';
+import {Taxes} from '../../tax/taxes';
 import {
   TransactionMovement,
   EntryAmount,
   StockMovement,
 } from '../../transaction-type/transaction-type';
-import {Taxes} from '../../tax/taxes';
-import {ArticleFieldType} from '../../article-field/article-field';
-import {ArticleFields} from '../../article-field/article-fields';
-
-import {PriceListService} from 'app/components/price-list/price-list.service';
-import {PriceList} from 'app/components/price-list/price-list';
-
-import {AddArticleComponent} from '../../article/article/add-article.component';
-
-import {StructureService} from 'app/components/structure/structure.service';
-import {Structure, Utilization} from 'app/components/structure/structure';
-
-import {TaxBase} from '../../tax/tax';
-
-import {Observable, Subscription} from 'rxjs';
-import {debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
+import {VariantType} from '../../variant-type/variant-type';
+import {VariantValue} from '../../variant-value/variant-value';
+import {Variant} from '../../variant/variant';
+import {VariantService} from '../../variant/variant.service';
+import {MovementOfArticle, MovementOfArticleStatus} from '../movement-of-article';
+import {MovementOfArticleService} from '../movement-of-article.service';
 
 @Component({
   selector: 'app-add-movement-of-article',
   templateUrl: './add-movement-of-article.component.html',
   styleUrls: ['./add-movement-of-article.component.scss'],
-  providers: [NgbAlertConfig],
+  providers: [NgbAlertConfig, TranslateMePipe],
   encapsulation: ViewEncapsulation.None,
 })
 export class AddMovementOfArticleComponent implements OnInit {
   @Input() movementOfArticle: MovementOfArticle;
   @Input() transaction: Transaction;
-  public containsVariants: Boolean;
-  public articleStock: ArticleStock;
-  public variants: Variant[];
-  public variantTypes: VariantType[];
-  public selectedVariants;
-  public areVariantsEmpty: boolean = true;
-  public movementOfArticleForm: FormGroup;
-  public alertMessage: string = '';
-  public userType: string;
-  public loading: boolean = false;
-  public focusEvent = new EventEmitter<boolean>();
-  public roundNumber: RoundNumberPipe;
-  public errVariant: string;
-  public config$: any;
-  public orderByPipe: OrderByPipe = new OrderByPipe();
-  public stock: number = 0;
-  public position: string = '';
-  public notes: string[];
+  containsVariants: Boolean;
+  articleStock: ArticleStock;
+  variants: Variant[];
+  variantTypes: VariantType[];
+  selectedVariants;
+  areVariantsEmpty: boolean = true;
+  movementOfArticleForm: FormGroup;
+  alertMessage: string = '';
+  userType: string;
+  loading: boolean = false;
+  focusEvent = new EventEmitter<boolean>();
+  roundNumber: RoundNumberPipe;
+  errVariant: string;
+  config$: any;
+  orderByPipe: OrderByPipe = new OrderByPipe();
+  stock: number = 0;
+  position: string = '';
+  notes: string[];
   private subscription: Subscription = new Subscription();
-  public structures: Structure[];
-  public grouped: {
+  structures: Structure[];
+  grouped: {
     name: string;
     isRequired: boolean;
     names: [
@@ -96,19 +85,19 @@ export class AddMovementOfArticleComponent implements OnInit {
       },
     ];
   }[] = [];
-  public movChild: MovementOfArticle[];
-  public auxPrice: number = 0;
+  movChild: MovementOfArticle[];
+  auxPrice: number = 0;
 
-  public formErrors = {description: '', amount: '', unitPrice: '', notes: ''};
+  formErrors = {description: '', amount: '', unitPrice: '', notes: ''};
 
-  public validationMessages = {
+  validationMessages = {
     description: {required: 'Este campo es requerido.'},
     amount: {required: 'Este campo es requerido.'},
     unitPrice: {required: 'Este campo es requerido.'},
     notes: {maxLength: 'Este campo no puede superar los 180 caracteres.'},
   };
 
-  public searchAccount = (text$: Observable<string>) =>
+  searchAccount = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
@@ -129,7 +118,7 @@ export class AddMovementOfArticleComponent implements OnInit {
       }),
       tap(() => (this.loading = false)),
     );
-  public formatterAccount = (x: Account) => {
+  formatterAccount = (x: Account) => {
     return x.description;
   };
 
@@ -139,10 +128,12 @@ export class AddMovementOfArticleComponent implements OnInit {
     private _variantService: VariantService,
     private _configService: ConfigService,
     private _priceListService: PriceListService,
-    public _accountService: AccountService,
-    public _fb: FormBuilder,
+    private _accountService: AccountService,
     private _modalService: NgbModal,
+    private _toastr: ToastrService,
+    public translatePipe: TranslateMePipe,
     public _router: Router,
+    public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _structureService: StructureService,
@@ -183,7 +174,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.calculateUnitPrice();
   }
 
-  public loadLocationAndStock(): void {
+  loadLocationAndStock(): void {
     let depositArticle: Deposit;
 
     if (
@@ -228,7 +219,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     }
   }
 
-  public loadStructure() {
+  loadStructure() {
     return new Promise<Boolean>((resolve, reject) => {
       this.loading = true;
 
@@ -381,7 +372,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     });
   }
 
-  public addNote(note: string): void {
+  addNote(note: string): void {
     note = note.toUpperCase();
     if (!this.notes) this.notes = new Array();
     if (note && note !== '') {
@@ -393,19 +384,19 @@ export class AddMovementOfArticleComponent implements OnInit {
     }
   }
 
-  public deleteNote(note: string): void {
+  deleteNote(note: string): void {
     note = note.toUpperCase();
     if (note) this.notes.splice(this.notes.indexOf(note), 1);
   }
 
-  public clearNotes(): void {
+  clearNotes(): void {
     this.movementOfArticle.notes = '';
     this.movementOfArticleForm.value.notes = '';
     this.notes = new Array();
     this.setValueForm();
   }
 
-  public getPriceList(id: string): Promise<PriceList> {
+  getPriceList(id: string): Promise<PriceList> {
     return new Promise<PriceList>((resolve, reject) => {
       this._priceListService.getPriceList(id).subscribe(
         (result) => {
@@ -510,7 +501,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  public onValueChanged(data?: any): void {
+  onValueChanged(data?: any): void {
     if (!this.movementOfArticleForm) {
       return;
     }
@@ -531,7 +522,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     }
   }
 
-  public isValidSelectedVariants(): boolean {
+  isValidSelectedVariants(): boolean {
     let isValid: boolean = true;
 
     if (this.containsVariants && this.variantTypes && this.variantTypes.length > 0) {
@@ -547,7 +538,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     return isValid;
   }
 
-  public getVariantsByArticleParent(): void {
+  getVariantsByArticleParent(): void {
     this.loading = true;
 
     let query = 'where="articleParent":"' + this.movementOfArticle.article._id + '"';
@@ -574,7 +565,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     );
   }
 
-  public initializeSelectedVariants(): void {
+  initializeSelectedVariants(): void {
     if (this.variantTypes && this.variantTypes.length > 0) {
       for (let type of this.variantTypes) {
         let key = type.name;
@@ -584,7 +575,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     }
   }
 
-  public getVariantsByType(variantType: VariantType): Variant[] {
+  getVariantsByType(variantType: VariantType): Variant[] {
     let variantsToReturn: Variant[] = new Array();
 
     for (let variant of this.variants) {
@@ -603,7 +594,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     return variantsToReturn;
   }
 
-  public getUniqueValues(property: string, array: Array<any>): Array<any> {
+  getUniqueValues(property: string, array: Array<any>): Array<any> {
     let uniqueArray = new Array();
     let exists = false;
 
@@ -626,7 +617,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     return uniqueArray;
   }
 
-  public getUniqueVariants(array: Array<any>): Array<any> {
+  getUniqueVariants(array: Array<any>): Array<any> {
     let uniqueArray = new Array();
     let exists = false;
 
@@ -672,12 +663,12 @@ export class AddMovementOfArticleComponent implements OnInit {
     }
   }
 
-  public addAmount(): void {
+  addAmount(): void {
     this.movementOfArticle.amount += 1;
     this.movementOfArticleForm.patchValue({amount: this.movementOfArticle.amount});
   }
 
-  public subtractAmount(): void {
+  subtractAmount(): void {
     if (
       (this.transaction.type &&
         this.transaction.type.stockMovement &&
@@ -699,7 +690,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.movementOfArticleForm.patchValue({amount: this.movementOfArticle.amount});
   }
 
-  public setValueForm(): void {
+  setValueForm(): void {
     if (!this.movementOfArticle._id) this.movementOfArticle._id = '';
     if (!this.movementOfArticle.description) this.movementOfArticle.description = '';
     if (this.movementOfArticle.amount === undefined) this.movementOfArticle.amount = 1;
@@ -734,7 +725,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.movementOfArticleForm.setValue(values);
   }
 
-  public calculateMeasure(): void {
+  calculateMeasure(): void {
     this.movementOfArticle.measure = this.movementOfArticleForm.value.measure;
     this.movementOfArticle.quantityMeasure =
       this.movementOfArticleForm.value.quantityMeasure;
@@ -1503,7 +1494,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     }
   }
 
-  public getArticleStock(movArticle: MovementOfArticle): Promise<ArticleStock> {
+  getArticleStock(movArticle: MovementOfArticle): Promise<ArticleStock> {
     return new Promise<ArticleStock>((resolve, reject) => {
       let depositID;
       let query;
@@ -1546,7 +1537,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     });
   }
 
-  public getArticleBySelectedVariants(): Article {
+  getArticleBySelectedVariants(): Article {
     let articleToReturn: Article;
     let articles: Article[] = new Array();
 
@@ -1579,7 +1570,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     return articleToReturn;
   }
 
-  public getVariantsByArticleChild(article: Article): Variant[] {
+  getVariantsByArticleChild(article: Article): Variant[] {
     let variantsToReturn: Variant[] = new Array();
 
     if (this.variants && this.variants.length > 0) {
@@ -1737,9 +1728,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     });
   }
 
-  public saveMovementsOfArticle(
-    movementOfArticle: MovementOfArticle[],
-  ): Promise<boolean> {
+  saveMovementsOfArticle(movementOfArticle: MovementOfArticle[]): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this._movementOfArticleService.saveMovementsOfArticles(movementOfArticle).subscribe(
         (result) => {
@@ -1778,7 +1767,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     });
   }
 
-  public recalculateCostPrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
+  recalculateCostPrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
     movementOfArticle.unitPrice = this.roundNumber.transform(
       movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount,
     );
@@ -1862,7 +1851,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     return movementOfArticle;
   }
 
-  public recalculateSalePrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
+  recalculateSalePrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
     if (movementOfArticle.article) {
       let quotation = 1;
 
@@ -2095,39 +2084,35 @@ export class AddMovementOfArticleComponent implements OnInit {
     });
   }
 
-  public deleteMovementOfArticle(): void {
+  deleteMovementOfArticle(): void {
     this.loading = true;
 
-    this._movementOfArticleService
-      .deleteMovementOfArticle(this.movementOfArticleForm.value._id)
-      .subscribe(
-        (result) => {
-          if (!result.movementOfArticle) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
-          } else {
-            let query =
-              '{"movementParent":"' +
-              result.movementOfArticle._id +
-              '", "operationType": { "$ne": "D" }}';
+    this._movementOfArticleService.delete(this.movementOfArticleForm.value._id).subscribe(
+      (result) => {
+        if (result.status === 200) {
+          let query =
+            '{"movementParent":"' +
+            this.movementOfArticleForm.value._id +
+            '", "operationType": { "$ne": "D" }}';
 
-            this._movementOfArticleService
-              .deleteMovementsOfArticles(query)
-              .subscribe((result) => {
-                if (result && result.movementsOfArticles) {
-                  this.activeModal.close('delete');
-                } else {
-                  this.activeModal.close('delete');
-                }
-              });
-          }
-          this.loading = false;
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
-        },
-      );
+          this._movementOfArticleService
+            .deleteMovementsOfArticles(query)
+            .subscribe((result) => {
+              if (result && result.movementsOfArticles) {
+                this.activeModal.close('delete');
+              } else {
+                this.activeModal.close('delete');
+              }
+            });
+        } else {
+          this.showToast(result);
+        }
+      },
+      (error) => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      },
+    );
   }
 
   async updateMovementOfArticle() {
@@ -2177,7 +2162,7 @@ export class AddMovementOfArticleComponent implements OnInit {
       );
   }
 
-  public getAllAccounts(match: {}): Promise<Account[]> {
+  getAllAccounts(match: {}): Promise<Account[]> {
     return new Promise<Account[]>((resolve, reject) => {
       this.subscription.add(
         this._accountService
@@ -2196,7 +2181,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     });
   }
 
-  public changeOptional(child: string, group) {
+  changeOptional(child: string, group) {
     for (let x = 0; x < this.grouped.length; x++) {
       if (this.grouped[x].name === group) {
         for (let y = 0; y < this.grouped[x].names.length; y++) {
@@ -2212,13 +2197,56 @@ export class AddMovementOfArticleComponent implements OnInit {
     }
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
   }
 
-  public hideMessage(): void {
+  hideMessage(): void {
     this.alertMessage = '';
+  }
+
+  showToast(result, type?: string, title?: string, message?: string): void {
+    if (result) {
+      if (result.status === 0) {
+        type = 'info';
+        title =
+          'el servicio se encuentra en mantenimiento, inténtelo nuevamente en unos minutos';
+      } else if (result.status === 200) {
+        type = 'success';
+        title = result.message;
+      } else if (result.status >= 500) {
+        type = 'danger';
+        title =
+          result.error && result.error.message ? result.error.message : result.message;
+      } else {
+        type = 'info';
+        title =
+          result.error && result.error.message ? result.error.message : result.message;
+      }
+    }
+    switch (type) {
+      case 'success':
+        this._toastr.success(
+          this.translatePipe.translateMe(message),
+          this.translatePipe.translateMe(title),
+        );
+        break;
+      case 'danger':
+        this._toastr.error(
+          this.translatePipe.translateMe(message),
+          this.translatePipe.translateMe(title),
+        );
+        break;
+      default:
+        this._toastr.info(
+          this.translatePipe.translateMe(message),
+          this.translatePipe.translateMe(title),
+        );
+        break;
+    }
+    this.hideMessage();
+    this.loading = false;
   }
 }
