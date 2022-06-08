@@ -12,7 +12,7 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
-    'no-console': 'warn',
+    'no-console': 'error',
     'comma-dangle': ['error', 'always-multiline'],
     'prettier/prettier': [
       'error',
