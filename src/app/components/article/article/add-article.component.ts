@@ -466,6 +466,7 @@ export class AddArticleComponent implements OnInit {
       'meliId': [this.article.meliId, []],
       'meliAttrs': [this.article.meliAttrs, []],
       'wooId': [this.article.wooId, []],
+      'purchasePrice': [this.article.purchasePrice,[]]
     });
 
     this.newDeposit = this._fb.group({
@@ -724,7 +725,6 @@ export class AddArticleComponent implements OnInit {
           } else {
             this.imageURL = './../../../assets/img/default.jpg';
           }
-          this.getLastPricePurchase();
           if (this.article.containsVariants) {
             this.getVariantsByArticleParent();
           }
@@ -1041,81 +1041,6 @@ export class AddArticleComponent implements OnInit {
     );
   }
 
-  public getLastPricePurchase(): void {
-
-    /// ORDENAMOS LA CONSULTA
-    let sortAux = { 'transaction.endDate': -1 };
-
-    // FILTRAMOS LA CONSULTA
-
-    let match = `{  "operationType": { "$ne": "D" },
-                    "transaction.operationType" : { "$ne": "D" },
-                    "transaction.state" : "Cerrado",
-                    "transaction.type.transactionMovement" : "Compra",
-                    "article._id" : { "$oid" : "${this.article._id}"}
-                  }`;
-
-
-    match = JSON.parse(match);
-
-    let timezone = "-03:00";
-    if (Config.timezone && Config.timezone !== '') {
-      timezone = Config.timezone.split('UTC')[1];
-    }
-
-    let project = {
-      endDate: { $dateToString: { date: "$transaction.endDate", format: "%d/%m/%Y", timezone: timezone } },
-      operationType: 1,
-      amount: 1,
-      salePrice: 1,
-      costPrice: 1,
-      basePrice: 1,
-      "article._id": 1,
-      "transaction._id": 1,
-      "transaction.endDate": 1,
-      "transaction.state": 1,
-      "transaction.operationType": 1,
-      "transaction.type.name": 1,
-      "transaction.type.transactionMovement": 1,
-      "transaction.quotation": 1,
-    };
-
-    // AGRUPAMOS EL RESULTADO
-    let group = {
-      _id: null,
-      count: { $sum: 1 },
-      movementsOfArticles: { $push: "$$ROOT" }
-    };
-
-    let limit = 1;
-    let skip = 0;
-
-    this._movementsOfArticle.getMovementsOfArticlesV2(
-      project, // PROJECT
-      match, // MATCH
-      sortAux, // SORT
-      group, // GROUP
-      limit, // LIMIT
-      skip // SKIP
-    ).subscribe(
-      result => {
-        if (result && result[0] && result[0].movementsOfArticles && result[0].movementsOfArticles.length > 0) {
-          let movementOfArticle = result[0].movementsOfArticles[0];
-          this.lastPricePurchase = this.roundNumber.transform(movementOfArticle.basePrice / movementOfArticle.amount);
-          this.lastDatePurchase = movementOfArticle['endDate'];
-          let quotation = 1;
-          if (movementOfArticle.transaction && movementOfArticle.transaction.quotation) {
-            quotation = movementOfArticle.transaction.quotation;
-          }
-          this.lastPricePurchase = this.roundNumber.transform(this.lastPricePurchase / quotation);
-        } else {
-          this.lastPricePurchase = 0;
-        }
-      },
-      error => this.showToast(error)
-    );
-  }
-
   public updatePrices(op): void {
 
     let taxedAmount = 0;
@@ -1406,6 +1331,7 @@ export class AddArticleComponent implements OnInit {
       'codeProvider': this.article.codeProvider,
       'allowStock': this.article.allowStock,
       'wooId': this.article.wooId,
+      'purchasePrice': this.article.purchasePrice
     };
 
     this.articleForm.patchValue(values);
