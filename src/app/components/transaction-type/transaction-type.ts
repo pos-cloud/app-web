@@ -70,7 +70,7 @@ export class TransactionType extends Model {
     public printSign: boolean = false;
     public posKitchen: boolean = false;
     public readLayout: boolean = false;
-    public updatePrice: boolean = false;
+    public updatePrice: PriceType;
     public resetNumber: boolean = false;
     public updateArticle: boolean = false;
     public finishCharge: boolean = true;
@@ -510,7 +510,8 @@ export enum EntryAmount {
 export enum PriceType {
     Base = <any>"Precio Base",
     Final = <any>"Precio Final",
-    SinTax = <any>"Precio Sin Impuestos"
+    SinTax = <any>"Precio Sin Impuestos",
+    Purchase = <any>"Ultima Compra"
 }
 
 export enum DescriptionType {

@@ -666,8 +666,9 @@ export class TransactionTypeComponent implements OnInit {
     {
       name: 'updatePrice',
       tag: 'select',
-      tagType: 'boolean',
-      values: ['false', 'true'],
+      tagType: 'text',
+      values: [null,PriceType.Base,PriceType.Purchase],
+      default: null,
       class: 'form-group col-md-2',
     },
     {
