@@ -79,6 +79,7 @@ import {
   StockMovement,
   TransactionType,
   optionalAFIP,
+  PriceType,
 } from '../transaction-type/transaction-type';
 import {DeleteTransactionComponent} from '../transaction/delete-transaction/delete-transaction.component';
 import {Transaction, TransactionState} from '../transaction/transaction';
@@ -3055,7 +3056,7 @@ export class AddSaleOrderComponent {
         throw new Error('No se encontraron productos en la transacción');
 
       // ACTUALIZACIÓN DE PRECIOS DE COSTOS
-      if (this.transaction.type.updatePrice) {
+      if (this.transaction.type.updatePrice === PriceType.Base) {
         let count = await this.updateArticlesCostPrice();
 
         if (count === 1) {

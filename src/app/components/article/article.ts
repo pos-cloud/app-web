@@ -38,6 +38,7 @@ export class Article {
     public markupPercentage: number = 0.00;
     public markupPrice: number = 0.00;
     public salePrice: number = 0.00;
+    public purchasePrice: number = 0.00;
     public currency: Currency;
     public make: Make;
     public deposits: [{
@@ -193,6 +194,16 @@ export let attributes = [
     {
         name: 'salePrice',
         visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'currency',
+        project: null,
+        align: 'right',
+        required: false,
+    },
+    {
+        name: 'purchasePrice',
+        visible: false,
         disabled: false,
         filter: true,
         datatype: 'currency',
