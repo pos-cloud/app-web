@@ -66,6 +66,7 @@
     "article.taxes[2].amount": "Monto Imp",
     "article.taxes[2].percentage": "Porcentaje Imp",
     "article.unitOfMeasurement.abbreviation": "Un. de Medida",
+    "article.purchasePrice": "Precio de Compra",
     "auth.messageOPT": "Mensaje de Texto",
     "auth.requireOPT": "Verifica teléfono al registrarse",
     "authentication token missing": "falta el token de autenticación",
@@ -359,6 +360,7 @@
     "printSign": "Imprime Firma",
     "providers": "Proveedores",
     "providersName": "Proveedor",
+    "purchasePrice": "Precio de Compra",
     "quantity": "Cantidad",
     "quantityForStock": "Movimiento de Stock",
     "quantityPerMeasure": "Cant. de Un. de Medida",
@@ -538,5 +540,5 @@
     "wrong authentication token": "la sesión se ha vencido",
     "you must select a state": "Debe seleccionar una provincia",
     "you must select who correctly": "Debe seleccionar a quién correctamente",
-    "you're not authorized": "No estas autorizado"
+    "you're not authorized": "No estas autorizado",
 }

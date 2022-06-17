@@ -8,6 +8,7 @@ import { Config } from '../../app.config';
 import { Structure } from 'app/components/structure/structure';
 import { AuthService } from '../login/auth.service';
 import { ModelService } from '../model/model.service';
+import { environment } from "environments/environment";
 
 @Injectable()
 export class StructureService extends ModelService {
@@ -147,6 +148,25 @@ export class StructureService extends ModelService {
       }),
       catchError((err) => {
         return of(err);
+      })
+    );
+  }
+
+  public updateBasePriceByStruct(): Observable<any>{
+    const URL = `${environment.apiv2}/articles/update-by-structure`;
+    console.log(this._authService.getToken());
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http.post(URL, {
+      headers: headers
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err)
       })
     );
   }

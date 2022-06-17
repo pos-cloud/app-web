@@ -11,8 +11,8 @@
           <button class="btn" (click)="openModal('add', null)" ><i class="fa fa-plus">
             <span>Agregar</span>
           </i></button>
+          <button class="btn fa fa-refresh" (click)="openModal('update-base-price')" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar Precio</span></button>
         <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
-        
       </div>
     </div>
     <div class="card-block table-responsive">
