@@ -1,8 +1,5 @@
 import {Component, OnInit, EventEmitter, ViewEncapsulation} from '@angular/core';
 import {FormGroup, FormBuilder, Validators, FormControl, FormArray} from '@angular/forms';
-import * as moment from 'moment';
-import 'moment/locale/es';
-
 import {Title} from '@angular/platform-browser';
 import {Router} from '@angular/router';
 import {NgbAlertConfig, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
@@ -12,11 +9,10 @@ import {Application} from 'app/components/application/application.model';
 import {ApplicationService} from 'app/components/application/application.service';
 import {Branch} from 'app/components/branch/branch';
 import {BranchService} from 'app/components/branch/branch.service';
-import { TransactionState } from 'app/components/transaction/transaction';
-import { CashBoxTypeService } from 'app/components/cash-box-type/cash-box-type.service';
-import { CashBoxType } from 'app/components/cash-box-type/cash-box-type.model';
+import {CashBoxType} from 'app/components/cash-box-type/cash-box-type.model';
+import {CashBoxTypeService} from 'app/components/cash-box-type/cash-box-type.service';
 import {Company, CompanyType} from 'app/components/company/company';
-import { CompanyService } from 'app/components/company/company.service';
+import {CompanyService} from 'app/components/company/company.service';
 import {EmailTemplate} from 'app/components/email-template/email-template';
 import {EmailTemplateService} from 'app/components/email-template/email-template.service';
 import {EmployeeType} from 'app/components/employee-type/employee-type.model';
@@ -27,12 +23,14 @@ import {Printer} from 'app/components/printer/printer';
 import {PrinterService} from 'app/components/printer/printer.service';
 import {ShipmentMethod} from 'app/components/shipment-method/shipment-method.model';
 import {ShipmentMethodService} from 'app/components/shipment-method/shipment-method.service';
+import {TransactionState} from 'app/components/transaction/transaction';
 import {CapitalizePipe} from 'app/main/pipes/capitalize';
 import {TranslateMePipe} from 'app/main/pipes/translate-me';
 import {FormField} from 'app/util/formField.interface';
 import Resulteable from 'app/util/Resulteable';
-import * as optionalAFIP2 from 'assets/datos/optionalAFIP.json';
 import * as $ from 'jquery';
+import * as moment from 'moment';
+import 'moment/locale/es';
 import {ToastrService} from 'ngx-toastr';
 import {Subscription, Subject, Observable, merge} from 'rxjs';
 import {debounceTime, distinctUntilChanged, tap, switchMap} from 'rxjs/operators';
@@ -46,7 +44,6 @@ import {
   PriceType,
   DescriptionType,
   StockMovement,
-  optionalAFIP,
 } from '../transaction-type';
 import {TransactionTypeService} from '../transaction-type.service';
 
@@ -58,29 +55,29 @@ import {TransactionTypeService} from '../transaction-type.service';
   encapsulation: ViewEncapsulation.None,
 })
 export class TransactionTypeComponent implements OnInit {
-  public objId: string;
-  public readonly: boolean;
-  public operation: string;
-  public obj: TransactionType;
-  public objForm: FormGroup;
-  public loading: boolean = false;
-  public schedule: FormArray;
-  public focusEvent = new EventEmitter<boolean>();
-  public title: string = 'transaction-type';
   private subscription: Subscription = new Subscription();
   private capitalizePipe: CapitalizePipe = new CapitalizePipe();
-  public focus$: Subject<string>[] = new Array();
-  public stateId: number;
-  public filesToUpload: any[] = new Array();
-  public filename: any[] = new Array();
-  public typeFile: any[] = new Array();
-  public oldFiles: any[];
-  public apiURL: string = Config.apiV8URL;
-  public database: string = Config.database;
-  public branches: Branch[];
-  public paymentMethods: PaymentMethod[];
+  objId: string;
+  readonly: boolean;
+  operation: string;
+  obj: TransactionType;
+  objForm: FormGroup;
+  loading: boolean = false;
+  schedule: FormArray;
+  focusEvent = new EventEmitter<boolean>();
+  title: string = 'transaction-type';
+  focus$: Subject<string>[] = new Array();
+  stateId: number;
+  filesToUpload: any[] = new Array();
+  filename: any[] = new Array();
+  typeFile: any[] = new Array();
+  oldFiles: any[];
+  apiURL: string = Config.apiV8URL;
+  database: string = Config.database;
+  branches: Branch[];
+  paymentMethods: PaymentMethod[];
 
-  public searchBranches = (text$: Observable<string>) => {
+  searchBranches = (text$: Observable<string>) => {
     const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
     const inputFocus$ = this.focus$['branch'];
 
@@ -99,9 +96,9 @@ export class TransactionTypeComponent implements OnInit {
     );
   };
 
-  public formatterBranches = (x: {name: string}) => x.name;
+  formatterBranches = (x: {name: string}) => x.name;
 
-  public searchApplications = (text$: Observable<string>) => {
+  searchApplications = (text$: Observable<string>) => {
     const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
     const inputFocus$ = this.focus$['application'];
 
@@ -120,9 +117,9 @@ export class TransactionTypeComponent implements OnInit {
     );
   };
 
-  public formatterApplications = (x: {name: string}) => x.name;
+  formatterApplications = (x: {name: string}) => x.name;
 
-  public searchEmployeeType = (text$: Observable<string>) => {
+  searchEmployeeType = (text$: Observable<string>) => {
     const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
     const inputFocus$ = this.focus$['requestEmployee'];
 
@@ -142,9 +139,9 @@ export class TransactionTypeComponent implements OnInit {
     );
   };
 
-  public formatterEmployeeType = (x: {name: string}) => x.name;
+  formatterEmployeeType = (x: {name: string}) => x.name;
 
-  public searchPaymentMethods = (text$: Observable<string>) => {
+  searchPaymentMethods = (text$: Observable<string>) => {
     const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
     const inputFocus$ = this.focus$['fastPayment'];
 
@@ -163,9 +160,9 @@ export class TransactionTypeComponent implements OnInit {
     );
   };
 
-  public formatterPaymentMethods = (x: {name: string}) => x.name;
+  formatterPaymentMethods = (x: {name: string}) => x.name;
 
-  public searchEmailTemplates = (text$: Observable<string>) => {
+  searchEmailTemplates = (text$: Observable<string>) => {
     const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
     const inputFocus$ = this.focus$['defectEmailTemplate'];
 
@@ -184,9 +181,9 @@ export class TransactionTypeComponent implements OnInit {
     );
   };
 
-  public formatterEmailTemplates = (x: {name: string}) => x.name;
+  formatterEmailTemplates = (x: {name: string}) => x.name;
 
-  public searchShipmentMethods = (text$: Observable<string>) => {
+  searchShipmentMethods = (text$: Observable<string>) => {
     const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
     const inputFocus$ = this.focus$['defectShipmentMethod'];
 
@@ -205,9 +202,9 @@ export class TransactionTypeComponent implements OnInit {
     );
   };
 
-  public formatterShipmentMethods = (x: {name: string}) => x.name;
+  formatterShipmentMethods = (x: {name: string}) => x.name;
 
-  public searchPrinters = (text$: Observable<string>) => {
+  searchPrinters = (text$: Observable<string>) => {
     const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
     const inputFocus$ = this.focus$['defectPrinter'];
 
@@ -226,9 +223,9 @@ export class TransactionTypeComponent implements OnInit {
     );
   };
 
-  public formatterPrinters = (x: {name: string}) => x.name;
+  formatterPrinters = (x: {name: string}) => x.name;
 
-  public searchCompanies = (text$: Observable<string>) => {
+  searchCompanies = (text$: Observable<string>) => {
     const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
     const inputFocus$ = this.focus$['company'];
 
@@ -250,9 +247,9 @@ export class TransactionTypeComponent implements OnInit {
     );
   };
 
-  public formatterCompanies = (x: {name: string}) => x.name;
+  formatterCompanies = (x: {name: string}) => x.name;
 
-  public searchCashBoxTypes = (text$: Observable<string>) => {
+  searchCashBoxTypes = (text$: Observable<string>) => {
     const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
     const inputFocus$ = this.focus$['cashBoxType'];
 
@@ -271,9 +268,9 @@ export class TransactionTypeComponent implements OnInit {
     );
   };
 
-  public formatterCashBoxType = (x: {name: string}) => x.name;
+  formatterCashBoxType = (x: {name: string}) => x.name;
 
-  public searchOptionalAFIP = (text$: Observable<string>) => {
+  searchOptionalAFIP = (text$: Observable<string>) => {
     const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
     const inputFocus$ = this.focus$['optionalAFIP'];
 
@@ -288,9 +285,9 @@ export class TransactionTypeComponent implements OnInit {
     );
   };
 
-  public formatterOptionalAFIP = (x: {name: string}) => x.name;
+  formatterOptionalAFIP = (x: {name: string}) => x.name;
 
-  public formFields: FormField[] = [
+  formFields: FormField[] = [
     {
       name: 'order',
       tag: 'input',
@@ -667,7 +664,7 @@ export class TransactionTypeComponent implements OnInit {
       name: 'updatePrice',
       tag: 'select',
       tagType: 'text',
-      values: [null,PriceType.Base,PriceType.Purchase],
+      values: [null, PriceType.Base, PriceType.Purchase],
       default: null,
       class: 'form-group col-md-2',
     },
@@ -930,12 +927,12 @@ export class TransactionTypeComponent implements OnInit {
       class: 'form-group col-md-2',
     },
   ];
-  public formErrors: {} = {};
-  public validationMessages = {
+  formErrors: {} = {};
+  validationMessages = {
     required: 'Este campo es requerido.',
   };
 
-  public tinyMCEConfigBody = {
+  tinyMCEConfigBody = {
     selector: 'textarea',
     theme: 'modern',
     paste_data_images: true,
