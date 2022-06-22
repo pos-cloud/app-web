@@ -4796,66 +4796,6 @@ export class PrintComponent implements OnInit {
     let margin = 5;
     let row = 10;
 
-    if (
-      !this.config[0].companyPicture ||
-      this.config[0].companyPicture === 'default.jpg'
-    ) {
-      this.doc.setFont('', 'bold');
-      this.doc.setFontSize(this.fontSizes.large);
-      if (this.config[0].companyFantasyName) {
-        this.centerText(
-          margin,
-          margin,
-          this.printer.pageWidth,
-          0,
-          row,
-          this.config[0].companyFantasyName,
-        );
-      } else {
-        this.centerText(
-          margin,
-          margin,
-          this.printer.pageWidth,
-          0,
-          row,
-          this.config[0].companyName,
-        );
-      }
-      this.doc.setFont('', 'normal');
-      this.doc.setFontSize(this.fontSizes.normal);
-      row += 5;
-      this.centerText(
-        margin,
-        margin,
-        this.printer.pageWidth,
-        0,
-        row,
-        this.config[0].companyAddress
-          .toString()
-          .slice(0, this.roundNumber.transform(this.printer.pageWidth / 2)),
-      );
-      row += 5;
-      this.centerText(
-        margin,
-        margin,
-        this.printer.pageWidth,
-        0,
-        row,
-        'tel: ' + this.config[0].companyPhone,
-      );
-    } else {
-      row += 30;
-      this.doc.setFont('', 'normal');
-      this.doc.setFontSize(this.fontSizes.normal);
-      if (this.branchImagen && this.branchImagen !== 'default.jpg') {
-        await this.getBranchPicture(3, 3, this.printer.pageWidth - 4, 40, false);
-      } else {
-        await this.getCompanyPicture(3, 3, this.printer.pageWidth - 4, 40, false);
-      }
-    }
-
-    row += 8;
-
     this.barcode64 = await this.getBarcode('qr?value=' + this.businessRule.code);
 
     let imgdata = 'data:image/png;base64,' + this.barcode64;
