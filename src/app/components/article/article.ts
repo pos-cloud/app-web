@@ -35,6 +35,7 @@ export class Article {
     public taxes: Taxes[];
     public otherFields: ArticleFields[];
     public costPrice: number = 0.00;
+    public costPrice2: number = 0.00;
     public markupPercentage: number = 0.00;
     public markupPrice: number = 0.00;
     public salePrice: number = 0.00;
@@ -189,6 +190,16 @@ export let attributes = [
         datatype: 'string',
         project: null,
         align: 'left',
+        required: false,
+    },
+    {
+        name: 'costPrice2',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'currency',
+        project: null,
+        align: 'right',
         required: false,
     },
     {
