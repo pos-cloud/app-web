@@ -4799,12 +4799,12 @@ export class PrintComponent implements OnInit {
     this.barcode64 = await this.getBarcode('qr?value=' + this.businessRule.code);
 
     let imgdata = 'data:image/png;base64,' + this.barcode64;
-    let imgWidth = 50;
+    let imgWidth = this.printer.pageWidth - 30;
 
     margin = this.roundNumber.transform((this.printer.pageWidth - imgWidth) / 2);
     this.doc.addImage(imgdata, 'PNG', margin, row + 5, imgWidth, imgWidth);
-    row += 60;
-    this.doc.setFontSize(this.fontSizes.large);
+    row += imgWidth + imgWidth / 5;
+    this.doc.setFontSize(imgWidth / 3);
     this.doc.setFont('', 'bold');
     this.centerText(
       margin,

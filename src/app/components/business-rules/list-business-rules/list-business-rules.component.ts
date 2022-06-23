@@ -143,7 +143,7 @@ export class ListBusinessRulesComponent {
       .toPromise();
 
     if (printerResponse.status === 200 && printerResponse.result.length > 0) {
-      return printerResponse.result;
+      return printerResponse.result[0];
     } else {
       this.datatableComponent.showToast(
         null,
