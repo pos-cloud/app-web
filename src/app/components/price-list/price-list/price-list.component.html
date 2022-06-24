@@ -71,7 +71,7 @@
                     <a ngbNavLink>Reglas Especiales</a>
                     <ng-template ngbNavContent>
                         <div class="row">
-                            <form (ngSubmit)="addRule(ruleForm)">
+                            <form #ruleForm="ngForm" (ngSubmit)="addRule(ruleForm)">
                                 <div class="row">
                                     <div class="form-group col-md-4">
                                         <label class="control-label">Rubro:</label>
@@ -157,7 +157,7 @@
                     <ng-template ngbNavContent>
                         <div class="row">
                             <div class="col-md-12">
-                                <form (ngSubmit)="addException(exceptionForm)">
+                                <form #exceptionForm="ngForm" (ngSubmit)="addException(exceptionForm)">
                                     <div class="row">
                                         <div class="form-group col-md-8">
                                             <ng-template #rtArticles let-r="result" let-t="term">
