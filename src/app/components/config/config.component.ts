@@ -306,6 +306,7 @@ export class ConfigComponent implements OnInit {
       'reports.summaryOfAccounts.invertedViewClient': [this.config.reports.summaryOfAccounts.invertedViewClient, []],
       'reports.summaryOfAccounts.invertedViewProvider': [this.config.reports.summaryOfAccounts.invertedViewProvider, []],
       'tradeBalance.codePrefix': [this.config.tradeBalance.codePrefix, []],
+      'tradeBalance.numberOfCode': [this.config.tradeBalance.numberOfCode, []],
       'tradeBalance.numberOfQuantity': [this.config.tradeBalance.numberOfQuantity, []],
       'tradeBalance.numberOfIntegers': [this.config.tradeBalance.numberOfIntegers, []],
       'tradeBalance.numberOfDecimals': [this.config.tradeBalance.numberOfDecimals, []],
@@ -631,6 +632,7 @@ export class ConfigComponent implements OnInit {
     if (this.config.reports.summaryOfAccounts.invertedViewClient === undefined) this.config.reports.summaryOfAccounts.invertedViewClient = false;
     if (this.config.reports.summaryOfAccounts.invertedViewProvider === undefined) this.config.reports.summaryOfAccounts.invertedViewProvider = false;
     if (this.config.tradeBalance.codePrefix === undefined) this.config.tradeBalance.codePrefix = 0;
+    if (this.config.tradeBalance.numberOfCode === undefined) this.config.tradeBalance.numberOfCode = 4;
     if (this.config.tradeBalance.numberOfQuantity === undefined) this.config.tradeBalance.numberOfQuantity = 2;
     if (this.config.tradeBalance.numberOfIntegers === undefined) this.config.tradeBalance.numberOfIntegers = 3;
     if (this.config.tradeBalance.numberOfDecimals === undefined) this.config.tradeBalance.numberOfDecimals = 2;
@@ -705,6 +707,7 @@ export class ConfigComponent implements OnInit {
       'reports.summaryOfAccounts.invertedViewClient': this.config.reports.summaryOfAccounts.invertedViewClient,
       'reports.summaryOfAccounts.invertedViewProvider': this.config.reports.summaryOfAccounts.invertedViewProvider,
       'tradeBalance.codePrefix': this.config.tradeBalance.codePrefix,
+      'tradeBalance.numberOfCode': this.config.tradeBalance.numberOfCode,
       'tradeBalance.numberOfQuantity': this.config.tradeBalance.numberOfQuantity,
       'tradeBalance.numberOfIntegers': this.config.tradeBalance.numberOfIntegers,
       'tradeBalance.numberOfDecimals': this.config.tradeBalance.numberOfDecimals,
