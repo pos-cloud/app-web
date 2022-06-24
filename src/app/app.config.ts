@@ -95,6 +95,7 @@ export class Config {
   };
   public tradeBalance: {
     codePrefix: number,
+    numberOfCode: number,
     numberOfQuantity: number,
     numberOfIntegers: number,
     numberOfDecimals: number
