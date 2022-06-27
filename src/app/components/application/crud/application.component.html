@@ -297,7 +297,7 @@
                                     </ng-template>
                                     <ng-template ngbPanelContent>
                                         <div class="col-md-12">
-                                            <form (ngSubmit)="addResource(resourceForm,data)">
+                                            <form #resourceForm="ngForm" (ngSubmit)="addResource(resourceForm,data)">
                                                 <div class="row">
                                                     <div class="form-group col-md-2">
                                                         <label for="order"
