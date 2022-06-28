@@ -2515,9 +2515,9 @@ export class AddSaleOrderComponent {
               this.transactionId = result.transaction._id;
               this.initComponent();
             } else {
-              if (this.transaction && this.transaction.type.printable) {
+              if (this.transaction && this.transaction?.type?.printable) {
                 this.print();
-              } else if (this.transaction && this.transaction.type.requestEmailTemplate) {
+              } else if (this.transaction && this.transaction?.type?.requestEmailTemplate) {
                 this.openModal('send-email');
               } else {
                 this.backFinal();
@@ -2693,17 +2693,7 @@ export class AddSaleOrderComponent {
         });
         break;
       case 'print':
-        if (
-          this.transaction.type.expirationDate &&
-          moment(this.transaction.type.expirationDate).diff(moment(), 'days') <= 0
-        ) {
-          this.showToast(
-            null,
-            'danger',
-            'El documento esta vencido no se puede imprimir',
-          );
-          this.backFinal();
-        } else {
+        
           if (this.transaction.type.readLayout) {
             modalRef = this._modalService.open(PrintTransactionTypeComponent);
             modalRef.componentInstance.transactionId = this.transaction._id;
@@ -2718,9 +2708,11 @@ export class AddSaleOrderComponent {
             modalRef.componentInstance.typePrint = 'invoice';
             modalRef.result.then(() => {
               this.backFinal();
-            });
+            }).catch((e) =>{
+              this.backFinal();
+            })
           }
-        }
+        
         break;
       case 'printKitchen':
         modalRef = this._modalService.open(PrintComponent);
