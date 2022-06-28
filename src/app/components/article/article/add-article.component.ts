@@ -433,7 +433,7 @@ export class AddArticleComponent implements OnInit {
       'posDescription': [this.article.posDescription, [Validators.maxLength(20)]],
       'basePrice': [this.article.basePrice, [Validators.required]],
       'costPrice': [this.article.costPrice, [Validators.required]],
-      'costPrice2': [this.article.costPrice2, [Validators.required]],
+      'costPrice2': [this.article.costPrice2],
       'markupPercentage': [this.article.markupPercentage, [Validators.required]],
       'markupPriceWithoutVAT': [this.markupPriceWithoutVAT],
       'markupPrice': [this.article.markupPrice, [Validators.required]],
@@ -1399,6 +1399,7 @@ export class AddArticleComponent implements OnInit {
           this.updateArticle();
         }
       } else {
+        console.log(this.articleForm);
         this.showToast({ message: "Revisa los errores en el formulario." });
         this.onValueChanged();
       }
