@@ -216,7 +216,15 @@ export class AddArticleComponent implements OnInit {
       tap(() => null)
     )
 
-  public formatterCategories = (x: { description: string }) => x.description;
+  formatterCategories(value: Category) {
+    if(value.parent && value.parent.description) return value.description + " - " + value.parent.description;          
+    return value.description;
+  }
+
+  inputCategories(value: Category)   {
+    if(value.parent && value.parent.description) return value.description + " - " + value.parent.description;          
+    return value.description;
+  }
 
   public searchMakes = (text$: Observable<string>) =>
     text$.pipe(
