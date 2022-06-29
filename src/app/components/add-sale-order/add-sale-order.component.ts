@@ -2515,9 +2515,9 @@ export class AddSaleOrderComponent {
               this.transactionId = result.transaction._id;
               this.initComponent();
             } else {
-              if (this.transaction && this.transaction?.type?.printable) {
+              if (this.transaction && this.transaction.type.printable) {
                 this.print();
-              } else if (this.transaction && this.transaction?.type?.requestEmailTemplate) {
+              } else if (this.transaction && this.transaction.type.requestEmailTemplate) {
                 this.openModal('send-email');
               } else {
                 this.backFinal();
