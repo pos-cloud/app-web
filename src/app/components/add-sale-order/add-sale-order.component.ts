@@ -2723,7 +2723,9 @@ export class AddSaleOrderComponent {
 
         modalRef.result.then(() => {
           this.updateMovementOfArticlePrintedKitchen();
-        });
+        }).catch((e) =>{
+          this.updateMovementOfArticlePrintedKitchen();
+        })
         break;
       case 'printBar':
         modalRef = this._modalService.open(PrintComponent);
@@ -2734,7 +2736,9 @@ export class AddSaleOrderComponent {
 
         modalRef.result.then(() => {
           this.updateMovementOfArticlePrintedBar();
-        });
+        }).catch((e) =>{
+          this.updateMovementOfArticlePrintedBar();
+        })
         break;
       case 'printVoucher':
         modalRef = this._modalService.open(PrintComponent);
@@ -2745,7 +2749,9 @@ export class AddSaleOrderComponent {
 
         modalRef.result.then(() => {
           this.updateMovementOfArticlePrintedVoucher();
-        });
+        }).catch((e) =>{
+          this.updateMovementOfArticlePrintedVoucher();
+        })
         break;
       case 'import':
         modalRef = this._modalService.open(ImportComponent, {
@@ -3252,6 +3258,8 @@ export class AddSaleOrderComponent {
   }
 
   async close(op?: string) {
+
+
     if (op === 'charge') {
       this.isCharge = true;
     } else {
@@ -3676,6 +3684,8 @@ export class AddSaleOrderComponent {
       } else {
         this.showToast(null, 'info', 'Debe iniciar sesión');
       }
+
+      console.log(this.typeOfOperationToPrint);
 
       switch (this.typeOfOperationToPrint) {
         case 'charge':
