@@ -1,8 +1,8 @@
 <div class="modal-header">
   <h4 class="modal-title">Importar</h4>
-  <h4 *ngIf='type === "actualizar-producto"' class="modal-title">: Actualizar Articulos</h4>
-  <h4 *ngIf='type === "alta-producto"' class="modal-title">: Crear Articulos</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+  <h4 *ngIf='type === "actualizar-producto"' class="modal-title">: Actualizar Productos</h4>
+  <h4 *ngIf='type === "alta-producto"' class="modal-title">: Crear Productos</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')" [disabled]="loading">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
@@ -21,7 +21,7 @@
   </ul>
   <ul id="lista1" *ngIf="countArticles > 0">
     <li>
-      Articulos actualizados con éxito
+      Productos actualizados con éxito
     </li>
     <li>
       <span class="separador">: </span> {{ countArticles }}
@@ -51,7 +51,7 @@
 
   <!-- <ul id="lista2" *ngIf="statusCode?.length > 0">
     <li>
-      Articulos existentes: {{statusCode?.length}} Filas =>
+      Productos existentes: {{statusCode?.length}} Filas =>
     </li>
     <li *ngFor="let item of statusCode;">
       <span class="separador">| </span> {{ item.filaExcel }}
@@ -90,8 +90,8 @@
     <a *ngIf='type === "alta-producto"' href="/assets/modelo_producto_crear.xlsx" target="_self" download>Descargar
       Modelo Crear</a>
     <div class="modal-footer">
-      <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="">
+      <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')" [disabled]="loading">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="loading">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Importar</span>
         <span *ngIf="loading">Espere por favor</span>
