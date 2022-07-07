@@ -9,6 +9,7 @@ import { Config } from '../../app.config';
 import { AuthService } from '../login/auth.service';
 import { Variant } from 'app/components/variant/variant';
 import { ModelService } from '../model/model.service';
+import { environment } from "environments/environment";
 
 @Injectable()
 export class ArticleService extends ModelService {
@@ -205,6 +206,26 @@ export class ArticleService extends ModelService {
 			headers: headers,
 			params: params
 
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return of(err);
+			})
+		);
+	}
+
+  public updatePrice2(query: string): Observable<any> {
+
+		const URL = `${environment.apiv2}/articles/update-prices`;
+
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
+
+		return this._http.post(URL, query, {
+			headers: headers,
 		}).pipe(
 			map(res => {
 				return res;

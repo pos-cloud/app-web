@@ -12,6 +12,7 @@ import { Category } from "../../category/category";
 import { ArticleService } from "../article.service";
 import { MakeService } from '../../make/make.service';
 import { CategoryService } from '../../category/category.service';
+import { Article } from '../article';
 
 
 @Component({
@@ -21,6 +22,7 @@ import { CategoryService } from '../../category/category.service';
 })
 export class UpdateArticlePriceComponent implements OnInit {
 
+  @Input() articles: Article[];
   public updatePriceForm: FormGroup;
   public alertMessage: string = '';
   public userType: string;
@@ -199,8 +201,9 @@ export class UpdateArticlePriceComponent implements OnInit {
             this.showMessage("Debe cargar la categoría a actualizar.", "info", true);
           }
       break;
-      default:where = '{}'
-        break;
+      default:
+        where = '{}'
+      break;
     }
 
 
@@ -215,20 +218,44 @@ export class UpdateArticlePriceComponent implements OnInit {
 
       this.loading = true;
       
-      this._articleService.updatePrice(query,this.updatePriceForm.value.decimal).subscribe(
-        result => {
-          this.loading = false;
-          if (result.status === "Error") {
-            this.showMessage("Hubo uno error en la actualización. Se actualizaron correctamente " + result.count + ". No se actualizaron:" + result.articleFailure, 'info', true);
-          } else {
-            this.showMessage("La lista se actualizo con éxito. Se actualizaron " + result.countFinal + " productos y " + result.countVariants + " variantes.", 'success', false);
-          }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
+      console.log(this.updatePriceForm.value.optionUpdate);
+      if(this.updatePriceForm.value.optionUpdate === "filter"){
+        let articles: string[] = [];
+        for (const article of this.articles) {
+          articles.push(article.code);
         }
-      );
+        const query = {
+          articlesCode : articles,
+          percentage: this.updatePriceForm.value.percentage,
+          field: this.updatePriceForm.value.field,
+          decimal: this.updatePriceForm.value.decimal
+        }
+        this._articleService.updatePrice2(JSON.stringify(query)).subscribe(
+          result =>{
+            this.showMessage(result.message, 'success', false )
+            this.loading = false;
+          },
+          error => {
+            this.showMessage(error._body, 'danger', false);
+            this.loading = false;
+          }
+        )
+      } else {
+        this._articleService.updatePrice(query,this.updatePriceForm.value.decimal).subscribe(
+          result => {
+            this.loading = false;
+            if (result.status === "Error") {
+              this.showMessage("Hubo uno error en la actualización. Se actualizaron correctamente " + result.count + ". No se actualizaron:" + result.articleFailure, 'info', true);
+            } else {
+              this.showMessage("La lista se actualizo con éxito. Se actualizaron " + result.countFinal + " productos y " + result.countVariants + " variantes.", 'success', false);
+            }
+          },
+          error => {
+            this.showMessage(error._body, 'danger', false);
+            this.loading = false;
+          }
+        );
+      }
     }
   }
 
