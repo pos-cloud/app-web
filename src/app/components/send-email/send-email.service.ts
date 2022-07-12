@@ -6,34 +6,35 @@ import { map, catchError } from "rxjs/operators";
 
 import { Config } from '../../app.config';
 import { AuthService } from '../login/auth.service';
+import { environment } from "environments/environment";
 
 @Injectable()
 export class EmailService {
 
-    constructor(
-        private _http: HttpClient,
-        private _authService: AuthService
-    ) { }
+  constructor(
+    private _http: HttpClient,
+    private _authService: AuthService
+  ) { }
 
-    public sendEmail(data: {}): Observable<any> {
+  public sendEmail(data: {}): Observable<any> {
 
-        const URL = `${Config.apiURL}send-email-client`;
+    const URL = `${Config.apiURL}send-email-client`;
 
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-        return this._http.post(URL, data, {
-            headers: headers
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-            catchError((err) => {
-                return of(err);
-            })
-        );
-    }
+    return this._http.post(URL, data, {
+      headers: headers
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 
   public sendEmailToClient(
     subject: string,
@@ -80,6 +81,26 @@ export class EmailService {
         body: body,
         emails: emails
       }, {
+      headers: headers
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
+
+  public sendEmailV2(data: {}): Observable<any> {
+
+    const URL = `${environment.apiv2}/email-templates/send-email`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http.post(URL, data, {
       headers: headers
     }).pipe(
       map(res => {

@@ -88,6 +88,7 @@ import {SelectTransportComponent} from '../transport/select-transport/select-tra
 import {UserService} from '../user/user.service';
 
 import {Config} from './../../app.config';
+import { EmailService } from '../send-email/send-email.service';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -197,6 +198,7 @@ export class AddSaleOrderComponent {
     private _userService: UserService,
     private _taxService: TaxService,
     private _useOfCFDIService: UseOfCFDIService,
+    private _serviceEmail: EmailService,
     private _relationTypeService: RelationTypeService,
     private _movementOfCancellationService: MovementOfCancellationService,
     private _cancellationTypeService: CancellationTypeService,
@@ -2219,35 +2221,18 @@ export class AddSaleOrderComponent {
             }
           }
         }
-
-        modalRef = this._modalService.open(SendEmailComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        if (this.transaction.company && this.transaction.company.emails) {
-          modalRef.componentInstance.emails = this.transaction.company.emails;
-        }
+        
         let labelPrint = this.transaction.type.name;
 
         if (this.transaction.type.labelPrint) {
           labelPrint = this.transaction.type.labelPrint;
         }
-        modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(
-          this.transaction.origin,
-          4,
-        )}-${this.transaction.letter}-${this.padNumber(this.transaction.number, 8)}`;
         if (this.transaction.type.electronics) {
-          // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${Config.database}/${this.transaction._id}">Su comprobante</a>`
-          modalRef.componentInstance.body = ' ';
-
           attachments.push({
             filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
             path: `/home/clients/${Config.database}/invoice/${this.transaction._id}.pdf`,
           });
         } else {
-          // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${Config.database}/${this.transaction._id}">Su comprobante</a>`
-          modalRef.componentInstance.body = ' ';
-
           attachments.push({
             filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
             path: `/home/clients/${Config.database}/others/${this.transaction._id}.pdf`,
@@ -2255,9 +2240,6 @@ export class AddSaleOrderComponent {
         }
 
         if (Config.country === 'MX') {
-          // modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number;
-          modalRef.componentInstance.body += ' ';
-
           attachments.push({
             filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.xml`,
             path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_${this.transaction.number}.xml`,
@@ -2266,20 +2248,12 @@ export class AddSaleOrderComponent {
 
         if (this.transaction.type.defectEmailTemplate) {
           if (this.transaction.type.electronics) {
-            // modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${Config.database}/${this.transaction._id}">Su comprobante</a>`
-            modalRef.componentInstance.body =
-              this.transaction.type.defectEmailTemplate.design;
-
             attachments = [];
             attachments.push({
               filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
               path: `/home/clients/${Config.database}/invoice/${this.transaction._id}.pdf`,
             });
           } else {
-            // modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${Config.database}/${this.transaction._id}">Su comprobante</a>`
-            modalRef.componentInstance.body =
-              this.transaction.type.defectEmailTemplate.design;
-
             attachments = [];
             attachments.push({
               filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
@@ -2288,9 +2262,6 @@ export class AddSaleOrderComponent {
           }
 
           if (Config.country === 'MX') {
-            // modalRef.componentInstance.body += ` y su XML correspondiente en http://vps-1883265-x.dattaweb.com:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number;
-            modalRef.componentInstance.body += ' ';
-
             attachments = [];
             attachments.push({
               filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.xml`,
@@ -2298,16 +2269,20 @@ export class AddSaleOrderComponent {
             });
           }
         }
-        modalRef.componentInstance.attachments = attachments;
 
-        modalRef.result.then(
-          (result) => {
-            this.backFinal();
-          },
-          (reason) => {
-            this.backFinal();
-          },
-        );
+        
+
+        const email = {
+          to: this.transaction.company.emails,
+          subject: `${labelPrint} ${this.padNumber(
+            this.transaction.origin,
+            4,
+          )}-${this.transaction.letter}-${this.padNumber(this.transaction.number, 8)}`,
+          body: this.transaction.type.defectEmailTemplate.design,
+          attachments: attachments
+        }
+
+        this.sendEmail(email);
 
         break;
       case 'cancel':
@@ -2517,8 +2492,7 @@ export class AddSaleOrderComponent {
             } else {
               if (this.transaction && this.transaction.type.printable) {
                 this.print();
-              } else if (this.transaction && this.transaction.type.requestEmailTemplate) {
-                this.openModal('send-email');
+                if (this.transaction && this.transaction.type.requestEmailTemplate) this.openModal('send-email');
               } else {
                 this.backFinal();
               }
@@ -2527,9 +2501,8 @@ export class AddSaleOrderComponent {
           (reason) => {
             if (this.transaction && this.transaction.type.printable) {
               this.print();
-            } else if (this.transaction && this.transaction.type.requestEmailTemplate) {
-              this.openModal('send-email');
-            } else {
+              if (this.transaction && this.transaction.type.requestEmailTemplate) this.openModal('send-email');
+            }else {
               this.backFinal();
             }
           },
@@ -3132,16 +3105,14 @@ export class AddSaleOrderComponent {
         this.transaction.table = await this.updateTable(table);
       }
 
-      if (this.transaction.type.allowAccounting)
-        await this._accountSeatService.addAccountSeatByTransaction(this.transaction._id);
+      if (this.transaction.type.allowAccounting) this._accountSeatService.addAccountSeatByTransaction(this.transaction._id);
 
       let cancellationTypesAutomatic = await this.getCancellationTypesAutomatic();
 
       if (!cancellationTypesAutomatic || cancellationTypesAutomatic.length == 0) {
         if (this.transaction && this.transaction.type.printable) {
           this.print();
-        } else if (this.transaction && this.transaction.type.requestEmailTemplate) {
-          this.openModal('send-email');
+          if (this.transaction && this.transaction.type.requestEmailTemplate) this.openModal('send-email');
         } else {
           this.backFinal();
         }
@@ -3982,5 +3953,17 @@ export class AddSaleOrderComponent {
     while (n.length < length) n = '0' + n;
 
     return n;
+  }
+
+  public sendEmail (body: {}): void {
+    
+    this._serviceEmail.sendEmailV2(body).subscribe(
+      result => {
+        this.showToast(result)
+      },
+      err => {
+        this.showToast(err);
+      }
+    );
   }
 }

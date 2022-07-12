@@ -125,6 +125,7 @@ export class SelectCompanyComponent implements OnInit {
             addressNumber: 1,
             phones: 1,
             "vatCondition.description": 1,
+            emails: 1,
             type: 1,
             operationType: 1
         }
