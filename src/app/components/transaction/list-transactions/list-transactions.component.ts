@@ -7,36 +7,34 @@ import {Branch} from 'app/components/branch/branch';
 import {BranchService} from 'app/components/branch/branch.service';
 import {AuthService} from 'app/components/login/auth.service';
 import {PrintComponent} from 'app/components/print/print/print.component';
+import {TransactionTypeService} from 'app/components/transaction-type/transaction-type.service';
+import {User} from 'app/components/user/user';
+import {UserService} from 'app/components/user/user.service';
 import {DateFormatPipe} from 'app/main/pipes/date-format.pipe';
+import * as moment from 'moment';
 import {of as observableOf, Observable, Subscription} from 'rxjs';
 
 import {Config} from '../../../app.config';
 import {RoundNumberPipe} from '../../../main/pipes/round-number.pipe';
 import {ConfigService} from '../../config/config.service';
-import { TransactionMovement, TransactionType } from '../../transaction-type/transaction-type';
-import { Transaction, attributes } from '../transaction';
-import {TransactionService} from '../transaction.service';
-import {DeleteTransactionComponent} from '../delete-transaction/delete-transaction.component';
-import {ViewTransactionComponent} from '../view-transaction/view-transaction.component';
 import {ExportCitiComponent} from '../../export/export-citi/export-citi.component';
-import {ExportIvaComponent} from '../../export/export-iva/export-iva.component';
-
-//Pipes
-
-import {PrinterService} from '../../printer/printer.service';
-import {Printer, PrinterPrintIn} from '../../printer/printer';
-import {AddTransactionComponent} from '../add-transaction/add-transaction.component';
-
-
-import {SendEmailComponent} from '../../send-email/send-email.component';
-import {PrintTransactionTypeComponent} from '../../print/print-transaction-type/print-transaction-type.component';
 import {ExportExcelComponent} from '../../export/export-excel/export-excel.component';
+import {ExportIvaComponent} from '../../export/export-iva/export-iva.component';
+import {PrintTransactionTypeComponent} from '../../print/print-transaction-type/print-transaction-type.component';
+import {Printer, PrinterPrintIn} from '../../printer/printer';
+import {PrinterService} from '../../printer/printer.service';
+import {SendEmailComponent} from '../../send-email/send-email.component';
+import {
+  TransactionMovement,
+  TransactionType,
+} from '../../transaction-type/transaction-type';
+import {AddTransactionComponent} from '../add-transaction/add-transaction.component';
+import {DeleteTransactionComponent} from '../delete-transaction/delete-transaction.component';
+import {Transaction, attributes} from '../transaction';
+import {TransactionService} from '../transaction.service';
+import {ViewTransactionComponent} from '../view-transaction/view-transaction.component';
 
-import * as moment from 'moment';
 import 'moment/locale/es';
-import {TransactionTypeService} from 'app/components/transaction-type/transaction-type.service';
-import {User} from 'app/components/user/user';
-import {UserService} from 'app/components/user/user.service';
 
 @Component({
   selector: 'app-list-transactions',
@@ -46,40 +44,38 @@ import {UserService} from 'app/components/user/user.service';
   encapsulation: ViewEncapsulation.Emulated,
 })
 export class ListTransactionsComponent implements OnInit {
-  public userCountry: string;
-  public transactionMovement: TransactionMovement;
-  public listType: string = 'statistics';
-  public modules: Observable<{}>;
-  public printers: Printer[];
-
-  public totalItems: number = 0;
-  public title: string = 'Listado de Transacciones';
-  public items: any[] = new Array();
-  public alertMessage: string = '';
-  public loading: boolean = false;
-  public itemsPerPage = 10;
-  public currentPage: number = 1;
-  public sort = {endDate: -1};
-  public filters: any[];
-  public scrollY: number = 0;
-  public timezone: string = '-03:00';
+  private subscription: Subscription = new Subscription();
   private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
   private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
   @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
-  public columns = attributes;
-  public pathLocation: string[];
-  private subscription: Subscription = new Subscription();
-  public dateFormat = new DateFormatPipe();
-  public employeeClosingId: string;
-  public origin: string;
-  //cabecera
-  public startDate: string;
-  public endDate: string;
-  public dateSelect: string;
-  public stateSelect: string = '';
-  public transactionTypes: TransactionType[];
-  public transactionTypesSelect;
-  public dropdownSettings = {
+  userCountry: string;
+  transactionMovement: TransactionMovement;
+  listType: string = 'statistics';
+  modules: Observable<{}>;
+  printers: Printer[];
+  totalItems: number = 0;
+  title: string = 'Listado de Transacciones';
+  items: any[] = new Array();
+  alertMessage: string = '';
+  loading: boolean = false;
+  itemsPerPage = 10;
+  currentPage: number = 1;
+  sort = {endDate: -1};
+  filters: any[];
+  scrollY: number = 0;
+  timezone: string = '-03:00';
+  columns = attributes;
+  pathLocation: string[];
+  dateFormat = new DateFormatPipe();
+  employeeClosingId: string;
+  origin: string;
+  startDate: string;
+  endDate: string;
+  dateSelect: string;
+  stateSelect: string = '';
+  transactionTypes: TransactionType[];
+  transactionTypesSelect;
+  dropdownSettings = {
     singleSelection: false,
     defaultOpen: false,
     idField: '_id',
@@ -90,10 +86,9 @@ export class ListTransactionsComponent implements OnInit {
     itemsShowLimit: 3,
     allowSearchFilter: true,
   };
-
-  public branchSelectedId: String;
-  public allowChangeBranch: boolean;
-  public branches: Branch[];
+  branchSelectedId: String;
+  allowChangeBranch: boolean;
+  branches: Branch[];
 
   constructor(
     public _transactionService: TransactionService,
@@ -174,7 +169,7 @@ export class ListTransactionsComponent implements OnInit {
     this.initDragHorizontalScroll();
   }
   public getBranches(match: {} = {}): Promise<Branch[]> {
-    return new Promise<Branch[]>((resolve, reject) => {
+    return new Promise<Branch[]>((resolve) => {
       this._branchService
         .getBranches(
           {}, // PROJECT
@@ -199,10 +194,6 @@ export class ListTransactionsComponent implements OnInit {
         );
     });
   }
-
-  onItemSelect(item: any) {}
-
-  onSelectAll(items: any) {}
 
   public getTransactionTypes(): Promise<TransactionType[]> {
     return new Promise<TransactionType[]>((resolve, reject) => {

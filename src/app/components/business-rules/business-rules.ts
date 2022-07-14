@@ -22,6 +22,10 @@ export class BusinessRule extends Model {
   discountValue: number;
   article: Article;
   item: Article;
+  item2: Article;
+  item3: Article;
+  transactionTypeIds: string[];
+  days: Day[];
 
   constructor() {
     super();
@@ -88,6 +92,16 @@ export class BusinessRule extends Model {
 export enum DiscountType {
   Percentage = 'percentage',
   Amount = 'amount',
+}
+
+export enum Day {
+  Monday = 'Monday',
+  Tuesday = 'Tuesday',
+  Wednesday = 'Wednesday',
+  Thursday = 'Thursday',
+  Friday = 'Friday',
+  Saturday = 'Saturday',
+  Sunday = 'Sunday',
 }
 
 export enum Types {

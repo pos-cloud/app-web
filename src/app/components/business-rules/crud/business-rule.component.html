@@ -135,6 +135,30 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="days">Días</label>
+                        <select class="form-control" formControlName="days" id="days" class="form-control" multiple="true">
+                            <option *ngFor="let dayOfWeek of daysOfWeek"
+                                [value]="dayOfWeek"
+                                [disabled]="readonly"
+                                [selected]="obj?.days?.includes(dayOfWeek)">
+                                {{dayOfWeek | translate | capitalize}}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="days">Tipos de transacción</label>
+                        <select class="form-control" formControlName="transactionTypeIds" id="transactionTypeIds" class="form-control" multiple="true">
+                            <option *ngFor="let transactionType of transactionTypes"
+                                [value]="transactionType._id"
+                                [disabled]="readonly"
+                                [selected]="obj?.transactionTypeIds?.includes(transactionType._id)">
+                                {{transactionType.name | translate | capitalize}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
             </form>
         </div>
     </div>

@@ -47,11 +47,8 @@
             [placeholder]="'Tipo de Transacción'"
             [settings]="dropdownSettings"
             [data]="transactionTypes"
-            [(ngModel)]="transactionTypesSelect"
-            (onSelect)="onItemSelect($event)"
-            (onSelectAll)="onSelectAll($event)"
-          >
-          </ng-multiselect-dropdown>
+            [(ngModel)]="transactionTypesSelect">
+            </ng-multiselect-dropdown>
         </div>
         <div class="col-md-2">
             <label for="dataSelect" class="control-label">
@@ -139,8 +136,7 @@
                     </tr>
                     <tr *ngFor="let item of items | paginate: { itemsPerPage: itemsPerPage,
                                                         currentPage: currentPage,
-                                                        totalItems: totalItems
-                                                      }">
+                                                        totalItems: totalItems }">
                         <td align="left">
                             <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', item)"
                                 title="Ver"><i class="fa fa-eye"></i>
@@ -149,10 +145,7 @@
                                 class="btn btn-primary btn-sm" (click)="openModal('edit', item)" title="Editar"><i
                                     class="fa fa-pencil"></i>
                             </button>
-                            <button type="button" *ngIf="item.type.allowDelete &&
-                              (!item.type.electronics ||
-                              (item.type.electronics &&
-                              item.state.toString() !== 'Cerrado'))" class="btn btn-danger btn-sm"
+                            <button type="button" *ngIf="item.type.allowDelete && (!item.type.electronics || (item.type.electronics && item.state.toString() !== 'Cerrado'))" class="btn btn-danger btn-sm"
                                 (click)="openModal('delete', item)" title="Eliminar"><i class="fa fa-trash-o"></i>
                             </button>
                             <button *ngIf="item.state.toString() !== 'Pendiente' || item.state.toString() !== 'Abierto'" type="button" class="btn btn-light btn-sm"

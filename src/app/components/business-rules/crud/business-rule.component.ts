@@ -14,18 +14,24 @@ import {EmployeeTypeService} from 'app/components/employee-type/employee-type.se
 import {PaymentMethodService} from 'app/components/payment-method/payment-method.service';
 import {PrinterService} from 'app/components/printer/printer.service';
 import {ShipmentMethodService} from 'app/components/shipment-method/shipment-method.service';
+import {
+  TransactionMovement,
+  TransactionType,
+} from 'app/components/transaction-type/transaction-type';
+import {TransactionTypeService} from 'app/components/transaction-type/transaction-type.service';
 import {CapitalizePipe} from 'app/main/pipes/capitalize';
 import {TranslateMePipe} from 'app/main/pipes/translate-me';
 import {FormField} from 'app/util/formField.interface';
 import * as $ from 'jquery';
 import * as moment from 'moment';
 import 'moment/locale/es';
+import {IDropdownSettings} from 'ng-multiselect-dropdown';
 import {ToastrService} from 'ngx-toastr';
 import {Subscription, Subject, Observable, merge} from 'rxjs';
 import {debounceTime, distinctUntilChanged, tap, switchMap} from 'rxjs/operators';
 
 import {BusinessRuleService} from '../business-rule.service';
-import {BusinessRule} from '../business-rules';
+import {BusinessRule, Day} from '../business-rules';
 
 @Component({
   selector: 'app-business-rules',
@@ -54,31 +60,27 @@ export class BusinessRuleComponent implements OnInit {
   oldFiles: any[];
   apiURL: string = Config.apiV8URL;
   database: string = Config.database;
-
-  searchArticle = (text$: Observable<string>) => {
-    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
-    const inputFocus$ = this.focus$['article'];
-
-    return merge(debouncedText$, inputFocus$).pipe(
-      tap(() => (this.loading = true)),
-      switchMap(async (term) => {
-        let match: {} =
-          term && term !== '' ? {description: {$regex: term, $options: 'i'}} : {};
-
-        if (this.operation === 'update' && this.obj._id) {
-          match['_id'] = {$ne: {$oid: this.obj._id}};
-        }
-        match['operationType'] = {$ne: 'D'};
-
-        return await this.getAllArticles(match).then((result) => {
-          return result;
-        });
-      }),
-      tap(() => (this.loading = false)),
-    );
+  transactionTypes: TransactionType[] = [];
+  dropdownSettings: IDropdownSettings = {
+    singleSelection: false,
+    defaultOpen: false,
+    idField: '_id',
+    textField: 'name',
+    selectAllText: 'Select All',
+    unSelectAllText: 'UnSelect All',
+    enableCheckAll: true,
+    itemsShowLimit: 3,
+    allowSearchFilter: true,
   };
-
-  formatterArticle = (x: {name: string}) => x.name;
+  daysOfWeek: Day[] = [
+    Day.Sunday,
+    Day.Monday,
+    Day.Tuesday,
+    Day.Wednesday,
+    Day.Thursday,
+    Day.Friday,
+    Day.Saturday,
+  ];
 
   searchItem = (text$: Observable<string>) => {
     const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
@@ -87,17 +89,18 @@ export class BusinessRuleComponent implements OnInit {
     return merge(debouncedText$, inputFocus$).pipe(
       tap(() => (this.loading = true)),
       switchMap(async (term) => {
-        let match: {} =
-          term && term !== '' ? {description: {$regex: term, $options: 'i'}} : {};
+        if (term && term !== '') {
+          let match: {} = {description: {$regex: term, $options: 'i'}};
 
-        if (this.operation === 'update' && this.obj._id) {
-          match['_id'] = {$ne: {$oid: this.obj._id}};
+          if (this.operation === 'update' && this.obj._id) {
+            match['_id'] = {$ne: {$oid: this.obj._id}};
+          }
+          match['operationType'] = {$ne: 'D'};
+
+          return await this.getAllArticles(match).then((result) => {
+            return result;
+          });
         }
-        match['operationType'] = {$ne: 'D'};
-
-        return await this.getAllArticles(match).then((result) => {
-          return result;
-        });
       }),
       tap(() => (this.loading = false)),
     );
@@ -126,35 +129,25 @@ export class BusinessRuleComponent implements OnInit {
       class: 'form-group col-md-3',
     },
     {
-      name: 'minAmount',
-      tag: 'input',
-      tagType: 'number',
-      class: 'form-group col-md-2',
-    },
-    {
-      name: 'minQuantity',
-      tag: 'input',
-      tagType: 'number',
-      class: 'form-group col-md-2',
-    },
-    {
-      name: 'transactionAmountLimit',
-      tag: 'input',
-      tagType: 'number',
-      class: 'form-group col-md-2',
-    },
-    {
       name: 'totalStock',
       tag: 'input',
       tagType: 'number',
-      class: 'form-group col-md-2',
+      class: 'form-group col-md-6',
       validators: [Validators.required, Validators.min(1)],
+    },
+    {
+      name: 'active',
+      tag: 'select',
+      tagType: 'boolean',
+      class: 'form-group col-md-6',
+      values: ['true', 'false'],
+      validators: [Validators.required],
     },
     {
       name: 'discountType',
       tag: 'select',
       tagType: 'text',
-      class: 'form-group col-md-2',
+      class: 'form-group col-md-6',
       values: ['percentage', 'amount'],
       validators: [Validators.required],
     },
@@ -162,28 +155,38 @@ export class BusinessRuleComponent implements OnInit {
       name: 'discountValue',
       tag: 'input',
       tagType: 'number',
-      class: 'form-group col-md-2',
+      class: 'form-group col-md-6',
       validators: [Validators.required],
     },
     {
-      name: 'active',
-      tag: 'select',
-      tagType: 'boolean',
-      class: 'form-group col-md-2',
-      values: ['true', 'false'],
-      validators: [Validators.required],
+      name: 'minAmount',
+      tag: 'input',
+      tagType: 'number',
+      class: 'form-group col-md-6',
+    },
+    {
+      name: 'transactionAmountLimit',
+      tag: 'input',
+      tagType: 'number',
+      class: 'form-group col-md-6',
     },
     {
       name: 'article',
       label: 'discountArticle',
       tag: 'autocomplete',
       tagType: 'text',
-      search: this.searchArticle,
-      format: this.formatterArticle,
+      search: this.searchItem,
+      format: this.formatterItem,
       values: null,
       focus: false,
-      class: 'form-group col-md-5',
+      class: 'form-group col-md-12',
       validators: [Validators.required],
+    },
+    {
+      name: 'minQuantity',
+      tag: 'input',
+      tagType: 'number',
+      class: 'form-group col-md-6',
     },
     {
       name: 'item',
@@ -193,7 +196,29 @@ export class BusinessRuleComponent implements OnInit {
       format: this.formatterItem,
       values: null,
       focus: false,
-      class: 'form-group col-md-5',
+      class: 'form-group col-md-6',
+    },
+    {
+      name: 'item2',
+      label: 'item 2',
+      tag: 'autocomplete',
+      tagType: 'text',
+      search: this.searchItem,
+      format: this.formatterItem,
+      values: null,
+      focus: false,
+      class: 'form-group col-md-6',
+    },
+    {
+      name: 'item3',
+      label: 'item 3',
+      tag: 'autocomplete',
+      tagType: 'text',
+      search: this.searchItem,
+      format: this.formatterItem,
+      values: null,
+      focus: false,
+      class: 'form-group col-md-6',
     },
     {
       name: 'description',
@@ -256,6 +281,7 @@ export class BusinessRuleComponent implements OnInit {
     public _paymentMethod: PaymentMethodService,
     public _emailTemplate: EmailTemplateService,
     public _shipmentMethod: ShipmentMethodService,
+    public _transactionTypeService: TransactionTypeService,
     public _printer: PrinterService,
     public _company: CompanyService,
     public translatePipe: TranslateMePipe,
@@ -289,6 +315,13 @@ export class BusinessRuleComponent implements OnInit {
     this._title.setTitle(this.title);
     this.buildForm();
     this.objId = pathUrl[3];
+
+    await this.getTransactionTypes().then((result) => {
+      if (result) {
+        this.transactionTypes = result;
+      }
+    });
+
     if (this.objId && this.objId !== '') {
       let project = {
         _id: 1,
@@ -302,6 +335,8 @@ export class BusinessRuleComponent implements OnInit {
         discountType: 1,
         discountValue: 1,
         active: 1,
+        days: 1,
+        transactionTypeIds: 1,
         'article._id': 1,
         'article.name': '$article.description',
         'item._id': 1,
@@ -361,6 +396,8 @@ export class BusinessRuleComponent implements OnInit {
   buildForm(): void {
     let fields: {} = {
       _id: [this.obj._id],
+      days: [this.obj.days],
+      transactionTypeIds: [this.obj.transactionTypeIds],
     };
 
     for (let field of this.formFields) {
@@ -410,6 +447,8 @@ export class BusinessRuleComponent implements OnInit {
   setValuesForm(): void {
     let values: {} = {
       _id: this.obj._id,
+      days: this.obj.days,
+      transactionTypeIds: this.obj.transactionTypeIds,
     };
 
     for (let field of this.formFields) {
@@ -673,6 +712,44 @@ export class BusinessRuleComponent implements OnInit {
             (error) => reject(error),
           ),
       );
+    });
+  }
+
+  public getTransactionTypes(): Promise<TransactionType[]> {
+    return new Promise<TransactionType[]>((resolve) => {
+      let match = {};
+
+      match = {
+        transactionMovement: TransactionMovement.Sale,
+        operationType: {$ne: 'D'},
+      };
+
+      this._transactionTypeService
+        .getAll({
+          project: {
+            _id: 1,
+            transactionMovement: 1,
+            requestArticles: 1,
+            operationType: 1,
+            name: 1,
+            branch: 1,
+          },
+          match: match,
+          sort: {name: 1},
+        })
+        .subscribe(
+          (result) => {
+            if (result) {
+              resolve(result.result);
+            } else {
+              resolve(null);
+            }
+          },
+          (error) => {
+            this.showToast(error);
+            resolve(null);
+          },
+        );
     });
   }
 
