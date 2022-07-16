@@ -73,8 +73,7 @@
         </div>
         <div class="form-group col-md-12">
           <label for="filePath" class="control-label">Archivo:</label>
-          <input type="file" class="form-control" formControlName="filePath" (change)="onFileChange($event)" />
-
+          <input type="file" class="form-control" formControlName="filePath" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"  (change)="onFileChange($event)" />
 
           <div *ngIf="formErrors.filePath" class="alert alert-danger">
             {{ formErrors.filePath }}
