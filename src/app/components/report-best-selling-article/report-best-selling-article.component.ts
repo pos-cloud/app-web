@@ -536,8 +536,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
             "transaction.state": "Cerrado",
             "transaction.operationType": { "$ne": "D" },
             "operationType": { "$ne": "D" },
-            "transaction.type.transactionMovement": this.transactionMovement,
-            "article.operationType": { "$ne": "D" }
+            "transaction.type.transactionMovement": this.transactionMovement
         }
 
         if(this.branchSelectedId){
