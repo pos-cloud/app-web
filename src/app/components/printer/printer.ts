@@ -10,6 +10,8 @@ export class Printer {
   type: PrinterType = PrinterType.PDF;
   pageWidth: number;
   pageHigh: number;
+  labelWidth: number;
+  labelHigh: number;
   printIn: PrinterPrintIn = PrinterPrintIn.Counter;
   url: string;
   quantity: number = 1;

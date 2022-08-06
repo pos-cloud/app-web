@@ -28,6 +28,7 @@ export class PrinterComponent implements OnInit {
   @Input() operation: string;
   public printer: Printer;
   public types: PrinterType[] = [PrinterType.PDF];
+  printIn2: string;
   public printsIn: PrinterPrintIn[] = [
     PrinterPrintIn.Counter,
     PrinterPrintIn.Kitchen,
@@ -178,6 +179,8 @@ export class PrinterComponent implements OnInit {
       type: [this.printer.type, [Validators.required]],
       pageWidth: [this.printer.pageWidth, []],
       pageHigh: [this.printer.pageHigh, []],
+      labelHigh: [this.printer.labelHigh, []],
+      labelWidth: [this.printer.labelWidth, []],
       printIn: [this.printer.printIn, []],
       pageSize: [this.pageSizes[0], []],
       quantity: [this.printer.quantity, []],
@@ -305,6 +308,8 @@ export class PrinterComponent implements OnInit {
     if (!this.printer.addPag) this.printer.addPag = 0;
     if (!this.printer.url) this.printer.url = '';
     if (!this.printer.quantity) this.printer.quantity = 1;
+    if (!this.printer.labelHigh) this.printer.labelHigh = 0;
+    if (!this.printer.labelWidth) this.printer.labelWidth = 0;
 
     const values = {
       _id: this.printer._id,
@@ -312,6 +317,8 @@ export class PrinterComponent implements OnInit {
       type: this.printer.type,
       pageWidth: this.printer.pageWidth,
       pageHigh: this.printer.pageHigh,
+      labelWidth: this.printer.labelWidth,
+      labelHigh: this.printer.labelHigh,
       printIn: this.printer.printIn,
       pageSize: this.printerForm.value.pageSize,
       orientation: this.printer.orientation,
