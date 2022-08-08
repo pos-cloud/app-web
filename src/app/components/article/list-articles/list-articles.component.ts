@@ -485,7 +485,6 @@ export class ListArticlesComponent implements OnInit {
           (reason) => { }
         );
         break;
-
       case "import":
         modalRef = this._modalService.open(ImportComponent, {
           size: "lg",
@@ -657,6 +656,36 @@ export class ListArticlesComponent implements OnInit {
         } else {
           this._router.navigateByUrl(`/admin/productos/${article._id}`);
         }
+        break;
+      case "print-labels":
+        let printer2 : Printer;
+        await this.getPrinters().then((printers) => {
+            if (printers && printers.length > 0) {
+              for (let printerAux of printers) {
+                if (printerAux.printIn === PrinterPrintIn.Label && printerAux.fields && printerAux.fields.length > 0) {
+                  printer2 = printerAux;
+                }
+              }
+            }
+          });
+
+          if(printer2){
+
+              modalRef = this._modalService.open(
+                PrintTransactionTypeComponent
+              );
+              modalRef.componentInstance.articles = this.items;
+              modalRef.componentInstance.printerID = printer2._id;
+              if (this.priceListId) {
+                modalRef.componentInstance.priceListId = this.priceListId;
+              }
+          } else {
+            this.showMessage(
+                "Debe crear una impresora de tipo etiqueta con diseño",
+                "danger",
+                false
+              );
+          }
         break;
       default:
     }

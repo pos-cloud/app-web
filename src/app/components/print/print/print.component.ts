@@ -1,36 +1,36 @@
-import {CurrencyPipe} from '@angular/common';
-import {Component, OnInit, Input, ElementRef, ViewChild} from '@angular/core';
-import {DomSanitizer} from '@angular/platform-browser';
-import {NgbModal, NgbAlertConfig, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {BranchService} from 'app/components/branch/branch.service';
-import {BusinessRule} from 'app/components/business-rules/business-rules';
-import {MovementOfCancellation} from 'app/components/movement-of-cancellation/movement-of-cancellation';
-import {MovementOfCancellationService} from 'app/components/movement-of-cancellation/movement-of-cancellation.service';
-import {TaxClassification} from 'app/components/tax/tax';
-import {UserService} from 'app/components/user/user.service';
-import {Voucher} from 'app/components/voucher-reader/voucher';
-import {VoucherService} from 'app/components/voucher-reader/voucher.service';
-import {ClaimService} from 'app/layout/claim/claim.service';
-import {CapitalizePipe} from 'app/main/pipes/capitalize';
+import { CurrencyPipe } from '@angular/common';
+import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
+import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { BranchService } from 'app/components/branch/branch.service';
+import { BusinessRule } from 'app/components/business-rules/business-rules';
+import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
+import { MovementOfCancellationService } from 'app/components/movement-of-cancellation/movement-of-cancellation.service';
+import { TaxClassification } from 'app/components/tax/tax';
+import { UserService } from 'app/components/user/user.service';
+import { Voucher } from 'app/components/voucher-reader/voucher';
+import { VoucherService } from 'app/components/voucher-reader/voucher.service';
+import { ClaimService } from 'app/layout/claim/claim.service';
+import { CapitalizePipe } from 'app/main/pipes/capitalize';
 import jsPDF from 'jspdf';
 import * as moment from 'moment';
 
-import {Config} from '../../../app.config';
-import {DateFormatPipe} from '../../../main/pipes/date-format.pipe';
-import {RoundNumberPipe} from '../../../main/pipes/round-number.pipe';
-import {ArticleStock} from '../../article-stock/article-stock';
-import {Article} from '../../article/article';
-import {ArticleService} from '../../article/article.service';
-import {CashBox} from '../../cash-box/cash-box';
-import {CashBoxService} from '../../cash-box/cash-box.service';
-import {Company} from '../../company/company';
-import {ConfigService} from '../../config/config.service';
-import {MovementOfArticle} from '../../movement-of-article/movement-of-article';
-import {MovementOfArticleService} from '../../movement-of-article/movement-of-article.service';
-import {MovementOfCash} from '../../movement-of-cash/movement-of-cash';
-import {MovementOfCashService} from '../../movement-of-cash/movement-of-cash.service';
-import {Printer, PrinterPrintIn, PrinterType} from '../../printer/printer';
-import {PrinterService} from '../../printer/printer.service';
+import { Config } from '../../../app.config';
+import { DateFormatPipe } from '../../../main/pipes/date-format.pipe';
+import { RoundNumberPipe } from '../../../main/pipes/round-number.pipe';
+import { ArticleStock } from '../../article-stock/article-stock';
+import { Article } from '../../article/article';
+import { ArticleService } from '../../article/article.service';
+import { CashBox } from '../../cash-box/cash-box';
+import { CashBoxService } from '../../cash-box/cash-box.service';
+import { Company } from '../../company/company';
+import { ConfigService } from '../../config/config.service';
+import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
+import { MovementOfArticleService } from '../../movement-of-article/movement-of-article.service';
+import { MovementOfCash } from '../../movement-of-cash/movement-of-cash';
+import { MovementOfCashService } from '../../movement-of-cash/movement-of-cash.service';
+import { Printer, PrinterPrintIn, PrinterType } from '../../printer/printer';
+import { PrinterService } from '../../printer/printer.service';
 import {
   TransactionType,
   TransactionMovement,
@@ -40,10 +40,10 @@ import {
 //Paquetes de terceros
 
 //Servicios
-import {TransactionTypeService} from '../../transaction-type/transaction-type.service';
-import {Transaction} from '../../transaction/transaction';
-import {TransactionService} from '../../transaction/transaction.service';
-import {PrintService} from '../print.service';
+import { TransactionTypeService } from '../../transaction-type/transaction-type.service';
+import { Transaction } from '../../transaction/transaction';
+import { TransactionService } from '../../transaction/transaction.service';
+import { PrintService } from '../print.service';
 
 //Pipes
 
@@ -129,8 +129,8 @@ export class PrintComponent implements OnInit {
   @Input() transactionId: string;
   @Input() source: string;
   @Input() businessRule: BusinessRule;
-  @ViewChild('contentPrinters', {static: true}) contentPrinters: ElementRef;
-  @ViewChild('contentTicket', {static: true}) contentTicket: ElementRef;
+  @ViewChild('contentPrinters', { static: true }) contentPrinters: ElementRef;
+  @ViewChild('contentTicket', { static: true }) contentTicket: ElementRef;
   transaction: Transaction;
   transactions: Transaction[];
   loading: boolean;
@@ -183,7 +183,7 @@ export class PrintComponent implements OnInit {
     public _branchService: BranchService,
     public _userService: UserService,
     private _voucherService: VoucherService,
-  ) {}
+  ) { }
 
   async ngOnInit() {
     if (!this.printer || !this.printer.printIn) {
@@ -223,7 +223,18 @@ export class PrintComponent implements OnInit {
       this.printOriginCount = 0;
     }
 
+    if (this.articles && this.articles.length > 0) {
+      this.printPrinterArticles();
+    }
+
     this.getConfig();
+  }
+
+  async printPrinterArticles() {
+
+    
+
+    this.finishImpression();
   }
 
   getConfig(): void {
@@ -275,18 +286,14 @@ export class PrintComponent implements OnInit {
 
     let project = `{
             "_id": 1,
-            "endDate": { "$dateToString": { "date": "$endDate", "format": "%d/%m/%Y %HH %MM %SS", "timezone": "${
-              Config.timezone.split('UTC')[1]
-            }" }},
-            "endDateAFIP": { "$dateToString": { "date": "$endDate", "format": "%Y-%m-%d", "timezone": "${
-              Config.timezone.split('UTC')[1]
-            }" }},
-            "startDate": { "$dateToString": { "date": "$startDate", "format": "%d/%m/%Y %HH %MM", "timezone": "${
-              Config.timezone.split('UTC')[1]
-            }" }},
-            "updateDate": { "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %HH %MM", "timezone": "${
-              Config.timezone.split('UTC')[1]
-            }" }},
+            "endDate": { "$dateToString": { "date": "$endDate", "format": "%d/%m/%Y %HH %MM %SS", "timezone": "${Config.timezone.split('UTC')[1]
+      }" }},
+            "endDateAFIP": { "$dateToString": { "date": "$endDate", "format": "%Y-%m-%d", "timezone": "${Config.timezone.split('UTC')[1]
+      }" }},
+            "startDate": { "$dateToString": { "date": "$startDate", "format": "%d/%m/%Y %HH %MM", "timezone": "${Config.timezone.split('UTC')[1]
+      }" }},
+            "updateDate": { "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %HH %MM", "timezone": "${Config.timezone.split('UTC')[1]
+      }" }},
             "balance": 1,
             "operationType": 1,
             "origin": 1,
@@ -365,7 +372,7 @@ export class PrintComponent implements OnInit {
     this._transactionService
       .getTransactionsV2(
         project, // PROJECT
-        {_id: {$oid: transactionId}, operationType: {$ne: 'D'}}, // MATCH
+        { _id: { $oid: transactionId }, operationType: { $ne: 'D' } }, // MATCH
         {}, // SORT
         {}, // GROUP
         0, // LIMIT
@@ -582,8 +589,8 @@ export class PrintComponent implements OnInit {
     if (Config.country === 'AR') {
       this.doc.text(
         this.padString(this.transaction.origin, 4) +
-          '-' +
-          this.padString(this.transaction.number, 10),
+        '-' +
+        this.padString(this.transaction.number, 10),
         130,
         20,
       );
@@ -796,8 +803,8 @@ export class PrintComponent implements OnInit {
           if (Config.country === 'AR') {
             this.doc.text(
               this.padString(this.transaction.origin, 4) +
-                '-' +
-                this.padString(this.transaction.number, 10),
+              '-' +
+              this.padString(this.transaction.number, 10),
               130,
               20,
             );
@@ -829,7 +836,7 @@ export class PrintComponent implements OnInit {
                   this.doc.setFontSize('8');
                   this.doc.text(
                     'Cod:' +
-                      this.padString(this.transaction.type.codes[i].code.toString(), 2),
+                    this.padString(this.transaction.type.codes[i].code.toString(), 2),
                     101,
                     16,
                   );
@@ -941,19 +948,19 @@ export class PrintComponent implements OnInit {
         this.doc.setFont('', 'normal');
         this.doc.text(
           movCancelation[index].transactionOrigin.type.name +
-            '   ' +
-            this.padString(movCancelation[index].transactionOrigin.origin, 4) +
-            '-' +
-            this.padString(movCancelation[index].transactionOrigin.number, 8),
+          '   ' +
+          this.padString(movCancelation[index].transactionOrigin.origin, 4) +
+          '-' +
+          this.padString(movCancelation[index].transactionOrigin.number, 8),
           10,
           row,
         );
         //this.doc.text("$ " + this.roundNumber.transform(this.transactions[index].totalPrice), 80, row);
         this.doc.textEx(
           '$ ' +
-            this.roundNumber.transform(
-              movCancelation[index].transactionOrigin.totalPrice,
-            ),
+          this.roundNumber.transform(
+            movCancelation[index].transactionOrigin.totalPrice,
+          ),
           95,
           row,
           'right',
@@ -968,7 +975,7 @@ export class PrintComponent implements OnInit {
         );
         this.doc.textEx(
           '$ ' +
-            this.roundNumber.transform(movCancelation[index].transactionOrigin.balance),
+          this.roundNumber.transform(movCancelation[index].transactionOrigin.balance),
           175,
           row,
           'right',
@@ -1002,8 +1009,8 @@ export class PrintComponent implements OnInit {
           if (Config.country === 'AR') {
             this.doc.text(
               this.padString(this.transaction.origin, 4) +
-                '-' +
-                this.padString(this.transaction.number, 10),
+              '-' +
+              this.padString(this.transaction.number, 10),
               130,
               20,
             );
@@ -1035,7 +1042,7 @@ export class PrintComponent implements OnInit {
                   this.doc.setFontSize('8');
                   this.doc.text(
                     'Cod:' +
-                      this.padString(this.transaction.type.codes[i].code.toString(), 2),
+                    this.padString(this.transaction.type.codes[i].code.toString(), 2),
                     101,
                     16,
                   );
@@ -1096,7 +1103,7 @@ export class PrintComponent implements OnInit {
   toPrintPagare() {
     let margin: number = 5;
 
-    this.doc.setProperties({title: 'String Splitting'});
+    this.doc.setProperties({ title: 'String Splitting' });
     this.doc.addPage();
     this.doc.setFont('', 'bold');
     this.doc.setFont('', this.fontSizes.large);
@@ -1112,11 +1119,9 @@ export class PrintComponent implements OnInit {
       18,
     );
     this.doc.text(
-      `${this.transaction.company.address} (${
-        this.transaction.company.state ? this.transaction.company.state.name : ''
-      }) ${
-        moment().format('DD [de]') +
-        this.capitalizePipe.transform(moment().format(' MMMM [de] YYYY'))
+      `${this.transaction.company.address} (${this.transaction.company.state ? this.transaction.company.state.name : ''
+      }) ${moment().format('DD [de]') +
+      this.capitalizePipe.transform(moment().format(' MMMM [de] YYYY'))
       }`,
       margin,
       26,
@@ -1143,17 +1148,15 @@ export class PrintComponent implements OnInit {
     En nuestro carácter de libradores hacemos constar expresamente que, de conformidad con lo
     establecido por el artículo 36 del Decreto-Ley 5.965/63, ampliamos el plazo de presentación para
     el pago de este pagaré hasta diez (10) años a contar de la fecha de libramiento.
-    Lugar de pago: ${
-      this.transaction.company &&
-      this.transaction.company.city &&
-      this.transaction.company.city != ''
+    Lugar de pago: ${this.transaction.company &&
+        this.transaction.company.city &&
+        this.transaction.company.city != ''
         ? this.transaction.company.city
         : '..................'
-    }, ${
-      this.transaction.company.state
+      }, ${this.transaction.company.state
         ? this.transaction.company.state.name
         : '..................'
-    }.
+      }.
     `;
     let row: number = 34;
 
@@ -1197,7 +1200,7 @@ export class PrintComponent implements OnInit {
   }
 
   toPrintMutuo() {
-    this.doc.setProperties({title: 'String Splitting'});
+    this.doc.setProperties({ title: 'String Splitting' });
     this.doc.addPage();
     this.doc.setFont('', 'bold');
     this.doc.setFont('', this.fontSizes.large);
@@ -1205,84 +1208,72 @@ export class PrintComponent implements OnInit {
     this.doc.setFont('', 'normal');
     this.doc.setFont('', this.fontSizes.normal);
     this.doc.line(0, 15, this.printer.pageWidth - 5, 15);
-    let text: string = `En la ciudad de ${
-      this.transaction.company &&
-      this.transaction.company.city &&
-      this.transaction.company.city != ''
+    let text: string = `En la ciudad de ${this.transaction.company &&
+        this.transaction.company.city &&
+        this.transaction.company.city != ''
         ? this.transaction.company.city
         : '..................'
-    }, Prov. de ${
-      this.transaction.company.state
+      }, Prov. de ${this.transaction.company.state
         ? this.transaction.company.state.name
         : '..................'
-    } a los ${moment().format('DD [días del mes de]')} ${this.capitalizePipe.transform(
-      moment().format('MMMM [de]'),
-    )} ${this.getNumeroALetras(
-      moment().format('YYYY'),
-    ).toLowerCase()} entre BORITA S.A., representada en este
-    acto por su PRESIDENTE Sr. DANIEL CAFFE D.N.I. Nº 20188385, con domicilio en calle ${
-      Config.companyAddress ? Config.companyAddress : '..................'
-    }, por
-    una parte y en adelante denominada LA ACREEDORA y por la otra el Sr./a ${
-      this.transaction.company ? this.transaction.company.name : '..................'
-    } L.C./L.E./D.N.I. Nº ${
-      this.transaction.company
+      } a los ${moment().format('DD [días del mes de]')} ${this.capitalizePipe.transform(
+        moment().format('MMMM [de]'),
+      )} ${this.getNumeroALetras(
+        moment().format('YYYY'),
+      ).toLowerCase()} entre BORITA S.A., representada en este
+    acto por su PRESIDENTE Sr. DANIEL CAFFE D.N.I. Nº 20188385, con domicilio en calle ${Config.companyAddress ? Config.companyAddress : '..................'
+      }, por
+    una parte y en adelante denominada LA ACREEDORA y por la otra el Sr./a ${this.transaction.company ? this.transaction.company.name : '..................'
+      } L.C./L.E./D.N.I. Nº ${this.transaction.company
         ? this.transaction.company.identificationValue
         : '..................'
-    }
+      }
     denominado/s en adelante EL/LOS DEUDOR/ES, han convenido en celebrar el presente contrato de mutuo oneroso sujeto a las cláusulas que a
-    continuación se transcriben: PRIMERA: BORITA S.A. otorga en préstamo a ${
-      this.transaction.company ? this.transaction.company.name : '..................'
-    } y éste/estos lo acepta/n, la suma de
+    continuación se transcriben: PRIMERA: BORITA S.A. otorga en préstamo a ${this.transaction.company ? this.transaction.company.name : '..................'
+      } y éste/estos lo acepta/n, la suma de
     Pesos ${this.capitalizePipe.transform(
-      this.getNumeroALetras(
+        this.getNumeroALetras(
+          this.roundNumber.transform(this.transaction.totalPrice),
+        ).toLowerCase(),
+      )} (${this.currencyPipe.transform(
         this.roundNumber.transform(this.transaction.totalPrice),
-      ).toLowerCase(),
-    )} (${this.currencyPipe.transform(
-      this.roundNumber.transform(this.transaction.totalPrice),
-      'USD',
-      'symbol-narrow',
-      '1.2-2',
-    )}) en billetes de esa moneda, con destino ................... ,
+        'USD',
+        'symbol-narrow',
+        '1.2-2',
+      )}) en billetes de esa moneda, con destino ................... ,
     que el DEUDOR/ES recibe/n en este acto de plena conformidad, sirviendo el presente de formal recibo y carta de adeudo en forma. SEGUNDA:
     El/LOS DEUDOR/ES se obliga/n a devolver a la ACREEDORA el importe del préstamo indicado en la cláusula anterior en la siguiente forma, 
-    plazo y condiciones: ${this.movementsOfCashes.length} ${
-      this.movementsOfCashes.length <= 1 ? 'CUOTA' : 'CUOTAS'
-    }, mensuales y consecutivas de ${this.currencyPipe.transform(
-      this.roundNumber.transform(
-        this.movementsOfCashes[this.movementsOfCashes.length - 1].amountPaid,
-      ),
-      'USD',
-      'symbol-narrow',
-      '1.2-2',
-    )} (Pesos ${this.capitalizePipe.transform(
-      this.getNumeroALetras(
-        this.movementsOfCashes[this.movementsOfCashes.length - 1].amountPaid,
-      ).toLowerCase(),
-    )})
+    plazo y condiciones: ${this.movementsOfCashes.length} ${this.movementsOfCashes.length <= 1 ? 'CUOTA' : 'CUOTAS'
+      }, mensuales y consecutivas de ${this.currencyPipe.transform(
+        this.roundNumber.transform(
+          this.movementsOfCashes[this.movementsOfCashes.length - 1].amountPaid,
+        ),
+        'USD',
+        'symbol-narrow',
+        '1.2-2',
+      )} (Pesos ${this.capitalizePipe.transform(
+        this.getNumeroALetras(
+          this.movementsOfCashes[this.movementsOfCashes.length - 1].amountPaid,
+        ).toLowerCase(),
+      )})
     cada una venciendo la primera el día ${moment(
-      this.movementsOfCashes[0].expirationDate,
-      'YYYY-MM-DDTHH:mm:ssZ',
-    ).format(
-      'DD/MM/YYYY',
-    )} y las restantes el mismo día de los meses siguientes al primero, obligaciones que deberán ser
-    abonadas en el domicilio de la ACREEDORA en calle ${
-      Config.companyAddress ? Config.companyAddress : '..................'
-    }, que incluye los intereses compensatorios
-    pactados, como así también el ${
-      this.movementsOfCashes[0].taxPercentage
-    }% del IVA sobre los intereses correspondientes que poseen cada una de ellas de acuerdo al calculo del
-    ${
-      this.movementsOfCashes[0].type.name
-    }.- TERCERA: Asimismo convienen las partes que el interés que se aplica al presente préstamo de dinero, con el carácter de 
+        this.movementsOfCashes[0].expirationDate,
+        'YYYY-MM-DDTHH:mm:ssZ',
+      ).format(
+        'DD/MM/YYYY',
+      )} y las restantes el mismo día de los meses siguientes al primero, obligaciones que deberán ser
+    abonadas en el domicilio de la ACREEDORA en calle ${Config.companyAddress ? Config.companyAddress : '..................'
+      }, que incluye los intereses compensatorios
+    pactados, como así también el ${this.movementsOfCashes[0].taxPercentage
+      }% del IVA sobre los intereses correspondientes que poseen cada una de ellas de acuerdo al calculo del
+    ${this.movementsOfCashes[0].type.name
+      }.- TERCERA: Asimismo convienen las partes que el interés que se aplica al presente préstamo de dinero, con el carácter de 
     compensatorio será del 8,00% mensual, que se aplica sobre el capital prestado, a partir del día de la fecha, que son liquidados conjuntamente
-    con cada una de las cuotas mensuales de capital, aplicando el ${
-      this.movementsOfCashes[0].type.name
-    } de amortización de créditos. El cálculo de los aludidos intereses
+    con cada una de las cuotas mensuales de capital, aplicando el ${this.movementsOfCashes[0].type.name
+      } de amortización de créditos. El cálculo de los aludidos intereses
     se practica sobre la base de trescientos sesenta y cinco días corridos calendarios. Además se conviene, en caso de producirse la mora automática
-    en el pago de las obligaciones asumidas por el/los DEUDOR/ES, la aplicación de un interés punitorio adicional del ${
-      this.movementsOfCashes[0].interestPercentage
-    }% mensual, que será
+    en el pago de las obligaciones asumidas por el/los DEUDOR/ES, la aplicación de un interés punitorio adicional del ${this.movementsOfCashes[0].interestPercentage
+      }% mensual, que será
     computado sobre el saldo de capital adeudado íntegramente, incluyendo la totalidad de las cuotas vencidas y las que se encuentran pendientes
     de vencimiento en el futuro. El pago de los intereses compensatorios, como los punitorios pactados deberán ser abonados también, en el domicilio
     de la ACREEDORA. Los intereses serán capitalizados conforme a la tasa mensual pactada, tanto los compensatorios como los punitorios.-
@@ -1320,51 +1311,42 @@ export class PrintComponent implements OnInit {
     Civil y Comercial de la Provincia de Formosa, por el importe total del préstamo, sus intereses compensatorios y punitorios, gastos
     causídicos y costas, sobre la base del presente instrumento y sin necesidad de aviso previo. A tal efecto, la liquidación que practique
     la ACREEDORA, acompañada de este instrumento será TITULO EJECUTIVO suficiente para accionar en contra del DEUDOR/ES .DECIMA
-    SEGUNDA: El Sr/a. ${
-      this.transaction.company ? this.transaction.company.name : '..................'
-    } L.C./L.E./D.N.I. Nº ${
-      this.transaction.company
+    SEGUNDA: El Sr/a. ${this.transaction.company ? this.transaction.company.name : '..................'
+      } L.C./L.E./D.N.I. Nº ${this.transaction.company
         ? this.transaction.company.identificationValue
         : '..................'
-    }, con domicilio en calle ........................., se constituyen en fiador/es y
+      }, con domicilio en calle ........................., se constituyen en fiador/es y
     garante/s solidario/s, liso/s y llano/s principal/es pagador/es y con el carácter de codeudor solidario de todas las obligaciones asumidas
     por el/los DEUDOR/E en el presente contrato, renunciando expresamente a los beneficios de excusión y/o división que
     pudiere/n corresponderle/s.-DECIMO TERCERA: En las condiciones expresadas, la ACREEDORA y el DEUDOR/ES y GARANTE/S o
     FIADOR/ES solidarios, aceptan en todas sus partes las cláusulas que anteceden y declaran expresamente someterse a la jurisdicción de los
-    Tribunales Ordinarios de la ciudad de ${
-      this.transaction.company &&
-      this.transaction.company.city &&
-      this.transaction.company.city != ''
+    Tribunales Ordinarios de la ciudad de ${this.transaction.company &&
+        this.transaction.company.city &&
+        this.transaction.company.city != ''
         ? this.transaction.company.city
         : '..................'
-    }, Prov. de ${
-      this.transaction.company.state
+      }, Prov. de ${this.transaction.company.state
         ? this.transaction.company.state.name
         : '..................'
-    }, renunciando expresamente a cualquier otro fuero que les pudiera corresponder,
+      }, renunciando expresamente a cualquier otro fuero que les pudiera corresponder,
     en especial el fuero Federal, constituyendo domicilio especial para todas las notificaciones y demás efectos legales la ACREEDORA
-    en calle ${
-      Config.companyAddress ? Config.companyAddress : '..................'
-    } y el DEUDOR/ES en calle , de la ciudad de ${
-      this.transaction.company &&
-      this.transaction.company.addressNumber &&
-      this.transaction.company.addressNumber != ''
+    en calle ${Config.companyAddress ? Config.companyAddress : '..................'
+      } y el DEUDOR/ES en calle , de la ciudad de ${this.transaction.company &&
+        this.transaction.company.addressNumber &&
+        this.transaction.company.addressNumber != ''
         ? this.transaction.company.addressNumber + ' - '
         : '............ - '
-    } ${
-      this.transaction.company &&
-      this.transaction.company.city &&
-      this.transaction.company.city != ''
+      } ${this.transaction.company &&
+        this.transaction.company.city &&
+        this.transaction.company.city != ''
         ? this.transaction.company.city
         : '..................'
-    }, Prov. de ${
-      this.transaction.company.state
+      }, Prov. de ${this.transaction.company.state
         ? this.transaction.company.state.name
         : '..................'
-    }
-    y el/los GARANTE/S o FIADOR/ES en calle ${
-      Config.companyAddress ? Config.companyAddress : '..................'
-    }, los que subsistirán a todos los efectos hasta que obre
+      }
+    y el/los GARANTE/S o FIADOR/ES en calle ${Config.companyAddress ? Config.companyAddress : '..................'
+      }, los que subsistirán a todos los efectos hasta que obre
     en lo de la ACREEDORA notificación fehaciente del nuevo domicilio contractural.-En prueba de conformidad suscriben las partes tres ejemplares
     de un mismo tenor en el lugar y fecha que indica más arriba.-`;
 
@@ -1380,9 +1362,9 @@ export class PrintComponent implements OnInit {
       let match;
 
       match = {
-        transactionDestination: {$oid: transactionDestinationViewId},
-        operationType: {$ne: 'D'},
-        'transactionOrigin.operationType': {$ne: 'D'},
+        transactionDestination: { $oid: transactionDestinationViewId },
+        operationType: { $ne: 'D' },
+        'transactionOrigin.operationType': { $ne: 'D' },
       };
 
       // CAMPOS A TRAER
@@ -1405,7 +1387,7 @@ export class PrintComponent implements OnInit {
         .getMovementsOfCancellations(
           project, // PROJECT
           match, // MATCH
-          {order: 1}, // SORT
+          { order: 1 }, // SORT
           {}, // GROUP
           0, // LIMIT
           0, // SKIP
@@ -1477,12 +1459,12 @@ export class PrintComponent implements OnInit {
 
     this.getBarcode64(
       'interleaved2of5?value=' +
-        this.config[0].companyIdentificationValue.replace('-', '').replace('-', '') +
-        codeInvoice +
-        this.transaction.origin +
-        this.transaction.CAE +
-        date +
-        checkDigit,
+      this.config[0].companyIdentificationValue.replace('-', '').replace('-', '') +
+      codeInvoice +
+      this.transaction.origin +
+      this.transaction.CAE +
+      date +
+      checkDigit,
       'invoice',
     );
   }
@@ -1557,7 +1539,7 @@ export class PrintComponent implements OnInit {
     if (this.cashBox.openingDate) {
       this.doc.text(
         'Apertura: ' +
-          this.dateFormat.transform(this.cashBox.openingDate, 'DD/MM/YYYY HH:mm:ss'),
+        this.dateFormat.transform(this.cashBox.openingDate, 'DD/MM/YYYY HH:mm:ss'),
         margin,
         (row += 5),
       );
@@ -1565,7 +1547,7 @@ export class PrintComponent implements OnInit {
     if (this.cashBox.closingDate) {
       this.doc.text(
         'Cierre: ' +
-          this.dateFormat.transform(this.cashBox.closingDate, 'DD/MM/YYYY HH:mm:ss'),
+        this.dateFormat.transform(this.cashBox.closingDate, 'DD/MM/YYYY HH:mm:ss'),
         margin,
         (row += 5),
       );
@@ -1856,10 +1838,10 @@ export class PrintComponent implements OnInit {
         if (!closingAmounts[k]) closingAmounts[k] = 0;
         this.doc.text(
           '$ ' +
-            (
-              closingAmounts[k] -
-              (openingAmounts[k] + inputAmounts[k] - outputAmounts[k])
-            ).toLocaleString('de-DE'),
+          (
+            closingAmounts[k] -
+            (openingAmounts[k] + inputAmounts[k] - outputAmounts[k])
+          ).toLocaleString('de-DE'),
           60,
           row,
         );
@@ -2218,10 +2200,10 @@ export class PrintComponent implements OnInit {
           this.doc.text('- ' + k, margin + 5, (row += 5));
           this.doc.text(
             '$ ' +
-              (
-                closingAmounts[k] -
-                (openingAmounts[k] + inputAmounts[k] - outputAmounts[k])
-              ).toLocaleString('de-DE'),
+            (
+              closingAmounts[k] -
+              (openingAmounts[k] + inputAmounts[k] - outputAmounts[k])
+            ).toLocaleString('de-DE'),
             60,
             row,
           );
@@ -2603,10 +2585,10 @@ export class PrintComponent implements OnInit {
         if (Config.country === 'AR') {
           this.doc.text(
             this.padString(item.transactionOrigin, 4) +
-              '-' +
-              item.transactionLetter +
-              '-' +
-              this.padString(item.transactionNumber, 10),
+            '-' +
+            item.transactionLetter +
+            '-' +
+            this.padString(item.transactionNumber, 10),
             90,
             row,
           );
@@ -2627,7 +2609,7 @@ export class PrintComponent implements OnInit {
 
         this.doc.textEx(
           '$ ' +
-            new Intl.NumberFormat('de-DE', {minimumFractionDigits: 2}).format(item.debe),
+          new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2 }).format(item.debe),
           160,
           row,
           'right',
@@ -2635,7 +2617,7 @@ export class PrintComponent implements OnInit {
         );
         this.doc.textEx(
           '$ ' +
-            new Intl.NumberFormat('de-DE', {minimumFractionDigits: 2}).format(item.haber),
+          new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2 }).format(item.haber),
           180,
           row,
           'right',
@@ -2644,9 +2626,9 @@ export class PrintComponent implements OnInit {
         this.doc.setFont('', 'bold');
         this.doc.textEx(
           '$ ' +
-            new Intl.NumberFormat('de-DE', {minimumFractionDigits: 2}).format(
-              item.balance,
-            ),
+          new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2 }).format(
+            item.balance,
+          ),
           205,
           row,
           'right',
@@ -2664,9 +2646,9 @@ export class PrintComponent implements OnInit {
           this.doc.text('TRANSPORTE:'.toString(), 25, row);
           this.doc.textEx(
             '$ ' +
-              new Intl.NumberFormat('de-DE', {minimumFractionDigits: 2}).format(
-                item.balance,
-              ),
+            new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2 }).format(
+              item.balance,
+            ),
             194,
             row,
             'right',
@@ -2682,9 +2664,9 @@ export class PrintComponent implements OnInit {
           this.doc.text('TRANSPORTE:'.toString(), 25, row);
           this.doc.textEx(
             '$ ' +
-              new Intl.NumberFormat('de-DE', {minimumFractionDigits: 2}).format(
-                item.balance,
-              ),
+            new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2 }).format(
+              item.balance,
+            ),
             194,
             row,
             'right',
@@ -2726,7 +2708,7 @@ export class PrintComponent implements OnInit {
     this.balance = this.roundNumber.transform(this.balance, 2).toFixed(2);
     this.doc.textEx(
       '$ ' +
-        new Intl.NumberFormat('de-DE', {minimumFractionDigits: 2}).format(this.balance),
+      new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2 }).format(this.balance),
       175,
       246,
       'right',
@@ -2815,8 +2797,8 @@ export class PrintComponent implements OnInit {
       if (Config.country === 'AR') {
         this.doc.text(
           this.padString(this.transaction.origin, 4) +
-            '-' +
-            this.padString(this.transaction.number, 8),
+          '-' +
+          this.padString(this.transaction.number, 8),
           130,
           25,
         );
@@ -3094,9 +3076,9 @@ export class PrintComponent implements OnInit {
                   this.movementsOfArticles[i].salePrice == 0
                     ? ''
                     : '$ ' +
-                        this.roundNumber
-                          .transform(taxesBase / this.movementsOfArticles[i].amount, 2)
-                          .toFixed(2),
+                    this.roundNumber
+                      .transform(taxesBase / this.movementsOfArticles[i].amount, 2)
+                      .toFixed(2),
                   160,
                   row,
                   'right',
@@ -3116,9 +3098,9 @@ export class PrintComponent implements OnInit {
                 this.movementsOfArticles[i].salePrice == 0
                   ? ''
                   : '$ ' +
-                      this.roundNumber
-                        .transform(this.movementsOfArticles[i].salePrice, 2)
-                        .toFixed(2),
+                  this.roundNumber
+                    .transform(this.movementsOfArticles[i].salePrice, 2)
+                    .toFixed(2),
                 207,
                 row,
                 'right',
@@ -3129,11 +3111,11 @@ export class PrintComponent implements OnInit {
                 this.movementsOfArticles[i].salePrice == 0
                   ? ''
                   : '$ ' +
-                      this.roundNumber.transform(
-                        this.movementsOfArticles[i].salePrice /
-                          this.movementsOfArticles[i].amount,
-                        2,
-                      ),
+                  this.roundNumber.transform(
+                    this.movementsOfArticles[i].salePrice /
+                    this.movementsOfArticles[i].amount,
+                    2,
+                  ),
                 160,
                 row,
                 'right',
@@ -3143,9 +3125,9 @@ export class PrintComponent implements OnInit {
                 this.movementsOfArticles[i].salePrice == 0
                   ? ''
                   : '$ ' +
-                      this.roundNumber
-                        .transform(this.movementsOfArticles[i].salePrice, 2)
-                        .toFixed(2),
+                  this.roundNumber
+                    .transform(this.movementsOfArticles[i].salePrice, 2)
+                    .toFixed(2),
                 207,
                 row,
                 'right',
@@ -3286,8 +3268,8 @@ export class PrintComponent implements OnInit {
               if (Config.country === 'AR') {
                 this.doc.text(
                   this.padString(this.transaction.origin, 4) +
-                    '-' +
-                    this.padString(this.transaction.number, 10),
+                  '-' +
+                  this.padString(this.transaction.number, 10),
                   130,
                   20,
                 );
@@ -3348,19 +3330,19 @@ export class PrintComponent implements OnInit {
           this.doc.setFont('', 'normal');
           this.doc.text(
             movCancelation[index].transactionOrigin.type.name +
-              '   ' +
-              this.padString(movCancelation[index].transactionOrigin.origin, 4) +
-              '-' +
-              this.padString(movCancelation[index].transactionOrigin.number, 8),
+            '   ' +
+            this.padString(movCancelation[index].transactionOrigin.origin, 4) +
+            '-' +
+            this.padString(movCancelation[index].transactionOrigin.number, 8),
             10,
             row,
           );
           //this.doc.text("$ " + this.roundNumber.transform(this.transactions[index].totalPrice), 80, row);
           this.doc.textEx(
             '$ ' +
-              this.roundNumber.transform(
-                movCancelation[index].transactionOrigin.totalPrice,
-              ),
+            this.roundNumber.transform(
+              movCancelation[index].transactionOrigin.totalPrice,
+            ),
             95,
             row,
             'right',
@@ -3446,8 +3428,8 @@ export class PrintComponent implements OnInit {
             if (Config.country === 'AR') {
               this.doc.text(
                 this.padString(this.transaction.origin, 4) +
-                  '-' +
-                  this.padString(this.transaction.number, 10),
+                '-' +
+                this.padString(this.transaction.number, 10),
                 130,
                 20,
               );
@@ -3512,12 +3494,12 @@ export class PrintComponent implements OnInit {
       ) {
         this.doc.text(
           '$ (' +
-            this.roundNumber.transform(
-              this.transaction.discountAmount /
-                (1 + this.transaction.taxes[0].percentage / 100),
-              2,
-            ) +
-            ')',
+          this.roundNumber.transform(
+            this.transaction.discountAmount /
+            (1 + this.transaction.taxes[0].percentage / 100),
+            2,
+          ) +
+          ')',
           173,
           rowTotals,
         );
@@ -3790,9 +3772,9 @@ export class PrintComponent implements OnInit {
         } else {
           this.doc.text(
             '$' +
-              parseFloat(
-                this.roundNumber.transform(this.transaction.totalPrice, 2),
-              ).toString(),
+            parseFloat(
+              this.roundNumber.transform(this.transaction.totalPrice, 2),
+            ).toString(),
             margin + 40,
             row + 20,
           );
@@ -3912,10 +3894,10 @@ export class PrintComponent implements OnInit {
         0,
         row,
         this.config[0].companyVatCondition.description +
-          ' - ' +
-          this.config[0].companyIdentificationType.name +
-          ':' +
-          this.config[0].companyIdentificationValue,
+        ' - ' +
+        this.config[0].companyIdentificationType.name +
+        ':' +
+        this.config[0].companyIdentificationValue,
       );
       row += 3;
       this.centerText(
@@ -3965,9 +3947,9 @@ export class PrintComponent implements OnInit {
     if (Config.country === 'AR') {
       this.doc.text(
         'N°:' +
-          this.padString(this.transaction.origin, 4) +
-          '-' +
-          this.padString(this.transaction.number, 8),
+        this.padString(this.transaction.origin, 4) +
+        '-' +
+        this.padString(this.transaction.number, 8),
         45,
         65,
       );
@@ -3995,8 +3977,8 @@ export class PrintComponent implements OnInit {
       ) {
         this.doc.text(
           this.transaction.company.identificationType.name +
-            ' :' +
-            this.transaction.company.identificationValue,
+          ' :' +
+          this.transaction.company.identificationValue,
           margin,
           row,
         );
@@ -4013,9 +3995,9 @@ export class PrintComponent implements OnInit {
       if (company.address && company.addressNumber) {
         this.doc.text(
           'Dirección : ' +
-            this.transaction.company.address +
-            ' ' +
-            this.transaction.company.addressNumber,
+          this.transaction.company.address +
+          ' ' +
+          this.transaction.company.addressNumber,
           margin,
           row,
         );
@@ -4087,10 +4069,10 @@ export class PrintComponent implements OnInit {
             } else {
               this.doc.text(
                 '$ ' +
-                  this.roundNumber.transform(
-                    movementOfArticle.salePrice / movementOfArticle.amount,
-                    2,
-                  ),
+                this.roundNumber.transform(
+                  movementOfArticle.salePrice / movementOfArticle.amount,
+                  2,
+                ),
                 50,
                 row,
               );
@@ -4108,10 +4090,10 @@ export class PrintComponent implements OnInit {
               if (element.percentage >= 0) {
                 this.doc.text(
                   '( IVA: ' +
-                    this.roundNumber
-                      .transform(movementOfArticle.article.taxes[0].percentage)
-                      .toFixed(2) +
-                    ' %)',
+                  this.roundNumber
+                    .transform(movementOfArticle.article.taxes[0].percentage)
+                    .toFixed(2) +
+                  ' %)',
                   13,
                   row,
                 );
@@ -4145,9 +4127,9 @@ export class PrintComponent implements OnInit {
         row += 3;
         this.doc.text(
           element.tax.name +
-            ': ' +
-            '$' +
-            this.roundNumber.transform(element.taxAmount).toString(),
+          ': ' +
+          '$' +
+          this.roundNumber.transform(element.taxAmount).toString(),
           5,
           row,
         );
@@ -4327,12 +4309,12 @@ export class PrintComponent implements OnInit {
               .toPrintURL(
                 this.printer.url,
                 '/home/clients/' +
-                  Config.database +
-                  '/' +
-                  this.typePrint +
-                  '/' +
-                  this.transactionId +
-                  '.pdf',
+                Config.database +
+                '/' +
+                this.typePrint +
+                '/' +
+                this.transactionId +
+                '.pdf',
               )
               .subscribe();
           }
@@ -4384,18 +4366,18 @@ export class PrintComponent implements OnInit {
     if (this.transaction.updateDate) {
       this.doc.text(
         'Hora: ' +
-          this.transaction.updateDate.substring(11, 13) +
-          ':' +
-          this.transaction.updateDate.substring(15, 17),
+        this.transaction.updateDate.substring(11, 13) +
+        ':' +
+        this.transaction.updateDate.substring(15, 17),
         margin,
         row,
       );
     } else {
       this.doc.text(
         'Hora: ' +
-          this.transaction.startDate.substring(11, 13) +
-          ':' +
-          this.transaction.startDate.substring(15, 17),
+        this.transaction.startDate.substring(11, 13) +
+        ':' +
+        this.transaction.startDate.substring(15, 17),
         margin,
         row,
       );
@@ -4516,9 +4498,9 @@ export class PrintComponent implements OnInit {
     this.doc.setFont('', 'normal');
     this.doc.text(
       'Fecha: ' +
-        this.transaction.startDate.substring(11, 13) +
-        ':' +
-        this.transaction.startDate.substring(15, 17),
+      this.transaction.startDate.substring(11, 13) +
+      ':' +
+      this.transaction.startDate.substring(15, 17),
       40,
       row,
     );
@@ -4578,7 +4560,7 @@ export class PrintComponent implements OnInit {
           while (movementOfArticle.notes.length > slice) {
             this.doc.text(
               movementOfArticle.notes.slice(slice, this.printer.pageWidth - 30 + slice) +
-                '-',
+              '-',
               5,
               row,
             );
@@ -4670,9 +4652,9 @@ export class PrintComponent implements OnInit {
     this.doc.setFont('', 'normal');
     this.doc.text(
       'Hora: ' +
-        this.transaction.startDate.substring(11, 13) +
-        ':' +
-        this.transaction.startDate.substring(15, 17),
+      this.transaction.startDate.substring(11, 13) +
+      ':' +
+      this.transaction.startDate.substring(15, 17),
       40,
       row,
     );
@@ -4731,7 +4713,7 @@ export class PrintComponent implements OnInit {
           while (movementOfArticle.notes.length > slice) {
             this.doc.text(
               movementOfArticle.notes.slice(slice, this.printer.pageWidth - 30 + slice) +
-                '-',
+              '-',
               5,
               row,
             );
@@ -4743,19 +4725,6 @@ export class PrintComponent implements OnInit {
       }
     }
 
-    // let qr: {} = {};
-    // qr['type'] = 'articles';
-    // qr['time'] = moment();
-    // qr['transaction'] = this.transactionId;
-    // qr['iat'] = moment().unix();
-    // qr['exp'] = moment().add(this.config[0].voucher.minutesOfExpiration, "minutes").unix();
-
-    // Encrypt
-    // this._voucherService.generateVoucher(qr).subscribe(
-    // 	async result => {
-    // 		if (!result.voucher) {
-    // 			if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-    // 		} else {
     let voucher: Voucher = new Voucher();
 
     voucher.token = this.transactionId;
@@ -4927,11 +4896,11 @@ export class PrintComponent implements OnInit {
     this.row += 5;
     this.doc.text(
       'Hora: ' +
-        this.transaction.endDate.substring(11, 13) +
-        ':' +
-        this.transaction.endDate.substring(15, 17) +
-        ':' +
-        this.transaction.endDate.substring(19, 21),
+      this.transaction.endDate.substring(11, 13) +
+      ':' +
+      this.transaction.endDate.substring(15, 17) +
+      ':' +
+      this.transaction.endDate.substring(19, 21),
       width / 1.6,
       this.row,
     );
@@ -5091,27 +5060,27 @@ export class PrintComponent implements OnInit {
           this.doc.text(movementOfArticle.description.slice(0, 25), margin, this.row);
           this.doc.text(
             this.roundNumber.transform(movementOfArticle.amount) +
-              ' x ' +
-              this.roundNumber
-                .transform(
-                  (movementOfArticle.salePrice +
-                    movementOfArticle.transactionDiscountAmount *
-                      movementOfArticle.amount) /
-                    movementOfArticle.amount,
-                )
-                .toString(),
+            ' x ' +
+            this.roundNumber
+              .transform(
+                (movementOfArticle.salePrice +
+                  movementOfArticle.transactionDiscountAmount *
+                  movementOfArticle.amount) /
+                movementOfArticle.amount,
+              )
+              .toString(),
             margin,
             this.row + 3,
           );
           this.doc.text(
             '$' +
-              this.roundNumber
-                .transform(
-                  movementOfArticle.salePrice +
-                    movementOfArticle.transactionDiscountAmount *
-                      movementOfArticle.amount,
-                )
-                .toString(),
+            this.roundNumber
+              .transform(
+                movementOfArticle.salePrice +
+                movementOfArticle.transactionDiscountAmount *
+                movementOfArticle.amount,
+              )
+              .toString(),
             width - 13,
             this.row,
           );
@@ -5234,7 +5203,7 @@ export class PrintComponent implements OnInit {
       while (this.transaction.observation.length > slice) {
         this.doc.text(
           this.transaction.observation.slice(slice, this.printer.pageWidth - 30 + slice) +
-            '-',
+          '-',
           5,
           this.row,
         );
@@ -5309,13 +5278,13 @@ export class PrintComponent implements OnInit {
       };
 
       let match = {
-        movementParent: {$oid: movementOfArticleId},
+        movementParent: { $oid: movementOfArticleId },
         'category.isRequiredOptional': true,
-        operationType: {$ne: 'D'},
+        operationType: { $ne: 'D' },
       };
 
       this._movementOfArticleService
-        .getMovementsOfArticlesV2(project, match, {description: 1}, {})
+        .getMovementsOfArticlesV2(project, match, { description: 1 }, {})
         .subscribe(
           (result) => {
             if (result && result.movementsOfArticles) {
@@ -5395,7 +5364,7 @@ export class PrintComponent implements OnInit {
             break;
         }
       },
-      (error) => {},
+      (error) => { },
     );
   }
 
