@@ -1390,7 +1390,7 @@ export class AddMovementOfCashComponent implements OnInit {
         if (
           this.movementOfCash.surcharge &&
           this.movementOfCash.surcharge > 0 &&
-          this.amountToPay >
+          this.amountToPay - 0.01 >
             this.roundNumber.transform(
               (this.transaction.totalPrice * this.movementOfCash.surcharge) / 100 +
                 this.transaction.totalPrice,
