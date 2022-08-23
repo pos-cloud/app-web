@@ -560,10 +560,8 @@ export class ListTransactionsComponent implements OnInit {
             modalRef = this._modalService.open(PrintTransactionTypeComponent);
             modalRef.componentInstance.transactionId = transaction._id;
           } else {
-            modalRef = this._modalService.open(PrintComponent);
-            modalRef.componentInstance.company = transaction.company;
-            modalRef.componentInstance.transactionId = transaction._id;
-            modalRef.componentInstance.typePrint = 'invoice';
+            let printer: Printer;
+
             await this.getUser().then(async (user) => {
               if (user && user.printers && user.printers.length > 0) {
                 for (const element of user.printers) {
@@ -572,23 +570,29 @@ export class ListTransactionsComponent implements OnInit {
                     element.printer &&
                     element.printer.printIn === PrinterPrintIn.Counter
                   ) {
-                    modalRef.componentInstance.printer = element.printer;
+                    printer = element.printer;
                   }
                 }
               } else {
                 if (transaction.type.defectPrinter) {
-                  modalRef.componentInstance.printer = transaction.type.defectPrinter;
+                  printer = transaction.type.defectPrinter;
                 } else {
                   if (this.printers && this.printers.length > 0) {
                     for (let printer of this.printers) {
                       if (printer.printIn === PrinterPrintIn.Counter) {
-                        modalRef.componentInstance.printer = printer;
+                        printer = printer;
                       }
                     }
                   }
                 }
               }
             });
+
+            modalRef = this._modalService.open(PrintComponent);
+            modalRef.componentInstance.company = transaction.company;
+            modalRef.componentInstance.transactionId = transaction._id;
+            modalRef.componentInstance.typePrint = 'invoice';
+            modalRef.componentInstance.printer = printer;
 
             modalRef.result.then(
               (result) => {

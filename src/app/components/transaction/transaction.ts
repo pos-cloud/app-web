@@ -554,6 +554,16 @@ export let attributes = [
     required: true,
   },
   {
+    name: 'type.defectPrinter.printIn',
+    visible: false,
+    disabled: false,
+    filter: false,
+    datatype: 'string',
+    project: null,
+    align: 'left',
+    required: true,
+  },
+  {
     name: 'type.readLayout',
     visible: false,
     disabled: false,
