@@ -91,7 +91,7 @@ export class ListStructureComponent implements OnInit {
       }
     }
 
-    match += `"operationType": { "$ne": "D" } }`;
+    match += `"operationType": { "$ne": "D" },"child.operationType": { "$ne": "D" },"parent.operationType": { "$ne": "D" }, "child": { "$exists" : true }, "parent": { "$exists" : true } }`;
 
     match = JSON.parse(match);
 
@@ -106,8 +106,10 @@ export class ListStructureComponent implements OnInit {
       "_id": 1,
       "parent.code": 1,
       "parent.description": 1,
+      "parent.operationType":1,
       "child.code": 1,
       "child.description": 1,
+      "child.operationType":1,
       "optional": 1,
       "quantity": 1,
       "utilization": 1,
