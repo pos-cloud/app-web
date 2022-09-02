@@ -38,7 +38,8 @@ import {Make} from '../../make/make';
 import {MakeService} from '../../make/make.service';
 import {Taxes} from '../../tax/taxes';
 import {Variant} from '../../variant/variant';
-import { Article, ArticlePrintIn, IMeliAttrs, Type } from '../article';
+import {VariantService} from '../../variant/variant.service';
+import {Article, ArticlePrintIn, IMeliAttrs, Type} from '../article';
 import {ArticleService} from '../article.service';
 
 import {Account} from './../../../components/account/account';
@@ -46,23 +47,22 @@ import {AccountService} from './../../../components/account/account.service';
 import {Application} from './../../../components/application/application.model';
 import {ApplicationService} from './../../../components/application/application.service';
 import {ArticleFieldService} from './../../../components/article-field/article-field.service';
+import {Classification} from './../../../components/classification/classification';
+import {ClassificationService} from './../../../components/classification/classification.service';
 import {CompanyService} from './../../../components/company/company.service';
-import { Currency } from './../../../components/currency/currency';
-import { UnitOfMeasurement } from './../../../components/unit-of-measurement/unit-of-measurement.model';
+import {ConfigService} from './../../../components/config/config.service';
+import {Currency} from './../../../components/currency/currency';
 
 // Services
-import {VariantService} from '../../variant/variant.service';
 
 import {CurrencyService} from './../../../components/currency/currency.service';
-import {UnitOfMeasurementService} from './../../../components/unit-of-measurement/unit-of-measurement.service';
 
 // Pipes
 
 import {MovementOfArticleService} from './../../../components/movement-of-article/movement-of-article.service';
-import {ClassificationService} from './../../../components/classification/classification.service';
-import {Classification} from './../../../components/classification/classification';
-import {ConfigService} from './../../../components/config/config.service';
 import {TaxClassification} from './../../../components/tax/tax';
+import {UnitOfMeasurement} from './../../../components/unit-of-measurement/unit-of-measurement.model';
+import {UnitOfMeasurementService} from './../../../components/unit-of-measurement/unit-of-measurement.service';
 import {TranslateMePipe} from './../../../main/pipes/translate-me';
 import Resulteable from './../../../util/Resulteable';
 
@@ -85,8 +85,8 @@ export class AddArticleComponent implements OnInit {
   articles: Article[];
   config: Config;
   articleForm: FormGroup;
-  public newDeposit: FormGroup;
-  public newLocation: FormGroup;
+  newDeposit: FormGroup;
+  newLocation: FormGroup;
   currencies: Currency[] = new Array();
   makes: Make[] = new Array();
   classifications: Classification[] = new Array();
@@ -174,11 +174,11 @@ export class AddArticleComponent implements OnInit {
     },
   };
 
-  public value;
-  public articleFieldSelected: ArticleField;
-  public articleFields: ArticleField[];
-  public articleFieldValues = [];
-  public formErrors = {
+  value;
+  articleFieldSelected: ArticleField;
+  articleFields: ArticleField[];
+  articleFieldValues = [];
+  formErrors = {
     code: '',
     make: '',
     description: '',
@@ -198,7 +198,7 @@ export class AddArticleComponent implements OnInit {
     note: '',
   };
 
-  public validationMessages = {
+  validationMessages = {
     code: {required: 'Este campo es requerido.'},
     make: {validateAutocomplete: 'Debe ingresar un valor válido'},
     description: {required: 'Este campo es requerido.'},
@@ -220,7 +220,7 @@ export class AddArticleComponent implements OnInit {
     tag: {},
   };
 
-  public searchCategories = (text$: Observable<string>) =>
+  searchCategories = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
@@ -250,7 +250,7 @@ export class AddArticleComponent implements OnInit {
     return value.description;
   }
 
-  public searchMakes = (text$: Observable<string>) =>
+  searchMakes = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
@@ -265,9 +265,9 @@ export class AddArticleComponent implements OnInit {
       tap(() => null),
     );
 
-  public formatterMakes = (x: {description: string}) => x.description;
+  formatterMakes = (x: {description: string}) => x.description;
 
-  public searchUnitsOfMeasurement = (text$: Observable<string>) =>
+  searchUnitsOfMeasurement = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
@@ -281,11 +281,11 @@ export class AddArticleComponent implements OnInit {
       }),
       tap(() => null),
     );
-  public formatterUnitsOfMeasurement = (x: UnitOfMeasurement) => {
+  formatterUnitsOfMeasurement = (x: UnitOfMeasurement) => {
     return x.name;
   };
 
-  public searchAccounts = (text$: Observable<string>) =>
+  searchAccounts = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
@@ -306,34 +306,33 @@ export class AddArticleComponent implements OnInit {
       }),
       tap(() => null),
     );
-  public formatterAccounts = (x: Account) => {
+  formatterAccounts = (x: Account) => {
     return x.description;
   };
 
   constructor(
-    public _articleService: ArticleService,
-    public _articleStockService: ArticleStockService,
-    public _variantService: VariantService,
-    public _depositService: DepositService,
-    public _locationService: LocationService,
-    public _modalService: NgbModal,
-    public _makeService: MakeService,
-    public _categoryService: CategoryService,
-    public _classificationService: ClassificationService,
-    public _companyService: CompanyService,
-    public _unitOfMeasurementService: UnitOfMeasurementService,
-    public _movementsOfArticle: MovementOfArticleService,
-    public _articleFields: ArticleFieldService,
-    public _applicationService: ApplicationService,
-    public _accountService: AccountService,
+    private _articleService: ArticleService,
+    private _articleStockService: ArticleStockService,
+    private _variantService: VariantService,
+    private _depositService: DepositService,
+    private _locationService: LocationService,
+    private _modalService: NgbModal,
+    private _makeService: MakeService,
+    private _categoryService: CategoryService,
+    private _classificationService: ClassificationService,
+    private _companyService: CompanyService,
+    private _unitOfMeasurementService: UnitOfMeasurementService,
+    private _articleFields: ArticleFieldService,
+    private _applicationService: ApplicationService,
+    private _accountService: AccountService,
+    private _currencyService: CurrencyService,
+    private _configService: ConfigService,
+    private _toastr: ToastrService,
+    public translatePipe: TranslateMePipe,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public _currencyService: CurrencyService,
-    public _configService: ConfigService,
-    public translatePipe: TranslateMePipe,
-    private _toastr: ToastrService,
   ) {
     if (window.screen.width < 1000) this.orientation = 'vertical';
     this.article = new Article();
@@ -758,6 +757,7 @@ export class AddArticleComponent implements OnInit {
   public getArticle(): void {
     this._articleService.getArticle(this.articleId).subscribe(
       (result: any) => {
+        console.log("🚀 ~ file: add-article.component.ts ~ line 760 ~ AddArticleComponent ~ getArticle ~ result", result)
         if (!result.article) {
           this.showToast(result);
         } else {
@@ -1615,7 +1615,6 @@ export class AddArticleComponent implements OnInit {
           this.updateArticle();
         }
       } else {
-        console.log(this.articleForm);
         this.showToast({message: 'Revisa los errores en el formulario.'});
         this.onValueChanged();
       }
@@ -1936,14 +1935,20 @@ export class AddArticleComponent implements OnInit {
     });
   }
 
-  public deletePicture(index, picture: string): void {
+  async deletePicture(index, picture: string) {
     this._articleService.deleteImage(picture).subscribe(
-      (result) => {
+      async (result) => {
         if (result) {
+          console.log(result, index)
           if (result.result === 'ok') {
-            let control = <FormArray>this.articleForm.controls.pictures;
+            if (index !== null) {
+              let control = <FormArray>this.articleForm.controls.pictures;
 
-            control.removeAt(index);
+              control.removeAt(index);
+            } else {
+              this.article.picture = 'default.jpg'
+              this.updateArticle()
+            }
           } else {
             this.showToast(null, 'danger', 'La imagen no se pudo eliminar');
           }
@@ -1955,24 +1960,24 @@ export class AddArticleComponent implements OnInit {
     );
   }
 
-  public addArticleTaxes(articleTaxes: Taxes[]): void {
+  addArticleTaxes(articleTaxes: Taxes[]): void {
     this.taxes = articleTaxes;
     this.updatePrices('taxes');
   }
 
-  public addArticleFields(otherFields: ArticleFields[]): void {
+  addArticleFields(otherFields: ArticleFields[]): void {
     this.updatePrices('otherFields');
   }
 
-  public addStock(articleStock: ArticleStock): void {
+  addStock(articleStock: ArticleStock): void {
     this.articleStock = articleStock;
   }
 
-  public manageVariants(variants: Variant[]): void {
+  manageVariants(variants: Variant[]): void {
     this.variants = variants;
   }
 
-  public showToast(result, type?: string, title?: string, message?: string): void {
+  showToast(result, type?: string, title?: string, message?: string): void {
     if (result) {
       if (result.status === 200) {
         type = 'success';
