@@ -63,7 +63,10 @@
             <span *ngIf="!loading">Exportar PDF</span>
             <span *ngIf="loading">Espere por favor</span>
           </button>
-          <button type="button" class="btn btn-primary" (click)="exportAsXLSX()" [disabled]="!exportIVAForm?.valid || loading">Exportar Excel</button>
+          <button type="button" class="btn btn-primary" (click)="exportAsXLSX()" [disabled]="!exportIVAForm?.valid || loading">
+            <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+            Exportar Excel
+          </button>
       </div>
     </form>
   
