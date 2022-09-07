@@ -604,6 +604,16 @@ export let attributes = [
     required: false,
   },
   {
+    name: 'CAE',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    project: null,
+    align: 'left',
+    required: false,
+  },
+  {
     name: 'endDate2',
     visible: false,
     disabled: true,
