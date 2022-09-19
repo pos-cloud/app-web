@@ -1,46 +1,43 @@
-import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-
-import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-
-import { ArticleFieldService } from 'app/components/article-field/article-field.service';
-import { ArticleField, ArticleFieldType } from 'app/components/article-field/article-field';
-import { ArticleFields } from 'app/components/article-field/article-fields';
-
+import {Component, OnInit, EventEmitter, Input, Output} from '@angular/core';
+import {FormGroup, FormBuilder, Validators} from '@angular/forms';
+import {Router} from '@angular/router';
+import {NgbAlertConfig, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
+import {ArticleField, ArticleFieldType} from 'app/components/article-field/article-field';
+import {ArticleFieldService} from 'app/components/article-field/article-field.service';
+import {ArticleFields} from 'app/components/article-field/article-fields';
 
 @Component({
   selector: 'app-add-article-fields',
   templateUrl: './add-article-fields.component.html',
   styleUrls: ['./add-article-fields.component.css'],
-  providers: [NgbAlertConfig]
+  providers: [NgbAlertConfig],
 })
-
 export class AddArticleFieldsComponent implements OnInit {
-
   @Input() fields: ArticleFields[];
   @Input() location: string;
-  @Output() eventAddArticleFields: EventEmitter<ArticleFields[]> = new EventEmitter<ArticleFields[]>();
+  @Output() eventAddArticleFields: EventEmitter<ArticleFields[]> = new EventEmitter<
+    ArticleFields[]
+  >();
   field: ArticleFields;
   articleFields: ArticleField[];
-  articleFieldsCustom : ArticleField[] = new Array();
-  articleFieldsPrice : ArticleField[] = new Array();
+  articleFieldsCustom: ArticleField[] = new Array();
+  articleFieldsPrice: ArticleField[] = new Array();
   articleFieldsForm: FormGroup;
   alertMessage: string = '';
   loading: boolean = false;
   focusEvent = new EventEmitter<boolean>();
 
   formErrors = {
-    'articleField': '',
-    'value': '',
+    articleField: '',
+    value: '',
   };
 
   validationMessages = {
-    'articleField': {
-      'required': 'Este campo es requerido.'
+    articleField: {
+      required: 'Este campo es requerido.',
     },
-    'value': {
-      'required': 'Este campo es requerido.'
+    value: {
+      required: 'Este campo es requerido.',
     },
   };
 
@@ -49,14 +46,13 @@ export class AddArticleFieldsComponent implements OnInit {
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig
-  ) { }
+    public alertConfig: NgbAlertConfig,
+  ) {}
 
   ngOnInit(): void {
-
     this.field = new ArticleFields();
     this.articleFields = new Array();
-    if(!this.fields) {
+    if (!this.fields) {
       this.fields = new Array();
     }
     this.getArticleFields();
@@ -68,28 +64,21 @@ export class AddArticleFieldsComponent implements OnInit {
   }
 
   public buildForm(): void {
-
     this.articleFieldsForm = this._fb.group({
-      'articleField': [this.field.articleField, [
-          Validators.required
-        ]
-      ],
-      'value': [this.field.value, [
-        Validators.required
-        ]
-      ]
+      articleField: [this.field.articleField, [Validators.required]],
+      value: [this.field.value, [Validators.required]],
     });
 
-    this.articleFieldsForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
+    this.articleFieldsForm.valueChanges.subscribe((data) => this.onValueChanged(data));
 
     this.onValueChanged();
     this.focusEvent.emit(true);
   }
 
   public onValueChanged(data?: any): void {
-
-    if (!this.articleFieldsForm) { return; }
+    if (!this.articleFieldsForm) {
+      return;
+    }
     const form = this.articleFieldsForm;
 
     for (const field in this.formErrors) {
@@ -98,6 +87,7 @@ export class AddArticleFieldsComponent implements OnInit {
 
       if (control && control.dirty && !control.valid) {
         const messages = this.validationMessages[field];
+
         for (const key in control.errors) {
           this.formErrors[field] += messages[key] + ' ';
         }
@@ -106,7 +96,6 @@ export class AddArticleFieldsComponent implements OnInit {
   }
 
   public changeValues(): void {
-
     this.field.articleField = this.articleFieldsForm.value.articleField;
     this.field.articleField.name = this.field.articleField.name;
     this.field.value = this.field.articleField.value;
@@ -115,31 +104,36 @@ export class AddArticleFieldsComponent implements OnInit {
   }
 
   public setValueForm(): void {
-
-    if(!this.field.articleField) { null }
-    if(!this.field.value) { this.field.value = '' }
+    if (!this.field.articleField) {
+      null;
+    }
+    if (!this.field.value) {
+      this.field.value = '';
+    }
 
     const values = {
-      'articleField': this.field.articleField,
-      'value' : this.field.value
+      articleField: this.field.articleField,
+      value: this.field.value,
     };
 
     this.articleFieldsForm.setValue(values);
   }
 
   public getArticleFields(): void {
-
     this.loading = true;
 
     this._articleFieldService.getArticleFields().subscribe(
-      result => {
+      (result) => {
         if (!result.articleFields) {
           this.hideMessage();
         } else {
           this.hideMessage();
           this.articleFields = result.articleFields;
           for (let articleField of this.articleFields) {
-            if(articleField.datatype === ArticleFieldType.String || articleField.datatype === ArticleFieldType.Array) {
+            if (
+              articleField.datatype === ArticleFieldType.String ||
+              articleField.datatype === ArticleFieldType.Array
+            ) {
               this.articleFieldsCustom.push(articleField);
             } else {
               this.articleFieldsPrice.push(articleField);
@@ -148,32 +142,34 @@ export class AddArticleFieldsComponent implements OnInit {
         }
         this.loading = false;
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
-      }
+      },
     );
   }
 
   public addArticleFields(): void {
-
     this.field = this.articleFieldsForm.value;
 
-    if(!this.existsField()) {
+    if (!this.existsField()) {
       this.fields.push(this.field);
       this.eventAddArticleFields.emit(this.fields);
       this.field = new ArticleFields();
     } else {
-      this.showMessage("El campo " + this.field.articleField.name + " ya existe.", "info", true);
+      this.showMessage(
+        'El campo ' + this.field.articleField.name + ' ya existe.',
+        'info',
+        true,
+      );
     }
   }
 
   public existsField(): boolean {
-    
     let exist: boolean = false;
 
-    for(let field of this.fields) {
-      if(field.articleField._id === this.field.articleField._id) {
+    for (let field of this.fields) {
+      if (field.articleField._id === this.field.articleField._id) {
         exist = true;
       }
     }
@@ -182,14 +178,15 @@ export class AddArticleFieldsComponent implements OnInit {
   }
 
   public deleteArticlField(articleField: ArticleFields): void {
-
     let i: number = 0;
     let articleTaxToDelete: number = -1;
 
     if (this.fields && this.fields.length > 0) {
       for (let articleTaxAux of this.fields) {
-        if (articleField.articleField._id === articleTaxAux.articleField._id &&
-            articleField.value === articleTaxAux.value) {
+        if (
+          articleField.articleField._id === articleTaxAux.articleField._id &&
+          articleField.value === articleTaxAux.value
+        ) {
           articleTaxToDelete = i;
         }
         i++;

@@ -1,368 +1,350 @@
-import { Injectable } from "@angular/core";
-import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
-import { of } from "rxjs";
-import { Observable } from "rxjs/Observable";
-import { map, catchError } from "rxjs/operators";
+import {HttpClient, HttpParams, HttpHeaders} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {Variant} from 'app/components/variant/variant';
+import {environment} from 'environments/environment';
+import {of} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
+import {map, catchError} from 'rxjs/operators';
 
-import { Article } from './article';
-import { Config } from '../../app.config';
-import { AuthService } from '../login/auth.service';
-import { Variant } from 'app/components/variant/variant';
-import { ModelService } from '../model/model.service';
-import { environment } from "environments/environment";
+import {Config} from '../../app.config';
+import {AuthService} from '../login/auth.service';
+import {ModelService} from '../model/model.service';
+
+import {Article} from './article';
 
 @Injectable()
 export class ArticleService extends ModelService {
+  constructor(public _http: HttpClient, public _authService: AuthService) {
+    super(
+      `articles`, // PATH
+      _http,
+      _authService,
+    );
+  }
 
-	constructor(
-		public _http: HttpClient,
-		public _authService: AuthService
-	) {
-		super(
-			`articles`, // PATH
-			_http,
-			_authService
-		);
-	}
+  public getArticle(_id: string): Observable<any> {
+    const URL = `${Config.apiURL}article`;
 
-	public getArticle(_id: string): Observable<any> {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		const URL = `${Config.apiURL}article`;
+    const params = new HttpParams().set('id', _id);
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+    return this._http
+      .get(URL, {
+        headers: headers,
+        params: params,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        }),
+      );
+  }
 
-		const params = new HttpParams()
-			.set('id', _id);
+  public getArticles(query?: string): Observable<any> {
+    const URL = `${Config.apiURL}articles`;
 
-		return this._http.get(URL, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-	public getArticles(
-		query?: string
-	): Observable<any> {
+    const params = new HttpParams().set('query', query);
 
-		const URL = `${Config.apiURL}articles`;
+    return this._http
+      .get(URL, {
+        headers: headers,
+        params: params,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        }),
+      );
+  }
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+  public getArticlesV2(
+    project: {},
+    match: {},
+    sort: {},
+    group: {},
+    limit: number = 0,
+    skip: number = 0,
+  ): Observable<any> {
+    const URL = `${Config.apiURL}v2/articles`;
 
-		const params = new HttpParams()
-			.set('query', query);
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		return this._http.get(URL, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    const params = new HttpParams()
+      .set('project', JSON.stringify(project))
+      .set('match', JSON.stringify(match))
+      .set('sort', JSON.stringify(sort))
+      .set('group', JSON.stringify(group))
+      .set('limit', limit.toString())
+      .set('skip', skip.toString());
 
-	public getArticlesV2(
-		project: {},
-		match: {},
-		sort: {},
-		group: {},
-		limit: number = 0,
-		skip: number = 0
-	): Observable<any> {
+    return this._http
+      .get(URL, {
+        headers: headers,
+        params: params,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        }),
+      );
+  }
 
-		const URL = `${Config.apiURL}v2/articles`;
+  public getHArticles(
+    project: {},
+    match: {},
+    sort: {},
+    group: {},
+    limit: number = 0,
+    skip: number = 0,
+  ): Observable<any> {
+    const URL = `${Config.apiURL}v2/histories`;
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		const params = new HttpParams()
-			.set('project', JSON.stringify(project))
-			.set('match', JSON.stringify(match))
-			.set('sort', JSON.stringify(sort))
-			.set('group', JSON.stringify(group))
-			.set('limit', limit.toString())
-			.set('skip', skip.toString());
+    const params = new HttpParams()
+      .set('project', JSON.stringify(project))
+      .set('match', JSON.stringify(match))
+      .set('sort', JSON.stringify(sort))
+      .set('group', JSON.stringify(group))
+      .set('limit', limit.toString())
+      .set('skip', skip.toString());
 
-		return this._http.get(URL, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    return this._http
+      .get(URL, {
+        headers: headers,
+        params: params,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        }),
+      );
+  }
 
-	public getHArticles(
-		project: {},
-		match: {},
-		sort: {},
-		group: {},
-		limit: number = 0,
-		skip: number = 0
-	): Observable<any> {
+  public saveArticle(article: Article, variants: Variant[]): Observable<any> {
+    const URL = `${Config.apiURL}article`;
 
-		const URL = `${Config.apiURL}v2/histories`;
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+    return this._http
+      .post(
+        URL,
+        {article: article, variants: variants},
+        {
+          headers: headers,
+        },
+      )
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        }),
+      );
+  }
 
-		const params = new HttpParams()
-			.set('project', JSON.stringify(project))
-			.set('match', JSON.stringify(match))
-			.set('sort', JSON.stringify(sort))
-			.set('group', JSON.stringify(group))
-			.set('limit', limit.toString())
-			.set('skip', skip.toString());
+  public updateArticle(article: Article, variants: Variant[]): Observable<any> {
+    const URL = `${Config.apiURL}article`;
 
-		return this._http.get(URL, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-	public saveArticle(article: Article, variants: Variant[]): Observable<any> {
+    const params = new HttpParams().set('id', article._id);
 
-		const URL = `${Config.apiURL}article`;
+    return this._http
+      .put(
+        URL,
+        {article: article, variants: variants},
+        {
+          headers: headers,
+          params: params,
+        },
+      )
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        }),
+      );
+  }
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+  public updatePrice(query: string, decimal: string): Observable<any> {
+    const URL = `${Config.apiURL}update-prices`;
 
-		return this._http.post(URL, { article: article, variants: variants }, {
-			headers: headers
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-	public updateArticle(article: Article, variants: Variant[]): Observable<any> {
+    const params = new HttpParams().set('decimal', decimal);
 
-		const URL = `${Config.apiURL}article`;
-
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
-
-		const params = new HttpParams()
-			.set('id', article._id);
-
-		return this._http.put(URL, { article: article, variants: variants }, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
-
-	public updatePrice(query: string, decimal: string): Observable<any> {
-
-		const URL = `${Config.apiURL}update-prices`;
-
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
-
-		const params = new HttpParams()
-			.set('decimal', decimal);
-
-		return this._http.put(URL, query, {
-			headers: headers,
-			params: params
-
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    return this._http
+      .put(URL, query, {
+        headers: headers,
+        params: params,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        }),
+      );
+  }
 
   public updatePrice2(query: string): Observable<any> {
+    const URL = `${Config.apiV8URL}articles/update-prices`;
 
-		const URL = `${Config.apiV8URL}articles/update-prices`;
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+    return this._http
+      .post(URL, query, {
+        headers: headers,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        }),
+      );
+  }
 
-		return this._http.post(URL, query, {
-			headers: headers,
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+  public makeFileRequest(idArticle: String, files: Array<File>) {
+    let xhr: XMLHttpRequest = new XMLHttpRequest();
 
-	public deleteArticle(_id: string): Observable<any> {
+    xhr.open('POST', Config.apiURL + 'upload-image-article/' + idArticle, true);
+    xhr.setRequestHeader('Authorization', this._authService.getToken());
 
-		const URL = `${Config.apiURL}article`;
+    return new Promise((resolve, reject) => {
+      let formData: any = new FormData();
 
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
+      if (files && files.length > 0) {
+        for (let i: number = 0; i < files.length; i++) {
+          formData.append('image', files[i], files[i].name);
+        }
+      }
 
-		const params = new HttpParams()
-			.set('id', _id);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4) {
+          if (xhr.status == 200) {
+            resolve(JSON.parse(xhr.response));
+          } else {
+            reject(xhr.response);
+          }
+        }
+      };
 
-		return this._http.delete(URL, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+      xhr.send(formData);
+    });
+  }
 
-	public makeFileRequest(idArticle: String, files: Array<File>) {
+  public makeFileRequestArray(files: Array<File>) {
+    let xhr: XMLHttpRequest = new XMLHttpRequest();
 
-		let xhr: XMLHttpRequest = new XMLHttpRequest();
-		xhr.open('POST', Config.apiURL + 'upload-image-article/' + idArticle, true);
-		xhr.setRequestHeader('Authorization', this._authService.getToken());
+    xhr.open('POST', Config.apiURL + 'upload-image-article/', true);
+    xhr.setRequestHeader('Authorization', this._authService.getToken());
 
-		return new Promise((resolve, reject) => {
-			let formData: any = new FormData();
+    return new Promise((resolve, reject) => {
+      let formData: any = new FormData();
 
-			if (files && files.length > 0) {
-				for (let i: number = 0; i < files.length; i++) {
-					formData.append('image', files[i], files[i].name);
-				}
-			}
+      if (files && files.length > 0) {
+        for (let i: number = 0; i < files.length; i++) {
+          formData.append('image', files[i], files[i].name);
+        }
+      }
 
-			xhr.onreadystatechange = function () {
-				if (xhr.readyState == 4) {
-					if (xhr.status == 200) {
-						resolve(JSON.parse(xhr.response));
-					} else {
-						reject(xhr.response);
-					}
-				}
-			}
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4) {
+          if (xhr.status == 200) {
+            resolve(JSON.parse(xhr.response));
+          } else {
+            reject(xhr.response);
+          }
+        }
+      };
 
-			xhr.send(formData);
-		});
-	}
+      xhr.send(formData);
+    });
+  }
 
-	public makeFileRequestArray(files: Array<File>) {
+  public deleteImage(picture: string): Observable<any> {
+    const URL = `${Config.apiURL}delete-image-article`;
 
-		let xhr: XMLHttpRequest = new XMLHttpRequest();
-		xhr.open('POST', Config.apiURL + 'upload-image-article/', true);
-		xhr.setRequestHeader('Authorization', this._authService.getToken());
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		return new Promise((resolve, reject) => {
-			let formData: any = new FormData();
+    const params = new HttpParams().set('picture', picture);
 
-			if (files && files.length > 0) {
-				for (let i: number = 0; i < files.length; i++) {
-					formData.append('image', files[i], files[i].name);
-				}
-			}
+    return this._http
+      .delete(URL, {
+        headers: headers,
+        params: params,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        }),
+      );
+  }
 
-			xhr.onreadystatechange = function () {
-				if (xhr.readyState == 4) {
-					if (xhr.status == 200) {
-						resolve(JSON.parse(xhr.response));
-					} else {
-						reject(xhr.response);
-					}
-				}
-			}
+  public getPicture(picture: string): Observable<any> {
+    const URL = `${Config.apiURL}get-image-base64-article`;
 
-			xhr.send(formData);
-		});
-	}
+    const params = new HttpParams().set('picture', picture);
 
-	public deleteImage(picture: string): Observable<any> {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-		const URL = `${Config.apiURL}delete-image-article`;
-
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
-
-		const params = new HttpParams()
-			.set('picture', picture);
-
-		return this._http.delete(URL, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
-
-	public getPicture(picture: string): Observable<any> {
-
-		const URL = `${Config.apiURL}get-image-base64-article`;
-
-		const params = new HttpParams()
-			.set('picture', picture);
-
-		const headers = new HttpHeaders()
-			.set('Content-Type', 'application/json')
-			.set('Authorization', this._authService.getToken());
-
-		return this._http.get(URL, {
-			headers: headers,
-			params: params
-		}).pipe(
-			map(res => {
-				return res;
-			}),
-			catchError((err) => {
-				return of(err);
-			})
-		);
-	}
+    return this._http
+      .get(URL, {
+        headers: headers,
+        params: params,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        }),
+      );
+  }
 }

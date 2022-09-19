@@ -2,7 +2,7 @@
     <h4 class="modal-title" *ngIf="operation==='add' || operation==='copy'">Agregar Producto</h4>
     <h4 class="modal-title" *ngIf="operation==='update'">Editar {{ articleType }} {{article.code}} -
         {{article.description}}</h4>
-    <h4 class="modal-title" *ngIf="operation==='view'">{{ articleType }} {{article.code}} - {{article.description}}</h4>
+    <h4 class="modal-title" *ngIf="operation==='view' || operation==='delete'">{{ articleType }} {{article.code}} - {{article.description}}</h4>
     <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
         <span aria-hidden="true">&times;</span>
     </button>
@@ -225,7 +225,7 @@
                                     </div>
                                 </div>
                                 <app-add-article-fields *ngIf="otherFieldsNumber"
-                                    (eventAddArticleFields)="addArticleFields($event)" [fields]="otherFields"
+                                    (eventAddArticleFields)="addArticleFields()" [fields]="otherFields"
                                     [location]="'Price'"></app-add-article-fields>
                                 <app-add-article-tax (eventAddArticleTax)="addArticleTaxes($event)" [article]="article"
                                     [otherFields]="otherFields" [articleTaxes]="taxes"

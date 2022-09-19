@@ -392,7 +392,7 @@ export class AddArticleComponent implements OnInit {
     }
   }
 
-  public getArticleTypes() {
+  getArticleTypes() {
     let match = `{"operationType": { "$ne": "D" } }`;
 
     match = JSON.parse(match);
@@ -431,7 +431,7 @@ export class AddArticleComponent implements OnInit {
       );
   }
 
-  public getArticleFields() {
+  getArticleFields() {
     this._articleFields.getArticleFields().subscribe(
       (result) => {
         if (result && result.articleFields) {
@@ -442,7 +442,7 @@ export class AddArticleComponent implements OnInit {
     );
   }
 
-  public buildListArticleField(articleField: ArticleField) {
+  buildListArticleField(articleField: ArticleField) {
     this.articleFieldValues = [];
     this.value = '';
 
@@ -455,7 +455,7 @@ export class AddArticleComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  public buildForm(): void {
+  buildForm(): void {
     this.articleForm = this._fb.group({
       _id: [this.article._id, []],
       order: [this.article.order, []],
@@ -524,7 +524,7 @@ export class AddArticleComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  public onValueChanged(fieldID?: any): void {
+  onValueChanged(fieldID?: any): void {
     if (!this.articleForm) {
       return;
     }
@@ -551,7 +551,7 @@ export class AddArticleComponent implements OnInit {
     }
   }
 
-  public addNote(note: string): void {
+  addNote(note: string): void {
     note = note.toUpperCase();
     if (!this.notes) this.notes = new Array();
     if (note && note !== '') {
@@ -567,14 +567,14 @@ export class AddArticleComponent implements OnInit {
     this.focusNoteEvent.emit(true);
   }
 
-  public deleteNote(note: string): void {
+  deleteNote(note: string): void {
     note = note.toUpperCase();
     if (note) this.notes.splice(this.notes.indexOf(note), 1);
     this.formErrorsNote = null;
     this.focusNoteEvent.emit(true);
   }
 
-  public addTag(tag: string): void {
+  addTag(tag: string): void {
     tag = tag.toUpperCase();
     if (!this.tags) this.tags = new Array();
     if (tag && tag !== '') {
@@ -590,14 +590,14 @@ export class AddArticleComponent implements OnInit {
     this.focusTagEvent.emit(true);
   }
 
-  public deleteTag(tag: string): void {
+  deleteTag(tag: string): void {
     tag = tag.toUpperCase();
     if (tag) this.tags.splice(this.tags.indexOf(tag), 1);
     this.formErrorsTag = null;
     this.focusTagEvent.emit(true);
   }
 
-  public getDeposit(id: string): Promise<Deposit> {
+  getDeposit(id: string): Promise<Deposit> {
     return new Promise<Deposit>((resolve, reject) => {
       this._depositService.getDeposit(id).subscribe((result) => {
         if (result && result.deposit) {
@@ -724,25 +724,25 @@ export class AddArticleComponent implements OnInit {
     }
   }
 
-  public deleteDeposit(index): void {
+  deleteDeposit(index): void {
     let control = <FormArray>this.articleForm.controls.deposits;
 
     control.removeAt(index);
   }
 
-  public deleteOtherField(index): void {
+  deleteOtherField(index): void {
     let control = <FormArray>this.articleForm.controls.otherFields;
 
     control.removeAt(index);
   }
 
-  public deleteLocation(index): void {
+  deleteLocation(index): void {
     let control = <FormArray>this.articleForm.controls.locations;
 
     control.removeAt(index);
   }
 
-  public getCurrencies(): void {
+  getCurrencies(): void {
     this._currencyService.getCurrencies('sort="name":1').subscribe(
       (result) => {
         if (!result.currencies) {
@@ -754,10 +754,9 @@ export class AddArticleComponent implements OnInit {
     );
   }
 
-  public getArticle(): void {
+  getArticle(): void {
     this._articleService.getArticle(this.articleId).subscribe(
       (result: any) => {
-        console.log("🚀 ~ file: add-article.component.ts ~ line 760 ~ AddArticleComponent ~ getArticle ~ result", result)
         if (!result.article) {
           this.showToast(result);
         } else {
@@ -802,7 +801,7 @@ export class AddArticleComponent implements OnInit {
     );
   }
 
-  public loadURL(): void {
+  loadURL(): void {
     if (this.articleForm.value.url === '') {
       let url = this.articleForm.value.description
         .split(' ')
@@ -841,7 +840,7 @@ export class AddArticleComponent implements OnInit {
     }
   }
 
-  public setValuesArray(): void {
+  setValuesArray(): void {
     if (this.article.deposits && this.article.deposits.length > 0) {
       let deposits = this.articleForm.controls.deposits as FormArray;
 
@@ -930,7 +929,7 @@ export class AddArticleComponent implements OnInit {
     }
   }
 
-  public getVariantsByArticleParent(): void {
+  getVariantsByArticleParent(): void {
     let query = 'where="articleParent":"' + this.article._id + '"';
 
     this._variantService.getVariants(query).subscribe(
@@ -945,7 +944,7 @@ export class AddArticleComponent implements OnInit {
     );
   }
 
-  public getUniqueVariants(variants: Variant[]): Variant[] {
+  getUniqueVariants(variants: Variant[]): Variant[] {
     let variantsToReturn: Variant[] = new Array();
 
     for (let variant of variants) {
@@ -968,7 +967,7 @@ export class AddArticleComponent implements OnInit {
     return variantsToReturn;
   }
 
-  public padString(n, length) {
+  padString(n, length) {
     n = n.toString();
     while (n.length < length) {
       n = '0' + n;
@@ -977,7 +976,7 @@ export class AddArticleComponent implements OnInit {
     return n;
   }
 
-  public validateAutocomplete(c: FormControl) {
+  validateAutocomplete(c: FormControl) {
     let result =
       c.value && Object.keys(c.value)[0] === '0'
         ? {
@@ -990,7 +989,7 @@ export class AddArticleComponent implements OnInit {
     return result;
   }
 
-  public getLastArticle(): void {
+  getLastArticle(): void {
     let query = `where="type":"${Type.Final}"&sort="_id":-1&limit=1`;
 
     this._articleService.getArticles(query).subscribe(
@@ -1036,7 +1035,7 @@ export class AddArticleComponent implements OnInit {
     }
   }
 
-  public saveArticleStock(): void {
+  saveArticleStock(): void {
     if (!this.articleStock) {
       this.articleStock = new ArticleStock();
     }
@@ -1057,7 +1056,7 @@ export class AddArticleComponent implements OnInit {
     );
   }
 
-  public getMakes(query) {
+  getMakes(query) {
     return new Promise((resolve, reject) => {
       this._makeService.getMakes(query).subscribe(
         (result) => {
@@ -1072,7 +1071,7 @@ export class AddArticleComponent implements OnInit {
     });
   }
 
-  public getCategories(query): Promise<Category[]> {
+  getCategories(query): Promise<Category[]> {
     return new Promise<Category[]>((resolve, reject) => {
       this._categoryService.getCategories(query).subscribe(
         (result) => {
@@ -1087,7 +1086,7 @@ export class AddArticleComponent implements OnInit {
     });
   }
 
-  public getDeposits(): void {
+  getDeposits(): void {
     this._depositService.getDeposits().subscribe(
       (result) => {
         if (!result.deposits) {
@@ -1101,7 +1100,7 @@ export class AddArticleComponent implements OnInit {
     );
   }
 
-  public getLocations(): void {
+  getLocations(): void {
     this._locationService.getLocations().subscribe(
       (result) => {
         if (!result.locations) {
@@ -1115,7 +1114,7 @@ export class AddArticleComponent implements OnInit {
     );
   }
 
-  public getCompany(): void {
+  getCompany(): void {
     let query = 'where="type":"' + CompanyType.Provider.toString() + '"';
 
     this._companyService.getCompanies(query).subscribe(
@@ -1133,7 +1132,7 @@ export class AddArticleComponent implements OnInit {
     );
   }
 
-  public updatePrices(op): void {
+  updatePrices(op): void {
     let taxedAmount = 0;
 
     switch (op) {
@@ -1338,7 +1337,7 @@ export class AddArticleComponent implements OnInit {
     this.setValuesForm();
   }
 
-  public loadPosDescription(): void {
+  loadPosDescription(): void {
     if (this.articleForm.value.posDescription === '') {
       const slicePipe = new SlicePipe();
 
@@ -1348,7 +1347,7 @@ export class AddArticleComponent implements OnInit {
     }
   }
 
-  public setValuesForm(): void {
+  setValuesForm(): void {
     if (!this.article._id) {
       this.article._id = '';
     }
@@ -1555,7 +1554,7 @@ export class AddArticleComponent implements OnInit {
     this.articleForm.patchValue(values);
   }
 
-  public addArticle(): void {
+  addArticle(): void {
     if (!this.readonly) {
       if (this.articleForm.valid) {
         this.loadPosDescription();
@@ -1605,7 +1604,7 @@ export class AddArticleComponent implements OnInit {
           this.article.providers = [];
         } else if (this.article.providers == undefined) {
           this.article.providers = [this.article.provider];
-        } else if (this.article.providers == []) {
+        } else if (this.article.providers.length == 0) {
           this.article.providers = [this.article.provider];
         }
 
@@ -1752,15 +1751,15 @@ export class AddArticleComponent implements OnInit {
     }
   }
 
-  public deleteArticle(): void {
+  deleteArticle(): void {
     this.loading = true;
 
-    this._articleService.deleteArticle(this.article._id).subscribe(
-      (result) => {
-        if (!result.article) {
-          this.showToast(result);
-        } else {
+    this._articleService.delete(this.article._id).subscribe(
+      (result: Resulteable) => {
+        if (result.status == 200) {
           this.activeModal.close('delete_close');
+        } else {
+          this.showToast(result);
         }
       },
       (error) => this.showToast(error),
@@ -1828,7 +1827,7 @@ export class AddArticleComponent implements OnInit {
     });
   }
 
-  public cleanForm() {
+  cleanForm() {
     this.article = new Article();
     this.taxes = new Array();
     this.otherFields = new Array();
@@ -1838,11 +1837,11 @@ export class AddArticleComponent implements OnInit {
     this.getLastArticle();
   }
 
-  public closeModal() {
+  closeModal() {
     this.activeModal.close(this.hasChanged);
   }
 
-  public fileChangeEvent(fileInput: any, eCommerce: boolean): void {
+  fileChangeEvent(fileInput: any, eCommerce: boolean): void {
     if (eCommerce) {
       this.filesToArray = <Array<File>>fileInput.target.files;
       this.fileNameArray = this.filesToArray[0].name;
@@ -1852,7 +1851,7 @@ export class AddArticleComponent implements OnInit {
     }
   }
 
-  public addPicture(): void {
+  addPicture(): void {
     this.fileNameArray = null;
     this._articleService.makeFileRequestArray(this.filesToArray).then(
       (result) => {
@@ -1880,7 +1879,7 @@ export class AddArticleComponent implements OnInit {
     }
   }
 
-  public getAllUnitsOfMeasurement(match: {}): Promise<UnitOfMeasurement[]> {
+  getAllUnitsOfMeasurement(match: {}): Promise<UnitOfMeasurement[]> {
     return new Promise<UnitOfMeasurement[]>((resolve, reject) => {
       this.subscription.add(
         this._unitOfMeasurementService
@@ -1899,7 +1898,7 @@ export class AddArticleComponent implements OnInit {
     });
   }
 
-  public getAllApplications(match: {}): Promise<Application[]> {
+  getAllApplications(match: {}): Promise<Application[]> {
     return new Promise<Application[]>((resolve, reject) => {
       this.subscription.add(
         this._applicationService
@@ -1917,7 +1916,7 @@ export class AddArticleComponent implements OnInit {
     });
   }
 
-  public getAllAccounts(match: {}): Promise<Account[]> {
+  getAllAccounts(match: {}): Promise<Account[]> {
     return new Promise<Account[]>((resolve, reject) => {
       this.subscription.add(
         this._accountService
@@ -1939,15 +1938,14 @@ export class AddArticleComponent implements OnInit {
     this._articleService.deleteImage(picture).subscribe(
       async (result) => {
         if (result) {
-          console.log(result, index)
           if (result.result === 'ok') {
             if (index !== null) {
               let control = <FormArray>this.articleForm.controls.pictures;
 
               control.removeAt(index);
             } else {
-              this.article.picture = 'default.jpg'
-              this.updateArticle()
+              this.article.picture = 'default.jpg';
+              this.updateArticle();
             }
           } else {
             this.showToast(null, 'danger', 'La imagen no se pudo eliminar');
@@ -1965,7 +1963,7 @@ export class AddArticleComponent implements OnInit {
     this.updatePrices('taxes');
   }
 
-  addArticleFields(otherFields: ArticleFields[]): void {
+  addArticleFields(): void {
     this.updatePrices('otherFields');
   }
 
