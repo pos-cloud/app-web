@@ -332,6 +332,7 @@ export class BusinessRuleComponent implements OnInit {
         minQuantity: 1,
         transactionAmountLimit: 1,
         totalStock: 1,
+        description: 1,
         discountType: 1,
         discountValue: 1,
         active: 1,
