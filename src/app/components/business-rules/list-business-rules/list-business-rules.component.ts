@@ -138,6 +138,7 @@ export class ListBusinessRulesComponent {
         },
         match: {
           printIn: PrinterPrintIn.Voucher,
+          url: ""
         },
       })
       .toPromise();
