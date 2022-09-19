@@ -341,6 +341,10 @@ export class BusinessRuleComponent implements OnInit {
         'article.name': '$article.description',
         'item._id': 1,
         'item.name': '$item.description',
+        'item2._id': 1,
+        'item2.name': '$item2.description',
+        'item3._id': 1,
+        'item3.name': '$item3.description',
       };
 
       this.subscription.add(
