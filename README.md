@@ -32,3 +32,9 @@ docker build -t admin-poscloud .
 docker run -d -it --name pos admin-poscloud
 rm -R /var/www/poscloud/
 docker cp pos:/app/dist/ /var/www/poscloud/
+
+## Acceso a demo
+
+empresa: demo
+user: admin
+pass: pos
