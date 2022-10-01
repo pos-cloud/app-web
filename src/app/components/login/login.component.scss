@@ -7,6 +7,15 @@ app-login {
 		width: 100%;
 	}
 
+	.checklockinput {
+		top: 0;
+		right: 0;
+		margin: 45px 25px 0 0;
+		&:focus {
+			cursor: pointer;
+		}
+	}
+
 	.box-login {
 		margin-top: 100px;
 		width: 500px;

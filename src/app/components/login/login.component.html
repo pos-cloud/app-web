@@ -21,7 +21,7 @@
     <form [formGroup]="loginForm" (ngSubmit)="login()" autocomplete="off">
       <div class="row">
         <div class="center-content">
-          <div class="row" *ngIf="!company">
+          <div class="row" *ngIf="!company else company">
             <div class="col-md-2"></div>
             <div class="col-md-8">
               <label for="company" class="control-label">Negocio:</label>
@@ -31,6 +31,19 @@
               </div>
             </div>
           </div>
+          <ng-template #company>
+            <div class="row">
+              <div class="col-md-2"></div>
+              <div class="col-md-8">
+                <label for="company" class="control-label">Negocio:</label>
+                <input type="text" class="form-control" formControlName="company" name="company" id="company" [focus]="focusEvent" [disabled]="checkLockInput == true"/>
+                <input type="checkbox" class="position-absolute checklockinput" id="check" name="check" (click)="lockInput()"/>
+                <div *ngIf="formErrors.company" class="alert alert-danger">
+                  {{ formErrors.company }}
+                </div>
+              </div>
+            </div>
+          </ng-template>
           <div class="row">
             <div class="col-md-2"></div>
             <div class="col-md-8">
@@ -59,7 +72,7 @@
       <div class="row">
         <div class="center-content">
           <div class="row">
-            <div class="col-md-12" align="right">
+            <div class="col-md-12" align="center">
               <button type="submit" class="btn btn-primary" [disabled]="!loginForm?.valid || loading">
                 <span *ngIf="!loading">Iniciar sesión</span>
                 <span *ngIf="loading">Espere por favor</span>
@@ -69,7 +82,7 @@
           <br><br>
           <div class="row">
             <div class="col-md-12" align="center">
-              <b>¿No tienes una cuenta?</b> <a href="http://www.poscloud.com.ar/registro.html?tipo-negocio=ropa">Crear una cuenta</a>
+              <b>¿No tienes una cuenta?</b><a href="http://www.poscloud.com.ar/registro.html?tipo-negocio=ropa"> Crear una cuenta</a>
             </div>
           </div>
         </div>
