@@ -99,6 +99,7 @@ export class LoginComponent implements OnInit {
   }
 
   public buildForm(): void {
+    
     this.company = localStorage.getItem("company");
 
     this.loginForm = this._fb.group({
