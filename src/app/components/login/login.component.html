@@ -21,34 +21,22 @@
     <form [formGroup]="loginForm" (ngSubmit)="login()" autocomplete="off">
       <div class="row">
         <div class="center-content">
-          <div class="row" *ngIf="!company else company">
-            <div class="col-md-2"></div>
-            <div class="col-md-8">
-              <label for="company" class="control-label">Negocio:</label>
-              <input type="text" class="form-control" formControlName="company" name="company" id="company" [focus]="focusEvent"/>
-              <div *ngIf="formErrors.company" class="alert alert-danger">
-                {{ formErrors.company }}
-              </div>
-            </div>
-          </div>
-          <ng-template #company>
             <div class="row">
               <div class="col-md-2"></div>
               <div class="col-md-8">
                 <label for="company" class="control-label">Negocio:</label>
-                <input type="text" class="form-control" formControlName="company" name="company" id="company" [focus]="focusEvent" [disabled]="checkLockInput == true"/>
+                <input type="text" class="form-control" formControlName="company" name="company" id="company" [readonly]=checkLockInput/>
                 <input type="checkbox" class="position-absolute checklockinput a" id="check" name="check" (click)="lockInput()"/>
                 <div *ngIf="formErrors.company" class="alert alert-danger">
                   {{ formErrors.company }}
                 </div>
               </div>
             </div>
-          </ng-template>
           <div class="row">
             <div class="col-md-2"></div>
             <div class="col-md-8">
               <label for="user" class="control-label">Usuario o Email:</label>
-              <input type="text" class="form-control" formControlName="user" name="user" id="user" [focus]="focusEvent"/>
+              <input type="text" class="form-control" formControlName="user" name="user" id="user" autofocus/>
               <div *ngIf="formErrors.user" class="alert alert-danger">
                 {{ formErrors.user }}
               </div>

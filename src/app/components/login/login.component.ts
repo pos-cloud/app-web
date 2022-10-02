@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
   public company: string;
   public user: string;
   public password: string;
-  public checkLockInput: boolean = false;
+  public checkLockInput: boolean = true;
 
   public formErrors = {
     'company': '',
@@ -84,7 +84,7 @@ export class LoginComponent implements OnInit {
   }
 
   async lockInput() {
-    this.checkLockInput = true;
+    this.checkLockInput ? this.checkLockInput = false : this.checkLockInput = true;
   }
 
   private processParams(): void {
@@ -109,7 +109,6 @@ export class LoginComponent implements OnInit {
     });
 
     this.loginForm.valueChanges.subscribe(data => this.onValueChanged(data));
-
     this.onValueChanged();
   }
 
