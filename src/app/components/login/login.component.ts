@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
   public company: string;
   public user: string;
   public password: string;
-  public checkLockInput: boolean = true;
+  public checkLockInput: boolean = false;
 
   public formErrors = {
     'company': '',
