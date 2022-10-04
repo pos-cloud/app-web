@@ -49,6 +49,7 @@ export class TransactionType extends Model {
   cashOpening: boolean = false;
   cashClosing: boolean = false;
   allowAPP: boolean = false;
+  allowTicketClose: boolean = false;
   allowEdit: boolean = false;
   allowDelete: boolean = false;
   allowZero: boolean = false;
@@ -292,6 +293,12 @@ export class TransactionType extends Model {
       },
       {
         name: 'allowAPP',
+        filter: true,
+        datatype: 'boolean',
+        align: 'left',
+      },
+      {
+        name: 'allowTicketClose',
         filter: true,
         datatype: 'boolean',
         align: 'left',
