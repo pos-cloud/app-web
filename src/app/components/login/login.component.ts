@@ -29,7 +29,6 @@ import { Employee } from '../employee/employee';
 })
 
 export class LoginComponent implements OnInit {
-
   public loginForm: FormGroup;
   public alertMessage: string;
   public loading: boolean = false;
@@ -38,6 +37,7 @@ export class LoginComponent implements OnInit {
   public company: string;
   public user: string;
   public password: string;
+  public checkLockInput: boolean = false;
 
   public formErrors = {
     'company': '',
@@ -83,6 +83,10 @@ export class LoginComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
+  async lockInput() {
+    this.checkLockInput ? this.checkLockInput = false : this.checkLockInput = true;
+  }
+
   private processParams(): void {
     this._route.queryParams.subscribe(params => {
       if (params['negocio']) {
@@ -95,20 +99,20 @@ export class LoginComponent implements OnInit {
   }
 
   public buildForm(): void {
+    
+    this.company = localStorage.getItem("company");
+
     this.loginForm = this._fb.group({
       'company': [this.company, [Validators.required]],
       'user': [this.user, [Validators.required]],
       'password': [this.password, [Validators.required]]
     });
 
-    this.loginForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
-
+    this.loginForm.valueChanges.subscribe(data => this.onValueChanged(data));
     this.onValueChanged();
   }
 
   public onValueChanged(data?: any): void {
-
     if (!this.loginForm) { return; }
     const form = this.loginForm;
 
@@ -126,7 +130,6 @@ export class LoginComponent implements OnInit {
   }
 
   async login() {
-
     this.user = this.loginForm.value.user;
     this.password = this.loginForm.value.password;
     this.company = this.loginForm.value.company;
@@ -135,8 +138,7 @@ export class LoginComponent implements OnInit {
     this.loading = true;
 
     //Obtener el token del usuario
-    this._authService.login(this.company, this.user, this.password).subscribe(
-      async result => {
+    this._authService.login(this.company, this.user, this.password).subscribe(async result => {
         this.loading = false;
         if (!result.user) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
@@ -145,19 +147,19 @@ export class LoginComponent implements OnInit {
             this.showMessage("Ingresando...", 'success', false);
             this._authService.loginStorage(result.user);
             this.initSocket();
-            await this.getConfigApi().then(
-              config => {
-                if (config) {
-                  this._configService.setConfig(config);
-                  this.setConfigurationSettings(config);
-                }
+            await this.getConfigApi().then(config => {
+              if (config) {
+                this._configService.setConfig(config);
+                this.setConfigurationSettings(config);
               }
-            );
+            });
 
             let returnURL = '/';
             this._route.queryParams.subscribe(params => returnURL = params['return'] || '/');
             this._router.navigateByUrl(returnURL);
-          } else {
+
+            localStorage.setItem("company", this.company);
+           } else {
             this.showMessage('El usuario y/o contraseña son incorrectos', 'info', true);
           }
         }
@@ -173,7 +175,6 @@ export class LoginComponent implements OnInit {
   }
 
   private initSocket(): void {
-
     let identity: User = JSON.parse(sessionStorage.getItem('user'));
 
     if (identity && Config.database && Config.database !== '') {
@@ -191,7 +192,6 @@ export class LoginComponent implements OnInit {
   }
 
   public getConfigApi(): Promise<Config> {
-
     return new Promise<Config>((resolve, reject) => {
       this._configService.getConfigApi().subscribe(
         result => {
