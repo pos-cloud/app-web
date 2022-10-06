@@ -17,7 +17,6 @@
     <li>
       <span class="separador">: </span> {{ status200?.length }}
     </li>
-
   </ul>
   <ul id="lista1" *ngIf="countArticles > 0">
     <li>
@@ -26,7 +25,6 @@
     <li>
       <span class="separador">: </span> {{ countArticles }}
     </li>
-
   </ul>
   <ul id="lista2" *ngIf="status500?.length > 0">
     <li>
@@ -46,7 +44,6 @@
     <li *ngFor="let item of statusCode;">
       <span class="separador">| </span> {{ item.filaExcel }}
     </li>
-
   </ul>
 
   <!-- <ul id="lista2" *ngIf="statusCode?.length > 0">
@@ -59,35 +56,26 @@
 
   </ul> -->
   <form [formGroup]="importForm" (ngSubmit)="import()" autocomplete="off" enctype="multipart/form-data">
-
     <div class="modal-body">
-
       <div class="row">
         <div *ngIf='type === "actualizar-producto"' class="form-group col-md-12">
-          <label for="selectProvider">Filtrar por proveedor:</label>
-          <select   formControlName='selectProvider' name="selectProvider" id="selectProvider">
+          <label for="selectProvider">Filtrar por proveedor: </label>
+          <select formControlName='selectProvider' name="selectProvider" id="selectProvider">
             <option [ngValue]='null'></option>
-            <option *ngFor="let provider of providers" [ngValue]='provider._id'>
-            {{provider.name}}</option>
+            <option *ngFor="let provider of providers" [ngValue]='provider._id'>{{provider.name}}</option>
           </select>
         </div>
         <div class="form-group col-md-12">
           <label for="filePath" class="control-label">Archivo:</label>
           <input type="file" class="form-control" formControlName="filePath" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"  (change)="onFileChange($event)" />
-
           <div *ngIf="formErrors.filePath" class="alert alert-danger">
             {{ formErrors.filePath }}
-          </div>
-          <div>
-
           </div>
         </div>
       </div>
     </div>
-    <a *ngIf='type === "actualizar-producto"' href="/assets/modelo_producto_actualizar.xlsx" target="_self"
-      download>Descargar Modelo Actualizar</a><br>
-    <a *ngIf='type === "alta-producto"' href="/assets/modelo_producto_crear.xlsx" target="_self" download>Descargar
-      Modelo Crear</a>
+    <a *ngIf='type === "actualizar-producto"' href="/assets/modelo_producto_actualizar.xlsx" target="_self" download>Descargar Modelo Actualizar</a><br>
+    <a *ngIf='type === "alta-producto"' href="/assets/modelo_producto_crear.xlsx" target="_self" download>Descargar Modelo Crear</a>
     <div class="modal-footer">
       <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')" [disabled]="loading">Cancelar</button>
       <button type="submit" class="btn btn-primary" [disabled]="loading">
