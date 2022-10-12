@@ -49,7 +49,7 @@ export class TransactionType extends Model {
   cashOpening: boolean = false;
   cashClosing: boolean = false;
   allowAPP: boolean = false;
-  allowTransactionClose: boolean = true;
+  allowTransactionClose: boolean = false;
   allowEdit: boolean = false;
   allowDelete: boolean = false;
   allowZero: boolean = false;
