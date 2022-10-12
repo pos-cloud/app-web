@@ -385,11 +385,10 @@ export class TransactionTypeComponent implements OnInit {
       class: 'form-group col-md-2',
     },
     {
-      name: 'AllowTransactionClose',
+      name: 'allowTransactionClose',
       tag: 'select',
       tagType: 'boolean',
       values: ['false', 'true'],
-      validators: [Validators.required],
       class: 'form-group col-md-2',
     },
     {
