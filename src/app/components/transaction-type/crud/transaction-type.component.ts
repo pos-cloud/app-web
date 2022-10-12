@@ -385,6 +385,13 @@ export class TransactionTypeComponent implements OnInit {
       class: 'form-group col-md-2',
     },
     {
+      name: 'allowTransactionClose',
+      tag: 'select',
+      tagType: 'boolean',
+      values: ['false', 'true'],
+      class: 'form-group col-md-2',
+    },
+    {
       name: 'application',
       tag: 'autocomplete',
       tagType: 'text',
@@ -392,7 +399,7 @@ export class TransactionTypeComponent implements OnInit {
       format: this.formatterApplications,
       values: null,
       focus: false,
-      class: 'form-group col-md-4',
+      class: 'form-group col-md-2',
     },
     {
       name: 'Numeración',
@@ -1033,6 +1040,7 @@ export class TransactionTypeComponent implements OnInit {
         allowEdit: 1,
         allowDelete: 1,
         allowAPP: 1,
+        allowTransactionClose: 1,
         requestCompany: 1,
         requestCurrency: 1,
         defectOrders: 1,

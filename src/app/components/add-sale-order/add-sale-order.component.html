@@ -437,7 +437,7 @@
                     [ngClass]="{'disabled': loading, 'enabled': !loading }">
                     Crear Producto
                 </div>
-                <div class="col-lg-2 col-md-2 btn-action btn-large center-content"
+                <div *ngIf="transaction.type.allowTransactionClose" class="col-lg-2 col-md-2 btn-action btn-large center-content"
                     (click)="!loading ? close() : $event.stopPropagation()"
                     [ngClass]="{'disabled': loading, 'enabled': !loading }">
                     Cerrar

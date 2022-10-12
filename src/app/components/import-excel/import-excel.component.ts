@@ -62,7 +62,9 @@ export class importExcelComponent implements OnInit {
     if (this.file[0].name.substr(-4) != 'xlsx') {
       this.showMessage('ingresar excel .xlsx', 'danger', true);
     } else {
-      this.showMessage('', '', false);
+      //verificamos el tamaño del archivo que no sea mayor a 1mb
+      //1mb = 1.000.000 bytes
+      if (this.file[0].size > 1000000) return this.showMessage('Este Archivo es muy grande para ser procesado, Porfavor vuelva a ingresar el archivo que no supere 1Mb!', 'danger', true);
     }
   }
 

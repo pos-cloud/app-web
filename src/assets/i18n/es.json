@@ -18,6 +18,7 @@
     "administrativeExpenseArticle": "Artículo Gasto Administrativo",
     "allowAccounting": "Genera Asiento Contable",
     "allowAPP": "Permite App",
+    "allowTransactionClose": "Permite Cerrar",
     "allowCompanyDiscount": "Permite descuento empresa",
     "allowCurrentAccount": "¿Permite Cuenta Corriente?",
     "allowDelete": "Permite Eliminar",
