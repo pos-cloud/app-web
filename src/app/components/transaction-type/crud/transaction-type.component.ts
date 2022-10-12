@@ -385,7 +385,7 @@ export class TransactionTypeComponent implements OnInit {
       class: 'form-group col-md-2',
     },
     {
-      name: 'Allow Transaction Close',
+      name: 'AllowTransactionClose',
       tag: 'select',
       tagType: 'boolean',
       values: ['false', 'true'],
