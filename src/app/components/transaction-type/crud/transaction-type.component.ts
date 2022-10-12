@@ -385,7 +385,7 @@ export class TransactionTypeComponent implements OnInit {
       class: 'form-group col-md-2',
     },
     {
-      name: 'Allow Ticket Close',
+      name: 'Allow Transaction Close',
       tag: 'select',
       tagType: 'boolean',
       values: ['false', 'true'],
@@ -1041,7 +1041,7 @@ export class TransactionTypeComponent implements OnInit {
         allowEdit: 1,
         allowDelete: 1,
         allowAPP: 1,
-        allowTicketClose: 1,
+        allowTransactionClose: 1,
         requestCompany: 1,
         requestCurrency: 1,
         defectOrders: 1,
