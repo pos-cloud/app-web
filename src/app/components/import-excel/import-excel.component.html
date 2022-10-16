@@ -58,12 +58,16 @@
   <form [formGroup]="importForm" (ngSubmit)="import()" autocomplete="off" enctype="multipart/form-data">
     <div class="modal-body">
       <div class="row">
-        <div *ngIf='type === "actualizar-producto"' class="form-group col-md-12">
-          <label for="selectProvider">Filtrar por proveedor: </label>
-          <select formControlName='selectProvider' name="selectProvider" id="selectProvider">
+        <div *ngIf='type === "actualizar-producto"' class="form-group col-md-6">
+          <label for="selectProvider">Filtrar por proveedor:</label>
+          <select   formControlName='selectProvider' name="selectProvider" id="selectProvider">
             <option [ngValue]='null'></option>
             <option *ngFor="let provider of providers" [ngValue]='provider._id'>{{provider.name}}</option>
           </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="roundFinalPrice">Redondear precio final: </label>
+          <input type="checkbox" formControlName='roundFinalPrice' name="roundFinalPrice" id="roundFinalPrice">
         </div>
         <div class="form-group col-md-12">
           <label for="filePath" class="control-label">Archivo:</label>

@@ -1,11 +1,11 @@
-import {HttpClient, HttpParams, HttpHeaders} from '@angular/common/http';
-import {Injectable} from '@angular/core';
-import {of} from 'rxjs';
-import {Observable} from 'rxjs/Observable';
-import {map, catchError} from 'rxjs/operators';
+import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { of } from "rxjs";
+import { Observable } from "rxjs/Observable";
+import { map, catchError } from "rxjs/operators";
 
-import {Config} from '../../app.config';
-import {AuthService} from '../login/auth.service';
+import { Config } from "../../app.config";
+import { AuthService } from "../login/auth.service";
 
 @Injectable()
 export class ImportExcelService {
@@ -15,12 +15,13 @@ export class ImportExcelService {
     objectToImport: {},
     type: string,
     idProvider: string = null,
+    roundFinalPrice: boolean = false
   ): Promise<any> {
     let URL: string;
 
-    if (type === 'clientes') {
+    if (type === "clientes") {
       URL = `${Config.apiURL}company/save-excel`;
-    } else if (type === 'alta-producto') {
+    } else if (type === "alta-producto") {
       URL = `${Config.apiV8URL}articles/create-article-excel`;
     } else {
       URL = `${Config.apiV8URL}articles/update-article-excel`;
@@ -28,20 +29,21 @@ export class ImportExcelService {
 
     let xhr: XMLHttpRequest = new XMLHttpRequest();
 
-    xhr.open('POST', URL, true);
-    xhr.setRequestHeader('Authorization', this._authService.getToken());
+    xhr.open("POST", URL, true);
+    xhr.setRequestHeader("Authorization", this._authService.getToken());
 
-    if (type === 'clientes') {
-      xhr.setRequestHeader('file', objectToImport[0].name);
-      xhr.setRequestHeader('excel', objectToImport[0]);
+    if (type === "clientes") {
+      xhr.setRequestHeader("file", objectToImport[0].name);
+      xhr.setRequestHeader("excel", objectToImport[0]);
     }
 
     return new Promise((resolve, reject) => {
       let formData: any = new FormData();
 
-      formData.append('excel', objectToImport[0], objectToImport[0].filename);
-      formData.append('idProvider', idProvider);
-      xhr.upload.addEventListener('progress', this.progressFunction, false);
+      formData.append("excel", objectToImport[0], objectToImport[0].filename);
+      formData.append("idProvider", idProvider);
+      formData.append("roundFinalPrice", roundFinalPrice);
+      xhr.upload.addEventListener("progress", this.progressFunction, false);
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4) {
           if (xhr.status == 200) {
@@ -50,7 +52,7 @@ export class ImportExcelService {
             try {
               reject(JSON.parse(xhr.response));
             } catch (err) {
-              reject({message: 'Error al importar el archivo'});
+              reject({ message: "Error al importar el archivo" });
             }
           }
         }
@@ -65,14 +67,17 @@ export class ImportExcelService {
     }
   }
 
-  public importMovement(objectToImport: {}, transaccionId: string): Observable<any> {
+  public importMovement(
+    objectToImport: {},
+    transaccionId: string
+  ): Observable<any> {
     const URL = `${Config.apiURL}import-movement`;
 
     const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
+      .set("Content-Type", "application/json")
+      .set("Authorization", this._authService.getToken());
 
-    const params = new HttpParams().set('transaccion', transaccionId);
+    const params = new HttpParams().set("transaccion", transaccionId);
 
     return this._http
       .post(URL, objectToImport, {
@@ -84,7 +89,7 @@ export class ImportExcelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
+        })
       );
   }
   public getCompaniesV2(
@@ -93,21 +98,21 @@ export class ImportExcelService {
     sort: {},
     group: {},
     limit: number = 0,
-    skip: number = 0,
+    skip: number = 0
   ): Observable<any> {
     const URL = `${Config.apiURL}v2/companies`;
 
     const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
+      .set("Content-Type", "application/json")
+      .set("Authorization", this._authService.getToken());
 
     const params = new HttpParams()
-      .set('project', JSON.stringify(project))
-      .set('match', JSON.stringify(match))
-      .set('sort', JSON.stringify(sort))
-      .set('group', JSON.stringify(group))
-      .set('limit', limit.toString())
-      .set('skip', skip.toString());
+      .set("project", JSON.stringify(project))
+      .set("match", JSON.stringify(match))
+      .set("sort", JSON.stringify(sort))
+      .set("group", JSON.stringify(group))
+      .set("limit", limit.toString())
+      .set("skip", skip.toString());
 
     return this._http
       .get(URL, {
@@ -120,7 +125,7 @@ export class ImportExcelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
+        })
       );
   }
 }

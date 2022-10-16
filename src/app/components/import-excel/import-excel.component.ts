@@ -48,6 +48,7 @@ export class importExcelComponent implements OnInit {
     this.importForm = new FormGroup({
       filePath: new FormControl(),
       selectProvider: new FormControl(),
+      roundFinalPrice: new FormControl(),
     });
   }
   ngOnInit(): void {
@@ -91,7 +92,7 @@ export class importExcelComponent implements OnInit {
   import() {
     this.loading = true;
     this._importExcelService
-      .import(this.file, this.type, this.importForm.value.selectProvider)
+      .import(this.file, this.type, this.importForm.value.selectProvider, this.importForm.value.roundFinalPrice)
       .then(async (r) => {
         for (let x = 0; x < r.length; x++) {
           if (r[x].status == 200) {
