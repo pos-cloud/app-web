@@ -41,6 +41,7 @@ import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operato
 import Resulteable from './../../../util/Resulteable';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateMePipe } from './../../../main/pipes/translate-me';
+import { EmailService } from 'app/components/send-email/send-email.service';
 
 @Component({
     selector: 'app-add-transaction',
@@ -151,6 +152,7 @@ export class AddTransactionComponent implements OnInit {
         public _cancellationTypeService: CancellationTypeService,
         public translatePipe: TranslateMePipe,
         private _toastr: ToastrService,
+        private _serviceEmail: EmailService,
     ) {
         this.transaction = new Transaction();
         this.transactionDate = this.transaction.startDate;
@@ -475,7 +477,7 @@ export class AddTransactionComponent implements OnInit {
                 this.transaction.balance = result.result.balance;
             }
             this.transaction = await this.updateTransaction()
-
+            this.sendEmail(this.transaction)
             this.activeModal.close({ transaction: this.transaction, movementsOfCashes: this.movementsOfCashes });
         } catch (error) {
 
@@ -754,5 +756,17 @@ export class AddTransactionComponent implements OnInit {
                 break;
         }
         this.loading = false;
+    }
+
+    public sendEmail (body: {}): void {
+    
+        this._serviceEmail.sendEmailV2(body).subscribe(
+          result => {
+            this.showToast(result)
+          },
+          err => {
+            this.showToast(err);
+          }
+        );
     }
 }
