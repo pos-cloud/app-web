@@ -477,7 +477,7 @@ export class AddTransactionComponent implements OnInit {
                 this.transaction.balance = result.result.balance;
             }
             this.transaction = await this.updateTransaction()
-            if (this.transaction.type.requestEmailTemplate === true) this.sendEmail(this.transaction);
+            if (this.transaction.type.requestEmailTemplate == true) this.sendEmail(this.transaction);
             this.activeModal.close({ transaction: this.transaction, movementsOfCashes: this.movementsOfCashes });
         } catch (error) {
 
@@ -762,9 +762,11 @@ export class AddTransactionComponent implements OnInit {
     
         this._serviceEmail.sendEmailV2(body).subscribe(
           result => {
+            console.log(result)
             this.showToast(result)
           },
           err => {
+            console.log(err)
             this.showToast(err);
           }
         );
