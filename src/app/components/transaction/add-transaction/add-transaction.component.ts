@@ -762,11 +762,9 @@ export class AddTransactionComponent implements OnInit {
     
         this._serviceEmail.sendEmailV2(body).subscribe(
           result => {
-            console.log(result)
             this.showToast(result)
           },
           err => {
-            console.log(err)
             this.showToast(err);
           }
         );
