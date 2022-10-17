@@ -477,7 +477,7 @@ export class AddTransactionComponent implements OnInit {
                 this.transaction.balance = result.result.balance;
             }
             this.transaction = await this.updateTransaction()
-            this.sendEmail(this.transaction);
+            if (this.transaction.type.requestEmailTemplate == true) return this.sendEmail(this.transaction);
             this.activeModal.close({ transaction: this.transaction, movementsOfCashes: this.movementsOfCashes });
         } catch (error) {
 
