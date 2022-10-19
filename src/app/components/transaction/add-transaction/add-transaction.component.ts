@@ -45,7 +45,7 @@ import { EmailService } from 'app/components/send-email/send-email.service';
 import { PrintComponent } from 'app/components/print/print/print.component';
 import { PrintTransactionTypeComponent } from 'app/components/print/print-transaction-type/print-transaction-type.component';
 import { Printer, PrinterPrintIn } from 'app/components/printer/printer';
-import {EmailProps} from '../types'
+import {EmailProps} from '../../../types'
 
 @Component({
     selector: 'app-add-transaction',
