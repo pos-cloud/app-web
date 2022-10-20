@@ -58,7 +58,10 @@ resolvemos conflicto si hay git rebase --continue
 Esto hace que tu commit quede sobre lo de testing 
 Realizar PR a testing
 
-## Documentation
+## Canales de comunicación
 
 Discord 
 - https://discord.gg/SFyaNdPU
+
+Notion
+- https://www.notion.so/679da073670e42e1bde8524a39f50b56?v=aec8fe73ce3344fbaf54fa451342ff12
