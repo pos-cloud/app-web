@@ -33,11 +33,17 @@ docker run -d -it --name pos admin-poscloud
 rm -R /var/www/poscloud/
 docker cp pos:/app/dist/ /var/www/poscloud/
 
-## Acceso a demo
+## Acceso a demo produccion
 
-empresa: demo
-user: admin
-pass: pos
+- url: poscloud.ar
+
+- empresa: demo
+- user: admin
+- pass: pos
+
+## Acceso a testing
+
+- testing.poscloud.ar
 
 ## Contribuir 
 
