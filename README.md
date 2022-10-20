@@ -36,7 +36,6 @@ docker cp pos:/app/dist/ /var/www/poscloud/
 ## Acceso a demo produccion
 
 - url: poscloud.ar
-
 - empresa: demo
 - user: admin
 - pass: pos
