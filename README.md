@@ -57,3 +57,8 @@ resolvemos conflicto si hay git rebase --continue
 - git push --force-with-lease
 Esto hace que tu commit quede sobre lo de testing 
 Realizar PR a testing
+
+## Documentation
+
+Discord 
+- https://discord.gg/SFyaNdPU
