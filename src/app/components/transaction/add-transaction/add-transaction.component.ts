@@ -42,13 +42,10 @@ import Resulteable from './../../../util/Resulteable';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateMePipe } from './../../../main/pipes/translate-me';
 import { EmailService } from 'app/components/send-email/send-email.service';
-<<<<<<< HEAD
 import { PrintComponent } from 'app/components/print/print/print.component';
 import { PrintTransactionTypeComponent } from 'app/components/print/print-transaction-type/print-transaction-type.component';
 import { Printer, PrinterPrintIn } from 'app/components/printer/printer';
 import {EmailProps} from '../../../types'
-=======
->>>>>>> 9ce982b0c003267fe78860c78daae78a26234f70
 
 @Component({
     selector: 'app-add-transaction',
@@ -569,11 +566,7 @@ export class AddTransactionComponent implements OnInit {
                 this.transaction.balance = result.result.balance;
             }
             this.transaction = await this.updateTransaction()
-<<<<<<< HEAD
             if (this.transaction.type.requestEmailTemplate == true) this.openModal('send-email');
-=======
-            this.sendEmail(this.transaction);
->>>>>>> 9ce982b0c003267fe78860c78daae78a26234f70
             this.activeModal.close({ transaction: this.transaction, movementsOfCashes: this.movementsOfCashes });
         } catch (error) {
 
@@ -854,7 +847,6 @@ export class AddTransactionComponent implements OnInit {
         this.loading = false;
     }
 
-<<<<<<< HEAD
     padNumber(n, length): string {
         n = n.toString();
         while (n.length < length) n = '0' + n;
@@ -864,17 +856,5 @@ export class AddTransactionComponent implements OnInit {
 
     public sendEmail (body: EmailProps): void {
         this._serviceEmail.sendEmailV2(body)
-=======
-    public sendEmail (body: {}): void {
-    
-        this._serviceEmail.sendEmailV2(body).subscribe(
-          result => {
-            this.showToast(result)
-          },
-          err => {
-            this.showToast(err);
-          }
-        );
->>>>>>> 9ce982b0c003267fe78860c78daae78a26234f70
     }
 }
