@@ -567,7 +567,6 @@ export class AddTransactionComponent implements OnInit {
             }
             this.transaction = await this.updateTransaction()
             if (this.transaction.type.requestEmailTemplate == true) this.openModal('send-email');
-            //if (this.transaction.type.requestEmailTemplate === true) this.sendEmail(this.transaction);
             this.activeModal.close({ transaction: this.transaction, movementsOfCashes: this.movementsOfCashes });
         } catch (error) {
 
