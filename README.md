@@ -41,8 +41,10 @@ pass: pos
 
 ## Contribuir 
 
-Desde notion tomamos el tk y el atributo branch nos dice el nombre de la rama
-Desde testing la creamos siempre
+- git clone https://github.com/pos-cloud/system.git
+
+Desde notion tomamos el tk y el atributo branch nos dice el nombre de la rama y desde testing se crea
+
 - git branch TK-??
 Se desarrolla y se hace commit de todo sobre la rama
 Luego hacemos 
