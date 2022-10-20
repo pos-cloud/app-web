@@ -43,15 +43,15 @@ pass: pos
 
 Desde notion tomamos el tk y el atributo branch nos dice el nombre de la rama
 Desde testing la creamos siempre
-# git branch TK-??
+- git branch TK-??
 Se desarrolla y se hace commit de todo sobre la rama
 Luego hacemos 
-# git fetch
-# git checkout testing
-# git pull
-# git checkout TK-??
-# git rebase testing
+- git fetch
+- git checkout testing
+- git pull
+- git checkout TK-??
+- git rebase testing
 resolvemos conflicto si hay git rebase --continue
-# git push --force-with-lease
+- git push --force-with-lease
 Esto hace que tu commit quede sobre lo de testing 
 Realizar PR a testing
