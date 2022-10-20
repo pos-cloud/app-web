@@ -58,6 +58,7 @@ import { MovementOfCashService } from '../movement-of-cash/movement-of-cash.serv
 import { MovementOfCancellation } from '../movement-of-cancellation/movement-of-cancellation';
 import { MovementOfCancellationService } from '../movement-of-cancellation/movement-of-cancellation.service';
 import Resulteable from '../../util/Resulteable';
+import { padNumber } from 'app/util/functions/padNumber';
 
 @Component({
     selector: 'app-point-of-sale',
@@ -1539,7 +1540,7 @@ export class PointOfSaleComponent implements OnInit {
                 if (this.transaction.type.labelPrint) {
                     labelPrint = this.transaction.type.labelPrint;
                 }
-                modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(this.transaction.origin, 4)}-${this.transaction.letter}-${this.padNumber(this.transaction.number, 8)}`;
+                modalRef.componentInstance.subject = `${labelPrint} ${padNumber(this.transaction.origin, 4)}-${this.transaction.letter}-${padNumber(this.transaction.number, 8)}`;
                 if (this.transaction.type.electronics) {
                     // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${Config.database}/${this.transaction._id}">Su comprobante</a>`
                     modalRef.componentInstance.body = ' '
@@ -1617,13 +1618,6 @@ export class PointOfSaleComponent implements OnInit {
                 break;
             default: ;
         }
-    }
-
-    public padNumber(n, length): string {
-        n = n.toString();
-        while (n.length < length)
-            n = "0" + n;
-        return n;
     }
 
     public async validateElectronicTransactionAR(transaction: Transaction, state: TransactionState = TransactionState.Closed) {

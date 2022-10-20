@@ -90,6 +90,8 @@ import {SelectTransportComponent} from '../transport/select-transport/select-tra
 import {UserService} from '../user/user.service';
 
 import {Config} from './../../app.config';
+import { EmailProps } from 'app/types';
+import { padNumber } from 'app/util/functions/padNumber';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -2307,11 +2309,11 @@ export class AddSaleOrderComponent {
           }
         }
 
-        const email = {
+        const email: EmailProps = {
           to: this.transaction.company.emails,
-          subject: `${labelPrint} ${this.padNumber(this.transaction.origin, 4)}-${
+          subject: `${labelPrint} ${padNumber(this.transaction.origin, 4)}-${
             this.transaction.letter
-          }-${this.padNumber(this.transaction.number, 8)}`,
+          }-${padNumber(this.transaction.number, 8)}`,
           body: this.transaction.type.defectEmailTemplate.design,
           attachments: attachments,
         };
@@ -3989,14 +3991,7 @@ export class AddSaleOrderComponent {
     this.loading = false;
   }
 
-  padNumber(n, length): string {
-    n = n.toString();
-    while (n.length < length) n = '0' + n;
-
-    return n;
-  }
-
-  public sendEmail(body: {}): void {
+  public sendEmail(body: EmailProps): void {
     this._serviceEmail.sendEmailV2(body).subscribe(
       (result) => {
         this.showToast(result);

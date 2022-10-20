@@ -35,6 +35,7 @@ import {TransactionService} from '../transaction.service';
 import {ViewTransactionComponent} from '../view-transaction/view-transaction.component';
 
 import 'moment/locale/es';
+import { padNumber } from 'app/util/functions/padNumber';
 
 @Component({
   selector: 'app-list-transactions',
@@ -676,10 +677,10 @@ export class ListTransactionsComponent implements OnInit {
         if (transaction.type.labelPrint) {
           labelPrint = transaction.type.labelPrint;
         }
-        modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(
+        modalRef.componentInstance.subject = `${labelPrint} ${padNumber(
           transaction.origin,
           4,
-        )}-${transaction.letter}-${this.padNumber(transaction.number, 8)}`;
+        )}-${transaction.letter}-${padNumber(transaction.number, 8)}`;
 
         if (transaction.type.electronics) {
           // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${Config.database}/${transaction._id}">Su comprobante</a>`
@@ -787,13 +788,6 @@ export class ListTransactionsComponent implements OnInit {
         );
       }
     });
-  }
-
-  public padNumber(n, length): string {
-    n = n.toString();
-    while (n.length < length) n = '0' + n;
-
-    return n;
   }
 
   public exportCiti(): void {
