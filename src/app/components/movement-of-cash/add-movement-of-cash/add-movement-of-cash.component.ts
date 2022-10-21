@@ -1083,7 +1083,7 @@ export class AddMovementOfCashComponent implements OnInit {
         const email: EmailProps = {
           to: this.transaction.company.emails,
           subject: `${labelPrint} ${padNumber(this.transaction.origin, 4)}-${this.transaction.letter}-${padNumber(this.transaction.number, 8)}`,
-          body: this.transaction.type.defectEmailTemplate ? this.transaction.type.defectEmailTemplate.design : "",
+          body: this.transaction?.type?.defectEmailTemplate?.design || "",
           attachments: attachments
         };
         
