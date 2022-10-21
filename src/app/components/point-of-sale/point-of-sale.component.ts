@@ -58,7 +58,7 @@ import { MovementOfCashService } from '../movement-of-cash/movement-of-cash.serv
 import { MovementOfCancellation } from '../movement-of-cancellation/movement-of-cancellation';
 import { MovementOfCancellationService } from '../movement-of-cancellation/movement-of-cancellation.service';
 import Resulteable from '../../util/Resulteable';
-import { padNumber } from 'app/util/functions/padNumber';
+import { padNumber } from 'app/util/functions/pad/padNumber';
 
 @Component({
     selector: 'app-point-of-sale',

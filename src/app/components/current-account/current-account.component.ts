@@ -35,7 +35,7 @@ import { SelectCompanyComponent } from '../company/select-company/select-company
 import { AuthService } from '../login/auth.service';
 import { User } from 'app/components/user/user';
 import { first } from 'rxjs/operators';
-import { padNumber } from 'app/util/functions/padNumber';
+import { padNumber } from 'app/util/functions/pad/padNumber';
 
 @Component({
     selector: 'app-current-account',
