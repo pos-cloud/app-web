@@ -35,7 +35,7 @@ import { Subscription } from 'rxjs';
 
 import { ToastrService } from 'ngx-toastr';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
-import { padNumber } from 'app/util/functions/padNumber';
+import { padNumber } from 'app/util/functions/pad/padNumber';
 
 @Component({
     selector: 'app-list-articles-pos',

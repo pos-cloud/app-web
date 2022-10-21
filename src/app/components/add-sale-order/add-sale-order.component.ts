@@ -91,7 +91,7 @@ import {UserService} from '../user/user.service';
 
 import {Config} from './../../app.config';
 import { EmailProps } from 'app/types';
-import { padNumber } from 'app/util/functions/padNumber';
+import { padNumber } from 'app/util/functions/pad/padNumber';
 
 @Component({
   selector: 'app-add-sale-order',
