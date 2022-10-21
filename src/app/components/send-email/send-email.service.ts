@@ -7,6 +7,7 @@ import { map, catchError } from "rxjs/operators";
 import { Config } from '../../app.config';
 import { AuthService } from '../login/auth.service';
 import { environment } from "environments/environment";
+import { EmailProps } from "app/types";
 
 @Injectable()
 export class EmailService {
@@ -16,7 +17,7 @@ export class EmailService {
     private _authService: AuthService
   ) { }
 
-  public sendEmail(data: {}): Observable<any> {
+  public sendEmail(data: EmailProps): Observable<any> {
 
     const URL = `${Config.apiURL}send-email-client`;
 
@@ -92,7 +93,7 @@ export class EmailService {
     );
   }
 
-  public sendEmailV2(data: {}): Observable<any> {
+  public sendEmailV2(data: EmailProps): Observable<any> {
 
     const URL = `${Config.apiV8URL}email-templates/send-email`;
 

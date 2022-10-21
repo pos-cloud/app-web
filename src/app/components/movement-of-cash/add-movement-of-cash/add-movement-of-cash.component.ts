@@ -43,6 +43,7 @@ import {
   CurrentAccount,
   Movements,
   TransactionMovement,
+  TransactionType,
 } from '../../transaction-type/transaction-type';
 import {Transaction, TransactionState} from '../../transaction/transaction';
 import {TransactionService} from '../../transaction/transaction.service';
@@ -50,6 +51,12 @@ import {DeleteMovementOfCashComponent} from '../delete-movement-of-cash/delete-m
 import {MovementOfCash, StatusCheck} from '../movement-of-cash';
 import {MovementOfCashService} from '../movement-of-cash.service';
 import {SelectChecksComponent} from '../select-checks/select-checks.component';
+import { padNumber } from 'app/util/functions/pad/padNumber';
+import { EmailProps } from 'app/types';
+import { EmailService } from 'app/components/send-email/send-email.service';
+import { Printer, PrinterPrintIn } from 'app/components/printer/printer';
+import { PrintTransactionTypeComponent } from 'app/components/print/print-transaction-type/print-transaction-type.component';
+import { PrintComponent } from 'app/components/print/print/print.component';
 
 @Component({
   selector: 'app-add-movement-of-cash',
@@ -92,6 +99,7 @@ export class AddMovementOfCashComponent implements OnInit {
   propertyTerm: string;
   holidays: Holiday[];
   banks: Bank[];
+  database: string;
   movementOfArticle: MovementOfArticle;
   keyboard: Keyboard;
   lastVatOfExpenses: number = 0;
@@ -102,6 +110,7 @@ export class AddMovementOfCashComponent implements OnInit {
   currencyNative: Currency = Config.currency;
   quotationNative: number = 0;
   quotationAmount: number = 0;
+  printers: Printer[];
 
   formErrors = {
     paymentMethod: '',
@@ -148,7 +157,10 @@ export class AddMovementOfCashComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal,
     public translatePipe: TranslateMePipe,
+    private _serviceEmail: EmailService,
   ) {
+    this.transaction = new Transaction();
+    this.transaction.type = new TransactionType();
     this.movementOfCash = new MovementOfCash();
     this.paymentMethods = new Array();
     this.banks = new Array();
@@ -158,6 +170,7 @@ export class AddMovementOfCashComponent implements OnInit {
       this.movementOfCash.type = new PaymentMethod();
     }
     this.paymentMethodSelected = this.movementOfCash.type;
+    this.printers = new Array();
   }
 
   async ngOnInit() {
@@ -992,7 +1005,92 @@ export class AddMovementOfCashComponent implements OnInit {
           }
         });
         break;
+      case 'send-email':
+        let attachments = [];
+      
+        if (this.transaction.type.readLayout) {
+          modalRef = this._modalService.open(PrintTransactionTypeComponent);
+          modalRef.componentInstance.transactionId = this.transaction._id;
+          modalRef.componentInstance.source = 'mail';
+        } else {
+          modalRef = this._modalService.open(PrintComponent);
+          modalRef.componentInstance.company = this.transaction.company;
+          modalRef.componentInstance.transactionId = this.transaction._id;
+          modalRef.componentInstance.typePrint = 'invoice';
+          modalRef.componentInstance.source = 'mail';
+        }
+        if (this.transaction.type.defectPrinter) {
+          modalRef.componentInstance.printer = this.transaction.type.defectPrinter;
+        } else {
+          if (this.printers && this.printers.length > 0) {
+            for (let printer of this.printers) {
+              if (printer.printIn === PrinterPrintIn.Counter) {
+                modalRef.componentInstance.printer = printer;
+              }
+            }
+          }
+        }
+      
+        let labelPrint = this.transaction.type.name;
+      
+        if (this.transaction.type.labelPrint) {
+          labelPrint = this.transaction.type.labelPrint;
+        }
+
+        if (this.transaction.type.electronics) {
+          attachments.push({
+            filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
+            path: `/home/clients/${Config.database}/invoice/${this.transaction._id}.pdf`,
+          });
+        } else {
+          attachments.push({
+            filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
+            path: `/home/clients/${Config.database}/others/${this.transaction._id}.pdf`,
+          });
+        }
+      
+        if (Config.country === 'MX') {
+          attachments.push({
+            filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.xml`,
+            path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_${this.transaction.number}.xml`,
+          });
+        }
+      
+        if (this.transaction.type.defectEmailTemplate) {
+          if (this.transaction.type.electronics) {
+            attachments = [];
+            attachments.push({
+              filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
+              path: `/home/clients/${Config.database}/invoice/${this.transaction._id}.pdf`,
+            });
+          } else {
+            attachments = [];
+            attachments.push({
+              filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
+              path: `/home/clients/${Config.database}/others/${this.transaction._id}.pdf`,
+            });
+          }
+      
+          if (Config.country === 'MX') {
+            attachments = [];
+            attachments.push({
+              filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.xml`,
+              path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_${this.transaction.number}.xml`,
+            });
+          }
+        }
+      
+        const email: EmailProps = {
+          to: this.transaction.company.emails,
+          subject: `${labelPrint} ${padNumber(this.transaction.origin, 4)}-${this.transaction.letter}-${padNumber(this.transaction.number, 8)}`,
+          body: this.transaction.type.defectEmailTemplate ? this.transaction.type.defectEmailTemplate.design : "",
+          attachments: attachments
+        };
+        
+        this.sendEmail(email)
+        break;
       default:
+        break;
     }
   }
 
@@ -1099,6 +1197,7 @@ export class AddMovementOfCashComponent implements OnInit {
           );
       }
 
+      if (this.transaction.type.requestEmailTemplate == true) this.openModal('send-email', null);
       this.activeModal.close({
         movementsOfCashes: this.movementsOfCashes,
         movementOfArticle: this.movementOfArticle,
@@ -2197,5 +2296,16 @@ export class AddMovementOfCashComponent implements OnInit {
         break;
     }
     this.loading = false;
+  }
+
+  public sendEmail (body: EmailProps): void {
+    this._serviceEmail.sendEmailV2(body).subscribe(
+        (result) => {
+          this.showToast(result);
+        },
+        (err) => {
+          this.showToast(err);
+        },
+    );
   }
 }
