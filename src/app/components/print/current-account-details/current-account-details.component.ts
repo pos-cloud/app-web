@@ -23,7 +23,7 @@ import { TransactionTypeService } from 'app/components/transaction-type/transact
 import { CompanyGroup } from 'app/components/company-group/company-group';
 import { CompanyGroupService } from 'app/components/company-group/company-group.service';
 import { Transaction } from 'app/components/transaction/transaction';
-import { padString } from 'app/util/functions/pad/padString';
+import { padString } from '../../../util/functions/pad/padString';
 
 let splitRegex = /\r\n|\r|\n/g;
 jsPDF.API['textEx'] = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {

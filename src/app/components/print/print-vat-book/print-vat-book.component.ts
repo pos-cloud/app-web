@@ -25,8 +25,7 @@ import { Classification } from 'app/components/classification/classification';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { MovementOfArticleService } from 'app/components/movement-of-article/movement-of-article.service';
 import { TaxClassification } from 'app/components/tax/tax';
-import { padString } from 'app/util/functions/pad/padString';
-
+import { padString } from '../../../util/functions/pad/padString';
 
 @Component({
     selector: 'app-print-vat-book',
