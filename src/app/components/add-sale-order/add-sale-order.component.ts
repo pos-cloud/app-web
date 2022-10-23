@@ -92,6 +92,7 @@ import {UserService} from '../user/user.service';
 import {Config} from './../../app.config';
 import { EmailProps } from 'app/types';
 import { padNumber } from 'app/util/functions/pad/padNumber';
+import { removeParam } from 'app/util/functions/removeParam';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -3158,7 +3159,7 @@ export class AddSaleOrderComponent {
       if (!cancellationTypesAutomatic || cancellationTypesAutomatic.length == 0) {
         if (this.transaction && this.transaction.type.printable) {
           this.print();
-          if (this.transaction && this.transaction.type.requestEmailTemplate)
+          if (this.transaction && this.transaction.type.requestEmailTemplate == true)
             this.openModal('send-email');
         } else {
           this.backFinal();
@@ -3338,7 +3339,7 @@ export class AddSaleOrderComponent {
             let paramsFromRoute = params['returnURL'].split('?')[1];
 
             if (paramsFromRoute && paramsFromRoute !== '') {
-              paramsFromRoute = this.removeParam(paramsFromRoute, 'automaticCreation');
+              paramsFromRoute = removeParam(paramsFromRoute, 'automaticCreation');
               route +=
                 '?' +
                 paramsFromRoute +
@@ -3350,7 +3351,7 @@ export class AddSaleOrderComponent {
             this._router.navigateByUrl(route);
           } else {
             this._router.navigateByUrl(
-              this.removeParam(params['returnURL'], 'automaticCreation'),
+              removeParam(params['returnURL'], 'automaticCreation'),
             );
           }
         } else {
@@ -3358,26 +3359,6 @@ export class AddSaleOrderComponent {
         }
       }
     });
-  }
-
-  private removeParam(sourceURL: string, key: string) {
-    let rtn = sourceURL.split('?')[0],
-      param,
-      params_arr = [],
-      queryString = sourceURL.indexOf('?') !== -1 ? sourceURL.split('?')[1] : '';
-
-    if (queryString !== '') {
-      params_arr = queryString.split('&');
-      for (let i = params_arr.length - 1; i >= 0; i -= 1) {
-        param = params_arr[i].split('=')[0];
-        if (param === key) {
-          params_arr.splice(i, 1);
-        }
-      }
-      rtn = rtn + '?' + params_arr.join('&');
-    }
-
-    return rtn;
   }
 
   getTable(tableId: string): Promise<Table> {
