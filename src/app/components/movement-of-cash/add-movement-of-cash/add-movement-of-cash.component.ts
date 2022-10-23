@@ -14,7 +14,6 @@ import {Config} from '../../../app.config';
 // PIPES
 
 // COMPONENTS
-
 import {AccountSeatService} from 'app/components/account-seat/account-seat.service';
 import {Bank} from 'app/components/bank/bank';
 import {BankService} from 'app/components/bank/bank.service';
