@@ -7,7 +7,7 @@ import { map, catchError } from "rxjs/operators";
 import { Config } from '../../app.config';
 import { AuthService } from '../login/auth.service';
 import { environment } from "environments/environment";
-import { EmailProps } from "app/types";
+import { EmailProps } from "../../types";
 
 @Injectable()
 export class EmailService {

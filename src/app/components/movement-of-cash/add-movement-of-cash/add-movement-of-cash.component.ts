@@ -77,7 +77,7 @@ import { JsonDiffPipe } from 'app/main/pipes/json-diff';
 import { PriceList } from 'app/components/price-list/price-list';
 import { ArticleFields } from 'app/components/article-field/article-fields';
 import { ArticleFieldType } from 'app/components/article-field/article-field';
-import { removeParam } from 'app/util/functions/removeParam';
+import { removeParam } from '../../../util/functions/removeParam';
 import { DeleteTransactionComponent } from 'app/components/transaction/delete-transaction/delete-transaction.component';
 import { ArticlePrintIn } from 'app/components/article/article';
 import { ArticleStock } from 'app/components/article-stock/article-stock';
