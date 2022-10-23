@@ -741,7 +741,6 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   async addMovementOfArticle() {
     this.loading = true;
-
     if (this.movementOfArticleForm.value.amount >= 0) {
       if (this.movementOfArticleForm.value.measure) {
         this.movementOfArticle.measure = this.movementOfArticleForm.value.measure;
@@ -751,13 +750,12 @@ export class AddMovementOfArticleComponent implements OnInit {
           eval(this.movementOfArticleForm.value.measure) *
             this.movementOfArticleForm.value.quantityMeasure,
         );
-        this.movementOfArticle.notes = this.movementOfArticleForm.value.measure;
       } else {
         this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
         this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
       }
 
-      if (this.notes && this.notes.length > 0) {
+      if (this.notes && this.notes.length > 0 && !this.movementOfArticle.measure) {
         for (let i = 0; i < this.notes.length; i++) {
           if (
             i == 0 &&
@@ -774,9 +772,10 @@ export class AddMovementOfArticleComponent implements OnInit {
             this.movementOfArticle.notes += `; `;
           }
         }
+        this.movementOfArticleForm.value.notes = this.movementOfArticle.notes;
       }
 
-      this.movementOfArticleForm.value.notes = this.movementOfArticle.notes;
+      
 
       if (this.containsVariants) {
         this.movementOfArticle.article = this.getArticleBySelectedVariants();
