@@ -3328,8 +3328,6 @@ export class AddMovementOfCashComponent implements OnInit {
           this.openModal('send-email');
       } else {
         this.backFinal();
-        if (this.transaction && this.transaction.type.requestEmailTemplate == true)
-        this.openModal('send-email');
       }
     } else {
       this.openModal('cancelation-type-automatic');
