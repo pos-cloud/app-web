@@ -3159,7 +3159,7 @@ export class AddSaleOrderComponent {
       if (!cancellationTypesAutomatic || cancellationTypesAutomatic.length == 0) {
         if (this.transaction && this.transaction.type.printable) {
           this.print();
-          if (this.transaction && this.transaction.type.requestEmailTemplate == true)
+          if (this.transaction && this.transaction.type.requestEmailTemplate)
             this.openModal('send-email');
         } else {
           this.backFinal();
