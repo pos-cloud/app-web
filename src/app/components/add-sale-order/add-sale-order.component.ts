@@ -90,6 +90,9 @@ import {SelectTransportComponent} from '../transport/select-transport/select-tra
 import {UserService} from '../user/user.service';
 
 import {Config} from './../../app.config';
+import { EmailProps } from 'app/types';
+import { padNumber } from 'app/util/functions/pad/padNumber';
+import { removeParam } from 'app/util/functions/removeParam';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -2307,11 +2310,11 @@ export class AddSaleOrderComponent {
           }
         }
 
-        const email = {
+        const email: EmailProps = {
           to: this.transaction.company.emails,
-          subject: `${labelPrint} ${this.padNumber(this.transaction.origin, 4)}-${
+          subject: `${labelPrint} ${padNumber(this.transaction.origin, 4)}-${
             this.transaction.letter
-          }-${this.padNumber(this.transaction.number, 8)}`,
+          }-${padNumber(this.transaction.number, 8)}`,
           body: this.transaction.type.defectEmailTemplate.design,
           attachments: attachments,
         };
@@ -3336,7 +3339,7 @@ export class AddSaleOrderComponent {
             let paramsFromRoute = params['returnURL'].split('?')[1];
 
             if (paramsFromRoute && paramsFromRoute !== '') {
-              paramsFromRoute = this.removeParam(paramsFromRoute, 'automaticCreation');
+              paramsFromRoute = removeParam(paramsFromRoute, 'automaticCreation');
               route +=
                 '?' +
                 paramsFromRoute +
@@ -3348,7 +3351,7 @@ export class AddSaleOrderComponent {
             this._router.navigateByUrl(route);
           } else {
             this._router.navigateByUrl(
-              this.removeParam(params['returnURL'], 'automaticCreation'),
+              removeParam(params['returnURL'], 'automaticCreation'),
             );
           }
         } else {
@@ -3356,26 +3359,6 @@ export class AddSaleOrderComponent {
         }
       }
     });
-  }
-
-  private removeParam(sourceURL: string, key: string) {
-    let rtn = sourceURL.split('?')[0],
-      param,
-      params_arr = [],
-      queryString = sourceURL.indexOf('?') !== -1 ? sourceURL.split('?')[1] : '';
-
-    if (queryString !== '') {
-      params_arr = queryString.split('&');
-      for (let i = params_arr.length - 1; i >= 0; i -= 1) {
-        param = params_arr[i].split('=')[0];
-        if (param === key) {
-          params_arr.splice(i, 1);
-        }
-      }
-      rtn = rtn + '?' + params_arr.join('&');
-    }
-
-    return rtn;
   }
 
   getTable(tableId: string): Promise<Table> {
@@ -3989,14 +3972,7 @@ export class AddSaleOrderComponent {
     this.loading = false;
   }
 
-  padNumber(n, length): string {
-    n = n.toString();
-    while (n.length < length) n = '0' + n;
-
-    return n;
-  }
-
-  public sendEmail(body: {}): void {
+  public sendEmail(body: EmailProps): void {
     this._serviceEmail.sendEmailV2(body).subscribe(
       (result) => {
         this.showToast(result);

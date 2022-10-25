@@ -35,6 +35,7 @@ import { Subscription } from 'rxjs';
 
 import { ToastrService } from 'ngx-toastr';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import { padNumber } from 'app/util/functions/pad/padNumber';
 
 @Component({
     selector: 'app-list-articles-pos',
@@ -637,7 +638,7 @@ export class ListArticlesPosComponent implements OnInit {
         if (this.transaction && this.transaction.type.transactionMovement === TransactionMovement.Sale &&
             this.config.tradeBalance.codePrefix && this.config.tradeBalance.codePrefix !== 0) {
             if (this.filterArticle.slice(0, this.config.tradeBalance.codePrefix.toString().length) === this.config.tradeBalance.codePrefix.toString()) {
-                this.filterArticle = this.padNumber(this.filterArticle.slice((this.config.tradeBalance.codePrefix.toString().length),
+                this.filterArticle = padNumber(this.filterArticle.slice((this.config.tradeBalance.codePrefix.toString().length),
                     (originalFilter.length -
                         this.config.tradeBalance.numberOfDecimals -
                         this.config.tradeBalance.numberOfQuantity -
@@ -676,7 +677,7 @@ export class ListArticlesPosComponent implements OnInit {
                     for (let art of this.filteredArticles) {
                         if (art.type === Type.Final) {
                             if (isCodePrefix &&
-                                this.padNumber(art.code, this.config.article.code.validators.maxLength) === this.padNumber(this.filterArticle, this.config.article.code.validators.maxLength)) {
+                                padNumber(art.code, this.config.article.code.validators.maxLength) === padNumber(this.filterArticle, this.config.article.code.validators.maxLength)) {
                                 count++;
                                 article = art;
                             } else if (!isCodePrefix) {
@@ -768,12 +769,6 @@ export class ListArticlesPosComponent implements OnInit {
         }
         this.hideMessage();
         this.loading = false;
-    }
-    public padNumber(n, length) {
-        n = n.toString();
-        while (n.length < length)
-            n = "0" + n;
-        return n;
     }
 
     public saveClaim(titulo: string, message: string): void {

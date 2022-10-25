@@ -25,7 +25,7 @@ import { Classification } from 'app/components/classification/classification';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { MovementOfArticleService } from 'app/components/movement-of-article/movement-of-article.service';
 import { TaxClassification } from 'app/components/tax/tax';
-
+import { padString } from '../../../util/functions/pad/padString';
 
 @Component({
     selector: 'app-print-vat-book',
@@ -267,9 +267,9 @@ export class PrintVatBookComponent implements OnInit {
                 this.doc.text(transaction.type.name, 95, row);
             }
             this.doc.text(
-                this.padString(transaction.origin, 4) + "-" +
+                padString(transaction.origin, 4) + "-" +
                 transaction.letter + "-" +
-                this.padString(transaction.number, 8)
+                padString(transaction.number, 8)
                 , 120, row);
 
             if (transaction.type.transactionMovement === TransactionMovement.Sale && transaction.type.movement === Movements.Outflows ||
@@ -804,13 +804,6 @@ export class PrintVatBookComponent implements OnInit {
                 }
             }
         }
-    }
-
-    public padString(n, length) {
-        n = n.toString();
-        while (n.length < length)
-            n = "0" + n;
-        return n;
     }
 
     public showMessage(message: string, type: string, dismissible: boolean): void {

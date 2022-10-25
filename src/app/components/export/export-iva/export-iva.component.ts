@@ -32,6 +32,7 @@ import {TransactionService} from '../../transaction/transaction.service';
 import {UserService} from '../../user/user.service';
 
 import 'moment/locale/es';
+import { padString } from 'app/util/functions/pad/padString';
 
 @Component({
   selector: 'app-export-iva',
@@ -508,9 +509,9 @@ export class ExportIvaComponent implements OnInit {
 
                   data[i]['Abrev'] = transaction.type.abbreviation;
 
-                  data[i]['Punto de Venta'] = this.padString(transaction.origin, 4);
+                  data[i]['Punto de Venta'] = padString(transaction.origin, 4);
                   data[i]['Letra'] = transaction.letter;
-                  data[i]['Numero'] = this.padString(transaction.number, 8);
+                  data[i]['Numero'] = padString(transaction.number, 8);
 
                   if (
                     (transaction.type.transactionMovement === TransactionMovement.Sale &&
@@ -913,13 +914,6 @@ export class ExportIvaComponent implements OnInit {
           this.loading = false;
         },
       );
-  }
-
-  public padString(n, length) {
-    n = n.toString();
-    while (n.length < length) n = '0' + n;
-
-    return n;
   }
 
   async getMovementOfArticle(id: string): Promise<MovementOfArticle[]> {
