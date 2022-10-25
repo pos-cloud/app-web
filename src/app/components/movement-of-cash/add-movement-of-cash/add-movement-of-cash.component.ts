@@ -1395,12 +1395,12 @@ export class AddMovementOfCashComponent implements OnInit {
           modalRef.componentInstance.printer = this.printerSelected;
           modalRef.componentInstance.typePrint = 'invoice';
           modalRef.result
-          .then(() => {
-            this.backFinal();
-          })
-          .catch((e) => {
-            this.backFinal();
-          });
+            .then(() => {
+              this.backFinal();
+            })
+            .catch((e) => {
+              this.backFinal();
+            });
         }
     
         break;
@@ -3320,18 +3320,19 @@ export class AddMovementOfCashComponent implements OnInit {
           );
       }
 
-    let cancellationTypesAutomatic = await this.getCancellationTypesAutomatic();
-    if (!cancellationTypesAutomatic || cancellationTypesAutomatic.length == 0) {
-      if (this.transaction && this.transaction.type.printable) {
-        this.print();
-        if (this.transaction && this.transaction.type.requestEmailTemplate == true)
-          this.openModal('send-email');
+      let cancellationTypesAutomatic = await this.getCancellationTypesAutomatic();
+      if (!cancellationTypesAutomatic || cancellationTypesAutomatic.length == 0) {
+        if (this.transaction && this.transaction.type.printable) {
+          this.print();
+          if (this.transaction && this.transaction.type.requestEmailTemplate == true)
+            this.openModal('send-email');
+        } else {
+          this.backFinal();
+        }
       } else {
-        this.backFinal();
+        this.openModal('cancelation-type-automatic');
       }
-    } else {
-      this.openModal('cancelation-type-automatic');
-    }
+
       this.activeModal.close({
         movementsOfCashes: this.movementsOfCashes,
         movementOfArticle: this.movementOfArticle,
