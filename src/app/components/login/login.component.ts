@@ -131,10 +131,12 @@ export class LoginComponent implements OnInit {
   }
 
   async login() {
-    this.user = this.loginForm.value.user;
-    this.password = this.loginForm.value.password;
-    this.company = this.loginForm.value.company;
+    this.company = this.loginForm.value.company.trim();
+    this.user = this.loginForm.value.user.trim();
+    this.password = this.loginForm.value.password.trim();
+
     Config.setDatabase(this.company);
+
     this.showMessage("Comprobando usuario...", 'info', false);
     this.loading = true;
 
@@ -146,8 +148,10 @@ export class LoginComponent implements OnInit {
         } else {
           if (result.user.employee) {
             this.showMessage("Ingresando...", 'success', false);
+            
             this._authService.loginStorage(result.user);
             this.initSocket();
+
             await this.getConfigApi().then(config => {
               if (config) {
                 this._configService.setConfig(config);
@@ -155,11 +159,11 @@ export class LoginComponent implements OnInit {
               }
             });
 
+            localStorage.setItem("company", this.company);
+
             let returnURL = '/';
             this._route.queryParams.subscribe(params => returnURL = params['return'] || '/');
             this._router.navigateByUrl(returnURL);
-
-            localStorage.setItem("company", this.company);
            } else {
             this.showMessage('El usuario y/o contraseña son incorrectos', 'info', true);
           }
