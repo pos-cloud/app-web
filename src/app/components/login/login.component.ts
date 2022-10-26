@@ -19,6 +19,7 @@ import { User } from 'app/components/user/user';
 import { ToastrService } from 'ngx-toastr';
 import { Socket } from 'ngx-socket-io';
 import { Employee } from '../employee/employee';
+import { forEachChild } from 'typescript';
 
 @Component({
   selector: 'app-login',
@@ -131,9 +132,11 @@ export class LoginComponent implements OnInit {
   }
 
   async login() {
-    this.company = this.loginForm.value.company.trim();
-    this.user = this.loginForm.value.user.trim();
-    this.password = this.loginForm.value.password.trim();
+    this.company = this.loginForm.value.company
+    this.user = this.loginForm.value.user
+    this.password = this.loginForm.value.password
+
+    if (this.company.match(/[^a-zA-Z0-9]/g)) return this.showToast("El negocio ingresado no fue encontrado.", "danger");
 
     Config.setDatabase(this.company);
 
@@ -148,7 +151,7 @@ export class LoginComponent implements OnInit {
         } else {
           if (result.user.employee) {
             this.showMessage("Ingresando...", 'success', false);
-            
+
             this._authService.loginStorage(result.user);
             this.initSocket();
 
