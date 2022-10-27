@@ -19,7 +19,6 @@ import { User } from 'app/components/user/user';
 import { ToastrService } from 'ngx-toastr';
 import { Socket } from 'ngx-socket-io';
 import { Employee } from '../employee/employee';
-import { forEachChild } from 'typescript';
 
 @Component({
   selector: 'app-login',
@@ -101,7 +100,6 @@ export class LoginComponent implements OnInit {
 
   public buildForm(): void {
     this.company = localStorage.getItem("company");
-
     this.company ? this.checkLockInput = true : this.checkLockInput = false
 
     this.loginForm = this._fb.group({
@@ -136,54 +134,52 @@ export class LoginComponent implements OnInit {
     this.user = this.loginForm.value.user
     this.password = this.loginForm.value.password
 
-    if (this.company.match(/[^a-zA-Z0-9]/g)) return this.showToast("El negocio ingresado no fue encontrado.", "danger");
+    if (this.company.match(/[^a-zA-Z0-9]/g)) {
+      this.showToast("El negocio ingresado no fue encontrado.", "danger");
+    } else {
+      Config.setDatabase(this.company);
+      this.showMessage("Comprobando usuario...", 'info', false);
+      this.loading = true;
+      this._authService.login(this.company, this.user, this.password).subscribe(async result => {
+          this.loading = false;
+          if (!result.user) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          } else {
+            if (result.user.employee) {
+              this.showMessage("Ingresando...", 'success', false);
 
-    Config.setDatabase(this.company);
-
-    this.showMessage("Comprobando usuario...", 'info', false);
-    this.loading = true;
-
-    //Obtener el token del usuario
-    this._authService.login(this.company, this.user, this.password).subscribe(async result => {
-        this.loading = false;
-        if (!result.user) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          if (result.user.employee) {
-            this.showMessage("Ingresando...", 'success', false);
-
-            this._authService.loginStorage(result.user);
-            this.initSocket();
-
-            await this.getConfigApi().then(config => {
-              if (config) {
-                this._configService.setConfig(config);
-                this.setConfigurationSettings(config);
-              }
-            });
-
-            localStorage.setItem("company", this.company);
-
-            let returnURL = '/';
-            this._route.queryParams.subscribe(params => returnURL = params['return'] || '/');
-            this._router.navigateByUrl(returnURL);
-           } else {
-            this.showMessage('El usuario y/o contraseña son incorrectos', 'info', true);
+              this._authService.loginStorage(result.user);
+              this.initSocket();
+  
+              await this.getConfigApi().then(config => {
+                if (config) {
+                  this._configService.setConfig(config);
+                  this.setConfigurationSettings(config);
+                }
+              });
+  
+              localStorage.setItem("company", this.company);
+  
+              this._route.queryParams.subscribe(params => params['return'] || '/');
+              this._router.navigateByUrl('/');
+             } else {
+              this.showMessage('El usuario y/o contraseña son incorrectos', 'info', true);
+            }
+          }
+        },
+        error => {
+          if (error.status === 0) {
+            this.showMessage("Error de conexión con el servidor. Comunicarse con Soporte.", 'danger', false);
+          } else {
+            this.showMessage(error._body, 'danger', false);
           }
         }
-      },
-      error => {
-        if (error.status === 0) {
-          this.showMessage("Error de conexión con el servidor. Comunicarse con Soporte.", 'danger', false);
-        } else {
-          this.showMessage(error._body, 'danger', false);
-        }
-      }
-    );
+      );
+    }
   }
 
   private initSocket(): void {
-    let identity: User = JSON.parse(sessionStorage.getItem('user'));
+    const identity: User = JSON.parse(sessionStorage.getItem('user'));
 
     if (identity && Config.database && Config.database !== '') {
       // INICIAMOS SOCKET
