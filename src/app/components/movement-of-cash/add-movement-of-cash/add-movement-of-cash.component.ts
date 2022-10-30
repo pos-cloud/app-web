@@ -3245,7 +3245,6 @@ export class AddMovementOfCashComponent implements OnInit {
         await this.updateTransaction().then((transaction) => {
           if (transaction) {
             this.transaction = transaction;
-            this.closeModal();
           }
         });
       } else {
