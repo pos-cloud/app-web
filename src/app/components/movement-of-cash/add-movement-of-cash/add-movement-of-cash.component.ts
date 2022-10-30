@@ -3211,7 +3211,6 @@ export class AddMovementOfCashComponent implements OnInit {
     if (this.transaction.type.defectPrinter) {
       this.printerSelected = this.transaction.type.defectPrinter;
       this.typeOfOperationToPrint = 'charge';
-      this.distributeImpressions(this.transaction.type.defectPrinter);
     } else {
       this.openModal('printers');
     }
