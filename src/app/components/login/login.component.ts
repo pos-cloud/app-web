@@ -100,7 +100,12 @@ export class LoginComponent implements OnInit {
 
   public buildForm(): void {
     this.company = localStorage.getItem("company");
-    this.company ? this.checkLockInput = true : this.checkLockInput = false
+
+    if (this.company) {
+      this.checkLockInput = true
+    } else {
+      this.checkLockInput = false
+    }
 
     this.loginForm = this._fb.group({
       'company': [this.company, [Validators.required]],
