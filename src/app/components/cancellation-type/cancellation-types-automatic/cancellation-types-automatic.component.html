@@ -15,8 +15,9 @@
             <div class="form-group col-md-12">
                 <div class="center-content">
                     <div class="btn-group-vertical">
-                        <button type="button" class="btn" [ngClass]="{'btn-outline-primary':cancellationTypeSelected,
-                                  'btn-primary':!cancellationTypeSelected}" (click)="cancellationTypeSelected = null"
+                        <button type="button" class="btn" [ngClass]="{'btn-outline-primary':cancellationTypeSelected, 'btn-primary':!cancellationTypeSelected}" 
+                            (click)="cancellationTypeSelected = null"
+                            (window:keydown.1)="cancellationTypeSelected = null"
                             *ngIf="transaction && transaction.type"
                             [disabled]="loading">
                             {{ transaction.type.name }}
@@ -26,6 +27,7 @@
                                 'btn-outline-primary':!cancellationType || !cancellationTypeSelected ||
                                                       cancellationType._id!==cancellationTypeSelected._id}"
                             (click)="cancellationTypeSelected = cancellationType"
+                            (window:keydown.2)="cancellationTypeSelected = cancellationType"
                             [disabled]="loading">
                             {{ cancellationType.destination.name }}
                         </button>
