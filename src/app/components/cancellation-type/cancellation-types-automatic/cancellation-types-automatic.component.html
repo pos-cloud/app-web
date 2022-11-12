@@ -38,7 +38,7 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
-        <button type="button" class="btn btn-primary" (click)="finishSelection()" [focus]="focusEvent" [disabled]="loading">
+        <button type="button" class="btn btn-primary" (click)="finishSelection()" (window:keydown.enter)="finishSelection()" [focus]="focusEvent" [disabled]="loading">
             <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
             <span *ngIf="!loading">Aceptar</span>
             <span *ngIf="loading">Espere por favor</span>
