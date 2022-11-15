@@ -22,10 +22,7 @@
                             [disabled]="loading">
                             {{ transaction.type.name }}
                         </button>
-                        <button type="button" *ngFor="let cancellationType of cancellationTypes" class="btn" [ngClass]="{'btn-primary':cancellationType && cancellationTypeSelected &&
-                                              cancellationType._id===cancellationTypeSelected._id,
-                                'btn-outline-primary':!cancellationType || !cancellationTypeSelected ||
-                                                      cancellationType._id!==cancellationTypeSelected._id}"
+                        <button type="button" *ngFor="let cancellationType of cancellationTypes" class="btn" [ngClass]="{'btn-primary':cancellationType && cancellationTypeSelected && cancellationType._id===cancellationTypeSelected._id, 'btn-outline-primary':!cancellationType || !cancellationTypeSelected || cancellationType._id!==cancellationTypeSelected._id}"
                             (click)="cancellationTypeSelected = cancellationType"
                             (window:keydown.2)="cancellationTypeSelected = cancellationType"
                             [disabled]="loading">
@@ -34,7 +31,7 @@
                     </div>
                 </div>
             </div>
-            <p class="text-muted mx-auto text-center">Puedes seleccionar con clicks o podes tambien seleccionar con atajo de teclado (1 y/o 2)</p>
+            <p class="text-muted mx-auto text-center">Puedes seleccionar con clicks o podes tambien seleccionar con atajo de teclado (numeros)</p>
         </div>
     </div>
     <div class="modal-footer">
