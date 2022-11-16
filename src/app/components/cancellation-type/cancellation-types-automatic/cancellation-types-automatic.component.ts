@@ -73,6 +73,26 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         if (this.transactionId) {
             this.getTransaction(this.transactionId);
         }
+
+        if (this.cancellationTypes && this.cancellationTypes.length !== 1) {
+            window.addEventListener('keydown', (e) => {
+                if (e.key == '1') {
+                    this.cancellationTypeSelected = null
+                } else if (e.key == '2') {
+                    this.cancellationTypeSelected = this.cancellationTypes[0]
+                } else if (e.key == '3') {
+                    this.cancellationTypeSelected = this.cancellationTypes[1]
+                }
+            })
+        } else {
+            window.addEventListener('keydown', (e) => {
+                if (e.key == '1') {
+                    this.cancellationTypeSelected = null
+                } else if (e.key == '2') {
+                    this.cancellationTypeSelected = this.cancellationTypes[0]
+                }
+            })
+        }
     }
 
     public async getTransaction(transactionId) {

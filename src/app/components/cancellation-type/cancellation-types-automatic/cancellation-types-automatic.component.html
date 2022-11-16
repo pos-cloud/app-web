@@ -17,14 +17,12 @@
                     <div class="btn-group-vertical">
                         <button type="button" class="btn" [ngClass]="{'btn-outline-primary':cancellationTypeSelected, 'btn-primary':!cancellationTypeSelected}" 
                             (click)="cancellationTypeSelected = null"
-                            (window:keydown.1)="cancellationTypeSelected = null"
                             *ngIf="transaction && transaction.type"
                             [disabled]="loading">
                             {{ transaction.type.name }}
                         </button>
                         <button type="button" *ngFor="let cancellationType of cancellationTypes" class="btn" [ngClass]="{'btn-primary':cancellationType && cancellationTypeSelected && cancellationType._id===cancellationTypeSelected._id, 'btn-outline-primary':!cancellationType || !cancellationTypeSelected || cancellationType._id!==cancellationTypeSelected._id}"
                             (click)="cancellationTypeSelected = cancellationType"
-                            (window:keydown.2)="cancellationTypeSelected = cancellationType"
                             [disabled]="loading">
                             {{ cancellationType.destination.name }}
                         </button>
