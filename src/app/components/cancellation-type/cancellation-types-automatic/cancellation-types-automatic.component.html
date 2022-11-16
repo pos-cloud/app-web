@@ -19,12 +19,12 @@
                             (click)="cancellationTypeSelected = null"
                             *ngIf="transaction && transaction.type"
                             [disabled]="loading">
-                            {{ transaction.type.name }}
+                            1: {{ transaction.type.name }}
                         </button>
-                        <button type="button" *ngFor="let cancellationType of cancellationTypes" class="btn" [ngClass]="{'btn-primary':cancellationType && cancellationTypeSelected && cancellationType._id===cancellationTypeSelected._id, 'btn-outline-primary':!cancellationType || !cancellationTypeSelected || cancellationType._id!==cancellationTypeSelected._id}"
+                        <button type="button" *ngFor="let cancellationType of cancellationTypes;let i = index" class="btn" [ngClass]="{'btn-primary':cancellationType && cancellationTypeSelected && cancellationType._id===cancellationTypeSelected._id, 'btn-outline-primary':!cancellationType || !cancellationTypeSelected || cancellationType._id!==cancellationTypeSelected._id}"
                             (click)="cancellationTypeSelected = cancellationType"
                             [disabled]="loading">
-                            {{ cancellationType.destination.name }}
+                            {{ i + 2 }}: {{ cancellationType.destination.name }}
                         </button>
                     </div>
                 </div>

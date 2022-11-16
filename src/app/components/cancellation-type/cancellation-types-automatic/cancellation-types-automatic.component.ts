@@ -80,8 +80,10 @@ export class CancellationTypeAutomaticComponent implements OnInit {
                     this.cancellationTypeSelected = null
                 } else if (e.key == '2') {
                     this.cancellationTypeSelected = this.cancellationTypes[0]
+                    this.finishSelection()
                 } else if (e.key == '3') {
                     this.cancellationTypeSelected = this.cancellationTypes[1]
+                    this.finishSelection()
                 }
             })
         } else {
@@ -90,6 +92,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
                     this.cancellationTypeSelected = null
                 } else if (e.key == '2') {
                     this.cancellationTypeSelected = this.cancellationTypes[0]
+                    this.finishSelection()
                 }
             })
         }
