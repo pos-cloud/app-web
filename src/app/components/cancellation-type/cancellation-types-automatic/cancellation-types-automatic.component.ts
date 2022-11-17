@@ -78,6 +78,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
             window.addEventListener('keydown', (e) => {
                 if (e.key == '1') {
                     this.cancellationTypeSelected = null
+                    this.finishSelection()
                 } else if (e.key == '2') {
                     this.cancellationTypeSelected = this.cancellationTypes[0]
                     this.finishSelection()
@@ -90,6 +91,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
             window.addEventListener('keydown', (e) => {
                 if (e.key == '1') {
                     this.cancellationTypeSelected = null
+                    this.finishSelection()
                 } else if (e.key == '2') {
                     this.cancellationTypeSelected = this.cancellationTypes[0]
                     this.finishSelection()
