@@ -65,6 +65,16 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         public translatePipe: TranslateMePipe,
     ) {
         this.cancellationTypes = new Array();
+
+        window.addEventListener('keydown', (e) => {
+            if(e.key === "1") {
+                this.cancellationTypeSelected = null;
+                this.finishSelection()
+            } else {
+                this.cancellationTypeSelected = this.cancellationTypes[(parseInt(e.key)) - 2]
+                this.finishSelection()
+            }
+        })
     }
 
     ngOnInit() {
@@ -72,31 +82,6 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         this.userType = pathLocation[1];
         if (this.transactionId) {
             this.getTransaction(this.transactionId);
-        }
-
-        if (this.cancellationTypes && this.cancellationTypes.length !== 1) {
-            window.addEventListener('keydown', (e) => {
-                if (e.key == '1') {
-                    this.cancellationTypeSelected = null
-                    this.finishSelection()
-                } else if (e.key == '2') {
-                    this.cancellationTypeSelected = this.cancellationTypes[0]
-                    this.finishSelection()
-                } else if (e.key == '3') {
-                    this.cancellationTypeSelected = this.cancellationTypes[1]
-                    this.finishSelection()
-                }
-            })
-        } else {
-            window.addEventListener('keydown', (e) => {
-                if (e.key == '1') {
-                    this.cancellationTypeSelected = null
-                    this.finishSelection()
-                } else if (e.key == '2') {
-                    this.cancellationTypeSelected = this.cancellationTypes[0]
-                    this.finishSelection()
-                }
-            })
         }
     }
 

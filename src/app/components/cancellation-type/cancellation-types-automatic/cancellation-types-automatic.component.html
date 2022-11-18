@@ -21,7 +21,7 @@
                             [disabled]="loading">
                             1: {{ transaction.type.name }}
                         </button>
-                        <button type="button" *ngFor="let cancellationType of cancellationTypes;let i = index" class="btn" [ngClass]="{'btn-primary':cancellationType && cancellationTypeSelected && cancellationType._id===cancellationTypeSelected._id, 'btn-outline-primary':!cancellationType || !cancellationTypeSelected || cancellationType._id!==cancellationTypeSelected._id}"
+                        <button type="button" *ngFor="let cancellationType of cancellationTypes; let i = index" class="btn" [ngClass]="{'btn-primary':cancellationType && cancellationTypeSelected && cancellationType._id===cancellationTypeSelected._id, 'btn-outline-primary':!cancellationType || !cancellationTypeSelected || cancellationType._id!==cancellationTypeSelected._id}"
                             (click)="cancellationTypeSelected = cancellationType"
                             [disabled]="loading">
                             {{ i + 2 }}: {{ cancellationType.destination.name }}
@@ -34,7 +34,7 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
-        <button type="button" class="btn btn-primary" (click)="finishSelection()" (window:keydown.enter)="finishSelection()" [focus]="focusEvent" [disabled]="loading">
+        <button type="button" class="btn btn-primary" (click)="finishSelection()" [focus]="focusEvent" [disabled]="loading">
             <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
             <span *ngIf="!loading">Aceptar</span>
             <span *ngIf="loading">Espere por favor</span>
