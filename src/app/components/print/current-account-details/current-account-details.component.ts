@@ -23,7 +23,6 @@ import { TransactionTypeService } from 'app/components/transaction-type/transact
 import { CompanyGroup } from 'app/components/company-group/company-group';
 import { CompanyGroupService } from 'app/components/company-group/company-group.service';
 import { Transaction } from 'app/components/transaction/transaction';
-import { padString } from '../../../util/functions/pad/padString';
 
 let splitRegex = /\r\n|\r|\n/g;
 jsPDF.API['textEx'] = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
@@ -792,13 +791,13 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     }
                     let comprobante = '';
                     if (transaction.origin) {
-                        comprobante += padString(transaction.origin, 4) + "-"
+                        comprobante += this.padString(transaction.origin, 4) + "-"
                     }
                     if (transaction.letter) {
                         comprobante += transaction.letter + "-"
                     }
                     if (transaction.number) {
-                        comprobante += padString(transaction.number, 8)
+                        comprobante += this.padString(transaction.number, 8)
                     }
                     this.doc.text(75, row, comprobante);
                     if (transaction.expirationDate) {
@@ -1581,13 +1580,13 @@ export class CurrentAccountDetailsComponent implements OnInit {
                             }
                             let comprobante = '';
                             if (transaction.origin) {
-                                comprobante += padString(transaction.origin, 4) + "-"
+                                comprobante += this.padString(transaction.origin, 4) + "-"
                             }
                             if (transaction.letter) {
                                 comprobante += transaction.letter + "-"
                             }
                             if (transaction.number) {
-                                comprobante += padString(transaction.number, 8)
+                                comprobante += this.padString(transaction.number, 8)
                             }
                             this.doc.text(75, row, comprobante);
                             if (transaction.expirationDate) {
@@ -1736,6 +1735,13 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
     public closeModal() {
         this.activeModal.close(this.hasChanged);
+    }
+
+    public padString(n, length) {
+        n = n.toString();
+        while (n.length < length)
+            n = "0" + n;
+        return n;
     }
 
     public getEmployees(): void {

@@ -12,7 +12,6 @@ import { Voucher } from 'app/components/voucher-reader/voucher';
 import { VoucherService } from 'app/components/voucher-reader/voucher.service';
 import { ClaimService } from 'app/layout/claim/claim.service';
 import { CapitalizePipe } from 'app/main/pipes/capitalize';
-import { padString } from 'app/util/functions/pad/padString';
 import jsPDF from 'jspdf';
 import * as moment from 'moment';
 
@@ -589,14 +588,14 @@ export class PrintComponent implements OnInit {
     this.doc.setFont('', 'normal');
     if (Config.country === 'AR') {
       this.doc.text(
-        padString(this.transaction.origin, 4) +
+        this.padString(this.transaction.origin, 4) +
         '-' +
-        padString(this.transaction.number, 10),
+        this.padString(this.transaction.number, 10),
         130,
         20,
       );
     } else {
-      this.doc.text(padString(this.transaction.number, 10), 130, 20);
+      this.doc.text(this.padString(this.transaction.number, 10), 130, 20);
     }
     this.doc.setFont('', 'bold');
     this.doc.text('Fecha:', 110, 25);
@@ -625,7 +624,7 @@ export class PrintComponent implements OnInit {
           ) {
             this.doc.setFontSize('8');
             this.doc.text(
-              'Cod:' + padString(this.transaction.type.codes[i].code.toString(), 2),
+              'Cod:' + this.padString(this.transaction.type.codes[i].code.toString(), 2),
               101,
               16,
             );
@@ -803,14 +802,14 @@ export class PrintComponent implements OnInit {
           this.doc.setFont('', 'normal');
           if (Config.country === 'AR') {
             this.doc.text(
-              padString(this.transaction.origin, 4) +
+              this.padString(this.transaction.origin, 4) +
               '-' +
-              padString(this.transaction.number, 10),
+              this.padString(this.transaction.number, 10),
               130,
               20,
             );
           } else {
-            this.doc.text(padString(this.transaction.number, 10), 130, 20);
+            this.doc.text(this.padString(this.transaction.number, 10), 130, 20);
           }
           this.doc.setFont('', 'bold');
           this.doc.text('Fecha:', 110, 25);
@@ -837,7 +836,7 @@ export class PrintComponent implements OnInit {
                   this.doc.setFontSize('8');
                   this.doc.text(
                     'Cod:' +
-                    padString(this.transaction.type.codes[i].code.toString(), 2),
+                    this.padString(this.transaction.type.codes[i].code.toString(), 2),
                     101,
                     16,
                   );
@@ -950,9 +949,9 @@ export class PrintComponent implements OnInit {
         this.doc.text(
           movCancelation[index].transactionOrigin.type.name +
           '   ' +
-          padString(movCancelation[index].transactionOrigin.origin, 4) +
+          this.padString(movCancelation[index].transactionOrigin.origin, 4) +
           '-' +
-          padString(movCancelation[index].transactionOrigin.number, 8),
+          this.padString(movCancelation[index].transactionOrigin.number, 8),
           10,
           row,
         );
@@ -1009,14 +1008,14 @@ export class PrintComponent implements OnInit {
           this.doc.setFont('', 'normal');
           if (Config.country === 'AR') {
             this.doc.text(
-              padString(this.transaction.origin, 4) +
+              this.padString(this.transaction.origin, 4) +
               '-' +
-              padString(this.transaction.number, 10),
+              this.padString(this.transaction.number, 10),
               130,
               20,
             );
           } else {
-            this.doc.text(padString(this.transaction.number, 10), 130, 20);
+            this.doc.text(this.padString(this.transaction.number, 10), 130, 20);
           }
           this.doc.setFont('', 'bold');
           this.doc.text('Fecha:', 110, 25);
@@ -1043,7 +1042,7 @@ export class PrintComponent implements OnInit {
                   this.doc.setFontSize('8');
                   this.doc.text(
                     'Cod:' +
-                    padString(this.transaction.type.codes[i].code.toString(), 2),
+                    this.padString(this.transaction.type.codes[i].code.toString(), 2),
                     101,
                     16,
                   );
@@ -2585,17 +2584,17 @@ export class PrintComponent implements OnInit {
         }
         if (Config.country === 'AR') {
           this.doc.text(
-            padString(item.transactionOrigin, 4) +
+            this.padString(item.transactionOrigin, 4) +
             '-' +
             item.transactionLetter +
             '-' +
-            padString(item.transactionNumber, 10),
+            this.padString(item.transactionNumber, 10),
             90,
             row,
           );
         } else {
           this.doc.text(
-            item.transactionLetter + '-' + padString(item.transactionNumber, 10),
+            item.transactionLetter + '-' + this.padString(item.transactionNumber, 10),
             90,
             row,
           );
@@ -2797,14 +2796,14 @@ export class PrintComponent implements OnInit {
       this.doc.setFont('', 'normal');
       if (Config.country === 'AR') {
         this.doc.text(
-          padString(this.transaction.origin, 4) +
+          this.padString(this.transaction.origin, 4) +
           '-' +
-          padString(this.transaction.number, 8),
+          this.padString(this.transaction.number, 8),
           130,
           25,
         );
       } else {
-        this.doc.text(padString(this.transaction.number, 8), 130, 25);
+        this.doc.text(this.padString(this.transaction.number, 8), 130, 25);
       }
       this.doc.setFont('', 'bold');
       this.doc.text('Fecha:', 110, 30);
@@ -3268,14 +3267,14 @@ export class PrintComponent implements OnInit {
               this.doc.setFont('', 'normal');
               if (Config.country === 'AR') {
                 this.doc.text(
-                  padString(this.transaction.origin, 4) +
+                  this.padString(this.transaction.origin, 4) +
                   '-' +
-                  padString(this.transaction.number, 10),
+                  this.padString(this.transaction.number, 10),
                   130,
                   20,
                 );
               } else {
-                this.doc.text(padString(this.transaction.number, 10), 130, 20);
+                this.doc.text(this.padString(this.transaction.number, 10), 130, 20);
               }
               this.doc.setFont('', 'bold');
               this.doc.text('Fecha:', 110, 25);
@@ -3332,9 +3331,9 @@ export class PrintComponent implements OnInit {
           this.doc.text(
             movCancelation[index].transactionOrigin.type.name +
             '   ' +
-            padString(movCancelation[index].transactionOrigin.origin, 4) +
+            this.padString(movCancelation[index].transactionOrigin.origin, 4) +
             '-' +
-            padString(movCancelation[index].transactionOrigin.number, 8),
+            this.padString(movCancelation[index].transactionOrigin.number, 8),
             10,
             row,
           );
@@ -3428,14 +3427,14 @@ export class PrintComponent implements OnInit {
             this.doc.setFont('', 'normal');
             if (Config.country === 'AR') {
               this.doc.text(
-                padString(this.transaction.origin, 4) +
+                this.padString(this.transaction.origin, 4) +
                 '-' +
-                padString(this.transaction.number, 10),
+                this.padString(this.transaction.number, 10),
                 130,
                 20,
               );
             } else {
-              this.doc.text(padString(this.transaction.number, 10), 130, 20);
+              this.doc.text(this.padString(this.transaction.number, 10), 130, 20);
             }
             this.doc.setFont('', 'bold');
             this.doc.text('Fecha:', 110, 25);
@@ -3948,14 +3947,14 @@ export class PrintComponent implements OnInit {
     if (Config.country === 'AR') {
       this.doc.text(
         'N°:' +
-        padString(this.transaction.origin, 4) +
+        this.padString(this.transaction.origin, 4) +
         '-' +
-        padString(this.transaction.number, 8),
+        this.padString(this.transaction.number, 8),
         45,
         65,
       );
     } else {
-      this.doc.text('N°:' + padString(this.transaction.number, 8), 45, 65);
+      this.doc.text('N°:' + this.padString(this.transaction.number, 8), 45, 65);
     }
     this.doc.text(this.transaction.endDate.split(' ')[0], 45, 70);
 
@@ -5340,6 +5339,13 @@ export class PrintComponent implements OnInit {
     xhr.open('GET', url);
     xhr.responseType = 'blob';
     xhr.send();
+  }
+
+  padString(n, length) {
+    n = n.toString();
+    while (n.length < length) n = '0' + n;
+
+    return n;
   }
 
   getBarcode64(barcode, op: string): void {

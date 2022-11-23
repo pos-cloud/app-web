@@ -774,9 +774,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         }
         this.movementOfArticleForm.value.notes = this.movementOfArticle.notes;
       }
-
       
-
       if (this.containsVariants) {
         this.movementOfArticle.article = this.getArticleBySelectedVariants();
       }

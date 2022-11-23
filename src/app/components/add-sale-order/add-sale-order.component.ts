@@ -45,6 +45,7 @@ import {ArticlePrintIn, Article} from '../article/article';
 import {AddArticleComponent} from '../article/article/add-article.component';
 import {ListArticlesPosComponent} from '../article/list-articles-pos/list-articles-pos.component';
 import {BusinessRuleService} from '../business-rules/business-rule.service';
+import {BusinessRule} from '../business-rules/business-rules';
 import {CancellationTypeAutomaticComponent} from '../cancellation-type/cancellation-types-automatic/cancellation-types-automatic.component';
 import {Category} from '../category/category';
 import {ListCategoriesPosComponent} from '../category/list-categories-pos/list-categories-pos.component';
@@ -68,6 +69,7 @@ import {PrintComponent} from '../print/print/print.component';
 import {Printer, PrinterType, PrinterPrintIn} from '../printer/printer';
 import {PrinterService} from '../printer/printer.service';
 import {SendEmailComponent} from '../send-email/send-email.component';
+import {EmailService} from '../send-email/send-email.service';
 import {SelectShipmentMethodComponent} from '../shipment-method/select-shipment-method/select-shipment-method.component';
 import {Table, TableState} from '../table/table';
 import {TableService} from '../table/table.service';
@@ -88,13 +90,7 @@ import {SelectTransportComponent} from '../transport/select-transport/select-tra
 import {UserService} from '../user/user.service';
 
 import {Config} from './../../app.config';
-<<<<<<< HEAD
 import { EmailProps } from 'app/types';
-import { padNumber } from 'app/util/functions/pad/padNumber';
-import { removeParam } from 'app/util/functions/removeParam';
-=======
-import { EmailService } from '../send-email/send-email.service';
->>>>>>> parent of 42dc291c (Tk-138 Opcion descuento)
 
 @Component({
   selector: 'app-add-sale-order',
@@ -169,6 +165,7 @@ export class AddSaleOrderComponent {
   database: string;
   lastMovementOfArticle: MovementOfArticle;
   isCancellationAutomatic: boolean = false;
+  showBussinessRulesButton: boolean = false;
   priceList: PriceList;
   newPriceList: PriceList;
   increasePrice = 0;
@@ -310,6 +307,12 @@ export class AddSaleOrderComponent {
           }
           this.backFinal();
         } else {
+          this.getBusinessRules().then((businessRules) => {
+            if (businessRules && businessRules.length > 0) {
+              this.showBussinessRulesButton = true;
+            }
+          });
+
           this.transactionMovement = '' + this.transaction.type.transactionMovement || '';
           this.filtersTaxClassification = [
             TaxClassification.Withholding,
@@ -362,6 +365,35 @@ export class AddSaleOrderComponent {
         this.focusEvent.emit(true);
       }
     }, 1000);
+  }
+
+  getBusinessRules(): Promise<BusinessRule[]> {
+    return new Promise<BusinessRule[]>((resolve) => {
+      this.loading = true;
+
+      this._businessRulesService
+        .getAll({
+          match: {
+            $or: [
+              {transactionTypeIds: {$in: [this.transaction.type._id]}},
+              {transactionTypeIds: {$size: 0}},
+            ],
+          },
+        })
+        .subscribe(
+          (result: Resulteable) => {
+            if (result.status === 200) {
+              resolve(result.result);
+            } else {
+              resolve(null);
+            }
+          },
+          () => {
+            this.loading = false;
+            resolve(null);
+          },
+        );
+    });
   }
 
   getPriceList(id: string): Promise<PriceList> {
@@ -2276,25 +2308,14 @@ export class AddSaleOrderComponent {
           }
         }
 
-<<<<<<< HEAD
         const email: EmailProps = {
           to: this.transaction.company.emails,
-          subject: `${labelPrint} ${padNumber(this.transaction.origin, 4)}-${
+          subject: `${labelPrint} ${this.padNumber(this.transaction.origin, 4)}-${
             this.transaction.letter
-          }-${padNumber(this.transaction.number, 8)}`,
-=======
-        
-
-        const email = {
-          to: this.transaction.company.emails,
-          subject: `${labelPrint} ${this.padNumber(
-            this.transaction.origin,
-            4,
-          )}-${this.transaction.letter}-${this.padNumber(this.transaction.number, 8)}`,
->>>>>>> parent of 42dc291c (Tk-138 Opcion descuento)
+          }-${this.padNumber(this.transaction.number, 8)}`,
           body: this.transaction.type.defectEmailTemplate.design,
-          attachments: attachments
-        }
+          attachments: attachments,
+        };
 
         this.sendEmail(email);
 
@@ -2506,7 +2527,8 @@ export class AddSaleOrderComponent {
             } else {
               if (this.transaction && this.transaction.type.printable) {
                 this.print();
-                if (this.transaction && this.transaction.type.requestEmailTemplate) this.openModal('send-email');
+                if (this.transaction && this.transaction.type.requestEmailTemplate)
+                  this.openModal('send-email');
               } else {
                 this.backFinal();
               }
@@ -2515,8 +2537,9 @@ export class AddSaleOrderComponent {
           (reason) => {
             if (this.transaction && this.transaction.type.printable) {
               this.print();
-              if (this.transaction && this.transaction.type.requestEmailTemplate) this.openModal('send-email');
-            }else {
+              if (this.transaction && this.transaction.type.requestEmailTemplate)
+                this.openModal('send-email');
+            } else {
               this.backFinal();
             }
           },
@@ -2680,26 +2703,27 @@ export class AddSaleOrderComponent {
         });
         break;
       case 'print':
-        
-          if (this.transaction.type.readLayout) {
-            modalRef = this._modalService.open(PrintTransactionTypeComponent);
-            modalRef.componentInstance.transactionId = this.transaction._id;
-            modalRef.result.then(() => {
-              this.backFinal();
-            });
-          } else {
-            modalRef = this._modalService.open(PrintComponent);
-            modalRef.componentInstance.transactionId = this.transaction._id;
-            modalRef.componentInstance.company = this.transaction.company;
-            modalRef.componentInstance.printer = this.printerSelected;
-            modalRef.componentInstance.typePrint = 'invoice';
-            modalRef.result.then(() => {
-              this.backFinal();
-            }).catch((e) =>{
+        if (this.transaction.type.readLayout) {
+          modalRef = this._modalService.open(PrintTransactionTypeComponent);
+          modalRef.componentInstance.transactionId = this.transaction._id;
+          modalRef.result.then(() => {
+            this.backFinal();
+          });
+        } else {
+          modalRef = this._modalService.open(PrintComponent);
+          modalRef.componentInstance.transactionId = this.transaction._id;
+          modalRef.componentInstance.company = this.transaction.company;
+          modalRef.componentInstance.printer = this.printerSelected;
+          modalRef.componentInstance.typePrint = 'invoice';
+          modalRef.result
+            .then(() => {
               this.backFinal();
             })
-          }
-        
+            .catch((e) => {
+              this.backFinal();
+            });
+        }
+
         break;
       case 'printKitchen':
         modalRef = this._modalService.open(PrintComponent);
@@ -2708,11 +2732,13 @@ export class AddSaleOrderComponent {
         modalRef.componentInstance.printer = this.printerSelected;
         modalRef.componentInstance.typePrint = 'kitchen';
 
-        modalRef.result.then(() => {
-          this.updateMovementOfArticlePrintedKitchen();
-        }).catch((e) =>{
-          this.updateMovementOfArticlePrintedKitchen();
-        })
+        modalRef.result
+          .then(() => {
+            this.updateMovementOfArticlePrintedKitchen();
+          })
+          .catch((e) => {
+            this.updateMovementOfArticlePrintedKitchen();
+          });
         break;
       case 'printBar':
         modalRef = this._modalService.open(PrintComponent);
@@ -2721,11 +2747,13 @@ export class AddSaleOrderComponent {
         modalRef.componentInstance.printer = this.printerSelected;
         modalRef.componentInstance.typePrint = 'bar';
 
-        modalRef.result.then(() => {
-          this.updateMovementOfArticlePrintedBar();
-        }).catch((e) =>{
-          this.updateMovementOfArticlePrintedBar();
-        })
+        modalRef.result
+          .then(() => {
+            this.updateMovementOfArticlePrintedBar();
+          })
+          .catch((e) => {
+            this.updateMovementOfArticlePrintedBar();
+          });
         break;
       case 'printVoucher':
         modalRef = this._modalService.open(PrintComponent);
@@ -2734,11 +2762,13 @@ export class AddSaleOrderComponent {
         modalRef.componentInstance.printer = this.printerSelected;
         modalRef.componentInstance.typePrint = 'voucher';
 
-        modalRef.result.then(() => {
-          this.updateMovementOfArticlePrintedVoucher();
-        }).catch((e) =>{
-          this.updateMovementOfArticlePrintedVoucher();
-        })
+        modalRef.result
+          .then(() => {
+            this.updateMovementOfArticlePrintedVoucher();
+          })
+          .catch((e) => {
+            this.updateMovementOfArticlePrintedVoucher();
+          });
         break;
       case 'import':
         modalRef = this._modalService.open(ImportComponent, {
@@ -3119,14 +3149,16 @@ export class AddSaleOrderComponent {
         this.transaction.table = await this.updateTable(table);
       }
 
-      if (this.transaction.type.allowAccounting) this._accountSeatService.addAccountSeatByTransaction(this.transaction._id);
+      if (this.transaction.type.allowAccounting)
+        this._accountSeatService.addAccountSeatByTransaction(this.transaction._id);
 
       let cancellationTypesAutomatic = await this.getCancellationTypesAutomatic();
 
       if (!cancellationTypesAutomatic || cancellationTypesAutomatic.length == 0) {
         if (this.transaction && this.transaction.type.printable) {
           this.print();
-          if (this.transaction && this.transaction.type.requestEmailTemplate) this.openModal('send-email');
+          if (this.transaction && this.transaction.type.requestEmailTemplate)
+            this.openModal('send-email');
         } else {
           this.backFinal();
         }
@@ -3243,8 +3275,6 @@ export class AddSaleOrderComponent {
   }
 
   async close(op?: string) {
-
-
     if (op === 'charge') {
       this.isCharge = true;
     } else {
@@ -3307,7 +3337,7 @@ export class AddSaleOrderComponent {
             let paramsFromRoute = params['returnURL'].split('?')[1];
 
             if (paramsFromRoute && paramsFromRoute !== '') {
-              paramsFromRoute = removeParam(paramsFromRoute, 'automaticCreation');
+              paramsFromRoute = this.removeParam(paramsFromRoute, 'automaticCreation');
               route +=
                 '?' +
                 paramsFromRoute +
@@ -3319,7 +3349,7 @@ export class AddSaleOrderComponent {
             this._router.navigateByUrl(route);
           } else {
             this._router.navigateByUrl(
-              removeParam(params['returnURL'], 'automaticCreation'),
+              this.removeParam(params['returnURL'], 'automaticCreation'),
             );
           }
         } else {
@@ -3327,6 +3357,26 @@ export class AddSaleOrderComponent {
         }
       }
     });
+  }
+
+  private removeParam(sourceURL: string, key: string) {
+    let rtn = sourceURL.split('?')[0],
+      param,
+      params_arr = [],
+      queryString = sourceURL.indexOf('?') !== -1 ? sourceURL.split('?')[1] : '';
+
+    if (queryString !== '') {
+      params_arr = queryString.split('&');
+      for (let i = params_arr.length - 1; i >= 0; i -= 1) {
+        param = params_arr[i].split('=')[0];
+        if (param === key) {
+          params_arr.splice(i, 1);
+        }
+      }
+      rtn = rtn + '?' + params_arr.join('&');
+    }
+
+    return rtn;
   }
 
   getTable(tableId: string): Promise<Table> {
@@ -3650,8 +3700,6 @@ export class AddSaleOrderComponent {
         this.showToast(null, 'info', 'Debe iniciar sesión');
       }
 
-      console.log(this.typeOfOperationToPrint);
-
       switch (this.typeOfOperationToPrint) {
         case 'charge':
           if (printer.type === PrinterType.PDF) {
@@ -3942,9 +3990,6 @@ export class AddSaleOrderComponent {
     this.loading = false;
   }
 
-<<<<<<< HEAD
-  public sendEmail(body: EmailProps): void {
-=======
   padNumber(n, length): string {
     n = n.toString();
     while (n.length < length) n = '0' + n;
@@ -3952,16 +3997,14 @@ export class AddSaleOrderComponent {
     return n;
   }
 
-  public sendEmail (body: {}): void {
-    
->>>>>>> parent of 42dc291c (Tk-138 Opcion descuento)
+  public sendEmail(body: EmailProps): void {
     this._serviceEmail.sendEmailV2(body).subscribe(
-      result => {
-        this.showToast(result)
+      (result) => {
+        this.showToast(result);
       },
-      err => {
+      (err) => {
         this.showToast(err);
-      }
+      },
     );
   }
 }

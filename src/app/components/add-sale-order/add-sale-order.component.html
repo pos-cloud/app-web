@@ -61,7 +61,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="item-header">
+                <div class="item-header" *ngIf="showBussinessRulesButton">
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-light" (click)="openModal('apply-bussiness-rule-code')">
                             Regla de negocio

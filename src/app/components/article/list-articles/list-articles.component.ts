@@ -770,6 +770,11 @@ export class ListArticlesComponent implements OnInit {
     );
   }
 
+  public padNumber(n, length) {
+    n = n.toString();
+    while (n.length < length) n = "0" + n;
+    return n;
+  }
 
   public saveClaim(titulo: string, message: string): void {
     this.loading = true;

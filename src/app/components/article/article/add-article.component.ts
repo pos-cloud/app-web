@@ -14,7 +14,6 @@ import {Router} from '@angular/router';
 
 // Terceros
 import {NgbAlertConfig, NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import { padString } from 'app/util/functions/pad/padString';
 import * as $ from 'jquery';
 
 // Models
@@ -968,6 +967,15 @@ export class AddArticleComponent implements OnInit {
     return variantsToReturn;
   }
 
+  padString(n, length) {
+    n = n.toString();
+    while (n.length < length) {
+      n = '0' + n;
+    }
+
+    return n;
+  }
+
   validateAutocomplete(c: FormControl) {
     let result =
       c.value && Object.keys(c.value)[0] === '0'
@@ -986,7 +994,7 @@ export class AddArticleComponent implements OnInit {
 
     this._articleService.getArticles(query).subscribe(
       (result) => {
-        let code = padString(1, this.config.article.code.validators.maxLength);
+        let code = this.padString(1, this.config.article.code.validators.maxLength);
 
         if (result.articles) {
           if (result.articles[0]) {
@@ -996,11 +1004,11 @@ export class AddArticleComponent implements OnInit {
                 this.config.article.code.validators.maxLength,
               );
             } else {
-              code = padString(1, this.config.article.code.validators.maxLength);
+              code = this.padString(1, this.config.article.code.validators.maxLength);
             }
           }
         }
-        this.article.code = padString(
+        this.article.code = this.padString(
           code,
           this.config.article.code.validators.maxLength,
         );
@@ -1344,7 +1352,7 @@ export class AddArticleComponent implements OnInit {
       this.article._id = '';
     }
     if (!this.article.code) {
-      this.article.code = padString(
+      this.article.code = this.padString(
         1,
         this.config.article.code.validators.maxLength,
       );

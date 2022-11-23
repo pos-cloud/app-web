@@ -35,7 +35,6 @@ import { SelectCompanyComponent } from '../company/select-company/select-company
 import { AuthService } from '../login/auth.service';
 import { User } from 'app/components/user/user';
 import { first } from 'rxjs/operators';
-import { padNumber } from 'app/util/functions/pad/padNumber';
 
 @Component({
     selector: 'app-current-account',
@@ -387,7 +386,7 @@ export class CurrentAccountComponent implements OnInit {
                 if (transaction.type.labelPrint) {
                     labelPrint = transaction.type.labelPrint;
                 }
-                modalRef.componentInstance.subject = `${labelPrint} ${padNumber(transaction.origin, 4)}-${transaction.letter}-${padNumber(transaction.number, 8)}`;
+                modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(transaction.origin, 4)}-${transaction.letter}-${this.padNumber(transaction.number, 8)}`;
                 if (transaction.type.electronics) {
                     // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente` + `<a href="http://${Config.apiHost}:300/api/print/invoice/${Config.database}/${transaction._id}">Su comprobante</a>`
                     modalRef.componentInstance.body = ' '
@@ -516,6 +515,13 @@ export class CurrentAccountComponent implements OnInit {
 
             default: ;
         }
+    }
+
+    public padNumber(n, length): string {
+        n = n.toString();
+        while (n.length < length)
+            n = "0" + n;
+        return n;
     }
 
     public getTransaction(transactionId: string): Promise<Transaction> {
