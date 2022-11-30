@@ -197,6 +197,7 @@ export class ListCashBoxComponent implements OnInit {
             "transaction._id": 1,
             "transaction.state": 1,
             "transaction.type.name": 1,
+            "transaction.observation": 1,
             "transaction.type.transactionMovement": 1,
             "transaction.type.movement": 1,
             "transaction.cashBox._id": 1,

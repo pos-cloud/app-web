@@ -1,5 +1,5 @@
 <section class="container-fluid">
-  <div class="card ">
+  <div class="card">
     <div class="card-header">Detalle de Caja
       <div class="pull-right">
       <!--  <button class= "btn" (click)="openModal('print')" ><i class="fa fa-print"></i><span>Imprimir</span></button>-->
@@ -51,15 +51,16 @@
               <th class="align-center" colspan="3" class="th balance-data">Movimientos</th>
             </tr>
             <tr>
-              <th class=""><i class="fa fa-bars"></i></th>
-              <th class="">Fecha</th>
-              <th class="">Movimiento</th>
-              <th class="">Nombre</th>
-              <th class="">Numero</th>
-              <th class="">Metodo de Pago</th>
-              <th class="">Entrada</th>
-              <th class="">Salida</th>
-              <th class="">Total</th>
+              <th><i class="fa fa-bars"></i></th>
+              <th>Fecha</th>
+              <th>Movimiento</th>
+              <th>Nombre</th>
+              <th>Numero</th>
+              <th>Metodo de Pago</th>
+              <th>Observación</th>
+              <th>Entrada</th>
+              <th>Salida</th>
+              <th>Total</th>
             </tr>
             <tr class="filters">
               <th></th>
@@ -86,6 +87,7 @@
               <td class="align-center" *ngIf="movementsOfCash.transaction.type">{{movementsOfCash.transaction.type.name}}</td>
               <td class="align-center" *ngIf="movementsOfCash.transaction">{{movementsOfCash.transaction.number}}</td>
               <td class="align-center" *ngIf="movementsOfCash.type.name">{{movementsOfCash.type.name}}</td>
+              <td class="align-center">{{movementsOfCash.transaction.observation}}</td>
               <td class="align-center" *ngIf="movementsOfCash.transaction.type.movement === 'Entrada'">{{movementsOfCash.amountPaid | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
               <td class="align-center" *ngIf="movementsOfCash.transaction.type.movement !== 'Entrada'"></td>
               <td class="align-center" *ngIf="movementsOfCash.transaction.type.movement === 'Salida'">{{movementsOfCash.amountPaid | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
