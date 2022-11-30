@@ -87,7 +87,8 @@
               <td class="align-center" *ngIf="movementsOfCash.transaction.type">{{movementsOfCash.transaction.type.name}}</td>
               <td class="align-center" *ngIf="movementsOfCash.transaction">{{movementsOfCash.transaction.number}}</td>
               <td class="align-center" *ngIf="movementsOfCash.type.name">{{movementsOfCash.type.name}}</td>
-              <td class="align-center">{{movementsOfCash.transaction.observation}}</td>
+              <td class="align-center" *ngIf="movementsOfCash.transaction.observation">{{movementsOfCash.transaction.observation}}</td>
+              <td class="align-center" *ngIf="!movementsOfCash.transaction.observation"></td>
               <td class="align-center" *ngIf="movementsOfCash.transaction.type.movement === 'Entrada'">{{movementsOfCash.amountPaid | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
               <td class="align-center" *ngIf="movementsOfCash.transaction.type.movement !== 'Entrada'"></td>
               <td class="align-center" *ngIf="movementsOfCash.transaction.type.movement === 'Salida'">{{movementsOfCash.amountPaid | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
