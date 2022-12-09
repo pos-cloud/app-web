@@ -206,8 +206,8 @@ export class AppComponent {
         Config.setApiV8Host('https://apiv8.poscloud.com.ar'); // DONWEB
       }
     } else {
-        Config.setApiHost(environment.api); // TEST
-        Config.setApiV8Host(environment.apiv2); // TEST
+        Config.setApiHost(`https://tapi.poscloud.com.ar`); // TEST
+        Config.setApiV8Host(`https://tapiv2.poscloud.com.ar`); // TEST
     }
   }
 
