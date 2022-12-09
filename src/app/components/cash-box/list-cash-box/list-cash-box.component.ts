@@ -12,7 +12,6 @@ import { ViewTransactionComponent } from '../../transaction/view-transaction/vie
 import { ListCashBoxesComponent } from '../list-cash-boxes/list-cash-boxes.component';
 import { CashBoxService } from 'app/components/cash-box/cash-box.service';
 import { Movements } from 'app/components/transaction-type/transaction-type';
-import { PrintArticlesStockComponent } from '../../print/print-articles-stock/print-articles-stock.component';
 import { PrintComponent } from '../../print/print/print.component';
 
 
