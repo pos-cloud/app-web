@@ -1,5 +1,6 @@
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { Config } from "app/app.config";
 import { Variant } from "app/components/variant/variant";
 import { environment } from "environments/environment";
 import { of } from "rxjs";
@@ -22,7 +23,7 @@ export class ArticleService extends ModelService {
   }
 
   public getArticle(_id: string): Observable<any> {
-    const URL = `${environment.api}/article`;
+    const URL = `${Config.apiURL}article`;
 
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json")
@@ -46,7 +47,7 @@ export class ArticleService extends ModelService {
   }
 
   public getArticles(query?: string): Observable<any> {
-    const URL = `${environment.api}/articles`;
+    const URL = `${Config.apiURL}articles`;
 
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json")
@@ -77,7 +78,7 @@ export class ArticleService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${environment.api}/v2/articles`;
+    const URL = `${Config.apiURL}v2/articles`;
 
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json")
@@ -114,7 +115,7 @@ export class ArticleService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${environment.api}/v2/histories`;
+    const URL = `${Config.apiURL}v2/histories`;
 
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json")
@@ -144,7 +145,7 @@ export class ArticleService extends ModelService {
   }
 
   public saveArticle(article: Article, variants: Variant[]): Observable<any> {
-    const URL = `${environment.api}/article`;
+    const URL = `${Config.apiURL}article`;
 
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json")
@@ -169,7 +170,7 @@ export class ArticleService extends ModelService {
   }
 
   public updateArticle(article: Article, variants: Variant[]): Observable<any> {
-    const URL = `${environment.api}/article`;
+    const URL = `${Config.apiURL}article`;
 
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json")
@@ -197,7 +198,7 @@ export class ArticleService extends ModelService {
   }
 
   public updatePrice(query: string, decimal: string): Observable<any> {
-    const URL = `${environment.api}/update-prices`;
+    const URL = `${Config.apiURL}update-prices`;
 
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json")
@@ -221,7 +222,7 @@ export class ArticleService extends ModelService {
   }
 
   public updatePrice2(query: string): Observable<any> {
-    const URL = `${environment.api}/articles/update-prices`;
+    const URL = `${Config.apiURL}articles/update-prices`;
 
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json")
@@ -304,7 +305,7 @@ export class ArticleService extends ModelService {
   }
 
   public deleteImage(picture: string): Observable<any> {
-    const URL = `${environment.api}/delete-image-article`;
+    const URL = `${Config.apiURL}delete-image-article`;
 
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json")
@@ -328,7 +329,7 @@ export class ArticleService extends ModelService {
   }
 
   public getPicture(picture: string): Observable<any> {
-    const URL = `${environment.api}/get-image-base64-article`;
+    const URL = `${Config.apiURL}get-image-base64-article`;
 
     const params = new HttpParams().set("picture", picture);
 
