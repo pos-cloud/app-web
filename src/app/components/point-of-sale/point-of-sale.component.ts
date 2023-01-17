@@ -697,6 +697,10 @@ export class PointOfSaleComponent implements OnInit {
                 query['type.level'] = { '$lt': this.user.level };
                 query['operationType'] = { $ne: 'D' };
 
+                if(this.user){
+                    query["creationUser"] = {'$oid':this.user._id};
+                }
+                
                 await this.getTransactionsV2(query).then(
                     transactions => {
                         this.hideMessage();
@@ -1851,6 +1855,7 @@ export class PointOfSaleComponent implements OnInit {
                 operationType: 1,
                 taxes: 1,
                 CAE: 1,
+                creationUser:1,
                 "company.name": 1,
                 "type._id": 1,
                 "type.allowEdit": 1,
