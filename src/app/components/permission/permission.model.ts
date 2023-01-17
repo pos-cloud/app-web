@@ -40,6 +40,8 @@ export class Permission extends Model {
         resto: boolean
 	}
 
+    filterTransaction: boolean;
+
     transactionTypes : TransactionType[];
 
     constructor() { super(); }
