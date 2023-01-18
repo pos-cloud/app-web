@@ -697,7 +697,7 @@ export class PointOfSaleComponent implements OnInit {
                 query['type.level'] = { '$lt': this.user.level };
                 query['operationType'] = { $ne: 'D' };
 
-                if(this.user){
+                if(this.user?.permission?.filterTransaction){
                     query["creationUser"] = {'$oid':this.user._id};
                 }
                 
