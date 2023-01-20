@@ -232,7 +232,7 @@ export class ListMovementsOfArticlesComponent implements OnInit {
         for (let i = 0; i < this.columns.length; i++) {
             if (this.columns[i].visible || this.columns[i].required) {
                 let value = this.filters[this.columns[i].name];
-                if (value && value != "" && value !== {}) {
+                if (value && value != "") {
                     if (this.columns[i].defaultFilter) {
                         match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
                     } else {
@@ -267,7 +267,7 @@ export class ListMovementsOfArticlesComponent implements OnInit {
         let transactionTypes = [];
 
 
-        if (this.transactionTypesSelect) {
+        if (this.transactionTypesSelect && this.transactionTypesSelect.length !== 0) {
             this.transactionTypesSelect.forEach(element => {
                 transactionTypes.push({ "$oid": element._id });
             });
@@ -276,7 +276,7 @@ export class ListMovementsOfArticlesComponent implements OnInit {
 
         let categories = []
 
-        if (this.categoriesSelect) {
+        if (this.categoriesSelect && this.categoriesSelect.length !== 0) {
             this.categoriesSelect.forEach(element => {
                 categories.push({ "$oid": element._id });
             });
@@ -319,25 +319,26 @@ export class ListMovementsOfArticlesComponent implements OnInit {
             0 // SKIP
         let limit = this.itemsPerPage;
 
-        this.subscription.add(this._movementOfArticleService.getMovementsOfArticlesV2(
+        this.subscription.add(this._movementOfArticleService.getAll({
             project, // PROJECT
             match, // MATCH
-            this.sort, // SORT
+            sort: this.sort, // SORT
             group, // GROUP
             limit, // LIMIT
             skip // SKIP
+        }
         ).subscribe(
             result => {
                 this.loading = false;
-                if (result && result[0] && result[0].items) {
+                if (result?.result[0]?.items) {
                     if (this.itemsPerPage === 0) {
-                        this.exportExcelComponent.items = result[0].items;
+                        this.exportExcelComponent.items = result?.result[0]?.items;
                         this.exportExcelComponent.export();
                         this.itemsPerPage = 10;
                         this.getItems();
                     } else {
-                        this.items = result[0].items;
-                        this.totalItems = result[0].count;
+                        this.items = result?.result[0]?.items;
+                        this.totalItems = result?.result[0]?.count;
                         this.getSum();
                     }
                 } else {
