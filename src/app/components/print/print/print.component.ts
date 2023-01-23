@@ -2484,7 +2484,7 @@ export class PrintComponent implements OnInit {
       }
       if (this.company.vatCondition && this.company.vatCondition.description) {
         this.doc.setFont('', 'normal');
-        this.doc.text(this.company.vatCondition.description, 42, 65);
+        this.doc.text(this.company.vatCondition.description.slice(0,40), 42, 65);
       }
 
       if (this.company.address) {

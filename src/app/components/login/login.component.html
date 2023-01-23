@@ -25,7 +25,7 @@
               <div class="col-md-2"></div>
               <div class="col-md-8">
                 <label for="company" class="control-label">Negocio:</label>
-                <input type="text" class="form-control" formControlName="company" name="company" id="company" [readonly]=checkLockInput/>
+                <input type="text" class="form-control" formControlName="company" name="company" id="company" [readonly]=checkLockInput [disabled]="company"/>
                 <input type="checkbox" class="position-absolute checklockinput" id="check" name="check" (click)="lockInput()" [checked]="company"/>
                 <div *ngIf="formErrors.company" class="alert alert-danger">
                   {{ formErrors.company }}

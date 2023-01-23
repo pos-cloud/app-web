@@ -511,6 +511,7 @@ export class ExportIvaComponent implements OnInit {
                   data[i]['Punto de Venta'] = this.padString(transaction.origin, 4);
                   data[i]['Letra'] = transaction.letter;
                   data[i]['Numero'] = this.padString(transaction.number, 8);
+                  data[i]['CAE'] = transaction.CAE;
 
                   if (
                     (transaction.type.transactionMovement === TransactionMovement.Sale &&

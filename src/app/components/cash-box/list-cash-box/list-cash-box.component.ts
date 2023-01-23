@@ -12,7 +12,6 @@ import { ViewTransactionComponent } from '../../transaction/view-transaction/vie
 import { ListCashBoxesComponent } from '../list-cash-boxes/list-cash-boxes.component';
 import { CashBoxService } from 'app/components/cash-box/cash-box.service';
 import { Movements } from 'app/components/transaction-type/transaction-type';
-import { PrintArticlesStockComponent } from '../../print/print-articles-stock/print-articles-stock.component';
 import { PrintComponent } from '../../print/print/print.component';
 
 
@@ -197,6 +196,7 @@ export class ListCashBoxComponent implements OnInit {
             "transaction._id": 1,
             "transaction.state": 1,
             "transaction.type.name": 1,
+            "transaction.observation": 1,
             "transaction.type.transactionMovement": 1,
             "transaction.type.movement": 1,
             "transaction.cashBox._id": 1,

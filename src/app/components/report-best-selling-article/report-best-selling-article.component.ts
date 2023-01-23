@@ -526,13 +526,12 @@ export class ReportBestSellingArticleComponent implements OnInit {
         }
 
 
-
-
         let match = {
             "transaction.endDate": {
-                "$gte": { "$date": this.startDate + "T00:00:00" + timezone },
-                "$lte": { "$date": this.endDate + "T23:59:59" + timezone }
+                "$gte": { "$date": this.startDate + "T"+this.startTime+":00" + timezone },
+                "$lte": { "$date": this.endDate + "T"+this.endTime+":00" + timezone }
             },
+           
             "transaction.state": "Cerrado",
             "transaction.operationType": { "$ne": "D" },
             "operationType": { "$ne": "D" },
