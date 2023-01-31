@@ -68,7 +68,7 @@ export class ExportIvaComponent implements OnInit {
     '11',
     '12',
   ];
-  public years = ['2018', '2019', '2020', '2021', '2022'];
+  public years = ['2018', '2019', '2020', '2021', '2022', '2023', '2024'];
   public toggleButton: boolean;
   public VATPeriod: string;
   public compURL: string;

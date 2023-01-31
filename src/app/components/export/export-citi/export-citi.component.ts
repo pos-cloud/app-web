@@ -24,7 +24,7 @@ export class ExportCitiComponent implements OnInit {
     public alertMessage: string = "";
     public loading: boolean = false;
     public months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
-    public years = ["2018", "2019", "2020", "2021", "2022"];
+    public years = ["2018", "2019", "2020", "2021", "2022", "2023", "2024"];
     public toggleButton: boolean;
     public VATPeriod: string;
     public compURL: string;
