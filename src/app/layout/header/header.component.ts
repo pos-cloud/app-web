@@ -269,4 +269,8 @@ export class HeaderComponent {
         });
         this._notificationService.generateNotification(data);
     }
+
+    public reload(){
+        window.location.reload();
+    }
 }
