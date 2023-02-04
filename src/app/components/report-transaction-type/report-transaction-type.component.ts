@@ -52,6 +52,7 @@ export class ReportTransactionTypeComponent implements OnInit {
   public areItemsEmpty: boolean = true;
   public totalItem = 0;
   public totalAmount = 0;
+  public totalBase = 0;
   public branches: Branch[];
   public branchSelectedId: String;
   public allowChangeBranch: boolean;
@@ -79,7 +80,8 @@ export class ReportTransactionTypeComponent implements OnInit {
     'totalPrice',
     'operationType',
     'CAE',
-    'balance'
+    'balance',
+    'basePrice'
   ];
   public filters: any[];
   public filterValue: string;
@@ -233,6 +235,7 @@ export class ReportTransactionTypeComponent implements OnInit {
       "type.name": 1,
       "type.movement": 1,
       "totalPrice": 1,
+      "basePrice": 1,
       "operationType": 1,
       "state": 1,
       "type.transactionMovement": 1,
@@ -246,7 +249,7 @@ export class ReportTransactionTypeComponent implements OnInit {
       _id: { name: "$type.name", movement: "$type.movement" },
       count: { $sum: 1 },
       totalPrice: { $sum: "$totalPrice" },
-
+      basePrice: { $sum: "$basePrice" }
 
     };
 
@@ -295,9 +298,11 @@ export class ReportTransactionTypeComponent implements OnInit {
 
     this.totalItem = 0;
     this.totalAmount = 0;
+    this.totalBase = 0
 
     for (let index = 0; index < this.items.length; index++) {
       this.totalItem = this.totalItem + this.items[index]['count'];
+      this.totalBase = this.totalBase + this.items[index]['basePrice'];
       if (this.items[index]['_id']['movement'] === "Entrada") {
         this.totalAmount = this.totalAmount + this.items[index]['totalPrice'];
       } else {
