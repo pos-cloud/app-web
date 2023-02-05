@@ -62,6 +62,7 @@
 						<th (click)="orderBy('_id')">Nombre</th>
 						<th class="align-right" (click)="orderBy('count')">Cantidad</th>
 						<th class="align-right" (click)="orderBy('basePrice')">Monto base</th>
+						<th class="align-right" >Impuestos</th>
 						<th class="align-right" (click)="orderBy('totalPrice')">Monto Total</th>
 					</tr>
 				</thead>
@@ -75,6 +76,7 @@
 						<td class="flat">{{ item._id.name }}</td>
 						<td class="align-right">{{ item.count }}</td>
 						<td class="align-right">{{ item.basePrice | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
+						<td class="align-right">{{ item.totalPrice - item.basePrice| currency:'USD':'symbol-narrow':'1.2-2' }}</td>
 						<td class="align-right" *ngIf="item._id.movement === 'Salida'">
 							({{ item.totalPrice | currency:'USD':'symbol-narrow':'1.2-2' }})</td>
 						<td class="align-right" *ngIf="item._id.movement === 'Entrada'">
@@ -100,6 +102,7 @@
 						</th>
 						<th class="align-right"><strong>{{totalItem}}</strong></th>
 						<th class="align-right"><strong>{{totalBase | currency:'USD':'symbol-narrow':'1.2-2' }}</strong></th>
+						<th class="align-right"><strong>{{ totalAmount - totalBase | currency:'USD':'symbol-narrow':'1.2-2' }}</strong></th>
 						<th class="align-right"><strong>{{totalAmount | currency:'USD':'symbol-narrow':'1.2-2' }}</strong></th>
 
 					</tr>
