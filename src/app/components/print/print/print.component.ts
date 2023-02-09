@@ -231,9 +231,57 @@ export class PrintComponent implements OnInit {
   }
 
   async printPrinterArticles() {
+      //set start coordinates
+      let x = 15
+      let y = 10
+      //set counter
+      let count = 1
+      //set date
+      var currentdate = new Date(); 
+      var datetime = currentdate.getDate() + "/"
+                + (currentdate.getMonth()+1)  + "/" 
+                + currentdate.getFullYear() + " "
+                + currentdate.getHours() + ":"  
+                + currentdate.getMinutes() 
 
-    
+      //print each article
+      for (let articleItem of this.articles){
+        //prepare label
+        this.doc.rect(x, y, 60, 30.5);
+        this.doc.setFont('', 'bold');
+        this.doc.setFontSize(30);
+        this.doc.text(x+5, y+13, "$"+articleItem.salePrice);
+        this.doc.setFont('', 'normal');
+        this.doc.setFontSize(9);
+        this.doc.setFont('', 'italic');
+        this.doc.text(x+1, y+23, articleItem.description);
+        this.doc.text(x+1, y+26, articleItem.make.description);
+        this.doc.setFontSize(7);
+        this.doc.text(x+1, y+29, articleItem.barcode);
+        this.doc.setFontSize(9);
+        this.doc.setFont('', 'normal');
+        this.doc.setFont('', 'bold');
+        this.doc.text(x+20, y+29, Config.companyFantasyName);
+        this.doc.setFont('', 'normal');
+        this.doc.setFontSize(7);
+        this.doc.text(x+44, y+29, datetime);
 
+        //validate position
+        if(x >= 110){
+          x=15
+          y+=30.5
+        }else{
+          x+=60
+        }
+        if(count === 27){
+          this.doc.addPage()
+          x = 15
+          y = 10
+          count = 1
+        }else{
+          count ++
+        }
+      }
     this.finishImpression();
   }
 
