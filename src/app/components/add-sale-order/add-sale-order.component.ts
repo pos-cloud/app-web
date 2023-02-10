@@ -246,7 +246,7 @@ export class AddSaleOrderComponent {
   }
 
   async ngOnInit() {
-    this.database = Config.database;
+    this.database = localStorage.getItem('company');
 
     await this._configService.getConfig.subscribe((config) => {
       this.config = config;
@@ -2268,12 +2268,12 @@ export class AddSaleOrderComponent {
         if (this.transaction.type.electronics) {
           attachments.push({
             filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-            path: `/home/clients/${Config.database}/invoice/${this.transaction._id}.pdf`,
+            path: `/home/clients/${this.database}/invoice/${this.transaction._id}.pdf`,
           });
         } else {
           attachments.push({
             filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-            path: `/home/clients/${Config.database}/others/${this.transaction._id}.pdf`,
+            path: `/home/clients/${this.database}/others/${this.transaction._id}.pdf`,
           });
         }
 
@@ -2289,13 +2289,13 @@ export class AddSaleOrderComponent {
             attachments = [];
             attachments.push({
               filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-              path: `/home/clients/${Config.database}/invoice/${this.transaction._id}.pdf`,
+              path: `/home/clients/${this.database}/invoice/${this.transaction._id}.pdf`,
             });
           } else {
             attachments = [];
             attachments.push({
               filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-              path: `/home/clients/${Config.database}/others/${this.transaction._id}.pdf`,
+              path: `/home/clients/${this.database}/others/${this.transaction._id}.pdf`,
             });
           }
 
@@ -2530,7 +2530,7 @@ export class AddSaleOrderComponent {
                 if (this.transaction && this.transaction.type.requestEmailTemplate)
                   this.openModal('send-email');
               } else {
-                this.backFinal();
+                  this.openModal('send-email');
               }
             }
           },

@@ -60,6 +60,7 @@ import { MovementOfCancellationService } from '../movement-of-cancellation/movem
 import Resulteable from '../../util/Resulteable';
 import { padNumber } from '../../util/functions/pad/padNumber';
 import { removeParam } from '../../util/functions/removeParam';
+import { EmailProps } from 'app/types';
 
 @Component({
     selector: 'app-point-of-sale',
@@ -110,6 +111,7 @@ export class PointOfSaleComponent implements OnInit {
     public identity: User;
     public user: User;
     public movementsOfCashes: MovementOfCash[];
+    private database: string;
 
     // CAMPOS TRAIDOS DE LA CUENTA CTE.
     @Input() company: Company;
@@ -127,6 +129,7 @@ export class PointOfSaleComponent implements OnInit {
         private _router: Router,
         private _route: ActivatedRoute,
         private _modalService: NgbModal,
+        private _serviceEmail: EmailService,
         private _currencyService: CurrencyService,
         private _cashBoxService: CashBoxService,
         private _tableService: TableService,
@@ -139,7 +142,7 @@ export class PointOfSaleComponent implements OnInit {
         public translatePipe: TranslateMePipe,
         private _toastr: ToastrService,
         private _movementOfCashService: MovementOfCashService,
-        private _movementOfCancellationService: MovementOfCancellationService
+        private _movementOfCancellationService: MovementOfCancellationService,
     ) {
         this.roomSelected = new Room();
         this.transactionTypes = new Array();
@@ -147,7 +150,7 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     async ngOnInit() {
-
+        this.database = localStorage.getItem('company');
         let pathLocation: string[] = this._router.url.split('/');
         this.userType = pathLocation[1].split('?')[0];
         this.posType = pathLocation[2].split('?')[0];
@@ -1532,22 +1535,22 @@ export class PointOfSaleComponent implements OnInit {
                 }
                 modalRef.componentInstance.subject = `${labelPrint} ${padNumber(this.transaction.origin, 4)}-${this.transaction.letter}-${padNumber(this.transaction.number, 8)}`;
                 if (this.transaction.type.electronics) {
-                    // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${Config.database}/${this.transaction._id}">Su comprobante</a>`
+                    // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${this.database}/${this.transaction._id}">Su comprobante</a>`
                     modalRef.componentInstance.body = ' '
 
 
                     attachments.push({
                         filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-                        path: `/home/clients/${Config.database}/invoice/${this.transaction._id}.pdf`
+                        path: `/home/clients/${this.database}/invoice/${this.transaction._id}.pdf`
                     })
                 } else {
-                    // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${Config.database}/${this.transaction._id}">Su comprobante</a>`
+                    // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${this.database}/${this.transaction._id}">Su comprobante</a>`
                     modalRef.componentInstance.body = ' '
 
 
                     attachments.push({
                         filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-                        path: `/home/clients/${Config.database}/others/${this.transaction._id}.pdf`
+                        path: `/home/clients/${this.database}/others/${this.transaction._id}.pdf`
                     })
                 }
 
@@ -1565,22 +1568,22 @@ export class PointOfSaleComponent implements OnInit {
                 if (this.transaction.type.defectEmailTemplate) {
 
                     if (this.transaction.type.electronics) {
-                        // modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${Config.database}/${this.transaction._id}">Su comprobante</a>`
+                        // modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${this.database}/${this.transaction._id}">Su comprobante</a>`
                         modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design
 
                         attachments = [];
                         attachments.push({
                             filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-                            path: `/home/clients/${Config.database}/invoice/${this.transaction._id}.pdf`
+                            path: `/home/clients/${this.database}/invoice/${this.transaction._id}.pdf`
                         })
                     } else {
-                        // modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${Config.database}/${this.transaction._id}">Su comprobante</a>`
+                        // modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${this.database}/${this.transaction._id}">Su comprobante</a>`
                         modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design
 
                         attachments = [];
                         attachments.push({
                             filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-                            path: `/home/clients/${Config.database}/others/${this.transaction._id}.pdf`
+                            path: `/home/clients/${this.database}/others/${this.transaction._id}.pdf`
                         })
                     }
 
@@ -1784,10 +1787,85 @@ export class PointOfSaleComponent implements OnInit {
             }
             this.transaction = await this.updateTransaction(this.transaction);
             if (print) {
+                this.openModal("print");
+                //a futuro integrar createAttatchment --->
                 this.refresh();
                 if (this.transaction.type.defectPrinter) {
                     this.printerSelected = this.printerSelected;
-                    this.openModal("print");
+                    let modalRef;
+                if (this.transaction.type.readLayout) {
+                    modalRef = this._modalService.open(PrintTransactionTypeComponent);
+                    modalRef.componentInstance.transactionId = this.transaction._id;
+                    modalRef.componentInstance.source = 'mail';
+                } else {
+                    modalRef = this._modalService.open(PrintComponent);
+                    modalRef.componentInstance.company = this.transaction.company;
+                    modalRef.componentInstance.transactionId = this.transaction._id;
+                    modalRef.componentInstance.typePrint = 'invoice';
+                    modalRef.componentInstance.source = 'mail';
+                }
+                let attachments = [];
+                
+                if (this.transaction.type.electronics) {
+                    attachments.push({
+                    filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
+                    path: `/home/clients/${this.database}/invoice/${this.transaction._id}.pdf`,
+                    });
+                } else {
+                    attachments.push({
+                    filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
+                    path: `/home/clients/${this.database}/others/${this.transaction._id}.pdf`,
+                    });
+                }
+                
+                if (Config.country === 'MX') {
+                    attachments.push({
+                    filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.xml`,
+                    path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_${this.transaction.number}.xml`,
+                    });
+                }
+      
+                if (this.transaction.type.defectEmailTemplate) {
+                    if (this.transaction.type.electronics) {
+                    attachments = [];
+                    attachments.push({
+                        filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
+                        path: `/home/clients/${this.database}/invoice/${this.transaction._id}.pdf`,
+                    });
+                    } else {
+                    attachments = [];
+                    attachments.push({
+                        filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
+                        path: `/home/clients/${this.database}/others/${this.transaction._id}.pdf`,
+                    });
+                    }
+
+                    if (Config.country === 'MX') {
+                    attachments = [];
+                    attachments.push({
+                        filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.xml`,
+                        path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_${this.transaction.number}.xml`,
+                    });
+                    }
+                    let labelPrint = this.transaction.type.name;
+        
+                    if (this.transaction.type.labelPrint) {
+                        labelPrint = this.transaction.type.labelPrint;
+                    }
+                    if (this.transaction.type.labelPrint) {
+                        labelPrint = this.transaction.type.labelPrint;
+                    }
+                    const email: EmailProps = {
+                        to: this.transaction.company.emails,
+                        subject: `${labelPrint} ${this.padNumber(this.transaction.origin, 4)}-${
+                          this.transaction.letter
+                        }-${this.padNumber(this.transaction.number, 8)}`,
+                        body: this.transaction.type.defectEmailTemplate.design,
+                        attachments: attachments,
+                      };
+                    this.sendEmail(email);
+                    // <--- a futuro integrar createAttatchment
+                }
                 } else {
                     this.openModal("printers");
                 }
@@ -1800,6 +1878,13 @@ export class PointOfSaleComponent implements OnInit {
             }
         } catch (error) { this.showToast(error) }
     }
+
+    padNumber(n, length): string {
+        n = n.toString();
+        while (n.length < length) n = '0' + n;
+    
+        return n;
+      }
 
     public updateMovementOfCash(movementOfCash: MovementOfCash): Promise<MovementOfCash> {
         return new Promise<MovementOfCash>((resolve, reject) => {
@@ -2082,60 +2167,13 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     async changeStateOfTransaction(transaction: Transaction, state: TransactionState) {
-
         this.transaction = await this.getTransaction(transaction._id);
         let email: string;
         if (this.transaction) {
             let oldState = this.transaction.state;
             this.transaction.state = state;
             let newState = (this.transaction.state || '').toString();
-            if (this.transaction.type.allowAPP) {
-                if (this.transaction.company) {
-                    await this.getUsers({ company: { $oid: this.transaction.company._id } })
-                        .then(users => {
-                            if (users && users.length > 0) email = users[0].email;
-                        });
-                }
-                if (email && newState === TransactionState.PaymentConfirmed.toString()) {
-                    this.transaction.balance = 0;
-                    if (this.transaction.type.application.email.statusTransaction.paymentConfirmed.enabled) {
-                        this.sendEmail(
-                            `Pago confirmado en tu Pedido Número ${this.transaction.orderNumber}`,
-                            `Hola ${transaction.company.name} confirmamos el pago de tu compra.</br><b>Ya estamos preparando tu pedido, te avisamos cuando este en camino.</b>`,
-                            email);
-                    }
-                    if (oldState === TransactionState.Delivered) this.transaction.state = TransactionState.Closed;
-                } else if (email && newState === TransactionState.PaymentDeclined.toString()) {
-                    this.transaction.balance = 0;
-                    if (this.transaction.type.application.email.statusTransaction.paymentDeclined.enabled) {
-                        this.sendEmail(
-                            `Pago rechazado en tu Pedido Número ${this.transaction.orderNumber}`,
-                            `Hola ${transaction.company.name} rechazamos el pago de tu compra.</br><b>Lamentamos el incoveniente por no poder finalizar la compra. Puedes realizar de nuevo el pedido cuando desees, te esperamos.</b>`,
-                            email);
-                    }
-                } else if (email && newState === TransactionState.Sent.toString()) {
-                    if (this.transaction.type.application.email.statusTransaction.sent.enabled) {
-                        this.sendEmail(
-                            `Tu Pedido Número ${this.transaction.orderNumber} está en camino.`,
-                            `${transaction.company.name} realizamos el envío de tu pedido.</br>
-                        <b>Ya se encuentra en camino a
-                        ${this.transaction.deliveryAddress.name} ${this.transaction.deliveryAddress.number},
-                        ${this.transaction.deliveryAddress.city},
-                        ${this.transaction.deliveryAddress.state}.
-                        </b>`,
-                            email)
-                    }
-                } else if (email && newState === TransactionState.Delivered.toString()) {
-                    if (this.transaction.type.application.email.statusTransaction.delivered.enabled) {
-                        this.sendEmail(
-                            `Tu Pedido Número ${this.transaction.orderNumber} ha sido entregado.`,
-                            `${transaction.company.name} hemos entregado tu pedido.</br>
-                  <b>Gracias por elegirnos. ¡Te esperamos pronto!</b>`,
-                            email);
-                    }
-                    if (this.transaction.balance === 0 && ((this.transaction.type.electronics && this.transaction.CAE) || !this.transaction.type.electronics)) this.transaction.state = TransactionState.Closed;
-                }
-            }
+            
             if (this.transaction.state === TransactionState.Closed) {
                 this.finishTransaction();
             } else {
@@ -2193,80 +2231,17 @@ export class PointOfSaleComponent implements OnInit {
         this.propertyTerm = property;
     }
 
-    private async sendEmail(title: string, message: string, email: string) {
 
-        this.loading = true;
-
-        let html: string = `
-					<div class="_3U2q6dcdZCrTrR_42Nxby JWNdg1hee9_Rz6bIGvG1c allowTextSelection">
-					<div>
-					<style type="text/css" style="box-sizing:border-box; margin:0; padding:0">
-					</style>
-					<div class="rps_21ff">
-					<div style="background:#F7F3ED; box-sizing:border-box; color:#000; font-family:'Barlow',sans-serif; font-size:16px; margin:0; overflow-x:hidden; padding:0">
-					<div class="x_container" style="border:1px solid #EDECED; box-sizing:border-box; margin:50px auto; max-width:650px; padding:0; width:100%">
-					<div class="x_reverse" style="box-sizing:border-box; margin:0; padding:0">
-						<a href="${window.location.toString().split("/#")[0]}" target="_blank" rel="noopener noreferrer" data-auth="NotApplicable" style="box-sizing:border-box; color:#0275D8; font-weight:500; margin:0; padding:0; text-decoration:none">
-							<div class="x_logo" style="color:white; background-color:#0275D8; background-position:center; background-repeat:no-repeat; background-size:auto 24px; box-sizing:border-box; height:60px; margin:0; padding:15px; font-size: 30px;">
-								${this.config["companyFantasyName"]}
-							</div>
-						</a>
-					</div>
-					<div class="x_main x_password-recovery-main" style="background:#fff; box-sizing:border-box; margin:0; padding:40px 38px; padding-top:14px; text-align:center">
-					<h2 style="box-sizing:border-box; color:#0275D8; font-size:43px; font-weight:bold; line-height:1; margin:12px 0; margin-bottom:10px; padding:0">
-						${title}
-					</h2>
-					<div class="x_generate-password" style="box-sizing:border-box; display:flex; margin:0 auto; padding-top:20px; padding-bottom:20px;">
-					<div class="x_generate-password__description" style="box-sizing:border-box; font-size:20px; letter-spacing:-0.25; line-height:1.25; margin:0; padding:0; text-align:left;">
-					<span class="x_icon-arrow x_icon-arrow--inline x_icon-arrow--sm" style="background-repeat:no-repeat; background-size:contain; box-sizing:border-box; display:inline-block; height:17px; margin:0; padding:0; width:17px">
-					</span>
-					<p style="box-sizing:border-box; padding:0; width:100%">
-						<span style="box-sizing:border-box; padding:0; margin-bottom:30px;">
-							${message}
-						</span>
-          </p>
-          <br>
-					</div>
-					</div>
-					<hr>
-					</div>
-					</div>
-					<p style="box-sizing:border-box; font-size:12px; font-weight:300; letter-spacing:normal; line-height:1.08; margin:12px 0; margin-top:20px; padding:0">
-					<span style="box-sizing:border-box; margin:0; padding:0">Si necesitas ayuda no dudes en dirigirte a nuestra área de contacto en
-					</span>
-					<span style="box-sizing:border-box; margin:0; padding:0">Para cualquier consulta puedes escribirnos a
-					</span>
-					<a href="mailto:${this.config["emailAccount"]}" target="_blank" rel="noopener noreferrer" data-auth="NotApplicable" style="box-sizing:border-box; color:#0275D8; font-weight:500; margin:0; padding:0; text-decoration:none"> ${this.config["emailAccount"]}
-					</a>.
-					</span>
-					</p>
-					<p style="box-sizing:border-box; font-size:12px; font-weight:300; letter-spacing:normal; line-height:1.08; margin:12px 0; margin-top:20px; padding:0; text-align: center;">
-					<span style="box-sizing:border-box; margin:0; padding:0">Generado en <a href="http://www.poscloud.com.ar" target="_blank" rel="noopener noreferrer" data-auth="NotApplicable" style="box-sizing:border-box; color:#0275D8; font-weight:500; margin:0; padding:0; text-decoration:none">http://www.poscloud.com.ar</a>, tu Punto de Venta en la NUBE.
-					</span>
-					</p>
-					</div>
-					</div>
-					</div>
-					</div>
-					</div>
-					`;
-
-        this._emailService.sendEmailClient(
-            title,
-            html,
-            email
-        ).subscribe(
-            result => {
-                this.loading = false;
-                if (result.accepted && result.accepted.length > 0) {
-                } else {
-                }
-            },
-            error => {
-                this.loading = false;
-            }
-        )
-    }
+    public sendEmail(body: EmailProps): void {
+        this._serviceEmail.sendEmailV2(body).subscribe(
+          (result) => {
+            this.showToast(result);
+          },
+          (err) => {
+            this.showToast(err);
+          },
+        );
+      }
 
     public ngOnDestroy(): void {
         this.subscription.unsubscribe();

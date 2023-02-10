@@ -95,7 +95,7 @@ export class EmailService {
 
   public sendEmailV2(data: EmailProps): Observable<any> {
 
-    const URL = `${Config.apiV8URL}email-templates/send-email`;
+    const URL = `${environment.apiv2}/email-templates/send-email`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

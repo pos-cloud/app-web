@@ -61,6 +61,8 @@
 					<tr>
 						<th (click)="orderBy('_id')">Nombre</th>
 						<th class="align-right" (click)="orderBy('count')">Cantidad</th>
+						<th class="align-right" (click)="orderBy('basePrice')">Monto base</th>
+						<th class="align-right" >Impuestos</th>
 						<th class="align-right" (click)="orderBy('totalPrice')">Monto Total</th>
 					</tr>
 				</thead>
@@ -73,18 +75,23 @@
 					<tr *ngFor="let item of items">
 						<td class="flat">{{ item._id.name }}</td>
 						<td class="align-right">{{ item.count }}</td>
+						<td class="align-right">{{ item.basePrice | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
+						<td class="align-right">{{ item.totalPrice - item.basePrice| currency:'USD':'symbol-narrow':'1.2-2' }}</td>
 						<td class="align-right" *ngIf="item._id.movement === 'Salida'">
 							({{ item.totalPrice | currency:'USD':'symbol-narrow':'1.2-2' }})</td>
 						<td class="align-right" *ngIf="item._id.movement === 'Entrada'">
 							{{ item.totalPrice | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
 					</tr>
 					<tr align="center" *ngIf="areItemsEmpty && !loading && pathLocation[2] === 'venta'">
+						<td></td>
 						<td colspan="4">No se encontraron ventas por tipo de comprobante</td>
 					</tr>
 					<tr align="center" *ngIf="areItemsEmpty && !loading && pathLocation[2] === 'compra'">
+						<td></td>
 						<td colspan="4">No se encontraron compras por tipo de comprobante</td>
 					</tr>
 					<tr align="center" *ngIf="areItemsEmpty && !loading && pathLocation[2] === 'fondo'">
+						<td></td>
 						<td colspan="4">No se encontraron fondos por tipo de comprobante</td>
 					</tr>
 				</tbody>
@@ -94,7 +101,10 @@
 							<strong>Total</strong>
 						</th>
 						<th class="align-right"><strong>{{totalItem}}</strong></th>
+						<th class="align-right"><strong>{{totalBase | currency:'USD':'symbol-narrow':'1.2-2' }}</strong></th>
+						<th class="align-right"><strong>{{ totalAmount - totalBase | currency:'USD':'symbol-narrow':'1.2-2' }}</strong></th>
 						<th class="align-right"><strong>{{totalAmount | currency:'USD':'symbol-narrow':'1.2-2' }}</strong></th>
+
 					</tr>
 				</tfoot>
 			</table>

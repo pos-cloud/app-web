@@ -12,7 +12,7 @@ import {User} from 'app/components/user/user';
 import {UserService} from 'app/components/user/user.service';
 import {DateFormatPipe} from 'app/main/pipes/date-format.pipe';
 import * as moment from 'moment';
-import {of as observableOf, Observable, Subscription} from 'rxjs';
+import {of as observableOf, Observable, Subscription, observable} from 'rxjs';
 
 import {Config} from '../../../app.config';
 import {RoundNumberPipe} from '../../../main/pipes/round-number.pipe';
@@ -89,6 +89,8 @@ export class ListTransactionsComponent implements OnInit {
   branchSelectedId: String;
   allowChangeBranch: boolean;
   branches: Branch[];
+  config: Config;
+  database: string;
 
   constructor(
     public _transactionService: TransactionService,
@@ -120,6 +122,7 @@ export class ListTransactionsComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.database = localStorage.getItem('company');
     this.userCountry = Config.country;
     this.getPrinters();
 
@@ -321,7 +324,7 @@ export class ListTransactionsComponent implements OnInit {
       if (this.columns[i].visible || this.columns[i].required) {
         let value = this.filters[this.columns[i].name];
 
-        if (value && value != '' && value !== {}) {
+        if (value && value != '') {
           if (this.columns[i].defaultFilter) {
             match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
           } else {
@@ -672,7 +675,7 @@ export class ListTransactionsComponent implements OnInit {
           modalRef.componentInstance.emails = transaction.company.emails;
         }
         let labelPrint = transaction.type.name;
-
+        
         if (transaction.type.labelPrint) {
           labelPrint = transaction.type.labelPrint;
         }
@@ -682,20 +685,19 @@ export class ListTransactionsComponent implements OnInit {
         )}-${transaction.letter}-${this.padNumber(transaction.number, 8)}`;
 
         if (transaction.type.electronics) {
-          // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${Config.database}/${transaction._id}">Su comprobante</a>`
+          // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${this.database}/${transaction._id}">Su comprobante</a>`
           modalRef.componentInstance.body = ' ';
 
           attachments.push({
             filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-            path: `/home/clients/${Config.database}/invoice/${transaction._id}.pdf`,
+            path: `/home/clients/${this.database}/invoice/${transaction._id}.pdf`,
           });
         } else {
-          // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${Config.database}/${transaction._id}">Su comprobante</a>`
+          // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${this.database}/${transaction._id}">Su comprobante</a>`
           modalRef.componentInstance.body = ' ';
-
           attachments.push({
             filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-            path: `/home/clients/${Config.database}/others/${transaction._id}.pdf`,
+            path: `/home/clients/${this.database}/others/${transaction._id}.pdf`,
           });
         }
 
@@ -714,20 +716,20 @@ export class ListTransactionsComponent implements OnInit {
 
         if (transaction.type.defectEmailTemplate) {
           if (transaction.type.electronics) {
-            // modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${Config.database}/${transaction._id}">Su comprobante</a>`
+            // modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${this.database}/${transaction._id}">Su comprobante</a>`
             modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design;
             attachments = [];
             attachments.push({
               filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-              path: `/home/clients/${Config.database}/invoice/${transaction._id}.pdf`,
+              path: `/home/clients/${this.database}/invoice/${transaction._id}.pdf`,
             });
           } else {
-            // modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${Config.database}/${transaction._id}">Su comprobante</a>`
+            // modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${this.database}/${transaction._id}">Su comprobante</a>`
             modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design;
             attachments = [];
             attachments.push({
               filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-              path: `/home/clients/${Config.database}/others/${transaction._id}.pdf`,
+              path: `/home/clients/${this.database}/others/${transaction._id}.pdf`,
             });
           }
 

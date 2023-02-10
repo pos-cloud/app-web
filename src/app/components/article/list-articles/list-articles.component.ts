@@ -33,6 +33,7 @@ import { Subscription } from "rxjs";
 import { TaxService } from "app/components/tax/tax.service";
 import { Tax } from "app/components/tax/tax";
 import { first } from "rxjs/operators";
+import { PrintComponent } from "app/components/print/print/print.component";
 
 @Component({
   selector: "app-list-articles",
@@ -166,7 +167,7 @@ export class ListArticlesComponent implements OnInit {
     for (let i = 0; i < this.columns.length; i++) {
       if (this.columns[i].visible || this.columns[i].required) {
         let value = this.filters[this.columns[i].name];
-        if (value && value != "" && value !== {}) {
+        if (value && value != "") {
           if (this.columns[i].defaultFilter) {
             match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
           } else {
@@ -662,15 +663,14 @@ export class ListArticlesComponent implements OnInit {
         await this.getPrinters().then((printers) => {
             if (printers && printers.length > 0) {
               for (let printerAux of printers) {
-                if (printerAux.printIn === PrinterPrintIn.Label && printerAux.fields && printerAux.fields.length > 0) {
+                if (printerAux.printIn === PrinterPrintIn.Label) {
                   printer2 = printerAux;
                 }
               }
             }
           });
-
           if(printer2){
-
+            if(printer2.fields && printer2.fields.length > 0){
               modalRef = this._modalService.open(
                 PrintTransactionTypeComponent
               );
@@ -679,6 +679,10 @@ export class ListArticlesComponent implements OnInit {
               if (this.priceListId) {
                 modalRef.componentInstance.priceListId = this.priceListId;
               }
+            }else{
+              modalRef = this._modalService.open(PrintComponent);
+              modalRef.componentInstance.articles = this.items;
+            }
           } else {
             this.showMessage(
                 "Debe crear una impresora de tipo etiqueta con diseño",

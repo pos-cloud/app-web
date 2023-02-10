@@ -231,9 +231,57 @@ export class PrintComponent implements OnInit {
   }
 
   async printPrinterArticles() {
+      //set start coordinates
+      let x = 15
+      let y = 10
+      //set counter
+      let count = 1
+      //set date
+      var currentdate = new Date(); 
+      var datetime = currentdate.getDate() + "/"
+                + (currentdate.getMonth()+1)  + "/" 
+                + currentdate.getFullYear() + " "
+                + currentdate.getHours() + ":"  
+                + currentdate.getMinutes() 
 
-    
+      //print each article
+      for (let articleItem of this.articles){
+        //prepare label
+        this.doc.rect(x, y, 60, 30.5);
+        this.doc.setFont('', 'bold');
+        this.doc.setFontSize(30);
+        this.doc.text(x+5, y+13, "$"+articleItem.salePrice);
+        this.doc.setFont('', 'normal');
+        this.doc.setFontSize(9);
+        this.doc.setFont('', 'italic');
+        this.doc.text(x+1, y+23, articleItem.description);
+        this.doc.text(x+1, y+26, articleItem.make.description);
+        this.doc.setFontSize(7);
+        this.doc.text(x+1, y+29, articleItem.barcode);
+        this.doc.setFontSize(9);
+        this.doc.setFont('', 'normal');
+        this.doc.setFont('', 'bold');
+        this.doc.text(x+20, y+29, Config.companyFantasyName);
+        this.doc.setFont('', 'normal');
+        this.doc.setFontSize(7);
+        this.doc.text(x+44, y+29, datetime);
 
+        //validate position
+        if(x >= 110){
+          x=15
+          y+=30.5
+        }else{
+          x+=60
+        }
+        if(count === 27){
+          this.doc.addPage()
+          x = 15
+          y = 10
+          count = 1
+        }else{
+          count ++
+        }
+      }
     this.finishImpression();
   }
 
@@ -529,7 +577,13 @@ export class PrintComponent implements OnInit {
         this.hideMessage();
         this.movementsOfCashes = result.movementsOfCashes;
         if (!this.transaction.type.requestArticles) {
-          this.toPrintPayment();
+          if (this.printer.pageWidth < 150) {
+            this.toPrintRollPayment();
+          } else if (this.printer.pageHigh > 150) {
+            this.toPrintPayment();
+          } else {
+            this.toPrintPayment();
+          }
         } else {
           if (
             Config.country === 'AR' &&
@@ -5259,6 +5313,346 @@ export class PrintComponent implements OnInit {
         this.doc.setLineWidth(0);
         this.count++;
         this.toPrintRoll();
+      } else {
+        this.finishImpression();
+      }
+    }
+  }
+
+  async toPrintRollPayment() {
+    //Cabecera del ticket
+    let margin = 5;
+
+    this.row = 30;
+
+    let width = this.printer.pageWidth;
+
+    if (
+      !this.config[0].companyPicture ||
+      this.config[0].companyPicture === 'default.jpg'
+    ) {
+      this.doc.setFont('', 'bold');
+      this.doc.setFontSize(this.fontSizes.large);
+      if (this.config[0].companyFantasyName) {
+        this.centerText(
+          margin,
+          margin,
+          width,
+          0,
+          this.row,
+          this.config[0].companyFantasyName,
+        );
+      } else {
+        this.centerText(margin, margin, width, 0, this.row, this.config[0].companyName);
+      }
+      this.doc.setFont('', 'normal');
+      this.doc.setFontSize(this.fontSizes.normal);
+      this.row += 5;
+      this.centerText(margin, margin, width, 0, this.row, this.config[0].companyAddress);
+      this.row += 5;
+      this.centerText(
+        margin,
+        margin,
+        width,
+        0,
+        this.row,
+        'tel: ' + this.config[0].companyPhone,
+      );
+      this.row += 8;
+    } else {
+      this.row += 30;
+      this.doc.setFont('', 'normal');
+      this.doc.setFontSize(this.fontSizes.normal);
+    }
+
+    this.doc.setFont('', 'bold');
+    if (this.transaction.orderNumber && this.transaction.orderNumber > 0) {
+      this.doc.text(
+        this.transaction.type.name + ' Nº: ' + this.transaction.orderNumber.toString(),
+        margin,
+        this.row,
+      );
+    } else {
+      this.doc.text(this.transaction.type.name + ' Nº: ' + this.transaction.number, margin, this.row);
+    }
+    this.doc.setFont('', 'normal');
+
+    this.doc.text(
+      'Fecha: ' + this.transaction.endDate.substring(0, 5),
+      width / 1.6,
+      this.row,
+    );
+    this.row += 5;
+    this.doc.text(
+      'Hora: ' +
+      this.transaction.endDate.substring(11, 13) +
+      ':' +
+      this.transaction.endDate.substring(15, 17) +
+      ':' +
+      this.transaction.endDate.substring(19, 21),
+      width / 1.6,
+      this.row,
+    );
+
+    this.doc.setFont('', 'normal');
+
+    if (this.transaction.company) {
+      if (
+        this.transaction.madein == 'resto' ||
+        this.transaction.madein == 'mostrador' ||
+        this.transaction.madein == 'pedidos-web'
+      ) {
+        this.row += 5;
+        this.doc.setFont('', 'bold');
+        if (this.transaction.company.name !== undefined) {
+          this.doc.text('Cliente : ' + this.transaction.company.name, margin, this.row);
+        } else {
+          this.doc.text('Cliente : Consumidor Final', margin, this.row);
+        }
+        this.row += 5;
+        if (this.transaction.company.phones) {
+          this.doc.text(
+            'Telefono : ' + this.transaction.company.phones,
+            margin,
+            this.row,
+          );
+        }
+
+        this.doc.setFont('', 'normal');
+      }
+      if (this.transaction.madein == 'delivery') {
+        this.row += 5;
+        this.doc.setFont('', 'bold');
+        this.doc.text(
+          'Entregar a: ' + this.transaction.company.address,
+          margin,
+          this.row,
+        );
+        this.doc.setFont('', 'normal');
+      }
+      if (this.transaction.madein == 'pedidos-web' && this.transaction.deliveryAddress) {
+        this.row += 5;
+        let direccion = '';
+
+        this.doc.setFont('', 'bold');
+
+        if (this.transaction.deliveryAddress.name) {
+          direccion = direccion + ' ' + this.transaction.deliveryAddress.name;
+        }
+        if (this.transaction.deliveryAddress.number) {
+          direccion = direccion + ' N°' + this.transaction.deliveryAddress.number;
+        }
+
+        if (direccion.length > 27) {
+          this.doc.text('Entregar a: ' + direccion.slice(0, 25) + '-', margin, this.row);
+          this.row += 5;
+          this.doc.text(direccion.slice(25, direccion.length), margin, this.row);
+        } else {
+          this.doc.text('Entregar a: ' + direccion, margin, this.row);
+        }
+
+        if (this.transaction.deliveryAddress.floor) {
+          this.row += 5;
+          this.doc.text(
+            'Piso: ' + this.transaction.deliveryAddress.floor,
+            margin + 5,
+            this.row,
+          );
+        }
+        if (this.transaction.deliveryAddress.flat) {
+          this.row += 5;
+          this.doc.text(
+            ' Departamento: ' + this.transaction.deliveryAddress.flat,
+            margin + 5,
+            this.row,
+          );
+        }
+
+        if (
+          this.transaction.deliveryAddress &&
+          this.transaction.deliveryAddress.observation
+        ) {
+          if (this.transaction.deliveryAddress.observation.length > 30) {
+            this.row += 5;
+            this.doc.text(
+              'Obs: ' + this.transaction.deliveryAddress.observation.slice(0, 29) + '-',
+              margin,
+              this.row,
+            );
+            this.row += 5;
+            this.doc.text(
+              this.transaction.deliveryAddress.observation.slice(
+                29,
+                this.transaction.deliveryAddress.observation.length,
+              ),
+              margin,
+              this.row,
+            );
+          } else {
+            this.row += 5;
+            this.doc.text(
+              'Obs: ' + this.transaction.deliveryAddress.observation,
+              margin,
+              this.row,
+            );
+          }
+        }
+
+        this.doc.setFont('', 'normal');
+      }
+    } else {
+      if (this.transaction.madein == 'resto' || this.transaction.madein == 'mostrador') {
+        this.row += 5;
+        this.doc.setFont('', 'bold');
+        this.doc.text('Cliente : ' + 'Consumidor Final', margin, this.row);
+        this.doc.setFont('', 'normal');
+      }
+    }
+
+    if (this.transaction.madein == 'resto') {
+      this.row += 5;
+      this.doc.setFont('', 'bold');
+      if (this.transaction.employeeOpening) {
+        this.doc.text('Mozo: ' + this.transaction.employeeOpening.name, margin, this.row);
+      }
+      if (this.transaction.table) {
+        this.doc.text('Mesa: ' + this.transaction.table.description, 40, this.row);
+      }
+      this.doc.setFont('', 'normal');
+    } else if (this.transaction.employeeOpening) {
+      this.row += 5;
+      this.doc.setFont('', 'bold');
+      this.doc.text(
+        'Empleado: ' + this.transaction.employeeOpening.name,
+        margin,
+        this.row,
+      );
+      this.doc.setFont('', 'normal');
+    }
+
+    //Cabecera de la tala de productos
+    this.row += 3;
+    this.doc.line(0, this.row, width, this.row);
+    this.row += 5;
+    this.doc.text('Desc.', margin, this.row);
+    this.doc.text('Total', width - 20, this.row);
+    this.row += 3;
+    this.doc.line(0, this.row, width, this.row);
+
+    //Cuerpo de la tabla de productos
+    this.row + 5;
+    if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
+      for (let movementOfcash of this.movementsOfCashes) {
+        if (movementOfcash.amountPaid > 0) {
+          this.doc.setFont('', 'normal');
+          this.row += 6;
+          this.doc.text(movementOfcash.type.name.slice(0, 25), margin, this.row);
+          this.doc.text(
+            '$' +
+            this.roundNumber
+              .transform(
+                movementOfcash.amountPaid,
+              )
+              .toString(),
+            width - 20,
+            this.row,
+          );
+        }
+      }
+    }
+
+    //Pie de la tabla de productos
+    this.row += 5;
+    this.doc.line(0, this.row, width, this.row);
+    if (this.transaction.discountAmount > 0) {
+      this.row += 5;
+      this.doc.text('DESCUENTO', margin, this.row);
+      this.doc.text(
+        '- $' + this.roundNumber.transform(this.transaction.discountAmount).toString(),
+        width - 15,
+        this.row,
+      );
+    }
+
+
+    if (this.transaction.shipmentMethod) {
+      this.row += 5;
+      this.doc.setFont('', 'bold');
+      this.doc.text('Forma de Entrega:', margin, this.row);
+
+      this.row += 5;
+      this.doc.setFont('', 'normal');
+      this.doc.text(`${this.transaction.shipmentMethod.name}`, margin, this.row);
+    }
+
+    if (this.transaction.observation) {
+      this.row += 5;
+      this.doc.setFont('', 'bold');
+      this.doc.text('Observación: ', margin, this.row);
+
+      this.row += 5;
+      this.doc.setFont('', 'normal');
+      let slice = 0;
+
+      while (this.transaction.observation.length > slice) {
+        this.doc.text(
+          this.transaction.observation.slice(slice, this.printer.pageWidth - 30 + slice) +
+          '-',
+          5,
+          this.row,
+        );
+        this.row += 4;
+        slice = slice + this.printer.pageWidth - 30;
+      }
+    }
+
+    this.doc.setFont('', 'bold');
+    this.row += 5;
+
+    this.doc.setFontSize(15);
+    this.centerText(
+      margin,
+      margin,
+      width,
+      2,
+      this.row,
+      'TOTAL $ ' + this.transaction.totalPrice,
+    );
+    //this.doc.text("$ " + this.transaction.totalPrice, width/1.4, this.row);
+
+    this.doc.setFontSize(10);
+    if (this.config[0].footerInvoice) {
+      this.doc.setFont('', 'italic');
+      this.row += 6;
+      this.doc.text(this.config[0].footerInvoice, 5, this.row);
+    }
+
+    //Pie del ticket
+    this.doc.setFontSize(this.fontSizes.xsmall);
+    this.row += 5;
+    this.centerText(margin, margin, width, 0, this.row, 'Generado en POSCLOUD.com.ar');
+    this.doc.setTextColor(0, 0, 0);
+    if (
+      !this.config[0].companyPicture ||
+      this.config[0].companyPicture === 'default.jpg'
+    ) {
+      this.finishImpression();
+    } else {
+      if (this.branchImagen && this.branchImagen !== 'default.jpg') {
+        await this.getBranchPicture(5, 5, this.printer.pageWidth - 4, 45, false);
+      } else {
+        await this.getCompanyPicture(5, 5, this.printer.pageWidth - 4, 45, false);
+      }
+      if (
+        this.transaction.type.numberPrint &&
+        this.count < this.transaction.type.numberPrint
+      ) {
+        this.row += 5;
+        this.doc.setLineWidth(1.5);
+        this.doc.line(0, this.row, width, this.row);
+        this.doc.setLineWidth(0);
+        this.count++;
+        this.toPrintRollPayment();
       } else {
         this.finishImpression();
       }

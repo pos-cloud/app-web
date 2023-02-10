@@ -167,11 +167,6 @@ export class SendEmailComponent implements OnInit {
         if (result.message && result.message !== '') {
             this.showMessage(result.message, 'info', true);
         }
-
-        if(result.error){
-            this.showMessage(result.error.response, 'info', true);
-        }
-
       },
       err => {
         this.loading = false;
