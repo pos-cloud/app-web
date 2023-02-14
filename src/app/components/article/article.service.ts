@@ -222,7 +222,7 @@ export class ArticleService extends ModelService {
   }
 
   public updatePrice2(query: string): Observable<any> {
-    const URL = `${Config.apiURL}articles/update-prices`;
+    const URL = `${Config.apiV8URL}articles/update-prices`;
 
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json")
