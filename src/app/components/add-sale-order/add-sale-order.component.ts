@@ -2313,11 +2313,12 @@ export class AddSaleOrderComponent {
           subject: `${labelPrint} ${this.padNumber(this.transaction.origin, 4)}-${
             this.transaction.letter
           }-${this.padNumber(this.transaction.number, 8)}`,
-          body: this.transaction.type.defectEmailTemplate.design,
+          body: this.transaction?.type?.defectEmailTemplate?.design  || '',
           attachments: attachments,
         };
 
         this.sendEmail(email);
+        this.backFinal();
 
         break;
       case 'cancel':
