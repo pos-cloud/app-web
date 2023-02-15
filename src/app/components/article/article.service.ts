@@ -247,7 +247,7 @@ export class ArticleService extends ModelService {
 
     xhr.open(
       "POST",
-      environment.api + "upload-image-article/" + idArticle,
+      Config.apiURL + "upload-image-article/" + idArticle,
       true
     );
     xhr.setRequestHeader("Authorization", this._authService.getToken());
@@ -278,7 +278,7 @@ export class ArticleService extends ModelService {
   public makeFileRequestArray(files: Array<File>) {
     let xhr: XMLHttpRequest = new XMLHttpRequest();
 
-    xhr.open("POST", environment.api + "upload-image-article/", true);
+    xhr.open("POST", Config.apiURL + "upload-image-article/", true);
     xhr.setRequestHeader("Authorization", this._authService.getToken());
 
     return new Promise((resolve, reject) => {
