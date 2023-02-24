@@ -96,7 +96,7 @@ export class ListArticlesPosComponent implements OnInit {
 
     async ngOnInit() {
 
-        this.database = Config.database;
+        this.database = localStorage.getItem('company');
         let pathLocation: string[] = this._router.url.split('/');
         this.userType = pathLocation[1];
 

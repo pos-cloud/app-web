@@ -112,7 +112,7 @@ export class ListArticlesComponent implements OnInit {
       this.config = config;
     });
 
-    this.database = Config.database;
+    this.database = localStorage.getItem('company');
     if ("Variantes" === this.listTitle) {
       this.articleType = Type.Variant;
       this.title = "Listado de Variantes";
