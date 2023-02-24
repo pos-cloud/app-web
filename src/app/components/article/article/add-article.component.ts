@@ -135,6 +135,7 @@ export class AddArticleComponent implements OnInit {
   salePriceWithoutVAT: number = 0;
   markupPriceWithoutVAT: number = 0;
   meliAttrs: IMeliAttrs;
+  database: string;
 
   html = '';
 
@@ -778,7 +779,7 @@ export class AddArticleComponent implements OnInit {
               'get-image-article/' +
               this.article.picture +
               '/' +
-              Config.database;
+              localStorage.getItem('company');
           } else {
             this.imageURL = './../../../assets/img/default.jpg';
           }
@@ -1660,7 +1661,7 @@ export class AddArticleComponent implements OnInit {
                         'get-image-article/' +
                         this.article.picture +
                         '/' +
-                        Config.database;
+                        localStorage.getItem('company');
                     } else {
                       this.imageURL = './../../../assets/img/default.jpg';
                     }
@@ -1708,7 +1709,7 @@ export class AddArticleComponent implements OnInit {
                   'get-image-article/' +
                   this.article.picture +
                   '/' +
-                  Config.database;
+                  localStorage.getItem('company');
               } else {
                 this.imageURL = './../../../assets/img/default.jpg';
               }
