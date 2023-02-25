@@ -32,9 +32,6 @@ import Resulteable from 'app/util/Resulteable';
     templateUrl: './cancellation-types-automatic.component.html',
     styleUrls: ['./cancellation-types-automatic.component.scss'],
     providers: [NgbAlertConfig, TranslateMePipe],
-    host: {
-        '(document:keypress)': 'handleKeyboardEvent($event)'
-    }
 })
 
 export class CancellationTypeAutomaticComponent implements OnInit {
@@ -74,18 +71,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         let pathLocation: string[] = this._router.url.split('/');
         this.userType = pathLocation[1];
         if (this.transactionId) {
-            console.log("entra");
             this.getTransaction(this.transactionId);
-        }
-    }
-
-    handleKeyboardEvent(event: KeyboardEvent) {
-        if(event.key == 'Enter'){
-            this.finishSelection()
-        }else if(event.key === '1'){
-            this.cancellationTypeSelected = null
-        }else if(Number(event.key) > 1 && Number(event.key) <= this.cancellationTypes.length + 1){
-            this.cancellationTypeSelected = this.cancellationTypes[Number(event.key) - 2]
         }
     }
 
