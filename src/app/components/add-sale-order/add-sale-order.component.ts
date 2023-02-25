@@ -2309,7 +2309,7 @@ export class AddSaleOrderComponent {
         }
 
         const email: EmailProps = {
-          to: this.transaction.company.emails,
+          to: this.transaction?.company?.emails,
           subject: `${labelPrint} ${this.padNumber(this.transaction.origin, 4)}-${
             this.transaction.letter
           }-${this.padNumber(this.transaction.number, 8)}`,
@@ -2318,7 +2318,6 @@ export class AddSaleOrderComponent {
         };
 
         this.sendEmail(email);
-        this.backFinal();
 
         break;
       case 'cancel':
