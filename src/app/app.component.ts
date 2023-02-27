@@ -191,7 +191,7 @@ export class AppComponent {
       subdominio = 'eldesafio';
       isLocal = true;
     }
-    if (hostname.includes('192.168.88.90') || hostname.includes('181.230.222.36')) {
+    if (hostname.includes('192.168.88.90') || hostname.includes('186.127.35.89')) {
       subdominio = 'granpaso';
       isLocal = true;
     }
