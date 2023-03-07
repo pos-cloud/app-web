@@ -1795,13 +1795,13 @@ export class PointOfSaleComponent implements OnInit {
                     if (this.transaction.type.readLayout) {
                         modalRef = this._modalService.open(PrintTransactionTypeComponent);
                         modalRef.componentInstance.transactionId = this.transaction._id;
-                        modalRef.componentInstance.source = 'mail';
+                        //modalRef.componentInstance.source = 'mail';
                     } else {
                         modalRef = this._modalService.open(PrintComponent);
                         modalRef.componentInstance.company = this.transaction.company;
                         modalRef.componentInstance.transactionId = this.transaction._id;
                         modalRef.componentInstance.typePrint = 'invoice';
-                        modalRef.componentInstance.source = 'mail';
+                        //modalRef.componentInstance.source = 'mail';
                     }
                     let attachments = [];
                     
