@@ -5607,7 +5607,7 @@ export class PrintComponent implements OnInit {
     }
 
     this.doc.setFont('', 'bold');
-    this.row += 5;
+    this.row += 7;
 
     this.doc.setFontSize(15);
     this.centerText(
@@ -5619,7 +5619,55 @@ export class PrintComponent implements OnInit {
       'TOTAL $ ' + this.transaction.totalPrice,
     );
     //this.doc.text("$ " + this.transaction.totalPrice, width/1.4, this.row);
+    this.row += 5;
 
+    let movCancelation: MovementOfCancellation[] = await this.getCancellationsOfMovements(
+      this.transactionId,
+    );
+
+    if (movCancelation) {
+      this.doc.setFont('', 'bold');
+      this.doc.setFontSize(this.fontSizes.normal-2);
+      this.doc.line(0, this.row, 80, this.row);
+      this.row += 5;
+      this.doc.text('Comprobantes cancelados', 5, this.row);
+      this.doc.text('Total', 40, this.row);
+      this.doc.text('Saldo Pendiente', 53, this.row);
+      this.row += 3;
+      this.doc.line(0, this.row, 80, this.row);
+      this.row += 5;
+      for (let index = 0; index < movCancelation.length; index++) {
+        this.doc.setFont('', 'normal');
+        this.doc.text(
+          movCancelation[index].transactionOrigin.type.name +
+          '   ' +
+          this.padString(movCancelation[index].transactionOrigin.origin, 4) +
+          '-' +
+          this.padString(movCancelation[index].transactionOrigin.number, 8),
+          5,
+          this.row,
+        );
+        this.doc.text(
+          '$ ' +
+          this.roundNumber.transform(
+            movCancelation[index].transactionOrigin.totalPrice,
+          ),
+          40,
+          this.row
+        );
+       
+        this.doc.text(
+          '$ ' +
+          this.roundNumber.transform(movCancelation[index].transactionOrigin.balance),
+          53,
+          this.row,
+          
+        );
+
+        this.row += 5;
+      }
+    }
+    
     this.doc.setFontSize(10);
     if (this.config[0].footerInvoice) {
       this.doc.setFont('', 'italic');
