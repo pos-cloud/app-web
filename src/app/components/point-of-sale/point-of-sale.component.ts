@@ -1790,81 +1790,7 @@ export class PointOfSaleComponent implements OnInit {
                 //a futuro integrar createAttatchment --->
                 this.refresh();
                 if (this.transaction.type.defectPrinter) {
-                    this.printerSelected = this.printerSelected;
-                    let modalRef;
-                    if (this.transaction.type.readLayout) {
-                        modalRef = this._modalService.open(PrintTransactionTypeComponent);
-                        modalRef.componentInstance.transactionId = this.transaction._id;
-                        //modalRef.componentInstance.source = 'mail';
-                    } else {
-                        modalRef = this._modalService.open(PrintComponent);
-                        modalRef.componentInstance.company = this.transaction.company;
-                        modalRef.componentInstance.transactionId = this.transaction._id;
-                        modalRef.componentInstance.typePrint = 'invoice';
-                        //modalRef.componentInstance.source = 'mail';
-                    }
-                    let attachments = [];
-                    
-                    if (this.transaction.type.electronics) {
-                        attachments.push({
-                        filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-                        path: `/home/clients/${this.database}/invoice/${this.transaction._id}.pdf`,
-                        });
-                    } else {
-                        attachments.push({
-                        filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-                        path: `/home/clients/${this.database}/others/${this.transaction._id}.pdf`,
-                        });
-                    }
-                    
-                    if (Config.country === 'MX') {
-                        attachments.push({
-                        filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.xml`,
-                        path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_${this.transaction.number}.xml`,
-                        });
-                    }
-        
-                    if (this.transaction.type.defectEmailTemplate) {
-                        if (this.transaction.type.electronics) {
-                        attachments = [];
-                        attachments.push({
-                            filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-                            path: `/home/clients/${this.database}/invoice/${this.transaction._id}.pdf`,
-                        });
-                        } else {
-                        attachments = [];
-                        attachments.push({
-                            filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-                            path: `/home/clients/${this.database}/others/${this.transaction._id}.pdf`,
-                        });
-                        }
-
-                        if (Config.country === 'MX') {
-                        attachments = [];
-                        attachments.push({
-                            filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.xml`,
-                            path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_${this.transaction.number}.xml`,
-                        });
-                        }
-                        let labelPrint = this.transaction.type.name;
-            
-                        if (this.transaction.type.labelPrint) {
-                            labelPrint = this.transaction.type.labelPrint;
-                        }
-                        if (this.transaction.type.labelPrint) {
-                            labelPrint = this.transaction.type.labelPrint;
-                        }
-                        const email: EmailProps = {
-                            to: this.transaction.company.emails,
-                            subject: `${labelPrint} ${this.padNumber(this.transaction.origin, 4)}-${
-                            this.transaction.letter
-                            }-${this.padNumber(this.transaction.number, 8)}`,
-                            body: this.transaction.type.defectEmailTemplate.design,
-                            attachments: attachments,
-                        };
-                        this.sendEmail(email);
-                        // <--- a futuro integrar createAttatchment
-                    }
+                    this.openModal("print");
                 } else {
                     this.openModal("printers");
                 }
@@ -1874,6 +1800,94 @@ export class PointOfSaleComponent implements OnInit {
                     this.transaction = undefined;
                 }
                 this.refresh();
+            }
+            if(this.transaction.type.requestEmailTemplate){
+                let attachments = [];
+                let modalRef;
+
+                if (this.transaction.type.readLayout) {
+                modalRef = this._modalService.open(PrintTransactionTypeComponent);
+                modalRef.componentInstance.transactionId = this.transaction._id;
+                modalRef.componentInstance.source = 'mail';
+                } else {
+                modalRef = this._modalService.open(PrintComponent);
+                modalRef.componentInstance.company = this.transaction.company;
+                modalRef.componentInstance.transactionId = this.transaction._id;
+                modalRef.componentInstance.typePrint = 'invoice';
+                modalRef.componentInstance.source = 'mail';
+                }
+                if (this.transaction.type.defectPrinter) {
+                modalRef.componentInstance.printer = this.transaction.type.defectPrinter;
+                } else {
+                if (this.printers && this.printers.length > 0) {
+                    for (let printer of this.printers) {
+                    if (printer.printIn === PrinterPrintIn.Counter) {
+                        modalRef.componentInstance.printer = printer;
+                    }
+                    }
+                }
+                }
+                
+                let labelPrint = this.transaction.type.name;
+
+                setTimeout(() => {
+                if (this.transaction.type.labelPrint) {
+                    labelPrint = this.transaction.type.labelPrint;
+                }
+                if (this.transaction.type.electronics) {
+                    attachments.push({
+                    filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
+                    path: `/home/clients/${this.database}/invoice/${this.transaction._id}.pdf`,
+                    });
+                } else {
+                    attachments.push({
+                    filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
+                    path: `/home/clients/${this.database}/others/${this.transaction._id}.pdf`,
+                    });
+                }
+
+                if (Config.country === 'MX') {
+                    attachments.push({
+                    filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.xml`,
+                    path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_${this.transaction.number}.xml`,
+                    });
+                }
+    
+                if (this.transaction.type.defectEmailTemplate) {
+                    if (this.transaction.type.electronics) {
+                    attachments = [];
+                    attachments.push({
+                        filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
+                        path: `/home/clients/${this.database}/invoice/${this.transaction._id}.pdf`,
+                    });
+                    } else {
+                    attachments = [];
+                    attachments.push({
+                        filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
+                        path: `/home/clients/${this.database}/others/${this.transaction._id}.pdf`,
+                    });
+                    }
+
+                    if (Config.country === 'MX') {
+                    attachments = [];
+                    attachments.push({
+                        filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.xml`,
+                        path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_${this.transaction.number}.xml`,
+                    });
+                    }
+                }
+        
+                const email: EmailProps = {
+                    to: this.transaction?.company?.emails,
+                    subject: `${labelPrint} ${this.padNumber(this.transaction.origin, 4)}-${
+                    this.transaction.letter
+                    }-${this.padNumber(this.transaction.number, 8)}`,
+                    body: this.transaction?.type?.defectEmailTemplate?.design  || '',
+                    attachments: attachments,
+                };
+                
+                this.sendEmail(email);          
+                }, 1300);
             }
         } catch (error) { this.showToast(error) }
     }
