@@ -570,11 +570,21 @@ export class ListArticlesComponent implements OnInit {
                     modalRef.componentInstance.priceListId = this.priceListId;
                   }
                 } else {
-                  this.showMessage(
-                    "Crear una diseño en la impresora de tipo etiqueta",
-                    "danger",
-                    false
-                  );
+                  if(printer.pageHigh === 297 && printer.pageWidth === 210){
+                    modalRef = this._modalService.open(
+                      PrintComponent
+                    );
+                    modalRef.componentInstance.article = article;
+                    modalRef.componentInstance.printer = printer;
+                  }else{
+                    this.showMessage(
+                      "Crear una diseño en la impresora de tipo etiqueta",
+                      "danger",
+                      false
+                    );
+                  }
+                  
+                  
                 }
               } else {
                 this.showMessage(

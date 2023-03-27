@@ -156,6 +156,7 @@ export class PrintComponent implements OnInit {
   barcode64: string;
   transactionTypes: TransactionType[] = new Array();
   transactionMovement: TransactionMovement;
+  public imageURL: any;
   fontSizes = {
     xsmall: 5,
     small: 7,
@@ -215,20 +216,53 @@ export class PrintComponent implements OnInit {
     }
 
     this.doc = new jsPDF(orientation, units, [pageWidth, pageHigh]);
-
     if (this.transactionId) {
       this.movementsOfCancellation = await this.getCancellationsOfMovements(
         this.transactionId,
       );
       this.printOriginCount = 0;
     }
-
+   
     if (this.articles && this.articles.length > 0) {
       this.printPrinterArticles();
+    }
+    
+    if(this.article){
+      this.printBarcodeList()
     }
 
     this.getConfig();
   }
+
+  async printBarcodeList() {
+    //set start coordinates
+    let x = 15
+    let y = 15
+    //set counter
+    let count = 1
+
+    //set barcode image
+    await this.getBarcodeForlabel('code128?value=' +this.article.barcode)
+
+    //print each article
+    for (let i = 0; i<80; i++){
+      this.doc.setFont('', 'bold');
+      this.doc.setFontSize(5);
+      this.doc.text(x+2, y+2.5, this.article.description);
+      this.doc.addImage(this.imageURL, 'png',x+6, y+4, 22, 6);
+      
+
+      //validate position
+      if(x >= 146){
+        x=15
+        y+=17
+      }else{
+        x+=36
+      }
+
+    }
+  this.finishImpression();
+}
 
   async printPrinterArticles() {
       //set start coordinates
@@ -4340,6 +4374,7 @@ export class PrintComponent implements OnInit {
       this.movementsOfCancellation.length !== this.printOriginCount &&
       this.printOrigin
     ) {
+      console.log("entra 1");
       this.transactionId =
         this.movementsOfCancellation[this.printOriginCount].transactionOrigin._id;
       this.printOriginCount++;
@@ -4348,6 +4383,7 @@ export class PrintComponent implements OnInit {
     }
 
     if (!this.source && this.printer && !this.printer.url) {
+      console.log("entra 2");
       this.doc.autoPrint();
       this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(
         this.doc.output('bloburl'),
@@ -4355,6 +4391,7 @@ export class PrintComponent implements OnInit {
     }
 
     if (this.printer.url && this.typePrint) {
+      console.log("entra 3");
       this._printService
         .saveFile(this.doc.output('blob'), this.typePrint, this.transactionId)
         .then((result) => {
@@ -4376,8 +4413,10 @@ export class PrintComponent implements OnInit {
     }
 
     if (this.transaction && this.transaction.type && this.transaction.type.electronics) {
+      console.log("entra 4");
       this._printService.saveFile(this.doc.output('blob'), 'invoice', this.transactionId);
     } else if (this.source === 'mail') {
+      console.log("entra 5");
       if (this.transaction) {
         this._printService.saveFile(
           this.doc.output('blob'),
@@ -5819,6 +5858,22 @@ export class PrintComponent implements OnInit {
         (error) => {
           reject(error);
         },
+      );
+    });
+  }
+
+  getBarcodeForlabel(barcode){
+    return new Promise((resolve, reject) => {
+      this._printService.getBarcode(barcode).subscribe(
+        result => {
+          if (!result.bc64) {
+            resolve(false)
+          } else {
+            let barcode64 = result.bc64;
+            this.imageURL = 'data:image/png;base64,' + barcode64;
+            resolve(true)
+          }
+        }
       );
     });
   }
