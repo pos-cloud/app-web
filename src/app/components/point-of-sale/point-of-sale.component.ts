@@ -1833,7 +1833,6 @@ export class PointOfSaleComponent implements OnInit {
                 
                 let labelPrint = this.transaction.type.name;
 
-                setTimeout(() => {
                 if (this.transaction.type.labelPrint) {
                     labelPrint = this.transaction.type.labelPrint;
                 }
@@ -1889,8 +1888,9 @@ export class PointOfSaleComponent implements OnInit {
                     attachments: attachments,
                 };
                 
-                this.sendEmail(email);          
-                }, 1300);
+                setTimeout(() => {
+                    this.sendEmail(email);          
+                }, 2500);
             }
         } catch (error) { this.showToast(error) }
     }

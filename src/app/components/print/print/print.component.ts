@@ -4374,7 +4374,6 @@ export class PrintComponent implements OnInit {
       this.movementsOfCancellation.length !== this.printOriginCount &&
       this.printOrigin
     ) {
-      console.log("entra 1");
       this.transactionId =
         this.movementsOfCancellation[this.printOriginCount].transactionOrigin._id;
       this.printOriginCount++;
@@ -4383,7 +4382,6 @@ export class PrintComponent implements OnInit {
     }
 
     if (!this.source && this.printer && !this.printer.url) {
-      console.log("entra 2");
       this.doc.autoPrint();
       this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(
         this.doc.output('bloburl'),
@@ -4391,7 +4389,6 @@ export class PrintComponent implements OnInit {
     }
 
     if (this.printer.url && this.typePrint) {
-      console.log("entra 3");
       this._printService
         .saveFile(this.doc.output('blob'), this.typePrint, this.transactionId)
         .then((result) => {
@@ -4413,10 +4410,8 @@ export class PrintComponent implements OnInit {
     }
 
     if (this.transaction && this.transaction.type && this.transaction.type.electronics) {
-      console.log("entra 4");
       this._printService.saveFile(this.doc.output('blob'), 'invoice', this.transactionId);
     } else if (this.source === 'mail') {
-      console.log("entra 5");
       if (this.transaction) {
         this._printService.saveFile(
           this.doc.output('blob'),
