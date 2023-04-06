@@ -2316,7 +2316,6 @@ export class AddSaleOrderComponent {
           body: this.transaction?.type?.defectEmailTemplate?.design  || '',
           attachments: attachments,
         };
-        console.log("fsdhahfudsh");
         setTimeout(() => {
             this.sendEmail(this.email);          
         }, 2500);
