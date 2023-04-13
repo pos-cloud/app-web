@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -20,7 +20,7 @@ import { Config } from 'app/app.config';
 
 export class ExportCitiComponent implements OnInit {
 
-    public exportCitiForm: FormGroup;
+    public exportCitiForm: UntypedFormGroup;
     public alertMessage: string = "";
     public loading: boolean = false;
     public months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
@@ -47,7 +47,7 @@ export class ExportCitiComponent implements OnInit {
     };
 
     constructor(
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public _router: Router,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,

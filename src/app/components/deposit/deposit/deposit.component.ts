@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, ViewEncapsulation, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -28,7 +28,7 @@ export class DepositComponent implements OnInit {
 	public deposit: Deposit;
 	public deposits: Deposit[];
 	public branches: Branch[];
-	public depositForm: FormGroup;
+	public depositForm: UntypedFormGroup;
 	public alertMessage: string = '';
 	public userType: string;
 	public loading: boolean = false;
@@ -55,7 +55,7 @@ export class DepositComponent implements OnInit {
 	constructor(
 		public _depositService: DepositService,
 		public _branchService: BranchService,
-		public _fb: FormBuilder,
+		public _fb: UntypedFormBuilder,
 		public _router: Router,
 		public activeModal: NgbActiveModal,
 		public alertConfig: NgbAlertConfig

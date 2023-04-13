@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -21,7 +21,7 @@ export class RelationTypeComponent implements OnInit {
   @Input() relationTypeId: string;
   @Input() operation: string;
   @Input() readonly: boolean;
-  public relationTypeForm: FormGroup;
+  public relationTypeForm: UntypedFormGroup;
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
@@ -43,7 +43,7 @@ export class RelationTypeComponent implements OnInit {
 
   constructor(
     public _relationTypeService: RelationTypeService,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig

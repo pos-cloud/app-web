@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormGroup, FormBuilder, FormControl} from '@angular/forms';
+import {UntypedFormGroup, UntypedFormBuilder, UntypedFormControl} from '@angular/forms';
 import {Router} from '@angular/router';
 import {NgbAlertConfig, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 
@@ -16,7 +16,7 @@ import {ImportExcelService} from './import-excel.service';
 })
 export class importExcelComponent implements OnInit {
   filePath: string = ''; //Ruta de archivo a importar
-  importForm: FormGroup;
+  importForm: UntypedFormGroup;
   providers: Array<object>;
   alertMessage: string = '';
   userType: string;
@@ -38,17 +38,17 @@ export class importExcelComponent implements OnInit {
   countArticles: any;
 
   constructor(
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _importExcelService: ImportExcelService,
     public _companyService: CompanyService,
   ) {
-    this.importForm = new FormGroup({
-      filePath: new FormControl(),
-      selectProvider: new FormControl(),
-      roundFinalPrice: new FormControl(),
+    this.importForm = new UntypedFormGroup({
+      filePath: new UntypedFormControl(),
+      selectProvider: new UntypedFormControl(),
+      roundFinalPrice: new UntypedFormControl(),
     });
   }
   ngOnInit(): void {

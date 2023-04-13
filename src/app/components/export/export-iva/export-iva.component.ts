@@ -1,5 +1,5 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {FormGroup, FormBuilder, Validators} from '@angular/forms';
+import {UntypedFormGroup, UntypedFormBuilder, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {NgbModal, NgbActiveModal, NgbAlertConfig} from '@ng-bootstrap/ng-bootstrap';
 import {ArticleField, ArticleFieldType} from 'app/components/article-field/article-field';
@@ -40,7 +40,7 @@ import 'moment/locale/es';
 })
 export class ExportIvaComponent implements OnInit {
   @Input() type;
-  public exportIVAForm: FormGroup;
+  public exportIVAForm: UntypedFormGroup;
   public dataIVA: any = [];
   public dataState: any = [];
   public dataClassification: any = [];
@@ -99,7 +99,7 @@ export class ExportIvaComponent implements OnInit {
   };
 
   constructor(
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public _modalService: NgbModal,

@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -25,7 +25,7 @@ export class TableComponent implements OnInit {
     public table: Table;
     public states: TableState[] = [TableState.Available, TableState.Disabled, TableState.Reserved];
     public rooms: Room[] = new Array();
-    public tableForm: FormGroup;
+    public tableForm: UntypedFormGroup;
     public alertMessage: string = '';
     public userType: string;
     public loading: boolean = false;
@@ -57,7 +57,7 @@ export class TableComponent implements OnInit {
     constructor(
         public _tableService: TableService,
         public _roomService: RoomService,
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public _router: Router,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,

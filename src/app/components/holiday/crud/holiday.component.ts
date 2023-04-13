@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl } from '@angular/forms';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
@@ -31,7 +31,7 @@ export class HolidayComponent implements OnInit {
     public readonly: boolean;
     public operation: string;
     public obj: Holiday;
-    public objForm: FormGroup;
+    public objForm: UntypedFormGroup;
     public loading: boolean = false;
     public focusEvent = new EventEmitter<boolean>();
     public title: string = 'holiday';
@@ -75,7 +75,7 @@ export class HolidayComponent implements OnInit {
         private _objService: HolidayService,
         private _toastr: ToastrService,
         private _title: Title,
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,
         public translatePipe: TranslateMePipe,
@@ -174,7 +174,7 @@ export class HolidayComponent implements OnInit {
         }
     }
 
-    public validateAutocomplete(c: FormControl) {
+    public validateAutocomplete(c: UntypedFormControl) {
         let result = (c.value && Object.keys(c.value)[0] === '0') ? {
             validateAutocomplete: {
                 valid: false

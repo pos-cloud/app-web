@@ -8,7 +8,7 @@ import { RoundNumberPipe } from '../../../main/pipes/round-number.pipe';
 import { TransactionService } from 'app/components/transaction/transaction.service';
 import { Config } from './../../../app.config';
 import { CompanyType, Company } from 'app/components/company/company';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { EmployeeService } from 'app/components/employee/employee.service';
 
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
@@ -100,7 +100,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
     public formatterCompanies = (x: { name: string }) => x.name;
 
-    public companyForm: FormGroup;
+    public companyForm: UntypedFormGroup;
     public alertMessage: string = '';
     public userType: string;
     public loading: boolean = false;
@@ -158,7 +158,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
         public _transactionTypeService: TransactionTypeService,
         public _employeeService: EmployeeService,
         public _companyGroup: CompanyGroupService,
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public _router: Router,
         public _companyService: CompanyService,
         public activeModal: NgbActiveModal,

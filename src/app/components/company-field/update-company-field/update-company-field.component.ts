@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -19,7 +19,7 @@ export class UpdateCompanyFieldComponent implements OnInit {
 
   @Input() companyField: CompanyField;
   @Input() readonly: boolean;
-  public companyFieldForm: FormGroup;
+  public companyFieldForm: UntypedFormGroup;
   public alertMessage: string = '';
   public datatypes: CompanyFieldType[] = [ CompanyFieldType.Number, CompanyFieldType.String ];
   public userType: string;
@@ -39,7 +39,7 @@ export class UpdateCompanyFieldComponent implements OnInit {
 
   constructor(
     public _companyFieldService: CompanyFieldService,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig

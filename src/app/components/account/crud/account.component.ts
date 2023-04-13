@@ -1,10 +1,10 @@
 import {Component, OnInit, EventEmitter, ViewEncapsulation} from '@angular/core';
 import {
-  FormGroup,
-  FormBuilder,
+  UntypedFormGroup,
+  UntypedFormBuilder,
   Validators,
-  FormControl,
-  FormArray,
+  UntypedFormControl,
+  UntypedFormArray,
   NgForm,
 } from '@angular/forms';
 import * as moment from 'moment';
@@ -47,9 +47,9 @@ export class AccountComponent implements OnInit {
   public readonly: boolean;
   public operation: string;
   public obj: Account;
-  public objForm: FormGroup;
+  public objForm: UntypedFormGroup;
   public loading: boolean = false;
-  public schedule: FormArray;
+  public schedule: UntypedFormArray;
   public focusEvent = new EventEmitter<boolean>();
   public title: string = 'account';
   private subscription: Subscription = new Subscription();
@@ -180,7 +180,7 @@ export class AccountComponent implements OnInit {
     private _objService: AccountService,
     private _toastr: ToastrService,
     private _title: Title,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _branchService: BranchService,
@@ -319,7 +319,7 @@ export class AccountComponent implements OnInit {
     }
   }
 
-  public validateAutocomplete(c: FormControl) {
+  public validateAutocomplete(c: UntypedFormControl) {
     let result =
       c.value && Object.keys(c.value)[0] === '0'
         ? {

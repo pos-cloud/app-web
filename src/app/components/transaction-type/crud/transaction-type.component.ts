@@ -1,5 +1,5 @@
 import {Component, OnInit, EventEmitter, ViewEncapsulation} from '@angular/core';
-import {FormGroup, FormBuilder, Validators, FormControl, FormArray} from '@angular/forms';
+import {UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl, UntypedFormArray} from '@angular/forms';
 import {Title} from '@angular/platform-browser';
 import {Router} from '@angular/router';
 import {NgbAlertConfig, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
@@ -61,9 +61,9 @@ export class TransactionTypeComponent implements OnInit {
   readonly: boolean;
   operation: string;
   obj: TransactionType;
-  objForm: FormGroup;
+  objForm: UntypedFormGroup;
   loading: boolean = false;
-  schedule: FormArray;
+  schedule: UntypedFormArray;
   focusEvent = new EventEmitter<boolean>();
   title: string = 'transaction-type';
   focus$: Subject<string>[] = new Array();
@@ -979,7 +979,7 @@ export class TransactionTypeComponent implements OnInit {
     private _objService: TransactionTypeService,
     private _toastr: ToastrService,
     private _title: Title,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _branchService: BranchService,
@@ -1249,7 +1249,7 @@ export class TransactionTypeComponent implements OnInit {
     }
   }
 
-  public validateAutocomplete(c: FormControl) {
+  public validateAutocomplete(c: UntypedFormControl) {
     let result =
       c.value && Object.keys(c.value)[0] === '0'
         ? {
@@ -1314,16 +1314,16 @@ export class TransactionTypeComponent implements OnInit {
           this.obj.paymentMethods.forEach((y) => {
             if (x._id === y._id) {
               exists = true;
-              const control = new FormControl(y);
+              const control = new UntypedFormControl(y);
 
-              (this.objForm.controls.paymentMethods as FormArray).push(control);
+              (this.objForm.controls.paymentMethods as UntypedFormArray).push(control);
             }
           });
         }
         if (!exists) {
-          const control = new FormControl(false);
+          const control = new UntypedFormControl(false);
 
-          (this.objForm.controls.paymentMethods as FormArray).push(control);
+          (this.objForm.controls.paymentMethods as UntypedFormArray).push(control);
         }
       });
     }

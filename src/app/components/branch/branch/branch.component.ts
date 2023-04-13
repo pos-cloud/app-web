@@ -1,6 +1,6 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, FormControl } from '@angular/forms';
 
 
 import { BranchService } from '../branch.service';
@@ -53,13 +53,13 @@ export class BranchComponent implements OnInit {
         }
     };
 
-    public branchForm: FormGroup;
+    public branchForm: UntypedFormGroup;
 
     constructor(
         public alertConfig: NgbAlertConfig,
         public _branchService: BranchService,
         public _router: Router,
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public activeModal: NgbActiveModal,
         public _configService: ConfigService
     ) {

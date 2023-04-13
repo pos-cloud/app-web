@@ -140,7 +140,6 @@
       }
     }
   },
-  "defaultProject": "pos-cloud",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",

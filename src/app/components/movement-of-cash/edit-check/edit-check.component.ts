@@ -1,6 +1,6 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { MovementOfCash, StatusCheck } from 'app/components/movement-of-cash/movement-of-cash';
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, Validators, UntypedFormBuilder } from '@angular/forms';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { MovementOfCashService } from 'app/components/movement-of-cash/movement-of-cash.service';
 import * as moment from 'moment';
@@ -21,7 +21,7 @@ export class EditCheckComponent implements OnInit {
     @Input() movementOfCashId: string;
     public movementOfCash: MovementOfCash;
     public statusChecks: StatusCheck[] = [StatusCheck.Rejected, StatusCheck.Available, StatusCheck.Closed, StatusCheck.Deposit];
-    public checkForm: FormGroup;
+    public checkForm: UntypedFormGroup;
     public alertMessage: string = '';
     public userType: string;
     public loading: boolean = false;
@@ -46,7 +46,7 @@ export class EditCheckComponent implements OnInit {
         private _toastr: ToastrService,
         private _movementOfCashService: MovementOfCashService,
         private _bankService: BankService,
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,
         public translatePipe: TranslateMePipe,

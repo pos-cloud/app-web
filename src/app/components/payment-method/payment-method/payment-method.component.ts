@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl, FormArray } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl, UntypedFormArray } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -34,7 +34,7 @@ export class PaymentMethodComponent implements OnInit {
   @Input() readonly: boolean
   @Input() operation: string;
   public paymentMethod: PaymentMethod;
-  public paymentMethodForm: FormGroup;
+  public paymentMethodForm: UntypedFormGroup;
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
@@ -148,7 +148,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
 
   constructor(
     private _paymentMethodService: PaymentMethodService,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
@@ -415,14 +415,14 @@ public formatterAccounts = (x: Account) => { return x.description; };
           this.paymentMethod.applications.forEach(y => {
             if (x._id === y._id) {
               exists = true;
-              const control = new FormControl(y); // if first item set to true, else false
-              (this.paymentMethodForm.controls.applications as FormArray).push(control);
+              const control = new UntypedFormControl(y); // if first item set to true, else false
+              (this.paymentMethodForm.controls.applications as UntypedFormArray).push(control);
             }
           })
         }
         if (!exists) {
-          const control = new FormControl(false); // if first item set to true, else false
-          (this.paymentMethodForm.controls.applications as FormArray).push(control);
+          const control = new UntypedFormControl(false); // if first item set to true, else false
+          (this.paymentMethodForm.controls.applications as UntypedFormArray).push(control);
         }
       })
     }

@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -22,7 +22,7 @@ export class CurrencyComponent implements OnInit {
     @Input() currencyId: string;
     @Input() operation: string;
     @Input() readonly: boolean;
-    public currencyForm: FormGroup;
+    public currencyForm: UntypedFormGroup;
     public alertMessage: string = '';
     public userType: string;
     public loading: boolean = false;
@@ -52,7 +52,7 @@ export class CurrencyComponent implements OnInit {
 
     constructor(
         public _currencyService: CurrencyService,
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public _router: Router,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig

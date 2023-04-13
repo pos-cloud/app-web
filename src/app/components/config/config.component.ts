@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl } from '@angular/forms';
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { User } from "app/components/user/user";
@@ -47,9 +47,9 @@ export class ConfigComponent implements OnInit {
   public config: Config;
   public loading: boolean = false;
   public cert: boolean = false;
-  public configFormEmail: FormGroup;
-  public configFormCompany: FormGroup;
-  public configFormSystem: FormGroup;
+  public configFormEmail: UntypedFormGroup;
+  public configFormCompany: UntypedFormGroup;
+  public configFormSystem: UntypedFormGroup;
   public focusEvent = new EventEmitter<boolean>();
   public alertMessage: string = "";
   public loadingCompany: boolean = false;
@@ -105,7 +105,7 @@ export class ConfigComponent implements OnInit {
     public _currencyService: CurrencyService,
     public _accountService: AccountService,
     public _userService: UserService,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _toastr: ToastrService,
     public alertConfig: NgbAlertConfig,
     private _authService: AuthService,
@@ -341,7 +341,7 @@ export class ConfigComponent implements OnInit {
   }
 
   public validateDate() {
-    return function (input: FormControl) {
+    return function (input: UntypedFormControl) {
       let dateValid = false;
       let date;
       if (input.parent && input.parent.controls && input.parent.controls['companyStartOfActivity'].value) {

@@ -3,12 +3,12 @@ import {DecimalPipe} from '@angular/common';
 import {SlicePipe} from '@angular/common';
 import {Component, OnInit, EventEmitter, Input, ViewEncapsulation} from '@angular/core';
 import {
-  FormGroup,
-  FormBuilder,
+  UntypedFormGroup,
+  UntypedFormBuilder,
   Validators,
-  FormArray,
+  UntypedFormArray,
   NgForm,
-  FormControl,
+  UntypedFormControl,
 } from '@angular/forms';
 import {Router} from '@angular/router';
 
@@ -84,9 +84,9 @@ export class AddArticleComponent implements OnInit {
   articleStock: ArticleStock;
   articles: Article[];
   config: Config;
-  articleForm: FormGroup;
-  newDeposit: FormGroup;
-  newLocation: FormGroup;
+  articleForm: UntypedFormGroup;
+  newDeposit: UntypedFormGroup;
+  newLocation: UntypedFormGroup;
   currencies: Currency[] = new Array();
   makes: Make[] = new Array();
   classifications: Classification[] = new Array();
@@ -330,7 +330,7 @@ export class AddArticleComponent implements OnInit {
     private _configService: ConfigService,
     private _toastr: ToastrService,
     public translatePipe: TranslateMePipe,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
@@ -378,9 +378,9 @@ export class AddArticleComponent implements OnInit {
         this.applications = result;
         if (!this.articleId) {
           this.applications.forEach((x) => {
-            const control = new FormControl(false);
+            const control = new UntypedFormControl(false);
 
-            (this.articleForm.controls.applications as FormArray).push(control);
+            (this.articleForm.controls.applications as UntypedFormArray).push(control);
           });
         }
       })
@@ -613,7 +613,7 @@ export class AddArticleComponent implements OnInit {
   async addDeposit(depositForm: any) {
     depositForm = this.newDeposit;
     let valid = true;
-    const deposits = this.articleForm.controls.deposits as FormArray;
+    const deposits = this.articleForm.controls.deposits as UntypedFormArray;
 
     let deposit = await this.getDeposit(depositForm.value.deposit);
 
@@ -658,7 +658,7 @@ export class AddArticleComponent implements OnInit {
     let valid = true;
 
     if (otherFieldsForm) {
-      const otherFields = this.articleForm.controls.otherFields as FormArray;
+      const otherFields = this.articleForm.controls.otherFields as UntypedFormArray;
 
       this.articleForm.controls.otherFields.value.forEach((element) => {
         if (otherFieldsForm.value.articleField._id == element.articleField) {
@@ -693,7 +693,7 @@ export class AddArticleComponent implements OnInit {
   async addLocation(locationForm: any) {
     locationForm = this.newLocation;
     let valid = true;
-    const locations = this.articleForm.controls.locations as FormArray;
+    const locations = this.articleForm.controls.locations as UntypedFormArray;
 
     if (
       (locationForm && locationForm.value && locationForm.value.location == '') ||
@@ -726,19 +726,19 @@ export class AddArticleComponent implements OnInit {
   }
 
   deleteDeposit(index): void {
-    let control = <FormArray>this.articleForm.controls.deposits;
+    let control = <UntypedFormArray>this.articleForm.controls.deposits;
 
     control.removeAt(index);
   }
 
   deleteOtherField(index): void {
-    let control = <FormArray>this.articleForm.controls.otherFields;
+    let control = <UntypedFormArray>this.articleForm.controls.otherFields;
 
     control.removeAt(index);
   }
 
   deleteLocation(index): void {
-    let control = <FormArray>this.articleForm.controls.locations;
+    let control = <UntypedFormArray>this.articleForm.controls.locations;
 
     control.removeAt(index);
   }
@@ -843,7 +843,7 @@ export class AddArticleComponent implements OnInit {
 
   setValuesArray(): void {
     if (this.article.deposits && this.article.deposits.length > 0) {
-      let deposits = this.articleForm.controls.deposits as FormArray;
+      let deposits = this.articleForm.controls.deposits as UntypedFormArray;
 
       this.article.deposits.forEach((x) => {
         if (x.deposit && x.deposit._id && x.deposit.operationType != 'D') {
@@ -859,7 +859,7 @@ export class AddArticleComponent implements OnInit {
     }
 
     if (this.article.locations && this.article.locations.length > 0) {
-      let locations = this.articleForm.controls.locations as FormArray;
+      let locations = this.articleForm.controls.locations as UntypedFormArray;
 
       this.article.locations.forEach((x) => {
         let locationId;
@@ -877,7 +877,7 @@ export class AddArticleComponent implements OnInit {
     }
 
     if (this.article.otherFields && this.article.otherFields.length > 0) {
-      let otherFields = this.articleForm.controls.otherFields as FormArray;
+      let otherFields = this.articleForm.controls.otherFields as UntypedFormArray;
 
       this.article.otherFields.forEach((x) => {
         let articleFieldId;
@@ -896,7 +896,7 @@ export class AddArticleComponent implements OnInit {
     }
 
     if (this.article.pictures && this.article.pictures.length > 0) {
-      let pictures = this.articleForm.controls.pictures as FormArray;
+      let pictures = this.articleForm.controls.pictures as UntypedFormArray;
 
       this.article.pictures.forEach((x) => {
         pictures.push(
@@ -916,15 +916,15 @@ export class AddArticleComponent implements OnInit {
         this.article.applications.forEach((y) => {
           if (x._id === y._id) {
             exists = true;
-            const control = new FormControl(y); // if first item set to true, else false
+            const control = new UntypedFormControl(y); // if first item set to true, else false
 
-            (this.articleForm.controls.applications as FormArray).push(control);
+            (this.articleForm.controls.applications as UntypedFormArray).push(control);
           }
         });
         if (!exists) {
-          const control = new FormControl(false); // if first item set to true, else false
+          const control = new UntypedFormControl(false); // if first item set to true, else false
 
-          (this.articleForm.controls.applications as FormArray).push(control);
+          (this.articleForm.controls.applications as UntypedFormArray).push(control);
         }
       });
     }
@@ -977,7 +977,7 @@ export class AddArticleComponent implements OnInit {
     return n;
   }
 
-  validateAutocomplete(c: FormControl) {
+  validateAutocomplete(c: UntypedFormControl) {
     let result =
       c.value && Object.keys(c.value)[0] === '0'
         ? {
@@ -1868,7 +1868,7 @@ export class AddArticleComponent implements OnInit {
 
   async addPictureArray(picture: string) {
     let valid = true;
-    const pictures = this.articleForm.controls.pictures as FormArray;
+    const pictures = this.articleForm.controls.pictures as UntypedFormArray;
 
     if (valid) {
       pictures.push(
@@ -1941,7 +1941,7 @@ export class AddArticleComponent implements OnInit {
         if (result) {
           if (result.result === 'ok') {
             if (index !== null) {
-              let control = <FormArray>this.articleForm.controls.pictures;
+              let control = <UntypedFormArray>this.articleForm.controls.pictures;
 
               control.removeAt(index);
             } else {

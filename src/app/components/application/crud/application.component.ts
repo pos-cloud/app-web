@@ -1,10 +1,10 @@
 import {Component, OnInit, EventEmitter, ViewEncapsulation} from '@angular/core';
 import {
-  FormGroup,
-  FormBuilder,
+  UntypedFormGroup,
+  UntypedFormBuilder,
   Validators,
-  FormControl,
-  FormArray,
+  UntypedFormControl,
+  UntypedFormArray,
   NgForm,
 } from '@angular/forms';
 import 'moment/locale/es';
@@ -45,9 +45,9 @@ export class ApplicationComponent implements OnInit {
   readonly: boolean;
   operation: string;
   obj: Application;
-  objForm: FormGroup;
+  objForm: UntypedFormGroup;
   loading: boolean = false;
-  schedule: FormArray;
+  schedule: UntypedFormArray;
   focusEvent = new EventEmitter<boolean>();
   title: string = 'application';
   focus$: Subject<string>[] = new Array();
@@ -568,7 +568,7 @@ export class ApplicationComponent implements OnInit {
     private _toastr: ToastrService,
     private _title: Title,
     private _router: Router,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public translatePipe: TranslateMePipe,
@@ -685,7 +685,7 @@ export class ApplicationComponent implements OnInit {
     }
   }
 
-  public validateAutocomplete(c: FormControl) {
+  public validateAutocomplete(c: UntypedFormControl) {
     let result =
       c.value && Object.keys(c.value)[0] === '0'
         ? {
@@ -743,7 +743,7 @@ export class ApplicationComponent implements OnInit {
     }
 
     if (this.obj.schedule && this.obj.schedule.length > 0) {
-      let schedule = <FormArray>this.objForm.controls.schedule;
+      let schedule = <UntypedFormArray>this.objForm.controls.schedule;
 
       this.obj.schedule.forEach((x) => {
         schedule.push(
@@ -762,7 +762,7 @@ export class ApplicationComponent implements OnInit {
 
   public addSchedule(scheduleForm: NgForm): void {
     let valid = true;
-    const schedule = this.objForm.controls.schedule as FormArray;
+    const schedule = this.objForm.controls.schedule as UntypedFormArray;
 
     if (
       scheduleForm.value.day === '' ||
@@ -787,7 +787,7 @@ export class ApplicationComponent implements OnInit {
   }
 
   deleteSchedule(index) {
-    let control = <FormArray>this.objForm.controls.schedule;
+    let control = <UntypedFormArray>this.objForm.controls.schedule;
 
     control.removeAt(index);
   }

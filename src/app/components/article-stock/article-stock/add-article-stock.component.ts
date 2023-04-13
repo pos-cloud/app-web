@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
@@ -20,7 +20,7 @@ export class AddArticleStockComponent implements OnInit {
 
   public articleStock: ArticleStock;
   @Input() article: Article;
-  public articleStockForm: FormGroup;
+  public articleStockForm: UntypedFormGroup;
   public alertMessage = '';
   public userType: string;
   public loading = false;
@@ -47,7 +47,7 @@ export class AddArticleStockComponent implements OnInit {
 
   constructor(
     public _articleStockService: ArticleStockService,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig

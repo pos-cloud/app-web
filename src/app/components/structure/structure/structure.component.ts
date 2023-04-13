@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 import { Structure, Utilization } from 'app/components/structure/structure';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { StructureService } from 'app/components/structure/structure.service';
 import { Router } from '@angular/router';
@@ -41,7 +41,7 @@ export class StructureComponent implements OnInit {
     userCountry: string;
     orientation: string = 'horizontal';
     result;
-    structureForm: FormGroup;
+    structureForm: UntypedFormGroup;
     searching: boolean = false;
     checkboxModel;
 
@@ -85,7 +85,7 @@ export class StructureComponent implements OnInit {
         public _structureService: StructureService,
         public _articleService: ArticleService,
         public _router: Router,
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public activeModal: NgbActiveModal,
 
     ) {

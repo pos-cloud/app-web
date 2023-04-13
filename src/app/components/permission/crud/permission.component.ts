@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl, FormArray, NgForm } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl, UntypedFormArray, NgForm } from '@angular/forms';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
@@ -35,8 +35,8 @@ export class PermissionComponent implements OnInit {
     public readonly: boolean;
     public operation: string;
     public obj: Permission;
-    public objForm: FormGroup;
-    public colecctions: FormArray;
+    public objForm: UntypedFormGroup;
+    public colecctions: UntypedFormArray;
     public loading: boolean = false;
     public focusEvent = new EventEmitter<boolean>();
     public title: string = 'permission';
@@ -201,7 +201,7 @@ export class PermissionComponent implements OnInit {
         private _transactionType : TransactionTypeService,
         private _toastr: ToastrService,
         private _title: Title,
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,
         public translatePipe: TranslateMePipe,
@@ -321,7 +321,7 @@ export class PermissionComponent implements OnInit {
         }
     }
 
-    public validateAutocomplete(c: FormControl) {
+    public validateAutocomplete(c: UntypedFormControl) {
         let result = (c.value && Object.keys(c.value)[0] === '0') ? {
             validateAutocomplete: {
                 valid: false
@@ -366,7 +366,7 @@ export class PermissionComponent implements OnInit {
         }
 
         if (this.obj.collections && this.obj.collections.length > 0) {
-            let collections = <FormArray>this.objForm.controls.collections;
+            let collections = <UntypedFormArray>this.objForm.controls.collections;
             this.obj.collections.forEach(x => {
 
                 collections.push(this._fb.group({
@@ -384,14 +384,14 @@ export class PermissionComponent implements OnInit {
                     this.obj.transactionTypes.forEach(y => {
                         if (x._id === y._id) {
                             exists = true;
-                            const control = new FormControl(y);
-                            (this.objForm.controls.transactionTypes as FormArray).push(control);
+                            const control = new UntypedFormControl(y);
+                            (this.objForm.controls.transactionTypes as UntypedFormArray).push(control);
                         }
                     })
                 }
                 if (!exists) {
-                    const control = new FormControl(false);
-                    (this.objForm.controls.transactionTypes as FormArray).push(control);
+                    const control = new UntypedFormControl(false);
+                    (this.objForm.controls.transactionTypes as UntypedFormArray).push(control);
                 }
             })
         }
@@ -402,7 +402,7 @@ export class PermissionComponent implements OnInit {
     public addCollection(collectionForm: NgForm): void {
 
         let valid = true;
-        const collections = this.objForm.controls.collections as FormArray;
+        const collections = this.objForm.controls.collections as UntypedFormArray;
 
         this.objForm.controls.collections.value.forEach(element => {
             if (collectionForm.value.name == element.name) {
@@ -435,7 +435,7 @@ export class PermissionComponent implements OnInit {
     }
 
     deleteCollection(index) {
-        let control = <FormArray>this.objForm.controls.collections;
+        let control = <UntypedFormArray>this.objForm.controls.collections;
         control.removeAt(index)
     }
 

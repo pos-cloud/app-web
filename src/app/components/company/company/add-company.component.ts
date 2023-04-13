@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -64,7 +64,7 @@ export class AddCompanyComponent implements OnInit {
     public otherFields: CompanyFields[] = new Array();
     public dateFormat = new DateFormatPipe();
     public identificationTypes: IdentificationType[];
-    public companyForm: FormGroup;
+    public companyForm: UntypedFormGroup;
     public alertMessage: string = '';
     public genders: any[] = ['', GenderType.Male, GenderType.Female];
     public userType: string;
@@ -169,7 +169,7 @@ export class AddCompanyComponent implements OnInit {
         public _countryService: CountryService,
         public _transportService: TransportService,
         public _priceListService: PriceListService,
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public _router: Router,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,

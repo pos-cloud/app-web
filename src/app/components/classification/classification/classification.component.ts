@@ -1,6 +1,6 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, FormControl } from '@angular/forms';
 
 
 import { ClassificationService } from '../classification.service';
@@ -31,7 +31,7 @@ export class ClassificationComponent implements OnInit {
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public userCountry: string;
-  public classificationForm: FormGroup;
+  public classificationForm: UntypedFormGroup;
   public orientation: string = 'horizontal';
 
   public formErrors = {
@@ -48,7 +48,7 @@ export class ClassificationComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _classificationService: ClassificationService,
     public _router: Router,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
   ) {
     if(window.screen.width < 1000) this.orientation = 'vertical';

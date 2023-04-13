@@ -1,6 +1,6 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
@@ -22,7 +22,7 @@ export class CompanyContactComponent implements OnInit {
   public areCompaniesContactEmpty: boolean = true;
   @Input() company: Company;
   
-  public contactForm: FormGroup;
+  public contactForm: UntypedFormGroup;
   public alertMessage: string = '';
   public userType: string;
   public orderTerm: string[] = ['-date'];

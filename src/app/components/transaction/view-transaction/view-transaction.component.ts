@@ -1,5 +1,5 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {NgbAlertConfig, NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {TranslatePipe} from '@ngx-translate/core';
 import {Config} from 'app/app.config';
@@ -57,7 +57,7 @@ export class ViewTransactionComponent implements OnInit {
   userCountry: string = 'AR';
   orientation: string = 'horizontal';
   obj: AccountSeat;
-  objForm: FormGroup;
+  objForm: UntypedFormGroup;
   formErrors: {} = {};
   objId: string;
   oldFiles: any[];
@@ -101,7 +101,7 @@ export class ViewTransactionComponent implements OnInit {
     private _objService: AccountSeatService,
     private _toastr: ToastrService,
     public _periodService: AccountPeriodService,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public translatePipe: TranslateMePipe,
     public _accountService: AccountService,
   ) {
@@ -264,7 +264,7 @@ export class ViewTransactionComponent implements OnInit {
     }
 
     if (this.obj && this.obj.items && this.obj.items.length > 0) {
-      let items = <FormArray>this.objForm.controls.items;
+      let items = <UntypedFormArray>this.objForm.controls.items;
 
       this.obj.items.forEach((x) => {
         items.push(

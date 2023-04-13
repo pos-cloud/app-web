@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -21,7 +21,7 @@ export class ImportComponent  implements OnInit {
   @Input() transaction : string;
   public properties: Array<String>; //Donde guardaremos las propiedades del objeto a importar
   public newProperties: Array<String>; //Donde guardaremos las propiedades del objeto a importar modificando las propiedades delas relaciones
-  public importForm: FormGroup;
+  public importForm: UntypedFormGroup;
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
@@ -40,7 +40,7 @@ export class ImportComponent  implements OnInit {
 
   constructor(
     public _importService: ImportService,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
@@ -74,10 +74,10 @@ export class ImportComponent  implements OnInit {
       let newProperty = property.toString();
 
       if (property !== "model" && property !== "primaryKey" && property !== "relations") {
-        this.importForm.addControl(newProperty, new FormControl(''));
+        this.importForm.addControl(newProperty, new UntypedFormControl(''));
         this.newProperties[newProperty] = newProperty;
       } else if (property !== "relations") {
-        this.importForm.addControl(newProperty, new FormControl(this.model[newProperty]));
+        this.importForm.addControl(newProperty, new UntypedFormControl(this.model[newProperty]));
       }
     }
 
@@ -86,7 +86,7 @@ export class ImportComponent  implements OnInit {
 
         let property = relation.toString();
 
-        this.importForm.addControl(property, new FormControl(''));
+        this.importForm.addControl(property, new UntypedFormControl(''));
 
 
         let newProperty = property.split('_');

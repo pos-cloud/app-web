@@ -1,6 +1,6 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 
 
 import { CancellationTypeService } from '../cancellation-type.service';
@@ -51,7 +51,7 @@ export class CancellationTypeComponent implements OnInit {
     }
   };
 
-  public cancellationTypeForm: FormGroup;
+  public cancellationTypeForm: UntypedFormGroup;
   public origins: TransactionType[] = new Array();
   public destinations: TransactionType[] = new Array();
   public originSelected: TransactionType;
@@ -61,7 +61,7 @@ export class CancellationTypeComponent implements OnInit {
     public _cancellationTypeService: CancellationTypeService,
     public _transactionTypeService: TransactionTypeService,
     public _router: Router,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public translatePipe: TranslateMePipe,
     private _toastr: ToastrService,
     public activeModal: NgbActiveModal,

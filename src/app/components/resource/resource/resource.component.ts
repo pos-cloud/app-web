@@ -1,6 +1,6 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl } from '@angular/forms';
 
 import { ResourceService } from '../resource.service';
 
@@ -29,7 +29,7 @@ export class ResourceComponent implements OnInit {
     public loading: boolean = false;
     public focusEvent = new EventEmitter<boolean>();
     public userCountry: string;
-    public resourceForm: FormGroup;
+    public resourceForm: UntypedFormGroup;
     public orientation: string = 'horizontal';
 
     public selectedFile: File = null;
@@ -40,7 +40,7 @@ export class ResourceComponent implements OnInit {
 
     public filesToUpload: Array<File>;
 
-    public fileCtrl = new FormControl();
+    public fileCtrl = new UntypedFormControl();
 
     public formErrors = {
         'name': '',
@@ -55,7 +55,7 @@ export class ResourceComponent implements OnInit {
     constructor(
         private _resourceService: ResourceService,
         private _router: Router,
-        private _fb: FormBuilder,
+        private _fb: UntypedFormBuilder,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,
     ) {

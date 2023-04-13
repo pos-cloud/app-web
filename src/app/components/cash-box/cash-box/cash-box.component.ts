@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 //Paquetes de terceros
@@ -45,8 +45,8 @@ import Resulteable from 'app/util/Resulteable';
 
 export class CashBoxComponent implements OnInit {
 
-    public cashBoxForm: FormGroup;
-    public formAddCurrencyValue: FormGroup;
+    public cashBoxForm: UntypedFormGroup;
+    public formAddCurrencyValue: UntypedFormGroup;
     public paymentMethods: PaymentMethod[];
     public currencyValues: CurrencyValue[];
     public transaction: Transaction;
@@ -67,7 +67,7 @@ export class CashBoxComponent implements OnInit {
     public printerSelected: Printer;
 
     constructor(
-        private _fb: FormBuilder,
+        private _fb: UntypedFormBuilder,
         private _router: Router,
         private _paymentMethodService: PaymentMethodService,
         private _movementOfCashService: MovementOfCashService,

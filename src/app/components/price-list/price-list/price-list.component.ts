@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormArray, NgForm } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators, UntypedFormArray, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Category } from 'app/components/category/category';
@@ -44,8 +44,8 @@ export class PriceListComponent implements OnInit {
     @Input() readonly: boolean;
     @Input() priceListId: string;
     public priceList: PriceList;
-    public priceListForm: FormGroup;
-    public rules: FormArray;
+    public priceListForm: UntypedFormGroup;
+    public rules: UntypedFormArray;
     public alertMessage: string = '';
     public userType: string;
     public loading: boolean = false;
@@ -79,7 +79,7 @@ export class PriceListComponent implements OnInit {
         public _categoryService: CategoryService,
         public _makeService: MakeService,
         public _articleService: ArticleService,
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public _router: Router,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig
@@ -136,7 +136,7 @@ export class PriceListComponent implements OnInit {
 
     public addNewRule(e: any): void {
         if (this.priceListForm.value.rules.lenght <= 0 && e) {
-            const rules = this.priceListForm.controls.rules as FormArray;
+            const rules = this.priceListForm.controls.rules as UntypedFormArray;
             rules.push(
                 this._fb.group({
                     _id: null,
@@ -150,7 +150,7 @@ export class PriceListComponent implements OnInit {
 
     public addNewException(e: any): void {
         if (this.priceListForm.value.exceptions.lenght <= 0 && e) {
-            const exceptions = this.priceListForm.controls.exceptions as FormArray;
+            const exceptions = this.priceListForm.controls.exceptions as UntypedFormArray;
             exceptions.push(
                 this._fb.group({
                     _id: null,
@@ -164,7 +164,7 @@ export class PriceListComponent implements OnInit {
     public addRule(ruleForm: NgForm): void {
 
         let valid = true;
-        const rules = this.priceListForm.controls.rules as FormArray;
+        const rules = this.priceListForm.controls.rules as UntypedFormArray;
 
         if ((ruleForm.value.make == '' || ruleForm.value.make == null) && (ruleForm.value.category == '' || ruleForm.value.category == null)) {
             this.showMessage("No puede seleccionar Todos los Rubros y Todas las Marcas", "danger", true)
@@ -202,7 +202,7 @@ export class PriceListComponent implements OnInit {
     public addException(exceptionForm: NgForm): void {
 
         let valid = true;
-        const exceptions = this.priceListForm.controls.exceptions as FormArray;
+        const exceptions = this.priceListForm.controls.exceptions as UntypedFormArray;
 
         this.priceListForm.controls.exceptions.value.forEach(element => {
 
@@ -237,12 +237,12 @@ export class PriceListComponent implements OnInit {
     }
 
     deleteRule(index) {
-        let control = <FormArray>this.priceListForm.controls.rules;
+        let control = <UntypedFormArray>this.priceListForm.controls.rules;
         control.removeAt(index)
     }
 
     deleteException(index) {
-        let control = <FormArray>this.priceListForm.controls.exceptions;
+        let control = <UntypedFormArray>this.priceListForm.controls.exceptions;
         control.removeAt(index)
     }
 
@@ -308,7 +308,7 @@ export class PriceListComponent implements OnInit {
         };
 
         if (this.priceList.rules && this.priceList.rules.length > 0) {
-            let rules = <FormArray>this.priceListForm.controls.rules;
+            let rules = <UntypedFormArray>this.priceListForm.controls.rules;
             this.priceList.rules.forEach(x => {
 
                 let categoryId;
@@ -332,7 +332,7 @@ export class PriceListComponent implements OnInit {
 
 
         if (this.priceList.exceptions && this.priceList.exceptions.length > 0) {
-            let exceptions = <FormArray>this.priceListForm.controls.exceptions;
+            let exceptions = <UntypedFormArray>this.priceListForm.controls.exceptions;
             this.priceList.exceptions.forEach(x => {
 
                 let articleId;

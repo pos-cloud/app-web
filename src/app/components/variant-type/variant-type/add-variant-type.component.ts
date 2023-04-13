@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -18,7 +18,7 @@ import { VariantTypeService } from '../variant-type.service';
 export class AddVariantTypeComponent implements OnInit {
 
   public variantType: VariantType;
-  public variantTypeForm: FormGroup;
+  public variantTypeForm: UntypedFormGroup;
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
@@ -43,7 +43,7 @@ export class AddVariantTypeComponent implements OnInit {
 
   constructor(
     public _variantTypeService: VariantTypeService,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig

@@ -3,7 +3,7 @@ import { NgbModal, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-boots
 import { TableService } from 'app/components/table/table.service';
 import { RoomService } from 'app/components/room/room.service';
 import { Room } from 'app/components/room/room';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Table } from 'app/components/table/table';
 
 @Component({
@@ -14,7 +14,7 @@ import { Table } from 'app/components/table/table';
 export class SelectTableComponent implements OnInit {
 
     @Input() roomId: string;
-    public tableForm: FormGroup;
+    public tableForm: UntypedFormGroup;
     public rooms: Room[];
     public tables: Table[];
     public table: Table;
@@ -23,7 +23,7 @@ export class SelectTableComponent implements OnInit {
     public focusEvent = new EventEmitter<boolean>();
 
     constructor(
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public _modalService: NgbModal,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,

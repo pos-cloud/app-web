@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl, FormArray, NgForm } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl, UntypedFormArray, NgForm } from '@angular/forms';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
@@ -38,9 +38,9 @@ export class VariantValueComponent implements OnInit {
     public readonly: boolean;
     public operation: string;
     public obj: VariantValue;
-    public objForm: FormGroup;
+    public objForm: UntypedFormGroup;
     public loading: boolean = false;
-    public schedule: FormArray;
+    public schedule: UntypedFormArray;
     public focusEvent = new EventEmitter<boolean>();
     public title: string = 'variant-value';
     private subscription: Subscription = new Subscription();
@@ -156,7 +156,7 @@ export class VariantValueComponent implements OnInit {
         private _variantTypeService : VariantTypeService,
         private _toastr: ToastrService,
         private _title: Title,
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,
         public _applicationService: ApplicationService,
@@ -275,7 +275,7 @@ export class VariantValueComponent implements OnInit {
         }
     }
 
-    public validateAutocomplete(c: FormControl) {
+    public validateAutocomplete(c: UntypedFormControl) {
         let result = (c.value && Object.keys(c.value)[0] === '0') ? {
             validateAutocomplete: {
                 valid: false

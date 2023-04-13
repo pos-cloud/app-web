@@ -1,6 +1,6 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, FormControl } from '@angular/forms';
 
 import { Transport } from '../transport';
 import { IdentificationType } from '../../identification-type/identification-type';
@@ -37,7 +37,7 @@ export class TransportComponent implements OnInit {
     public loading: boolean = false;
     public focusEvent = new EventEmitter<boolean>();
     public userCountry: string;
-    public transportForm: FormGroup;
+    public transportForm: UntypedFormGroup;
     public identificationTypes: IdentificationType[];
     public vatConditions: VATCondition[];
     public countries: Country[];
@@ -62,7 +62,7 @@ export class TransportComponent implements OnInit {
         public _countryService: CountryService,
         public _configService: ConfigService,
         public _router: Router,
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public activeModal: NgbActiveModal,
     ) {
         if (window.screen.width < 1000) this.orientation = 'vertical';

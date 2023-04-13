@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Deposit } from 'app/components/deposit/deposit';
 import { DepositService } from 'app/components/deposit/deposit.service';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -12,13 +12,13 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 export class SelectDepositComponent implements OnInit {
 
   @Input() op : string;
-  public transferForm : FormGroup
+  public transferForm : UntypedFormGroup
   public deposits : Deposit[];
   public alertMessage = '';
   public loading: boolean = false;
 
   constructor(
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _depositService : DepositService,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
