@@ -65,7 +65,7 @@ export class DatatableController {
       for (let i = 0; i < this.columns.length; i++) {
         if (this.columns[i].visible || this.columns[i].required) {
           let value = filters[this.columns[i].name];
-          if (value != undefined && value != null && value != "" && value !== {}) {
+          if (value != undefined && value != null && value != "") {
             if (this.columns[i].defaultFilter) {
               match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
             } else {

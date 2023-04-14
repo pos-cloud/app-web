@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -21,7 +21,7 @@ import { Employee } from '../employee/employee';
 
 export class RegisterComponent implements OnInit {
 
-  public registerForm: FormGroup;
+  public registerForm: UntypedFormGroup;
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
@@ -62,7 +62,7 @@ export class RegisterComponent implements OnInit {
     public _authService: AuthService,
     public _employeeService: EmployeeService,
     public _employeeTypeService: EmployeeTypeService,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,

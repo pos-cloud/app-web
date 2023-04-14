@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -22,7 +22,7 @@ export class VATConditionComponent implements OnInit {
     @Input() op: string;
     @Input() vatConditionId: string;
     public vatCondition: VATCondition;
-    public vatConditionForm: FormGroup;
+    public vatConditionForm: UntypedFormGroup;
     public alertMessage: string = '';
     public userType: string;
     public loading: boolean = false;
@@ -53,7 +53,7 @@ export class VATConditionComponent implements OnInit {
 
     constructor(
         public _vatConditionService: VATConditionService,
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public _router: Router,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,

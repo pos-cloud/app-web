@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -39,7 +39,7 @@ export class PrintVatBookComponent implements OnInit {
     public transactions: Transaction[];
     public classifications: Classification[];
     public dataClassification: any = [];
-    public printPriceListForm: FormGroup;
+    public printPriceListForm: UntypedFormGroup;
     public alertMessage: string = '';
     public vatConditions: VATCondition[];
     public userType: string;
@@ -67,7 +67,7 @@ export class PrintVatBookComponent implements OnInit {
         public _vatConditionService: VATConditionService,
         public _classificationService: ClassificationService,
         public _movementOfArticleService: MovementOfArticleService,
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public _router: Router,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,

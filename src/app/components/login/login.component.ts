@@ -1,6 +1,6 @@
 // ANGULAR
 import { Component, OnInit, EventEmitter, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
 // TERCEROS
@@ -29,7 +29,7 @@ import { Employee } from '../employee/employee';
 })
 
 export class LoginComponent implements OnInit {
-  public loginForm: FormGroup;
+  public loginForm: UntypedFormGroup;
   public alertMessage: string;
   public loading: boolean = false;
   public employees: Employee[] = new Array();
@@ -62,7 +62,7 @@ export class LoginComponent implements OnInit {
     private _authService: AuthService,
     public _employeeService: EmployeeService,
     public _tableService: TableService,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _router: Router,

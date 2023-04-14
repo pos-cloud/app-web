@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { RoundNumberPipe } from 'app/main/pipes/round-number.pipe';
@@ -24,7 +24,7 @@ export class AddMeliAttrsComponent implements OnInit {
     @Input() meliAttrs: IMeliAttrs;
     @Input() readonly: boolean;
     @Output() eventAddMeliAttrs: EventEmitter<any> = new EventEmitter<any>();
-    meliAttrsForm: FormGroup;
+    meliAttrsForm: UntypedFormGroup;
     alertMessage: string = '';
     loading: boolean = false;
     focusEvent = new EventEmitter<boolean>();
@@ -40,7 +40,7 @@ export class AddMeliAttrsComponent implements OnInit {
 
     constructor(
         public _taxService: TaxService,
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public _router: Router,
         public _meliService: MeliService,
         public translatePipe: TranslateMePipe,

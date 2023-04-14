@@ -1,6 +1,6 @@
 //Paquetes de Angular
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 //Paquetes de terceros
@@ -52,7 +52,7 @@ import { TranslateMePipe } from './../../../main/pipes/translate-me';
 export class AddTransactionComponent implements OnInit {
 
     @Input() transactionId: string;
-    public transactionForm: FormGroup;
+    public transactionForm: UntypedFormGroup;
     public companies: Company[];
     public transaction: Transaction;
     public taxes: Taxes[] = new Array();
@@ -141,7 +141,7 @@ export class AddTransactionComponent implements OnInit {
         public _employeeService: EmployeeService,
         public _accountService: AccountService,
         public _movementOfCancellationService: MovementOfCancellationService,
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public _router: Router,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,

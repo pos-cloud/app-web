@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 import { Gallery } from 'app/components/gallery/gallery';
-import { FormGroup, FormArray, FormBuilder, Validators, NgForm } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormArray, UntypedFormBuilder, Validators, NgForm } from '@angular/forms';
 import { Resource } from 'app/components/resource/resource';
 import { GalleryService } from 'app/components/gallery/gallery.service';
 import { ResourceService } from 'app/components/resource/resource.service';
@@ -19,9 +19,9 @@ export class GalleryComponent implements OnInit {
     @Input() galleryId: string;
 
     public gallery: Gallery;
-    public galleryForm: FormGroup;
+    public galleryForm: UntypedFormGroup;
 
-    public resourcesForm: FormArray;
+    public resourcesForm: UntypedFormArray;
     public alertMessage: string = '';
     public userType: string;
     public loading: boolean = false;
@@ -44,7 +44,7 @@ export class GalleryComponent implements OnInit {
     constructor(
         public _galleryService: GalleryService,
         public _resourceService: ResourceService,
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public _router: Router,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig
@@ -93,7 +93,7 @@ export class GalleryComponent implements OnInit {
 
     public addNewResource(e: any): void {
         if (this.galleryForm.value.resources.lenght <= 0 && e) {
-            const resources = this.galleryForm.controls.resources as FormArray;
+            const resources = this.galleryForm.controls.resources as UntypedFormArray;
             resources.push(
                 this._fb.group({
                     _id: null,
@@ -109,7 +109,7 @@ export class GalleryComponent implements OnInit {
     public addResource(resourceForm: NgForm): void {
 
         let valid = true;
-        const resources = this.galleryForm.controls.resources as FormArray;
+        const resources = this.galleryForm.controls.resources as UntypedFormArray;
 
         if (valid) {
             resources.push(
@@ -125,7 +125,7 @@ export class GalleryComponent implements OnInit {
     }
 
     deleteResource(index) {
-        let control = <FormArray>this.galleryForm.controls.resources;
+        let control = <UntypedFormArray>this.galleryForm.controls.resources;
         control.removeAt(index)
     }
 
@@ -188,7 +188,7 @@ export class GalleryComponent implements OnInit {
         };
 
         if (this.gallery.resources && this.gallery.resources.length > 0) {
-            let resources = <FormArray>this.galleryForm.controls.resources;
+            let resources = <UntypedFormArray>this.galleryForm.controls.resources;
             this.gallery.resources.forEach(x => {
 
                 let resourceId;

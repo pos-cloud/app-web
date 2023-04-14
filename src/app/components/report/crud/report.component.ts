@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl, FormArray, NgForm } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl, UntypedFormArray, NgForm } from '@angular/forms';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
@@ -36,10 +36,10 @@ export class ReportComponent implements OnInit {
     public readonly: boolean;
     public operation: string;
     public obj: Report;
-    public objForm: FormGroup;
+    public objForm: UntypedFormGroup;
     public name;
     public loading: boolean = false;
-    public param: FormArray;
+    public param: UntypedFormArray;
     public focusEvent = new EventEmitter<boolean>();
     public title: string = 'report';
     private subscription: Subscription = new Subscription();
@@ -143,7 +143,7 @@ export class ReportComponent implements OnInit {
         private _emailTemplate: EmailTemplateService,
         private _toastr: ToastrService,
         private _title: Title,
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,
         public translatePipe: TranslateMePipe,
@@ -245,7 +245,7 @@ export class ReportComponent implements OnInit {
         }
     }
 
-    public validateAutocomplete(c: FormControl) {
+    public validateAutocomplete(c: UntypedFormControl) {
         let result = (c.value && Object.keys(c.value)[0] === '0') ? {
             validateAutocomplete: {
                 valid: false
@@ -290,7 +290,7 @@ export class ReportComponent implements OnInit {
         }
 
         if (this.obj.params && this.obj.params.length > 0) {
-            let params = <FormArray>this.objForm.controls.params;
+            let params = <UntypedFormArray>this.objForm.controls.params;
             this.obj.params.forEach(x => {
 
                 params.push(this._fb.group({
@@ -307,7 +307,7 @@ export class ReportComponent implements OnInit {
     public addParam(paramForm: NgForm): void {
 
         let valid = true;
-        const params = this.objForm.controls.params as FormArray;
+        const params = this.objForm.controls.params as UntypedFormArray;
 
         if (paramForm.value.name === "" || paramForm.value.type === "") {
             this.showToast("", "warning", "Debe completar todos los campos")
@@ -327,7 +327,7 @@ export class ReportComponent implements OnInit {
     }
 
     deleteParam(index) {
-        let control = <FormArray>this.objForm.controls.params;
+        let control = <UntypedFormArray>this.objForm.controls.params;
         control.removeAt(index)
     }
 

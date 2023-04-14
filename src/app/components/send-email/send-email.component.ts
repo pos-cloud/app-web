@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, EventEmitter, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -18,7 +18,7 @@ import * as $ from 'jquery';
 
 export class SendEmailComponent implements OnInit {
   
-  public sendEmailForm: FormGroup;
+  public sendEmailForm: UntypedFormGroup;
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
@@ -88,7 +88,7 @@ export class SendEmailComponent implements OnInit {
   constructor(
     public _companyService: CompanyService,
     public _serviceEmail: EmailService,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,

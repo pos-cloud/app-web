@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -23,7 +23,7 @@ export class SelectPriceListComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
 
   constructor(
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _priceListService: PriceListService,
     public _authService: AuthService,
     public activeModal: NgbActiveModal,

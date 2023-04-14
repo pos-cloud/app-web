@@ -1,6 +1,6 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 
 import { OriginService } from '../origin.service';
 
@@ -33,7 +33,7 @@ export class OriginComponent implements OnInit {
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public userCountry: string;
-  public originForm: FormGroup;
+  public originForm: UntypedFormGroup;
   public branches: Branch[];
   public orientation: string = 'horizontal';
 
@@ -55,7 +55,7 @@ export class OriginComponent implements OnInit {
     private _originService: OriginService,
     private _branchService: BranchService,
     private _router: Router,
-    private _fb: FormBuilder,
+    private _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
   ) {

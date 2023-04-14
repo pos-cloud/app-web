@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -23,7 +23,7 @@ export class SelectTransportComponent implements OnInit {
     public package: number;
 
     constructor(
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public _transportService: TransportService,
         public _authService: AuthService,
         public activeModal: NgbActiveModal,

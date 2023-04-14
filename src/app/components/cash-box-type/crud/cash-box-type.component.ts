@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl } from '@angular/forms';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
@@ -27,7 +27,7 @@ export class CashBoxTypeComponent implements OnInit {
   @Input() readonly: boolean;
   @Input() operation: string;
   public obj: CashBoxType;
-  public objForm: FormGroup;
+  public objForm: UntypedFormGroup;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public title: string = 'cash-box-type';
@@ -58,7 +58,7 @@ export class CashBoxTypeComponent implements OnInit {
     private _objService: CashBoxTypeService,
     private _toastr: ToastrService,
     private _title: Title,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public translatePipe: TranslateMePipe
@@ -134,7 +134,7 @@ export class CashBoxTypeComponent implements OnInit {
     }
   }
 
-  public validateAutocomplete(c: FormControl) {
+  public validateAutocomplete(c: UntypedFormControl) {
     let result = (c.value && Object.keys(c.value)[0] === '0') ? {
       validateAutocomplete: {
         valid: false

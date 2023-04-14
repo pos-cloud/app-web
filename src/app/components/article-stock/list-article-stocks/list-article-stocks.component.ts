@@ -163,7 +163,7 @@ export class ListArticleStocksComponent implements OnInit {
         if (this.columns[i].visible || this.columns[i].required) {
           let value = this.filters[this.columns[i].name];
 
-          if (value && value != '' && value !== {}) {
+          if (value && value != '') {
             if (this.columns[i].defaultFilter) {
               match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
             } else {

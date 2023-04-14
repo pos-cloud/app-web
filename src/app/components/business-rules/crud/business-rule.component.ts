@@ -1,5 +1,5 @@
 import {Component, OnInit, EventEmitter, ViewEncapsulation} from '@angular/core';
-import {FormGroup, FormBuilder, Validators, FormControl, FormArray} from '@angular/forms';
+import {UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl, UntypedFormArray} from '@angular/forms';
 import {Title} from '@angular/platform-browser';
 import {Router} from '@angular/router';
 import {NgbAlertConfig, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
@@ -47,9 +47,9 @@ export class BusinessRuleComponent implements OnInit {
   readonly: boolean;
   operation: string;
   obj: BusinessRule;
-  objForm: FormGroup;
+  objForm: UntypedFormGroup;
   loading: boolean = false;
-  schedule: FormArray;
+  schedule: UntypedFormArray;
   focusEvent = new EventEmitter<boolean>();
   title: string = 'business-rule';
   focus$: Subject<string>[] = new Array();
@@ -286,7 +286,7 @@ export class BusinessRuleComponent implements OnInit {
     public _company: CompanyService,
     public translatePipe: TranslateMePipe,
     private _router: Router,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
   ) {
     this.obj = new BusinessRule();
     for (let field of this.formFields) {
@@ -436,7 +436,7 @@ export class BusinessRuleComponent implements OnInit {
     }
   }
 
-  validateAutocomplete(c: FormControl) {
+  validateAutocomplete(c: UntypedFormControl) {
     let result =
       c.value && Object.keys(c.value)[0] === '0'
         ? {

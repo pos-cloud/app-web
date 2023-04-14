@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -18,7 +18,7 @@ import { ArticleFieldService } from '../article-field.service';
 export class AddArticleFieldComponent  implements OnInit {
 
   public articleField: ArticleField;
-  public articleFieldForm: FormGroup;
+  public articleFieldForm: UntypedFormGroup;
   public alertMessage: string = '';
   public datatypes: ArticleFieldType[] = [ 
     ArticleFieldType.Percentage, 
@@ -48,7 +48,7 @@ export class AddArticleFieldComponent  implements OnInit {
 
   constructor(
     public _articleFieldService: ArticleFieldService,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,

@@ -1,5 +1,5 @@
 import {Component, OnInit, EventEmitter, Input} from '@angular/core';
-import {FormGroup, FormBuilder, Validators, FormControl, FormArray} from '@angular/forms';
+import {UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl, UntypedFormArray} from '@angular/forms';
 import 'moment/locale/es';
 
 import {Title} from '@angular/platform-browser';
@@ -33,7 +33,7 @@ export class ShipmentMethodComponent implements OnInit {
   @Input() readonly: boolean;
   @Input() operation: string;
   public obj: ShipmentMethod;
-  public objForm: FormGroup;
+  public objForm: UntypedFormGroup;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public title: string = 'shipment-method';
@@ -115,7 +115,7 @@ export class ShipmentMethodComponent implements OnInit {
     private _articleService: ArticleService,
     private _toastr: ToastrService,
     private _title: Title,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public translatePipe: TranslateMePipe,
@@ -222,7 +222,7 @@ export class ShipmentMethodComponent implements OnInit {
     }
   }
 
-  public validateAutocomplete(c: FormControl) {
+  public validateAutocomplete(c: UntypedFormControl) {
     let result =
       c.value && Object.keys(c.value)[0] === '0'
         ? {
@@ -262,16 +262,16 @@ export class ShipmentMethodComponent implements OnInit {
           this.obj.applications.forEach((y) => {
             if (x._id === y._id) {
               exists = true;
-              const control = new FormControl(y);
+              const control = new UntypedFormControl(y);
 
-              (this.objForm.controls.applications as FormArray).push(control);
+              (this.objForm.controls.applications as UntypedFormArray).push(control);
             }
           });
         }
         if (!exists) {
-          const control = new FormControl(false);
+          const control = new UntypedFormControl(false);
 
-          (this.objForm.controls.applications as FormArray).push(control);
+          (this.objForm.controls.applications as UntypedFormArray).push(control);
         }
       });
     }

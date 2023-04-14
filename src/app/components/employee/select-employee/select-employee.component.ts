@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Employee } from '../employee';
 import { Table } from 'app/components/table/table';
@@ -32,7 +32,7 @@ export class SelectEmployeeComponent implements OnInit {
     public focusEvent = new EventEmitter<boolean>();
 
     constructor(
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public _employeeService: EmployeeService,
         public _employeeTypeService: EmployeeTypeService,
         public _tableService: TableService,

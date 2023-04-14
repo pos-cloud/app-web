@@ -1,6 +1,6 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, FormControl } from '@angular/forms';
 
 
 import { CountryService } from '../country.service';
@@ -49,13 +49,13 @@ export class CountryComponent implements OnInit {
     }
   };
 
-  public countryForm: FormGroup;
+  public countryForm: UntypedFormGroup;
 
   constructor(
     public alertConfig: NgbAlertConfig,
     public _countryService: CountryService,
     public _router: Router,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
   ) {
     if(window.screen.width < 1000) this.orientation = 'vertical';

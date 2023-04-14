@@ -1,5 +1,5 @@
 import { Component, ViewEncapsulation, NgZone, Input, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -23,7 +23,7 @@ import { ShipmentMethod } from 'app/components/shipment-method/shipment-method.m
 
 export class AddressComponent {
 
-  public addressForm: FormGroup;
+  public addressForm: UntypedFormGroup;
   public address: Address;
   public loading: boolean = false;
   private subscription: Subscription = new Subscription();
@@ -78,7 +78,7 @@ export class AddressComponent {
   };
 
   constructor(
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     private _addressService: AddressService,
     private _route: ActivatedRoute,
     private _companyService: CompanyService,

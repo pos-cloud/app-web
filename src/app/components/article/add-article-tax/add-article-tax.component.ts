@@ -1,5 +1,5 @@
 import {Component, OnInit, EventEmitter, Input, Output} from '@angular/core';
-import {FormGroup, FormBuilder, Validators} from '@angular/forms';
+import {UntypedFormGroup, UntypedFormBuilder, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {NgbAlertConfig, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {ArticleFieldType} from 'app/components/article-field/article-field';
@@ -21,7 +21,7 @@ import {Taxes} from '../../tax/taxes';
 export class AddArticleTaxComponent implements OnInit {
   public articleTax: Taxes;
   public taxes: Tax[];
-  public articleTaxForm: FormGroup;
+  public articleTaxForm: UntypedFormGroup;
   public alertMessage: string = '';
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -47,7 +47,7 @@ export class AddArticleTaxComponent implements OnInit {
 
   constructor(
     public _taxService: TaxService,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,

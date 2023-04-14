@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, ViewEncapsulation, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -25,7 +25,7 @@ export class LocationComponent implements OnInit {
 
   public location: Location;
   public deposits : Deposit [];
-  public locationForm: FormGroup;
+  public locationForm: UntypedFormGroup;
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
@@ -48,7 +48,7 @@ export class LocationComponent implements OnInit {
   constructor(
     public _locationService: LocationService,
     public _depositService : DepositService,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig

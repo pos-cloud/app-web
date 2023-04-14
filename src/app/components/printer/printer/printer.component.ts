@@ -6,7 +6,7 @@ import {
   ViewEncapsulation,
   Output,
 } from '@angular/core';
-import {FormGroup, FormBuilder, Validators, FormArray, NgForm} from '@angular/forms';
+import {UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormArray, NgForm} from '@angular/forms';
 import {Router} from '@angular/router';
 import {NgbAlertConfig, NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ConfigService} from 'app/components/config/config.service';
@@ -41,7 +41,7 @@ export class PrinterComponent implements OnInit {
     PositionPrint.Body,
     PositionPrint.Footer,
   ];
-  public printerForm: FormGroup;
+  public printerForm: UntypedFormGroup;
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
@@ -88,7 +88,7 @@ export class PrinterComponent implements OnInit {
   constructor(
     public _printerService: PrinterService,
     public _configService: ConfigService,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _router: Router,
     public _modalService: NgbModal,
     public activeModal: NgbActiveModal,
@@ -199,7 +199,7 @@ export class PrinterComponent implements OnInit {
 
   public addField(fieldForm: NgForm): void {
     let valid = true;
-    const fields = this.printerForm.controls.fields as FormArray;
+    const fields = this.printerForm.controls.fields as UntypedFormArray;
 
     if (valid) {
       let field = {
@@ -243,7 +243,7 @@ export class PrinterComponent implements OnInit {
   }
 
   deleteField(index) {
-    let control = <FormArray>this.printerForm.controls.fields;
+    let control = <UntypedFormArray>this.printerForm.controls.fields;
 
     control.removeAt(index);
     this.addPrinter();
@@ -329,7 +329,7 @@ export class PrinterComponent implements OnInit {
     };
 
     if (this.printer.fields && this.printer.fields.length > 0) {
-      let fields = <FormArray>this.printerForm.controls.fields;
+      let fields = <UntypedFormArray>this.printerForm.controls.fields;
 
       this.printer.fields.forEach((x) => {
         fields.push(

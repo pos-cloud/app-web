@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -23,10 +23,10 @@ export class ParamsReportComponent implements OnInit {
     public focusEvent = new EventEmitter<boolean>();
     public declaredValue: number;
     public package: number;
-    public objForm: FormGroup;
+    public objForm: UntypedFormGroup;
 
     constructor(
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public _authService: AuthService,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,

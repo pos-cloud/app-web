@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, NgForm, FormArray, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, NgForm, UntypedFormArray, UntypedFormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -40,7 +40,7 @@ export class AddUserComponent implements OnInit {
   @Input() operation: string;
   public user: User;
   public identity: User;
-  public userForm: FormGroup;
+  public userForm: UntypedFormGroup;
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
@@ -131,7 +131,7 @@ export class AddUserComponent implements OnInit {
     private _cashBoxTypeService: CashBoxTypeService,
     public _branchService: BranchService,
     public _permissionService: PermissionService,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
@@ -251,7 +251,7 @@ export class AddUserComponent implements OnInit {
     );
   }
 
-  public validateAutocomplete(c: FormControl) {
+  public validateAutocomplete(c: UntypedFormControl) {
     let result = (c.value && Object.keys(c.value)[0] === '0') ? {
       validateAutocomplete: {
         valid: false
@@ -333,7 +333,7 @@ export class AddUserComponent implements OnInit {
     };
 
     if (this.user.printers && this.user.printers.length > 0) {
-      let printers = <FormArray>this.userForm.controls.printers;
+      let printers = <UntypedFormArray>this.userForm.controls.printers;
       this.user.printers.forEach(x => {
 
         let printerId;
@@ -369,7 +369,7 @@ export class AddUserComponent implements OnInit {
   public addPermission(permissionForm: NgForm): void {
 
     let valid = true;
-    const permission = this.userForm.controls.permission as FormArray;
+    const permission = this.userForm.controls.permission as UntypedFormArray;
 
     if (valid) {
 
@@ -387,7 +387,7 @@ export class AddUserComponent implements OnInit {
   async addPrinter(printerForm: NgForm) {
 
     let valid = true;
-    const printers = this.userForm.controls.printers as FormArray;
+    const printers = this.userForm.controls.printers as UntypedFormArray;
 
     let printer = await this.getPrinter(printerForm.value.printer)
 
@@ -428,7 +428,7 @@ export class AddUserComponent implements OnInit {
   }
 
   deletePrinter(index) {
-    let control = <FormArray>this.userForm.controls.printers;
+    let control = <UntypedFormArray>this.userForm.controls.printers;
     control.removeAt(index)
   }
 

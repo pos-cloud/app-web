@@ -1,6 +1,6 @@
 import { Component, OnInit, EventEmitter, Input, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, FormControl } from '@angular/forms';
 
 
 import { CurrencyValueService } from '../currency-value.service';
@@ -32,7 +32,7 @@ export class CurrencyValueComponent implements OnInit {
     public loading: boolean = false;
     public focusEvent = new EventEmitter<boolean>();
     public userCountry: string;
-    public currencyValueForm: FormGroup;
+    public currencyValueForm: UntypedFormGroup;
     public orientation: string = 'horizontal';
 
     public formErrors = {
@@ -53,7 +53,7 @@ export class CurrencyValueComponent implements OnInit {
         public alertConfig: NgbAlertConfig,
         public _currencyValueService: CurrencyValueService,
         public _router: Router,
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public activeModal: NgbActiveModal,
     ) {
         if (window.screen.width < 1000) this.orientation = 'vertical';

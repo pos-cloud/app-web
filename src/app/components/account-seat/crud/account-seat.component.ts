@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl, FormArray, NgForm } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl, UntypedFormArray, NgForm } from '@angular/forms';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
@@ -47,9 +47,9 @@ export class AccountSeatComponent implements OnInit {
     public readonly: boolean;
     public operation: string;
     public obj: AccountSeat;
-    public objForm: FormGroup;
+    public objForm: UntypedFormGroup;
     public loading: boolean = false;
-    public schedule: FormArray;
+    public schedule: UntypedFormArray;
     public focusEvent = new EventEmitter<boolean>();
     public title: string = 'account-seat';
     private subscription: Subscription = new Subscription();
@@ -170,7 +170,7 @@ export class AccountSeatComponent implements OnInit {
         private _objService: AccountSeatService,
         private _toastr: ToastrService,
         private _title: Title,
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,
         public _branchService: BranchService,
@@ -337,7 +337,7 @@ export class AccountSeatComponent implements OnInit {
         }
     }
 
-    public validateAutocomplete(c: FormControl) {
+    public validateAutocomplete(c: UntypedFormControl) {
         let result = (c.value && Object.keys(c.value)[0] === '0') ? {
             validateAutocomplete: {
                 valid: false
@@ -383,7 +383,7 @@ export class AccountSeatComponent implements OnInit {
         }
 
         if (this.obj.items && this.obj.items.length > 0) {
-            let items = <FormArray>this.objForm.controls.items;
+            let items = <UntypedFormArray>this.objForm.controls.items;
             this.obj.items.forEach(x => {
                 this.totalDebit = this.totalDebit + +x.debit;
                 this.totalHaber = this.totalHaber + +x.credit;
@@ -603,7 +603,7 @@ export class AccountSeatComponent implements OnInit {
 
     public addItem(itemForm: NgForm): void {
         let valid = true;
-        const item = this.objForm.controls.items as FormArray;
+        const item = this.objForm.controls.items as UntypedFormArray;
      
         if (valid) {
             this.totalDebit = this.totalDebit + parseFloat(itemForm.value.debit);
@@ -627,7 +627,7 @@ export class AccountSeatComponent implements OnInit {
     }
 
     deleteItem(index) {
-        let control = <FormArray>this.objForm.controls.items;
+        let control = <UntypedFormArray>this.objForm.controls.items;
         control.removeAt(index)
         
         this.totalDebit = 0;

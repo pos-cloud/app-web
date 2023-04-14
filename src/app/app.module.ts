@@ -431,7 +431,7 @@ const configSocket: SocketIoConfig = {
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule.forRoot(_routes, {useHash: true, relativeLinkResolution: 'legacy'}),
+    RouterModule.forRoot(_routes, { useHash: true }),
     NgbModule,
     NgbCollapseModule,
     NgbNavModule,

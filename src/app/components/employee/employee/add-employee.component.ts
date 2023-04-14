@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { EmployeeService } from '../employee.service';
@@ -24,7 +24,7 @@ export class AddEmployeeComponent implements OnInit {
 
   public employee: Employee;
   public employeeTypes: EmployeeType[];
-  public employeeForm: FormGroup;
+  public employeeForm: UntypedFormGroup;
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
@@ -72,7 +72,7 @@ export class AddEmployeeComponent implements OnInit {
   constructor(
     public _employeeService: EmployeeService,
     public _employeeTypeService: EmployeeTypeService,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
@@ -133,7 +133,7 @@ export class AddEmployeeComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  public validateAutocomplete(c: FormControl) {
+  public validateAutocomplete(c: UntypedFormControl) {
     let result = (c.value && Object.keys(c.value)[0] === '0') ? {
       validateAutocomplete: {
         valid: false

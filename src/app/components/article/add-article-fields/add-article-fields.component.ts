@@ -1,5 +1,5 @@
 import {Component, OnInit, EventEmitter, Input, Output} from '@angular/core';
-import {FormGroup, FormBuilder, Validators} from '@angular/forms';
+import {UntypedFormGroup, UntypedFormBuilder, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {NgbAlertConfig, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {ArticleField, ArticleFieldType} from 'app/components/article-field/article-field';
@@ -22,7 +22,7 @@ export class AddArticleFieldsComponent implements OnInit {
   articleFields: ArticleField[];
   articleFieldsCustom: ArticleField[] = new Array();
   articleFieldsPrice: ArticleField[] = new Array();
-  articleFieldsForm: FormGroup;
+  articleFieldsForm: UntypedFormGroup;
   alertMessage: string = '';
   loading: boolean = false;
   focusEvent = new EventEmitter<boolean>();
@@ -43,7 +43,7 @@ export class AddArticleFieldsComponent implements OnInit {
 
   constructor(
     public _articleFieldService: ArticleFieldService,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,

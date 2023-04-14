@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
@@ -19,7 +19,7 @@ export class ApplyDiscountComponent implements OnInit {
   @Input() percentageToApply: number = 0;
   @Input() percentageToApplyCompany: number = 0;
   @Input() percentageToApplyCompanyGroup: number = 0;
-  public discountForm: FormGroup;
+  public discountForm: UntypedFormGroup;
   public alertMessage: string = '';
   public loading: boolean = false;
   public roundNumber = new RoundNumberPipe();
@@ -49,7 +49,7 @@ export class ApplyDiscountComponent implements OnInit {
   };
 
   constructor(
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
   ) { }

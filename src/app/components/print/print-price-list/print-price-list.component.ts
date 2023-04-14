@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -35,7 +35,7 @@ import { ConfigService } from 'app/components/config/config.service';
 })
 export class PrintPriceListComponent implements OnInit {
 
-    public printPriceListForm: FormGroup;
+    public printPriceListForm: UntypedFormGroup;
     public alertMessage: string = '';
     public userType: string;
     public loading: boolean = false;
@@ -74,7 +74,7 @@ export class PrintPriceListComponent implements OnInit {
 
     constructor(
         public _articleService: ArticleService,
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public _router: Router,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,

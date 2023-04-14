@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -23,7 +23,7 @@ import { Article } from '../article';
 export class UpdateArticlePriceComponent implements OnInit {
 
   @Input() articles: Article[];
-  public updatePriceForm: FormGroup;
+  public updatePriceForm: UntypedFormGroup;
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
@@ -59,7 +59,7 @@ export class UpdateArticlePriceComponent implements OnInit {
 
   constructor(
     public _articleService: ArticleService,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,

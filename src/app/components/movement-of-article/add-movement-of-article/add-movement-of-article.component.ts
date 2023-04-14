@@ -1,5 +1,5 @@
 import {Component, OnInit, Input, EventEmitter, ViewEncapsulation} from '@angular/core';
-import {FormGroup, FormBuilder, Validators} from '@angular/forms';
+import {UntypedFormGroup, UntypedFormBuilder, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {NgbAlertConfig, NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Account} from 'app/components/account/account';
@@ -57,7 +57,7 @@ export class AddMovementOfArticleComponent implements OnInit {
   variantTypes: VariantType[];
   selectedVariants;
   areVariantsEmpty: boolean = true;
-  movementOfArticleForm: FormGroup;
+  movementOfArticleForm: UntypedFormGroup;
   alertMessage: string = '';
   userType: string;
   loading: boolean = false;
@@ -133,7 +133,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     private _toastr: ToastrService,
     public translatePipe: TranslateMePipe,
     public _router: Router,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _structureService: StructureService,

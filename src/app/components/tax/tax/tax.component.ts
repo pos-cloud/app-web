@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -30,7 +30,7 @@ export class TaxComponent implements OnInit {
     public taxBases: TaxBase[] = [TaxBase.None, TaxBase.Neto];
     public taxClassifications: TaxClassification[] = [TaxClassification.None, TaxClassification.Tax, TaxClassification.Withholding, TaxClassification.Perception];
     public taxTypes: TaxType[] = [TaxType.None, TaxType.National, TaxType.State, TaxType.City];
-    public taxForm: FormGroup;
+    public taxForm: UntypedFormGroup;
     public alertMessage: string = '';
     public userType: string;
     public loading: boolean = false;
@@ -107,7 +107,7 @@ export class TaxComponent implements OnInit {
         public _taxService: TaxService,
         public _accountService: AccountService,
         public _printerService: PrinterService,
-        public _fb: FormBuilder,
+        public _fb: UntypedFormBuilder,
         public _router: Router,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig

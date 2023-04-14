@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl, FormArray } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl, UntypedFormArray } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -29,7 +29,7 @@ export class MakeComponent implements OnInit {
   @Input() operation: string;
   @Input() readonly: boolean;
   public make: Make;
-  public makeForm: FormGroup;
+  public makeForm: UntypedFormGroup;
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
@@ -52,7 +52,7 @@ export class MakeComponent implements OnInit {
   constructor(
     public _makeService: MakeService,
     public _applicationService: ApplicationService,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
@@ -75,8 +75,8 @@ export class MakeComponent implements OnInit {
         this.applications = result;
         if (!this.makeId) {
           this.applications.forEach(x => {
-            const control = new FormControl(false);
-            (this.makeForm.controls.applications as FormArray).push(control);
+            const control = new UntypedFormControl(false);
+            (this.makeForm.controls.applications as UntypedFormArray).push(control);
           })
         }
       })
@@ -134,13 +134,13 @@ export class MakeComponent implements OnInit {
         this.make.applications.forEach(y => {
           if (x._id === y._id) {
             encontro = true;
-            const control = new FormControl(y); // if first item set to true, else false
-            (this.makeForm.controls.applications as FormArray).push(control);
+            const control = new UntypedFormControl(y); // if first item set to true, else false
+            (this.makeForm.controls.applications as UntypedFormArray).push(control);
           }
         })
         if (!encontro) {
-          const control = new FormControl(false); // if first item set to true, else false
-          (this.makeForm.controls.applications as FormArray).push(control);
+          const control = new UntypedFormControl(false); // if first item set to true, else false
+          (this.makeForm.controls.applications as UntypedFormArray).push(control);
         }
       })
     }

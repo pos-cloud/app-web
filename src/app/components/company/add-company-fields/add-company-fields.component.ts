@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -21,7 +21,7 @@ export class AddCompanyFieldsComponent implements OnInit {
   public field: CompanyFields;
   public companyFields: CompanyField[];
   @Input() fields: CompanyFields[];
-  public companyFieldsForm: FormGroup;
+  public companyFieldsForm: UntypedFormGroup;
   public alertMessage: string = '';
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -51,7 +51,7 @@ export class AddCompanyFieldsComponent implements OnInit {
 
   constructor(
     public _companyFieldService: CompanyFieldService,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
