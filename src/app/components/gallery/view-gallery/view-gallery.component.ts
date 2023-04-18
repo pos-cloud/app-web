@@ -42,6 +42,9 @@ export class ViewGalleryComponent implements OnInit {
     public apiURL = Config.apiURL;
     public database: string;
 
+    public makeImage: string = "";
+    public articleImage: string = "";
+
     constructor(
         private _route: ActivatedRoute,
         private _galleryService: GalleryService,
@@ -198,6 +201,7 @@ export class ViewGalleryComponent implements OnInit {
                     barcode: 1,
                     description: 1,
                     "make.description": 1,
+                    "make.picture": 1,
                     "category.description": 1,
                     posDescription: 1,
                     observation : 1,
@@ -217,6 +221,16 @@ export class ViewGalleryComponent implements OnInit {
                     } else {
                         this.article = null;
                         this.filterArticle = "";
+                    }
+
+                    if(this.article.picture === 'default.jpg' || !this.article.picture) {
+                        if(this.article.make && this.article.make.picture) {
+                            this.makeImage = this.article.make.picture
+                        } else {
+                            this.articleImage = 'default.jpg'
+                        }
+                    } else {
+                        this.articleImage = this.article.picture
                     }
                 },
                 error =>{

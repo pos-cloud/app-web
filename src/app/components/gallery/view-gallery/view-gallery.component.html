@@ -13,10 +13,10 @@
                 [focus]="focusEvent">
         </div>
         <div *ngIf="article" class="col-4">
-            <img *ngIf="article.picture == 'default.jpg' || article.picture == undefined"
-                src="./../../../assets/img/default.jpg" height="350" width="400">
-            <img *ngIf="article.picture !== 'default.jpg' && article.picture !== undefined"
-                [src]="apiURL + 'get-image-article/'+article.picture+'/'+database" height="350" width="400">
+            <img *ngIf="makeImage"
+            [src]="apiURL + 'get-image-make/'+makeImage+'/'+database" height="350" width="400">
+            <img *ngIf="articleImage"
+                [src]="apiURL + 'get-image-article/'+articleImage+'/'+database" height="350" width="400">
         </div>
         <div *ngIf="article" class="col-4">
             <h1>{{article.description}}</h1>
