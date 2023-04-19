@@ -21,5 +21,8 @@
     ],
     "module": "es2020",
     "useDefineForClassFields": false
+  },
+  "angularCompilerOptions": {
+    "enableIvy": false
   }
 }
