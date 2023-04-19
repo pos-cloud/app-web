@@ -25,7 +25,7 @@ jobs:
           TARGET: prod-ar
     steps:
       - uses: actions/checkout@v3
-      - run: npm install
+      - run: npm install --legacy-peer-deps
       - run: npm run build:prod
       - run: cp -Rf /var/www/html/* /var/www/backup/
       - run: rm -Rf /var/www/html/*
