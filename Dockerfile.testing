@@ -1,4 +1,4 @@
-FROM node:16.10 as build-step
+FROM node:18.10.0 as build-step
 RUN mkdir -p /app
 WORKDIR /app
 COPY . /app
