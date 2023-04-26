@@ -3,29 +3,19 @@
 # https://github.community/t/create-matrix-with-multiple-os-and-env-for-each-one/16895/2
 #
 #
-name: Main
+name: jacksonburgs
 on:
   push:
-    branches: [ main ]
+    branches: [ jacksonburgs ]
   workflow_dispatch:
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix: 
-        os: [ eldesafio, granpaso, jacksonburgs, prod-ar ]
-        include:
-        - os: eldesafio
-          TARGET: eldesafio
-        - os: granpaso
-          TARGET: granpaso
-        - os: jacksonburgs
-          TARGET: jacksonburgs
-        - os: prod-ar
-          TARGET: prod-ar
+    runs-on: jacksonburgs
     steps:
       - uses: actions/checkout@v3
       - run: npm install
       - run: npm run build:prod
+      - run: rm -Rf /var/www/backup/*
+      - run: cp -Rf /var/www/html/* /var/www/backup/
       - run: rm -Rf /var/www/html/*
       - run: cp -Rf dist/* /var/www/html/
