@@ -1,23 +1,23 @@
-####  Instalaciones necesarias
+###  Instalaciones necesarias
 ------------
 - [Angular](https://angular.io/)  v15.0.0
 - VSCode
 - NodeJs v19.7.0 (usar [nvm](https://github.com/nvm-sh/nvm))
 - Git
 
-#### Run locally
+### Run locally
 ------------
 npm i
 npm start
 
-#### Build Cloud
+### Build Cloud
 ------------
 docker build -t admin-poscloud . 
 docker run -d -it --name pos admin-poscloud
 rm -R /var/www/poscloud/
 docker cp pos:/app/dist/ /var/www/poscloud/
 
-#### Acceso a Produccion
+### Acceso a Produccion
 
 ------------
 - url: poscloud.ar
@@ -25,7 +25,7 @@ docker cp pos:/app/dist/ /var/www/poscloud/
 - user: admin
 - pass: pos
 
-#### Acceso a Testing
+### Acceso a Testing
 
 ------------
 - url: testing.poscloud.ar
@@ -33,7 +33,7 @@ docker cp pos:/app/dist/ /var/www/poscloud/
 - user: admin
 - pass: pos
 
-#### Contribuir 
+### Contribuir 
 
 ------------
 
