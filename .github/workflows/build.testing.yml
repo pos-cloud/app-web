@@ -8,10 +8,14 @@ jobs:
     runs-on: dev
     steps:
       - uses: actions/checkout@v3
-      # - run: npm install
-      # - run: npm run build:dev
-      # - run: rm -Rf /var/www/html/*
-      # - run: cp -Rf dist/* /var/www/html/
-      # - run: docker rm -f api-poscloud
-      - run: docker build -t system -f Dockerfile.testing .
-      - run: docker run -v /home:/home --restart unless-stopped --net host --name system -d -it -p 80:80 system
+
+      - name: Stop and remove existing container
+        run: |
+          docker stop system || true
+          docker rm -f system || true
+
+      - name: Build Docker image
+        run: docker build -t system -f Dockerfile.testing .
+
+      - name: Run Docker container
+        run: docker run -v /home:/home --restart unless-stopped --net host --name system -d -it -p 80:80 system
