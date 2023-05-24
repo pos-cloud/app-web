@@ -1,6 +1,6 @@
 // ANGULAR
 import {Component, OnInit, Input, EventEmitter, ViewEncapsulation} from '@angular/core';
-import {UntypedFormGroup, UntypedFormBuilder, Validators} from '@angular/forms';
+import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 
 // DE TERCEROS
 import {NgbAlertConfig, NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -69,7 +69,7 @@ export class AddMovementOfCashComponent implements OnInit {
   movementsOfCashesToFinance: MovementOfCash[];
   paymentMethods: PaymentMethod[];
   paymentMethodSelected: PaymentMethod;
-  movementOfCashForm: UntypedFormGroup;
+  movementOfCashForm: FormGroup;
   paymentChange: string = '0.00';
   alertMessage: string = '';
   loading: boolean = false;
@@ -145,7 +145,7 @@ export class AddMovementOfCashComponent implements OnInit {
     private _toastr: ToastrService,
     private _currencyService: CurrencyService,
     public activeModal: NgbActiveModal,
-    public _fb: UntypedFormBuilder,
+    public _fb: FormBuilder,
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal,
     public translatePipe: TranslateMePipe,
