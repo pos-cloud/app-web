@@ -1,6 +1,6 @@
 // ANGULAR
 import {Component, OnInit, Input, EventEmitter, ViewEncapsulation} from '@angular/core';
-import {FormGroup, FormBuilder, Validators} from '@angular/forms';
+import {UntypedFormGroup, UntypedFormBuilder, Validators} from '@angular/forms';
 
 // DE TERCEROS
 import {NgbAlertConfig, NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -69,10 +69,11 @@ export class AddMovementOfCashComponent implements OnInit {
   movementsOfCashesToFinance: MovementOfCash[];
   paymentMethods: PaymentMethod[];
   paymentMethodSelected: PaymentMethod;
-  movementOfCashForm: FormGroup;
+  movementOfCashForm: UntypedFormGroup;
   paymentChange: string = '0.00';
   alertMessage: string = '';
   loading: boolean = false;
+  isFormSubmitted: boolean = false;
   focusEvent = new EventEmitter<boolean>();
   transactionAmount: number = 0.0;
   amountToPay: number = 0.0;
@@ -144,7 +145,7 @@ export class AddMovementOfCashComponent implements OnInit {
     private _toastr: ToastrService,
     private _currencyService: CurrencyService,
     public activeModal: NgbActiveModal,
-    public _fb: FormBuilder,
+    public _fb: UntypedFormBuilder,
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal,
     public translatePipe: TranslateMePipe,
@@ -1719,10 +1720,13 @@ export class AddMovementOfCashComponent implements OnInit {
   }
 
   async addMovementOfCash() {
-    if (!this.loading) {
-      try {
+    if (this.loading || this.isFormSubmitted) {
+      return;
+    }
+    this.loading = true;
+
+    try {
         if (this.movementOfCashForm.valid) {
-          this.loading = true;
           if (!this.fastPayment) {
             if (await this.isValidAmount()) {
               if (!this.paymentMethodSelected.allowToFinance) {
@@ -1903,10 +1907,12 @@ export class AddMovementOfCashComponent implements OnInit {
           this.onValueChanged();
           throw new Error('Verificar errores en el formulario');
         }
+        this.isFormSubmitted = true;
       } catch (error) {
         this.showToast(error);
+      } finally {
+        this.loading = false;
       }
-    }
   }
 
   cancel(): void {
