@@ -73,6 +73,7 @@ export class AddMovementOfCashComponent implements OnInit {
   paymentChange: string = '0.00';
   alertMessage: string = '';
   loading: boolean = false;
+  isFormSubmitted: boolean = false;
   focusEvent = new EventEmitter<boolean>();
   transactionAmount: number = 0.0;
   amountToPay: number = 0.0;
@@ -1719,10 +1720,13 @@ export class AddMovementOfCashComponent implements OnInit {
   }
 
   async addMovementOfCash() {
-    if (!this.loading) {
-      try {
+    if (this.loading || this.isFormSubmitted) {
+      return;
+    }
+    this.loading = true;
+
+    try {
         if (this.movementOfCashForm.valid) {
-          this.loading = true;
           if (!this.fastPayment) {
             if (await this.isValidAmount()) {
               if (!this.paymentMethodSelected.allowToFinance) {
@@ -1903,10 +1907,12 @@ export class AddMovementOfCashComponent implements OnInit {
           this.onValueChanged();
           throw new Error('Verificar errores en el formulario');
         }
+        this.isFormSubmitted = true;
       } catch (error) {
         this.showToast(error);
+      } finally {
+        this.loading = false;
       }
-    }
   }
 
   cancel(): void {

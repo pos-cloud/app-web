@@ -523,12 +523,12 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-light" (click)="(loading) ? $event.stopPropagation() : cancel()">Cancelar</button>
-            <button type="submit" class="btn btn-primary" [disabled]="loading">
+            <button type="submit" class="btn btn-primary" [disabled]="loading || isFormSubmitted">
                 <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
                 <span *ngIf="!loading">Guardar</span>
                 <span *ngIf="loading">Espere por favor</span>
             </button>
-            <button type="button" class="btn btn-success" [disabled]="loading"
+            <button type="button" class="btn btn-success" [disabled]="loading || isFormSubmitted"
                 *ngIf="transaction.type.allowZero" (click)="(loading) ? $event.stopPropagation() : finish()">
                 <i class="fa" [ngClass]="{'fa-check':!loading, 'fa-spinner fa-spin':loading}"></i>
                 <span *ngIf="!loading">Finalizar</span>
