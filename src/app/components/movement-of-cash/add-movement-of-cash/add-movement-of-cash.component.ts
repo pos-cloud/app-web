@@ -1,5 +1,5 @@
 // ANGULAR
-import {Component, OnInit, Input, EventEmitter, ViewEncapsulation} from '@angular/core';
+import {Component, OnInit, Input, EventEmitter, ViewEncapsulation, HostListener} from '@angular/core';
 import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 
 // DE TERCEROS
@@ -131,6 +131,7 @@ export class AddMovementOfCashComponent implements OnInit {
     CUIT: {},
     number: {pattern: ' Ingrese solo números '},
   };
+  disableEnterKey: boolean = false;
 
   constructor(
     private _paymentMethodService: PaymentMethodService,
@@ -1720,11 +1721,11 @@ export class AddMovementOfCashComponent implements OnInit {
   }
 
   async addMovementOfCash() {
-    if (this.loading || this.isFormSubmitted) {
+    if (this.loading) {
       return;
     }
     this.loading = true;
-
+    this.disableEnterKey = true;
     try {
         if (this.movementOfCashForm.valid) {
           if (!this.fastPayment) {
@@ -1907,12 +1908,22 @@ export class AddMovementOfCashComponent implements OnInit {
           this.onValueChanged();
           throw new Error('Verificar errores en el formulario');
         }
-        this.isFormSubmitted = true;
       } catch (error) {
         this.showToast(error);
       } finally {
-        this.loading = false;
+        setTimeout(function(){
+          this.loading = false;
+          this.disableEnterKey = false;
+       }, 2000);
       }
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    console.log(this.disableEnterKey)
+    if (event.key === 'Enter' && this.disableEnterKey) {
+      event.preventDefault();
+    }
   }
 
   cancel(): void {
