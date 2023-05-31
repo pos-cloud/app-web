@@ -1,8 +1,3 @@
-# https://serverfault.com/questions/1052695/must-not-run-with-sudo-while-trying-to-create-a-runner-using-github-actions
-# https://stackoverflow.com/questions/64859065/how-to-overcome-must-not-with-sudo-error-in-setting-up-github-actions-config-o
-# https://github.community/t/create-matrix-with-multiple-os-and-env-for-each-one/16895/2
-#
-#
 name: Main
 on:
   push:
@@ -10,24 +5,17 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    timeout-minutes: 10
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix: 
-        os: [ eldesafio, granpaso, jacksonburgs, prod-ar ]
-        include:
-        - os: eldesafio
-          TARGET: eldesafio
-        - os: granpaso
-          TARGET: granpaso
-        - os: jacksonburgs
-          TARGET: jacksonburgs
-        - os: prod-ar
-          TARGET: prod-ar
+    runs-on: dev
     steps:
       - uses: actions/checkout@v3
-      - run: npm install --legacy-peer-deps
-      - run: npm run build:prod
-      - run: cp -Rf /var/www/html/* /var/www/backup/
-      - run: rm -Rf /var/www/html/*
-      - run: cp -Rf dist/* /var/www/html/
+
+      - name: Stop and remove existing container
+        run: |
+          docker stop system || true
+          docker rm -f system || true
+
+      - name: Build Docker image
+        run: docker build -t system -f Dockerfile.main .
+
+      - name: Run Docker container
+        run: docker run -v /home:/home --restart unless-stopped --net host --name system -d -it -p 80:80 system
