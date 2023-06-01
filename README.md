@@ -3,7 +3,9 @@
 - [Angular](https://angular.io/)  v15.0.0
 - VSCode
 - NodeJs v19.7.0 (usar [nvm](https://github.com/nvm-sh/nvm))
-- Git
+- [Git] (https://git-scm.com/) 
+- [Filezilla] (https://filezilla-project.org/)
+- [MongoDB] (https://www.mongodb.com/)
 
 ### Run locally
 ------------
