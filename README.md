@@ -1,7 +1,7 @@
 ###  Instalaciones necesarias
 ------------
 - [Angular](https://angular.io/)  v15.0.0
-- VSCode
+- [VSCode](https://code.visualstudio.com/)
 - NodeJs v19.7.0 (usar [nvm](https://github.com/nvm-sh/nvm))
 - [Git](https://git-scm.com/) 
 - [Filezilla](https://filezilla-project.org/)
