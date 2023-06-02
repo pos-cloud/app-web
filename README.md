@@ -27,11 +27,20 @@
 - user: admin
 - pass: pos
 
-#### Restaurar base demo
+##### Restaurar base demo
 
 La base de encuentra en assets del proyecto
 
 mongorestore --db demo --archive=/home/demo.gz --gzip
+
+### Servicios
+
+##### Repositorios
+api: https://github.com/pos-cloud/api
+apiv2: https://github.com/pos-cloud/apiv2
+##### Ambientes
+api: https://tapi.poscloud.com.ar
+apiv2: https://tapiv2.poscloud.com.ar
 
 ### Contribuir 
 
