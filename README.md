@@ -3,29 +3,21 @@
 - [Angular](https://angular.io/)  v15.0.0
 - VSCode
 - NodeJs v19.7.0 (usar [nvm](https://github.com/nvm-sh/nvm))
-- [Git] (https://git-scm.com/) 
-- [Filezilla] (https://filezilla-project.org/)
-- [MongoDB] (https://www.mongodb.com/)
+- [Git](https://git-scm.com/) 
+- [Filezilla](https://filezilla-project.org/)
+- [MongoDB](https://www.mongodb.com/)
 
 ### Run locally
 ------------
-npm i
-npm start
+     npm i
+     npm start
 
 ### Build Cloud
 ------------
-docker build -t admin-poscloud . 
-docker run -d -it --name pos admin-poscloud
-rm -R /var/www/poscloud/
-docker cp pos:/app/dist/ /var/www/poscloud/
-
-### Acceso a Produccion
-
-------------
-- url: poscloud.ar
-- empresa: demo
-- user: admin
-- pass: pos
+    docker build -t admin-poscloud . 
+    docker run -d -it --name pos admin-poscloud
+    rm -R /var/www/poscloud/
+    docker cp pos:/app/dist/ /var/www/poscloud/
 
 ### Acceso a Testing
 
@@ -34,6 +26,12 @@ docker cp pos:/app/dist/ /var/www/poscloud/
 - empresa: demo
 - user: admin
 - pass: pos
+
+# Restaurar base demo
+
+La base de encuentra en assets del proyecto
+
+mongorestore --db demo --archive=/home/demo.gz --gzip
 
 ### Contribuir 
 
