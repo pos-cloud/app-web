@@ -49,7 +49,7 @@
                                     <div class="form-group col-md-6">
                                         <ng-template #rtMakes let-r="result" let-t="term">
                                             <ngb-highlight [result]="r.description" [term]="t">
-                                            </ngb-highlight>
+                                            </ngb-highlight>x
                                         </ng-template>
                                         <label for="make">Marca:</label>
                                         <input id="make" type="text" class="form-control" formControlName="make"
@@ -118,11 +118,11 @@
                                     {{ formErrors['unitOfMeasurement'] }}
                                 </div>
                             </div>
-                            <div class="form-group col-md-4">
+                            <!-- <div class="form-group col-md-4">
                                 <label for="quantityPerMeasure" class="control-label">Cantidad:</label>
                                 <input type="text" class="form-control" formControlName="quantityPerMeasure"
                                     name="quantityPerMeasure" id="quantityPerMeasure" [readonly]="readonly" />
-                            </div>
+                            </div> -->
                             <div class="form-group col-md-4">
                                 <label for="printIn" class="control-label">Imprime en:</label>
                                 <select class="form-control" formControlName="printIn">
