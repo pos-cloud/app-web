@@ -1,7 +1,18 @@
-FROM node:16.10 as build-step
+# FROM node:16.10 as build-step
+# RUN mkdir -p /app
+# WORKDIR /app
+# COPY . /app
+# RUN npm install
+# RUN npm install -g @angular/cli@13.1.3
+# RUN ng build --configuration production
+
+FROM node:18.10.0 as build-step
 RUN mkdir -p /app
 WORKDIR /app
 COPY . /app
-RUN npm install
-RUN npm install -g @angular/cli@13.1.3
-RUN ng build --configuration production
+RUN npm install --legacy-peer-deps
+RUN npm install -g @angular/cli
+RUN npm run build:prod
+
+FROM nginx:stable
+COPY --from=build-step /app/dist /usr/share/nginx/html
