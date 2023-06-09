@@ -15,7 +15,7 @@ jobs:
           docker rm -f system || true
 
       - name: Build Docker image
-        run: sudo docker build -t system -f Dockerfile.main .
+        run: docker build -t system -f Dockerfile.main .
 
       - name: Run Docker container
         run: docker run -v /home:/home --restart unless-stopped --net host --name system -d -it -p 80:80 system
