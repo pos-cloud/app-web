@@ -2811,6 +2811,7 @@ export class PrintComponent implements OnInit {
   }
 
   async toPrintInvoice() {
+    console.log("entroq12312")
     let transport = 0;
 
     // Encabezado de la transacción
@@ -2974,9 +2975,10 @@ export class PrintComponent implements OnInit {
     let margin = 5;
     let totalArticle = 0;
 
+
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let i = 0; i < this.movementsOfArticles.length; i++) {
-        if (this.movementsOfArticles[i].amount > 0) {
+        if (this.movementsOfArticles[i].amount > 0 && !this.movementsOfArticles[i].movementParent) {
           if (this.movementsOfArticles[i].amount) {
             totalArticle = totalArticle + this.movementsOfArticles[i].amount;
             this.doc.text(this.movementsOfArticles[i].amount.toString(), 6, row);
