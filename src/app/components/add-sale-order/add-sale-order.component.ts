@@ -2531,7 +2531,7 @@ export class AddSaleOrderComponent {
                 if (this.transaction && this.transaction.type.requestEmailTemplate)
                   this.openModal('send-email');
               } else {
-                  this.openModal('send-email');
+                this.backFinal();
               }
             }
           },

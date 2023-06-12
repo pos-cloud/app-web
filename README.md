@@ -20,7 +20,6 @@
     docker cp pos:/app/dist/ /var/www/poscloud/
 
 ### Acceso a Testing
-
 ------------
 - url: testing.poscloud.ar
 - empresa: demo
