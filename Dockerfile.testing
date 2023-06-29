@@ -7,4 +7,5 @@ RUN npm install -g @angular/cli
 RUN npm run build:dev
 
 FROM nginx:stable
+EXPOSE 8080
 COPY --from=build-step /app/dist /usr/share/nginx/html

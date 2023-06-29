@@ -18,4 +18,4 @@ jobs:
         run: docker build -t system -f Dockerfile.testing .
 
       - name: Run Docker container
-        run: docker run -v /home:/home --restart unless-stopped --net host --name system -d -it -p 80:80 system
+        run: docker run -v /home:/home --restart unless-stopped --net host --name system -d -it -p 8080:8080 system
