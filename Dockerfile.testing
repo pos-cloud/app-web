@@ -1,11 +1,19 @@
-FROM node:18.10.0 as build-step
+# FROM node:18.10.0 as build-step
+# RUN mkdir -p /app
+# WORKDIR /app
+# COPY . /app
+# RUN npm install --legacy-peer-deps
+# RUN npm install -g @angular/cli
+# RUN npm run build:dev
+
+# FROM nginx:stable
+# EXPOSE 8080
+# COPY --from=build-step /app/dist /usr/share/nginx/html
+
+FROM node:18.10 as build-step
 RUN mkdir -p /app
 WORKDIR /app
 COPY . /app
-RUN npm install --legacy-peer-deps
+RUN npm install
 RUN npm install -g @angular/cli
-RUN npm run build:dev
-
-FROM nginx:stable
-EXPOSE 8080
-COPY --from=build-step /app/dist /usr/share/nginx/html
+RUN ng build
