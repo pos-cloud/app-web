@@ -29,13 +29,12 @@ jobs:
         run: npm run build:test
 
       - name: Deploy to GitHub Pages - Production
+        if: github.ref != 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist/prod
           publish_branch: gh-pages
-          cname: prod.poscloud.ar
-        if: github.ref == 'refs/heads/main'
 
       - name: Deploy to GitHub Pages - Testing
         uses: peaceiris/actions-gh-pages@v3
@@ -43,5 +42,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist/test
           publish_branch: gh-pages
-          cname: test.poscloud.ar
-        if: github.ref == 'refs/heads/testing'
