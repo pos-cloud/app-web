@@ -19,8 +19,8 @@ jobs:
         with:
           node-version: 14
 
-      - name: Install gh-pages
-        run: npm install -g gh-pages
+      - name: Install dependencies
+        run: npm install
 
       - name: Build production
         run: npm run build:prod
@@ -32,10 +32,14 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           echo "prod.poscloud.ar" > dist/prod/CNAME
-          gh-pages -d dist/prod -b gh-pages --dotfiles --no-silent
+          git add -A
+          git commit -m "Deploy to prod.poscloud.ar"
+          git push origin main
 
       - name: Deploy to GitHub Pages - Testing
         if: github.ref == 'refs/heads/testing'
         run: |
           echo "test.poscloud.ar" > dist/test/CNAME
-          gh-pages -d dist/test -b gh-pages --dotfiles --no-silent
+          git add -A
+          git commit -m "Deploy to test.poscloud.ar"
+          git push origin testing
