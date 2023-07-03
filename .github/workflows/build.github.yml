@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - testing
+      - main
 
 jobs:
   deploy:
@@ -23,6 +24,7 @@ jobs:
 
       - name: Build production
         run: npm run build:prod
+
       - name: Build testing
         run: npm run build:test
 
@@ -33,6 +35,7 @@ jobs:
           publish_dir: ./dist/prod
           publish_branch: gh-pages
           cname: prod.poscloud.ar
+        if: github.ref == 'refs/heads/main'
 
       - name: Deploy to GitHub Pages - Testing
         uses: peaceiris/actions-gh-pages@v3
@@ -41,3 +44,4 @@ jobs:
           publish_dir: ./dist/test
           publish_branch: gh-pages
           cname: test.poscloud.ar
+        if: github.ref == 'refs/heads/testing'
