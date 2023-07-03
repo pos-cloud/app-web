@@ -1,0 +1,43 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - testing
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build production
+        run: npm run build:prod
+      - name: Build testing
+        run: npm run build:test
+
+      - name: Deploy to GitHub Pages - Production
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist/prod
+          publish_branch: gh-pages
+          cname: prod.poscloud.ar
+
+      - name: Deploy to GitHub Pages - Testing
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist/test
+          publish_branch: gh-pages
+          cname: test.poscloud.ar
