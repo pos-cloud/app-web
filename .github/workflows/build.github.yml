@@ -1,45 +1,31 @@
-name: Deploy to GitHub Pages
+name: Build and Deploy
 
 on:
   push:
     branches:
-      - testing
-      - main
-
+      - master
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 14
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build production
-        run: npm run build:prod
-
-      - name: Build testing
-        run: npm run build:test
-
-      - name: Deploy to GitHub Pages - Production
-        if: github.ref == 'refs/heads/main'
-        run: |
-          echo "prod.poscloud.ar" > dist/prod/CNAME
-          git add -A
-          git commit -m "Deploy to prod.poscloud.ar"
-          git push origin main
-
-      - name: Deploy to GitHub Pages - Testing
-        if: github.ref == 'refs/heads/testing'
-        run: |
-          echo "test.poscloud.ar" > dist/test/CNAME
-          git add -A
-          git commit -m "Deploy to test.poscloud.ar"
-          git push origin testing
+    - name: Checkout
+      uses: actions/checkout@v1
+    - uses: actions/setup-node@v1 #this installs node and npm for us
+      with:
+        node-version: '10.x'
+    - uses: actions/cache@v1 # this allows for re-using node_modules caching, making builds a bit faster.
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-    
+    - name: Build
+      run: |
+        npm install
+        npm run-script deploy
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@releases/v3
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: dist
