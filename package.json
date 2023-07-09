@@ -9,9 +9,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build:test": "ng build --configuration test --output-path=dist/test",
     "build:dev": "ng build --configuration develop",
-    "build:prod": "ng build --configuration production --output-path=dist/prod",
+    "build:prod": "ng build --configuration production",
     "test:headless": "ng test --watch=false --browsers=ChromeHeadless"
   },
   "private": true,
