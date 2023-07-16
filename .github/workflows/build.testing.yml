@@ -1,14 +1,46 @@
-name: Testing
+# name: Testing
+# on:
+#   push:
+#     branches: [ testing ]
+#   workflow_dispatch:
+# jobs:
+#   build:
+#     runs-on: dev
+#     steps:
+#       - uses: actions/checkout@v3
+#       - run: npm install
+#       - run: npm run build:dev
+#       - run: rm -Rf /var/www/html/*
+#       - run: cp -Rf dist/* /var/www/html/
+
+name: Deploy to GitHub Pages
+
 on:
   push:
-    branches: [ testing ]
-  workflow_dispatch:
+    branches:
+      - testing  # Cambia esto si tu rama principal es diferente
+
 jobs:
-  build:
-    runs-on: dev
+  deploy:
+    runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v3
-      - run: npm install
-      - run: npm run build:dev
-      - run: rm -Rf /var/www/html/*
-      - run: cp -Rf dist/* /var/www/html/
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 14
+      
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build
+      run: npm run build:dev
+      
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist
