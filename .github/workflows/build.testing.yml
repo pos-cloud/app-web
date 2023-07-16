@@ -18,7 +18,8 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - testing  # Cambia esto si tu rama principal es diferente
+      - main
+      - testing
 
 jobs:
   deploy:
@@ -34,13 +35,17 @@ jobs:
         node-version: 14
       
     - name: Install dependencies
-      run: npm i
+      run: npm ci
       
-    - name: Build
-      run: npm run build:dev
+    - name: Build Main
+      run: npm run build --configuration production --output-path=dist/main --base-href /main/
+      
+    - name: Build Testing
+      run: npm run build --configuration develop --output-path=dist/testing --base-href /testing/
       
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./dist
+        publish_branch: gh-pages
