@@ -38,10 +38,10 @@ jobs:
       run: npm i
       
     - name: Build Main
-      run: npm run build --configuration production --output-path=dist/main --base-href /main/
+      run: npm run build:prod
       
     - name: Build Testing
-      run: npm run build --configuration develop --output-path=dist/testing --base-href /testing/
+      run: npm run build:dev
       
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
