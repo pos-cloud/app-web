@@ -11,8 +11,9 @@
     "e2e": "ng e2e",
     "build:dev": "ng build --configuration develop",
     "build:prod": "ng build --configuration production",
-    "build:devp": "ng build --configuration develop --output-path=dist/dev --base-href=/system/",
-    "build:prodp": "ng build --configuration production --output-path=dist/main --base-href=/system/",
+
+    "build:devp": "ng build --configuration develop --output-path=dist/dev --base-href=/system/dev",
+    "build:prodp": "ng build --configuration production --output-path=dist/main --base-href=/system/prod",
 
     "test:headless": "ng test --watch=false --browsers=ChromeHeadless"
   },
