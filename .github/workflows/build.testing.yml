@@ -1,51 +1,14 @@
-# name: Testing
-# on:
-#   push:
-#     branches: [ testing ]
-#   workflow_dispatch:
-# jobs:
-#   build:
-#     runs-on: dev
-#     steps:
-#       - uses: actions/checkout@v3
-#       - run: npm install
-#       - run: npm run build:dev
-#       - run: rm -Rf /var/www/html/*
-#       - run: cp -Rf dist/* /var/www/html/
-
-name: Deploy to GitHub Pages
-
+name: Testing
 on:
   push:
-    branches:
-      - main
-      - testing
-
+    branches: [ testing ]
+  workflow_dispatch:
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    
+  build:
+    runs-on: dev
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: 14
-      
-    - name: Install dependencies
-      run: npm i
-      
-    - name: Build Main
-      run: npm run build:prod
-      
-    - name: Build Testing
-      run: npm run build:dev
-      
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist
-        publish_branch: gh-pages
+      - uses: actions/checkout@v3
+      - run: npm install
+      - run: npm run build:dev
+      - run: rm -Rf /var/www/html/*
+      - run: cp -Rf dist/* /var/www/html/
