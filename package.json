@@ -12,8 +12,8 @@
     "build:dev": "ng build --configuration develop",
     "build:prod": "ng build --configuration production",
 
-    "build:devp": "ng build --configuration develop --output-path=dist/dev --base-href=/system/dev/",
-    "build:prodp": "ng build --configuration production --output-path=dist/prod --base-href=/system/prod/",
+    "build:devp": "ng build --configuration develop --output-path=dist/dev --base-href=/dev/",
+    "build:prodp": "ng build --configuration production --output-path=dist/prod --base-href=/prod/",
 
     "test:headless": "ng test --watch=false --browsers=ChromeHeadless"
   },
