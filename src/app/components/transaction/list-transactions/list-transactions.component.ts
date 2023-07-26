@@ -92,6 +92,10 @@ export class ListTransactionsComponent implements OnInit {
   config: Config;
   database: string;
 
+
+  deleteTransaction = true;
+  editTransaction = true;
+
   constructor(
     public _transactionService: TransactionService,
     public _transactionTypeService: TransactionTypeService,
@@ -146,6 +150,19 @@ export class ListTransactionsComponent implements OnInit {
     }
 
     this._authService.getIdentity.subscribe(async (identity) => {
+      // get permision
+      
+      if (identity.permission.collections.some((collection) => collection.name === "transacciones")) {
+        // Encontrar el objeto con name igual a "transacciones"
+        const transactionObject = identity.permission.collections.find(
+          (collection) => collection.name === "transacciones"
+        );
+      
+        // Guardar los valores de 'actions' en las variables correspondientes
+        this.deleteTransaction = transactionObject.actions.delete;
+        this.editTransaction = transactionObject.actions.edit;
+      }
+
       if (identity && identity.origin) {
         this.branchSelectedId = identity.origin.branch._id;
         this.allowChangeBranch = false;
