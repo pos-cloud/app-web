@@ -14,12 +14,10 @@ import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { FormField } from 'app/util/formField.interface';
-import * as $ from 'jquery';
 import { Config } from 'app/app.config';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import Resulteable from 'app/util/Resulteable';
 import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
-import { waitForAsync } from '@angular/core/testing';
 
 @Component({
     selector: 'app-permission',
