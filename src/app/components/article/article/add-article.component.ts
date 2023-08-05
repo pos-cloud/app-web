@@ -1665,20 +1665,14 @@ export class AddArticleComponent implements OnInit {
                     } else {
                       this.imageURL = './../../../assets/img/default.jpg';
                     }
-                    this.showToast(
-                      null,
-                      'success',
-                      'El producto se ha añadido con éxito.',
-                    );
+                    this.showToast(null,'success','El producto se ha añadido con éxito.');
                     this.activeModal.close({article: this.article});
                   },
                   (error) => this.showToast(error),
                 );
             } else {
               this.showToast(null, 'success', 'El producto se ha añadido con éxito.');
-              if (this.userType === 'pos') {
-                this.activeModal.close({article: this.article});
-              }
+              this.activeModal.close({article: this.article});
             }
           }
         },
