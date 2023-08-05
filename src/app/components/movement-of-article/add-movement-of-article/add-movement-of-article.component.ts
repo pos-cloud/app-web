@@ -40,6 +40,8 @@ import {Variant} from '../../variant/variant';
 import {VariantService} from '../../variant/variant.service';
 import {MovementOfArticle, MovementOfArticleStatus} from '../movement-of-article';
 import {MovementOfArticleService} from '../movement-of-article.service';
+import { AuthService } from 'app/components/login/auth.service';
+import { User } from 'app/components/user/user';
 
 @Component({
   selector: 'app-add-movement-of-article',
@@ -51,6 +53,7 @@ import {MovementOfArticleService} from '../movement-of-article.service';
 export class AddMovementOfArticleComponent implements OnInit {
   @Input() movementOfArticle: MovementOfArticle;
   @Input() transaction: Transaction;
+  user: User;
   containsVariants: Boolean;
   articleStock: ArticleStock;
   variants: Variant[];
@@ -138,6 +141,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _structureService: StructureService,
     public _articleService: ArticleService,
+    private _authService: AuthService
   ) {
     this.roundNumber = new RoundNumberPipe();
     this.selectedVariants = {};
@@ -167,6 +171,8 @@ export class AddMovementOfArticleComponent implements OnInit {
     ) {
       this.loadStructure();
     }
+
+    this._authService.getIdentity.subscribe(async (user: User) => { this.user = user });
   }
 
   ngAfterViewInit() {

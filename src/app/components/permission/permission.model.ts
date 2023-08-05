@@ -43,6 +43,7 @@ export class Permission extends Model {
     filterTransaction: boolean;
 
     transactionTypes : TransactionType[];
+    editArticle: boolean;
 
     constructor() { super(); }
 
