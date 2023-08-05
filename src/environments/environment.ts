@@ -5,6 +5,6 @@
 
 export const environment = {
   production: false,
-  api: "https://tapi.poscloud.com.ar",
-  apiv2: "https://tapiv2.poscloud.com.ar"
+  api: "http://localhost:300",
+  apiv2: "http://localhost:308"
 };
