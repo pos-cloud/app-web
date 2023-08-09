@@ -80,7 +80,7 @@
           <div class="input-group">
             <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
             <input type="number" class="form-control" formControlName="auxPrice" name="auxPrice" id="auxPrice"
-              step="1" [readOnly]="!movementOfArticle.transaction.type.modifyArticle || !user.permission.editArticle" (input)="changeUnitPrice()"/>
+              step="1" [readOnly]="viewPrice()" (input)="changeUnitPrice()"/>
           </div>
           <div *ngIf="formErrors.unitPrice" class="alert alert-danger">
             {{ formErrors.unitPrice }}

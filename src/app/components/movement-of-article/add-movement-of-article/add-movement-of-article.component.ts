@@ -175,6 +175,16 @@ export class AddMovementOfArticleComponent implements OnInit {
     this._authService.getIdentity.subscribe(async (user: User) => { this.user = user });
   }
 
+  viewPrice() : boolean {
+    if(this.user.permission.editArticle && this.movementOfArticle.transaction.type.modifyArticle) {
+      return false  
+    }
+    if(!this.movementOfArticle.transaction.type.modifyArticle && this.user.permission.editArticle) {
+      return false
+    }
+    return true
+  }
+
   ngAfterViewInit() {
     this.focusEvent.emit(true);
     this.calculateUnitPrice();
