@@ -9,7 +9,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build:dev": "ng build --configuration develop",
+    "build:dev": "ng build --configuration donweb",
     "build:prod": "ng build --configuration production",
 
     "build:prodp": "ng build --configuration production --output-path=dist/prod --base-href=/system/prod/",
