@@ -61,3 +61,19 @@ resolvemos conflicto si hay git rebase --continue
 - git push --force-with-lease
 Esto hace que tu commit quede sobre lo de testing 
 Realizar PR a testing
+
+### Ambientes
+
+## Hosting Github Pages
+
+- https://pos-cloud.github.io/system/donweb
+- https://pos-cloud.github.io/system/evennode
+- https://pos-cloud.github.io/system/prod
+
+
+## Hosting DonWeb
+
+- dev.poscloud.ar
+- poscloud.ar (prod)
+
+
