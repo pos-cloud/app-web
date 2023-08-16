@@ -60,7 +60,7 @@
                 }
               ]
             },
-            "develop": {
+            "donweb": {
               "budgets": [
                 {
                   "type": "anyComponentStyle",
@@ -77,11 +77,11 @@
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.test.ts"
+                  "with": "src/environments/environment.donweb.ts"
                 }
               ]
             },
-            "test": {
+            "evennode": {
               "budgets": [
                 {
                   "type": "anyComponentStyle",
@@ -98,7 +98,7 @@
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.test.ts"
+                  "with": "src/environments/environment.evennode.ts"
                 }
               ]
             }

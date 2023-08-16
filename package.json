@@ -12,8 +12,9 @@
     "build:dev": "ng build --configuration develop",
     "build:prod": "ng build --configuration production",
 
-    "build:devp": "ng build --configuration develop --output-path=dist/dev --base-href=/system/dev/",
     "build:prodp": "ng build --configuration production --output-path=dist/prod --base-href=/system/prod/",
+    "build:donwebp": "ng build --configuration donweb --output-path=dist/donweb --base-href=/system/donweb/",
+    "build:evennodep": "ng build --configuration evennode --output-path=dist/evennode --base-href=/system/evennode/",
 
     "test:headless": "ng test --watch=false --browsers=ChromeHeadless"
   },
