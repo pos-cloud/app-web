@@ -5,6 +5,6 @@
 
 export const environment = {
   production: false,
-  api: "http://apiv1.eu-4.evennode.com",
-  apiv2: "http://apiv2.eu-4.evennode.com"
+  api: "http://localhost:300",
+  apiv2: "http://localhost:308"
 };
