@@ -77,3 +77,5 @@ Realizar PR a testing
 - poscloud.ar (prod)
 
 
+######
+v11.1.0: Agrega opcion de poder editar articulo en una transaccion en permisos de usuario. Siempre tiene prioridad primera la editar articulo del tipo de transaccion.
