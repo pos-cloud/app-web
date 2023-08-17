@@ -548,5 +548,7 @@
     "wrong authentication token": "la sesión se ha vencido",
     "you must select a state": "Debe seleccionar una provincia",
     "you must select who correctly": "Debe seleccionar a quién correctamente",
-    "you're not authorized": "No estas autorizado"
+    "you're not authorized": "No estas autorizado",
+    "filterTransaction": "Filtra Transacciones",
+    "editArticle": "Permite editar articulo"
 }
