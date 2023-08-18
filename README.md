@@ -70,6 +70,7 @@ Realizar PR a testing
 - https://pos-cloud.github.io/system/evennode
 - https://pos-cloud.github.io/system/prod
 
+- http://vps-2504224-x.dattaweb.com (test)
 
 ## Hosting DonWeb
 
