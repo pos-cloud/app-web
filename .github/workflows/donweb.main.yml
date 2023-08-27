@@ -1,4 +1,5 @@
-name: Main
+name: Deploy to DonWeb Main
+
 on:
   push:
     branches: [ main ]

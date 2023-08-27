@@ -1,9 +1,9 @@
-name: Deploy to GitHub Pages Donweb
+name: Deploy to GitHub Pages Main
 
 on:
   push:
     branches:
-      - testing
+      - main
 
 jobs:
   deploy:
@@ -21,8 +21,8 @@ jobs:
     - name: Install dependencies
       run: npm i
       
-    - name: Build Testing
-      run: npm run build:donwebp
+    - name: Build Main
+      run: npm run build:prodp
       
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3

@@ -1,9 +1,9 @@
-name: Deploy to GitHub Pages Evennode
+name: Deploy to GitHub Pages Dev
 
 on:
   push:
     branches:
-      - testing
+      - dev
 
 jobs:
   deploy:
@@ -21,7 +21,7 @@ jobs:
     - name: Install dependencies
       run: npm i
       
-    - name: Build Testing
+    - name: Build Dev
       run: npm run build:evennodep
       
     - name: Deploy to GitHub Pages
