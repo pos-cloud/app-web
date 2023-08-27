@@ -66,17 +66,12 @@ Realizar PR a testing
 
 ## Hosting Github Pages
 
-- https://pos-cloud.github.io/system/donweb
-- https://pos-cloud.github.io/system/evennode
-- https://pos-cloud.github.io/system/prod
-
-- http://vps-2504224-x.dattaweb.com (test)
+- dev.poscloud.ar
+- prod.poscloud.ar
 
 ## Hosting DonWeb
 
-- dev.poscloud.ar
 - poscloud.ar (prod)
-
 
 ######
 v11.1.0: Agrega opcion de poder editar articulo en una transaccion en permisos de usuario. Siempre tiene prioridad primera la editar articulo del tipo de transaccion.
