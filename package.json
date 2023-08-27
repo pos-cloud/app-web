@@ -9,12 +9,11 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build:dev": "ng build --configuration donweb",
-    "build:prod": "ng build --configuration production",
 
+    "build:prod": "ng build --configuration production",
     "build:prodp": "ng build --configuration production --output-path=dist/prod --base-href=/system/prod/",
-    "build:donwebp": "ng build --configuration donweb --output-path=dist/donweb --base-href=/system/donweb/",
-    "build:evennodep": "ng build --configuration evennode --output-path=dist/evennode --base-href=/system/evennode/",
+    
+    "build:dev": "ng build --configuration dev",
 
     "test:headless": "ng test --watch=false --browsers=ChromeHeadless"
   },
