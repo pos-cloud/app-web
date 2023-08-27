@@ -22,7 +22,7 @@ jobs:
       run: npm i
       
     - name: Build Dev
-      run: npm run build:evennodep
+      run: npm run build:dev
       
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
