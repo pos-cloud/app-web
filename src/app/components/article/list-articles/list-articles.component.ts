@@ -411,9 +411,6 @@ export class ListArticlesComponent implements OnInit {
     this._meliService.fetchPDF().subscribe((pdfBase64: string) => {
       this.pdfSrc = pdfBase64;
       this.loadingPdf = false; 
-      const modalRef = this._modalService.open(
-        PrintComponent
-      );
     })
   }
 
