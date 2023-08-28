@@ -5,6 +5,7 @@
 
 export const environment = {
   production: false,
-  api: "http://localhost:300",
-  apiv2: "http://localhost:308"
+  api: "http://localhost:3000",
+  apiv2: "http://localhost:308",
+  apiPrint:'http://localhost:3001'
 };

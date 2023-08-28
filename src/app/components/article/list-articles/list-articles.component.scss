@@ -11,3 +11,10 @@ app-list-articles {
         text-align: center;
       }
 }
+
+.full-screen {
+	left: -200px;
+	position:absolute;
+	width: 100vh;
+	height: 100vh;
+}

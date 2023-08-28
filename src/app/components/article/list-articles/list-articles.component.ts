@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef } from "@angular/core";
 import { Router } from "@angular/router";
 import {
   NgbModal,
@@ -34,6 +34,8 @@ import { TaxService } from "app/components/tax/tax.service";
 import { Tax } from "app/components/tax/tax";
 import { first } from "rxjs/operators";
 import { PrintComponent } from "app/components/print/print/print.component";
+import { MeliService } from "app/main/services/meli.service";
+
 
 @Component({
   selector: "app-list-articles",
@@ -51,6 +53,9 @@ export class ListArticlesComponent implements OnInit {
   public userType: string = "";
   public loading: boolean = false;
   public apiURL = Config.apiURL;
+  public pdfSrc: string | any;
+  public loadingPdf: boolean = false;
+  @ViewChild('pdfFrame') pdfFrame!: ElementRef;
   public timezone = "-03:00";
   public itemsPerPage = 10;
   @ViewChild(ExportExcelComponent)
@@ -80,6 +85,7 @@ export class ListArticlesComponent implements OnInit {
     private _modalService: NgbModal,
     private _printerService: PrinterService,
     private _priceList: PriceListService,
+    public _meliService: MeliService,
     private _userService: UserService,
     private _authService: AuthService,
     private _taxService: TaxService,
@@ -395,6 +401,22 @@ export class ListArticlesComponent implements OnInit {
   public selectArticle(articleSelected: Article): void {
     this.activeModal.close({ article: articleSelected });
   }
+
+  public loadPdf(){
+    if (this.loadingPdf) {
+      return; 
+    }
+
+    this.loadingPdf = true;
+    this._meliService.fetchPDF().subscribe((pdfBase64: string) => {
+      this.pdfSrc = pdfBase64;
+      this.loadingPdf = false; 
+      const modalRef = this._modalService.open(
+        PrintComponent
+      );
+    })
+  }
+
 
   async openModal(op: string, article?: Article, type?: string) {
     let modalRef;

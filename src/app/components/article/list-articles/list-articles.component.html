@@ -124,6 +124,17 @@
               <button *ngIf="priceLists && priceLists.length == 0" type="button"
                 class="btn btn-light btn-sm" (click)="openModal('print-label', item)"
                 title="Imprimir Etiqueta"><i class="fa fa-barcode"></i></button>
+                <button (click)="loadPdf()">Cargar y imprimir PDF</button>
+        
+            <iframe 
+              #pdfFrame
+              [src]="pdfSrc | safe"
+              class="full-screen"
+              frameborder="0"
+              style="border: 0; top: 0px; left: 0px; bottom: 0px; right: 0px; width: 100%; height: 100%; display: none;"
+              allowfullscreen type='application/pdf'
+              *ngIf="pdfSrc">
+            </iframe> 
               <button type="button" class="btn btn-light btn-sm"
                 (click)="openModal('copy', item)" title="Copiar"><i
                   class="fa fa-copy"></i></button>

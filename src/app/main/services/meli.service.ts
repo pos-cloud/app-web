@@ -81,7 +81,7 @@ export class MeliService {
 
     loadSalesTermByCategory(categoryId: string): Observable<any> {
 
-        const URL = `${Config.apiV8URL}meli/sales-term/${categoryId}`;
+        const URL = `${Config.apiPrintURL}meli/sales-term/${categoryId}`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
@@ -98,4 +98,20 @@ export class MeliService {
             })
         );
     }
+    
+    
+    fetchPDF(): Observable<string> {
+
+        const URL = `${Config.apiPrintURL}pdf`;
+
+        return this._http.get(URL, { responseType: 'text' }).pipe(
+          map((pdfBase64: string) => {
+            return pdfBase64;
+          }),
+          catchError((err) => {
+            return of(err);
+          })
+        );
+      }
+    
 }

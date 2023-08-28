@@ -252,6 +252,7 @@ import {NotificationGuard} from './main/guards/notification.guard';
 import {AuthInterceptor} from './main/interceptors/auth.interceptor';
 import {PipesModule} from './main/pipes/pipes.module';
 import {MeliService} from './main/services/meli.service';
+import { SafePipe } from './main/pipes/safe.pipe';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -424,6 +425,7 @@ const configSocket: SocketIoConfig = {
     SelectPriceListComponent,
     AddMeliAttrsComponent,
     KardexCheckComponent,
+    SafePipe
   ],
   imports: [
     BrowserModule,
