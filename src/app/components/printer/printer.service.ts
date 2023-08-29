@@ -173,4 +173,18 @@ export class PrinterService extends ModelService {
         }),
       );
   }
+
+  printLabel(): Observable<string> {
+
+    const URL = `${Config.apiPrintURL}pdf`;
+
+    return this._http.get(URL, { responseType: 'text' }).pipe(
+      map((pdfBase64: string) => {
+        return pdfBase64;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 }

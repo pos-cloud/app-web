@@ -402,16 +402,18 @@ export class ListArticlesComponent implements OnInit {
     this.activeModal.close({ article: articleSelected });
   }
 
-  public loadPdf(){
-    if (this.loadingPdf) {
-      return; 
-    }
-
-    this.loadingPdf = true;
-    this._meliService.fetchPDF().subscribe((pdfBase64: string) => {
-      this.pdfSrc = pdfBase64;
-      this.loadingPdf = false; 
-    })
+  public printLabel() {
+    this._printerService.printLabel().subscribe(
+      (res: string) => {
+        if(res) {
+          this.pdfSrc = res
+        } else {
+          this.showMessage(res, "danger", false);
+        }
+      },
+      (error) =>{
+        this.showMessage(error._body, "danger", false);
+      })
   }
 
 
@@ -547,80 +549,7 @@ export class ListArticlesComponent implements OnInit {
         );
         break;
       case "print-label":
-        let identity: User = JSON.parse(sessionStorage.getItem("user"));
-        let printer: Printer;
-        if (identity) {
-          this._userService.getUser(identity._id).subscribe(
-            async (result) => {
-              if (
-                result &&
-                result.user &&
-                result.user.printers &&
-                result.user.printers.length > 0
-              ) {
-                for (const element of result.user.printers) {
-                  if (
-                    element &&
-                    element.printer &&
-                    element.printer.printIn === PrinterPrintIn.Label
-                  ) {
-                    printer = element.printer;
-                  }
-                }
-              } else {
-                await this.getPrinters().then((printers) => {
-                  if (printers && printers.length > 0) {
-                    for (let printerAux of printers) {
-                      if (printerAux.printIn === PrinterPrintIn.Label) {
-                        printer = printerAux;
-                      }
-                    }
-                  }
-                });
-              }
-              if (printer) {
-                if (printer.fields && printer.fields.length > 0) {
-                  modalRef = this._modalService.open(
-                    PrintTransactionTypeComponent
-                  );
-                  modalRef.componentInstance.articleId = article._id;
-                  modalRef.componentInstance.printer = printer;
-                  if (this.priceListId) {
-                    modalRef.componentInstance.priceListId = this.priceListId;
-                  }
-                } else {
-                  if(printer.pageHigh === 297 && printer.pageWidth === 210){
-                    modalRef = this._modalService.open(
-                      PrintComponent
-                    );
-                    modalRef.componentInstance.article = article;
-                    modalRef.componentInstance.printer = printer;
-                  }else{
-                    this.showMessage(
-                      "Crear una diseño en la impresora de tipo etiqueta",
-                      "danger",
-                      false
-                    );
-                  }
-                  
-                  
-                }
-              } else {
-                this.showMessage(
-                  "Debe crear una impresora de tipo etiqueta",
-                  "danger",
-                  false
-                );
-              }
-            },
-            (error) => {
-              this.showMessage(error._body, "danger", false);
-            }
-          );
-        } else {
-          this.showMessage("Debe iniciar sesión", "danger", false);
-        }
-
+        this.printLabel();
         break;
       case "print-list":
         modalRef = this._modalService.open(PrintPriceListComponent);
