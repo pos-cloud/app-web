@@ -5,7 +5,7 @@
 
 export const environment = {
   production: false,
-  api: "http://localhost:3000",
-  apiv2: "http://localhost:308",
+  api: "https://dev-apiv1.eu-4.evennode.com",
+  apiv2: "https://dev-apiv2.eu-4.evennode.com",
   apiPrint:'http://localhost:3001'
 };
