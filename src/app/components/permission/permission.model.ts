@@ -44,6 +44,7 @@ export class Permission extends Model {
 
     transactionTypes : TransactionType[];
     editArticle: boolean;
+    allowDiscount: boolean;
 
     constructor() { super(); }
 

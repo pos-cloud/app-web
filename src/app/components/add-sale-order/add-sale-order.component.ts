@@ -2205,6 +2205,14 @@ export class AddSaleOrderComponent {
         );
         break;
       case 'apply_discount':
+
+        const user: User = await this.getUser();
+
+        if(user.permission.allowDiscount === false) {
+            this.showToast(null, 'error', 'No tiene permisos para aplicar descuento.');
+            return;
+        }
+
         if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
           modalRef = this._modalService.open(ApplyDiscountComponent, {
             size: 'lg',
@@ -2825,8 +2833,8 @@ export class AddSaleOrderComponent {
             }
           });
         } else {
-          this.showToast(null, 'info', 'Debe seleccionar una empresa.');
-        }
+`          this.showToast(null, 'info', 'Debe seleccionar una empresa.');
+`        }
         break;
       case 'change-table':
         modalRef = this._modalService.open(SelectTableComponent);

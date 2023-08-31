@@ -76,6 +76,15 @@ export class PermissionComponent implements OnInit {
         tag: 'select',
         tagType: "boolean",
         values: ['false', 'true'],
+        default: ['true'],
+        class: 'form-group col-md-2'
+    },
+    {
+        name: 'allowDiscount',
+        tag: 'select',
+        tagType: "boolean",
+        default: ['true'],
+        values: ['false', 'true'],
         class: 'form-group col-md-2'
     },
     {
@@ -237,9 +246,10 @@ export class PermissionComponent implements OnInit {
         this.objId = pathUrl[3];
         if (this.objId && this.objId !== '') {
             let project = {
-                name : 1,
-                filterTransaction:1,
-                editArticle: 1,
+                "name" : 1,
+                "filterTransaction":1,
+                "editArticle": 1,
+                "allowDiscount": 1,
                 "menu": 1,
                 "collections": 1,
                 "transactionTypes._id": 1,
