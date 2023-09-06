@@ -402,11 +402,11 @@ export class ListArticlesComponent implements OnInit {
     this.activeModal.close({ article: articleSelected });
   }
 
-  public printLabel() {
-    this._printerService.printLabel().subscribe(
+  public printArticle(article: Article) {
+    this._printerService.printArticle(article._id).subscribe(
       (res: string) => {
         if(res) {
-          this.pdfSrc = res
+          this.pdfSrc = res['pdfBase64']
         } else {
           this.showMessage(res, "danger", false);
         }
@@ -549,7 +549,7 @@ export class ListArticlesComponent implements OnInit {
         );
         break;
       case "print-label":
-        this.printLabel();
+        this.printArticle(article);
         break;
       case "print-list":
         modalRef = this._modalService.open(PrintPriceListComponent);

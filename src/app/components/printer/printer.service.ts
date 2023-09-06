@@ -174,17 +174,27 @@ export class PrinterService extends ModelService {
       );
   }
 
-  printLabel(): Observable<string> {
+  public printArticle(articleId: string): Observable<any> {
+    const URL = `${Config.apiPrintURL}article`;
 
-    const URL = `${Config.apiPrintURL}pdf`;
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-    return this._http.get(URL, { responseType: 'text' }).pipe(
-      map((pdfBase64: string) => {
-        return pdfBase64;
-      }),
-      catchError((err) => {
-        return of(err);
+    const params = new HttpParams().set('articleId', articleId);
+
+    return this._http
+      .get(URL, {
+        headers: headers,
+        params: params
       })
-    );
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        }),
+      );
   }
 }
