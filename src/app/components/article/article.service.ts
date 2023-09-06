@@ -11,6 +11,7 @@ import { AuthService } from "../login/auth.service";
 import { ModelService } from "../model/model.service";
 
 import { Article } from "./article";
+import { PriceType } from "../transaction-type/transaction-type";
 
 @Injectable()
 export class ArticleService extends ModelService {
@@ -197,31 +198,7 @@ export class ArticleService extends ModelService {
       );
   }
 
-  public updatePrice(query: string, decimal: string): Observable<any> {
-    const URL = `${Config.apiURL}update-prices`;
-
-    const headers = new HttpHeaders()
-      .set("Content-Type", "application/json")
-      .set("Authorization", this._authService.getToken());
-
-    const params = new HttpParams().set("decimal", decimal);
-
-    return this._http
-      .put(URL, query, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public updatePrice2(query: string): Observable<any> {
+  public updatePrices(articlesCode: string[], field: PriceType, decimal: number, percentage: number): Observable<any> {
     const URL = `${Config.apiV8URL}articles/update-prices`;
 
     const headers = new HttpHeaders()
@@ -229,9 +206,13 @@ export class ArticleService extends ModelService {
       .set("Authorization", this._authService.getToken());
 
     return this._http
-      .post(URL, query, {
+    .post(
+      URL,
+      { articlesCode, field, decimal, percentage },
+      {
         headers: headers,
-      })
+      }
+      )
       .pipe(
         map((res) => {
           return res;

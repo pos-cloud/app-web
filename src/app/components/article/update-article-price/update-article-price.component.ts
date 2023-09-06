@@ -35,8 +35,6 @@ export class UpdateArticlePriceComponent implements OnInit {
 
   public formErrors = {
     'optionUpdate': '',
-    'make': '',
-    'category': '',
     'percentage': '',
     'field': '',
     'decimal' : '',
@@ -71,54 +69,11 @@ export class UpdateArticlePriceComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.getMakes();
     this.buildForm();
   }
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
-  }
-
-  public getMakes(): void {
-
-    this.loading = true;
-
-    this._makeService.getMakes('sort="description":1').subscribe(
-      result => {
-        if (!result.makes) {
-          this.getCategories();
-        } else {
-          this.hideMessage();
-          this.makes = result.makes;
-          this.getCategories();
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public getCategories(): void {
-
-    this.loading = true;
-
-    this._categoryService.getCategories('sort="description":1').subscribe(
-      result => {
-        if (!result.categories) {
-          this.hideMessage();
-        } else {
-          this.hideMessage();
-          this.categories = result.categories;
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
   }
 
 
@@ -127,12 +82,6 @@ export class UpdateArticlePriceComponent implements OnInit {
     this.updatePriceForm = this._fb.group({
       'optionUpdate': [this.optionUpdate, [
           Validators.required
-        ]
-      ],
-      'make': [, [
-        ]
-      ],
-      'category': [, [
         ]
       ],
       'percentage': [, [
@@ -172,57 +121,13 @@ export class UpdateArticlePriceComponent implements OnInit {
 
   public updatePrice(): void {
 
-    let areValidData: boolean = true;
-
-    let where: string;
-
-    switch (this.updatePriceForm.value.optionUpdate) {
-      case "make":
-        if(this.updatePriceForm.value.make) {
-          where = '{"operationType": { "$ne": "D" }, "make":"' + this.updatePriceForm.value.make + '"}';
-        } else {
-          areValidData = false;
-          this.showMessage("Debe cargar la marca a actualizar.", "info", true);
-        }
-        break;
-      case "category":
-          if(this.updatePriceForm.value.category) {
-            where = '{"operationType": { "$ne": "D" }, "category":"' + this.updatePriceForm.value.category + '"}';
-          } else {
-            areValidData = false;
-            this.showMessage("Debe cargar la categoría a actualizar.", "info", true);
-          }
-      break;
-      case "make-category":
-          if(this.updatePriceForm.value.category && this.updatePriceForm.value.make) {
-            where = '{"operationType": { "$ne": "D" }, "category":"' + this.updatePriceForm.value.category + '", "make":"' + this.updatePriceForm.value.make + '"}';
-          } else {
-            areValidData = false;
-            this.showMessage("Debe cargar la categoría a actualizar.", "info", true);
-          }
-      break;
-      default:
-        where = '{}'
-      break;
-    }
-
-
-    let query = `{ 
-                  "where": ${where}, 
-                  "percentage": ${this.updatePriceForm.value.percentage}, 
-                  "field":"${this.updatePriceForm.value.field}" 
-                }`;
-
-
-    if(areValidData) {
-
       this.loading = true;
-      
-      console.log(this.updatePriceForm.value.optionUpdate);
-      if(this.updatePriceForm.value.optionUpdate === "filter"){
+
         let articles: string[] = [];
-        for (const article of this.articles) {
-          articles.push(article.code);
+        if(this.updatePriceForm.value.optionUpdate === 'filter') {
+          for (const article of this.articles) {
+            articles.push(article.code);
+          }
         }
         const query = {
           articlesCode : articles,
@@ -230,7 +135,7 @@ export class UpdateArticlePriceComponent implements OnInit {
           field: this.updatePriceForm.value.field,
           decimal: this.updatePriceForm.value.decimal
         }
-        this._articleService.updatePrice2(JSON.stringify(query)).subscribe(
+        this._articleService.updatePrices(query.articlesCode, query.field, query.decimal, query.percentage).subscribe(
           result =>{
             this.showMessage(result.message, 'success', false )
             this.loading = false;
@@ -240,23 +145,6 @@ export class UpdateArticlePriceComponent implements OnInit {
             this.loading = false;
           }
         )
-      } else {
-        this._articleService.updatePrice(query,this.updatePriceForm.value.decimal).subscribe(
-          result => {
-            this.loading = false;
-            if (result.status === "Error") {
-              this.showMessage("Hubo uno error en la actualización. Se actualizaron correctamente " + result.count + ". No se actualizaron:" + result.articleFailure, 'info', true);
-            } else {
-              this.showMessage("La lista se actualizo con éxito. Se actualizaron " + result.countFinal + " productos y " + result.countVariants + " variantes.", 'success', false);
-            }
-          },
-          error => {
-            this.showMessage(error._body, 'danger', false);
-            this.loading = false;
-          }
-        );
-      }
-    }
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
