@@ -197,4 +197,28 @@ export class PrinterService extends ModelService {
         }),
       );
   }
+
+  public printTransaction(transactionId: string): Observable<any> {
+    const URL = `${Config.apiPrintURL}transaction`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams().set('transactionId', transactionId);
+
+    return this._http
+      .get(URL, {
+        headers: headers,
+        params: params
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        }),
+      );
+  }
 }
