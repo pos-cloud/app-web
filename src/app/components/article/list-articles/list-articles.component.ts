@@ -403,15 +403,19 @@ export class ListArticlesComponent implements OnInit {
   }
 
   public printArticle(article: Article) {
+    this.loading = true;
     this._printerService.printArticle(article._id).subscribe(
       (res: string) => {
         if(res) {
           this.pdfSrc = res['pdfBase64']
+          this.loading = false;
         } else {
+          this.loading = false;
           this.showMessage(res, "danger", false);
         }
       },
       (error) =>{
+        this.loading = false;
         this.showMessage(error._body, "danger", false);
       })
   }
