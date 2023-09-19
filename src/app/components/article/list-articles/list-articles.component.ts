@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef } from "@angular/core";
 import { Router } from "@angular/router";
 import {
   NgbModal,
@@ -34,6 +34,8 @@ import { TaxService } from "app/components/tax/tax.service";
 import { Tax } from "app/components/tax/tax";
 import { first } from "rxjs/operators";
 import { PrintComponent } from "app/components/print/print/print.component";
+import { MeliService } from "app/main/services/meli.service";
+
 
 @Component({
   selector: "app-list-articles",
@@ -51,6 +53,9 @@ export class ListArticlesComponent implements OnInit {
   public userType: string = "";
   public loading: boolean = false;
   public apiURL = Config.apiURL;
+  public pdfSrc: string | any;
+  public loadingPdf: boolean = false;
+  @ViewChild('pdfFrame') pdfFrame!: ElementRef;
   public timezone = "-03:00";
   public itemsPerPage = 10;
   @ViewChild(ExportExcelComponent)
@@ -80,6 +85,7 @@ export class ListArticlesComponent implements OnInit {
     private _modalService: NgbModal,
     private _printerService: PrinterService,
     private _priceList: PriceListService,
+    public _meliService: MeliService,
     private _userService: UserService,
     private _authService: AuthService,
     private _taxService: TaxService,
@@ -396,6 +402,25 @@ export class ListArticlesComponent implements OnInit {
     this.activeModal.close({ article: articleSelected });
   }
 
+  public printArticle(article: Article) {
+    this.loading = true;
+    this._printerService.printArticle(article._id).subscribe(
+      (res: string) => {
+        if(res) {
+          this.pdfSrc = res['pdfBase64']
+          this.loading = false;
+        } else {
+          this.loading = false;
+          this.showMessage(res, "danger", false);
+        }
+      },
+      (error) =>{
+        this.loading = false;
+        this.showMessage(error._body, "danger", false);
+      })
+  }
+
+
   async openModal(op: string, article?: Article, type?: string) {
     let modalRef;
     switch (op) {
@@ -528,80 +553,7 @@ export class ListArticlesComponent implements OnInit {
         );
         break;
       case "print-label":
-        let identity: User = JSON.parse(sessionStorage.getItem("user"));
-        let printer: Printer;
-        if (identity) {
-          this._userService.getUser(identity._id).subscribe(
-            async (result) => {
-              if (
-                result &&
-                result.user &&
-                result.user.printers &&
-                result.user.printers.length > 0
-              ) {
-                for (const element of result.user.printers) {
-                  if (
-                    element &&
-                    element.printer &&
-                    element.printer.printIn === PrinterPrintIn.Label
-                  ) {
-                    printer = element.printer;
-                  }
-                }
-              } else {
-                await this.getPrinters().then((printers) => {
-                  if (printers && printers.length > 0) {
-                    for (let printerAux of printers) {
-                      if (printerAux.printIn === PrinterPrintIn.Label) {
-                        printer = printerAux;
-                      }
-                    }
-                  }
-                });
-              }
-              if (printer) {
-                if (printer.fields && printer.fields.length > 0) {
-                  modalRef = this._modalService.open(
-                    PrintTransactionTypeComponent
-                  );
-                  modalRef.componentInstance.articleId = article._id;
-                  modalRef.componentInstance.printer = printer;
-                  if (this.priceListId) {
-                    modalRef.componentInstance.priceListId = this.priceListId;
-                  }
-                } else {
-                  if(printer.pageHigh === 297 && printer.pageWidth === 210){
-                    modalRef = this._modalService.open(
-                      PrintComponent
-                    );
-                    modalRef.componentInstance.article = article;
-                    modalRef.componentInstance.printer = printer;
-                  }else{
-                    this.showMessage(
-                      "Crear una diseño en la impresora de tipo etiqueta",
-                      "danger",
-                      false
-                    );
-                  }
-                  
-                  
-                }
-              } else {
-                this.showMessage(
-                  "Debe crear una impresora de tipo etiqueta",
-                  "danger",
-                  false
-                );
-              }
-            },
-            (error) => {
-              this.showMessage(error._body, "danger", false);
-            }
-          );
-        } else {
-          this.showMessage("Debe iniciar sesión", "danger", false);
-        }
-
+        this.printArticle(article);
         break;
       case "print-list":
         modalRef = this._modalService.open(PrintPriceListComponent);

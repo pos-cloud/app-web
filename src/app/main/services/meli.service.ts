@@ -81,7 +81,7 @@ export class MeliService {
 
     loadSalesTermByCategory(categoryId: string): Observable<any> {
 
-        const URL = `${Config.apiV8URL}meli/sales-term/${categoryId}`;
+        const URL = `${Config.apiPrintURL}meli/sales-term/${categoryId}`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
