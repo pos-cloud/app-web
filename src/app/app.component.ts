@@ -205,6 +205,7 @@ export class AppComponent {
       } else {
         Config.setApiHost('https://api.poscloud.com.ar'); // DONWEB
         Config.setApiV8Host('https://apiv8.poscloud.com.ar'); // DONWEB
+        Config.setApiPrintHost(environment.apiPrint); // TEST
       }
     } else {
         Config.setApiHost(environment.api); // TEST
