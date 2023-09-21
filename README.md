@@ -75,3 +75,14 @@ Realizar PR a testing
 
 ######
 v11.1.0: Agrega opcion de poder editar articulo en una transaccion en permisos de usuario. Siempre tiene prioridad primera la editar articulo del tipo de transaccion.
+
+
+// old worker cloudflare
+
+addEventListener('fetch', event => {
+  event.respondWith(handleRequest(event.request))
+})
+
+async function handleRequest(request) {
+  return Response.redirect('https://pos-cloud.github.io/system/dev', 301)
+}
