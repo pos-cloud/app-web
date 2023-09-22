@@ -176,7 +176,7 @@ export class PrinterService extends ModelService {
   }
 
   public printArticle(articleId: string): Observable<any> {
-    const URL = `${environment.apiPdf}/article`;
+    const URL = `${environment.apiPrint}/article`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -201,7 +201,7 @@ export class PrinterService extends ModelService {
   }
 
   public printTransaction(transactionId: string): Observable<any> {
-    const URL = `${environment.apiPdf}/transaction`;
+    const URL = `${environment.apiPrint}/transaction`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
