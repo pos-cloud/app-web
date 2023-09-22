@@ -405,19 +405,20 @@ export class ListArticlesComponent implements OnInit {
   public printArticle(article: Article) {
     this.loading = true;
     this._printerService.printArticle(article._id).subscribe(
-      (res: string) => {
-        if(res) {
-          this.pdfSrc = res['pdfBase64']
+      (res: Blob) => {
+        if (res) {
+          this.pdfSrc = URL.createObjectURL(res); // Convierte la respuesta en una URL de objeto
           this.loading = false;
         } else {
           this.loading = false;
-          this.showMessage(res, "danger", false);
+          this.showMessage('Error al cargar el PDF', 'danger', false);
         }
       },
-      (error) =>{
+      (error) => {
         this.loading = false;
-        this.showMessage(error._body, "danger", false);
-      })
+        this.showMessage(error.message, 'danger', false);
+      }
+    );
   }
 
 
