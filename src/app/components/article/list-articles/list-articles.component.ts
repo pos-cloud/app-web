@@ -35,6 +35,7 @@ import { Tax } from "app/components/tax/tax";
 import { first } from "rxjs/operators";
 import { PrintComponent } from "app/components/print/print/print.component";
 import { MeliService } from "app/main/services/meli.service";
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 
 @Component({
@@ -93,6 +94,7 @@ export class ListArticlesComponent implements OnInit {
     private _claimService: ClaimService,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
+    private sanitizer: DomSanitizer
   ) {
     this.filters = new Array();
     for (let field of this.columns) {
@@ -405,19 +407,23 @@ export class ListArticlesComponent implements OnInit {
   public printArticle(article: Article) {
     this.loading = true;
     this._printerService.printArticle(article._id).subscribe(
-      (res: string) => {
-        if(res) {
-          this.pdfSrc = res['pdfBase64']
+      (res: Blob) => {
+        if (res) {
+          const blobUrl = URL.createObjectURL(res);
+          const safePdfUrl: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(blobUrl);
+          
+          this.pdfSrc = safePdfUrl;
           this.loading = false;
         } else {
           this.loading = false;
-          this.showMessage(res, "danger", false);
+          this.showMessage('Error al cargar el PDF', 'danger', false);
         }
       },
-      (error) =>{
+      (error) => {
         this.loading = false;
-        this.showMessage(error._body, "danger", false);
-      })
+        this.showMessage(error.message, 'danger', false);
+      }
+    );
   }
 
 

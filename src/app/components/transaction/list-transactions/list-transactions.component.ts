@@ -570,6 +570,7 @@ export class ListTransactionsComponent implements OnInit {
         );
         break;
       case 'print':
+        //this.printTransaction(transaction)
         if (
           transaction.type.expirationDate &&
           moment(transaction.type.expirationDate).diff(moment(), 'days') <= 0
@@ -853,7 +854,7 @@ export class ListTransactionsComponent implements OnInit {
         }
       },
       (error) =>{
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error.message, "danger", false);
       })
   }
 

@@ -9,6 +9,7 @@ import {AuthService} from '../login/auth.service';
 import {ModelService} from '../model/model.service';
 
 import {Printer} from './printer';
+import { environment } from 'environments/environment';
 
 @Injectable()
 export class PrinterService extends ModelService {
@@ -175,7 +176,7 @@ export class PrinterService extends ModelService {
   }
 
   public printArticle(articleId: string): Observable<any> {
-    const URL = `${Config.apiPrintURL}article`;
+    const URL = `${environment.apiPdf}/article`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -186,7 +187,8 @@ export class PrinterService extends ModelService {
     return this._http
       .get(URL, {
         headers: headers,
-        params: params
+        params: params,
+        responseType: 'blob'
       })
       .pipe(
         map((res) => {
@@ -199,7 +201,7 @@ export class PrinterService extends ModelService {
   }
 
   public printTransaction(transactionId: string): Observable<any> {
-    const URL = `${Config.apiPrintURL}transaction`;
+    const URL = `${environment.apiPdf}/transaction`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

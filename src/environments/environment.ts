@@ -5,7 +5,7 @@
 
 export const environment = {
   production: false,
-  api: "http://localhost:300",
-  apiv2: "http://localhost:308",
-  apiPrint:'http://localhost:300'
+  api: "https://api.poscloud.com.ar",
+  apiv2: "https://apiv8.poscloud.com.ar",
+  apiPdf:'http://localhost:300'
 };
