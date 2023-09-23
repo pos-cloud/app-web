@@ -427,6 +427,6 @@
     </div>
   </div>
 </section>
+<iframe *ngIf="pdfSrc" [src]="pdfSrc | safe" style="width: 100%; height: 600px;"></iframe>
 
 
-<iframe [src]="pdfSrc | safe" style="width: 100%; height: 600px;"></iframe>
