@@ -429,4 +429,4 @@
 </section>
 
 
-<object [data]="pdfSrc" type="application/pdf" style="width: 100%; height: 600px;"></object>
+<iframe [src]="pdfSrc | safe" style="width: 100%; height: 600px;"></iframe>

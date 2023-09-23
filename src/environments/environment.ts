@@ -4,7 +4,7 @@
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
 export const environment = {
-  production: true,
+  production: false,
   api: "http://localhost:300",
   apiv2: "http://localhost:308",
   apiPrint:'http://localhost:300'
