@@ -408,11 +408,8 @@ export class ListArticlesComponent implements OnInit {
     this.loading = true;
     this._printerService.printArticle(article._id).subscribe(
       (res: Blob) => {
-        if (res) {
-          const blobUrl = URL.createObjectURL(res);
-          const safePdfUrl: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(blobUrl);
-          
-          this.pdfSrc = safePdfUrl;
+        if (res) {     
+          this.pdfSrc = URL.createObjectURL(res);
           this.loading = false;
         } else {
           this.loading = false;
