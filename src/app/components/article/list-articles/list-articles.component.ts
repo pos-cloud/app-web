@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef, HostListener } from "@angular/core";
 import { Router } from "@angular/router";
 import {
   NgbModal,
@@ -35,7 +35,7 @@ import { Tax } from "app/components/tax/tax";
 import { first } from "rxjs/operators";
 import { PrintComponent } from "app/components/print/print/print.component";
 import { MeliService } from "app/main/services/meli.service";
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import * as printJS from "print-js";
 
 
 @Component({
@@ -46,6 +46,12 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   encapsulation: ViewEncapsulation.None,
 })
 export class ListArticlesComponent implements OnInit {
+
+  @HostListener('window:afterprint')
+  onAfterPrint() {
+    this.pdfSrc = null;
+  }
+
   public identity: User;
   public title: string;
   public priceLists: PriceList[] = new Array();
@@ -79,6 +85,7 @@ export class ListArticlesComponent implements OnInit {
   };
   public columns = attributes;
   public articleHistoryId: string;
+  public showPdf = true;
 
   constructor(
     private _articleService: ArticleService,
@@ -93,8 +100,7 @@ export class ListArticlesComponent implements OnInit {
     private _configService: ConfigService,
     private _claimService: ClaimService,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
-    private sanitizer: DomSanitizer
+    public alertConfig: NgbAlertConfig
   ) {
     this.filters = new Array();
     for (let field of this.columns) {
@@ -107,6 +113,7 @@ export class ListArticlesComponent implements OnInit {
   }
 
   async ngOnInit() {
+    console.log("entro")
     this.getPriceList();
     let pathLocation: string[] = this._router.url.split("/");
     this.userType = pathLocation[1];
@@ -409,7 +416,8 @@ export class ListArticlesComponent implements OnInit {
     this._printerService.printArticle(article._id).subscribe(
       (res: Blob) => {
         if (res) {     
-          this.pdfSrc = URL.createObjectURL(res);
+          const blobUrl = URL.createObjectURL(res);
+          printJS(blobUrl);
           this.loading = false;
         } else {
           this.loading = false;
