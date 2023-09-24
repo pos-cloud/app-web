@@ -223,12 +223,12 @@ export class ArticleService extends ModelService {
       );
   }
 
-  public makeFileRequest(idArticle: String, files: Array<File>) {
+  public makeFileRequest(origin: string, files: Array<File>) {
     let xhr: XMLHttpRequest = new XMLHttpRequest();
 
     xhr.open(
       "POST",
-      Config.apiURL + "upload-image-article/" + idArticle,
+      `${environment.apiStorage}/upload`,
       true
     );
     xhr.setRequestHeader("Authorization", this._authService.getToken());
@@ -238,14 +238,17 @@ export class ArticleService extends ModelService {
 
       if (files && files.length > 0) {
         for (let i: number = 0; i < files.length; i++) {
-          formData.append("image", files[i], files[i].name);
+          formData.append("file", files[i], files[i].name);
         }
       }
 
+      formData.append('origin', origin)
+
       xhr.onreadystatechange = function () {
+        console.log(xhr);
         if (xhr.readyState == 4) {
-          if (xhr.status == 200) {
-            resolve(JSON.parse(xhr.response));
+          if (xhr.status == 201) {
+            resolve(xhr.response);
           } else {
             reject(xhr.response);
           }
@@ -298,6 +301,30 @@ export class ArticleService extends ModelService {
       .delete(URL, {
         headers: headers,
         params: params,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+  }
+
+  public deleteImageGoogle(origin: string): Observable<any> {
+    const URL = `${environment.apiStorage}/upload`;
+
+    const headers = new HttpHeaders()
+      .set("Content-Type", "application/json")
+      .set("Authorization", this._authService.getToken());
+
+    return this._http
+      .delete(URL, {
+        headers: headers,
+        body: {
+          origin: origin
+        }
       })
       .pipe(
         map((res) => {

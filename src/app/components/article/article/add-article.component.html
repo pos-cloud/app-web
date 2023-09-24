@@ -98,7 +98,7 @@
                                     <label *ngIf="!readonly" class="custom-file-label btn btn-action" for="customFileLang">Imagen</label>
                                     <input *ngIf="!readonly" type="file" class="custom-file-input" lang="es" placeholder="Buscar Imagen" accept="image/*" id="customFileLang" (change)="fileChangeEvent($event,false)" />
                                     <img class="img-article" [src]="imageURL" height="120" width="120">
-                                    <button class="btn btn-sm btn-danger" (click)="deletePicture(null, article.picture)" *ngIf="article?.picture != 'default.jpg'"><i class="fa fa-trash-o"></i></button>
+                                    <button class="btn btn-sm btn-danger" (click)="deletePicture(null, article.picture)" *ngIf="article?.picture != './../../../assets/img/default.jpg'"><i class="fa fa-trash-o"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -626,7 +626,7 @@
                                     <tbody>
                                         <tr class="separation"
                                             *ngFor="let picture of articleForm.get('pictures').controls; let i = index;">
-                                            <td>{{picture.value.picture}}</td>
+                                            <td>{{picture.value.picture.split('?')[0]}}</td>
                                             <td align="right" width="10">
                                                 <button type="button" class="btn btn-danger btn-sm"
                                                     (click)="deletePicture(i,picture.value.picture)">

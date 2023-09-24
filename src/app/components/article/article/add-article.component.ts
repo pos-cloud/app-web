@@ -58,13 +58,12 @@ import {Currency} from './../../../components/currency/currency';
 import {CurrencyService} from './../../../components/currency/currency.service';
 
 // Pipes
-
-import {MovementOfArticleService} from './../../../components/movement-of-article/movement-of-article.service';
 import {TaxClassification} from './../../../components/tax/tax';
 import {UnitOfMeasurement} from './../../../components/unit-of-measurement/unit-of-measurement.model';
 import {UnitOfMeasurementService} from './../../../components/unit-of-measurement/unit-of-measurement.service';
 import {TranslateMePipe} from './../../../main/pipes/translate-me';
 import Resulteable from './../../../util/Resulteable';
+import { ORIGINMEDIA } from 'app/types';
 
 @Component({
   selector: 'app-add-article',
@@ -773,16 +772,10 @@ export class AddArticleComponent implements OnInit {
           if (this.article.url === '') {
             this.loadURL();
           }
-          if (this.article.picture && this.article.picture !== 'default.jpg') {
-            this.imageURL =
-              Config.apiURL +
-              'get-image-article/' +
-              this.article.picture +
-              '/' +
-              localStorage.getItem('company');
-          } else {
-            this.imageURL = './../../../assets/img/default.jpg';
-          }
+
+
+          this.imageURL = this.article.picture ?? './../../../assets/img/default.jpg'
+
           if (this.article.containsVariants) {
             this.getVariantsByArticleParent();
           }
@@ -1631,6 +1624,9 @@ export class AddArticleComponent implements OnInit {
     this.loading = true;
 
     if (await this.isValid()) {
+
+      if(this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
+
       this._articleService.saveArticle(this.article, this.variants).subscribe(
         (result) => {
           if (!result.article) {
@@ -1646,34 +1642,10 @@ export class AddArticleComponent implements OnInit {
           } else {
             this.hasChanged = true;
             this.article = result.article;
-            if (this.filesToUpload) {
-              this._articleService
-                .makeFileRequest(this.article._id, this.filesToUpload)
-                .then(
-                  (result) => {
-                    let resultUpload;
-
-                    resultUpload = result;
-                    this.article.picture = resultUpload.article.picture;
-                    if (this.article.picture && this.article.picture !== 'default.jpg') {
-                      this.imageURL =
-                        Config.apiURL +
-                        'get-image-article/' +
-                        this.article.picture +
-                        '/' +
-                        localStorage.getItem('company');
-                    } else {
-                      this.imageURL = './../../../assets/img/default.jpg';
-                    }
-                    this.showToast(null,'success','El producto se ha añadido con éxito.');
-                    this.activeModal.close({article: this.article});
-                  },
-                  (error) => this.showToast(error),
-                );
-            } else {
+          
               this.showToast(null, 'success', 'El producto se ha añadido con éxito.');
               this.activeModal.close({article: this.article});
-            }
+            
           }
         },
         (error) => this.showToast(error),
@@ -1685,43 +1657,14 @@ export class AddArticleComponent implements OnInit {
 
   async updateArticle() {
     this.loading = true;
-    let isValid: boolean = await this.isValid();
 
-    if (isValid) {
-      if (this.filesToUpload) {
-        await this._articleService
-          .makeFileRequest(this.article._id, this.filesToUpload)
-          .then(
-            (result) => {
-              let resultUpload;
+    if (await this.isValid()) {
 
-              resultUpload = result;
-              this.article.picture = resultUpload.article.picture;
-              if (this.article.picture && this.article.picture !== 'default.jpg') {
-                this.imageURL =
-                  Config.apiURL +
-                  'get-image-article/' +
-                  this.article.picture +
-                  '/' +
-                  localStorage.getItem('company');
-              } else {
-                this.imageURL = './../../../assets/img/default.jpg';
-              }
-              this.filesToUpload = null;
-            },
-            (error) => {
-              isValid = false;
-              this.showToast(error);
-            },
-          );
-      }
-    }
+      if(this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
 
-    if (isValid) {
-      await this._articleService.updateArticle(this.article, this.variants).subscribe(
+      this._articleService.updateArticle(this.article, this.variants).subscribe(
         (result) => {
           if (!result.article) {
-            isValid = false;
             this.showToast(
               null,
               'info',
@@ -1759,6 +1702,41 @@ export class AddArticleComponent implements OnInit {
       },
       (error) => this.showToast(error),
     );
+  }
+
+  async uploadFile(pictureDelete: string): Promise<string> {
+    return new Promise<string>(async (resolve, reject) => {
+      if(pictureDelete && pictureDelete.includes('https://storage.googleapis')) {
+        await this.deleteFile(pictureDelete);
+      }
+
+      this._articleService
+          .makeFileRequest(ORIGINMEDIA.ARTICLES, this.filesToUpload)
+          .then(
+            (result: string) => {
+              console.log(result);
+              this.article.picture = result;
+              this.imageURL = result;
+              resolve(result);
+          },
+          (error) => this.showToast(error),
+        );
+    })
+  }
+
+  async deleteFile(pictureDelete: string): Promise<boolean> {
+    return new Promise<boolean>(async (resolve, reject) => {
+      this._articleService.deleteImageGoogle(pictureDelete).subscribe(
+        (result) => {
+          resolve(true)
+        },
+        (error) => {
+          console.log(error)
+          this.showToast(error.messge)
+          resolve(true)
+        }
+      )
+    })
   }
 
   async isValid(): Promise<boolean> {
@@ -1836,28 +1814,34 @@ export class AddArticleComponent implements OnInit {
     this.activeModal.close(this.hasChanged);
   }
 
-  fileChangeEvent(fileInput: any, eCommerce: boolean): void {
+  fileChangeEvent(event: any, eCommerce: boolean): void {
     if (eCommerce) {
-      this.filesToArray = <Array<File>>fileInput.target.files;
+      this.filesToArray = <Array<File>>event.target.files;
       this.fileNameArray = this.filesToArray[0].name;
     } else {
-      this.filesToUpload = <Array<File>>fileInput.target.files;
+      this.filesToUpload = <Array<File>>event.target.files;
       this.fileNamePrincipal = this.filesToUpload[0].name;
+
+      if (event.target.files && event.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.imageURL = e.target.result;
+        }
+        // Coloca la siguiente línea fuera del evento onload
+        reader.readAsDataURL(event.target.files[0]);
+      }
     }
   }
 
   addPicture(): void {
-    this.fileNameArray = null;
-    this._articleService.makeFileRequestArray(this.filesToArray).then(
-      (result) => {
-        let resultUpload;
-
-        resultUpload = result;
-        this.addPictureArray(resultUpload['file']['filename']);
-        this.filesToArray = null;
-      },
-      (error) => this.showToast(error),
-    );
+    this._articleService
+    .makeFileRequest(ORIGINMEDIA.ARTICLES, this.filesToArray)
+    .then(
+      (result: string) => {
+        this.addPictureArray(result);
+    },
+    (error) => this.showToast(error),
+  );
   }
 
   async addPictureArray(picture: string) {
@@ -1929,30 +1913,6 @@ export class AddArticleComponent implements OnInit {
     });
   }
 
-  async deletePicture(index, picture: string) {
-    this._articleService.deleteImage(picture).subscribe(
-      async (result) => {
-        if (result) {
-          if (result.result === 'ok') {
-            if (index !== null) {
-              let control = <UntypedFormArray>this.articleForm.controls.pictures;
-
-              control.removeAt(index);
-            } else {
-              this.article.picture = 'default.jpg';
-              this.updateArticle();
-            }
-          } else {
-            this.showToast(null, 'danger', 'La imagen no se pudo eliminar');
-          }
-        } else {
-          this.showToast(null, 'danger', 'La imagen no se encontro');
-        }
-      },
-      (error) => this.showToast(error),
-    );
-  }
-
   addArticleTaxes(articleTaxes: Taxes[]): void {
     this.taxes = articleTaxes;
     this.updatePrices('taxes');
@@ -2005,5 +1965,18 @@ export class AddArticleComponent implements OnInit {
         break;
     }
     this.loading = false;
+  }
+
+  async deletePicture(index: number, picture: string) {
+
+    if(index !== null) {
+      let control = <UntypedFormArray>this.articleForm.controls.pictures;
+      control.removeAt(index);
+    } else {
+      this.article.picture = './../../../assets/img/default.jpg';
+      this.imageURL = "./../../../assets/img/default.jpg"
+    }
+    
+    await this.deleteFile(picture)
   }
 }
