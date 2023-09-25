@@ -32,6 +32,8 @@ import {Transaction} from '../transaction';
 import {TransactionService} from '../transaction.service';
 
 import 'moment/locale/es';
+import { Article } from 'app/components/article/article';
+import * as printJS from 'print-js';
 
 @Component({
   selector: 'app-view-transaction',
@@ -415,6 +417,26 @@ export class ViewTransactionComponent implements OnInit {
     );
   }
 
+  public printArticles( movement: MovementOfArticle) {
+    this.loading = true;
+    this._printerService.printArticles(movement.article._id, movement.amount).subscribe(
+      (res: Blob) => {
+        if (res) {     
+          const blobUrl = URL.createObjectURL(res);
+          printJS(blobUrl);
+          this.loading = false;
+        } else {
+          this.loading = false;
+          this.showMessage('Error al cargar el PDF', 'danger', false);
+        }
+      },
+      (error) => {
+        this.loading = false;
+        this.showMessage(error.message, 'danger', false);
+      }
+    );
+  }
+
   async openModal(op: string, movement?: MovementOfArticle) {
     let modalRef;
 
@@ -447,67 +469,7 @@ export class ViewTransactionComponent implements OnInit {
         modalRef.componentInstance.operation = 'update';
         break;
       case 'print-label':
-        let identity: User = JSON.parse(sessionStorage.getItem('user'));
-        let printer: Printer;
-
-        if (identity) {
-          this._userService.getUser(identity._id).subscribe(
-            async (result) => {
-              if (
-                result &&
-                result.user &&
-                result.user.printers &&
-                result.user.printers.length > 0
-              ) {
-                for (const element of result.user.printers) {
-                  if (
-                    element &&
-                    element.printer &&
-                    element.printer.printIn === PrinterPrintIn.Label
-                  ) {
-                    printer = element.printer;
-                  }
-                }
-              } else {
-                await this.getPrinters().then((printers) => {
-                  if (printers && printers.length > 0) {
-                    for (let printerAux of printers) {
-                      if (printerAux.printIn === PrinterPrintIn.Label) {
-                        printer = printerAux;
-                      }
-                    }
-                  }
-                });
-              }
-              if (printer) {
-                if (printer.fields && printer.fields.length > 0) {
-                  modalRef = this._modalService.open(PrintTransactionTypeComponent);
-                  modalRef.componentInstance.articleId = movement.article._id;
-                  modalRef.componentInstance.quantity = movement.amount;
-                  modalRef.componentInstance.printer = printer;
-                } else {
-                  this.showMessage(
-                    'Crear una diseño en la impresora de tipo etiqueta',
-                    'danger',
-                    false,
-                  );
-                }
-              } else {
-                this.showMessage(
-                  'Debe crear una impresora de tipo etiqueta',
-                  'danger',
-                  false,
-                );
-              }
-            },
-            (error) => {
-              this.showMessage(error._body, 'danger', false);
-            },
-          );
-        } else {
-          this.showMessage('Debe iniciar sesión', 'danger', false);
-        }
-
+      this.printArticles(movement)
         break;
       default:
         break;
