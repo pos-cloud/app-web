@@ -72,6 +72,13 @@ export class PermissionComponent implements OnInit {
         class: 'form-group col-md-2'
     },
     {
+        name: 'filterCompany',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
         name: 'editArticle',
         tag: 'select',
         tagType: "boolean",
@@ -248,6 +255,7 @@ export class PermissionComponent implements OnInit {
             let project = {
                 "name" : 1,
                 "filterTransaction":1,
+                "filterCompany": 1,
                 "editArticle": 1,
                 "allowDiscount": 1,
                 "menu": 1,

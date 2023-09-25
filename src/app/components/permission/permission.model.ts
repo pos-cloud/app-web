@@ -41,7 +41,8 @@ export class Permission extends Model {
 	}
 
     filterTransaction: boolean;
-
+    filterCompany: boolean;
+    
     transactionTypes : TransactionType[];
     editArticle: boolean;
     allowDiscount: boolean;
