@@ -208,7 +208,7 @@ export class ListCompaniesComponent implements OnInit {
         }
 
         match += `,"companyType": "${this.type}"`;
-        if (this.employee) {
+        if (this.employee || this.identity.permission.filterCompany) {
             match += `,"employee._id": { "$oid" : "${this.employee}"}`
         }
         if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);

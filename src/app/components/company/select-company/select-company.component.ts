@@ -89,8 +89,6 @@ export class SelectCompanyComponent implements OnInit {
 
         this.loading = true;
 
-        let pathLocation: string[] = this._router.url.split('/');
-
         this.loading = true;
 
         // ORDENAMOS LA CONSULTA
@@ -111,8 +109,17 @@ export class SelectCompanyComponent implements OnInit {
             }
         }
 
-        match += `"operationType": { "$ne": "D" },
-                "type" : "${this.type.toString()}"}`;
+
+      
+
+        match += `  "operationType": { "$ne": "D" },
+                    "type" : "${this.type.toString()}"
+            `;            
+        if (this.identity.permission.filterCompany && this.identity.employee._id) {
+            match += `,"employee._id": { "$oid" : "${this.identity.employee._id}"}}`
+        } else {
+            match += `}`
+        }
 
         match = JSON.parse(match);
 
@@ -125,6 +132,7 @@ export class SelectCompanyComponent implements OnInit {
             addressNumber: 1,
             phones: 1,
             "vatCondition.description": 1,
+            "employee._id" : 1,
             emails: 1,
             type: 1,
             operationType: 1
