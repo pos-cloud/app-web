@@ -417,9 +417,9 @@ export class ViewTransactionComponent implements OnInit {
     );
   }
 
-  public printArticles( movement: MovementOfArticle) {
+  public printArticle(movement: MovementOfArticle) {
     this.loading = true;
-    this._printerService.printArticles(movement.article._id, movement.amount).subscribe(
+    this._printerService.printArticle(movement.article._id, movement.amount).subscribe(
       (res: Blob) => {
         if (res) {     
           const blobUrl = URL.createObjectURL(res);
@@ -469,7 +469,7 @@ export class ViewTransactionComponent implements OnInit {
         modalRef.componentInstance.operation = 'update';
         break;
       case 'print-label':
-      this.printArticles(movement)
+      this.printArticle(movement)
         break;
       default:
         break;
