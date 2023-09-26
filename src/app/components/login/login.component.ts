@@ -144,7 +144,7 @@ export class LoginComponent implements OnInit {
       Config.setApiV8Host(this.apiv1); // TEST
     }
     
-    this.company = this.loginForm.value.company
+    this.company = this.loginForm.value.company.trim()
     this.user = this.loginForm.value.user
     this.password = this.loginForm.value.password
 
