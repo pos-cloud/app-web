@@ -413,7 +413,7 @@ export class ListArticlesComponent implements OnInit {
 
   public printArticle(article: Article) {
     this.loading = true;
-    this._printerService.printArticle(article._id).subscribe(
+    this._printerService.printArticle(article._id, 1).subscribe(
       (res: Blob) => {
         if (res) {     
           const blobUrl = URL.createObjectURL(res);
