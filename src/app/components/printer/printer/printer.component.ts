@@ -14,6 +14,7 @@ import {ConfigService} from 'app/components/config/config.service';
 import {PrintTransactionTypeComponent} from '../../print/print-transaction-type/print-transaction-type.component';
 import {Printer, PrinterType, PrinterPrintIn, PositionPrint} from '../printer';
 import {PrinterService} from '../printer.service';
+import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-add-printer',
@@ -49,11 +50,16 @@ export class PrinterComponent implements OnInit {
   public pageSizes: string[] = ['A4', 'Etiqueta', 'Roll Paper', 'Personalizado'];
   public pdfURL;
   public doc;
+ 
+  fontList = {}; // La lista de fuentes
+  selectedFontName = 'default'; // Fuente seleccionada
+  selectedFontStyle = 'normal'; // Variante de fuente seleccionada
+  fontListKeys: string[] = [];
 
   // valores del add
   public position;
   public type;
-  public collection;
+  public collection; 
   public value;
   public font = 'default';
   public fontType = 'normal';
@@ -105,9 +111,20 @@ export class PrinterComponent implements OnInit {
     this.buildForm();
     this.updatePageSize();
 
+    if(this.fontList){
+      this.getFontList();
+    }
+
     if (this.printerId) {
       this.getPrinter();
     }
+  }
+
+  getFontList(): void {
+    const pdf = new jsPDF();
+    this.fontList = pdf.getFontList();
+  
+    this.fontListKeys = Object.keys(this.fontList);
   }
 
   public getDocuments(): void {

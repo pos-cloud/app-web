@@ -194,22 +194,17 @@
                                         *ngIf="type === 'data' || type === 'dataEsp' || type === 'dataSum' || type === 'label'">
                                         <div class="form-group col-md-4">
                                             <label for="font" class="control-label">Fuente:</label>
-                                            <select class="form-control" [(ngModel)]="font" name="font">
-                                                <option value="default" [selected]="default">Default</option>
-                                                <option value="courier" [selected]="courier">Courier</option>
-                                                <option value="times" [selected]="times">Times</option>
-                                                <option value="helvetica" [selected]="helvetica">Helvetica</option>
-                                            </select>
+                                            <select class="form-control" [(ngModel)]="selectedFontName" name="font">
+                                                <option value="default">Default</option>
+                                                <option *ngFor="let fontName of fontListKeys" [value]="fontName">{{ fontName }}</option>
+                                              </select>
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label for="fontType" class="control-label">Letra:</label>
-                                            <select class="form-control" [(ngModel)]="fontType" name="fontType"
-                                                required>
-                                                <option value="normal" [selected]="normal">Normal</option>
-                                                <option value="italic" [selected]="italic">Italic</option>
-                                                <option value="bold" [selected]="bold">Bold</option>
-                                                <option value="bolditalic" [selected]="bolditalic">Bolditalic</option>
-                                            </select>
+                                            <select class="form-control" [(ngModel)]="selectedFontStyle" name="fontType">
+                                                <option value="default">default</option>
+                                                <option *ngFor="let variant of fontList[selectedFontName]" [value]="variant">{{ variant }}</option>
+                                              </select>
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label for="fontSize" class="control-label">Tamaño:</label>
