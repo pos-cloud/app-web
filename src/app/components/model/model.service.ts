@@ -7,6 +7,8 @@ import {map, catchError} from 'rxjs/operators';
 
 import {DatatableHistory} from '../datatable/datatable-history.interface';
 import {AuthService} from '../login/auth.service';
+import { environment } from 'environments/environment';
+import { ORIGINMEDIA } from 'app/types';
 
 @Injectable()
 export class ModelService {
@@ -170,26 +172,38 @@ export class ModelService {
       );
   }
 
-  public uploadFile(type: string, model: string, file: File): Promise<any> {
+  public uploadFile(origin: ORIGINMEDIA, file: File): Promise<any> {
+    if(origin) {
+      
+    }
     let xhr: XMLHttpRequest = new XMLHttpRequest();
 
-    xhr.open('POST', `${Config.apiV8URL}file?type=${type}&model=${model}`, true);
-    xhr.setRequestHeader('Authorization', this._authService.getToken());
+    xhr.open(
+      "POST",
+      `${environment.apiStorage}/upload`,
+      true
+    );
+    xhr.setRequestHeader("Authorization", this._authService.getToken());
 
     return new Promise((resolve, reject) => {
       let formData: any = new FormData();
 
-      formData.append('image', file, file.name);
-      xhr.upload.addEventListener('progress', this.progressFunction, false);
+     
+      formData.append("file", file, file.name);
+
+      formData.append('origin', origin)
+
       xhr.onreadystatechange = function () {
+        console.log(xhr);
         if (xhr.readyState == 4) {
-          if (xhr.status == 200) {
-            resolve(JSON.parse(xhr.response));
+          if (xhr.status == 201) {
+            resolve(xhr.response);
           } else {
-            reject(JSON.parse(xhr.response));
+            reject(xhr.response);
           }
         }
       };
+
       xhr.send(formData);
     });
   }
@@ -201,20 +215,19 @@ export class ModelService {
     }
   }
 
-  public deleteFile(type: string, model: string, filename: string): Observable<any> {
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
+  public deleteFile(filename: string): Observable<any> {
+    const URL = `${environment.apiStorage}/upload`;
 
-    const params = new HttpParams()
-      .set('type', type)
-      .set('model', model)
-      .set('filename', filename);
+    const headers = new HttpHeaders()
+      .set("Content-Type", "application/json")
+      .set("Authorization", this._authService.getToken());
 
     return this._http
-      .delete(`${Config.apiV8URL}file`, {
-        headers,
-        params,
+      .delete(URL, {
+        headers: headers,
+        body: {
+          origin: filename
+        }
       })
       .pipe(
         map((res) => {
@@ -222,7 +235,7 @@ export class ModelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
+        })
       );
   }
 

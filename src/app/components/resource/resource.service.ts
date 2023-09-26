@@ -8,6 +8,7 @@ import { map, catchError } from "rxjs/operators";
 import { Resource } from './resource';
 import { Config } from '../../app.config';
 import { AuthService } from '../login/auth.service';
+import { environment } from "environments/environment";
 
 @Injectable()
 export class ResourceService {
@@ -150,29 +151,64 @@ export class ResourceService {
         );
     }
 
-    public makeFileRequest(file: File) {
-
+    public makeFileRequest(origin: string, file: File) {
         let xhr: XMLHttpRequest = new XMLHttpRequest();
-        xhr.open('POST', Config.apiURL + 'upload-file/', true);
-        xhr.setRequestHeader('Authorization', this._authService.getToken());
-
+    
+        xhr.open(
+          "POST",
+          `${environment.apiStorage}/upload`,
+          true
+        );
+        xhr.setRequestHeader("Authorization", this._authService.getToken());
+    
         return new Promise((resolve, reject) => {
-            let formData: any = new FormData();
-
-            formData.append('image', file, file.name);
-
-
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4) {
-                    if (xhr.status == 200) {
-                        resolve(JSON.parse(xhr.response));
-                    } else {
-                        reject(xhr.response);
-                    }
-                }
+          let formData: any = new FormData();
+    
+ 
+        formData.append("file", file, file.name);
+    
+          formData.append('origin', origin)
+    
+          xhr.onreadystatechange = function () {
+            console.log(xhr);
+            if (xhr.readyState == 4) {
+              if (xhr.status == 201) {
+                resolve(xhr.response);
+              } else {
+                reject(xhr.response);
+              }
             }
-
-            xhr.send(formData);
+          };
+    
+          xhr.send(formData);
         });
-    }
+      }
+
+
+      public deleteImageGoogle(origin: string): Observable<any> {
+
+        console.log(origin);
+        
+        const URL = `${environment.apiStorage}/upload`;
+    
+        const headers = new HttpHeaders()
+          .set("Content-Type", "application/json")
+          .set("Authorization", this._authService.getToken());
+    
+        return this.http
+          .delete(URL, {
+            headers: headers,
+            body: {
+              origin: origin
+            }
+          })
+          .pipe(
+            map((res) => {
+              return res;
+            }),
+            catchError((err) => {
+              return of(err);
+            })
+          );
+      }
 }

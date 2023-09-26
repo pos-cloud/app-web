@@ -529,8 +529,6 @@ export class BusinessRuleComponent implements OnInit {
             ) {
               this.loading = true;
               this._objService.deleteFile(
-                this.typeFile[field.name],
-                field.name.split('.')[field.name.split('.').length - 1],
                 this.obj[field.name],
               );
               if (
@@ -549,8 +547,7 @@ export class BusinessRuleComponent implements OnInit {
                 for (let file of this.filesToUpload[field.name]) {
                   await this._objService
                     .uploadFile(
-                      this.typeFile[field.name],
-                      field.name.split('.')[field.name.split('.').length - 1],
+                      null,
                       file,
                     )
                     .then((result) => {
@@ -618,8 +615,6 @@ export class BusinessRuleComponent implements OnInit {
   deleteFile(typeFile: string, fieldName: string, filename: string) {
     this._objService
       .deleteFile(
-        typeFile,
-        fieldName.split('.')[fieldName.split('.').length - 1],
         filename,
       )
       .subscribe(

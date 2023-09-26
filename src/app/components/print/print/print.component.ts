@@ -2466,29 +2466,36 @@ export class PrintComponent implements OnInit {
 
   async getCompanyPicture(lmargin, rmargin, width, height, finish: boolean = false) {
     return new Promise((resolve, reject) => {
-      this.loading = true;
-      this._configService
-        .getCompanyPicture(this.config[0].companyPicture)
-        .subscribe((result) => {
-          if (!result.imageBase64) {
-            this.getCompanyData();
-            if (finish) {
-              this.finishImpression();
-            }
-            this.loading = false;
-            resolve(true);
-          } else {
-            this.hideMessage();
-            let imageURL = 'data:image/jpeg;base64,' + result.imageBase64;
 
-            this.doc.addImage(imageURL, 'jpeg', lmargin, rmargin, width, height);
-            if (finish) {
-              this.finishImpression();
-            }
-            resolve(true);
-          }
-          this.loading = false;
-        });
+      const url = this.config[0]['companyPicture'];
+      this.doc.addImage('https://storage.googleapis.com/poscloud/bardo/companies/1695677361072-descdfgdfgdfgarga1232134.png', 'jpeg', lmargin, rmargin, width, height);        
+
+
+      //console.log(this.config[0]['companyPicture'])
+      
+
+      // this._configService
+      //   .getCompanyPicture(this.config[0].companyPicture)
+      //   .subscribe((result) => {
+      //     if (!result.imageBase64) {
+      //       this.getCompanyData();
+      //       if (finish) {
+      //         this.finishImpression();
+      //       }
+      //       this.loading = false;
+      //       resolve(true);
+      //     } else {
+      //       this.hideMessage();
+      //       let imageURL = 'data:image/jpeg;base64,' + result.imageBase64;
+
+      //       this.doc.addImage(imageURL, 'jpeg', lmargin, rmargin, width, height);
+      //       if (finish) {
+      //         this.finishImpression();
+      //       }
+      //       resolve(true);
+      //     }
+      //     this.loading = false;
+      //   });
     });
   }
 

@@ -64,6 +64,7 @@ import {UnitOfMeasurementService} from './../../../components/unit-of-measuremen
 import {TranslateMePipe} from './../../../main/pipes/translate-me';
 import Resulteable from './../../../util/Resulteable';
 import { ORIGINMEDIA } from 'app/types';
+import { FileService } from 'app/services/file.service';
 
 @Component({
   selector: 'app-add-article',
@@ -333,6 +334,7 @@ export class AddArticleComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
+    public _fileService: FileService
   ) {
     if (window.screen.width < 1000) this.orientation = 'vertical';
     this.article = new Article();
@@ -1710,8 +1712,8 @@ export class AddArticleComponent implements OnInit {
         await this.deleteFile(pictureDelete);
       }
 
-      this._articleService
-          .makeFileRequest(ORIGINMEDIA.ARTICLES, this.filesToUpload)
+      this._fileService
+          .uploadImage(ORIGINMEDIA.ARTICLES, this.filesToUpload)
           .then(
             (result: string) => {
               console.log(result);
@@ -1726,7 +1728,7 @@ export class AddArticleComponent implements OnInit {
 
   async deleteFile(pictureDelete: string): Promise<boolean> {
     return new Promise<boolean>(async (resolve, reject) => {
-      this._articleService.deleteImageGoogle(pictureDelete).subscribe(
+      this._fileService.deleteImage(pictureDelete).subscribe(
         (result) => {
           resolve(true)
         },

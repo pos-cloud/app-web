@@ -5,7 +5,7 @@
 				<img *ngIf="category.picture == 'default.jpg' || category.picture == undefined"
 					src="./../../../assets/img/default.jpg" height="120" width="120">
 				<img *ngIf="category.picture !== 'default.jpg' && category.picture !== undefined"
-					[src]="apiURL + 'get-image-category/'+category.picture+'/'+database" height="120" width="120">
+					[src]="category.picture" height="120" width="120">
 				<div class="image-title">{{ category.description | slice:0:19 }}</div>
 			</div>
 		</div>

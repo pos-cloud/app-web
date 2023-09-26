@@ -34,20 +34,18 @@
                                 </div>
                                 <div class="row">
 
-                                    <div class="form-group col-md-3">
+                                    <div class="form-group col-md-6">
                                         <div class="custom-file">
                                             <label *ngIf="!readonly" class="custom-file-label btn btn-action"
-                                                for="customFileLang">Cambiar Imagen</label>
+                                                for="customFileLang">Seleccionar Imagen</label>
                                             <input *ngIf="!readonly" type="file" class="custom-file-input" lang="es"
                                                 id="customFileLang" (change)="onFileSelected($event)" />
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <picture
-                                        *ngIf="(resource && resource.type == 'image' && src) || (src && typeSelectFile == 'image')">
-                                        <img width="600" height="400" [src]="src">
-                                    </picture>
+
+                                    <img width="600" height="400" [src]="src">
 
                                     <audio controls
                                         *ngIf="(resource && resource.type == 'audio' && src) || (src && typeSelectFile == 'audio')">

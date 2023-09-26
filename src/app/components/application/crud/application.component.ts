@@ -30,6 +30,7 @@ import {debounceTime, distinctUntilChanged, tap, switchMap} from 'rxjs/operators
 
 import {Application, ApplicationType} from '../application.model';
 import {ApplicationService} from '../application.service';
+import { ORIGINMEDIA } from 'app/types';
 
 @Component({
   selector: 'app-application',
@@ -833,7 +834,8 @@ export class ApplicationComponent implements OnInit {
         if (this.filesToUploadHome && this.filesToUploadHome.length > 0) {
           for (let file of this.filesToUploadHome) {
             await this._objService
-              .uploadFile('image', 'application', file)
+              .uploadFile( 
+                null ,file)
               .then((result) => {
                 if (result.status === 200) {
                   banner = result.result;
@@ -924,8 +926,6 @@ export class ApplicationComponent implements OnInit {
   public deleteFile(typeFile: string, fieldName: string, filename: string) {
     this._objService
       .deleteFile(
-        typeFile,
-        fieldName.split('.')[fieldName.split('.').length - 1],
         filename,
       )
       .subscribe(
@@ -990,8 +990,6 @@ export class ApplicationComponent implements OnInit {
             ) {
               this.loading = true;
               this._objService.deleteFile(
-                this.typeFile[field.name],
-                field.name.split('.')[field.name.split('.').length - 1],
                 this.obj[field.name],
               );
               if (
@@ -1010,8 +1008,7 @@ export class ApplicationComponent implements OnInit {
                 for (let file of this.filesToUpload[field.name]) {
                   await this._objService
                     .uploadFile(
-                      this.typeFile[field.name],
-                      field.name.split('.')[field.name.split('.').length - 1],
+                      null,
                       file,
                     )
                     .then((result) => {

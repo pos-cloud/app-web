@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, ViewEncapsulation } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl, UntypedFormArray } from '@angular/forms';
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { User } from "app/components/user/user";
@@ -27,6 +27,9 @@ import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operato
 import { AccountService } from '../account/account.service';
 import { Account } from '../account/account';
 import { first } from "rxjs/operators";
+import { ArticleService } from '../article/article.service';
+import { ORIGINMEDIA } from 'app/types';
+import { FileService } from 'app/services/file.service';
 
 @Component({
   selector: 'app-config',
@@ -109,7 +112,8 @@ export class ConfigComponent implements OnInit {
     public _toastr: ToastrService,
     public alertConfig: NgbAlertConfig,
     private _authService: AuthService,
-    public _modalService: NgbModal
+    public _modalService: NgbModal,
+    public _fileService: FileService
   ) {
     this.apiURL = Config.apiURL;
     this.apiV8URL = Config.apiV8URL;
@@ -196,8 +200,17 @@ export class ConfigComponent implements OnInit {
       )
   }
 
-  public fileChangeEvent(fileInput: any) {
-    this.filesToUpload = <Array<File>>fileInput.target.files;
+  public fileChangeEvent(event: any) {
+    this.filesToUpload = <Array<File>>event.target.files;
+
+    if (event.target.files && event.target.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.imageURL = e.target.result;
+      }
+      // Coloca la siguiente línea fuera del evento onload
+      reader.readAsDataURL(event.target.files[0]);
+    }
   }
 
 
@@ -420,13 +433,10 @@ export class ConfigComponent implements OnInit {
         if (!result.configs) {
           if (result.message && result.message !== "") this.showToast(result.message, "info");
         } else {
-          let config = result.configs[0];
-          this.config = config;
-          if (config['companyPicture'] && config['companyPicture'] !== 'default.jpg') {
-            this.imageURL = this.apiURL + 'get-image-company/' + config['companyPicture'] + '/' + Config.database;
-          } else {
-            this.imageURL = './../../../assets/img/default.jpg';
-          }
+          //let config = result.configs[0];
+          this.config = result.configs[0];
+          this.imageURL = this.config['companyPicture'];
+          
           this.setConfigurationSettings(this.config);
           this.setValuesForm();
         }
@@ -464,33 +474,22 @@ export class ConfigComponent implements OnInit {
   }
 
   async addConfigCompany() {
+
+    this.loadingCompany = true;
+
     this.config = this.configFormCompany.value;
     this.config['companyStartOfActivity'] = moment(this.config['companyStartOfActivity'], 'DD/MM/YYYY').format('YYYY-MM-DDTHH:mm:ssZ');
-    this.loadingCompany = true;
+    if(this.filesToUpload) this.config['companyPicture'] = await this.uploadFile(this.config['companyPicture']);
+
     await this.updateConfig().then(
       config => {
         if (config) {
           this.config = config;
-          if (this.filesToUpload) {
-            this._configService.makeFileRequest(this.config, this.filesToUpload)
-              .then(
-                (result) => {
-                  this.config["companyPicture"] = result["filename"];
-                  this.showToast("Los cambios fueron guardados con éxito.", "success");
-                  this.getConfig();
-                  this.loadingCompany = false;
-                },
-                (error) => {
-                  this.showToast(error, 'danger');
-                  this.loadingCompany = false;
-                }
-              );
-          } else {
-            this.showToast("Los cambios fueron guardados con éxito.", "success");
-            this.getConfig();
-            this.loadingCompany = false;
-          }
+          this.showToast("La configuración de empresa se guardo con éxito ", "success");
+        } else {
+          this.showToast("No se encontro configuración de empresa", "danger");
         }
+        this.loadingCompany = false;
       }
     );
   }
@@ -545,26 +544,14 @@ export class ConfigComponent implements OnInit {
     });
   }
 
-  public deletePicture(): void {
+  async deletePicture(picture: string) {
 
-    this.loadingCompany = true;
-
-    this._configService.deletePicture(this.config._id).subscribe(
-      result => {
-        if (!result.configs) {
-          if (result.message && result.message !== "") this.showToast(result.message, "info");
-        } else {
-          this.config = result.configs[0];
-          this.showToast("Los cambios fueron guardados con éxito.", "success");
-          this.getConfig();
-        }
-        this.loadingCompany = false;
-      },
-      error => {
-        this.showToast(error._body, "danger");
-        this.loadingCompany = false;
-      }
-    )
+ 
+    this.config['companyPicture'] = './../../../assets/img/default.jpg';
+    this.imageURL = "./../../../assets/img/default.jpg"
+    
+    
+    await this.deleteFile(picture)
   }
 
   public setValuesForm(): void {
@@ -765,4 +752,40 @@ export class ConfigComponent implements OnInit {
         break;
     }
   }
+
+  async uploadFile(pictureDelete: string): Promise<string> {
+    return new Promise<string>(async (resolve, reject) => {
+      if(pictureDelete && pictureDelete.includes('https://storage.googleapis')) {
+        await this.deleteFile(pictureDelete);
+      }
+
+      this._fileService
+          .uploadImage(ORIGINMEDIA.COMPANY, this.filesToUpload)
+          .then(
+            (result: string) => {
+              console.log(result);
+              this.config['companyPicture'] = result;
+              this.imageURL = result;
+              resolve(result);
+          },
+          (error) => this.showToast('',error),
+        );
+    })
+  }
+
+  async deleteFile(pictureDelete: string): Promise<boolean> {
+    return new Promise<boolean>(async (resolve, reject) => {
+      this._fileService.deleteImage(pictureDelete).subscribe(
+        (result) => {
+          resolve(true)
+        },
+        (error) => {
+          console.log(error)
+          this.showToast('',error.messge)
+          resolve(true)
+        }
+      )
+    })
+  }
+
 }

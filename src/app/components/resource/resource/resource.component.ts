@@ -8,11 +8,16 @@ import { Resource } from '../resource';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
+import { ORIGINMEDIA } from 'app/types';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateMePipe } from 'app/main/pipes/translate-me';
 
 @Component({
     selector: 'app-resource',
     templateUrl: './resource.component.html',
-    styleUrls: ['./resource.component.css']
+    styleUrls: ['./resource.component.css'],
+    providers: [NgbAlertConfig, TranslateMePipe],
+
 })
 export class ResourceComponent implements OnInit {
 
@@ -58,6 +63,9 @@ export class ResourceComponent implements OnInit {
         private _fb: UntypedFormBuilder,
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,
+        public _toastr: ToastrService,
+        public translatePipe: TranslateMePipe,
+
     ) {
         if (window.screen.width < 1000) this.orientation = 'vertical';
         this.resource = new Resource();
@@ -89,7 +97,9 @@ export class ResourceComponent implements OnInit {
                 } else {
                     this.hideMessage();
                     this.resource = result.resource;
-                    this.getFile();
+                    this.src = this.resource.file;
+
+                    console.log(this.resource)
                     this.setValueForm();
                 }
                 this.loading = false;
@@ -149,7 +159,7 @@ export class ResourceComponent implements OnInit {
 
     public addResource() {
 
-        this.resource = this.resourceForm.value;
+        this.resource = {...this.resource, ...this.resourceForm.value}
 
         switch (this.operation) {
             case 'add':
@@ -165,9 +175,15 @@ export class ResourceComponent implements OnInit {
         }
     }
 
-    public updateResource() {
+    async updateResource() {
 
         this.loading = true;
+
+        console.log(this.resource)
+
+        if(this.selectedFile) {
+            this.resource.file = await this.uploadFile(this.resource.file);
+        } 
 
         this._resourceService.updateResource(this.resource).subscribe(
             result => {
@@ -177,8 +193,7 @@ export class ResourceComponent implements OnInit {
                 } else {
                     this.loading = false;
                     this.showMessage('El recurso se ha actualizado con éxito.', 'success', false);
-                    this.resource = new Resource();
-                    this.buildForm();
+                    this.activeModal.close()
                 }
             },
             error => {
@@ -188,11 +203,13 @@ export class ResourceComponent implements OnInit {
         );
     }
 
-    public saveResource() {
+    async saveResource() {
 
         this.loading = true;
 
         if (this.selectedFile) {
+
+            if(this.selectedFile) this.resource.file = await this.uploadFile(this.resource.file);
 
             this._resourceService.addResource(this.resource).subscribe(
                 result => {
@@ -201,7 +218,8 @@ export class ResourceComponent implements OnInit {
                         if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
                     } else {
                         this.resource = result.resource;
-                        this.onUpload();
+                        this.activeModal.close();
+                        //this.onUpload();
                     }
                 },
                 error => {
@@ -215,9 +233,11 @@ export class ResourceComponent implements OnInit {
         }
     }
 
-    public deleteResource() {
+    async deleteResource() {
 
         this.loading = true;
+
+        await this.deleteFile(this.resource.file)
 
         this._resourceService.deleteResource(this.resource).subscribe(
             result => {
@@ -248,33 +268,67 @@ export class ResourceComponent implements OnInit {
 
     }
 
-    public onUpload() {
-        this._resourceService.makeFileRequest(this.selectedFile)
-            .then(
-                (result) => {
-                    if (result['file']) {
-                        this.resource.type = result['file']['mimetype'].split('/')[0]
-                        this.resource.file = result['file']['filename']
-                        this.updateResource();
-                    } else {
-                        this.showMessage("Error al guardar el archivo", 'danger', false);
-                        this.loading = false;
-                    }
-                },
-                (error) => {
-                    this.showMessage(error._body, 'danger', false);
-                    this.loading = false;
-                }
-            );
-    }
+    // public onUpload() {
+    //     this._resourceService.makeFileRequest(this.selectedFile)
+    //         .then(
+    //             (result) => {
+    //                 if (result['file']) {
+    //                     this.resource.type = result['file']['mimetype'].split('/')[0]
+    //                     this.resource.file = result['file']['filename']
+    //                     this.updateResource();
+    //                 } else {
+    //                     this.showMessage("Error al guardar el archivo", 'danger', false);
+    //                     this.loading = false;
+    //                 }
+    //             },
+    //             (error) => {
+    //                 this.showMessage(error._body, 'danger', false);
+    //                 this.loading = false;
+    //             }
+    //         );
+    // }
 
     public getFile(): void {
         if (this.resource.file) {
-            this.src = `${Config.apiURL}get-resource?filename=${this.resource.file}&database=${Config.database}`
+            this.src = `${this.resource.file}`
         } else {
             this.showMessage("No se encontro el archivo", 'danger', false)
             this.loading = true;
         }
+    }
+
+    async uploadFile(pictureDelete: string): Promise<string> {
+        return new Promise<string>(async (resolve, reject) => {
+          if(pictureDelete && pictureDelete.includes('https://storage.googleapis')) {
+            await this.deleteFile(pictureDelete);
+          }
+    
+          this._resourceService
+              .makeFileRequest(ORIGINMEDIA.RESOURCES, this.selectedFile)
+              .then(
+                (result: string) => {
+                  console.log(result);
+                  this.resource.file = result;
+                  resolve(result);
+              },
+              (error) => this.showToast(error),
+            );
+        })
+    }
+
+    async deleteFile(pictureDelete: string): Promise<boolean> {
+        return new Promise<boolean>(async (resolve, reject) => {
+          this._resourceService.deleteImageGoogle(pictureDelete).subscribe(
+            (result) => {
+              resolve(true)
+            },
+            (error) => {
+              console.log(error)
+              this.showToast(error.messge)
+              resolve(true)
+            }
+          )
+        })
     }
 
     public showMessage(message: string, type: string, dismissible: boolean): void {
@@ -286,5 +340,42 @@ export class ResourceComponent implements OnInit {
     public hideMessage(): void {
         this.alertMessage = '';
     }
+
+    showToast(result, type?: string, title?: string, message?: string): void {
+        if (result) {
+          if (result.status === 200) {
+            type = 'success';
+            title = result.message;
+          } else if (result.status >= 400) {
+            type = 'danger';
+            title =
+              result.error && result.error.message ? result.error.message : result.message;
+          } else {
+            type = 'info';
+            title = result.message;
+          }
+        }
+        switch (type) {
+          case 'success':
+            this._toastr.success(
+              this.translatePipe.translateMe(message),
+              this.translatePipe.translateMe(title),
+            );
+            break;
+          case 'danger':
+            this._toastr.error(
+              this.translatePipe.translateMe(message),
+              this.translatePipe.translateMe(title),
+            );
+            break;
+          default:
+            this._toastr.info(
+              this.translatePipe.translateMe(message),
+              this.translatePipe.translateMe(title),
+            );
+            break;
+        }
+        this.loading = false;
+      }
 
 }
