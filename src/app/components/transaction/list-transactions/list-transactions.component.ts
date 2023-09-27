@@ -35,6 +35,7 @@ import {TransactionService} from '../transaction.service';
 import {ViewTransactionComponent} from '../view-transaction/view-transaction.component';
 
 import 'moment/locale/es';
+import * as printJS from 'print-js';
 
 @Component({
   selector: 'app-list-transactions',
@@ -574,77 +575,7 @@ export class ListTransactionsComponent implements OnInit {
         );
         break;
       case 'print':
-        //this.printTransaction(transaction)
-        if (
-          transaction.type.expirationDate &&
-          moment(transaction.type.expirationDate).diff(moment(), 'days') <= 0
-        ) {
-          this.showMessage('El documento esta vencido', 'danger', true);
-        } else {
-          if (transaction.type.readLayout) {
-            modalRef = this._modalService.open(PrintTransactionTypeComponent);
-            modalRef.componentInstance.transactionId = transaction._id;
-          } else {
-            let printer: Printer;
-
-            await this.getUser().then(async (user) => {
-              if (user && user.printers && user.printers.length > 0) {
-                for (const element of user.printers) {
-                  if (
-                    element &&
-                    element.printer &&
-                    element.printer.printIn === PrinterPrintIn.Counter
-                  ) {
-                    printer = element.printer;
-                  }
-                }
-              } else {
-                if (transaction.type.defectPrinter) {
-                  printer = transaction.type.defectPrinter;
-                } else {
-                  if (this.printers && this.printers.length > 0) {
-                    for (let printer of this.printers) {
-                      if (printer.printIn === PrinterPrintIn.Counter) {
-                        printer = printer;
-                      }
-                    }
-                  }
-                }
-              }
-            });
-
-            modalRef = this._modalService.open(PrintComponent);
-            modalRef.componentInstance.company = transaction.company;
-            modalRef.componentInstance.transactionId = transaction._id;
-            modalRef.componentInstance.typePrint = 'invoice';
-            modalRef.componentInstance.printer = printer;
-
-            modalRef.result.then(
-              (result) => {
-                if (transaction.taxes && transaction.taxes.length > 0) {
-                  for (const tax of transaction.taxes) {
-                    if (tax.tax.printer) {
-                      modalRef = this._modalService.open(PrintTransactionTypeComponent);
-                      modalRef.componentInstance.transactionId = transaction._id;
-                      modalRef.componentInstance.printerID = tax.tax.printer;
-                    }
-                  }
-                }
-              },
-              (reason) => {
-                if (transaction.taxes && transaction.taxes.length > 0) {
-                  for (const tax of transaction.taxes) {
-                    if (tax.tax.printer) {
-                      modalRef = this._modalService.open(PrintTransactionTypeComponent);
-                      modalRef.componentInstance.transactionId = transaction._id;
-                      modalRef.componentInstance.printerID = tax.tax.printer;
-                    }
-                  }
-                }
-              },
-            );
-          }
-        }
+        this.printTransaction(transaction)
         break;
       case 'delete':
         modalRef = this._modalService.open(DeleteTransactionComponent, {
@@ -849,17 +780,23 @@ export class ListTransactionsComponent implements OnInit {
   }
 
   public printTransaction(transaction: Transaction) {
+    this.loading = true;
     this._printerService.printTransaction(transaction._id).subscribe(
-      (res: string) => {
-        if(res) {
-          this.pdfSrc = res['pdfBase64']
+      (res: Blob) => {
+        if (res) {     
+          const blobUrl = URL.createObjectURL(res);
+          printJS(blobUrl);
+          this.loading = false;
         } else {
-          this.showMessage(res, "danger", false);
+          this.loading = false;
+          this.showMessage('Error al cargar el PDF', 'danger', false);
         }
       },
-      (error) =>{
-        this.showMessage(error.message, "danger", false);
-      })
+      (error) => {
+        this.loading = false;
+        this.showMessage(error.message, 'danger', false);
+      }
+    );
   }
 
   public exportItems(): void {
