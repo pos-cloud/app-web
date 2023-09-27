@@ -780,23 +780,17 @@ export class ListTransactionsComponent implements OnInit {
   }
 
   public printTransaction(transaction: Transaction) {
-    this.loading = true;
     this._printerService.printTransaction(transaction._id).subscribe(
-      (res: Blob) => {
-        if (res) {     
-          const blobUrl = URL.createObjectURL(res);
-          printJS(blobUrl);
-          this.loading = false;
+      (res: string) => {
+        if(res) {
+          this.pdfSrc = res['pdfBase64']
         } else {
-          this.loading = false;
-          this.showMessage('Error al cargar el PDF', 'danger', false);
+          this.showMessage(res, "danger", false);
         }
       },
-      (error) => {
-        this.loading = false;
-        this.showMessage(error.message, 'danger', false);
-      }
-    );
+      (error) =>{
+        this.showMessage(error.message, "danger", false);
+      })
   }
 
   public exportItems(): void {
