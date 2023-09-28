@@ -68,6 +68,7 @@ export class PermissionComponent implements OnInit {
         name: 'filterTransaction',
         tag: 'select',
         tagType: "boolean",
+        default: ['false'],
         values: ['false', 'true'],
         class: 'form-group col-md-2'
     },
@@ -75,6 +76,7 @@ export class PermissionComponent implements OnInit {
         name: 'filterCompany',
         tag: 'select',
         tagType: "boolean",
+        default: ['false'],
         values: ['false', 'true'],
         class: 'form-group col-md-2'
     },
