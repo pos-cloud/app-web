@@ -121,7 +121,7 @@
         <div class="col-md-4 form-group">
           <label for="discountRate" class="control-label">Porc. Desc.:</label>
           <div class="input-group">
-            <input type="number" class="form-control" formControlName="discountRate" name="discountRate" (input)="changeDiscountRate()"/>
+            <input type="number" class="form-control" formControlName="discountRate" name="discountRate" (input)="changeDiscountRate()" [readOnly]="!this.user.permission.allowDiscount"/>
             <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
           </div>
         </div>
@@ -129,7 +129,7 @@
           <label for="discountAmount" class="control-label">Monto Desc.:</label>
           <div class="input-group">
             <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-            <input type="number" class="form-control" formControlName="discountAmount" name="discountAmount" (input)="changeDiscountAmount()"/>
+            <input type="number" class="form-control" formControlName="discountAmount" name="discountAmount" (input)="changeDiscountAmount()" [readOnly]="!this.user.permission.allowDiscount"/>
           </div>
         </div>
         <div class="col-md-4 form-group">
