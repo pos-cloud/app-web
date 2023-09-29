@@ -236,7 +236,8 @@ export class PrinterService extends ModelService {
     return this._http
       .get(URL, {
         headers: headers,
-        params: params
+        params: params,
+        responseType : 'blob',
       })
       .pipe(
         map((res) => {
