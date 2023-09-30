@@ -775,8 +775,11 @@ export class AddArticleComponent implements OnInit {
             this.loadURL();
           }
 
-
-          this.imageURL = this.article.picture ?? './../../../assets/img/default.jpg'
+          if(this.article.picture.includes('google')){
+            this.imageURL = this.article.picture
+          } else {
+            this.imageURL = './../../../assets/img/default.jpg'
+          }
 
           if (this.article.containsVariants) {
             this.getVariantsByArticleParent();
