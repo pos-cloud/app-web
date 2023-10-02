@@ -2466,10 +2466,10 @@ export class PrintComponent implements OnInit {
 
   async getCompanyPicture(lmargin, rmargin, width, height, finish: boolean = false) {
     return new Promise((resolve, reject) => {
-      this.loading = true;
       this._configService
         .getCompanyPicture(this.config[0].companyPicture)
         .subscribe((result) => {
+          console.log(result)
           if (!result.imageBase64) {
             this.getCompanyData();
             if (finish) {
@@ -2479,9 +2479,8 @@ export class PrintComponent implements OnInit {
             resolve(true);
           } else {
             this.hideMessage();
-            let imageURL = 'data:image/jpeg;base64,' + result.imageBase64;
-
-            this.doc.addImage(imageURL, 'jpeg', lmargin, rmargin, width, height);
+            let imageURL = result.imageBase64;
+            this.doc.addImage(imageURL, 'png', lmargin, rmargin, width, height);
             if (finish) {
               this.finishImpression();
             }

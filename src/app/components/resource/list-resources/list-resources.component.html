@@ -55,7 +55,7 @@
                         </td>
                         <td>{{resource.name}}</td>
                         <td>{{resource.type}}</td>
-                        <td>{{resource.file}}</td>
+                        <td>{{resource.file.split('?')[0]}}</td>
                     </tr>
                     <tr align="center" *ngIf="totalItems === 0 && !loading">
                         <td colspan="16">No se encontraron Recursos</td>

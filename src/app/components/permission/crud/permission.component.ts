@@ -497,14 +497,14 @@ export class PermissionComponent implements OnInit {
                     case 'file':
                         if (this.filesToUpload && this.filesToUpload[field.name] && this.filesToUpload[field.name].length > 0) {
                             this.loading = true;
-                            this._objService.deleteFile(this.typeFile[field.name], field.name.split('.')[field.name.split('.').length - 1], this.obj[field.name]);
+                            this._objService.deleteFile(this.obj[field.name]);
                             if (this.filesToUpload[field.name] && this.filesToUpload[field.name].length > 0) {
                                 this.obj[field.name] = this.oldFiles[field.name];
                                 if (field.multiple && (!this.obj || !this.obj[field.name] || this.obj[field.name].length === 0)) {
                                     this.obj[field.name] = new Array();
                                 }
                                 for (let file of this.filesToUpload[field.name]) {
-                                    await this._objService.uploadFile(this.typeFile[field.name], field.name.split('.')[field.name.split('.').length - 1], file)
+                                    await this._objService.uploadFile(null, file)
                                         .then(result => {
                                             this.loading = false;
                                             if (result['result']) {
@@ -558,7 +558,7 @@ export class PermissionComponent implements OnInit {
     }
 
     public deleteFile(typeFile: string, fieldName: string, filename: string) {
-        this._objService.deleteFile(typeFile, fieldName.split('.')[fieldName.split('.').length - 1], filename).subscribe(
+        this._objService.deleteFile(filename).subscribe(
             result => {
                 if (result.status === 200) {
                     eval('this.obj.' + fieldName + ' = this.obj.' + fieldName + '.filter(item => item !== filename)');

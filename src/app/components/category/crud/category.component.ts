@@ -20,6 +20,7 @@ import { CategoryService } from '../category.service';
 import { Application } from 'app/components/application/application.model';
 import { ApplicationService } from 'app/components/application/application.service';
 import Resulteable from 'app/util/Resulteable';
+import { ORIGINMEDIA } from 'app/types';
 
 
 @Component({
@@ -311,7 +312,7 @@ export class CategoryComponent implements OnInit {
     }
 
     public getFiles(fieldName) {
-        return eval('this.obj?.' + fieldName.split('.').join('?.'));
+        return eval('this.obj?.' + fieldName);
     }
 
     public onFileSelected(event, model: string) {
@@ -390,12 +391,12 @@ export class CategoryComponent implements OnInit {
                     case 'date':
                         values[field.name] = (eval("this.obj." + field.name) !== undefined) ? moment(eval("this.obj." + field.name)).format('YYYY-MM-DD') : null
                         break;
-                    case 'file':
-                        if (!this.oldFiles || !this.oldFiles[field.name]) {
-                            this.oldFiles = new Array();
-                            this.oldFiles[field.name] = eval("this.obj?." + field.name);
-                        }
-                        break;
+                    // case 'file':
+                    //     if (!this.oldFiles || !this.oldFiles[field.name]) {
+                    //         this.oldFiles = new Array();
+                    //         this.oldFiles[field.name] = eval("this.obj?." + field.name);
+                    //     }
+                    //     break;
                     default:
                         if (field.tag !== 'separator') values[field.name] = (eval("this.obj." + field.name) !== undefined) ? eval("this.obj." + field.name) : null
                         break;
@@ -450,24 +451,29 @@ export class CategoryComponent implements OnInit {
                         this.obj[field.name] = parseFloat(this.obj[field.name]);
                         break;
                     case 'file':
+                        console.log("swith file")
+                        console.log(this.operation)
+                        console.log(this.obj[field.name])
+
+                        if (this.operation === 'delete') {
+                            this.deleteFile(field.name ,this.obj[field.name]);
+                        }
+
                         if (this.filesToUpload && this.filesToUpload[field.name] && this.filesToUpload[field.name].length > 0) {
                             this.loading = true;
-                            this._objService.deleteFile(this.typeFile[field.name], "category", this.obj[field.name]);
+                            console.log(this.obj[field.name])
+                            this.deleteFile(field.name ,this.obj[field.name]);
                             if (this.filesToUpload[field.name] && this.filesToUpload[field.name].length > 0) {
-                                this.obj[field.name] = this.oldFiles[field.name];
+                                //this.obj[field.name] = this.oldFiles[field.name];
                                 if (field.multiple && (!this.obj || !this.obj[field.name] || this.obj[field.name].length === 0)) {
                                     this.obj[field.name] = new Array();
                                 }
                                 for (let file of this.filesToUpload[field.name]) {
-                                    await this._objService.uploadFile(this.typeFile[field.name], "category", file)
+                                    await this._objService.uploadFile(ORIGINMEDIA.CATEGORIES, file)
                                         .then(result => {
                                             this.loading = false;
-                                            if (result['result']) {
-                                                if (!field.multiple) {
-                                                    this.obj[field.name] = result['result'];
-                                                } else {
-                                                    this.obj[field.name].push(result['result']);
-                                                }
+                                            if (result) {
+                                                this.obj[field.name] = result;
                                             } else {
                                                 this.showToast(result['error'].message, 'info');
                                                 isValid = false;
@@ -511,28 +517,10 @@ export class CategoryComponent implements OnInit {
         }
     }
 
-    public deleteFile(typeFile: string, fieldName: string, filename: string) {
-        this._objService.deleteFile(typeFile, "category", filename).subscribe(
+    public deleteFile(fieldName: string, filename: string) {
+        this._objService.deleteFile(filename).subscribe(
             result => {
-                if (result.status === 200) {
-                    try {
-                        eval('this.obj.' + fieldName + ' = this.obj.' + fieldName + '.filter(item => item !== filename)');
-                    } catch (error) {
-                        eval('this.obj.' + fieldName + ' = null');
-                    }
-                    this.loading = true;
-                    this.subscription.add(
-                        this._objService.update(this.obj).subscribe(
-                            result => {
-                                this.showToast(result);
-                                this.setValuesForm();
-                            },
-                            error => this.showToast(error)
-                        )
-                    );
-                } else {
-                    this.showToast(result);
-                }
+                this.obj[fieldName] = "./../../../assets/img/default.jpg";
             },
             error => this.showToast(error)
         )

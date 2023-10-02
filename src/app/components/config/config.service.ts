@@ -7,6 +7,7 @@ import { map, catchError } from "rxjs/operators";
 import { Config } from '../../app.config';
 import { AuthService } from '../login/auth.service';
 import { ModelService } from '../model/model.service';
+import { environment } from "environments/environment";
 
 @Injectable()
 export class ConfigService extends ModelService {
@@ -68,8 +69,7 @@ export class ConfigService extends ModelService {
   }
 
   public getCompanyPicture(picture: string): Observable<any> {
-
-    const URL = `${Config.apiURL}get-image-base64-company`;
+    const URL = `${environment.apiPrint}/get-img`;
 
     const params = new HttpParams()
       .set('picture', picture);
