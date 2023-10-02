@@ -124,6 +124,13 @@ export class PrinterComponent implements OnInit {
     const pdf = new jsPDF();
     this.fontList = pdf.getFontList();
   
+    this.fontList = Object.keys(this.fontList).reduce((filteredFonts, fontName) => {
+      console.log(filteredFonts)
+      if (/^[A-Z]/.test(fontName)) { 
+        filteredFonts[fontName] = this.fontList[fontName];
+      }
+      return filteredFonts;
+    }, {});
     const removeFonts = ['ZapfDingbats', 'Symbol'];
  
     for (const removeFont of removeFonts) {
