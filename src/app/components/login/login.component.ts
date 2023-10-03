@@ -39,9 +39,6 @@ export class LoginComponent implements OnInit {
   public password: string;
   public checkLockInput: boolean = false;
 
-  public apiv1 = ''
-  public apiv2 = ''
-
   public formErrors = {
     'company': '',
     'user': '',
@@ -139,10 +136,6 @@ export class LoginComponent implements OnInit {
 
   async login() {
 
-    // if(this.apiv1 && this.apiv1) {
-    //   Config.setApiHost(this.apiv1); // TEST
-    //   Config.setApiV8Host(this.apiv1); // TEST
-    // }
     
     this.company = this.loginForm.value.company.trim()
     this.user = this.loginForm.value.user
