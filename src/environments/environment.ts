@@ -7,6 +7,6 @@ export const environment = {
   production: true,
   api: "https://api.poscloud.com.ar",
   apiv2: "https://apiv8.poscloud.com.ar",
-  apiPrint: "http://200.58.99.221:302",
-  apiStorage: "https://api-storage.us-3.evennode.com"
+  apiPrint: "https://api-print.poscloud.ar",
+  apiStorage: "https://api-storage.poscloud.ar"
 };
