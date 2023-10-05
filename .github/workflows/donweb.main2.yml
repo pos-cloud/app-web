@@ -1,0 +1,22 @@
+name: Deploy to DonWeb Main
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: prod
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Stop and remove existing container
+        run: |
+          docker stop system || true
+          docker rm -f system || true
+
+      - name: Build Docker image
+        run: docker build -t system -f Dockerfile.main .
+
+      - name: Run Docker container
+        run: docker run -v /home:/home --restart unless-stopped --net host --name system -d -it -p 304:80 system
