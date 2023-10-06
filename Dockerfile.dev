@@ -1,0 +1,42 @@
+# FROM node:18.10.0 as build-step
+# RUN mkdir -p /app
+# WORKDIR /app
+# COPY . /app
+# RUN npm install --legacy-peer-deps
+# RUN npm install -g @angular/cli
+# RUN npm run build:dev
+
+# FROM nginx:stable
+# EXPOSE 8080
+# COPY --from=build-step /app/dist /usr/share/nginx/html
+
+# FROM node:18.10.0 as build-step
+# RUN mkdir -p /app
+# WORKDIR /app
+# COPY . /app
+# RUN npm install --legacy-peer-deps
+# RUN npm install -g @angular/cli
+# RUN npm run build:dev
+
+# FROM nginx:stable
+# COPY --from=build-step /app/dist /usr/share/nginx/html
+
+# Dockerfile
+
+# Utiliza la imagen oficial de Nginx como base
+FROM nginx:latest
+
+# Establece el directorio de trabajo en el directorio de Nginx
+WORKDIR /usr/share/nginx/html
+
+# Copia los archivos del artefacto descargado
+COPY ./path/to/artifacts/dist/* .
+
+# Configura Nginx para servir la aplicación Angular
+COPY ./path/to/nginx.conf /etc/nginx/conf.d/default.conf
+
+# Exponer el puerto 80
+EXPOSE 80
+
+# Comando para iniciar Nginx en primer plano
+CMD ["nginx", "-g", "daemon off;"]

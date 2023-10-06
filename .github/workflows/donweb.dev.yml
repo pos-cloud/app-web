@@ -44,7 +44,7 @@
 #         run: docker run -v /tmp/dist:/usr/share/nginx/html --restart unless-stopped --net host --name system2 -d -it -p 304:80 system
 
 
-name: Build and Store Artifact
+name: Build and Deploy
 
 on:
   push:
@@ -61,7 +61,7 @@ jobs:
 
     - name: Build Angular
       run: |
-        npm install
+        npm install --legacy-peer-deps
         npm run build:prod
         mkdir -p artifacts
         mv dist artifacts/
@@ -70,4 +70,30 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: dist
-        path: artifacts/dist
+        path: artifacts/
+
+  deploy:
+    runs-on: prod
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Download Artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: dist
+        path: artifacts
+    - name: Stop and remove existing container
+      run: |
+          docker stop system-poscloud || true
+          docker rm -f system-poscloud || true
+
+    - name: Build Docker Image and Run Container
+      run: |
+        cd artifacts/dist
+        # Comandos para construir la imagen Docker y ejecutar el contenedor
+        docker build -t system-poscloud -f Dockerfile.main2 .
+        docker run -v /tmp/dist:/usr/share/nginx/html --restart unless-stopped --net host --name system-poscloud -d -it -p 304:80 system
