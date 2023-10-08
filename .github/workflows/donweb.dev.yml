@@ -12,11 +12,11 @@ jobs:
 
       - name: Stop and remove existing container
         run: |
-          docker stop system || true
-          docker rm -f system || true
+          docker stop system-poscloud || true
+          docker rm -f system-poscloud || true
 
       - name: Build Docker image
         run: docker build -t system-poscloud -f Dockerfile.dev .
 
       - name: Run Docker container
-        run: docker run -v /home:/home --restart unless-stopped --net host --name system-poscloud -d -it -p 304:80 system-poscloud
+        run: docker run -v /home:/home --restart unless-stopped --net host --name system-poscloud -d -it --publish 304:80 system-poscloud
