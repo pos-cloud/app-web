@@ -19,4 +19,4 @@ jobs:
         run: docker build -t system-poscloud -f Dockerfile.dev .
 
       - name: Run Docker container
-        run: docker run  --publish 304:80 --restart unless-stopped --net host --name system-poscloud -d -it system-poscloud
+        run: docker run --publish 304:304 --restart unless-stopped --net host --name system-poscloud -d system-poscloud
