@@ -2,21 +2,21 @@ name: Deploy to DonWeb Main
 
 on:
   push:
-    branches: [dev]
+    branches: [ main ]
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: prod
-
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Build and Run Docker Container
+      - name: Stop and remove existing container
         run: |
-          docker stop system-poscloud || true
-          docker rm -f system-poscloud || true
-          
-          docker build -t system-poscloud -f Dockerfile.dev .
-          docker run -v /home:/home --restart unless-stopped --net host --name system-poscloud -d -it -p 304:80 system-poscloud
+          docker stop system || true
+          docker rm -f system || true
+
+      - name: Build Docker image
+        run: docker build -t system-poscloud -f Dockerfile.dev .
+
+      - name: Run Docker container
+        run: docker run -v /home:/home --restart unless-stopped --net host --name system-poscloud -d -it -p 304:80 system-poscloud
