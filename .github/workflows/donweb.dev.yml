@@ -1,8 +1,8 @@
-name: Deploy to DonWeb Main
+name: Deploy to DonWeb Dev
 
 on:
   push:
-    branches: [ main ]
+    branches: [ dev ]
   workflow_dispatch:
 jobs:
   build:
