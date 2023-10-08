@@ -9,3 +9,4 @@ RUN npm run build:prod
 
 FROM nginx:stable
 COPY --from=build-step /app/dist /usr/share/nginx/html
+EXPOSE 304
