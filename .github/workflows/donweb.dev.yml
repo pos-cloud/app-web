@@ -13,17 +13,15 @@ jobs:
       - name: Build Docker image
         run: docker build -t build-system -f Dockerfile.dev .
       
-      - name: Obtener Último Tag
-        id: get_tag
+      - name: Crear Carpeta de Version con Fecha
         run: |
-          git fetch --tags
-          TAG=$(git describe --abbrev=0 --tags)
-          echo "::set-output name=tag::$TAG"
+          fecha=$(date "+%Y%m%d")
+          mkdir -p /home/system/version/$fecha
   
-      - name: Crear Carpeta de Version con Último Tag
+      - name: Copiar Archivos y Eliminar Excepto /version
         run: |
-          TAG=${{ steps.get_tag.outputs.tag }}
-          mkdir -p /home/system/version/$TAG
+          cp -r /home/system/* /home/system/version/$fecha/
+          find /home/system/ -maxdepth 1 ! -name version -exec rm -r {} \;
   
       - name: Copiar Archivos y Eliminar Excepto /version
         run: |
