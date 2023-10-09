@@ -10,13 +10,30 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Build Docker image
+        run: docker build -t build-system -f Dockerfile.dev .
+      
+      - name: Obtener Último Tag
+        id: get_tag
+        run: |
+          TAG=$(git describe --abbrev=0 --tags)
+          echo "::set-output name=tag::$TAG"
+  
+      - name: Crear Carpeta de Version con Último Tag
+        run: |
+          TAG=${{ steps.get_tag.outputs.tag }}
+          mkdir -p /home/system/version/$TAG
+  
+      - name: Copiar Archivos y Eliminar Excepto /version
+        run: |
+          cp -r /home/system/* /home/system/version/$TAG/
+          find /home/system/ -maxdepth 1 ! -name version -exec rm -r {} \;
+
+      - name: Run Docker container
+        run: docker run -v /ruta/en/tu/host:/home/system build-system
+
       - name: Stop and remove existing container
         run: |
           docker stop system-poscloud || true
           docker rm -f system-poscloud || true
-
-      - name: Build Docker image
-        run: docker build -t system-poscloud -f Dockerfile.dev .
-
-      - name: Run Docker container
-        run: docker run --publish 304:304 --restart unless-stopped --net host --name system-poscloud -d system-poscloud
+      

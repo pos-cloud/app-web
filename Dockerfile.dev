@@ -1,12 +1,16 @@
+# Utiliza una imagen de Node con la versión que necesitas
+FROM node:18.10.0
 
-FROM node:18.10.0 as build-step
-RUN mkdir -p /app
+# Crea un directorio de trabajo en la imagen
 WORKDIR /app
-COPY . /app
+
+# Copia los archivos del contexto de construcción al directorio de trabajo
+COPY . .
+
+# Instala las dependencias y realiza la construcción de Angular
 RUN npm install --legacy-peer-deps
 RUN npm install -g @angular/cli
 RUN npm run build:prod
 
-FROM nginx:stable
-COPY --from=build-step /app/dist /usr/share/nginx/html
-EXPOSE 304
+# Copia los archivos resultantes al host (en este caso, /home/system)
+CMD cp -r /app/dist /home/system
