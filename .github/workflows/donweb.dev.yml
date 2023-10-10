@@ -1,38 +1,43 @@
-name: Deploy to DonWeb Dev
+name: Build and Deploy
 
 on:
   push:
-    branches: [ dev ]
-  workflow_dispatch:
+    branches:
+      - dev
+
 jobs:
-  build:
-    runs-on: prod
+  build-and-deploy:
+    runs-on: [prod]
+
     steps:
-      - uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Build Docker image
-        run: docker build -t build-system -f Dockerfile.dev .
-      
-      - name: Crear Carpeta de Version con Fecha
-        run: |
-          fecha=$(date "+%Y%m%d")
-          mkdir -p /home/system/version/$fecha
-  
-      - name: Copiar Archivos y Eliminar Excepto /version
-        run: |
-          cp -r /home/system/* /home/system/version/$fecha/
-          find /home/system/ -maxdepth 1 ! -name version -exec rm -r {} \;
-  
-      - name: Copiar Archivos y Eliminar Excepto /version
-        run: |
-          cp -r /home/system/* /home/system/version/$TAG/
-          find /home/system/ -maxdepth 1 ! -name version -exec rm -r {} \;
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
 
-      - name: Run Docker container
-        run: docker run -v /ruta/en/tu/host:/home/system build-system
+    - name: Build Docker image
+      run: docker build -t build-system -f Dockerfile.dev .
 
-      - name: Stop and remove existing container
-        run: |
-          docker stop system-poscloud || true
-          docker rm -f system-poscloud || true
-      
+    - name: Backup current files
+      run: |
+        if [ -d "/home/system" ]; then
+          mv /home/system /home/system_backup
+          mkdir /home/system
+        fi
+
+    - name: Clean up backup
+      run: |
+        if [ -d "/home/system_backup" ]; then
+          rm -rf /home/system_backup
+        fi
+
+    - name: Run Docker container
+      run: docker run -v /home/system:/home/system build-system
+
+    - name: Stop and remove existing container
+      run: |
+        docker stop system-poscloud || true
+        docker rm -f system-poscloud || true
