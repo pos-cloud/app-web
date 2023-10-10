@@ -35,7 +35,7 @@ jobs:
         fi
 
     - name: Run Docker container
-      run: docker run -v /home/system:/home/system build-system
+      run: docker run -v /home/system:/app/dist build-system
 
     - name: Stop and remove existing container
       run: |

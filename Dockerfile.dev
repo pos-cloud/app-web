@@ -12,5 +12,11 @@ RUN npm install --legacy-peer-deps
 RUN npm install -g @angular/cli
 RUN npm run build:prod
 
-# Copia los archivos resultantes al host (en este caso, /home/system)
-CMD cp -r /app/dist /home/system
+# Crea un directorio para contener los archivos finales
+RUN mkdir /app/dist
+
+# Mueve los archivos resultantes al directorio creado
+RUN cp -r /app/dist/* /app/dist/
+
+# CMD para mover los archivos a /home/system cuando se inicia el contenedor
+CMD mv /app/dist/* /home/system/
