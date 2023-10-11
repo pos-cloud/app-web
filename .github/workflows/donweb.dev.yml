@@ -35,9 +35,8 @@ jobs:
         fi
 
     - name: Run Docker container
-      run: docker run -v /home/system:/app/build-system build-system
+      run: docker run -v /home/system:/home/system build-system
       
-
     - name: Stop and remove existing container
       run: |
         docker stop system-poscloud || true
