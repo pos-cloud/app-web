@@ -14,4 +14,3 @@ RUN npm run build:prod
 
 # Mueve los archivos resultantes al directorio /home/system
 CMD mv /app/dist/* /home/system/
-
