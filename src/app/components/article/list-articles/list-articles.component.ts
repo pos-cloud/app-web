@@ -75,6 +75,7 @@ export class ListArticlesComponent implements OnInit {
   public filters: any[];
   public config: Config;
   public items: any[] = new Array();
+  public article: Article
   public listTitle: string;
   public orderTerm: string[] = ["description"];
   public totalItems: number = 0;
@@ -413,7 +414,7 @@ export class ListArticlesComponent implements OnInit {
 
   public printArticle(article: Article) {
     this.loading = true;
-    this._printerService.printArticle(article._id, 1).subscribe(
+    this._printerService.printArticle(article._id, 1,).subscribe(
       (res: Blob) => {
         if (res) {     
           const blobUrl = URL.createObjectURL(res);
@@ -431,6 +432,25 @@ export class ListArticlesComponent implements OnInit {
     );
   }
 
+  public printLabels() {
+    this.loading = true;
+    this._printerService.printLabels().subscribe(
+      (res: Blob) => {
+        if (res) {     
+          const blobUrl = URL.createObjectURL(res);
+          printJS(blobUrl);
+          this.loading = false;
+        } else {
+          this.loading = false;
+          this.showMessage('Error al cargar el PDF', 'danger', false);
+        }
+      },
+      (error) => {
+        this.loading = false;
+        this.showMessage(error.message, 'danger', false);
+      }
+    );
+  }
 
   async openModal(op: string, article?: Article, type?: string) {
     let modalRef;
@@ -632,37 +652,7 @@ export class ListArticlesComponent implements OnInit {
         }
         break;
       case "print-labels":
-        let printer2 : Printer;
-        await this.getPrinters().then((printers) => {
-            if (printers && printers.length > 0) {
-              for (let printerAux of printers) {
-                if (printerAux.printIn === PrinterPrintIn.Label) {
-                  printer2 = printerAux;
-                }
-              }
-            }
-          });
-          if(printer2){
-            if(printer2.fields && printer2.fields.length > 0){
-              modalRef = this._modalService.open(
-                PrintTransactionTypeComponent
-              );
-              modalRef.componentInstance.articles = this.items;
-              modalRef.componentInstance.printerID = printer2._id;
-              if (this.priceListId) {
-                modalRef.componentInstance.priceListId = this.priceListId;
-              }
-            }else{
-              modalRef = this._modalService.open(PrintComponent);
-              modalRef.componentInstance.articles = this.items;
-            }
-          } else {
-            this.showMessage(
-                "Debe crear una impresora de tipo etiqueta con diseño",
-                "danger",
-                false
-              );
-          }
+        this.printLabels();
         break;
       default:
     }
@@ -721,6 +711,7 @@ export class ListArticlesComponent implements OnInit {
               this.showMessage(result.message, "info", true);
             resolve(null);
           } else {
+            this.article = result.article
             resolve(result.article);
           }
         },

@@ -265,6 +265,7 @@ export class PrintComponent implements OnInit {
 }
 
   async printPrinterArticles() {
+    console.log('estoy en print.component')
       //set start coordinates
       let x = 15
       let y = 10
