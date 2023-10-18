@@ -541,7 +541,6 @@ export class PrintTransactionTypeComponent implements OnInit {
   }
 
   async buildBody(): Promise<boolean> {
-    console.log('estoy aqui en body')
     return new Promise<boolean>(async (resolve, reject) => {
       let row = 0;
       if (this.movementOfArticle && this.movementOfArticle.length > 0) {

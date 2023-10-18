@@ -75,6 +75,7 @@ export class ListArticlesComponent implements OnInit {
   public filters: any[];
   public config: Config;
   public items: any[] = new Array();
+  public itemsId: any[] = new Array
   public article: Article
   public listTitle: string;
   public orderTerm: string[] = ["description"];
@@ -432,9 +433,9 @@ export class ListArticlesComponent implements OnInit {
     );
   }
 
-  public printLabels() {
+  public printLabels(itemsId: any[]) {
     this.loading = true;
-    this._printerService.printLabels().subscribe(
+    this._printerService.printLabels(itemsId).subscribe(
       (res: Blob) => {
         if (res) {     
           const blobUrl = URL.createObjectURL(res);
@@ -652,7 +653,10 @@ export class ListArticlesComponent implements OnInit {
         }
         break;
       case "print-labels":
-        this.printLabels();
+        const result = this.items.map(objeto => objeto._id);
+        this.itemsId = result
+        this.printLabels(this.itemsId);
+      
         break;
       default:
     }
