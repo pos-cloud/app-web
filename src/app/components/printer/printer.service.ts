@@ -202,7 +202,7 @@ export class PrinterService extends ModelService {
       );
   }
 
-  public printLabels(itemsId: any[]): Observable<any> {
+  public printLabels(articlesId: string[]): Observable<any> {
     const URL = `${environment.apiPrint}/get-articles`;
 
     const headers = new HttpHeaders()
@@ -210,7 +210,7 @@ export class PrinterService extends ModelService {
       .set('Authorization', this._authService.getToken());
 
     return this._http
-      .post(URL, itemsId, {
+      .post(URL, articlesId, {
         headers: headers,
         responseType: 'blob'
       })
