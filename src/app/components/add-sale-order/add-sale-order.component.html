@@ -264,6 +264,7 @@
                             <td align="left">
                                 <strong>{{quantity}}</strong>
                             </td>
+                        
                             <td align="left">
                                 <strong>Subtotal</strong>
                             </td>
@@ -330,8 +331,14 @@
                         </tr>
                         <tr>
                             <td align="left">
+                                <div *ngIf="m3 > 0">
+                                    <strong>M3</strong>
+                                </div>
                             </td>
                             <td align="left">
+                                <div *ngIf="m3 > 0">
+                                    <strong>{{m3}}</strong>
+                                </div>
                             </td>
                             <td align="left">
                                 <h6>

@@ -94,6 +94,7 @@ export class Article {
     public updateUser: User;
     public updateDate: string;
     public harticle: Article;
+    public m3: number;
     
     constructor() { }
 }

@@ -513,6 +513,7 @@ export class AddArticleComponent implements OnInit {
       meliAttrs: [this.article.meliAttrs, []],
       wooId: [this.article.wooId, []],
       purchasePrice: [this.article.purchasePrice, []],
+      m3: [this.article.m3,[]]
     });
 
     this.newDeposit = this._fb.group({
@@ -1548,6 +1549,7 @@ export class AddArticleComponent implements OnInit {
       allowStock: this.article.allowStock,
       wooId: this.article.wooId,
       purchasePrice: this.article.purchasePrice,
+      m3: this.article.m3
     };
 
     this.articleForm.patchValue(values);
@@ -1628,6 +1630,8 @@ export class AddArticleComponent implements OnInit {
   async saveArticle() {
     this.loading = true;
 
+    console.log(this.article.m3)
+
     if (await this.isValid()) {
 
       if(this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
@@ -1662,6 +1666,8 @@ export class AddArticleComponent implements OnInit {
 
   async updateArticle() {
     this.loading = true;
+
+    console.log(this.article.m3)
 
     if (await this.isValid()) {
 

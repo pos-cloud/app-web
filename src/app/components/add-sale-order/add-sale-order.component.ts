@@ -188,6 +188,7 @@ export class AddSaleOrderComponent {
     letter: '',
     number: 0,
   };
+  m3: number = 0;
 
   constructor(
     private _transactionService: TransactionService,
@@ -719,6 +720,7 @@ export class AddSaleOrderComponent {
           this.movementsOfArticles = new Array();
           this.lastMovementOfArticle = null;
           this.updatePrices();
+          this.updateQuantity();
         } else {
           this.areMovementsOfArticlesEmpty = false;
           this.movementsOfArticles = result.movementsOfArticles;
@@ -744,6 +746,7 @@ export class AddSaleOrderComponent {
       for (let movementOfArticle of this.movementsOfArticles) {
         if (!movementOfArticle.movementParent) {
           this.quantity += movementOfArticle.amount;
+          this.m3 += movementOfArticle.article.m3 ?? 0;
         }
       }
     }
