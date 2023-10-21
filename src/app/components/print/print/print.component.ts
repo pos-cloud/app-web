@@ -289,7 +289,7 @@ export class PrintComponent implements OnInit {
         this.doc.setFontSize(9);
         this.doc.setFont('', 'italic');
         this.doc.text(x+1, y+23, articleItem.description);
-        this.doc.text(x+1, y+26, articleItem.make.description);
+        this.doc.text(x+1, y+26, articleItem?.make?.description ?? '');
         this.doc.setFontSize(7);
         this.doc.text(x+1, y+29, articleItem.barcode);
         this.doc.setFontSize(9);
