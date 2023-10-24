@@ -2469,7 +2469,6 @@ export class PrintComponent implements OnInit {
       this._configService
         .getCompanyPicture(this.config[0].companyPicture)
         .subscribe((result) => {
-          console.log(result)
           if (!result.imageBase64) {
             this.getCompanyData();
             if (finish) {

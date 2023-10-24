@@ -202,6 +202,28 @@ export class PrinterService extends ModelService {
       );
   }
 
+  public printLabels(articlesId: string[]): Observable<any> {
+    const URL = `${environment.apiPrint}/get-articles`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http
+      .post(URL, articlesId, {
+        headers: headers,
+        responseType: 'blob'
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        }),
+      );
+  }
+
   public printTransaction(transactionId: string): Observable<any> {
     const URL = `${environment.apiPrint}/transaction`;
 
