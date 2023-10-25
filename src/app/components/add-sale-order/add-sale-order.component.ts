@@ -2748,6 +2748,26 @@ export class AddSaleOrderComponent {
             .then(() => this.backFinal())
             .catch(() => this.backFinal());
         }
+        // if (this.transaction.type.readLayout) {
+        //   modalRef = this._modalService.open(PrintTransactionTypeComponent);
+        //   modalRef.componentInstance.transactionId = this.transaction._id;
+        //   modalRef.result.then(() => {
+        //     this.backFinal();
+        //   });
+        // } else {
+        //   modalRef = this._modalService.open(PrintComponent);
+        //   modalRef.componentInstance.transactionId = this.transaction._id;
+        //   modalRef.componentInstance.company = this.transaction.company;
+        //   modalRef.componentInstance.printer = this.printerSelected;
+        //   modalRef.componentInstance.typePrint = 'invoice';
+        //   modalRef.result
+        //     .then(() => {
+        //       this.backFinal();
+        //     })
+        //     .catch((e) => {
+        //       this.backFinal();
+        //     });
+        // }
 
         break;
       case 'printKitchen':
