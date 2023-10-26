@@ -1274,56 +1274,8 @@ export class PointOfSaleComponent implements OnInit {
                     });
                 }
                 break;
-            case 'print':       
-            if (this.transaction.type.readLayout) {
-             this.printTransactionPdf(this.transaction)
-                , async (reason) => {
-                    if (this.transaction.state === TransactionState.Packing) {
-                        // PONEMOS LA TRANSACCION EN ESTADO EN ENTREGADO
-                        await this.getTransaction(this.transaction._id).then(
-                            async transaction => {
-                                if (transaction) {
-                                    transaction.state = TransactionState.Delivered;
-                                    await this.updateTransaction(transaction);
-                                    this.refresh();
-                                }
-                            }
-                        );
-                    }
-                };
-            } else {
-                await this.getPrinters().then(
-                    printers => {
-                        this.printers = printers;
-                    }
-                );
-            this.printTransactionPdf(this.transaction)
-                if (this.transaction.type.defectPrinter) {
-                    modalRef.componentInstance.printer = this.transaction.type.defectPrinter;
-                } else {
-                    if (this.printers && this.printers.length > 0) {
-                        for (let printer of this.printers) {
-                            if (printer.printIn === PrinterPrintIn.Counter) {
-                                modalRef.componentInstance.printer = printer;
-                            }
-                        }
-                    }
-                }
-               async (reason) => {
-                    if (this.transaction.state === TransactionState.Packing) {
-                        // PONEMOS LA TRANSACCION EN ESTADO EN ENTREGADO
-                        await this.getTransaction(this.transaction._id).then(
-                            async transaction => {
-                                if (transaction) {
-                                    transaction.state = TransactionState.Delivered;
-                                    await this.updateTransaction(transaction);
-                                    this.refresh();
-                                }
-                            }
-                        );
-                    }
-                };
-            }
+            case 'print':
+                this.printTransactionPdf(this.transaction)
                 break;
             case 'printers':
                 await this.getPrinters().then(
