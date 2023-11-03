@@ -91,6 +91,7 @@ import {UserService} from '../user/user.service';
 
 import {Config} from './../../app.config';
 import { EmailProps } from 'app/types';
+import * as printJS from 'print-js';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -2097,6 +2098,26 @@ export class AddSaleOrderComponent {
       );
   }
 
+  public printTransaction(transaction: Transaction) {
+    this.loading = true;
+    this._printerService.printTransaction(transaction._id).subscribe(
+      (res: Blob) => {
+        if (res) {     
+          const blobUrl = URL.createObjectURL(res);
+          printJS(blobUrl);
+          this.loading = false;
+        } else {
+          this.loading = false;
+          this.showMessage('Error al cargar el PDF', 'danger', false);
+        }
+      },
+      (error) => {
+        this.loading = false;
+        this.showMessage(error.message, 'danger', false);
+      }
+    );
+}
+
   async openModal(
     op: string,
     movementOfArticle?: MovementOfArticle,
@@ -2718,24 +2739,14 @@ export class AddSaleOrderComponent {
         break;
       case 'print':
         if (this.transaction.type.readLayout) {
-          modalRef = this._modalService.open(PrintTransactionTypeComponent);
-          modalRef.componentInstance.transactionId = this.transaction._id;
-          modalRef.result.then(() => {
-            this.backFinal();
-          });
+          Promise.resolve() 
+            .then(() => this.printTransaction(this.transaction))
+            .then(() => this.backFinal())
         } else {
-          modalRef = this._modalService.open(PrintComponent);
-          modalRef.componentInstance.transactionId = this.transaction._id;
-          modalRef.componentInstance.company = this.transaction.company;
-          modalRef.componentInstance.printer = this.printerSelected;
-          modalRef.componentInstance.typePrint = 'invoice';
-          modalRef.result
-            .then(() => {
-              this.backFinal();
-            })
-            .catch((e) => {
-              this.backFinal();
-            });
+          Promise.resolve()
+            .then(() => this.printTransaction(this.transaction))
+            .then(() => this.backFinal())
+            .catch(() => this.backFinal());
         }
 
         break;

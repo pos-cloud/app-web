@@ -61,6 +61,7 @@ import Resulteable from '../../util/Resulteable';
 import { padNumber } from '../../util/functions/pad/padNumber';
 import { removeParam } from '../../util/functions/removeParam';
 import { EmailProps } from 'app/types';
+import * as printJS from 'print-js';
 
 @Component({
     selector: 'app-point-of-sale',
@@ -1176,6 +1177,25 @@ export class PointOfSaleComponent implements OnInit {
             );
         });
     }
+    public printTransactionPdf(transaction: Transaction) {
+        this.loading = true;
+        this._printerService.printTransaction(transaction._id).subscribe(
+          (res: Blob) => {
+            if (res) {     
+              const blobUrl = URL.createObjectURL(res);
+              printJS(blobUrl);
+              this.loading = false;
+            } else {
+              this.loading = false;
+              this.showMessage('Error al cargar el PDF', 'danger', false);
+            }
+          },
+          (error) => {
+            this.loading = false;
+            this.showMessage(error.message, 'danger', false);
+          }
+        );
+    }
 
     async openModal(op: string, state: TransactionState = TransactionState.Closed) {
 
@@ -1254,62 +1274,56 @@ export class PointOfSaleComponent implements OnInit {
                     });
                 }
                 break;
-            case 'print':
-                if (this.transaction.type.readLayout) {
-                    modalRef = this._modalService.open(PrintTransactionTypeComponent);
-                    modalRef.componentInstance.transactionId = this.transaction._id;
-                    modalRef.result.then(async (result) => {
-                    }, async (reason) => {
-                        if (this.transaction.state === TransactionState.Packing) {
-                            // PONEMOS LA TRANSACCION EN ESTADO EN ENTREGADO
-                            await this.getTransaction(this.transaction._id).then(
-                                async transaction => {
-                                    if (transaction) {
-                                        transaction.state = TransactionState.Delivered;
-                                        await this.updateTransaction(transaction);
-                                        this.refresh();
-                                    }
+            case 'print':       
+            if (this.transaction.type.readLayout) {
+             this.printTransactionPdf(this.transaction)
+                , async (reason) => {
+                    if (this.transaction.state === TransactionState.Packing) {
+                        // PONEMOS LA TRANSACCION EN ESTADO EN ENTREGADO
+                        await this.getTransaction(this.transaction._id).then(
+                            async transaction => {
+                                if (transaction) {
+                                    transaction.state = TransactionState.Delivered;
+                                    await this.updateTransaction(transaction);
+                                    this.refresh();
                                 }
-                            );
-                        }
-                    });
+                            }
+                        );
+                    }
+                };
+            } else {
+                await this.getPrinters().then(
+                    printers => {
+                        this.printers = printers;
+                    }
+                );
+            this.printTransactionPdf(this.transaction)
+                if (this.transaction.type.defectPrinter) {
+                    modalRef.componentInstance.printer = this.transaction.type.defectPrinter;
                 } else {
-                    await this.getPrinters().then(
-                        printers => {
-                            this.printers = printers;
-                        }
-                    );
-                    modalRef = this._modalService.open(PrintComponent);
-                    modalRef.componentInstance.company = this.transaction.company;
-                    modalRef.componentInstance.transactionId = this.transaction._id;
-                    modalRef.componentInstance.typePrint = 'invoice';
-                    if (this.transaction.type.defectPrinter) {
-                        modalRef.componentInstance.printer = this.transaction.type.defectPrinter;
-                    } else {
-                        if (this.printers && this.printers.length > 0) {
-                            for (let printer of this.printers) {
-                                if (printer.printIn === PrinterPrintIn.Counter) {
-                                    modalRef.componentInstance.printer = printer;
-                                }
+                    if (this.printers && this.printers.length > 0) {
+                        for (let printer of this.printers) {
+                            if (printer.printIn === PrinterPrintIn.Counter) {
+                                modalRef.componentInstance.printer = printer;
                             }
                         }
                     }
-                    modalRef.result.then(async (result) => {
-                    }, async (reason) => {
-                        if (this.transaction.state === TransactionState.Packing) {
-                            // PONEMOS LA TRANSACCION EN ESTADO EN ENTREGADO
-                            await this.getTransaction(this.transaction._id).then(
-                                async transaction => {
-                                    if (transaction) {
-                                        transaction.state = TransactionState.Delivered;
-                                        await this.updateTransaction(transaction);
-                                        this.refresh();
-                                    }
-                                }
-                            );
-                        }
-                    });
                 }
+               async (reason) => {
+                    if (this.transaction.state === TransactionState.Packing) {
+                        // PONEMOS LA TRANSACCION EN ESTADO EN ENTREGADO
+                        await this.getTransaction(this.transaction._id).then(
+                            async transaction => {
+                                if (transaction) {
+                                    transaction.state = TransactionState.Delivered;
+                                    await this.updateTransaction(transaction);
+                                    this.refresh();
+                                }
+                            }
+                        );
+                    }
+                };
+            }
                 break;
             case 'printers':
                 await this.getPrinters().then(
