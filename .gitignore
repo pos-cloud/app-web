@@ -10,6 +10,9 @@ settings.json
 # dependencies
 /node_modules
 
+# services
+/services
+
 # IDEs and editors
 /.idea
 .project

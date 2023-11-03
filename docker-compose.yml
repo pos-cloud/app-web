@@ -1,0 +1,28 @@
+version: '1'
+
+services:
+  front-end:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "4200:4200"
+    volumes:
+      - .:/usr/src/app
+  api-v1:
+    container_name: api
+    restart: always
+    build:
+      context: .
+      dockerfile: services/api-v1/Dockerfile.dev
+      args:
+        - PORT = 300
+    ports:
+      - 300:300
+    # env_file:
+    #   - .env
+    volumes:
+      - ./:/usr/local/apps/myapp/dev
+      - ignore:/usr/local/apps/myapp/dev/node_modules/
+volumes:
+  ignore:
