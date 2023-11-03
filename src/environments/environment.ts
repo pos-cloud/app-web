@@ -4,9 +4,9 @@
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
 export const environment = {
-  production: true,
-  api: "https://api.poscloud.com.ar",
-  apiv2: "https://apiv8.poscloud.com.ar",
-  apiPrint: "http://localhost:300",
-  apiStorage: "https://api-storage.poscloud.ar"
+  production: false,
+  api: "http://localhost:300",
+  apiv2: "http://localhost:308",
+  apiPrint: "http://localhost:302",
+  apiStorage: "http://localhost:303"
 };
