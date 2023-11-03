@@ -1,4 +1,4 @@
-name: Deploy to DonWeb Main
+name: Deploy to DonWeb Main poscloud.ar
 
 on:
   push:
