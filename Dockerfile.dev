@@ -1,14 +1,31 @@
 
+# FROM node:18.10.0
+
+# WORKDIR /usr/src/app
+
+# COPY package*.json ./
+
+# RUN npm install --legacy-peer-deps
+
+# COPY . .
+
+# EXPOSE 4200
+
+# CMD ["npm", "run", "dev"]
+
+# Utiliza una imagen de Node con la versión que necesitas
 FROM node:18.10.0
 
-WORKDIR /usr/src/app
+# Crea un directorio de trabajo en la imagen
+WORKDIR /app
 
-COPY package*.json ./
-
-RUN npm install --legacy-peer-deps
-
+# Copia los archivos del contexto de construcción al directorio de trabajo
 COPY . .
 
-EXPOSE 4200
+# Instala las dependencias y realiza la construcción de Angular
+RUN npm install --legacy-peer-deps
+RUN npm install -g @angular/cli
+RUN npm run build:prod
 
-CMD ["npm", "run", "dev"]
+# Mueve los archivos resultantes al directorio /home/system
+CMD mv /app/dist/* /home/system/
