@@ -135,12 +135,10 @@
         </div>
       </li>
       <li class="nav-item" ngbDropdown
-        *ngIf="identity?.permission?.menu?.companies?.client || identity?.permission?.menu?.companies?.providers"
         (click)="makeVisibleReport(false)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-male"></i> Empresas</a>
         <div class="dropdown-menu" ngbDropdownMenu>
-          <div >
             <button *ngIf="identity?.permission?.menu?.companies?.client" class="dropdown-item" [routerLink]="['admin','clientes']" [routerLinkActive]="['active']">
               Clientes
             </button>
@@ -156,21 +154,17 @@
               </button>
             </div>
             <div *ngIf="config.modules.purchase" class="dropdown-divider"></div>
-          </div>
-          <div *ngIf="config.modules.purchase">
+        
             <button *ngIf="identity?.permission?.menu?.companies?.provider" class="dropdown-item" [routerLink]="['admin','proveedores']" [routerLinkActive]="['active']">
               Proveedores
             </button>
-            <div>
-              <button *ngIf="identity?.permission?.menu?.companies?.providerSummary" class="dropdown-item" (click)="openModal('current','Proveedor')">
-                Resúmenes de Cuentas
-              </button>
-              <button *ngIf="identity?.permission?.menu?.companies?.providerAccount" class="dropdown-item" [routerLink]="['admin','cuentas-corrientes']"
-                [queryParams]="{companyType:'Proveedor'}" [routerLinkActive]="['active']">
-                Cuentas Corrientes
-              </button>
-            </div>
-          </div>
+            <button *ngIf="identity?.permission?.menu?.companies?.providerSummary" class="dropdown-item" (click)="openModal('current','Proveedor')">
+              Resúmenes de Cuentas
+            </button>
+            <button *ngIf="identity?.permission?.menu?.companies?.providerAccount" class="dropdown-item" [routerLink]="['admin','cuentas-corrientes']"
+              [queryParams]="{companyType:'Proveedor'}" [routerLinkActive]="['active']">
+              Cuentas Corrientes
+            </button>
           <div class="dropdown-divider"></div>
           <button *ngIf="identity?.permission?.menu?.companies?.group" class="dropdown-item" [routerLink]="['company-groups']" [routerLinkActive]="['active']">
             {{ 'company-groups' | translate | capitalize }}
