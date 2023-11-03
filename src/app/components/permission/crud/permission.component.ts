@@ -180,7 +180,49 @@ export class PermissionComponent implements OnInit {
         class: 'form-group col-md-2'
     },
     {
+        name: 'menu.companies.clientSummary',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
+        name: 'menu.companies.clientAccount',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
         name: 'menu.companies.provider',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
+        name: 'menu.companies.providerSummary',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
+        name: 'menu.companies.providerAccount',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
+        name: 'menu.companies.group',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
+        name: 'menu.companies.field',
         tag: 'select',
         tagType: "boolean",
         values: ['false', 'true'],

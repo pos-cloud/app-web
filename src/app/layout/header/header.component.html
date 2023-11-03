@@ -140,42 +140,42 @@
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-male"></i> Empresas</a>
         <div class="dropdown-menu" ngbDropdownMenu>
-          <div *ngIf="identity?.permission?.menu?.companies?.client">
-            <button class="dropdown-item" [routerLink]="['admin','clientes']" [routerLinkActive]="['active']">
+          <div >
+            <button *ngIf="identity?.permission?.menu?.companies?.client" class="dropdown-item" [routerLink]="['admin','clientes']" [routerLinkActive]="['active']">
               Clientes
             </button>
             <div *ngIf="(config.modules.sale.resto ||
                           config.modules.sale.counter ||
                           config.modules.sale.delivery) || identity.name === 'soporte'">
-              <button class="dropdown-item" (click)="openModal('current','Cliente')">
+              <button *ngIf="identity?.permission?.menu?.companies?.clientSummary" class="dropdown-item" (click)="openModal('current','Cliente')">
                 Resúmenes de Cuentas
               </button>
-              <button class="dropdown-item" [routerLink]="['admin','cuentas-corrientes']"
+              <button *ngIf="identity?.permission?.menu?.companies?.clientAccount" class="dropdown-item" [routerLink]="['admin','cuentas-corrientes']"
                 [queryParams]="{companyType:'Cliente'}" [routerLinkActive]="['active']">
                 Cuentas Corrientes
               </button>
             </div>
             <div *ngIf="config.modules.purchase" class="dropdown-divider"></div>
           </div>
-          <div *ngIf="config.modules.purchase && identity?.permission?.menu?.companies?.provider">
-            <button class="dropdown-item" [routerLink]="['admin','proveedores']" [routerLinkActive]="['active']">
+          <div *ngIf="config.modules.purchase">
+            <button *ngIf="identity?.permission?.menu?.companies?.provider" class="dropdown-item" [routerLink]="['admin','proveedores']" [routerLinkActive]="['active']">
               Proveedores
             </button>
             <div>
-              <button class="dropdown-item" (click)="openModal('current','Proveedor')">
+              <button *ngIf="identity?.permission?.menu?.companies?.providerSummary" class="dropdown-item" (click)="openModal('current','Proveedor')">
                 Resúmenes de Cuentas
               </button>
-              <button class="dropdown-item" [routerLink]="['admin','cuentas-corrientes']"
+              <button *ngIf="identity?.permission?.menu?.companies?.providerAccount" class="dropdown-item" [routerLink]="['admin','cuentas-corrientes']"
                 [queryParams]="{companyType:'Proveedor'}" [routerLinkActive]="['active']">
                 Cuentas Corrientes
               </button>
             </div>
           </div>
           <div class="dropdown-divider"></div>
-          <button class="dropdown-item" [routerLink]="['company-groups']" [routerLinkActive]="['active']">
+          <button *ngIf="identity?.permission?.menu?.companies?.group" class="dropdown-item" [routerLink]="['company-groups']" [routerLinkActive]="['active']">
             {{ 'company-groups' | translate | capitalize }}
           </button>
-          <button class="dropdown-item" [routerLink]="['admin','campos-de-empresas']" [routerLinkActive]="['active']">
+          <button *ngIf="identity?.permission?.menu?.companies?.field" class="dropdown-item" [routerLink]="['admin','campos-de-empresas']" [routerLinkActive]="['active']">
             Campos de empresas
           </button>
         </div>
