@@ -86,3 +86,31 @@ addEventListener('fetch', event => {
 async function handleRequest(request) {
   return Response.redirect('https://pos-cloud.github.io/system/dev', 301)
 }
+
+
+#### Doc para servidores
+Puerto para este servidor que estas destinados a las API
+
+300 api-v1-poscloud
+301 api-fit
+302 api-pdf-poscloud
+303 api-storage-poscloud
+304 front-poscloud
+308 api-v2-poscloud
+
+Agregar un nuevo sitio 
+- primero verificamos que el puerto no esta ocupado 
+	netstat -tuln | grep 301
+- segundo creamos el archivo dentro de 
+	cd /etc/apache2/sites-available/
+- agregamos el sitio 
+	sudo a2ensite prod.poscloud
+- verificamos que este bien configurado apache 
+	sudo apache2ctl configtest
+- recargamos la config
+	sudo systemctl reload apache2
+
+Caso de tener que volver atrás 
+- sudo a2dissite nombre_del_sitio
+- sudo systemctl reload apache2
+
