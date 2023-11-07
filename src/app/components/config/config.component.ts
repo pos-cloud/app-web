@@ -523,6 +523,7 @@ export class ConfigComponent implements OnInit {
 
   async addConfigSystem() {
     this.config = this.configFormSystem.value;
+    console.log(this.configFormSystem)
     this.loadingSystem = true;
     await this.updateConfig().then(
       config => {
