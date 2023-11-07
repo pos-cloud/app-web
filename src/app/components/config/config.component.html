@@ -639,6 +639,42 @@
                 </div>
                 <div class="row">
                     <div class="form-group col-md-12">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">Tienda Nube Token:</span>
+                            <input type="text" class="form-control" formControlName="tiendaNube.token"
+                                name="tiendaNube.token" id="tiendaNube.token" aria-describedby="basic-addon1">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">Usuario de Tienda Nube</span>
+                            <input type="text" class="form-control" formControlName="tiendaNube.userID"
+                                name="tiendaNube.userID" id="tiendaNube.userID" aria-describedby="basic-addon1">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">Tienda Nube appId:</span>
+                            <input type="text" class="form-control" formControlName="tiendaNube.appID"
+                                name="tiendaNube.appID" id="tiendaNube.appID" aria-describedby="basic-addon1">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">Tienda Nube Clave del Cliente</span>
+                            <input type="text" class="form-control" formControlName="tiendaNube.clientSecret"
+                                name="tiendaNube.clientSecret" id="tiendaNube.clientSecret" aria-describedby="basic-addon1">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-12">
                         <button type="submit" class="btn btn-primary"
                             [disabled]="!configFormSystem.valid || loadingSystem">
                             <i class="fa"

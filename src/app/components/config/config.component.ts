@@ -301,6 +301,14 @@ export class ConfigComponent implements OnInit {
         authToken: ''
       }
     }
+    if (!this.config.tiendaNube) {
+      this.config.tiendaNube = {
+        token: '',
+        userID: '',
+        appID: '',
+        clientSecret: ''
+      }
+    }
     this.configFormSystem = this._fb.group({
       '_id': [this.config._id, [Validators.required]],
       'article.code.validators.maxLength': [this.config.article.code.validators.maxLength, []],
@@ -327,7 +335,11 @@ export class ConfigComponent implements OnInit {
       'voucher.minutesOfExpiration': [this.config.voucher.minutesOfExpiration, []],
       'twilio.senderNumber': [this.config.twilio.senderNumber, []],
       'twilio.accountSid': [this.config.twilio.accountSid, []],
-      'twilio.authToken': [this.config.twilio.authToken, []]
+      'twilio.authToken': [this.config.twilio.authToken, []],
+      'tiendaNube.token': [this.config.tiendaNube.token, []],
+      'tiendaNube.userID': [this.config.tiendaNube.userID, []],
+      'tiendaNube.appID': [this.config.tiendaNube.appID, []],
+      'tiendaNube.clientSecret': [this.config.tiendaNube.clientSecret, []]
     });
 
     this.configFormSystem.valueChanges.subscribe(data => this.onValueChangedSystem(data));
