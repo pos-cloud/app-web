@@ -84,6 +84,10 @@
           </div>
         </div>
       </li>
+      <li class="nav-item" ngbDropdown *ngIf="identity?.permission?.menu?.production" (click)="makeVisibleReport(false)">
+        <a class="nav-link btn" [routerLink]="['pos','mostrador','production']" [routerLinkActive]="['active-primary']">
+          <i class="fa fa-dropbox"></i> Producción</a>
+      </li>
       <li class="nav-item" *ngIf="identity?.permission?.menu?.stock && config.modules.stock"
         (click)="makeVisibleReport(false)">
         <a class="nav-link btn" [routerLink]="['pos','mostrador','stock']" [routerLinkActive]="['active-primary']">
@@ -187,21 +191,17 @@
           </button>
         </div>
       </li>
-      <li class="nav-item" ngbDropdown
+      <li class="nav-item" ngbDropdown *ngIf="identity?.permission?.menu?.content?.resource || identity?.permission?.menu?.content?.gallery"
         (click)="makeVisibleReport(false)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-image"></i> Contenido</a>
         <div class="dropdown-menu" ngbDropdownMenu>
-          <div>
-            <button class="dropdown-item" [routerLink]="['admin','resources']" [routerLinkActive]="['active']">
-              Recursos
-            </button>
-          </div>
-          <div>
-            <button class="dropdown-item" [routerLink]="['admin','galleries']" [routerLinkActive]="['active']">
-              Galerías
-            </button>
-          </div>
+          <button *ngIf="identity?.permission?.menu?.content?.resource" class="dropdown-item" [routerLink]="['admin','resources']" [routerLinkActive]="['active']">
+            Recursos
+          </button>
+          <button *ngIf="identity?.permission?.menu?.content?.gallery" class="dropdown-item" [routerLink]="['admin','galleries']" [routerLinkActive]="['active']">
+            Galerías
+          </button>
         </div>
       </li>
       <li class="nav-item" ngbDropdown *ngIf="identity?.permission?.menu?.report" (click)="makeVisibleReport(true)">

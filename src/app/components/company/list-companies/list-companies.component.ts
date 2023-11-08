@@ -48,7 +48,7 @@ export class ListCompaniesComponent implements OnInit {
     public userCountry: string;
     private subscription: Subscription = new Subscription();
     public focusEvent = new EventEmitter<boolean>();
-    public employee: string;
+    public employeeId: string;
     public title: string = "Empresas"
     public currentPage: number = 0;
     public columns = attributes;
@@ -86,6 +86,7 @@ export class ListCompaniesComponent implements OnInit {
         this._authService.getIdentity.pipe(first()).subscribe(
             identity => {
                 this.identity = identity;
+                this.employeeId = this.identity.employee._id;
             }
         );
 
@@ -166,7 +167,7 @@ export class ListCompaniesComponent implements OnInit {
     private processParams(): void {
         this._route.queryParams.subscribe(params => {
             if (params['employee']) {
-                this.employee = params['employee'];
+                this.employeeId = params['employee'];
 
                 let pathLocation: string[] = this._router.url.split('/');
 
@@ -208,8 +209,8 @@ export class ListCompaniesComponent implements OnInit {
         }
 
         match += `,"companyType": "${this.type}"`;
-        if (this.employee || this.identity.permission.filterCompany) {
-            match += `,"employee._id": { "$oid" : "${this.employee}"}`
+        if (this.employeeId || this.identity.permission.filterCompany) {
+            match += `,"employee._id": { "$oid" : "${this.employeeId}"}`
         }
         if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
