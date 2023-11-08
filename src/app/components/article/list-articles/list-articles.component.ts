@@ -652,8 +652,39 @@ export class ListArticlesComponent implements OnInit {
         }
         break;
       case "print-labels":
-        const articlesId: string[] = this.items.map(objeto => objeto._id);
-        this.printLabels(articlesId); 
+        // const articlesId: string[] = this.items.map(objeto => objeto._id);
+        // this.printLabels(articlesId); 
+        let printer2 : Printer;
+        await this.getPrinters().then((printers) => {
+            if (printers && printers.length > 0) {
+              for (let printerAux of printers) {
+                if (printerAux.printIn === PrinterPrintIn.Label) {
+                  printer2 = printerAux;
+                }
+              }
+            }
+          });
+          if(printer2){
+            if(printer2.fields && printer2.fields.length > 0){
+              modalRef = this._modalService.open(
+                PrintTransactionTypeComponent
+              );
+              modalRef.componentInstance.articles = this.items;
+              modalRef.componentInstance.printerID = printer2._id;
+              if (this.priceListId) {
+                modalRef.componentInstance.priceListId = this.priceListId;
+              }
+            }else{
+              modalRef = this._modalService.open(PrintComponent);
+              modalRef.componentInstance.articles = this.items;
+            }
+          } else {
+            this.showMessage(
+                "Debe crear una impresora de tipo etiqueta con diseño",
+                "danger",
+                false
+              );
+          }
         break;
       default:
     }
