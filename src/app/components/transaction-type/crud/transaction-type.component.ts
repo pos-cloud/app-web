@@ -328,6 +328,7 @@ export class TransactionTypeComponent implements OnInit {
         TransactionMovement.Purchase,
         TransactionMovement.Sale,
         TransactionMovement.Stock,
+        TransactionMovement.Production
       ],
       validators: [Validators.required],
       class: 'form-group col-md-3',

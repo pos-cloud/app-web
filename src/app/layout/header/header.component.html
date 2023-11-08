@@ -71,20 +71,22 @@
           </div>
         </div>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="identity?.permission?.menu?.production &&
-                      (config.modules.production && config.modules.production.kitchen)"
+      <li class="nav-item" ngbDropdown *ngIf="identity?.permission?.menu?.production && identity?.permission?.menu?.production &&
+                      (config.modules.production && (config.modules.production.kitchen || config.modules.production.pos))"
         (click)="makeVisibleReport(false)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-paste"></i> Producción</a>
         <div class="dropdown-menu" ngbDropdownMenu>
-          <div>
-            <button class="dropdown-item" [routerLink]="['pos','cocina']" [routerLinkActive]="['active']">
+       
+            <button *ngIf="config.modules.production.kitchen" class="dropdown-item" [routerLink]="['pos','cocina']" [routerLinkActive]="['active']">
               Cocina
             </button>
-          </div>
+            <button *ngIf="config.modules.production.pos" class="dropdown-item" [routerLink]="['pos','mostrador','production']" [routerLinkActive]="['active']">
+              POS
+            </button>
         </div>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="identity?.permission?.menu?.production" (click)="makeVisibleReport(false)">
+      <li class="nav-item" ngbDropdown  (click)="makeVisibleReport(false)">
         <a class="nav-link btn" [routerLink]="['pos','mostrador','production']" [routerLinkActive]="['active-primary']">
           <i class="fa fa-dropbox"></i> Producción</a>
       </li>
@@ -700,6 +702,17 @@
             Más Información
           </a>
         </li>
+      </ul>
+    </div>
+    <div class="col-md-3" style="width: 300px" *ngIf="!config.modules.production">
+      <ul>
+        <li class="dropdown-header">Producción</li>
+        <li>
+          <a (click)="openReport('admin/production')">
+            Listado de transacciones
+          </a>
+        </li>
+      
       </ul>
     </div>
   </div>
