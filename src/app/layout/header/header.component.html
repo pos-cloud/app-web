@@ -82,13 +82,9 @@
               Cocina
             </button>
             <button *ngIf="config.modules.production.pos" class="dropdown-item" [routerLink]="['pos','mostrador','production']" [routerLinkActive]="['active']">
-              POS
+              Planta
             </button>
         </div>
-      </li>
-      <li class="nav-item" ngbDropdown  (click)="makeVisibleReport(false)">
-        <a class="nav-link btn" [routerLink]="['pos','mostrador','production']" [routerLinkActive]="['active-primary']">
-          <i class="fa fa-dropbox"></i> Producción</a>
       </li>
       <li class="nav-item" *ngIf="identity?.permission?.menu?.stock && config.modules.stock"
         (click)="makeVisibleReport(false)">
