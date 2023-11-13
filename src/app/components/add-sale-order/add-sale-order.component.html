@@ -32,7 +32,7 @@
                     <b> Lista de Precio:</b>
                     <span *ngIf="transaction.company.priceList.name">{{transaction.company.priceList.name}}</span>
                 </div>
-                <div class="item-header" *ngIf="transactionMovement && transactionMovement !=='Stock'"
+                <div class="item-header" *ngIf="transactionMovement && transactionMovement !=='Stock' || transactionMovement !== 'Producción'"
                     (click)="openModal('current-account')">
                     <b *ngIf="transactionMovement === 'Venta'">Cliente: </b>
                     <b *ngIf="transactionMovement === 'Compra'">Proveedor: </b>
@@ -78,7 +78,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="item-header" *ngIf="transaction?.type?.optionalAFIP">
+                <div class="item-header" *ngIf="transaction?.type?.optionalAFIP?.id">
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-light" (click)="openModal('change-optional-afip')">
                             Opcional AFIP : {{ transaction?.optionalAFIP?.value }}
@@ -215,7 +215,7 @@
                                         <strong>{{movementOfArticle?.notes}}</strong>
                                     </div>
                                 </td>
-                                <td align="right">
+                                <td align="right" *ngIf="transaction?.type?.showPrices">
                                     <div>
                                         <span
                                             *ngIf="transaction?.type?.showPriceType?.toString()==='Precio Final'">{{movementOfArticle.salePrice
@@ -274,7 +274,7 @@
                             </td>
                         </tr>
 
-                        <tr class="totals" *ngIf="transaction.discountAmount > 0 && transactionMovement !== 'Stock'">
+                        <tr class="totals" *ngIf="transaction.discountAmount > 0 && transactionMovement !== 'Stock' && transactionMovement !== 'Producción'">
                             <td align="left">
                             </td>
                             <td align="left">
@@ -288,7 +288,7 @@
                             </td>
                         </tr>
 
-                        <tr *ngIf="transactionMovement !== 'Stock' && transaction.type.requestTaxes"
+                        <tr *ngIf="(transactionMovement !== 'Stock' || transactionMovement !== 'Producción') && transaction.type.requestTaxes"
                             [ngClass]="{'disabled': loading, 'enabled': !loading }" class="pointer totals">
                             <td align="left">
                             </td>
@@ -302,7 +302,7 @@
                             </td>
                         </tr>
 
-                        <tr *ngIf="transactionMovement !== 'Stock' && transaction.type.requestTaxes"
+                        <tr *ngIf="(transactionMovement !== 'Stock' || transactionMovement !== 'Producción' )&& transaction.type.requestTaxes"
                             (click)="!loading ? openModal('change-taxes') : $event.stopPropagation()"
                             [ngClass]="{'disabled': loading, 'enabled': !loading }" class="pointer totals">
                             <td align="left">
@@ -316,7 +316,7 @@
                                 <strong>{{totalTaxesAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
                             </td>
                         </tr>
-                        <tr *ngIf="transaction.exempt > 0 && transactionMovement !== 'Stock' && transaction.type.requestTaxes"
+                        <tr *ngIf="transaction.exempt > 0 && transactionMovement !== 'Stock' && transactionMovement !== 'Producción' && transaction.type.requestTaxes"
                             [ngClass]="{'disabled': loading, 'enabled': !loading }" class="pointer totals">
                             <td align="left">
                             </td>
@@ -354,17 +354,17 @@
                     </tbody>
                 </table>
             </div>
-            <div class="row" *ngIf="transactionMovement && transactionMovement !== 'Stock'">
+            <div class="row" *ngIf="transactionMovement && transactionMovement !== 'Stock' && transactionMovement !== 'Producción'">
                 <div *ngIf="transaction.type && !transaction.type.fastPayment"
                     class="col-md-12 btn-action btn-large center-content"
                     (click)="!loading ? openModal('charge') : $event.stopPropagation()"
                     [ngClass]="{'disabled': loading, 'enabled': !loading }">
                     <span
-                        *ngIf="transactionMovement && transactionMovement ==='Compra' && transaction.type.requestPaymentMethods">Pagar</span>
+                        *ngIf="transactionMovement && transactionMovement === 'Compra' && transaction.type.requestPaymentMethods">Pagar</span>
                     <span
-                        *ngIf="transactionMovement && transactionMovement ==='Venta' && transaction.type.requestPaymentMethods">Cobrar</span>
+                        *ngIf="transactionMovement && transactionMovement === 'Venta' && transaction.type.requestPaymentMethods">Cobrar</span>
                     <span
-                        *ngIf="transactionMovement && transactionMovement ==='Venta' && !transaction.type.requestPaymentMethods">Finalizar</span>
+                        *ngIf="transactionMovement && transactionMovement === 'Venta' && !transaction.type.requestPaymentMethods">Finalizar</span>
                 </div>
                 <div *ngIf="transaction.type && transaction.type.fastPayment"
                     class="col-md-6 col-sm-6 col-6 btn-action btn-large center-content"
@@ -380,7 +380,7 @@
                     <span *ngIf="transactionMovement && transactionMovement ==='Venta'">Cobrar</span>
                 </div>
             </div>
-            <div class="row" *ngIf="transactionMovement && transactionMovement !== 'Stock'">
+            <div class="row" *ngIf="transactionMovement && transactionMovement !== 'Stock' && transactionMovement !== 'Producción'">
                 <div class="col-md-4 col-sm-4 col-4 btn-action btn-large center-content"
                     (click)="!loading ? openModal('add_client') : $event.stopPropagation()"
                     [ngClass]="{'disabled': loading, 'enabled': !loading }">
@@ -398,11 +398,11 @@
                     Anular
                 </div>
             </div>
-            <div class="row" *ngIf="transactionMovement && transactionMovement === 'Stock'">
+            <div class="row" *ngIf="transactionMovement && (transactionMovement === 'Stock' || transactionMovement === 'Producción')">
                 <div class="col-md-12 btn-action btn-large center-content"
                     (click)="!loading ? finish() : $event.stopPropagation()"
                     [ngClass]="{'disabled': loading, 'enabled': !loading }">
-                    <span>Procesar Stock</span>
+                    <span>Procesar</span>
                 </div>
             </div>
         </div>

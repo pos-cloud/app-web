@@ -9,6 +9,7 @@ import {AuthService} from '../login/auth.service';
 import {ModelService} from '../model/model.service';
 
 import {MovementOfArticle} from './movement-of-article';
+import { environment } from 'environments/environment';
 
 @Injectable()
 export class MovementOfArticleService extends ModelService {
@@ -271,6 +272,29 @@ export class MovementOfArticleService extends ModelService {
         catchError((err) => {
           return of(err);
         }),
+      );
+  }
+
+  public updateMovementOfArticles(transactionId: string): Observable<any> {
+    const URL = `${environment.apiv2}/movements-of-articles/update-by-transaction/${transactionId}`;
+
+    const headers = new HttpHeaders()
+      .set("Content-Type", "application/json")
+      .set("Authorization", this._authService.getToken());
+
+      console.log(headers)
+
+    return this._http
+      .put(URL,{}, {
+        headers: headers,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
       );
   }
 }

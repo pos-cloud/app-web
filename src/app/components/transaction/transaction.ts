@@ -100,6 +100,7 @@ export enum TransactionState {
   Sent = <any>'Enviado',
   Preparing = <any>'Preparando',
   Pending = <any>'Pendiente',
+  Produccion= <any>'En Producción'
 }
 
 export let attributes = [

@@ -210,6 +210,7 @@ export class StructureComponent implements OnInit {
 
         if (!this.structure.optional) {
             this.structure.increasePrice = null;
+            this.structure.optional = false
         }
 
 

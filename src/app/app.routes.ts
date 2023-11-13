@@ -284,6 +284,12 @@ export const _routes: Routes = [
     data: { module: 'config.modules.money' }
   },
   {
+    path: 'admin/production',
+    component: ListTransactionsComponent,
+    canActivate: [AuthGuard, LicenseGuard],
+    //data: { module: 'config.modules.production' }
+  },
+  {
     path: 'admin/resumenes-de-cuentas',
     component: ListSummaryOfAccountsComponent,
     canActivate: [AuthGuard, LicenseGuard]
@@ -633,6 +639,12 @@ export const _routes: Routes = [
     component: PointOfSaleComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.stock' }
+  },
+  {
+    path: 'pos/mostrador/production',
+    component: PointOfSaleComponent,
+    canActivate: [AuthGuard, LicenseGuard],
+    data: { module: 'config.modules.production' }
   },
   {
     path: 'pos/mostrador/editar-transaccion',

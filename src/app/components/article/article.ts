@@ -516,7 +516,7 @@ export let attributes = [
     {
         name: 'type',
         visible: false,
-        disabled: true,
+        disabled: false,
         filter: false,
         datatype: 'string',
         project: null,

@@ -147,6 +147,8 @@ export class ListTransactionsComponent implements OnInit {
       this.transactionMovement = TransactionMovement.Stock;
     } else if (this.listType === 'Fondos') {
       this.transactionMovement = TransactionMovement.Money;
+    } else if (this.listType === 'Production') {
+      this.transactionMovement = TransactionMovement.Production;
     }
 
     this._authService.getIdentity.subscribe(async (identity) => {
@@ -272,6 +274,8 @@ export class ListTransactionsComponent implements OnInit {
           this.transactionMovement = TransactionMovement.Stock;
         } else if (this.listType === 'Fondos') {
           this.transactionMovement = TransactionMovement.Money;
+        } else if (this.listType === 'Production') {
+          this.transactionMovement = TransactionMovement.Production
         }
       }
     });

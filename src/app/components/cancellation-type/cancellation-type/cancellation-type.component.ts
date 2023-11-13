@@ -203,7 +203,7 @@ export class CancellationTypeComponent implements OnInit {
         _id: 1
       },
       match: {
-        transactionMovement: this.originSelected.transactionMovement,
+        //transactionMovement: this.originSelected.transactionMovement,
         //_id: { "$ne": this.originSelected._id },
         operationType: { "$ne": "D" }
       }

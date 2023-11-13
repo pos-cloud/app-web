@@ -328,6 +328,7 @@ export class TransactionTypeComponent implements OnInit {
         TransactionMovement.Purchase,
         TransactionMovement.Sale,
         TransactionMovement.Stock,
+        TransactionMovement.Production
       ],
       validators: [Validators.required],
       class: 'form-group col-md-3',
@@ -607,6 +608,7 @@ export class TransactionTypeComponent implements OnInit {
         TransactionState.Pending,
         TransactionState.Preparing,
         TransactionState.Sent,
+        TransactionState.Produccion
       ],
       class: 'form-group col-md-2',
     },
