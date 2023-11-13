@@ -40,6 +40,7 @@ export class MovementOfArticle {
   notes: string;
   printIn: ArticlePrintIn;
   printed: number = 0;
+  read: number = 0;
   status: MovementOfArticleStatus = MovementOfArticleStatus.Ready;
   article: Article;
   transaction: Transaction = null;
@@ -48,6 +49,7 @@ export class MovementOfArticle {
   modifyStock: boolean;
   stockMovement: StockMovement;
   movementParent: MovementOfArticle;
+  movementOrigin: MovementOfArticle;
   isOptional: boolean = false;
   isGeneratedByPayment: boolean = false;
   account: Account;
