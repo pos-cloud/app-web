@@ -545,6 +545,7 @@ export enum TransactionMovement {
   Purchase = <any>'Compra',
   Stock = <any>'Stock',
   Money = <any>'Fondos',
+  Production = <any>'Producción'
 }
 
 export enum EntryAmount {
