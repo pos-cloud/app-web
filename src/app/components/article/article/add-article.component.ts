@@ -1,7 +1,7 @@
 // Angular
-import {DecimalPipe} from '@angular/common';
-import {SlicePipe} from '@angular/common';
-import {Component, OnInit, EventEmitter, Input, ViewEncapsulation} from '@angular/core';
+import { DecimalPipe } from '@angular/common';
+import { SlicePipe } from '@angular/common';
+import { Component, OnInit, EventEmitter, Input, ViewEncapsulation } from '@angular/core';
 import {
   UntypedFormGroup,
   UntypedFormBuilder,
@@ -10,58 +10,58 @@ import {
   NgForm,
   UntypedFormControl,
 } from '@angular/forms';
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
 
 // Terceros
-import {NgbAlertConfig, NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as $ from 'jquery';
 
 // Models
-import {ToastrService} from 'ngx-toastr';
-import {Subscription, Observable, Subject} from 'rxjs';
-import {debounceTime, distinctUntilChanged, tap, switchMap} from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
+import { Subscription, Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 
-import {Config} from '../../../app.config';
-import {RoundNumberPipe} from '../../../main/pipes/round-number.pipe';
-import {ArticleFieldType, ArticleField} from '../../article-field/article-field';
-import {ArticleFields} from '../../article-field/article-fields';
-import {ArticleStock} from '../../article-stock/article-stock';
-import {ArticleStockService} from '../../article-stock/article-stock.service';
-import {Category} from '../../category/category';
-import {CategoryService} from '../../category/category.service';
-import {Company, CompanyType} from '../../company/company';
-import {Deposit} from '../../deposit/deposit';
-import {DepositService} from '../../deposit/deposit.service';
-import {Location} from '../../location/location';
-import {LocationService} from '../../location/location.service';
-import {Make} from '../../make/make';
-import {MakeService} from '../../make/make.service';
-import {Taxes} from '../../tax/taxes';
-import {Variant} from '../../variant/variant';
-import {VariantService} from '../../variant/variant.service';
-import {Article, ArticlePrintIn, IMeliAttrs, Type} from '../article';
-import {ArticleService} from '../article.service';
+import { Config } from '../../../app.config';
+import { RoundNumberPipe } from '../../../main/pipes/round-number.pipe';
+import { ArticleFieldType, ArticleField } from '../../article-field/article-field';
+import { ArticleFields } from '../../article-field/article-fields';
+import { ArticleStock } from '../../article-stock/article-stock';
+import { ArticleStockService } from '../../article-stock/article-stock.service';
+import { Category } from '../../category/category';
+import { CategoryService } from '../../category/category.service';
+import { Company, CompanyType } from '../../company/company';
+import { Deposit } from '../../deposit/deposit';
+import { DepositService } from '../../deposit/deposit.service';
+import { Location } from '../../location/location';
+import { LocationService } from '../../location/location.service';
+import { Make } from '../../make/make';
+import { MakeService } from '../../make/make.service';
+import { Taxes } from '../../tax/taxes';
+import { Variant } from '../../variant/variant';
+import { VariantService } from '../../variant/variant.service';
+import { Article, ArticlePrintIn, IMeliAttrs, Type } from '../article';
+import { ArticleService } from '../article.service';
 
-import {Account} from './../../../components/account/account';
-import {AccountService} from './../../../components/account/account.service';
-import {Application} from './../../../components/application/application.model';
-import {ApplicationService} from './../../../components/application/application.service';
-import {ArticleFieldService} from './../../../components/article-field/article-field.service';
-import {Classification} from './../../../components/classification/classification';
-import {ClassificationService} from './../../../components/classification/classification.service';
-import {CompanyService} from './../../../components/company/company.service';
-import {ConfigService} from './../../../components/config/config.service';
-import {Currency} from './../../../components/currency/currency';
+import { Account } from './../../../components/account/account';
+import { AccountService } from './../../../components/account/account.service';
+import { Application } from './../../../components/application/application.model';
+import { ApplicationService } from './../../../components/application/application.service';
+import { ArticleFieldService } from './../../../components/article-field/article-field.service';
+import { Classification } from './../../../components/classification/classification';
+import { ClassificationService } from './../../../components/classification/classification.service';
+import { CompanyService } from './../../../components/company/company.service';
+import { ConfigService } from './../../../components/config/config.service';
+import { Currency } from './../../../components/currency/currency';
 
 // Services
 
-import {CurrencyService} from './../../../components/currency/currency.service';
+import { CurrencyService } from './../../../components/currency/currency.service';
 
 // Pipes
-import {TaxClassification} from './../../../components/tax/tax';
-import {UnitOfMeasurement} from './../../../components/unit-of-measurement/unit-of-measurement.model';
-import {UnitOfMeasurementService} from './../../../components/unit-of-measurement/unit-of-measurement.service';
-import {TranslateMePipe} from './../../../main/pipes/translate-me';
+import { TaxClassification } from './../../../components/tax/tax';
+import { UnitOfMeasurement } from './../../../components/unit-of-measurement/unit-of-measurement.model';
+import { UnitOfMeasurementService } from './../../../components/unit-of-measurement/unit-of-measurement.service';
+import { TranslateMePipe } from './../../../main/pipes/translate-me';
 import Resulteable from './../../../util/Resulteable';
 import { ORIGINMEDIA } from 'app/types';
 import { FileService } from 'app/services/file.service';
@@ -200,23 +200,23 @@ export class AddArticleComponent implements OnInit {
   };
 
   validationMessages = {
-    code: {required: 'Este campo es requerido.'},
-    make: {validateAutocomplete: 'Debe ingresar un valor válido'},
-    description: {required: 'Este campo es requerido.'},
-    posDescription: {maxlength: 'No puede exceder los 20 carácteres.'},
-    basePrice: {required: 'Este campo es requerido.'},
-    costPrice: {required: 'Este campo es requerido.'},
-    markupPercentage: {required: 'Este campo es requerido.'},
-    markupPrice: {required: 'Este campo es requerido.'},
-    salePrice: {required: 'Este campo es requerido.'},
+    code: { required: 'Este campo es requerido.' },
+    make: { validateAutocomplete: 'Debe ingresar un valor válido' },
+    description: { required: 'Este campo es requerido.' },
+    posDescription: { maxlength: 'No puede exceder los 20 carácteres.' },
+    basePrice: { required: 'Este campo es requerido.' },
+    costPrice: { required: 'Este campo es requerido.' },
+    markupPercentage: { required: 'Este campo es requerido.' },
+    markupPrice: { required: 'Este campo es requerido.' },
+    salePrice: { required: 'Este campo es requerido.' },
     category: {
       required: 'Este campo es requerido.',
       validateAutocomplete: 'Debe ingresar un valor válido',
     },
-    deposit: {required: 'Este campo es requerido'},
+    deposit: { required: 'Este campo es requerido' },
     location: {},
-    unitOfMeasurement: {validateAutocomplete: 'Debe ingresar un valor válido'},
-    currency: {maxlength: 'No puede exceder los 14 dígitos.'},
+    unitOfMeasurement: { validateAutocomplete: 'Debe ingresar un valor válido' },
+    currency: { maxlength: 'No puede exceder los 14 dígitos.' },
     note: {},
     tag: {},
   };
@@ -266,7 +266,7 @@ export class AddArticleComponent implements OnInit {
       tap(() => null),
     );
 
-  formatterMakes = (x: {description: string}) => x.description;
+  formatterMakes = (x: { description: string }) => x.description;
 
   searchUnitsOfMeasurement = (text$: Observable<string>) =>
     text$.pipe(
@@ -274,7 +274,7 @@ export class AddArticleComponent implements OnInit {
       distinctUntilChanged(),
       tap(() => null),
       switchMap(async (term) => {
-        let match: {} = term && term !== '' ? {name: {$regex: term, $options: 'i'}} : {};
+        let match: {} = term && term !== '' ? { name: { $regex: term, $options: 'i' } } : {};
 
         return await this.getAllUnitsOfMeasurement(match).then((result) => {
           return result;
@@ -295,10 +295,10 @@ export class AddArticleComponent implements OnInit {
         let match: {} =
           term && term !== ''
             ? {
-                description: {$regex: term, $options: 'i'},
-                mode: 'Analitico',
-                operationType: {$ne: 'D'},
-              }
+              description: { $regex: term, $options: 'i' },
+              mode: 'Analitico',
+              operationType: { $ne: 'D' },
+            }
             : {};
 
         return await this.getAllAccounts(match).then((result) => {
@@ -408,8 +408,8 @@ export class AddArticleComponent implements OnInit {
     // AGRUPAMOS EL RESULTADO
     let group = {
       _id: null,
-      count: {$sum: 1},
-      classifications: {$push: '$$ROOT'},
+      count: { $sum: 1 },
+      classifications: { $push: '$$ROOT' },
     };
 
     this._classificationService
@@ -513,7 +513,7 @@ export class AddArticleComponent implements OnInit {
       meliAttrs: [this.article.meliAttrs, []],
       wooId: [this.article.wooId, []],
       purchasePrice: [this.article.purchasePrice, []],
-      m3: [this.article.m3,[]]
+      m3: [this.article.m3, []]
     });
 
     this.newDeposit = this._fb.group({
@@ -776,7 +776,7 @@ export class AddArticleComponent implements OnInit {
             this.loadURL();
           }
 
-          if(this.article.picture.includes('google')){
+          if (this.article.picture.includes('google')) {
             this.imageURL = this.article.picture
           } else {
             this.imageURL = './../../../assets/img/default.jpg'
@@ -836,7 +836,7 @@ export class AddArticleComponent implements OnInit {
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '');
 
-      this.articleForm.patchValue({url: url});
+      this.articleForm.patchValue({ url: url });
     }
   }
 
@@ -980,10 +980,10 @@ export class AddArticleComponent implements OnInit {
     let result =
       c.value && Object.keys(c.value)[0] === '0'
         ? {
-            validateAutocomplete: {
-              valid: false,
-            },
-          }
+          validateAutocomplete: {
+            valid: false,
+          },
+        }
         : null;
 
     return result;
@@ -1177,7 +1177,7 @@ export class AddArticleComponent implements OnInit {
         if (!(taxedAmount === 0 && this.articleForm.value.salePrice !== 0)) {
           this.articleForm.value.markupPrice = this.roundNumber.transform(
             (this.articleForm.value.costPrice * this.articleForm.value.markupPercentage) /
-              100,
+            100,
           );
           this.articleForm.value.salePrice =
             this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
@@ -1222,7 +1222,7 @@ export class AddArticleComponent implements OnInit {
         if (!(taxedAmount === 0 && this.articleForm.value.salePrice !== 0)) {
           this.articleForm.value.markupPrice = this.roundNumber.transform(
             (this.articleForm.value.costPrice * this.articleForm.value.markupPercentage) /
-              100,
+            100,
           );
           this.articleForm.value.salePrice =
             this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
@@ -1266,7 +1266,7 @@ export class AddArticleComponent implements OnInit {
         if (!(taxedAmount === 0 && this.articleForm.value.salePrice !== 0)) {
           this.articleForm.value.markupPrice = this.roundNumber.transform(
             (this.articleForm.value.costPrice * this.articleForm.value.markupPercentage) /
-              100,
+            100,
           );
           this.articleForm.value.salePrice =
             this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
@@ -1281,7 +1281,7 @@ export class AddArticleComponent implements OnInit {
         ) {
           this.articleForm.value.markupPrice = this.roundNumber.transform(
             (this.articleForm.value.costPrice * this.articleForm.value.markupPercentage) /
-              100,
+            100,
           );
           this.articleForm.value.salePrice =
             this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
@@ -1615,7 +1615,7 @@ export class AddArticleComponent implements OnInit {
           this.updateArticle();
         }
       } else {
-        this.showToast({message: 'Revisa los errores en el formulario.'});
+        this.showToast({ message: 'Revisa los errores en el formulario.' });
         this.onValueChanged();
       }
     }
@@ -1623,7 +1623,7 @@ export class AddArticleComponent implements OnInit {
 
   eventAddMeliAttrs(params: any) {
     this.article.meliId = params.article.meliId;
-    this.articleForm.patchValue({meliId: this.article.meliId});
+    this.articleForm.patchValue({ meliId: this.article.meliId });
     this.meliAttrs = params.meliAttrs;
   }
 
@@ -1634,7 +1634,7 @@ export class AddArticleComponent implements OnInit {
 
     if (await this.isValid()) {
 
-      if(this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
+      if (this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
 
       this._articleService.saveArticle(this.article, this.variants).subscribe(
         (result) => {
@@ -1645,16 +1645,35 @@ export class AddArticleComponent implements OnInit {
               result.error && result.error.message
                 ? result.error.message
                 : result.message
-                ? result.message
-                : '',
+                  ? result.message
+                  : '',
             );
           } else {
             this.hasChanged = true;
             this.article = result.article;
-          
-              this.showToast(null, 'success', 'El producto se ha añadido con éxito.');
-              this.activeModal.close({article: this.article});
-            
+
+            if (this.article.ecommerceEnabled) {
+              this._articleService.saveArticleTiendaNube(this.article._id).subscribe(
+                (result) => {
+                  if (!result) {
+                    this.showToast(
+                      null,
+                      'info',
+                      result.error && result.error.messagefaul
+                        ? result.error.message
+                        : result.message
+                          ? result.message
+                          : '',
+                    );
+                  } else {
+                    this.showToast(null, 'success', 'Operación realizada con éxito, Producto creado en Tienda Nube');
+                    this.activeModal.close();
+                  }
+                }
+              )
+            }
+            this.showToast(null, 'success', 'El producto se ha añadido con éxito.');
+            this.activeModal.close({ article: this.article });
           }
         },
         (error) => this.showToast(error),
@@ -1667,11 +1686,9 @@ export class AddArticleComponent implements OnInit {
   async updateArticle() {
     this.loading = true;
 
-    console.log(this.article.m3)
-
     if (await this.isValid()) {
 
-      if(this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
+      if (this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
 
       this._articleService.updateArticle(this.article, this.variants).subscribe(
         (result) => {
@@ -1682,20 +1699,42 @@ export class AddArticleComponent implements OnInit {
               result.error && result.error.message
                 ? result.error.message
                 : result.message
-                ? result.message
-                : '',
+                  ? result.message
+                  : '',
             );
           } else {
             this.hasChanged = true;
             this.article = result.article;
-            this.articleForm.patchValue({meliId: this.article.meliId});
-            this.articleForm.patchValue({wooId: this.article.wooId});
+            this.articleForm.patchValue({ meliId: this.article.meliId });
+            this.articleForm.patchValue({ wooId: this.article.wooId });
             this._articleService.setItems(null);
+
+            if (this.article.ecommerceEnabled && this.article.picture) {
+              this._articleService.saveArticleTiendaNube(this.article._id).subscribe(
+                (saveResult) => {
+                  if (!saveResult) {
+                    this.showToast(
+                      null,
+                      'info',
+                      saveResult.error && saveResult.error.message
+                        ? saveResult.error.message
+                        : saveResult.message
+                          ? saveResult.message
+                          : '',
+                    );
+                  } else {
+                    this.showToast(null, 'success', 'Operación realizada con éxito, Producto creado en Tienda Nube');
+                    this.activeModal.close();
+                  }
+                },
+                (saveError) => this.showToast(saveError)
+              )
+            }
             this.showToast(null, 'success', 'Operación realizada con éxito');
             this.activeModal.close();
           }
         },
-        (error) => this.showToast(error),
+        (updateError) => this.showToast(updateError),
       );
     }
   }
@@ -1717,18 +1756,18 @@ export class AddArticleComponent implements OnInit {
 
   async uploadFile(pictureDelete: string): Promise<string> {
     return new Promise<string>(async (resolve, reject) => {
-      if(pictureDelete && pictureDelete.includes('https://storage.googleapis')) {
+      if (pictureDelete && pictureDelete.includes('https://storage.googleapis')) {
         await this.deleteFile(pictureDelete);
       }
 
       this._fileService
-          .uploadImage(ORIGINMEDIA.ARTICLES, this.filesToUpload)
-          .then(
-            (result: string) => {
-              console.log(result);
-              this.article.picture = result;
-              this.imageURL = result;
-              resolve(result);
+        .uploadImage(ORIGINMEDIA.ARTICLES, this.filesToUpload)
+        .then(
+          (result: string) => {
+            console.log(result);
+            this.article.picture = result;
+            this.imageURL = result;
+            resolve(result);
           },
           (error) => this.showToast(error),
         );
@@ -1846,13 +1885,13 @@ export class AddArticleComponent implements OnInit {
 
   addPicture(): void {
     this._articleService
-    .makeFileRequest(ORIGINMEDIA.ARTICLES, this.filesToArray)
-    .then(
-      (result: string) => {
-        this.addPictureArray(result);
-    },
-    (error) => this.showToast(error),
-  );
+      .makeFileRequest(ORIGINMEDIA.ARTICLES, this.filesToArray)
+      .then(
+        (result: string) => {
+          this.addPictureArray(result);
+        },
+        (error) => this.showToast(error),
+      );
   }
 
   async addPictureArray(picture: string) {
@@ -1875,7 +1914,7 @@ export class AddArticleComponent implements OnInit {
         this._unitOfMeasurementService
           .getAll({
             match,
-            sort: {name: 1},
+            sort: { name: 1 },
             limit: 10,
           })
           .subscribe(
@@ -1894,7 +1933,7 @@ export class AddArticleComponent implements OnInit {
         this._applicationService
           .getAll({
             match,
-            sort: {name: 1},
+            sort: { name: 1 },
           })
           .subscribe(
             (result) => {
@@ -1912,7 +1951,7 @@ export class AddArticleComponent implements OnInit {
         this._accountService
           .getAll({
             match,
-            sort: {description: 1},
+            sort: { description: 1 },
           })
           .subscribe(
             (result) => {
@@ -1980,14 +2019,14 @@ export class AddArticleComponent implements OnInit {
 
   async deletePicture(index: number, picture: string) {
 
-    if(index !== null) {
+    if (index !== null) {
       let control = <UntypedFormArray>this.articleForm.controls.pictures;
       control.removeAt(index);
     } else {
       this.article.picture = './../../../assets/img/default.jpg';
       this.imageURL = "./../../../assets/img/default.jpg"
     }
-    
+
     await this.deleteFile(picture)
   }
 }
