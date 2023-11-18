@@ -163,7 +163,7 @@ export class MovementOfCancellationComponent implements OnInit {
                     } else {
                         transaction = await this.getTransaction(result.movementsOfCancellations[index].transactionOrigin)
                     }
-                    if (transaction && (transaction.state !== TransactionState.Open || transaction.state !== TransactionState.Pending)) {
+                    if (transaction && (transaction.state !== TransactionState.Open && transaction.state !== TransactionState.Pending)) {
                         transaction.balance = this.roundNumber.transform(result.movementsOfCancellations[index].balance);
                         this.transactions.push(transaction);
                     } else {
