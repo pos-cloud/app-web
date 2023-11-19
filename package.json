@@ -19,7 +19,6 @@
     "api-v2": "cd services/api-v2 && npm run dev",
     "print": "cd services/print && npm run dev",
     "storage": "cd services/storage && npm start"
-
   },
   "private": true,
   "dependencies": {
