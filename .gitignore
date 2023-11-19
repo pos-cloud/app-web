@@ -10,8 +10,14 @@ settings.json
 # dependencies
 /node_modules
 
-# services
-/services
+## services
+# apiv1
+/services/api-v1
+# apiv2
+/services/api-v2
+# tienda nube
+/services/tienda-nube/node_modules
+/services/tienda-nube/dist
 
 # IDEs and editors
 /.idea

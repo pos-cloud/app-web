@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - dev
+    paths-ignore:
+      - 'services/**'
+
 
 jobs:
   build-and-deploy:

@@ -13,7 +13,8 @@
     "build:prodp": "ng build --configuration production --output-path=dist/prod --base-href=/system/prod/",
     "build:dev": "ng build --configuration dev",
     "test:headless": "ng test --watch=false --browsers=ChromeHeadless",
-    "dev": "ng serve --host 0.0.0.0 --poll 500"
+    "dev": "ng serve --host 0.0.0.0 --poll 500",
+    "tienda-nube": "echo -en '\\033]0;Tienda Nube\\007' && cd services/tienda-nube && npm start"
   },
   "private": true,
   "dependencies": {

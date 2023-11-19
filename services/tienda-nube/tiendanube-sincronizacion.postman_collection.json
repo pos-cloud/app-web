@@ -1,0 +1,142 @@
+{
+	"info": {
+		"_postman_id": "1e46c410-3eb1-49f5-9f52-0e0df594c609",
+		"name": "tiendanube-sincronizacion",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26679067",
+		"_collection_link": "https://galactic-crater-842893.postman.co/workspace/team-projects~7413a6b8-fda4-4a63-bde2-e1aa36558acf/collection/26679067-1e46c410-3eb1-49f5-9f52-0e0df594c609?action=share&source=collection_link&creator=26679067"
+	},
+	"item": [
+		{
+			"name": "categories",
+			"item": [
+				{
+					"name": "create-category",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "6acfe76187564b71485902825e9fdaae35c5af33",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"categoryId\": \"5ee249357591127576e1fba1\" \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:305/categories",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "305",
+							"path": [
+								"categories"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "products",
+			"item": [
+				{
+					"name": "create products",
+					"request": {
+						"auth": {
+							"type": "basic"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer 6acfe76187564b71485902825e9fdaae35c5af33",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJkYXRhYmFzZSI6ImRpc3RyaWJ1aWRvcmFnaWxldHRhIn0.K3PDxmXChC8-53wGp3ndP-Ptz67agP9zpm5m1zIL6iE",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"productId\":\"5d667f4232c5b00c931b5afe\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:305/products",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "305",
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJkYXRhYmFzZSI6ImRpc3RyaWJ1aWRvcmFnaWxldHRhIn0.K3PDxmXChC8-53wGp3ndP-Ptz67agP9zpm5m1zIL6iE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:305/products/:productId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "305",
+							"path": [
+								"products",
+								":productId"
+							],
+							"variable": [
+								{
+									"key": "productId",
+									"value": "5d667f4232c5b00c931b5afe"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

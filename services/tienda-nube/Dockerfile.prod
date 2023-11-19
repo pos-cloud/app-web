@@ -1,0 +1,21 @@
+FROM node:18.7.0
+
+# Crear directorio de la aplicación
+RUN mkdir -p /app
+WORKDIR /app
+
+# Copiar archivos de configuración
+COPY tsconfig.json .
+COPY package.json .
+
+# Instalar TypeScript globalmente y las dependencias de npm
+RUN npm install -g typescript
+RUN npm install
+
+# Copiar y compilar la aplicación
+COPY . /app
+RUN npm run build
+
+# Establecer el directorio de trabajo y el comando de inicio
+WORKDIR /app
+CMD ["node", "dist/server.js"]
