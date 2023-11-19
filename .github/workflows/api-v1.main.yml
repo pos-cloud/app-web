@@ -1,4 +1,5 @@
 name: donweb-Prod
+
 on:
   push:
     branches: [ main ]
@@ -9,8 +10,13 @@ on:
 jobs:
   build:
     runs-on: prod
+
     steps:
       - uses: actions/checkout@v3
-      - run: docker rm -f api-poscloud
-      - run: docker build -t api-poscloud -f services/api-v1/Dockerfile.prod .
-      - run: docker run -v /home:/home --restart unless-stopped --net host --name api-poscloud -d -it -p 300:300 api-poscloud
+
+      # Verificar si el contenedor existe antes de intentar eliminarlo
+      - name: Verificar contenedor existente
+        run: docker ps -q --filter "name=api-poscloud" | xargs -I {} docker rm -f {}
+
+      - name: Construir y ejecutar contenedor Docker
+        run: docker build -t api-poscloud -f services/api-v1/Dockerfile.prod . && docker run -v /home:/home --restart unless-stopped --net host --name api-poscloud -d -it -p 300:300 api-poscloud
