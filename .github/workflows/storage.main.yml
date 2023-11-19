@@ -1,0 +1,31 @@
+name: Deploy Prod to DonWeb
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'services/storage/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: prod
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Stop and remove existing container
+        run: docker rm -f api-storage-poscloud || true
+
+      - name: Build Docker image
+        run: docker build -t api-storage-poscloud -f services/storage/Dockerfile.dev .
+
+      - name: Run Docker container
+        run: |
+          docker run \
+            -v /home:/home \
+            --restart unless-stopped \
+            --net host \
+            --name api-storage-poscloud \
+            -d -it -p 303:303 api-storage-poscloud

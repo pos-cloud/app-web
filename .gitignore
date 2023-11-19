@@ -22,7 +22,9 @@ settings.json
 # print
 /services/print/node_modules
 /services/print/dist
-
+# print
+/services/storage/node_modules
+/services/storage/dist
 # IDEs and editors
 /.idea
 .project

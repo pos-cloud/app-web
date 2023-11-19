@@ -1,0 +1,122 @@
+{
+	"info": {
+		"_postman_id": "44a4fcac-7ffd-43ec-83ad-a29fd68f0c4b",
+		"name": "franco",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26679067",
+		"_collection_link": "https://galactic-crater-842893.postman.co/workspace/team-projects~7413a6b8-fda4-4a63-bde2-e1aa36558acf/collection/26679067-44a4fcac-7ffd-43ec-83ad-a29fd68f0c4b?action=share&source=collection_link&creator=26679067"
+	},
+	"item": [
+		{
+			"name": "upload google storage",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "sdfasd",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/JAMZ/Pictures/fondos/Developer/69061801_1983324578436489_6865726632515076096_o.jpg"
+						},
+						{
+							"key": "origin",
+							"value": "resources",
+							"type": "text"
+						},
+						{
+							"key": "bucket",
+							"value": "test_bucket_jamz",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/upload",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"upload"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "migrations",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "fdsfad",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/migration",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"migration"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete object",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "dfasdfasd",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"origin\":\"pizzaya/resources/1695298643953-Captura-de-pantalla-2023-07-03-164514.png\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/upload",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"upload"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
