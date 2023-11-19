@@ -10,7 +10,7 @@ on:
 
 jobs:
   deploy-donweb:
-    runs-on: [prod]
+    runs-on: [ prod ]
 
     steps:
     - name: Checkout repository
@@ -45,31 +45,31 @@ jobs:
         docker stop system-poscloud || true
         docker rm -f system-poscloud || true
 
-  deploy-github-pages:
-    runs-on: ubuntu-latest
+  # deploy-github-pages:
+  #   runs-on: ubuntu-latest
     
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
       
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: 14
+  #   - name: Set up Node.js
+  #     uses: actions/setup-node@v2
+  #     with:
+  #       node-version: 14
       
-    - name: Install dependencies
-      run: npm i
+  #   - name: Install dependencies
+  #     run: npm i
       
-    - name: Build Main
-      run: npm run build:prodp
+  #   - name: Build Main
+  #     run: npm run build:prodp
       
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist
-        publish_branch: gh-pages
-        keep_files: true
+  #   - name: Deploy to GitHub Pages
+  #     uses: peaceiris/actions-gh-pages@v3
+  #     with:
+  #       github_token: ${{ secrets.GITHUB_TOKEN }}
+  #       publish_dir: ./dist
+  #       publish_branch: gh-pages
+  #       keep_files: true
 
   # deploy-donweb-2:
   #   runs-on: prod-ar
