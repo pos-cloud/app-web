@@ -5,15 +5,15 @@ RUN mkdir -p /app
 WORKDIR /app
 
 # Copiar archivos de configuración
-COPY tsconfig.json .
-COPY package.json .
+COPY services/print/tsconfig.json .
+COPY services/print/package.json .
 
 # Instalar TypeScript globalmente y las dependencias de npm
 RUN npm install -g typescript
 RUN npm install
 
 # Copiar y compilar la aplicación
-COPY . /app
+COPY services/print/ .
 RUN npm run build
 
 # Establecer el directorio de trabajo y el comando de inicio
