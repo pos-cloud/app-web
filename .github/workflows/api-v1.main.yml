@@ -12,5 +12,5 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: docker rm -f api-poscloud
-      - run: docker build -t api-poscloud -f services/Dockerfile.prod .
+      - run: docker build -t api-poscloud -f services/api-v1/Dockerfile.prod .
       - run: docker run -v /home:/home --restart unless-stopped --net host --name api-poscloud -d -it -p 300:300 api-poscloud
