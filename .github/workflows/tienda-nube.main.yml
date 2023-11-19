@@ -19,7 +19,7 @@ jobs:
         run: docker rm -f api-tienda-nube || true
 
       - name: Build Docker image
-        run: docker build -t api-tienda-nube -f Dockerfile.tienda-nube .
+        run: docker build -t api-tienda-nube -f services/tienda-nube/Dockerfile.main .
 
       - name: Run Docker container
         run: |
