@@ -7,6 +7,7 @@ WORKDIR /app
 # Copiar archivos de configuración
 COPY services/tienda-nube/tsconfig.json .
 COPY services/tienda-nube/package.json .
+COPY services/tienda-nube/tsconfig.build.json .
 
 # Instalar TypeScript globalmente y las dependencias de npm
 RUN npm install -g typescript
