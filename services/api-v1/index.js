@@ -15,6 +15,7 @@ const port = config.PORT || 300
 const server = app.listen(port, function () {
   console.log(`${moment().format('YYYY-MM-DDTHH:mm:ssZ')} Server ${config.NODE_ENV} Funcionando en puerto ${port}`)
   initSentry()
+//test
 // MercadopagoController.verifyPayments();
 // MercadopagoController.startPaymentVerificationTask();
 })
