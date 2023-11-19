@@ -1,14 +1,14 @@
-name: Deploy Prod to DonWeb
+name: Deploy Tienda Nube Main
 
 on:
   push:
-    branches: [dev]
+    branches: [ main ]
     paths:
       - 'services/tienda-nube/**'
   workflow_dispatch:
 
 jobs:
-  build:
+  deploy-donweb:
     runs-on: prod
 
     steps:

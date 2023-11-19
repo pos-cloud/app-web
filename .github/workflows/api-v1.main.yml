@@ -1,0 +1,16 @@
+name: donweb-Prod
+on:
+  push:
+    branches: [ main ]
+    paths:
+        - 'services/api-v1/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: prod
+    steps:
+      - uses: actions/checkout@v3
+      - run: docker rm -f api-poscloud
+      - run: docker build -t api-poscloud -f services/Dockerfile.prod .
+      - run: docker run -v /home:/home --restart unless-stopped --net host --name api-poscloud -d -it -p 300:300 api-poscloud

@@ -12,7 +12,7 @@ settings.json
 
 ## services
 # apiv1
-/services/api-v1
+/services/api-v1/node_modules
 # apiv2
 /services/api-v2
 # tienda nube

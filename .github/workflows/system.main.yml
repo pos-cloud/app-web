@@ -1,4 +1,4 @@
-name: Build and Deploy prod.poscloud.ar
+name: Deploy System Main
 
 on:
   push:
@@ -45,7 +45,7 @@ jobs:
         docker stop system-poscloud || true
         docker rm -f system-poscloud || true
 
-  deploy-github-action:
+  deploy-github-pages:
     runs-on: ubuntu-latest
     
     steps:
@@ -71,18 +71,18 @@ jobs:
         publish_branch: gh-pages
         keep_files: true
 
-  deploy-donweb-2:
-    runs-on: prod-ar
-    steps:
-      - uses: actions/checkout@v3
+  # deploy-donweb-2:
+  #   runs-on: prod-ar
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - name: Stop and remove existing container
-        run: |
-          docker stop system || true
-          docker rm -f system || true
+  #     - name: Stop and remove existing container
+  #       run: |
+  #         docker stop system || true
+  #         docker rm -f system || true
 
-      - name: Build Docker image
-        run: docker build -t system -f Dockerfile.main .
+  #     - name: Build Docker image
+  #       run: docker build -t system -f Dockerfile.main .
 
-      - name: Run Docker container
-        run: docker run -v /home:/home --restart unless-stopped --net host --name system -d -it -p 80:80 system
+  #     - name: Run Docker container
+  #       run: docker run -v /home:/home --restart unless-stopped --net host --name system -d -it -p 80:80 system
