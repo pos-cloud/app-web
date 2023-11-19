@@ -1,68 +1,67 @@
-name: Deploy System Main
+name: Deploy System to Don Web
 
 on:
   push:
     branches:
       - main
     paths-ignore:
-      - 'services/**'
-
+      - "services/**"
 
 jobs:
   deploy-donweb:
-    runs-on: [ prod ]
+    runs-on: [prod]
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
 
-    - name: Build Docker image
-      run: docker build -t build-system -f Dockerfile.dev .
+      - name: Build Docker image
+        run: docker build -t build-system -f Dockerfile.dev .
 
-    - name: Backup current files
-      run: |
-        if [ -d "/home/system" ]; then
-          mv /home/system /home/system_backup
-          mkdir /home/system
-        fi
+      - name: Backup current files
+        run: |
+          if [ -d "/home/system" ]; then
+            mv /home/system /home/system_backup
+            mkdir /home/system
+          fi
 
-    - name: Clean up backup
-      run: |
-        if [ -d "/home/system_backup" ]; then
-          rm -rf /home/system_backup
-        fi
+      - name: Clean up backup
+        run: |
+          if [ -d "/home/system_backup" ]; then
+            rm -rf /home/system_backup
+          fi
 
-    - name: Run Docker container
-      run: docker run -v /home/system:/home/system build-system
-      
-    - name: Stop and remove existing container
-      run: |
-        docker stop system-poscloud || true
-        docker rm -f system-poscloud || true
+      - name: Run Docker container
+        run: docker run -v /home/system:/home/system build-system
+
+      - name: Stop and remove existing container
+        run: |
+          docker stop system-poscloud || true
+          docker rm -f system-poscloud || true
 
   # deploy-github-pages:
   #   runs-on: ubuntu-latest
-    
+
   #   steps:
   #   - name: Checkout code
   #     uses: actions/checkout@v2
-      
+
   #   - name: Set up Node.js
   #     uses: actions/setup-node@v2
   #     with:
   #       node-version: 14
-      
+
   #   - name: Install dependencies
   #     run: npm i
-      
+
   #   - name: Build Main
   #     run: npm run build:prodp
-      
+
   #   - name: Deploy to GitHub Pages
   #     uses: peaceiris/actions-gh-pages@v3
   #     with:

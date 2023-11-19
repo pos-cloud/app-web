@@ -1,10 +1,10 @@
-name: Deploy Prod to DonWeb
+name: Deploy Print to Don Web
 
 on:
   push:
     branches: [main]
     paths:
-          - 'services/print/**'
+      - "services/print/**"
   workflow_dispatch:
 
 jobs:

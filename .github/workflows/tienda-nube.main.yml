@@ -1,10 +1,10 @@
-name: Deploy Tienda Nube Main
+name: Deploy Tienda Nube to Don Web
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
-      - 'services/tienda-nube/**'
+      - "services/tienda-nube/**"
   workflow_dispatch:
 
 jobs:
