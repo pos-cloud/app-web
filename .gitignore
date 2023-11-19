@@ -18,6 +18,9 @@ settings.json
 # tienda nube
 /services/tienda-nube/node_modules
 /services/tienda-nube/dist
+# print
+/services/print/node_modules
+/services/print/dist
 
 # IDEs and editors
 /.idea

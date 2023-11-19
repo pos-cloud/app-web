@@ -1,0 +1,68 @@
+{
+  "name": "api-pdf",
+  "version": "1.0.0",
+  "description": "",
+  "type": "commonjs",
+  "main": "app/server.ts",
+  "scripts": {
+    "dev": "nodemon ./app/server.ts",
+    "build": "tsc",
+    "prod": "node dist/server.js"
+  },
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES6",
+    "esModuleInterop": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pos-cloud/fe-ar.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pos-cloud/fe-ar/issues"
+  },
+  "homepage": "https://github.com/pos-cloud/fe-ar#readme",
+  "dependencies": {
+    "@sentry/node": "^7.69.0",
+    "@types/axios": "^0.14.0",
+    "@types/moment": "^2.13.0",
+    "axios": "^1.6.0",
+    "bwip-js": "^3.4.5",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.3.1",
+    "env": "^0.0.2",
+    "express": "^4.18.2",
+    "fs": "^0.0.1-security",
+    "gm": "^1.25.0",
+    "js-base64": "^3.7.5",
+    "jspdf": "^2.5.1",
+    "jwt-simple": "^0.5.6",
+    "moment": "^2.29.4",
+    "mongodb": "^6.0.0",
+    "mongoose": "^7.5.0",
+    "morgan": "^1.10.0",
+    "qrcode": "^1.5.3",
+    "rescode": "^0.1.10",
+    "sharp": "^0.32.6"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.17",
+    "@types/morgan": "^1.9.4",
+    "@types/node": "^20.4.5",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}

@@ -14,9 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # Verificar si el contenedor existe antes de intentar eliminarlo
-      - name: Verificar contenedor existente
-        run: docker ps -q --filter "name=api-poscloud" | xargs -I {} docker rm -f {}
+      - name: Stop and remove existing container
+        run: docker rm -f api-poscloud || true
 
       - name: Construir y ejecutar contenedor Docker
         run: docker build -t api-poscloud -f services/api-v1/Dockerfile.prod . && docker run -v /home:/home --restart unless-stopped --net host --name api-poscloud -d -it -p 300:300 api-poscloud

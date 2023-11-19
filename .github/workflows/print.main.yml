@@ -1,0 +1,31 @@
+name: Deploy Prod to DonWeb
+
+on:
+  push:
+    branches: [main]
+    paths:
+          - 'services/print/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: prod
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Stop and remove existing container
+        run: docker rm -f api-print-poscloud || true
+
+      - name: Build Docker image
+        run: docker build -t api-print-poscloud -f services/print/Dockerfile.prod .
+
+      - name: Run Docker container
+        run: |
+          docker run \
+            -v /home:/home \
+            --restart unless-stopped \
+            --net host \
+            --name api-print-poscloud \
+            -d -it -p 302:302 api-print-poscloud

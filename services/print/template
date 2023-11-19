@@ -1,0 +1,23 @@
+project-root/
+├─ app/
+│  ├─ controllers/
+│  ├─ routes/
+│  ├─ middlewares/
+│  ├─ models/
+│  ├─ services/
+│  ├─ utils/
+│  ├─ app.ts
+├─ tests/
+├─ .gitignore
+├─ package.json
+├─ tsconfig.json
+├─ README.md
+├─ server.ts
+
+// imprimir pdf de etiqueta de articulo
+-----
+1- importar modelos article y printer
+2- armamos el endpoint en el postman en el body ponemos el article id
+-----
+// imprimir pdf de etiqueta de articulos
+// imprimir pdf de transaccion
