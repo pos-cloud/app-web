@@ -19,4 +19,4 @@ RUN npm run build
 
 # Establecer el directorio de trabajo y el comando de inicio
 WORKDIR /app
-CMD ["node", "dist/server.js"]
+CMD ["node", "dist/main.js"]

@@ -1,11 +1,9 @@
-name: Deploy to GitHub Pages Main
+name: Deploy to GitHub Pages Dev
 
 on:
   push:
     branches:
-      - main
-    paths-ignore:
-      - 'services/**'
+      - dev
 
 jobs:
   deploy:
@@ -23,8 +21,8 @@ jobs:
     - name: Install dependencies
       run: npm i
       
-    - name: Build Main
-      run: npm run build:prodp
+    - name: Build Dev
+      run: npm run build:dev
       
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
