@@ -1,0 +1,38 @@
+name: Deploy Prod to DonWeb
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "services/api-v2/**"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: prod
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Remove existing container if exists
+        run: |
+          docker rm -f apiv2-poscloud || true
+
+      - name: Tag previous container (if it exists)
+        run: |
+          if docker inspect apiv2-poscloud >/dev/null 2>&1; then
+            docker tag apiv2-poscloud apiv2-poscloud:previous
+          fi
+
+      - name: Build Docker image
+        run: |
+          docker build -t apiv2-poscloud -f services/api-v2/Dockerfile.prod .
+      
+      - name: Run Docker container
+        run: |
+          docker run -v /home:/home --restart unless-stopped --net host --name apiv2-poscloud -d -p 308:308 apiv2-poscloud
+
+      - name: Cleanup previous container if build successful
+        if: success()
+        run: |
+          docker image rm apiv2-poscloud:previous || true

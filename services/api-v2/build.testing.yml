@@ -1,0 +1,13 @@
+name: Deploy Dev to DonWeb
+on:
+  push:
+    branches: [ testing ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: dev
+    steps:
+      - uses: actions/checkout@v3
+      - run: docker rm -f apiv2-poscloud
+      - run: docker build -t apiv2-poscloud -f Dockerfile.testing .
+      - run: docker run -v /home:/home --restart unless-stopped --net pos --name apiv2-poscloud -d -it -p 308:308 apiv2-poscloud

@@ -16,9 +16,9 @@
     "dev": "ng serve --host 0.0.0.0 --poll 500",
     "tienda-nube": "cd services/tienda-nube && npm start",
     "api-v1": "cd services/api-v1 && npm run dev",
+    "api-v2": "cd services/api-v2 && npm run dev",
     "print": "cd services/print && npm run dev",
     "storage": "cd services/storage && npm start"
-
   },
   "private": true,
   "dependencies": {
