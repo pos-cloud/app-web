@@ -236,14 +236,21 @@ export class PermissionComponent implements OnInit {
         class: 'form-group col-md-2'
     },
     {
-        name: 'menu.gallery',
+        name: 'menu.report',
         tag: 'select',
         tagType: "boolean",
         values: ['false', 'true'],
         class: 'form-group col-md-2'
     },
     {
-        name: 'menu.report',
+        name: 'menu.content.resource',
+        tag: 'select',
+        tagType: "boolean",
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
+        name: 'menu.content.gallery',
         tag: 'select',
         tagType: "boolean",
         values: ['false', 'true'],

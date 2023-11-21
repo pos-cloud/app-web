@@ -184,6 +184,8 @@
                                     <th>Descuento</th>
                                     <th>Precio Total</th>
                                     <th>Depósito</th>
+                                    <th>_id</th>
+                                    <th>read</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -213,6 +215,8 @@
                                     </td>
                                     <td>{{movementOfArticle?.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                                     <td>{{movementOfArticle?.deposit?.name}}</td>
+                                    <td>{{movementOfArticle?._id}}</td>
+                                    <td>{{movementOfArticle?.read}}</td>
                                 </tr>
                                 <tr align="center " *ngIf="areMovementsOfArticlesEmpty ">
                                     <td colspan="10 ">No existen productos en la transacción</td>

@@ -71,17 +71,19 @@
           </div>
         </div>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="identity?.permission?.menu?.production &&
-                      (config.modules.production && config.modules.production.kitchen)"
+      <li class="nav-item" ngbDropdown *ngIf="identity?.permission?.menu?.production && identity?.permission?.menu?.production &&
+                      (config.modules.production && (config.modules.production.kitchen || config.modules.production.pos))"
         (click)="makeVisibleReport(false)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-paste"></i> Producción</a>
         <div class="dropdown-menu" ngbDropdownMenu>
-          <div>
-            <button class="dropdown-item" [routerLink]="['pos','cocina']" [routerLinkActive]="['active']">
+       
+            <button *ngIf="config.modules.production.kitchen" class="dropdown-item" [routerLink]="['pos','cocina']" [routerLinkActive]="['active']">
               Cocina
             </button>
-          </div>
+            <button *ngIf="config.modules.production.pos" class="dropdown-item" [routerLink]="['pos','mostrador','production']" [routerLinkActive]="['active']">
+              Planta
+            </button>
         </div>
       </li>
       <li class="nav-item" *ngIf="identity?.permission?.menu?.stock && config.modules.stock"
@@ -187,21 +189,17 @@
           </button>
         </div>
       </li>
-      <li class="nav-item" ngbDropdown
+      <li class="nav-item" ngbDropdown *ngIf="identity?.permission?.menu?.content?.resource || identity?.permission?.menu?.content?.gallery"
         (click)="makeVisibleReport(false)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-image"></i> Contenido</a>
         <div class="dropdown-menu" ngbDropdownMenu>
-          <div>
-            <button class="dropdown-item" [routerLink]="['admin','resources']" [routerLinkActive]="['active']">
-              Recursos
-            </button>
-          </div>
-          <div>
-            <button class="dropdown-item" [routerLink]="['admin','galleries']" [routerLinkActive]="['active']">
-              Galerías
-            </button>
-          </div>
+          <button *ngIf="identity?.permission?.menu?.content?.resource" class="dropdown-item" [routerLink]="['admin','resources']" [routerLinkActive]="['active']">
+            Recursos
+          </button>
+          <button *ngIf="identity?.permission?.menu?.content?.gallery" class="dropdown-item" [routerLink]="['admin','galleries']" [routerLinkActive]="['active']">
+            Galerías
+          </button>
         </div>
       </li>
       <li class="nav-item" ngbDropdown *ngIf="identity?.permission?.menu?.report" (click)="makeVisibleReport(true)">
@@ -421,7 +419,7 @@
           <i class="fa fa-wifi" style="color: #FF0000; margin-top: 13px; margin-left: 5px"></i>
         </ng-template>
       </li>
-      <li class="nav-item" style="margin-top: 10px; margin-left: 5px">V-12.0.0</li>
+      <li class="nav-item" style="margin-top: 10px; margin-left: 5px">V-12.0.1</li>
       <li> <i class="fa fa-refresh"
         style="color: blue; margin-top: 13px; margin-left: 5px" (click)="reload()"></i></li>
 
@@ -700,6 +698,17 @@
             Más Información
           </a>
         </li>
+      </ul>
+    </div>
+    <div class="col-md-3" style="width: 300px" *ngIf="config.modules.production">
+      <ul>
+        <li class="dropdown-header">Producción</li>
+        <li>
+          <a (click)="openReport('admin/production')">
+            Listado de transacciones
+          </a>
+        </li>
+      
       </ul>
     </div>
   </div>

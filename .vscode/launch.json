@@ -10,6 +10,39 @@
 			"name": "Lanzar Chrome contra localhost",
 			"url": "http://localhost:4200",
 			"webRoot": "${workspaceFolder}"
+		},
+		{
+			"name": "API Tienda Nube",
+			"type": "node",
+			"request": "launch",
+			"program": "${workspaceFolder}/services/tienda-nube/node_modules/.bin/nest",
+			"args": ["start", "--watch"],
+			"stopOnEntry": false,
+			"cwd": "${workspaceFolder}/services/tienda-nube",
+			"preLaunchTask": "start-tienda-nube",
+			"runtimeExecutable": null,
+			"runtimeArgs": ["--nolazy"],
+			"env": {"NODE_ENV": "development"},
+			"sourceMaps": true,
+			"outFiles": [],
+			"externalConsole": false,
+			"outputCapture": "std",
+			"runtimeStdin": true,
+			"runtimeSuspended": true,
+			"console": "integratedTerminal"
+		},					
+		{
+			"name": "System",
+			"type": "chrome",
+			"request": "launch",
+			"url": "http://localhost:4200",
+			"webRoot": "${workspaceFolder}",
+			"sourceMaps": true,
+			"trace": true,
+			"sourceMapPathOverrides": {
+			  "webpack:///./src/*": "${webRoot}/*"
+			},
+			"preLaunchTask": "start-angular"
 		}
 	]
 }

@@ -1,0 +1,31 @@
+name: Deploy Tienda Nube to Don Web
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "services/tienda-nube/**"
+  workflow_dispatch:
+
+jobs:
+  deploy-donweb:
+    runs-on: prod
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Stop and remove existing container
+        run: docker rm -f api-tienda-nube || true
+
+      - name: Build Docker image
+        run: docker build -t api-tienda-nube -f services/tienda-nube/Dockerfile.main .
+
+      - name: Run Docker container
+        run: |
+          docker run \
+            -v /home:/home \
+            --restart unless-stopped \
+            --net host \
+            --name api-tienda-nube \
+            -d -it -p 305:305 api-tienda-nube

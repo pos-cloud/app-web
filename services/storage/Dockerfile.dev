@@ -1,0 +1,16 @@
+FROM node:16
+
+RUN mkdir -p /app
+WORKDIR /app
+
+COPY package.json .
+COPY pos-cloud-299813-432bdece7851.json .
+COPY tsconfig.json .
+COPY tsconfig.build.json .
+
+RUN npm install
+RUN npm run build
+
+COPY ./ .
+
+CMD [ "npm", "run", "start" ]

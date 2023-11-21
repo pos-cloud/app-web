@@ -1,0 +1,21 @@
+name: Deploy Api v1 to Don Web
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "services/api-v1/**"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: prod
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Stop and remove existing container
+        run: docker rm -f api-poscloud || true
+
+      - name: Construir y ejecutar contenedor Docker
+        run: docker build -t api-poscloud -f services/api-v1/Dockerfile.prod . && docker run -v /home:/home --restart unless-stopped --net host --name api-poscloud -d -it -p 300:300 api-poscloud

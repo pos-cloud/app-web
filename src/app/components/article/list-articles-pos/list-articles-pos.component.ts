@@ -49,6 +49,7 @@ export class ListArticlesPosComponent implements OnInit {
     @Output() eventAddItem = new EventEmitter<{ parent: MovementOfArticle, child: MovementOfArticle[] }>();
     @Input() areArticlesVisible: boolean = false;
     @Input() filterArticle: string = '';
+    @Input() movementOfArticleOrigin: MovementOfArticle;
     @Input() transactionId: string;
     @Input() transaction: Transaction;
     @Input() loading: boolean = false;
@@ -350,6 +351,11 @@ export class ListArticlesPosComponent implements OnInit {
                         movementOfArticle.transaction = this.transaction;
                         movementOfArticle.modifyStock = this.transaction.type.modifyStock;
                         movementOfArticle.otherFields = article.otherFields;
+
+                        if(this.movementOfArticleOrigin){
+                            movementOfArticle.movementOrigin = this.movementOfArticleOrigin
+                        }
+
                         if (amount && amount > 0) movementOfArticle.amount = amount;
                         movementOfArticle.stockMovement = this.transaction.type.stockMovement;
 

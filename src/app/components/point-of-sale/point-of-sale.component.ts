@@ -547,8 +547,8 @@ export class PointOfSaleComponent implements OnInit {
                 this.transactionMovement = TransactionMovement.Stock;
             } else if (pathLocation[3] === 'fondo') {
                 this.transactionMovement = TransactionMovement.Money;
-            } else {
-                this.transactionMovement = TransactionMovement.Sale;
+            } else if ([pathLocation[3] === 'production']) {
+                this.transactionMovement = TransactionMovement.Production;
             }
         } else if (this.posType === "cuentas-corrientes") {
             if (this.companyType === CompanyType.Client) {

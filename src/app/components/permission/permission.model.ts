@@ -40,6 +40,10 @@ export class Permission extends Model {
             group: boolean,
             field: boolean,
 		},
+        content: {
+            resource: boolean,
+            gallery: boolean
+        }
 		report: boolean,
 		config: boolean,
 		gallery: boolean,
