@@ -1698,7 +1698,7 @@ export class AddArticleComponent implements OnInit {
             this.showToast(null, 'success', 'Operación realizada con éxito');
 
             if(this.article.ecommerceEnabled && this.article.applications[0].type === ApplicationType.TiendaNube){
-              this.saveArticleTiendaNube();
+              this.updateArticleTiendaNube();
             }else{
               this.activeModal.close();
             }
@@ -1713,6 +1713,30 @@ export class AddArticleComponent implements OnInit {
     this.loading = true;
 
     this._articleService.saveArticleTiendaNube(this.article._id).subscribe(
+      (result) => {
+        if (result.error) {
+          this.showToast(
+            null,
+            'info',
+            result.error && result.error.message
+              ? result.error.message
+              : result.message
+              ? result.message
+              : '',
+          );
+        } else {
+          this.showToast(null, 'success', 'Operación realizada con éxito en TiendaNube');
+          this.activeModal.close();
+        }
+      },
+      (error) => this.showToast(error)
+    );
+  }
+
+  async updateArticleTiendaNube() {
+    this.loading = true;
+
+    this._articleService.updateArticleTiendaNube(this.article._id).subscribe(
       (result) => {
         if (result.error) {
           this.showToast(
