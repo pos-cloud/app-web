@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateTiendaNubeDto } from '../dto/create-tienda-nube.dto';
 import { UpdateTiendaNubeDto } from '../dto/update-tienda-nube.dto';
 import { HttpService } from '@nestjs/axios';
@@ -15,25 +15,31 @@ export class TiendaNubeService {
   async createCategory(
     createTiendaNubeDto: CreateCategoryTiendaNubeDto,
     tiendaNubeAccesstoken: string,
-    tiendaNubeUserId: string
+    tiendaNubeUserId: string,
   ) {
-    // const { data: userFacebook }: any = await firstValueFrom(
-    //   this.httpService.get(apiUrl),
-    // )
-    const data = await firstValueFrom(
-      this.httpService
-        .post(
-          `${this.tiendaNubeUrI}/${tiendaNubeUserId}/categories`,
-          createTiendaNubeDto,
-          {
-            headers: {
-              Authentication: `bearer ${tiendaNubeAccesstoken}`,
+    try {
+      // const { data: userFacebook }: any = await firstValueFrom(
+      //   this.httpService.get(apiUrl),
+      // )
+      const data = await firstValueFrom(
+        this.httpService
+          .post(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/categories`,
+            createTiendaNubeDto,
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccesstoken}`,
+              },
             },
-          },
-        )
-        .pipe(map((resp) => resp.data)),
-    );
-    return data;
+          )
+          .pipe(map((resp) => resp.data)),
+      ).catch(() => {
+        throw new Error('Error al crear categoria en tiendaNube');
+      });
+      return data;
+    } catch (err) {
+      throw err;
+    }
   }
   async getCategoryId(
     categoryId: string,
@@ -60,7 +66,6 @@ export class TiendaNubeService {
     tiendaNubeAccesstoken: string,
     tiendaNubeUserId: string,
   ) {
-    
     const data = await firstValueFrom(
       this.httpService
         .post(
@@ -74,7 +79,7 @@ export class TiendaNubeService {
         )
         .pipe(map((resp) => resp.data)),
     );
-   
+
     return data;
   }
 
@@ -98,32 +103,37 @@ export class TiendaNubeService {
         )
         .pipe(map((resp) => resp.data)),
     );
-
+  
     return data;
   }
 
-  
   async updateProduct(
     tiendaNubeAccesstoken: string,
     tiendaNubeUserId: string,
     productId: string,
     updateProductDto: UpdateProductTiendaNubeDto,
   ) {
-    const data = await firstValueFrom(
-      this.httpService
-        .put(
-          `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}`,
-          updateProductDto,
-          {
-            headers: {
-              Authentication: `bearer ${tiendaNubeAccesstoken}`,
+    try {
+      const data = await firstValueFrom(
+        this.httpService
+          .put(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}`,
+            updateProductDto,
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccesstoken}`,
+              },
             },
-          },
-        )
-        .pipe(map((resp) => resp.data)),
-    );
+          )
+          .pipe(map((resp) => resp.data)),
+      ).catch((e) => {
+        throw new Error('Error al actualizar producto con tiendaNube');
+      });
 
-    return data;
+      return data;
+    } catch (err) {
+      throw err;
+    }
   }
 
   async updatePrincipalImageOfProduct(
@@ -133,20 +143,26 @@ export class TiendaNubeService {
     tiendaNubeAccesstoken: string,
     tiendaNubeUserId: string,
   ) {
-    const data = await firstValueFrom(
-      this.httpService
-        .put(
-          `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/images/${imageId}`,
-          { src: url },
-          {
-            headers: {
-              Authentication: `bearer ${tiendaNubeAccesstoken}`,
+    try {
+      const data = await firstValueFrom(
+        this.httpService
+          .put(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/images/${imageId}`,
+            { src: url },
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccesstoken}`,
+              },
             },
-          },
-        )
-        .pipe(map((resp) => resp.data)),
-    );
-    return data;
+          )
+          .pipe(map((resp) => resp.data)),
+      ).catch((err) => {
+        throw new BadRequestException('Error al subir Imagen');
+      });
+      return data;
+    } catch (err) {
+      throw err;
+    }
   }
   findAll() {
     return `This action returns all tiendaNube`;
@@ -156,11 +172,30 @@ export class TiendaNubeService {
     return `This action returns a #${id} tiendaNube`;
   }
 
-  update(id: number, updateTiendaNubeDto: UpdateTiendaNubeDto) {
-    return `This action updates a #${id} tiendaNube`;
-  }
+  async removeProduct(
+    productId: string,
+    tiendaNubeAccesstoken: string,
+    tiendaNubeUserId: string,
+  ) {
+    try {
+      const result = await firstValueFrom(
+        this.httpService
+          .delete(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}`,
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccesstoken}`,
+              },
+            },
+          )
+          .pipe(map((resp) => resp.data)),
+      ).catch(() => {
+        throw new Error('Error al eliminar el producto en tiendaNube');
+      });
 
-  remove(id: number) {
-    return `This action removes a #${id} tiendaNube`;
+      return result ? true : false;
+    } catch (err) {
+      throw err;
+    }
   }
 }

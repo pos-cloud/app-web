@@ -389,8 +389,6 @@ export class ArticleService extends ModelService {
     const headers = new HttpHeaders()
     .set("Content-Type", "application/json")
     .set("Authorization", this._authService.getToken());
-
-      const params = new HttpParams().set("productId", id);
    
     return this._http
       .patch(URL, {}, { headers: headers })
@@ -402,6 +400,27 @@ export class ArticleService extends ModelService {
           return of(err);
         })
       );
+  }
+
+  public deleteArticleTiendaNube(id: string): Observable<any> {
+    const URL = `${environment.apiTiendaNube}/products/${id}`;
+
+    const headers = new HttpHeaders()
+    .set('Content-Type', 'application/json')
+    .set('Authorization', this._authService.getToken());
+
+  const params = new HttpParams().set('productId', id);
+
+  return this._http
+    .delete(URL, { headers: headers })
+    .pipe(
+      map((res) => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      }),
+    );
   }
 }
 

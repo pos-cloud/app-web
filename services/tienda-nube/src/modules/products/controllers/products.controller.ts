@@ -36,12 +36,18 @@ export class ProductsController {
   }
 
   @Patch(':productId')
-  update(@Param('productId') productId: string, @Request() request: CustomRequest) {
-    return this.productsService.update(request.database, productId,);
+  update(
+    @Param('productId') productId: string,
+    @Request() request: CustomRequest,
+  ) {
+    return this.productsService.update(request.database, productId);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productsService.remove(+id);
+  @Delete(':productId')
+  remove(
+    @Param('productId') productId: string,
+    @Request() request: CustomRequest,
+  ) {
+    return this.productsService.remove(request.database, productId);
   }
 }

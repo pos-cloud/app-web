@@ -1709,6 +1709,38 @@ export class AddArticleComponent implements OnInit {
     }
   }
 
+  deleteArticle(): void {
+    this.loading = true;
+
+    this._articleService.deleteArticleTiendaNube(this.article._id).subscribe(
+      (result) => {
+        if (result.error) {
+          this.showToast(
+            null,
+            'info',
+            result.error && result.error.message
+              ? result.error.message
+              : result.message
+              ? result.message
+              : '',
+          );
+        } else {
+          this.showToast(null, 'success', 'Operación realizada con éxito en TiendaNube');
+          this._articleService.delete(this.article._id).subscribe(
+            (result: Resulteable) => {
+              if (result.status == 200) {
+                this.activeModal.close('delete_close');
+              } else {
+                this.showToast(result);
+              }
+            },
+         )
+       }
+     },
+      (error) => this.showToast(error)
+    );
+  }
+
   async saveArticleTiendaNube() {
     this.loading = true;
 
@@ -1754,21 +1786,6 @@ export class AddArticleComponent implements OnInit {
         }
       },
       (error) => this.showToast(error)
-    );
-  }
-
-  deleteArticle(): void {
-    this.loading = true;
-
-    this._articleService.delete(this.article._id).subscribe(
-      (result: Resulteable) => {
-        if (result.status == 200) {
-          this.activeModal.close('delete_close');
-        } else {
-          this.showToast(result);
-        }
-      },
-      (error) => this.showToast(error),
     );
   }
 

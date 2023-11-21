@@ -9,61 +9,68 @@ export class CategoriesService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly tiendaNubeService: TiendaNubeService,
-  ) {}
+  ) { }
 
   async create(
     // createCategoryDto: CreateCategoryDto,
     database: string,
     categoryId: string,
   ) {
-    if (!database) {
-      throw new BadRequestException(`Database is required `);
-    }
-    await this.databaseService.initConnection(database);
-    const { token, userID  } =
-      await this.databaseService.getCredentialsTiendaNube();
-
-    const foundCollection = this.databaseService.getCollection('categories');
-
-    const foundCategory = await this.databaseService.getDocumentById(
-      'categories',
-      categoryId,
-    );
-
-    if (!foundCategory) {
-      throw new BadRequestException(` Category with id${categoryId} not found`);
-    }
-
-    if (foundCategory.tiendaNubeId) {
-      const foundCategoryTiendaMia = await this.tiendaNubeService.getCategoryId(
-        foundCategory.tiendaNubeId,
-        token,
-        userID 
-      );
-      if (foundCategoryTiendaMia) {
-        return foundCategoryTiendaMia;
+    try {
+      if (!database) {
+        throw new BadRequestException(`Database is required `);
       }
+      await this.databaseService.initConnection(database);
+      const { token, userID } =
+        await this.databaseService.getCredentialsTiendaNube();
+
+      const foundCollection = this.databaseService.getCollection('categories');
+
+      const foundCategory = await this.databaseService.getDocumentById(
+        'categories',
+        categoryId,
+      );
+
+      if (!foundCategory) {
+        throw new BadRequestException(
+          ` Category with id${categoryId} not found`,
+        );
+      }
+
+      if (foundCategory.tiendaNubeId) {
+        const foundCategoryTiendaMia =
+          await this.tiendaNubeService.getCategoryId(
+            foundCategory.tiendaNubeId,
+            token,
+            userID,
+          );
+        if (foundCategoryTiendaMia) {
+          return foundCategoryTiendaMia;
+        }
+      }
+
+      const categoryTiendaNube = await this.tiendaNubeService.createCategory(
+        {
+          name: {
+            es: foundCategory.description,
+          },
+        },
+        token,
+        userID,
+      );
+
+      await foundCollection.updateOne(
+        { _id: foundCategory._id },
+        {
+          $set: {
+            tiendaNubeId: categoryTiendaNube.id,
+          },
+        },
+      );
+      return categoryTiendaNube;
+    } catch (err) {
+      throw err;
     }
-
-    const categoryTiendaNube = await this.tiendaNubeService.createCategory(
-      {
-        name: {
-          es: foundCategory.description,
-        },
-      },
-      token,
-      userID
-    );
-
-    await foundCollection.updateOne(
-      { _id: foundCategory._id },
-      {
-        $set: {
-          tiendaNubeId: categoryTiendaNube.id,
-        },
-      },
-    );
-    return categoryTiendaNube;
   }
 
   findAll() {
