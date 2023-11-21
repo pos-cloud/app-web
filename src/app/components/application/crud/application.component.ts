@@ -139,6 +139,7 @@ export class ApplicationComponent implements OnInit {
         ApplicationType.App,
         ApplicationType.Woocommerce,
         ApplicationType.MercadoLibre,
+        ApplicationType.TiendaNube
       ],
       validators: [Validators.required],
       class: 'form-group col-md-2',

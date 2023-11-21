@@ -52,7 +52,7 @@ export class DatabaseService {
       const collection = this.database.collection(collectionName);
       const objectId = new ObjectId(documentId);
       const document = await collection.findOne({ _id: objectId });
-
+   
       return document;
     } catch (error) {
       console.error('Error al obtener el documento por ID:', error);
