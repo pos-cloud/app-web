@@ -116,6 +116,11 @@ const ArticleSchema = new Schema({
   maxStock: { type: Number },
   pointOfOrder: { type: Number },
   m3: { type: Number },
+  weight: { type: String},
+  width: { type: String},
+  height: { type: String},
+  depth: { type: String},
+
 })
 
 module.exports = ArticleSchema

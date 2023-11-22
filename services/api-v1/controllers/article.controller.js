@@ -752,6 +752,10 @@ async function saveArticle (req, res, next) {
   article.meliId = params.meliId
   article.meliAttrs = params.meliAttrs
   article.m3 = params.m3
+  article.weight = params.weight
+  article.width = params.width
+  article.height = params.height
+  article.depth = params.depth
   const user = new User()
   user._id = req.session.user
   article.creationUser = user

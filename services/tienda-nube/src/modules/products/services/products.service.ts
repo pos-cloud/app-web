@@ -35,7 +35,7 @@ export class ProductsService {
     if (
       !foundArticle ||
       foundArticle.operationType == 'D' ||
-      (foundArticle.type as string).toLocaleLowerCase() != 'final'
+       (foundArticle.type as string).toLocaleLowerCase() != 'final'
     ) {
       throw new BadRequestException(` Article with id ${productId} not found`);
     }
@@ -64,7 +64,7 @@ export class ProductsService {
       const foundCategory = this.categoryService.findOneCategoryDb(
         foundArticle.category,
       );
-
+ 
       const foundCategoryTiendaMia = await this.categoryService.create(
         database,
         foundArticle.category,
@@ -86,7 +86,7 @@ export class ProductsService {
       operationType: { $ne: 'D' },
       article: new ObjectId(productId),
     });
- 
+
     await this.tiendaNubeService.updateProductFirstVariant(
       token,
       userID,
@@ -95,6 +95,11 @@ export class ProductsService {
       {
         stock: !stockFound || stockFound.realStock < 0 ? 0 : stockFound.realStock,
         price: foundArticle.salePrice || null,
+        sku: foundArticle.barcode || null,
+        weight: foundArticle.weight || null,
+        width: foundArticle.width || null,
+        height: foundArticle.height || null,
+        depth: foundArticle.depth || null
       },
     );
     await foundCollection.updateOne(
@@ -135,7 +140,7 @@ export class ProductsService {
       if (
         !foundArticle ||
         foundArticle.operationType == 'D' ||
-       (foundArticle.type as string).toLocaleLowerCase() != 'final'
+        (foundArticle.type as string).toLocaleLowerCase() != 'final'
       ) {
         throw new BadRequestException(
           ` Article with id ${productId} not found`,
@@ -211,6 +216,11 @@ export class ProductsService {
         {
           stock: !stockFound || stockFound.realStock < 0 ? 0 : stockFound.realStock,
           price: foundArticle.salePrice ? foundArticle.salePrice : null,
+          sku: foundArticle.barcode || null,
+          weight: foundArticle.weight || null,
+          width: foundArticle.width || null,
+          height: foundArticle.height || null,
+          depth: foundArticle.depth || null
         },
       );
       return result;

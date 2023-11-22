@@ -90,4 +90,8 @@ export default interface Article extends Model {
   purchasePrice: Number
   costPrice2: Number
   m3: Number
+  weight: String
+  width: String
+  height: String
+  depth: String
 }
