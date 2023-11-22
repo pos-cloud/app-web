@@ -357,7 +357,6 @@ export class AddArticleComponent implements OnInit {
 
   async ngOnInit() {
     this.buildForm();
-
     await this._configService.getConfig.subscribe((config) => {
       this.config = config;
       // AGREGAMOS VALIDACIÓN DE LONGITUD DE CÓDIGO INTERNO
@@ -513,7 +512,11 @@ export class AddArticleComponent implements OnInit {
       meliAttrs: [this.article.meliAttrs, []],
       wooId: [this.article.wooId, []],
       purchasePrice: [this.article.purchasePrice, []],
-      m3: [this.article.m3, []]
+      m3: [this.article.m3, []],
+      weight: [this.article.weight, []],
+      width: [this.article.width, []],
+      height: [this.article.height, []],
+      depth: [this.article.depth, []]
     });
 
     this.newDeposit = this._fb.group({
@@ -1484,6 +1487,18 @@ export class AddArticleComponent implements OnInit {
     if (!this.article.make) {
       this.article.make = null;
     }
+    if(!this.article.weight){
+      this.article.weight = null;
+    }
+    if(!this.article.height){
+      this.article.height = null;
+    }
+    if(!this.article.width){
+      this.article.width = null;
+    }
+    if(!this.article.depth){
+      this.article.depth = null;
+    }
 
     this.article.basePrice = this.roundNumber.transform(this.article.basePrice);
     this.article.costPrice = this.roundNumber.transform(this.article.costPrice);
@@ -1549,7 +1564,11 @@ export class AddArticleComponent implements OnInit {
       allowStock: this.article.allowStock,
       wooId: this.article.wooId,
       purchasePrice: this.article.purchasePrice,
-      m3: this.article.m3
+      m3: this.article.m3,
+      weight: this.article.weight,
+      height: this.article.height,
+      width: this.article.width,
+      depth: this.article.depth
     };
 
     this.articleForm.patchValue(values);
@@ -1630,7 +1649,7 @@ export class AddArticleComponent implements OnInit {
   async saveArticle() {
     this.loading = true;
 
-    console.log(this.article.m3)
+    console.log(this.article.weight)
 
     if (await this.isValid()) {
 
@@ -1670,8 +1689,6 @@ export class AddArticleComponent implements OnInit {
 
   async updateArticle() {
     this.loading = true;
-
-    console.log(this.article.m3)
 
     if (await this.isValid()) {
 
@@ -1746,6 +1763,7 @@ export class AddArticleComponent implements OnInit {
 
     this._articleService.saveArticleTiendaNube(this.article._id).subscribe(
       (result) => {
+        console.log(result)
         if (result.error) {
           this.showToast(
             null,

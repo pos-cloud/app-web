@@ -247,4 +247,8 @@ export default class ArticleDto extends ModelDto {
   purchasePrice: number
   costPrice2: number
   m3: number
+  weight: String
+  width: String
+  height: String
+  depth: String
 }
