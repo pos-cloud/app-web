@@ -17,6 +17,7 @@ import { Account } from '../account/account';
 export class Article {
 
     public _id: string;
+    public tiendaNubeId: string;
     public type: Type = Type.Final;
     public containsVariants: boolean = false;
     public containsStructure: boolean = false;
