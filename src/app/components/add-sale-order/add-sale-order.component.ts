@@ -764,7 +764,7 @@ export class AddSaleOrderComponent {
         if (
           !itemData.article.containsVariants &&
           !itemData.article.allowMeasure &&
-          !await this.getStructure(itemData.article._id)
+          !(await this.getStructure(itemData.article._id))
         ) {
           let movementOfArticle: MovementOfArticle;
 
@@ -803,7 +803,6 @@ export class AddSaleOrderComponent {
             movementOfArticle.modifyStock = this.transaction.type.modifyStock;
             movementOfArticle.stockMovement = this.transaction.type.stockMovement;
             movementOfArticle.printed = 0;
-            movementOfArticle.read = 0;
             if (child && child.length === 0) {
               if (await this.isValidMovementOfArticle(movementOfArticle)) {
                 await this.saveMovementOfArticle(movementOfArticle).then(
@@ -834,7 +833,6 @@ export class AddSaleOrderComponent {
                       movsArticle = new Array();
                       for (const movArticle of child) {
                         movArticle.movementParent = movementOfArticle;
-                        movArticle.movementOrigin = null;
                         movsArticle.push(movArticle);
                       }
                       await this.saveMovementsOfArticles(movsArticle).then((result) => {
@@ -3110,8 +3108,6 @@ export class AddSaleOrderComponent {
 
   async finish() {
     try {
-
-      console.log(this.movementsOfArticles)
       this.loading = true;
 
       if (!this.movementsOfArticles || this.movementsOfArticles.length === 0)
@@ -3139,13 +3135,6 @@ export class AddSaleOrderComponent {
       if (this.config['modules'].stock && this.transaction.type.modifyStock) {
         if (await this.areValidMovementOfArticle()) await this.updateStockByTransaction();
       }
-
-      // ACTUALIZACION DE ORDENES DE PRODUCCION
-      if (this.transaction.type.transactionMovement === TransactionMovement.Production) {
-        console.log("entro")
-        await this.updateOrdenOfProduction(this.transaction._id);
-      }
-
 
       let result: Resulteable = await this._transactionService
         .updateBalance(this.transaction)
@@ -3929,22 +3918,8 @@ export class AddSaleOrderComponent {
     }
   }
 
-  async filterArticles() {
+  filterArticles(): void {
     this.listArticlesComponent.filterArticle = this.filterArticle;
-    let article : Article = null;
-    const regex = /^[0-9a-fA-F]{24}$/;
-    if(this.transaction.type.transactionMovement == TransactionMovement.Production && regex.test(this.filterArticle)) {
-      let query = 'where="_id":"' + this.filterArticle + '"';
-      const mov = await this.getMovementsOfArticles(query);
-
-
-      if(mov?.[0]?.article) {
-        article = mov[0].article;
-        this.listArticlesComponent.movementOfArticleOrigin = mov[0];
-        // update mov article 
-      }
-    }
-
     if (
       this.filterArticle &&
       this.filterArticle !== '' &&
@@ -3952,11 +3927,6 @@ export class AddSaleOrderComponent {
     ) {
       this.listArticlesComponent.filterItem(
         this.lastMovementOfArticle.article,
-        this.categorySelected,
-      );
-    } else if (article) {
-      this.listArticlesComponent.filterItem(
-        article,
         this.categorySelected,
       );
     } else {

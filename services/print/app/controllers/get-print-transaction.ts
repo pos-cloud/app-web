@@ -520,11 +520,14 @@ async function toPrintInvoice(doc: any, transaction: Transaction, movementsOfCas
 
       doc.text(`${movementsOfArticle.amount}`, 6, verticalPosition);
       doc.text(movementsOfArticle.code, 17, verticalPosition);
+
+      doc.setFontSize(12);
       movementsOfArticle.description.length > 0
         ? doc.text(movementsOfArticle.description.slice(0, 55), 42, verticalPosition) : ''
       movementsOfArticle.description.length > 55
         ? movementsOfArticle.description.slice(55, 105)
         : '';
+        doc.setFontSize(7);
       doc.text(`$ ${formatNumber(movementsOfArticle.unitPrice)}`, 134, verticalPosition);
       if (transaction.type.electronics) {
         doc.text(movementsOfArticle.taxes[0]?.percentage !== undefined ? `${movementsOfArticle.taxes[0]?.percentage}%` : "", 173, verticalPosition);
@@ -761,72 +764,78 @@ export async function getPrintTransaction(
       const units = "mm";
       const orientation = printer.orientation;
       doc = new jsPDF(orientation, units, [pageWidth, pageHigh]);
+    
+      let verticalPosition = 12
+      for( let i=0; i < movementOfArticles.length; i++){
+        let movementOfArticle = movementOfArticles[i];
+        doc.text(movementOfArticle.description, verticalPosition , 12)
 
-      for (const movementOfArticle of movementOfArticles) {
-        for (const field of printer.fields) {
-          switch (field.type) {
-            case 'label':
-              if (field.font !== 'default') {
-                doc.setFont(field.font, field.fontType);
-              }
-              doc.setFontSize(field.fontSize);
-              doc.text(field.positionStartX, field.positionStartY, field.value);
-              break;
-            case 'line':
-              doc.setLineWidth(field.fontSize);
-              doc.line(field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY);
-              break;
-            case 'image':
-              try {
-                const img = await getCompanyPictureFromGoogle(eval(field.value));
-                doc.addImage(img, 'png', field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY);
-              } catch (error) {
-                console.log(error);
-              }
-              break;
-            case 'barcode':
-              doc.text('hello', 6, 6)
-              // try {
-              //   const response = await getBarcode('code128', eval(field.value));
-              //   doc.addImage(response, 'png', field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY);
-              // } catch (error) {
-              //   console.log(error);
-              // }
-              break;
-            case 'data':
-              if (field.font !== 'default') {
-                doc.setFont(field.font, field.fontType);
-              }
-              doc.setFontSize(field.fontSize)
-              try {
-                if (field.positionEndX || field.positionEndY) {
-                  doc.text(field.positionStartX, field.positionStartY, eval(field.value).toString().slice(field.positionEndX, field.positionEndY))
-                } else {
-                  doc.text(field.positionStartX, field.positionStartY, eval(field.value).toString())
-                }
-              } catch (e) {
-                doc.text(field.positionStartX, field.positionStartY, " ")
-              }
-              break;
-            case 'dataEsp':
-              if (field.font !== 'default') {
-                doc.setFont(field.font, field.fontType);
-              }
-              doc.setFontSize(field.fontSize);
-              try {
-                const text = field.positionEndX || field.positionEndY
-                  ? eval(field.value).toString().slice(field.positionEndX, field.positionEndY)
-                  : eval(field.value).toString();
-                doc.text(field.positionStartX, field.positionStartY, text);
-              } catch (e) {
-                doc.text(field.positionStartX, field.positionStartY, " ");
-              }
-              break;
-            default:
-              break;
-          }
-        }
+        verticalPosition += 25
       }
+   
+        // for (const field of printer.fields) {
+        //   switch (field.type) {
+        //     case 'label':
+        //       if (field.font !== 'default') {
+        //         doc.setFont(field.font, field.fontType);
+        //       }
+        //       doc.setFontSize(field.fontSize);
+        //       doc.text(field.positionStartX, field.positionStartY, field.value);
+        //       break;
+        //     case 'line':
+        //       doc.setLineWidth(field.fontSize);
+        //       doc.line(field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY);
+        //       break;
+        //     case 'image':
+        //       try {
+        //         const img = await getCompanyPictureFromGoogle(eval(field.value));
+        //         doc.addImage(img, 'png', field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY);
+        //       } catch (error) {
+        //         console.log(error);
+        //       }
+        //       break;
+        //     case 'barcode':
+        //       doc.text('hello', 6, 6)
+        //       // try {
+        //       //   const response = await getBarcode('code128', eval(field.value));
+        //       //   doc.addImage(response, 'png', field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY);
+        //       // } catch (error) {
+        //       //   console.log(error);
+        //       // }
+        //       break;
+        //     case 'data':
+        //       if (field.font !== 'default') {
+        //         doc.setFont(field.font, field.fontType);
+        //       }
+        //       doc.setFontSize(field.fontSize)
+        //       try {
+        //         if (field.positionEndX || field.positionEndY) {
+        //           doc.text(field.positionStartX, field.positionStartY, eval(field.value).toString().slice(field.positionEndX, field.positionEndY))
+        //         } else {
+        //           doc.text(field.positionStartX, field.positionStartY, eval(field.value).toString())
+        //         }
+        //       } catch (e) {
+        //         doc.text(field.positionStartX, field.positionStartY, " ")
+        //       }
+        //       break;
+        //     case 'dataEsp':
+        //       if (field.font !== 'default') {
+        //         doc.setFont(field.font, field.fontType);
+        //       }
+        //       doc.setFontSize(field.fontSize);
+        //       try {
+        //         const text = field.positionEndX || field.positionEndY
+        //           ? eval(field.value).toString().slice(field.positionEndX, field.positionEndY)
+        //           : eval(field.value).toString();
+        //         doc.text(field.positionStartX, field.positionStartY, text);
+        //       } catch (e) {
+        //         doc.text(field.positionStartX, field.positionStartY, " ");
+        //       }
+        //       break;
+        //     default:
+        //       break;
+        //   }
+
     } else {
       let printer = await getPrinters(token, "Mostrador");
       if (!printer) {

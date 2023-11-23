@@ -1291,14 +1291,13 @@ export class PointOfSaleComponent implements OnInit {
                         );
                     }
                 };
-
             } else {
                 await this.getPrinters().then(
                     printers => {
                         this.printers = printers;
                     }
                 );
-                  this.printTransactionPdf(this.transaction) 
+            this.printTransactionPdf(this.transaction)
                 if (this.transaction.type.defectPrinter) {
                     modalRef.componentInstance.printer = this.transaction.type.defectPrinter;
                 } else {
@@ -1310,8 +1309,7 @@ export class PointOfSaleComponent implements OnInit {
                         }
                     }
                 }
-                modalRef.result.then(async (result) => {
-                }, async (reason) => {
+               async (reason) => {
                     if (this.transaction.state === TransactionState.Packing) {
                         // PONEMOS LA TRANSACCION EN ESTADO EN ENTREGADO
                         await this.getTransaction(this.transaction._id).then(
@@ -1324,7 +1322,7 @@ export class PointOfSaleComponent implements OnInit {
                             }
                         );
                     }
-                });
+                };
             }
                 break;
             case 'printers':
