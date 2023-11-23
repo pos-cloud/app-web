@@ -96,6 +96,10 @@ export class Article {
     public updateDate: string;
     public harticle: Article;
     public m3: number;
+    public weight: string = "";
+    public width: string  = "";
+    public height: string  = "";
+    public depth: string  = "";
     
     constructor() { }
 }
@@ -554,6 +558,46 @@ export let attributes = [
         project: null,
         align: 'left',
         required: true,
+    },
+    {
+        name: 'weight',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+    },
+    {
+        name: 'depth',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+    },
+    {
+        name: 'width',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+    },
+    {
+        name: 'height',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
     },
 ];
 

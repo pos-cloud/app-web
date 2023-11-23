@@ -1,4 +1,4 @@
-import { IsNumber } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 
 export class CreateVariantTiendaNubeDto {
   @IsNumber()
@@ -6,4 +6,19 @@ export class CreateVariantTiendaNubeDto {
 
   @IsNumber()
   stock: number;
+
+  @IsString()
+  sku: string;
+
+  @IsString()
+  width: string
+
+  @IsString()
+  height : string
+
+  @IsString()
+  weight : string
+
+  @IsString()
+  depth : string
 }
