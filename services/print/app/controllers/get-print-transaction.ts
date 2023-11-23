@@ -788,7 +788,7 @@ export async function getPrintTransaction(
         doc.text(movementOfArticle.description, 10, verticalPosition);
         doc.text(movementOfArticle.transaction._id, 10, verticalPosition + 7);
       
-        const barcodeImage = getBarcode('code128', movementOfArticle.article._id);
+        const barcodeImage = getBarcode('code128', movementOfArticle._id);
         doc.addImage(barcodeImage, 'png', 10, verticalPosition + 15, 80, 25);
       
         verticalPosition += 58;
