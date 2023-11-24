@@ -3079,8 +3079,11 @@ export class AddSaleOrderComponent {
 
   async finish() {
     try {
-
-      console.log(this.movementsOfArticles)
+      for(let i=0; i < this.movementsOfArticles.length; i++){
+        if(this.movementsOfArticles[i].article.tiendaNubeId){
+          this.updateArticleTiendaNube(this.movementsOfArticles[i].article._id)
+        }
+      }
       this.loading = true;
 
       if (!this.movementsOfArticles || this.movementsOfArticles.length === 0)
@@ -3193,6 +3196,30 @@ export class AddSaleOrderComponent {
     } catch (error) {
       this.showToast(error);
     }
+  }
+
+  async updateArticleTiendaNube(idArticle) {
+    this.loading = true;
+
+    this._articleService.updateArticleTiendaNube(idArticle).subscribe(
+      (result) => {
+        if (result.error) {
+          this.showToast(
+            null,
+            'info',
+            result.error && result.error.message
+              ? result.error.message
+              : result.message
+              ? result.message
+              : '',
+          );
+        } else {
+          this.showToast(null, 'success', 'Operación realizada con éxito en TiendaNube');
+          this.activeModal.close();
+        }
+      },
+      (error) => this.showToast(error)
+    );
   }
 
   async changeArticlesStatusToPending(): Promise<boolean> {
