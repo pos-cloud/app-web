@@ -155,7 +155,7 @@ export class ListTransactionsComponent implements OnInit {
     this._authService.getIdentity.subscribe(async (identity) => {
       // get permision
       
-      if (identity.permission.collections.some((collection) => collection.name === "transacciones")) {
+      if (identity?.permission?.collections.some((collection) => collection.name === "transacciones")) {
         // Encontrar el objeto con name igual a "transacciones"
         const transactionObject = identity.permission.collections.find(
           (collection) => collection.name === "transacciones"
