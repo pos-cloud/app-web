@@ -786,8 +786,8 @@ export async function getPrintTransaction(
       
         doc.setFontSize(10)
         doc.text(movementOfArticle.description, 10, verticalPosition);
-        doc.text(movementOfArticle.transaction._id, 10, verticalPosition + 7);
-      
+        doc.text(`${movementOfArticle.transaction.type.abbreviation}-${padString(movementOfArticle.transaction.number,10)}`, 10, verticalPosition + 7);
+
         const barcodeImage = getBarcode('code128', movementOfArticle._id);
         doc.addImage(barcodeImage, 'png', 10, verticalPosition + 15, 80, 25);
       
