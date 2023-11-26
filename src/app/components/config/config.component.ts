@@ -648,6 +648,15 @@ export class ConfigComponent implements OnInit {
     if (!this.config.twilio.accountSid) this.config.twilio.accountSid = '';
     if (!this.config.twilio.authToken) this.config.twilio.authToken = '';
 
+    if (!this.config.tiendaNube) {
+      this.config.tiendaNube = {
+        appID: '',
+        clientSecret: '',
+        token: '',
+        userID: ''
+      }
+    }
+
     if(!this.config.tiendaNube.appID) this.config.tiendaNube.appID;
     if(!this.config.tiendaNube.clientSecret) this.config.tiendaNube.clientSecret;
     if(!this.config.tiendaNube.token) this.config.tiendaNube.token;
