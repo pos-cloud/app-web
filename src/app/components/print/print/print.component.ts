@@ -2809,7 +2809,6 @@ export class PrintComponent implements OnInit {
   }
 
   async toPrintInvoice() {
-    console.log("entroq12312")
     let transport = 0;
 
     // Encabezado de la transacción

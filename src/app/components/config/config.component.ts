@@ -648,6 +648,21 @@ export class ConfigComponent implements OnInit {
     if (!this.config.twilio.accountSid) this.config.twilio.accountSid = '';
     if (!this.config.twilio.authToken) this.config.twilio.authToken = '';
 
+    if (!this.config.tiendaNube) {
+      this.config.tiendaNube = {
+        appID: '',
+        clientSecret: '',
+        token: '',
+        userID: ''
+      }
+    }
+
+    if(!this.config.tiendaNube.appID) this.config.tiendaNube.appID;
+    if(!this.config.tiendaNube.clientSecret) this.config.tiendaNube.clientSecret;
+    if(!this.config.tiendaNube.token) this.config.tiendaNube.token;
+    if(!this.config.tiendaNube.userID) this.config.tiendaNube.userID;
+
+
     let vatConfitionDefault;
     if (!this.config.company.vatCondition.default) {
       vatConfitionDefault = null;
@@ -714,7 +729,12 @@ export class ConfigComponent implements OnInit {
       'voucher.minutesOfExpiration': this.config.voucher.minutesOfExpiration,
       'twilio.senderNumber': this.config.twilio.senderNumber,
       'twilio.accountSid': this.config.twilio.accountSid,
-      'twilio.authToken': this.config.twilio.authToken
+      'twilio.authToken': this.config.twilio.authToken,
+      'tiendaNube.appID' : this.config.tiendaNube.appID,
+      'tiendaNube.clientSecret' : this.config.tiendaNube.clientSecret,
+      'tiendaNube.token' : this.config.tiendaNube.token,
+      'tiendaNube.userID' : this.config.tiendaNube.userID,
+
     });
   }
 

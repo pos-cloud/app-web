@@ -92,9 +92,9 @@ export async function getPrintArticles(
     }
 
     doc.autoPrint();
-    doc.save(`article-${database}.pdf`)
+    doc.save(`articles-${database}.pdf`)
 
-    const pdfPath = `article-${database}.pdf`;
+    const pdfPath = `articles-${database}.pdf`;
 
     if (fs.existsSync(pdfPath)) {
       res.contentType("application/pdf");

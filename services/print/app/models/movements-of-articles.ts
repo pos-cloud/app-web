@@ -1,5 +1,6 @@
 import Article from "./article"
 import Model from "./model"
+import Transaction from "./transaction"
 
 export default interface MovementOfArticle extends Model {
   name: string
@@ -55,4 +56,5 @@ export default interface MovementOfArticle extends Model {
   isGeneratedByRule?: boolean
 //   account: Account
   recalculateParent?: boolean
+  transaction: Transaction
 }
