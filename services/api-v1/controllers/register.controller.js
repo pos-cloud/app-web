@@ -509,7 +509,8 @@ async function register(req, res, next) {
 		await saveConfig(config);
 
 		sendEmailToSales(req, res, next);
-		return res.status(200).send({ url: 'http://www.' + dbName + '.poscloud.com.ar' });
+		//return res.status(200).send({ url: 'http://www.' + dbName + '.poscloud.com.ar' });
+		return res.status(200).send({ password: passwordSoporte, user: userSoporte.name, db: dbName });
 	} catch (error) {
 		fileController.writeLog(req, res, next, error.status || 500, error);
 		return res.status(error.status || 500).send({ message: error.message });
