@@ -740,13 +740,16 @@ export class AddSaleOrderComponent {
     );
   }
 
+
   updateQuantity(): void {
-    this.quantity = 0;
+     this.quantity = 0;
+     this.m3 = 0
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let movementOfArticle of this.movementsOfArticles) {
         if (!movementOfArticle.movementParent) {
+          this.quantity = 0;
           this.quantity += movementOfArticle.amount;
-          this.m3 += (movementOfArticle.article.m3 * movementOfArticle.amount) ?? 0;
+          this.m3 += (movementOfArticle.article.m3 * movementOfArticle.amount) * 100 / 100 ?? 0;
         }
       }
     }
