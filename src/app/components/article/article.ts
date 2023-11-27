@@ -96,10 +96,10 @@ export class Article {
     public updateDate: string;
     public harticle: Article;
     public m3: number;
-    public weight: string = "";
-    public width: string  = "";
-    public height: string  = "";
-    public depth: string  = "";
+    public weight: number;
+    public width: number;
+    public height: number;
+    public depth: number;
     
     constructor() { }
 }
