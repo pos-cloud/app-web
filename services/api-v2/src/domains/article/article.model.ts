@@ -122,10 +122,10 @@ class ArticleSchema extends Model {
       maxStock: {type: Number},
       pointOfOrder: {type: Number},
 	    m3: {type: Number},
-      weight: { type: String},
-      width: { type: String},
-      height: { type: String},
-      depth: { type: String},
+      weight: { type: Number},
+      width: { type: Number},
+      height: { type: Number},
+      depth: { type: Number},
 
     })
   }
