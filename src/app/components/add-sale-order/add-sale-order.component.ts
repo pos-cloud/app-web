@@ -742,6 +742,7 @@ export class AddSaleOrderComponent {
 
   updateQuantity(): void {
     this.quantity = 0;
+    this.m3 = 0;
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let movementOfArticle of this.movementsOfArticles) {
         if (!movementOfArticle.movementParent) {
