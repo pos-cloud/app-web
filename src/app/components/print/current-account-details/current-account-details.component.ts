@@ -71,7 +71,6 @@ jsPDF.API['textEx'] = function (text: any, x: number, y: number, hAlign?: string
     this.text(text, x, y);
     return this;
 };
-
 @Component({
     selector: 'app-current-account-details',
     templateUrl: './current-account-details.component.html',
@@ -649,7 +648,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
         }
 
 
-        match += `  "balance" : { "$gt" : 0 },`
+        match += `  "balance" : { "$gt" : 10 },`
         match += `  "company.type" : "${this.companyType}",
                     "state" : "Cerrado",       
                     "type.currentAccount" : { "$ne" : "No"},   
