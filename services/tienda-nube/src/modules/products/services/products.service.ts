@@ -86,7 +86,6 @@ export class ProductsService {
       operationType: { $ne: 'D' },
       article: new ObjectId(productId),
     });
-
     await this.tiendaNubeService.updateProductFirstVariant(
       token,
       userID,
@@ -207,7 +206,7 @@ export class ProductsService {
         operationType: { $ne: 'D' },
         article: new ObjectId(productId),
       });
-      
+   
       await this.tiendaNubeService.updateProductFirstVariant(
         token,
         userID,
