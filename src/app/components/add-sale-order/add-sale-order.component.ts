@@ -121,6 +121,7 @@ export class AddSaleOrderComponent {
   optional: string = '';
   transaction: Transaction;
   transactionId: string;
+  article: Article;
   transactionMovement: string;
   alertMessage: string = '';
   display = true;
