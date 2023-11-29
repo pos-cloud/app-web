@@ -91,6 +91,7 @@ import {UserService} from '../user/user.service';
 
 import {Config} from './../../app.config';
 import { EmailProps } from 'app/types';
+import { ApplicationType } from '../application/application.model';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -120,6 +121,7 @@ export class AddSaleOrderComponent {
   optional: string = '';
   transaction: Transaction;
   transactionId: string;
+  article: Article;
   transactionMovement: string;
   alertMessage: string = '';
   display = true;
@@ -3079,9 +3081,11 @@ export class AddSaleOrderComponent {
 
   async finish() {
     try {
-      for(let i=0; i < this.movementsOfArticles.length; i++){
-        if(this.movementsOfArticles[i].article.tiendaNubeId){
-          this.updateArticleTiendaNube(this.movementsOfArticles[i].article._id)
+      if (this.config.tiendaNube.appID !== '') {
+        for (let i = 0; i < this.movementsOfArticles.length; i++) {
+          if (this.movementsOfArticles[i].article.tiendaNubeId && this.movementsOfArticles[i].article.applications[0].type === ApplicationType.TiendaNube) {
+            this.updateArticleTiendaNube(this.movementsOfArticles[i].article._id)
+          }
         }
       }
       this.loading = true;
