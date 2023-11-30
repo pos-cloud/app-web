@@ -97,6 +97,11 @@ function getMovementsOfCancellations(req, res, next) {
 					if (searchPropertyOfArray(project, 'transactionOrigin.company.')) {
 						queryAggregate.push({ $lookup: { from: "companies", foreignField: "_id", localField: "transactionOrigin.company", as: "transactionOrigin.company" } });
 						queryAggregate.push({ $unwind: { path: "$transactionOrigin.company", preserveNullAndEmptyArrays: true } });
+						
+						if (searchPropertyOfArray(project, 'transactionOrigin.company.state.')) {
+							queryAggregate.push({ $lookup: { from: "states", foreignField: "_id", localField: "transactionOrigin.company.state", as: "transactionOrigin.company.state" } });
+							queryAggregate.push({ $unwind: { path: "$transactionOrigin.company.state", preserveNullAndEmptyArrays: true } });
+						}
 
 						if (searchPropertyOfArray(project, 'transactionOrigin.company.employee.')) {
 							queryAggregate.push({ $lookup: { from: "employees", foreignField: "_id", localField: "transactionOrigin.company.employee", as: "transactionOrigin.company.employee" } });
