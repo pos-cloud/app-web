@@ -41,7 +41,7 @@ export let attributes = [
     },
     {
         name: 'transactionOrigin.company.employee.name',
-        visible: false,
+        visible: true,
         disabled: false,
         filter: true,
         datatype: 'string',
@@ -71,7 +71,7 @@ export let attributes = [
     },
     {
         name: 'transactionOrigin.origin',
-        visible: true,
+        visible: false,
         disabled: false,
         filter: true,
         datatype: 'number',
@@ -101,7 +101,7 @@ export let attributes = [
     },
     {
         name: 'transactionOrigin.company.name',
-        visible: true,
+        visible: false,
         disabled: false,
         filter: true,
         datatype: 'string',
@@ -171,7 +171,7 @@ export let attributes = [
     },
     {
         name: 'transactionDestination.origin',
-        visible: true,
+        visible: false,
         disabled: false,
         filter: true,
         datatype: 'number',
@@ -201,7 +201,7 @@ export let attributes = [
     },
     {
         name: 'transactionDestination.company.name',
-        visible: false,
+        visible: true,
         disabled: false,
         filter: true,
         datatype: 'string',
