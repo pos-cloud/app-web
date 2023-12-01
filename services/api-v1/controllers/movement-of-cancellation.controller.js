@@ -85,6 +85,10 @@ function getMovementsOfCancellations(req, res, next) {
 					queryAggregate.push({ $lookup: { from: "transactions", foreignField: "_id", localField: "transactionOrigin", as: "transactionOrigin" } });
 					queryAggregate.push({ $unwind: { path: "$transactionOrigin", preserveNullAndEmptyArrays: true } });
 
+					if (searchPropertyOfArray(project, 'transactionOrigin.employeeClosing.')) {
+						queryAggregate.push({ $lookup: { from: "employees", foreignField: "_id", localField: "transactionOrigin.employeeClosing", as: "transactionOrigin.employeeClosing" } });
+						queryAggregate.push({ $unwind: { path: "$transactionOrigin.employeeClosing", preserveNullAndEmptyArrays: true } });
+					}
 					if (searchPropertyOfArray(project, 'transactionOrigin.type.')) {
 						queryAggregate.push({ $lookup: { from: "transaction-types", foreignField: "_id", localField: "transactionOrigin.type", as: "transactionOrigin.type" } });
 						queryAggregate.push({ $unwind: { path: "$transactionOrigin.type", preserveNullAndEmptyArrays: true } });
@@ -92,12 +96,17 @@ function getMovementsOfCancellations(req, res, next) {
 
 					if (searchPropertyOfArray(project, 'transactionOrigin.company.')) {
 						queryAggregate.push({ $lookup: { from: "companies", foreignField: "_id", localField: "transactionOrigin.company", as: "transactionOrigin.company" } });
-                        queryAggregate.push({ $unwind: { path: "$transactionOrigin.company", preserveNullAndEmptyArrays: true } });
-                        
-                        if (searchPropertyOfArray(project, 'transactionOrigin.company.state.')) {
-                            queryAggregate.push({ $lookup: { from: "states", foreignField: "_id", localField: "transactionOrigin.company.state", as: "transactionOrigin.company.state" } });
-                            queryAggregate.push({ $unwind: { path: "$transactionOrigin.company.state", preserveNullAndEmptyArrays: true } });
-                        }
+						queryAggregate.push({ $unwind: { path: "$transactionOrigin.company", preserveNullAndEmptyArrays: true } });
+						
+						if (searchPropertyOfArray(project, 'transactionOrigin.company.state.')) {
+							queryAggregate.push({ $lookup: { from: "states", foreignField: "_id", localField: "transactionOrigin.company.state", as: "transactionOrigin.company.state" } });
+							queryAggregate.push({ $unwind: { path: "$transactionOrigin.company.state", preserveNullAndEmptyArrays: true } });
+						}
+
+						if (searchPropertyOfArray(project, 'transactionOrigin.company.employee.')) {
+							queryAggregate.push({ $lookup: { from: "employees", foreignField: "_id", localField: "transactionOrigin.company.employee", as: "transactionOrigin.company.employee" } });
+							queryAggregate.push({ $unwind: { path: "$transactionOrigin.company.employee", preserveNullAndEmptyArrays: true } });
+						}
 					}
 				}
 
