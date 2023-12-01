@@ -8,7 +8,7 @@ moment.locale('es');
 
 let Address;
 let User;
-
+// test
 function getAddress(req, res, next, id = undefined) {
 
 	initConnectionDB(req.session.database);
