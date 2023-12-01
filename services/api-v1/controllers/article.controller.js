@@ -756,6 +756,7 @@ async function saveArticle (req, res, next) {
   article.width = params.width
   article.height = params.height
   article.depth = params.depth
+  article.tiendaNubeId = params.tiendaNubeId
   const user = new User()
   user._id = req.session.user
   article.creationUser = user

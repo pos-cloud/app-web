@@ -52,7 +52,28 @@ export class DatabaseService {
       const collection = this.database.collection(collectionName);
       const objectId = new ObjectId(documentId);
       const document = await collection.findOne({ _id: objectId });
-   
+      return document;
+    } catch (error) {
+      console.error('Error al obtener el documento por ID:', error);
+      throw error;
+    }
+  }
+
+  async getDocumentByIdHarticle(
+    collectionName: string,
+    documentId: string,
+  ){
+    try {
+      if (!this.database) {
+        throw new Error(
+          'La conexión con la base de datos no ha sido establecida',
+        );
+      }
+
+      const collection = this.database.collection(collectionName);
+      const objectId = new ObjectId(documentId);
+      const document = await collection.findOne({ harticle: objectId });
+    
       return document;
     } catch (error) {
       console.error('Error al obtener el documento por ID:', error);
@@ -71,6 +92,7 @@ export class DatabaseService {
       throw error;
     }
   }
+
   async getCredentialsTiendaNube() {
     const itemCollection = this.getCollection('configs');
 

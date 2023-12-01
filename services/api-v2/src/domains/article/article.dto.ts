@@ -251,4 +251,5 @@ export default class ArticleDto extends ModelDto {
   width: number
   height: number
   depth: number
+  tiendaNubeId: number 
 }

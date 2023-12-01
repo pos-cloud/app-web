@@ -237,10 +237,10 @@ export class ProductsService {
       await this.databaseService.initConnection(database);
       const { token, userID } =
         await this.databaseService.getCredentialsTiendaNube();
-      const foundCollection = this.databaseService.getCollection('articles');
+      const foundCollection = this.databaseService.getCollection('harticles');
 
-      const foundArticle = await this.databaseService.getDocumentById(
-        'articles',
+      const foundArticle = await this.databaseService.getDocumentByIdHarticle(
+        'harticles',
         productId,
       );
 

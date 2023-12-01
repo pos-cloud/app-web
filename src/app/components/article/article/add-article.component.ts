@@ -1649,8 +1649,6 @@ export class AddArticleComponent implements OnInit {
   async saveArticle() {
     this.loading = true;
 
-    console.log(this.article.weight)
-
     if (await this.isValid()) {
 
       if(this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
@@ -1672,7 +1670,7 @@ export class AddArticleComponent implements OnInit {
             this.article = result.article;
           
               this.showToast(null, 'success', 'El producto se ha añadido con éxito.');
-              if(this.article.ecommerceEnabled && this.article.applications[0].type === ApplicationType.TiendaNube){
+              if(this.article.ecommerceEnabled && this.article.applications.some(app => app.type === ApplicationType.TiendaNube)){
                 this.saveArticleTiendaNube();
               }else{
                 this.activeModal.close({article: this.article});
@@ -1714,7 +1712,7 @@ export class AddArticleComponent implements OnInit {
             this._articleService.setItems(null);
             this.showToast(null, 'success', 'Operación realizada con éxito');
 
-            if(this.article.ecommerceEnabled && this.article.applications[0].type === ApplicationType.TiendaNube){
+            if(this.article.ecommerceEnabled && this.article.applications.some(app => app.type === ApplicationType.TiendaNube)){
               this.updateArticleTiendaNube();
             }else{
               this.activeModal.close();
@@ -1728,36 +1726,58 @@ export class AddArticleComponent implements OnInit {
 
   deleteArticle(): void {
     this.loading = true;
-
-    this._articleService.deleteArticleTiendaNube(this.article._id).subscribe(
-      (result) => {
-        if (result.error) {
-          this.showToast(
-            null,
-            'info',
-            result.error && result.error.message
-              ? result.error.message
-              : result.message
-              ? result.message
-              : '',
-          );
+  
+    this._articleService.delete(this.article._id).subscribe(
+      (result: Resulteable) => {
+        if (result.status == 200) {
+          this.deleteArticleTiendaNube();
         } else {
-          this.showToast(null, 'success', 'Operación realizada con éxito en TiendaNube');
-          this._articleService.delete(this.article._id).subscribe(
-            (result: Resulteable) => {
-              if (result.status == 200) {
-                this.activeModal.close('delete_close');
-              } else {
-                this.showToast(result);
-              }
-            },
-         )
-       }
-     },
-      (error) => this.showToast(error)
+          this.showToast(result);
+          this.loading = false;
+        }
+      },
+      (error) => {
+        this.showToast(error);
+        this.loading = false;
+      }
     );
   }
-
+  
+  private deleteArticleTiendaNube(): void {
+    if (
+      this.article.tiendaNubeId &&
+      this.article.ecommerceEnabled &&
+      this.article.applications.some(app => app.type === ApplicationType.TiendaNube)
+    ) {
+      this._articleService.deleteArticleTiendaNube(this.article._id).subscribe(
+        (result) => {
+          if (result.error) {
+            this.showToast(
+              null,
+              'info',
+              result.error && result.error.message
+                ? result.error.message
+                : result.message
+                ? result.message
+                : '',
+            );
+          } else {
+            this.showToast(null, 'success', 'Operación realizada con éxito en TiendaNube');
+          }
+          this.loading = false;
+          this.activeModal.close('delete_close');
+        },
+        (error) => {
+          this.showToast(error);
+          this.loading = false;
+        }
+      );
+    } else {
+      this.loading = false;
+      this.activeModal.close('delete_close');
+    }
+  }
+  
   async saveArticleTiendaNube() {
     this.loading = true;
 

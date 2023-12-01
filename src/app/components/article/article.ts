@@ -17,7 +17,6 @@ import { Account } from '../account/account';
 export class Article {
 
     public _id: string;
-    public tiendaNubeId: string;
     public type: Type = Type.Final;
     public containsVariants: boolean = false;
     public containsStructure: boolean = false;
@@ -100,6 +99,7 @@ export class Article {
     public width: number;
     public height: number;
     public depth: number;
+    public tiendaNubeId: number;
     
     constructor() { }
 }

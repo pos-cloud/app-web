@@ -126,6 +126,7 @@ class ArticleSchema extends Model {
       width: { type: Number},
       height: { type: Number},
       depth: { type: Number},
+      tiendaNubeId: { type: Number},
 
     })
   }
