@@ -566,5 +566,9 @@
     "you're not authorized": "No estas autorizado",
     "filterTransaction": "Filtra Transacciones",
     "filterCompany": "Filtra Empresas",
-    "editArticle": "Permite editar articulo"
+    "editArticle": "Permite editar articulo",
+    "weight": "Peso",
+    "depth": "Ancho",
+    "width": "Largo",
+    "height": "Alto"
 }

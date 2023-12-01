@@ -1649,8 +1649,6 @@ export class AddArticleComponent implements OnInit {
   async saveArticle() {
     this.loading = true;
 
-    console.log(this.article.weight)
-
     if (await this.isValid()) {
 
       if(this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
@@ -1670,13 +1668,12 @@ export class AddArticleComponent implements OnInit {
           } else {
             this.hasChanged = true;
             this.article = result.article;
-          
-              this.showToast(null, 'success', 'El producto se ha añadido con éxito.');
-              if(this.article.ecommerceEnabled && this.article.applications[0].type === ApplicationType.TiendaNube){
-                this.saveArticleTiendaNube();
-              }else{
-                this.activeModal.close({article: this.article});
-              }
+            this.showToast(null, 'success', 'El producto se ha añadido con éxito.');
+            if(this.article.ecommerceEnabled && this.article.applications[0].type === ApplicationType.TiendaNube){
+              this.saveArticleTiendaNube();
+            } else {
+              this.activeModal.close({article: this.article});
+            }
             
           }
         },
@@ -1713,12 +1710,8 @@ export class AddArticleComponent implements OnInit {
             this.articleForm.patchValue({wooId: this.article.wooId});
             this._articleService.setItems(null);
             this.showToast(null, 'success', 'Operación realizada con éxito');
-
-            if(this.article.ecommerceEnabled && this.article.applications[0].type === ApplicationType.TiendaNube){
-              this.updateArticleTiendaNube();
-            }else{
-              this.activeModal.close();
-            }
+            this.activeModal.close();
+            if(this.article.ecommerceEnabled && this.article.tiendaNubeId) this.updateArticleTiendaNube();
           }
         },
         (error) => this.showToast(error),
@@ -1726,7 +1719,23 @@ export class AddArticleComponent implements OnInit {
     }
   }
 
-  deleteArticle(): void {
+  async deleteArticle() {
+    this.loading = true;
+
+    this._articleService.delete(this.article._id).subscribe(
+      (result: Resulteable) => {
+        if (result.status == 200) {
+          this.activeModal.close('delete_close');
+          if(this.article.tiendaNubeId && this.article.ecommerceEnabled) this.deleteArticleTiendaNube();
+        } else {
+          this.showToast(result);
+        }
+      },
+      (error) => this.showToast(error),
+    );
+  }
+
+  async deleteArticleTiendaNube() {
     this.loading = true;
 
     this._articleService.deleteArticleTiendaNube(this.article._id).subscribe(
@@ -1742,17 +1751,8 @@ export class AddArticleComponent implements OnInit {
               : '',
           );
         } else {
-          this.showToast(null, 'success', 'Operación realizada con éxito en TiendaNube');
-          this._articleService.delete(this.article._id).subscribe(
-            (result: Resulteable) => {
-              if (result.status == 200) {
-                this.activeModal.close('delete_close');
-              } else {
-                this.showToast(result);
-              }
-            },
-         )
-       }
+          this.showToast(null, 'success', 'Producto eliminado con éxito en TiendaNube');
+      }
      },
       (error) => this.showToast(error)
     );
@@ -1763,7 +1763,6 @@ export class AddArticleComponent implements OnInit {
 
     this._articleService.saveArticleTiendaNube(this.article._id).subscribe(
       (result) => {
-        console.log(result)
         if (result.error) {
           this.showToast(
             null,
@@ -1775,8 +1774,7 @@ export class AddArticleComponent implements OnInit {
               : '',
           );
         } else {
-          this.showToast(null, 'success', 'Operación realizada con éxito en TiendaNube');
-          this.activeModal.close();
+          this.showToast(null, 'success', 'Producto creado con éxito en Tienda Nube');
         }
       },
       (error) => this.showToast(error)
@@ -1799,8 +1797,7 @@ export class AddArticleComponent implements OnInit {
               : '',
           );
         } else {
-          this.showToast(null, 'success', 'Operación realizada con éxito en TiendaNube');
-          this.activeModal.close();
+          this.showToast(null, 'success', 'Producto actualizado con éxito en TiendaNube');
         }
       },
       (error) => this.showToast(error)

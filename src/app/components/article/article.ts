@@ -561,7 +561,7 @@ export let attributes = [
     },
     {
         name: 'weight',
-        visible: true,
+        visible: false,
         disabled: false,
         filter: true,
         datatype: 'string',
@@ -571,7 +571,7 @@ export let attributes = [
     },
     {
         name: 'depth',
-        visible: true,
+        visible: false,
         disabled: false,
         filter: true,
         datatype: 'string',
@@ -581,7 +581,7 @@ export let attributes = [
     },
     {
         name: 'width',
-        visible: true,
+        visible: false,
         disabled: false,
         filter: true,
         datatype: 'string',
@@ -591,7 +591,7 @@ export let attributes = [
     },
     {
         name: 'height',
-        visible: true,
+        visible: false,
         disabled: false,
         filter: true,
         datatype: 'string',
