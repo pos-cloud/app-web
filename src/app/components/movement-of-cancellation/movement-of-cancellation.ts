@@ -101,7 +101,7 @@ export let attributes = [
     },
     {
         name: 'transactionOrigin.company.name',
-        visible: false,
+        visible: true,
         disabled: false,
         filter: true,
         datatype: 'string',
@@ -211,7 +211,7 @@ export let attributes = [
     },
     {
         name: 'transactionDestination.totalPrice',
-        visible: false,
+        visible: true,
         disabled: false,
         filter: true,
         datatype: 'currency',
