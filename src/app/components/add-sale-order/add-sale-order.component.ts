@@ -2250,7 +2250,6 @@ export class AddSaleOrderComponent {
         }
         break;
       case 'send-email':
-
         if (this.transaction.type.readLayout) {
           modalRef = this._modalService.open(PrintTransactionTypeComponent);
           modalRef.componentInstance.transactionId = this.transaction._id;
@@ -2335,6 +2334,112 @@ export class AddSaleOrderComponent {
         }, 2500);
    
         break;
+      case 'send-email-modal':
+          let attachment = [];
+
+        if (this.transaction.type.readLayout) {
+          modalRef = this._modalService.open(PrintTransactionTypeComponent);
+          modalRef.componentInstance.transactionId = this.transaction._id;
+          modalRef.componentInstance.source = 'mail';
+        } else {
+          modalRef = this._modalService.open(PrintComponent);
+          modalRef.componentInstance.company = this.transaction.company;
+          modalRef.componentInstance.transactionId = this.transaction._id;
+          modalRef.componentInstance.typePrint = 'invoice';
+          modalRef.componentInstance.source = 'mail';
+        }
+        if (this.transaction.type.defectPrinter) {
+          modalRef.componentInstance.printer = this.transaction.type.defectPrinter;
+        } else {
+          if (this.printers && this.printers.length > 0) {
+            for (let printer of this.printers) {
+              if (printer.printIn === PrinterPrintIn.Counter) {
+                modalRef.componentInstance.printer = printer;
+              }
+            }
+          }
+        }
+    
+        modalRef = this._modalService.open(SendEmailComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        if (this.transaction.company && this.transaction.company.emails) {
+          modalRef.componentInstance.emails = this.transaction.company.emails;
+        }
+         let labelPrints = this.transaction.type.name;
+    
+        if (this.transaction.type.labelPrint) {
+          labelPrints = this.transaction.type.labelPrint;
+        }
+        modalRef.componentInstance.subject = `${labelPrints} ${this.padNumber(
+          this.transaction.origin,
+          4,
+        )}-${this.transaction.letter}-${this.padNumber(this.transaction.number, 8)}`;
+    
+        if (this.transaction.type.electronics) {
+          // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${this.database}/${transaction._id}">Su comprobante</a>`
+          modalRef.componentInstance.body = ' ';
+    
+          attachment.push({
+            filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
+            path: `/home/clients/${this.database}/invoice/${this.transaction._id}.pdf`,
+          });
+        } else {
+          // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${this.database}/${transaction._id}">Su comprobante</a>`
+          modalRef.componentInstance.body = ' ';
+          attachment.push({
+            filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
+            path: `/home/clients/${this.database}/others/${this.transaction._id}.pdf`,
+          });
+        }
+    
+        if (Config.country === 'MX') {
+          // modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://vps-1883265-x.dattaweb.com:300/api/print/xml/CFDI-33_Factura_` + transaction.number + `">Su comprobante</a>`;
+          modalRef.componentInstance.body += ' ';
+    
+          attachment.push({
+            filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.xml`,
+            path:
+              `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` +
+              this.transaction.number +
+              `.xml`,
+          });
+        }
+        if (this.transaction.type.defectEmailTemplate) {
+          if (this.transaction.type.electronics) {
+            // modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${this.database}/${transaction._id}">Su comprobante</a>`
+            modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design;
+            attachment = [];
+            attachment.push({
+              filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
+              path: `/home/clients/${this.database}/invoice/${this.transaction._id}.pdf`,
+            });
+          } else {
+            // modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${this.database}/${transaction._id}">Su comprobante</a>`
+            modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design;
+            attachment = [];
+            attachment.push({
+              filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
+              path: `/home/clients/${this.database}/others/${this.transaction._id}.pdf`,
+            });
+          }
+    
+          if (Config.country === 'MX') {
+            // modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://vps-1883265-x.dattaweb.com:300/api/print/xml/CFDI-33_Factura_` + transaction.number + `">Su comprobante</a>`;
+            modalRef.componentInstance.body += ' ';
+            attachment = [];
+            attachment.push({
+              filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.xml`,
+              path:
+                `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` +
+                this.transaction.number +
+                `.xml`,
+            });
+          }
+        }
+        modalRef.componentInstance.attachment = attachment;
+        break
       case 'cancel':
         modalRef = this._modalService.open(DeleteTransactionComponent, {
           size: 'lg',
@@ -3078,116 +3183,6 @@ export class AddSaleOrderComponent {
     });
   }
 
-  sendMail(transaction: Transaction) {
-    let modalRef;
-
-    let attachments = [];
-
-    if (transaction.type.readLayout) {
-      modalRef = this._modalService.open(PrintTransactionTypeComponent);
-      modalRef.componentInstance.transactionId = transaction._id;
-      modalRef.componentInstance.source = 'mail';
-    } else {
-      modalRef = this._modalService.open(PrintComponent);
-      modalRef.componentInstance.company = transaction.company;
-      modalRef.componentInstance.transactionId = transaction._id;
-      modalRef.componentInstance.typePrint = 'invoice';
-      modalRef.componentInstance.source = 'mail';
-    }
-    if (transaction.type.defectPrinter) {
-      modalRef.componentInstance.printer = transaction.type.defectPrinter;
-    } else {
-      if (this.printers && this.printers.length > 0) {
-        for (let printer of this.printers) {
-          if (printer.printIn === PrinterPrintIn.Counter) {
-            modalRef.componentInstance.printer = printer;
-          }
-        }
-      }
-    }
-
-    modalRef = this._modalService.open(SendEmailComponent, {
-      size: 'lg',
-      backdrop: 'static',
-    });
-    if (transaction.company && transaction.company.emails) {
-      modalRef.componentInstance.emails = transaction.company.emails;
-    }
-    let labelPrint = transaction.type.name;
-
-    if (transaction.type.labelPrint) {
-      labelPrint = transaction.type.labelPrint;
-    }
-    modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(
-      transaction.origin,
-      4,
-    )}-${transaction.letter}-${this.padNumber(transaction.number, 8)}`;
-
-    if (transaction.type.electronics) {
-      // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${this.database}/${transaction._id}">Su comprobante</a>`
-      modalRef.componentInstance.body = ' ';
-
-      attachments.push({
-        filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-        path: `/home/clients/${this.database}/invoice/${transaction._id}.pdf`,
-      });
-    } else {
-      // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${this.database}/${transaction._id}">Su comprobante</a>`
-      modalRef.componentInstance.body = ' ';
-      attachments.push({
-        filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-        path: `/home/clients/${this.database}/others/${transaction._id}.pdf`,
-      });
-    }
-
-    if (Config.country === 'MX') {
-      // modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://vps-1883265-x.dattaweb.com:300/api/print/xml/CFDI-33_Factura_` + transaction.number + `">Su comprobante</a>`;
-      modalRef.componentInstance.body += ' ';
-
-      attachments.push({
-        filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.xml`,
-        path:
-          `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` +
-          transaction.number +
-          `.xml`,
-      });
-    }
-
-    if (transaction.type.defectEmailTemplate) {
-      if (transaction.type.electronics) {
-        // modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${this.database}/${transaction._id}">Su comprobante</a>`
-        modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design;
-        attachments = [];
-        attachments.push({
-          filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-          path: `/home/clients/${this.database}/invoice/${transaction._id}.pdf`,
-        });
-      } else {
-        // modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${this.database}/${transaction._id}">Su comprobante</a>`
-        modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design;
-        attachments = [];
-        attachments.push({
-          filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-          path: `/home/clients/${this.database}/others/${transaction._id}.pdf`,
-        });
-      }
-
-      if (Config.country === 'MX') {
-        // modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://vps-1883265-x.dattaweb.com:300/api/print/xml/CFDI-33_Factura_` + transaction.number + `">Su comprobante</a>`;
-        modalRef.componentInstance.body += ' ';
-        attachments = [];
-        attachments.push({
-          filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.xml`,
-          path:
-            `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` +
-            transaction.number +
-            `.xml`,
-        });
-      }
-    }
-    modalRef.componentInstance.attachments = attachments;
-  }
-
   async finish() {
     try {
 
@@ -3226,7 +3221,7 @@ export class AddSaleOrderComponent {
       }
       
       if(this.transaction.type.defectEmailTemplate !== null && this.transaction.type.requestEmailTemplate){
-        this.sendMail(this.transaction);
+        this.openModal('send-email-modal');
       }
 
       let result: Resulteable = await this._transactionService
