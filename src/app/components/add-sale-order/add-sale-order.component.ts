@@ -3082,7 +3082,10 @@ export class AddSaleOrderComponent {
 
   async finish() {
     try {
-      if (this.transaction.type.requestArticles && this.transaction.type.modifyStock && this.config.tiendaNube.appID !== '') {
+      if (this.transaction.type.requestArticles && 
+        this.transaction.type.modifyStock && 
+        this.config.tiendaNube.appID !== '' &&
+        this.movementsOfArticles.length > 0) {
           for (let i = 0; i < this.movementsOfArticles.length; i++) {
             if (this.movementsOfArticles[i].article.tiendaNubeId) {
               this.updateArticleTiendaNube(this.movementsOfArticles[i].article._id)
