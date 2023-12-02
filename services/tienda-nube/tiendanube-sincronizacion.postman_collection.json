@@ -135,6 +135,84 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "delete product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJkYXRhYmFzZSI6ImRpc3RyaWJ1aWRvcmFnaWxldHRhIn0.K3PDxmXChC8-53wGp3ndP-Ptz67agP9zpm5m1zIL6iE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:305/products/:productId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "305",
+							"path": [
+								"products",
+								":productId"
+							],
+							"query": [
+								{
+									"key": null,
+									"value": "191198567",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "productId",
+									"value": "5d667f4232c5b00c931b5afe"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "massive update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJkYXRhYmFzZSI6ImRpc3RyaWJ1aWRvcmFnaWxldHRhIn0.K3PDxmXChC8-53wGp3ndP-Ptz67agP9zpm5m1zIL6iE",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"products\": [\r\n        192983744,\r\n        192986220,\r\n        192986594\r\n    ]\r\n} //5d667f4232c5b00c931b5afe,5d2c6e790bba5d15e7477fc9,5d2e47d3b3193539be057d80",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:305/products/massive",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "305",
+							"path": [
+								"products",
+								"massive"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}

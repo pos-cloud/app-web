@@ -35,7 +35,7 @@ export class ProductsService {
     if (
       !foundArticle ||
       foundArticle.operationType == 'D' ||
-       (foundArticle.type as string).toLocaleLowerCase() != 'final'
+      (foundArticle.type as string).toLocaleLowerCase() != 'final'
     ) {
       throw new BadRequestException(` Article with id ${productId} not found`);
     }
@@ -64,7 +64,7 @@ export class ProductsService {
       const foundCategory = this.categoryService.findOneCategoryDb(
         foundArticle.category,
       );
- 
+
       const foundCategoryTiendaMia = await this.categoryService.create(
         database,
         foundArticle.category,
@@ -92,13 +92,14 @@ export class ProductsService {
       result.id,
       result.variants[0].id,
       {
-        stock: !stockFound || stockFound.realStock < 0 ? 0 : stockFound.realStock,
+        stock:
+          !stockFound || stockFound.realStock < 0 ? 0 : stockFound.realStock,
         price: foundArticle.salePrice || null,
         sku: foundArticle.barcode || null,
         weight: foundArticle.weight || null,
         width: foundArticle.width || null,
         height: foundArticle.height || null,
-        depth: foundArticle.depth || null
+        depth: foundArticle.depth || null,
       },
     );
     await foundCollection.updateOne(
@@ -146,8 +147,8 @@ export class ProductsService {
         );
       }
 
-      if(!foundArticle.tiendaNubeId){
-        return this.create(database,productId)
+      if (!foundArticle.tiendaNubeId) {
+        return this.create(database, productId);
       }
 
       const dataUpdateProductTiendaNube = {
@@ -206,23 +207,56 @@ export class ProductsService {
         operationType: { $ne: 'D' },
         article: new ObjectId(productId),
       });
-   
+
       await this.tiendaNubeService.updateProductFirstVariant(
         token,
         userID,
         result.id,
         result.variants[0].id,
         {
-          stock: !stockFound || stockFound.realStock < 0 ? 0 : stockFound.realStock,
+          stock:
+            !stockFound || stockFound.realStock < 0 ? 0 : stockFound.realStock,
           price: foundArticle.salePrice ? foundArticle.salePrice : null,
           sku: foundArticle.barcode || null,
           weight: foundArticle.weight || null,
           width: foundArticle.width || null,
           height: foundArticle.height || null,
-          depth: foundArticle.depth || null
+          depth: foundArticle.depth || null,
         },
       );
       return result;
+    } catch (err) {
+      throw err;
+    }
+  }
+  async massiveUpdate(database: string, products: string[]) {
+    try {
+      if (!database) {
+        throw new BadRequestException(`Database is required `);
+      }
+      await this.databaseService.initConnection(database);
+
+      const foundCollection = this.databaseService.getCollection('articles');
+
+      const data = await foundCollection
+        .find({ tiendaNubeId: { $in: products } })
+        .toArray();
+
+      const arrayData = data.map((e) => {
+        return new Promise(async (resolve, reject) => {
+          const result = await this.update(database, e._id);
+          if (result) {
+            resolve(true);
+          }
+          reject(false);
+        });
+      });
+
+      const result = await Promise.all(arrayData);
+      if (result) {
+        return true;
+      }
+      return false;
     } catch (err) {
       throw err;
     }
@@ -233,7 +267,7 @@ export class ProductsService {
       if (!database) {
         throw new BadRequestException(`Database is required `);
       }
-      
+
       await this.databaseService.initConnection(database);
       const { token, userID } =
         await this.databaseService.getCredentialsTiendaNube();
