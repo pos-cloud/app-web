@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Request,
+  Put,
 } from '@nestjs/common';
 import { ProductsService } from '../services/products.service';
 import { CreateProductDto } from '../dto/create-product.dto';
@@ -43,6 +44,13 @@ export class ProductsController {
     return this.productsService.update(request.database, productId);
   }
 
+  @Put('massive')
+  massiveUpdate(
+    @Body('products') products: string[],
+    @Request() request: CustomRequest,
+  ) {
+    return this.productsService.massiveUpdate(request.database, products);
+  }
   @Delete(':productId')
   remove(
     @Param('productId') productId: string,
