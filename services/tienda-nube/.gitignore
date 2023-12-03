@@ -1,2 +1,3 @@
-node_nmodules 
+node_modules 
+
 .env 
