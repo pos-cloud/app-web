@@ -46,10 +46,10 @@ export class ProductsController {
 
   @Put('massive')
   massiveUpdate(
-    @Body('products') products: string[],
+    @Body('tiendaNubeIds') tiendaNubeIds: string[],
     @Request() request: CustomRequest,
   ) {
-    return this.productsService.massiveUpdate(request.database, products);
+    return this.productsService.massiveUpdate(request.database, tiendaNubeIds);
   }
 
   @Delete(':tiendaNubeId')
