@@ -262,7 +262,7 @@ export class ProductsService {
     }
   }
 
-  async remove(database: string, productId: string) {
+  async remove(database: string, tiendaNubeId: string) {
     try {
       if (!database) {
         throw new BadRequestException(`Database is required `);
@@ -271,20 +271,15 @@ export class ProductsService {
       await this.databaseService.initConnection(database);
       const { token, userID } =
         await this.databaseService.getCredentialsTiendaNube();
-      const foundCollection = this.databaseService.getCollection('articles');
+    
 
-      const foundArticle = await this.databaseService.getDocumentById(
-        'articles',
-        productId,
-      );
-
-      if (!foundArticle.tiendaNubeId) {
+      if (!tiendaNubeId) {
         throw new BadRequestException(
-          `El producto no esta vinculado a tiendaNube`,
+          `ID not found`,
         );
       }
       const result = await this.tiendaNubeService.removeProduct(
-        foundArticle.tiendaNubeId,
+        tiendaNubeId,
         token,
         userID,
       );
@@ -292,17 +287,8 @@ export class ProductsService {
       if (!result) {
         return false;
       }
-      const updateArticle = await foundCollection.updateOne(
-        {
-          _id: foundArticle._id,
-        },
-        {
-          $unset: {
-            tiendaNubeId: 1,
-          },
-        },
-      );
-      return updateArticle ? true : false;
+   
+      return result;
     } catch (err) {
       throw err;
     }

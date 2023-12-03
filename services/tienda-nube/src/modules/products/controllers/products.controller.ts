@@ -51,11 +51,12 @@ export class ProductsController {
   ) {
     return this.productsService.massiveUpdate(request.database, products);
   }
-  @Delete(':productId')
+
+  @Delete(':tiendaNubeId')
   remove(
-    @Param('productId') productId: string,
+    @Param('tiendaNubeId') tiendaNubeId: string,
     @Request() request: CustomRequest,
   ) {
-    return this.productsService.remove(request.database, productId);
+    return this.productsService.remove(request.database, tiendaNubeId);
   }
 }

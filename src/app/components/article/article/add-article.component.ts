@@ -1738,7 +1738,7 @@ export class AddArticleComponent implements OnInit {
   async deleteArticleTiendaNube() {
     this.loading = true;
 
-    this._articleService.deleteArticleTiendaNube(this.article._id).subscribe(
+    this._articleService.deleteArticleTiendaNube(this.article.tiendaNubeId).subscribe(
       (result) => {
         if (result.error) {
           this.showToast(
@@ -1752,7 +1752,7 @@ export class AddArticleComponent implements OnInit {
           );
         } else {
           this.showToast(null, 'success', 'Producto eliminado con éxito en TiendaNube');
-      }
+        }
      },
       (error) => this.showToast(error)
     );

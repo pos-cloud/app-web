@@ -402,14 +402,14 @@ export class ArticleService extends ModelService {
       );
   }
 
-  public deleteArticleTiendaNube(id: string): Observable<any> {
-    const URL = `${environment.apiTiendaNube}/products/${id}`;
+  public deleteArticleTiendaNube(tiendaNubeId: string): Observable<any> {
+    const URL = `${environment.apiTiendaNube}/products/${tiendaNubeId}`;
 
     const headers = new HttpHeaders()
     .set('Content-Type', 'application/json')
     .set('Authorization', this._authService.getToken());
 
-  const params = new HttpParams().set('productId', id);
+  const params = new HttpParams().set('tiendaNubeId', tiendaNubeId);
 
   return this._http
     .delete(URL, { headers: headers })
