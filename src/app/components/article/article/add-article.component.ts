@@ -1669,7 +1669,7 @@ export class AddArticleComponent implements OnInit {
             this.hasChanged = true;
             this.article = result.article;
             this.showToast(null, 'success', 'El producto se ha añadido con éxito.');
-            if(this.article.ecommerceEnabled && this.article.applications[0].type === ApplicationType.TiendaNube){
+            if(this.article.ecommerceEnabled && this.article.applications.some(application => application.type === ApplicationType.TiendaNube)){
               this.saveArticleTiendaNube();
             } else {
               this.activeModal.close({article: this.article});
@@ -1711,7 +1711,9 @@ export class AddArticleComponent implements OnInit {
             this._articleService.setItems(null);
             this.showToast(null, 'success', 'Operación realizada con éxito');
             this.activeModal.close();
-            if(this.article.ecommerceEnabled && this.article.tiendaNubeId) this.updateArticleTiendaNube();
+          if(this.article.ecommerceEnabled && this.article.applications.some(application => application.type === ApplicationType.TiendaNube)){
+              this.updateArticleTiendaNube();
+            }
           }
         },
         (error) => this.showToast(error),
@@ -1784,7 +1786,7 @@ export class AddArticleComponent implements OnInit {
   async updateArticleTiendaNube() {
     this.loading = true;
 
-    this._articleService.updateArticleTiendaNube(this.article._id).subscribe(
+    this._articleService.updateArticleTiendaNube(this.article.tiendaNubeId).subscribe(
       (result) => {
         if (result.error) {
           this.showToast(
