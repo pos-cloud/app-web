@@ -1786,7 +1786,7 @@ export class AddArticleComponent implements OnInit {
   async updateArticleTiendaNube() {
     this.loading = true;
 
-    this._articleService.updateArticleTiendaNube(this.article.tiendaNubeId).subscribe(
+    this._articleService.updateArticleTiendaNube(this.article._id).subscribe(
       (result) => {
         if (result.error) {
           this.showToast(
