@@ -11,6 +11,11 @@ jobs:
   deploy-donweb:
     runs-on: prod
 
+    env:
+      MONGO_URL: ${{ secrets.MONGO_URL }}
+      TIENDA_NUBE_URI: ${{ secrets.TIENDA_NUBE_URI }}
+      TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -24,6 +29,9 @@ jobs:
       - name: Run Docker container
         run: |
           docker run \
+            -e MONGO_URL=${MONGO_URL} \
+            -e TIENDA_NUBE_URI=${TIENDA_NUBE_URI} \
+            -e TOKEN_SECRET=${TOKEN_SECRET} \
             -v /home:/home \
             --restart unless-stopped \
             --net host \
