@@ -21,7 +21,7 @@ export class DatabaseService {
         this.client = await MongoClient.connect(mongoUri);
         this.database = this.client.db(databaseName);
       }
-      console.log('Conexión con MongoDB establecida');
+      console.log('Conexión con MongoDB establecida' + this.database);
     } catch (error) {
       console.error('Error al conectar con MongoDB:', error);
       throw error;
@@ -31,7 +31,7 @@ export class DatabaseService {
   getCollection(collectionName: string): Collection<any> {
     if (!this.database) {
       throw new Error(
-        'La conexión con la base de datos no ha sido establecida',
+        'La conexión con la base de datos no ha sido establecida' + this.database,
       );
     }
     this.collection = this.database.collection(collectionName);

@@ -137,6 +137,8 @@ export class ProductsService {
         productId,
       );
 
+      console.log(foundArticle)
+
       if (
         !foundArticle ||
         foundArticle.operationType == 'D' ||
