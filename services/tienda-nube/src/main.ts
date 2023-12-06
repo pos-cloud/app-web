@@ -10,7 +10,6 @@ async function bootstrap() {
     credentials: true,
   });
   
-  // test
   await app.listen(305);
 }
 bootstrap();
