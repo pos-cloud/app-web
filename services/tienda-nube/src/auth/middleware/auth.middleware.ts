@@ -7,16 +7,16 @@ import DataJWT from '../interface/jwt.interface';
 export class AuthMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     if (req?.headers?.authorization) {
-      // const token = req.headers.authorization.replace(/['"]+/g, '');
+      const token = req.headers.authorization.replace(/['"]+/g, '');
       try {
-        const token = jwt.encode(
-          {
-            user: '64a6f0d40e715e06d48eb00b',
-            database: 'distribuidoragiletta',
-            clientId: '64a6f0d40e715e06d48eb00b',
-          },
-          process.env.TOKEN_SECRET || '',
-        );
+        // const token = jwt.encode(
+        //   {
+        //     user: '64a6f0d40e715e06d48eb00b',
+        //     database: 'distribuidoragiletta',
+        //     clientId: '64a6f0d40e715e06d48eb00b',
+        //   },
+        //   process.env.TOKEN_SECRET || '',
+        // );
         const dataJWT: DataJWT = jwt.decode(
           token,
           process.env.TOKEN_SECRET || '',
