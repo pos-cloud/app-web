@@ -3084,13 +3084,14 @@ export class AddSaleOrderComponent {
     try {
       if (this.transaction.type.requestArticles && 
         this.transaction.type.modifyStock && 
+        this.config.tiendaNube.appID &&
         this.config.tiendaNube.appID !== '' &&
         this.movementsOfArticles.length > 0) {
-          for (let i = 0; i < this.movementsOfArticles.length; i++) {
-            if (this.movementsOfArticles[i].article.tiendaNubeId) {
-              this.updateArticleTiendaNube(this.movementsOfArticles[i].article._id)
-          }
-        }
+          const tiendaNubeIds = this.movementsOfArticles
+              .filter(movement => movement.article.tiendaNubeId)
+              .map(movement => movement.article.tiendaNubeId);
+          
+          if(tiendaNubeIds.length > 0) this.updateArticlesTiendaNube(tiendaNubeIds)
       }
       this.loading = true;
 
@@ -3206,10 +3207,10 @@ export class AddSaleOrderComponent {
     }
   }
 
-  async updateArticleTiendaNube(idArticle) {
+  async updateArticlesTiendaNube(tiendaNubeIds: string[]) {
     this.loading = true;
 
-    this._articleService.updateArticleTiendaNube(idArticle).subscribe(
+    this._articleService.updateArticlesTiendaNube(tiendaNubeIds).subscribe(
       (result) => {
         if (result.error) {
           this.showToast(
