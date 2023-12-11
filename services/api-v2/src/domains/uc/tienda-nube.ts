@@ -12,12 +12,14 @@ import TransactionSchema from '../transaction/transaction.model'
 import RequestWithUser from '../../interfaces/requestWithUser.interface'
 import TransactionController from '../transaction/transaction.controller'
 import TransactionTypeController from '../transaction-type/transaction-type.controller'
+import MovementOfArticleController from '../movement-of-article/movement-of-article.controller'
 import Address from '../address/address.interface'
 import AddresSchema from '../address/address.model'
 import { TransactionType } from '../transaction-type/transaction-type.interface'
 import CompanySchema from '../company/company.model'
 import Company from '../company/company.interface'
 import TransactionUC from '../transaction/transaction.uc'
+import ArticleController from '../article/article.controller'
 
 //  https://tiendanube.github.io/api-documentation/resources/order#get-ordersid
 
@@ -299,8 +301,22 @@ export default class TiendaNubeController {
         return null
     }
 
-    getMovementsOfArticles(order: any) {
-
+    getArticles = async (database: string, order: any) => {
+        try {
+            const Article = await new ArticleController(database).getAll({
+                project: {
+                    _id: 1,
+                    name: 1,
+                    salePrice: 1,
+                    // 'article._id': 1,
+                    // 'article.name': 1,
+                    // 'article.salePrice': 1
+                },
+            });
+            return Article;
+        } catch (error) {
+            throw error;
+        }
     }
 
     createTransaction = async (
@@ -327,10 +343,10 @@ export default class TiendaNubeController {
 
             if (!address) return response.send(new Responser(404, null, 'Address not found', null));
 
-          //  const movementsOfArticle = this.getMovementsOfArticles(order)
+            const movementsOfArticle = this.getArticles(this.database,order)
 
-          //  if (!movementsOfArticle) return response.send(new Responser(404, null, 'movementsOfArticle not found', null));
-
+            if (!movementsOfArticle) return response.send(new Responser(404, null, 'movementsOfArticle not found', null));
+     
             let transactionTiendaNube: Transaction = TransactionSchema.getInstance(this.database)
             transactionTiendaNube = Object.assign(transactionTiendaNube, {
                 letter: "X",
@@ -347,7 +363,7 @@ export default class TiendaNubeController {
                 shipmentMethod: order.shipping,
             })
 
-             response.send(new Responser(200, transactionTiendaNube));
+             response.send(new Responser(200, {transactionTiendaNube, movementsOfArticle}));
 
         } catch (error) {
             console.log(error)
