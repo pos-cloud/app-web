@@ -12,9 +12,12 @@ import TransactionSchema from '../transaction/transaction.model'
 import RequestWithUser from '../../interfaces/requestWithUser.interface'
 import TransactionController from '../transaction/transaction.controller'
 import TransactionTypeController from '../transaction-type/transaction-type.controller'
-import Responseable from '../../interfaces/responsable.interface'
 import Address from '../address/address.interface'
 import AddresSchema from '../address/address.model'
+import { TransactionType } from '../transaction-type/transaction-type.interface'
+import CompanySchema from '../company/company.model'
+import Company from '../company/company.interface'
+import TransactionUC from '../transaction/transaction.uc'
 
 //  https://tiendanube.github.io/api-documentation/resources/order#get-ordersid
 
@@ -218,6 +221,7 @@ const exampleOrder: any = {
 }
 
 export default class TiendaNubeController {
+
     public EJSON: any = require('bson').EJSON
     public path = '/tienda-nube'
     public router = express.Router()
@@ -232,63 +236,122 @@ export default class TiendaNubeController {
             `${this.path}/add-transaction`, [authMiddleware, ensureLic], this.createTransaction
         )
     }
+     
+    getTiendaNubeTransactions = async (database: string) => {
+        try {
+            const transactionType = await new TransactionTypeController(database).getAll({
+                project: {
+                    _id: 1,
+                    name: 1,
+                    allowAPP: 1,
+                    'application._id': 1,
+                    'application.name': 1,
+                    'application.type': 1
+                },
+                match: {
+                    allowAPP: true,
+                    'application.type': 'TiendaNube'
+                },
+            });
+            return transactionType.result[0];
+        } catch (error) {
+            throw error;
+        }
+    }
 
-    createTransaction(
+    getCompany(order: any) {
+        if (order.customer) {
+            let company: Company = CompanySchema.getInstance(this.database)
+            company = Object.assign(company, {
+                name: order.customer.name,
+                fantasyName: order.customer.name,
+                type: 'Cliente',
+                address: order.customer.default_address.address,
+                city: order.customer.default_address.city,
+                phones: order.customer.phone,
+                emails: order.customer.email,
+                identificationValue: order.customer.identification,
+                observation: order.customer.note,
+                addressNumber: order.customer.default_address.number,
+                zipCode: order.customer.default_address.zipCode,
+                floorNumber: order.customer.default_address.floor,
+                state: order.customer.default_address.province,
+                country: order.customer.default_address.country,
+            })
+            return company
+        }
+        return null
+
+    }
+
+    getaddress(order: any) {
+        if (order.shipping_address) {
+            let addressTiendaNube: Address = AddresSchema.getInstance(this.database)
+            addressTiendaNube = Object.assign(addressTiendaNube, {
+                country: order.shipping_address.country,
+                city: order.shipping_address.city,
+                floor: order.shipping_address.floor,
+                name: order.shipping_address.name,
+                postalCode: order.shipping_address.zipcode,
+            })
+            return addressTiendaNube
+        }
+        return null
+    }
+
+    getMovementsOfArticles(order: any) {
+
+    }
+
+    createTransaction = async (
         request: RequestWithUser,
         response: express.Response,
-        next: express.NextFunction,) {
+        next: express.NextFunction,) => {
+        try {
+            this.database = request.database;
+            const order = request.body;
 
-        let database = request.database;
-        const order = request.body;
+            if (Object.keys(order).length < 0) {
+                return response.send(new Responser(404, null, 'Order not found', null));
+            }
 
-        if (Object.keys(order).length < 0) {
-            return response.send(new Responser(404, null, 'Order not found', null));
-        }
-        new TransactionTypeController(database).getAll({
-            project: {
-                _id: 1,
-                name: 1,
-                allowAPP: 1,
-                'application._id': 1,
-                'application.name': 1,
-                'application.type': 1
-            },
-            match: {
-                allowAPP: true,
-                'application.type': 'TiendaNube'
-            },
-        })
-            .then(async (result: Responseable) => {
-                if (result.status == 200) {
-                    if (result.result.length > 0) {
-                        let addressTiendaNube: Address = AddresSchema.getInstance(database)
-                        addressTiendaNube = Object.assign(addressTiendaNube, {
-                            country: order.shipping_address.country,
-                            city: order.shipping_address.city,
-                            floor: order.shipping_address.floor,
-                            name: order.shipping_address.name,
-                            postalCode: order.shipping_address.zipcode,
-                        })
+            const transactionType = await this.getTiendaNubeTransactions(this.database);
 
-                        let transactionTiendaNube: Transaction = TransactionSchema.getInstance(database)
-                        transactionTiendaNube = Object.assign(transactionTiendaNube, {
-                            letter: "X",
-                            origin: 0,
-                            totalPrice: order.total,
-                            discountAmount: order.discount,
-                            number: order.number,
-                            madein: 'Tienda Nube',
-                            state: order.status,
-                            deliveryAddress: addressTiendaNube,
-                            startDate: order.created_at,
-                            shipmentMethod: order.shipping,
-                        })
+            if (!transactionType) return response.send(new Responser(404, null, 'TransactionType not found', null));
 
-                        response.send(new Responser(200, transactionTiendaNube));
-                    }
-                }
-            }).catch(error => {
-                response.send(new Responser(500, null, error));
+            const company = this.getCompany(order)
+
+            if (!company) return response.send(new Responser(404, null, 'Company not found', null));
+
+            const address = this.getaddress(order)
+
+            if (!address) return response.send(new Responser(404, null, 'Address not found', null));
+
+          //  const movementsOfArticle = this.getMovementsOfArticles(order)
+
+          //  if (!movementsOfArticle) return response.send(new Responser(404, null, 'movementsOfArticle not found', null));
+
+            let transactionTiendaNube: Transaction = TransactionSchema.getInstance(this.database)
+            transactionTiendaNube = Object.assign(transactionTiendaNube, {
+                letter: "X",
+                origin: 0,
+                totalPrice: order.total,
+                discountAmount: order.discount,
+                number: order.number,
+                madein: 'Tienda Nube',
+                state: 'Abierto',
+                type: transactionType._id,
+                company: company._id,
+                deliveryAddress: address._id,
+                startDate: order.created_at,
+                shipmentMethod: order.shipping,
             })
+
+             response.send(new Responser(200, transactionTiendaNube));
+
+        } catch (error) {
+            console.log(error)
+            response.send(new Responser(500, null, error));
+        }
     }
 }
