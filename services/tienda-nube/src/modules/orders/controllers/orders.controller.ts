@@ -11,12 +11,12 @@ export class OrdersController {
   @Get('get-webhook')
   @HttpCode(200)
   getWebhook(@Request() request: CustomRequest) {
-    console.log(request.body);
+    console.log(request);
   }
 
   @Post('post-webhook')
   @HttpCode(200) 
   postWebhook(@Request() request: CustomRequest) {
-    console.log(request.body);
+    console.log(request);
   }
 }
