@@ -3084,6 +3084,7 @@ export class AddSaleOrderComponent {
     try {
       if (this.transaction.type.requestArticles && 
         this.transaction.type.modifyStock && 
+        this.config.tiendaNube !== undefined &&
         this.config.tiendaNube.appID &&
         this.config.tiendaNube.appID !== '' &&
         this.movementsOfArticles.length > 0) {
