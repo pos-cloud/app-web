@@ -40,8 +40,6 @@ export class ProductsService {
       throw new BadRequestException(` Article with id ${productId} not found`);
     }
 
-    console.log('Create, abajo del if para ver si cumple las condiciones del articulo')
-
     const dataNewProductTiendaNube = {
       images: [
         {
@@ -81,8 +79,6 @@ export class ProductsService {
       token,
       userID,
     );
-
-    console.log('result article creado:', result)
 
     const stockCollection =
       this.databaseService.getCollection('article-stocks');
@@ -141,8 +137,6 @@ export class ProductsService {
         productId,
       );
 
-      console.log(foundArticle)
-
       if (
         !foundArticle ||
         foundArticle.operationType == 'D' ||
@@ -152,7 +146,6 @@ export class ProductsService {
           ` Article with id ${productId} not found`,
         );
       }
-      console.log('Update, abajo del if para ver si cumple las condiciones del articulo')
 
       if (!foundArticle.tiendaNubeId) {
         return this.create(database, productId);
@@ -188,8 +181,6 @@ export class ProductsService {
         foundArticle.tiendaNubeId,
         dataUpdateProductTiendaNube as UpdateProductTiendaNubeDto,
       );
-
-      console.log('result article update:', result) 
 
       if (foundArticle.picture != result.images[0].src) {
         const dataresult =
