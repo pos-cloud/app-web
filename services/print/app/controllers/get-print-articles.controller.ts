@@ -64,6 +64,8 @@ export async function getPrintArticles(
       articleItem.description.length > 58
         ? articleItem.description.slice(58, 105)
         : '';
+        doc.setFontSize(7);
+     doc.text(x+40, y+26, articleItem.barcode);
       doc.setFontSize(9);
       doc.setFont('helvetica', 'bold');
       doc.text(x + 1, y + 29, config.companyFantasyName);

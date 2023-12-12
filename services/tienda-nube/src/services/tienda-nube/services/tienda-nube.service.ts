@@ -65,10 +65,7 @@ export class TiendaNubeService {
     createProductTiendaNube: CreateProductTiendaNubeDTO,
     tiendaNubeAccesstoken: string,
     tiendaNubeUserId: string,
-  ) {
-    console.log('ruta createProduct:', `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products`)
-    console.log('parametro enviado en la ruta create:', createProductTiendaNube)
-    console.log('create Product authentication:', `bearer ${tiendaNubeAccesstoken}`)   
+  ) {  
     const data = await firstValueFrom(
       this.httpService
         .post(
@@ -83,7 +80,6 @@ export class TiendaNubeService {
         .pipe(map((resp) => resp.data)),
     );
 
-    console.log('respueta create Producto ruta' ,data)
     return data;
   }
 
@@ -117,10 +113,7 @@ export class TiendaNubeService {
     productId: string,
     updateProductDto: UpdateProductTiendaNubeDto,
   ) {
-    try {
-      console.log('ruta update:', `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}`)
-      console.log('parametro enviado en la ruta update:', updateProductDto)
-      console.log('update Product authentication:', `bearer ${tiendaNubeAccesstoken}`)         
+    try {        
       const data = await firstValueFrom(
         this.httpService
           .put(
@@ -134,7 +127,6 @@ export class TiendaNubeService {
           )
           .pipe(map((resp) => resp.data)),
       ).catch((e) => {
-        console.log('error update product ruta:',e)
         throw new Error('Error al actualizar producto con tiendaNube');
       });
 
