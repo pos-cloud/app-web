@@ -20,6 +20,11 @@ import CompanySchema from '../company/company.model'
 import Company from '../company/company.interface'
 import TransactionUC from '../transaction/transaction.uc'
 import ArticleController from '../article/article.controller'
+import Article from '../article/article.interface'
+import MovementOfCash from '../movement-of-cash/movement-of-cash.interface'
+import MovementOfCashSchema from '../movement-of-cash/movement-of-cash.model'
+import UserController from '../user/user.controller'
+import MovementOfArticle from 'domains/movement-of-article/movement-of-article.interface'
 
 //  https://tiendanube.github.io/api-documentation/resources/order#get-ordersid
 
@@ -163,7 +168,7 @@ const exampleOrder: any = {
             "name": "Mesa de Roble",
             "price": "6000.00",
             "compare_at_price": "37.77",
-            "product_id": 111334785,
+            "product_id": 193538276,
             "image": {
                 "id": 277896749,
                 "product_id": 111334785,
@@ -238,7 +243,84 @@ export default class TiendaNubeController {
             `${this.path}/add-transaction`, [authMiddleware, ensureLic], this.createTransaction
         )
     }
-     
+
+    createTransaction = async (
+        request: RequestWithUser,
+        response: express.Response,
+        next: express.NextFunction,) => {
+        try {
+            this.database = request.database;
+            const order = request.body;
+
+            if (!Object.keys(order).length) {
+                return response.send(new Responser(404, null, 'Order not found', null));
+            }
+            console.log(this.database)
+            const articles = await this.getArticles(this.database, order)
+           
+            if (!articles.result.length) return response.send(new Responser(404, null, 'articles not found', null));
+
+            const transactionType = await this.getTiendaNubeTransactions(this.database);
+
+            if (!transactionType) return response.send(new Responser(404, null, 'TransactionType not found', null));
+
+            const company = this.getCompany(order)
+
+            if (!company) return response.send(new Responser(404, null, 'Company not found', null));
+
+            const address = this.getaddress(order)
+
+            if (!address) return response.send(new Responser(404, null, 'Address not found', null));
+
+            const movementsOfCash = this.getMovementsOfCash(order)
+
+            if (!movementsOfCash) return response.send(new Responser(404, null, 'movementsOfCash not found', null))
+            const user = await this.getUser(this.database)
+
+            if (!user) return response.send(new Responser(404, null, 'user not found', null));
+
+            let transactionTiendaNube: Transaction = TransactionSchema.getInstance(this.database)
+            transactionTiendaNube = Object.assign(transactionTiendaNube, {
+                letter: "X",
+                origin: 0,
+                totalPrice: order.total,
+                discountAmount: order.discount,
+                number: order.number,
+                madein: 'Tienda Nube',
+                state: 'Abierto',
+                type: transactionType._id,
+                company: company._id,
+                deliveryAddress: address._id,
+                startDate: order.created_at,
+                shipmentMethod: order.shipping,
+            })
+            const createTransaction = new TransactionUC(this.database).createTransaction(transactionTiendaNube, movementsOfCash, articles.result, user.result[0])
+
+            response.send(new Responser(200, { createTransaction }));
+
+        } catch (error) {
+            console.log(error)
+            response.send(new Responser(500, null, error));
+        }
+    }
+
+    async getUser(database: string) {
+        try {
+            const user = await new UserController(database).getAll({
+                project: {
+                    _id: 1,
+                    name: 1,
+                    email: 1,
+                    phone: 1,
+                    state: 1,
+                }
+            });
+            return user
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     getTiendaNubeTransactions = async (database: string) => {
         try {
             const transactionType = await new TransactionTypeController(database).getAll({
@@ -256,6 +338,26 @@ export default class TiendaNubeController {
                 },
             });
             return transactionType.result[0];
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    getArticles = async (database: string, order: any) => {
+        try {
+            const articles = await new ArticleController(database).getAll({
+                project: {
+                    tiendaNubeId: 1,
+                    _id: 1,
+                    description: 1,
+                    salePrice: 1,
+                },
+                match: {
+                    tiendaNubeId: { $in: order.products.map((product: { product_id: number }) => product.product_id) },
+                }
+            });
+
+            return articles;
         } catch (error) {
             throw error;
         }
@@ -301,73 +403,13 @@ export default class TiendaNubeController {
         return null
     }
 
-    getArticles = async (database: string, order: any) => {
-        try {
-            const Article = await new ArticleController(database).getAll({
-                project: {
-                    _id: 1,
-                    name: 1,
-                    salePrice: 1,
-                    // 'article._id': 1,
-                    // 'article.name': 1,
-                    // 'article.salePrice': 1
-                },
-            });
-            return Article;
-        } catch (error) {
-            throw error;
-        }
-    }
+    getMovementsOfCash(order: any) {
+        let movementOfCash: MovementOfCash[] = MovementOfCashSchema.getInstance(this.database)
+        movementOfCash = Object.assign(movementOfCash, {
+            amountPaid: order.total,
+            discountAmount: order.discount_gateway,
 
-    createTransaction = async (
-        request: RequestWithUser,
-        response: express.Response,
-        next: express.NextFunction,) => {
-        try {
-            this.database = request.database;
-            const order = request.body;
-
-            if (Object.keys(order).length < 0) {
-                return response.send(new Responser(404, null, 'Order not found', null));
-            }
-
-            const transactionType = await this.getTiendaNubeTransactions(this.database);
-
-            if (!transactionType) return response.send(new Responser(404, null, 'TransactionType not found', null));
-
-            const company = this.getCompany(order)
-
-            if (!company) return response.send(new Responser(404, null, 'Company not found', null));
-
-            const address = this.getaddress(order)
-
-            if (!address) return response.send(new Responser(404, null, 'Address not found', null));
-
-            const movementsOfArticle = this.getArticles(this.database,order)
-
-            if (!movementsOfArticle) return response.send(new Responser(404, null, 'movementsOfArticle not found', null));
-     
-            let transactionTiendaNube: Transaction = TransactionSchema.getInstance(this.database)
-            transactionTiendaNube = Object.assign(transactionTiendaNube, {
-                letter: "X",
-                origin: 0,
-                totalPrice: order.total,
-                discountAmount: order.discount,
-                number: order.number,
-                madein: 'Tienda Nube',
-                state: 'Abierto',
-                type: transactionType._id,
-                company: company._id,
-                deliveryAddress: address._id,
-                startDate: order.created_at,
-                shipmentMethod: order.shipping,
-            })
-
-             response.send(new Responser(200, {transactionTiendaNube, movementsOfArticle}));
-
-        } catch (error) {
-            console.log(error)
-            response.send(new Responser(500, null, error));
-        }
+        })
+        return movementOfCash
     }
 }
