@@ -233,6 +233,7 @@ export default class TiendaNubeController {
     public path = '/tienda-nube'
     public router = express.Router()
     public database: string;
+    public authToken: string;
 
     constructor() {
         this.initializeRoutes()
@@ -250,6 +251,7 @@ export default class TiendaNubeController {
         next: express.NextFunction,) => {
         try {
             this.database = request.database;
+            this.authToken = request.headers.authorization
             const order = request.body;
 
             if (!Object.keys(order).length) {
@@ -285,6 +287,12 @@ export default class TiendaNubeController {
                 origin: 0,
                 totalPrice: order.total,
                 discountAmount: order.discount,
+                taxes: [
+                    {
+                    percentage: (order.discount / order.total )* 100,
+                    taxBase: order.subtotal,
+                    }
+                ],
                 number: order.number,
                 madein: 'Tienda Nube',
                 state: 'Abierto',
@@ -292,9 +300,10 @@ export default class TiendaNubeController {
                 company: company._id,
                 deliveryAddress: address._id,
                 startDate: order.created_at,
-                shipmentMethod: order.shipping,
+                
             })
-            const createTransaction = new TransactionUC(this.database).createTransaction(transactionTiendaNube, movementsOfCash, articles.result, user.result[0])
+           
+            const createTransaction = new TransactionUC(this.database, this.authToken).createTransaction(transactionTiendaNube, movementsOfCash, articles.result, user.result[0])
 
             response.send(new Responser(200, { createTransaction }));
 
