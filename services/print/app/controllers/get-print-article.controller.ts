@@ -53,7 +53,7 @@ const fs = require('fs');
                   doc.setFont(field.font, field.fontType);
                 }
                 doc.setFontSize(field.fontSize);
-                doc.text(field.positionStartX, field.positionStartY, eval(field.value));
+                doc.text(field.positionStartX, field.positionStartY, field.value);
                 break;
               case 'line':
                 doc.setLineWidth(field.fontSize);
