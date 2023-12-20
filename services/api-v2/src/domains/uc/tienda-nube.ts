@@ -243,12 +243,14 @@ export default class TiendaNubeController {
         this.router.post(
             `${this.path}/add-transaction`, [authMiddleware, ensureLic], this.createTransaction
         )
+        this.router.get(`${this.path}/credentials/:id`, this.getCredentials )
     }
+
 
     createTransaction = async (
         request: RequestWithUser,
         response: express.Response,
-        next: express.NextFunction,) => {
+        next: express.NextFunction) => {
         try {
             this.database = request.database;
             this.authToken = request.headers.authorization
@@ -257,7 +259,7 @@ export default class TiendaNubeController {
             if (!Object.keys(order).length) {
                 return response.send(new Responser(404, null, 'Order not found', null));
             }
-            console.log(this.database)
+            
             const articles = await this.getArticles(this.database, order)
            
             if (!articles.result.length) return response.send(new Responser(404, null, 'articles not found', null));
@@ -311,6 +313,29 @@ export default class TiendaNubeController {
             console.log(error)
             response.send(new Responser(500, null, error));
         }
+    }
+
+    getCredentials = async (
+        request: RequestWithUser,
+        response: express.Response,
+        next: express.NextFunction) => { 
+ 
+       const {id} = request.params;
+       if(!id){
+        return response.send(new Responser(404, null, 'id not found', null));
+       }
+        let credentialsTiendaNube = [
+            {
+                tokenTiendaNube: 'caeb032b8bbd258ae2fe42ef70b7c95b44e400eb',
+                userID: 3937256
+            },
+            {
+                tokenTiendaNube: '7f568c4aa62eca95fc5c4aef4200d16e5b1f85d2',
+                userID: 2469501
+            }
+        ]
+      const credential = credentialsTiendaNube.find(credentials => credentials.userID === parseInt(id));
+      return response.send(credential)
     }
 
     async getUser(database: string) {
