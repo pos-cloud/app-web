@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { CreateTiendaNubeDto } from '../dto/create-tienda-nube.dto';
 import { UpdateTiendaNubeDto } from '../dto/update-tienda-nube.dto';
 import { HttpService } from '@nestjs/axios';
@@ -18,9 +22,6 @@ export class TiendaNubeService {
     tiendaNubeUserId: string,
   ) {
     try {
-      // const { data: userFacebook }: any = await firstValueFrom(
-      //   this.httpService.get(apiUrl),
-      // )
       const data = await firstValueFrom(
         this.httpService
           .post(
@@ -66,9 +67,8 @@ export class TiendaNubeService {
     tiendaNubeAccesstoken: string,
     tiendaNubeUserId: string,
   ) {
-    console.log('ruta createProduct:', `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products`)
-    console.log('parametro enviado en la ruta create:', createProductTiendaNube)
-    console.log('create Product authentication:', `bearer ${tiendaNubeAccesstoken}`)   
+  
+
     const data = await firstValueFrom(
       this.httpService
         .post(
@@ -83,7 +83,7 @@ export class TiendaNubeService {
         .pipe(map((resp) => resp.data)),
     );
 
-    console.log('respueta create Producto ruta' ,data)
+
     return data;
   }
 
@@ -107,7 +107,7 @@ export class TiendaNubeService {
         )
         .pipe(map((resp) => resp.data)),
     );
-  
+
     return data;
   }
 
@@ -118,9 +118,8 @@ export class TiendaNubeService {
     updateProductDto: UpdateProductTiendaNubeDto,
   ) {
     try {
-      console.log('ruta update:', `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}`)
-      console.log('parametro enviado en la ruta update:', updateProductDto)
-      console.log('update Product authentication:', `bearer ${tiendaNubeAccesstoken}`)         
+
+  
       const data = await firstValueFrom(
         this.httpService
           .put(
@@ -134,7 +133,6 @@ export class TiendaNubeService {
           )
           .pipe(map((resp) => resp.data)),
       ).catch((e) => {
-        console.log('error update product ruta:',e)
         throw new Error('Error al actualizar producto con tiendaNube');
       });
 
@@ -207,8 +205,26 @@ export class TiendaNubeService {
     }
   }
 
-
-  async createOrder(){
-    
+  async getOrderId(
+    id: string,
+    tiendaNubeAccesstoken: string,
+    tiendaNubeUserId: string,
+  ) {
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService.get(
+          `${this.tiendaNubeUrI}/${tiendaNubeUserId}/orders/${id}`,
+          {
+            headers: {
+              Authentication: `bearer ${tiendaNubeAccesstoken}`,
+            },
+          },
+        ),
+      );
+      return data;
+    } catch (err) {
+      throw new InternalServerErrorException(`Error in server tiendanube`);
+    }
   }
+  async createOrder() {}
 }

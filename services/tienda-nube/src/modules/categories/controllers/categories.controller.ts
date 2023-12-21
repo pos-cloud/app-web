@@ -23,7 +23,6 @@ export class CategoriesController {
     @Body('categoryId') categoryId:string,
     @Request() request: CustomRequest,
   ) {
-    console.log(request.database);
     return this.categoriesService.create( request.database, categoryId);
   }
 

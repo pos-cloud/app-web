@@ -6,17 +6,9 @@ import CustomRequest from 'src/common/interfaces/request.interface';
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
-  @Post()
-  create(@Request() request: CustomRequest) {}
-  @Get('get-webhook')
-  @HttpCode(200)
-  getWebhook(@Request() request: CustomRequest) {
-    console.log(request);
-  }
-
   @Post('post-webhook')
-  @HttpCode(200) 
+  @HttpCode(200)
   postWebhook(@Request() request: CustomRequest) {
-    console.log(request);
+    return this.ordersService.wehbook(request.body);
   }
 }

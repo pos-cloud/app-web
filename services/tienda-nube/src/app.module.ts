@@ -1,6 +1,5 @@
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+
 import { ConfigModule } from '@nestjs/config';
 
 import { CategoriesModule } from './modules/categories/categories.module';
@@ -9,6 +8,7 @@ import { AuthMiddleware } from './auth/middleware/auth.middleware';
 import { TiendaNubeModule } from './services/tienda-nube/tienda-nube.module';
 import { ProductsModule } from './modules/products/products.module';
 import { OrdersModule } from './modules/orders/orders.module';
+import { PostCloudModule } from './services/post-cloud/post-cloud.module';
 
 @Module({
   imports: [
@@ -18,9 +18,8 @@ import { OrdersModule } from './modules/orders/orders.module';
     TiendaNubeModule,
     ProductsModule,
     OrdersModule,
+    PostCloudModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
