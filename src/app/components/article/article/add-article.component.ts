@@ -1671,6 +1671,7 @@ export class AddArticleComponent implements OnInit {
             this.showToast(null, 'success', 'El producto se ha añadido con éxito.');
             if(this.article.ecommerceEnabled && this.article.applications.some(application => application.type === ApplicationType.TiendaNube)){
               this.saveArticleTiendaNube();
+              this.activeModal.close({article: this.article});
             } else {
               this.activeModal.close({article: this.article});
             }
