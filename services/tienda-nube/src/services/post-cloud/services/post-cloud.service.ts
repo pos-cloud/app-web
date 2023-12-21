@@ -10,14 +10,24 @@ import { firstValueFrom, map } from 'rxjs';
 @Injectable()
 export class PostCloudService {
   private postCloudUrI = process.env.POSTCLOUD_URI;
-  constructor(private readonly httpService: HttpService) {}
+  constructor(private readonly httpService: HttpService) {
+    if (!this.postCloudUrI) {
+      throw new InternalServerErrorException(
+        `url de api de postcloud es requerido`,
+      );
+    }
+  }
 
   async getCredentialTiendaNube(storeId: number) {
     try {
       const credentiales = await firstValueFrom(
         this.httpService
           .get(`${this.postCloudUrI}/tienda-nube/credentials/${storeId}`)
-          .pipe(map((resp) => resp.data)),
+          .pipe(
+            map((resp) => {
+              return resp.data;
+            }),
+          ),
       ).catch(() => {
         throw new Error(`Error al obtener credenciales de tiendaNube `);
       });
