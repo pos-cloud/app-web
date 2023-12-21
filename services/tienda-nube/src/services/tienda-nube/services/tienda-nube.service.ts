@@ -83,7 +83,6 @@ export class TiendaNubeService {
         .pipe(map((resp) => resp.data)),
     );
 
-
     return data;
   }
 

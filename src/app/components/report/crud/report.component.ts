@@ -51,9 +51,7 @@ export class ReportComponent implements OnInit {
     public filename: any[] = new Array();
     public typeFile: any[] = new Array();
     public oldFiles: any[];
-    public apiURL: string = Config.apiV8URL;
     public database: string = Config.database;
-    public view;
     public home: {
         title: string,
         view: string,

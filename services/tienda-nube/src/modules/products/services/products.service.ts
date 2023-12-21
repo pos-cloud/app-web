@@ -40,7 +40,6 @@ export class ProductsService {
       throw new BadRequestException(` Article with id ${productId} not found`);
     }
 
-
     const dataNewProductTiendaNube = {
       images: [
         {
@@ -80,7 +79,6 @@ export class ProductsService {
       token,
       userID,
     );
-
 
     const stockCollection =
       this.databaseService.getCollection('article-stocks');
@@ -139,7 +137,6 @@ export class ProductsService {
         productId,
       );
 
-
       if (
         !foundArticle ||
         foundArticle.operationType == 'D' ||
@@ -184,7 +181,6 @@ export class ProductsService {
         foundArticle.tiendaNubeId,
         dataUpdateProductTiendaNube as UpdateProductTiendaNubeDto,
       );
-
 
       if (foundArticle.picture != result.images[0].src) {
         const dataresult =

@@ -32,7 +32,8 @@ export async function getArticlesData( token: string, articlesIds: string[]): Pr
     let project = {
       salePrice: 1,
       description: 1,
-      'make.description': 1
+      'make.description': 1,
+      barcode: 1
     }
     let sort = {}
     let group = {}

@@ -47,7 +47,6 @@ export class PermissionComponent implements OnInit {
     public typeFile: any[] = new Array();
     public tables: string[] = ["empresas", "transacciones"];
     public oldFiles: any[];
-    public apiURL: string = Config.apiV8URL;
     public database: string = Config.database;
     public transactionTypes: TransactionType[];
 

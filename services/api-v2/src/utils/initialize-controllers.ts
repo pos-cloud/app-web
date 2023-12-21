@@ -79,12 +79,14 @@ import VariantController from './../domains/variant/variant.controller'
 import VATConditionController from './../domains/vat-condition/vat-condition.controller'
 import VoucherController from './../domains/voucher/voucher.controller'
 import Controller from './../interfaces/controller.interface'
+import TiendaNubeController from './../domains/uc/tienda-nube'
 
 function initializeControllers(app: express.Application = null, database: string = null) {
   let controllers: Controller[] = [
     new OrderNumberController(),
     new getSummaryCurrentAccount(),
     new StockController(),
+    new TiendaNubeController(),
     new AccountSeatTransactionController(),
     new CompanyController(database),
     new ReportController(database),
