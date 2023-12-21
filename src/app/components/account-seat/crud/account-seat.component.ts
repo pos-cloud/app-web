@@ -60,7 +60,6 @@ export class AccountSeatComponent implements OnInit {
     public filename: any[] = new Array();
     public typeFile: any[] = new Array();
     public oldFiles: any[];
-    public apiURL: string = Config.apiV8URL;
     public database: string = Config.database;
     public debit = 0 ;
     public credit = 0;
