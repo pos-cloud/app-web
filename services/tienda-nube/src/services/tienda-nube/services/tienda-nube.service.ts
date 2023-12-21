@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { CreateTiendaNubeDto } from '../dto/create-tienda-nube.dto';
 import { UpdateTiendaNubeDto } from '../dto/update-tienda-nube.dto';
 import { HttpService } from '@nestjs/axios';
@@ -7,6 +11,8 @@ import { CreateCategoryTiendaNubeDto } from '../dto/create-category-tienda-nube.
 import { CreateProductTiendaNubeDTO } from '../dto/create-product-tienda-nube.dto';
 import { UpdateVariantTiendaNubeDto } from '../dto/update-variant-tienda-nube.dto';
 import { UpdateProductTiendaNubeDto } from '../dto/update-product-tienda-nube.dto';
+import { CancelOrderDto } from 'src/modules/orders/dtos/cancel-order.dto';
+import { FulFillOrderDto } from 'src/modules/orders/dtos/fulfill-order.dto';
 
 @Injectable()
 export class TiendaNubeService {
@@ -18,9 +24,6 @@ export class TiendaNubeService {
     tiendaNubeUserId: string,
   ) {
     try {
-      // const { data: userFacebook }: any = await firstValueFrom(
-      //   this.httpService.get(apiUrl),
-      // )
       const data = await firstValueFrom(
         this.httpService
           .post(
@@ -65,7 +68,7 @@ export class TiendaNubeService {
     createProductTiendaNube: CreateProductTiendaNubeDTO,
     tiendaNubeAccesstoken: string,
     tiendaNubeUserId: string,
-  ) {  
+  ) {
     const data = await firstValueFrom(
       this.httpService
         .post(
@@ -103,7 +106,7 @@ export class TiendaNubeService {
         )
         .pipe(map((resp) => resp.data)),
     );
-  
+
     return data;
   }
 
@@ -113,7 +116,7 @@ export class TiendaNubeService {
     productId: string,
     updateProductDto: UpdateProductTiendaNubeDto,
   ) {
-    try {        
+    try {
       const data = await firstValueFrom(
         this.httpService
           .put(
@@ -199,8 +202,172 @@ export class TiendaNubeService {
     }
   }
 
-
-  async createOrder(){
-    
+  async getOrderId(
+    id: string,
+    tiendaNubeAccesstoken: string,
+    tiendaNubeUserId: string,
+  ) {
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService.get(
+          `${this.tiendaNubeUrI}/${tiendaNubeUserId}/orders/${id}`,
+          {
+            headers: {
+              Authentication: `bearer ${tiendaNubeAccesstoken}`,
+            },
+          },
+        ),
+      );
+      return data;
+    } catch (err) {
+      throw new InternalServerErrorException(`Error in server tiendanube`);
+    }
+  }
+  async openOrder(
+    orderId: string,
+    tiendaNubeAccesstoken: string,
+    tiendaNubeUserId: string,
+  ) {
+    try {
+      const data = await firstValueFrom(
+        this.httpService
+          .post(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/orders/${orderId}/open`,
+            {},
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccesstoken}`,
+              },
+            },
+          )
+          .pipe(map((resp) => resp.data)),
+      ).catch((err) => {
+        throw new InternalServerErrorException({
+          message: 'error al abrir una order',
+          error: err,
+        });
+      });
+      return data;
+    } catch (err) {
+      throw err;
+    }
+  }
+  async closeOrder(
+    orderId: string,
+    tiendaNubeAccesstoken: string,
+    tiendaNubeUserId: string,
+  ) {
+    try {
+      const data = await firstValueFrom(
+        this.httpService
+          .post(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/orders/${orderId}/close`,
+            {},
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccesstoken}`,
+              },
+            },
+          )
+          .pipe(map((resp) => resp.data)),
+      ).catch((err) => {
+        throw new InternalServerErrorException({
+          message: 'error al cerrar una order',
+          error: err,
+        });
+      });
+      return data;
+    } catch (err) {
+      throw err;
+    }
+  }
+  async cancelOrder(
+    dataBody: CancelOrderDto,
+    orderId: string,
+    tiendaNubeAccesstoken: string,
+    tiendaNubeUserId: string,
+  ) {
+    try {
+      const data = await firstValueFrom(
+        this.httpService
+          .post(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/orders/${orderId}/cancel`,
+            dataBody,
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccesstoken}`,
+              },
+            },
+          )
+          .pipe(map((resp) => resp.data)),
+      ).catch((err) => {
+        throw new InternalServerErrorException({
+          message: 'error al cancelar una order',
+          error: err,
+        });
+      });
+      return data;
+    } catch (err) {
+      throw err;
+    }
+  }
+  async packOrder(
+    orderId: string,
+    tiendaNubeAccesstoken: string,
+    tiendaNubeUserId: string,
+  ) {
+    try {
+      const data = await firstValueFrom(
+        this.httpService
+          .post(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/orders/${orderId}/pack`,
+            {},
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccesstoken}`,
+              },
+            },
+          )
+          .pipe(map((resp) => resp.data)),
+      ).catch((err) => {
+        throw new InternalServerErrorException({
+          message: 'err en pack order ',
+          error: err,
+        });
+      });
+      return data;
+    } catch (err) {
+      throw err;
+    }
+  }
+  async fulFillOrder(
+    dataBody: FulFillOrderDto,
+    orderId: string,
+    tiendaNubeAccesstoken: string,
+    tiendaNubeUserId: string,
+  ) {
+    try {
+      const data = await firstValueFrom(
+        this.httpService
+          .post(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/orders/${orderId}/fulfill`,
+            dataBody,
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccesstoken}`,
+              },
+            },
+          )
+          .pipe(map((resp) => resp.data)),
+      ).catch((err) => {
+        throw new InternalServerErrorException({
+          message: 'error fulfill en order',
+          error: err,
+        });
+      });
+      return data;
+    } catch (err) {
+      throw err;
+    }
   }
 }

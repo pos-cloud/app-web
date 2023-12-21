@@ -18,7 +18,6 @@ export class VariantProduct {
       })
       .toArray();
    
-    console.log('object');
     const arrrayTypeProduct = variantProducts.map((element) =>
       element.type.toString(),
     );
