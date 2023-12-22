@@ -84,6 +84,7 @@ export class Transaction {
   updateUser: User;
   updateDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   tracking: {date: string; state: TransactionState}[];
+  tiendaNubeId: string;
 
   constructor() {}
 }

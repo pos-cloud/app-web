@@ -136,6 +136,10 @@ export default class TransactionDto extends ModelDto {
   @IsString()
   meliId: string
 
+  @ValidateIf((o) => o.tiendaNubeId !== undefined)
+  @IsString()
+  tiendaNubeId: string
+
   @ValidateIf((o) => !o._id)
   @IsDefined()
   @IsString()

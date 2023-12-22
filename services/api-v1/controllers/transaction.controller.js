@@ -1562,6 +1562,7 @@ async function saveTransaction (req, res, next) {
     transaction.deliveryAddress = params.deliveryAddress
     transaction.paymentMethodEcommerce = params.paymentMethodEcommerce
     transaction.wooId = params.wooId
+    transaction.tiendaNubeId = params.tiendaNubeId
     transaction.declaredValue = params.declaredValue
     transaction.package = params.package
     transaction.account = params.account

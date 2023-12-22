@@ -83,6 +83,7 @@ export default interface Transaction extends Model {
   }
   paymentMethodEcommerce?: string
   declaredValue?: number
+  tiendaNubeId?: string,
   package?: number
 }
 
