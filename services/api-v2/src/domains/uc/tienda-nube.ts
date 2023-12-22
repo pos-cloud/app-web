@@ -293,6 +293,7 @@ export default class TiendaNubeController {
 
             let transactionTiendaNube: Transaction = TransactionSchema.getInstance(this.database)
             transactionTiendaNube = Object.assign(transactionTiendaNube, {
+                tiendaNubeId: order.id,
                 letter: "X",
                 origin: 0,
                 totalPrice: order.total,
@@ -312,7 +313,6 @@ export default class TiendaNubeController {
                 startDate: order.created_at,
                 
             })
-           
             const createTransaction = new TransactionUC(this.database, this.authToken).createTransaction(transactionTiendaNube, movementsOfCash, articles.result, user.result[0])
 
             response.send(new Responser(200, { createTransaction }));

@@ -89,6 +89,7 @@ class TransactionSchema extends Model {
       account: {type: Schema.Types.ObjectId, ref: 'account'},
       tracking: [{date: {type: Date, trim: true}, state: {type: String, trim: true}}],
       paymentMethodEcommerce: {type: String, trim: true},
+      tiendaNubeId:  {type: String},
       updateDate: {type: Date},
       optionalAFIP: {
         id: {type: String, trim: true},

@@ -76,6 +76,7 @@ const TransactionSchema = new Schema({
   operationType: { type: String, trim: true },
   updateUser: { type: Schema.ObjectId, ref: 'user' },
   updateDate: { type: Date },
+  tiendaNubeId: { type: String},
 })
 
 module.exports = TransactionSchema
