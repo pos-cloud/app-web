@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PostCloudService } from 'src/services/post-cloud/services/post-cloud.service';
+import { PosCloudService } from 'src/services/post-cloud/services/pos-cloud.service';
 import { TiendaNubeService } from 'src/services/tienda-nube/services/tienda-nube.service';
 import { CancelOrderDto } from '../dtos/cancel-order.dto';
 import { FulFillOrderDto } from '../dtos/fulfill-order.dto';
@@ -8,7 +8,7 @@ import { FulFillOrderDto } from '../dtos/fulfill-order.dto';
 export class OrdersService {
   constructor(
     private readonly tiendaNubeService: TiendaNubeService,
-    private readonly postCloudService: PostCloudService,
+    private readonly postCloudService: PosCloudService,
   ) {}
   async wehbook(data: any) {
     const { store_id, event, id } = data;
