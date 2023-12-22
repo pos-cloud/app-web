@@ -25,6 +25,7 @@ import MovementOfCash from '../movement-of-cash/movement-of-cash.interface'
 import MovementOfCashSchema from '../movement-of-cash/movement-of-cash.model'
 import UserController from '../user/user.controller'
 import MovementOfArticle from 'domains/movement-of-article/movement-of-article.interface'
+import axios from 'axios'
 
 //  https://tiendanube.github.io/api-documentation/resources/order#get-ordersid
 
@@ -232,7 +233,7 @@ export default class TiendaNubeController {
     public EJSON: any = require('bson').EJSON
     public path = '/tienda-nube'
     public router = express.Router()
-    public database: string;
+    public database: 'demo';
     public authToken: string;
 
     constructor() {
@@ -241,7 +242,7 @@ export default class TiendaNubeController {
 
     private initializeRoutes() {
         this.router.post(
-            `${this.path}/add-transaction`, [authMiddleware, ensureLic], this.createTransaction
+            `${this.path}/add-transaction`, this.createTransaction
         )
         this.router.get(`${this.path}/credentials/:id`, this.getCredentials )
     }
@@ -252,16 +253,23 @@ export default class TiendaNubeController {
         response: express.Response,
         next: express.NextFunction) => {
         try {
-            this.database = request.database;
-            this.authToken = request.headers.authorization
-            const order = request.body;
-
+           // this.database = request.database;
+            const order= request.body;
+             this.database = 'demo'
+               console.log(order)
             if (!Object.keys(order).length) {
                 return response.send(new Responser(404, null, 'Order not found', null));
             }
-            
+
+            const token = await this.getToken()
+
+            if (!token) {
+                return response.send(new Responser(404, null, 'token not found', null));
+            }
+            this.authToken = token
+
             const articles = await this.getArticles(this.database, order)
-           
+
             if (!articles.result.length) return response.send(new Responser(404, null, 'articles not found', null));
 
             const transactionType = await this.getTiendaNubeTransactions(this.database);
@@ -333,11 +341,12 @@ export default class TiendaNubeController {
                 tokenTiendaNube: '7f568c4aa62eca95fc5c4aef4200d16e5b1f85d2',
                 userID: 2469501
             }
-        ]
-      const credential = credentialsTiendaNube.find(credentials => credentials.userID === parseInt(id));
+        ] 
+      const credential = credentialsTiendaNube.find(credentials => credentials.userID === parseInt(id));   
+
       return response.send(credential)
     }
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
     async getUser(database: string) {
         try {
             const user = await new UserController(database).getAll({
@@ -435,6 +444,20 @@ export default class TiendaNubeController {
             return addressTiendaNube
         }
         return null
+    }
+
+    async getToken(){
+        let URL = 'http://localhost:300/api/login'
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        let params ={
+            database: "demo",
+            user: "admin",
+            password: "pos"
+        }
+        const data = await axios.post(URL,params, { headers })
+         return data.data.user.token
     }
 
     getMovementsOfCash(order: any) {
