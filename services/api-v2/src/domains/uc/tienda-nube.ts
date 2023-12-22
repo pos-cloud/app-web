@@ -447,7 +447,7 @@ export default class TiendaNubeController {
     }
 
     async getToken(){
-        let URL = 'http://localhost:300/api/login'
+        let URL = 'https://api.poscloud.com.ar/api/login'
         const headers = {
             'Content-Type': 'application/json'
         };
