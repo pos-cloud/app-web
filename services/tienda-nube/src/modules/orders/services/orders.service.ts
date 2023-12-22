@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PostCloudService } from 'src/services/post-cloud/services/post-cloud.service';
+import { PosCloudService } from 'src/services/pos-cloud/services/pos-cloud.service';
 import { TiendaNubeService } from 'src/services/tienda-nube/services/tienda-nube.service';
 import { CancelOrderDto } from '../dtos/cancel-order.dto';
 import { FulFillOrderDto } from '../dtos/fulfill-order.dto';
@@ -8,12 +8,12 @@ import { FulFillOrderDto } from '../dtos/fulfill-order.dto';
 export class OrdersService {
   constructor(
     private readonly tiendaNubeService: TiendaNubeService,
-    private readonly postCloudService: PostCloudService,
+    private readonly posCloudService: PosCloudService,
   ) {}
   async wehbook(data: any) {
     const { store_id, event, id } = data;
     const credentials =
-      await this.postCloudService.getCredentialTiendaNube(store_id);
+      await this.posCloudService.getCredentialTiendaNube(store_id);
     const { tokenTiendaNube, userID } = credentials;
 
     const order = await this.tiendaNubeService.getOrderId(
@@ -26,7 +26,7 @@ export class OrdersService {
       event,
       order: order,
     };
-    await this.postCloudService.webhookOrder(dataResponse);
+    await this.posCloudService.webhookOrder(dataResponse);
     return dataResponse;
   }
 
@@ -37,7 +37,7 @@ export class OrdersService {
         throw new BadRequestException(`storeId es requerido`);
       }
       const credentials =
-        await this.postCloudService.getCredentialTiendaNube(storeId);
+        await this.posCloudService.getCredentialTiendaNube(storeId);
       const { tokenTiendaNube, userID } = credentials;
       return await this.tiendaNubeService.openOrder(
         orderId,
@@ -54,7 +54,7 @@ export class OrdersService {
         throw new BadRequestException(`storeId es requerido`);
       }
       const credentials =
-        await this.postCloudService.getCredentialTiendaNube(storeId);
+        await this.posCloudService.getCredentialTiendaNube(storeId);
       const { tokenTiendaNube, userID } = credentials;
 
       return await this.tiendaNubeService.closeOrder(
@@ -70,7 +70,7 @@ export class OrdersService {
     try {
       const { storeId } = dataBody;
       const credentials =
-        await this.postCloudService.getCredentialTiendaNube(storeId);
+        await this.posCloudService.getCredentialTiendaNube(storeId);
       const { tokenTiendaNube, userID } = credentials;
 
       return await this.tiendaNubeService.cancelOrder(
@@ -89,7 +89,7 @@ export class OrdersService {
         throw new BadRequestException(`storeId es requerido`);
       }
       const credentials =
-        await this.postCloudService.getCredentialTiendaNube(storeId);
+        await this.posCloudService.getCredentialTiendaNube(storeId);
       const { tokenTiendaNube, userID } = credentials;
 
       return await this.tiendaNubeService.packOrder(
@@ -106,7 +106,7 @@ export class OrdersService {
       const { storeId } = dataBody;
 
       const credentials =
-        await this.postCloudService.getCredentialTiendaNube(storeId);
+        await this.posCloudService.getCredentialTiendaNube(storeId);
       const { tokenTiendaNube, userID } = credentials;
 
       return await this.tiendaNubeService.fulFillOrder(

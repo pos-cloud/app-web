@@ -8,7 +8,7 @@ import { AuthMiddleware } from './auth/middleware/auth.middleware';
 import { TiendaNubeModule } from './services/tienda-nube/tienda-nube.module';
 import { ProductsModule } from './modules/products/products.module';
 import { OrdersModule } from './modules/orders/orders.module';
-import { PostCloudModule } from './services/post-cloud/post-cloud.module';
+import { PostCloudModule } from './services/post-cloud/pos-cloud.module';
 
 @Module({
   imports: [

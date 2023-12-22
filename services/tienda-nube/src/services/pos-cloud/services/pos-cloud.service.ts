@@ -8,12 +8,12 @@ import { HttpService } from '@nestjs/axios';
 import { firstValueFrom, map } from 'rxjs';
 
 @Injectable()
-export class PostCloudService {
-  private postCloudUrI = process.env.POSTCLOUD_URI;
+export class PosCloudService {
+  private posCloudUrI = process.env.POSCLOUD_URI;
   constructor(private readonly httpService: HttpService) {
-    if (!this.postCloudUrI) {
+    if (!this.posCloudUrI) {
       throw new InternalServerErrorException(
-        `url de api de postcloud es requerido`,
+        `url de api de poscloud es requerido`,
       );
     }
   }
@@ -22,7 +22,7 @@ export class PostCloudService {
     try {
       const credentiales = await firstValueFrom(
         this.httpService
-          .get(`${this.postCloudUrI}/tienda-nube/credentials/${storeId}`)
+          .get(`${this.posCloudUrI}/tienda-nube/credentials/${storeId}`)
           .pipe(
             map((resp) => {
               return resp.data;
@@ -48,14 +48,14 @@ export class PostCloudService {
     try {
       await firstValueFrom(
         this.httpService
-          .post(`${this.postCloudUrI}/tienda-nube/add-transaction`, data)
+          .post(`${this.posCloudUrI}/tienda-nube/add-transaction`, data)
           .pipe(map((resp) => resp.data)),
       ).catch((err) => {
         throw err;
       });
     } catch (err) {
       throw new InternalServerErrorException(
-        `Error en el webhook de PostCloud`,
+        `Error en el webhook de PosCloud`,
       );
     }
   }
