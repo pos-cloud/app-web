@@ -7,4 +7,4 @@ import { HttpModule } from '@nestjs/axios';
   providers: [PosCloudService],
   exports: [PosCloudService],
 })
-export class PostCloudModule {}
+export class PosCloudModule {}

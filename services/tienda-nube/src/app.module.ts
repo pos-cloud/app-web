@@ -8,7 +8,7 @@ import { AuthMiddleware } from './auth/middleware/auth.middleware';
 import { TiendaNubeModule } from './services/tienda-nube/tienda-nube.module';
 import { ProductsModule } from './modules/products/products.module';
 import { OrdersModule } from './modules/orders/orders.module';
-import { PostCloudModule } from './services/post-cloud/pos-cloud.module';
+import { PosCloudModule } from './services/pos-cloud/pos-cloud.module';
 
 @Module({
   imports: [
@@ -18,7 +18,7 @@ import { PostCloudModule } from './services/post-cloud/pos-cloud.module';
     TiendaNubeModule,
     ProductsModule,
     OrdersModule,
-    PostCloudModule,
+    PosCloudModule,
   ],
 })
 export class AppModule {
