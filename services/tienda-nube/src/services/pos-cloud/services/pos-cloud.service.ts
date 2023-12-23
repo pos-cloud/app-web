@@ -46,6 +46,7 @@ export class PosCloudService {
 
   async webhookOrder(data: any) {
     try {
+      console.log('en webhookOrder')
       await firstValueFrom(
         this.httpService
           .post(`${this.posCloudUrI}/tienda-nube/add-transaction`, data)
