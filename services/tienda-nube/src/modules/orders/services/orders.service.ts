@@ -12,15 +12,17 @@ export class OrdersService {
   ) {}
   async wehbook(data: any) {
     const { store_id, event, id } = data;
+  console.log( store_id, event, id)
     const credentials =
       await this.posCloudService.getCredentialTiendaNube(store_id);
     const { tokenTiendaNube, userID } = credentials;
-
+ 
     const order = await this.tiendaNubeService.getOrderId(
       id,
       tokenTiendaNube,
       userID,
     );
+    console.log(order)
     const dataResponse = {
       storeId: store_id,
       event,

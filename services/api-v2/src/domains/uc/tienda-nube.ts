@@ -254,7 +254,7 @@ export default class TiendaNubeController {
         next: express.NextFunction) => {
         try {
            // this.database = request.database;
-            const order= request.body;
+            const {order} = request.body;
              this.database = 'demo'
                console.log(order)
             if (!Object.keys(order).length) {
