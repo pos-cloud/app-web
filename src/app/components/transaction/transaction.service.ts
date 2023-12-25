@@ -246,7 +246,7 @@ export class TransactionService extends ModelService {
       number: number;
     },
   ): Observable<any> {
-    const URL = `${environment.apiv2}transactions/validate-electronic/${transaction._id}`;
+    const URL = `${Config.apiV8URL}transactions/validate-electronic/${transaction._id}`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -321,7 +321,7 @@ export class TransactionService extends ModelService {
   }
 
   public updateBalance(transaction: Transaction): Observable<any> {
-    const URL = `${environment.apiv2}transactions/update-balance/${transaction._id}`;
+    const URL = `${Config.apiV8URL}transactions/update-balance/${transaction._id}`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -342,7 +342,7 @@ export class TransactionService extends ModelService {
   }
 
   public syncMeli(): Observable<any> {
-    const URL = `${environment.apiv2}meli/import-transactions`;
+    const URL = `${Config.apiV8URL}meli/import-transactions`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

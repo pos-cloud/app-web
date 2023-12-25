@@ -26,7 +26,7 @@ export class AccountSeatService extends ModelService {
 
   public addAccountSeatByTransaction(transactionId: string): Observable<any> {
 
-    const URL = `${environment.apiv2}account-seat-transaction`;
+    const URL = `${environment.apiv2}/account-seat-transaction`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

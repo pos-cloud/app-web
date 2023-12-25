@@ -12,7 +12,7 @@ import { ORIGINMEDIA } from 'app/types';
 
 @Injectable()
 export class ModelService {
-  public URL = `${environment.apiv2}`;
+  public URL = `${environment.apiv2}/`;
   private items: BehaviorSubject<DatatableHistory> =
     new BehaviorSubject<DatatableHistory>(null);
 

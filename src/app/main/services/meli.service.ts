@@ -18,7 +18,7 @@ export class MeliService {
 
     getCategories(): Observable<any> {
 
-        const URL = `${environment.apiv2}meli/categories`;
+        const URL = `${environment.apiv2}/meli/categories`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
@@ -38,7 +38,7 @@ export class MeliService {
 
     getSubcategories(id: string): Observable<any> {
 
-        const URL = `${environment.apiv2}meli/subcategories`;
+        const URL = `${environment.apiv2}/meli/subcategories`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
@@ -62,7 +62,7 @@ export class MeliService {
 
     loadAttrsByCategory(categoryId: string): Observable<any> {
 
-        const URL = `${environment.apiv2}meli/attrs/${categoryId}`;
+        const URL = `${environment.apiv2}/meli/attrs/${categoryId}`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
@@ -82,7 +82,7 @@ export class MeliService {
 
     loadSalesTermByCategory(categoryId: string): Observable<any> {
 
-        const URL = `${environment.apiv2}meli/sales-term/${categoryId}`;
+        const URL = `${environment.apiv2}/meli/sales-term/${categoryId}`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
