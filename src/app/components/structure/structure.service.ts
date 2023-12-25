@@ -151,7 +151,7 @@ export class StructureService extends ModelService {
   }
 
   public updateBasePriceByStruct(): Observable<any> {
-    const URL = `${Config.apiV8URL}articles/update-by-structure`;
+    const URL = `${environment.apiv2}articles/update-by-structure`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

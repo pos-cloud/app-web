@@ -8,6 +8,7 @@ import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 import { of } from "rxjs";
 import { Observable } from "rxjs/Observable";
 import { map, catchError } from "rxjs/operators";
+import { environment } from 'environments/environment';
 
 @Injectable()
 export class AccountSeatService extends ModelService {
@@ -25,7 +26,7 @@ export class AccountSeatService extends ModelService {
 
   public addAccountSeatByTransaction(transactionId: string): Observable<any> {
 
-    const URL = `${Config.apiV8URL}account-seat-transaction`;
+    const URL = `${environment.apiv2}account-seat-transaction`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

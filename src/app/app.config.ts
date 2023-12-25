@@ -14,7 +14,6 @@ export class Config {
   static apiPrintHost: string = 'localhost';
   static apiURL: string;
   static apiV8URL: string;
-  static apiPrintURL: string;
   static apiURL_FE_AR: string = 'libs/fe/ar/index.php';
   static apiURL_FE_MX: string = 'libs/fe/mx/01_CFDI_fe.php';
   static apiPort = 300;
@@ -122,12 +121,6 @@ export class Config {
   constructor() {
     Config.updateApiURL();
     Config.updateApiV8URL();
-    Config.updateApiPrintURL();
-  }
-
-  public static setApiPrintHost(apiPrintHost: string): void{
-    this.apiPrintHost = apiPrintHost;
-    Config.updateApiPrintURL();
   }
 
   public static setApiHost(apiHost: string): void {
@@ -138,11 +131,6 @@ export class Config {
   public static setApiV8Host(apiV8Host: string): void {
     this.apiV8Host = apiV8Host;
     Config.updateApiV8URL();
-  }
-
-  public static setApiPrintPort(apiPrintPort: number): void {
-    this.apiPrintPort = apiPrintPort;
-    Config.updateApiPrintURL();
   }
 
   public static setApiPort(apiPort: number): void {
@@ -210,14 +198,6 @@ export class Config {
 
   public static setConfigs(showLicenseNotification: boolean): void {
     Config.showLicenseNotification = showLicenseNotification;
-  }
-
-  public static updateApiPrintURL() {
-    if (Config.apiPort !== 0) {
-      Config.apiPrintURL = Config.apiPrintHost + '/';
-    } else {
-      Config.apiPrintURL = Config.apiPrintHost + '/';
-    }
   }
 
   public static updateApiURL() {

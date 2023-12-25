@@ -6,6 +6,7 @@ import { map, catchError } from "rxjs/operators";
 
 import { Config } from '../../app.config';
 import { AuthService } from "app/components/login/auth.service";
+import { environment } from "environments/environment";
 
 @Injectable()
 export class MeliService {
@@ -17,7 +18,7 @@ export class MeliService {
 
     getCategories(): Observable<any> {
 
-        const URL = `${Config.apiV8URL}meli/categories`;
+        const URL = `${environment.apiv2}meli/categories`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
@@ -37,7 +38,7 @@ export class MeliService {
 
     getSubcategories(id: string): Observable<any> {
 
-        const URL = `${Config.apiV8URL}meli/subcategories`;
+        const URL = `${environment.apiv2}meli/subcategories`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
@@ -61,7 +62,7 @@ export class MeliService {
 
     loadAttrsByCategory(categoryId: string): Observable<any> {
 
-        const URL = `${Config.apiV8URL}meli/attrs/${categoryId}`;
+        const URL = `${environment.apiv2}meli/attrs/${categoryId}`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
@@ -81,7 +82,7 @@ export class MeliService {
 
     loadSalesTermByCategory(categoryId: string): Observable<any> {
 
-        const URL = `${Config.apiPrintURL}meli/sales-term/${categoryId}`;
+        const URL = `${environment.apiv2}meli/sales-term/${categoryId}`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
