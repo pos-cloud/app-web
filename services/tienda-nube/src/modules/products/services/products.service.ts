@@ -37,9 +37,10 @@ export class ProductsService {
       foundArticle.operationType == 'D' ||
       (foundArticle.type as string).toLocaleLowerCase() != 'final'
     ) {
+     console.log('BadRequestException create')
       throw new BadRequestException(` Article with id ${productId} not found`);
     }
-
+   console.log('article',foundArticle)
     const dataNewProductTiendaNube = {
       images: [
         {
@@ -142,8 +143,9 @@ export class ProductsService {
         foundArticle.operationType == 'D' ||
         (foundArticle.type as string).toLocaleLowerCase() != 'final'
       ) {
+        console.log('BadRequestException update')
         throw new BadRequestException(
-          ` Article with id ${productId} not found`,
+          `Article with id ${productId} not found`,
         );
       }
 
@@ -229,6 +231,7 @@ export class ProductsService {
       throw err;
     }
   }
+
   async massiveUpdate(database: string, products: string[]) {
     try {
       if (!database) {

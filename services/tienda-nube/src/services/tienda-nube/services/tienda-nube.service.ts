@@ -69,6 +69,7 @@ export class TiendaNubeService {
     tiendaNubeAccesstoken: string,
     tiendaNubeUserId: string,
   ) {
+    console.log('ifo en createProduct',createProductTiendaNube)
     const data = await firstValueFrom(
       this.httpService
         .post(
@@ -82,7 +83,7 @@ export class TiendaNubeService {
         )
         .pipe(map((resp) => resp.data)),
     );
-
+    console.log('respuesta de data en createProduct:', data)
     return data;
   }
 
