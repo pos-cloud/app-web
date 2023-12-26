@@ -233,7 +233,9 @@ export default class TiendaNubeController {
     public EJSON: any = require('bson').EJSON
     public path = '/tienda-nube'
     public router = express.Router()
-    public database: 'demo';
+    public database: string;
+    public user: string;
+    public password: string;
     public authToken: string;
 
     constructor() {
@@ -254,13 +256,20 @@ export default class TiendaNubeController {
         next: express.NextFunction) => {
         try {
            // this.database = request.database;
-            const {order} = request.body;
-             this.database = 'demo'
-               console.log(order)
-            if (!Object.keys(order).length) {
+            const { storeId, order} = request.body;
+            
+            if (typeof order == "undefined") {
                 return response.send(new Responser(404, null, 'Order not found', null));
             }
+            const credential = await this.getCredentialTiendaNube(storeId)
 
+            if (!credential) {
+                return response.send(new Responser(404, null, 'credential not found', null));
+            }
+            this.database = credential.database
+            this.user = credential.user
+            this.password = credential.password
+            
             const token = await this.getToken()
 
             if (!token) {
@@ -335,11 +344,17 @@ export default class TiendaNubeController {
         let credentialsTiendaNube = [
             {
                 tokenTiendaNube: 'caeb032b8bbd258ae2fe42ef70b7c95b44e400eb',
-                userID: 3937256
+                userID: 3937256,
+                database: 'demo',
+                user:'admin',
+                password: 'pos'
             },
             {
                 tokenTiendaNube: '7f568c4aa62eca95fc5c4aef4200d16e5b1f85d2',
-                userID: 2469501
+                userID: 2469501,
+                database: 'polirrubrojb',
+                user: 'soporte',
+                password: '431744'
             }
         ] 
       const credential = credentialsTiendaNube.find(credentials => credentials.userID === parseInt(id));   
@@ -448,15 +463,13 @@ export default class TiendaNubeController {
 
     async getToken(){
         let URL = 'https://api.poscloud.com.ar/api/login'
-        const headers = {
-            'Content-Type': 'application/json'
-        };
+     
         let params ={
-            database: "demo",
-            user: "admin",
-            password: "pos"
+            database: this.database,
+            user: this.user,
+            password: this.password
         }
-        const data = await axios.post(URL,params, { headers })
+        const data = await axios.post(URL, params)
          return data.data.user.token
     }
 
@@ -469,4 +482,11 @@ export default class TiendaNubeController {
         })
         return movementOfCash
     }
+
+  async getCredentialTiendaNube(storeId: number){
+    let URL = `https://api-v2.poscloud.ar/tienda-nube/credentials/${storeId}`
+
+    const data = await axios.get(URL)
+     return data.data
+  }
 }
