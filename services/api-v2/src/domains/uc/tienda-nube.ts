@@ -227,6 +227,22 @@ const exampleOrder: any = {
     },
     "app_id": null
 }
+const credentialsTiendaNube = [
+    {
+        tokenTiendaNube: 'caeb032b8bbd258ae2fe42ef70b7c95b44e400eb',
+        userID: 3937256,
+        database: 'demo',
+        user:'admin',
+        password: 'pos'
+    },
+    {
+        tokenTiendaNube: '7f568c4aa62eca95fc5c4aef4200d16e5b1f85d2',
+        userID: 2469501,
+        database: 'polirrubrojb',
+        user: 'soporte',
+        password: '431744'
+    }
+] 
 
 export default class TiendaNubeController {
 
@@ -246,7 +262,7 @@ export default class TiendaNubeController {
         this.router.post(
             `${this.path}/add-transaction`, this.createTransaction
         )
-        this.router.get(`${this.path}/credentials/:id`, this.getCredentials )
+        this.router.get(`${this.path}/credentials/:storeId`, this.getCredentials )
     }
 
 
@@ -261,8 +277,8 @@ export default class TiendaNubeController {
             if (typeof order == "undefined") {
                 return response.send(new Responser(404, null, 'Order not found', null));
             }
-            const credential = await this.getCredentialTiendaNube(storeId)
 
+            const credential = credentialsTiendaNube.find(credentials => credentials.userID === parseInt(storeId)); 
             if (!credential) {
                 return response.send(new Responser(404, null, 'credential not found', null));
             }
@@ -337,27 +353,12 @@ export default class TiendaNubeController {
         response: express.Response,
         next: express.NextFunction) => { 
  
-       const {id} = request.params;
-       if(!id){
+       const {storeId} = request.params;
+       if(!storeId){
         return response.send(new Responser(404, null, 'id not found', null));
        }
-        let credentialsTiendaNube = [
-            {
-                tokenTiendaNube: 'caeb032b8bbd258ae2fe42ef70b7c95b44e400eb',
-                userID: 3937256,
-                database: 'demo',
-                user:'admin',
-                password: 'pos'
-            },
-            {
-                tokenTiendaNube: '7f568c4aa62eca95fc5c4aef4200d16e5b1f85d2',
-                userID: 2469501,
-                database: 'polirrubrojb',
-                user: 'soporte',
-                password: '431744'
-            }
-        ] 
-      const credential = credentialsTiendaNube.find(credentials => credentials.userID === parseInt(id));   
+        
+      const credential = credentialsTiendaNube.find(credentials => credentials.userID === parseInt(storeId));   
 
       return response.send(credential)
     }
@@ -482,11 +483,4 @@ export default class TiendaNubeController {
         })
         return movementOfCash
     }
-
-  async getCredentialTiendaNube(storeId: number){
-    let URL = `https://api-v2.poscloud.ar/tienda-nube/credentials/${storeId}`
-
-    const data = await axios.get(URL)
-     return data.data
-  }
 }
