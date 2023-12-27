@@ -71,6 +71,7 @@ export interface TransactionType extends Model {
   application: Application
   groupsArticles: boolean
   printOrigin: boolean
+  requestCompany: string
   company: Company
   paymentMethods: PaymentMethod[]
   orderNumber: number
