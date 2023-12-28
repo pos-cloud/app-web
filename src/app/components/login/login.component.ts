@@ -142,7 +142,6 @@ export class LoginComponent implements OnInit {
     if (!this.company.match(/^[a-z0-9]+$/)) {
       this.showToast("El negocio ingresado no fue encontrado.", "danger");
     } else {
-      Config.setDatabase(this.company);
       this.showMessage("Comprobando usuario...", 'info', false);
       this.loading = true;
       this._authService.login(this.company, this.user, this.password).subscribe(async result => {
@@ -160,11 +159,9 @@ export class LoginComponent implements OnInit {
                 if (config) {
                   this._configService.setConfig(config);
                   this.setConfigurationSettings(config);
-
-                 
                 }
               });
-  
+              Config.setDatabase(this.company);
               localStorage.setItem("company", this.company);
   
               this._route.queryParams.subscribe(params => params['return'] || '/');
