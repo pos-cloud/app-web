@@ -135,13 +135,11 @@ export class LoginComponent implements OnInit {
   }
 
   async login() {
-
-    
     this.company = this.loginForm.value.company.trim()
     this.user = this.loginForm.value.user
     this.password = this.loginForm.value.password
 
-    if (this.company.match(/[^a-zA-Z0-9]/g)) {
+    if (!this.company.match(/^[a-z0-9]+$/)) {
       this.showToast("El negocio ingresado no fue encontrado.", "danger");
     } else {
       Config.setDatabase(this.company);
