@@ -1575,7 +1575,6 @@ export class AddArticleComponent implements OnInit {
   }
 
   addArticle(): void {
-    if (!this.readonly) {
       if (this.articleForm.valid) {
         this.loadPosDescription();
         this.loadURL();
@@ -1637,7 +1636,6 @@ export class AddArticleComponent implements OnInit {
         this.showToast({ message: 'Revisa los errores en el formulario.' });
         this.onValueChanged();
       }
-    }
   }
 
   eventAddMeliAttrs(params: any) {
@@ -1669,16 +1667,18 @@ export class AddArticleComponent implements OnInit {
             this.hasChanged = true;
             this.article = result.article;
             this.showToast(null, 'success', 'El producto se ha añadido con éxito.');
+            this.activeModal.close({article: this.article});
+            this.loading = false;
             if(this.article.ecommerceEnabled && this.article.applications.some(application => application.type === ApplicationType.TiendaNube)){
               this.saveArticleTiendaNube();
-              this.activeModal.close({article: this.article});
-            } else {
-              this.activeModal.close({article: this.article});
             }
             
           }
         },
-        (error) => this.showToast(error),
+        (error) => {
+          this.showToast(error)
+          this.loading = false
+        }
       );
     } else {
       this.loading = false;
@@ -1712,12 +1712,16 @@ export class AddArticleComponent implements OnInit {
             this._articleService.setItems(null);
             this.showToast(null, 'success', 'Operación realizada con éxito');
             this.activeModal.close();
-          if(this.article.ecommerceEnabled && this.article.applications.some(application => application.type === ApplicationType.TiendaNube)){
+            this.loading = false
+            if(this.article.ecommerceEnabled && this.article.applications.some(application => application.type === ApplicationType.TiendaNube)){
               this.updateArticleTiendaNube();
             }
           }
         },
-        (error) => this.showToast(error),
+        (error) => {
+          this.showToast(error)
+          this.loading = false
+        }
       );
     }
   }
@@ -1733,8 +1737,12 @@ export class AddArticleComponent implements OnInit {
         } else {
           this.showToast(result);
         }
+        this.loading = false;
       },
-      (error) => this.showToast(error),
+      (error) => {
+        this.showToast(error)
+        this.loading = false;
+      }
     );
   }
 
@@ -1756,8 +1764,12 @@ export class AddArticleComponent implements OnInit {
         } else {
           this.showToast(null, 'success', 'Producto eliminado con éxito en TiendaNube');
         }
+        this.loading = false
      },
-      (error) => this.showToast(error)
+      (error) => {
+        this.showToast(error)
+        this.loading = false
+      }
     );
   }
 
@@ -1779,8 +1791,13 @@ export class AddArticleComponent implements OnInit {
         } else {
           this.showToast(null, 'success', 'Producto creado con éxito en Tienda Nube');
         }
+        this.loading = false;
+
       },
-      (error) => this.showToast(error)
+      (error) => {
+        this.showToast(error)
+        this.loading = false;
+      }
     );
   }
 
@@ -1802,8 +1819,12 @@ export class AddArticleComponent implements OnInit {
         } else {
           this.showToast(null, 'success', 'Producto actualizado con éxito en TiendaNube');
         }
+        this.loading = false;
       },
-      (error) => this.showToast(error)
+      (error) => {
+        this.loading = false;
+        this.showToast(error)
+      }
     );
   }
 
