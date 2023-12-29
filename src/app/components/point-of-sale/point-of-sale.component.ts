@@ -608,7 +608,7 @@ export class PointOfSaleComponent implements OnInit {
                 if (this.transactionStates.length > 0) {
                     query = {
                         state: { $in: this.transactionStates },
-                        madein: { $in: ['pedidos-web', 'mercadolibre', 'woocommerce'] },
+                        madein: { $in: ['pedidos-web', 'mercadolibre', 'woocommerce', 'tiendanube'] },
                         operationType: { $ne: 'D' },
                         "type.transactionMovement": this.transactionMovement,
                     }
@@ -630,7 +630,7 @@ export class PointOfSaleComponent implements OnInit {
                             { state: TransactionState.Delivered },
                             { state: TransactionState.Sent }
                         ],
-                        madein: { $in: ['pedidos-web', 'mercadolibre', 'woocommerce'] },
+                        madein: { $in: ['pedidos-web', 'mercadolibre', 'woocommerce', 'tiendanube'] },
                         operationType: { $ne: 'D' },
                         "type.transactionMovement": this.transactionMovement,
                     }

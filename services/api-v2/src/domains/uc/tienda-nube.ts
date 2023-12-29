@@ -17,133 +17,16 @@ import MovementOfCashSchema from '../movement-of-cash/movement-of-cash.model'
 import UserController from '../user/user.controller'
 import axios from 'axios'
 import { TransactionType } from '../transaction-type/transaction-type.interface'
+import { ShipmentMethod } from '../shipment-method/shipment-method.interface'
+import ShipmentMethodSchema from '../shipment-method/shipment-method.model'
+import MovementOfArticleSchema from '../movement-of-article/movement-of-article.model'
+import MovementOfArticle from '../movement-of-article/movement-of-article.interface'
+import Article from '../article/article.interface'
+import PaymentMethod from '../payment-method/payment-method.interface'
+import PaymentMethodController from '../payment-method/payment-method.controller'
 
-//  https://tiendanube.github.io/api-documentation/resources/order#get-ordersid
-let order: {
-    "id": 1412498095,
-    "token": "78bdfd5f113b4408d454779e2e65ce8abc263961",
-    "store_id": "3937256",
-    "contact_email": " jeremias.vallejos78@gmail.com",
-    " contact_name": "Jeremias Vallejos",
-    "contact_phone": "",
-    "contact_identification": null,
-    "shipping_min_days": null,
-    "shipping_max_days": null,
-    "billing_name": "Jeremias",
-    "billing_phone": "",
-    "billing_address": "Juan Jose Paso",
-    "billing_number": "33",
-    "billing_floor": "",
-    "billing_locality": "",
-    "billing_zipcode": "2933",
-    "billing_city": "Perez Millan",
-    "billing_province": "Buenos Aires",
-    "billing_country": "AR",
-    "shipping_cost_owner": "0.00",
-    "shipping_cost_customer": "0.00",
-    "coupon": [],
-    "promotional_discount": {
-        "id": null,
-        "store_id": 3937256,
-        "order_id": "1412498095",
-        "created_at": " 2023-12-26T21:56:00+0000",
-        "total_discount_amount": "0.00",
-        "contents": [],
-        "promotions_applied": []
-    },
-    "subtotal": "678.00",
-    "discount": "0.00",
-    "discount_coupon": "0.00",
-    "discount_gateway": "0.00",
-    "total": " 678.00",
-    "total_usd": "0.84",
-    "checkout_enabled": true,
-    "weight": " 0.000",
-    "currency": "ARS",
-    "language": "es",
-    "gateway": "offline",
-    "gateway_id": null,
-    "gateway_name": "A convenir",
-    "shipping": "table_default",
-    "shipping_option": "Nos comunicaremos para coordinar la entrega del producto",
-    "shipping_option_code": "table_default_123123",
-    "shipping_option_reference": null,
-    "shipping_pickup_details": null,
-    "shipping_tracking_number": null,
-    "shipping_tracking_url": null,
-    "shipping_store_branch_name": null,
-    "shipping_store_branch_extra": null,
-    "shipping_pickup_type": "ship",
-    "shipping_suboption": [],
-    "extra": {},
-    "storefront": "store",
-    "note": "kk",
-    "created_at": " 2023-12-26T19:04:23+0000",
-    "updated_at": " 2023-12-26T19:04:23+0000",
-    "completed_at": {
-        "date": "2023-12-26 19:04:23.000000",
-        "timezone_type": 3,
-        "timezone": "UTC"
-    },
-    "next_action": "waiting_manual_confirmation",
-    "payment_details": { "method": "custom", "credit_card_company": null, "installments": "1" },
-    "attributes": [],
-    "products": [
-        {
-            "id": 1555630602,
-            "depth": "0.00",
-            "height": "0.00",
-            "name": "order",
-            "price": "678.00",
-            "compare_at_price": "678.00",
-            "product_id": 195611795,
-            "image": null,
-            "quantity": "1",
-            "free_shipping": false,
-            "weight": "0.00",
-            "width": "0.00",
-            "variant_id": "789844924",
-            "variant_values": [],
-            "properties": [],
-            "sku": "787",
-            "barcode": null,
-            "cost": null
-        }
-    ],
-    "fulfillments": null,
-    "number": 128,
-    "cancel_reason": null,
-    "owner_note": null,
-    "cancelled_at": null,
-    "closed_at": null,
-    "read_at": null,
-    "status": "open",
-    "payment_status": "pending",
-    "gateway_link": null,
-    "has_shippable_products": true,
-    "shipping_carrier_name": null,
-    "shipping_address": {
-        "address": " Juan Jose Paso",
-        "city": "Perez Millan",
-        "country": "AR",
-        "created_at": "2023-12-26T19:02:55+0000",
-        "default": false,
-        "floor": "",
-        "id": 0,
-        "locality": "",
-        "name": "Jeremias Vallejos",
-        "number": "33",
-        "phone": "",
-        "province": "Buenos Aires",
-        "updated_at": "2023-12-26T19:04:23+0000",
-        "zipcode": "2933",
-        "customs": null
-    },
-    "shipping_status": "unpacked",
-    "shipped_at": null,
-    "paid_at": null,
-    "app_id": null
-}
+// https://tiendanube.github.io/api-documentation/resources/order#get-ordersid
+
 const credentialsTiendaNube = [
     {
         tokenTiendaNube: 'caeb032b8bbd258ae2fe42ef70b7c95b44e400eb',
@@ -182,61 +65,68 @@ export default class TiendaNubeController {
         this.router.get(`${this.path}/credentials/:storeId`, this.getCredentials)
     }
 
-
     createTransaction = async (
         request: RequestWithUser,
         response: express.Response,
         next: express.NextFunction) => {
         try {
             const { storeId, order } = request.body;
-   console.log(order)
-            if (typeof order == "undefined") {
-                return response.send(new Responser(404, null, 'Order not found', null));
-            }
+            console.log(order)
+            if (typeof order == "undefined") return response.send(new Responser(404, null, 'Order not found', null));
 
             const credential = credentialsTiendaNube.find(credentials => credentials.storeId === parseInt(storeId));
-            if (!credential) {
-                return response.send(new Responser(404, null, 'credential not found', null));
-            }
+            if (!credential) return response.send(new Responser(404, null, 'credential not found', null));
+
             this.database = credential.database
             this.user = credential.user
             this.password = credential.password
 
             const token = await this.getToken()
 
-            if (!token) {
-                return response.send(new Responser(404, null, 'token not found', null));
-            }
+            if (!token) return response.send(new Responser(404, null, 'token not found', null));
+
             this.authToken = token
 
             const articles = await this.getArticles(this.database, order)
 
             if (!articles.result.length) return response.send(new Responser(404, null, 'articles not found', null));
 
-            const transactionType = await this.getTiendaNubeTransactions(this.database);
+            const transactionType = await this.getTiendaNubeTransactionsType(this.database);
 
             if (!transactionType) return response.send(new Responser(404, null, 'TransactionType not found', null));
 
             const company = await this.getCompany(order, transactionType)
-           
+
             if (!company) return response.send(new Responser(404, null, 'Company not found', null));
 
             const address = this.getaddress(order)
 
             if (!address) return response.send(new Responser(404, null, 'Address not found', null));
 
-            const movementsOfCash = this.getMovementsOfCash(order)
+            const paymentMethod = await this.getPaymentMethod()
+
+            if (!paymentMethod) return response.send(new Responser(404, null, 'paymentMethod not found', null));
+
+            const movementsOfCash = this.getMovementsOfCash(order, paymentMethod.result[0])
 
             if (!movementsOfCash) return response.send(new Responser(404, null, 'movementsOfCash not found', null))
+
+            const movementOfArticle = this.getMovementsOfArticles(articles.result, order.products)
+
+            if (!movementOfArticle) return response.send(new Responser(404, null, 'movementOfArticle not found', null));
+
             const user = await this.getUser(this.database)
 
             if (!user) return response.send(new Responser(404, null, 'user not found', null));
+
+            const shipmentMethod = this.shipmentMethod()
+
+            if (!shipmentMethod) return response.send(new Responser(404, null, 'shipmentMethod not found', null));
 
             let transactionTiendaNube: Transaction = TransactionSchema.getInstance(this.database)
             transactionTiendaNube = Object.assign(transactionTiendaNube, {
                 tiendaNubeId: order.id,
                 letter: "X",
-                origin: 0,
                 totalPrice: order.total,
                 discountAmount: order.discount,
                 taxes: [
@@ -246,18 +136,20 @@ export default class TiendaNubeController {
                     }
                 ],
                 number: order.number,
-                madein: 'Tienda Nube',
-                state: 'Abierto',
+                madein: 'tiendanube',
+                state: "Pendiente de pago",
+                balance: order.payment_status === "paid" ? order.total : 0,
+                shipmentMethod: shipmentMethod,
                 type: transactionType._id,
                 company: company,
                 deliveryAddress: address._id,
                 startDate: order.created_at,
-
+                observation: order.note
             })
-      console.log(transactionTiendaNube)
-            const createTransaction = new TransactionUC(this.database, this.authToken).createTransaction(transactionTiendaNube, movementsOfCash, articles.result, user.result[0])
 
-            response.send(new Responser(200, { createTransaction }));
+            const createTransaction = await new TransactionUC(this.database, this.authToken).createTransaction(transactionTiendaNube, movementsOfCash, movementOfArticle, user.result[0])
+            console.log(createTransaction.movementsOfArticles.length)
+            return response.send(new Responser(200, { createTransaction }));
 
         } catch (error) {
             console.log(error)
@@ -297,7 +189,7 @@ export default class TiendaNubeController {
         }
     }
 
-    getTiendaNubeTransactions = async (database: string) => {
+    getTiendaNubeTransactionsType = async (database: string) => {
         try {
             const transactionType = await new TransactionTypeController(database).getAll({
                 project: {
@@ -308,6 +200,7 @@ export default class TiendaNubeController {
                     'application.name': 1,
                     'application.type': 1,
                     requestCompany: 1,
+                    transactionMovement: 1,
                     company: 1
                 },
                 match: {
@@ -329,6 +222,14 @@ export default class TiendaNubeController {
                     _id: 1,
                     description: 1,
                     salePrice: 1,
+                    code: 1,
+                    costPrice: 1,
+                    barcode: 1,
+                    basePrice: 1,
+                    order: 1,
+                    url: 1,
+                    posDescription: 1,
+                    category: 1
                 },
                 match: {
                     tiendaNubeId: { $in: order.products.map((product: { product_id: number }) => product.product_id) },
@@ -393,13 +294,60 @@ export default class TiendaNubeController {
         return data.data.user.token
     }
 
-    getMovementsOfCash(order: any) {
-        let movementOfCash: MovementOfCash[] = MovementOfCashSchema.getInstance(this.database)
+    getMovementsOfCash(order: any, paymentMethod: PaymentMethod): MovementOfCash[] {
+        let movementOfCash: MovementOfCash = MovementOfCashSchema.getInstance(this.database)
         movementOfCash = Object.assign(movementOfCash, {
             amountPaid: order.total,
             discountAmount: order.discount_gateway,
-
+            quota: order.payment_details.installments,
+            expirationDate: "2023-12-26 19:04:23.000000",
+            date: "2023-12-26 19:04:23.000000",
+            type: paymentMethod._id
         })
-        return movementOfCash
+        return [movementOfCash]
+    }
+
+    shipmentMethod() {
+        let shipmentMethod: ShipmentMethod = ShipmentMethodSchema.getInstance(this.database)
+        shipmentMethod = Object.assign(shipmentMethod, {
+            name: "Delivery"
+        })
+        return shipmentMethod._id
+    }
+
+    getMovementsOfArticles(articles: Article[], orders: any): MovementOfArticle[] {
+        return articles.map((article, index) => {
+            let movementOfArticle: MovementOfArticle = MovementOfArticleSchema.getInstance(this.database);
+            const order = orders[index];
+            movementOfArticle = Object.assign(movementOfArticle, {
+                code: article.code,
+                amount: order.quantity,
+                description: article.description,
+                basePrice: article.basePrice,
+                salePrice: order.quantity * article.salePrice,
+                unitPrice: article.salePrice,
+                costPrice: article.costPrice,
+                article: article._id,
+                category: article.category._id
+            });
+            return movementOfArticle;
+        });
+    }
+
+    async getPaymentMethod() {
+        let result = await new PaymentMethodController(this.database).getAll({
+            project: {
+                _id: 1,
+                name: 1,
+                acceptReturned: 1,
+                isCurrentAccount: 1,
+                'applications.type': 1
+            },
+            match: {
+                'applications.type': "TiendaNube"
+
+            },
+        })
+        return result
     }
 }
