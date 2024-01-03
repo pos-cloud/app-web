@@ -52,6 +52,8 @@ class TransactionSchema extends Model {
           'Enviado',
           'Preparando',
           'Pendiente',
+          'paid',
+          'pending',
         ],
       },
       madein: {type: String, trim: true},

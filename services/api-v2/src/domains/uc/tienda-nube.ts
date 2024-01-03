@@ -24,6 +24,7 @@ import MovementOfArticle from '../movement-of-article/movement-of-article.interf
 import Article from '../article/article.interface'
 import PaymentMethod from '../payment-method/payment-method.interface'
 import PaymentMethodController from '../payment-method/payment-method.controller'
+import moment = require('moment')
 
 // https://tiendanube.github.io/api-documentation/resources/order#get-ordersid
 
@@ -111,7 +112,7 @@ export default class TiendaNubeController {
 
             if (!movementsOfCash) return response.send(new Responser(404, null, 'movementsOfCash not found', null))
 
-            const movementOfArticle = this.getMovementsOfArticles(articles.result, order.products)
+            const movementOfArticle = this.getMovementsOfArticles(articles.result, order)
 
             if (!movementOfArticle) return response.send(new Responser(404, null, 'movementOfArticle not found', null));
 
@@ -124,20 +125,17 @@ export default class TiendaNubeController {
             if (!shipmentMethod) return response.send(new Responser(404, null, 'shipmentMethod not found', null));
 
             let transactionTiendaNube: Transaction = TransactionSchema.getInstance(this.database)
+            
             transactionTiendaNube = Object.assign(transactionTiendaNube, {
                 tiendaNubeId: order.id,
                 letter: "X",
                 totalPrice: order.total,
                 discountAmount: order.discount,
-                taxes: [
-                    {
-                        percentage: (order.discount / order.total) * 100,
-                        taxBase: order.subtotal,
-                    }
-                ],
                 number: order.number,
                 madein: 'tiendanube',
                 state: "Pendiente de pago",
+                endDate2: moment().format("YYYY-MM-DD HH:mm:ss.SSSSSS"),
+                endDate: moment().format("MM/DD/YYYY"),
                 balance: order.payment_status === "paid" ? order.total : 0,
                 shipmentMethod: shipmentMethod,
                 type: transactionType._id,
@@ -148,7 +146,7 @@ export default class TiendaNubeController {
             })
 
             const createTransaction = await new TransactionUC(this.database, this.authToken).createTransaction(transactionTiendaNube, movementsOfCash, movementOfArticle, user.result[0])
-            console.log(createTransaction.movementsOfArticles.length)
+
             return response.send(new Responser(200, { createTransaction }));
 
         } catch (error) {
@@ -300,8 +298,8 @@ export default class TiendaNubeController {
             amountPaid: order.total,
             discountAmount: order.discount_gateway,
             quota: order.payment_details.installments,
-            expirationDate: "2023-12-26 19:04:23.000000",
-            date: "2023-12-26 19:04:23.000000",
+            expirationDate: moment().format("YYYY-MM-DD HH:mm:ss.SSSSSS"),
+            date: moment().format("YYYY-MM-DD HH:mm:ss.SSSSSS"),
             type: paymentMethod._id
         })
         return [movementOfCash]
@@ -315,18 +313,19 @@ export default class TiendaNubeController {
         return shipmentMethod._id
     }
 
-    getMovementsOfArticles(articles: Article[], orders: any): MovementOfArticle[] {
+    getMovementsOfArticles(articles: Article[], order: any): MovementOfArticle[] {
         return articles.map((article, index) => {
             let movementOfArticle: MovementOfArticle = MovementOfArticleSchema.getInstance(this.database);
-            const order = orders[index];
+            const products = order.products[index];
             movementOfArticle = Object.assign(movementOfArticle, {
                 code: article.code,
-                amount: order.quantity,
+                amount: products.quantity,
                 description: article.description,
                 basePrice: article.basePrice,
-                salePrice: order.quantity * article.salePrice,
+                salePrice: products.quantity * article.salePrice,
                 unitPrice: article.salePrice,
                 costPrice: article.costPrice,
+                discountRate: (order.discount / order.subtotal) * 100,
                 article: article._id,
                 category: article.category._id
             });
