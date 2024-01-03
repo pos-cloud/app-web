@@ -784,12 +784,12 @@ export async function getPrintTransaction(
           articlesOnCurrentPage = 0;
         }
       
-        doc.setFontSize(10)
-        doc.text(movementOfArticle.description, 10, verticalPosition);
-        doc.text(`${movementOfArticle.transaction.type.abbreviation}-${padString(movementOfArticle.transaction.number,10)}`, 10, verticalPosition + 7);
+        doc.setFontSize(20)
+        doc.text(movementOfArticle.description, 3, 85);
+        doc.text(`${movementOfArticle.transaction.type.abbreviation}-${padString(movementOfArticle.transaction.number,10)}`, 3, verticalPosition + 80);
 
         const barcodeImage = getBarcode('code128', movementOfArticle._id);
-        doc.addImage(barcodeImage, 'png', 10, verticalPosition + 15, 80, 25);
+        doc.addImage(barcodeImage, 'png', 3, verticalPosition + 90, 80, 25); 
       
         verticalPosition += 58;
         articlesOnCurrentPage++;
