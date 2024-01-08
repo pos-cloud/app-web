@@ -57,7 +57,7 @@ class TransactionSchema extends Model {
       shippingStatus: {
         type: String,
         trim: true,
-        required: true,
+        required: false,
         enum: [
          'unpacked',
          'fulfilled',
@@ -67,7 +67,7 @@ class TransactionSchema extends Model {
       statusTiendaNube: {
         type: String,
         trim: true,
-        required: true,
+        required: false,
         enum: [
           'open',
           'closed',
