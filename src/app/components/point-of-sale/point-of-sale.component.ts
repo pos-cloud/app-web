@@ -7,7 +7,7 @@ import 'moment/locale/es';
 
 import { Room } from '../room/room';
 import { Printer, PrinterPrintIn } from '../printer/printer';
-import { Transaction, TransactionState, TransactionStatusTiendaNube } from '../transaction/transaction';
+import { Transaction, TransactionState } from '../transaction/transaction';
 import { TransactionType, TransactionMovement, StockMovement, CurrentAccount } from '../transaction-type/transaction-type';
 
 import { RoomService } from '../room/room.service';
@@ -1130,10 +1130,10 @@ export class PointOfSaleComponent implements OnInit {
         }
     }
 
-    public async chargeTransaction(transaction: Transaction, state: TransactionState = TransactionState.Closed, stateTn: TransactionStatusTiendaNube) {
+    public async chargeTransaction(transaction: Transaction, state: TransactionState = TransactionState.Closed) {
         this.transaction = await this.getTransaction(transaction._id);
         if (this.transaction) {
-            this.openModal('charge', state, stateTn);
+            this.openModal('charge', state);
         }
     }
 
@@ -1177,7 +1177,7 @@ export class PointOfSaleComponent implements OnInit {
         });
     }
 
-    async openModal(op: string, state: TransactionState = TransactionState.Closed, stateTn?: TransactionStatusTiendaNube) {
+    async openModal(op: string, state: TransactionState = TransactionState.Closed) {
 
         let modalRef;
 
@@ -1240,7 +1240,7 @@ export class PointOfSaleComponent implements OnInit {
                                 async transaction => {
                                     if (transaction) {
                                         this.transaction = transaction;
-                                        this.changeStateOfTransaction(this.transaction, state, stateTn);
+                                        this.changeStateOfTransaction(this.transaction, state);
                                     } else {
                                         this.refresh();
                                     }
@@ -2184,7 +2184,7 @@ export class PointOfSaleComponent implements OnInit {
         });
     }
 
-    async changeStateOfTransaction(transaction: Transaction, state: TransactionState, stateTn: TransactionStatusTiendaNube) {
+    async changeStateOfTransaction(transaction: Transaction, state: TransactionState) {
         this.transaction = await this.getTransaction(transaction._id);
         let email: string;
         if (this.transaction && !this.transaction.tiendaNubeId) {
@@ -2235,22 +2235,22 @@ export class PointOfSaleComponent implements OnInit {
             }
         }else if(this.transaction && this.transaction.tiendaNubeId && this.config.tiendaNube.userID){
             console.log(state)
-            return new Promise<Transaction>((resolve, reject) => {
-                this._transactionService.updateTransactionStatus(transaction.tiendaNubeId, this.config.tiendaNube.userID, state).subscribe(
-                    (result: Resulteable) => {
-                        if (result.status === 200) {
-                            resolve(result.result);
-                        } else {
-                            this.showToast(result);
-                            reject(result);
-                        };
-                    },
-                    error => {
-                        this.showToast(error)
-                        reject(error);
-                    }
-                );
-            });
+            // return new Promise<Transaction>((resolve, reject) => {
+            //     this._transactionService.updateTransactionStatus(transaction.tiendaNubeId, this.config.tiendaNube.userID, state).subscribe(
+            //         (result: Resulteable) => {
+            //             if (result.status === 200) {
+            //                 resolve(result.result);
+            //             } else {
+            //                 this.showToast(result);
+            //                 reject(result);
+            //             };
+            //         },
+            //         error => {
+            //             this.showToast(error)
+            //             reject(error);
+            //         }
+            //     );
+            // });
         }
     }
 
