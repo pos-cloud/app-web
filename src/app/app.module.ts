@@ -20,7 +20,7 @@ import {TranslateModule, TranslateLoader} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {NgMultiSelectDropDownModule} from 'ng-multiselect-dropdown';
 import {NgxPaginationModule} from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
-//import {SocketIoModule, SocketIoConfig} from 'ngx-socket-io';
+import {SocketIoModule, SocketIoConfig} from 'ngx-socket-io';
 import {NgxTinymceModule} from 'ngx-tinymce';
 import {ToastrModule} from 'ngx-toastr';
 
@@ -256,6 +256,7 @@ import { CancelComponent } from './components/tiendaNube/cancel/cancel.component
 import { FulfilledComponent } from './components/tiendaNube/fulfilled/fulfilled.component'
 import { MenuComponent } from './components/menu/menu.component';
 import { MenuService } from './components/menu/menu.service';
+import { SocketService } from './main/services/socket.service';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -265,12 +266,15 @@ export function createTranslateLoader(http: HttpClient) {
 //   url: 'http://demo.poscloud.com.ar:300',
 //   options: {},
 // };
+const configSocket: SocketIoConfig = {
+  url: 'http://localhost:305',
+  options: {},
+};
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    HeaderComponent,
     ListArticlesComponent,
     AddArticleComponent,
     ListEmployeesComponent,
@@ -536,7 +540,8 @@ export function createTranslateLoader(http: HttpClient) {
     PushNotificationsService,
     MercadopagoService,
     MeliService,
-    MenuService
+    MenuService,
+    SocketService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
   bootstrap: [AppComponent],

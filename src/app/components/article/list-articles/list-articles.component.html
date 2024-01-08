@@ -129,7 +129,7 @@
               <i class="fa fa-bars"></i>
             </th>
             <ng-container *ngFor="let column of columns">
-              <th *ngIf="column.visible" (click)="orderBy(column.name)">
+              <th *ngIf="column.visible" (click)="orderBy(column.name)" style="font-weight: bold;">
                 {{ column.name | translate }}
               </th>
             </ng-container>
@@ -137,7 +137,7 @@
           <tr class="filters">
             <th *ngIf="!articleHistoryId"></th>
             <ng-container *ngFor="let column of columns">
-              <th *ngIf="column.visible">
+              <th *ngIf="column.visible" >
                 <input
                   type="text"
                   class="form-control"
@@ -229,7 +229,7 @@
               </button>
             </td>
             <ng-container *ngFor="let column of columns">
-              <td *ngIf="column.visible" [attr.align]="column.align">
+              <td *ngIf="column.visible" [attr.align]="column.align" >
                 {{ getValue(item, column) }}
               </td>
             </ng-container>

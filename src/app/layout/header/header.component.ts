@@ -17,11 +17,10 @@ import { AddUserComponent } from '../../components/user/user/add-user.component'
 import { ClaimComponent } from '../claim/claim.component';
 import { ToastrService } from 'ngx-toastr';
 import { Config } from 'app/app.config';
-//import { Socket } from 'ngx-socket-io';
 import { CurrentAccountDetailsComponent } from '../../components/print/current-account-details/current-account-details.component';
 import { PushNotificationsService } from 'app/components/notification/notification.service';
 import { UserService } from 'app/components/user/user.service';
-import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
+import { SocketService } from 'app/main/services/socket.service';
 
 @Component({
     selector: 'app-header',
@@ -54,10 +53,9 @@ export class HeaderComponent {
         public activeModal: NgbActiveModal,
         public alertConfig: NgbAlertConfig,
         public _modalService: NgbModal,
-        //private socket: Socket,
         private _toastr: ToastrService,
         private _notificationService: PushNotificationsService,
-        private _userService: UserService,
+        private _socket: SocketService,
     ) {
         // OCULTAR MENU REPORTE
         this.isReportVisible = false;
@@ -111,7 +109,6 @@ export class HeaderComponent {
         // this.renderer.listen(this.elementRef.nativeElement, 'click', (event) => {
         // });
 
-        //this.initSocket();
         
     }
 
@@ -122,42 +119,6 @@ export class HeaderComponent {
         }, 3000);
     }
 
-    toggleAccordion() {
-        this.showAccordion = !this.showAccordion;
-      }
-
-    // private initSocket(): void {
-
-    //     let identity: User = JSON.parse(sessionStorage.getItem('user'));
-
-    //     if (identity && Config.database && Config.database !== '') {
-
-    //         if (!this.socket.ioSocket.connected) {
-    //             // INICIAMOS SOCKET
-    //             this.socket.emit('start', {
-    //                 database: Config.database,
-    //                 clientType: 'pos'
-    //             });
-
-    //             // ESCUCHAMOS SOCKET
-    //             this.socket.on('message', (mnj) => {
-    //                 this.showToast(mnj);
-    //                 this.showNotification(mnj);
-    //             });
-
-    //             if (this.intervalSocket) {
-    //                 clearInterval(this.intervalSocket);
-    //             }
-    //         }
-
-    //         // INICIAR CONTADOR PARA VERIFICAR CONEXION DE SOCKET
-    //         this.intervalSocket = setInterval(() => {
-    //             if (!this.socket.ioSocket.connected) {
-    //                 this.initSocket();
-    //             }
-    //         }, 5000);
-    //     }
-    // }
 
     public readNotification(): void {
         this.readedNotification = true;
@@ -244,7 +205,7 @@ export class HeaderComponent {
 
     public logout(): void {
         this.makeVisibleReport(false);
-        //this.socket.emit('finish');
+        this._socket.logout();
         this._authService.logoutStorage();
     }
 

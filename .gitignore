@@ -23,15 +23,17 @@ settings.json
 # print
 /services/print/node_modules
 /services/print/dist
-# print
+# storage
 /services/storage/node_modules
 /services/storage/dist
 
-# print
+# socket
 /services/socket/
 
-# print
-/services/socket
+# socket
+# storage
+/services/socket/node_modules
+/services/socket/dist
 # IDEs and editors
 /.idea
 .project
