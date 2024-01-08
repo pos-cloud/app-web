@@ -25,6 +25,10 @@ settings.json
 # print
 /services/storage/node_modules
 /services/storage/dist
+
+# print
+/services/socket/
+
 # IDEs and editors
 /.idea
 .project
