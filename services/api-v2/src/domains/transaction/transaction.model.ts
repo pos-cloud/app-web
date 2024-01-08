@@ -52,9 +52,29 @@ class TransactionSchema extends Model {
           'Enviado',
           'Preparando',
           'Pendiente',
-          'paid',
-          'pending',
         ],
+      },
+      shippingStatus: {
+        type: String,
+        trim: true,
+        required: true,
+        enum: [
+         'unpacked',
+         'fulfilled',
+         'unfulfilled'
+        ],
+      },
+      statusTiendaNube: {
+        type: String,
+        trim: true,
+        required: true,
+        enum: [
+          'open',
+          'closed',
+          'canceled',
+          'packed',
+          'fulfilled'
+         ],
       },
       madein: {type: String, trim: true},
       balance: {type: Number, default: 0},

@@ -85,6 +85,7 @@ export class Transaction {
   updateDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   tracking: {date: string; state: TransactionState}[];
   tiendaNubeId: string;
+  stateShipping:  TransactionShippingStatus
 
   constructor() {}
 }
@@ -103,6 +104,21 @@ export enum TransactionState {
   Pending = <any>'Pendiente',
   Produccion= <any>'En Producción'
 }
+
+export enum TransactionStatusTiendaNube {
+  Open = <any> 'open', //abierto
+  Closed = <any> 'closed', //cerrado
+  Canceled = <any> 'canceled',//cancelado
+  Packed = <any> 'packed',//preparado
+  Fulfilled = <any> 'fulfilled'//completado
+}
+
+export enum TransactionShippingStatus {
+  Unpacked = <any> 'packed',
+  Fulfilled = <any>'fulfilled',
+  Unfulfilled = <any> 'unfulfilled'
+}
+
 
 export let attributes = [
   {

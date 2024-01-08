@@ -7,7 +7,7 @@ import 'moment/locale/es';
 
 import { Room } from '../room/room';
 import { Printer, PrinterPrintIn } from '../printer/printer';
-import { Transaction, TransactionState } from '../transaction/transaction';
+import { Transaction, TransactionState, TransactionStatusTiendaNube } from '../transaction/transaction';
 import { TransactionType, TransactionMovement, StockMovement, CurrentAccount } from '../transaction-type/transaction-type';
 
 import { RoomService } from '../room/room.service';
@@ -1130,10 +1130,10 @@ export class PointOfSaleComponent implements OnInit {
         }
     }
 
-    public async chargeTransaction(transaction: Transaction, state: TransactionState = TransactionState.Closed) {
+    public async chargeTransaction(transaction: Transaction, state: TransactionState = TransactionState.Closed, stateTn: TransactionStatusTiendaNube) {
         this.transaction = await this.getTransaction(transaction._id);
         if (this.transaction) {
-            this.openModal('charge', state);
+            this.openModal('charge', state, stateTn);
         }
     }
 
@@ -1177,7 +1177,7 @@ export class PointOfSaleComponent implements OnInit {
         });
     }
 
-    async openModal(op: string, state: TransactionState = TransactionState.Closed) {
+    async openModal(op: string, state: TransactionState = TransactionState.Closed, stateTn?: TransactionStatusTiendaNube) {
 
         let modalRef;
 
@@ -1240,7 +1240,7 @@ export class PointOfSaleComponent implements OnInit {
                                 async transaction => {
                                     if (transaction) {
                                         this.transaction = transaction;
-                                        this.changeStateOfTransaction(this.transaction, state);
+                                        this.changeStateOfTransaction(this.transaction, state, stateTn);
                                     } else {
                                         this.refresh();
                                     }
@@ -1957,6 +1957,8 @@ export class PointOfSaleComponent implements OnInit {
                 taxes: 1,
                 CAE: 1,
                 creationUser:1,
+                tiendaNubeId: 1,
+                stateTiendaNube: 1,
                 "company.name": 1,
                 "type._id": 1,
                 "type.allowEdit": 1,
@@ -2182,10 +2184,11 @@ export class PointOfSaleComponent implements OnInit {
         });
     }
 
-    async changeStateOfTransaction(transaction: Transaction, state: TransactionState) {
+    async changeStateOfTransaction(transaction: Transaction, state: TransactionState, stateTn: TransactionStatusTiendaNube) {
         this.transaction = await this.getTransaction(transaction._id);
         let email: string;
-        if (this.transaction) {
+        if (this.transaction && !this.transaction.tiendaNubeId) {
+            console.log( !this.transaction.tiendaNubeId)
             let oldState = this.transaction.state;
             this.transaction.state = state;
             let newState = (this.transaction.state || '').toString();
@@ -2230,6 +2233,24 @@ export class PointOfSaleComponent implements OnInit {
                     }
                 );
             }
+        }else if(this.transaction && this.transaction.tiendaNubeId && this.config.tiendaNube.userID){
+            console.log(state)
+            return new Promise<Transaction>((resolve, reject) => {
+                this._transactionService.updateTransactionStatus(transaction.tiendaNubeId, this.config.tiendaNube.userID, state).subscribe(
+                    (result: Resulteable) => {
+                        if (result.status === 200) {
+                            resolve(result.result);
+                        } else {
+                            this.showToast(result);
+                            reject(result);
+                        };
+                    },
+                    error => {
+                        this.showToast(error)
+                        reject(error);
+                    }
+                );
+            });
         }
     }
 
@@ -2247,7 +2268,6 @@ export class PointOfSaleComponent implements OnInit {
         this.propertyTerm = property;
     }
 
-
     public sendEmail(body: EmailProps): void {
         this._serviceEmail.sendEmailV2(body).subscribe(
           (result) => {
@@ -2257,7 +2277,7 @@ export class PointOfSaleComponent implements OnInit {
             this.showToast(err);
           },
         );
-      }
+    }
 
     public ngOnDestroy(): void {
         this.subscription.unsubscribe();

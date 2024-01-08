@@ -1,3 +1,4 @@
+
 import * as express from 'express'
 
 import Responser from '../../utils/responser'
@@ -25,20 +26,21 @@ import Article from '../article/article.interface'
 import PaymentMethod from '../payment-method/payment-method.interface'
 import PaymentMethodController from '../payment-method/payment-method.controller'
 import moment = require('moment')
+import TransactionController from '../transaction/transaction.controller'
 
 // https://tiendanube.github.io/api-documentation/resources/order#get-ordersid
 
 const credentialsTiendaNube = [
     {
         tokenTiendaNube: 'caeb032b8bbd258ae2fe42ef70b7c95b44e400eb',
-        storeId: 3937256,
+        userID: 3937256,
         database: 'demo',
         user: 'admin',
         password: 'pos'
     },
     {
         tokenTiendaNube: '7f568c4aa62eca95fc5c4aef4200d16e5b1f85d2',
-        storeId: 2469501,
+        userID: 2469501,
         database: 'polirrubrojb',
         user: 'soporte',
         password: '431744'
@@ -71,11 +73,11 @@ export default class TiendaNubeController {
         response: express.Response,
         next: express.NextFunction) => {
         try {
-            const { storeId, order } = request.body;
-            console.log(order)
+            const { storeId, order, event } = request.body;
+    
             if (typeof order == "undefined") return response.send(new Responser(404, null, 'Order not found', null));
 
-            const credential = credentialsTiendaNube.find(credentials => credentials.storeId === parseInt(storeId));
+            const credential = credentialsTiendaNube.find(credentials => credentials.userID === parseInt(storeId));
             if (!credential) return response.send(new Responser(404, null, 'credential not found', null));
 
             this.database = credential.database
@@ -87,6 +89,12 @@ export default class TiendaNubeController {
             if (!token) return response.send(new Responser(404, null, 'token not found', null));
 
             this.authToken = token
+
+            let resp
+            if(event === 'order/updated'){
+                 resp = await this.updateTransaction(order)
+            }
+            if (resp) return response.send(new Responser(200, resp ));
 
             const articles = await this.getArticles(this.database, order)
 
@@ -123,9 +131,15 @@ export default class TiendaNubeController {
             const shipmentMethod = this.shipmentMethod()
 
             if (!shipmentMethod) return response.send(new Responser(404, null, 'shipmentMethod not found', null));
+           
+            let statusOrder: any = {
+                'open': 'Abierto',
+                'closed': 'Cerrado',
+                'cancelled': 'Anulado'
+              };
 
             let transactionTiendaNube: Transaction = TransactionSchema.getInstance(this.database)
-            
+
             transactionTiendaNube = Object.assign(transactionTiendaNube, {
                 tiendaNubeId: order.id,
                 letter: "X",
@@ -133,7 +147,9 @@ export default class TiendaNubeController {
                 discountAmount: order.discount,
                 number: order.number,
                 madein: 'tiendanube',
-                state: "Pendiente de pago",
+                state: statusOrder[order.status],
+                shippingStatus: order.shipping_status,
+                statusTiendaNube: order.status,
                 endDate2: moment().format("YYYY-MM-DD HH:mm:ss.SSSSSS"),
                 endDate: moment().format("MM/DD/YYYY"),
                 balance: order.payment_status === "paid" ? order.total : 0,
@@ -144,7 +160,7 @@ export default class TiendaNubeController {
                 startDate: order.created_at,
                 observation: order.note
             })
-
+            
             const createTransaction = await new TransactionUC(this.database, this.authToken).createTransaction(transactionTiendaNube, movementsOfCash, movementOfArticle, user.result[0])
 
             return response.send(new Responser(200, { createTransaction }));
@@ -153,6 +169,36 @@ export default class TiendaNubeController {
             console.log(error)
             response.send(new Responser(500, null, error));
         }
+    }
+
+    async updateTransaction(order: any) {
+     const getTransaction = await new TransactionController(this.database).getAll({
+        project:{
+            _id: 1,
+            tiendaNubeId: 1,
+            stateTiendaNube: 1,
+            totalPrice: 1,
+            origin: 1,
+            letter: 1,
+            paymentStatus: 1,
+            shippingStatus: 1
+        },
+        match:{
+        tiendaNubeId: String(order.id)
+        }
+     })
+     if(!getTransaction.result.length){
+     return new Responser(404, null, `Transaction not found with tiendaNubeId ${order.id}`)
+     }
+     let transaction = getTransaction.result[0]
+
+     transaction.shippingStatus = order.shipping_status
+     transaction.paymentStatus = order.payment_status
+     transaction.stateTiendaNube = order.status
+
+     const updateTransaction = await new TransactionUC(this.database, this.authToken).updateTransaction(transaction._id, transaction)
+     
+     return updateTransaction
     }
 
     getCredentials = async (
@@ -165,7 +211,7 @@ export default class TiendaNubeController {
             return response.send(new Responser(404, null, 'id not found', null));
         }
 
-        const credential = credentialsTiendaNube.find(credentials => credentials.storeId === parseInt(storeId));
+        const credential = credentialsTiendaNube.find(credentials => credentials.userID === parseInt(storeId));
 
         return response.send(credential)
     }

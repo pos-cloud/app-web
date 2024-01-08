@@ -1,3 +1,4 @@
+
 import {IsDefined, IsString, IsNumber, ValidateIf, IsArray, Min} from 'class-validator'
 import * as moment from 'moment'
 
@@ -20,7 +21,7 @@ import {TransactionType} from './../../domains/transaction-type/transaction-type
 import Transport from './../../domains/transport/transport.interface'
 import UseOfCFDI from './../../domains/use-of-CFDI/use-of-CFDI.interface'
 import 'moment/locale/es'
-import {TransactionState} from './transaction.interface'
+import { TransactionShippingStatus, TransactionState, TransactionStatusTiendaNube} from './transaction.interface'
 
 export default class TransactionDto extends ModelDto {
   @ValidateIf((o) => !o._id)
@@ -127,6 +128,16 @@ export default class TransactionDto extends ModelDto {
   @IsDefined()
   @IsString()
   state: TransactionState
+
+  @ValidateIf((o) => !o._id)
+  @IsDefined()
+  @IsString()
+  shippingStatus: TransactionShippingStatus
+
+  @ValidateIf((o) => !o._id)
+  @IsDefined()
+  @IsString()
+  statusTiendaNube: TransactionStatusTiendaNube
 
   @ValidateIf((o) => o.wooId !== undefined)
   @IsString()
