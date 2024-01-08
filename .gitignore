@@ -29,6 +29,8 @@ settings.json
 # print
 /services/socket/
 
+# print
+/services/socket
 # IDEs and editors
 /.idea
 .project
