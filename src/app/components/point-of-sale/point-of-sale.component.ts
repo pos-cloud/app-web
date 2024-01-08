@@ -2235,22 +2235,22 @@ export class PointOfSaleComponent implements OnInit {
             }
         }else if(this.transaction && this.transaction.tiendaNubeId && this.config.tiendaNube.userID){
             console.log(state)
-            return new Promise<Transaction>((resolve, reject) => {
-                this._transactionService.updateTransactionStatus(transaction.tiendaNubeId, this.config.tiendaNube.userID, state).subscribe(
-                    (result: Resulteable) => {
-                        if (result.status === 200) {
-                            resolve(result.result);
-                        } else {
-                            this.showToast(result);
-                            reject(result);
-                        };
-                    },
-                    error => {
-                        this.showToast(error)
-                        reject(error);
-                    }
-                );
-            });
+            // return new Promise<Transaction>((resolve, reject) => {
+            //     this._transactionService.updateTransactionStatus(transaction.tiendaNubeId, this.config.tiendaNube.userID, state).subscribe(
+            //         (result: Resulteable) => {
+            //             if (result.status === 200) {
+            //                 resolve(result.result);
+            //             } else {
+            //                 this.showToast(result);
+            //                 reject(result);
+            //             };
+            //         },
+            //         error => {
+            //             this.showToast(error)
+            //             reject(error);
+            //         }
+            //     );
+            // });
         }
     }
 
