@@ -31,7 +31,7 @@ export class ProductsService {
       'articles',
       productId,
     );
-
+ console.log(' create', foundArticle)
     if (
       !foundArticle ||
       foundArticle.operationType == 'D' ||
@@ -40,7 +40,6 @@ export class ProductsService {
      console.log('BadRequestException create')
       throw new BadRequestException(` Article with id ${productId} not found`);
     }
-   console.log('article',foundArticle)
     const dataNewProductTiendaNube = {
       images: [
         {
@@ -87,6 +86,7 @@ export class ProductsService {
       operationType: { $ne: 'D' },
       article: new ObjectId(productId),
     });
+    console.log('create', stockFound)
     await this.tiendaNubeService.updateProductFirstVariant(
       token,
       userID,
@@ -137,7 +137,7 @@ export class ProductsService {
         'articles',
         productId,
       );
-
+      console.log('update',foundArticle)
       if (
         !foundArticle ||
         foundArticle.operationType == 'D' ||
@@ -209,7 +209,7 @@ export class ProductsService {
         operationType: { $ne: 'D' },
         article: new ObjectId(productId),
       });
-
+    console.log('update', stockFound)
       await this.tiendaNubeService.updateProductFirstVariant(
         token,
         userID,
