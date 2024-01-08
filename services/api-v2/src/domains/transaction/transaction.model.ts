@@ -54,28 +54,6 @@ class TransactionSchema extends Model {
           'Pendiente',
         ],
       },
-      shippingStatus: {
-        type: String,
-        trim: true,
-        required: false,
-        enum: [
-         'unpacked',
-         'fulfilled',
-         'unfulfilled'
-        ],
-      },
-      statusTiendaNube: {
-        type: String,
-        trim: true,
-        required: false,
-        enum: [
-          'open',
-          'closed',
-          'canceled',
-          'packed',
-          'fulfilled'
-         ],
-      },
       madein: {type: String, trim: true},
       balance: {type: Number, default: 0},
       CAE: {type: String, trim: true}, // AR

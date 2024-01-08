@@ -42,8 +42,6 @@ export default interface Transaction extends Model {
   diners?: number
   orderNumber?: number
   state: TransactionState
-  statusTiendaNube: TransactionStatusTiendaNube
-  shippingStatus: TransactionShippingStatus
   madein?: string
   balance: number
   CAE?: string
@@ -103,16 +101,3 @@ export enum TransactionState {
   Preparing = <any>'Preparando',
   Pending = <any>'Pendiente',
 }
-
-export enum TransactionStatusTiendaNube {
-  Open = <any> 'open',
-  Closed = <any> 'closed',
-  Cancelled = <any> 'cancelled'
-
-}
-export enum TransactionShippingStatus {
-  Unpacked = <any> 'packed',
-  Fulfilled = <any>'fulfilled',
-  Unfulfilled = <any> 'unfulfilled'
-}
-
