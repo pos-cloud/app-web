@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: dev
+    runs-on: prod-ar
 
     steps:
       - uses: actions/checkout@v3
