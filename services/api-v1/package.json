@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development MONGO_URL=mongodb://localhost:27017/ BASE_URL_V8=http://localhost:308 nodemon index.js",
-    
     "prod": "cross-env NODE_ENV=production MONGO_URL=mongodb://localhost:27017/ BASE_URL_V8=https://api-v2.poscloud.ar nodemon index.js",
+    
     "eldesafio": "cross-env NODE_ENV=production MONGO_URL=mongodb://localhost:27017/ BASE_URL_V8=http://192.168.2.108:308 nodemon index.js",
     "granpaso": "cross-env NODE_ENV=production MONGO_URL=mongodb://localhost:27017/ BASE_URL_V8=http://192.168.88.90:308 nodemon index.js",
     "jacksonburgs": "cross-env NODE_ENV=production MONGO_URL=mongodb://localhost:27017/ BASE_URL_V8=http://192.168.0.88:308 nodemon index.js",
