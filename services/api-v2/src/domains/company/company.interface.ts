@@ -12,7 +12,6 @@ import VATCondition from './../../domains/vat-condition/vat-condition.interface'
 export default interface Company extends Model {
   name: string
   fantasyName?: string
-  entryDate: string
   type: CompanyType
   category?: string
   vatCondition: VATCondition

@@ -24,6 +24,7 @@ export default interface MovementOfCash extends Model {
   cancelingTransaction?: Transaction
   observation?: string
   type: PaymentMethod
+  paymentStatus: PaymentStatus
   transaction: Transaction
   receiver?: string
   number?: string
@@ -45,4 +46,13 @@ export enum StatusCheck {
   Closed = <any>'Cerrado',
   Deposit = <any>'Depositado',
   Available = <any>'Disponible',
+}
+
+export enum PaymentStatus {
+  Authorized = <any> 'Autorizado',
+  Pending = <any> 'Pendiente',
+  Paid = <any> 'Pagado',
+  Abandoned = <any> 'Abandonado',
+  Refunded = <any> 'Reembolso',
+  Voided = <any>'Anulado'
 }

@@ -6,6 +6,7 @@ import ModelDto from './../../domains/model/model.dto'
 import PaymentMethod from './../../domains/payment-method/payment-method.interface'
 import Transaction from './../../domains/transaction/transaction.interface'
 import 'moment/locale/es'
+import { PaymentStatus } from './movement-of-cash.interface'
 
 export default class MovementOfCashDto extends ModelDto {
   @ValidateIf((o) => !o._id)
@@ -110,6 +111,10 @@ export default class MovementOfCashDto extends ModelDto {
   @ValidateIf((o) => o.titular !== undefined)
   @IsString()
   titular: string
+
+  @ValidateIf((o) => o.paymentStatus !== undefined)
+  @IsString()
+  paymentStatus: PaymentStatus
 
   @ValidateIf((o) => o.CUIT !== undefined)
   @IsString()

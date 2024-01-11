@@ -23,6 +23,16 @@ class AddressSchema extends Model {
       forBilling: {type: Boolean, default: true},
       forShipping: {type: Boolean, default: true},
       company: {type: Schema.Types.ObjectId, ref: 'company', required: true},
+      shippingStatus: {
+        type: String,
+        trim: true,
+        required: false,
+        enum: [
+          'Desempaquetado',
+          'Enviado',
+          'No enviado'
+        ],
+      },
     })
   }
 
