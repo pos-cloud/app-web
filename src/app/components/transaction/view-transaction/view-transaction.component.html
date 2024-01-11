@@ -262,6 +262,7 @@
                                 <tr>
                                     <th>Método</th>
                                     <th>Comprobante</th>
+                                    <th>Estado</th>
                                     <th>Cuota</th>
                                     <th>Vencimiento</th>
                                     <th>Banco</th>
@@ -282,6 +283,7 @@
                                     <td (click)="pushCurrencyValue(movementOfCash)">{{movementOfCash?.type?.name}}
                                     </td>
                                     <td>{{movementOfCash?.number}}</td>
+                                    <td>{{movementOfCash?.paymentStatus}}</td>
                                     <td>{{movementOfCash?.quota}}</td>
                                     <td>{{movementOfCash.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
                                     <td>{{movementOfCash?.bank?.name}}</td>
@@ -345,6 +347,7 @@
                                 <tr>
                                     <th>Método</th>
                                     <th>Tipo</th>
+                                    <th>Estado</th>
                                     <th>Provincia</th>
                                     <th>Ciudad</th>
                                     <th>Dirección</th>
@@ -359,6 +362,7 @@
                                 <tr>
                                     <td>{{transaction?.shipmentMethod?.name}}</td>
                                     <td>{{transaction?.deliveryAddress?.type}}</td>
+                                    <td>{{transaction?.deliveryAddress?.shippingStatus}}</td>
                                     <td>{{transaction?.deliveryAddress?.state}}</td>
                                     <td>{{transaction?.deliveryAddress?.city}}</td>
                                     <td>{{transaction?.deliveryAddress?.name}}</td>

@@ -41,6 +41,7 @@ export class MovementOfCash {
     cancelingTransaction: Transaction;
     currencyValues: currencyValue[]
     operationType: string;
+    paymentStatus: PaymentStatus
 
     constructor() { }
 }
@@ -51,6 +52,15 @@ export enum StatusCheck {
     Deposit = <any>"Depositado",
     Available = <any>"Disponible"
 }
+
+export enum PaymentStatus {
+    Authorized = <any> 'Autorizado',
+    Pending = <any> 'Pendiente',
+    Paid = <any> 'Pagado',
+    Abandoned = <any> 'Abandonado',
+    Refunded = <any> 'Reembolso',
+    Voided = <any>'Anulado'
+  }
 
 export let attributes = [
     {
