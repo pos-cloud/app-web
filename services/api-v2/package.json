@@ -74,8 +74,7 @@
 		"jacksonburgs": "cross-env NODE_ENV=production URL_SERVER=http://192.168.0.88 API_URL=http://192.168.0.88:300/api API_V8_URL=http://192.168.0.88:308 nodemon ./src/server.ts",
 		"granpaso": "cross-env NODE_ENV=production URL_SERVER=http://192.168.88.90 API_URL=http://192.168.88.90:300/api API_V8_URL=http://192.168.88.90:308 nodemon ./src/server.ts",
 		
-		"donweb:dev": "cross-env NODE_ENV=development MONGO_URL=mongodb://181.13.244.217:27017/ API_URL=http://181.13.244.217:300/api nodemon ./src/server.ts",
-		"evennode:dev": "cross-env NODE_ENV=development MONGO_URL=mongodb+srv://pos:pos@cluster0.fscmrqu.mongodb.net/ API_URL=http://apiv1.eu-4.evennode.com/api PORT=3000 && node dist/server.js"
+		"donweb:dev": "cross-env NODE_ENV=development MONGO_URL=mongodb://181.13.244.217:27017/ API_URL=http://181.13.244.217:300/api nodemon ./src/server.ts"
 	},
 	"author": "POS Cloud",
 	"license": "MIT"
