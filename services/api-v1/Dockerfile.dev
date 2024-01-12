@@ -8,4 +8,4 @@ RUN npm install
 
 COPY services/api-v1/ .
 
-CMD [ "npm", "run", "dev" ]
+CMD [ "npm", "run", "donweb:dev" ]
