@@ -14,5 +14,5 @@ export class CancelOrderDto {
   restock?: boolean;
 
   @IsNumber()
-  storeId: number;
+  storeIdTn: number;
 }
