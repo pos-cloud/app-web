@@ -253,6 +253,8 @@ import {AuthInterceptor} from './main/interceptors/auth.interceptor';
 import {PipesModule} from './main/pipes/pipes.module';
 import {MeliService} from './main/services/meli.service';
 import { SafePipe } from './main/pipes/safe.pipe';
+import { CancelComponent } from './components/tiendaNube/cancel/cancel.component';
+import { FulfilledComponent } from './components/tiendaNube/fulfilled/fulfilled.component'
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -425,7 +427,9 @@ const configSocket: SocketIoConfig = {
     SelectPriceListComponent,
     AddMeliAttrsComponent,
     KardexCheckComponent,
-    SafePipe
+    SafePipe,
+    CancelComponent,
+    FulfilledComponent
   ],
   imports: [
     BrowserModule,
