@@ -2,14 +2,14 @@ name: Deploy Api v2 to Don Web
 
 on:
   push:
-    branches: [ main ]
+    branches: [ dev ]
     paths:
       - "services/api-v2/**"
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: prod
+    runs-on: dev
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
