@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PosCloudService } from './post-cloud.service';
+import { PosCloudService } from './pos-cloud.service';
 
 describe('PosCloudService', () => {
-  let service: PostCloudService;
+  let service: PosCloudService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

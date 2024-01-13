@@ -29,12 +29,6 @@ export default class CompanyDto extends ModelDto {
   @IsString()
   public name: string
 
-  @ValidateIf((o) => !o._id)
-  @IsDefined()
-  @IsString()
-  @ValidateIf((o) => moment(o.entryDate, 'YYYY-MM-DDTHH:mm:ssZ').isValid())
-  public entryDate: string
-
   @ValidateIf((o) => o.fantasyName !== undefined)
   @IsString()
   public fantasyName: string

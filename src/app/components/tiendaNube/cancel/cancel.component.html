@@ -1,0 +1,43 @@
+<div class="modal-header">
+    <h4 class="modal-title">Cancelar pedido</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<section class="container-fluid">
+    <form [formGroup]="cancelForm" (ngSubmit)="changeStatusTiendaNube()">
+    <div class="row">
+        <div class="form-group col-md-2" >
+            <label class="control-label">Razón:</label>
+            <select formControlName="reason" class="form-control" name="reason">
+                <option>Otro</option>
+                <option>Cliente</option>
+                <option>Inventario</option>
+                <option>Fraude</option>
+            </select>
+        </div>
+        <div class="form-group col-md-3">
+            <label for="mailNotification" class="control-label">Notificación de envío de correo:</label>
+            <select class="form-control" formControlName="email">
+                <option [value]="true">Si</option>
+                <option [value]="false">No</option>
+            </select>     
+        </div>        
+        <div class="form-group col-md-3">
+            <label for="mailNotification" class="control-label">Reabastecer los productos:</label>
+            <select class="form-control" formControlName="restock">
+                <option [value]="true">Si</option>
+                <option [value]="false">No</option>
+            </select>
+        </div>     
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="loading">
+            <i [ngClass]="{'save':!loading, 'spinner spin':loading}"></i>
+            <span *ngIf="!loading">Enviar</span>
+            <span *ngIf="loading">Espere por favor</span>
+        </button>
+        </div>
+    </form>
+</section>

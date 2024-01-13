@@ -104,19 +104,13 @@ export enum TransactionState {
   Produccion= <any>'En Producción'
 }
 
-// export enum TransactionStatusTiendaNube {
-//   Open = <any> 'open', //abierto
-//   Closed = <any> 'closed', //cerrado
-//   Canceled = <any> 'canceled',//cancelado
-//   Packed = <any> 'packed',//preparado
-//   Fulfilled = <any> 'fulfilled'//completado
-// }
-
-// export enum TransactionShippingStatus {
-//   Unpacked = <any> 'packed',
-//   Fulfilled = <any>'fulfilled',
-//   Unfulfilled = <any> 'unfulfilled'
-// }
+export enum TransactionStateTiendaNube {
+  Open = <any> 'open', //abierto
+  Closed = <any> 'closed', //cerrado
+  Canceled = <any> 'canceled',//cancelado
+  Packed = <any> 'packed',//preparado
+  Fulfilled = <any> 'fulfilled'//completado
+}
 
 
 export let attributes = [

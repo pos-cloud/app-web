@@ -11,7 +11,7 @@ import {AuthService} from '../login/auth.service';
 import {ModelService} from '../model/model.service';
 import {TransactionMovement} from '../transaction-type/transaction-type';
 
-import {Transaction} from './transaction';
+import {Transaction, TransactionStateTiendaNube } from './transaction';
 import { environment } from 'environments/environment';
 
 @Injectable()
@@ -414,41 +414,37 @@ export class TransactionService extends ModelService {
       );
   }
 
-  // public updateTransactionStatus(orderId: string, storeId: string, status: any) {
-  //   const URL = `${environment.apiTiendaNube}/orders/${orderId}`;
-  //   const params = new HttpParams().set('storeId', storeId);
-  //   console.log('estoy acaa:' , orderId, storeId, status)
-  //   let statusEndpoint: string;
+  public updateTransactionStatus(orderId: string, data: any, status: any) {
+    const URL = `${environment.apiTiendaNube}/orders/${orderId}`;
+    let statusEndpoint: string;
   
-  //   switch (status) {
-  //     case TransactionStatusTiendaNube.Open:
-  //       statusEndpoint = 'open';
-  //       break;
-  //     case TransactionStatusTiendaNube.Closed:
-  //       statusEndpoint = 'close';
-  //       break;
-  //     case TransactionStatusTiendaNube.Canceled:
-  //       statusEndpoint = 'cancel';
-  //       break;
-  //     case TransactionStatusTiendaNube.Packed:
-  //       statusEndpoint = 'pack';
-  //       break;
-  //     case TransactionStatusTiendaNube.Fulfilled:
-  //       statusEndpoint = 'fulfill';
-  //       break;
-  //   }
-  //   const options = { params: params }; 
+    switch (status) {
+      case TransactionStateTiendaNube.Open:
+        statusEndpoint = 'open';
+        break;
+      case TransactionStateTiendaNube.Closed:
+        statusEndpoint = 'close';
+        break;
+      case TransactionStateTiendaNube.Canceled:
+        statusEndpoint = 'cancel';
+        break;
+      case TransactionStateTiendaNube.Packed:
+        statusEndpoint = 'pack';
+        break;
+      case TransactionStateTiendaNube.Fulfilled:
+        statusEndpoint = 'fulfill';
+        break;
+    }
   
-  //   return this._http
-  //     .post(`${URL}/${statusEndpoint}`, {storeId: storeId}
-  //     )
-  //     .pipe(
-  //       map((res) => {
-  //         return res;
-  //       }),
-  //       catchError((err) => {
-  //         return of(err);
-  //       }),
-  //     );
-  // }
+    return this._http
+      .post(`${URL}/${statusEndpoint}`, data)
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        }),
+      );
+  }
 }

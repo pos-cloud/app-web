@@ -19,6 +19,7 @@ export class Address extends Model {
   public company: Company;
   public forBilling: boolean = true;
   public forShipping: boolean = true;
+  public shippingStatus: string;
 
   constructor() {
     super();

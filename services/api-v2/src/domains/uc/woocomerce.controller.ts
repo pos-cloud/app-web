@@ -1829,7 +1829,7 @@ export default class WooCommerceController {
             _pCompany.address = billing.address_1
             _pCompany.city = billing.city
             _pCompany.phones = billing.phone
-            _pCompany.entryDate = moment().format('YYYY-MM-DDTHH:mm:ssZ')
+         //   _pCompany.entryDate = moment().format('YYYY-MM-DDTHH:mm:ssZ')
             _pCompany.type = CompanyType.CLIENT
             _pCompany.allowCurrentAccount = true
 
