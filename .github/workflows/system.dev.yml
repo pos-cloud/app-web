@@ -33,8 +33,12 @@ jobs:
           cd /path/to/your/angular/app
           ng build --prod
 
-      - name: Clean up existing files
-        run: sudo rm -rf /home/system
+      - name: Clean up backup
+        run: |
+            if [ -d "/home/system_backup" ]; then
+              rm -rf /home/system_backup
+            fi
+        
 
       - name: Move new build to /home/system
         run: sudo mv /path/to/your/angular/app/dist/* /home/system/
