@@ -1,15 +1,15 @@
-name: Deploy System to Don Web
+name: Deploy System DEV
 
 on:
   push:
     branches:
-      - main
+      - dev
     paths-ignore:
       - "services/**"
 
 jobs:
   deploy-donweb:
-    runs-on: [prod]
+    runs-on: [dev]
 
     steps:
       - name: Checkout repository
