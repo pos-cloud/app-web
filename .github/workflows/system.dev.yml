@@ -9,7 +9,7 @@ on:
 
 jobs:
   deploy-donweb:
-    runs-on: [dev]
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -18,25 +18,29 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18"
+          node-version: "14"  # Use Node.js 14 as Angular may not be fully compatible with Node 18
 
-      - name: Build Docker image
-        run: docker build -t build-system -f Dockerfile.dev .
-
-      - name: Clean up backup
-        run: |
-          if [ -d "/home/system_backup" ]; then
-            rm -rf /home/system_backup
-          fi
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
 
       - name: Backup current files
         run: |
-          if [ -d "/home/system" ]; then
-            mv /home/system /home/system_backup
-          fi
+          sudo mv /home/system /home/system_backup
+          sudo mkdir /home/system
 
-      - name: Create new /home/system directory
-        run: mkdir /home/system
+      - name: Build Angular app
+        run: |
+          cd /path/to/your/angular/app
+          ng build --prod
+
+      - name: Clean up existing files
+        run: sudo rm -rf /home/system
+
+      - name: Move new build to /home/system
+        run: sudo mv /path/to/your/angular/app/dist/* /home/system/
+
+      - name: Build Docker image
+        run: docker build -t build-system -f Dockerfile.dev .
 
       - name: Run Docker container
         run: docker run -v /home/system:/home/system build-system
