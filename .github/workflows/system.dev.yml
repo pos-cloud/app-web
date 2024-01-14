@@ -3,13 +3,13 @@ name: Deploy System From Dev
 on:
   push:
     branches:
-      - main
+      - dev
     paths-ignore:
       - "services/**"
 
 jobs:
   deploy-donweb:
-    runs-on: [prod]
+    runs-on: [dev]
 
     steps:
       - name: Checkout repository
