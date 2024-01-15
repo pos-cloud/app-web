@@ -74,8 +74,6 @@
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
-              "baseHref": "/system/dev/",
-              "outputPath": "dist/dev",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
