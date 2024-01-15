@@ -32,7 +32,7 @@ import MovementOfCashController from '../movement-of-cash/movement-of-cash.contr
 
 const credentialsTiendaNube = [
     {
-        tokenTiendaNube: 'caeb032b8bbd258ae2fe42ef70b7c95b44e400eb',
+        tokenTiendaNube: '76b8f64f0932d715f712ae1384d3a27f1025848d',
         storeId: 3937256,
         database: 'demo',
         user: 'admin',
