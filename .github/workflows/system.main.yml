@@ -21,7 +21,7 @@ jobs:
           node-version: "18"
 
       - name: Build Docker image
-        run: docker build -t build-system -f Dockerfile.dev .
+        run: docker build -t build-system -f Dockerfile.prod .
 
       - name: Backup current files
         run: |
