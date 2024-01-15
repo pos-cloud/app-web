@@ -26,12 +26,12 @@ export class ProductsService {
     const { token, userID } =
       await this.databaseService.getCredentialsTiendaNube();
     const foundCollection = this.databaseService.getCollection('articles');
-
+     console.log(productId)
     const foundArticle = await this.databaseService.getDocumentById(
       'articles',
-      productId,
+      '8999',
     );
- console.log(' create', foundArticle)
+ console.log('34 create', foundArticle)
     if (
       !foundArticle ||
       foundArticle.operationType == 'D' ||
@@ -86,7 +86,7 @@ export class ProductsService {
       operationType: { $ne: 'D' },
       article: new ObjectId(productId),
     });
-    console.log('create', stockFound)
+//    console.log('create', stockFound)
     await this.tiendaNubeService.updateProductFirstVariant(
       token,
       userID,

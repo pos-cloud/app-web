@@ -112,9 +112,9 @@ export default class MovementOfCashDto extends ModelDto {
   @IsString()
   titular: string
 
-  @ValidateIf((o) => o.paymentStatus !== undefined)
+  @ValidateIf((o) => o.status !== undefined)
   @IsString()
-  paymentStatus: PaymentStatus
+  status: PaymentStatus
 
   @ValidateIf((o) => o.CUIT !== undefined)
   @IsString()

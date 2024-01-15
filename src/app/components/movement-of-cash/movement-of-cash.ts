@@ -41,7 +41,7 @@ export class MovementOfCash {
     cancelingTransaction: Transaction;
     currencyValues: currencyValue[]
     operationType: string;
-    paymentStatus: PaymentStatus
+    status: PaymentStatus
 
     constructor() { }
 }

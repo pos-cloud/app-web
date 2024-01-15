@@ -48,11 +48,14 @@ export class DatabaseService {
           'La conexión con la base de datos no ha sido establecida',
         );
       }
-
+   console.log(this.database)
+   console.log(this.collection);
       const collection = this.database.collection(collectionName);
       const objectId = new ObjectId(documentId);
+      console.log(objectId)
       const document = await collection.findOne({ _id: objectId });
    
+      console.log(document)
       return document;
     } catch (error) {
       console.error('Error al obtener el documento por ID:', error);
