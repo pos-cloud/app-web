@@ -204,7 +204,7 @@ export default class TiendaNubeController {
                 _id: 1,
                 statusCheck: 1,
                 quota: 1,
-                paymentStatus: 1,
+                status: 1,
                 "transaction._id": 1
             },
             match: {
@@ -218,7 +218,7 @@ export default class TiendaNubeController {
         let transaction: Transaction = getTransaction.result[0]
         let movOfCash: MovementOfCash = getMovementsOfCash.result[0]
 
-        movOfCash.paymentStatus = paymentStatus[order.payment_status]
+        movOfCash.status = paymentStatus[order.payment_status]
 
         let updateMovOfCash = await new MovementOfCashController(this.database).update(movOfCash._id, movOfCash)
 

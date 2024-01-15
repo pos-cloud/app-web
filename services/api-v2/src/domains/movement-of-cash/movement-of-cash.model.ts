@@ -49,7 +49,7 @@ class MovementOfCashSchema extends Model {
       ],
       tokenMP: {type: String, trim: true},
       paymentMP: {type: String, trim: true},
-      paymentStatus: {
+      status: {
         type: String,
         trim: true,
         required: false,

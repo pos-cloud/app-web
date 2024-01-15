@@ -24,7 +24,7 @@ export default interface MovementOfCash extends Model {
   cancelingTransaction?: Transaction
   observation?: string
   type: PaymentMethod
-  paymentStatus: PaymentStatus
+  status: PaymentStatus
   transaction: Transaction
   receiver?: string
   number?: string
