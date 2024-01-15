@@ -1,4 +1,4 @@
-name: Deploy System From Dev
+name: Deploy System
 
 on:
   push:
@@ -23,18 +23,14 @@ jobs:
       - name: Build Docker image
         run: docker build -t build-system -f Dockerfile.dev .
 
-      - name: Backup current files
-        run: |
-          if [ -d "/home/system" ]; then
-            mv /home/system /home/system_backup
-            mkdir /home/system
-          fi
+      - name: Delete old backup
+        run: rm -rf /home/system_backup/*
 
-      - name: Clean up backup
-        run: |
-          if [ -d "/home/system_backup" ]; then
-            rm -rf /home/system_backup
-          fi
+      - name: Backup current files
+        run: cp -r /home/system/. /home/system_backup/
+
+      - name: Clean system
+        run: rm -rf /home/system/*
 
       - name: Run Docker container
         run: docker run -v /home/system:/home/system build-system
