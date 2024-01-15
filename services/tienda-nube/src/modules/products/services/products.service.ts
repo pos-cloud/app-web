@@ -29,9 +29,8 @@ export class ProductsService {
      console.log(productId)
     const foundArticle = await this.databaseService.getDocumentById(
       'articles',
-      '8999',
+      productId,
     );
- console.log('34 create', foundArticle)
     if (
       !foundArticle ||
       foundArticle.operationType == 'D' ||
