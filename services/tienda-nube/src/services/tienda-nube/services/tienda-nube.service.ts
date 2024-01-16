@@ -209,6 +209,7 @@ export class TiendaNubeService {
     tiendaNubeUserId: string,
   ) {
     try {
+      console.log(`${this.tiendaNubeUrI}/${tiendaNubeUserId}/orders/${id}`)
       const { data } = await firstValueFrom(
         this.httpService.get(
           `${this.tiendaNubeUrI}/${tiendaNubeUserId}/orders/${id}`,
@@ -221,6 +222,7 @@ export class TiendaNubeService {
       );
       return data;
     } catch (err) {
+      console.log(err)
       throw new InternalServerErrorException(`Error in server tiendanube`);
     }
   }
