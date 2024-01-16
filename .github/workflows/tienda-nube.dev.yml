@@ -15,7 +15,7 @@ jobs:
       MONGO_URL: ${{ secrets.MONGO_URL }}
       TIENDA_NUBE_URI: ${{ secrets.TIENDA_NUBE_URI }}
       TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
-      POSCLOUD_URI: ${{ secrets.POSCLOUD_URI }}
+      POSCLOUD_URI: ${{ secrets.D_API_V2 }}
 
     steps:
       - name: Checkout code
