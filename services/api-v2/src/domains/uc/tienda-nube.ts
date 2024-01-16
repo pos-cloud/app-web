@@ -91,7 +91,7 @@ export default class TiendaNubeController {
             this.authToken = token
 
             let resp
-            if (event === 'order/updated') {
+            if (['order/updated', 'order/fulfilled', 'order/paid', 'order/packed', 'order/cancelled'].includes(event)) {
                 resp = await this.updateTransaction(order)
             }
             if (resp) return response.send(new Responser(200, resp));
@@ -159,7 +159,7 @@ export default class TiendaNubeController {
             })
 
             const createTransaction = await new TransactionUC(this.database, this.authToken).createTransaction(transactionTiendaNube, movementsOfCash, movementOfArticle, user.result[0])
-
+              console.log('Movimeintos:', createTransaction.movementsOfArticles, createTransaction.movementsOfCashes, createTransaction.transaction)
             return response.send(new Responser(200, { createTransaction }));
 
         } catch (error) {
@@ -338,6 +338,7 @@ export default class TiendaNubeController {
                     tiendaNubeId: { $in: order.products.map((product: { product_id: number }) => product.product_id) },
                 }
             });
+            console.log(articles)
             return articles;
         } catch (error) {
             throw error;
@@ -439,6 +440,7 @@ export default class TiendaNubeController {
             paymentStatus: paymentStatus[order.payment_status],
             type: paymentMethod._id
         })
+        console.log(movementOfCash)
         return [movementOfCash]
     }
 
