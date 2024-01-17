@@ -630,7 +630,9 @@ export class PointOfSaleComponent implements OnInit {
                             },
                             { state: TransactionState.PaymentConfirmed },
                             { state: TransactionState.Delivered },
-                            { state: TransactionState.Sent }
+                            { state: TransactionState.Sent },
+                            { state: TransactionState.Open},
+                            { state: TransactionState.Canceled }
                         ],
                         madein: { $in: ['pedidos-web', 'mercadolibre', 'woocommerce', 'tiendanube'] },
                         operationType: { $ne: 'D' },
@@ -1964,7 +1966,7 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     public getTransactionsV2(match: {}): Promise<Transaction[]> {
-
+       console.log(match)
         return new Promise<Transaction[]>((resolve, reject) => {
 
             this.loading = true;
