@@ -18,13 +18,13 @@ export class OrdersService {
     const credentials =
       await this.posCloudService.getCredentialTiendaNube(store_id);
     const { tokenTiendaNube, storeId } = credentials;
-    console.log(credentials)
+    // console.log(credentials)
     const order = await this.tiendaNubeService.getOrderId(
       id,
       tokenTiendaNube,
       storeId,
     );
-    console.log(order)
+    // console.log(order)
     const dataResponse = {
       storeId: store_id,
       event,
