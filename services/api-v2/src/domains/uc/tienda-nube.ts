@@ -74,7 +74,7 @@ export default class TiendaNubeController {
         next: express.NextFunction) => {
         try {
             const { storeId, order, event } = request.body;
-
+    console.log(event, order.id)
             if (typeof order == "undefined") return response.send(new Responser(404, null, 'Order not found', null));
 
             const credential = credentialsTiendaNube.find(credentials => credentials.storeId === parseInt(storeId));
