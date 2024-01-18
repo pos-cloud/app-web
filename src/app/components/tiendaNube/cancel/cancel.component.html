@@ -7,13 +7,13 @@
 <section class="container-fluid">
     <form [formGroup]="cancelForm" (ngSubmit)="changeStatusTiendaNube()">
     <div class="row">
-        <div class="form-group col-md-2" >
+        <div class="form-group col-md-3" >
             <label class="control-label">Razón:</label>
             <select formControlName="reason" class="form-control" name="reason">
-                <option>Otro</option>
-                <option>Cliente</option>
-                <option>Inventario</option>
-                <option>Fraude</option>
+                <option>El cliente cambió de idea</option>
+                <option>El producto no esta disponible</option>
+                <option>Es fraudulenta</option>
+                <option>Otro motivo</option>
             </select>
         </div>
         <div class="form-group col-md-3">
@@ -24,7 +24,7 @@
             </select>     
         </div>        
         <div class="form-group col-md-3">
-            <label for="mailNotification" class="control-label">Reabastecer los productos:</label>
+            <label for="mailNotification" class="control-label">Restaurar stock:</label>
             <select class="form-control" formControlName="restock">
                 <option [value]="true">Si</option>
                 <option [value]="false">No</option>
