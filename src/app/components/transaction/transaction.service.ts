@@ -417,27 +417,33 @@ export class TransactionService extends ModelService {
   public updateTransactionStatus(orderId: string, data: any, status: any) {
     const URL = `${environment.apiTiendaNube}/orders/${orderId}`;
     let statusEndpoint: string;
-  
+    let payload: any;
+
     switch (status) {
       case TransactionStateTiendaNube.Open:
         statusEndpoint = 'open';
+        payload = { 'storeId': data }
         break;
       case TransactionStateTiendaNube.Closed:
         statusEndpoint = 'close';
+        payload = { 'storeId': data }
         break;
       case TransactionStateTiendaNube.Canceled:
         statusEndpoint = 'cancel';
+        payload = data;
         break;
       case TransactionStateTiendaNube.Packed:
         statusEndpoint = 'pack';
+        payload = { 'storeId': data }
         break;
       case TransactionStateTiendaNube.Fulfilled:
         statusEndpoint = 'fulfill';
+        payload = data
         break;
     }
-  
+
     return this._http
-      .post(`${URL}/${statusEndpoint}`, data)
+      .post(`${URL}/${statusEndpoint}`, payload)
       .pipe(
         map((res) => {
           return res;

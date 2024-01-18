@@ -36,7 +36,7 @@ export class CancelComponent implements OnInit {
 
   buildForm(): void {
     this.cancelForm = this.fb.group({
-      reason: ['Otro'],
+      reason: ['El cliente cambió de idea'],
       email: [true],
       restock: [true],
       storeIdTn: [this.config.tiendaNube.userID]
@@ -47,10 +47,10 @@ export class CancelComponent implements OnInit {
     if (this.cancelForm.valid) {
       const formData = this.cancelForm.value;
       let reasonMappings: any = {
-        'Otro': 'other',
-        'Cliente': 'customer',
-        'Inventario': 'inventory' ,
-        'Fraude' : 'fraud'
+        'Otro motivo': 'other',
+        'El cliente cambió de idea': 'customer',
+        'El producto no esta disponible': 'inventory' ,
+        'Es fraudulenta' : 'fraud'
     };
       formData.reason = reasonMappings[formData.reason];
       return new Promise<Transaction>((resolve, reject) => {
@@ -60,7 +60,7 @@ export class CancelComponent implements OnInit {
                     resolve(result.result);
                     this.activeModal.close();
                 } else {
-                    this.showToast(result);
+                   // this.showToast(result);
                     reject(result);
                     this.activeModal.close();
                 };
