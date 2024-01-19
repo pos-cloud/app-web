@@ -9,5 +9,6 @@ export const environment = {
   apiv2: "http://localhost:308",
   apiPrint: "http://localhost:302",
   apiStorage: "http://localhost:303", 
-  apiTiendaNube: "http://localhost:305"
+  apiTiendaNube: "http://localhost:305",
+  socket: "http://localhost:306"
 };
