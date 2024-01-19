@@ -154,13 +154,6 @@ export class LoginComponent implements OnInit {
               this.showMessage("Ingresando...", 'success', false);
 
               this._authService.loginStorage(result.user);
-
-
-              this._socket.initSocket(
-                this.user,
-                this.password,
-                this.company
-              );
   
               await this.getConfigApi().then(config => {
                 if (config) {
@@ -170,7 +163,8 @@ export class LoginComponent implements OnInit {
               });
               Config.setDatabase(this.company);
               localStorage.setItem("company", this.company);
-  
+              this._socket.initSocket();
+
               this._route.queryParams.subscribe(params => params['return'] || '/');
               this._router.navigateByUrl('/');
              } else {

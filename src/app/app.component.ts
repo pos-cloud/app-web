@@ -12,6 +12,7 @@ import {ConfigService} from './components/config/config.service';
 import {AuthService} from './components/login/auth.service';
 
 import 'moment/locale/es';
+import { SocketService } from './main/services/socket.service';
 
 @Component({
   selector: 'app-root',
@@ -35,7 +36,8 @@ export class AppComponent {
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal,
     public _router: Router,
-    private _translateService: TranslateService
+    private _translateService: TranslateService,
+    private _socket: SocketService
   ) {
     this._translateService.setDefaultLang('es');
     this.setApiConfigurationSettings();
@@ -65,6 +67,7 @@ export class AppComponent {
         }
       }
     });
+
   }
 
   public verifyNotification() {

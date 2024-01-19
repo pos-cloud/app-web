@@ -1,39 +1,45 @@
 // socket.service.ts
-import { Injectable } from '@angular/core';
-import { Config } from 'app/app.config';
-import { User } from 'app/components/user/user';
-import { Socket } from 'ngx-socket-io';
+import { Injectable } from "@angular/core";
+import { Subject } from 'rxjs';
+import { Socket } from "ngx-socket-io";
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class SocketService {
-  constructor(private socket: Socket) {}
+  private updateTableSubject = new Subject<any>();
 
-  initSocket( username : string, password: string, database: string): void {
-    const identity: User = JSON.parse(sessionStorage.getItem('user'));
-
-      // INICIAMOS SOCKET
-      this.socket.emit('login', {
-        username,
-        password,
-        database,
-      });
-
-      // ESCUCHAMOS SOCKET - Puedes agregar más eventos aquí según sea necesario
-      this.socket.on('message', (message) => {
-        console.log('Mensaje recibido desde el servidor:', message);
-      });
-
-      // Ejemplo de escucha para el evento 'ventas_response'
-      this.socket.on('ventas_response', (response) => {
-        console.log('Respuesta de Ventas:', response);
-        // Puedes manejar la respuesta aquí
-      });
+  constructor(private socket: Socket) {
+    this.socket.fromEvent('update-table').subscribe(response => {
+      this.updateTableSubject.next(response);
+    });
   }
 
-    // Método para manejar el logout
-    logout(): void {
-        // Envía un evento al servidor para indicar el logout
-        this.socket.emit('logout');
-    }
+  initSocket(): void {
+    const room = localStorage.getItem("company");
+
+    this.socket.emit("login", {
+      room: localStorage.getItem("company")
+    });
+
+    this.socket.on("update-table", (response) => {
+      console.log("Respuesta de update-table:", response);
+    });
+
+  }
+
+  logout(): void {
+    this.socket.disconnect();
+  }
+
+  updateTable(): void {
+    this.socket.emit("update-table", {room : localStorage.getItem("company")});
+  }
+
+  reconnect(): void {
+    this.socket.emit("reconnect", {room : localStorage.getItem("company")});
+  }
+
+  onUpdateTable(): Subject<any> {
+    return this.updateTableSubject;
+  } 
 }
