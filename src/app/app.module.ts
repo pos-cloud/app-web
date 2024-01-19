@@ -257,6 +257,7 @@ import { FulfilledComponent } from './components/tiendaNube/fulfilled/fulfilled.
 import { MenuComponent } from './components/menu/menu.component';
 import { MenuService } from './components/menu/menu.service';
 import { SocketService } from './main/services/socket.service';
+import { environment } from 'environments/environment';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -267,7 +268,7 @@ export function createTranslateLoader(http: HttpClient) {
 //   options: {},
 // };
 const configSocket: SocketIoConfig = {
-  url: 'http://localhost:305',
+  url: environment.socket,
   options: {},
 };
 
