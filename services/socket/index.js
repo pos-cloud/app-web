@@ -38,7 +38,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("reconnect", ({ room }) => {
-    socket.join(room);
+    if(room) socket.join(room);
     if (!rooms[room]) rooms[room] = 0;
     rooms[room]++;
     updateRoomStatus();
