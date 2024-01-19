@@ -12,10 +12,10 @@ import { UserService } from '../../user/user.service';
 
 import { TableComponent } from '../table/table.component';
 import { TransactionType } from './../../../components/transaction-type/transaction-type';
-import { TransactionState } from './../../../components/transaction/transaction';
 import { PrintQRComponent } from './../../../components/print/print-qr/print-qr.component';
 import { TranslateMePipe } from '../../../main/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
+import { SocketService } from 'app/main/services/socket.service';
 
 @Component({
     selector: 'app-list-tables',
@@ -62,6 +62,7 @@ export class ListTablesComponent implements OnInit {
         public _modalService: NgbModal,
         public translatePipe: TranslateMePipe,
         private _toastr: ToastrService,
+        private _socket: SocketService
     ) {
         if (this.filterRoom === undefined) {
             this.filterRoom = '';
@@ -76,13 +77,17 @@ export class ListTablesComponent implements OnInit {
         this.userType = pathLocation[1];
         this.getTables();
 
-        if (this.userType === 'pos') {
-            this.interval = setInterval(() => {
-                if (!this.loading) {
-                    this.getTables();
-                }
-            }, 3000);
-        }
+        // if (this.userType === 'pos') {
+        //     this.interval = setInterval(() => {
+        //         if (!this.loading) {
+        //             this.getTables();
+        //         }
+        //     }, 3000);
+        // }
+
+        this._socket.onUpdateTable().subscribe(() => {
+            this.getTables();
+        });
     }
 
     public ngOnDestroy(): void {

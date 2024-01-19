@@ -92,6 +92,8 @@ import {UserService} from '../user/user.service';
 import {Config} from './../../app.config';
 import { EmailProps } from 'app/types';
 import {VariantService} from '../variant/variant.service';
+import { ApplicationType } from '../application/application.model';
+import { SocketService } from 'app/main/services/socket.service';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -221,6 +223,7 @@ export class AddSaleOrderComponent {
     public translatePipe: TranslateMePipe,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
+    public _socket: SocketService
   ) {
     this.initVariables();
     this.processParams();
@@ -697,6 +700,7 @@ export class AddSaleOrderComponent {
               this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
+            this._socket.updateTable();
             resolve(result.table);
           }
         },

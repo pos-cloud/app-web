@@ -63,6 +63,7 @@ import { removeParam } from '../../util/functions/removeParam';
 import { EmailProps } from 'app/types';
 import { CancelComponent } from '../tiendaNube/cancel/cancel.component';
 import { FulfilledComponent } from '../tiendaNube/fulfilled/fulfilled.component';
+import { SocketService } from 'app/main/services/socket.service';
 
 @Component({
     selector: 'app-point-of-sale',
@@ -145,6 +146,7 @@ export class PointOfSaleComponent implements OnInit {
         private _toastr: ToastrService,
         private _movementOfCashService: MovementOfCashService,
         private _movementOfCancellationService: MovementOfCancellationService,
+        private _socket : SocketService
     ) {
         this.roomSelected = new Room();
         this.transactionTypes = new Array();
@@ -1480,6 +1482,7 @@ export class PointOfSaleComponent implements OnInit {
                                 await this.updateTable().then(
                                     table => {
                                         if (table) {
+                                            this._socket.updateTable();
                                             this.tableSelected = table;
                                             this.transaction.diners = this.tableSelected.diners;
                                             this.nextStepTransaction();
