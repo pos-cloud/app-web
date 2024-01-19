@@ -18,6 +18,7 @@
     "api-v2": "cd services/api-v2 && npm run dev",
     "print": "cd services/print && npm run dev",
     "storage": "cd services/storage && npm run start:dev",
+    "socket" : "cd services/socket && node index.js",
     "dev": "concurrently -n 'Angular,APIv1,APIv2,Storage,TiendaNube,Print' -c 'red,blue,yellow,magenta,cyan,green' \"ng serve\" \"npm run api-v1\" \"npm run api-v2\" \"npm run storage\" \"npm run tienda-nube\" \"npm run print\""
   },
   "private": true,
