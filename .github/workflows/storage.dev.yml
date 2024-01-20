@@ -19,7 +19,7 @@ jobs:
         run: docker rm -f api-storage-poscloud || true
 
       - name: Build Docker image
-        run: docker build -t api-storage-poscloud -f services/storage/Dockerfile.prod .
+        run: docker build -t api-storage-poscloud -f services/storage/Dockerfile.dev .
 
       - name: Run Docker container
         run: |
