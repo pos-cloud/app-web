@@ -839,7 +839,7 @@ export class ListTransactionsComponent implements OnInit {
 
   public exportIVA(): void {
     let modalRef = this._modalService.open(ExportIvaComponent, {
-      size: 'lg',
+      size: 'md',
       backdrop: 'static',
     });
 
