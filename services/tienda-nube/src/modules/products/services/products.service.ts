@@ -81,7 +81,6 @@ export class ProductsService {
         userID,
       );
 
-      console.log('reate result');
       const stockCollection =
         this.databaseService.getCollection('article-stocks');
       const stockFound = await stockCollection.findOne({
@@ -142,7 +141,6 @@ export class ProductsService {
       await this.databaseService.getVariantDataByArticle(productId);
 
     if (dataVarinat.length == 0) return;
-    console.log('pasooo ');
 
     const variantData = await this.clearDataVariant(dataVarinat, variantName);
 
