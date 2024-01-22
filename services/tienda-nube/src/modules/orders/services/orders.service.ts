@@ -18,13 +18,11 @@ export class OrdersService {
     const credentials =
       await this.posCloudService.getCredentialTiendaNube(store_id);
     const { tokenTiendaNube, storeId } = credentials;
-    // console.log(credentials)
     const order = await this.tiendaNubeService.getOrderId(
       id,
       tokenTiendaNube,
       storeId,
     );
-    // console.log(order)
     const dataResponse = {
       storeId: store_id,
       event,
@@ -36,7 +34,6 @@ export class OrdersService {
 
   async openOrder(orderId: string, storeIdTn: number) {
     try {
-      console.log(storeIdTn);
       if (!storeIdTn) {
         throw new BadRequestException(`storeId es requerido`);
       }
