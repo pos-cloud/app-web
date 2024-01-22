@@ -23,7 +23,9 @@ export class ProductsController {
     @Body('productId') ProductId: string,
     @Request() request: CustomRequest,
   ) {
-    return this.productsService.create(request.database, ProductId);
+
+      return this.productsService.create(request.database, ProductId);
+
   }
 
   @Get()
