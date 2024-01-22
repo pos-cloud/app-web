@@ -1966,7 +1966,6 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     public getTransactionsV2(match: {}): Promise<Transaction[]> {
-       console.log(match)
         return new Promise<Transaction[]>((resolve, reject) => {
 
             this.loading = true;
@@ -2265,11 +2264,12 @@ export class PointOfSaleComponent implements OnInit {
             return new Promise<Transaction>((resolve, reject) => {
                 this._transactionService.updateTransactionStatus(transaction.tiendaNubeId, this.config.tiendaNube.userID, state).subscribe(
                     (result: Resulteable) => {
-                        if (result.status === 200) {
+                        if (result.status === 201) {
                             resolve(result.result);
+                            this.refresh();
                         } else {
-                            this.showToast(result);
                             reject(result);
+                            this.refresh();
                         };
                     },
                     error => {

@@ -262,12 +262,12 @@
                                 <tr>
                                     <th>Método</th>
                                     <th>Comprobante</th>
-                                    <th>Estado</th>
                                     <th>Cuota</th>
                                     <th>Vencimiento</th>
                                     <th>Banco</th>
                                     <th>Monto</th>
                                     <th>Saldo</th>
+                                    <th>Estado</th>
                                     <th>Vuelto</th>
                                     <th>Observación</th>
                                     <th>Tasa de Servicios Diaria</th>
@@ -283,7 +283,6 @@
                                     <td (click)="pushCurrencyValue(movementOfCash)">{{movementOfCash?.type?.name}}
                                     </td>
                                     <td>{{movementOfCash?.number}}</td>
-                                    <td>{{movementOfCash?.status}}</td>
                                     <td>{{movementOfCash?.quota}}</td>
                                     <td>{{movementOfCash.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
                                     <td>{{movementOfCash?.bank?.name}}</td>
@@ -291,6 +290,7 @@
                                     </td>
                                     <td>{{(movementOfCash?.amountPaid - movementOfCash?.balanceCanceled) |
                                         currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                                        <td>{{movementOfCash?.status}}</td>
                                     <td>{{movementOfCash?.paymentChange |
                                         currency:'USD':'symbol-narrow':'1.2-2'}}
                                     </td>

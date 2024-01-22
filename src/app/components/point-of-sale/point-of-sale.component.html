@@ -504,11 +504,11 @@
                                       'btn-state-canceled': transaction?.state?.toString() === 'Anulado',
                                     }"></button>
                                   <div class="dropdown-menu" ngbDropdownMenu>
-                                    <button ngbDropdownItem (click)="changeStateOfTransaction(transaction, 'open')" *ngIf="transaction?.state?.toString() !== 'sent' && transaction?.state?.toString() !== 'Abierto'">Abierto</button>
-                                    <button ngbDropdownItem (click)="changeStateOfTransaction(transaction, 'closed')" *ngIf="transaction?.state?.toString() !== 'sent' && transaction?.state?.toString() !== 'Cerrado'">Cerrado</button>
-                                    <button ngbDropdownItem (click)="canceledStatusTransaction(transaction, 'canceled')" *ngIf="transaction?.state?.toString() !== 'sent' && transaction?.state?.toString() !== 'Anulado'">Cancelar</button>
-                                    <button ngbDropdownItem (click)="changeStateOfTransaction(transaction, 'packed')">Empaquetado</button>
-                                    <button ngbDropdownItem (click)="fulfilledStatusTransaction(transaction, 'fulfilled')">Enviado</button>
+                                    <button ngbDropdownItem (click)="changeStateOfTransaction(transaction, 'open')" *ngIf="transaction?.state?.toString() !== 'Anulado' && transaction?.state?.toString() !== 'Abierto'">Abierto</button>
+                                    <button ngbDropdownItem (click)="changeStateOfTransaction(transaction, 'closed')" *ngIf="transaction?.state?.toString() !== 'Anulado' && transaction?.state?.toString() !== 'Cerrado'">Cerrado</button>
+                                    <button ngbDropdownItem (click)="canceledStatusTransaction(transaction, 'canceled')" *ngIf="transaction?.state?.toString() !== 'Anulado'">Anulado</button>
+                                    <button ngbDropdownItem (click)="changeStateOfTransaction(transaction, 'packed')" >Empaquetado</button>
+                                    <button ngbDropdownItem (click)="fulfilledStatusTransaction(transaction, 'fulfilled')" >Enviado</button>
                                   </div>
                                 </div>
                               </div>
