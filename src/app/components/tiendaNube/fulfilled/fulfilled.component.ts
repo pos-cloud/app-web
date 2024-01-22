@@ -51,11 +51,10 @@ export class FulfilledComponent implements OnInit {
         return new Promise<Transaction>((resolve, reject) => {
           this._transactionService.updateTransactionStatus(this.transaction.tiendaNubeId, formData, this.state).subscribe(
               (result: Resulteable) => {
-                  if (result.status === 200) {
+                  if (result.status === 201) {
                       resolve(result.result);
                       this.activeModal.close();
                   } else {
-                      this.showToast(result);
                       reject(result);
                       this.activeModal.close();
                   };
