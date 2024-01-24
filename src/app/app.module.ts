@@ -256,6 +256,7 @@ import { CancelComponent } from './components/tiendaNube/cancel/cancel.component
 import { FulfilledComponent } from './components/tiendaNube/fulfilled/fulfilled.component'
 import { MenuComponent } from './components/menu/menu.component';
 import { MenuService } from './components/menu/menu.service';
+import { ListArticlesRequirementsByTransactionComponent } from './components/reports/list-articles-requirements-by-transaction/list-articles-requirements-by-transaction.component';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -432,6 +433,7 @@ const configSocket: SocketIoConfig = {
     CancelComponent,
     FulfilledComponent,
     MenuComponent
+    ListArticlesRequirementsByTransactionComponent
   ],
   imports: [
     BrowserModule,

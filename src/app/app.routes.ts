@@ -79,6 +79,7 @@ import { AbandonedCartsComponent } from './components/point-of-sale/abandoned-ca
 import { BillingComponent } from './components/billing/billing.component';
 import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
 import { MenuComponent } from './components/menu/menu.component';
+import { ListArticlesRequirementsByTransactionComponent } from './components/reports/list-articles-requirements-by-transaction/list-articles-requirements-by-transaction.component';
 
 
 export const _routes: Routes = [
@@ -207,6 +208,11 @@ export const _routes: Routes = [
   {
     path: 'admin/productos',
     component: ListArticlesComponent,
+    canActivate: [AuthGuard, LicenseGuard]
+  },
+  {
+    path: 'report/production/productos',
+    component: ListArticlesRequirementsByTransactionComponent,
     canActivate: [AuthGuard, LicenseGuard]
   },
   {
