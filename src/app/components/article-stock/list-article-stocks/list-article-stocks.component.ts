@@ -35,6 +35,7 @@ import {ArticleStockService} from '../article-stock.service';
 import {UpdateArticleStockComponent} from '../update-article-stock/update-article-stock.component';
 
 import {AddArticleStockComponent} from '../article-stock/add-article-stock.component';
+import { ImportComponent } from 'app/components/import/import.component';
 
 @Component({
   selector: 'app-list-article-stocks',
@@ -493,6 +494,23 @@ export class ListArticleStocksComponent implements OnInit {
             this.totalItems = 0;
           },
         );
+      case 'uploadFile':
+        modalRef = this._modalService.open(ImportComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.articleStock = articleStock;
+        modalRef.componentInstance.readonly = false;
+        modalRef.result.then(
+          (result) => {
+            if (result === 'save_close') {
+              this.getItems();
+            }
+          },
+          (reason) => {},
+        );
+      
+        break;
       default:
         break;
     }
