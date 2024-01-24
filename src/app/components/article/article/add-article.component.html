@@ -468,7 +468,7 @@
                     <a ngbNavLink *ngIf="articleType === 'Producto'">Variantes</a>
                     <ng-template ngbNavContent>
                         <app-add-variant (eventAddVariants)="manageVariants($event)" [article]="article"
-                            [variants]="variants">
+                            [variants]="variants" [operation]="operation">
                         </app-add-variant>
                     </ng-template>
                 </li>
