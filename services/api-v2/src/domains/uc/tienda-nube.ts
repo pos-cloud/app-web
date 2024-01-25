@@ -348,36 +348,81 @@ export default class TiendaNubeController {
         }
     }
 
-    async getCompany(order: any, transactionType: TransactionType) {
+    async getCompanyByIdentification(identification: string, id: string) {
+        try {
+            if (identification !== '') {
+                const company = await new CompanyController(this.database).getAll({
+                    project: {
+                        _id: 1,
+                        name: 1,
+                        fantasyName: 1,
+                        identificationValue: 1
+                    },
+                    match: {
+                        identificationValue: identification
+                    }
+                });
+                return company.result;
+            } else {
+                const company = await new CompanyController(this.database).getAll({
+                    project: {
+                        _id: 1,
+                        name: 1,
+                        fantasyName: 1,
+                        identificationValue: 1,
+                        vatCondition: 1
+                    },
+                    match: {
+                        _id: { $oid: id }
+                    }
+                });
+
+                return company.result[0].vatCondition
+            }
+
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getCompany(order: any, transactionType: TransactionType): Promise<Company> {
         return new Promise<Company>(async (resolve, reject) => {
             try {
-                if (transactionType.requestCompany !== null && transactionType.company !== null) {
-                    resolve(transactionType.company)
-                } else if (order.customer) {
-                    let company: Company = CompanySchema.getInstance(this.database)
-                    company = Object.assign(company, {
-                        name: order.customer.name,
-                        fantasyName: order.customer.name,
-                        type: 'Cliente',
-                        address: order.customer.default_address.address,
-                        city: order.customer.default_address.city,
-                        phones: order.customer.phone,
-                        emails: order.customer.email,
-                        identificationValue: order.customer.identification,
-                        observation: order.customer.note,
-                        addressNumber: order.customer.default_address.number,
-                        zipCode: order.customer.default_address.zipCode,
-                        floorNumber: order.customer.default_address.floor,
-                        vatCondition: "5b4d4009cb51075064d07906"
-                    })
-                    await new CompanyController(this.database).save(company).then((result: Responseable) =>
-                        resolve(result.result),
-                    )
+                if (order.customer) {
+                    const company = await this.getCompanyByIdentification(order.customer.identification, '');
+                    if (company.length > 0) {
+                        resolve(company[0]);
+                    } else {
+                        const companyType = await this.getCompanyByIdentification('', transactionType.company._id);
+                        let company: Company = CompanySchema.getInstance(this.database);
+                        company = Object.assign(company, {
+                            name: order.customer.name,
+                            fantasyName: order.customer.name,
+                            type: 'Cliente',
+                            address: order.customer.default_address.address,
+                            city: order.customer.default_address.city,
+                            phones: order.customer.phone,
+                            emails: order.customer.email,
+                            identificationValue: order.customer.identification,
+                            observation: order.customer.note,
+                            addressNumber: order.customer.default_address.number,
+                            zipCode: order.customer.default_address.zipCode,
+                            floorNumber: order.customer.default_address.floor,
+                            vatCondition: companyType
+                        });
+
+                        await new CompanyController(this.database).save(company)
+                            .then((result: Responseable) => resolve(result.result))
+                            .catch((error) => reject(error));
+                    }
+                } else if (transactionType.requestCompany !== null && transactionType.company !== null) {
+                    resolve(transactionType.company);
                 }
             } catch (err) {
-                reject(err)
+                reject(err);
             }
-        })
+        });
     }
 
     createAddress(order: any, transactionType: TransactionType) {
@@ -440,7 +485,7 @@ export default class TiendaNubeController {
             quota: order.payment_details.installments,
             expirationDate: moment().format("YYYY-MM-DD HH:mm:ss.SSSSSS"),
             date: moment().format("YYYY-MM-DD HH:mm:ss.SSSSSS"),
-            paymentStatus: paymentStatus[order.payment_status],
+            status: paymentStatus[order.payment_status],
             type: paymentMethod._id
         })
         return [movementOfCash]
