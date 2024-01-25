@@ -519,7 +519,7 @@
                             {{transaction.state}}
                         </td>
                         <td>
-                            {{transaction.paymentMethodEcommerce}}
+                            {{transaction.paymentMethodEcommerce | translate}}
                         </td>
                         <td style="white-space: normal;">
                             <b *ngIf="transaction && transaction.shipmentMethod">{{transaction.shipmentMethod.name}} -
