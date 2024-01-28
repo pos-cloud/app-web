@@ -78,6 +78,7 @@ import { ReportTransactionTypeComponent } from './components/report-transaction-
 import { AbandonedCartsComponent } from './components/point-of-sale/abandoned-carts/abandoned-carts.component';
 import { BillingComponent } from './components/billing/billing.component';
 import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
+import { MenuComponent } from './components/menu/menu.component';
 
 
 export const _routes: Routes = [
@@ -703,6 +704,10 @@ export const _routes: Routes = [
     path: 'pos/ver-galeria/:name',
     component: ViewGalleryComponent,
     canActivate: [AuthGuard, LicenseGuard],
+  },
+  {
+    path: 'menu/:database',
+    component: MenuComponent
   },
   {
     path: '**',

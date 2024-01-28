@@ -179,4 +179,5 @@ export enum ApplicationType {
   Woocommerce = <any>'Woocommerce',
   MercadoLibre = <any>'MercadoLibre',
   TiendaNube = <any>'TiendaNube',
+  Menu = <any> 'Carta digital'
 }
