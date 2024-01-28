@@ -2,6 +2,7 @@ import * as express from 'express'
 import * as fs from 'fs'
 import * as multer from 'multer'
 import * as moment from 'moment'
+import * as xlsx from 'xlsx';
 
 import Controller from '../model/model.controller'
 
@@ -16,6 +17,7 @@ import authMiddleware from './../../middleware/auth.middleware'
 import ensureLic from './../../middleware/license.middleware'
 import validationMiddleware from './../../middleware/validation.middleware'
 import Responser from './../../utils/responser'
+import ArticleStockUC from './article-stock.uc';
 
 export default class ArticleStockController extends Controller {
   public EJSON: any = require('bson').EJSON
@@ -28,7 +30,7 @@ export default class ArticleStockController extends Controller {
   }
 
   private initializeRoutes() {
-    let upload = multer({storage: this.getStorage()})
+    const upload = multer({ dest: 'uploads/' });
 
     this.router
       .get(this.path, [authMiddleware, ensureLic], this.getAllObjs)
@@ -47,7 +49,7 @@ export default class ArticleStockController extends Controller {
       
       .post(
         `${this.path}/update-excel`,
-        [authMiddleware, ensureLic, upload.single('excel')],
+        [authMiddleware, ensureLic, upload.single('file')],
         this.updateExcel,
       )
   }
@@ -60,6 +62,21 @@ export default class ArticleStockController extends Controller {
     try {
       this.initConnectionDB(request.database)
       this.userAudit = request.user
+
+      const file = request.file; // Objeto del archivo subido
+      if (!file) {
+        throw new Error('No se ha proporcionado ningún archivo.');
+      }
+
+      const workbook = xlsx.readFile(file.path);
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+
+      const data = xlsx.utils.sheet_to_json(worksheet);
+
+      
+      await new ArticleStockUC(request.database).updateFromExcel(data)
+
 
       response.send(new Responser(200, {}))
     } catch (error) {
