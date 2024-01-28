@@ -94,4 +94,5 @@ export default interface Article extends Model {
   width: Number
   height: Number
   depth: Number
+  showMenu: boolean
 }

@@ -120,7 +120,7 @@ const ArticleSchema = new Schema({
   width: { type: Number},
   height: { type: Number},
   depth: { type: Number},
-
+  showMenu: { type: Boolean, default: false }
 })
 
 module.exports = ArticleSchema
