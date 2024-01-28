@@ -33,6 +33,8 @@ export default class MenuController {
             description: 1,
             "category.description": 1,
             "category.showMenu": 1,
+            "category.order" : 1,
+            order: 1,
             operationType: 1,
             observation: 1,
             salePrice: 1,
@@ -42,6 +44,10 @@ export default class MenuController {
             showMenu: true,
             "category.showMenu": true,
             operationType: { $ne : "D" }
+          },
+          sort: {
+            "category.order" : 1,
+            "order" : 1
           }
         });
   

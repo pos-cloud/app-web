@@ -22,11 +22,9 @@
 }
 
 .category-title {
-  font-family: 'Vast Shadow', sans-serif; /* Aplica la fuente Montserrat */
-  /* Otros estilos para el título de la categoría */
+  font-family: 'Vast Shadow', sans-serif; 
+  font-size: 25px;
 }
-
-/* Otros estilos para el componente */
 
 
 .product-list {
@@ -39,22 +37,21 @@
 
 .product-details {
   display: flex;
-  justify-content: space-between; /* Alinear elementos en cada línea */
+  justify-content: space-between; 
 }
 
 .product-name {
   font-weight: 600;
   margin: 0px;
   font-family: 'Rajdhani';
-  color: #ef4132
-
+  color: #ef4132;
+  font-size: 20px;
 }
 
 .product-observation {
-  margin: 0px;
+  margin-top: 5px; /* Añadir espacio entre el precio y las observaciones */
   font-size: 15px;
   font-family: 'PT Sans';
-}
-
-.product-price {
+  width: 100%; /* Hacer que las observaciones ocupen el ancho completo */
+  word-wrap: break-word; /* Permitir que las palabras se envuelvan cuando sean demasiado largas */
 }
