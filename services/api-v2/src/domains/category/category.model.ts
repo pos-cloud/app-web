@@ -21,6 +21,7 @@ class CategorySchema extends Model {
       parent: {type: Schema.Types.ObjectId, ref: 'category'},
       observation: {type: String, trim: true},
       wooId: {type: String},
+      showMenu: {type: Boolean, default: false},
     })
   }
 
