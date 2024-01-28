@@ -516,7 +516,8 @@ export class AddArticleComponent implements OnInit {
       weight: [this.article.weight, []],
       width: [this.article.width, []],
       height: [this.article.height, []],
-      depth: [this.article.depth, []]
+      depth: [this.article.depth, []],
+      showMenu: [this.article.showMenu, []]
     });
 
     this.newDeposit = this._fb.group({
@@ -1568,7 +1569,8 @@ export class AddArticleComponent implements OnInit {
       weight: this.article.weight,
       height: this.article.height,
       width: this.article.width,
-      depth: this.article.depth
+      depth: this.article.depth,
+      showMenu: this.article.showMenu ?? ''
     };
 
     this.articleForm.patchValue(values);

@@ -126,6 +126,7 @@ class ArticleSchema extends Model {
       width: { type: Number},
       height: { type: Number},
       depth: { type: Number},
+      showMenu: { type: Boolean, default: false},
 
     })
   }
