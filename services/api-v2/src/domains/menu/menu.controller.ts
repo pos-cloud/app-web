@@ -35,6 +35,7 @@ export default class MenuController {
             "category.showMenu": 1,
             operationType: 1,
             observation: 1,
+            salePrice: 1,
             showMenu: 1
           },
           match: {
