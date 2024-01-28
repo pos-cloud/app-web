@@ -93,6 +93,6 @@ export default interface Article extends Model {
   weight: Number
   width: Number
   height: Number
-  depth: Number,
+  depth: Number
   showMenu: boolean
 }
