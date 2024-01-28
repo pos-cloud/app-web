@@ -1,0 +1,21 @@
+<div>
+  <img class="presentation-image" src="assets/los4hermanos.png" alt="Presentación">
+  <div class="categories">
+    <div *ngFor="let category of getMenuCategories()" class="category">
+      <h2 class="category-title">{{ category | uppercase }}</h2>
+      <div class="product-list">
+        <div *ngFor="let product of getProduct(category)" class="product">
+          <div class="product-details">
+            <div class="product-line">
+              <p class="product-name">{{ product | uppercase }}</p>
+              <p class="product-observation">{{ menu[category][product].observation }}</p>
+            </div>
+            <div class="product-price-line">
+              <span class="product-price">${{ menu[category][product].price }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

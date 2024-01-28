@@ -26,6 +26,7 @@ export class AddVariantComponent implements OnInit {
   public variant: Variant;
   @Input() variants: Variant[];
   public variantsByTypes: any[];
+  @Input() operation: string;
   @Input() article: Article;
   @Output() eventAddVariants: EventEmitter<Variant[]> = new EventEmitter<Variant[]>();
   public variantTypes: VariantType[];

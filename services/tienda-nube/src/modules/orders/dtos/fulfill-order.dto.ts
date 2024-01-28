@@ -12,5 +12,5 @@ export class FulFillOrderDto {
   notify_customer: boolean;
 
   @IsNumber()
-  storeId: number;
+  storeIdTn: number;
 }

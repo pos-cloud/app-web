@@ -25,7 +25,7 @@ COPY . .
 # Instala las dependencias y realiza la construcción de Angular
 RUN npm install --legacy-peer-deps
 RUN npm install -g @angular/cli
-RUN npm run build:prod
+RUN npm run build:dev
 
 # Mueve los archivos resultantes al directorio /home/system
 CMD mv /app/dist/* /home/system/

@@ -1223,7 +1223,7 @@ export default class MercadoLibreController {
               _mCompany.billing_info.doc_type,
             ),
             identificationValue: _mCompany.billing_info.doc_number,
-            entryDate: moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+      //      entryDate: moment().format('YYYY-MM-DDTHH:mm:ssZ'),
             vatCondition,
             audits: [{user: null, date: moment().format('YYYY-MM-DDTHH:mm:ssZ')}],
             meliId: buyer.id,

@@ -267,6 +267,7 @@
                                     <th>Banco</th>
                                     <th>Monto</th>
                                     <th>Saldo</th>
+                                    <th>Estado</th>
                                     <th>Vuelto</th>
                                     <th>Observación</th>
                                     <th>Tasa de Servicios Diaria</th>
@@ -289,6 +290,7 @@
                                     </td>
                                     <td>{{(movementOfCash?.amountPaid - movementOfCash?.balanceCanceled) |
                                         currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                                        <td>{{movementOfCash?.status}}</td>
                                     <td>{{movementOfCash?.paymentChange |
                                         currency:'USD':'symbol-narrow':'1.2-2'}}
                                     </td>
@@ -345,6 +347,7 @@
                                 <tr>
                                     <th>Método</th>
                                     <th>Tipo</th>
+                                    <th>Estado</th>
                                     <th>Provincia</th>
                                     <th>Ciudad</th>
                                     <th>Dirección</th>
@@ -359,6 +362,7 @@
                                 <tr>
                                     <td>{{transaction?.shipmentMethod?.name}}</td>
                                     <td>{{transaction?.deliveryAddress?.type}}</td>
+                                    <td>{{transaction?.deliveryAddress?.shippingStatus}}</td>
                                     <td>{{transaction?.deliveryAddress?.state}}</td>
                                     <td>{{transaction?.deliveryAddress?.city}}</td>
                                     <td>{{transaction?.deliveryAddress?.name}}</td>

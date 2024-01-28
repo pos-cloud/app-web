@@ -49,6 +49,19 @@ class MovementOfCashSchema extends Model {
       ],
       tokenMP: {type: String, trim: true},
       paymentMP: {type: String, trim: true},
+      status: {
+        type: String,
+        trim: true,
+        required: false,
+        enum: [
+          'Autorizado',
+          'Pendiente',
+          'Pagado',
+          'Abandonado',
+          'Reembolso',
+          'Anulado'
+        ],
+      },
     })
   }
 

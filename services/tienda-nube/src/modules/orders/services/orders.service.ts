@@ -9,20 +9,20 @@ export class OrdersService {
   constructor(
     private readonly tiendaNubeService: TiendaNubeService,
     private readonly posCloudService: PosCloudService,
-  ) {}
+  ) { }
+  
   async wehbook(data: any) {
     const { store_id, event, id } = data;
-  console.log( store_id, event, id)
+    console.log(store_id, event, id)
+
     const credentials =
       await this.posCloudService.getCredentialTiendaNube(store_id);
-    const { tokenTiendaNube, userID } = credentials;
- 
+    const { tokenTiendaNube, storeId } = credentials;
     const order = await this.tiendaNubeService.getOrderId(
       id,
       tokenTiendaNube,
-      userID,
+      storeId,
     );
-    console.log(order)
     const dataResponse = {
       storeId: store_id,
       event,
@@ -32,90 +32,93 @@ export class OrdersService {
     return dataResponse;
   }
 
-  async openOrder(orderId: string, storeId: number) {
+  async openOrder(orderId: string, storeIdTn: number) {
     try {
-      console.log(storeId);
-      if (!storeId) {
+      if (!storeIdTn) {
         throw new BadRequestException(`storeId es requerido`);
       }
       const credentials =
-        await this.posCloudService.getCredentialTiendaNube(storeId);
-      const { tokenTiendaNube, userID } = credentials;
+        await this.posCloudService.getCredentialTiendaNube(storeIdTn);
+      const { tokenTiendaNube, storeId } = credentials;
       return await this.tiendaNubeService.openOrder(
         orderId,
         tokenTiendaNube,
-        userID,
+        storeId,
       );
     } catch (err) {
       throw err;
     }
   }
-  async closeOrder(orderId: string, storeId: number) {
+
+  async closeOrder(orderId: string, storeIdTn: number) {
     try {
-      if (!storeId) {
+      if (!storeIdTn) {
         throw new BadRequestException(`storeId es requerido`);
       }
       const credentials =
-        await this.posCloudService.getCredentialTiendaNube(storeId);
-      const { tokenTiendaNube, userID } = credentials;
+        await this.posCloudService.getCredentialTiendaNube(storeIdTn);
+      const { tokenTiendaNube, storeId } = credentials;
 
       return await this.tiendaNubeService.closeOrder(
         orderId,
         tokenTiendaNube,
-        userID,
+        storeId,
       );
     } catch (err) {
       throw err;
     }
   }
+
   async cancelOrder(orderId: string, dataBody: CancelOrderDto) {
     try {
-      const { storeId } = dataBody;
+      const {storeIdTn} = dataBody;
       const credentials =
-        await this.posCloudService.getCredentialTiendaNube(storeId);
-      const { tokenTiendaNube, userID } = credentials;
+        await this.posCloudService.getCredentialTiendaNube(storeIdTn);
+      const { tokenTiendaNube, storeId } = credentials;
 
       return await this.tiendaNubeService.cancelOrder(
         dataBody,
         orderId,
         tokenTiendaNube,
-        userID,
+        storeId,
       );
     } catch (err) {
       throw err;
     }
   }
-  async packOrder(orderId: string, storeId: number) {
+
+  async packOrder(orderId: string, storeIdTn: number) {
     try {
-      if (!storeId) {
+      if (!storeIdTn) {
         throw new BadRequestException(`storeId es requerido`);
       }
       const credentials =
-        await this.posCloudService.getCredentialTiendaNube(storeId);
-      const { tokenTiendaNube, userID } = credentials;
+        await this.posCloudService.getCredentialTiendaNube(storeIdTn);
+      const { tokenTiendaNube, storeId } = credentials;
 
       return await this.tiendaNubeService.packOrder(
         orderId,
         tokenTiendaNube,
-        userID,
+        storeId,
       );
     } catch (err) {
       throw err;
     }
   }
+
   async fulfillOrder(orderId: string, dataBody: FulFillOrderDto) {
     try {
-      const { storeId } = dataBody;
+      const { storeIdTn } = dataBody;
 
       const credentials =
-        await this.posCloudService.getCredentialTiendaNube(storeId);
-      const { tokenTiendaNube, userID } = credentials;
+        await this.posCloudService.getCredentialTiendaNube(storeIdTn);
+      const { tokenTiendaNube, storeId } = credentials;
 
       return await this.tiendaNubeService.fulFillOrder(
         dataBody,
         orderId,
         tokenTiendaNube,
-        userID,
+        storeId,
       );
     } catch (err) {
       throw err;

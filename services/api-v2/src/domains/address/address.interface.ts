@@ -17,4 +17,11 @@ export default interface Address extends Model {
   forBilling?: boolean
   forShipping?: boolean
   company: Company
+  shippingStatus: ShippingStatus
+}
+
+export enum ShippingStatus {
+  Unpacked = <any>  'Desempaquetado',
+  Fulfilled = <any> 'Enviado' ,
+  Unfulfilled =  <any> 'No enviado'
 }

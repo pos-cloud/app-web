@@ -1,0 +1,41 @@
+name: Deploy System
+
+on:
+  push:
+    branches:
+      - dev
+    paths-ignore:
+      - "services/**"
+
+jobs:
+  deploy-donweb:
+    runs-on: [dev]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Build Docker image
+        run: docker build -t build-system -f Dockerfile.dev .
+
+      - name: Delete old backup
+        run: rm -rf /home/system_backup/*
+
+      - name: Backup current files
+        run: cp -r /home/system/. /home/system_backup/
+
+      - name: Clean system
+        run: rm -rf /home/system/*
+
+      - name: Run Docker container
+        run: docker run -v /home/system:/home/system build-system
+
+      - name: Stop and remove existing container
+        run: |
+          docker stop system-poscloud || true
+          docker rm -f system-poscloud || true

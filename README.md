@@ -1,4 +1,4 @@
-###  Instalaciones necesarias
+###  Installation
 ------------
 - [Angular](https://angular.io/)  v15.0.0
 - [VSCode](https://code.visualstudio.com/)
@@ -19,27 +19,25 @@
     rm -R /var/www/poscloud/
     docker cp pos:/app/dist/ /var/www/poscloud/
 
-### Acceso a Testing
+### DEV Access
 ------------
-- url: testing.poscloud.ar
-- empresa: demo
+- url: dev.poscloud.ar
+- negocio: demo
 - user: admin
 - pass: pos
 
-##### Restaurar base demo
+##### Restore database
 
-La base de encuentra en assets del proyecto
-
-mongorestore --db demo --archive=/home/demo.gz --gzip
+    mongorestore --db demo --archive=/src/asstes/demo.gz --gzip
 
 ### Servicios
 
-##### Repositorios
-api: https://github.com/pos-cloud/api
-apiv2: https://github.com/pos-cloud/apiv2
-##### Ambientes
-api: https://tapi.poscloud.com.ar
-apiv2: https://tapiv2.poscloud.com.ar
+##### Ambientes 
+  - api: https://d-api-v1.poscloud.ar
+  - apiv2: https://d-api-v2.poscloud.ar
+  - apiPrint: https://d-api-print.poscloud.ar
+  - apiStorage: https://d-api-storage.poscloud.ar
+  - apiTiendaNube: https://d-api-tiendanube.poscloud.ar
 
 ### Contribuir 
 
@@ -62,20 +60,37 @@ resolvemos conflicto si hay git rebase --continue
 Esto hace que tu commit quede sobre lo de testing 
 Realizar PR a testing
 
-### Ambientes
 
-## Hosting Github Pages
+#### Conventional Commits
 
-- dev.poscloud.ar
-- prod.poscloud.ar
+```
+#-XX <type>: <short summary>
+  │	  │             │
+  |	  │             └─⫸ Summary in present tense. Not capitalized. No period at the end
+  |	  │
+  |	  └─⫸ Commit Type: build|ci|docs|feat|fix|perf|refactor|test
+  |
+  └─⫸ Name Task: #-123
+```
 
-## Hosting DonWeb
 
-- poscloud.ar (prod)
+
+##### Type
+
+Must be one of the following:
+
+-   **build**: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)
+-   **ci**: Changes to our CI configuration files and scripts (examples: CircleCi, SauceLabs)
+-   **docs**: Documentation only changes
+-   **feat**: A new feature
+-   **fix**: A bug fix
+-   **perf**: A code change that improves performance
+-   **refactor**: A code change that neither fixes a bug nor adds a feature
+-   **test**: Adding missing tests or correcting existing tests
+
+
 
 ######
-v11.1.0: Agrega opcion de poder editar articulo en una transaccion en permisos de usuario. Siempre tiene prioridad primera la editar articulo del tipo de transaccion.
-
 
 // old worker cloudflare
 

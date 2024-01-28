@@ -61,6 +61,8 @@ import Resulteable from '../../util/Resulteable';
 import { padNumber } from '../../util/functions/pad/padNumber';
 import { removeParam } from '../../util/functions/removeParam';
 import { EmailProps } from 'app/types';
+import { CancelComponent } from '../tiendaNube/cancel/cancel.component';
+import { FulfilledComponent } from '../tiendaNube/fulfilled/fulfilled.component';
 
 @Component({
     selector: 'app-point-of-sale',
@@ -628,7 +630,9 @@ export class PointOfSaleComponent implements OnInit {
                             },
                             { state: TransactionState.PaymentConfirmed },
                             { state: TransactionState.Delivered },
-                            { state: TransactionState.Sent }
+                            { state: TransactionState.Sent },
+                            { state: TransactionState.Open},
+                            { state: TransactionState.Canceled }
                         ],
                         madein: { $in: ['pedidos-web', 'mercadolibre', 'woocommerce', 'tiendanube'] },
                         operationType: { $ne: 'D' },
@@ -1137,6 +1141,20 @@ export class PointOfSaleComponent implements OnInit {
         }
     }
 
+    public async canceledStatusTransaction(transaction: Transaction, state: TransactionState = TransactionState.Closed) {
+        this.transaction = await this.getTransaction(transaction._id);
+        if (this.transaction) {
+            this.openModal('canceledTn', state);
+        }
+    }
+
+    public async fulfilledStatusTransaction(transaction: Transaction, state: TransactionState = TransactionState.Closed) {
+        this.transaction = await this.getTransaction(transaction._id);
+        if (this.transaction) {
+            this.openModal('fulfilledTn', state);
+        }
+    }
+
     public async changeCompany(transaction: Transaction) {
         this.transaction = await this.getTransaction(transaction._id);
         if (this.transaction) {
@@ -1254,6 +1272,18 @@ export class PointOfSaleComponent implements OnInit {
                     });
                 }
                 break;
+            case 'canceledTn':
+                modalRef = this._modalService.open(CancelComponent, { size: 'lg', backdrop: 'static' });
+                modalRef.componentInstance.transaction = this.transaction;
+                modalRef.componentInstance.config = this.config;
+                modalRef.componentInstance.state = state;
+            break
+            case 'fulfilledTn':
+                modalRef = this._modalService.open(FulfilledComponent, { size: 'lg', backdrop: 'static' });
+                modalRef.componentInstance.transaction = this.transaction;
+                modalRef.componentInstance.config = this.config;
+                modalRef.componentInstance.state = state;
+            break
             case 'print':
                 if (this.transaction.type.readLayout) {
                     modalRef = this._modalService.open(PrintTransactionTypeComponent);
@@ -1936,7 +1966,6 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     public getTransactionsV2(match: {}): Promise<Transaction[]> {
-
         return new Promise<Transaction[]>((resolve, reject) => {
 
             this.loading = true;
@@ -1958,7 +1987,6 @@ export class PointOfSaleComponent implements OnInit {
                 CAE: 1,
                 creationUser:1,
                 tiendaNubeId: 1,
-                stateTiendaNube: 1,
                 "company.name": 1,
                 "type._id": 1,
                 "type.allowEdit": 1,
@@ -2188,7 +2216,6 @@ export class PointOfSaleComponent implements OnInit {
         this.transaction = await this.getTransaction(transaction._id);
         let email: string;
         if (this.transaction && !this.transaction.tiendaNubeId) {
-            console.log( !this.transaction.tiendaNubeId)
             let oldState = this.transaction.state;
             this.transaction.state = state;
             let newState = (this.transaction.state || '').toString();
@@ -2234,23 +2261,24 @@ export class PointOfSaleComponent implements OnInit {
                 );
             }
         }else if(this.transaction && this.transaction.tiendaNubeId && this.config.tiendaNube.userID){
-            console.log(state)
-            // return new Promise<Transaction>((resolve, reject) => {
-            //     this._transactionService.updateTransactionStatus(transaction.tiendaNubeId, this.config.tiendaNube.userID, state).subscribe(
-            //         (result: Resulteable) => {
-            //             if (result.status === 200) {
-            //                 resolve(result.result);
-            //             } else {
-            //                 this.showToast(result);
-            //                 reject(result);
-            //             };
-            //         },
-            //         error => {
-            //             this.showToast(error)
-            //             reject(error);
-            //         }
-            //     );
-            // });
+            return new Promise<Transaction>((resolve, reject) => {
+                this._transactionService.updateTransactionStatus(transaction.tiendaNubeId, this.config.tiendaNube.userID, state).subscribe(
+                    (result: Resulteable) => {
+                        if (result.status === 201) {
+                            this.refresh();
+                            resolve(result.result);
+                        } else {
+                            this.refresh();
+                            reject(result);
+                        };
+                        this.refresh();
+                    },
+                    error => {
+                        this.showToast(error)
+                        reject(error);
+                    }
+                );
+            });
         }
     }
 

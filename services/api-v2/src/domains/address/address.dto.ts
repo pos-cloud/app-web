@@ -2,6 +2,7 @@ import {IsDefined, IsString, ValidateIf, IsBoolean} from 'class-validator'
 
 import Company from './../../domains/company/company.interface'
 import ModelDto from './../../domains/model/model.dto'
+import { ShippingStatus } from './address.interface'
 
 export default class AddressDto extends ModelDto {
   @ValidateIf((o) => o.type !== undefined)
@@ -64,4 +65,8 @@ export default class AddressDto extends ModelDto {
   @ValidateIf((o) => !o._id)
   @IsDefined()
   public company: Company
+
+  @ValidateIf((o) => o.shippingStatus !== undefined)
+  @IsString()
+  public shippingStatus: ShippingStatus
 }

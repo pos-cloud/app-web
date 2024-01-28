@@ -10,7 +10,6 @@ class CompanySchema extends Model {
     super({
       name: {type: String, trim: true, required: true},
       fantasyName: {type: String, trim: true},
-      entryDate: {type: Date, required: true},
       type: {type: String, trim: true, enum: ['Cliente', 'Proveedor'], required: true},
       category: {type: String, trim: true},
       vatCondition: {type: Schema.Types.ObjectId, ref: 'vat-condition', required: true},

@@ -1,11 +1,19 @@
 <div class="row">
   <div class="col-md-12">
+    <div class="center-content">
+      <ngb-alert *ngIf="operation==='update'">
+       Los tipos de variantes no pueden ser mas de 3
+      </ngb-alert>
+      <ngb-alert  *ngIf="operation==='add' || operation==='copy'">
+        Solo se puede agregar valores a los tipos de variantes existentes. No es posible agregar mas tipos de variantes
+      </ngb-alert>
+    </div>
     <div class="center-content" *ngIf="alertMessage !== ''">
       <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
         {{alertMessage}}
       </ngb-alert>
     </div>
-    <form [formGroup]="variantForm" (ngSubmit)="addVariant()" autocomplete="off">
+    <form [formGroup]="variantForm" autocomplete="off">
       <div class="modal-body">
         <div class="row">
           <div class="form-group col-md-5">
@@ -30,7 +38,7 @@
           </div>
           <div class="form-group col-md-2">
             <div>Acción</div>
-            <button type="submit" class="btn btn-success" [disabled]="!variantForm?.valid || loading">Agregar</button>
+            <button type="submit" class="btn btn-success" [disabled]="!variantForm?.valid || loading" (click)="addVariant()">Agregar</button>
           </div>
         </div>
         <div class="row table-responsive">

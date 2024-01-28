@@ -350,10 +350,10 @@
         <div class="card-header">
             <span>Pedidos</span>
             <div class="pull-right">
-                <button class="btn fa fa-mercadolibre" (click)="syncMeli()" [disabled]="loading"><i
+                <!-- <button class="btn fa fa-mercadolibre" (click)="syncMeli()" [disabled]="loading"><i
                         [ngClass]="{'fa-spin':loading}"></i>Sincronizar Mercadolibre</button>
                 <button class="btn fa fa-wordpress" (click)="syncWoocommerce()" [disabled]="loading"><i
-                        [ngClass]="{'fa-spin':loading}"></i>Sincronizar Woocommerce</button>
+                        [ngClass]="{'fa-spin':loading}"></i>Sincronizar Woocommerce</button> -->
                 <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i
                         [ngClass]="{'fa-spin':loading}"></i>Actualizar</button>
             </div>
@@ -490,38 +490,25 @@
                             </div>
                             <div class="btn-group mr-3" *ngIf="transaction.tiendaNubeId !== undefined">
                                 <button type="button" class="btn" [ngClass]="{
-                                    'btn-state-close': transaction?.stateTiendaNube?.toString() === 'closed',
-                                    'btn-state-open': transaction?.stateTiendaNube?.toString() === 'open',
-                                    'btn-state-canceled': transaction?.stateTiendaNube?.toString() === 'cancelled',
-                                    'btn-state-sent': transaction?.stateShipping?.toString() === 'packed' && transaction?.stateTiendaNube?.toString() !== 'fulfilled',
-                                    'btn-state-sent-fulfilled': transaction?.stateShipping?.toString() === 'fulfilled',
-                                  }" *ngIf="transaction?.stateShipping?.toString() !== 'fulfilled'">
-                                    {{ transaction.stateTiendaNube }}
+                                    'btn-state-close': transaction?.state?.toString() === 'Cerrado',
+                                    'btn-state-open': transaction?.state?.toString() === 'Abierto',
+                                    'btn-state-canceled': transaction?.state?.toString() === 'Anulado',
+                                }">
+                                    {{ transaction.state }}
                                   </button>
-                                  
-                                  <button type="button" class="btn" [ngClass]="{
-                                    'btn-state-close': transaction?.stateTiendaNube?.toString() === 'closed',
-                                    'btn-state-open': transaction?.stateTiendaNube?.toString() === 'open',
-                                    'btn-state-canceled': transaction?.stateTiendaNube?.toString() === 'cancelled',
-                                    'btn-state-sent': transaction?.stateShipping?.toString() === 'packed',
-                                    'btn-state-sent-fulfilled': transaction?.stateShipping?.toString() === 'fulfilled',
-                                  }" *ngIf="transaction?.stateShipping?.toString() === 'fulfilled'">
-                                    {{ transaction.stateShipping }}
-                                  </button>
+        
                                 <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
                                   <button class="btn dropdown-toggle-split" ngbDropdownToggle [ngClass]="{
-                                      'btn-state-close': transaction?.stateTiendaNube?.toString() === 'closed',
-                                      'btn-state-open': transaction?.stateTiendaNube?.toString() === 'open',
-                                      'btn-state-canceled': transaction?.stateTiendaNube?.toString() === 'canceled',
-                                      'btn-state-sent': transaction?.stateTiendaNube?.toString() === 'packed',
-                                      'btn-state-sent': transaction?.stateTiendaNube?.toString() === 'fulfilled',
+                                      'btn-state-close': transaction?.state?.toString() === 'Cerrado',
+                                      'btn-state-open': transaction?.state?.toString() === 'Abierto',
+                                      'btn-state-canceled': transaction?.state?.toString() === 'Anulado',
                                     }"></button>
                                   <div class="dropdown-menu" ngbDropdownMenu>
-                                    <button ngbDropdownItem (click)="chargeTransaction(transaction, 'open')" *ngIf="transaction?.stateTiendaNube?.toString() !== 'sent' && transaction?.stateTiendaNube?.toString() !== 'open'">Abierto</button>
-                                    <button ngbDropdownItem (click)="changeStateOfTransaction(transaction, 'closed')" *ngIf="transaction?.stateTiendaNube?.toString() !== 'sent' && transaction?.stateTiendaNube?.toString() !== 'closed'">Cerrado</button>
-                                    <button ngbDropdownItem (click)="changeStateOfTransaction(transaction, 'canceled')" *ngIf="transaction?.stateTiendaNube?.toString() !== 'sent' && transaction?.stateTiendaNube?.toString() !== 'canceled'">Cancelar</button>
-                                    <button ngbDropdownItem (click)="changeStateOfTransaction(transaction, 'packed')" *ngIf="transaction?.stateTiendaNube?.toString() !== 'sent' && transaction?.stateTiendaNube?.toString() !== 'packed'">Preparado</button>
-                                    <button ngbDropdownItem (click)="changeStateOfTransaction(transaction, 'fulfilled')" *ngIf="transaction?.stateTiendaNube?.toString() !== 'sent' && transaction?.stateTiendaNube?.toString() !== 'fulfilled'">Completado</button>
+                                    <button ngbDropdownItem (click)="changeStateOfTransaction(transaction, 'open')" *ngIf="transaction?.state?.toString() !== 'Anulado' && transaction?.state?.toString() !== 'Abierto'">Abierto</button>
+                                    <button ngbDropdownItem (click)="changeStateOfTransaction(transaction, 'closed')" *ngIf="transaction?.state?.toString() !== 'Anulado' && transaction?.state?.toString() !== 'Cerrado'">Cerrado</button>
+                                    <button ngbDropdownItem (click)="canceledStatusTransaction(transaction, 'canceled')" *ngIf="transaction?.state?.toString() !== 'Anulado'">Anulado</button>
+                                    <button ngbDropdownItem (click)="changeStateOfTransaction(transaction, 'packed')" >Empaquetado</button>
+                                    <button ngbDropdownItem (click)="fulfilledStatusTransaction(transaction, 'fulfilled')" >Enviado</button>
                                   </div>
                                 </div>
                               </div>
@@ -532,7 +519,7 @@
                             {{transaction.state}}
                         </td>
                         <td>
-                            {{transaction.paymentMethodEcommerce}}
+                            {{transaction.paymentMethodEcommerce | translate}}
                         </td>
                         <td style="white-space: normal;">
                             <b *ngIf="transaction && transaction.shipmentMethod">{{transaction.shipmentMethod.name}} -

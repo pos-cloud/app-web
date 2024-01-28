@@ -100,6 +100,7 @@ export class Article {
     public width: number;
     public height: number;
     public depth: number;
+    public showMenu: Boolean = false;
     
     constructor() { }
 }

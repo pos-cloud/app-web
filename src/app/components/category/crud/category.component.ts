@@ -113,6 +113,14 @@ export class CategoryComponent implements OnInit {
             class: 'form-group col-md-4'
         },
         {
+            name: 'showMenu',
+            tag: 'select',
+            tagType: 'boolean',
+            values: ['true', 'false'],
+            default: 'false',
+            class: 'form-group col-md-4'
+        },
+        {
             name: 'picture',
             tag: 'input',
             tagType: 'file',
@@ -272,7 +280,8 @@ export class CategoryComponent implements OnInit {
                 'parent.name':'$parent.description',
                 'applications._id': 1,
                 'applications.name': 1,
-                'observation': 1
+                'observation': 1,
+                showMenu: 1
             }
 
             this.subscription.add(this._objService.getAll({

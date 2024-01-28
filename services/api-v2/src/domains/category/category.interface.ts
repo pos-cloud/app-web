@@ -19,4 +19,5 @@ export default interface Category extends Model {
   parent: Category
   observation: string
   wooId: string
+  showMenu: boolean
 }

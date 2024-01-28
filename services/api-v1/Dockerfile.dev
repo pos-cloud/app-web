@@ -3,11 +3,9 @@ FROM node:16.10
 RUN mkdir -p /app
 WORKDIR /app
 
-COPY package.json .
+COPY services/api-v1/package.json .
 RUN npm install
 
-COPY ./ .
-
-EXPOSE 300
+COPY services/api-v1/ .
 
 CMD [ "npm", "run", "donweb:dev" ]

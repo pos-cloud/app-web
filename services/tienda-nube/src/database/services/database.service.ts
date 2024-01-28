@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MongoClient, Db, Collection, ObjectId } from 'mongodb';
+import { ResponseVariantsDB } from 'src/common/interfaces/ResponseVariantDb.interface';
 
 @Injectable()
 export class DatabaseService {
@@ -31,7 +32,8 @@ export class DatabaseService {
   getCollection(collectionName: string): Collection<any> {
     if (!this.database) {
       throw new Error(
-        'La conexión con la base de datos no ha sido establecida' + this.database,
+        'La conexión con la base de datos no ha sido establecida' +
+          this.database,
       );
     }
     this.collection = this.database.collection(collectionName);
@@ -48,11 +50,10 @@ export class DatabaseService {
           'La conexión con la base de datos no ha sido establecida',
         );
       }
-
       const collection = this.database.collection(collectionName);
       const objectId = new ObjectId(documentId);
       const document = await collection.findOne({ _id: objectId });
-   
+
       return document;
     } catch (error) {
       console.error('Error al obtener el documento por ID:', error);
@@ -82,5 +83,82 @@ export class DatabaseService {
       token,
       userID,
     };
+  }
+
+  async getVariantDataByArticle(productParent: string) {
+    const itemCollection = this.getCollection('variants');
+
+    const documents = await itemCollection
+      .aggregate([
+        {
+          $match: {
+            articleParent: new ObjectId(productParent),
+          },
+        },
+        {
+          $lookup: {
+            from: 'variant-types',
+            localField: 'type',
+            foreignField: '_id',
+            as: 'typeInfo',
+          },
+        },
+        {
+          $lookup: {
+            from: 'variant-values',
+            localField: 'value',
+            foreignField: '_id',
+            as: 'valueInfo',
+          },
+        },
+        {
+          $lookup: {
+            from: 'articles',
+            localField: 'articleChild',
+            foreignField: '_id',
+            as: 'articleChildInfo',
+          },
+        },
+        {
+          $unwind: '$typeInfo',
+        },
+        {
+          $unwind: '$valueInfo',
+        },
+        {
+          $unwind: '$articleChildInfo',
+        },
+        {
+          $group: {
+            _id: {
+              articleParent: '$articleParent',
+              articleChild: '$articleChild',
+            },
+            variants: {
+              $push: {
+                type: '$typeInfo',
+                value: '$valueInfo',
+                creationUser: '$creationUser',
+                creationDate: '$creationDate',
+                operationType: '$operationType',
+                __v: '$__v',
+              },
+            },
+            articleChildInfo: { $first: '$articleChildInfo' },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            articleParent: '$_id.articleParent',
+            articleChild: '$_id.articleChild',
+            variants: 1,
+            articleChildInfo: 1,
+          },
+        },
+      ])
+      .toArray();
+
+    return documents as unknown as ResponseVariantsDB[];
   }
 }

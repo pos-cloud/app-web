@@ -69,7 +69,6 @@ export class TiendaNubeService {
     tiendaNubeAccesstoken: string,
     tiendaNubeUserId: string,
   ) {
-    console.log('ifo en createProduct',createProductTiendaNube)
     const data = await firstValueFrom(
       this.httpService
         .post(
@@ -82,8 +81,10 @@ export class TiendaNubeService {
           },
         )
         .pipe(map((resp) => resp.data)),
-    );
-    console.log('respuesta de data en createProduct:', data)
+    ).catch((err) => {
+      
+      throw new Error(`Error al crear el producto en tienda nube`);
+    });
     return data;
   }
 
@@ -99,6 +100,31 @@ export class TiendaNubeService {
         .put(
           `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/variants/${variantId}`,
           updateVariant,
+          {
+            headers: {
+              Authentication: `bearer ${tiendaNubeAccesstoken}`,
+            },
+          },
+        )
+        .pipe(map((resp) => resp.data)),
+    ).catch((err) => {
+      throw err;
+    });
+
+    return data;
+  }
+
+  async createVarianteByProduct(
+    tiendaNubeAccesstoken: string,
+    tiendaNubeUserId: string,
+    productId: string,
+    dataVariant: UpdateVariantTiendaNubeDto,
+  ) {
+    const data = await firstValueFrom(
+      this.httpService
+        .post(
+          `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/variants`,
+          dataVariant,
           {
             headers: {
               Authentication: `bearer ${tiendaNubeAccesstoken}`,

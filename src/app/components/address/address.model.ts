@@ -19,6 +19,7 @@ export class Address extends Model {
   public company: Company;
   public forBilling: boolean = true;
   public forShipping: boolean = true;
+  public shippingStatus: ShippingStatus;
 
   constructor() {
     super();
@@ -133,4 +134,10 @@ export class Address extends Model {
       },
     ]);
   }
+}
+
+export enum ShippingStatus {
+  Unpacked = <any>  'Desempaquetado',
+  Fulfilled = <any> 'Enviado' ,
+  Unfulfilled =  <any> 'No enviado'
 }

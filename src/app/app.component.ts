@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {Router} from '@angular/router';
+import {Router, NavigationEnd} from '@angular/router';
 import {NgbModal, NgbAlertConfig, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {TranslateService} from '@ngx-translate/core';
 import {environment} from 'environments/environment';
@@ -26,6 +26,7 @@ export class AppComponent {
   public modules: any;
   public isVerifyNotification: boolean = false;
   public readedNotification: boolean = false;
+  public showHeader: boolean = true;
 
   constructor(
     public _configService: ConfigService,
@@ -35,7 +36,7 @@ export class AppComponent {
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal,
     public _router: Router,
-    private _translateService: TranslateService,
+    private _translateService: TranslateService
   ) {
     this._translateService.setDefaultLang('es');
     this.setApiConfigurationSettings();
@@ -54,6 +55,15 @@ export class AppComponent {
         });
       } else {
         this.config$ = observableMerge(observableOf(true));
+      }
+    });
+
+    this._router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        const currentUrl = event.url;
+        if(currentUrl.includes('menu')) {
+          this.showHeader = false;
+        }
       }
     });
   }
