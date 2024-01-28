@@ -79,6 +79,7 @@ export default class TransactionController extends Controller {
 
       response.send(new Responser(200, objData))
     } catch (error) {
+      console.log(error)
       next(
         new HttpException(new Responser(error.status || 500, null, error.message, error)),
       )
