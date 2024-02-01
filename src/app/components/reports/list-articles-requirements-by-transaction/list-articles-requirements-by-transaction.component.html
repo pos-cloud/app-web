@@ -2,7 +2,7 @@
     <div class="center-content" *ngIf="alertMessage !== ''">
         <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
             {{alertMessage}}
-        </ngb-alert> 
+        </ngb-alert>
     </div>
     <div class="row container-filter">
         <div class="col-md-2">
@@ -20,7 +20,7 @@
                 </option>
             </select>
         </div>
-         <div class="col-md-2">
+        <div class="col-md-2">
             <label class="control-label">
                 <b>Estado:</b>
             </label>
@@ -39,18 +39,15 @@
                 <option value="Preparando">Preparando</option>
             </select>
         </div>
-         <div class="col-md-2">
+        <div class="col-md-2">
             <label for="transactionType" class="control-label">
                 <b>Tipo</b>
             </label>
-            <ng-multiselect-dropdown
-            [placeholder]="'Tipo de Transacción'"
-            [settings]="dropdownSettings"
-            [data]="transactionTypes"
-            [(ngModel)]="transactionTypesSelect">
+            <ng-multiselect-dropdown [placeholder]="'Tipo de Transacción'" [settings]="dropdownSettings"
+                [data]="transactionTypes" [(ngModel)]="transactionTypesSelect">
             </ng-multiselect-dropdown>
-        </div> 
-      <div class="col-md-2">
+        </div>
+        <div class="col-md-2">
             <label for="dataSelect" class="control-label">
                 <b>Por Fecha de:</b>
             </label>
@@ -72,24 +69,20 @@
             </label>
             <input type="date" class="form-control" name="endDate" min="2000-01-01" [(ngModel)]="endDate" />
         </div>
-       <div class="col-md-2" (click)="getItems()">
+        <div class="col-md-2" (click)="getItems()">
             <label for="btn-action" class="control-label"><b>Acción:</b></label>
             <span class="form-control btn-action center-content">
                 <i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar
             </span>
-        </div>  
+        </div>
     </div>
-    <!-- <div class="card  card-large">
+    <div class="card  card-large">
         <div class="card-header">
-            <span>{{title}}</span>
+            <span>Requerimientos de producción</span>
             <div class="pull-right">
                 <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i
                         [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
-                <button class="btn" (click)="exportIVA()" *ngIf="userCountry === 'AR'"><i
-                        class="fa fa-book"></i><span>Exportar IVA</span></button>
-                <button class="btn" (click)="exportCiti()" *ngIf="userCountry === 'AR'"><i
-                        class="fa fa-list"></i><span>Exportar Régimen de Información</span></button>
-                <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems()"></app-export-excel>
+                <button class="btn" (click)="exportIVA()"><i class="fa fa-book"></i><span>Exportar IVA</span></button>
                 <div class="btn-group" ngbDropdown>
                     <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Columnas"><i
                             class="fa fa-columns"></i><span>Columnas</span></button>
@@ -98,8 +91,8 @@
                             <div class="example-box" *ngFor="let column of columns" cdkDrag
                                 [cdkDragDisabled]="column.disabled">
                                 <label for="column"><input type="checkbox" [id]="column.name" (change)="getItems()"
-                                        [(ngModel)]="column.visible"
-                                        [disabled]="column.disabled">{{ column.name | translate}}</label>
+                                        [(ngModel)]="column.visible" [disabled]="column.disabled">{{ column.name |
+                                    translate}}</label>
                             </div>
                         </div>
                     </div>
@@ -134,27 +127,9 @@
                             <app-progressbar [loading]="loading"></app-progressbar>
                         </td>
                     </tr>
-                    <tr *ngFor="let item of items | paginate: { itemsPerPage: itemsPerPage,
-                                                        currentPage: currentPage,
-                                                        totalItems: totalItems }">
-                        <td align="left">
-                            <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', item)"
-                                title="Ver"><i class="fa fa-eye"></i>
-                            </button>
-                            <button type="button" *ngIf="item.type.allowEdit && editTransaction"
-                                class="btn btn-primary btn-sm" (click)="openModal('edit', item)" title="Editar"><i
-                                    class="fa fa-pencil"></i>
-                            </button>
-                            <button type="button" *ngIf="item.type.allowDelete && (!item.type.electronics || (item.type.electronics && item.state.toString() !== 'Cerrado')) && deleteTransaction" class="btn btn-danger btn-sm"
-                                (click)="openModal('delete', item)" title="Eliminar"><i class="fa fa-trash-o"></i>
-                            </button>
-                            <button *ngIf="item.state.toString() !== 'Pendiente' || item.state.toString() !== 'Abierto'" type="button" class="btn btn-light btn-sm"
-                                (click)="openModal('print', item)" title="Imprimir"><i class="fa fa-print"></i>
-                            </button>
-                            <button type="button" *ngIf="item.state.toString() !== 'Pendiente' || item.state.toString() !== 'Abierto'" class="btn btn-light btn-sm"
-                                (click)="openModal('send-email', item)" title="Enviar"><i class="fa fa-envelope"></i>
-                            </button>
-                        </td>
+                    <tr *ngFor="let item of items | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage, totalItems: totalItems }">
+                        <td></td>
+
                         <ng-container *ngFor="let column of columns">
                             <td *ngIf="column.visible" [attr.align]="column.align">{{getValue(item, column)}}</td>
                         </ng-container>
@@ -170,12 +145,12 @@
         <div class="card-footer">
             <div class="row">
                 <div class="col-md-10">
-                    <pagination-controls class="my-pagination" (pageChange)="pageChange($event)" #api
+                    <pagination-controls (pageChange)="pageChange($event)"
                         previousLabel="Ant." nextLabel="Sig." autoHide="true">
                     </pagination-controls>
-                </div>
+                </div>         
                 <div class="form-group col-md-2">
-                    <select class="form-control" [(ngModel)]="itemsPerPage" (change)="getItems()">
+                    <select class="form-control" [(ngModel)]="itemsPerPage" (change)="pageChange(1)">
                         <option [value]="5">Mostrar 5 Registros</option>
                         <option [value]="10">Mostrar 10 Registros</option>
                         <option [value]="15">Mostrar 15 Registros</option>
@@ -186,5 +161,5 @@
                 </div>
             </div>
         </div>
-    </div> -->
+    </div>
 </section>

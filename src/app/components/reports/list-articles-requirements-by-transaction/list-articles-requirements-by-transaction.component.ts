@@ -1,16 +1,22 @@
-import { Component, OnInit} from '@angular/core';
-import {Branch} from 'app/components/branch/branch';
-import {BranchService} from 'app/components/branch/branch.service';
-import {attributes} from 'app/components/transaction/transaction';
+import { Component, OnInit } from '@angular/core';
+import {CurrencyPipe} from '@angular/common';
+import { Router } from '@angular/router';
+import { moveItemInArray, CdkDragDrop } from '@angular/cdk/drag-drop';
+import { of as observableOf, Observable, Subscription } from 'rxjs';
+import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { Branch } from 'app/components/branch/branch';
+import { BranchService } from 'app/components/branch/branch.service';
+import { attributes } from '../reports';
 import { TransactionService } from 'app/components/transaction/transaction.service';
+import {RoundNumberPipe} from '../../../main/pipes/round-number.pipe';
 import * as moment from 'moment';
 import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
-import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import {of as observableOf, Observable, Subscription, observable} from 'rxjs';
-import { Router } from '@angular/router';
 import { AuthService } from 'app/components/login/auth.service';
-import {Config} from '../../../app.config'
+import { Config } from '../../../app.config'
 import { TransactionMovement, TransactionType } from 'app/components/transaction-type/transaction-type';
+import { ReportsService } from '../reports.service';
+import { ExportIvaComponent } from '../../export/export-iva/export-iva.component';
+import {DateFormatPipe} from 'app/main/pipes/date-format.pipe';
 
 @Component({
   selector: 'app-list-articles-requirements-by-transaction',
@@ -19,11 +25,14 @@ import { TransactionMovement, TransactionType } from 'app/components/transaction
 })
 export class ListArticlesRequirementsByTransactionComponent implements OnInit {
   private subscription: Subscription = new Subscription();
+  private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
+  private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
   branches: Branch[];
-  branchSelectedId: String;
+  branchSelectedId: string;
   allowChangeBranch: boolean;
   alertMessage: string = '';
   loading: boolean = false;
+  dateFormat = new DateFormatPipe();
   columns = attributes;
   filters: any[];
   employeeClosingId: string;
@@ -33,12 +42,12 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
   stateSelect: string = '';
   startDate: string;
   endDate: string;
-  dateSelect: string; 
+  dateSelect: string;
   timezone: string = '-03:00';
   transactionTypes: TransactionType[];
   transactionTypesSelect;
   currentPage: number = 1;
-  sort = {endDate: -1};
+  sort = { endDate: -1 };
   itemsPerPage = 10;
   modules: Observable<{}>;
   dropdownSettings = {
@@ -64,10 +73,12 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     private _branchService: BranchService,
     private _transactionService: TransactionService,
     public alertConfig: NgbAlertConfig,
+    public _modalService: NgbModal,
     public _transactionTypeService: TransactionTypeService,
     private _authService: AuthService,
     public _router: Router,
-  ){
+    public _reportsService: ReportsService,
+  ) {
     this.transactionTypesSelect = new Array();
     this.filters = new Array();
     for (let field of this.columns) {
@@ -81,10 +92,10 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     this.endDate = moment().format('YYYY-MM-DD');
     this.dateSelect = 'creationDate';
   }
-  
-  async ngOnInit(){
 
-    await this.getBranches({operationType: {$ne: 'D'}}).then((branches) => {
+  async ngOnInit() {
+
+    await this.getBranches({ operationType: { $ne: 'D' } }).then((branches) => {
       this.branches = branches;
     });
 
@@ -106,13 +117,13 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
 
     this._authService.getIdentity.subscribe(async (identity) => {
       // get permision
-      
+
       if (identity?.permission?.collections.some((collection) => collection.name === "transacciones")) {
         // Encontrar el objeto con name igual a "transacciones"
         const transactionObject = identity.permission.collections.find(
           (collection) => collection.name === "transacciones"
         );
-      
+
         // Guardar los valores de 'actions' en las variables correspondientes
         this.deleteTransaction = transactionObject.actions.delete;
         this.editTransaction = transactionObject.actions.edit;
@@ -132,14 +143,14 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
         this.branchSelectedId = null;
       }
     });
-    
-    this.getItems();
 
     await this.getTransactionTypes().then((result) => {
       if (result) {
         this.transactionTypes = result;
       }
     });
+
+    this.getItems();
   }
 
   public getBranches(match: {} = {}): Promise<Branch[]> {
@@ -148,7 +159,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
         .getBranches(
           {}, // PROJECT
           match, // MATCH
-          {number: 1}, // SORT
+          { number: 1 }, // SORT
           {}, // GROUP
           0, // LIMIT
           0, // SKIP
@@ -175,7 +186,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
 
       match = {
         transactionMovement: this.transactionMovement,
-        operationType: {$ne: 'D'},
+        operationType: { $ne: 'D' },
       };
 
       this._transactionTypeService
@@ -206,149 +217,119 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     });
   }
 
-
   public getItems(): void {
     this.loading = true;
 
-    // FILTRAMOS LA CONSULTA
-    let match = `{`;
+    this.items = [];
 
-    for (let i = 0; i < this.columns.length; i++) {
-      if (this.columns[i].visible || this.columns[i].required) {
-        let value = this.filters[this.columns[i].name];
-
-        if (value && value != '') {
-          if (this.columns[i].defaultFilter) {
-            match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
-          } else {
-            if (this.columns[i].name.includes('_id')) {
-              match += `"${this.columns[i].name}": { "$oid": "${value}" }`;
-            } else {
-              if (value.includes('$')) {
-                match += `"${this.columns[i].name}": { ${value} }`;
-              } else {
-                match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
-              }
-            }
-          }
-          if (i < this.columns.length - 1) {
-            match += ',';
-          }
-        }
-      }
-    }
-
-    if (this.employeeClosingId) {
-      match += `,"employeeClosing._id": { "$oid" : "${this.employeeClosingId}"},`;
-    }
-
-    if (this.origin) {
-      match += `,"origin": "${this.origin}"`;
-    }
-    if (this.branchSelectedId) {
-      match += `,"branchOrigin": {"$oid": "${this.branchSelectedId}"},`;
-    }
-
-    if (match.charAt(match.length - 1) === '}') match += ',';
-    match += `"type.transactionMovement": "${this.transactionMovement}",`;
-    if (this.stateSelect && this.stateSelect !== '')
-      match += `"state": "${this.stateSelect}",`;
-    match += `"${this.dateSelect}" : {
-                    "$gte" : { "$date" : "${this.startDate}T00:00:00${this.timezone}" },
-                    "$lte" : { "$date" : "${this.endDate}T23:59:59${this.timezone}" }
-                }`;
-
-    if (match.charAt(match.length - 1) === ',')
-      match = match.substring(0, match.length - 1);
-
-    match += `}`;
-
-    match = JSON.parse(match);
-
-    let transactionTypes = [];
-
-    if (this.transactionTypesSelect && this.transactionTypesSelect.length > 0) {
-      this.transactionTypesSelect.forEach((element) => {
-        transactionTypes.push({$oid: element._id});
-      });
-      match['type._id'] = {$in: transactionTypes};
-    }
-
-    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-    let project = `{`;
-    let j = 0;
-
-    for (let i = 0; i < this.columns.length; i++) {
-      if (this.columns[i].visible || this.columns[i].required) {
-        if (j > 0) {
-          project += `,`;
-        }
-        j++;
-
-        if (this.columns[i].project === null) {
-          project += `"${this.columns[i].name}": 1`;
-        } else {
-          project += `"${this.columns[i].name}": ${this.columns[i].project}`;
-        }
-      }
-    }
-    project += `,"branchOrigin":1`;
-    project += `}`;
-
-    project = JSON.parse(project);
-
-    // AGRUPAMOS EL RESULTADO
-    let group = {
-      _id: null,
-      count: {$sum: 1},
-      items: {$push: '$$ROOT'},
-    };
-
-    let page = 0;
-
-    if (this.currentPage != 0) {
-      page = this.currentPage - 1;
-    }
-    let skip = !isNaN(page * this.itemsPerPage) ? page * this.itemsPerPage : 0; // SKIP
-    let limit = this.itemsPerPage;
+    const transactionTypesId = this.transactionTypesSelect.map(id => id._id)
 
     this.subscription.add(
-      this._transactionService
-        .getTransactionsV2(
-          project, // PROJECT
-          match, // MATCH
-          this.sort, // SORT
-          group, // GROUP
-          limit, // LIMIT
-          skip, // SKIP
-        )
-        .subscribe(
-          (result) => {
-            this.loading = false;
-            if (result && result[0] && result[0].items) {
-              if (this.itemsPerPage === 0) {
-                this.exportExcelComponent.items = result[0].items;
-                this.exportExcelComponent.export();
-                this.itemsPerPage = 10;
-                this.getItems();
-              } else {
-                this.items = result[0].items;
-                this.totalItems = result[0].count;
-              }
-            } else {
-              this.items = new Array();
-              this.totalItems = 0;
-            }
-          },
-          (error) => {
-            this.showMessage(error._body, 'danger', false);
-            this.loading = false;
-            this.totalItems = 0;
-          },
-        ),
+        this._reportsService.getRequirementByTransaction(this.startDate, this.endDate, [this.stateSelect], transactionTypesId.length > 0 ? transactionTypesId : [''], this.dateSelect, this.branchSelectedId)
+            .subscribe(
+                (result) => {
+                    this.loading = false;
+                    if (result.result.length) {
+                        if (this.itemsPerPage === 0) {
+                            this.itemsPerPage = 10;
+                            this.getItems();
+                        } else {
+                            this.items = result.result;
+                            this.totalItems = result.result.length;
+                        }
+                    } else {
+                        this.items = new Array();
+                        this.totalItems = 0;
+                    }
+                },
+                (error) => {
+                    this.showMessage(error._body, 'danger', false);
+                    this.loading = false;
+                    this.totalItems = 0;
+                },
+            ),
+    );
+}
+
+  public getColumnsVisibles(): number {
+    let count: number = 0;
+
+    for (let column of this.columns) {
+      if (column.visible) {
+        count++;
+      }
+    }
+
+    return count;
+  }
+
+  public getValue(item, column): any {
+    let val: string = 'item';
+    let exists: boolean = true;
+    let value: any = '';
+    for (let a of column.name.split('.')) {
+      val += '.' + a;
+      if (exists && !eval(val)) {
+        exists = false;
+      }
+    }
+    if (exists) {
+      switch (column.datatype) {
+        case 'number':
+          value = this.roundNumberPipe.transform(eval(val));
+          break;
+        case 'currency':
+          value = this.currencyPipe.transform(
+            this.roundNumberPipe.transform(eval(val)),
+            'USD',
+            'symbol-narrow',
+            '1.2-2',
+          );
+          break;
+        case 'percent':
+          value = this.roundNumberPipe.transform(eval(val)) + '%';
+          break;
+        case 'date':
+          value = this.dateFormat.transform(eval(val), 'DD/MM/YYYY');
+          break;
+        default:
+          value = eval(val);
+          break;
+      }
+    }
+
+    return value;
+  }
+
+  public refresh(): void {
+    this.getItems();
+   
+  }
+
+  public exportIVA(): void {
+    let modalRef = this._modalService.open(ExportIvaComponent, {
+      size: 'lg',
+      backdrop: 'static',
+    });
+
+    modalRef.componentInstance.type = this.listType;
+    modalRef.result.then(
+      (result) => {
+        if (result === 'export') {
+        }
+      },
+      (reason) => {},
     );
   }
-  
+
+  public drop(event: CdkDragDrop<string[]>): void {
+    moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
+  }
+
+  public pageChange(page): void {
+    this.currentPage = page;
+  }
+
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
@@ -359,4 +340,3 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     this.alertMessage = '';
   }
 }
-

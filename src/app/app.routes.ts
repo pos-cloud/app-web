@@ -211,7 +211,7 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard]
   },
   {
-    path: 'report/production/productos',
+    path: 'reports/production/productos',
     component: ListArticlesRequirementsByTransactionComponent,
     canActivate: [AuthGuard, LicenseGuard]
   },
