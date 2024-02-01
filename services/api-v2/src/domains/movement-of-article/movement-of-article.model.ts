@@ -31,7 +31,7 @@ class MovementOfArticleSchema extends Model {
         },
       ],
       movementParent: {type: Schema.Types.ObjectId, ref: 'movement-of-article'},
-	  movementOrigin: { type: Schema.Types.ObjectId, ref: 'movement-of-article' },
+	    movementOrigin: { type: Schema.Types.ObjectId, ref: 'movement-of-article' },
       isOptional: {type: Boolean, default: false},
       costPrice: {type: Number, default: 0},
       unitPrice: {type: Number, default: 0},
