@@ -15,6 +15,7 @@ settings.json
 /services/api-v1/node_modules
 # apiv2
 /services/api-v2/node_modules
+/services/api-v2/uploads
 /services/api-v2/dist
 # tienda nube
 /services/tienda-nube/node_modules
