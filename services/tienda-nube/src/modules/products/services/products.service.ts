@@ -147,6 +147,7 @@ export class ProductsService {
 
     const variantData = await this.clearDataVariant(dataVarinat, variantName);
 
+    // console.log('variantData 147 ', variantData[0]);
     const arrayCreateVariant = variantData.map((e) => {
       new Promise(async (resolve) => {
         const resultResolve =
@@ -295,27 +296,53 @@ export class ProductsService {
           },
         );
       }
-      const stockCollection =
-        this.databaseService.getCollection('article-stocks');
-      const stockFound = await stockCollection.findOne({
-        operationType: { $ne: 'D' },
-        article: new ObjectId(productId),
-      });
-      await this.tiendaNubeService.updateProductFirstVariant(
+
+      const resultVariantName =
+        await this.productVariantService.getProductVariantsPropertyNames(
+          foundArticle._id,
+        );
+
+      const dataVariant =
+        await this.databaseService.getVariantDataByArticle(productId);
+
+      if (dataVariant.length == 0) {
+        const stockCollection =
+          this.databaseService.getCollection('article-stocks');
+        const stockFound = await stockCollection.findOne({
+          operationType: { $ne: 'D' },
+          article: new ObjectId(productId),
+        });
+        await this.tiendaNubeService.updateProductFirstVariant(
+          token,
+          userID,
+          result.id,
+          result.variants[0].id,
+          {
+            stock:
+              !stockFound || stockFound.realStock < 0
+                ? 0
+                : stockFound.realStock,
+            price: foundArticle.salePrice ? foundArticle.salePrice : null,
+            sku: foundArticle.barcode || null,
+            weight: foundArticle.weight || null,
+            width: foundArticle.width || null,
+            height: foundArticle.height || null,
+            depth: foundArticle.depth || null,
+          },
+        );
+        return result;
+      }
+
+      const variantData = await this.clearDataVariant(
+        dataVariant,
+        resultVariantName as string[],
+      );
+
+      await this.tiendaNubeService.massiveVariantUpdate(
         token,
         userID,
         result.id,
-        result.variants[0].id,
-        {
-          stock:
-            !stockFound || stockFound.realStock < 0 ? 0 : stockFound.realStock,
-          price: foundArticle.salePrice ? foundArticle.salePrice : null,
-          sku: foundArticle.barcode || null,
-          weight: foundArticle.weight || null,
-          width: foundArticle.width || null,
-          height: foundArticle.height || null,
-          depth: foundArticle.depth || null,
-        },
+        variantData,
       );
       return result;
     } catch (err) {
