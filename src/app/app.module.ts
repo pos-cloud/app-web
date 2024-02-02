@@ -255,6 +255,8 @@ import {MeliService} from './main/services/meli.service';
 import { SafePipe } from './main/pipes/safe.pipe';
 import { CancelComponent } from './components/tiendaNube/cancel/cancel.component';
 import { FulfilledComponent } from './components/tiendaNube/fulfilled/fulfilled.component'
+import { MenuComponent } from './components/menu/menu.component';
+import { MenuService } from './components/menu/menu.service';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -429,7 +431,8 @@ const configSocket: SocketIoConfig = {
     KardexCheckComponent,
     SafePipe,
     CancelComponent,
-    FulfilledComponent
+    FulfilledComponent,
+    MenuComponent
   ],
   imports: [
     BrowserModule,
@@ -551,6 +554,7 @@ const configSocket: SocketIoConfig = {
     PushNotificationsService,
     MercadopagoService,
     MeliService,
+    MenuService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
   bootstrap: [AppComponent],

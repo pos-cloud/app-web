@@ -2265,12 +2265,13 @@ export class PointOfSaleComponent implements OnInit {
                 this._transactionService.updateTransactionStatus(transaction.tiendaNubeId, this.config.tiendaNube.userID, state).subscribe(
                     (result: Resulteable) => {
                         if (result.status === 201) {
+                            this.refresh();
                             resolve(result.result);
-                            this.refresh();
                         } else {
-                            reject(result);
                             this.refresh();
+                            reject(result);
                         };
+                        this.refresh();
                     },
                     error => {
                         this.showToast(error)

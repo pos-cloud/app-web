@@ -40,11 +40,14 @@ export class ProductsService {
           ` Article with id ${productId} not found`,
         );
       }
+      const pictureUrls = foundArticle.pictures.map(picture => picture.picture);
+
       const dataNewProductTiendaNube = {
         images: [
           {
             src: foundArticle.picture,
           },
+            ...pictureUrls.map(src => ({ src })),
         ],
         name: {
           es: foundArticle.description,

@@ -80,6 +80,7 @@ import VATConditionController from './../domains/vat-condition/vat-condition.con
 import VoucherController from './../domains/voucher/voucher.controller'
 import Controller from './../interfaces/controller.interface'
 import TiendaNubeController from './../domains/uc/tienda-nube'
+import MenuController from './../domains/menu/menu.controller'
 
 function initializeControllers(app: express.Application = null, database: string = null) {
   let controllers: Controller[] = [
@@ -163,6 +164,7 @@ function initializeControllers(app: express.Application = null, database: string
     new WooCommerceController(null),
     new MercadoLibreController(null),
     new BusinessRulesController(database),
+    new MenuController()
   ]
 
   if (app)

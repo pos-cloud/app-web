@@ -197,6 +197,7 @@ export default class TransactionUC {
 
         resolve(response.data.transaction)
       } catch (error) {
+        console.log(error)
         reject(error)
       }
     })

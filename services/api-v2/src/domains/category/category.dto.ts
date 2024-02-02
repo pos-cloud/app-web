@@ -61,4 +61,6 @@ export default class CategoryDto extends ModelDto {
   @ValidateIf((o) => o.wooId !== undefined)
   @IsString()
   public wooId: string
+
+  public showMenu: boolean
 }
