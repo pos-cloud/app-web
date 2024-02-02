@@ -41,7 +41,7 @@ import {ArticleFieldType} from '../article-field/article-field';
 import {ArticleFields} from '../article-field/article-fields';
 import {ArticleStock} from '../article-stock/article-stock';
 import {ArticleStockService} from '../article-stock/article-stock.service';
-import {ArticlePrintIn, Article} from '../article/article';
+import {ArticlePrintIn, Article, Type} from '../article/article';
 import {AddArticleComponent} from '../article/article/add-article.component';
 import {ListArticlesPosComponent} from '../article/list-articles-pos/list-articles-pos.component';
 import {BusinessRuleService} from '../business-rules/business-rule.service';
@@ -91,7 +91,7 @@ import {UserService} from '../user/user.service';
 
 import {Config} from './../../app.config';
 import { EmailProps } from 'app/types';
-import { ApplicationType } from '../application/application.model';
+import {VariantService} from '../variant/variant.service';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -203,6 +203,7 @@ export class AddSaleOrderComponent {
     private _modalService: NgbModal,
     private _printerService: PrinterService,
     private _userService: UserService,
+    private _variantService: VariantService,
     private _taxService: TaxService,
     private _useOfCFDIService: UseOfCFDIService,
     private _serviceEmail: EmailService,
@@ -1058,7 +1059,6 @@ export class AddSaleOrderComponent {
   ): Promise<MovementOfArticle> {
     return new Promise<MovementOfArticle>((resolve) => {
       this.loading = true;
-
       movementOfArticle.basePrice = this.roundNumber.transform(
         movementOfArticle.basePrice,
       );
@@ -3080,19 +3080,85 @@ export class AddSaleOrderComponent {
     });
   }
 
+  async updateArticleTiendaNube(idArticle: string) {
+    this.loading = true;
+    this._articleService.updateArticleTiendaNube(idArticle).subscribe(
+      (result) => {
+        if (result.error) {
+          this.showToast(
+            null,
+            'info',
+            result.error && result.error.message
+              ? result.error.message
+              : result.message
+              ? result.message
+              : '',
+          );
+        } else {
+          this.showToast(null, 'success', 'Producto actualizado con éxito en TiendaNube');
+        }
+        this.loading = false;
+      },
+      (error) => {
+        this.loading = false;
+        this.showToast(error)
+      }
+    );
+  }
+
+  getVariantsByArticleChild(id): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.loading = true;
+      let query = 'where="articleChild":"' + id + '"';
+      
+      this._variantService.getVariants(query)
+      .subscribe(
+        (result) => {        
+          if (!result.variants) {
+            resolve(null);
+          } else {
+            resolve(result.variants);
+          }
+          this.loading = false;
+        },
+        (error) => {
+          console.error('Error al obtener variantes:', error);
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
+          reject(error);
+        },
+      );
+    });
+  }
+  
+
   async finish() {
     try {
-      if (this.transaction.type.requestArticles && 
-        this.transaction.type.modifyStock && 
+      if (this.transaction.type.requestArticles &&
+        this.transaction.type.modifyStock &&
         this.config.tiendaNube !== undefined &&
         this.config.tiendaNube.appID &&
         this.config.tiendaNube.appID !== '' &&
         this.movementsOfArticles.length > 0) {
-          const tiendaNubeIds = this.movementsOfArticles
-              .filter(movement => movement.article.tiendaNubeId)
-              .map(movement => movement.article.tiendaNubeId);
-          
-          if(tiendaNubeIds.length > 0) this.updateArticlesTiendaNube(tiendaNubeIds)
+    
+        const tiendaNubeIds = this.movementsOfArticles
+          .filter(movement => movement.article.tiendaNubeId)
+          .map(movement => movement.article.tiendaNubeId);
+    
+          this.movementsOfArticles.forEach(async movement => {
+            if (movement.article.type === Type.Final && tiendaNubeIds.length > 0) {
+              this.updateArticlesTiendaNube(tiendaNubeIds)
+            } else if (movement.article.type === Type.Variant) {
+              const result = await this.getVariantsByArticleChild(movement.article._id);
+              if (result && result.length > 0) {
+                for (const variant of result) {
+                  if (variant && variant.articleParent._id) {
+                    this.updateArticleTiendaNube(variant.articleParent._id);
+                  }
+              }
+            }
+          }
+          });
       }
       this.loading = true;
 
