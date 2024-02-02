@@ -82,7 +82,6 @@ export class TiendaNubeService {
         )
         .pipe(map((resp) => resp.data)),
     ).catch((err) => {
-      
       throw new Error(`Error al crear el producto en tienda nube`);
     });
     return data;
@@ -166,6 +165,28 @@ export class TiendaNubeService {
     }
   }
 
+  async massiveVariantUpdate(
+    tiendaNubeAccesstoken: string,
+    tiendaNubeUserId: string,
+    productId: string,
+    dataVariant: UpdateVariantTiendaNubeDto[],
+  ) {
+    const data = await firstValueFrom(
+      this.httpService
+        .put(
+          `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/variants`,
+          dataVariant,
+          {
+            headers: {
+              Authentication: `bearer ${tiendaNubeAccesstoken}`,
+            },
+          },
+        )
+        .pipe(map((resp) => resp.data)),
+    );
+
+    return data;
+  }
   async updatePrincipalImageOfProduct(
     url: string,
     productId: string,
