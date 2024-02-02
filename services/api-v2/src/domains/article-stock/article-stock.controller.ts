@@ -75,10 +75,10 @@ export default class ArticleStockController extends Controller {
       const data = xlsx.utils.sheet_to_json(worksheet);
 
       
-      await new ArticleStockUC(request.database).updateFromExcel(data)
+      const res = await new ArticleStockUC(request.database).updateFromExcel(data)
 
 
-      response.send(new Responser(200, {}))
+      response.send(new Responser(200, res))
     } catch (error) {
       next(
         new HttpException(new Responser(error.status || 500, null, error.message, error)),
