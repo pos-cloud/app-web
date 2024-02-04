@@ -5,35 +5,19 @@
   </button>
 </div>
 <section class="container-fluid">
-  <div class="center-content" *ngIf="alertMessage !== ''">
-    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-      {{alertMessage}}
-    </ngb-alert>
-  </div>
   <form [formGroup]="importForm" (ngSubmit)="import()" autocomplete="off">
     <div class="modal-body">
       <div class="row">
         <div class="form-group col-md-12">
-          <label for="filePath" class="control-label">Archivo:</label>
-          <input type="text" class="form-control" formControlName="filePath" name="filePath" id="filePath"
+          <label for="file" class="control-label">Archivo:</label>
+          <input type="file" class="form-control" formControlName="file" id="fileInput"
             [focus]="focusEvent" />
-          <div *ngIf="formErrors.filePath" class="alert alert-danger">
-            {{ formErrors.filePath }}
-          </div>
-        </div>
-      </div>
-      <div class="row" *ngFor="let property of properties">
-        <div class="form-group col-md-12"
-          *ngIf="property !== 'model' && property !== 'primaryKey' && property !== 'relations'">
-          <label for="newProperties[property]" class="control-label">{{property | translate | capitalize}}:</label>
-          <input type="text" class="form-control" formControlName="{{newProperties[property]}}"
-            name="newProperties[property]" id="newProperties[property]" />
         </div>
       </div>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="!importForm?.valid || loading">
+      <button type="submit" class="btn btn-primary" [disabled]="!importForm.valid || loading">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Importar</span>
         <span *ngIf="loading">Espere por favor</span>

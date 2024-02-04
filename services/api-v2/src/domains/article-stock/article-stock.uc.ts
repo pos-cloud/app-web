@@ -11,7 +11,7 @@ export default class ArticleStockUC {
     this.articleStockController = new ArticleStockController(database);
   }
 
-  async updateFromExcel(data: any[]) {
+  async updateFromExcel(data: any[], branchId: string, depositId: string) {
     return new Promise<{}>(async (resolve, reject) => {
       let articlesObject: any = {};
 

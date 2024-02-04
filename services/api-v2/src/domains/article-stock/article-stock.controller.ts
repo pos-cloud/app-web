@@ -63,7 +63,9 @@ export default class ArticleStockController extends Controller {
       this.initConnectionDB(request.database)
       this.userAudit = request.user
 
-      const file = request.file; // Objeto del archivo subido
+      const file = request.file;
+      const branchId = request.body.branchId;
+      const depositId = request.body.depositId
       if (!file) {
         throw new Error('No se ha proporcionado ningún archivo.');
       }
@@ -75,7 +77,7 @@ export default class ArticleStockController extends Controller {
       const data = xlsx.utils.sheet_to_json(worksheet);
 
       
-      const res = await new ArticleStockUC(request.database).updateFromExcel(data)
+      const res = await new ArticleStockUC(request.database).updateFromExcel(data, branchId, depositId)
 
 
       response.send(new Responser(200, res))
@@ -84,37 +86,5 @@ export default class ArticleStockController extends Controller {
         new HttpException(new Responser(error.status || 500, null, error.message, error)),
       )
     }
-  }
-
-  getStorage(): multer.StorageEngine {
-    let storage = multer.diskStorage({
-      destination: function (request: RequestWithUser, file, cb) {
-        try {
-			let path = '/home/clients/'
-
-          if (request.database) {
-            path += `${request.database}/excel`
-          }
-          fs.mkdirSync(path, {recursive: true})
-          cb(null, path)
-        } catch (err) {
-          cb(err, null)
-        }
-      },
-      filename: function (req, file, cb) {
-        try {
-          let name: string =
-            moment().format('YYYY-MM-DD-THH_mm_ss').toString() +
-            '-' +
-            file.originalname.normalize('NFD').replace(/[\u0300-\u036f]/g, '.xlsx')
-
-          cb(null, name.replace(/ /g, '-'))
-        } catch (err) {
-          cb(err, null)
-        }
-      },
-    })
-
-    return storage
   }
 }
