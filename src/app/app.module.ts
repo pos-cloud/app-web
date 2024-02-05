@@ -433,7 +433,7 @@ const configSocket: SocketIoConfig = {
     SafePipe,
     CancelComponent,
     FulfilledComponent,
-    MenuComponent
+    MenuComponent,
     ListArticlesRequirementsByTransactionComponent
   ],
   imports: [
@@ -539,7 +539,7 @@ const configSocket: SocketIoConfig = {
     PushNotificationsService,
     MercadopagoService,
     MeliService,
-    MenuService
+    MenuService,
     ReportsService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
