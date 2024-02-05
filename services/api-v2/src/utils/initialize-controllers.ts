@@ -165,7 +165,7 @@ function initializeControllers(app: express.Application = null, database: string
     new WooCommerceController(null),
     new MercadoLibreController(null),
     new BusinessRulesController(database),
-    new MenuController()
+    new MenuController(),
     new ArticleRequirementsByTransaccionController()
   ]
 

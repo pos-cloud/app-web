@@ -31,7 +31,7 @@ export default class ArticleRequirementsByTransaccionController {
         const { startDate, endDate, status, transactionType, dateSelect, branch} = request.body
 
         const transactions = await getItem(startDate, endDate, status, transactionType, this.database, dateSelect, branch)
-   console.log(transactions)
+
         if (transactions.length === 0) return response.send(new Responser(404, 0, 'Transaction not found'))
 
         return response.send(new Responser(200, transactions))
