@@ -41,3 +41,9 @@ export let attributes = [
         required: true,
       },
 ]
+
+export interface requirementsByTransaccion {
+  amount: number;
+  code: string;
+  description: string;
+}

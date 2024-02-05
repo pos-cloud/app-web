@@ -18,6 +18,10 @@ import { ReportsService } from '../reports.service';
 import { ExportIvaComponent } from '../../export/export-iva/export-iva.component';
 import {DateFormatPipe} from 'app/main/pipes/date-format.pipe';
 
+// import {Country} from './country';
+// import {CountryService} from './country.service';
+import {NgbdSortableHeader, SortEvent} from '../../../main/directives/sortable.directive';
+
 @Component({
   selector: 'app-list-articles-requirements-by-transaction',
   templateUrl: './list-articles-requirements-by-transaction.component.html',
@@ -34,7 +38,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
   loading: boolean = false;
   dateFormat = new DateFormatPipe();
   columns = attributes;
-  filters: any[];
+  filters:{ [key: string]: string } = {};
   employeeClosingId: string;
   origin: any;
   listType: string = 'statistics';
@@ -62,12 +66,16 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     allowSearchFilter: true,
   };
   exportExcelComponent: any;
-  items: any[] = new Array();
+  items: any[] = [];
+  filterItems: any[] = [];
   totalItems: number = 0;
+  
   config: Config;
 
   deleteTransaction = true;
   editTransaction = true;
+  // countries$: Observable<Country[]>;
+  total$: Observable<number>;
 
   constructor(
     private _branchService: BranchService,
@@ -78,9 +86,11 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     private _authService: AuthService,
     public _router: Router,
     public _reportsService: ReportsService,
+    // public service: CountryService
+    
   ) {
     this.transactionTypesSelect = new Array();
-    this.filters = new Array();
+    this.filters = {};
     for (let field of this.columns) {
       if (field.defaultFilter) {
         this.filters[field.name] = field.defaultFilter;
@@ -91,6 +101,8 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     this.startDate = moment().format('YYYY-MM-DD');
     this.endDate = moment().format('YYYY-MM-DD');
     this.dateSelect = 'creationDate';
+    // this.countries$ = service.countries$;
+    // this.total$ = service.total$;
   }
 
   async ngOnInit() {
@@ -152,6 +164,25 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
 
     this.getItems();
   }
+
+  // @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>;
+
+  // constructor(public service: CountryService) {
+  //   this.countries$ = service.countries$;
+  //   this.total$ = service.total$;
+  // }
+
+  // onSort({column, direction}: SortEvent) {
+  //   // resetting other headers
+  //   this.headers.forEach(header => {
+  //     if (header.sortable !== column) {
+  //       header.direction = '';
+  //     }
+  //   });
+
+  //   this.service.sortColumn = column;
+  //   this.service.sortDirection = direction;
+  // }
 
   public getBranches(match: {} = {}): Promise<Branch[]> {
     return new Promise<Branch[]>((resolve) => {
@@ -235,10 +266,12 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
                             this.getItems();
                         } else {
                             this.items = result.result;
+                            this.filterItems = result.result;
                             this.totalItems = result.result.length;
                         }
                     } else {
                         this.items = new Array();
+                        this.filterItems = new Array();
                         this.totalItems = 0;
                     }
                 },
@@ -249,8 +282,36 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
                 },
             ),
     );
-}
+  }
 
+  filterItem() {
+    let filteredList = this.items;
+
+    for (const column of this.columns) {
+      const filterValue = this.filters[column.name]?.toString().trim();
+
+      if (filterValue !== undefined && filterValue !== '' && column.filter) {
+        filteredList = filteredList.filter((dato) => {
+          const columnValue = dato[column.name];
+
+          if (typeof columnValue === 'string') {
+            return columnValue
+              .toLowerCase()
+              .includes(filterValue.toLowerCase());
+          } else if (typeof columnValue === 'number') {
+           
+            return columnValue.toString() === filterValue;
+          }
+
+          return false;
+        });
+      }
+    }
+
+    this.filterItems = filteredList;
+    this.totalItems = filteredList.length;
+  }
+  
   public getColumnsVisibles(): number {
     let count: number = 0;
 
@@ -261,6 +322,10 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     }
 
     return count;
+  }
+
+  public orderBy(value){
+ console.log(value)
   }
 
   public getValue(item, column): any {
@@ -303,7 +368,6 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
 
   public refresh(): void {
     this.getItems();
-   
   }
 
   public exportIVA(): void {

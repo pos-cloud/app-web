@@ -106,16 +106,24 @@
                         <th>
                             <i class="fa fa-bars"></i>
                         </th>
-                        <ng-container *ngFor="let column of columns">
+                        <!-- <ng-container *ngFor="let column of columns">
                             <th *ngIf="column.visible" (click)="orderBy(column.name)">{{ column.name | translate }}</th>
-                        </ng-container>
+                            
+                        </ng-container> -->
+                        <th scope="col">Codigo</th>
+                        <th scope="col">Descripción</th>
+                        <th scope="col">cantidad</th>
                     </tr>
                     <tr class="filters">
                         <th></th>
                         <ng-container *ngFor="let column of columns">
                             <th *ngIf="column.visible">
-                                <input type="text" class="form-control" [(ngModel)]="filters[column.name]"
-                                    (keydown.enter)="getItems()" placeholder="{{ column.name | translate }}"
+                                <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    [(ngModel)]="filters[column.name]"
+                                    (keydown.enter)="filterItem(column)" 
+                                    placeholder="{{ column.name | translate }}"
                                     [disabled]="!column.filter">
                             </th>
                         </ng-container>
@@ -127,14 +135,14 @@
                             <app-progressbar [loading]="loading"></app-progressbar>
                         </td>
                     </tr>
-                    <tr *ngFor="let item of items | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage, totalItems: totalItems }">
+                    <tr *ngFor="let item of filterItems | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage, totalItems: totalItems }">
                         <td></td>
 
                         <ng-container *ngFor="let column of columns">
                             <td *ngIf="column.visible" [attr.align]="column.align">{{getValue(item, column)}}</td>
                         </ng-container>
                     </tr>
-                    <tr align="center" *ngIf="totalItems === 0 && !loading">
+                    <tr align="center" *ngIf="filterItems.length === 0 && !loading">
                         <td [attr.colspan]="getColumnsVisibles() + 1">No se encontraron transacciones</td>
                     </tr>
                 </tbody>
