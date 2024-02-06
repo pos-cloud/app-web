@@ -188,7 +188,7 @@ export class ListTransactionsComponent implements OnInit {
     });
 
     this.getItems();
-
+    console.log(this.listType)
     this.initDragHorizontalScroll();
   }
   public getBranches(match: {} = {}): Promise<Branch[]> {

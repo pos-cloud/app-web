@@ -80,7 +80,6 @@ import { BillingComponent } from './components/billing/billing.component';
 import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
 import { MenuComponent } from './components/menu/menu.component';
 
-
 export const _routes: Routes = [
   {
     path: '', component: HomeComponent,
