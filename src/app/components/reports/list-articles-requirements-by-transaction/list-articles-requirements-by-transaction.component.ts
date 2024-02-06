@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import {CurrencyPipe} from '@angular/common';
+import { Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {CurrencyPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { moveItemInArray, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { of as observableOf, Observable, Subscription } from 'rxjs';
@@ -7,7 +7,6 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Branch } from 'app/components/branch/branch';
 import { BranchService } from 'app/components/branch/branch.service';
 import { attributes } from '../reports';
-import { TransactionService } from 'app/components/transaction/transaction.service';
 import {RoundNumberPipe} from '../../../main/pipes/round-number.pipe';
 import * as moment from 'moment';
 import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
@@ -15,12 +14,8 @@ import { AuthService } from 'app/components/login/auth.service';
 import { Config } from '../../../app.config'
 import { TransactionMovement, TransactionType } from 'app/components/transaction-type/transaction-type';
 import { ReportsService } from '../reports.service';
-import { ExportIvaComponent } from '../../export/export-iva/export-iva.component';
 import {DateFormatPipe} from 'app/main/pipes/date-format.pipe';
-
-// import {Country} from './country';
-// import {CountryService} from './country.service';
-import {NgbdSortableHeader, SortEvent} from '../../../main/directives/sortable.directive';
+import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
 
 @Component({
   selector: 'app-list-articles-requirements-by-transaction',
@@ -31,6 +26,9 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
   private subscription: Subscription = new Subscription();
   private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
   private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
+
+  @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
+  title: string = 'Requerimientos de producción'
   branches: Branch[];
   branchSelectedId: string;
   allowChangeBranch: boolean;
@@ -50,9 +48,8 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
   timezone: string = '-03:00';
   transactionTypes: TransactionType[];
   transactionTypesSelect;
-  currentPage: number = 1;
-  sort = { endDate: -1 };
   itemsPerPage = 10;
+  currentPage: number = 1;
   modules: Observable<{}>;
   dropdownSettings = {
     singleSelection: false,
@@ -65,7 +62,6 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     itemsShowLimit: 3,
     allowSearchFilter: true,
   };
-  exportExcelComponent: any;
   items: any[] = [];
   filterItems: any[] = [];
   totalItems: number = 0;
@@ -74,19 +70,15 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
 
   deleteTransaction = true;
   editTransaction = true;
-  // countries$: Observable<Country[]>;
-  total$: Observable<number>;
 
   constructor(
     private _branchService: BranchService,
-    private _transactionService: TransactionService,
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal,
     public _transactionTypeService: TransactionTypeService,
     private _authService: AuthService,
     public _router: Router,
     public _reportsService: ReportsService,
-    // public service: CountryService
     
   ) {
     this.transactionTypesSelect = new Array();
@@ -101,8 +93,6 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     this.startDate = moment().format('YYYY-MM-DD');
     this.endDate = moment().format('YYYY-MM-DD');
     this.dateSelect = 'creationDate';
-    // this.countries$ = service.countries$;
-    // this.total$ = service.total$;
   }
 
   async ngOnInit() {
@@ -164,25 +154,6 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
 
     this.getItems();
   }
-
-  // @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>;
-
-  // constructor(public service: CountryService) {
-  //   this.countries$ = service.countries$;
-  //   this.total$ = service.total$;
-  // }
-
-  // onSort({column, direction}: SortEvent) {
-  //   // resetting other headers
-  //   this.headers.forEach(header => {
-  //     if (header.sortable !== column) {
-  //       header.direction = '';
-  //     }
-  //   });
-
-  //   this.service.sortColumn = column;
-  //   this.service.sortDirection = direction;
-  // }
 
   public getBranches(match: {} = {}): Promise<Branch[]> {
     return new Promise<Branch[]>((resolve) => {
@@ -286,20 +257,16 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
 
   filterItem() {
     let filteredList = this.items;
-
     for (const column of this.columns) {
       const filterValue = this.filters[column.name]?.toString().trim();
-
       if (filterValue !== undefined && filterValue !== '' && column.filter) {
         filteredList = filteredList.filter((dato) => {
           const columnValue = dato[column.name];
-
           if (typeof columnValue === 'string') {
             return columnValue
               .toLowerCase()
               .includes(filterValue.toLowerCase());
           } else if (typeof columnValue === 'number') {
-           
             return columnValue.toString() === filterValue;
           }
 
@@ -369,22 +336,12 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
   public refresh(): void {
     this.getItems();
   }
+  
 
-  public exportIVA(): void {
-    let modalRef = this._modalService.open(ExportIvaComponent, {
-      size: 'lg',
-      backdrop: 'static',
-    });
-
-    modalRef.componentInstance.type = this.listType;
-    modalRef.result.then(
-      (result) => {
-        if (result === 'export') {
-        }
-      },
-      (reason) => {},
-    );
-  }
+  public exportItems(): void {
+    this.exportExcelComponent.items = this.items;
+    this.exportExcelComponent.export();
+}
 
   public drop(event: CdkDragDrop<string[]>): void {
     moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
@@ -399,7 +356,6 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
   }
-
   public hideMessage(): void {
     this.alertMessage = '';
   }

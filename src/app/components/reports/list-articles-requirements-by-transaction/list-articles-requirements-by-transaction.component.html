@@ -82,7 +82,7 @@
             <div class="pull-right">
                 <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i
                         [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
-                <button class="btn" (click)="exportIVA()"><i class="fa fa-book"></i><span>Exportar IVA</span></button>
+                        <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems()"></app-export-excel>
                 <div class="btn-group" ngbDropdown>
                     <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Columnas"><i
                             class="fa fa-columns"></i><span>Columnas</span></button>
@@ -106,13 +106,9 @@
                         <th>
                             <i class="fa fa-bars"></i>
                         </th>
-                        <!-- <ng-container *ngFor="let column of columns">
-                            <th *ngIf="column.visible" (click)="orderBy(column.name)">{{ column.name | translate }}</th>
-                            
-                        </ng-container> -->
-                        <th scope="col">Codigo</th>
-                        <th scope="col">Descripción</th>
-                        <th scope="col">cantidad</th>
+                        <ng-container *ngFor="let column of columns">
+                            <th *ngIf="column.visible" sortable="(column.name)" (sort)="onSort($event)">{{ column.name | translate }}</th>      
+                        </ng-container>
                     </tr>
                     <tr class="filters">
                         <th></th>
@@ -134,13 +130,12 @@
                         <td [attr.colspan]="getColumnsVisibles() + 1" style="padding: 0px">
                             <app-progressbar [loading]="loading"></app-progressbar>
                         </td>
-                    </tr>
-                    <tr *ngFor="let item of filterItems | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage, totalItems: totalItems }">
+                    </tr>        
+                    <tr *ngFor="let item of filterItems | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage, totalItems: totalItems }"> 
                         <td></td>
-
                         <ng-container *ngFor="let column of columns">
-                            <td *ngIf="column.visible" [attr.align]="column.align">{{getValue(item, column)}}</td>
-                        </ng-container>
+                         <td *ngIf="column.visible" [attr.align]="column.align">{{getValue(item, column)}}</td>
+                        </ng-container>  
                     </tr>
                     <tr align="center" *ngIf="filterItems.length === 0 && !loading">
                         <td [attr.colspan]="getColumnsVisibles() + 1">No se encontraron transacciones</td>
@@ -154,9 +149,9 @@
             <div class="row">
                 <div class="col-md-10">
                     <pagination-controls (pageChange)="pageChange($event)"
-                        previousLabel="Ant." nextLabel="Sig." autoHide="true">
+                    previousLabel="Ant." nextLabel="Sig." autoHide="true">
                     </pagination-controls>
-                </div>         
+                </div>    
                 <div class="form-group col-md-2">
                     <select class="form-control" [(ngModel)]="itemsPerPage" (change)="pageChange(1)">
                         <option [value]="5">Mostrar 5 Registros</option>
@@ -166,7 +161,7 @@
                         <option [value]="50">Mostrar 50 Registros</option>
                         <option [value]="100">Mostrar 100 Registros</option>
                     </select>
-                </div>
+                  </div>
             </div>
         </div>
     </div>

@@ -47,3 +47,4 @@ export interface requirementsByTransaccion {
   code: string;
   description: string;
 }
+
