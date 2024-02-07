@@ -20,6 +20,7 @@ import {ShipmentMethodModule} from './shipment-method/shipment-method.module';
 import {TransactionTypeModule} from './transaction-type/transaction-type.module';
 import {UnitOfMeasurementModule} from './unit-of-measurement/unit-of-measurement.module';
 import {VariantValueModule} from './variant-value/variant-value.module';
+import { ReportsModule } from './reports/reports.module';
 
 @NgModule({
   imports: [
@@ -43,6 +44,7 @@ import {VariantValueModule} from './variant-value/variant-value.module';
     ReportModule,
     ImportExcelModule,
     BusinessRuleModule,
+    ReportsModule
   ],
   declarations: [],
 })

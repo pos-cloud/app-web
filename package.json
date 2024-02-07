@@ -22,7 +22,6 @@
   },
   "private": true,
   "dependencies": {
-    "@agm/core": "^1.1.0",
     "@angular/animations": "^15.2.7",
     "@angular/cdk": "^13.1.2",
     "@angular/common": "^15.2.7",
@@ -36,9 +35,6 @@
     "@ngu/carousel": "^4.0.0",
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
-    "@sentry/angular": "^6.16.1",
-    "@sentry/tracing": "^6.16.1",
-    "@types/googlemaps": "^3.43.3",
     "acorn": "^8.7.0",
     "angular-in-memory-web-api": "^0.13.0",
     "bootstrap": "^4.3.1",

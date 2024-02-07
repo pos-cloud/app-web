@@ -780,7 +780,7 @@ export class AddArticleComponent implements OnInit {
             this.loadURL();
           }
 
-          if (this.article.picture.includes('google')) {
+          if (this.article.picture.includes('google') ||  this.article.picture.includes('mitiendanube')) {
             this.imageURL = this.article.picture
           } else {
             this.imageURL = './../../../assets/img/default.jpg'

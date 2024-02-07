@@ -4,7 +4,6 @@ import { AddressComponent } from './crud/address.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AutocompleteComponent } from './google-places.component';
-import { AgmCoreModule } from '@agm/core';
 import { AddressService } from './address.service';
 
 @NgModule({
@@ -20,11 +19,7 @@ import { AddressService } from './address.service';
         BrowserModule,
         CommonModule,
         FormsModule,
-        ReactiveFormsModule,
-        AgmCoreModule.forRoot({
-            apiKey: "AIzaSyCi1AySMkCMeuptt0rwsgpo6nEgigDVJ4E",
-            libraries: ['places', 'geocoding']
-        }),
+        ReactiveFormsModule
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
     providers: []
