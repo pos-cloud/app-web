@@ -65,6 +65,7 @@ import { TranslateMePipe } from './../../../main/pipes/translate-me';
 import Resulteable from './../../../util/Resulteable';
 import { ORIGINMEDIA } from 'app/types';
 import { FileService } from 'app/services/file.service';
+import { ToastService } from 'app/main/services/toast.service';
 
 @Component({
   selector: 'app-add-article',
@@ -334,7 +335,8 @@ export class AddArticleComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public _fileService: FileService
+    public _fileService: FileService,
+    public toastService: ToastService
   ) {
     if (window.screen.width < 1000) this.orientation = 'vertical';
     this.article = new Article();
@@ -2070,26 +2072,14 @@ export class AddArticleComponent implements OnInit {
         title = result.message;
       }
     }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title),
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title),
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title),
-        );
-        break;
-    }
+
+    this.toastService.show(message, {
+      classname: `bg-${type} text-light`,
+      delay: 2000 ,
+      autohide: true,
+      headertext: title
+    });
+
     this.loading = false;
   }
 
