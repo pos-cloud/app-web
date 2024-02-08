@@ -44,6 +44,13 @@ const credentialsTiendaNube = [
         database: 'polirrubrojb',
         user: 'soporte',
         password: '431744'
+    },
+    {
+        tokenTiendaNube: 'a3bc18debd7faff1af268f5fda3ad89f4776501f',
+        storeId: 3954904,
+        database: 'quierosersanto',
+        user: 'soporte',
+        password: '431744'
     }
 ]
 
