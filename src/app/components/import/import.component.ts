@@ -22,6 +22,7 @@ export class ImportComponent implements OnInit {
   countUpdate: number;
   notUpdateArticle: string[];
   updateArticle: string[];
+  errorMessage: string;
   public importForm: UntypedFormGroup;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -61,7 +62,20 @@ export class ImportComponent implements OnInit {
 
   onBranchSelect(branch: Branch) {
  const branchId = branch._id
-  this.depositsData = this.allDeposits.filter(deposit => deposit.branch === branchId)
+ const filteredDeposits = this.allDeposits.filter(deposit => deposit.branch === branchId)
+
+  const uniqueDepositIds = new Set<string>();
+
+  // filtro los depositos duplicados
+  const uniqueDeposits = filteredDeposits.filter(deposit => {
+    if (!uniqueDepositIds.has(deposit._id)) {
+      uniqueDepositIds.add(deposit._id);
+      return true;
+    }
+    return false;
+  });
+
+  this.depositsData = uniqueDeposits
 
   }
 
@@ -87,7 +101,8 @@ export class ImportComponent implements OnInit {
         },
         error => {
           // Maneja el error en caso de que ocurra
-          console.error('Error al enviar el archivo:', error);
+          console.error('Error al enviar el archivo:', error.message);
+          this.errorMessage = 'Error al importar el archivo'
           this.loading = false; // Asegúrate de ocultar el estado de carga en caso de error
         }
       );

@@ -52,7 +52,7 @@
     </div>
   </form>
   
-  <div class="container" *ngIf="notUpdateArticle?.length > 0  && updateArticle?.length > 0">
+  <div class="container" *ngIf="notUpdateArticle?.length > 0 || updateArticle?.length > 0">
     <p>
       <span class="font-weight-bold">{{ countUpdate }} artículo<span *ngIf="countUpdate !== 1">s</span> actualizado<span *ngIf="countUpdate !== 1">s</span>: </span>
       <ng-container *ngFor="let article of updateArticle; let last = last">
@@ -64,6 +64,9 @@
       <ng-container  *ngFor="let article of notUpdateArticle; let last = last">
         <span class="text-danger">{{ article }}</span>{{ !last ? ', ' : '' }}
       </ng-container>
-    </p>    
+    </p>   
+    <p *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </p> 
   </div>
 </section>
