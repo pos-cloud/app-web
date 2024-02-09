@@ -3190,7 +3190,6 @@ export class AddSaleOrderComponent {
 
       // ACTUALIZACION DE ORDENES DE PRODUCCION
       if (this.transaction.type.transactionMovement === TransactionMovement.Production) {
-        console.log("entro")
         await this.updateOrdenOfProduction(this.transaction._id);
       }
 

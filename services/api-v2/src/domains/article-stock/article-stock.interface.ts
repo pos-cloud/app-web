@@ -10,4 +10,5 @@ export default interface ArticleStock extends Model {
   realStock: number
   minStock: number
   maxStock: number
+  code: string
 }

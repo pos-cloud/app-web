@@ -39,10 +39,10 @@
     <div class="card-header">
       <span>{{title}}</span>
       <div class="pull-right">
-        <button *ngIf="database === 'distribuidoragiletta'" class="btn fa fa-refresh" (click)="openModal('updateArticle')" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar Articulos</span></button>
-          <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
+        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
         <button class="btn" (click)="openModal('print-inventario', null)"><i class="fa fa-print"></i> Imprimir Inventario</button>
         <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems()"></app-export-excel>
+        <button class="btn" (click)="openModal('uploadFile', null)"><i class="fa fa-upload"></i> Importar</button>
         <div class="btn-group" ngbDropdown>
           <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Columnas"><i class="fa fa-columns"></i><span>Columnas</span></button>
           <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu>

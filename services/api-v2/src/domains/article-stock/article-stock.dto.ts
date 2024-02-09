@@ -30,4 +30,6 @@ export default class ArticleStockDto extends ModelDto {
   @ValidateIf((o) => o.maxStock !== undefined)
   @IsNumber()
   public maxStock: number
+
+  public code: string
 }

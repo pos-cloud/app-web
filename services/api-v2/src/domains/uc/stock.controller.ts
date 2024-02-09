@@ -125,6 +125,7 @@ export default class StockController {
 					quantityForStock: 1,
 					operationType: 1,
 					transaction: 1,
+					code: 1,
 					'deposit._id': 1,
 					'deposit.branch._id': 1,
 					'deposit.branch.operationType': 1,
@@ -217,6 +218,7 @@ export default class StockController {
 								articleStock.deposit = movementOfArticle.deposit;
 								articleStock.minStock = 0;
 								articleStock.realStock = 0;
+								articleStock.code = movementOfArticle.code;
 
 								if (!endProcess) {
 									if (movementOfArticle.stockMovement === StockMovement.Inflows ||
