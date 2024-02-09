@@ -62,7 +62,7 @@ export default class ArticleStockController extends Controller {
     try {
       this.initConnectionDB(request.database)
       this.userAudit = request.user
-
+      
       const file = request.file;
       const branchId = request.body.branchId;
       const depositId = request.body.depositId

@@ -12,6 +12,7 @@ export default class ArticleStockUC {
   }
 
   async updateFromExcel(data: any[], branchId: string, depositId: string) {
+
     return new Promise<{}>(async (resolve, reject) => {
       let articlesObject: any = {};
 
@@ -32,8 +33,10 @@ export default class ArticleStockUC {
       try {
         const articlesStockByArticle = await new ArticleStockController(
           this.database,
-        ).find({ code: { $in: articles } }, {});
-
+        ).find(
+          { code: { $in: articles }, deposit: depositId, branch: branchId }, {}
+           );
+           
         articlesStockByArticle.forEach((item: any) => {
           item.realStock = articlesObject[item.code].realStock;
           item.minStock = articlesObject[item.code].minStock;

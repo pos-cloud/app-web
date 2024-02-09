@@ -16,13 +16,15 @@ export class ImportService {
     public _authService: AuthService
   ) { }
 
-  public import(file: File): Observable<any> {
+  public import(file: File, depositId: string, branchId: string ): Observable<any> {
 
     const URL = `${environment.apiv2}/article-stocks/update-excel`;
 
     const formData = new FormData();
     formData.append('file', file);
-
+    formData.append('depositId', depositId);
+    formData.append('branchId', branchId);
+  
     const headers = new HttpHeaders()
       .set('Authorization', this._authService.getToken());
 

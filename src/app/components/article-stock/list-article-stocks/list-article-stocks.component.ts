@@ -66,6 +66,7 @@ export class ListArticleStocksComponent implements OnInit {
   branches: Branch[] = new Array();
   branchesSelected: Branch[] = new Array();
   deposits: Deposit[] = new Array();
+  allDeposits: Deposit[] = new Array();
   depositsSelected: Deposit[] = new Array();
   priceListId: string;
   alertMessage: string = '';
@@ -501,6 +502,8 @@ export class ListArticleStocksComponent implements OnInit {
           backdrop: 'static',
         });
         modalRef.componentInstance.model = 'articles-stock'
+        modalRef.componentInstance.branches = this.branches
+        modalRef.componentInstance.allDeposits = this.allDeposits
         modalRef.result.then(
           (result) => {
             if (result === 'save_close') {
@@ -577,7 +580,15 @@ export class ListArticleStocksComponent implements OnInit {
   public getBranches(): void {
     this._branchService.getAll({match: {operationType: {$ne: 'D'}}}).subscribe(
       (result: Resulteable) => {
-        if (result.status === 200) this.branches = result.result;
+        if (result.status === 200){
+          this.branches = result.result
+
+          if (this.branches && this.branches.length > 0) {
+            this.branches.forEach(branch => {
+              this.getDeposits(branch._id);
+            });
+          }
+        }
       },
       (error) => this.showToast(error),
     );
@@ -588,7 +599,12 @@ export class ListArticleStocksComponent implements OnInit {
       .getAll({match: {branch: {$oid: branchId}, operationType: {$ne: 'D'}}})
       .subscribe(
         (result: Resulteable) => {
-          if (result.status === 200) this.deposits = result.result;
+          if (result.status === 200){
+            const depositsForBranch = result.result;
+            this.deposits = depositsForBranch;
+            this.allDeposits = this.allDeposits.concat(depositsForBranch);
+          }
+
         },
         (error) => this.showToast(error),
       );
