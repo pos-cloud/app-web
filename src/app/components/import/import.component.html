@@ -64,6 +64,9 @@
       <ng-container  *ngFor="let article of notUpdateArticle; let last = last">
         <span class="text-danger">{{ article }}</span>{{ !last ? ', ' : '' }}
       </ng-container>
-    </p>    
+    </p>   
+    <p *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </p> 
   </div>
 </section>
