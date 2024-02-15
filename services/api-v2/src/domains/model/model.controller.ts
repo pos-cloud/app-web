@@ -498,6 +498,17 @@ export default class Controller {
     })
   }
 
+  async find(query: {}, project: {}): Promise<[]> {
+    return new Promise<[]>(async (resolve, reject) => {
+        this.model
+          .find(query,project)
+          .then((result : []) => {
+            resolve(result)
+          })
+          .catch((error: any) => reject(new NotFoundException('', error)))
+    })
+  }
+
   getObjById = async (
     request: RequestWithUser,
     response: express.Response,

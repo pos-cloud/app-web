@@ -14,6 +14,7 @@ class ArticleStockSchema extends Model {
       realStock: {type: Number, default: 0, required: true},
       minStock: {type: Number, default: 0},
       maxStock: {type: Number, default: 0},
+      code: {type: String, trim: true}
     })
   }
 

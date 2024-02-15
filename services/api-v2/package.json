@@ -50,6 +50,7 @@
 		"@types/node": "^14.18.10",
 		"@types/supertest": "^2.0.7",
 		"@types/woocommerce__woocommerce-rest-api": "^1.0.1",
+		"@types/xlsx": "^0.0.36",
 		"@typescript-eslint/eslint-plugin": "^5.27.0",
 		"@typescript-eslint/parser": "^5.27.0",
 		"eslint": "^8.16.0",
@@ -68,12 +69,10 @@
 	"scripts": {
 		"dev": "cross-env NODE_ENV=development API_URL=http://localhost:300/api nodemon ./src/server.ts",
 		"lint": "tslint -p tsconfig.json -c tslint.json",
-		
 		"prod": "cross-env NODE_ENV=production nodemon ./src/server.ts",
 		"eldesafio": "cross-env NODE_ENV=production URL_SERVER=http://192.168.2.108 API_URL=http://192.168.2.108:300/api API_V8_URL=http://192.168.2.108:308 nodemon ./src/server.ts",
 		"jacksonburgs": "cross-env NODE_ENV=production URL_SERVER=http://192.168.0.88 API_URL=http://192.168.0.88:300/api API_V8_URL=http://192.168.0.88:308 nodemon ./src/server.ts",
 		"granpaso": "cross-env NODE_ENV=production URL_SERVER=http://192.168.88.90 API_URL=http://192.168.88.90:300/api API_V8_URL=http://192.168.88.90:308 nodemon ./src/server.ts",
-		
 		"donweb:dev": "cross-env NODE_ENV=development MONGO_URL=mongodb://localhost:27017/ API_URL=https://d-api-v1.poscloud.ar/api nodemon ./src/server.ts"
 	},
 	"author": "POS Cloud",
