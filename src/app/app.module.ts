@@ -20,7 +20,7 @@ import {TranslateModule, TranslateLoader} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {NgMultiSelectDropDownModule} from 'ng-multiselect-dropdown';
 import {NgxPaginationModule} from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
-import {SocketIoModule, SocketIoConfig} from 'ngx-socket-io';
+//import {SocketIoModule, SocketIoConfig} from 'ngx-socket-io';
 import {NgxTinymceModule} from 'ngx-tinymce';
 import {ToastrModule} from 'ngx-toastr';
 
@@ -261,10 +261,10 @@ export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 
-const configSocket: SocketIoConfig = {
-  url: 'http://demo.poscloud.com.ar:300',
-  options: {},
-};
+// const configSocket: SocketIoConfig = {
+//   url: 'http://demo.poscloud.com.ar:300',
+//   options: {},
+// };
 
 @NgModule({
   declarations: [
@@ -454,7 +454,7 @@ const configSocket: SocketIoConfig = {
         deps: [HttpClient],
       },
     }),
-    SocketIoModule.forRoot(configSocket),
+    //SocketIoModule.forRoot(configSocket),
     ToastrModule.forRoot(),
     NguCarouselModule,
     NgxTinymceModule.forRoot({
