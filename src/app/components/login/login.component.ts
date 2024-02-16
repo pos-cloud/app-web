@@ -17,7 +17,7 @@ import { AuthService } from 'app/components/login/auth.service';
 import { ConfigService } from 'app/components/config/config.service';
 import { User } from 'app/components/user/user';
 import { ToastrService } from 'ngx-toastr';
-import { Socket } from 'ngx-socket-io';
+//import { Socket } from 'ngx-socket-io';
 import { Employee } from '../employee/employee';
 
 @Component({
@@ -68,7 +68,7 @@ export class LoginComponent implements OnInit {
     public _router: Router,
     private _configService: ConfigService,
     private _route: ActivatedRoute,
-    private socket: Socket,
+    //private socket: Socket,
     private _toastr: ToastrService,
   ) {
     this.alertMessage = '';
@@ -153,7 +153,7 @@ export class LoginComponent implements OnInit {
               this.showMessage("Ingresando...", 'success', false);
 
               this._authService.loginStorage(result.user);
-              this.initSocket();
+              //this.initSocket();
   
               await this.getConfigApi().then(config => {
                 if (config) {
@@ -182,22 +182,22 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  private initSocket(): void {
-    const identity: User = JSON.parse(sessionStorage.getItem('user'));
+  // private initSocket(): void {
+  //   const identity: User = JSON.parse(sessionStorage.getItem('user'));
 
-    if (identity && Config.database && Config.database !== '') {
-      // INICIAMOS SOCKET
-      this.socket.emit('start', {
-        database: Config.database,
-        clientType: 'pos'
-      });
+  //   if (identity && Config.database && Config.database !== '') {
+  //     // INICIAMOS SOCKET
+  //     this.socket.emit('start', {
+  //       database: Config.database,
+  //       clientType: 'pos'
+  //     });
 
-      // ESCUCHAMOS SOCKET
-      this.socket.on('message', (mnj) => {
-        this.showToast(mnj);
-      });
-    }
-  }
+  //     // ESCUCHAMOS SOCKET
+  //     this.socket.on('message', (mnj) => {
+  //       this.showToast(mnj);
+  //     });
+  //   }
+  // }
 
   public getConfigApi(): Promise<Config> {
     return new Promise<Config>((resolve, reject) => {

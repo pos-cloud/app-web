@@ -716,12 +716,18 @@ export class ListArticlesPosComponent implements OnInit {
                         if (!article.isWeigth) { salePrice = article.salePrice }
                         let amount = 1;
                         if (this.config.tradeBalance.numberOfQuantity && this.config.tradeBalance.numberOfQuantity != 0) {
+                            // for ajonjoli
+                            amount = parseFloat(wholePart + "." + decimalPart)
+                            salePrice = article.salePrice * amount;
+
+                            /*
                             amount = parseInt(originalFilter.slice(
                                 this.config.tradeBalance.codePrefix.toString().length + article.code.length,
                                 this.config.tradeBalance.codePrefix.toString().length + article.code.length + this.config.tradeBalance.numberOfQuantity)
                             );
                             amount = amount / article.quantityPerMeasure;
-                            salePrice = article.salePrice * amount;
+
+                            */
                         }
                         await this.getStructureForStock(article, amount, salePrice);
                     } else {
