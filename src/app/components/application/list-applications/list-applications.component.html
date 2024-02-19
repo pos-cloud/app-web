@@ -1,1 +1,201 @@
-<app-datatable [title]="title" [columns]="columns" [rowButtons]="rowButtons" [headerButtons]="headerButtons" [sort]="sort" [_service]="_service" (eventFunction)="emitEvent($event)"></app-datatable>
+<section class="container-fluid">
+    <div class="card card-large">
+        <div class="card-header">
+            <span>{{ title }}</span>
+        </div>
+        <div class="card-block table-responsive">
+            <ngb-accordion [closeOthers]="true" #acc="ngbAccordion" activeIds="ngb-panel-0">
+                <ngb-panel id="Tienda Nube">
+                    <ng-template ngbPanelTitle>
+                        <div class="row align-items-center">
+                            <div class="col-auto pr-0">
+                                <img src="../../../../assets/img/tiendanube-logo.png" alt="TiendaNube" class="img-fluid"
+                                    style="max-height: 30px;" />
+                            </div>
+                            <div>
+                                <p class="mb-0 h5 text-dark">Tienda Nube</p>
+                            </div>
+                        </div>
+                    </ng-template>
+                    <ng-template ngbPanelContent>
+                        <form [formGroup]="tiendaNubeForm" (ngSubmit)="updateApplication('TiendaNube')">
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label for="userId" class="control-label">Usuario Id:</label>
+                                    <input formControlName="userId" type="number" class="form-control" name="userId"
+                                        id="userId" />
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="token" class="control-label">Token:</label>
+                                    <input type="text" class="form-control" formControlName="token" name="token"
+                                        id="token" />
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary pull-right" [disabled]="loading">
+                                <i [ngClass]="{'save':!loading, 'spinner spin':loading}"></i>
+                                <span *ngIf="!loading">Enviar</span>
+                                <span *ngIf="loading">Espere por favor</span>
+                            </button>
+                        </form>
+                    </ng-template>
+                </ngb-panel>
+                <ngb-panel id="Carta Digital">
+                    <ng-template ngbPanelTitle>
+                        <div class="row align-items-center">
+                            <div class="col-auto pr-0">
+                                <img src="../../../../assets/img/cartadigital.png" alt="Carta Digital" class="img-fluid"
+                                    style="max-height: 30px;" />
+                            </div>
+                            <div>
+                                <p class="mb-0 h5 text-dark">Carta Digital</p>
+                            </div>
+                        </div>
+                    </ng-template>
+                    <ng-template ngbPanelContent>
+                        <form [formGroup]="cartaDigitalForm" (ngSubmit)="updateApplication('Carta digital')">
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label for="portain" class="control-label">Portada:</label>
+                                    <input formControlName="portain" type="text" class="form-control" name="portain"
+                                        id="portain" />
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="background" class="control-label">Fondo:</label>
+                                    <input formControlName="background" type="text" class="form-control"
+                                        name="background" id="background" />
+                                </div>
+                                <div formGroupName="article" class="row offset-md-0">
+                                    <div class="col-md-12 mt-3">
+                                        <h5 class="m-0">Productos</h5>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="articleFont" class="control-label">Fuente:</label>
+                                        <input type="text" class="form-control" formControlName="font"
+                                            name="articleFont" id="articleFont" />
+                                    </div>
+                                    <div class="form-group col-md-2 mt-2">
+                                        <label for="articleSize" class="control-label">Tamaño:</label>
+                                        <input type="text" class="form-control" formControlName="size"
+                                            name="articleSize" id="articleSize" />
+                                    </div>
+                                    <div class="form-group col-md-2 mt-2">
+                                        <label for="articleColor" class="control-label">Color:</label>
+                                        <input type="text" class="form-control" formControlName="color"
+                                            name="articleColor" id="articleColor" />
+                                    </div>
+                                    <div class="form-group col-md-2 mt-2">
+                                        <label for="articleStyle" class="control-label">Estilo:</label>
+                                        <input type="text" class="form-control" formControlName="style"
+                                            name="articleStyle" id="articleStyle" />
+                                    </div>
+                                    <div class="form-group col-md-2 mt-2">
+                                        <label for="articleWeight" class="control-label">Grosor de la fuente:</label>
+                                        <input type="text" class="form-control" formControlName="weight"
+                                            name="articleWeight" id="articleWeight" />
+                                    </div>
+                                </div>
+                                
+                                <div formGroupName="category" class="row offset-md-0">
+                                    <div class="col-md-12 mt-3">
+                                        <h5 class="m-0">Categoría</h5>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="categoryFont" class="control-label">Fuente:</label>
+                                        <input type="text" class="form-control" formControlName="font"
+                                            name="categoryFont" id="categoryFont" />
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="categorySize" class="control-label">Tamaño:</label>
+                                        <input type="text" class="form-control" formControlName="size"
+                                            name="categorySize" id="categorySize" />
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="categoryColor" class="control-label">Color:</label>
+                                        <input type="text" class="form-control" formControlName="color"
+                                            name="categoryColor" id="categoryColor" />
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="categoryStyle" class="control-label">Estilo:</label>
+                                        <input type="text" class="form-control" formControlName="style"
+                                            name="categoryStyle" id="categoryStyle" />
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="categoryWeight" class="control-label">Grosor de la fuente:</label>
+                                        <input type="text" class="form-control" formControlName="weight"
+                                            name="categoryWeight" id="categoryWeight" />
+                                    </div>
+                                </div>
+                                <div formGroupName="price" class="row offset-md-0">
+                                    <div class="col-md-12 mt-3">
+                                        <h5 class="m-0">Precio</h5>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="priceFont" class="control-label">Fuente:</label>
+                                        <input type="text" class="form-control" formControlName="font" name="priceFont"
+                                            id="priceFont" />
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="priceSize" class="control-label">Tamaño:</label>
+                                        <input type="text" class="form-control" formControlName="size" name="priceSize"
+                                            id="priceSize" />
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="priceColor" class="control-label">Color:</label>
+                                        <input type="text" class="form-control" formControlName="color"
+                                            name="priceColor" id="priceColor" />
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="priceStyle" class="control-label">Estilo:</label>
+                                        <input type="text" class="form-control" formControlName="style"
+                                            name="priceStyle" id="priceStyle" />
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="priceWeight" class="control-label">Grosor de la fuente:</label>
+                                        <input type="text" class="form-control" formControlName="weight"
+                                            name="priceWeight" id="priceWeight" />
+                                    </div>
+                                </div>
+                                <div formGroupName="observation" class="row offset-md-0">
+                                    <div class="col-md-12 mt-3">
+                                        <h5 class="m-0">Observación</h5>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="observationFont" class="control-label">Fuente:</label>
+                                        <input type="text" class="form-control" formControlName="font"
+                                            name="observationFont" id="observationFont" />
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="observationSize" class="control-label">Tamaño:</label>
+                                        <input type="text" class="form-control" formControlName="size"
+                                            name="observationSize" id="observationSize" />
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="observationColor" class="control-label">Color:</label>
+                                        <input type="text" class="form-control" formControlName="color"
+                                            name="observationColor" id="observationColor" />
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="observationStyle" class="control-label">Estilo:</label>
+                                        <input type="text" class="form-control" formControlName="style"
+                                            name="observationStyle" id="observationStyle" />
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="observationWeight" class="control-label">Grosor de la
+                                            fuente:</label>
+                                        <input type="text" class="form-control" formControlName="weight"
+                                            name="observationWeight" id="observationWeight" />
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary pull-right" [disabled]="loading">
+                                <i [ngClass]="{'save':!loading, 'spinner spin':loading}"></i>
+                                <span *ngIf="!loading">Enviar</span>
+                                <span *ngIf="loading">Espere por favor</span>
+                            </button>
+                        </form>
+                    </ng-template>
+                </ngb-panel>
+            </ngb-accordion>
+        </div>
+    </div>
+</section>

@@ -15,6 +15,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from 'app/main/pipes/pipes.module';
 import { ListApplicationsComponent } from './list-applications/list-applications.component';
 import { NgxTinymceModule } from 'ngx-tinymce';
+import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
 
 const routes: Routes = [
   {
@@ -55,6 +56,7 @@ const routes: Routes = [
         DragDropModule,
         ProgressbarModule,
         PipesModule,
+        NgbAccordionModule,
         TranslateModule,
         NgbDropdownModule,
         NgbModule,
