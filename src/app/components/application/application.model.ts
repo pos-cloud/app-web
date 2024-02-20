@@ -1,9 +1,9 @@
-import {IAttribute} from 'app/util/attribute.interface';
+import { IAttribute } from 'app/util/attribute.interface';
 
-import {Article} from '../article/article';
-import {Category} from '../category/category';
-import {EmailTemplate} from '../email-template/email-template';
-import {Model} from '../model/model.model';
+import { Article } from '../article/article';
+import { Category } from '../category/category';
+import { EmailTemplate } from '../email-template/email-template';
+import { Model } from '../model/model.model';
 
 export class Application extends Model {
   order: number;
@@ -61,13 +61,13 @@ export class Application extends Model {
   };
   auth: {
     requireOPT: boolean;
-    messageOPT: {type: String};
+    messageOPT: { type: String };
   };
   integrations: {
     meli: {
-      code: {type: String};
-      token: {type: String};
-      refreshToken: {type: String};
+      code: { type: String };
+      token: { type: String };
+      refreshToken: { type: String };
     };
   };
   notifications: {
@@ -79,13 +79,11 @@ export class Application extends Model {
       checkout: string;
     };
   };
-
   schedule: {
     day: string;
     from: string;
     to: string;
   }[];
-
   email: {
     register: {
       enabled: boolean;
@@ -118,6 +116,42 @@ export class Application extends Model {
       };
     };
   };
+  tiendaNube: {
+    userId: string,
+    token: string
+  }
+  menu: {
+    portain: string,
+    background: string
+    article: {
+      font: string,
+      size: number,
+      color: string,
+      style: string,
+      weight: string
+    },
+    category: {
+      font: string,
+      size: number,
+      color: string,
+      style: string,
+      weight: string
+    },
+    price: {
+      font: string,
+      size: number,
+      color: string,
+      style: string,
+      weight: string
+    },
+    observation: {
+      font: string,
+      size: number,
+      color: string,
+      style: string,
+      weight: string
+    }
+  }
 
   constructor() {
     super();
@@ -179,5 +213,5 @@ export enum ApplicationType {
   Woocommerce = <any>'Woocommerce',
   MercadoLibre = <any>'MercadoLibre',
   TiendaNube = <any>'TiendaNube',
-  Menu = <any> 'Carta digital'
+  Menu = <any>'Carta digital'
 }

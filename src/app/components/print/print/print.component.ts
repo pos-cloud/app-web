@@ -3224,7 +3224,7 @@ export class PrintComponent implements OnInit {
 
             if (this.movementsOfArticles[i].discountRate > 0) {
               this.doc.text(
-                '%' + this.movementsOfArticles[i].discountRate.toString(),
+                '$ ' +  this.movementsOfArticles[i].discountAmount.toString(),
                 175,
                 row,
               );
