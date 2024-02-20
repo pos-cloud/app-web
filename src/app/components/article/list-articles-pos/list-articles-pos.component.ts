@@ -717,6 +717,8 @@ export class ListArticlesPosComponent implements OnInit {
                         let amount = 1;
                         if (this.config.tradeBalance.numberOfQuantity && this.config.tradeBalance.numberOfQuantity != 0) {
                             // for ajonjoli
+                            wholePart = originalFilter.substring(this.config.tradeBalance.codePrefix.toString().length + this.config.tradeBalance.numberOfCode, this.config.tradeBalance.codePrefix.toString().length + this.config.tradeBalance.numberOfCode + this.config.tradeBalance.numberOfQuantity);
+
                             amount = parseFloat(wholePart + "." + decimalPart)
                             salePrice = article.salePrice * amount;
 
