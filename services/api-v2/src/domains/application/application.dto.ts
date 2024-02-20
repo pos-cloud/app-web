@@ -139,4 +139,42 @@ export default class ApplicationDto extends ModelDto {
       }
     }
   }
+
+  tiendaNube:{
+    userId: number,
+    token: string
+  }
+  menu: {
+    portain: string, 
+    background: string
+    article: {
+        font: string,
+        size: number,
+        color: string,
+        style: string,
+        weight: string
+    },
+    category: {
+        font: string,
+        size: number,
+        color: string,
+        style: string,
+        weight: string
+    },
+    price: {
+        font: string,
+        size: number,
+        color: string,
+        style: string,
+        weight: string
+    },
+    observation: {
+        font: string,
+        size: number,
+        color: string,
+        style: string,
+        weight: string
+    }
+}
+
 }

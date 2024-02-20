@@ -21,6 +21,7 @@ import { Config } from 'app/app.config';
 import { CurrentAccountDetailsComponent } from '../../components/print/current-account-details/current-account-details.component';
 import { PushNotificationsService } from 'app/components/notification/notification.service';
 import { UserService } from 'app/components/user/user.service';
+import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'app-header',
@@ -42,6 +43,8 @@ export class HeaderComponent {
     public readedNotification: boolean;
     public intervalSocket;
     public notificationMessage: string;
+    showAccordion = false;
+
     constructor(
         private _authService: AuthService,
         public _configService: ConfigService,
@@ -118,6 +121,10 @@ export class HeaderComponent {
             this.notificationMessage = localStorage.getItem('notificationMessage');
         }, 3000);
     }
+
+    toggleAccordion() {
+        this.showAccordion = !this.showAccordion;
+      }
 
     // private initSocket(): void {
 

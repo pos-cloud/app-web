@@ -129,6 +129,43 @@ class ApplicationSchema extends Model {
           },
         },
       },
+      tiendaNube: {
+        userId: { type: Number },
+        token: { type: String }
+      },
+      menu: {
+        portain: { type: String },
+        background: { type: String },
+        article: {
+            font: { type: String },
+            size: { type: Number },
+            color: { type: String },
+            style: { type: String },
+            weight: { type: String },
+        },
+        category: {
+            font: { type: String },
+            size: { type: Number },
+            color: { type: String },
+            style: { type: String },
+            weight: { type: String },
+        },
+        price: {
+            font: { type: String },
+            size: { type: Number },
+            color: { type: String },
+            style: { type: String },
+            weight: { type: String },
+        },
+        observation: {
+            font: { type: String },
+            size: { type: Number },
+            color: { type: String },
+            style: { type: String },
+            weight: { type: String }
+        }
+    }
+
     })
   }
 
