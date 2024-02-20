@@ -139,10 +139,6 @@
           </button>
         </div>
       </li>
-      <li class="nav-item" >
-        <a class="nav-link btn" [routerLink]="['applications']"  data-toggle="tooltip" data-placement="top">
-          <i class="fa fa-align-left"></i> {{ 'applications' | translate | capitalize }} </a>
-      </li>
       <li class="nav-item" ngbDropdown (click)="makeVisibleReport(false)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-male"></i> Empresas</a>
@@ -377,7 +373,13 @@
             Lista de Precios
           </button>
           <div class="dropdown-divider"></div>
-
+          <!-- <li class="nav-item" >
+            <a class="nav-link btn" [routerLink]="['applications']"  data-toggle="tooltip" data-placement="top">
+              <i class="fa fa-align-left"></i> {{ 'applications' | translate | capitalize }} </a>
+          </li> -->
+            <button class="dropdown-item" [routerLink]="['applications']" [routerLinkActive]="['active']">
+              {{ 'applications' | translate | capitalize }}
+            </button>
           <div class="dropdown-divider"></div>
           <button class="dropdown-item" [routerLink]="['holidays']" [routerLinkActive]="['active']">
             {{ 'holidays' | translate | capitalize }}
@@ -434,7 +436,7 @@
           <i class="fa fa-wifi" style="color: #FF0000; margin-top: 13px; margin-left: 5px"></i>
         </ng-template>
       </li>
-      <li class="nav-item" style="margin-top: 10px; margin-left: 5px">V-1.1.5b</li>
+      <li class="nav-item" style="margin-top: 10px; margin-left: 5px">V-1.1.5c</li>
       <li> <i class="fa fa-refresh"
         style="color: blue; margin-top: 13px; margin-left: 5px" (click)="reload()"></i></li>
 
