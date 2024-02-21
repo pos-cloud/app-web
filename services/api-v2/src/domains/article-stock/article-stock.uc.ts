@@ -1,4 +1,8 @@
+import Article from "../article/article.interface";
+import ArticleController from "../article/article.controller";
 import ArticleStockController from "./article-stock.controller";
+import ArticleStockSchema from '../article-stock/article-stock.model'
+import ArticleStock from "./article-stock.interface";
 
 export default class ArticleStockUC {
   database: string;
@@ -12,7 +16,6 @@ export default class ArticleStockUC {
   }
 
   async updateFromExcel(data: any[], branchId: string, depositId: string) {
-
     return new Promise<{}>(async (resolve, reject) => {
       let articlesObject: any = {};
 
@@ -21,22 +24,35 @@ export default class ArticleStockUC {
         notUpdateArticle: <any>[],
         countUpdate: 0,
         countNotUpdate: 0
-      }
+      };
 
       const articles = data.map((obj) => obj.article);
 
       data.forEach((item) => {
         articlesObject[item.article] = item;
-        response.notUpdateArticle.push(item.article)
+        response.notUpdateArticle.push(item.article);
       });
 
       try {
+        const article = await new ArticleController(this.database).find(
+          { code: { $in: articles }, type: "Final" }, {}
+        );
+
+        const existingCodes = article.map((item: Article) => item.code);
+
+        const nonExistingCodes = existingCodes.filter(code => !existingCodes.includes(code));
+
+        nonExistingCodes.forEach((item) => {
+          response.notUpdateArticle.push(item);
+        });
+
+
         const articlesStockByArticle = await new ArticleStockController(
           this.database,
         ).find(
-          { code: { $in: articles }, deposit: depositId, branch: branchId }, {}
-           );
-           
+          { code: { $in: existingCodes }, deposit: depositId, branch: branchId }, {}
+        );
+
         articlesStockByArticle.forEach((item: any) => {
           item.realStock = articlesObject[item.code].realStock;
           item.minStock = articlesObject[item.code].minStock;
@@ -53,21 +69,59 @@ export default class ArticleStockUC {
             },
           );
 
-          if(result.status == 200) {
-            response.updateArticle.push(result.result.code) 
-            let indexToRemove = response.notUpdateArticle.indexOf(result.result.code);
-              if (indexToRemove !== -1) {
-                response.notUpdateArticle.splice(indexToRemove, 1);
-              }
+          if (result.status === 200) {
+            const code = result.result.code;
+            if (!response.updateArticle.includes(code)) {
+              response.updateArticle.push(code);
+            }
+            const indexToRemove = response.notUpdateArticle.indexOf(code);
+            if (indexToRemove !== -1) {
+              response.notUpdateArticle.splice(indexToRemove, 1);
+            }
           }
           return result;
         });
 
         await Promise.all(updatePromises);
 
-        response.countUpdate = response.updateArticle.length
-        response.countNotUpdate = response.notUpdateArticle.length
+        const existingCodesS= articlesStockByArticle.map((item: ArticleStock) => item.code);
+        const articlesNotFoundInStock = existingCodes.filter(code => !existingCodesS.includes(code));
 
+         const createPromises = articlesNotFoundInStock.map(async (code) => {
+          const articleData = articlesObject[code];
+
+          const articles: Article[] = await new ArticleController(this.database).find({ code: code, type: "Final" }, {});
+
+          const article = articles[0];
+          let articleStock: ArticleStock = ArticleStockSchema.getInstance(this.database);
+          articleStock = Object.assign(articleStock, {
+            code,
+            article: article._id,
+            deposit: depositId,
+            branch: branchId,
+            realStock: articleData.realStock,
+            minStock: articleData.minStock,
+            maxStock: articleData.maxStock,
+          });
+
+          const result = await new ArticleStockController(this.database).save(articleStock);
+          if (result.status === 200) {
+            const createdCode = result.result.code;
+            if (!response.updateArticle.includes(createdCode)) {
+              response.updateArticle.push(createdCode);
+            }
+            const indexToRemove = response.notUpdateArticle.indexOf(createdCode);
+            if (indexToRemove !== -1) {
+              response.notUpdateArticle.splice(indexToRemove, 1);
+            }
+          }
+          return result;
+        });
+
+        await Promise.all(createPromises);
+
+        response.countUpdate = response.updateArticle.length;
+        response.countNotUpdate = response.notUpdateArticle.length;
         resolve(response);
       } catch (error) {
         reject(error);

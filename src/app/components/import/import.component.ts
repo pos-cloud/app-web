@@ -2,8 +2,8 @@ import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ImportService } from './import.service';
-import {Branch} from 'app/components/branch/branch';
-import {Deposit} from 'app/components/deposit/deposit';
+import { Branch } from 'app/components/branch/branch';
+import { Deposit } from 'app/components/deposit/deposit';
 
 @Component({
   selector: 'add-import',
@@ -46,7 +46,6 @@ export class ImportComponent implements OnInit {
 
   ngOnInit(): void {
     this.buildForm();
-    console.log(this.branches, this.allDeposits)
   }
 
   public buildForm(): void {
@@ -61,21 +60,20 @@ export class ImportComponent implements OnInit {
   }
 
   onBranchSelect(branch: Branch) {
- const branchId = branch._id
- const filteredDeposits = this.allDeposits.filter(deposit => deposit.branch === branchId)
+    const branchId = branch._id
+    const filteredDeposits = this.allDeposits.filter(deposit => deposit.branch === branchId)
 
-  const uniqueDepositIds = new Set<string>();
+    const uniqueDepositIds = new Set<string>();
 
-  // filtro los depositos duplicados
-  const uniqueDeposits = filteredDeposits.filter(deposit => {
-    if (!uniqueDepositIds.has(deposit._id)) {
-      uniqueDepositIds.add(deposit._id);
-      return true;
-    }
-    return false;
-  });
+    const uniqueDeposits = filteredDeposits.filter(deposit => {
+      if (!uniqueDepositIds.has(deposit._id)) {
+        uniqueDepositIds.add(deposit._id);
+        return true;
+      }
+      return false;
+    });
 
-  this.depositsData = uniqueDeposits
+    this.depositsData = uniqueDeposits
 
   }
 
@@ -87,10 +85,10 @@ export class ImportComponent implements OnInit {
     if (this.importForm.valid) {
       const inputElement: HTMLInputElement = document.getElementById('fileInput') as HTMLInputElement;
       const file: File = inputElement.files[0]; // Obtener el primer archivo seleccionado
-  
-      this.loading = true; 
-  
-      this._excelUpdateService.import(file, this.depositsSelected[0]._id, this.branchesSelected[0]._id ).subscribe(
+
+      this.loading = true;
+
+      this._excelUpdateService.import(file, this.depositsSelected[0]._id, this.branchesSelected[0]._id).subscribe(
         response => {
 
           this.countNotUpdate = response.result.countNotUpdate;
