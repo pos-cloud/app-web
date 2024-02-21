@@ -16,7 +16,7 @@ export class ProductsService {
     private readonly tiendaNubeService: TiendaNubeService,
     private readonly categoryService: CategoriesService,
     private readonly productVariantService: VariantProduct,
-  ) {}
+  ) { }
 
   async create(database: string, productId: string) {
     try {
@@ -24,8 +24,7 @@ export class ProductsService {
         throw new BadRequestException(`Database is required `);
       }
       await this.databaseService.initConnection(database);
-      const { token, userID } =
-        await this.databaseService.getCredentialsTiendaNube();
+      const { token, userID } = await this.databaseService.getCredentialsTiendaNube();
       const foundCollection = this.databaseService.getCollection('articles');
       const foundArticle = await this.databaseService.getDocumentById(
         'articles',
@@ -47,17 +46,17 @@ export class ProductsService {
           {
             src: foundArticle.picture,
           },
-            ...pictureUrls.map(src => ({ src })),
+          ...pictureUrls.map(src => ({ src })),
         ],
         name: {
           es: foundArticle.description,
         },
+        description: {
+          es: foundArticle.observation || ''
+        },
       };
 
-      const resultVariantName =
-        await this.productVariantService.getProductVariantsPropertyNames(
-          foundArticle._id,
-        );
+      const resultVariantName = await this.productVariantService.getProductVariantsPropertyNames(foundArticle._id,);
 
       dataNewProductTiendaNube['attributes'] = resultVariantName.map((e) => ({
         es: e,
@@ -84,22 +83,20 @@ export class ProductsService {
         userID,
       );
 
-      const stockCollection =
-        this.databaseService.getCollection('article-stocks');
+      const stockCollection = this.databaseService.getCollection('article-stocks');
       const stockFound = await stockCollection.findOne({
         operationType: { $ne: 'D' },
         article: new ObjectId(productId),
       });
 
-      //    console.log('create', stockFound)
+
       await this.tiendaNubeService.updateProductFirstVariant(
         token,
         userID,
         result.id,
         result.variants[0].id,
         {
-          stock:
-            !stockFound || stockFound.realStock < 0 ? 0 : stockFound.realStock,
+          stock: !foundArticle.allowSaleWithoutStock ? (stockFound && stockFound.realStock >= 0 ? stockFound.realStock : 0) : null,
           price: foundArticle.salePrice || null,
           sku: foundArticle.barcode || null,
           weight: foundArticle.weight || null,
@@ -108,7 +105,6 @@ export class ProductsService {
           depth: foundArticle.depth || null,
         },
       );
-
       // Creacion de variantes
 
       await this.massCreactionOfProductVariants(
@@ -140,8 +136,7 @@ export class ProductsService {
     productTiendaNube: string,
     variantName: string[],
   ) {
-    const dataVarinat =
-      await this.databaseService.getVariantDataByArticle(productId);
+    const dataVarinat = await this.databaseService.getVariantDataByArticle(productId);
 
     if (dataVarinat.length == 0) return;
 
@@ -251,7 +246,7 @@ export class ProductsService {
           es: foundArticle.description,
         },
         description: {
-          es: foundArticle.posDescription || '',
+          es: foundArticle.observation || '',
         },
       };
 
@@ -318,10 +313,7 @@ export class ProductsService {
           result.id,
           result.variants[0].id,
           {
-            stock:
-              !stockFound || stockFound.realStock < 0
-                ? 0
-                : stockFound.realStock,
+            stock: !foundArticle.allowSaleWithoutStock ? (stockFound && stockFound.realStock >= 0 ? stockFound.realStock : 0) : null,
             price: foundArticle.salePrice ? foundArticle.salePrice : null,
             sku: foundArticle.barcode || null,
             weight: foundArticle.weight || null,
