@@ -556,7 +556,7 @@ export default class Controller {
         await this.validateDuplicateKeys(objData)
         await this.validateDto(objData)
         const result = await objData.save()
-
+        
         resolve(new Responser(200, result))
       } catch (error) {
         reject(error)
