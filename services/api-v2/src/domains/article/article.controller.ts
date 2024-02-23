@@ -3,6 +3,7 @@ import * as fs from 'fs'
 import * as express from 'express'
 import * as moment from 'moment'
 import * as multer from 'multer'
+import * as xlsx from 'xlsx';
 
 import CategoryController from '../../domains/category/category.controller'
 import Category from '../../domains/category/category.interface'
@@ -28,6 +29,7 @@ import ObjDto from './article.dto'
 import Article from './article.interface'
 import ObjSchema from './article.model'
 import ArticleUC from './article.uc'
+
 export default class ArticleController extends Controller {
   public EJSON: any = require('bson').EJSON
   public path = ObjSchema.getPath()
@@ -57,9 +59,9 @@ export default class ArticleController extends Controller {
       )
       .delete(`${this.path}/:id`, [authMiddleware, ensureLic], this.deleteArticle)
       .post(
-        `${this.path}/update-article-excel`,
-        [authMiddleware, ensureLic, upload.single('excel')],
-        this.updateArticleExcel,
+        `${this.path}/import-excel`,
+        [authMiddleware, ensureLic, upload.single('file')],
+        this.updateExcel,
       )
       .post(
         `${this.path}/create-article-excel`,
@@ -1232,6 +1234,39 @@ export default class ArticleController extends Controller {
 
       response.send(new Responser(200))
     } catch (error) {
+      next(
+        new HttpException(new Responser(error.status || 500, null, error.message, error)),
+      )
+    }
+  }
+
+  updateExcel = async (
+    request: RequestWithUser,
+    response: express.Response,
+    next: express.NextFunction,
+  ) => {
+    try {
+      this.initConnectionDB(request.database)
+      this.userAudit = request.user
+      
+      const file = request.file;
+      if (!file) {
+        throw new Error('No se ha proporcionado ningún archivo.');
+      }
+
+      const workbook = xlsx.readFile(file.path);
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+
+      const data = xlsx.utils.sheet_to_json(worksheet);
+
+      
+      const res = await new ArticleUC(request.database).importFromExcel(data)
+
+
+      response.send(new Responser(200, res))
+    } catch (error) {
+      console.log(error)
       next(
         new HttpException(new Responser(error.status || 500, null, error.message, error)),
       )

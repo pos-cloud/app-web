@@ -686,7 +686,23 @@ export class ListArticlesComponent implements OnInit {
         //       );
         //   }
         break;
-      default:
+        case 'uploadFile':
+          modalRef = this._modalService.open(ImportComponent, {
+            size: 'lg',
+            backdrop: 'static',
+          });
+          modalRef.componentInstance.model = 'articles'
+          modalRef.result.then(
+            (result) => {
+              if (result === 'save_close') {
+                this.getItems();
+              }
+            },
+            (reason) => {},
+          );
+        
+          break;
+        default:
     }
   }
 

@@ -15,7 +15,7 @@ export default class ArticleStockUC {
     this.articleStockController = new ArticleStockController(database);
   }
 
-  async updateFromExcel(data: any[], branchId: string, depositId: string) {
+  async importFromExcel(data: any[], branchId: string, depositId: string) {
     return new Promise<{}>(async (resolve, reject) => {
       let articlesObject: any = {};
 
@@ -32,7 +32,7 @@ export default class ArticleStockUC {
         articlesObject[item.article] = item;
         response.notUpdateArticle.push(item.article);
       });
-
+      console.log(articlesObject)
       try {
         const article = await new ArticleController(this.database).find(
           { code: { $in: articles }, type: "Final" }, {}
@@ -41,7 +41,7 @@ export default class ArticleStockUC {
         const existingCodes = article.map((item: Article) => item.code);
 
         const nonExistingCodes = existingCodes.filter(code => !existingCodes.includes(code));
-
+        console.log('Existem:',existingCodes, 'No existen:', nonExistingCodes)
         nonExistingCodes.forEach((item) => {
           response.notUpdateArticle.push(item);
         });

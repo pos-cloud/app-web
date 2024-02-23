@@ -16,9 +16,9 @@ export class ImportService {
     public _authService: AuthService
   ) { }
 
-  public import(file: File, depositId: string, branchId: string ): Observable<any> {
+  public importStock(file: File, depositId: string, branchId: string ): Observable<any> {
 
-    const URL = `${environment.apiv2}/article-stocks/update-excel`;
+    const URL = `${environment.apiv2}/article-stocks/import-excel`;
 
     const formData = new FormData();
     formData.append('file', file);
@@ -52,6 +52,27 @@ export class ImportService {
       .set('transaccion', transaccionId);
 
     return this._http.post(URL, objectToImport, {
+      headers: headers
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
+
+  public importArticle(file: File){
+    const URL = `${environment.apiv2}/articles/import-excel`;
+
+    const formData = new FormData();
+    formData.append('file', file);
+  
+    const headers = new HttpHeaders()
+      .set('Authorization', this._authService.getToken());
+
+    return this._http.post(URL, formData, {
       headers: headers
     }).pipe(
       map(res => {
