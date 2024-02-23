@@ -277,6 +277,7 @@ const configSocket: SocketIoConfig = {
     AppComponent,
     HomeComponent,
     ListArticlesComponent,
+    HeaderComponent,
     AddArticleComponent,
     ListEmployeesComponent,
     AddEmployeeComponent,
@@ -459,7 +460,7 @@ const configSocket: SocketIoConfig = {
         deps: [HttpClient],
       },
     }),
-    //SocketIoModule.forRoot(configSocket),
+    SocketIoModule.forRoot(configSocket),
     ToastrModule.forRoot(),
     NguCarouselModule,
     NgxTinymceModule.forRoot({
