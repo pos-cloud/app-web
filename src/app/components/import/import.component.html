@@ -5,10 +5,13 @@
   </button>
 </div>
 <section class="container-fluid">
-  <a href="/assets/modelo_crear_inventario.xlsx" target="_self" download class="pull-right">
+  <a *ngIf="model === 'articles-stock'" href="/assets/modelo_crear_inventario.xlsx" target="_self" download class="pull-right">
     Descargar Modelo
   </a>
-  <div class="row container-filter">
+  <a *ngIf="model === 'articles'" href="/assets/modelo_crear_producto.xlsx" target="_self" download class="pull-right">
+    Descargar Modelo
+  </a>
+  <div class="row container-filter" *ngIf="model === 'articles-stock'">
     <div class="col-md-3">
       <label for="branch" class="control-label">
         <b>{{'branch' | translate | capitalize}}</b>

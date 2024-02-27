@@ -15,6 +15,7 @@ export class ImportComponent implements OnInit {
 
   @Input() branches: Branch[];
   @Input() allDeposits: any[];
+  @Input() model: string;
   branchesSelected: Branch[] = new Array();
   depositsSelected: Deposit[] = new Array();
   depositsData: Deposit[] = new Array();
@@ -88,22 +89,39 @@ export class ImportComponent implements OnInit {
 
       this.loading = true;
 
-      this._excelUpdateService.import(file, this.depositsSelected[0]._id, this.branchesSelected[0]._id).subscribe(
-        response => {
+      if (this.model === 'articles-stock') {
+        this._excelUpdateService.importStock(file, this.depositsSelected[0]._id, this.branchesSelected[0]._id).subscribe(
+          response => {
 
-          this.countNotUpdate = response.result.countNotUpdate;
-          this.countUpdate = response.result.countUpdate;
-          this.notUpdateArticle = response.result.notUpdateArticle;
-          this.updateArticle = response.result.updateArticle;
-          this.loading = false;
-        },
-        error => {
-          // Maneja el error en caso de que ocurra
-          console.error('Error al enviar el archivo:', error.message);
-          this.errorMessage = 'Error al importar el archivo'
-          this.loading = false; // Asegúrate de ocultar el estado de carga en caso de error
-        }
-      );
+            this.countNotUpdate = response.result.countNotUpdate;
+            this.countUpdate = response.result.countUpdate;
+            this.notUpdateArticle = response.result.notUpdateArticle;
+            this.updateArticle = response.result.updateArticle;
+            this.loading = false;
+          },
+          error => {
+            // Maneja el error en caso de que ocurra
+            console.error('Error al enviar el archivo:', error.message);
+            this.errorMessage = 'Error al importar el archivo'
+            this.loading = false; // Asegúrate de ocultar el estado de carga en caso de error
+          }
+        );
+      } else if (this.model === 'articles')
+        this._excelUpdateService.importArticle(file).subscribe(
+          response => {
+            if (response.status == 200) {
+              this.countNotUpdate = response.result.countNotUpdate;
+              this.countUpdate = response.result.countUpdate;
+              this.notUpdateArticle = response.result.notUpdateArticle;
+              this.updateArticle = response.result.updateArticle;
+              this.loading = false;
+            } else {
+              console.error('Error al enviar el archivo:');
+              this.errorMessage = 'Error al importar el archivo'
+              this.loading = false; // Asegúrate de ocultar el estado de carga en caso de error
+            }
+          },
+        );
     }
   }
 }

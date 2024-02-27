@@ -48,7 +48,7 @@ export default class ArticleStockController extends Controller {
       .delete(`${this.path}/:id`, [authMiddleware, ensureLic], this.deleteObj)
       
       .post(
-        `${this.path}/update-excel`,
+        `${this.path}/import-excel`,
         [authMiddleware, ensureLic, upload.single('file')],
         this.updateExcel,
       )
@@ -77,7 +77,7 @@ export default class ArticleStockController extends Controller {
       const data = xlsx.utils.sheet_to_json(worksheet);
 
       
-      const res = await new ArticleStockUC(request.database).updateFromExcel(data, branchId, depositId)
+      const res = await new ArticleStockUC(request.database).importFromExcel(data, branchId, depositId)
 
 
       response.send(new Responser(200, res))
