@@ -131,42 +131,42 @@ export class ListApplicationsComponent implements OnInit {
     let menu = cartaDigital.menu
 
     const formDataTn = {
-      userId: tn.userId,
-      token: tn.token
+      userId: tn?.userId,
+      token: tn?.token
     };
     this.tiendaNubeForm.patchValue(formDataTn);
 
     const formData = {
-      portain: menu.portain,
-      background: menu.background,
-      article: {
-        font: menu.article.font,
-        size: menu.article.size,
-        color: menu.article.color,
-        style: menu.article.style,
-        weight: menu.article.weight
-      },
-      category: {
-        font: menu.category.font,
-        size: menu.category.size,
-        color: menu.category.color,
-        style: menu.category.style,
-        weight: menu.category.weight
-      },
-      price: {
-        font: menu.price.font,
-        size: menu.price.size,
-        color: menu.price.color,
-        style: menu.price.style,
-        weight: menu.price.weight
-      },
-      observation: {
-        font: menu.observation.font,
-        size: menu.observation.size,
-        color: menu.observation.color,
-        style: menu.observation.style,
-        weight: menu.observation.weight
-      }
+      portain: menu?.portain,
+      background: menu?.background,
+      article: menu?.article ? {
+        font: menu?.article.font,
+        size: menu?.article.size,
+        color: menu?.article.color,
+        style: menu?.article.style,
+        weight: menu?.article.weight
+      } : {},
+      category: menu?.category ? {
+        font: menu?.category.font,
+        size: menu?.category.size,
+        color: menu?.category.color,
+        style: menu?.category.style,
+        weight: menu?.category.weight
+      } : {},
+      price: menu?.price ? {
+        font: menu?.price.font,
+        size: menu?.price.size,
+        color: menu?.price.color,
+        style: menu?.price.style,
+        weight: menu?.price.weight
+      } : {},
+      observation: menu?.observation ? {
+        font: menu?.observation.font,
+        size: menu?.observation.size,
+        color: menu?.observation.color,
+        style: menu?.observation.style,
+        weight: menu?.observation.weight
+      } : {}
     };
     this.cartaDigitalForm.patchValue(formData);
   }
