@@ -388,6 +388,8 @@ export class ProductsService {
       if (!tiendaNubeId) {
         throw new BadRequestException(`ID not found`);
       }
+      await this.databaseService.getArticleByTiendaNube(tiendaNubeId)
+
       const result = await this.tiendaNubeService.removeProduct(
         tiendaNubeId,
         token,

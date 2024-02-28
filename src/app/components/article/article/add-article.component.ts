@@ -1671,7 +1671,7 @@ export class AddArticleComponent implements OnInit {
             this.showToast(null, 'success', 'El producto se ha añadido con éxito.');
             this.activeModal.close({article: this.article});
             this.loading = false;
-            if(this.article.ecommerceEnabled && this.article.applications.some(application => application.type === ApplicationType.TiendaNube)){
+            if(this.article.applications.some(application => application.type === ApplicationType.TiendaNube)){
               this.saveArticleTiendaNube();
             }
             
@@ -1715,9 +1715,11 @@ export class AddArticleComponent implements OnInit {
             this.showToast(null, 'success', 'Operación realizada con éxito');
             this.activeModal.close();
             this.loading = false
-            if(this.article.ecommerceEnabled && this.article.applications.some(application => application.type === ApplicationType.TiendaNube)){
+           if(this.article.applications.some(application => application.type === ApplicationType.TiendaNube)){
               this.updateArticleTiendaNube();
-            }
+           }else if(this.article.tiendaNubeId){
+              this.deleteArticleTiendaNube();
+           }
           }
         },
         (error) => {
@@ -1735,7 +1737,9 @@ export class AddArticleComponent implements OnInit {
       (result: Resulteable) => {
         if (result.status == 200) {
           this.activeModal.close('delete_close');
-          if(this.article.tiendaNubeId && this.article.ecommerceEnabled) this.deleteArticleTiendaNube();
+          if(this.article.tiendaNubeId){
+            this.deleteArticleTiendaNube();
+          }
         } else {
           this.showToast(result);
         }
