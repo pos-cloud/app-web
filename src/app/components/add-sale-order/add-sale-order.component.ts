@@ -3469,9 +3469,9 @@ export class AddSaleOrderComponent {
                 '&automaticCreation=' +
                 params['automaticCreation'];
             } 
-            // else {
-            //   route += '?' + 'automaticCreation=' + params['automaticCreation'];
-            // }
+            else {
+              route += '?' + 'automaticCreation=' + params['automaticCreation'];
+            }
             this._router.navigateByUrl(route);
           } else {
             this._router.navigateByUrl(
