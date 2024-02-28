@@ -161,4 +161,17 @@ export class DatabaseService {
 
     return documents as unknown as ResponseVariantsDB[];
   }
+
+  async getArticleByTiendaNube(tiendaNubeId: string){
+    try {
+      const collection = this.getCollection('articles');
+      const document = await collection.findOne({ tiendaNubeId: parseInt(tiendaNubeId) });
+      if(document.tiendaNubeId){
+        const update = await collection.updateOne({ _id: document._id }, { $set: { tiendaNubeId: null  }})
+        return update;
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 }
