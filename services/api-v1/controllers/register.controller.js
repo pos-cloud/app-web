@@ -435,7 +435,6 @@ async function register(req, res, next) {
 		makeDefect = await saveMake(make);
 
 		let unitsOfMeasurements = [
-			{ code: '9', abbreviation: 'Doc', name: 'docena' },
 			{ code: '14', abbreviation: 'g', name: 'gramos' },
 			{ code: '1', abbreviation: 'kg', name: 'kilogramos' },
 			{ code: '17', abbreviation: 'km', name: 'kilómetros' },
@@ -443,8 +442,7 @@ async function register(req, res, next) {
 			{ code: '2', abbreviation: 'm', name: 'metros' },
 			{ code: '3', abbreviation: 'm2', name: 'metros cuadrados' },
 			{ code: '4', abbreviation: 'm3', name: 'metros cúbicos' },
-			{ code: '96', abbreviation: 'pk', name: 'packs' },
-			{ code: '7', abbreviation: 'u', name: 'unidades' }
+			{ code: '7', abbreviation: 'un', name: 'unidad' }
 		];
 		for (let u of unitsOfMeasurements) {
 			let unitOfMeasurement = new UnitOfMeasurement();
