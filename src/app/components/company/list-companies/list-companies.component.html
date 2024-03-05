@@ -27,9 +27,9 @@
                 <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i
                         [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
 
-                        <button class="btn" (click)="openModal('excel', null)"><i
+                        <button class="btn" (click)="openModal('uploadFile', null)"><i
                             class="fa fa-upload"></i>
-                            <span>Importar Clientes excel</span>
+                            <span>Importar</span>
                         </button>
 
                         <button class="btn" *ngIf="identity.name === 'soporte'" (click)="openModal('import', null)"><i

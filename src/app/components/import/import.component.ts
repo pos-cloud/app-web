@@ -111,7 +111,7 @@ export class ImportComponent implements OnInit {
             }
           },
         );
-      } else if (this.model === 'articles')
+      } else if (this.model === 'articles') {
         this._excelUpdateService.importArticle(file).subscribe(
           response => {
             if (response.status == 200) {
@@ -126,6 +126,23 @@ export class ImportComponent implements OnInit {
             }
           },
         );
+      } else if (this.model === 'company') {
+        this._excelUpdateService.importCompany(file).subscribe(
+          response => {
+            if (response.status == 200) {
+              this.countNotUpdate = response.result.countNotUpdate;
+              this.countUpdate = response.result.countUpdate;
+              this.notUpdateArticle = response.result.notUpdateCompany;
+              this.updateArticle = response.result.updateCompany;
+              this.loading = false;
+            } else {
+              console.error('Error al enviar el archivo:');
+              this.errorMessage = 'Error al importar el archivo'
+              this.loading = false;
+            }
+          }
+        )
+      }
     }
   }
 

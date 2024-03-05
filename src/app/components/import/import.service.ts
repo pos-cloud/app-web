@@ -84,4 +84,25 @@ export class ImportService {
     );
   }
 
+  public importCompany(file: File){
+    const URL = `${environment.apiv2}/companies/import-excel`;
+
+    const formData = new FormData();
+    formData.append('file', file);
+  
+    const headers = new HttpHeaders()
+      .set('Authorization', this._authService.getToken());
+
+    return this._http.post(URL, formData, {
+      headers: headers
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
+
 }
