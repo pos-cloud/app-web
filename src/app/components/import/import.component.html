@@ -5,39 +5,33 @@
   </button>
 </div>
 <section class="container-fluid">
-  <a *ngIf="model === 'articles-stock'" href="/assets/modelo_crear_inventario.xlsx" target="_self" download class="pull-right">
-    Descargar Modelo
-  </a>
-  <a *ngIf="model === 'articles'" href="/assets/modelo_crear_producto.xlsx" target="_self" download class="pull-right">
-    Descargar Modelo
-  </a>
+  <div class="pull-right">
+    <a *ngIf="model === 'articles'" href="/assets/modelo_creer_producto.xlsx" target="_self" download>
+      Descargar Modelos
+    </a>
+    <a *ngIf="model === 'articles-stock'" href="/assets/modelo_crear_inventario.xlsx" target="_self" download>
+      Descargar Modelo
+    </a>
+  </div>
+
   <div class="row container-filter" *ngIf="model === 'articles-stock'">
     <div class="col-md-3">
       <label for="branch" class="control-label">
         <b>{{'branch' | translate | capitalize}}</b>
       </label>
-      <ng-multiselect-dropdown
-        [placeholder]="'branch' | translate"
-        [settings]="dropdownSettings"
-        [data]="branches"
-        [(ngModel)]="branchesSelected"
-        (onSelect)="onBranchSelect($event)"
-      ></ng-multiselect-dropdown>
+      <ng-multiselect-dropdown [placeholder]="'branch' | translate" [settings]="dropdownSettings" [data]="branches"
+        [(ngModel)]="branchesSelected" (onSelect)="onBranchSelect($event)"></ng-multiselect-dropdown>
     </div>
     <div class="col-md-3">
       <label for="deposit" class="control-label">
         <b>{{'deposit' | translate | capitalize}}</b>
       </label>
-      <ng-multiselect-dropdown
-        [placeholder]="'deposit' | translate"
-        [settings]="dropdownSettings"
-        [data]="depositsData"
-        [(ngModel)]="depositsSelected"
-      ></ng-multiselect-dropdown>
+      <ng-multiselect-dropdown [placeholder]="'deposit' | translate" [settings]="dropdownSettings" [data]="depositsData"
+        [(ngModel)]="depositsSelected"></ng-multiselect-dropdown>
     </div>
   </div>
-  <form [formGroup]="importForm" (ngSubmit)="import()" autocomplete="off">
-    <div class="modal-body">
+  <form [formGroup]="importForm" (ngSubmit)="import()" autocomplete="off" class="d-inline">
+    <div class="modal-body" class="d-inline">
       <div class="row">
         <div class="form-group col-md-12">
           <label for="file" class="control-label">Archivo:</label>
@@ -54,22 +48,24 @@
       </button>
     </div>
   </form>
-  
+
   <div class="container" *ngIf="notUpdateArticle?.length > 0 || updateArticle?.length > 0">
     <p>
-      <span class="font-weight-bold">{{ countUpdate }} artículo<span *ngIf="countUpdate !== 1">s</span> actualizado<span *ngIf="countUpdate !== 1">s</span>: </span>
+      <span class="font-weight-bold">{{ countUpdate }} artículo<span *ngIf="countUpdate !== 1">s</span> actualizado<span
+          *ngIf="countUpdate !== 1">s</span>: </span>
       <ng-container *ngFor="let article of updateArticle; let last = last">
         <span class="text-success">{{ article }}</span>{{ !last ? ', ' : '' }}
       </ng-container>
     </p>
     <p>
-      <span class="font-weight-bold">{{ countNotUpdate }} artículo<span *ngIf="countNotUpdate !== 1">s</span> no actualizado<span *ngIf="countNotUpdate !== 1">s</span>: </span>
-      <ng-container  *ngFor="let article of notUpdateArticle; let last = last">
+      <span class="font-weight-bold">{{ countNotUpdate }} artículo<span *ngIf="countNotUpdate !== 1">s</span> no
+        actualizado<span *ngIf="countNotUpdate !== 1">s</span>: </span>
+      <ng-container *ngFor="let article of notUpdateArticle; let last = last">
         <span class="text-danger">{{ article }}</span>{{ !last ? ', ' : '' }}
       </ng-container>
-    </p>   
+    </p>
     <p *ngIf="errorMessage" class="alert alert-danger">
       {{ errorMessage }}
-    </p> 
+    </p>
   </div>
 </section>

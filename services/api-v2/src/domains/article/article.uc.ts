@@ -22,6 +22,12 @@ import Category from '../category/category.interface'
 import MakeSchema from '../make/make.model'
 import CategorySchema from '../category/category.model'
 import ArticleSchema from '../article/article.model'
+import Printer from '../printer/printer.interface'
+import PrinterController from '../printer/printer.controller'
+import UnitOfMeasurement from '../unit-of-measurement/unit-of-measurement.interface'
+import UnitOfMeasurementController from '../unit-of-measurement/unit-of-measurement.controller'
+import Tax from '../tax/tax.interface'
+import TaxController from '../tax/tax.controller'
 
 export default class ArticleUC {
 	database: string
@@ -441,191 +447,259 @@ export default class ArticleUC {
 				countUpdate: 0,
 				countNotUpdate: 0
 			};
-
 			data.forEach((item) => {
-				articlesObject[item.codigo] = item;
-				response.notUpdateArticle.push(item.codigo);
-			  });
-			const codes = data.map((obj) => obj.codigo);
-			const makes = data.map((obj) => obj.marca)
-			const categories = data.map((obj) => obj.categoria)
+				articlesObject[item.column1] = item;
+				response.notUpdateArticle.push(item.column1);
+			});
+			const codes = data.map((obj) => obj.column1);
 
 			try {
-				  const article = await new ArticleController(this.database).find(
+				if (codes.some(code => code === '')) {
+					return reject(new Responser(500, null, "En el archivo Excel, hay códigos de productos que están incompletos."))
+				}
+
+				const article = await new ArticleController(this.database).find(
 					{ code: { $in: codes }, type: "Final" }, {}
-				  );
-		    
-				  const nonExistingCodes = codes.filter(code => !article.map((item:Article)=> item.code).includes(code));
-        
-				  let make = await new MakeController(this.database).find({description: {$in: makes}}, {})
+				);
 
-				  const existingMakes = make.map((item: Make) => item.description);
+				const nonExistingCodes = codes.filter(code => !article.map((item: Article) => item.code).includes(code));
 
-				  const nonExistingMakes = makes.filter(code => !existingMakes.includes(code));
-
-				   const createMakePromises = nonExistingMakes.map(async (item: any) => {
-					let make: Make = MakeSchema.getInstance(this.database)
-					make = Object.assign(make, {
-						description: item
-					})
-					const result = await new MakeController(this.database).save(make);
-		  
-					if (result.status === 200) {
-					  result.result
-					}
-					return result;
-				  });
-		  
-				  await Promise.all(createMakePromises);
-
-				  const category = await new CategoryController(this.database).find({description: {$in: categories}}, {})
-
-				  const existingCategory = category.map((item: Category) => item.description);
-
-				  const nonExistingCategory = categories.filter(code => !existingCategory.includes(code));
-
-				  const createCategoryPromises = nonExistingCategory.map(async (item: any) => {
-					let newCategory: Make = CategorySchema.getInstance(this.database)
-					newCategory = Object.assign(newCategory, {
-						description: item
-					})
-					const result = await new MakeController(this.database).save(newCategory);
-		  
-					if (result.status === 200) {
-					    result.result
-					}
-					return result;
-				  });
-		  
-				  await Promise.all(createCategoryPromises);
-
-				  const updatePromises = article.map(async (item: any) => {
+				const updatePromises = article.map(async (item: any) => {
 					const articleData = articlesObject[item.code];
 
-					const makesId : Make[]= await new MakeController(this.database).find({description: articleData.marca}, {})
-					const categoryId: Category[] = await new CategoryController(this.database).find({description: articleData.categoria}, {})
+					const makesId = await this.getMakeOrCreateExcelData(articleData.column14)
+					const categoryId = await this.getCategoryOrCreateExcelData(articleData.column15)
+					const printerId = await this.getPrinters(articleData.column17)
+					const unitOfMeasurementId = await this.getUnitOfMeasurement(articleData.column6)
+					const tax: Tax = await this.getTax(articleData.column11)
+					const calculatedSalePrice = this.calculateSalePrice(articleData.column10, articleData.column12, articleData.column13);
 
 					const result = await new ArticleController(this.database).update(
-					  item._id,
-					  {
-						code: articleData.codigo,
-						description: articleData.descripcion,
-						url: articleData.url,
-						posDescription: articleData.pos_descripcion,
-						quantityPerMeasure: parseInt(articleData.cantidad_por_medida) || 0,
-						observation: articleData.observacion,
-						notes: articleData.notas,
-						tags: articleData.etiqueta,
-						basePrice: parseInt(articleData.precio_base) || 0,
-						costPrice: parseInt(articleData.precio_de_costo)  || 0,
-						costPrice2: parseInt(articleData.precio_base_2)  || 0,
-					    purchasePrice: parseInt(articleData.precio_de_compra) || 0,
-						markupPercentage: parseInt(articleData.porcentaje_de_margen)  || 0,
-						markupPrice: parseInt(articleData.precio_de_margen)  || 0,
-						salePrice: parseInt(articleData.precio_de_venta)  || 0,
-						category: categoryId[0]._id,
-						make: makesId[0]._id,
-						barcode: articleData.codigo_de_barra,
-						printIn: articleData.imprime_en,
-						posKitchen: articleData.aparece_en_pos_cocina || false,
-						allowPurchase: articleData.permitir_compra || false,
-						allowSale: articleData.permitir_venta || false,
-						allowSaleWithoutStock: articleData.permitir_venta_sin_stock || false,
-						allowMeasure: articleData.permitir_medida || false,
-						favourite: articleData.producto_favorito || false,
-					    isWeigth: articleData.es_pesable || false, 
-						m3: parseInt(articleData.m3)  || 0,
-						weight: parseInt(articleData.peso)  || 0,
-						width: parseInt(articleData.ancho)  || 0,
-						height: parseInt(articleData.alto)  || 0,
-						depth: parseInt(articleData.profundidad)  || 0,
-					  },
+						item._id,
+						{
+							code: articleData.column1,
+							description: articleData.column2 === "" ? item.description : articleData.column2,
+							url: articleData.column3 === "" ? item.url : articleData.column3,
+							posDescription: articleData.column4 === "" ? item.posDescription : articleData.column4,
+							quantityPerMeasure: articleData.column5,
+							unitOfMeasurement: unitOfMeasurementId === "" ? item.unitOfMeasurement : unitOfMeasurementId,
+							observation: articleData.column7 === "" ? item.observation : articleData.column7,
+							notes: articleData.column8 === "" ? item.notes : articleData.column8,
+							tags: articleData.column9 === "" ? item.tags : articleData.column9,
+							basePrice: calculatedSalePrice.basePrice2,
+							taxes: tax !== undefined ? [{
+								tax: tax._id,
+								percentage: tax.percentage,
+							}
+							] : item.taxes,
+							markupPercentage: calculatedSalePrice.markupPercentage2,
+							salePrice: calculatedSalePrice.salePrice2,
+							make: makesId === null ? item.make : makesId,
+							category: categoryId === null ? item.category : categoryId,
+							barcode: articleData.column16 === "" ? item.barcode : articleData.column16,
+							printIn: printerId === "" ? item.unitOfMeasurement : printerId,
+							posKitchen: articleData.column18 === 'Si',
+							allowPurchase: articleData.column19 === 'Si',
+							allowSale: articleData.column20 === 'Si',
+							allowStock: articleData.column21 === 'Si',
+							allowSaleWithoutStock: articleData.column22 === 'Si',
+							allowMeasure: articleData.column23 === 'Si',
+							favourite: articleData.column24 === 'Si',
+							isWeigth: articleData.column25 === 'Si',
+						}
 					);
-		  
+
+
 					if (result.status === 200) {
-					  const code = result.result.code;
-					  if (!response.updateArticle.includes(code)) {
-						response.updateArticle.push(code);
-					  }
-					  const indexToRemove = response.notUpdateArticle.indexOf(code);
-					  if (indexToRemove !== -1) {
-						response.notUpdateArticle.splice(indexToRemove, 1);
-					  }
-					}
-					return result;
-				  });
-		  
-				  await Promise.all(updatePromises);
-
-				  const createArticlePromises = nonExistingCodes.map(async(item:any)=>{
-					const articleData = articlesObject[item];
-
-					const makesId : Make[]= await new MakeController(this.database).find({description: articleData.marca}, {})
-					const categoryId: Category[] = await new CategoryController(this.database).find({description: articleData.categoria}, {})
-
-					let newArticle: Article = ArticleSchema.getInstance(this.database)
-					newArticle = Object.assign(newArticle, {
-						code: articleData.codigo,
-						description: articleData.descripcion,
-						url: articleData.url,
-						posDescription: articleData.pos_descripcion,
-						quantityPerMeasure: parseInt(articleData.cantidad_por_medida) || 0,
-						observation: articleData.observacion,
-						notes: articleData.notas,
-						tags: articleData.etiqueta,
-						basePrice: parseInt(articleData.precio_base) || 0,
-						costPrice: parseInt(articleData.precio_de_costo) || 0,
-						costPrice2: parseInt(articleData.precio_base_2) || 0,
-					    purchasePrice: parseInt(articleData.precio_de_compra)|| 0,
-						markupPercentage: parseInt(articleData.porcentaje_de_margen) || 0,
-						markupPrice: parseInt(articleData.precio_de_margen) || 0,
-						salePrice: parseInt(articleData.precio_de_venta) || 0,
-						category: categoryId[0]._id,
-						make: makesId[0]._id,
-						barcode: articleData.codigo_de_barra,
-						printIn: articleData.imprime_en,
-						posKitchen: articleData.aparece_en_pos_cocina || false,
-						allowPurchase: articleData.permitir_compra || false,
-						allowSale: articleData.permitir_venta || false,
-						allowSaleWithoutStock: articleData.permitir_venta_sin_stock || false,
-						allowMeasure: articleData.permitir_medida || false,
-						favourite: articleData.producto_favorito || false,
-					    isWeigth: articleData.es_pesable || false,
-						m3: parseInt(articleData.m3) || 0,
-						weight: parseInt(articleData.peso) || 0,
-						width: parseInt(articleData.ancho) || 0,
-						height: parseInt(articleData.alto) || 0,
-						depth: parseInt(articleData.profundidad) || 0,
-					})
-					console.log(newArticle)
-					const result = await new ArticleController(this.database).save(newArticle);
-			
-					  if (result.status === 200) {
 						const code = result.result.code;
 						if (!response.updateArticle.includes(code)) {
-						  response.updateArticle.push(code);
+							response.updateArticle.push(code);
 						}
 						const indexToRemove = response.notUpdateArticle.indexOf(code);
 						if (indexToRemove !== -1) {
-						  response.notUpdateArticle.splice(indexToRemove, 1);
+							response.notUpdateArticle.splice(indexToRemove, 1);
 						}
-					  }
-					  return result;
-				  })
+					}
+					return result;
+				});
 
-				  await Promise.all(createArticlePromises);
+				await Promise.all(updatePromises);
 
-				  response.countUpdate = response.updateArticle.length;
-				  response.countNotUpdate = response.notUpdateArticle.length;
-				  resolve(response)
+				const createArticlePromises = nonExistingCodes.map(async (item: any) => {
+					const articleData = articlesObject[item];
+
+					const makesId = await this.getMakeOrCreateExcelData(articleData.column14)
+					const categoryId = await this.getCategoryOrCreateExcelData(articleData.column15)
+					const printerId = await this.getPrinters(articleData.column17)
+					const unitOfMeasurementId = await this.getUnitOfMeasurement(articleData.column6)
+					const tax: Tax = await this.getTax(articleData.column11)
+					const calculatedSalePrice = this.calculateSalePrice(articleData.column10, articleData.column12, articleData.column13);
+
+					let newArticle: Article = ArticleSchema.getInstance(this.database)
+					newArticle = Object.assign(newArticle, {
+						code: articleData.column1,
+						description: articleData.column2,
+						url: articleData.column3,
+						posDescription: articleData.column4,
+						quantityPerMeasure: articleData.column5,
+						unitOfMeasurement: unitOfMeasurementId === "" ? null : unitOfMeasurementId,
+						observation: articleData.column7,
+						notes: articleData.column8,
+						tags: articleData.column9,
+						basePrice: calculatedSalePrice.basePrice2,
+						taxes: tax !== undefined ? [{
+							tax: tax._id,
+							percentage: tax.percentage,
+						}
+						] : item.taxes,
+						markupPercentage: calculatedSalePrice.markupPercentage2,
+						salePrice: calculatedSalePrice.salePrice2,
+						make: makesId,
+						category: categoryId,
+						barcode: articleData.column16,
+						printIn: printerId === "" ? null : printerId,
+						posKitchen: articleData.column18 === 'Si',
+						allowPurchase: articleData.column19 === 'Si',
+						allowSale: articleData.column20 === 'Si',
+						allowStock: articleData.column21 === 'Si',
+						allowSaleWithoutStock: articleData.column22 === 'Si',
+						allowMeasure: articleData.column23 === 'Si',
+						favourite: articleData.column24 === 'Si',
+						isWeigth: articleData.column25 === 'Si',
+					})
+					const result = await new ArticleController(this.database).save(newArticle);
+
+					if (result.status === 200) {
+						const code = result.result.code;
+						if (!response.updateArticle.includes(code)) {
+							response.updateArticle.push(code);
+						}
+						const indexToRemove = response.notUpdateArticle.indexOf(code);
+						if (indexToRemove !== -1) {
+							response.notUpdateArticle.splice(indexToRemove, 1);
+						}
+					}
+					return result;
+				})
+
+				await Promise.all(createArticlePromises);
+
+				response.countUpdate = response.updateArticle.length;
+				response.countNotUpdate = response.notUpdateArticle.length;
+				resolve(response)
 			} catch (error) {
-  				console.log(error)
+				console.log(error)
 			}
 		})
 	}
 
-	async createMake(){
+	async getPrinters(data: string) {
+		try {
+			let printer: Printer[] = await new PrinterController(this.database).find({ printIn: data }, {})
+			if (printer.length > 0) {
+				return printer[0]._id
+			}
+			return ''
+		} catch (error) {
+			throw error;
+		}
+	}
 
+	async getUnitOfMeasurement(data: string) {
+		try {
+			let unitOfMeasurement: UnitOfMeasurement[] = await new UnitOfMeasurementController(this.database).find({ name: data }, {})
+			if (unitOfMeasurement.length > 0) {
+				return unitOfMeasurement[0]._id
+			}
+			return ''
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async getTax(data: string) {
+		try {
+			let tax: Tax[] = await new TaxController(this.database).find({ name: data }, {})
+			if (tax.length > 0) {
+				return tax[0]
+			}
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async getMakeOrCreateExcelData(makes: string) {
+		if (makes !== '') {
+			let existingMake: Make[] = await new MakeController(this.database).find({ description: makes }, {})
+
+			if (existingMake.length) {
+				return existingMake[0]._id
+			} else {
+				let make: Make = MakeSchema.getInstance(this.database)
+				make = Object.assign(make, {
+					description: makes
+				})
+				const result = await new MakeController(this.database).save(make);
+
+				if (result.status === 200) {
+					return result.result[0]._id
+				}
+			}
+		}
+		return null;
+	}
+
+	async getCategoryOrCreateExcelData(category: string) {
+		if (category !== '') {
+			const existingCategory: Category[] = await new CategoryController(this.database).find({ description: category }, {})
+			if (existingCategory.length) {
+				return existingCategory[0]._id
+			} else {
+
+				let newCategory: Make = CategorySchema.getInstance(this.database)
+				newCategory = Object.assign(newCategory, {
+					description: category
+				})
+				const result = await new MakeController(this.database).save(newCategory);
+
+				if (result.status === 200) {
+					result.result[0]._id
+				}
+			}
+		}
+		return null;
+	}
+
+	calculateSalePrice(basePrice: string, markupPercentage: string, salePrice: string) {
+		let price = {
+			basePrice2: 0,
+			markupPercentage2: 0,
+			salePrice2: 0
+		}
+		if (basePrice !== "" && markupPercentage !== "" && salePrice === "") {
+			price.basePrice2 = Number(basePrice);
+			price.markupPercentage2 = Number(markupPercentage);
+			price.salePrice2 = Number((Number(basePrice) * (1 + Number(markupPercentage) / 100)).toFixed(2))
+
+			return price
+		} else if (basePrice === "" && markupPercentage === "" && salePrice !== "") {
+			price.basePrice2 = Number(basePrice);
+			price.markupPercentage2 = Number(markupPercentage);
+			price.salePrice2 = Number(salePrice)
+
+			return price;
+		} else if (basePrice !== "" && markupPercentage === "" && salePrice !== "") {
+			price.basePrice2 = Number(basePrice);
+			price.markupPercentage2 = Number(((Number(salePrice) - Number(basePrice)) / Number(basePrice) * 100).toFixed(2))
+			price.salePrice2 = Number(salePrice)
+
+			return price;
+		} else {
+			price.basePrice2 = Number(basePrice);
+			price.markupPercentage2 = Number(markupPercentage);
+			price.salePrice2 = Number(salePrice)
+
+			return price;
+		}
 	}
 }
-
