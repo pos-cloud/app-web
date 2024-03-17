@@ -18,17 +18,80 @@
                         </div>
                     </ng-template>
                     <ng-template ngbPanelContent>
-                        <form [formGroup]="tiendaNubeForm" (ngSubmit)="updateApplication('TiendaNube')">
+                        <form [formGroup]="tiendaNubeForm" (ngSubmit)="updateApplication('TiendaNube')"
+                            autocomplete="off">
                             <div class="row">
                                 <div class="form-group col-md-3">
                                     <label for="userId" class="control-label">Usuario Id:</label>
                                     <input formControlName="userId" type="number" class="form-control" name="userId"
-                                        id="userId" />
+                                        id="userId" [focus]="focusEvent" />
+                                    <div *ngIf="tiendaNubeForm.get('userId').invalid && (tiendaNubeForm.get('userId').dirty || tiendaNubeForm.get('userId').touched)"
+                                        class="alert alert-danger">
+                                        {{ formErrors.userId }}
+                                    </div>
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label for="token" class="control-label">Token:</label>
                                     <input type="text" class="form-control" formControlName="token" name="token"
-                                        id="token" />
+                                        id="token" [focus]="focusEvent" />
+                                    <div *ngIf="tiendaNubeForm.get('token').invalid && (tiendaNubeForm.get('token').dirty || tiendaNubeForm.get('token').touched)"
+                                        class="alert alert-danger">
+                                        {{ formErrors.token }}
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="transactionType" class="control-label">Tipo de transacción:</label>
+                                    <select class="form-control" formControlName="transactionType">
+                                        <option *ngFor="let transactionType of transactionTypes"
+                                            [value]="transactionType._id" [focus]="focusEvent">
+                                            {{transactionType.name}}</option>
+                                    </select>
+                                    <div *ngIf="tiendaNubeForm.get('transactionType').invalid && (tiendaNubeForm.get('transactionType').dirty || tiendaNubeForm.get('transactionType').touched)"
+                                        class="alert alert-danger">
+                                        {{ formErrors.transactionType }}
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="shipmentMethod" class="control-label">Método de entrega:</label>
+                                    <select class="form-control" formControlName="shipmentMethod">
+                                        <option *ngFor="let shipmentMethod of shipmentMethods"
+                                            [value]="shipmentMethod._id" [focus]="focusEvent">
+                                            {{shipmentMethod.name}}</option>
+                                    </select>
+                                    <div *ngIf="tiendaNubeForm.get('shipmentMethod').invalid && (tiendaNubeForm.get('shipmentMethod').dirty || tiendaNubeForm.get('shipmentMethod').touched)"
+                                        class="alert alert-danger">
+                                        {{ formErrors.shipmentMethod }}
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="paymentMethod" class="control-label">Método de pago:</label>
+                                    <select class="form-control" formControlName="paymentMethod">
+                                        <option *ngFor="let paymentMethod of paymentMethods" [value]="paymentMethod._id"
+                                            [focus]="focusEvent">
+                                            {{paymentMethod.name}}</option>
+                                    </select>
+                                    <div *ngIf="tiendaNubeForm.get('paymentMethod').invalid && (tiendaNubeForm.get('paymentMethod').dirty || tiendaNubeForm.get('paymentMethod').touched)"
+                                        class="alert alert-danger">
+                                        {{ formErrors.paymentMethod }}
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="company" class="control-label">Tipo de Cliente:</label>
+                                    <select class="form-control" formControlName="company">
+                                        <option *ngFor="let company of companies" [value]="company._id"
+                                            [focus]="focusEvent">
+                                            {{company.name}}</option>
+                                    </select>
+                                    <div *ngIf="tiendaNubeForm.get('company').invalid && (tiendaNubeForm.get('company').dirty || tiendaNubeForm.get('company').touched)"
+                                        class="alert alert-danger">
+                                        {{ formErrors.company }}
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label class="control-label">Habilitar Webhook para Transacciones</label>
+                                    <button class="btn btn-primary" type="button" (click)="generateWebhook()">
+                                        Generar webhook
+                                    </button>
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-primary pull-right" [disabled]="loading">
@@ -94,7 +157,7 @@
                                             name="articleWeight" id="articleWeight" />
                                     </div>
                                 </div>
-                                
+
                                 <div formGroupName="category" class="row offset-md-0">
                                     <div class="col-md-12 mt-3">
                                         <h5 class="m-0">Categoría</h5>
