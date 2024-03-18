@@ -6,6 +6,7 @@ import VATConditionController from '../vat-condition/vat-condition.controller'
 import IdentificationTypeController from '../identification-type/identification-type.controller'
 import VATCondition from '../vat-condition/vat-condition.interface'
 import IdentificationType from '../identification-type/identification-type.interface'
+import Responser from '../../utils/responser'
 
 export default class CompanyUc {
     database: string
@@ -36,8 +37,17 @@ export default class CompanyUc {
 
             const identificationValue = data.map((obj) => obj.column7);
             const name = data.map((obj) => obj.column1)
-            
+            const type = data.map((obj) => obj.column3)
+            const typeIdentification = data.map((obj) => obj.column6)
+
             try {
+                if (identificationValue.some(identificationValue => identificationValue === '') || name.some(name => name === '')) {
+					return reject(new Responser(500, null, "Hay números de identificación o nombres de empresas incompletos en el archivo Excel."))
+				}
+                if (type.some(type => type === '') || typeIdentification.some(typeIdentification => typeIdentification === '')) {
+					return reject(new Responser(500, null, "Tipos de empresas o tipos de identificación incompletos en el archivo Excel."))
+				}
+
                 const company: Company[] = await new CompanyController(this.database).find(
                     { identificationValue: { $in: identificationValue }, name: { $in: name } }, {}
                 );
@@ -55,7 +65,6 @@ export default class CompanyUc {
                   }
                   
                 const nonExistingCodes = identificationValue.filter(code => !company.map((item: Company) => item.identificationValue).includes(code));
-
                 const createPromises = nonExistingCodes.map(async (item: any) => {
                     const companyData = articlesObject[item];
                  
