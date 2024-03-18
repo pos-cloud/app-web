@@ -7,6 +7,7 @@ import IdentificationTypeController from '../identification-type/identification-
 import VATCondition from '../vat-condition/vat-condition.interface'
 import IdentificationType from '../identification-type/identification-type.interface'
 import Responser from '../../utils/responser'
+import moment = require('moment')
 
 export default class CompanyUc {
     database: string
@@ -31,16 +32,20 @@ export default class CompanyUc {
                 countNotUpdate: 0
             };
             data.forEach((item) => {
-                articlesObject[item.column7] = item;
-                response.notUpdateCompany.push(item.column7);
+                articlesObject[item.column6] = item;
+                response.notUpdateCompany.push(item.column6);
             });
 
-            const identificationValue = data.map((obj) => obj.column7);
+            const identificationValue = data.map((obj) => obj.column6);
             const name = data.map((obj) => obj.column1)
             const type = data.map((obj) => obj.column3)
-            const typeIdentification = data.map((obj) => obj.column6)
+            const typeIdentification = data.map((obj) => obj.column5)
+            const vatCondition = data.map((obj) => obj.column4)
 
             try {
+                if(vatCondition.some(vatCondition => vatCondition === '') ){
+                    return reject(new Responser(500, null, "Condiciónes de IVA estan incompletos en el archivo Excel."))
+                }
                 if (identificationValue.some(identificationValue => identificationValue === '') || name.some(name => name === '')) {
 					return reject(new Responser(500, null, "Hay números de identificación o nombres de empresas incompletos en el archivo Excel."))
 				}
@@ -65,38 +70,38 @@ export default class CompanyUc {
                   }
                   
                 const nonExistingCodes = identificationValue.filter(code => !company.map((item: Company) => item.identificationValue).includes(code));
+               
                 const createPromises = nonExistingCodes.map(async (item: any) => {
                     const companyData = articlesObject[item];
-                 
-                    let vatCondition = await this.getVatCondition(companyData.column5)
-                    let identificationTypes = await this.getIdentificationType(companyData.column6)
-            
+                
+                    let vatCondition = await this.getVatCondition(companyData.column4)
+                    let identificationTypes = await this.getIdentificationType(companyData.column5)
+                
                     let company: Company = CompanySchema.getInstance(this.database);
                     company = Object.assign(company, {
                         name: companyData.column1,
                         fantasyName: companyData.column2,
                         type: companyData.column3,
-                        category: companyData.column4,
                         vatCondition: vatCondition,
                         identificationType: identificationTypes,
-                        identificationValue: companyData.column7,
-                        grossIncome: companyData.column8,
-                        address: companyData.column9,
-                        city: companyData.column11,
-                        phones: companyData.column11,
-                        emails: companyData.column12,
-                        birthday: companyData.column13,
-                        gender: companyData.column14,
-                        observation: companyData.column15,
-                        allowCurrentAccount: companyData.column16 == 'Si'? true : false,
-                        floorNumber: companyData.column17,
-                        flat: companyData.column18,
-                        addressNumber: companyData.column19,
-                        latitude: companyData.column20,
-                        longitude: companyData.column21,
-                        discount: companyData.column22,
-                        creditLimit: companyData.column23,
-                        zipCode: companyData.column24,
+                        identificationValue: companyData.column6,
+                        grossIncome: companyData.column7,
+                        address: companyData.column8,
+                        city: companyData.column9,
+                        phones: companyData.column10,
+                        emails: companyData.column11,
+                        birthday:companyData.column12 === '' ? '' : moment(companyData.column12, 'DD/MM/YYYY').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+                        gender: companyData.column13 === '' ? null : companyData.column13,
+                        observation: companyData.column14,
+                        allowCurrentAccount: companyData.column15 === 'Si',
+                        floorNumber: companyData.column16,
+                        flat: companyData.column17,
+                        addressNumber: companyData.column18,
+                        latitude: companyData.column19,
+                        longitude: companyData.column20,
+                        discount: companyData.column21,
+                        creditLimit: companyData.column22,
+                        zipCode: companyData.column23,
                     });
                     const result = await new CompanyController(this.database).save(company);
                     if (result.status === 200) {
@@ -128,7 +133,7 @@ export default class CompanyUc {
             if(vatCondition.length > 0){
                 return vatCondition[0]._id
             }
-            return ''
+            return null
         } catch (error) {
             throw error;
         }
@@ -141,7 +146,7 @@ export default class CompanyUc {
             if (identificationTypes.length > 0) {
                 return identificationTypes[0]._id;
             }
-            return ''
+            return null
         } catch (error) {
             throw error;
         }

@@ -120,21 +120,26 @@ export default class CompanyController extends Controller {
       const worksheet = workbook.Sheets[sheetName];
       
       const range = xlsx.utils.decode_range(worksheet['!ref']);
-   
-      const data2 = [];
+      const data = [];
 
       for (let rowNum = range.s.r + 1; rowNum <= range.e.r; rowNum++) {
-        const rowData:any = {};
+        let hasData = false;
+        const rowData: any = {};
         for (let colNum = range.s.c; colNum <= range.e.c; colNum++) {
           const cellAddress = xlsx.utils.encode_cell({ r: rowNum, c: colNum });
           const cell = worksheet[cellAddress];
-          const value = cell ? String(cell.v) : '';
+          const value = cell && cell.v !== undefined ? String(cell.v) : '';
           rowData[`column${colNum + 1}`] = value;
+          if (value.trim() !== '') {
+            hasData = true;
+          }
         }
-        data2.push(rowData);
+        if (hasData) {
+          data.push(rowData);
+        }
       }
 
-      const res = await new CompanyUc(request.database).importFromExcel(data2)
+      const res = await new CompanyUc(request.database).importFromExcel(data)
 
       response.send(new Responser(200, res))
     } catch (error) {
