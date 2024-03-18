@@ -597,7 +597,7 @@ export default class ArticleUC {
 		try {
 			let printer: Printer[] = await new PrinterController(this.database).find({ printIn: data }, {})
 			if (printer.length > 0) {
-				return printer[0]._id
+				return printer[0].printIn
 			}
 			return ''
 		} catch (error) {
@@ -640,9 +640,8 @@ export default class ArticleUC {
 					description: makes
 				})
 				const result = await new MakeController(this.database).save(make);
-
 				if (result.status === 200) {
-					return result.result[0]._id
+					return result.result._id
 				}
 			}
 		}
@@ -663,7 +662,7 @@ export default class ArticleUC {
 				const result = await new MakeController(this.database).save(newCategory);
 
 				if (result.status === 200) {
-					result.result[0]._id
+					result.result._id
 				}
 			}
 		}
@@ -690,9 +689,9 @@ export default class ArticleUC {
 			return price;
 		} else if (basePrice !== "" && markupPercentage === "" && salePrice !== "") {
 			price.basePrice2 = Number(basePrice);
-			price.markupPercentage2 = Number(((Number(salePrice) - Number(basePrice)) / Number(basePrice) * 100).toFixed(2))
-			price.salePrice2 = Number(salePrice)
+			price.markupPercentage2 = Number(Math.abs(((Number(salePrice) - Number(basePrice)) / Number(basePrice) * 100)).toFixed(2));
 
+			price.salePrice2 = Number(salePrice)
 			return price;
 		} else {
 			price.basePrice2 = Number(basePrice);
