@@ -448,10 +448,10 @@ export default class ArticleUC {
 				countNotUpdate: 0
 			};
 			data.forEach((item) => {
-				articlesObject[item.column1] = item;
-				response.notUpdateArticle.push(item.column1);
+				articlesObject[item.column2] = item;
+				response.notUpdateArticle.push(item.column2);
 			});
-			const codes = data.map((obj) => obj.column1);
+			const codes = data.map((obj) => obj.column2);
 
 			try {
 				if (codes.some(code => code === '')) {
@@ -467,25 +467,26 @@ export default class ArticleUC {
 				const updatePromises = article.map(async (item: any) => {
 					const articleData = articlesObject[item.code];
 
-					const makesId = await this.getMakeOrCreateExcelData(articleData.column14)
-					const categoryId = await this.getCategoryOrCreateExcelData(articleData.column15)
-					const printerId = await this.getPrinters(articleData.column17)
-					const unitOfMeasurementId = await this.getUnitOfMeasurement(articleData.column6)
-					const tax: Tax = await this.getTax(articleData.column11)
-					const calculatedSalePrice = this.calculateSalePrice(articleData.column10, articleData.column12, articleData.column13);
+					const makesId = await this.getMakeOrCreateExcelData(articleData.column4)
+					const categoryId = await this.getCategoryOrCreateExcelData(articleData.column5)
+					const printerId = await this.getPrinters(articleData.column9)
+					const unitOfMeasurementId = await this.getUnitOfMeasurement(articleData.column8)
+					const tax: Tax = await this.getTax(articleData.column12)
+					const calculatedSalePrice = this.calculateSalePrice(articleData.column11, articleData.column13, articleData.column14);
 
 					const result = await new ArticleController(this.database).update(
 						item._id,
 						{
-							code: articleData.column1,
-							description: articleData.column2 === "" ? item.description : articleData.column2,
-							url: articleData.column3 === "" ? item.url : articleData.column3,
-							posDescription: articleData.column4 === "" ? item.posDescription : articleData.column4,
-							quantityPerMeasure: articleData.column5,
+							order: articleData.column1 === "" ? item.order : articleData.column11,
+							code: articleData.column2,
+							barcode: articleData.column13 === "" ? item.barcode : articleData.column13,
+							make: makesId === null ? item.make : makesId,
+							category: categoryId === null ? item.category : categoryId,
+							description: articleData.column6 === "" ? item.description : articleData.column6.substring(0, 20),
+							posDescription: articleData.column7 === "" ? item.posDescription : articleData.column7,
 							unitOfMeasurement: unitOfMeasurementId === "" ? item.unitOfMeasurement : unitOfMeasurementId,
-							observation: articleData.column7 === "" ? item.observation : articleData.column7,
-							notes: articleData.column8 === "" ? item.notes : articleData.column8,
-							tags: articleData.column9 === "" ? item.tags : articleData.column9,
+							printIn: printerId === "" ? item.unitOfMeasurement : printerId,
+							observation: articleData.column10 === "" ? item.observation : articleData.column10,
 							basePrice: calculatedSalePrice.basePrice2,
 							taxes: tax !== undefined ? [{
 								tax: tax._id,
@@ -494,18 +495,18 @@ export default class ArticleUC {
 							] : item.taxes,
 							markupPercentage: calculatedSalePrice.markupPercentage2,
 							salePrice: calculatedSalePrice.salePrice2,
-							make: makesId === null ? item.make : makesId,
-							category: categoryId === null ? item.category : categoryId,
-							barcode: articleData.column16 === "" ? item.barcode : articleData.column16,
-							printIn: printerId === "" ? item.unitOfMeasurement : printerId,
-							posKitchen: articleData.column18 === 'Si',
+							weight: articleData.column15  === "" ? item.weight : articleData.column15,
+							width: articleData.column16 === "" ? item.width : articleData.column16,
+							height: articleData.column17 === "" ? item.height : articleData.column17,
+							depth: articleData.column18 === "" ? item.depth : articleData.column18,
 							allowPurchase: articleData.column19 === 'Si',
 							allowSale: articleData.column20 === 'Si',
 							allowStock: articleData.column21 === 'Si',
 							allowSaleWithoutStock: articleData.column22 === 'Si',
-							allowMeasure: articleData.column23 === 'Si',
-							favourite: articleData.column24 === 'Si',
-							isWeigth: articleData.column25 === 'Si',
+							isWeigth: articleData.column23 === 'Si',
+							allowMeasure: articleData.column24 === 'Si',
+							posKitchen: articleData.column25 === 'Si',
+							m3: articleData.column26 === "" ? item.m3 : articleData.column26,
 						}
 					);
 
@@ -528,44 +529,45 @@ export default class ArticleUC {
 				const createArticlePromises = nonExistingCodes.map(async (item: any) => {
 					const articleData = articlesObject[item];
 
-					const makesId = await this.getMakeOrCreateExcelData(articleData.column14)
-					const categoryId = await this.getCategoryOrCreateExcelData(articleData.column15)
-					const printerId = await this.getPrinters(articleData.column17)
-					const unitOfMeasurementId = await this.getUnitOfMeasurement(articleData.column6)
-					const tax: Tax = await this.getTax(articleData.column11)
-					const calculatedSalePrice = this.calculateSalePrice(articleData.column10, articleData.column12, articleData.column13);
+					const makesId = await this.getMakeOrCreateExcelData(articleData.column4)
+					const categoryId = await this.getCategoryOrCreateExcelData(articleData.column5)
+					const printerId = await this.getPrinters(articleData.column9)
+					const unitOfMeasurementId = await this.getUnitOfMeasurement(articleData.column8)
+					const tax: Tax = await this.getTax(articleData.column12)
+					const calculatedSalePrice = this.calculateSalePrice(articleData.column11, articleData.column13, articleData.column14);
 
 					let newArticle: Article = ArticleSchema.getInstance(this.database)
 					newArticle = Object.assign(newArticle, {
-						code: articleData.column1,
-						description: articleData.column2,
-						url: articleData.column3,
-						posDescription: articleData.column4,
-						quantityPerMeasure: articleData.column5,
-						unitOfMeasurement: unitOfMeasurementId === "" ? null : unitOfMeasurementId,
-						observation: articleData.column7,
-						notes: articleData.column8,
-						tags: articleData.column9,
-						basePrice: calculatedSalePrice.basePrice2,
-						taxes: tax !== undefined ? [{
-							tax: tax._id,
-							percentage: tax.percentage,
-						}
-						] : item.taxes,
-						markupPercentage: calculatedSalePrice.markupPercentage2,
-						salePrice: calculatedSalePrice.salePrice2,
-						make: makesId,
-						category: categoryId,
-						barcode: articleData.column16,
-						printIn: printerId === "" ? null : printerId,
-						posKitchen: articleData.column18 === 'Si',
-						allowPurchase: articleData.column19 === 'Si',
-						allowSale: articleData.column20 === 'Si',
-						allowStock: articleData.column21 === 'Si',
-						allowSaleWithoutStock: articleData.column22 === 'Si',
-						allowMeasure: articleData.column23 === 'Si',
-						favourite: articleData.column24 === 'Si',
-						isWeigth: articleData.column25 === 'Si',
+						    order: articleData.column1,
+						 	code: articleData.column2,
+							barcode: articleData.column3,
+							make: makesId,
+							category: categoryId,
+							description: articleData.column6.substring(0, 20),
+							posDescription: articleData.column7,
+							unitOfMeasurement:  unitOfMeasurementId === "" ? null : unitOfMeasurementId,
+							printIn: printerId === "" ? null : printerId,
+							observation: articleData.column10,
+							basePrice: calculatedSalePrice.basePrice2,
+							taxes: tax !== undefined ? [{
+								tax: tax._id,
+								percentage: tax.percentage,
+							}
+							] : item.taxes,
+							markupPercentage: calculatedSalePrice.markupPercentage2,
+							salePrice: calculatedSalePrice.salePrice2,
+							weight: articleData.column15,
+							width: articleData.column16,
+							height: articleData.column17,
+							depth: articleData.column18,
+							allowPurchase: articleData.column19 === 'Si',
+							allowSale: articleData.column20 === 'Si',
+							allowStock: articleData.column21 === 'Si',
+							allowSaleWithoutStock: articleData.column22 === 'Si',
+							isWeigth: articleData.column23 === 'Si',
+							allowMeasure: articleData.column24 === 'Si',
+							posKitchen: articleData.column25 === 'Si',
+							m3: articleData.column26,
 					})
 					const result = await new ArticleController(this.database).save(newArticle);
 

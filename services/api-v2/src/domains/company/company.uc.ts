@@ -8,6 +8,10 @@ import VATCondition from '../vat-condition/vat-condition.interface'
 import IdentificationType from '../identification-type/identification-type.interface'
 import Responser from '../../utils/responser'
 import moment = require('moment')
+import Country from '../country/country.interface'
+import CountryController from '../country/country.controller'
+import State from '../state/state.interface'
+import StateController from '../state/state.controller'
 
 export default class CompanyUc {
     database: string
@@ -43,40 +47,42 @@ export default class CompanyUc {
             const vatCondition = data.map((obj) => obj.column4)
 
             try {
-                if(vatCondition.some(vatCondition => vatCondition === '') ){
+                if (vatCondition.some(vatCondition => vatCondition === '')) {
                     return reject(new Responser(500, null, "Condiciónes de IVA estan incompletos en el archivo Excel."))
                 }
                 if (identificationValue.some(identificationValue => identificationValue === '') || name.some(name => name === '')) {
-					return reject(new Responser(500, null, "Hay números de identificación o nombres de empresas incompletos en el archivo Excel."))
-				}
+                    return reject(new Responser(500, null, "Hay números de identificación o nombres de empresas incompletos en el archivo Excel."))
+                }
                 if (type.some(type => type === '') || typeIdentification.some(typeIdentification => typeIdentification === '')) {
-					return reject(new Responser(500, null, "Tipos de empresas o tipos de identificación incompletos en el archivo Excel."))
-				}
+                    return reject(new Responser(500, null, "Tipos de empresas o tipos de identificación incompletos en el archivo Excel."))
+                }
 
                 const company: Company[] = await new CompanyController(this.database).find(
                     { identificationValue: { $in: identificationValue }, name: { $in: name } }, {}
                 );
                 if (company.length) {
                     for (const companyObj of company) {
-                      const identificationValue = companyObj.identificationValue;
-                      if (!response.updateCompany.includes(identificationValue)) {
-                        response.updateCompany.push(identificationValue);
-                      }
-                      const indexToRemove = response.notUpdateCompany.indexOf(identificationValue);
-                      if (indexToRemove !== -1) {
-                        response.notUpdateCompany.splice(indexToRemove, 1);
-                      }
+                        const identificationValue = companyObj.identificationValue;
+                        if (!response.updateCompany.includes(identificationValue)) {
+                            response.updateCompany.push(identificationValue);
+                        }
+                        const indexToRemove = response.notUpdateCompany.indexOf(identificationValue);
+                        if (indexToRemove !== -1) {
+                            response.notUpdateCompany.splice(indexToRemove, 1);
+                        }
                     }
-                  }
-                  
+                }
+
                 const nonExistingCodes = identificationValue.filter(code => !company.map((item: Company) => item.identificationValue).includes(code));
-               
+
                 const createPromises = nonExistingCodes.map(async (item: any) => {
                     const companyData = articlesObject[item];
-                
+
                     let vatCondition = await this.getVatCondition(companyData.column4)
                     let identificationTypes = await this.getIdentificationType(companyData.column5)
-                
+                    let countryId = await this.getCoutry(companyData.column14)
+                    let stateId = await this.getState(companyData.column14)
+
                     let company: Company = CompanySchema.getInstance(this.database);
                     company = Object.assign(company, {
                         name: companyData.column1,
@@ -87,21 +93,19 @@ export default class CompanyUc {
                         identificationValue: companyData.column6,
                         grossIncome: companyData.column7,
                         address: companyData.column8,
-                        city: companyData.column9,
-                        phones: companyData.column10,
-                        emails: companyData.column11,
-                        birthday:companyData.column12 === '' ? '' : moment(companyData.column12, 'DD/MM/YYYY').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
-                        gender: companyData.column13 === '' ? null : companyData.column13,
-                        observation: companyData.column14,
-                        allowCurrentAccount: companyData.column15 === 'Si',
-                        floorNumber: companyData.column16,
-                        flat: companyData.column17,
-                        addressNumber: companyData.column18,
-                        latitude: companyData.column19,
-                        longitude: companyData.column20,
-                        discount: companyData.column21,
-                        creditLimit: companyData.column22,
-                        zipCode: companyData.column23,
+                        addressNumber: companyData.column9,
+                        floorNumber: companyData.column10,
+                        flat: companyData.column11,
+                        zipCode: companyData.column12,
+                        country: countryId,
+                        state: stateId,
+                        city: companyData.column15,
+                        phones: companyData.column16,
+                        emails: companyData.column17,
+                        gender: companyData.column18 === '' ? null : companyData.column18,
+                        birthday: companyData.column19 === '' ? '' : moment(companyData.column19, 'DD/MM/YYYY').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+                        allowCurrentAccount: companyData.column20 === 'Si',
+                        creditLimit: companyData.column21,
                     });
                     const result = await new CompanyController(this.database).save(company);
                     if (result.status === 200) {
@@ -114,12 +118,12 @@ export default class CompanyUc {
                             response.notUpdateCompany.splice(indexToRemove, 1);
                         }
                     }
-                    
+
                     return result;
                 })
                 await Promise.all(createPromises);
             } catch (error) {
-              console.log(error)
+                console.log(error)
             }
             response.countUpdate = response.updateCompany.length;
             response.countNotUpdate = response.notUpdateCompany.length;
@@ -127,10 +131,10 @@ export default class CompanyUc {
         })
     }
 
-    async getVatCondition(dato: string){
+    async getVatCondition(dato: string) {
         try {
             let vatCondition: VATCondition[] = await new VATConditionController(this.database).find({ description: dato }, {})
-            if(vatCondition.length > 0){
+            if (vatCondition.length > 0) {
                 return vatCondition[0]._id
             }
             return null
@@ -142,7 +146,7 @@ export default class CompanyUc {
     async getIdentificationType(dato: string) {
         try {
             const identificationTypes: IdentificationType[] = await new IdentificationTypeController(this.database).find({ name: dato }, {});
-    
+
             if (identificationTypes.length > 0) {
                 return identificationTypes[0]._id;
             }
@@ -151,5 +155,29 @@ export default class CompanyUc {
             throw error;
         }
     }
-    
+
+    async getCoutry(data: string) {
+        try {
+            let country: Country[] = await new CountryController(this.database).find({ name: data }, {})
+            if (country.length > 0) {
+                return country[0]._id
+            }
+            return null
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async getState(data: string) {
+        try {
+            let state: State[] = await new StateController(this.database).find({ name: data }, {})
+            if (state.length > 0) {
+                return state[0]._id
+            }
+            return null
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 }
