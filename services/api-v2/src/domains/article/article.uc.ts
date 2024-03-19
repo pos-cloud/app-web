@@ -452,11 +452,18 @@ export default class ArticleUC {
 				response.notUpdateArticle.push(item.column2);
 			});
 			const codes = data.map((obj) => obj.column2);
+			const makes = data.map((obj) => obj.column4);
+			const categories = data.map((obj) => obj.column5)
 
 			try {
 				if (codes.some(code => code === '')) {
 					return reject(new Responser(500, null, "En el archivo Excel, hay códigos de productos que están incompletos."))
 				}
+				const setMakes = new Set(makes);
+				let uniqueMakes = [...setMakes];
+
+				const setCategories = new Set(categories);
+				let uniqueCategories = [...setCategories];
 
 				const article = await new ArticleController(this.database).find(
 					{ code: { $in: codes }, type: "Final" }, {}
@@ -464,11 +471,14 @@ export default class ArticleUC {
 
 				const nonExistingCodes = codes.filter(code => !article.map((item: Article) => item.code).includes(code));
 
+				await this.createMake(uniqueMakes)
+				await this.createCategory(uniqueCategories)
+
 				const updatePromises = article.map(async (item: any) => {
 					const articleData = articlesObject[item.code];
 
-					const makesId = await this.getMakeOrCreateExcelData(articleData.column4)
-					const categoryId = await this.getCategoryOrCreateExcelData(articleData.column5)
+					const makesId = await this.getMake(articleData.column4)
+					const categoryId = await this.getCategory(articleData.column5)
 					const printerId = await this.getPrinters(articleData.column9)
 					const unitOfMeasurementId = await this.getUnitOfMeasurement(articleData.column8)
 					const tax: Tax = await this.getTax(articleData.column12)
@@ -480,8 +490,8 @@ export default class ArticleUC {
 							order: articleData.column1 === "" ? item.order : articleData.column11,
 							code: articleData.column2,
 							barcode: articleData.column13 === "" ? item.barcode : articleData.column13,
-							make: makesId === null ? item.make : makesId,
-							category: categoryId === null ? item.category : categoryId,
+							make: makesId === null ? item.make : makesId[0]._id,
+							category: categoryId === null ? item.category : categoryId[0]._id,
 							description: articleData.column6 === "" ? item.description : articleData.column6.substring(0, 20),
 							posDescription: articleData.column7 === "" ? item.posDescription : articleData.column7,
 							unitOfMeasurement: unitOfMeasurementId === "" ? item.unitOfMeasurement : unitOfMeasurementId,
@@ -495,7 +505,7 @@ export default class ArticleUC {
 							] : item.taxes,
 							markupPercentage: calculatedSalePrice.markupPercentage2,
 							salePrice: calculatedSalePrice.salePrice2,
-							weight: articleData.column15  === "" ? item.weight : articleData.column15,
+							weight: articleData.column15 === "" ? item.weight : articleData.column15,
 							width: articleData.column16 === "" ? item.width : articleData.column16,
 							height: articleData.column17 === "" ? item.height : articleData.column17,
 							depth: articleData.column18 === "" ? item.depth : articleData.column18,
@@ -529,8 +539,8 @@ export default class ArticleUC {
 				const createArticlePromises = nonExistingCodes.map(async (item: any) => {
 					const articleData = articlesObject[item];
 
-					const makesId = await this.getMakeOrCreateExcelData(articleData.column4)
-					const categoryId = await this.getCategoryOrCreateExcelData(articleData.column5)
+					const makesId = await this.getMake(articleData.column4)
+					const categoryId = await this.getCategory(articleData.column5)
 					const printerId = await this.getPrinters(articleData.column9)
 					const unitOfMeasurementId = await this.getUnitOfMeasurement(articleData.column8)
 					const tax: Tax = await this.getTax(articleData.column12)
@@ -538,36 +548,36 @@ export default class ArticleUC {
 
 					let newArticle: Article = ArticleSchema.getInstance(this.database)
 					newArticle = Object.assign(newArticle, {
-						    order: articleData.column1,
-						 	code: articleData.column2,
-							barcode: articleData.column3,
-							make: makesId,
-							category: categoryId,
-							description: articleData.column6.substring(0, 20),
-							posDescription: articleData.column7,
-							unitOfMeasurement:  unitOfMeasurementId === "" ? null : unitOfMeasurementId,
-							printIn: printerId === "" ? null : printerId,
-							observation: articleData.column10,
-							basePrice: calculatedSalePrice.basePrice2,
-							taxes: tax !== undefined ? [{
-								tax: tax._id,
-								percentage: tax.percentage,
-							}
-							] : item.taxes,
-							markupPercentage: calculatedSalePrice.markupPercentage2,
-							salePrice: calculatedSalePrice.salePrice2,
-							weight: articleData.column15,
-							width: articleData.column16,
-							height: articleData.column17,
-							depth: articleData.column18,
-							allowPurchase: articleData.column19 === 'Si',
-							allowSale: articleData.column20 === 'Si',
-							allowStock: articleData.column21 === 'Si',
-							allowSaleWithoutStock: articleData.column22 === 'Si',
-							isWeigth: articleData.column23 === 'Si',
-							allowMeasure: articleData.column24 === 'Si',
-							posKitchen: articleData.column25 === 'Si',
-							m3: articleData.column26,
+						order: articleData.column1,
+						code: articleData.column2,
+						barcode: articleData.column3,
+						make: makesId === null ? item.make : makesId[0]._id,
+						category: categoryId === null ? item.category : categoryId[0]._id,
+						description: articleData.column6.substring(0, 20),
+						posDescription: articleData.column7,
+						unitOfMeasurement: unitOfMeasurementId === "" ? null : unitOfMeasurementId,
+						printIn: printerId === "" ? null : printerId,
+						observation: articleData.column10,
+						basePrice: calculatedSalePrice.basePrice2,
+						taxes: tax !== undefined ? [{
+							tax: tax._id,
+							percentage: tax.percentage,
+						}
+						] : item.taxes,
+						markupPercentage: calculatedSalePrice.markupPercentage2,
+						salePrice: calculatedSalePrice.salePrice2,
+						weight: articleData.column15,
+						width: articleData.column16,
+						height: articleData.column17,
+						depth: articleData.column18,
+						allowPurchase: articleData.column19 === 'Si',
+						allowSale: articleData.column20 === 'Si',
+						allowStock: articleData.column21 === 'Si',
+						allowSaleWithoutStock: articleData.column22 === 'Si',
+						isWeigth: articleData.column23 === 'Si',
+						allowMeasure: articleData.column24 === 'Si',
+						posKitchen: articleData.column25 === 'Si',
+						m3: articleData.column26,
 					})
 					const result = await new ArticleController(this.database).save(newArticle);
 
@@ -630,45 +640,58 @@ export default class ArticleUC {
 		}
 	}
 
-	async getMakeOrCreateExcelData(makes: string) {
-		if (makes !== '') {
-			let existingMake: Make[] = await new MakeController(this.database).find({ description: makes }, {})
+	async createMake(uniqueMakes: string[]) {
+		let make: Make[] = await this.getMake(uniqueMakes)
+		const existingMakes = make.map((item: Make) => item.description);
+		const nonExistingMakes = uniqueMakes.filter(description => !existingMakes.includes(description) && description !== '');
 
-			if (existingMake.length) {
-				return existingMake[0]._id
-			} else {
-				let make: Make = MakeSchema.getInstance(this.database)
-				make = Object.assign(make, {
-					description: makes
-				})
-				const result = await new MakeController(this.database).save(make);
-				if (result.status === 200) {
-					return result.result._id
-				}
+		const createMakesPromises = nonExistingMakes.map(async (item: any) => {
+			let make: Make = MakeSchema.getInstance(this.database)
+			make = Object.assign(make, {
+				description: item
+			})
+			const result = await new MakeController(this.database).save(make);
+			if (result.status === 200) {
+				return result.result._id
 			}
-		}
-		return null;
+		})
+		await Promise.all(createMakesPromises);
 	}
 
-	async getCategoryOrCreateExcelData(category: string) {
-		if (category !== '') {
-			const existingCategory: Category[] = await new CategoryController(this.database).find({ description: category }, {})
-			if (existingCategory.length) {
-				return existingCategory[0]._id
-			} else {
+	async createCategory(uniqueCategories: string[]) {
+		let category: Category[] = await this.getCategory(uniqueCategories)
+		const existingCategory = category.map((item: Category) => item.description);
+		const nonExistingCategorie = uniqueCategories.filter((description: string) => !existingCategory.includes(description) && description !== '');
 
-				let newCategory: Make = CategorySchema.getInstance(this.database)
-				newCategory = Object.assign(newCategory, {
-					description: category
-				})
-				const result = await new MakeController(this.database).save(newCategory);
-
-				if (result.status === 200) {
-					result.result._id
-				}
+		const createCategoriesPromises = nonExistingCategorie.map(async (item: any) => {
+			let category: Category = CategorySchema.getInstance(this.database)
+			category = Object.assign(category, {
+				description: item
+			})
+			const result = await new CategoryController(this.database).save(category);
+			if (result.status === 200) {
+				return result.result._id
 			}
+		})
+		await Promise.all(createCategoriesPromises);
+	}
+
+	async getMake(makes: any) {
+		if (makes.length || makes !== '') {
+			let existingMake: Make[] = await new MakeController(this.database).find({ description: { $in: makes } }, {})
+
+			return existingMake
 		}
-		return null;
+		return null
+	}
+
+	async getCategory(category: any) {
+		if (category.length) {
+			let existingCategory: Category[] = await new CategoryController(this.database).find({ description: { $in: category } }, {})
+
+			return existingCategory
+		}
+		return null
 	}
 
 	calculateSalePrice(basePrice: string, markupPercentage: string, salePrice: string) {
