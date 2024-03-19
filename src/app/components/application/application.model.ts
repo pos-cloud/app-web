@@ -4,6 +4,10 @@ import { Article } from '../article/article';
 import { Category } from '../category/category';
 import { EmailTemplate } from '../email-template/email-template';
 import { Model } from '../model/model.model';
+import { TransactionType } from '../transaction-type/transaction-type';
+import { ShipmentMethod } from '../shipment-method/shipment-method.model';
+import { PaymentMethod } from '../payment-method/payment-method';
+import { Company } from '../company/company'
 
 export class Application extends Model {
   order: number;
@@ -115,10 +119,15 @@ export class Application extends Model {
         template: EmailTemplate;
       };
     };
+
   };
   tiendaNube: {
     userId: string,
-    token: string
+    token: string,
+    transactionType: TransactionType,
+    shipmentMethod: ShipmentMethod,
+    paymentMethod: PaymentMethod,
+    company: Company
   }
   menu: {
     portain: string,

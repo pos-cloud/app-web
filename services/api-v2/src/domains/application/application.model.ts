@@ -131,7 +131,11 @@ class ApplicationSchema extends Model {
       },
       tiendaNube: {
         userId: { type: Number },
-        token: { type: String }
+        token: { type: String },
+        transactionType: {type: Schema.Types.ObjectId, ref: 'transaction-type'},
+        shipmentMethod: {type: Schema.Types.ObjectId, ref: 'shipment-method'}, 
+        paymentMethod:  {type: Schema.Types.ObjectId, ref: 'payment-method'},
+        company: {type: Schema.Types.ObjectId, ref: 'company'},
       },
       menu: {
         portain: { type: String },
@@ -164,8 +168,7 @@ class ApplicationSchema extends Model {
             style: { type: String },
             weight: { type: String }
         }
-    }
-
+      },
     })
   }
 

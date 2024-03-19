@@ -1,10 +1,14 @@
-import {IsDefined, IsString, IsNumber, ValidateIf} from 'class-validator'
+import { IsDefined, IsString, IsNumber, ValidateIf } from 'class-validator'
 import EmailTemplate from 'domains/email-template/email-template.interface'
 
 import Article from './../../domains/article/article.interface'
 import Category from './../../domains/category/category.interface'
 import ModelDto from './../../domains/model/model.dto'
-import {ApplicationType} from './application.interface'
+import { ApplicationType } from './application.interface'
+import { TransactionType } from '../transaction-type/transaction-type.interface'
+import { ShipmentMethod } from '../shipment-method/shipment-method.interface'
+import PaymentMethod from '../payment-method/payment-method.interface'
+import Company from '../company/company.interface'
 
 export default class ApplicationDto extends ModelDto {
   @ValidateIf((o) => !o._id)
@@ -140,41 +144,45 @@ export default class ApplicationDto extends ModelDto {
     }
   }
 
-  tiendaNube:{
+  tiendaNube: {
     userId: number,
-    token: string
+    token: string,
+    transactionType: TransactionType,
+    shipmentMethod: ShipmentMethod,
+    paymentMethod: PaymentMethod,
+    company: Company
   }
   menu: {
-    portain: string, 
+    portain: string,
     background: string
     article: {
-        font: string,
-        size: number,
-        color: string,
-        style: string,
-        weight: string
+      font: string,
+      size: number,
+      color: string,
+      style: string,
+      weight: string
     },
     category: {
-        font: string,
-        size: number,
-        color: string,
-        style: string,
-        weight: string
+      font: string,
+      size: number,
+      color: string,
+      style: string,
+      weight: string
     },
     price: {
-        font: string,
-        size: number,
-        color: string,
-        style: string,
-        weight: string
+      font: string,
+      size: number,
+      color: string,
+      style: string,
+      weight: string
     },
     observation: {
-        font: string,
-        size: number,
-        color: string,
-        style: string,
-        weight: string
+      font: string,
+      size: number,
+      color: string,
+      style: string,
+      weight: string
     }
-}
+  }
 
 }
