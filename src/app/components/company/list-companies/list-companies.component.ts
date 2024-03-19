@@ -135,11 +135,11 @@ export class ListCompaniesComponent implements OnInit {
 
     public initDragHorizontalScroll(): void {
         const slider = document.querySelector('.table-responsive');
-        if(slider) {
+        if (slider) {
             let isDown = false;
             let startX;
             let scrollLeft;
-    
+
             slider.addEventListener('mousedown', (e) => {
                 isDown = true;
                 slider.classList.add('active');
@@ -422,7 +422,6 @@ export class ListCompaniesComponent implements OnInit {
             case 'account':
                 this._router.navigateByUrl("admin/cuentas-corrientes?companyId=" + company._id + "&companyType=" + this.type)
                 break;
-
             case "excel":
                 modalRef = this._modalService.open(importExcelComponent, {
                     size: "lg",
@@ -471,6 +470,22 @@ export class ListCompaniesComponent implements OnInit {
                 }, (reason) => {
 
                 });
+                break;
+            case 'uploadFile':
+                modalRef = this._modalService.open(ImportComponent, {
+                    size: 'lg',
+                    backdrop: 'static',
+                });
+                modalRef.componentInstance.model = 'company'
+                modalRef.result.then(
+                    (result) => {
+                        if (result === 'save_close') {
+                            this.getItems();
+                        }
+                    },
+                    (reason) => { },
+                );
+
                 break;
             default: ;
         }

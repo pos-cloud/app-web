@@ -25,8 +25,8 @@ export class ImportComponent implements OnInit {
   alertMessage: string = '';
   countNotUpdate: number;
   countUpdate: number;
-  notUpdateArticle: string[];
-  updateArticle: string[];
+  notUpdate: string[];
+  update: string[];
   errorMessage: string;
   public importForm: UntypedFormGroup;
   public loading: boolean = false;
@@ -102,8 +102,8 @@ export class ImportComponent implements OnInit {
             if (response.status == 200) {
               this.countNotUpdate = response.result.countNotUpdate;
               this.countUpdate = response.result.countUpdate;
-              this.notUpdateArticle = response.result.notUpdateArticle;
-              this.updateArticle = response.result.updateArticle;
+              this.notUpdate= response.result.notUpdateArticle;
+              this.update = response.result.updateArticle;
               this.loading = false;
             } else {
               this.showToast(response.error, 'danger')
@@ -111,14 +111,14 @@ export class ImportComponent implements OnInit {
             }
           },
         );
-      } else if (this.model === 'articles')
+      } else if (this.model === 'articles') {
         this._excelUpdateService.importArticle(file).subscribe(
           response => {
             if (response.status == 200) {
               this.countNotUpdate = response.result.countNotUpdate;
               this.countUpdate = response.result.countUpdate;
-              this.notUpdateArticle = response.result.notUpdateArticle;
-              this.updateArticle = response.result.updateArticle;
+              this.notUpdate = response.result.notUpdateArticle;
+              this.update = response.result.updateArticle;
               this.loading = false;
             } else {
               this.showToast(response.error, 'danger')
@@ -126,6 +126,22 @@ export class ImportComponent implements OnInit {
             }
           },
         );
+      } else if (this.model === 'company') {
+        this._excelUpdateService.importCompany(file).subscribe(
+          response => {
+            if (response.status == 200) {
+              this.countNotUpdate = response.result.countNotUpdate;
+              this.countUpdate = response.result.countUpdate;
+              this.notUpdate = response.result.notUpdateCompany;
+              this.update = response.result.updateCompany;
+              this.loading = false;
+            } else {
+              this.showToast(response.error, 'danger')
+              this.loading = false;
+            }
+          }
+        )
+      }
     }
   }
 

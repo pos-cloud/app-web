@@ -5,15 +5,20 @@
   </button>
 </div>
 <section class="container-fluid">
-  <div class="pull-right">
-    <a *ngIf="model === 'articles'" href="/assets/modelo_creer_producto.xlsx" target="_self" download>
-      Descargar Modelos
-    </a>
-    <a *ngIf="model === 'articles-stock'" href="/assets/modelo_crear_inventario.xlsx" target="_self" download>
-      Descargar Modelo
-    </a>
-  </div>
-
+  <a *ngIf="model === 'articles-stock'" href="/assets/modelo_crear_inventario.xlsx" target="_self" download class="pull-right">
+    Descargar Modelo
+  </a>
+  <a *ngIf="model === 'articles'" href="/assets/modelo_crear_producto.xlsx" target="_self" download class="pull-right">
+    Descargar Modelo
+  </a>
+  <a *ngIf="model === 'company'" href="/assets/modelo_crear_clientes.xlsx" target="_self" download class="pull-right">
+    Descargar Modelo
+  </a>
+  <div *ngIf="model === 'company'" class="center-content" >
+    <ngb-alert>
+       Solo se pueden crear Clientes y Proveedores
+    </ngb-alert>
+    </div>
   <div class="row container-filter" *ngIf="model === 'articles-stock'">
     <div class="col-md-3">
       <label for="branch" class="control-label">
@@ -48,24 +53,21 @@
       </button>
     </div>
   </form>
-
-  <div class="container" *ngIf="notUpdateArticle?.length > 0 || updateArticle?.length > 0">
+  <div class="container" *ngIf="notUpdate?.length > 0 || update?.length > 0">
     <p>
-      <span class="font-weight-bold">{{ countUpdate }} artículo<span *ngIf="countUpdate !== 1">s</span> actualizado<span
-          *ngIf="countUpdate !== 1">s</span>: </span>
-      <ng-container *ngFor="let article of updateArticle; let last = last">
+      <span class="font-weight-bold">{{ countUpdate }} {{ model === 'company' ? 'empresa' : 'artículo' }}<span *ngIf="countUpdate !== 1">s</span> {{ model === 'company' ? 'actualizada' : 'actualizado' }}<span
+      *ngIf="countUpdate !== 1">s</span>: </span>
+
+      <ng-container *ngFor="let article of update; let last = last">
         <span class="text-success">{{ article }}</span>{{ !last ? ', ' : '' }}
       </ng-container>
     </p>
     <p>
-      <span class="font-weight-bold">{{ countNotUpdate }} artículo<span *ngIf="countNotUpdate !== 1">s</span> no
-        actualizado<span *ngIf="countNotUpdate !== 1">s</span>: </span>
-      <ng-container *ngFor="let article of notUpdateArticle; let last = last">
+      <span class="font-weight-bold">{{ countNotUpdate }} {{ model === 'company' ? 'empresa' : 'artículo' }}<span *ngIf="countNotUpdate !== 1">s</span> no
+      {{ model === 'company' ? 'actualizada' : 'actualizado' }}<span *ngIf="countNotUpdate !== 1">s</span>: </span>
+      <ng-container *ngFor="let article of notUpdate; let last = last">
         <span class="text-danger">{{ article }}</span>{{ !last ? ', ' : '' }}
       </ng-container>
-    </p>
-    <p *ngIf="errorMessage" class="alert alert-danger">
-      {{ errorMessage }}
     </p>
   </div>
 </section>
