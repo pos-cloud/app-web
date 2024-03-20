@@ -69,10 +69,10 @@ export default class TiendaNubeController {
     }
 
     private initializeRoutes() {
-        this.router.post(
-            `${this.path}/add-transaction`, this.createTransaction
-        )
+        this.router.post(`${this.path}/add-transaction`, this.createTransaction)
         this.router.get(`${this.path}/credentials/:storeId`, this.getCredentials)
+        this.router.post(`${this.path}/create-webhook`, this.createWebhook)
+        this.router.get(`${this.path}/get-webhook`, this.getWebhook)
     }
 
     createTransaction = async (
@@ -173,6 +173,52 @@ export default class TiendaNubeController {
         } catch (error) {
             console.log(error)
             response.send(new Responser(500, null, error));
+        }
+    }
+
+    async createWebhook(
+        request: RequestWithUser,
+        response: express.Response,
+        next: express.NextFunction
+    ) {
+        try {
+            const { userId, event, url, authentication } = request.body;
+            let URL = `https://api.tiendanube.com/v1/${userId}/webhooks`;
+
+            const requestOptions = {
+                headers: {
+                    Authentication: `bearer ${authentication}`
+                }
+            };
+            const data = {
+                event: event,
+                url: url
+            };
+            const webhook = await axios.post(URL, data, requestOptions)
+            return response.send(new Responser(200, { webhook: webhook.data }));
+        } catch (error) {
+            return response.send(new Responser(500, 'Error al crear los webhooks'));
+        }
+    }
+
+    async getWebhook(
+        request: RequestWithUser,
+        response: express.Response,
+        next: express.NextFunction
+    ) {
+        try {
+            const { userId, authentication } = request.query;
+            let URL = `https://api.tiendanube.com/v1/${userId}/webhooks`;
+            const requestOptions = {
+                headers: {
+                    Authentication: `bearer ${authentication}`
+                }
+            };
+            const webhook = await axios.get(URL,requestOptions )
+            let data = webhook.data
+            return response.send(new Responser(200, { data }));
+        } catch (error) {
+            return response.send(new Responser(500, 'Error al crear los webhooks'));
         }
     }
 
