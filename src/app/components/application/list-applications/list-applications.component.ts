@@ -268,19 +268,7 @@ export class ListApplicationsComponent implements OnInit {
       error => this.showToast(error)
     )
   }
-
-  public getWebhook(userId, token): any {
-    this._service.getWebhookTn(userId, token).subscribe(
-      (result: Resulteable) => {
-        if (result.status === 200) {
-          return result.result
-        } else {
-          return []
-        }
-      }
-    )
-  }
-
+  
   setValuesForm(tiendaNube, cartaDigital) {
     let tn = tiendaNube.tiendaNube
     let menu = cartaDigital.menu
@@ -335,7 +323,7 @@ export class ListApplicationsComponent implements OnInit {
     if (this.tiendaNubeForm.value.userId && this.tiendaNubeForm.value.token) {
       this._service.createWebhookTn(this.tiendaNubeForm.value.userId, this.tiendaNubeForm.value.token).subscribe(
         (result: Resulteable) => {
-          if (result.status == 201) {
+          if (result.status == 200) {
             this.showToast(null, 'success', 'Los webhooks se han creado con éxito.');
           } else {
             this.showToast(null, 'danger', 'Error al crear los webhooks.');
@@ -350,19 +338,13 @@ export class ListApplicationsComponent implements OnInit {
     }
   }
 
-  updateApplication(type) {
+  async updateApplication(type) {
     let application = this.applications.find(app => app.type === type)
     let formData = {};
 
     if (type === ApplicationType.TiendaNube) {
       if (!this.tiendaNubeForm.valid) {
         return this.showToast({ message: 'Revisa los errores en el formulario.' });
-      }
-
-      let webhook = this.getWebhook(this.tiendaNubeForm.value.userId, this.tiendaNubeForm.value.token)
-
-      if (webhook === undefined || !webhook.length) {
-        return this.showToast({ message: 'No hay Webhook generados.' });
       }
 
       formData = this.tiendaNubeForm.value;
