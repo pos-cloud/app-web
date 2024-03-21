@@ -22,7 +22,7 @@ export class ApplicationService extends ModelService {
   }
 
   public createWebhookTn(userId: string, authentication: string): Observable<any>{
-    const URL = `${Config.apiV8URL}tienda-nube/create-webhook`;
+    const URL = `${Config.apiV8URL}tienda-nube/webhook`;
   
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json")
@@ -31,55 +31,17 @@ export class ApplicationService extends ModelService {
         URL,
         {
           userId: userId,
-          event: "order/created",
-          url: "https://api-tiendanube.poscloud.ar/orders/post-webhook",
           authentication: authentication
         },
         { headers: headers }
-      ).pipe(
-        mergeMap(() => {
-          return this._http.post(
-            URL,
-            {
-              userId: userId,
-              event: "order/updated",
-              url: "https://api-tiendanube.poscloud.ar/orders/post-webhook",
-              authentication: authentication
-            },
-            { headers: headers }
-          ).pipe(
-            catchError((error) => {
-              
-              console.log(error)
-              return of(error);
-            })
-          );
+      )
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
         })
       );
-  }
-
-  public getWebhookTn(userId: string, authentication: string){
-    const URL = `${Config.apiV8URL}tienda-nube/get-webhook`
-  
-      const params = {
-        userId: userId,
-        authentication: authentication
-      }
-  
-    return this._http.get(
-      URL, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-         params
-      })
-    .pipe(
-      map((res) => {
-        return res;
-      }),
-      catchError((err) => {
-        return of(err);
-      })
-    );
   }
 }

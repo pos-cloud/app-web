@@ -268,25 +268,7 @@ export class ListApplicationsComponent implements OnInit {
       error => this.showToast(error)
     )
   }
-
-  public getWebhook(userId, token): Promise<string> {
-    return new Promise((resolve, reject) => {
-      this._service.getWebhookTn(userId, token).subscribe(
-        (result: Resulteable) => {
-          if (result.status === 200) {
-            resolve(result.result.data);
-          } else {
-            resolve('');
-          }
-        },
-        (error) => {
-          reject([]);
-        }
-      );
-    });
-  }
   
-
   setValuesForm(tiendaNube, cartaDigital) {
     let tn = tiendaNube.tiendaNube
     let menu = cartaDigital.menu
@@ -363,11 +345,6 @@ export class ListApplicationsComponent implements OnInit {
     if (type === ApplicationType.TiendaNube) {
       if (!this.tiendaNubeForm.valid) {
         return this.showToast({ message: 'Revisa los errores en el formulario.' });
-      }
-
-     let webhook =  await this.getWebhook(this.tiendaNubeForm.value.userId, this.tiendaNubeForm.value.token)
-      if (!webhook.length) {
-        return this.showToast({ message: 'No hay Webhook generados.' });
       }
 
       formData = this.tiendaNubeForm.value;
