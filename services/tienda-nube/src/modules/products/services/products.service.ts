@@ -206,8 +206,19 @@ export class ProductsService {
     return resolvedData;
   }
 
-  findAll() {
-    return `This action returns all products`;
+  async findAll(database: string) {
+    if (!database) {
+      throw new BadRequestException(`Database is required `);
+    }
+    await this.databaseService.initConnection(database);
+    const { token, userID } = await this.databaseService.getCredentialsTiendaNube();
+
+    const data = await this.tiendaNubeService.findAll(
+      token,
+      userID 
+    )
+
+    return data
   }
 
   findOne(id: number) {

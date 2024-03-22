@@ -771,6 +771,30 @@ export class ListArticlesComponent implements OnInit {
     });
   }
 
+  public getAllArticlesTn(): Promise<any> {
+    this.loading = true;
+    return new Promise<any>((resolve, reject) => {
+      this._articleService.getAllArticlesTiendaNube().subscribe(
+        (result) => {
+          if (!result.result) {
+            if (result.message && result.message !== "")
+              this.showMessage(result.message, "info", true);
+            this.loading = false;
+            resolve(null);
+          } else {
+            resolve(result);
+            this.refresh()
+            this.loading = false;
+          }
+        },
+        (error) => {
+          this.showMessage(error._body, "danger", false);
+          resolve(null);
+        }
+      );
+    });
+  }
+
   public getPriceList(): void {
     this._priceList.getPriceLists().subscribe(
       (result) => {
