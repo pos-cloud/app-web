@@ -2551,9 +2551,10 @@ export class PrintComponent implements OnInit {
       this.doc.text('Régimen Fiscal:', margin, 65);
     }
 
-    this.doc.text('Dirección:', 110, 55);
-    this.doc.text('Teléfono:', 110, 60);
-    this.doc.text('Localidad:', 110, 65);
+    this.doc.text('Dirección:', 110, 53);
+    this.doc.text('Teléfono:', 110, 57);
+    this.doc.text('Localidad:', 110, 61);
+    this.doc.text('Provincia:', 110, 65);
     this.doc.setFont('', 'normal');
 
     if (this.company) {
@@ -2572,19 +2573,22 @@ export class PrintComponent implements OnInit {
         this.doc.setFont('', 'normal');
         this.doc.text(this.company.vatCondition.description.slice(0,40), 42, 65);
       }
-
       if (this.company.address) {
         if (this.company.addressNumber) {
-          this.doc.text(this.company.address + ' ' + this.company.addressNumber, 130, 55);
+          this.doc.text(this.company.address + ' ' + this.company.addressNumber, 130, 53);
         } else {
-          this.doc.text(this.company.address, 130, 55);
+          this.doc.text(this.company.address, 130, 53);
         }
       }
       if (this.company.phones) {
-        this.doc.text(this.company.phones, 130, 60);
+        this.doc.text(this.company.phones, 130, 57);
       }
       if (this.company.city) {
-        this.doc.text(this.company.city, 130, 65);
+        this.doc.text(this.company.city, 130, 61);
+      }
+
+      if(this.company.state){
+        this.doc.text(this.company.state.name, 130, 65);
       }
     } else {
       this.doc.setFont('', 'bold');
@@ -3194,13 +3198,26 @@ export class PrintComponent implements OnInit {
                 'middle',
               );
             } else {
+              // this.doc.textEx(
+              //   this.movementsOfArticles[i].salePrice == 0
+              //     ? ''
+              //     : '$ ' +
+              //     this.roundNumber.transform(
+              //       this.movementsOfArticles[i].salePrice /
+              //       this.movementsOfArticles[i].amount,
+              //       2,
+              //     ),
+              //   160,
+              //   row,
+              //   'right',
+              //   'middle',
+              // );
               this.doc.textEx(
-                this.movementsOfArticles[i].salePrice == 0
+                this.movementsOfArticles[i].costPrice == 0
                   ? ''
                   : '$ ' +
                   this.roundNumber.transform(
-                    this.movementsOfArticles[i].salePrice /
-                    this.movementsOfArticles[i].amount,
+                    this.movementsOfArticles[i].costPrice,
                     2,
                   ),
                 160,
@@ -3221,11 +3238,10 @@ export class PrintComponent implements OnInit {
                 'middle',
               );
             }
-
             if (this.movementsOfArticles[i].discountRate > 0) {
               this.doc.text(
-                `$  ${this.movementsOfArticles[i].discountAmount.toString()} (${this.movementsOfArticles[i].discountRate.toString()}%)`,
-                170,
+                `$ ${this.movementsOfArticles[i].discountAmount.toString()}`,
+                173,
                 row + 1.5,
               );
             }

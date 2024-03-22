@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">Importar</h4>
+  <h4 class="modal-title">{{ title }}</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -14,11 +14,6 @@
   <a *ngIf="model === 'company'" href="/assets/modelo_crear_clientes.xlsx" target="_self" download class="pull-right">
     Descargar Modelo
   </a>
-  <div *ngIf="model === 'company'" class="center-content" >
-    <ngb-alert>
-       Solo se pueden crear Clientes y Proveedores
-    </ngb-alert>
-    </div>
   <div class="row container-filter" *ngIf="model === 'articles-stock'">
     <div class="col-md-3">
       <label for="branch" class="control-label">

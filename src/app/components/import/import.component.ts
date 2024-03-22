@@ -19,6 +19,7 @@ export class ImportComponent implements OnInit {
   @Input() branches: Branch[];
   @Input() allDeposits: any[];
   @Input() model: string;
+  @Input() title: string;
   branchesSelected: Branch[] = new Array();
   depositsSelected: Deposit[] = new Array();
   depositsData: Deposit[] = new Array();

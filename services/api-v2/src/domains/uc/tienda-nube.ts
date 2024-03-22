@@ -69,9 +69,9 @@ export default class TiendaNubeController {
     }
 
     private initializeRoutes() {
-        this.router.post(`${this.path}/add-transaction`, this.createTransaction)
-        this.router.get(`${this.path}/credentials/:storeId`, this.getCredentials)
-        this.router.post(`${this.path}/webhook`, this.verifyWebHook)
+        this.router.get(`${this.path}/credentials/:storeId`, this.getCredentials);
+        this.router.post(`${this.path}/add-transaction`, this.createTransaction);
+        this.router.post(`${this.path}/webhook`, this.verifyWebHook);
     }
 
     createTransaction = async (
@@ -189,7 +189,7 @@ export default class TiendaNubeController {
                 if (createWebhook.length) {
                     return response.send(new Responser(200, createWebhook, userId, authentication));
                 }
-                return response.send(new Responser(200, 'Error al crear los webhook'));
+                return response.send(new Responser(200, 'No se encontraron un usuario con esas credenciales'));
             }
             const deleteWebhooks = await this.deleteWebhook(Webhooks, userId, authentication)
             if (deleteWebhooks) {
@@ -197,11 +197,11 @@ export default class TiendaNubeController {
                 if (createWebhook.length) {
                     return response.send(new Responser(200, createWebhook, userId, authentication));
                 }
-                return response.send(new Responser(200, 'Error al crear los webhook'));
+                return response.send(new Responser(200, 'Error al crear los webhooks'));
             }
             return response.send(new Responser(200, deleteWebhooks));
         } catch (error) {
-            console.log(error)
+            return response.send(new Responser(500, error));
         }
     }
 
@@ -216,7 +216,7 @@ export default class TiendaNubeController {
             const webhook = await axios.get(URL, requestOptions)
             return webhook.data
         } catch (error) {
-            console.log(error)
+            throw 'Tienda no encontrada con las credenciales proporcionadas';
         }
     }
 
@@ -248,7 +248,7 @@ export default class TiendaNubeController {
             const webhooks = await Promise.all(webhookPromises);
             return webhooks
         } catch (error) {
-            console.log(error)
+            throw 'Tienda no encontrada con las credenciales proporcionadas'
         }
     }
 

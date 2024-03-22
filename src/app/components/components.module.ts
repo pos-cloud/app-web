@@ -13,7 +13,6 @@ import {EmployeeTypeModule} from './employee-type/employee-type.module';
 import {ExportersModule} from './export/exporters.module';
 import {HistoryModule} from './history/history.module';
 import {HolidayModule} from './holiday/holiday.module';
-import {ImportExcelModule} from './import-excel/import-excel.module';
 import {PermissionModule} from './permission/permission.module';
 import {ReportModule} from './report/report.module';
 import {ShipmentMethodModule} from './shipment-method/shipment-method.module';
@@ -42,7 +41,6 @@ import { ReportsModule } from './reports/reports.module';
     AccountSeatModule,
     VariantValueModule,
     ReportModule,
-    ImportExcelModule,
     BusinessRuleModule,
     ReportsModule
   ],
