@@ -16,8 +16,6 @@ import { PipesModule } from 'app/main/pipes/pipes.module';
 import { ListReportsComponent } from './list-reports/list-reports.component';
 import { ViewReportComponent } from './view-report/view-report.component';
 import { NgxTinymceModule } from 'ngx-tinymce';
-import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
-import { ImportExcelModule } from '../import-excel/import-excel.module';
 import { ExportersModule } from '../export/exporters.module';
 import { ParamsReportComponent } from './params-report/params-report.component';
 

@@ -320,13 +320,17 @@ export class ListApplicationsComponent implements OnInit {
   }
 
   generateWebhook() {
+    this.loading = true;
+
     if (this.tiendaNubeForm.value.userId && this.tiendaNubeForm.value.token) {
       this._service.createWebhookTn(this.tiendaNubeForm.value.userId, this.tiendaNubeForm.value.token).subscribe(
         (result: Resulteable) => {
           if (result.status == 200) {
             this.showToast(null, 'success', 'Los webhooks se han creado con éxito.');
+            this.loading = false
           } else {
-            this.showToast(null, 'danger', 'Error al crear los webhooks.');
+            this.showToast(null, 'danger', result.result);
+            this.loading = false
           }
         },
         (error) => {
@@ -339,6 +343,7 @@ export class ListApplicationsComponent implements OnInit {
   }
 
   async updateApplication(type) {
+    this.loading = true
     let application = this.applications.find(app => app.type === type)
     let formData = {};
 
@@ -360,8 +365,10 @@ export class ListApplicationsComponent implements OnInit {
         (result) => {
           if (result.status === 200) {
             this.showToast(null, 'success', 'La aplicación se ha actualizado con éxito.');
+            this.loading = false
           } else {
             this.showToast(null, 'danger', 'Error al actualizar la Aplicación.')
+            this.loading = false
           }
         }
       ),
