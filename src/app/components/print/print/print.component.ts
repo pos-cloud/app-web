@@ -3212,12 +3212,27 @@ export class PrintComponent implements OnInit {
               //   'right',
               //   'middle',
               // );
+              // this.doc.textEx(
+              //   this.movementsOfArticles[i].costPrice == 0
+              //     ? ''
+              //     : '$ ' +
+              //     this.roundNumber.transform(
+              //       this.movementsOfArticles[i].discountAmount ? 
+              //         (this.movementsOfArticles[i].salePrice + this.movementsOfArticles[i].discountAmount) / this.movementsOfArticles[i].amount : 
+              //         this.movementsOfArticles[i].salePrice / this.movementsOfArticles[i].amount,
+              //       2,
+              //     ),
+              //   160,
+              //   row,
+              //   'right',
+              //   'middle',
+              // );
               this.doc.textEx(
-                this.movementsOfArticles[i].costPrice == 0
+                this.movementsOfArticles[i].unitPrice == 0
                   ? ''
                   : '$ ' +
                   this.roundNumber.transform(
-                    this.movementsOfArticles[i].costPrice,
+                    this.movementsOfArticles[i].unitPrice,
                     2,
                   ),
                 160,

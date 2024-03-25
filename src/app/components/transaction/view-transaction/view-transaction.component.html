@@ -181,7 +181,8 @@
                                     <th>Descripción</th>
                                     <th>Desc. Corta</th>
                                     <th>Precio Unitario</th>
-                                    <th>Descuento</th>
+                                    <th>Descuento (%)</th>
+                                    <th>Descuento ($)</th>
                                     <th>Precio Total</th>
                                     <th>Depósito</th>
                                     <th>_id</th>
@@ -211,8 +212,8 @@
                                     </td>
                                     <td>{{movementOfArticle?.article?.posDescription}}</td>
                                     <td>{{movementOfArticle?.unitPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-                                    <td>{{movementOfArticle?.discountRate | currency:'USD':'symbol-narrow':'1.2-2'}}
-                                    </td>
+                                    <td>{{movementOfArticle?.discountRate + " %" }}</td>
+                                    <td>{{ movementOfArticle?.discountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                                     <td>{{movementOfArticle?.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                                     <td>{{movementOfArticle?.deposit?.name}}</td>
                                     <td>{{movementOfArticle?._id}}</td>
