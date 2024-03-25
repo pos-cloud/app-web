@@ -2505,30 +2505,10 @@ export class PrintComponent implements OnInit {
 
     this.doc.setFont('', 'normal');
 
-    this.doc.text(this.transaction.employeeClosing.name, 42, 71);
+    this.doc.text(this.transaction.employeeClosing.name, margin + 20, 71);
     if (this.transaction.company.fantasyName) {
       this.doc.text(this.transaction.company.fantasyName, 150, 71);
     }
-
-    this.doc.setFontSize(this.fontSizes.normal);
-    this.doc.setFont('', 'normal');
-  }
-
-  getTransport() {
-    let margin = 5;
-
-    // Lineas divisorias horizontales para el receptor
-    this.doc.line(0, 67, 240, 67);
-    //this.doc.line(0, 80, 240, 80);
-
-    // Detalle receptor
-    this.doc.setFontSize(this.fontSizes.normal);
-    this.doc.setFont('', 'bold');
-    this.doc.text('Transporte:', margin, 71);
-
-    this.doc.setFont('', 'normal');
-
-    this.doc.text(this.transaction.transport.name, 42, 71);
 
     this.doc.setFontSize(this.fontSizes.normal);
     this.doc.setFont('', 'normal');
@@ -2935,9 +2915,6 @@ export class PrintComponent implements OnInit {
       this.transaction.employeeClosing._id
     ) {
       this.getEmployee();
-    }
-    if (this.transaction.transport) {
-      this.getTransport();
     }
 
     this.doc.setFont('', 'normal');
