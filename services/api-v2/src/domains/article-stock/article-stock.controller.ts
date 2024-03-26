@@ -46,9 +46,9 @@ export default class ArticleStockController extends Controller {
         this.updateObj,
       )
       .delete(`${this.path}/:id`, [authMiddleware, ensureLic], this.deleteObj)
-      
+
       .post(
-        `${this.path}/update-excel`,
+        `${this.path}/import-excel`,
         [authMiddleware, ensureLic, upload.single('file')],
         this.updateExcel,
       )
@@ -62,7 +62,7 @@ export default class ArticleStockController extends Controller {
     try {
       this.initConnectionDB(request.database)
       this.userAudit = request.user
-      
+
       const file = request.file;
       const branchId = request.body.branchId;
       const depositId = request.body.depositId
@@ -74,15 +74,29 @@ export default class ArticleStockController extends Controller {
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
 
-      const data = xlsx.utils.sheet_to_json(worksheet);
+      const range = xlsx.utils.decode_range(worksheet['!ref']);
+      const data = [];
 
-      
-      const res = await new ArticleStockUC(request.database).updateFromExcel(data, branchId, depositId)
-
+      for (let rowNum = range.s.r + 1; rowNum <= range.e.r; rowNum++) {
+        let hasData = false;
+        const rowData: any = {};
+        for (let colNum = range.s.c; colNum <= range.e.c; colNum++) {
+          const cellAddress = xlsx.utils.encode_cell({ r: rowNum, c: colNum });
+          const cell = worksheet[cellAddress];
+          const value = cell && cell.v !== undefined ? String(cell.v) : '';
+          rowData[`column${colNum + 1}`] = value;
+          if (value.trim() !== '') {
+            hasData = true;
+          }
+        }
+        if (hasData) {
+          data.push(rowData);
+        }
+      }
+      const res = await new ArticleStockUC(request.database).importFromExcel(data, branchId, depositId)
 
       response.send(new Responser(200, res))
     } catch (error) {
-      console.log(error)
       next(
         new HttpException(new Responser(error.status || 500, null, error.message, error)),
       )

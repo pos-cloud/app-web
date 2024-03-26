@@ -3,6 +3,7 @@ import ArticleController from "../article/article.controller";
 import ArticleStockController from "./article-stock.controller";
 import ArticleStockSchema from '../article-stock/article-stock.model'
 import ArticleStock from "./article-stock.interface";
+import Responser from './../../utils/responser'
 
 export default class ArticleStockUC {
   database: string;
@@ -15,10 +16,9 @@ export default class ArticleStockUC {
     this.articleStockController = new ArticleStockController(database);
   }
 
-  async updateFromExcel(data: any[], branchId: string, depositId: string) {
+  async importFromExcel(data: any[], branchId: string, depositId: string) {
     return new Promise<{}>(async (resolve, reject) => {
       let articlesObject: any = {};
-
       const response = {
         updateArticle: <any>[],
         notUpdateArticle: <any>[],
@@ -26,14 +26,18 @@ export default class ArticleStockUC {
         countNotUpdate: 0
       };
 
-      const articles = data.map((obj) => obj.article);
+      const articles = data.map((obj) => obj.column1);
 
       data.forEach((item) => {
-        articlesObject[item.article] = item;
-        response.notUpdateArticle.push(item.article);
+        articlesObject[item.column1] = item;
+        response.notUpdateArticle.push(item.column1);
       });
 
       try {
+        if (articles.some(code => code === '')) {
+          return reject(new Responser(500, null, "En el archivo Excel, hay códigos de productos que están incompletos."))
+        }
+
         const article = await new ArticleController(this.database).find(
           { code: { $in: articles }, type: "Final" }, {}
         );
@@ -41,7 +45,6 @@ export default class ArticleStockUC {
         const existingCodes = article.map((item: Article) => item.code);
 
         const nonExistingCodes = existingCodes.filter(code => !existingCodes.includes(code));
-
         nonExistingCodes.forEach((item) => {
           response.notUpdateArticle.push(item);
         });
@@ -54,9 +57,9 @@ export default class ArticleStockUC {
         );
 
         articlesStockByArticle.forEach((item: any) => {
-          item.realStock = articlesObject[item.code].realStock;
-          item.minStock = articlesObject[item.code].minStock;
-          item.maxStock = articlesObject[item.code].maxStock;
+          item.realStock = articlesObject[item.code].column2;
+          item.minStock = articlesObject[item.code].column3;
+          item.maxStock = articlesObject[item.code].column4;
         });
 
         const updatePromises = articlesStockByArticle.map(async (item: any) => {
@@ -84,10 +87,11 @@ export default class ArticleStockUC {
 
         await Promise.all(updatePromises);
 
-        const existingCodesS= articlesStockByArticle.map((item: ArticleStock) => item.code);
+        const existingCodesS = articlesStockByArticle.map((item: ArticleStock) => item.code);
         const articlesNotFoundInStock = existingCodes.filter(code => !existingCodesS.includes(code));
 
-         const createPromises = articlesNotFoundInStock.map(async (code) => {
+
+        const createPromises = articlesNotFoundInStock.map(async (code) => {
           const articleData = articlesObject[code];
 
           const articles: Article[] = await new ArticleController(this.database).find({ code: code, type: "Final" }, {});
@@ -99,9 +103,9 @@ export default class ArticleStockUC {
             article: article._id,
             deposit: depositId,
             branch: branchId,
-            realStock: articleData.realStock,
-            minStock: articleData.minStock,
-            maxStock: articleData.maxStock,
+            realStock: articleData.column2,
+            minStock: articleData.column3,
+            maxStock: articleData.column4,
           });
 
           const result = await new ArticleStockController(this.database).save(articleStock);

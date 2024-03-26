@@ -504,6 +504,7 @@ export class ListArticleStocksComponent implements OnInit {
         modalRef.componentInstance.model = 'articles-stock'
         modalRef.componentInstance.branches = this.branches
         modalRef.componentInstance.allDeposits = this.allDeposits
+        modalRef.componentInstance.title = 'Importar stock'
         modalRef.result.then(
           (result) => {
             if (result === 'save_close') {

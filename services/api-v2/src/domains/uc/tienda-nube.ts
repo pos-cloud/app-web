@@ -69,10 +69,9 @@ export default class TiendaNubeController {
     }
 
     private initializeRoutes() {
-        this.router.post(
-            `${this.path}/add-transaction`, this.createTransaction
-        )
-        this.router.get(`${this.path}/credentials/:storeId`, this.getCredentials)
+        this.router.get(`${this.path}/credentials/:storeId`, this.getCredentials);
+        this.router.post(`${this.path}/add-transaction`, this.createTransaction);
+        this.router.post(`${this.path}/webhook`, this.verifyWebHook);
     }
 
     createTransaction = async (
@@ -173,6 +172,101 @@ export default class TiendaNubeController {
         } catch (error) {
             console.log(error)
             response.send(new Responser(500, null, error));
+        }
+    }
+
+    verifyWebHook = async (
+        request: RequestWithUser,
+        response: express.Response,
+        next: express.NextFunction
+    ) => {
+        try {
+            const { userId, authentication } = request.body;
+
+            const Webhooks = await this.getWebhook(userId, authentication)
+            if (!Webhooks.length) {
+                const createWebhook: any = await this.createWebhook(userId, authentication)
+                if (createWebhook.length) {
+                    return response.send(new Responser(200, createWebhook, userId, authentication));
+                }
+                return response.send(new Responser(200, 'No se encontraron un usuario con esas credenciales'));
+            }
+            const deleteWebhooks = await this.deleteWebhook(Webhooks, userId, authentication)
+            if (deleteWebhooks) {
+                const createWebhook: any = await this.createWebhook(userId, authentication)
+                if (createWebhook.length) {
+                    return response.send(new Responser(200, createWebhook, userId, authentication));
+                }
+                return response.send(new Responser(200, 'Error al crear los webhooks'));
+            }
+            return response.send(new Responser(200, deleteWebhooks));
+        } catch (error) {
+            return response.send(new Responser(500, error));
+        }
+    }
+
+    async getWebhook(userId: string, authentication: string) {
+        try {
+            let URL = `https://api.tiendanube.com/v1/${userId}/webhooks`;
+            const requestOptions = {
+                headers: {
+                    Authentication: `bearer ${authentication}`
+                }
+            };
+            const webhook = await axios.get(URL, requestOptions)
+            return webhook.data
+        } catch (error) {
+            throw 'Tienda no encontrada con las credenciales proporcionadas';
+        }
+    }
+
+    async createWebhook(userId: string, authentication: string) {
+        try {
+            let URL = `https://api.tiendanube.com/v1/${userId}/webhooks`;
+
+            const requestOptions = {
+                headers: {
+                    Authentication: `bearer ${authentication}`
+                }
+            };
+            const webhooksData = [
+                {
+                    event: 'order/created',
+                    url: "https://api-tiendanube.poscloud.ar/orders/post-webhook",
+                },
+                {
+                    event: 'order/updated',
+                    url: "https://api-tiendanube.poscloud.ar/orders/post-webhook",
+                }
+            ];
+
+            const webhookPromises = webhooksData.map(async (data) => {
+                const response = await axios.post(URL, data, requestOptions)
+                return response.data;
+            });
+
+            const webhooks = await Promise.all(webhookPromises);
+            return webhooks
+        } catch (error) {
+            throw 'Tienda no encontrada con las credenciales proporcionadas'
+        }
+    }
+
+    async deleteWebhook(webhook: any, userId: string, authentication: string) {
+        try {
+            const requestOptions = {
+                headers: {
+                    Authentication: `bearer ${authentication}`
+                }
+            };
+            const webhookPromises = webhook.map(async (data: any) => {
+                const response = await axios.delete(`https://api.tiendanube.com/v1/${userId}/webhooks/${data.id}`, requestOptions)
+                return response.data;
+            });
+            const webhooks = await Promise.all(webhookPromises);
+            return webhooks
+        } catch (error) {
+            console.log(error)
         }
     }
 

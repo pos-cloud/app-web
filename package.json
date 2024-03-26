@@ -14,7 +14,7 @@
     "build:dev": "ng build --configuration dev",
     "test:headless": "ng test --watch=false --browsers=ChromeHeadless",
     "tienda-nube": "cd services/tienda-nube && npm run start:dev",
-    "api-v1": "cd services/api-v1 && npm run dev",
+    "api-v1": "cd services/api-v1 && npm run start",
     "api-v2": "cd services/api-v2 && npm run dev",
     "print": "cd services/print && npm run dev",
     "storage": "cd services/storage && npm run start:dev",

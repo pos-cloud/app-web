@@ -1,11 +1,19 @@
-import { Component, ViewEncapsulation, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter } from '@angular/core';
 import { Application, ApplicationType } from '../application.model';
 import { ApplicationService } from '../application.service';
-import { NgbPanelChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateMePipe } from '../../../main/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
+import { TransactionTypeService } from '../../transaction-type/transaction-type.service';
+import { TransactionType } from '../../transaction-type/transaction-type';
+import { ShipmentMethodService } from '../../shipment-method/shipment-method.service';
+import { PaymentMethodService } from '../../payment-method/payment-method.service';
+import { PaymentMethod } from '../../payment-method/payment-method'
+import { ShipmentMethod } from '../../shipment-method/shipment-method.model'
+import Resulteable from './../../../util/Resulteable';
+import { CompanyService } from 'app/components/company/company.service';
+import { Company } from '../../company/company'
 
 @Component({
   selector: 'app-list-applications',
@@ -22,25 +30,56 @@ export class ListApplicationsComponent implements OnInit {
   tiendaNubeForm: FormGroup;
   cartaDigitalForm: FormGroup;
   loading: boolean = false;
+  transactionTypes: TransactionType[]
+  shipmentMethods: ShipmentMethod[]
+  paymentMethods: PaymentMethod[]
+  companies: Company[]
+  focusEvent = new EventEmitter<boolean>();
+  formErrors = {
+    userId: 'Este campo es requerido.',
+    token: 'Este campo es requerido.',
+    transactionType: 'Este campo es requerido.',
+    shipmentMethod: 'Este campo es requerido.',
+    paymentMethod: 'Este campo es requerido.',
+    company: 'Este campo es requerido.',
+  };
 
   constructor(
     private fb: FormBuilder,
     public _service: ApplicationService,
     private _toastr: ToastrService,
     public translatePipe: TranslateMePipe,
+    public _transactionTypeService: TransactionTypeService,
+    public _shipmentMethodService: ShipmentMethodService,
+    public _paymentMethodService: PaymentMethodService,
+    public _companyService: CompanyService
   ) { }
 
   async ngOnInit() {
     this.buildForm();
 
-    await this.getAllApplication()
+    this.getAllApplication();
+    this.getTransactionTypes();
+    this.getShipmentMethod();
+    this.getPaymentMethod();
+    this.getCompany()
+  }
+
+  ngAfterViewInit() {
+    this.focusEvent.emit(true);
   }
 
   buildForm(): void {
     this.tiendaNubeForm = this.fb.group({
-      userId: [0],
-      token: [''],
+      userId: [0, [Validators.required]],
+      token: ['', [Validators.required]],
+      transactionType: ['', [Validators.required]],
+      shipmentMethod: ['', [Validators.required]],
+      paymentMethod: ['', [Validators.required]],
+      company: ['', [Validators.required]]
     });
+
+    this.focusEvent.emit(true)
 
     this.cartaDigitalForm = this.fb.group({
       portain: [''],
@@ -76,7 +115,7 @@ export class ListApplicationsComponent implements OnInit {
     });
   }
 
-  getAllApplication() {
+  public getAllApplication() {
     let project = {
       "order": { "$toString": "$order" },
       "name": 1,
@@ -85,7 +124,10 @@ export class ListApplicationsComponent implements OnInit {
       "operationType": 1,
       "tiendaNube.userId": 1,
       "tiendaNube.token": 1,
-      "menu.portain": 1,
+      "tiendaNube.transactionType._id": 1,
+      "tiendaNube.shipmentMethod._id": 1,
+      "tiendaNube.paymentMethod._id": 1,
+      "tiendaNube.company._id": 1, "menu.portain": 1,
       "menu.background": 1,
       "menu.article.font": 1,
       "menu.article.size": 1,
@@ -106,9 +148,8 @@ export class ListApplicationsComponent implements OnInit {
       "menu.observation.size": 1,
       "menu.observation.color": 1,
       "menu.observation.style": 1,
-      "menu.observation.weight": 1,
+      "menu.observation.weight": 1
     }
-
     this.subscription.add(
       this._service.getAll({
         project,
@@ -126,56 +167,191 @@ export class ListApplicationsComponent implements OnInit {
     );
   }
 
+  public getTransactionTypes(): Promise<TransactionType[]> {
+    return new Promise<TransactionType[]>((resolve, reject) => {
+      let match = {};
+
+      match = {
+        operationType: { $ne: 'D' },
+      };
+
+      this._transactionTypeService
+        .getAll({
+          project: {
+            _id: 1,
+            operationType: 1,
+            name: 1,
+          },
+          match: match,
+        })
+        .subscribe(
+          (result) => {
+            if (result) {
+              this.transactionTypes = result.result
+              resolve(result.result);
+            } else {
+              this.transactionTypes = null
+              resolve(null);
+            }
+          },
+          (error) => {
+            resolve(null);
+          },
+        );
+    });
+  }
+
+  public getShipmentMethod() {
+    this._shipmentMethodService.getAll({
+      project: {
+        _id: 1,
+        name: 1,
+        operationType: 1,
+      },
+      match: {
+        operationType: { $ne: "D" }
+      }
+    }).subscribe(
+      (result) => {
+        if (result) {
+          this.shipmentMethods = result.result
+        } else {
+          this.shipmentMethods = null
+        }
+      },
+      error => this.showToast(error)
+    )
+  }
+
+  public getPaymentMethod() {
+    this._paymentMethodService.getAll({
+      project: {
+        _id: 1,
+        name: 1,
+        operationType: 1,
+      },
+      match: {
+        operationType: { $ne: "D" }
+      }
+    }).subscribe(
+      (result) => {
+        if (result) {
+          this.paymentMethods = result.result
+        } else {
+          this.paymentMethods = null
+        }
+      },
+      error => this.showToast(error)
+    )
+  }
+
+  public getCompany() {
+    this._companyService.getAll({
+      project: {
+        _id: 1,
+        name: 1,
+        operationType: 1,
+        type: 1
+      },
+      match: {
+        type: 'Cliente',
+        operationType: { $ne: "D" }
+      }
+    }).subscribe(
+      (result) => {
+        if (result) {
+          this.companies = result.result
+        } else {
+          this.companies = null
+        }
+      },
+      error => this.showToast(error)
+    )
+  }
+  
   setValuesForm(tiendaNube, cartaDigital) {
     let tn = tiendaNube.tiendaNube
     let menu = cartaDigital.menu
 
     const formDataTn = {
-      userId: tn.userId,
-      token: tn.token
+      userId: tn?.userId,
+      token: tn?.token,
+      transactionType: tn?.transactionType?._id,
+      shipmentMethod: tn?.shipmentMethod?._id,
+      paymentMethod: tn?.paymentMethod?._id,
+      company: tn?.company?._id
     };
+
     this.tiendaNubeForm.patchValue(formDataTn);
 
     const formData = {
-      portain: menu.portain,
-      background: menu.background,
-      article: {
-        font: menu.article.font,
-        size: menu.article.size,
-        color: menu.article.color,
-        style: menu.article.style,
-        weight: menu.article.weight
-      },
-      category: {
-        font: menu.category.font,
-        size: menu.category.size,
-        color: menu.category.color,
-        style: menu.category.style,
-        weight: menu.category.weight
-      },
-      price: {
-        font: menu.price.font,
-        size: menu.price.size,
-        color: menu.price.color,
-        style: menu.price.style,
-        weight: menu.price.weight
-      },
-      observation: {
-        font: menu.observation.font,
-        size: menu.observation.size,
-        color: menu.observation.color,
-        style: menu.observation.style,
-        weight: menu.observation.weight
-      }
+      portain: menu?.portain,
+      background: menu?.background,
+      article: menu?.article ? {
+        font: menu?.article.font,
+        size: menu?.article.size,
+        color: menu?.article.color,
+        style: menu?.article.style,
+        weight: menu?.article.weight
+      } : {},
+      category: menu?.category ? {
+        font: menu?.category.font,
+        size: menu?.category.size,
+        color: menu?.category.color,
+        style: menu?.category.style,
+        weight: menu?.category.weight
+      } : {},
+      price: menu?.price ? {
+        font: menu?.price.font,
+        size: menu?.price.size,
+        color: menu?.price.color,
+        style: menu?.price.style,
+        weight: menu?.price.weight
+      } : {},
+      observation: menu?.observation ? {
+        font: menu?.observation.font,
+        size: menu?.observation.size,
+        color: menu?.observation.color,
+        style: menu?.observation.style,
+        weight: menu?.observation.weight
+      } : {}
     };
     this.cartaDigitalForm.patchValue(formData);
   }
 
-  updateApplication(type) {
-    let application = this.applications.find(app => app.type === type)
+  generateWebhook() {
+    this.loading = true;
 
+    if (this.tiendaNubeForm.value.userId && this.tiendaNubeForm.value.token) {
+      this._service.createWebhookTn(this.tiendaNubeForm.value.userId, this.tiendaNubeForm.value.token).subscribe(
+        (result: Resulteable) => {
+          if (result.status == 200) {
+            this.showToast(null, 'success', 'Los webhooks se han creado con éxito.');
+            this.loading = false
+          } else {
+            this.showToast(null, 'danger', result.result);
+            this.loading = false
+          }
+        },
+        (error) => {
+          this.showToast(null, 'danger', 'Error al crear los webhooks.');
+        }
+      );
+    } else {
+      this.showToast(null, 'info', 'Completa el UserId y el Token para generar los webhooks.');
+    }
+  }
+
+  async updateApplication(type) {
+    this.loading = true
+    let application = this.applications.find(app => app.type === type)
     let formData = {};
+
     if (type === ApplicationType.TiendaNube) {
+      if (!this.tiendaNubeForm.valid) {
+        return this.showToast({ message: 'Revisa los errores en el formulario.' });
+      }
+
       formData = this.tiendaNubeForm.value;
       application.tiendaNube = { ...application.tiendaNube, ...formData };
     } else if (type === ApplicationType.Menu) {
@@ -183,13 +359,16 @@ export class ListApplicationsComponent implements OnInit {
       application.menu = { ...application.menu, ...formData };
     }
 
+
     this.subscription.add(
       this._service.update(application).subscribe(
         (result) => {
           if (result.status === 200) {
             this.showToast(null, 'success', 'La aplicación se ha actualizado con éxito.');
-          }else{
-            this.showToast(null, 'danger', 'Error al actualizar la Aplicación')
+            this.loading = false
+          } else {
+            this.showToast(null, 'danger', 'Error al actualizar la Aplicación.')
+            this.loading = false
           }
         }
       ),

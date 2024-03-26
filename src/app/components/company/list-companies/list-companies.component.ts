@@ -15,7 +15,6 @@ import { ExportExcelComponent } from '../../export/export-excel/export-excel.com
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { first } from 'rxjs/operators';
 import { DatatableHistory } from 'app/components/datatable/datatable-history.interface';
-import { importExcelComponent } from "../../import-excel/import-excel.component";
 @Component({
     selector: 'app-list-companies',
     templateUrl: './list-companies.component.html',
@@ -135,11 +134,11 @@ export class ListCompaniesComponent implements OnInit {
 
     public initDragHorizontalScroll(): void {
         const slider = document.querySelector('.table-responsive');
-        if(slider) {
+        if (slider) {
             let isDown = false;
             let startX;
             let scrollLeft;
-    
+
             slider.addEventListener('mousedown', (e) => {
                 isDown = true;
                 slider.classList.add('active');
@@ -422,55 +421,22 @@ export class ListCompaniesComponent implements OnInit {
             case 'account':
                 this._router.navigateByUrl("admin/cuentas-corrientes?companyId=" + company._id + "&companyType=" + this.type)
                 break;
-
-            case "excel":
-                modalRef = this._modalService.open(importExcelComponent, {
-                    size: "lg",
-                    backdrop: "static",
+            case 'uploadFile':
+                modalRef = this._modalService.open(ImportComponent, {
+                    size: 'lg',
+                    backdrop: 'static',
                 });
+                modalRef.componentInstance.model = 'company'
+                modalRef.componentInstance.title = 'Importar empresas'
                 modalRef.result.then(
                     (result) => {
-                        if (result === "import_close") {
+                        if (result === 'save_close') {
                             this.getItems();
                         }
                     },
-                    (reason) => { }
+                    (reason) => { },
                 );
-                break;
-            case 'import':
-                modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
-                let model: any = new Company();
-                model.relations = new Array();
-                model.model = "company";
-                model.primaryKey = "code";
-                model.code = '';
-                model.name = '';
-                model.fantasyName = '';
-                model.type = '';
-                model.relations.push("identification-type_relation_name");
-                model.identificationValue = '';
-                model.grossIncome = '';
-                model.address = '';
-                model.addressNumber = '';
-                model.city = '';
-                model.relations.push("state_relation_name");
-                model.relations.push("country_relation_name");
-                model.phones = '';
-                model.emails = '';
-                model.birthday = '';
-                model.observation = '';
-                model.gender = '';
-                model.relations.push("employee_relation_name");
-                model.relations.push("transport_relation_name");
-                model.relations.push("vat-condition_relation_description");
-                modalRef.componentInstance.model = model;
-                modalRef.result.then((result) => {
-                    if (result === 'import_close') {
-                        this.getItems();
-                    }
-                }, (reason) => {
 
-                });
                 break;
             default: ;
         }

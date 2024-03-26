@@ -3,6 +3,7 @@ import * as fs from 'fs'
 import * as express from 'express'
 import * as moment from 'moment'
 import * as multer from 'multer'
+import * as xlsx from 'xlsx';
 
 import CategoryController from '../../domains/category/category.controller'
 import Category from '../../domains/category/category.interface'
@@ -28,6 +29,7 @@ import ObjDto from './article.dto'
 import Article from './article.interface'
 import ObjSchema from './article.model'
 import ArticleUC from './article.uc'
+
 export default class ArticleController extends Controller {
   public EJSON: any = require('bson').EJSON
   public path = ObjSchema.getPath()
@@ -40,7 +42,7 @@ export default class ArticleController extends Controller {
   }
 
   private initializeRoutes() {
-    let upload = multer({storage: this.getStorage()})
+    let upload = multer({ storage: this.getStorage() })
 
     this.router
       .get(this.path, [authMiddleware, ensureLic], this.getAllObjs)
@@ -57,9 +59,9 @@ export default class ArticleController extends Controller {
       )
       .delete(`${this.path}/:id`, [authMiddleware, ensureLic], this.deleteArticle)
       .post(
-        `${this.path}/update-article-excel`,
-        [authMiddleware, ensureLic, upload.single('excel')],
-        this.updateArticleExcel,
+        `${this.path}/import-excel`,
+        [authMiddleware, ensureLic, upload.single('file')],
+        this.updateExcel,
       )
       .post(
         `${this.path}/create-article-excel`,
@@ -170,10 +172,10 @@ export default class ArticleController extends Controller {
                       code = rows[i]['filtro_proveedor']
                     } else {
                       // code = rows[i]["filtro_proveedor"]
-                      article = {result: [], status: 500, code: null}
+                      article = { result: [], status: 500, code: null }
                     }
                   } else {
-                    article = {result: [], status: 500, code: null}
+                    article = { result: [], status: 500, code: null }
                   }
 
                   // 	/buscar por code
@@ -392,11 +394,11 @@ export default class ArticleController extends Controller {
             margen = (utilidad_con_impuestos * 100) / costPriceFinish
             venta_con_impuestos = Number(salePrice)
           }
-		  if(request.body.roundFinalPrice) {
-			venta_con_impuestos = salePrice = Number(Number(salePrice).toFixed(0))
-			utilidad_con_impuestos = Number(salePrice) - costPriceFinish
+          if (request.body.roundFinalPrice) {
+            venta_con_impuestos = salePrice = Number(Number(salePrice).toFixed(0))
+            utilidad_con_impuestos = Number(salePrice) - costPriceFinish
             margen = (utilidad_con_impuestos * 100) / costPriceFinish
-		  } 
+          }
           update.push({
             basePrice: value,
             markupPercentage: margen,
@@ -416,11 +418,11 @@ export default class ArticleController extends Controller {
             margen = (utilidad_con_impuestos * 100) / value
             venta_con_impuestos = Number(salePrice)
           }
-		  if(request.body.roundFinalPrice) {
-			venta_con_impuestos = salePrice = Number(venta_con_impuestos.toFixed(0))
-			utilidad_con_impuestos = Number(salePrice) - costPriceFinish
+          if (request.body.roundFinalPrice) {
+            venta_con_impuestos = salePrice = Number(venta_con_impuestos.toFixed(0))
+            utilidad_con_impuestos = Number(salePrice) - costPriceFinish
             margen = (utilidad_con_impuestos * 100) / costPriceFinish
-		  } 
+          }
           update.push({
             basePrice: value,
             markupPercentage: margen,
@@ -440,34 +442,34 @@ export default class ArticleController extends Controller {
       if (select_match == 'code') {
         match = {
           code: value,
-          operationType: {$ne: 'D'},
+          operationType: { $ne: 'D' },
         }
       }
       if (select_match == 'barcode') {
         match = {
           barcode: value,
-          operationType: {$ne: 'D'},
+          operationType: { $ne: 'D' },
         }
       }
       if (select_match == 'code_prov') {
         match = {
           codeProvider: value,
-          operationType: {$ne: 'D'},
+          operationType: { $ne: 'D' },
         }
       }
       if (select_match == 'prov') {
         match = {
           code: value,
-          operationType: {$ne: 'D'},
+          operationType: { $ne: 'D' },
         }
       }
       if (select_match == 'filtro_prov') {
         match = {
-          operationType: {$ne: 'D'},
+          operationType: { $ne: 'D' },
         }
       }
       if (request.body.idProvider != 'null') {
-        match.provider = {$oid: request.body.idProvider}
+        match.provider = { $oid: request.body.idProvider }
       }
 
       return new Promise((resolve, reject) => {
@@ -488,7 +490,7 @@ export default class ArticleController extends Controller {
 
   async createArticleExcel(request: RequestWithUser, response: express.Response) {
     if (request.file.filename) {
-		let route = `/home/clients/${request.database}/excel/${request.file.filename}`
+      let route = `/home/clients/${request.database}/excel/${request.file.filename}`
       let exceltojson = require('xlsx-to-json')
 
       exceltojson(
@@ -685,7 +687,7 @@ export default class ArticleController extends Controller {
                       taxes,
                       request.database,
                     )
-					if(request.body.roundFinalPrice) article.salePrice = Number(article.salePrice.toFixed(0))
+                    if (request.body.roundFinalPrice) article.salePrice = Number(article.salePrice.toFixed(0))
                     // marca
                     if (
                       rows[i]['marca'] != '' &&
@@ -801,7 +803,7 @@ export default class ArticleController extends Controller {
 
       return new Promise((resolve, reject) => {
         new UnitOfMeasurementController(request.database)
-          .getAll({match: match})
+          .getAll({ match: match })
           .then(async (result) => {
             if (result.result.length > 0) {
               resolve(result.result[0])
@@ -822,7 +824,7 @@ export default class ArticleController extends Controller {
 
       return new Promise((resolve, reject) => {
         new CompanyController(request.database)
-          .getAll({match: match})
+          .getAll({ match: match })
           .then(async (result) => {
             if (result.result.length > 0) {
               resolve(result.result[0])
@@ -947,32 +949,32 @@ export default class ArticleController extends Controller {
       if (select_match == 'code') {
         match = {
           code: value,
-          operationType: {$ne: 'D'},
+          operationType: { $ne: 'D' },
         }
       }
       if (select_match == 'barcode') {
         match = {
           barcode: value,
-          operationType: {$ne: 'D'},
+          operationType: { $ne: 'D' },
         }
       }
       if (select_match == 'code_prov') {
         match = {
           codeProvider: value,
-          operationType: {$ne: 'D'},
+          operationType: { $ne: 'D' },
         }
       }
       if (select_match == 'prov') {
         match = {
           code: value,
-          operationType: {$ne: 'D'},
+          operationType: { $ne: 'D' },
         }
       }
 
       return new Promise((resolve, reject) => {
         new ArticleController(request.database)
-          .getAll({match: match})
-          .then((result: {result: string | any[]}) => {
+          .getAll({ match: match })
+          .then((result: { result: string | any[] }) => {
             if (result.result.length > 0) {
               resolve(1)
             } else {
@@ -1048,7 +1050,7 @@ export default class ArticleController extends Controller {
           article.basePrice = basePrice
         }
         if (salePrice > 0) {
-			article.salePrice = salePrice
+          article.salePrice = salePrice
         }
 
         return article
@@ -1082,12 +1084,12 @@ export default class ArticleController extends Controller {
     let storage = multer.diskStorage({
       destination: function (request: RequestWithUser, file, cb) {
         try {
-			let path = '/home/clients/'
+          let path = '/home/clients/'
 
           if (request.database) {
             path += `${request.database}/excel`
           }
-          fs.mkdirSync(path, {recursive: true})
+          fs.mkdirSync(path, { recursive: true })
           cb(null, path)
         } catch (err) {
           cb(err, null)
@@ -1130,7 +1132,7 @@ export default class ArticleController extends Controller {
       )
     }
   }
-//test
+  //test
   updatePrices = async (
     request: RequestWithUser,
     response: express.Response,
@@ -1172,9 +1174,9 @@ export default class ArticleController extends Controller {
 
     let match: any = {}
 
-    if (make) match['make'] = {$oid: make}
-    if (category) match['category'] = {$oid: category}
-    match['operationType'] = {$ne: 'D'}
+    if (make) match['make'] = { $oid: make }
+    if (category) match['category'] = { $oid: category }
+    match['operationType'] = { $ne: 'D' }
 
     await new ArticleController(request.database)
       .getAll({
@@ -1232,6 +1234,56 @@ export default class ArticleController extends Controller {
 
       response.send(new Responser(200))
     } catch (error) {
+      next(
+        new HttpException(new Responser(error.status || 500, null, error.message, error)),
+      )
+    }
+  }
+
+  updateExcel = async (
+    request: RequestWithUser,
+    response: express.Response,
+    next: express.NextFunction,
+  ) => {
+    try {
+      this.initConnectionDB(request.database)
+      this.userAudit = request.user
+
+      const file = request.file;
+      if (!file) {
+        throw new Error('No se ha proporcionado ningún archivo.');
+      }
+
+      const workbook = xlsx.readFile(file.path);
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+
+      //   const data = xlsx.utils.sheet_to_json(worksheet);
+      const range = xlsx.utils.decode_range(worksheet['!ref']);
+      const data = [];
+
+      for (let rowNum = range.s.r + 1; rowNum <= range.e.r; rowNum++) {
+        let hasData = false;
+        const rowData: any = {};
+        for (let colNum = range.s.c; colNum <= range.e.c; colNum++) {
+          const cellAddress = xlsx.utils.encode_cell({ r: rowNum, c: colNum });
+          const cell = worksheet[cellAddress];
+          const value = cell && cell.v !== undefined ? String(cell.v) : '';
+          rowData[`column${colNum + 1}`] = value;
+          if (value.trim() !== '') {
+            hasData = true;
+          }
+        }
+        if (hasData) {
+          data.push(rowData);
+        }
+      }
+
+      const res = await new ArticleUC(request.database).importFromExcel(data)
+
+      response.send(new Responser(200, res))
+    } catch (error) {
+      console.log(error)
       next(
         new HttpException(new Responser(error.status || 500, null, error.message, error)),
       )

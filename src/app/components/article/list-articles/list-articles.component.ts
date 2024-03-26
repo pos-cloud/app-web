@@ -9,10 +9,9 @@ import { Article, Type, attributes } from "../article";
 import { Config } from "../../../app.config";
 import { ArticleService } from "../article.service";
 import { AddArticleComponent } from "../article/add-article.component";
-import { importExcelComponent } from "../../import-excel/import-excel.component";
 import { ImportComponent } from "../../import/import.component";
 import { RoundNumberPipe } from "../../../main/pipes/round-number.pipe";
-import { Printer, PrinterPrintIn } from "../../printer/printer";
+import { Printer } from "../../printer/printer";
 import { PrinterService } from "../../printer/printer.service";
 import { UpdateArticlePriceComponent } from "../update-article-price/update-article-price.component";
 import { AuthService } from "app/components/login/auth.service";
@@ -24,7 +23,6 @@ import { ClaimService } from "app/layout/claim/claim.service";
 import { ExportExcelComponent } from "../../export/export-excel/export-excel.component";
 import { CurrencyPipe } from "@angular/common";
 import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
-import { PrintTransactionTypeComponent } from "../../print/print-transaction-type/print-transaction-type.component";
 import { UserService } from "app/components/user/user.service";
 import { PriceList } from "app/components/price-list/price-list";
 import { PriceListService } from "app/components/price-list/price-list.service";
@@ -33,7 +31,6 @@ import { Subscription } from "rxjs";
 import { TaxService } from "app/components/tax/tax.service";
 import { Tax } from "app/components/tax/tax";
 import { first } from "rxjs/operators";
-import { PrintComponent } from "app/components/print/print/print.component";
 import { MeliService } from "app/main/services/meli.service";
 import * as printJS from "print-js";
 
@@ -512,77 +509,6 @@ export class ListArticlesComponent implements OnInit {
           (reason) => { }
         );
         break;
-      case "excel":
-        modalRef = this._modalService.open(importExcelComponent, {
-          size: "lg",
-          backdrop: "static",
-        });
-        modalRef.componentInstance.type = type;
-        modalRef.result.then(
-          (result) => {
-            if (result === "import_close") {
-              this.getItems();
-            }
-          },
-          (reason) => { }
-        );
-        break;
-      case "excel-create":
-        modalRef = this._modalService.open(importExcelComponent,{
-          size: "lg",
-          backdrop: "static"
-        });
-        modalRef.componentInstance.type = 'create-article';
-        modalRef.result.then(
-          (result) => {
-            if (result === "import_close") {
-              this.getItems();
-            }
-          },
-          (reason) => { }
-        );
-        break;
-      case "import":
-        modalRef = this._modalService.open(ImportComponent, {
-          size: "lg",
-          backdrop: "static",
-        });
-        let model: any = new Article();
-        model.model = "article";
-        model.primaryKey = "code";
-        model.barcode = "";
-        model.type = "";
-        model.description = "";
-        model.basePrice = "";
-        model.costPrice = "";
-        model.markupPercentage = "";
-        model.markupPrice = "";
-        model.salePrice = "";
-        model.allowPurchase = "";
-        model.allowSale = "";
-        model.allowSaleWithoutStock = "";
-        model.observation = "";
-        model.ecommerceEnabled = "";
-        model.favourite = "";
-        model.codeProvider = "";
-        model.tags = "";
-        model.relations = new Array();
-        model.relations.push("make_relation_description");
-        model.relations.push("category_relation_description");
-        model.relations.push("providers_relation_code");
-        model.relations.push("provider_relation_code");
-        model.relations.push("currency_relation_name");
-
-        modalRef.componentInstance.model = model;
-        modalRef.result.then(
-          (result) => {
-            if (result === "import_close") {
-              this.getItems();
-            }
-          },
-          (reason) => { }
-        );
-        break;
       case "print-label":
         this.printArticle(article);
         break;
@@ -686,7 +612,24 @@ export class ListArticlesComponent implements OnInit {
         //       );
         //   }
         break;
-      default:
+      case 'uploadFile':
+          modalRef = this._modalService.open(ImportComponent, {
+            size: 'lg',
+            backdrop: 'static',
+          });
+          modalRef.componentInstance.model = 'articles'
+          modalRef.componentInstance.title = 'Importar artículos'
+          modalRef.result.then(
+            (result) => {
+              if (result === 'save_close') {
+                this.getItems();
+              }
+            },
+            (reason) => {},
+          );
+        
+          break;
+        default:
     }
   }
 

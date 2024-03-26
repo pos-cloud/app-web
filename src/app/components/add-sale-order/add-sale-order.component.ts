@@ -3468,7 +3468,8 @@ export class AddSaleOrderComponent {
                 paramsFromRoute +
                 '&automaticCreation=' +
                 params['automaticCreation'];
-            } else {
+            } 
+            else {
               route += '?' + 'automaticCreation=' + params['automaticCreation'];
             }
             this._router.navigateByUrl(route);
