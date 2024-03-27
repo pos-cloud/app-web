@@ -3205,19 +3205,32 @@ export class PrintComponent implements OnInit {
               //   'right',
               //   'middle',
               // );
-              this.doc.textEx(
-                this.movementsOfArticles[i].unitPrice == 0
-                  ? ''
-                  : '$ ' +
-                  this.roundNumber.transform(
-                    this.movementsOfArticles[i].unitPrice,
-                    2,
-                  ),
-                160,
-                row,
-                'right',
-                'middle',
-              );
+              if((this.movementsOfArticles[i].unitPrice / this.movementsOfArticles[i].amount) == this.movementsOfArticles[i].discountAmount) {
+                this.doc.textEx(
+                   '$ ' +
+                    this.roundNumber
+                      .transform(this.movementsOfArticles[i].unitPrice + this.movementsOfArticles[i].discountAmount,2)
+                      .toFixed(2),
+                  160,
+                  row,
+                  'right',
+                  'middle',
+                );
+              } else {
+
+                this.doc.textEx(
+                  this.movementsOfArticles[i].unitPrice == 0
+                    ? ''
+                    : '$ ' +
+                    this.roundNumber
+                      .transform(this.movementsOfArticles[i].unitPrice,2)
+                      .toFixed(2),
+                  160,
+                  row,
+                  'right',
+                  'middle',
+                );
+              }
               this.doc.textEx(
                 this.movementsOfArticles[i].salePrice == 0
                   ? ''
@@ -3232,10 +3245,9 @@ export class PrintComponent implements OnInit {
               );
             }
             if (this.movementsOfArticles[i].discountRate > 0) {
-              this.doc.text(
-                `$ ${this.movementsOfArticles[i].discountAmount.toString()}`,
-                173,
-                row + 1.5,
+              this.doc.text(`$ ${this.movementsOfArticles[i].discountAmount.toString()}`,
+              173,
+              row + 1.5,
               );
             }
           }
