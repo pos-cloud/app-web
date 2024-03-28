@@ -2944,7 +2944,7 @@ export class PrintComponent implements OnInit {
           }
         });
       }
-      this.doc.text('Desc', 175, 77);
+      this.doc.text('Desc.', 170, 77);
       this.doc.text('Total', 192, 77);
     }
     this.doc.setFont(undefined,'normal');
@@ -3216,12 +3216,20 @@ export class PrintComponent implements OnInit {
                   'right',
                   'middle',
                 );
-              } else {
-
+              } else if (this.movementsOfArticles[i].discountRate == 100) {
                 this.doc.textEx(
-                  this.movementsOfArticles[i].unitPrice == 0
-                    ? ''
-                    : '$ ' +
+                  '$ ' +
+                   this.roundNumber
+                     .transform(this.movementsOfArticles[i].discountAmount / this.movementsOfArticles[i].amount,2)
+                     .toFixed(2),
+                 160,
+                 row,
+                 'right',
+                 'middle',
+               );
+              } else {
+                this.doc.textEx(
+                  '$ ' +
                     this.roundNumber
                       .transform(this.movementsOfArticles[i].unitPrice,2)
                       .toFixed(2),
@@ -3232,9 +3240,7 @@ export class PrintComponent implements OnInit {
                 );
               }
               this.doc.textEx(
-                this.movementsOfArticles[i].salePrice == 0
-                  ? ''
-                  : '$ ' +
+                   '$ ' +
                   this.roundNumber
                     .transform(this.movementsOfArticles[i].salePrice, 2)
                     .toFixed(2),
@@ -3245,8 +3251,8 @@ export class PrintComponent implements OnInit {
               );
             }
             if (this.movementsOfArticles[i].discountRate > 0) {
-              this.doc.text(`$ ${this.movementsOfArticles[i].discountAmount.toString()}`,
-              173,
+              this.doc.text(`$ ${this.movementsOfArticles[i].discountAmount.toFixed(2)}`,
+              165,
               row + 1.5,
               );
             }
