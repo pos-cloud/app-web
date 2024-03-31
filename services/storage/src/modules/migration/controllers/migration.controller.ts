@@ -10,4 +10,9 @@ export class MigrationController {
   async migrationResource(@Request() request: CustomRequest) {
     return this.migrationService.migrationImages(request.database);
   }
+  
+  @Post('googleToAws')
+  async googleToAws(@Request() request: CustomRequest) {
+    return this.migrationService.migrationGoogleToAws(request.database);
+  }
 }

@@ -1,65 +1,42 @@
-import { Storage } from '@google-cloud/storage';
+// import { Storage } from '@google-cloud/storage';
 import {
   Injectable,
   BadRequestException,
   HttpException,
   HttpStatus,
-} from '@nestjs/common';
-import ORIGINMEDIA from 'src/common/enums/media.enum';
+} from "@nestjs/common";
+import ORIGINMEDIA from "src/common/enums/media.enum";
+import { FileFormatChange } from "src/common/functions/file-format-change.function";
+import { S3Service } from "src/services/s3/services/s3.service";
 
 @Injectable()
 export class UploadService {
-  private readonly storage: Storage;
-  private GCP_PROJECT_ID: string;
-  private GCP_KEY_FILE_PATH: string;
-
-  constructor() {
-    this.GCP_PROJECT_ID = process.env.GCP_PROJECT_ID || '';
-    this.GCP_KEY_FILE_PATH = process.env.GCP_KEY_FILE_PATH || '';
-    this.storage = new Storage({
-      projectId: this.GCP_PROJECT_ID,
-      keyFilename: this.GCP_KEY_FILE_PATH,
-    });
-  }
+  constructor(private readonly s3Service: S3Service) {}
 
   async save(
-    database,
+    database: string,
     origin: ORIGINMEDIA,
-    contentType: string,
-    media: Buffer,
-    name: string,
-    metadata: { [key: string]: string }[],
-    gcp_bucket: string = process.env.GCP_BUCKET,
+    file: Express.Multer.File,
+    name?: string | null,
+    gcp_bucket: string = process.env.GCP_BUCKET_MIGRATION
   ): Promise<string> {
     try {
-      if (!origin || !gcp_bucket || !media || !database) {
+      if (!origin || !gcp_bucket || !file || !database) {
         throw new BadRequestException(`Want data(path, bucket, media)`);
       }
       this.validOrigin(origin);
+      let originPath: string;
+      if (name) {
+        originPath = [database, origin, name].join("/");
+      }
+      originPath = [database, origin].join("/");
 
-      name = Date.now() + '-' + name.replace(/ /g, '-');
+      const uploadFile = FileFormatChange(file);
 
-      const originPath = [database, origin, name].join('/');
-
-      const object = metadata.reduce(
-        (obj, item) => Object.assign(obj, item),
-        {},
+      const { url } = await this.s3Service.uploadFile(
+        `${originPath}/`,
+        uploadFile
       );
-      const file = this.storage.bucket(gcp_bucket).file(originPath);
-
-      const stream = file.createWriteStream();
-
-      await new Promise((resolve, reject) => {
-        stream.on('finish', resolve);
-        stream.on('error', reject);
-        stream.end(media);
-      });
-
-      await file.setMetadata({
-        metadata: object,
-      });
-
-      const url = file.publicUrl();
 
       return url;
     } catch (err) {
@@ -67,27 +44,25 @@ export class UploadService {
     }
   }
 
-  async deleteFile(
-    origin: string,
-    gcp_bucket: string = process.env.GCP_BUCKET,
-  ) {
+  async deleteFile(origin: string, bucket: string) {
     try {
-      // const urlParts = origin.split('?');
-      const pathParts = origin.split('/');
+      const pathParts = origin.split("/");
+
       const resource = pathParts
         .slice(4, pathParts.length)
-        .join('/')
-        .replace(/%2F/g, '/');
-      const deleteOptions = {};
+        .join("/")
+        .replace(/%2F/g, "/");
+      const key = [bucket, resource].join("/");
 
-      await this.storage
-        .bucket(gcp_bucket)
-        .file(resource)
-        .delete(deleteOptions);
+      console.log(key);
+
+      const response = await this.s3Service.deleteFile(key);
+
+      return response ? true : false;
     } catch (err) {
       if (err.code == 404) {
         throw new BadRequestException({
-          messge: `Could not delete file, check url`,
+          message: `Could not delete file, check url`,
           errors: err.errors,
         });
       }
@@ -96,7 +71,7 @@ export class UploadService {
   }
   private validOrigin(origin: ORIGINMEDIA) {
     if (!Object.values(ORIGINMEDIA).includes(origin)) {
-      throw new BadRequestException('invalid source path');
+      throw new BadRequestException("invalid source path");
     }
   }
 }
