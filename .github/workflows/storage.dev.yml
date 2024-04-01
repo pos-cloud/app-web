@@ -11,6 +11,13 @@ jobs:
   build:
     runs-on: dev
 
+    env:
+      TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
+      S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
+      S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
+      S3_BUCKET: ${{ secrets.S3_BUCKET }}
+      S3_REGION: ${{ secrets.S3_REGION }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -19,7 +26,7 @@ jobs:
         run: docker rm -f api-storage-poscloud || true
 
       - name: Build Docker image
-        run: docker build -t api-storage-poscloud -f services/storage/Dockerfile.dev .
+        run: docker build -t api-storage-poscloud -f services/storage/Dockerfile .
 
       - name: Run Docker container
         run: |
@@ -28,4 +35,9 @@ jobs:
             --restart unless-stopped \
             --net host \
             --name api-storage-poscloud \
+            -e TOKEN_SECRET=${TOKEN_SECRET} \
+            -e S3_ACCESS_KEY=${S3_ACCESS_KEY} \
+            -e S3_SECRET_KEY=${S3_SECRET_KEY} \
+            -e S3_BUCKET=${S3_BUCKET} \
+            -e S3_REGION=${S3_REGION} \
             -d -it -p 303:303 api-storage-poscloud

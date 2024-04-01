@@ -6,39 +6,38 @@ import {
   UseInterceptors,
   Request,
   Delete,
-} from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { UploadService } from '../services/upload.service';
-import CustomRequest from 'src/common/interfaces/request.interface';
-import ORIGINMEDIA from 'src/common/enums/media.enum';
+} from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { UploadService } from "../services/upload.service";
+import CustomRequest from "src/common/interfaces/request.interface";
+import ORIGINMEDIA from "src/common/enums/media.enum";
 
-@Controller('upload')
+@Controller("upload")
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor("file"))
   async uploadMedia(
     @UploadedFile() file: Express.Multer.File,
-    @Body('origin') origin: ORIGINMEDIA,
-    @Body('bucket') bucket: string,
-    @Request() request: CustomRequest,
+    @Body("origin") origin: ORIGINMEDIA,
+    @Body("bucket") bucket: string,
+    @Request() request: CustomRequest
   ) {
+    console.log(file);
     return await this.uploadService.save(
       request.database,
       origin,
-      file.mimetype,
-      file.buffer,
-      file.originalname,
-      [{ mediaId: origin }],
-      bucket,
+      file,
+      null,
+      "bucket"
     );
   }
 
   @Delete()
   async deleteMedia(
-    @Body('origin') origin: ORIGINMEDIA,
-    @Body('bucket') bucket: string,
+    @Body("origin") origin: ORIGINMEDIA,
+    @Body("bucket") bucket: string
   ) {
     return await this.uploadService.deleteFile(origin, bucket);
   }

@@ -1,14 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import ORIGINMEDIA from 'src/common/enums/media.enum';
-import { readFile } from 'src/common/functions/migration-image.function';
-import { DatabaseService } from 'src/database/services/database.service';
-import { UploadService } from 'src/modules/upload/services/upload.service';
+import { Injectable } from "@nestjs/common";
+import ORIGINMEDIA from "src/common/enums/media.enum";
+import { readFile } from "src/common/functions/migration-image.function";
+import { DatabaseService } from "src/database/services/database.service";
+import { UploadService } from "src/modules/upload/services/upload.service";
+import axios from "axios";
+import { FileFormatChange } from "src/common/functions/file-format-change.function";
 
 @Injectable()
 export class MigrationService {
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly uploadService: UploadService,
+    private readonly uploadService: UploadService
   ) {}
 
   async migrationImages(database: string) {
@@ -22,20 +24,22 @@ export class MigrationService {
 
       const itemCollection = this.databaseService.getCollection(collection);
 
-      const documents = itemCollection.find({
-        operationType: { $ne: 'D' },
-        picture: { 
-          $ne: 'default.jpg',
-          $not: { $regex: 'http' }
-        },
-      }).limit(100);
+      const documents = itemCollection
+        .find({
+          operationType: { $ne: "D" },
+          picture: {
+            $ne: "default.jpg",
+            $not: { $regex: "http" },
+          },
+        })
+        .limit(100);
 
       const arrayItem = await this.arrayPromiseDocument(
         documents,
         database,
         nameDirectory,
         itemCollection,
-        collection,
+        collection
       );
       promises.concat(arrayItem);
     }
@@ -45,12 +49,74 @@ export class MigrationService {
     });
   }
 
+  async migrationGoogleToAws(database: string) {
+    console.log(database);
+    await this.databaseService.initConnection(database);
+    const collectionEnums = Object.values(ORIGINMEDIA);
+    console.log(collectionEnums);
+
+    for (let collection of collectionEnums) {
+      const itemCollection = this.databaseService.getCollection(collection);
+      const documentsCursor = itemCollection.find({
+        picture: { $regex: /^https:\/\/storage\.googleapis\.com\// },
+      });
+
+      const documents = await documentsCursor.toArray();
+
+      for (let i = 0; i < documents.length; i++) {
+        try {
+          console.log({ _id: documents[i]._id, picture: documents[i].picture });
+          const url = documents[i].picture;
+          const response = await axios.get(url, {
+            responseType: "arraybuffer",
+          });
+          const buffer = Buffer.from(response.data, "binary");
+          const filename = url.substring(url.lastIndexOf("/") + 1);
+          const mimetype = "image/jpeg";
+          const file: Express.Multer.File = {
+            fieldname: "file",
+            originalname: filename,
+            mimetype: mimetype,
+            encoding: "binary",
+            buffer: buffer,
+            size: buffer.length,
+            stream: null,
+            destination: null,
+            filename: null,
+            path: null,
+          };
+          const fileUpload = FileFormatChange(file);
+
+          const uploadAws = await this.uploadService.save(
+            database,
+            collection,
+            file,
+            filename,
+            process.env.S3_BUCKET
+          );
+          console.log(uploadAws);
+          await itemCollection.updateOne(
+            {
+              _id: documents[i]._id,
+            },
+            {
+              $set: {
+                picture: uploadAws,
+              },
+            }
+          );
+        } catch (e) {}
+      }
+    }
+    return true;
+  }
+
   private async arrayPromiseDocument(
     documents: any,
     database: string,
     nameDirectory: string,
     itemCollection: any,
-    collection: string | ORIGINMEDIA | any,
+    collection: string | ORIGINMEDIA | any
   ) {
     const promises: Promise<any>[] = [];
     for await (const document of documents) {
@@ -61,18 +127,17 @@ export class MigrationService {
             const url = await this.uploadService.save(
               database,
               collection,
-              '',
-              file,
-              document.picture,
-              [],
-              process.env.GCP_BUCKET_MIGRATION,
+              file as any,
+              document.picture, //name
+
+              process.env.GCP_BUCKET_MIGRATION as string
             );
 
             await itemCollection.updateOne(
               { _id: document._id },
               {
                 $set: { picture: url },
-              },
+              }
             );
             resolve(true);
           } catch (errr) {
@@ -85,23 +150,23 @@ export class MigrationService {
     return promises;
   }
   private getDirectory(collection: string): string {
-    let nameDirectory: string = '';
+    let nameDirectory: string = "";
 
     switch (collection) {
-      case 'articles':
-        nameDirectory = 'article';
+      case "articles":
+        nameDirectory = "article";
         break;
-      case 'categories':
-        nameDirectory = 'category';
+      case "categories":
+        nameDirectory = "category";
         break;
-      case 'makes':
-        nameDirectory = 'make';
+      case "makes":
+        nameDirectory = "make";
         break;
-      case 'configs':
-        nameDirectory = 'company';
+      case "configs":
+        nameDirectory = "company";
         break;
-      case 'resources':
-        nameDirectory = 'resource';
+      case "resources":
+        nameDirectory = "resource";
         break;
       default:
         nameDirectory = collection;
