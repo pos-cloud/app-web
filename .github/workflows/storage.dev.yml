@@ -28,4 +28,9 @@ jobs:
             --restart unless-stopped \
             --net host \
             --name api-storage-poscloud \
+            -e TOKEN_SECRET=$TOKEN_SECRET \
+            -e S3_ACCESS_KEY=$S3_ACCESS_KEY \
+            -e S3_SECRET_KEY=$S3_SECRET_KEY \
+            -e S3_BUCKET=$S3_BUCKET \
+            -e S3_REGION=$S3_REGION \
             -d -it -p 303:303 api-storage-poscloud

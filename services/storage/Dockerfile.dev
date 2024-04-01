@@ -4,7 +4,6 @@ RUN mkdir -p /app
 WORKDIR /app
 
 COPY services/storage/package.json .
-COPY services/storage/pos-cloud-299813-432bdece7851.json .
 COPY services/storage/tsconfig.json .
 COPY services/storage/tsconfig.build.json .
 

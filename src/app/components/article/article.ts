@@ -76,7 +76,7 @@ export class Article {
     public ecommerceEnabled: Boolean = false;
     public favourite: Boolean = false;
     public forShipping: Boolean = false;
-    public picture: string = 'default.jpg';
+    public picture: string = './../../../assets/img/default.jpg';
     public providers: Company[];
     public provider: Company;
     public classification: Classification;
