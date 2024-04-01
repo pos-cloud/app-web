@@ -17,6 +17,9 @@ export class S3Service {
   constructor() {
     const { S3_ACCESS_KEY, S3_SECRET_KEY, S3_REGION } = process.env;
 
+    console.log(S3_REGION);
+    
+
     this.s3 = new S3Client({
       region: S3_REGION,
       credentials: {
