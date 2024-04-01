@@ -85,7 +85,6 @@ export class MigrationService {
             filename: null,
             path: null,
           };
-          const fileUpload = FileFormatChange(file);
 
           const uploadAws = await this.uploadService.save(
             database,

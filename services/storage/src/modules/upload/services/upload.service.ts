@@ -27,9 +27,9 @@ export class UploadService {
       this.validOrigin(origin);
       let originPath: string;
       if (name) {
-        originPath = [database, origin, name].join("/");
+        originPath = this.cleanAndJoinElements([database, origin, name]);
       }
-      originPath = [database, origin].join("/");
+      originPath = this.cleanAndJoinElements([database, origin]);
 
       const uploadFile = FileFormatChange(file);
 
@@ -73,5 +73,13 @@ export class UploadService {
     if (!Object.values(ORIGINMEDIA).includes(origin)) {
       throw new BadRequestException("invalid source path");
     }
+  }
+
+  cleanAndJoinElements(elements: string[]) {
+    let cleanedElements = elements.map(function (element) {
+      return element.replace(/\//g, "");
+    });
+
+    return cleanedElements.join("/");
   }
 }
