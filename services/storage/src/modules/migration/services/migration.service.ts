@@ -62,7 +62,9 @@ export class MigrationService {
       });
 
       const documents = await documentsCursor.toArray();
-
+      console.log(documents);
+      console.log(collection)
+      console.log("------documents-----");
       for (let i = 0; i < documents.length; i++) {
         try {
           console.log({ _id: documents[i]._id, picture: documents[i].picture });
@@ -72,6 +74,8 @@ export class MigrationService {
           });
           const buffer = Buffer.from(response.data, "binary");
           const filename = url.substring(url.lastIndexOf("/") + 1);
+          console.log("filename");
+          console.log(filename);
           const mimetype = "image/jpeg";
           const file: Express.Multer.File = {
             fieldname: "file",
@@ -104,9 +108,15 @@ export class MigrationService {
               },
             }
           );
-        } catch (e) {}
+          console.log("-------");
+        } catch (e) {
+          console.log("error al subir", e);
+          console.log("-----------");
+          continue;
+        }
       }
     }
+    await this.databaseService.closeConnection();
     return true;
   }
 

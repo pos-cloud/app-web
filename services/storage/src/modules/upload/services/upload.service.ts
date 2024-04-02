@@ -28,9 +28,10 @@ export class UploadService {
       let originPath: string;
       if (name) {
         originPath = this.cleanAndJoinElements([database, origin, name]);
+      } else {
+        originPath = this.cleanAndJoinElements([database, origin]);
       }
-      originPath = this.cleanAndJoinElements([database, origin]);
-
+      console.log(originPath);
       const uploadFile = FileFormatChange(file);
 
       const { url } = await this.s3Service.uploadFile(
