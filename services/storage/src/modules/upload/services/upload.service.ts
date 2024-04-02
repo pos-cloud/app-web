@@ -35,7 +35,7 @@ export class UploadService {
       const uploadFile = FileFormatChange(file);
 
       const { url } = await this.s3Service.uploadFile(
-        `${originPath}`,
+        `${originPath}/`,
         uploadFile
       );
 
