@@ -21,7 +21,7 @@ export class AuthMiddleware implements NestMiddleware {
           token,
           process.env.TOKEN_SECRET || ""
         );
-
+console.log(dataJWT)
         const database: string = dataJWT?.database;
         const userId: string = dataJWT?.user;
 
