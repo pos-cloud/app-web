@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { MongoClient, Db, Collection } from 'mongodb';
+import { Injectable } from "@nestjs/common";
+import { MongoClient, Db, Collection } from "mongodb";
 
 @Injectable()
 export class DatabaseService {
@@ -15,15 +15,16 @@ export class DatabaseService {
   async initConnection(databaseName: string) {
     try {
       const mongoUri = `${
-        process.env.MONGO_URL || 'mongodb://localhost:27017'
+        process.env.MONGO_URL || "mongodb://localhost:27017"
       }/${databaseName}`;
       if (!this.client) {
         this.client = await MongoClient.connect(mongoUri);
         this.database = this.client.db(databaseName);
       }
-      console.log('Conexión con MongoDB establecida:' + databaseName);
+      console.log("Conexión con MongoDB establecida:" + databaseName);
+      return this.client;
     } catch (error) {
-      console.error('Error al conectar con MongoDB:', error);
+      console.error("Error al conectar con MongoDB:", error);
       throw error;
     }
   }
@@ -31,7 +32,7 @@ export class DatabaseService {
   getCollection(collectionName: string): Collection<any> {
     if (!this.database) {
       throw new Error(
-        'La conexión con la base de datos no ha sido establecida',
+        "La conexión con la base de datos no ha sido establecida"
       );
     }
     this.collection = this.database.collection(collectionName);
@@ -42,10 +43,11 @@ export class DatabaseService {
     try {
       if (this.client) {
         await this.client.close();
-        console.log('Conexión con MongoDB cerrada');
+        console.log("Conexión con MongoDB cerrada");
       }
+      this.client = null;
     } catch (error) {
-      console.error('Error closing MongoDB connection:', error);
+      console.error("Error closing MongoDB connection:", error);
       throw error;
     }
   }
