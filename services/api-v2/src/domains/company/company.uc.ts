@@ -143,7 +143,7 @@ export default class CompanyUc {
             });
             return countriesObj
         }
-        return null
+        return ''
         } catch (error) {
             console.log(error)
         }
@@ -159,7 +159,7 @@ export default class CompanyUc {
             });
             return stateObj
             }
-            return null
+            return ''
         } catch (error) {
             console.log(error)
         }
