@@ -31,6 +31,7 @@
     "allowSaleWithoutStock": "¿Se vende sin stock disponible?",
     "allowZero": "Permite ingresar monto 0",
     "allowDiscount": "Permite decuento",
+    "allowPayment":"Permite cobro",
     "amount": "Cantidad",
     "amountPaid": "Monto",
     "application": "Aplicación",

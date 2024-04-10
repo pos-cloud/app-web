@@ -59,10 +59,11 @@ class PermissionSchema extends Model {
         config: {type: Boolean},
       },
       filterTransaction: {type: Boolean},
-	  filterCompany: {type: Boolean},
+	    filterCompany: {type: Boolean},
       transactionTypes: [{type: Schema.Types.ObjectId, ref: 'transaction-type'}],
-	  editArticle: {type: Boolean, default: true },
-	  allowDiscount : {type: Boolean, default: true }
+	    editArticle: {type: Boolean, default: true },
+	    allowDiscount: {type: Boolean, default: true },
+      allowPayment: {type: Boolean, default: true }
     })
   }
 
