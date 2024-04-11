@@ -1,18 +1,21 @@
 <div>
   <img class="presentation-image" src="assets/los4hermanos.png" alt="Presentación">
-  <div class="categories">
-    <div *ngFor="let category of getMenuCategories()" class="category">
-      <h2 class="category-title">{{ category | uppercase }}</h2>
-      <div class="product-list">
-        <div *ngFor="let product of getProduct(category)" class="product">
-          <div class="product-details">
-            <div class="product-line">
-              <p class="product-name">{{ product | uppercase }}</p>
-              <!-- <p class="product-observation">{{ menu[category][product].observation }}</p> -->
+  <div class="row align-items-start">
+    <div *ngFor="let category of getMenuCategories()" class="category col-md-6">
+      <div class="card m-2">
+        <div class="card-body">
+          <div class="col-md-12" style="background-color: #666; font-size: 15px;">
+            <h5 class="card-title text-center" style="color: #fff; padding: 8px 10px; font-weight: 400">{{ category }}</h5>
+          </div>
+          <div *ngFor="let product of getProduct(category)">
+            <div class="d-flex justify-content-between align-items-center" style="padding: 15px;">
+              <p class="card-text mb-0" style="font-size: 20px; color: #666; font-weight:900; font-family: poppins, sans-serif;">{{ product }}</p>
+              <div class="product-price-line">
+                <span class="product-price" style="color: #666; font-size: 20px; font-weight:500; font-family: poppins, sans-serif;">${{ menu[category][product].price }}</span>
+              </div>
             </div>
-            <div class="product-price-line">
-              <span class="product-price">${{ menu[category][product].price }}</span>
-            </div>
+            <!-- Agregar puntos debajo del producto -->
+            <div style="border-bottom: 3px dotted #ccc; margin-bottom: 10px;"></div>
           </div>
         </div>
       </div>

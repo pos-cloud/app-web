@@ -2429,6 +2429,11 @@ export class AddSaleOrderComponent {
       case 'charge':
         this.typeOfOperationToPrint = 'charge';
 
+        const users: User = await this.getUser();
+        if(users.permission.allowPayment === false) {
+            this.showToast(null, 'error', 'No tiene permisos para hacer esta operación.');
+            return;
+        }
         if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
           this.transaction = await this.assignLetter();
         }

@@ -76,7 +76,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group col-md-3">
-                                    <label for="company" class="control-label">Tipo de Cliente:</label>
+                                    <label for="company" class="control-label">Cliente:</label>
                                     <select class="form-control" formControlName="company">
                                         <option *ngFor="let company of companies" [value]="company._id"
                                             [focus]="focusEvent">
@@ -88,7 +88,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group col-md-3">
-                                    <label class="control-label">Habilitar Webhook para Transacciones</label>
+                                    <label class="control-label">Verificar webhook:</label> <br/>
                                     <button type="submit" class="btn btn-primary" [disabled]="loading" (click)="generateWebhook()">
                                         <i class="fa" [ngClass]="{'':!loading, 'fa-spinner fa-spin':loading}"></i>
                                         <span *ngIf="!loading">Generar webhook</span>

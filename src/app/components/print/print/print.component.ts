@@ -5002,22 +5002,24 @@ export class PrintComponent implements OnInit {
     }
     this.doc.setFont(undefined,'normal');
 
-    this.doc.text(
-      'Fecha: ' + this.transaction.endDate.substring(0, 5),
-      width / 1.6,
-      this.row,
-    );
-    this.row += 5;
-    this.doc.text(
-      'Hora: ' +
-      this.transaction.endDate.substring(11, 13) +
-      ':' +
-      this.transaction.endDate.substring(15, 17) +
-      ':' +
-      this.transaction.endDate.substring(19, 21),
-      width / 1.6,
-      this.row,
-    );
+    if(this.transaction?.endDate){
+      this.doc.text(
+        `Fecha:${this.transaction?.endDate?.substring(0, 5) ?? ''}`,
+        width / 1.6,
+        this.row,
+      );
+      this.row += 5;
+      this.doc.text(
+        'Hora: ' +
+        this.transaction?.endDate?.substring(11, 13) ?? '' +
+        ':' +
+        this.transaction?.endDate?.substring(15, 17) ?? '' +
+        ':' +
+        this.transaction?.endDate?.substring(19, 21) ?? '',
+        width / 1.6,
+        this.row,
+      );
+    }
 
     this.doc.setFont(undefined,'normal');
 

@@ -96,6 +96,14 @@ export class PermissionComponent implements OnInit {
         class: 'form-group col-md-2'
     },
     {
+        name: 'allowPayment',
+        tag: 'select',
+        tagType: "boolean",
+        default: ['true'],
+        values: ['false', 'true'],
+        class: 'form-group col-md-2'
+    },
+    {
         name: 'Menu',
         tag: 'separator',
         tagType: null,
@@ -308,6 +316,7 @@ export class PermissionComponent implements OnInit {
                 "filterCompany": 1,
                 "editArticle": 1,
                 "allowDiscount": 1,
+                "allowPayment": 1,
                 "menu": 1,
                 "collections": 1,
                 "transactionTypes._id": 1,
