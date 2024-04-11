@@ -1,57 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Vast+Shadow&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Vast+Shadow&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Rajdhani:wght@300;400;500;600;700&family=Vast+Shadow&display=swap');
-
 
 .presentation-image{
   width: 100%;
 }
 
-.categories {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #fff8e3;
-}
-
-.category {
-  width: 100%;
-  margin-bottom: 40px;
-  text-align: center;
-}
-
-.category-title {
-  font-family: 'Vast Shadow', sans-serif; 
-  font-size: 25px;
-}
-
-
-.product-list {
-  width: 100%;
-}
-
-.product {
-  padding: 5px;
-}
-
-.product-details {
-  display: flex;
-  justify-content: space-between; 
-}
-
-.product-name {
-  font-weight: 600;
-  margin: 0px;
-  font-family: 'Rajdhani';
-  color: #ef4132;
-  font-size: 20px;
-}
-
-.product-observation {
-  margin-top: 5px; /* Añadir espacio entre el precio y las observaciones */
-  font-size: 15px;
-  font-family: 'PT Sans';
-  width: 100%; /* Hacer que las observaciones ocupen el ancho completo */
-  word-wrap: break-word; /* Permitir que las palabras se envuelvan cuando sean demasiado largas */
+.product-price{
+  background: #fff;
+  min-width: 3rem;
+  bottom: 0;
+  right: 0;
+  padding-left: .2rem;
+  text-align: right;
+  z-index: 2;
 }
