@@ -3136,7 +3136,6 @@ export class AddSaleOrderComponent {
       );
     });
   }
-  
 
   async finish() {
     try {
@@ -3196,8 +3195,19 @@ export class AddSaleOrderComponent {
 
       // ACTUALIZACION DE ORDENES DE PRODUCCION
       if (this.transaction.type.transactionMovement === TransactionMovement.Production) {
-        await this.updateOrdenOfProduction(this.transaction._id);
+        let movArtOrigin: MovementOfArticle[] = [];
+        if (this.movementsOfArticles[0].movementOrigin) {
+          // Consultar los movimientos de artículo de origen
+          let query = 'where="_id":"' + this.movementsOfArticles[0].movementOrigin + '"';
+          movArtOrigin = await this.getMovementsOfArticles(query);
+        }
+        if (movArtOrigin.length === 0 || movArtOrigin[0].amount !== movArtOrigin[0].read) {
+          await this.updateOrdenOfProduction(this.transaction._id);
+        } else {
+          this.showToast(null, 'info', `Todos las ordenes de produccion ya fueron cerradas`);
+        }
       }
+      
 
 
       let result: Resulteable = await this._transactionService
