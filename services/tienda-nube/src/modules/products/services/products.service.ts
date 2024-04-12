@@ -16,7 +16,7 @@ export class ProductsService {
     private readonly tiendaNubeService: TiendaNubeService,
     private readonly categoryService: CategoriesService,
     private readonly productVariantService: VariantProduct,
-  ) { }
+  ) {}
 
   async create(database: string, productId: string) {
     try {
@@ -24,7 +24,8 @@ export class ProductsService {
         throw new BadRequestException(`Database is required `);
       }
       await this.databaseService.initConnection(database);
-      const { token, userID } = await this.databaseService.getCredentialsTiendaNube();
+      const { token, userID } =
+        await this.databaseService.getCredentialsTiendaNube();
       const foundCollection = this.databaseService.getCollection('articles');
       const foundArticle = await this.databaseService.getDocumentById(
         'articles',
@@ -39,24 +40,29 @@ export class ProductsService {
           ` Article with id ${productId} not found`,
         );
       }
-      const pictureUrls = foundArticle.pictures.map(picture => picture.picture);
+      const pictureUrls = foundArticle.pictures.map(
+        (picture) => picture.picture,
+      );
 
       const dataNewProductTiendaNube = {
         images: [
           {
             src: foundArticle.picture,
           },
-          ...pictureUrls.map(src => ({ src })),
+          ...pictureUrls.map((src) => ({ src })),
         ],
         name: {
           es: foundArticle.description,
         },
         description: {
-          es: foundArticle.observation || ''
+          es: foundArticle.observation || '',
         },
       };
 
-      const resultVariantName = await this.productVariantService.getProductVariantsPropertyNames(foundArticle._id,);
+      const resultVariantName =
+        await this.productVariantService.getProductVariantsPropertyNames(
+          foundArticle._id,
+        );
 
       dataNewProductTiendaNube['attributes'] = resultVariantName.map((e) => ({
         es: e,
@@ -83,12 +89,12 @@ export class ProductsService {
         userID,
       );
 
-      const stockCollection = this.databaseService.getCollection('article-stocks');
+      const stockCollection =
+        this.databaseService.getCollection('article-stocks');
       const stockFound = await stockCollection.findOne({
         operationType: { $ne: 'D' },
         article: new ObjectId(productId),
       });
-
 
       await this.tiendaNubeService.updateProductFirstVariant(
         token,
@@ -96,7 +102,11 @@ export class ProductsService {
         result.id,
         result.variants[0].id,
         {
-          stock: !foundArticle.allowSaleWithoutStock ? (stockFound && stockFound.realStock >= 0 ? stockFound.realStock : 0) : null,
+          stock: !foundArticle.allowSaleWithoutStock
+            ? stockFound && stockFound.realStock >= 0
+              ? stockFound.realStock
+              : 0
+            : null,
           price: foundArticle.salePrice || null,
           sku: foundArticle.barcode || null,
           weight: foundArticle.weight || null,
@@ -123,8 +133,11 @@ export class ProductsService {
           },
         },
       );
+      await this.databaseService.closeConnection();
       return result;
     } catch (err) {
+      // await this.databaseService.initConnection(database);
+
       throw err;
     }
   }
@@ -136,7 +149,8 @@ export class ProductsService {
     productTiendaNube: string,
     variantName: string[],
   ) {
-    const dataVarinat = await this.databaseService.getVariantDataByArticle(productId);
+    const dataVarinat =
+      await this.databaseService.getVariantDataByArticle(productId);
 
     if (dataVarinat.length == 0) return;
 
@@ -313,7 +327,11 @@ export class ProductsService {
           result.id,
           result.variants[0].id,
           {
-            stock: !foundArticle.allowSaleWithoutStock ? (stockFound && stockFound.realStock >= 0 ? stockFound.realStock : 0) : null,
+            stock: !foundArticle.allowSaleWithoutStock
+              ? stockFound && stockFound.realStock >= 0
+                ? stockFound.realStock
+                : 0
+              : null,
             price: foundArticle.salePrice ? foundArticle.salePrice : null,
             sku: foundArticle.barcode || null,
             weight: foundArticle.weight || null,
@@ -336,6 +354,8 @@ export class ProductsService {
         result.id,
         variantData,
       );
+      await this.databaseService.closeConnection();
+
       return result;
     } catch (err) {
       throw err;
@@ -366,6 +386,8 @@ export class ProductsService {
       });
 
       const result = await Promise.all(arrayData);
+      await this.databaseService.closeConnection();
+
       if (result) {
         return true;
       }
@@ -388,13 +410,15 @@ export class ProductsService {
       if (!tiendaNubeId) {
         throw new BadRequestException(`ID not found`);
       }
-      await this.databaseService.getArticleByTiendaNube(tiendaNubeId)
+      await this.databaseService.getArticleByTiendaNube(tiendaNubeId);
 
       const result = await this.tiendaNubeService.removeProduct(
         tiendaNubeId,
         token,
         userID,
       );
+
+      await this.databaseService.closeConnection();
 
       if (!result) {
         return false;
