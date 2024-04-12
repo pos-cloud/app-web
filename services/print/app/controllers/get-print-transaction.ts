@@ -776,24 +776,27 @@ export async function getPrintTransaction(
       
       for (let i = 0; i < movementOfArticles.length; i++) {
         let movementOfArticle = movementOfArticles[i];
-    
-        if (articlesOnCurrentPage >= articlesPerPage) {
-          doc.addPage();
-          currentPage++;
-          verticalPosition = 12;
-          articlesOnCurrentPage = 0;
+      
+        for (let j = 0; j < movementOfArticle.amount; j++) {
+          if (articlesOnCurrentPage >= articlesPerPage) {
+            doc.addPage();
+            currentPage++;
+            verticalPosition = 12;
+            articlesOnCurrentPage = 0;
+          }
+          
+          doc.setFontSize(20);
+          doc.text(movementOfArticle.description, 3, 85);
+          doc.text(`${movementOfArticle.transaction.type.abbreviation}-${padString(movementOfArticle.transaction.number,10)}`, 3, verticalPosition + 80);
+        
+          const barcodeImage = getBarcode('code128', movementOfArticle._id);
+          doc.addImage(barcodeImage, 'png', 3, verticalPosition + 90, 80, 25); 
+          
+          verticalPosition += 58;
+          articlesOnCurrentPage++;
         }
-      
-        doc.setFontSize(20)
-        doc.text(movementOfArticle.description, 3, 85);
-        doc.text(`${movementOfArticle.transaction.type.abbreviation}-${padString(movementOfArticle.transaction.number,10)}`, 3, verticalPosition + 80);
-
-        const barcodeImage = getBarcode('code128', movementOfArticle._id);
-        doc.addImage(barcodeImage, 'png', 3, verticalPosition + 90, 80, 25); 
-      
-        verticalPosition += 58;
-        articlesOnCurrentPage++;
       }
+      
       
       if (currentPage === 0) {
         doc.addPage();
