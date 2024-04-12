@@ -9,7 +9,7 @@ export class CategoriesService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly tiendaNubeService: TiendaNubeService,
-  ) { }
+  ) {}
 
   async create(
     // createCategoryDto: CreateCategoryDto,
@@ -67,6 +67,9 @@ export class CategoriesService {
           },
         },
       );
+
+      await this.databaseService.closeConnection();
+
       return categoryTiendaNube;
     } catch (err) {
       throw err;

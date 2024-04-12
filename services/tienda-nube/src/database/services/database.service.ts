@@ -7,6 +7,7 @@ export class DatabaseService {
   private client: MongoClient;
   private database: Db | null;
   private collection: Collection<any> | null;
+
   constructor() {
     this.client = null;
     this.database = null;
@@ -66,6 +67,9 @@ export class DatabaseService {
       if (this.client) {
         await this.client.close();
         console.log('Conexión con MongoDB cerrada');
+        this.client = null;
+        this.database = null;
+        this.collection = null;
       }
     } catch (error) {
       console.error('Error closing MongoDB connection:', error);
@@ -162,16 +166,21 @@ export class DatabaseService {
     return documents as unknown as ResponseVariantsDB[];
   }
 
-  async getArticleByTiendaNube(tiendaNubeId: string){
+  async getArticleByTiendaNube(tiendaNubeId: string) {
     try {
       const collection = this.getCollection('articles');
-      const document = await collection.findOne({ tiendaNubeId: parseInt(tiendaNubeId) });
-      if(document.tiendaNubeId){
-        const update = await collection.updateOne({ _id: document._id }, { $set: { tiendaNubeId: null  }})
+      const document = await collection.findOne({
+        tiendaNubeId: parseInt(tiendaNubeId),
+      });
+      if (document.tiendaNubeId) {
+        const update = await collection.updateOne(
+          { _id: document._id },
+          { $set: { tiendaNubeId: null } },
+        );
         return update;
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 }
