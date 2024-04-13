@@ -3204,7 +3204,8 @@ export class AddSaleOrderComponent {
         if (movArtOrigin.length === 0 || movArtOrigin[0].amount !== movArtOrigin[0].read) {
           await this.updateOrdenOfProduction(this.transaction._id);
         } else {
-          this.showToast(null, 'info', `Todos las ordenes de produccion ya fueron cerradas`);
+          this.showToast(null, 'info', `El producto ya fue cerrado`);
+          return;
         }
       }
       
@@ -4031,6 +4032,8 @@ export class AddSaleOrderComponent {
         this.listArticlesComponent.movementOfArticleOrigin = mov[0];
         // update mov article 
       }
+
+      this.categorySelected = null
     }
 
     if (
@@ -4051,7 +4054,12 @@ export class AddSaleOrderComponent {
       this.listArticlesComponent.filterItem(null, this.categorySelected);
     }
     if (!this.filterArticle || this.filterArticle === '') {
-      this.showCategories();
+      if(this.transaction.type.transactionMovement != TransactionMovement.Production){
+        this.showCategories();
+      } else {
+        this.listCategoriesComponent.areCategoriesVisible = false;
+        this.listArticlesComponent.areArticlesVisible = false;
+      }
     }
   }
 
