@@ -184,8 +184,7 @@
                         <tr>
                             <th width="90px">Cantidad</th>
                             <th width="100%">Descripción</th>
-                            <th align="right" width="100px" *ngIf="transaction?.type?.showPrices">
-                                Monto</th>
+                            <th style="text-align: end;" width="140px" *ngIf="transaction?.type?.showPrices">Monto</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -399,10 +398,15 @@
                 </div>
             </div>
             <div class="row" *ngIf="transactionMovement && (transactionMovement === 'Stock' || transactionMovement === 'Producción')">
-                <div class="col-md-12 btn-action btn-large center-content"
+                <div class="col-md-8 btn-action btn-large center-content"
                     (click)="!loading ? finish() : $event.stopPropagation()"
                     [ngClass]="{'disabled': loading, 'enabled': !loading }">
                     <span>Procesar</span>
+                </div>
+                <div class="col-md-4 col-sm-4 col-4 btn-action btn-large center-content"
+                    (click)="!loading ? openModal('cancel') : $event.stopPropagation()"
+                    [ngClass]="{'disabled': loading, 'enabled': !loading }">
+                    Anular
                 </div>
             </div>
         </div>
