@@ -13,7 +13,8 @@ import { PaymentMethod } from '../../payment-method/payment-method'
 import { ShipmentMethod } from '../../shipment-method/shipment-method.model'
 import Resulteable from './../../../util/Resulteable';
 import { CompanyService } from 'app/components/company/company.service';
-import { Company } from '../../company/company'
+import { Company } from '../../company/company';
+import {ArticleService}  from '../../article/article.service'
 
 @Component({
   selector: 'app-list-applications',
@@ -52,7 +53,8 @@ export class ListApplicationsComponent implements OnInit {
     public _transactionTypeService: TransactionTypeService,
     public _shipmentMethodService: ShipmentMethodService,
     public _paymentMethodService: PaymentMethodService,
-    public _companyService: CompanyService
+    public _companyService: CompanyService,
+    private _articleService: ArticleService,
   ) { }
 
   async ngOnInit() {
@@ -386,6 +388,29 @@ export class ListApplicationsComponent implements OnInit {
     );
   }
 
+  public getAllArticlesTn(): Promise<any> {
+    this.loading = true;
+    return new Promise<any>((resolve, reject) => {
+      this._articleService.getAllArticlesTiendaNube().subscribe(
+        (result) => {
+          if (!result.result) {
+            if (result.message && result.message !== "")
+              this.showToast(null, 'denger', 'Error al sincronizar los artículos.');
+            this.loading = false;
+            resolve(null);
+          } else {
+            this.showToast(null, 'success', 'Los artículos se sincronizaron correctamente');
+            resolve(result);
+            this.loading = false;
+          }
+        },
+        (error) => {
+          this.showToast(null, 'denger', 'Error al sincronizar los artículos.');
+          resolve(null);
+        }
+      );
+    });
+  }
   showToast(result, type?: string, title?: string, message?: string): void {
     if (result) {
       if (result.status === 200) {

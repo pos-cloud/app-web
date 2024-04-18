@@ -1284,7 +1284,7 @@ export default class ArticleController extends Controller {
 
       const res = await new ArticleUC(request.database).importFromExcel(data)
 
-      response.send(new Responser(200, res))
+       response.send(new Responser(200, res))
     } catch (error) {
       console.log(error)
       next(
@@ -1306,6 +1306,9 @@ export default class ArticleController extends Controller {
       if (!data.length) {
         return response.send(new Responser(404, null, 'No hay artículos en Tienda Nube para sincronizar', null));
       }
+
+      const res = await new ArticleUC(request.database).createProductTiendaNube(data)
+
       return response.send(new Responser(200, data));
     } catch (error) {
       next(
