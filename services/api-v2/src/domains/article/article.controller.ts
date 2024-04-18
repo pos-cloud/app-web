@@ -29,12 +29,14 @@ import ObjDto from './article.dto'
 import Article from './article.interface'
 import ObjSchema from './article.model'
 import ArticleUC from './article.uc'
+import axios from 'axios';
 
 export default class ArticleController extends Controller {
   public EJSON: any = require('bson').EJSON
   public path = ObjSchema.getPath()
   public router = express.Router()
   public obj: any
+  public authToken: string;
 
   constructor(database: string) {
     super(ObjSchema, ObjDto, database)
@@ -44,8 +46,9 @@ export default class ArticleController extends Controller {
   private initializeRoutes() {
     let upload = multer({ storage: this.getStorage() })
 
-    this.router
-      .get(this.path, [authMiddleware, ensureLic], this.getAllObjs)
+    this.router      
+      .get(this.path, this.getAllObjs)
+      .get(`${this.path}/articles-tiendanube`, [authMiddleware, ensureLic], this.importTiendaNube) 
       .get(`${this.path}/:id`, [authMiddleware, ensureLic], this.getObjById)
       .post(
         this.path,
@@ -1281,12 +1284,52 @@ export default class ArticleController extends Controller {
 
       const res = await new ArticleUC(request.database).importFromExcel(data)
 
-      response.send(new Responser(200, res))
+       response.send(new Responser(200, res))
     } catch (error) {
       console.log(error)
       next(
         new HttpException(new Responser(error.status || 500, null, error.message, error)),
       )
+    }
+  }
+
+  importTiendaNube = async (
+    request: RequestWithUser,
+    response: express.Response,
+    next: express.NextFunction) => {
+    try {
+      this.initConnectionDB(request.database);
+      this.userAudit = request.user;
+      this.authToken = request.headers.authorization;
+
+      const data = await this.getArticlesTn();
+      if (!data.length) {
+        return response.send(new Responser(404, null, 'No hay artículos en Tienda Nube para sincronizar', null));
+      }
+
+      const res = await new ArticleUC(request.database).createProductTiendaNube(data)
+
+      return response.send(new Responser(200, data));
+    } catch (error) {
+      next(
+        new HttpException(new Responser(error.status || 500, null, error.message, error)),
+      )
+    }
+  }
+
+  async getArticlesTn() {
+    let URL = 'http://localhost:305/products'
+    try {
+      const requestOptions = {
+        headers: {
+          Authorization: this.authToken
+        }
+      };
+
+      const response = await axios.get(URL, requestOptions)
+      return response.data
+    } catch (error) {
+      console.log(error)
     }
   }
 }

@@ -44,6 +44,7 @@ export class TiendaNubeService {
       throw err;
     }
   }
+
   async getCategoryId(
     categoryId: string,
     tiendaNubeAccesstoken: string,
@@ -187,6 +188,7 @@ export class TiendaNubeService {
 
     return data;
   }
+
   async updatePrincipalImageOfProduct(
     url: string,
     productId: string,
@@ -215,8 +217,30 @@ export class TiendaNubeService {
       throw err;
     }
   }
-  findAll() {
-    return `This action returns all tiendaNube`;
+
+  async findAll(
+    tiendaNubeAccesstoken: string,
+    tiendaNubeUserId: string,
+  ) {
+    try {
+      const data = await firstValueFrom(
+        this.httpService
+          .get(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products`,
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccesstoken}`,
+              },
+            },
+          )
+          .pipe(map((resp) => resp.data)),
+      ).catch((err) => {
+        throw new BadRequestException('Error al traer todos los articulos');
+      });
+      return data;
+    } catch (err) {
+      throw err;
+    }
   }
 
   findOne(id: number) {
@@ -271,6 +295,7 @@ export class TiendaNubeService {
       throw new InternalServerErrorException(`Error in server tiendanube`);
     }
   }
+
   async openOrder(
     orderId: string,
     tiendaNubeAccesstoken: string,
@@ -300,6 +325,7 @@ export class TiendaNubeService {
       throw err;
     }
   }
+
   async closeOrder(
     orderId: string,
     tiendaNubeAccesstoken: string,
@@ -329,6 +355,7 @@ export class TiendaNubeService {
       throw err;
     }
   }
+
   async cancelOrder(
     dataBody: CancelOrderDto,
     orderId: string,
@@ -359,6 +386,7 @@ export class TiendaNubeService {
       throw err;
     }
   }
+
   async packOrder(
     orderId: string,
     tiendaNubeAccesstoken: string,
@@ -388,6 +416,7 @@ export class TiendaNubeService {
       throw err;
     }
   }
+
   async fulFillOrder(
     dataBody: FulFillOrderDto,
     orderId: string,
