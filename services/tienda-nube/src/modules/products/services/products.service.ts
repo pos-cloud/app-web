@@ -69,9 +69,7 @@ export class ProductsService {
       }));
 
       if (foundArticle.category) {
-        const foundCategory = this.categoryService.findOneCategoryDb(
-          foundArticle.category,
-        );
+        await this.categoryService.findOneCategoryDb(foundArticle.category);
 
         const foundCategoryTiendaMia = await this.categoryService.create(
           database,
@@ -133,11 +131,11 @@ export class ProductsService {
           },
         },
       );
+
       await this.databaseService.closeConnection();
       return result;
     } catch (err) {
       // await this.databaseService.initConnection(database);
-
       throw err;
     }
   }
@@ -154,9 +152,14 @@ export class ProductsService {
 
     if (dataVarinat.length == 0) return;
 
-    const variantData = await this.clearDataVariant(dataVarinat, variantName);
+    const variantData = await this.clearDataVariant(
+      dataVarinat,
+      variantName,
+      productTiendaNube,
+      tokenTiendaNube,
+      userIdTiendaNube,
+    );
 
-    // console.log('variantData 147 ', variantData[0]);
     const arrayCreateVariant = variantData.map((e) => {
       new Promise(async (resolve) => {
         const resultResolve =
@@ -172,13 +175,28 @@ export class ProductsService {
 
     await Promise.all(arrayCreateVariant);
   }
-  async clearDataVariant(data: ResponseVariantsDB[], attributes: string[]) {
-    const dataclearPromises = data.map((element) => {
+  async clearDataVariant(
+    data: ResponseVariantsDB[],
+    attributes: string[],
+    productTiendaNube: string,
+    tiendaNubeAccessToken: string,
+    tiendaNubeUserId: string,
+  ) {
+    const dataClearPromises = data.map((element) => {
       return new Promise(async (resolve) => {
         const variantData = {
           values: [],
         };
-
+        //upload image, and add id image variant
+        const image = await this.tiendaNubeService.uploadImageOfProduct(
+          productTiendaNube,
+          element.articleChildInfo?.picture ?? null,
+          tiendaNubeAccessToken,
+          tiendaNubeUserId,
+        );
+        if (image) {
+          variantData['image_id'] = image.id;
+        }
         for (let attribute of attributes) {
           for (let variantValue of element.variants) {
             if (
@@ -214,7 +232,7 @@ export class ProductsService {
       });
     });
 
-    const resolvedData = await Promise.all(dataclearPromises);
+    const resolvedData = await Promise.all(dataClearPromises);
 
     // `resolvedData` ahora contiene el resultado de todas las consultas
     return resolvedData;
@@ -297,6 +315,10 @@ export class ProductsService {
         dataUpdateProductTiendaNube as UpdateProductTiendaNubeDto,
       );
 
+      // console.log('update product , result 315', result);
+
+      // eliminacion de imagenee
+      this.deleteAllImageVariant(result.variants, result.id, token, userID);
       if (foundArticle.picture != result.images[0].src) {
         const dataresult =
           await this.tiendaNubeService.updatePrincipalImageOfProduct(
@@ -357,6 +379,9 @@ export class ProductsService {
       const variantData = await this.clearDataVariant(
         dataVariant,
         resultVariantName as string[],
+        foundArticle.tiendaNubeId,
+        token,
+        userID,
       );
 
       await this.tiendaNubeService.massiveVariantUpdate(
@@ -373,6 +398,31 @@ export class ProductsService {
     }
   }
 
+  deleteAllImageVariant(
+    data: any[],
+    productId: string,
+
+    tiendaNubeAccessToken: string,
+    tiendaNubeUserId: string,
+  ) {
+    data = data.filter((e) => e.image_id != null);
+    const arrayDeleteOldImage = data.map((variant) => {
+      return new Promise(async (resolver, reject) => {
+        const result = await this.tiendaNubeService.deleteImageOfProduct(
+          productId,
+          variant.image_id,
+          tiendaNubeAccessToken,
+          tiendaNubeUserId,
+        );
+        // console.log(result)
+        if (result) {
+          resolver(true);
+        }
+        reject(false);
+      });
+    });
+    Promise.all(arrayDeleteOldImage);
+  }
   async massiveUpdate(database: string, products: string[]) {
     try {
       if (!database) {
