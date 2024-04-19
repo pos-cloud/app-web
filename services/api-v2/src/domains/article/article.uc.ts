@@ -624,7 +624,7 @@ export default class ArticleUC {
 			const deposit = await this.getDeposit()
 			const variantType = await this.getVariantType()
 			const variantValue = await this.getVariantValue()
-			const code = await this.lastArticle()
+			let code = await this.lastArticle()
 
 
 			for (const [index, item] of data.entries()) {
@@ -632,8 +632,9 @@ export default class ArticleUC {
 				if (ArticlesObj[tiendaNubeId]) {
 				} else {
 					let newArticle: Article = ArticleSchema.getInstance(this.database)
+					code++;
 					newArticle = Object.assign(newArticle, {
-						code: code > 0 ? String(parseInt(code, 10) + 1).padStart(code.length, '0') : String(index + 1).padStart(5, '0'),
+						code: String(code).padStart(5, '0'),
 						barcode: item.variants[0].sku,
 						//make: makeObj[´']._id,
 						category: categoryObj[item.categories[0]?.name.es] !== undefined ? categoryObj[item.categories[0].name.es]._id : null,
