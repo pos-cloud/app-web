@@ -165,6 +165,59 @@ export class TiendaNubeService {
     }
   }
 
+  async uploadImageOfProduct(
+    productId: string,
+    urlImage: string,
+    tiendaNubeAccesstoken: string,
+    tiendaNubeUserId: string,
+  ) {
+    try {
+      const data = await firstValueFrom(
+        this.httpService
+          .post(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/images`,
+            {
+              src: urlImage,
+            },
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccesstoken}`,
+              },
+            },
+          )
+          .pipe(map((resp) => resp.data)),
+      );
+      return data;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  async deleteImageOfProduct(
+    productId: string,
+    imageId: string,
+    tiendaNubeAccessToken: string,
+    tiendaNubeUserId: string,
+  ) {
+    try {
+   const result =   await firstValueFrom(
+        this.httpService
+          .delete(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/images/${imageId}`,
+
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccessToken}`,
+              },
+            },
+          )
+          .pipe(map((resp) => resp.data)),
+      );
+      return result;
+    } catch (err) {
+      // return null;
+    }
+  }
   async massiveVariantUpdate(
     tiendaNubeAccesstoken: string,
     tiendaNubeUserId: string,
