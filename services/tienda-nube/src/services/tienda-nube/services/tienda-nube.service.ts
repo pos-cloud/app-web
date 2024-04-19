@@ -274,12 +274,13 @@ export class TiendaNubeService {
   async findAll(
     tiendaNubeAccesstoken: string,
     tiendaNubeUserId: string,
+    page: string
   ) {
     try {
       const data = await firstValueFrom(
         this.httpService
           .get(
-            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products`,
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products?per_page=200&page=${page}`,
             {
               headers: {
                 Authentication: `bearer ${tiendaNubeAccesstoken}`,

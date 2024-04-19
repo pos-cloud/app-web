@@ -33,8 +33,9 @@ export class ProductsController {
   @Get()
   findAll(
     @Request() request: CustomRequest,
+    @Body('page') page: string
   ) {
-    return this.productsService.findAll(request.database);
+    return this.productsService.findAll(request.database, page);
   }
 
   @Get(':id')

@@ -663,6 +663,7 @@ export default class ArticleUC {
 						tiendaNubeId: item.id,
 						applications: aplicationsObj['TiendaNube']._id,
 						type: 'Final',
+						tags: item.tags.split(',').map((tag: any) => tag.trim()),
 						containsVariants: item.attributes.length > 0
 					})
 					const resultParent = await new ArticleController(this.database).save(newArticle);
