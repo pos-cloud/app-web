@@ -238,19 +238,25 @@ export class ProductsService {
     return resolvedData;
   }
 
-  async findAll(database: string) {
-    if (!database) {
-      throw new BadRequestException(`Database is required `);
+  async findAll(database: string, page: string) {
+    try{
+      console.log(page)
+      if (!database) {
+        throw new BadRequestException(`Database is required `);
+      }
+      await this.databaseService.initConnection(database);
+      const { token, userID } = await this.databaseService.getCredentialsTiendaNube();
+  
+      const data = await this.tiendaNubeService.findAll(
+        token,
+        userID,
+        page
+      )
+  
+      return data
+    }catch(err){
+      return null
     }
-    await this.databaseService.initConnection(database);
-    const { token, userID } = await this.databaseService.getCredentialsTiendaNube();
-
-    const data = await this.tiendaNubeService.findAll(
-      token,
-      userID 
-    )
-
-    return data
   }
 
   findOne(id: number) {

@@ -1318,18 +1318,29 @@ export default class ArticleController extends Controller {
   }
 
   async getArticlesTn() {
-    let URL = 'http://localhost:305/products'
-    try {
-      const requestOptions = {
-        headers: {
-          Authorization: this.authToken
+    const URL = 'http://localhost:305/products';
+    const articles = [];
+    let page = 1;
+  
+    const requestOptions = {
+      headers: {
+        Authorization: this.authToken
+      }
+    };
+  
+      while (true) {
+        const response = await axios.get(URL,{
+          data: { page },
+          ...requestOptions
+        });
+        const responseData = response.data;
+        if (responseData === '') {
+          break; 
         }
-      };
-
-      const response = await axios.get(URL, requestOptions)
-      return response.data
-    } catch (error) {
-      console.log(error)
-    }
-  }
+        
+        articles.push(...responseData);
+        page++;
+      }
+      return articles;
+  }  
 }
