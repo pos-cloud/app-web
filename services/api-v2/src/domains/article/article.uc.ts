@@ -959,10 +959,6 @@ export default class ArticleUC {
 		}
 	}
 
-	async getType() {
-
-	}
-
 	async createMake(data: any) {
 		const makeObj: any = {};
 		const makes = await new MakeController(this.database).getAll({
