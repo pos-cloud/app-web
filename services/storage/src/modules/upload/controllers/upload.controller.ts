@@ -36,7 +36,7 @@ export class UploadController {
 
   @Delete()
   async deleteMedia(
-    @Body("origin") origin: ORIGINMEDIA,
+    @Body("origin") origin: string,
     @Body("bucket") bucket: string
   ) {
     return await this.uploadService.deleteFile(origin, bucket);
