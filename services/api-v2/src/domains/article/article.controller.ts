@@ -1334,11 +1334,11 @@ export default class ArticleController extends Controller {
           ...requestOptions
         });
         const responseData = response.data;
-        if (responseData === '') {
+        articles.push(...responseData);
+
+        if (responseData.length < 200) {
           break; 
         }
-        
-        articles.push(...responseData);
         page++;
       }
       return articles;
