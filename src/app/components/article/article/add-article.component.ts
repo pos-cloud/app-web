@@ -1519,6 +1519,7 @@ export class AddArticleComponent implements OnInit {
 
     const values = {
       _id: this.article._id,
+      order: this.article.order,
       code: this.article.code,
       codeSAT: this.article.codeSAT,
       currency: currency,
