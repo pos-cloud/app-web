@@ -44,7 +44,7 @@ name: Deploy System to Don Web
 on:
   push:
     branches:
-      - main
+      - dev
     paths-ignore:
       - "services/**"
 
