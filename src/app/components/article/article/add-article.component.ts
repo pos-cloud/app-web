@@ -1842,13 +1842,13 @@ export class AddArticleComponent implements OnInit {
         .uploadImage(ORIGINMEDIA.ARTICLES, this.filesToUpload)
         .then(
           (result: string) => {
-            console.log(result);
             this.article.picture = result;
             this.imageURL = result;
             resolve(result);
           },
-          (error) => this.showToast(error),
-        );
+          (error) => this.showToast(JSON.parse(error))
+          
+        )
     })
   }
 
