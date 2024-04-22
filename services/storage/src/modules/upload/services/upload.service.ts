@@ -39,11 +39,10 @@ export class UploadService {
       const { url } = await this.s3Service.uploadFile(
         `${originPath}/`,
         uploadFile
-      );
-
-      return url;
+      )
+      return url
     } catch (err) {
-      throw err;
+      throw new BadRequestException(err);
     }
   }
 

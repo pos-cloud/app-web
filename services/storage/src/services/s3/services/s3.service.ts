@@ -52,7 +52,7 @@ export class S3Service {
       });
 
       const filetypes =
-        /jpeg|jpg|png|svg|pdf|docx|doc|xlsx|xls|pptx|ppt|txt|csv/;
+        /jpeg|jpg|png/;
 
       if (filetypes.test(mimetype.toString())) {
         const name =
@@ -60,7 +60,7 @@ export class S3Service {
         const { Key, url } = await this.uploadFileS3(name, fileBuffer);
         return { url, key: Key };
       } else {
-        return null;
+        throw "El tipo de imagen es incorrecto. Solo se aceptan archivos con formato JPEG, JPG y PNG."
       }
     } catch (err) {
       throw err;
@@ -69,8 +69,6 @@ export class S3Service {
 
   async uploadFileS3(key: string, file: Buffer) {
     try {
-      console.log("upload aws 68");
-      console.log(key);
       const parallelUploads3 = new Upload({
         client: this.s3,
         params: { Bucket: this.bucketName, Key: key, Body: file },
