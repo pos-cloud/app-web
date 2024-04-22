@@ -65,10 +65,10 @@ jobs:
         run: npm install -g @angular/cli
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Build
-        run: npm run build -- --configuration=production
+        run: npm run build:dev
 
   deploy:
     runs-on: [dev]
