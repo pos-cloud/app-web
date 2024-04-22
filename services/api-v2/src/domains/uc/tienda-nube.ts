@@ -51,6 +51,20 @@ const credentialsTiendaNube = [
         database: 'quierosersanto',
         user: 'soporte',
         password: '431744'
+    },
+    {
+        tokenTiendaNube: '7c4682264c62f8f5cd246fac1687278adb8ce508',
+        storeId: 1350756,
+        database: 'arterama',
+        user: 'soporte',
+        password: '9fR8Gh49' 
+    },
+    {
+        tokenTiendaNube: '6d2b63bbf23ad4131d376209f331c74e9afc36af',
+        storeId: 3937223,
+        database: 'demotest',
+        user: 'soporte',
+        password: 'etUHWcAv' 
     }
 ]
 

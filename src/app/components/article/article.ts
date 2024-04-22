@@ -130,6 +130,16 @@ export let attributes = [
         required: false,
     },
     {
+        name: 'showMenu',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'boolean',
+        project: null,
+        align: 'left',
+        required: true,
+    },
+    {
         name: 'order',
         visible: false,
         disabled: false,
