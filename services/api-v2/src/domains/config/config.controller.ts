@@ -15,6 +15,7 @@ export default class ConfigController extends Controller {
   public path = ObjSchema.getPath()
   public router = express.Router()
   public obj: any
+  public database: string;
 
   constructor(database: string) {
     super(ObjSchema, ObjDto, database)
@@ -40,24 +41,25 @@ export default class ConfigController extends Controller {
       .delete(`${this.path}/:id`, [authMiddleware, ensureLic], this.deleteObj)
   }
 
-  public downloadBD(request: RequestWithUser, response: express.Response) {
-    let dbName = request.params.filename.split('-', 1)[0]
-    let route = `/home/clients/${dbName}/backups/${request.params.filename}`
+  public downloadBD = (request: RequestWithUser, response: express.Response)=> {
+    const dbName = this.database
+    //let dbName = request.params.filename.split('-', 1)[0]
+   let route = `/home/clients/${dbName}/backups/${request.params.filename}`
 
     return response.download(route)
   }
 
-  public backUp(request: RequestWithUser, response: express.Response) {
+  public backUp = (request: RequestWithUser, response: express.Response) =>{
     let today = new Date()
     const dd = String(today.getDate()).padStart(2, '0')
     const mm = String(today.getMonth() + 1).padStart(2, '0') //January is 0!
     const yyyy = today.getFullYear()
     const todayString = dd + '-' + mm + '-' + yyyy
-
-    const dbName = request.database
+    this.database = request.database
+    const dbName = this.database
 
     let archive_path = `/home/clients/${dbName}/backups/${dbName + '-' + todayString}.gz`
-
+    
     const child = spawn('mongodump', [
       `--db=${dbName}`,
       `--archive=${archive_path}`,
@@ -66,7 +68,7 @@ export default class ConfigController extends Controller {
 
     child.stdout.on('data', (data) => {})
     child.stderr.on('data', (data) => {})
-    child.on('error', (e) => {})
+    child.on('error', (e) => { })
 
     child.on('exit', (code, signal) => {
       if (code) {
