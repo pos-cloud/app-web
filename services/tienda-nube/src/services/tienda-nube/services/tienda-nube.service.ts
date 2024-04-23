@@ -190,6 +190,7 @@ export class TiendaNubeService {
       );
       return data;
     } catch (err) {
+      console.log("error tienda nube upload image of product, 193",err)
       return null;
     }
   }
