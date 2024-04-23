@@ -56,7 +56,7 @@ export default class ConfigController extends Controller {
     const yyyy = today.getFullYear()
     const todayString = dd + '-' + mm + '-' + yyyy
     this.database = request.database
-    const dbName = this.database
+    const dbName = request.database
 
     let archive_path = `/home/clients/${dbName}/backups/${dbName + '-' + todayString}.gz`
     
