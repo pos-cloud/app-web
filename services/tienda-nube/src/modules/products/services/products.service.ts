@@ -194,6 +194,7 @@ export class ProductsService {
           tiendaNubeAccessToken,
           tiendaNubeUserId,
         );
+        console.log('upload image 197',image)
         if (image) {
           variantData['image_id'] = image.id;
         }
@@ -210,16 +211,18 @@ export class ProductsService {
           }
         }
 
+        console.log("product service upload 214")
         variantData['price'] = element.articleChildInfo.salePrice ?? 0;
 
         const stockCollection =
           this.databaseService.getCollection('article-stocks');
-
-        try {
-          const stockFound = await stockCollection.findOne({
-            operationType: { $ne: 'D' },
-            article: new ObjectId(element.articleChild),
-          });
+          
+          try {
+            const stockFound = await stockCollection.findOne({
+              operationType: { $ne: 'D' },
+              article: new ObjectId(element.articleChild),
+            });
+            console.log("product service upload 225",stockFound)
 
           variantData['stock'] =
             !stockFound || stockFound.realStock < 0 ? 0 : stockFound.realStock;
@@ -227,6 +230,7 @@ export class ProductsService {
           console.error(`Error al consultar la base de datos: ${error}`);
           variantData['stock'] = 0;
         }
+        console.log("product service upload 233",variantData)
 
         resolve(variantData);
       });
