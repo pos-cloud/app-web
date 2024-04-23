@@ -184,9 +184,14 @@ export class ProductsService {
   ) {
     const dataClearPromises = data.map((element) => {
       return new Promise(async (resolve,reject) => {
+        try{
+
+     
         const variantData = {
           values: [],
         };
+
+        console.log("upload image credential", productTiendaNube,tiendaNubeAccessToken,tiendaNubeUserId,data,attributes)
         //upload image, and add id image variant
         console.log("upload image 191",element.articleChildInfo?.picture )
         const image = await this.tiendaNubeService.uploadImageOfProduct(
@@ -234,6 +239,10 @@ export class ProductsService {
         console.log("product service upload 233",variantData)
 
         resolve(variantData);
+      }catch(error){
+        console.error(`Error en la promesa: ${error}`);
+        reject(error);
+      }
       });
     });
 
