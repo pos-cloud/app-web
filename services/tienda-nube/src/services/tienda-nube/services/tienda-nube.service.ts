@@ -178,7 +178,8 @@ export class TiendaNubeService {
           .post(
             `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/images`,
             {
-              src: urlImage,
+              // src: urlImage,
+              src:"https://poscloud.s3.sa-east-1.amazonaws.com/arterama/articles/1713850050045/1713850050045-descdfgdfgdfgarga1232134.png"
             },
             {
               headers: {
