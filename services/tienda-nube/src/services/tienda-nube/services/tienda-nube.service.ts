@@ -201,7 +201,7 @@ export class TiendaNubeService {
     tiendaNubeUserId: string,
   ) {
     try {
-   const result =   await firstValueFrom(
+      const result = await firstValueFrom(
         this.httpService
           .delete(
             `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/images/${imageId}`,
@@ -225,21 +225,26 @@ export class TiendaNubeService {
     productId: string,
     dataVariant: UpdateVariantTiendaNubeDto[],
   ) {
-    const data = await firstValueFrom(
-      this.httpService
-        .put(
-          `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/variants`,
-          dataVariant,
-          {
-            headers: {
-              Authentication: `bearer ${tiendaNubeAccesstoken}`,
+    try {
+      const data = await firstValueFrom(
+        this.httpService
+          .put(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/variants`,
+            dataVariant,
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccesstoken}`,
+              },
             },
-          },
-        )
-        .pipe(map((resp) => resp.data)),
-    );
+          )
+          .pipe(map((resp) => resp.data)),
+      );
 
-    return data;
+      return data;
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   }
 
   async updatePrincipalImageOfProduct(
@@ -274,7 +279,7 @@ export class TiendaNubeService {
   async findAll(
     tiendaNubeAccesstoken: string,
     tiendaNubeUserId: string,
-    page: string
+    page: string,
   ) {
     try {
       const data = await firstValueFrom(
