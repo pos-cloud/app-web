@@ -382,7 +382,7 @@ export class ProductsService {
         );
         return result;
       }
-      console.log('product service 385');
+      console.log('product service 385',     foundArticle.tiendaNubeId,dataVariant,resultVariantName,token,userID);
 
       const variantData = await this.clearDataVariant(
         dataVariant,
@@ -391,7 +391,7 @@ export class ProductsService {
         token,
         userID,
       );
-
+      console.log('product service 394',variantData);
       await this.tiendaNubeService.massiveVariantUpdate(
         token,
         userID,
