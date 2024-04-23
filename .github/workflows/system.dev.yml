@@ -82,7 +82,13 @@ jobs:
 
       - name: Clean system
         run: rm -rf /home/system/*
-        
+
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: dist
+          path: dist
+
       - name: Copy files to server
         run: |
           cp -r dist /home/system/
