@@ -204,6 +204,7 @@ export class ProductsService {
         if (image) {
           variantData['image_id'] = image.id;
         }
+        console.log('variant upload 207', element.variants)
         for (let attribute of attributes) {
           for (let variantValue of element.variants) {
             if (
