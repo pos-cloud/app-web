@@ -93,8 +93,4 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: dist
-          path: dist
-
-      - name: Copy files to server
-        run: |
-          cp -r dist/* /home/system/
+          path: /home/system/
