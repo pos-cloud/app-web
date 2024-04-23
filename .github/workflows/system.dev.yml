@@ -93,13 +93,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: dist
-      
-      - name: Create dist directory
-        run: mkdir dist
-
-      - name: Move files to dist directory
-        run: |
-          mv * dist/
+          path: dist
 
       - name: Copy files to server
         run: |
