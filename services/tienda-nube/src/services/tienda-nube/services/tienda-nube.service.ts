@@ -187,7 +187,7 @@ export class TiendaNubeService {
             },
           )
           .pipe(map((resp) => resp.data)),
-      );
+      ).catch(err=>console.log(err));
       return data;
     } catch (err) {
       console.log("error tienda nube upload image of product, 193",err)
