@@ -69,6 +69,12 @@ jobs:
 
       - name: Build
         run: npm run build:dev
+      
+      - name: Archive dist
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: dist
 
   deploy:
     runs-on: [dev]
