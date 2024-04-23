@@ -239,23 +239,20 @@ export class ProductsService {
   }
 
   async findAll(database: string, page: string) {
-    try{
-      console.log(page)
+    try {
+      console.log(page);
       if (!database) {
         throw new BadRequestException(`Database is required `);
       }
       await this.databaseService.initConnection(database);
-      const { token, userID } = await this.databaseService.getCredentialsTiendaNube();
-  
-      const data = await this.tiendaNubeService.findAll(
-        token,
-        userID,
-        page
-      )
-  
-      return data
-    }catch(err){
-      return null
+      const { token, userID } =
+        await this.databaseService.getCredentialsTiendaNube();
+
+      const data = await this.tiendaNubeService.findAll(token, userID, page);
+
+      return data;
+    } catch (err) {
+      return null;
     }
   }
 
@@ -324,7 +321,10 @@ export class ProductsService {
       // console.log('update product , result 315', result);
 
       // eliminacion de imagenee
-      this.deleteAllImageVariant(result.variants, result.id, token, userID);
+      try {
+        this.deleteAllImageVariant(result.variants, result.id, token, userID);
+      } catch (err) {}
+      console.log('product service 327',result);
       if (foundArticle.picture != result.images[0].src) {
         const dataresult =
           await this.tiendaNubeService.updatePrincipalImageOfProduct(
@@ -344,6 +344,7 @@ export class ProductsService {
           },
         );
       }
+      console.log('product service 347');
 
       const resultVariantName =
         await this.productVariantService.getProductVariantsPropertyNames(
@@ -381,6 +382,7 @@ export class ProductsService {
         );
         return result;
       }
+      console.log('product service 385');
 
       const variantData = await this.clearDataVariant(
         dataVariant,
@@ -396,6 +398,8 @@ export class ProductsService {
         result.id,
         variantData,
       );
+      console.log('product service 401');
+
       await this.databaseService.closeConnection();
 
       return result;
