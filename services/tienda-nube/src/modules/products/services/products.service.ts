@@ -183,11 +183,12 @@ export class ProductsService {
     tiendaNubeUserId: string,
   ) {
     const dataClearPromises = data.map((element) => {
-      return new Promise(async (resolve) => {
+      return new Promise(async (resolve,reject) => {
         const variantData = {
           values: [],
         };
         //upload image, and add id image variant
+        console.log("upload image 191",element.articleChildInfo?.picture )
         const image = await this.tiendaNubeService.uploadImageOfProduct(
           productTiendaNube,
           element.articleChildInfo?.picture ?? null,
