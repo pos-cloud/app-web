@@ -16,7 +16,7 @@ export class ProductsService {
     private readonly tiendaNubeService: TiendaNubeService,
     private readonly categoryService: CategoriesService,
     private readonly productVariantService: VariantProduct,
-  ) {}
+  ) { }
 
   async create(database: string, productId: string) {
     try {
@@ -40,17 +40,18 @@ export class ProductsService {
           ` Article with id ${productId} not found`,
         );
       }
-      const pictureUrls = foundArticle.pictures.map(
-        (picture) => picture.picture,
-      );
+
+      // const pictureUrls = foundArticle.pictures.map(
+      //   (picture) => picture.picture,
+      // );
 
       const dataNewProductTiendaNube = {
-        images: [
-          {
-            src: foundArticle.picture,
-          },
-          ...pictureUrls.map((src) => ({ src })),
-        ],
+        // images: [
+        //   {
+        //     src: foundArticle.picture,
+        //   },
+        //   ...pictureUrls.map((src) => ({ src })),
+        // ],
         name: {
           es: foundArticle.description,
         },
@@ -175,6 +176,7 @@ export class ProductsService {
 
     await Promise.all(arrayCreateVariant);
   }
+  
   async clearDataVariant(
     data: ResponseVariantsDB[],
     attributes: string[],
@@ -182,14 +184,6 @@ export class ProductsService {
     tiendaNubeAccessToken: string,
     tiendaNubeUserId: string,
   ) {
-    console.log('data upload 185', data);
-    console.log('attributes upload 185', attributes);
-    console.log(
-      'credentials',
-      productTiendaNube,
-      tiendaNubeAccessToken,
-      tiendaNubeUserId,
-    );
 
     const dataClearPromises = data.map((element) => {
       return new Promise(async (resolve, reject) => {
@@ -198,25 +192,20 @@ export class ProductsService {
             values: [],
           };
 
-          console.log('upload image credential', element);
           //upload image, and add id image variant
-          console.log('upload image 191', element.articleChildInfo?.picture);
-          let image = null;
-          try {
-            image = await this.tiendaNubeService.uploadImageOfProduct(
-              productTiendaNube,
-              element.articleChildInfo?.picture ?? null,
-              tiendaNubeAccessToken,
-              tiendaNubeUserId,
-            );
-          } catch (err) {
-            console.log("erro upload service product",err)
-          }
-          console.log('upload image 197', image);
-          if (image) {
-            variantData['image_id'] = image.id;
-          }
-          console.log('variant upload 207', element.variants);
+          //let image = null;
+          // try {
+          //   image = await this.tiendaNubeService.uploadImageOfProduct(
+          //     productTiendaNube,
+          //     element.articleChildInfo?.picture ?? null,
+          //     tiendaNubeAccessToken,
+          //     tiendaNubeUserId,
+          //   );
+          // } catch (err) {
+          // }
+          // if (image) {
+          //   variantData['image_id'] = image.id;
+          // }
           for (let attribute of attributes) {
             for (let variantValue of element.variants) {
               if (
@@ -230,7 +219,6 @@ export class ProductsService {
             }
           }
 
-          console.log('product service upload 214');
           variantData['price'] = element.articleChildInfo.salePrice ?? 0;
 
           const stockCollection =
@@ -241,21 +229,17 @@ export class ProductsService {
               operationType: { $ne: 'D' },
               article: new ObjectId(element.articleChild),
             });
-            console.log('product service upload 225', stockFound);
 
             variantData['stock'] =
               !stockFound || stockFound.realStock < 0
                 ? 0
                 : stockFound.realStock;
           } catch (error) {
-            console.error(`Error al consultar la base de datos: ${error}`);
             variantData['stock'] = 0;
           }
-          console.log('product service upload 233', variantData);
 
           resolve(variantData);
         } catch (error) {
-          console.error(`Error en la promesa: ${error}`);
           reject(error);
         }
       });
@@ -263,13 +247,11 @@ export class ProductsService {
 
     const resolvedData = await Promise.all(dataClearPromises);
 
-    // `resolvedData` ahora contiene el resultado de todas las consultas
     return resolvedData;
   }
 
   async findAll(database: string, page: string) {
     try {
-      console.log(page);
       if (!database) {
         throw new BadRequestException(`Database is required `);
       }
@@ -279,7 +261,9 @@ export class ProductsService {
 
       const data = await this.tiendaNubeService.findAll(token, userID, page);
 
+      await this.databaseService.closeConnection();
       return data;
+
     } catch (err) {
       return null;
     }
@@ -294,6 +278,7 @@ export class ProductsService {
       if (!database) {
         throw new BadRequestException(`Database is required `);
       }
+
       await this.databaseService.initConnection(database);
       const { token, userID } =
         await this.databaseService.getCredentialsTiendaNube();
@@ -313,6 +298,7 @@ export class ProductsService {
       }
 
       if (!foundArticle.tiendaNubeId) {
+        await this.databaseService.closeConnection();
         return this.create(database, productId);
       }
 
@@ -347,33 +333,29 @@ export class ProductsService {
         dataUpdateProductTiendaNube as UpdateProductTiendaNubeDto,
       );
 
-      // console.log('update product , result 315', result);
-
       // eliminacion de imagenee
-      try {
-        this.deleteAllImageVariant(result.variants, result.id, token, userID);
-      } catch (err) {}
-      console.log('product service 327', result);
-      if (foundArticle.picture != result.images[0].src) {
-        const dataresult =
-          await this.tiendaNubeService.updatePrincipalImageOfProduct(
-            foundArticle.picture,
-            result.id,
-            result.images[0].id,
-            token,
-            userID,
-          );
+      // try {
+      // //  this.deleteAllImageVariant(result.variants, result.id, token, userID);
+      // } catch (err) {}
+      // if (foundArticle.picture != result.images[0]?.src) {
+      //   const dataresult =
+      //     await this.tiendaNubeService.updatePrincipalImageOfProduct(
+      //       foundArticle.picture,
+      //       result.id,
+      //       result.images[0].id,
+      //       token,
+      //       userID,
+      //     );
 
-        await foundCollection.updateOne(
-          { _id: foundArticle._id },
-          {
-            $set: {
-              picture: dataresult.src,
-            },
-          },
-        );
-      }
-      console.log('product service 347');
+      //   await foundCollection.updateOne(
+      //     { _id: foundArticle._id },
+      //     {
+      //       $set: {
+      //         picture: dataresult.src,
+      //       },
+      //     },
+      //   );
+      // }
 
       const resultVariantName =
         await this.productVariantService.getProductVariantsPropertyNames(
@@ -382,7 +364,6 @@ export class ProductsService {
 
       const dataVariant =
         await this.databaseService.getVariantDataByArticle(productId);
-
       if (dataVariant.length == 0) {
         const stockCollection =
           this.databaseService.getCollection('article-stocks');
@@ -390,6 +371,7 @@ export class ProductsService {
           operationType: { $ne: 'D' },
           article: new ObjectId(productId),
         });
+
         await this.tiendaNubeService.updateProductFirstVariant(
           token,
           userID,
@@ -409,16 +391,10 @@ export class ProductsService {
             depth: foundArticle.depth || null,
           },
         );
+        await this.databaseService.closeConnection();
+
         return result;
       }
-      console.log(
-        'product service 385',
-        foundArticle.tiendaNubeId,
-        dataVariant,
-        resultVariantName,
-        token,
-        userID,
-      );
 
       const variantData = await this.clearDataVariant(
         dataVariant,
@@ -427,14 +403,12 @@ export class ProductsService {
         token,
         userID,
       );
-      console.log('product service 394', variantData);
       await this.tiendaNubeService.massiveVariantUpdate(
         token,
         userID,
         result.id,
         variantData,
-      );
-      console.log('product service 401');
+      )
 
       await this.databaseService.closeConnection();
 
@@ -460,7 +434,6 @@ export class ProductsService {
           tiendaNubeAccessToken,
           tiendaNubeUserId,
         );
-        // console.log(result)
         if (result) {
           resolver(true);
         }
@@ -469,6 +442,7 @@ export class ProductsService {
     });
     Promise.all(arrayDeleteOldImage);
   }
+
   async massiveUpdate(database: string, products: string[]) {
     try {
       if (!database) {

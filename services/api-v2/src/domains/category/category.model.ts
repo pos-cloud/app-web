@@ -22,6 +22,7 @@ class CategorySchema extends Model {
       observation: {type: String, trim: true},
       wooId: {type: String},
       showMenu: {type: Boolean, default: false},
+      tiendaNubeId: {type: Number}
     })
   }
 

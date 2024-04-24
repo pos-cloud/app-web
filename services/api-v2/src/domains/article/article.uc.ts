@@ -29,7 +29,7 @@ import UnitOfMeasurementController from '../unit-of-measurement/unit-of-measurem
 import Tax from '../tax/tax.interface'
 import TaxController from '../tax/tax.controller'
 import ApplicationController from '../application/application.controller'
-import { Application } from 'express'
+import { Application, application } from 'express'
 import VariantSchema from '../variant/variant.model'
 import ArticleStock from '../article-stock/article-stock.interface'
 import ArticleStockSchema from '../article-stock/article-stock.model'
@@ -642,7 +642,7 @@ export default class ArticleUC {
 						url: item.canonical_url,
 						posDescription: item.name.es,
 						observation: item.variants[0].description,
-						basePrice: item.variants[0].cost ?? item.variants[0].price,
+						basePrice: 0,
 						taxes: {
 							tax: taxObj[21]._id,
 							percentage: taxObj[21].percentage
@@ -653,14 +653,14 @@ export default class ArticleUC {
 						width: item.variants[0].width,
 						height: item.variants[0].height,
 						depth: item.variants[0].depth,
-						picture: item.images[0]?.src,
+						//picture: item.images[0]?.src,
 						allowPurchase: true,
 						allowSale: true,
 						allowStock: true,
 						allowSaleWithoutStock: item.variants[0].stock_management,
-						isWeigth: true,
-						allowMeasure: item.attributes.length > 0,
-						posKitchen: true,
+						// isWeigth: true,
+						// allowMeasure: item.attributes.length > 0,
+						// posKitchen: true,
 						tiendaNubeId: item.id,
 						applications: aplicationsObj['TiendaNube']._id,
 						type: 'Final',
@@ -681,7 +681,7 @@ export default class ArticleUC {
 								url: art.canonical_url,
 								posDescription: item.name.es,
 								observation: item.description.es,
-								basePrice: art.cost ?? art.price,
+								basePrice: 0,
 								taxes: {
 									tax: taxObj[21]._id,
 									percentage: taxObj[21].percentage
@@ -692,19 +692,19 @@ export default class ArticleUC {
 								width: art.width,
 								height: art.height,
 								depth: art.depth,
-								picture: (() => {
-									const imageObject = item.images.find((img: any) => img.id === art.image_id);
-									return imageObject ? imageObject.src : null;
-								})(),
+								// picture: (() => {
+								// 	const imageObject = item.images.find((img: any) => img.id === art.image_id);
+								// 	return imageObject ? imageObject.src : null;
+								// })(),
 								allowPurchase: true,
 								allowSale: true,
 								allowStock: true,
 								allowSaleWithoutStock: art.stock_management,
-								isWeigth: true,
-								allowMeasure: true,
-								posKitchen: true,
+								// isWeigth: true,
+								// allowMeasure: true,
+								// posKitchen: true,
 								tiendaNubeId: item.id,
-								aperrorplications: aplicationsObj['TiendaNube']._id,
+								applications: aplicationsObj['TiendaNube']._id,
 								type: 'Variante'
 							})
 
@@ -791,6 +791,7 @@ export default class ArticleUC {
 					let newCategory: Category = CategorySchema.getInstance(this.database)
 					newCategory = Object.assign(newCategory, {
 						description: description,
+						tiendaNubeId: item.categories[0].id
 					})
 					const result = await new MakeController(this.database).save(newCategory);
 					categoriesObj[description] = newCategory;
