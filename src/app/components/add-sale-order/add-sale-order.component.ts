@@ -3086,29 +3086,30 @@ export class AddSaleOrderComponent {
   }
 
   async updateArticleTiendaNube(idArticle: string) {
-    this.loading = true;
-    this._articleService.updateArticleTiendaNube(idArticle).subscribe(
-      (result) => {
-        if (result.error) {
-          this.showToast(
-            null,
-            'info',
-            result.error && result.error.message
-              ? result.error.message
-              : result.message
-              ? result.message
-              : '',
-          );
-        } else {
-          this.showToast(null, 'success', 'Producto actualizado con éxito en TiendaNube');
+    return new Promise<boolean>(async (resolve) => {
+      this._articleService.updateArticleTiendaNube(idArticle).subscribe(
+        (result) => {
+          if (result.error) {
+            this.showToast(
+              null,
+              'info',
+              result.error && result.error.message
+                ? result.error.message
+                : result.message
+                ? result.message
+                : '',
+            );
+          } else {
+            this.showToast(null, 'success', 'Producto actualizado con éxito en TiendaNube');
+          }
+          resolve(true)
+        },
+        (error) => {
+          resolve(true)
+          this.showToast(error)
         }
-        this.loading = false;
-      },
-      (error) => {
-        this.loading = false;
-        this.showToast(error)
-      }
-    );
+      );
+    });
   }
 
   getVariantsByArticleChild(id): Promise<any> {
