@@ -44,6 +44,7 @@ export class TiendaNubeService {
       throw err;
     }
   }
+
   async getCategoryId(
     categoryId: string,
     tiendaNubeAccesstoken: string,
@@ -94,23 +95,28 @@ export class TiendaNubeService {
     variantId: string,
     updateVariant: UpdateVariantTiendaNubeDto,
   ) {
-    const data = await firstValueFrom(
-      this.httpService
-        .put(
-          `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/variants/${variantId}`,
-          updateVariant,
-          {
-            headers: {
-              Authentication: `bearer ${tiendaNubeAccesstoken}`,
+    try {
+      const data = await firstValueFrom(
+        this.httpService
+          .put(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/variants/${variantId}`,
+            updateVariant,
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccesstoken}`,
+              },
             },
-          },
-        )
-        .pipe(map((resp) => resp.data)),
-    ).catch((err) => {
-      throw err;
-    });
+          )
+          .pipe(map((resp) => resp.data))
+
+      ).catch((err) => {
+        throw err;
+      });
 
     return data;
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   async createVarianteByProduct(
@@ -165,28 +171,87 @@ export class TiendaNubeService {
     }
   }
 
+  async uploadImageOfProduct(
+    productId: string,
+    urlImage: string,
+    tiendaNubeAccesstoken: string,
+    tiendaNubeUserId: string,
+  ) {
+    try {
+      const data = await firstValueFrom(
+        this.httpService
+          .post(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/images`,
+            {
+              src: urlImage,
+            //  src:"https://oscloud.s3.sa-east-1.amazonaws.com/arterama/articles/1713850050045/1713850050045-descdfgdfgdfgarga1232134.png"
+            },
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccesstoken}`,
+              },
+            },
+          )
+          .pipe(map((resp) => resp.data)),
+      ).catch(err=>console.log(err));
+      return data;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  async deleteImageOfProduct(
+    productId: string,
+    imageId: string,
+    tiendaNubeAccessToken: string,
+    tiendaNubeUserId: string,
+  ) {
+    try {
+      const result = await firstValueFrom(
+        this.httpService
+          .delete(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/images/${imageId}`,
+
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccessToken}`,
+              },
+            },
+          )
+          .pipe(map((resp) => resp.data)),
+      );
+      return result;
+    } catch (err) {
+      // return null;
+    }
+  }
   async massiveVariantUpdate(
     tiendaNubeAccesstoken: string,
     tiendaNubeUserId: string,
     productId: string,
     dataVariant: UpdateVariantTiendaNubeDto[],
   ) {
-    const data = await firstValueFrom(
-      this.httpService
-        .put(
-          `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/variants`,
-          dataVariant,
-          {
-            headers: {
-              Authentication: `bearer ${tiendaNubeAccesstoken}`,
+    try {
+      const data = await firstValueFrom(
+        this.httpService
+          .put(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/variants`,
+            dataVariant,
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccesstoken}`,
+              },
             },
-          },
-        )
-        .pipe(map((resp) => resp.data)),
-    );
+          )
+          .pipe(map((resp) => resp.data)),
+      );
 
-    return data;
+      return data;
+    } catch (err) {
+      throw err;
+    }
   }
+
   async updatePrincipalImageOfProduct(
     url: string,
     productId: string,
@@ -215,8 +280,31 @@ export class TiendaNubeService {
       throw err;
     }
   }
-  findAll() {
-    return `This action returns all tiendaNube`;
+
+  async findAll(
+    tiendaNubeAccesstoken: string,
+    tiendaNubeUserId: string,
+    page: string,
+  ) {
+    try {
+      const data = await firstValueFrom(
+        this.httpService
+          .get(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products?per_page=200&page=${page}`,
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccesstoken}`,
+              },
+            },
+          )
+          .pipe(map((resp) => resp.data)),
+      ).catch((err) => {
+        throw new BadRequestException('Error al traer todos los articulos');
+      });
+      return data;
+    } catch (err) {
+      throw err;
+    }
   }
 
   findOne(id: number) {
@@ -271,6 +359,7 @@ export class TiendaNubeService {
       throw new InternalServerErrorException(`Error in server tiendanube`);
     }
   }
+
   async openOrder(
     orderId: string,
     tiendaNubeAccesstoken: string,
@@ -300,6 +389,7 @@ export class TiendaNubeService {
       throw err;
     }
   }
+
   async closeOrder(
     orderId: string,
     tiendaNubeAccesstoken: string,
@@ -329,6 +419,7 @@ export class TiendaNubeService {
       throw err;
     }
   }
+
   async cancelOrder(
     dataBody: CancelOrderDto,
     orderId: string,
@@ -359,6 +450,7 @@ export class TiendaNubeService {
       throw err;
     }
   }
+
   async packOrder(
     orderId: string,
     tiendaNubeAccesstoken: string,
@@ -388,6 +480,7 @@ export class TiendaNubeService {
       throw err;
     }
   }
+
   async fulFillOrder(
     dataBody: FulFillOrderDto,
     orderId: string,

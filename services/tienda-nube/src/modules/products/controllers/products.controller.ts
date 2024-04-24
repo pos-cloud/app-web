@@ -23,12 +23,19 @@ export class ProductsController {
     @Body('productId') ProductId: string,
     @Request() request: CustomRequest,
   ) {
-    return this.productsService.create(request.database, ProductId);
+    try {
+      return this.productsService.create(request.database, ProductId);
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   @Get()
-  findAll() {
-    return this.productsService.findAll();
+  findAll(
+    @Request() request: CustomRequest,
+    @Body('page') page: string
+  ) {
+    return this.productsService.findAll(request.database, page);
   }
 
   @Get(':id')

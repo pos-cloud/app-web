@@ -16,7 +16,7 @@ export class ProductsService {
     private readonly tiendaNubeService: TiendaNubeService,
     private readonly categoryService: CategoriesService,
     private readonly productVariantService: VariantProduct,
-  ) {}
+  ) { }
 
   async create(database: string, productId: string) {
     try {
@@ -40,17 +40,18 @@ export class ProductsService {
           ` Article with id ${productId} not found`,
         );
       }
-      const pictureUrls = foundArticle.pictures.map(
-        (picture) => picture.picture,
-      );
+
+      // const pictureUrls = foundArticle.pictures.map(
+      //   (picture) => picture.picture,
+      // );
 
       const dataNewProductTiendaNube = {
-        images: [
-          {
-            src: foundArticle.picture,
-          },
-          ...pictureUrls.map((src) => ({ src })),
-        ],
+        // images: [
+        //   {
+        //     src: foundArticle.picture,
+        //   },
+        //   ...pictureUrls.map((src) => ({ src })),
+        // ],
         name: {
           es: foundArticle.description,
         },
@@ -69,9 +70,7 @@ export class ProductsService {
       }));
 
       if (foundArticle.category) {
-        const foundCategory = this.categoryService.findOneCategoryDb(
-          foundArticle.category,
-        );
+        await this.categoryService.findOneCategoryDb(foundArticle.category);
 
         const foundCategoryTiendaMia = await this.categoryService.create(
           database,
@@ -133,11 +132,11 @@ export class ProductsService {
           },
         },
       );
+
       await this.databaseService.closeConnection();
       return result;
     } catch (err) {
       // await this.databaseService.initConnection(database);
-
       throw err;
     }
   }
@@ -154,9 +153,14 @@ export class ProductsService {
 
     if (dataVarinat.length == 0) return;
 
-    const variantData = await this.clearDataVariant(dataVarinat, variantName);
+    const variantData = await this.clearDataVariant(
+      dataVarinat,
+      variantName,
+      productTiendaNube,
+      tokenTiendaNube,
+      userIdTiendaNube,
+    );
 
-    // console.log('variantData 147 ', variantData[0]);
     const arrayCreateVariant = variantData.map((e) => {
       new Promise(async (resolve) => {
         const resultResolve =
@@ -172,56 +176,97 @@ export class ProductsService {
 
     await Promise.all(arrayCreateVariant);
   }
-  async clearDataVariant(data: ResponseVariantsDB[], attributes: string[]) {
-    const dataclearPromises = data.map((element) => {
-      return new Promise(async (resolve) => {
-        const variantData = {
-          values: [],
-        };
+  
+  async clearDataVariant(
+    data: ResponseVariantsDB[],
+    attributes: string[],
+    productTiendaNube: string,
+    tiendaNubeAccessToken: string,
+    tiendaNubeUserId: string,
+  ) {
 
-        for (let attribute of attributes) {
-          for (let variantValue of element.variants) {
-            if (
-              attribute ==
-              variantValue.type.name.toLocaleLowerCase().replace(/ /g, '_')
-            ) {
-              variantData['values'].push({
-                es: variantValue.value.description,
-              });
+    const dataClearPromises = data.map((element) => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const variantData = {
+            values: [],
+          };
+
+          //upload image, and add id image variant
+          //let image = null;
+          // try {
+          //   image = await this.tiendaNubeService.uploadImageOfProduct(
+          //     productTiendaNube,
+          //     element.articleChildInfo?.picture ?? null,
+          //     tiendaNubeAccessToken,
+          //     tiendaNubeUserId,
+          //   );
+          // } catch (err) {
+          // }
+          // if (image) {
+          //   variantData['image_id'] = image.id;
+          // }
+          for (let attribute of attributes) {
+            for (let variantValue of element.variants) {
+              if (
+                attribute ==
+                variantValue.type.name.toLocaleLowerCase().replace(/ /g, '_')
+              ) {
+                variantData['values'].push({
+                  es: variantValue.value.description,
+                });
+              }
             }
           }
-        }
 
-        variantData['price'] = element.articleChildInfo.salePrice ?? 0;
+          variantData['price'] = element.articleChildInfo.salePrice ?? 0;
 
-        const stockCollection =
-          this.databaseService.getCollection('article-stocks');
+          const stockCollection =
+            this.databaseService.getCollection('article-stocks');
 
-        try {
-          const stockFound = await stockCollection.findOne({
-            operationType: { $ne: 'D' },
-            article: new ObjectId(element.articleChild),
-          });
+          try {
+            const stockFound = await stockCollection.findOne({
+              operationType: { $ne: 'D' },
+              article: new ObjectId(element.articleChild),
+            });
 
-          variantData['stock'] =
-            !stockFound || stockFound.realStock < 0 ? 0 : stockFound.realStock;
+            variantData['stock'] =
+              !stockFound || stockFound.realStock < 0
+                ? 0
+                : stockFound.realStock;
+          } catch (error) {
+            variantData['stock'] = 0;
+          }
+
+          resolve(variantData);
         } catch (error) {
-          console.error(`Error al consultar la base de datos: ${error}`);
-          variantData['stock'] = 0;
+          reject(error);
         }
-
-        resolve(variantData);
       });
     });
 
-    const resolvedData = await Promise.all(dataclearPromises);
+    const resolvedData = await Promise.all(dataClearPromises);
 
-    // `resolvedData` ahora contiene el resultado de todas las consultas
     return resolvedData;
   }
 
-  findAll() {
-    return `This action returns all products`;
+  async findAll(database: string, page: string) {
+    try {
+      if (!database) {
+        throw new BadRequestException(`Database is required `);
+      }
+      await this.databaseService.initConnection(database);
+      const { token, userID } =
+        await this.databaseService.getCredentialsTiendaNube();
+
+      const data = await this.tiendaNubeService.findAll(token, userID, page);
+
+      await this.databaseService.closeConnection();
+      return data;
+
+    } catch (err) {
+      return null;
+    }
   }
 
   findOne(id: number) {
@@ -233,6 +278,7 @@ export class ProductsService {
       if (!database) {
         throw new BadRequestException(`Database is required `);
       }
+
       await this.databaseService.initConnection(database);
       const { token, userID } =
         await this.databaseService.getCredentialsTiendaNube();
@@ -252,6 +298,7 @@ export class ProductsService {
       }
 
       if (!foundArticle.tiendaNubeId) {
+        await this.databaseService.closeConnection();
         return this.create(database, productId);
       }
 
@@ -286,25 +333,29 @@ export class ProductsService {
         dataUpdateProductTiendaNube as UpdateProductTiendaNubeDto,
       );
 
-      if (foundArticle.picture != result.images[0].src) {
-        const dataresult =
-          await this.tiendaNubeService.updatePrincipalImageOfProduct(
-            foundArticle.picture,
-            result.id,
-            result.images[0].id,
-            token,
-            userID,
-          );
+      // eliminacion de imagenee
+      // try {
+      // //  this.deleteAllImageVariant(result.variants, result.id, token, userID);
+      // } catch (err) {}
+      // if (foundArticle.picture != result.images[0]?.src) {
+      //   const dataresult =
+      //     await this.tiendaNubeService.updatePrincipalImageOfProduct(
+      //       foundArticle.picture,
+      //       result.id,
+      //       result.images[0].id,
+      //       token,
+      //       userID,
+      //     );
 
-        await foundCollection.updateOne(
-          { _id: foundArticle._id },
-          {
-            $set: {
-              picture: dataresult.src,
-            },
-          },
-        );
-      }
+      //   await foundCollection.updateOne(
+      //     { _id: foundArticle._id },
+      //     {
+      //       $set: {
+      //         picture: dataresult.src,
+      //       },
+      //     },
+      //   );
+      // }
 
       const resultVariantName =
         await this.productVariantService.getProductVariantsPropertyNames(
@@ -313,7 +364,6 @@ export class ProductsService {
 
       const dataVariant =
         await this.databaseService.getVariantDataByArticle(productId);
-
       if (dataVariant.length == 0) {
         const stockCollection =
           this.databaseService.getCollection('article-stocks');
@@ -321,6 +371,7 @@ export class ProductsService {
           operationType: { $ne: 'D' },
           article: new ObjectId(productId),
         });
+
         await this.tiendaNubeService.updateProductFirstVariant(
           token,
           userID,
@@ -340,26 +391,56 @@ export class ProductsService {
             depth: foundArticle.depth || null,
           },
         );
+        await this.databaseService.closeConnection();
+
         return result;
       }
 
       const variantData = await this.clearDataVariant(
         dataVariant,
         resultVariantName as string[],
+        foundArticle.tiendaNubeId,
+        token,
+        userID,
       );
-
       await this.tiendaNubeService.massiveVariantUpdate(
         token,
         userID,
         result.id,
         variantData,
-      );
+      )
+
       await this.databaseService.closeConnection();
 
       return result;
     } catch (err) {
       throw err;
     }
+  }
+
+  deleteAllImageVariant(
+    data: any[],
+    productId: string,
+
+    tiendaNubeAccessToken: string,
+    tiendaNubeUserId: string,
+  ) {
+    data = data.filter((e) => e.image_id != null);
+    const arrayDeleteOldImage = data.map((variant) => {
+      return new Promise(async (resolver, reject) => {
+        const result = await this.tiendaNubeService.deleteImageOfProduct(
+          productId,
+          variant.image_id,
+          tiendaNubeAccessToken,
+          tiendaNubeUserId,
+        );
+        if (result) {
+          resolver(true);
+        }
+        reject(false);
+      });
+    });
+    Promise.all(arrayDeleteOldImage);
   }
 
   async massiveUpdate(database: string, products: string[]) {

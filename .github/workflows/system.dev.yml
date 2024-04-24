@@ -1,4 +1,4 @@
-name: Deploy System
+name: Deploy System to Don Web
 
 on:
   push:
@@ -8,8 +8,8 @@ on:
       - "services/**"
 
 jobs:
-  deploy-donweb:
-    runs-on: [dev]
+  build:
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -20,9 +20,25 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Build Docker image
-        run: docker build -t build-system -f Dockerfile.dev .
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
 
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build
+        run: npm run build:dev
+      
+      - name: Archive dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+  deploy:
+    runs-on: [dev]
+    needs: build
+    steps:
       - name: Delete old backup
         run: rm -rf /home/system_backup/*
 
@@ -32,10 +48,8 @@ jobs:
       - name: Clean system
         run: rm -rf /home/system/*
 
-      - name: Run Docker container
-        run: docker run -v /home/system:/home/system build-system
-
-      - name: Stop and remove existing container
-        run: |
-          docker stop system-poscloud || true
-          docker rm -f system-poscloud || true
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: /home/system/

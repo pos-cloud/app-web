@@ -28,6 +28,21 @@ import UnitOfMeasurement from '../unit-of-measurement/unit-of-measurement.interf
 import UnitOfMeasurementController from '../unit-of-measurement/unit-of-measurement.controller'
 import Tax from '../tax/tax.interface'
 import TaxController from '../tax/tax.controller'
+import ApplicationController from '../application/application.controller'
+import { Application, application } from 'express'
+import VariantSchema from '../variant/variant.model'
+import ArticleStock from '../article-stock/article-stock.interface'
+import ArticleStockSchema from '../article-stock/article-stock.model'
+import BranchController from '../branch/branch.controller'
+import Branch from '../branch/branch.interface'
+import Deposit from '../deposit/deposit.interface'
+import DepositController from '../deposit/deposit.controller'
+import VariantTypeController from '../variant-type/variant-type.controller'
+import VariantType from '../variant-type/variant-type.interface'
+import VariantTypeSchema from '../variant-type/variant-type.model'
+import VariantValueController from '../variant-value/variant-value.controller'
+import VariantValue from '../variant-value/variant-value.interface'
+import VariantValueSchema from '../variant-value/variant-value.model'
 
 export default class ArticleUC {
 	database: string
@@ -440,86 +455,74 @@ export default class ArticleUC {
 
 	async importFromExcel(data: any[]) {
 		return new Promise<{}>(async (resolve, reject) => {
-			let articlesObject: any = {};
+
 			const response = {
 				updateArticle: <any>[],
 				notUpdateArticle: <any>[],
 				countUpdate: 0,
 				countNotUpdate: 0
 			};
-			data.forEach((item) => {
-				articlesObject[item.column2] = item;
-				response.notUpdateArticle.push(item.column2);
-			});
-			const codes = data.map((obj) => obj.column2);
-			const makes = data.map((obj) => obj.column4);
-			const categories = data.map((obj) => obj.column5)
 
-			try {
-				if (codes.some(code => code === '')) {
+			const articlesObj: any = {};
+
+			const articles = await new ArticleController(this.database).find({}, {});
+
+			articles.forEach((item: any) => {
+				if (item.code) {
+					articlesObj[item.code] = item;
+				}
+			});
+
+			await this.createMake(data)
+			await this.createCategory(data)
+			const makesObj = await this.getMake()
+			const categoryObj = await this.getCategory()
+			const printerObj = await this.getPrinters()
+			const unitOfMeasurementObj = await this.getUnitOfMeasurement()
+			const taxObj = await this.getTax()
+
+			for (const item of data) {
+				const calculatedSalePrice = this.calculateSalePrice(item.column11, item.column13, item.column14);
+				if (item.column2 === '') {
 					return reject(new Responser(500, null, "En el archivo Excel, hay códigos de productos que están incompletos."))
 				}
-				const setMakes = new Set(makes);
-				let uniqueMakes = [...setMakes];
-
-				const setCategories = new Set(categories);
-				let uniqueCategories = [...setCategories];
-
-				const article = await new ArticleController(this.database).find(
-					{ code: { $in: codes }, type: "Final" }, {}
-				);
-
-				const nonExistingCodes = codes.filter(code => !article.map((item: Article) => item.code).includes(code));
-
-				await this.createMake(uniqueMakes)
-				await this.createCategory(uniqueCategories)
-
-				const updatePromises = article.map(async (item: any) => {
-					const articleData = articlesObject[item.code];
-
-					const makesId = await this.getMake(articleData.column4)
-					const categoryId = await this.getCategory(articleData.column5)
-					const printerId = await this.getPrinters(articleData.column9)
-					const unitOfMeasurementId = await this.getUnitOfMeasurement(articleData.column8)
-					const tax: Tax = await this.getTax(articleData.column12)
-					const calculatedSalePrice = this.calculateSalePrice(articleData.column11, articleData.column13, articleData.column14);
-
+				let code = item.column2;
+				if (articlesObj[code]) {
+					const article = articlesObj[code]
 					const result = await new ArticleController(this.database).update(
-						item._id,
+						article._id,
 						{
-							order: articleData.column1 === "" ? item.order : articleData.column11,
-							code: articleData.column2,
-							barcode: articleData.column13 === "" ? item.barcode : articleData.column13,
-							make: makesId === null ? item.make : makesId[0]._id,
-							category: categoryId === null ? item.category : categoryId[0]._id,
-							description: articleData.column6 === "" ? item.description : articleData.column6.substring(0, 20),
-							posDescription: articleData.column7 === "" ? item.posDescription : articleData.column7,
-							unitOfMeasurement: unitOfMeasurementId === "" ? item.unitOfMeasurement : unitOfMeasurementId,
-							printIn: printerId === "" ? item.unitOfMeasurement : printerId,
-							observation: articleData.column10 === "" ? item.observation : articleData.column10,
+							order: item.column1 === "" ? article.order : item.column11,
+							code: item.column2,
+							barcode: item.column13 === "" ? article.barcode : item.column13,
+							make: makesObj[item.column4] === undefined ? article.make : makesObj[item.column4]._id,
+							category: categoryObj[item.column5] === undefined ? article.category : categoryObj[item.column5]?._id,
+							description: item.column6 === "" ? article.description : item.column6.substring(0, 20),
+							posDescription: item.column7 === "" ? article.posDescription : item.column7,
+							unitOfMeasurement: unitOfMeasurementObj[item.column8] === "" ? article.unitOfMeasurement : unitOfMeasurementObj[item.column8]?._id,
+							printIn: printerObj[item.column9] === "" ? article.unitOfMeasurement : printerObj[item.column9]?.name,
+							observation: item.column10 === "" ? article.observation : item.column10,
 							basePrice: calculatedSalePrice.basePrice2,
-							taxes: tax !== undefined ? [{
-								tax: tax._id,
-								percentage: tax.percentage,
-							}
-							] : item.taxes,
+							taxes: item.column12 === "" ? article.tax : {
+								tax: taxObj[item.column12]._id,
+								percentage: taxObj[item.column12].percentage
+							},
 							markupPercentage: calculatedSalePrice.markupPercentage2,
 							salePrice: calculatedSalePrice.salePrice2,
-							weight: articleData.column15 === "" ? item.weight : articleData.column15,
-							width: articleData.column16 === "" ? item.width : articleData.column16,
-							height: articleData.column17 === "" ? item.height : articleData.column17,
-							depth: articleData.column18 === "" ? item.depth : articleData.column18,
-							allowPurchase: articleData.column19 === 'Si',
-							allowSale: articleData.column20 === 'Si',
-							allowStock: articleData.column21 === 'Si',
-							allowSaleWithoutStock: articleData.column22 === 'Si',
-							isWeigth: articleData.column23 === 'Si',
-							allowMeasure: articleData.column24 === 'Si',
-							posKitchen: articleData.column25 === 'Si',
-							m3: articleData.column26 === "" ? item.m3 : articleData.column26,
+							weight: item.column15 === "" ? article.weight : item.column15,
+							width: item.column16 === "" ? article.width : item.column16,
+							height: item.column17 === "" ? article.height : item.column17,
+							depth: item.column18 === "" ? article.depth : item.column18,
+							allowPurchase: item.column19 === 'Si',
+							allowSale: item.column20 === 'Si',
+							allowStock: item.column21 === 'Si',
+							allowSaleWithoutStock: item.column22 === 'Si',
+							isWeigth: item.column23 === 'Si',
+							allowMeasure: item.column24 === 'Si',
+							posKitchen: item.column25 === 'Si',
+							m3: item.column26 === "" ? item.m3 : item.column26,
 						}
 					);
-
 
 					if (result.status === 200) {
 						const code = result.result.code;
@@ -531,53 +534,41 @@ export default class ArticleUC {
 							response.notUpdateArticle.splice(indexToRemove, 1);
 						}
 					}
-					return result;
-				});
-
-				await Promise.all(updatePromises);
-
-				const createArticlePromises = nonExistingCodes.map(async (item: any) => {
-					const articleData = articlesObject[item];
-
-					const makesId = await this.getMake(articleData.column4)
-					const categoryId = await this.getCategory(articleData.column5)
-					const printerId = await this.getPrinters(articleData.column9)
-					const unitOfMeasurementId = await this.getUnitOfMeasurement(articleData.column8)
-					const tax: Tax = await this.getTax(articleData.column12)
-					const calculatedSalePrice = this.calculateSalePrice(articleData.column11, articleData.column13, articleData.column14);
-
+				} else {
 					let newArticle: Article = ArticleSchema.getInstance(this.database)
 					newArticle = Object.assign(newArticle, {
-						order: articleData.column1,
-						code: articleData.column2,
-						barcode: articleData.column3,
-						make: makesId === null ? item.make : makesId[0]._id,
-						category: categoryId === null ? item.category : categoryId[0]._id,
-						description: articleData.column6.substring(0, 20),
-						posDescription: articleData.column7,
-						unitOfMeasurement: unitOfMeasurementId === "" ? null : unitOfMeasurementId,
-						printIn: printerId === "" ? null : printerId,
-						observation: articleData.column10,
+						order: item.column1,
+						code: item.column2,
+						barcode: item.column3,
+						make: makesObj[item.column4]?._id,
+						category: categoryObj[item.column5]?._id,
+						description: item.column6.substring(0, 20),
+						posDescription: item.column7,
+						unitOfMeasurement: unitOfMeasurementObj[item.column8]?._id,
+						printIn: printerObj[item.column9]?.name,
+						observation: item.column10,
 						basePrice: calculatedSalePrice.basePrice2,
-						taxes: tax !== undefined ? [{
-							tax: tax._id,
-							percentage: tax.percentage,
-						}
-						] : item.taxes,
+						taxes: item.column12 === "" ? {
+							tax: taxObj[21]._id,
+							percentage: taxObj[21].percentage
+						} : {
+							tax: taxObj[item.column12]._id,
+							percentage: taxObj[item.column12].percentage
+						},
 						markupPercentage: calculatedSalePrice.markupPercentage2,
 						salePrice: calculatedSalePrice.salePrice2,
-						weight: articleData.column15,
-						width: articleData.column16,
-						height: articleData.column17,
-						depth: articleData.column18,
-						allowPurchase: articleData.column19 === 'Si',
-						allowSale: articleData.column20 === 'Si',
-						allowStock: articleData.column21 === 'Si',
-						allowSaleWithoutStock: articleData.column22 === 'Si',
-						isWeigth: articleData.column23 === 'Si',
-						allowMeasure: articleData.column24 === 'Si',
-						posKitchen: articleData.column25 === 'Si',
-						m3: articleData.column26,
+						weight: item.column15,
+						width: item.column16,
+						height: item.column17,
+						depth: item.column18,
+						allowPurchase: item.column19 === 'Si',
+						allowSale: item.column20 === 'Si',
+						allowStock: item.column21 === 'Si',
+						allowSaleWithoutStock: item.column22 === 'Si',
+						isWeigth: item.column23 === 'Si',
+						allowMeasure: item.column24 === 'Si',
+						posKitchen: item.column25 === 'Si',
+						m3: item.column26,
 					})
 					const result = await new ArticleController(this.database).save(newArticle);
 
@@ -591,107 +582,435 @@ export default class ArticleUC {
 							response.notUpdateArticle.splice(indexToRemove, 1);
 						}
 					}
-					return result;
-				})
-
-				await Promise.all(createArticlePromises);
-
-				response.countUpdate = response.updateArticle.length;
-				response.countNotUpdate = response.notUpdateArticle.length;
-				resolve(response)
-			} catch (error) {
-				console.log(error)
+				}
 			}
+
+			response.countUpdate = response.updateArticle.length;
+			response.countNotUpdate = response.notUpdateArticle.length;
+			resolve(response);
 		})
 	}
 
-	async getPrinters(data: string) {
+	async createProductTiendaNube(data: any) {
+		const ArticlesObj: any = {};
+
 		try {
-			let printer: Printer[] = await new PrinterController(this.database).find({ printIn: data }, {})
-			if (printer.length > 0) {
-				return printer[0].printIn
+			await this.createCategory(data)
+			await this.createVariantTypes(data)
+			await this.createVariantValues(data)
+			//await this.createMake(data)
+
+			const articles = await new ArticleController(this.database).getAll({
+				project: {
+					tiendaNubeId: 1,
+					description: 1
+				},
+				match: {
+					tiendaNubeId: { $exists: true, $ne: null }
+				}
+			});
+
+			articles.result.forEach((item: any) => {
+				if (item.tiendaNubeId) {
+					ArticlesObj[item.tiendaNubeId] = item;
+				}
+			});
+
+			//const makeObj= await this.getMake()
+			const categoryObj = await this.getCategory()
+			const taxObj = await this.getTax()
+			const aplicationsObj = await this.getApplications()
+			const branch = await this.getBranch()
+			const deposit = await this.getDeposit()
+			const variantType = await this.getVariantType()
+			const variantValue = await this.getVariantValue()
+			let code = await this.lastArticle()
+
+
+			for (const [index, item] of data.entries()) {
+				let tiendaNubeId = item.id;
+				if (ArticlesObj[tiendaNubeId]) {
+				} else {
+					let newArticle: Article = ArticleSchema.getInstance(this.database)
+					code++;
+					newArticle = Object.assign(newArticle, {
+						code: String(code).padStart(5, '0'),
+						barcode: item.variants[0].sku,
+						//make: makeObj[´']._id,
+						category: categoryObj[item.categories[0]?.name.es] !== undefined ? categoryObj[item.categories[0].name.es]._id : null,
+						description: item.name.es,
+						url: item.canonical_url,
+						posDescription: item.name.es,
+						observation: item.variants[0].description,
+						basePrice: 0,
+						taxes: {
+							tax: taxObj[21]._id,
+							percentage: taxObj[21].percentage
+						},
+						markupPercentage: (item.variants[0].price === null || item.variants[0].cost === null) ? null : Number(Math.abs(((Number(item.variants[0].price) - Number(item.variants[0].cost)) / Number(item.variants[0].cost) * 100)).toFixed(2)),
+						salePrice: item.variants[0].price,
+						weight: item.variants[0].weight,
+						width: item.variants[0].width,
+						height: item.variants[0].height,
+						depth: item.variants[0].depth,
+						//picture: item.images[0]?.src,
+						allowPurchase: true,
+						allowSale: true,
+						allowStock: true,
+						allowSaleWithoutStock: item.variants[0].stock_management,
+						// isWeigth: true,
+						// allowMeasure: item.attributes.length > 0,
+						// posKitchen: true,
+						tiendaNubeId: item.id,
+						applications: aplicationsObj['TiendaNube']._id,
+						type: 'Final',
+						tags: item.tags.split(',').map((tag: any) => tag.trim()),
+						containsVariants: item.attributes.length > 0
+					})
+					const resultParent = await new ArticleController(this.database).save(newArticle);
+
+					if (item.attributes.length) {
+						item.variants.forEach(async (art: any) => {
+							let newArticle: Article = ArticleSchema.getInstance(this.database)
+							newArticle = Object.assign(newArticle, {
+								code: resultParent.result.code,
+								barcode: art.sku,
+								//make: makeObj[´']._id,
+								category: categoryObj[item.categories[0]?.name.es] !== undefined ? categoryObj[item.categories[0].name.es]._id : null,
+								description: art.values.map((items: any) => items.es.toLowerCase()).join(' / '),
+								url: art.canonical_url,
+								posDescription: item.name.es,
+								observation: item.description.es,
+								basePrice: 0,
+								taxes: {
+									tax: taxObj[21]._id,
+									percentage: taxObj[21].percentage
+								},
+								markupPercentage: (item.variants[0].price === null || item.variants[0].cost === null) ? null : Number(Math.abs(((Number(item.variants[0].price) - Number(item.variants[0].cost)) / Number(item.variants[0].cost) * 100)).toFixed(2)),
+								salePrice: art.price,
+								weight: art.weight,
+								width: art.width,
+								height: art.height,
+								depth: art.depth,
+								// picture: (() => {
+								// 	const imageObject = item.images.find((img: any) => img.id === art.image_id);
+								// 	return imageObject ? imageObject.src : null;
+								// })(),
+								allowPurchase: true,
+								allowSale: true,
+								allowStock: true,
+								allowSaleWithoutStock: art.stock_management,
+								// isWeigth: true,
+								// allowMeasure: true,
+								// posKitchen: true,
+								tiendaNubeId: item.id,
+								applications: aplicationsObj['TiendaNube']._id,
+								type: 'Variante'
+							})
+
+							let resultChild = await new ArticleController(this.database).save(newArticle);
+							art.values.forEach(async (artic: any, index: number) => {
+								let newVariant: Variant = VariantSchema.getInstance(this.database);
+								newVariant = Object.assign(newVariant, {
+									type: variantType[item.attributes[index].es],
+									value: variantValue[artic.es],
+									articleParent: resultParent.result._id,
+									articleChild: resultChild.result._id,
+								});
+								const resultVariant = await new VariantController(this.database).save(newVariant);
+							});
+
+							let newArticleStock: ArticleStock = ArticleStockSchema.getInstance(this.database);
+							newArticleStock = Object.assign(newArticleStock, {
+								article: resultChild.result._id,
+								branch: branch,
+								deposit: deposit,
+								realStock: art.stock ?? 0,
+								minStock: 0,
+								maxStock: 0,
+								code: resultChild.result.code
+							})
+							const resultArticleStock = await new ArticleController(this.database).save(newArticleStock);
+						})
+					} else {
+						let newArticleStock: ArticleStock = ArticleStockSchema.getInstance(this.database);
+						newArticleStock = Object.assign(newArticleStock, {
+							article: resultParent.result._id,
+							branch: branch,
+							deposit: deposit,
+							realStock: item.variants[0].stock ?? 0,
+							minStock: 0,
+							maxStock: 0,
+							code: resultParent.result.code
+						})
+						const resultArticleStock = await new ArticleController(this.database).save(newArticleStock);
+
+					}
+				}
 			}
-			return ''
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
+	async getPrinters() {
+		try {
+			let printersObj: any = {}
+			let printers: Printer[] = await new PrinterController(this.database).find({}, {})
+			printers.forEach((item: any) => {
+				printersObj[item.printIn] = item;
+			});
+			return printersObj
 		} catch (error) {
 			throw error;
 		}
 	}
 
-	async getUnitOfMeasurement(data: string) {
-		try {
-			let unitOfMeasurement: UnitOfMeasurement[] = await new UnitOfMeasurementController(this.database).find({ name: data }, {})
-			if (unitOfMeasurement.length > 0) {
-				return unitOfMeasurement[0]._id
+	async createCategory(data: any) {
+		const categoriesObj: any = {};
+		const categories = await new CategoryController(this.database).getAll({
+			project: {
+				tiendaNubeId: 1,
+				description: 1
+			},
+			match: {
+				description: { $exists: true, $ne: null }
 			}
-			return ''
+		});
+
+		categories.result.forEach((item: any) => {
+			if (item.description) {
+				categoriesObj[item.description] = item;
+			}
+		});
+
+		for (const item of data) {
+			const description = item.categories === undefined ? item.column5 : item.categories[0]?.name?.es;
+			if (!categoriesObj[description]) {
+				if (description) {
+					let newCategory: Category = CategorySchema.getInstance(this.database)
+					newCategory = Object.assign(newCategory, {
+						description: description,
+						tiendaNubeId: item.categories[0].id
+					})
+					const result = await new MakeController(this.database).save(newCategory);
+					categoriesObj[description] = newCategory;
+				}
+			}
+		}
+		return 200
+	}
+
+	async createVariantTypes(data: any) {
+		const variantTypesObj: any = {};
+		const variantTypes = await new VariantTypeController(this.database).getAll({
+			project: {
+				name: 1
+			},
+			match: {
+				name: { $exists: true, $ne: null }
+			}
+		});
+
+		variantTypes.result.forEach((item: any) => {
+			if (item.name) {
+				variantTypesObj[item.name] = item;
+			}
+		});
+
+		for (const item of data) {
+			await Promise.all(item.attributes.map(async (art: any) => {
+				if (!variantTypesObj[art.es]) {
+					let newVariantType: VariantType = VariantTypeSchema.getInstance(this.database);
+					newVariantType = Object.assign(newVariantType, {
+						name: art?.es,
+						operationType: 'C'
+					});
+
+					const result = await new VariantTypeController(this.database).save(newVariantType);
+					variantTypesObj[art.es] = newVariantType;
+				}
+			}));
+		}
+		return 200;
+	}
+
+	async createVariantValues(data: any) {
+		const varinatValuesObj: any = {};
+		const VariantValues = await new VariantValueController(this.database).getAll({
+			project: {
+				description: 1
+			},
+			match: {
+				description: { $exists: true, $ne: null }
+			}
+		});
+
+		VariantValues.result.forEach((item: any) => {
+			if (item.description) {
+				varinatValuesObj[item.description] = item;
+			}
+		});
+
+		const variantType = await this.getVariantType();
+
+		for (const item of data) {
+			for (const art of item.variants) {
+				for (const [index, artic] of art.values.entries()) {
+					if (!varinatValuesObj[artic.es]) {
+						let newVariantValue: VariantValue = VariantValueSchema.getInstance(this.database);
+						newVariantValue = Object.assign(newVariantValue, {
+							type: variantType[item.attributes[index]?.es],
+							description: artic.es,
+						});
+						const result = await new VariantValueController(this.database).save(newVariantValue);
+						varinatValuesObj[artic.es] = newVariantValue;
+					}
+				}
+			}
+		}
+
+		return 200;
+	}
+
+	async getApplications() {
+		try {
+			let aplicationsObj: any = {}
+			let applications: Application[] = await new ApplicationController(this.database).find({}, {})
+			applications.forEach((item: any) => {
+				aplicationsObj[item.type] = item;
+			});
+			return aplicationsObj
 		} catch (error) {
 			throw error;
 		}
 	}
 
-	async getTax(data: string) {
+	async getUnitOfMeasurement() {
 		try {
-			let tax: Tax[] = await new TaxController(this.database).find({ name: data }, {})
-			if (tax.length > 0) {
-				return tax[0]
-			}
+			let unitOfMeasurementObj: any = {}
+			let unitOfMeasurement: UnitOfMeasurement[] = await new UnitOfMeasurementController(this.database).find({}, {})
+			unitOfMeasurement.forEach((item: any) => {
+				unitOfMeasurementObj[item.name] = item;
+			});
+			return unitOfMeasurementObj
 		} catch (error) {
 			throw error;
 		}
 	}
 
-	async createMake(uniqueMakes: string[]) {
-		let make: Make[] = await this.getMake(uniqueMakes)
-		const existingMakes = make.map((item: Make) => item.description);
-		const nonExistingMakes = uniqueMakes.filter(description => !existingMakes.includes(description) && description !== '');
+	async getTax() {
+		try {
+			let taxObj: any = {}
+			let tax: Tax[] = await new TaxController(this.database).find({}, {})
 
-		const createMakesPromises = nonExistingMakes.map(async (item: any) => {
-			let make: Make = MakeSchema.getInstance(this.database)
-			make = Object.assign(make, {
-				description: item
-			})
-			const result = await new MakeController(this.database).save(make);
-			if (result.status === 200) {
-				return result.result._id
-			}
-		})
-		await Promise.all(createMakesPromises);
-	}
-
-	async createCategory(uniqueCategories: string[]) {
-		let category: Category[] = await this.getCategory(uniqueCategories)
-		const existingCategory = category.map((item: Category) => item.description);
-		const nonExistingCategorie = uniqueCategories.filter((description: string) => !existingCategory.includes(description) && description !== '');
-
-		const createCategoriesPromises = nonExistingCategorie.map(async (item: any) => {
-			let category: Category = CategorySchema.getInstance(this.database)
-			category = Object.assign(category, {
-				description: item
-			})
-			const result = await new CategoryController(this.database).save(category);
-			if (result.status === 200) {
-				return result.result._id
-			}
-		})
-		await Promise.all(createCategoriesPromises);
-	}
-
-	async getMake(makes: any) {
-		if (makes.length || makes !== '') {
-			let existingMake: Make[] = await new MakeController(this.database).find({ description: { $in: makes } }, {})
-
-			return existingMake
+			tax.forEach((item: any) => {
+				taxObj[item.percentage] = item;
+			});
+			return taxObj
+		} catch (error) {
+			throw error;
 		}
-		return null
 	}
 
-	async getCategory(category: any) {
-		if (category.length) {
-			let existingCategory: Category[] = await new CategoryController(this.database).find({ description: { $in: category } }, {})
+	async getVariantType() {
+		try {
+			let variantTypeObj: any = {}
+			let variantType = await new VariantTypeController(this.database).find({}, {})
 
-			return existingCategory
+			variantType.forEach((item: any) => {
+				variantTypeObj[item.name] = item;
+			});
+			return variantTypeObj
+		} catch (error) {
+			throw error;
 		}
-		return null
+	}
+
+	async getVariantValue() {
+		try {
+			let variantValueObj: any = {}
+			let variantValue = await new VariantValueController(this.database).find({}, {})
+
+			variantValue.forEach((item: any) => {
+				variantValueObj[item.description] = item;
+			});
+			return variantValueObj
+
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async getBranch() {
+		try {
+			let branch: Branch[] = await new BranchController(this.database).find({ default: true }, {})
+
+			return branch[0]._id
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async getDeposit() {
+		try {
+			let depesit: Deposit[] = await new DepositController(this.database).find({ default: true }, {})
+
+			return depesit[0]._id
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async createMake(data: any) {
+		const makeObj: any = {};
+		const makes = await new MakeController(this.database).getAll({
+			project: {
+				description: 1
+			},
+			match: {
+				description: { $exists: true, $ne: null }
+			}
+		});
+
+		makes.result.forEach((item: any) => {
+			if (item.description) {
+				makeObj[item.description] = item;
+			}
+		});
+
+		for (const item of data) {
+			let descripcion = item.column4
+			if (!makeObj[descripcion]) {
+				if (descripcion) {
+					let make: Make = MakeSchema.getInstance(this.database)
+					make = Object.assign(make, {
+						description: descripcion
+					})
+					const result = await new MakeController(this.database).save(make);
+					makeObj[descripcion] = make
+				}
+			}
+		}
+		return 200
+	}
+
+	async getMake() {
+		let makeObj: any = {}
+		let make: Make[] = await new MakeController(this.database).find({}, {})
+		make.forEach((item: any) => {
+			makeObj[item.description] = item;
+		});
+		return makeObj
+	}
+
+	async getCategory() {
+		let categoryObj: any = {}
+		let category: Category[] = await new CategoryController(this.database).find({}, {})
+		category.forEach((item: any) => {
+			categoryObj[item.description] = item;
+		});
+		return categoryObj
 	}
 
 	calculateSalePrice(basePrice: string, markupPercentage: string, salePrice: string) {
@@ -726,4 +1045,23 @@ export default class ArticleUC {
 			return price;
 		}
 	}
+
+	async lastArticle() {
+		const todosLosProductos = await new ArticleController(this.database).getAll({
+			match: {
+				type: 'Final'
+			}
+		});
+
+		if (todosLosProductos.result) {
+			todosLosProductos.result.sort((a: any, b: any) => {
+				const dateA = new Date(a.creationDate).getTime();
+				const dateB = new Date(b.creationDate).getTime();
+				return dateB - dateA;
+			});
+			const ultimoProducto = todosLosProductos.result[0];
+			return ultimoProducto?.code ?? 0
+		}
+	}
+
 }

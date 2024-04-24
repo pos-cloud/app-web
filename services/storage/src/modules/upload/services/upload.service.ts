@@ -26,36 +26,32 @@ export class UploadService {
       }
       this.validOrigin(origin);
       let originPath: string;
-      if (name) {
-        originPath = this.cleanAndJoinElements([database, origin, name]);
-      } else {
-        originPath = this.cleanAndJoinElements([database, origin]);
-      }
-      console.log(originPath);
+
+      const timestamp = Date.now().toString();
+      // if (name) {
+      originPath = this.cleanAndJoinElements([database, origin, timestamp]);
+      // } else {
+      // originPath = this.cleanAndJoinElements([database, origin]);
+      // }
+      // console.log(originPath);
       const uploadFile = FileFormatChange(file);
 
       const { url } = await this.s3Service.uploadFile(
         `${originPath}/`,
         uploadFile
-      );
-
-      return url;
+      )
+      return url
     } catch (err) {
-      throw err;
+      throw new BadRequestException(err);
     }
   }
 
   async deleteFile(origin: string, bucket: string) {
     try {
       const pathParts = origin.split("/");
-
-      const resource = pathParts
-        .slice(4, pathParts.length)
-        .join("/")
-        .replace(/%2F/g, "/");
-      const key = [bucket, resource].join("/");
-
-      console.log(key);
+      const resource = pathParts.slice(3).join("/").replace(/%2F/g, "/");
+      const decodedResource = decodeURIComponent(resource);
+      const key = decodedResource.replace(/%25/g, "%");
 
       const response = await this.s3Service.deleteFile(key);
 

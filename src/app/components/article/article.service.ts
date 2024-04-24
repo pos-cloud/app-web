@@ -360,6 +360,28 @@ export class ArticleService extends ModelService {
       );
   }
 
+  public getAllArticlesTiendaNube(): Observable<any> {
+    const URL = `${environment.apiv2}/articles/articles-tiendanube`;
+
+    const headers = new HttpHeaders()
+      .set("Content-Type", "application/json")
+      .set("Authorization", this._authService.getToken());
+
+    return this._http
+      .get(URL,
+        {
+          headers: headers,
+        })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+  }
+
   public saveArticleTiendaNube(id: string): Observable<any> {
     const URL = `${environment.apiTiendaNube}/products`;
 

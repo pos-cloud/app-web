@@ -8,8 +8,8 @@ on:
       - "services/**"
 
 jobs:
-  deploy-donweb:
-    runs-on: [prod]
+  build:
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -20,68 +20,36 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Build Docker image
-        run: docker build -t build-system -f Dockerfile.prod .
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build
+        run: npm run build:prod
+      
+      - name: Archive dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+  deploy:
+    runs-on: [prod]
+    needs: build
+    steps:
+      - name: Delete old backup
+        run: rm -rf /home/system_backup/*
 
       - name: Backup current files
-        run: |
-          if [ -d "/home/system" ]; then
-            mv /home/system /home/system_backup
-            mkdir /home/system
-          fi
+        run: cp -r /home/system/. /home/system_backup/
 
-      - name: Clean up backup
-        run: |
-          if [ -d "/home/system_backup" ]; then
-            rm -rf /home/system_backup
-          fi
+      - name: Clean system
+        run: rm -rf /home/system/*
 
-      - name: Run Docker container
-        run: docker run -v /home/system:/home/system build-system
-
-      - name: Stop and remove existing container
-        run: |
-          docker stop system-poscloud || true
-          docker rm -f system-poscloud || true
-
-  # deploy-github-pages:
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #   - name: Checkout code
-  #     uses: actions/checkout@v2
-
-  #   - name: Set up Node.js
-  #     uses: actions/setup-node@v2
-  #     with:
-  #       node-version: 14
-
-  #   - name: Install dependencies
-  #     run: npm i
-
-  #   - name: Build Main
-  #     run: npm run build:prodp
-
-  #   - name: Deploy to GitHub Pages
-  #     uses: peaceiris/actions-gh-pages@v3
-  #     with:
-  #       github_token: ${{ secrets.GITHUB_TOKEN }}
-  #       publish_dir: ./dist
-  #       publish_branch: gh-pages
-  #       keep_files: true
-
-  # deploy-donweb-2:
-  #   runs-on: prod-ar
-  #   steps:
-  #     - uses: actions/checkout@v3
-
-  #     - name: Stop and remove existing container
-  #       run: |
-  #         docker stop system || true
-  #         docker rm -f system || true
-
-  #     - name: Build Docker image
-  #       run: docker build -t system -f Dockerfile.main .
-
-  #     - name: Run Docker container
-  #       run: docker run -v /home:/home --restart unless-stopped --net host --name system -d -it -p 80:80 system
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: /home/system/

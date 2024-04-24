@@ -573,5 +573,6 @@
     "weight": "Peso",
     "depth": "Ancho",
     "width": "Largo",
-    "height": "Alto"
+    "height": "Alto",
+    "tiendaNubeId": "Tienda Nube ID"
 }

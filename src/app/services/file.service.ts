@@ -24,7 +24,7 @@ export class FileService {
       "POST",
       `${environment.apiStorage}/upload`,
       true
-    );
+    )
     xhr.setRequestHeader("Authorization", this._authService.getToken());
 
     return new Promise((resolve, reject) => {
@@ -39,7 +39,7 @@ export class FileService {
       formData.append('origin', origin)
 
       xhr.onreadystatechange = function () {
-        console.log(xhr);
+       // console.log(xhr);
         if (xhr.readyState == 4) {
           if (xhr.status == 201) {
             resolve(xhr.response);
@@ -48,8 +48,8 @@ export class FileService {
           }
         }
       };
-
-      xhr.send(formData);
+      
+        xhr.send(formData);
     });
   }
 

@@ -4,7 +4,11 @@ import {
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from "@nestjs/common";
 import { FileUpload } from "src/common/interfaces/file.type";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Upload } from "@aws-sdk/lib-storage";
@@ -48,7 +52,7 @@ export class S3Service {
       });
 
       const filetypes =
-        /jpeg|jpg|png|svg|pdf|docx|doc|xlsx|xls|pptx|ppt|txt|csv/;
+        /jpeg|jpg|png/;
 
       if (filetypes.test(mimetype.toString())) {
         const name =
@@ -56,7 +60,7 @@ export class S3Service {
         const { Key, url } = await this.uploadFileS3(name, fileBuffer);
         return { url, key: Key };
       } else {
-        return null;
+        throw "El tipo de imagen es incorrecto. Solo se aceptan archivos con formato JPEG, JPG y PNG."
       }
     } catch (err) {
       throw err;
@@ -65,8 +69,6 @@ export class S3Service {
 
   async uploadFileS3(key: string, file: Buffer) {
     try {
-      console.log("upload aws 68");
-      console.log(key);
       const parallelUploads3 = new Upload({
         client: this.s3,
         params: { Bucket: this.bucketName, Key: key, Body: file },
@@ -85,7 +87,7 @@ export class S3Service {
 
       return { Key, url };
     } catch (err) {
-      console.log(err)
+      console.log(err);
       throw new InternalServerErrorException(
         `error when uploading images to the server`
       );
@@ -102,16 +104,20 @@ export class S3Service {
   }
 
   async deleteFile(key: string) {
-    if (!key) {
-      return null;
-    }
+    try {
+      if (!key) {
+        return null;
+      }
 
-    const command = new DeleteObjectCommand({
-      Bucket: this.bucketName,
-      Key: key,
-    });
-    const response = await this.s3.send(command);
-    return response;
+      const command = new DeleteObjectCommand({
+        Bucket: this.bucketName,
+        Key: key,
+      });
+      const response = await this.s3.send(command);
+      return response;
+    } catch (err) {
+      throw new BadRequestException(`Error in delete file`);
+    }
   }
 }
 interface ResponseUploadFile {
