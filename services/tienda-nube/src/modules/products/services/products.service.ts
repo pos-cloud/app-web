@@ -260,7 +260,9 @@ export class ProductsService {
 
       const data = await this.tiendaNubeService.findAll(token, userID, page);
 
+     // await this.databaseService.closeConnection();
       return data;
+
     } catch (err) {
       return null;
     }
@@ -327,10 +329,10 @@ export class ProductsService {
         foundArticle.tiendaNubeId,
         dataUpdateProductTiendaNube as UpdateProductTiendaNubeDto,
       );
-
+  
       // eliminacion de imagenee
       try {
-        this.deleteAllImageVariant(result.variants, result.id, token, userID);
+      //  this.deleteAllImageVariant(result.variants, result.id, token, userID);
       } catch (err) {}
       // if (foundArticle.picture != result.images[0]?.src) {
       //   const dataresult =
