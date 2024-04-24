@@ -95,23 +95,32 @@ export class TiendaNubeService {
     variantId: string,
     updateVariant: UpdateVariantTiendaNubeDto,
   ) {
-    const data = await firstValueFrom(
-      this.httpService
-        .put(
-          `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/variants/${variantId}`,
-          updateVariant,
-          {
-            headers: {
-              Authentication: `bearer ${tiendaNubeAccesstoken}`,
+    try {
+      console.log(`${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/variants/${variantId}`)
+      console.log(updateVariant)
+      const data = await firstValueFrom(
+        this.httpService
+          .put(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/variants/${variantId}`,
+            updateVariant,
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccesstoken}`,
+              },
             },
-          },
-        )
-        .pipe(map((resp) => resp.data)),
-    ).catch((err) => {
-      throw err;
-    });
+          )
+          .pipe(map((resp) => resp.data))
+
+      ).catch((err) => {
+        console.log('hello')
+        console.log(err)
+        throw err;
+      });
 
     return data;
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   async createVarianteByProduct(
@@ -178,8 +187,8 @@ export class TiendaNubeService {
           .post(
             `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/images`,
             {
-              // src: urlImage,
-              src:"https://poscloud.s3.sa-east-1.amazonaws.com/arterama/articles/1713850050045/1713850050045-descdfgdfgdfgarga1232134.png"
+              src: urlImage,
+            //  src:"https://oscloud.s3.sa-east-1.amazonaws.com/arterama/articles/1713850050045/1713850050045-descdfgdfgdfgarga1232134.png"
             },
             {
               headers: {
@@ -244,7 +253,6 @@ export class TiendaNubeService {
 
       return data;
     } catch (err) {
-      console.log(err);
       throw err;
     }
   }

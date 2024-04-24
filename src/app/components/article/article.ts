@@ -530,6 +530,16 @@ export let attributes = [
         required: true,
     },
     {
+        name: 'tiendaNubeId',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: true,
+    },
+    {
         name: 'type',
         visible: false,
         disabled: false,
