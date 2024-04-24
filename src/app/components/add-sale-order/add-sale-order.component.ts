@@ -3142,8 +3142,8 @@ export class AddSaleOrderComponent {
       if (this.transaction.type.requestArticles &&
         this.transaction.type.modifyStock &&
         this.config.tiendaNube !== undefined &&
-        this.config.tiendaNube.appID &&
-        this.config.tiendaNube.appID !== '' &&
+        this.config.tiendaNube.userID &&
+        this.config.tiendaNube.userID !== '' &&
         this.movementsOfArticles.length > 0) {
     
         const tiendaNubeIds = this.movementsOfArticles
@@ -3158,11 +3158,11 @@ export class AddSaleOrderComponent {
               if (result && result.length > 0) {
                 for (const variant of result) {
                   if (variant && variant.articleParent._id) {
-                    this.updateArticleTiendaNube(variant.articleParent._id);
+                    await this.updateArticleTiendaNube(variant.articleParent._id);
                   }
+                }
               }
             }
-          }
           });
       }
       this.loading = true;
