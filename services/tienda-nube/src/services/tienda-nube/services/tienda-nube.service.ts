@@ -96,8 +96,6 @@ export class TiendaNubeService {
     updateVariant: UpdateVariantTiendaNubeDto,
   ) {
     try {
-      console.log(`${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/variants/${variantId}`)
-      console.log(updateVariant)
       const data = await firstValueFrom(
         this.httpService
           .put(
@@ -112,8 +110,6 @@ export class TiendaNubeService {
           .pipe(map((resp) => resp.data))
 
       ).catch((err) => {
-        console.log('hello')
-        console.log(err)
         throw err;
       });
 
@@ -200,7 +196,6 @@ export class TiendaNubeService {
       ).catch(err=>console.log(err));
       return data;
     } catch (err) {
-      console.log("error tienda nube upload image of product, 193",err)
       return null;
     }
   }

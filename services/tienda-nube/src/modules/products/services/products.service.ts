@@ -16,7 +16,7 @@ export class ProductsService {
     private readonly tiendaNubeService: TiendaNubeService,
     private readonly categoryService: CategoriesService,
     private readonly productVariantService: VariantProduct,
-  ) {}
+  ) { }
 
   async create(database: string, productId: string) {
     try {
@@ -40,9 +40,10 @@ export class ProductsService {
           ` Article with id ${productId} not found`,
         );
       }
-      const pictureUrls = foundArticle.pictures.map(
-        (picture) => picture.picture,
-      );
+
+      // const pictureUrls = foundArticle.pictures.map(
+      //   (picture) => picture.picture,
+      // );
 
       const dataNewProductTiendaNube = {
         // images: [
@@ -175,6 +176,7 @@ export class ProductsService {
 
     await Promise.all(arrayCreateVariant);
   }
+  
   async clearDataVariant(
     data: ResponseVariantsDB[],
     attributes: string[],
@@ -191,7 +193,7 @@ export class ProductsService {
           };
 
           //upload image, and add id image variant
-          let image = null;
+          //let image = null;
           // try {
           //   image = await this.tiendaNubeService.uploadImageOfProduct(
           //     productTiendaNube,
@@ -245,7 +247,6 @@ export class ProductsService {
 
     const resolvedData = await Promise.all(dataClearPromises);
 
-    // `resolvedData` ahora contiene el resultado de todas las consultas
     return resolvedData;
   }
 
@@ -260,7 +261,7 @@ export class ProductsService {
 
       const data = await this.tiendaNubeService.findAll(token, userID, page);
 
-     // await this.databaseService.closeConnection();
+      await this.databaseService.closeConnection();
       return data;
 
     } catch (err) {
@@ -277,6 +278,7 @@ export class ProductsService {
       if (!database) {
         throw new BadRequestException(`Database is required `);
       }
+
       await this.databaseService.initConnection(database);
       const { token, userID } =
         await this.databaseService.getCredentialsTiendaNube();
@@ -296,6 +298,7 @@ export class ProductsService {
       }
 
       if (!foundArticle.tiendaNubeId) {
+        await this.databaseService.closeConnection();
         return this.create(database, productId);
       }
 
@@ -329,11 +332,11 @@ export class ProductsService {
         foundArticle.tiendaNubeId,
         dataUpdateProductTiendaNube as UpdateProductTiendaNubeDto,
       );
-  
+
       // eliminacion de imagenee
-      try {
-      //  this.deleteAllImageVariant(result.variants, result.id, token, userID);
-      } catch (err) {}
+      // try {
+      // //  this.deleteAllImageVariant(result.variants, result.id, token, userID);
+      // } catch (err) {}
       // if (foundArticle.picture != result.images[0]?.src) {
       //   const dataresult =
       //     await this.tiendaNubeService.updatePrincipalImageOfProduct(
@@ -368,8 +371,7 @@ export class ProductsService {
           operationType: { $ne: 'D' },
           article: new ObjectId(productId),
         });
-      console.log('369', result)
-      console.log(token,userID,)
+
         await this.tiendaNubeService.updateProductFirstVariant(
           token,
           userID,
@@ -389,6 +391,8 @@ export class ProductsService {
             depth: foundArticle.depth || null,
           },
         );
+        await this.databaseService.closeConnection();
+
         return result;
       }
 
@@ -438,6 +442,7 @@ export class ProductsService {
     });
     Promise.all(arrayDeleteOldImage);
   }
+
   async massiveUpdate(database: string, products: string[]) {
     try {
       if (!database) {
