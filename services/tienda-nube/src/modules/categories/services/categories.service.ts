@@ -68,7 +68,7 @@ export class CategoriesService {
         },
       );
 
-      await this.databaseService.closeConnection();
+     //  await this.databaseService.closeConnection();
 
       return categoryTiendaNube;
     } catch (err) {

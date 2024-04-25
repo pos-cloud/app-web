@@ -1715,11 +1715,10 @@ export class AddArticleComponent implements OnInit {
             this.loading = false
 
            if(this.article.applications.some(application => application.type === ApplicationType.TiendaNube)){
-            if (this.article.type === Type.Final && this.article.tiendaNubeId) {
+            if (this.article.type === Type.Final) {
               this.updateArticleTiendaNube(this.article._id)
             } else if (this.article.type === Type.Variant) {
               const result = await this.getVariantsByArticleChild(this.article._id);
-              console.log(result[0])
               if (result && result.length > 0) {
                   if (result[0] && result[0].articleParent._id) {
                      this.updateArticleTiendaNube(result[0].articleParent._id);

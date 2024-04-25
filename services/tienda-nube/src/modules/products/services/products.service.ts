@@ -88,8 +88,7 @@ export class ProductsService {
         userID,
       );
 
-      const stockCollection =
-        this.databaseService.getCollection('article-stocks');
+      const stockCollection = this.databaseService.getCollection('article-stocks');
       const stockFound = await stockCollection.findOne({
         operationType: { $ne: 'D' },
         article: new ObjectId(productId),
