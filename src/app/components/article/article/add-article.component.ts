@@ -1693,7 +1693,7 @@ export class AddArticleComponent implements OnInit {
       if(this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
 
       this._articleService.updateArticle(this.article, this.variants).subscribe(
-        (result) => {
+        async (result) => {
           if (!result.article) {
             this.showToast(
               null,
@@ -1713,8 +1713,18 @@ export class AddArticleComponent implements OnInit {
             this.showToast(null, 'success', 'Operación realizada con éxito');
             this.activeModal.close();
             this.loading = false
+
            if(this.article.applications.some(application => application.type === ApplicationType.TiendaNube)){
-              this.updateArticleTiendaNube();
+            if (this.article.type === Type.Final) {
+              this.updateArticleTiendaNube(this.article._id)
+            } else if (this.article.type === Type.Variant) {
+              const result = await this.getVariantsByArticleChild(this.article._id);
+              if (result && result.length > 0) {
+                  if (result[0] && result[0].articleParent._id) {
+                     this.updateArticleTiendaNube(result[0].articleParent._id);
+                }
+              }
+            }
            }else if(this.article.tiendaNubeId){
               this.deleteArticleTiendaNube();
            }
@@ -1805,10 +1815,10 @@ export class AddArticleComponent implements OnInit {
     );
   }
 
-  async updateArticleTiendaNube() {
+  async updateArticleTiendaNube(articleId) {
     this.loading = true;
 
-    this._articleService.updateArticleTiendaNube(this.article._id).subscribe(
+    this._articleService.updateArticleTiendaNube(articleId).subscribe(
       (result) => {
         if (result.error) {
           this.showToast(
@@ -1830,6 +1840,31 @@ export class AddArticleComponent implements OnInit {
         this.showToast(error)
       }
     );
+  }
+
+  getVariantsByArticleChild(id): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.loading = true;
+      let query = 'where="articleChild":"' + id + '"';
+      
+      this._variantService.getVariants(query)
+      .subscribe(
+        (result) => {        
+          if (!result.variants) {
+            resolve(null);
+          } else {
+            resolve(result.variants);
+          }
+          this.loading = false;
+        },
+        (error) => {
+          console.error('Error al obtener variantes:', error);
+         // this.showMessage(error._body, 'danger', false);
+          this.loading = false;
+          reject(error);
+        },
+      );
+    });
   }
 
   async uploadFile(pictureDelete: string): Promise<string> {
