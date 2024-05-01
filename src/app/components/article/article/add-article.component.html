@@ -346,7 +346,7 @@
                         </div>
                     </ng-template>
                 </li>
-                <li ngbNavItem>
+                <!-- <li ngbNavItem>
                     <a ngbNavLink>Stock</a>
                     <ng-template ngbNavContent>
                         <div class="row">
@@ -473,7 +473,7 @@
                             </tfoot>
                         </table>
                     </ng-template>
-                </li>
+                </li> -->
                 <li ngbNavItem>
                     <a ngbNavLink *ngIf="articleType === 'Producto'">Variantes</a>
                     <ng-template ngbNavContent>
@@ -862,8 +862,7 @@
                                     <div class="form-group col-md-6">
                                         <label class="control-label">El día:</label>
                                         <label *ngIf="article.creationDate" class="control-label"><b>
-                                                {{article.creationDate | dateFormat:'DD/MM/YYYY
-                                                HH:mm:ss'}}</b></label>
+                                                {{article.creationDate | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
                                     </div>
                                 </div>
                                 <div class="row">
