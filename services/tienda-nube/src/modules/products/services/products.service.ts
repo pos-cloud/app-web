@@ -37,8 +37,7 @@ export class ProductsService {
         productId,
         database,
       );
-      console.log("create product 40")
-      console.log(foundArticle)
+
       if (
         !foundArticle ||
         foundArticle.operationType == 'D' ||
@@ -67,7 +66,6 @@ export class ProductsService {
           es: foundArticle.observation || '',
         },
       };
-      console.log("create product 70")
 
       const resultVariantName =
         await this.productVariantService.getProductVariantsPropertyNames(
@@ -78,7 +76,6 @@ export class ProductsService {
       dataNewProductTiendaNube['attributes'] = resultVariantName.map((e) => ({
         es: e,
       }));
-      console.log("create product 80")
 
       if (foundArticle.category) {
         await this.categoryService.findOneCategoryDb(
@@ -130,7 +127,6 @@ export class ProductsService {
           depth: foundArticle.depth || null,
         },
       );
-      console.log('products 129');
       // Creacion de variantes
 
       await this.massCreactionOfProductVariants(
@@ -170,7 +166,6 @@ export class ProductsService {
       database,
     );
 
-    console.log("variantin product 175",dataVarinat)
     if (dataVarinat.length == 0) return;
 
     const variantData = await this.clearDataVariant(

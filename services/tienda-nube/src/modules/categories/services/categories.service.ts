@@ -22,9 +22,7 @@ export class CategoriesService {
       if (!database) {
         throw new BadRequestException(`Database is required `);
       }
-      console.log(database);
       const connectionDb = await this.poolDatabase.initConnection(database);
-      console.log(connectionDb);
       const { token, userID } =
         await this.poolDatabase.getCredentialsTiendaNube(database);
 

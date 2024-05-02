@@ -13,7 +13,6 @@ export class VariantProduct {
   ) {}
 
   async getProductVariantsPropertyNames(productId: string, database: string) {
-    console.log(productId);
     const foundCollection = await this.poolDatabase.getCollection(
       'variants',
       database,
