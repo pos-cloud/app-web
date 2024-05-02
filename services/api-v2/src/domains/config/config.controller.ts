@@ -42,9 +42,14 @@ export default class ConfigController extends Controller {
   }
 
   public downloadBD = (request: RequestWithUser, response: express.Response)=> {
+    let today = new Date()
+    const dd = String(today.getDate()).padStart(2, '0')
+    const mm = String(today.getMonth() + 1).padStart(2, '0')
+    const yyyy = today.getFullYear()
+    const todayString = dd + '-' + mm + '-' + yyyy
     const dbName = this.database
-    //let dbName = request.params.filename.split('-', 1)[0]
-   let route = `/home/clients/${dbName}/backups/${request.params.filename}`
+    
+   let route = `/home/clients/${dbName}/backups/${dbName + '-' + todayString}`
 
     return response.download(route)
   }
@@ -57,7 +62,7 @@ export default class ConfigController extends Controller {
     const todayString = dd + '-' + mm + '-' + yyyy
     this.database = request.database
     const dbName = request.database
-
+    console.log('acaa 1')
     let archive_path = `/home/clients/${dbName}/backups/${dbName + '-' + todayString}.gz`
     
     const child = spawn('mongodump', [
