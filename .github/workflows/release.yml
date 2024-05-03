@@ -14,7 +14,7 @@ jobs:
       - name: Build Changelog
         id: build_changelog
         if: startsWith(github.ref, 'refs/tags/')
-        uses: mikepenz/release-changelog-builder-action@{latest-release}
+        uses: mikepenz/release-changelog-builder-action@v4
         with:
             configuration: "configuration.json"
             owner: "mikepenz"
