@@ -1,4 +1,8 @@
-###  Installation
+
+![Logo Final](https://github.com/pos-cloud/system/assets/13305254/03378ed8-3699-4355-877a-e92c67f3db90)
+
+
+###  Dependencias
 ------------
 - [Angular](https://angular.io/)  v15.0.0
 - [VSCode](https://code.visualstudio.com/)
@@ -9,7 +13,7 @@
 
 ### Run locally
 ------------
-     npm i
+     npm i --force
      npm start
 
 
@@ -26,21 +30,47 @@
 
 ### Servicios
 
-##### Ambientes 
+##### Ambientes para desarrollo
   - api: https://d-api-v1.poscloud.ar
   - apiv2: https://d-api-v2.poscloud.ar
   - apiPrint: https://d-api-print.poscloud.ar
   - apiStorage: https://d-api-storage.poscloud.ar
   - apiTiendaNube: https://d-api-tiendanube.poscloud.ar
 
+### Infraestructura
+
+#### Doc para servidores
+Puerto para este servidor que estas destinados a las API
+
+- 300 - api-v1-poscloud
+- 301 - api-fit
+- 302 - api-pdf-poscloud
+- 303 - api-storage-poscloud
+- 304 - front-poscloud
+- 308 - api-v2-poscloud
+
+Agregar un nuevo sitio 
+- primero verificamos que el puerto no esta ocupado 
+	netstat -tuln | grep 301
+- segundo creamos el archivo dentro de 
+	cd /etc/apache2/sites-available/
+- agregamos el sitio 
+	sudo a2ensite prod.poscloud
+- verificamos que este bien configurado apache 
+	sudo apache2ctl configtest
+- recargamos la config
+	sudo systemctl reload apache2
+
+Caso de tener que volver atrás 
+- sudo a2dissite nombre_del_sitio
+- sudo systemctl reload apache2
+
 ### Contribuir 
 
 ------------
+Project ->  https://github.com/orgs/pos-cloud/projects/1 
 
 - git clone https://github.com/pos-cloud/system.git
-
-Desde project de la empresa ( https://github.com/orgs/pos-cloud/projects/1 ) tomamos la feacture y el atributo branch nos dice el nombre de la rama y desde dev se crea
-
 - git branch #XXX
 Se desarrolla y se hace commit de todo sobre la rama
 Luego hacemos 
@@ -66,8 +96,6 @@ Realizar PR a testing
   
 ```
 
-
-
 ##### Type
 
 Must be one of the following:
@@ -79,32 +107,3 @@ Must be one of the following:
 -   **perf**: A code change that improves performance
 -   **refactor**: A code change that neither fixes a bug nor adds a feature
 -   **test**: Adding missing tests or correcting existing tests
-
-
-
-#### Doc para servidores
-Puerto para este servidor que estas destinados a las API
-
-300 api-v1-poscloud
-301 api-fit
-302 api-pdf-poscloud
-303 api-storage-poscloud
-304 front-poscloud
-308 api-v2-poscloud
-
-Agregar un nuevo sitio 
-- primero verificamos que el puerto no esta ocupado 
-	netstat -tuln | grep 301
-- segundo creamos el archivo dentro de 
-	cd /etc/apache2/sites-available/
-- agregamos el sitio 
-	sudo a2ensite prod.poscloud
-- verificamos que este bien configurado apache 
-	sudo apache2ctl configtest
-- recargamos la config
-	sudo systemctl reload apache2
-
-Caso de tener que volver atrás 
-- sudo a2dissite nombre_del_sitio
-- sudo systemctl reload apache2
-
