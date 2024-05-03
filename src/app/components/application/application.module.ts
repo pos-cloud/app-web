@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ApplicationComponent } from './crud/application.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
@@ -21,26 +20,6 @@ const routes: Routes = [
   {
     path: 'applications',
     component: ListApplicationsComponent,
-    canActivate: [AuthGuard]
-  },
-  {
-    path: 'applications/add',
-    component: ApplicationComponent,
-    canActivate: [AuthGuard]
-  },
-  {
-    path: 'applications/view/:id',
-    component: ApplicationComponent,
-    canActivate: [AuthGuard]
-  },
-  {
-    path: 'applications/update/:id',
-    component: ApplicationComponent,
-    canActivate: [AuthGuard]
-  },
-  {
-    path: 'applications/delete/:id',
-    component: ApplicationComponent,
     canActivate: [AuthGuard]
   }
 ];
@@ -64,12 +43,9 @@ const routes: Routes = [
         NgxTinymceModule
     ],
     declarations: [
-        ListApplicationsComponent,
-        ApplicationComponent
+        ListApplicationsComponent
     ],
-    exports: [
-        ApplicationComponent
-    ],
+    exports: [],
     providers: [
         ApplicationService
     ]

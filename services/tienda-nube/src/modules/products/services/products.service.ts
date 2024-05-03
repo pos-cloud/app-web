@@ -5,6 +5,7 @@ import { TiendaNubeService } from 'src/services/tienda-nube/services/tienda-nube
 import { CategoriesService } from 'src/modules/categories/services/categories.service';
 import { VariantProduct } from './variant.service';
 import { CreateProductTiendaNubeDTO } from 'src/services/tienda-nube/dto/create-product-tienda-nube.dto';
+import { PoolDatabase } from 'src/database/services/database-2.service';
 import { ObjectId } from 'mongodb';
 import { UpdateProductTiendaNubeDto } from 'src/services/tienda-nube/dto/update-product-tienda-nube.dto';
 import { ResponseVariantsDB } from 'src/common/interfaces/ResponseVariantDb.interface';
@@ -12,25 +13,31 @@ import { ResponseVariantsDB } from 'src/common/interfaces/ResponseVariantDb.inte
 @Injectable()
 export class ProductsService {
   constructor(
-    private readonly databaseService: DatabaseService,
+    private readonly poolDatabase: PoolDatabase,
+    // private readonly databaseService: DatabaseService,
     private readonly tiendaNubeService: TiendaNubeService,
     private readonly categoryService: CategoriesService,
     private readonly productVariantService: VariantProduct,
-  ) { }
+  ) {}
 
   async create(database: string, productId: string) {
     try {
       if (!database) {
         throw new BadRequestException(`Database is required `);
       }
-      await this.databaseService.initConnection(database);
+      await this.poolDatabase.initConnection(database);
       const { token, userID } =
-        await this.databaseService.getCredentialsTiendaNube();
-      const foundCollection = this.databaseService.getCollection('articles');
-      const foundArticle = await this.databaseService.getDocumentById(
+        await this.poolDatabase.getCredentialsTiendaNube(database);
+      const foundCollection = await this.poolDatabase.getCollection(
+        'articles',
+        database,
+      );
+      const foundArticle = await this.poolDatabase.getDocumentById(
         'articles',
         productId,
+        database,
       );
+
       if (
         !foundArticle ||
         foundArticle.operationType == 'D' ||
@@ -63,6 +70,7 @@ export class ProductsService {
       const resultVariantName =
         await this.productVariantService.getProductVariantsPropertyNames(
           foundArticle._id,
+          database,
         );
 
       dataNewProductTiendaNube['attributes'] = resultVariantName.map((e) => ({
@@ -70,7 +78,10 @@ export class ProductsService {
       }));
 
       if (foundArticle.category) {
-        await this.categoryService.findOneCategoryDb(foundArticle.category);
+        await this.categoryService.findOneCategoryDb(
+          foundArticle.category,
+          database,
+        );
 
         const foundCategoryTiendaMia = await this.categoryService.create(
           database,
@@ -88,7 +99,10 @@ export class ProductsService {
         userID,
       );
 
-      const stockCollection = this.databaseService.getCollection('article-stocks');
+      const stockCollection = await this.poolDatabase.getCollection(
+        'article-stocks',
+        database,
+      );
       const stockFound = await stockCollection.findOne({
         operationType: { $ne: 'D' },
         article: new ObjectId(productId),
@@ -121,6 +135,7 @@ export class ProductsService {
         userID,
         result.id,
         resultVariantName as string[],
+        database,
       );
 
       await foundCollection.updateOne(
@@ -132,10 +147,8 @@ export class ProductsService {
         },
       );
 
-      await this.databaseService.closeConnection();
       return result;
     } catch (err) {
-      // await this.databaseService.initConnection(database);
       throw err;
     }
   }
@@ -146,9 +159,12 @@ export class ProductsService {
     userIdTiendaNube: string,
     productTiendaNube: string,
     variantName: string[],
+    database: string,
   ) {
-    const dataVarinat =
-      await this.databaseService.getVariantDataByArticle(productId);
+    const dataVarinat = await this.poolDatabase.getVariantDataByArticle(
+      productId,
+      database,
+    );
 
     if (dataVarinat.length == 0) return;
 
@@ -158,6 +174,7 @@ export class ProductsService {
       productTiendaNube,
       tokenTiendaNube,
       userIdTiendaNube,
+      database,
     );
 
     const arrayCreateVariant = variantData.map((e) => {
@@ -175,15 +192,15 @@ export class ProductsService {
 
     await Promise.all(arrayCreateVariant);
   }
-  
+
   async clearDataVariant(
     data: ResponseVariantsDB[],
     attributes: string[],
     productTiendaNube: string,
     tiendaNubeAccessToken: string,
     tiendaNubeUserId: string,
+    database: string,
   ) {
-
     const dataClearPromises = data.map((element) => {
       return new Promise(async (resolve, reject) => {
         try {
@@ -220,8 +237,10 @@ export class ProductsService {
 
           variantData['price'] = element.articleChildInfo.salePrice ?? 0;
 
-          const stockCollection =
-            this.databaseService.getCollection('article-stocks');
+          const stockCollection = await this.poolDatabase.getCollection(
+            'article-stocks',
+            database,
+          );
 
           try {
             const stockFound = await stockCollection.findOne({
@@ -254,15 +273,13 @@ export class ProductsService {
       if (!database) {
         throw new BadRequestException(`Database is required `);
       }
-      await this.databaseService.initConnection(database);
+      await this.poolDatabase.initConnection(database);
       const { token, userID } =
-        await this.databaseService.getCredentialsTiendaNube();
-
+        await this.poolDatabase.getCredentialsTiendaNube(database);
       const data = await this.tiendaNubeService.findAll(token, userID, page);
 
-      await this.databaseService.closeConnection();
+      // await this.databaseService.closeConnection();
       return data;
-
     } catch (err) {
       return null;
     }
@@ -278,15 +295,19 @@ export class ProductsService {
         throw new BadRequestException(`Database is required `);
       }
 
-      await this.databaseService.initConnection(database);
+      await this.poolDatabase.initConnection(database);
       const { token, userID } =
-        await this.databaseService.getCredentialsTiendaNube();
+        await this.poolDatabase.getCredentialsTiendaNube(database);
 
-      const foundCollection = this.databaseService.getCollection('articles');
+      const foundCollection = this.poolDatabase.getCollection(
+        'articles',
+        database,
+      );
 
-      const foundArticle = await this.databaseService.getDocumentById(
+      const foundArticle = await this.poolDatabase.getDocumentById(
         'articles',
         productId,
+        database,
       );
       if (
         !foundArticle ||
@@ -297,7 +318,6 @@ export class ProductsService {
       }
 
       if (!foundArticle.tiendaNubeId) {
-        await this.databaseService.closeConnection();
         return this.create(database, productId);
       }
 
@@ -311,7 +331,10 @@ export class ProductsService {
       };
 
       if (foundArticle.category) {
-        await this.categoryService.findOneCategoryDb(foundArticle.category);
+        await this.categoryService.findOneCategoryDb(
+          foundArticle.category,
+          database,
+        );
 
         const foundCategoryTiendaMia = await this.categoryService.create(
           database,
@@ -359,13 +382,18 @@ export class ProductsService {
       const resultVariantName =
         await this.productVariantService.getProductVariantsPropertyNames(
           foundArticle._id,
+          database,
         );
 
-      const dataVariant =
-        await this.databaseService.getVariantDataByArticle(productId);
+      const dataVariant = await this.poolDatabase.getVariantDataByArticle(
+        productId,
+        database,
+      );
       if (dataVariant.length == 0) {
-        const stockCollection =
-          this.databaseService.getCollection('article-stocks');
+        const stockCollection = await this.poolDatabase.getCollection(
+          'article-stocks',
+          database,
+        );
         const stockFound = await stockCollection.findOne({
           operationType: { $ne: 'D' },
           article: new ObjectId(productId),
@@ -390,7 +418,7 @@ export class ProductsService {
             depth: foundArticle.depth || null,
           },
         );
-        await this.databaseService.closeConnection();
+        // await this.databaseService.closeConnection();
 
         return result;
       }
@@ -401,15 +429,16 @@ export class ProductsService {
         foundArticle.tiendaNubeId,
         token,
         userID,
+        database,
       );
       await this.tiendaNubeService.massiveVariantUpdate(
         token,
         userID,
         result.id,
         variantData,
-      )
+      );
 
-      await this.databaseService.closeConnection();
+      // await this.databaseService.closeConnection();
 
       return result;
     } catch (err) {
@@ -447,9 +476,9 @@ export class ProductsService {
       if (!database) {
         throw new BadRequestException(`Database is required `);
       }
-      await this.databaseService.initConnection(database);
+      await this.poolDatabase.initConnection(database);
 
-      const foundCollection = this.databaseService.getCollection('articles');
+      const foundCollection =await this.poolDatabase.getCollection('articles',database);
 
       const data = await foundCollection
         .find({ tiendaNubeId: { $in: products } })
@@ -466,7 +495,7 @@ export class ProductsService {
       });
 
       const result = await Promise.all(arrayData);
-      await this.databaseService.closeConnection();
+      // await this.databaseService.closeConnection();
 
       if (result) {
         return true;
@@ -483,14 +512,14 @@ export class ProductsService {
         throw new BadRequestException(`Database is required `);
       }
 
-      await this.databaseService.initConnection(database);
+      await this.poolDatabase.initConnection(database);
       const { token, userID } =
-        await this.databaseService.getCredentialsTiendaNube();
+        await this.poolDatabase.getCredentialsTiendaNube(database);
 
       if (!tiendaNubeId) {
         throw new BadRequestException(`ID not found`);
       }
-      await this.databaseService.getArticleByTiendaNube(tiendaNubeId);
+      await this.poolDatabase.getArticleByTiendaNube(tiendaNubeId,database);
 
       const result = await this.tiendaNubeService.removeProduct(
         tiendaNubeId,
@@ -498,7 +527,7 @@ export class ProductsService {
         userID,
       );
 
-      await this.databaseService.closeConnection();
+      // await this.databaseService.closeConnection();
 
       if (!result) {
         return false;

@@ -1,13 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from '../dto/create-category.dto';
 import { UpdateCategoryDto } from '../dto/update-category.dto';
-import { DatabaseService } from 'src/database/services/database.service';
+// import { DatabaseService } from 'src/database/services/database.service';
+import { PoolDatabase } from 'src/database/services/database-2.service';
 import { TiendaNubeService } from 'src/services/tienda-nube/services/tienda-nube.service';
 
 @Injectable()
 export class CategoriesService {
   constructor(
-    private readonly databaseService: DatabaseService,
+    // private readonly databaseService: DatabaseService,
+    private readonly poolDatabase: PoolDatabase,
     private readonly tiendaNubeService: TiendaNubeService,
   ) {}
 
@@ -20,15 +22,19 @@ export class CategoriesService {
       if (!database) {
         throw new BadRequestException(`Database is required `);
       }
-      await this.databaseService.initConnection(database);
+      const connectionDb = await this.poolDatabase.initConnection(database);
       const { token, userID } =
-        await this.databaseService.getCredentialsTiendaNube();
+        await this.poolDatabase.getCredentialsTiendaNube(database);
 
-      const foundCollection = this.databaseService.getCollection('categories');
+      const foundCollection = await this.poolDatabase.getCollection(
+        'categories',
+        database,
+      );
 
-      const foundCategory = await this.databaseService.getDocumentById(
+      const foundCategory = await this.poolDatabase.getDocumentById(
         'categories',
         categoryId,
+        database,
       );
 
       if (!foundCategory) {
@@ -68,7 +74,7 @@ export class CategoriesService {
         },
       );
 
-     //  await this.databaseService.closeConnection();
+      //  await this.databaseService.closeConnection();
 
       return categoryTiendaNube;
     } catch (err) {
@@ -79,10 +85,11 @@ export class CategoriesService {
   findAll() {
     return `This action returns all categories`;
   }
-  async findOneCategoryDb(categoryId: string) {
-    const foundCategory = await this.databaseService.getDocumentById(
+  async findOneCategoryDb(categoryId: string, database: string) {
+    const foundCategory = await this.poolDatabase.getDocumentById(
       'categories',
       categoryId,
+      database,
     );
     if (!foundCategory) {
       throw new BadRequestException(` Category with id${categoryId} not found`);

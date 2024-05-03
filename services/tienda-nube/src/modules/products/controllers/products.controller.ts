@@ -38,10 +38,10 @@ export class ProductsController {
     return this.productsService.findAll(request.database, page);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productsService.findOne(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.productsService.findOne(+id);
+  // }
 
   @Patch(':productId')
   update(
@@ -56,6 +56,7 @@ export class ProductsController {
     @Body('tiendaNubeIds') tiendaNubeIds: string[],
     @Request() request: CustomRequest,
   ) {
+    console.log(tiendaNubeIds)
     return this.productsService.massiveUpdate(request.database, tiendaNubeIds);
   }
 
