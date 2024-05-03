@@ -20,7 +20,5 @@ jobs:
             owner: "mikepenz"
             repo: "release-changelog-builder-action"
             ignorePreReleases: "false"
-            fromTag: "0.3.0"
-            toTag: "0.5.0"
             token: ${{ secrets.PAT }}
 
