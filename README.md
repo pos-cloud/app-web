@@ -12,12 +12,6 @@
      npm i
      npm start
 
-### Build Cloud
-------------
-    docker build -t admin-poscloud . 
-    docker run -d -it --name pos admin-poscloud
-    rm -R /var/www/poscloud/
-    docker cp pos:/app/dist/ /var/www/poscloud/
 
 ### DEV Access
 ------------
@@ -45,16 +39,16 @@
 
 - git clone https://github.com/pos-cloud/system.git
 
-Desde project de la empresa ( https://github.com/orgs/pos-cloud/projects/1 ) tomamos la feacture y el atributo branch nos dice el nombre de la rama y desde testing se crea
+Desde project de la empresa ( https://github.com/orgs/pos-cloud/projects/1 ) tomamos la feacture y el atributo branch nos dice el nombre de la rama y desde dev se crea
 
-- git branch TK-??
+- git branch #XXX
 Se desarrolla y se hace commit de todo sobre la rama
 Luego hacemos 
 - git fetch
-- git checkout testing
+- git checkout dev
 - git pull
-- git checkout TK-??
-- git rebase testing
+- git checkout #XXX
+- git rebase dev
 resolvemos conflicto si hay git rebase --continue
 - git push --force-with-lease
 Esto hace que tu commit quede sobre lo de testing 
@@ -64,13 +58,12 @@ Realizar PR a testing
 #### Conventional Commits
 
 ```
-#-XX <type>: <short summary>
-  │	  │             │
-  |	  │             └─⫸ Summary in present tense. Not capitalized. No period at the end
-  |	  │
-  |	  └─⫸ Commit Type: build|ci|docs|feat|fix|perf|refactor|test
-  |
-  └─⫸ Name Task: #-123
+ <type>: <short summary>
+	  │             │
+    │             └─⫸ Summary in present tense. Not capitalized. No period at the end
+    │
+    └─⫸ Commit Type: build|docs|feat|fix|refactor|test
+  
 ```
 
 
@@ -80,7 +73,6 @@ Realizar PR a testing
 Must be one of the following:
 
 -   **build**: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)
--   **ci**: Changes to our CI configuration files and scripts (examples: CircleCi, SauceLabs)
 -   **docs**: Documentation only changes
 -   **feat**: A new feature
 -   **fix**: A bug fix
@@ -88,19 +80,6 @@ Must be one of the following:
 -   **refactor**: A code change that neither fixes a bug nor adds a feature
 -   **test**: Adding missing tests or correcting existing tests
 
-
-
-######
-
-// old worker cloudflare
-
-addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request))
-})
-
-async function handleRequest(request) {
-  return Response.redirect('https://pos-cloud.github.io/system/dev', 301)
-}
 
 
 #### Doc para servidores
