@@ -750,7 +750,7 @@ export class AddSaleOrderComponent {
       for (let movementOfArticle of this.movementsOfArticles) {
         if (!movementOfArticle.movementParent) {
           this.quantity += movementOfArticle.amount;
-          this.m3 += (movementOfArticle.article.m3 * movementOfArticle.amount) ?? 0;
+          this.m3 += (movementOfArticle.article?.m3 * movementOfArticle.amount) ?? 0;
         }
       }
     }
