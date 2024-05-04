@@ -65,6 +65,79 @@ Caso de tener que volver atrás
 - sudo a2dissite nombre_del_sitio
 - sudo systemctl reload apache2
 
+### Estructura
+src/
+|-- app/
+|   |-- main/
+|   |   |-- services/
+|   |   |   |-- auth.service.ts
+|   |   |   |-- file.service.ts
+|   |   |-- guards/
+|   |   |-- interceptors/
+|   |   |-- directives/
+|   |   |-- pipes/
+|   |-- shared/
+|   |   |-- components/
+|   |   |   |-- datatable/
+|   |   |   |-- toast/
+|   |   |   |-- tooltip/
+|   |   |-- models/
+|   |   |-- interface/
+|   |   |   |-- service.interface.ts
+|   |   |   |-- resultable.interface.ts
+|   |-- components/
+|   |   |-- models/
+|   |   |   |-- article
+|   |   |   |   |-- article/
+|   |   |   |   |-- list-articles/
+|   |   |   |   |-- actions/
+|   |   |   |   |   |-- update-prices/
+|   |   |   |   |-- article.service.ts
+|   |   |   |   |-- article.ts
+|   |   |   |-- models.module.ts
+|   |   |   |-- models.service.ts
+|   |   |   |-- modes.router.ts
+|   |   |-- reports/
+|   |   |   |-- report-1
+|   |   |   |   |-- report-1.component.ts
+|   |   |   |   |-- report-1.component.css
+|   |   |   |   |-- report-1.component.html
+|   |   |   |-- report.service.ts
+|   |   |   |-- report.module.ts
+|   |   |   |-- report.router.ts
+|   |   |-- transaction/
+|   |   |   |-- add-mov-article/
+|   |   |   |-- add-mov-cash/
+|   |   |   |-- cancelation/
+|   |   |   |-- list-tables-resto/
+|   |   |-- components.routes.ts
+|   |   |-- components.module.ts
+|   |-- layout/
+|   |   |-- claim/
+|   |   |-- header/
+|   |   |-- footer/
+|   |   |-- home/
+|   |-- pages/
+|   |   |-- login/
+|   |   |-- register/
+|   |   |-- menu/
+|   |   |-- add-transaction/
+|   |   |   |-- counter/
+|   |   |   |-- resto/
+|   |   |   |-- delivery/
+|   |-- app.routes.ts
+|   |-- app.component.html
+|   |-- app.component.ts
+|   |-- app.module.ts
+|-- assets/
+|   |-- i18n/
+|   |   |-- en.json
+|   |   |-- es.json
+|-- environments/
+|   |-- environments.dev.ts
+|   |-- environments.prod.ts
+|   |-- environments.ts
+
 ### Contribuir 
 
 ------------
