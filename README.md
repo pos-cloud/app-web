@@ -66,6 +66,7 @@ Caso de tener que volver atrás
 - sudo systemctl reload apache2
 
 ### Estructura
+```
 src/
 |-- app/
 |   |-- main/
@@ -137,7 +138,7 @@ src/
 |   |-- environments.dev.ts
 |   |-- environments.prod.ts
 |   |-- environments.ts
-
+```
 ### Contribuir 
 
 ------------
