@@ -29,27 +29,33 @@ jobs:
       - name: Build
         run: npm run build:prod
       
-      - name: Archive dist
+      - name: Archive build-prod
         uses: actions/upload-artifact@v4
         with:
-          name: dist
-          path: dist
+          name: build-prod
+          path: build-prod
 
   deploy:
     runs-on: [prod]
     needs: build
     steps:
-      - name: Delete old backup
-        run: rm -rf /home/system_backup/*
+      # - name: Delete old backup
+      #   run: rm -rf /home/system_backup/*
 
-      - name: Backup current files
-        run: cp -r /home/system/. /home/system_backup/
+      # - name: Backup current files
+      #   run: cp -r /home/system/. /home/system_backup/
 
-      - name: Clean system
-        run: rm -rf /home/system/*
+      # - name: Clean system
+      #   run: rm -rf /home/system/*
+
+      # - name: Download artifact
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: build-prod
+      #     path: /home/system/
 
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: dist
-          path: /home/system/
+          name: build-prod
+          path: /home/system2/
