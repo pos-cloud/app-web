@@ -39,23 +39,17 @@ jobs:
     runs-on: [prod]
     needs: build
     steps:
-      # - name: Delete old backup
-      #   run: rm -rf /home/system_backup/*
+      - name: Delete old backup
+        run: rm -rf /home/system_backup/*
 
-      # - name: Backup current files
-      #   run: cp -r /home/system/. /home/system_backup/
+      - name: Backup current files
+        run: cp -r /home/system/. /home/system_backup/
 
-      # - name: Clean system
-      #   run: rm -rf /home/system/*
-
-      # - name: Download artifact
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: build-prod
-      #     path: /home/system/
+      - name: Clean system
+        run: rm -rf /home/system/*
 
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: build-prod
-          path: /home/system2/
+          path: /home/system/
