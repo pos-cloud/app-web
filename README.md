@@ -89,7 +89,7 @@ src/
 |   |-- components/
 |   |   |-- models/
 |   |   |   |-- article
-|   |   |   |   |-- article/
+|   |   |   |   |-- crud/
 |   |   |   |   |-- list-articles/
 |   |   |   |   |-- actions/
 |   |   |   |   |   |-- update-prices/
@@ -107,7 +107,8 @@ src/
 |   |   |   |-- report.module.ts
 |   |   |   |-- report.router.ts
 |   |   |-- transaction/
-|   |   |   |-- add-mov-article/
+|   |   |   |-- add-article-by-transaction/
+|   |   |   |-- movement-of-cancellation/
 |   |   |   |-- add-mov-cash/
 |   |   |   |-- cancelation/
 |   |   |   |-- list-tables-resto/
