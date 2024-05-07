@@ -1693,7 +1693,6 @@ export class AddArticleComponent implements OnInit {
     if (await this.isValid()) {
 
       if(this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
-
       this._articleService.updateArticle(this.article, this.variants).subscribe(
         async (result) => {
           if (!result.article) {

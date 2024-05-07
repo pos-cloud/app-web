@@ -1162,8 +1162,6 @@ async function updateArticle (req, res, next) {
   const article = req.body.article
   const variants = req.body.variants
 
-  console.log(article.m3)
-
   const user = new User()
   user._id = req.session.user
   article.updateUser = user
