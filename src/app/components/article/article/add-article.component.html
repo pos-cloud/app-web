@@ -886,11 +886,14 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="form-group col-md-6">
-                                        <label class="control-label">Tienda Nube ID:</label>
-                                        <label class="control-label"><b>{{article.tiendaNubeId}}</b></label>
+                                    <div class="form-group col-md-2">
+                                        <label for="tiendaNubeId" class="control-label">Tienda Nube ID:</label>
+                                        
+                                            <input type="number" class="form-control" formControlName="tiendaNubeId" name="tiendaNubeId"
+                                                id="tiendaNubeId" />
+                                       
                                     </div>
-                                </div>
+                                </div>  
                             </div>
                         </div>
                     </ng-template>
