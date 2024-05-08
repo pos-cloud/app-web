@@ -168,7 +168,19 @@
                       </select>
                     </div>
                   </div>
+                  <div class="form-group col-md-4">
+                    <label for="cancelByArticle" class="control-label">Cancela por producto</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="cancelByArticle">
+                        <option value="true" [selected]="cancellationType.cancelByArticle" [disabled]="readonly">Si
+                        </option>
+                        <option value="false" [selected]="!cancellationType.cancelByArticle" [disabled]="readonly">No
+                        </option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
+             
               </div>
             </div>
           </ng-template>

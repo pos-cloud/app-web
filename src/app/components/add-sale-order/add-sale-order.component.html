@@ -12,8 +12,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="item-header" *ngIf="transaction?.type"
-                    (click)="openModal('observation')">
+                <div class="item-header" *ngIf="transaction?.type" (click)="openModal('observation')">
                     <b>{{transaction.type.name}} {{ transaction.number }}</b>
                 </div>
                 <div class="item-header"
@@ -32,7 +31,8 @@
                     <b> Lista de Precio:</b>
                     <span *ngIf="transaction.company.priceList.name">{{transaction.company.priceList.name}}</span>
                 </div>
-                <div class="item-header" *ngIf="transactionMovement && transactionMovement !=='Stock' || transactionMovement !== 'Producción'"
+                <div class="item-header"
+                    *ngIf="transactionMovement && transactionMovement !=='Stock' || transactionMovement !== 'Producción'"
                     (click)="openModal('current-account')">
                     <b *ngIf="transactionMovement === 'Venta'">Cliente: </b>
                     <b *ngIf="transactionMovement === 'Compra'">Proveedor: </b>
@@ -63,7 +63,8 @@
                 </div>
                 <div class="item-header" *ngIf="showBussinessRulesButton">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-outline-light" (click)="openModal('apply-bussiness-rule-code')">
+                        <button type="button" class="btn btn-outline-light"
+                            (click)="openModal('apply-bussiness-rule-code')">
                             Regla de negocio
                         </button>
                     </div>
@@ -88,8 +89,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="item-header"
-                    *ngIf="!transaction?.company?.priceList && transaction?.type?.allowPriceList">
+                <div class="item-header" *ngIf="!transaction?.company?.priceList && transaction?.type?.allowPriceList">
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-light" (click)="openModal('priceList')">
                             Lista de Precio: {{ transaction?.priceList?.name }}
@@ -109,8 +109,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="item-header"
-                    *ngIf="transaction?.company && transaction?.type?.requestTransport">
+                <div class="item-header" *ngIf="transaction?.company && transaction?.type?.requestTransport">
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-light" (click)="openModal('change-transport')">
                             Transporte {{ transaction?.transport?.name }}
@@ -120,8 +119,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="item-header"
-                    *ngIf="userCountry === 'MX' && transaction?.type?.electronics">
+                <div class="item-header" *ngIf="userCountry === 'MX' && transaction?.type?.electronics">
                     <select class="form-control" (change)="changeUseOfCFDI($event.target.value)">
                         <option [ngValue]="null" [selected]="!transaction.useOfCFDI">Uso de CFDI:</option>
                         <option *ngFor="let useOfCFDI of usesOfCFDI" [value]="useOfCFDI._id" [selected]="((transaction.useOfCFDI && transaction.useOfCFDI._id && useOfCFDI._id===transaction.useOfCFDI._id) ||
@@ -130,8 +128,7 @@
                         </option>
                     </select>
                 </div>
-                <div class="item-header"
-                    *ngIf="userCountry === 'MX' && transaction?.type?.electronics">
+                <div class="item-header" *ngIf="userCountry === 'MX' && transaction?.type?.electronics">
                     <select class="form-control" [(ngModel)]="transaction.relationType" (change)="updateTransaction()">
                         <option [ngValue]="null" [selected]="(!transaction.relationType)">Tipo de Relación:</option>
                         <option *ngFor="let relationType of relationTypes" [ngValue]="relationType" [selected]="(transaction.relationType &&
@@ -150,6 +147,19 @@
                         </button>
                         <button type="button" class="btn btn-outline-light fa fa-exchange"
                             (click)="openModal('list-cancellations')">
+                        </button>
+                    </div>
+                </div>
+                <div class="item-header" *ngIf=" showButtonCancelation &&
+                transaction &&
+                transaction.totalPrice === 0">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-light"
+                            (click)="openModal('list-cancellations-article')">
+                            Buscar Articulos a Cancelar
+                        </button>
+                        <button type="button" class="btn btn-outline-light fa fa-exchange"
+                            (click)="openModal('list-cancellations-article')">
                         </button>
                     </div>
                 </div>
@@ -199,8 +209,7 @@
                                         <b>{{ movementOfArticle.amount}}</b>
                                     </span>
                                     <img *ngIf="movementOfArticle.article && (movementOfArticle.article.picture !== 'default.jpg' && movementOfArticle.article.picture !== undefined)"
-                                        [src]="movementOfArticle.article.picture"
-                                        height="50" width="50">
+                                        [src]="movementOfArticle.article.picture" height="50" width="50">
                                 </td>
                                 <td>
                                     <span
@@ -264,7 +273,7 @@
                             <td align="left">
                                 <strong>{{quantity}}</strong>
                             </td>
-                        
+
                             <td align="left">
                                 <strong>Subtotal</strong>
                             </td>
@@ -274,7 +283,8 @@
                             </td>
                         </tr>
 
-                        <tr class="totals" *ngIf="transaction.discountAmount > 0 && transactionMovement !== 'Stock' && transactionMovement !== 'Producción'">
+                        <tr class="totals"
+                            *ngIf="transaction.discountAmount > 0 && transactionMovement !== 'Stock' && transactionMovement !== 'Producción'">
                             <td align="left">
                             </td>
                             <td align="left">
@@ -354,7 +364,8 @@
                     </tbody>
                 </table>
             </div>
-            <div class="row" *ngIf="transactionMovement && transactionMovement !== 'Stock' && transactionMovement !== 'Producción'">
+            <div class="row"
+                *ngIf="transactionMovement && transactionMovement !== 'Stock' && transactionMovement !== 'Producción'">
                 <div *ngIf="transaction.type && !transaction.type.fastPayment"
                     class="col-md-12 btn-action btn-large center-content"
                     (click)="!loading ? openModal('charge') : $event.stopPropagation()"
@@ -380,7 +391,8 @@
                     <span *ngIf="transactionMovement && transactionMovement ==='Venta'">Cobrar</span>
                 </div>
             </div>
-            <div class="row" *ngIf="transactionMovement && transactionMovement !== 'Stock' && transactionMovement !== 'Producción'">
+            <div class="row"
+                *ngIf="transactionMovement && transactionMovement !== 'Stock' && transactionMovement !== 'Producción'">
                 <div class="col-md-4 col-sm-4 col-4 btn-action btn-large center-content"
                     (click)="!loading ? openModal('add_client') : $event.stopPropagation()"
                     [ngClass]="{'disabled': loading, 'enabled': !loading }">
@@ -398,7 +410,8 @@
                     Anular
                 </div>
             </div>
-            <div class="row" *ngIf="transactionMovement && (transactionMovement === 'Stock' || transactionMovement === 'Producción')">
+            <div class="row"
+                *ngIf="transactionMovement && (transactionMovement === 'Stock' || transactionMovement === 'Producción')">
                 <div class="col-md-12 btn-action btn-large center-content"
                     (click)="!loading ? finish() : $event.stopPropagation()"
                     [ngClass]="{'disabled': loading, 'enabled': !loading }">
@@ -444,7 +457,8 @@
                     [ngClass]="{'disabled': loading, 'enabled': !loading }">
                     Crear Producto
                 </div>
-                <div *ngIf="transaction.type.allowTransactionClose" class="col-lg-2 col-md-2 btn-action btn-large center-content"
+                <div *ngIf="transaction.type.allowTransactionClose"
+                    class="col-lg-2 col-md-2 btn-action btn-large center-content"
                     (click)="!loading ? close() : $event.stopPropagation()"
                     [ngClass]="{'disabled': loading, 'enabled': !loading }">
                     Cerrar
@@ -459,7 +473,8 @@
             <div class="row" *ngIf="display">
                 <div class="col-md-12">
                     <app-list-categories-pos (eventSelectCategory)="showArticles($event)"
-                        [transactionMovement]="transaction.type.transactionMovement" [loading]="loading"></app-list-categories-pos>
+                        [transactionMovement]="transaction.type.transactionMovement"
+                        [loading]="loading"></app-list-categories-pos>
                 </div>
             </div>
         </div>
@@ -550,8 +565,8 @@
     <div class="modal-body container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <input type="text" class="form-control" [(ngModel)]="transaction.optionalAFIP.value" placeholder="Opcional"
-                    [focus]="focusEvent">
+                <input type="text" class="form-control" [(ngModel)]="transaction.optionalAFIP.value"
+                    placeholder="Opcional" [focus]="focusEvent">
             </div>
         </div>
     </div>
@@ -689,14 +704,15 @@
     <div class="modal-body container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <input type="text" class="form-control" [(ngModel)]="businessRulesCode"
-                    placeholder="Código" />
+                <input type="text" class="form-control" [(ngModel)]="businessRulesCode" placeholder="Código" />
             </div>
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-light" (click)="!loading ? c('cancel') : $event.stopPropagation()" [disabled]="loading">Cancelar</button>
-        <button type="submit" class="btn btn-primary" (click)="!loading ? applyBusinessRuleCode() : $event.stopPropagation()" [disabled]="loading">
+        <button type="button" class="btn btn-light" (click)="!loading ? c('cancel') : $event.stopPropagation()"
+            [disabled]="loading">Cancelar</button>
+        <button type="submit" class="btn btn-primary"
+            (click)="!loading ? applyBusinessRuleCode() : $event.stopPropagation()" [disabled]="loading">
             <span *ngIf="!loading">Aplicar</span>
             <span *ngIf="loading">Espere, por favor...</span>
         </button>

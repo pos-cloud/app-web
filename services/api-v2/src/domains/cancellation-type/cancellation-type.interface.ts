@@ -10,5 +10,6 @@ export default interface CancellationType extends Model {
   requestCompany: boolean
   requestStatusOrigin: string
   stateOrigin: string
-  updatePrices: boolean
+  updatePrices: boolean,
+  cancelByArticle: boolean
 }

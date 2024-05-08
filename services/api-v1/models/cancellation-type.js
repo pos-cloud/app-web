@@ -13,6 +13,7 @@ const CancellationTypeSchema = new Schema({
 	requestStatusOrigin: { type: String, default: 'Cerrado' },
     stateOrigin: { type: String, trim: true },
     updatePrices: { type: Boolean, default: false },
+    cancelByArticle: { type: Boolean, default: false },
     creationUser: { type: Schema.ObjectId, ref: 'user' },
     creationDate: { type: Date },
     operationType: { type: String, trim: true },

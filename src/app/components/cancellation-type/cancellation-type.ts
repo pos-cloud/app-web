@@ -14,6 +14,7 @@ export class CancellationType extends Model {
   public requestStatusOrigin: TransactionState = TransactionState.Closed;
   public stateOrigin: TransactionState;
   public updatePrices: boolean = false;
+  public cancelByArticle: boolean = false;
 
   constructor() { super(); }
 
