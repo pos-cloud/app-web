@@ -256,6 +256,7 @@ import { CancelComponent } from './components/tiendaNube/cancel/cancel.component
 import { FulfilledComponent } from './components/tiendaNube/fulfilled/fulfilled.component'
 import { MenuComponent } from './components/menu/menu.component';
 import { MenuService } from './components/menu/menu.service';
+import { SelectArticleByTransactionComponent } from './components/transaction/select-article-by-transaction/select-article-by-transaction.component';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -431,7 +432,8 @@ export function createTranslateLoader(http: HttpClient) {
     SafePipe,
     CancelComponent,
     FulfilledComponent,
-    MenuComponent
+    MenuComponent,
+    SelectArticleByTransactionComponent
   ],
   imports: [
     BrowserModule,

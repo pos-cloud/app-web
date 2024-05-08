@@ -30,6 +30,8 @@ import Article from './article.interface'
 import ObjSchema from './article.model'
 import ArticleUC from './article.uc'
 import axios from 'axios';
+import CancellationTypeController from '../cancellation-type/cancellation-type.controller';
+import { ObjectId } from 'bson';
 
 export default class ArticleController extends Controller {
   public EJSON: any = require('bson').EJSON
@@ -46,9 +48,9 @@ export default class ArticleController extends Controller {
   private initializeRoutes() {
     let upload = multer({ storage: this.getStorage() })
 
-    this.router      
+    this.router
       .get(this.path, this.getAllObjs)
-      .get(`${this.path}/articles-tiendanube`, [authMiddleware, ensureLic], this.importTiendaNube) 
+      .get(`${this.path}/articles-tiendanube`, [authMiddleware, ensureLic], this.importTiendaNube)
       .get(`${this.path}/:id`, [authMiddleware, ensureLic], this.getObjById)
       .post(
         this.path,
@@ -317,26 +319,26 @@ export default class ArticleController extends Controller {
     const URL = 'http://localhost:305/products';
     const articles = [];
     let page = 1;
-  
+
     const requestOptions = {
       headers: {
         Authorization: this.authToken
       }
     };
-  
-      while (true) {
-        const response = await axios.get(URL,{
-          data: { page },
-          ...requestOptions
-        });
-        const responseData = response.data;
-        articles.push(...responseData);
 
-        if (responseData.length < 200) {
-          break; 
-        }
-        page++;
+    while (true) {
+      const response = await axios.get(URL, {
+        data: { page },
+        ...requestOptions
+      });
+      const responseData = response.data;
+      articles.push(...responseData);
+
+      if (responseData.length < 200) {
+        break;
       }
-      return articles;
-  }  
+      page++;
+    }
+    return articles;
+  }
 }

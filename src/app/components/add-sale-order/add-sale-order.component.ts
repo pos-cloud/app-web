@@ -61,6 +61,7 @@ import {
 import {MovementOfArticleService} from '../movement-of-article/movement-of-article.service';
 import {MovementOfCancellation} from '../movement-of-cancellation/movement-of-cancellation';
 import {MovementOfCancellationComponent} from '../movement-of-cancellation/movement-of-cancellation.component';
+import {SelectArticleByTransactionComponent} from '../transaction/select-article-by-transaction/select-article-by-transaction.component'
 import {AddMovementOfCashComponent} from '../movement-of-cash/add-movement-of-cash/add-movement-of-cash.component';
 import {SelectPriceListComponent} from '../price-list/select-price-list/select-price-list.component';
 import {Print} from '../print/print';
@@ -428,6 +429,7 @@ export class AddSaleOrderComponent {
             'destination.name': 1,
             'origin._id': 1,
             'origin.name': 1,
+            cancelByProduct: 1,
             operationType: 1,
           }, // PROJECT
           {
@@ -446,6 +448,7 @@ export class AddSaleOrderComponent {
               result.cancellationTypes &&
               result.cancellationTypes.length > 0
             ) {
+              this.cancellationTypes = result.cancellationTypes[0]
               resolve(result.cancellationTypes);
             } else {
               resolve(null);
@@ -2171,6 +2174,13 @@ export class AddSaleOrderComponent {
             });
           }
         });
+        break;
+      case 'list-cancellations-article':
+        modalRef = this._modalService.open(SelectArticleByTransactionComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.transactionTypeId = this.transaction.type._id;
         break;
       case 'observation':
         modalRef = this._modalService

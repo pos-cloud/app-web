@@ -31,6 +31,7 @@ class CancellationTypeSchema extends Model {
         ],
       },
       updatePrices: {type: Boolean, default: false},
+      cancelByArticle: {type: Boolean, default: false}
     })
   }
 

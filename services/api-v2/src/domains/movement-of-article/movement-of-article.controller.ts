@@ -14,6 +14,7 @@ import ObjDto from './movement-of-article.dto'
 import MovementOfArticle from './movement-of-article.interface'
 import ObjSchema from './movement-of-article.model'
 import MovementOfArticleUC from './movement-of-article.uc'
+import CancellationTypeController from '../cancellation-type/cancellation-type.controller'
 
 export default class MovementOfArticleController extends Controller {
   EJSON: any = require('bson').EJSON
@@ -29,6 +30,7 @@ export default class MovementOfArticleController extends Controller {
   private initializeRoutes() {
     this.router
       .get(this.path, [authMiddleware, ensureLic], this.getAllObjs)
+      .get(`${this.path}/articles-by-transaction/:transactionTypeId`, [authMiddleware, ensureLic], this.getMovOfArticleByTransaction)
       .get(`${this.path}/:id`, [authMiddleware, ensureLic], this.getObjById)
       .post(`${this.path}/fullquery`, [authMiddleware, ensureLic], this.getFullQueryObjs)
       .post(
@@ -46,7 +48,7 @@ export default class MovementOfArticleController extends Controller {
         [authMiddleware, ensureLic, validationMiddleware(ObjDto)],
         this.updateObj,
       )
-	  .put(
+      .put(
         `${this.path}/update-by-transaction/:id`,
         [authMiddleware, ensureLic],
         this.updateByTransaction,
@@ -163,18 +165,18 @@ export default class MovementOfArticleController extends Controller {
     response: express.Response,
     next: express.NextFunction,
   ) => {
-	try {
-		this.initConnectionDB(request.database)
-		this.userAudit = request.user
-		const transactionId = request.params.id
-	
-		const res = await new MovementOfArticleUC(this.database).updateByTransactionUC(transactionId)
-		response.send(new Responser(200, {res}))
-	} catch (error) {
-		next(
-			new HttpException(new Responser(error.status || 500, null, error.message, error)),
-		)
-	}
+    try {
+      this.initConnectionDB(request.database)
+      this.userAudit = request.user
+      const transactionId = request.params.id
+
+      const res = await new MovementOfArticleUC(this.database).updateByTransactionUC(transactionId)
+      response.send(new Responser(200, { res }))
+    } catch (error) {
+      next(
+        new HttpException(new Responser(error.status || 500, null, error.message, error)),
+      )
+    }
   }
 
   deleteObj = async (
@@ -188,11 +190,66 @@ export default class MovementOfArticleController extends Controller {
       const id = request.params.id
 
       await new MovementOfArticleUC(this.database).deleteMovementOfArticle(id)
-      response.send(new Responser(200, {id}))
+      response.send(new Responser(200, { id }))
     } catch (error) {
       next(
         new HttpException(new Responser(error.status || 500, null, error.message, error)),
       )
+    }
+  }
+
+  getMovOfArticleByTransaction = async (
+    request: RequestWithUser,
+    response: express.Response,
+    next: express.NextFunction,
+  ) => {
+    try {
+
+      const { transactionTypeId } = request.params
+
+      const cancelationTypes = await new CancellationTypeController(request.database).getAll({
+        project: {
+          destination: 1,
+          'origin.name': 1,
+          requestStatusOrigin: 1,
+          stateOrigin: 1,
+          operationType: 1
+
+        },
+        match: {
+          destination: { $oid: transactionTypeId },
+          operationType: { $ne: 'D' }
+
+        }
+      })
+      const cancelationType = cancelationTypes.result.map((cancelation: any) => cancelation.requestStatusOrigin)
+
+      const movementArticle = await new MovementOfArticleController(request.database).getAll({
+        project: {
+          description: 1,
+          creationDate: 1,
+          status: 1,
+          operationType: 1,
+          amount: 1,
+          'article.description': 1,
+          'article.amount': 1,
+          'transaction.state': 1,
+          'transaction._id': 1,
+          'transaction.balance': 1,
+          'transaction.number': 1,
+          'transaction.type.name': 1,
+          'transaction.company.name': 1,
+
+        },
+        match: {
+          'transaction.state': { $in: cancelationType },
+          operationType: { $ne: 'D' }
+        }
+      })
+      return response.send(new Responser(200, movementArticle.result));
+
+    } catch (error) {
+      console.log(error)
     }
   }
 }

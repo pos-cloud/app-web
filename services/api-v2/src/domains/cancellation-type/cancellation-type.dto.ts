@@ -39,4 +39,5 @@ export default class CancellationTypeDto extends ModelDto {
   public stateOrigin: string
 
   public updatePrices: boolean
+  public cancelByArticle: boolean
 }

@@ -1,0 +1,50 @@
+<section class="container-fluid">
+    <div class="card ">
+        <div class="card-header">Seleccionar Articulos a Cancelar
+            <div class="pull-right">
+                <span>Cantidad Seleccionado: {{  amountSelect}}</span>
+                <span>Suma de m3: {{ m3Select }}</span>
+                <button class="btn fa fa-close"
+                    (click)="activeModal.dismiss('close_click')"><span>Cerrar</span></button>
+            </div>
+        </div>
+        <div class="card-block table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>
+                            <i class="fa fa-bars"></i>
+                        </th>
+                        <th>Fecha de </th>
+                        <th>Tipo transacción</th>
+                        <th>Número de transacción</th>
+                        <th>Empresa</th>
+                        <th>Descripción</th>
+                        <th>Cantidad</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="99" style="padding: 0px">
+                                <app-progressbar [loading]="loading"></app-progressbar>
+                            </td>
+                        </tr>
+                    <tr *ngFor="let movArticle of movementOfArticle">
+                        <td align="left" width="50">
+                            <button type="button" class="btn btn-success  btn-sm"
+                                (click)="openModal('view', movArticle.transaction)" title="Ver"><i class="fa fa-eye"></i></button>
+                        </td>
+                        <th>{{movArticle.creationDate | dateFormat:'DD/MM/YYYY'}}</th>
+                        <th>{{movArticle.transaction.type.name}}</th>
+                        <th>{{movArticle.transaction.number}}</th>
+                        <th>{{movArticle.transaction.company.name}}</th>
+                        <th>{{movArticle.description}}</th>
+                        <th>{{movArticle.amount}}</th>
+                        <input type="number" class="form-control" (blur)="updateAmount(movArticle, $event.target.value)"/>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
