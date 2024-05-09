@@ -343,7 +343,7 @@ export class CancellationTypeComponent implements OnInit {
     this.loading = true;
 
     this.cancellationType = this.cancellationTypeForm.value;
-console.log( this.cancellationType )
+
     this._cancellationTypeService.saveCancellationType(this.cancellationType).subscribe(
       result => {
         if (!result.cancellationType) {

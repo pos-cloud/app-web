@@ -41,7 +41,8 @@
                         <th>{{movArticle.transaction.company.name}}</th>
                         <th>{{movArticle.description}}</th>
                         <th>{{movArticle.amount}}</th>
-                        <input type="number" class="form-control" (blur)="updateAmount(movArticle, $event.target.value)"/>
+                        <th>   
+                            <input type="number" class="form-control" (blur)="updateAmount(movArticle, $event.target.value)"/></th>
                     </tr>
                 </tbody>
             </table>
