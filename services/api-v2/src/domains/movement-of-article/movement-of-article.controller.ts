@@ -211,6 +211,7 @@ export default class MovementOfArticleController extends Controller {
         project: {
           destination: 1,
           'origin.name': 1,
+          'origin._id': 1,
           requestStatusOrigin: 1,
           stateOrigin: 1,
           operationType: 1
@@ -222,7 +223,9 @@ export default class MovementOfArticleController extends Controller {
 
         }
       })
-      const cancelationType = cancelationTypes.result.map((cancelation: any) => cancelation.requestStatusOrigin)
+
+      const cancelationOrigin = cancelationTypes.result.map((cancelation: any) => cancelation.origin._id)
+      const cancelationState = cancelationTypes.result.map((cancelation: any) => cancelation.requestStatusOrigin)
 
       const movementArticle = await new MovementOfArticleController(request.database).getAll({
         project: {
@@ -238,11 +241,13 @@ export default class MovementOfArticleController extends Controller {
           'transaction.balance': 1,
           'transaction.number': 1,
           'transaction.type.name': 1,
+          'transaction.type._id' : 1,
           'transaction.company.name': 1,
 
         },
         match: {
-          'transaction.state': { $in: cancelationType },
+        //  'transaction.type._id': { $in: cancelationOrigin},
+          'transaction.state': { $in: cancelationState },
           operationType: { $ne: 'D' }
         }
       })
