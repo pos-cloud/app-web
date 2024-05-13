@@ -1726,7 +1726,7 @@ export class AddArticleComponent implements OnInit {
                 }
               }
             }
-           }else if(this.article.tiendaNubeId){
+          }else if(this.article.tiendaNubeId && this.article.type === Type.Final){
               this.deleteArticleTiendaNube();
            }
           }

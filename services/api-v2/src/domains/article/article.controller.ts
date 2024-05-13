@@ -303,7 +303,7 @@ export default class ArticleController extends Controller {
         return response.send(new Responser(404, null, 'No hay artículos en Tienda Nube para sincronizar', null));
       }
 
-      const res = await new ArticleUC(request.database).createProductTiendaNube(data)
+      const res = await new ArticleUC(request.database).importProductTiendaNube(data)
 
       return response.send(new Responser(200, data));
     } catch (error) {

@@ -129,6 +129,17 @@ export class ProductsService {
       );
       // Creacion de variantes
 
+      
+      const foundCollectionV = await this.poolDatabase.getCollection(
+        'variants',
+        database,
+      );
+
+      const variantProducts = await foundCollectionV.find({
+        articleParent: new ObjectId(foundArticle._id.toString()),
+      }).toArray();
+
+
       await this.massCreactionOfProductVariants(
         productId,
         token,
@@ -136,7 +147,23 @@ export class ProductsService {
         result.id,
         resultVariantName as string[],
         database,
-      );
+      ).then((promise) => {
+        return Promise.all(promise);
+      }).then(async (result) => {
+        result.map(async (productVariante: any, index) => {
+          const variantProducto = variantProducts[index];
+
+          await foundCollection.updateOne(
+            { _id: variantProducto.articleChild },
+            {
+              $set: {
+                tiendaNubeId: productVariante.id,
+              },
+            },
+          );
+        });
+      })
+
 
       await foundCollection.updateOne(
         { _id: foundArticle._id },
@@ -178,7 +205,7 @@ export class ProductsService {
     );
 
     const arrayCreateVariant = variantData.map((e) => {
-      new Promise(async (resolve) => {
+     return new Promise(async (resolve) => {
         const resultResolve =
           await this.tiendaNubeService.createVarianteByProduct(
             tokenTiendaNube,
@@ -189,8 +216,9 @@ export class ProductsService {
         resolve(resultResolve);
       });
     });
+    await Promise.all(arrayCreateVariant)
+    return arrayCreateVariant
 
-    await Promise.all(arrayCreateVariant);
   }
 
   async clearDataVariant(
