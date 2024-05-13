@@ -15,7 +15,7 @@
     </div>
     <form [formGroup]="articleForm" (ngSubmit)="addArticle()" autocomplete="off">
         <div class="modal-body">
-            <ul ngbNav #nav="ngbNav" class="nav-tabs" [orientation]="orientation" (navChange)="loadURL()">
+            <ul ngbNav #nav="ngbNav" class="nav-tabs" [orientation]="orientation">
                 <li ngbNavItem>
                     <a ngbNavLink>Datos principales</a>
                     <ng-template ngbNavContent>
@@ -482,7 +482,7 @@
                         </app-add-variant>
                     </ng-template>
                 </li>
-                <li ngbNavItem>
+                <!-- <li ngbNavItem>
                     <a ngbNavLink>Campos Personalizados</a>
                     <ng-template ngbNavContent>
                         <form #otherFieldForm="ngForm" (ngSubmit)="addOtherField(otherFieldForm)">
@@ -548,17 +548,17 @@
                             </tfoot>
                         </table>
                     </ng-template>
-                </li>
+                </li> -->
                 <li ngbNavItem>
                     <a ngbNavLink>E-Commerce</a>
                     <ng-template ngbNavContent>
-                        <div class="row">
+                        <!-- <div class="row">
                             <div class="form-group col-md-12">
                                 <label for="url" class="control-label">URL:</label>
                                 <input type="text" class="form-control" formControlName="url" name="url" id="url"
                                     (blur)="loadURL()" [readonly]="readonly" />
                             </div>
-                        </div>
+                        </div> -->
                         <div class="row">
                             <!-- <div class="form-group col-md-3">
                                 <label for="ecommerceEnabled" class="control-label">Publicar</label>

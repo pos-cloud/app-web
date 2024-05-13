@@ -125,9 +125,9 @@
             Ubicaciones
           </button>
           <div class="dropdown-divider"></div>
-          <button class="dropdown-item" [routerLink]="['admin','campos-de-productos']" [routerLinkActive]="['active']">
+          <!-- <button class="dropdown-item" [routerLink]="['admin','campos-de-productos']" [routerLinkActive]="['active']">
             Campos de producto
-          </button>
+          </button> -->
           <button class="dropdown-item" [routerLink]="['units-of-measurement']" [routerLinkActive]="['active']">
             {{ 'units-of-measurement' | translate | capitalize }}
           </button>
@@ -180,10 +180,10 @@
             [routerLink]="['company-groups']" [routerLinkActive]="['active']">
             {{ 'company-groups' | translate | capitalize }}
           </button>
-          <button *ngIf="identity?.permission?.menu?.companies?.field" class="dropdown-item"
+          <!-- <button *ngIf="identity?.permission?.menu?.companies?.field" class="dropdown-item"
             [routerLink]="['admin','campos-de-empresas']" [routerLinkActive]="['active']">
             Campos de empresas
-          </button>
+          </button> -->
         </div>
       </li>
       <li class="nav-item" ngbDropdown *ngIf="identity?.permission?.menu?.resto && config.modules.sale.resto"
