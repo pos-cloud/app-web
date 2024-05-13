@@ -230,6 +230,7 @@ function saveCancellationType(req, res, next) {
 	cancellationType.stateOrigin = params.stateOrigin;
 	cancellationType.requestStatusOrigin = params.requestStatusOrigin;
     cancellationType.updatePrices = params.updatePrices;
+	cancellationType.cancelByArticle = params.cancelByArticle 
 
 	let user = new User();
 	user._id = req.session.user;
