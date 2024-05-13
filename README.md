@@ -123,10 +123,11 @@ src/
 |   |   |-- login/
 |   |   |-- register/
 |   |   |-- menu/
-|   |   |-- add-transaction/
+|   |   |-- point-of-sales/
 |   |   |   |-- counter/
 |   |   |   |-- resto/
 |   |   |   |-- delivery/
+|   |   |   |-- pedido-web/
 |   |-- app.routes.ts
 |   |-- app.component.html
 |   |-- app.component.ts
