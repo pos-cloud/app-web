@@ -43,6 +43,7 @@ import VariantTypeSchema from '../variant-type/variant-type.model'
 import VariantValueController from '../variant-value/variant-value.controller'
 import VariantValue from '../variant-value/variant-value.interface'
 import VariantValueSchema from '../variant-value/variant-value.model'
+import { ObjectId } from 'mongodb';
 
 export default class ArticleUC {
 	database: string
@@ -591,7 +592,7 @@ export default class ArticleUC {
 		})
 	}
 
-	async createProductTiendaNube(data: any) {
+	async importProductTiendaNube(data: any) {
 		const ArticlesObj: any = {};
 
 		try {
@@ -626,10 +627,22 @@ export default class ArticleUC {
 			const variantValue = await this.getVariantValue()
 			let code = await this.lastArticle()
 
-
 			for (const [index, item] of data.entries()) {
 				let tiendaNubeId = item.id;
 				if (ArticlesObj[tiendaNubeId]) {
+					const article = ArticlesObj[tiendaNubeId]
+					if (item.attributes.length) {
+						const variants = await this.getVariant(article._id)
+						item.variants.forEach(async (art: any, index: any) => {
+							const variantProducto = variants[index];
+							const result = await new ArticleController(this.database).update(
+								variantProducto.articleChild._id,
+								{
+									tiendaNubeId: art.inventory_levels[0].variant_id,
+								}
+							)
+						})
+					}
 				} else {
 					let newArticle: Article = ArticleSchema.getInstance(this.database)
 					code++;
@@ -703,7 +716,7 @@ export default class ArticleUC {
 								// isWeigth: true,
 								// allowMeasure: true,
 								// posKitchen: true,
-								tiendaNubeId: item.id,
+								tiendaNubeId: art.inventory_levels[0].variant_id,
 								applications: aplicationsObj['TiendaNube']._id,
 								type: 'Variante'
 							})
@@ -1062,6 +1075,19 @@ export default class ArticleUC {
 			const ultimoProducto = todosLosProductos.result[0];
 			return ultimoProducto?.code ?? 0
 		}
+	}
+
+	async getVariant(id: string) {
+		let VariantObj: any = {}
+		let variant: Variant[] = await new VariantController(this.database).find({
+			articleParent: new ObjectId(id.toString()),
+		}, {})
+		// variant.forEach((item: any) => {
+		// 	VariantObj[item._id] = item;
+		// });
+		//console.log(VariantObj)
+		return variant
+
 	}
 
 }
