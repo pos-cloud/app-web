@@ -637,21 +637,27 @@ export default class TiendaNubeController {
             let variantIds: number[] = [];
             let productIds: number[] = []
             order.products.forEach((product: any) => {
-                if (product.variant_values ) {
+                if (product.variant_values) {
                     variantIds.push(parseInt(product.variant_id))
                 }else{
                   productIds.push(product.product_id)
                 }
 
             });
-         let ids = productIds.concat(variantIds)
-        console.log(ids)
-            const articlesObj = await this.getArticlesById(productIds);
-           
+            let ids = productIds.concat(variantIds)
+        
+            const articlesObj = await this.getArticlesById(ids);
+         
             const movOfArticle = [];
 
             for (const product of order.products) {
-                const article = articlesObj[product.product_id];
+                let article
+                if(product.variant_values){
+                    article = articlesObj[product.variant_id];
+                }else{
+                    article = articlesObj[product.product_id];
+                }
+               
                 if (article) {
                     let movementOfArticle: MovementOfArticle = MovementOfArticleSchema.getInstance(this.database);
 
