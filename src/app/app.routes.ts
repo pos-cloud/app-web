@@ -79,6 +79,7 @@ import { AbandonedCartsComponent } from './components/point-of-sale/abandoned-ca
 import { BillingComponent } from './components/billing/billing.component';
 import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
 import { MenuComponent } from './components/menu/menu.component';
+import { WebTransactionsComponent } from './components/point-of-sale/web-transactions/web-transactions.component'
 
 export const _routes: Routes = [
   {
@@ -606,7 +607,7 @@ export const _routes: Routes = [
   },
   {
     path: 'pos/pedidos-web',
-    component: PointOfSaleComponent,
+    component: WebTransactionsComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.app' }
   },
