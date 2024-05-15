@@ -206,6 +206,15 @@ function getMovementsOfArticles (req, res, next) {
   initConnectionDB(req.session.database)
 
   // http://localhost:3000/api/articles/limit=6&skip=0&select=description,code&sort="code":1&where="description":"s"
+req.query.query = {
+  "transaction": {
+    "$in": [
+      "66426561ec0cb939dce799eb",
+      "6643dc0f990b582a90a48c53",
+      "6643dc8a990b582a90a48c73"
+    ]
+  }
+}
 
   let where = JSON.parse('{"operationType": {"$ne": "D"}}')
   let limit = 0
@@ -215,6 +224,7 @@ function getMovementsOfArticles (req, res, next) {
   let error
 
   if (req.query.query !== undefined) {
+    console.log(req.query.query)
     req.query.query.split('&').forEach(function (part) {
       const item = part.split('=')
       let json
@@ -264,6 +274,7 @@ function getMovementsOfArticles (req, res, next) {
   }
 
   if (error) {
+    console.log('acaaaaaa',error)
     fileController.writeLog(req, res, next, 500, error)
     return res.status(500).send(constants.ERR_SERVER)
   }
