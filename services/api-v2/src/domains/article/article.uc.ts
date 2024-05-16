@@ -635,6 +635,7 @@ export default class ArticleUC {
 						const variants = await this.getVariant(article._id)
 						item.variants.forEach(async (art: any, index: any) => {
 							const variantProducto = variants[index];
+
 							const result = await new ArticleController(this.database).update(
 								variantProducto.articleChild._id,
 								{
@@ -654,7 +655,7 @@ export default class ArticleUC {
 						description: item.name.es,
 						url: item.canonical_url,
 						posDescription: item.name.es,
-						observation: item.variants[0].description,
+						observation: item.description.es,
 						basePrice: 0,
 						taxes: {
 							tax: taxObj[21]._id,
@@ -677,7 +678,7 @@ export default class ArticleUC {
 						tiendaNubeId: item.id,
 						applications: aplicationsObj['TiendaNube']._id,
 						type: 'Final',
-						tags: item.tags.split(',').map((tag: any) => tag.trim()),
+						tags: item.tags ? item.tags.split(',').map((tag: any) => tag.trim()) : null,
 						containsVariants: item.attributes.length > 0
 					})
 					const resultParent = await new ArticleController(this.database).save(newArticle);
