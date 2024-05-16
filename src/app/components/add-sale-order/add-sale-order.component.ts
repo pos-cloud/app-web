@@ -3146,16 +3146,14 @@ export class AddSaleOrderComponent {
         this.config.tiendaNube.userID &&
         this.config.tiendaNube.userID !== '' &&
         this.movementsOfArticles.length > 0) {
-    
-        const tiendaNubeIds = this.movementsOfArticles
-          .filter(movement => movement.article.tiendaNubeId)
-          .map(movement => movement.article.tiendaNubeId);
-    
+
           this.movementsOfArticles.forEach(async movement => {
-            if (movement.article.type === Type.Final && tiendaNubeIds.length > 0) {
-              this.updateArticlesTiendaNube(tiendaNubeIds)
-            } else if (movement.article.type === Type.Variant) {
-              const result = await this.getVariantsByArticleChild(movement.article._id);
+            if(movement.article.tiendaNubeId){
+              if(movement.article.type === Type.Final){
+                await this.updateArticleTiendaNube(movement.article._id)
+              }
+              if(movement.article.type === Type.Variant){
+                   const result = await this.getVariantsByArticleChild(movement.article._id);
               if (result && result.length > 0) {
                 for (const variant of result) {
                   if (variant && variant.articleParent._id) {
@@ -3164,7 +3162,8 @@ export class AddSaleOrderComponent {
                 }
               }
             }
-          });
+          }
+        })
       }
       this.loading = true;
 
