@@ -172,7 +172,7 @@ export default class TiendaNubeController {
                 state: statusOrder[order.status],
                 endDate2: moment().format("YYYY-MM-DD HH:mm:ss.SSSSSS"),
                 endDate: moment().format("MM/DD/YYYY"),
-                balance: order.payment_status === "paid" ? order.total : 0,
+                balance: order.total,
                 shipmentMethod: shipmentMethod,
                 paymentMethodEcommerce: order.payment_details.method,
                 type: transactionType._id,
@@ -473,18 +473,18 @@ export default class TiendaNubeController {
         }
     }
 
-    async getCompanyByIdentification(identification: string, id: string) {
+    async getCompanyByIdentification(emails: string, id: string) {
         try {
-            if (identification !== '') {
+            if (emails !== '') {
                 const company = await new CompanyController(this.database).getAll({
                     project: {
                         _id: 1,
                         name: 1,
                         fantasyName: 1,
-                        identificationValue: 1
+                        emails: 1
                     },
                     match: {
-                        identificationValue: identification
+                        emails: emails
                     }
                 });
                 return company.result;
@@ -515,7 +515,7 @@ export default class TiendaNubeController {
         return new Promise<Company>(async (resolve, reject) => {
             try {
                 if (order.customer) {
-                    const company = await this.getCompanyByIdentification(order.customer.identification, '');
+                    const company = await this.getCompanyByIdentification(order.customer.emails, '');
                     if (company.length > 0) {
                         resolve(company[0]);
                     } else {
@@ -541,9 +541,32 @@ export default class TiendaNubeController {
                             .then((result: Responseable) => resolve(result.result))
                             .catch((error) => reject(error));
                     }
-                } else if (transactionType.requestCompany !== null && transactionType.company !== null) {
-                    resolve(transactionType.company);
+                } else {
+                    const company = await this.getCompanyByIdentification(order.contact_email, '');
+                    if (company.length > 0) {
+                        resolve(company[0]);
+                    } else {
+                    const companyType = await this.getCompanyByIdentification('', transactionType.company._id);
+                    let company: Company = CompanySchema.getInstance(this.database);
+                    company = Object.assign(company, {
+                        name: order.billing_name,
+                        type: 'Cliente',
+                        address: order.billing_address,
+                        city: order.billing_city,
+                        phones: order.billing_phone,
+                        emails: order.contact_email,
+                        identificationValue: order.contact_identification,
+                        addressNumber: order.billing_number,
+                        zipCode: order.billing_zipcode,
+                        floorNumber: order.billing_floor,
+                        vatCondition: companyType
+                    });
+
+                    await new CompanyController(this.database).save(company)
+                        .then((result: Responseable) => resolve(result.result))
+                        .catch((error) => reject(error)); 
                 }
+            }
             } catch (err) {
                 reject(err);
             }
@@ -666,8 +689,8 @@ export default class TiendaNubeController {
                         amount: product.quantity,
                         description: article.description,
                         basePrice: article.basePrice,
-                        salePrice: product.price,
-                        unitPrice: article.salePrice,
+                        salePrice: product.price * product.quantity,
+                        unitPrice: product.price,
                         costPrice: article.costPrice,
                         discountRate: (order.discount / order.subtotal) * 100,
                         article: article._id,
@@ -686,8 +709,6 @@ export default class TiendaNubeController {
             throw err;
         }
     }
-
-
 
     async getPaymentMethod() {
         let result = await new PaymentMethodController(this.database).getAll({
