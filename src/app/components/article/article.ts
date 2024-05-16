@@ -620,6 +620,16 @@ export let attributes = [
         align: 'left',
         required: false,
     },
+    {
+        name: 'm3',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'number',
+        project: null,
+        align: 'left',
+        required: false,
+    },
 ];
 
 export interface IMeliAttrs {
