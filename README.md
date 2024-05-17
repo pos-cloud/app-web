@@ -89,7 +89,7 @@ src/
 |   |-- components/
 |   |   |-- models/
 |   |   |   |-- article
-|   |   |   |   |-- article/
+|   |   |   |   |-- crud/
 |   |   |   |   |-- list-articles/
 |   |   |   |   |-- actions/
 |   |   |   |   |   |-- update-prices/
@@ -107,7 +107,8 @@ src/
 |   |   |   |-- report.module.ts
 |   |   |   |-- report.router.ts
 |   |   |-- transaction/
-|   |   |   |-- add-mov-article/
+|   |   |   |-- add-article-by-transaction/
+|   |   |   |-- movement-of-cancellation/
 |   |   |   |-- add-mov-cash/
 |   |   |   |-- cancelation/
 |   |   |   |-- list-tables-resto/
@@ -122,10 +123,11 @@ src/
 |   |   |-- login/
 |   |   |-- register/
 |   |   |-- menu/
-|   |   |-- add-transaction/
+|   |   |-- point-of-sales/
 |   |   |   |-- counter/
 |   |   |   |-- resto/
 |   |   |   |-- delivery/
+|   |   |   |-- pedido-web/
 |   |-- app.routes.ts
 |   |-- app.component.html
 |   |-- app.component.ts
@@ -174,10 +176,11 @@ Realizar PR a testing
 
 Must be one of the following:
 
--   **build**: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)
--   **docs**: Documentation only changes
--   **feat**: A new feature
--   **fix**: A bug fix
--   **perf**: A code change that improves performance
--   **refactor**: A code change that neither fixes a bug nor adds a feature
--   **test**: Adding missing tests or correcting existing tests
+-   **build**: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm).
+-   **docs**: Documentation only changes.
+-   **feat**: A new feature.
+-   **fix**: A bug fix.
+-   **perf**: A code change that improves performance.
+-   **refactor**: A code change that neither fixes a bug nor adds a feature.
+-   **test**: Adding missing tests or correcting existing tests.
+-   **style**: Changes that exclusively focus on styling and formatting.

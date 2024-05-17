@@ -57,21 +57,21 @@ const credentialsTiendaNube = [
         storeId: 1350756,
         database: 'arterama',
         user: 'soporte',
-        password: '9fR8Gh49' 
+        password: '9fR8Gh49'
     },
     {
         tokenTiendaNube: '6d2b63bbf23ad4131d376209f331c74e9afc36af',
         storeId: 3937223,
         database: 'demotest',
         user: 'soporte',
-        password: 'etUHWcAv' 
+        password: 'etUHWcAv'
     },
     {
         tokenTiendaNube: '1c1d2af103fe9e3eb36a1993329139e03d7c2366',
         storeId: 535284,
         database: 'syp',
         user: 'soporte',
-        password: 'PosRest@' 
+        password: 'PosRest@'
     }
 ]
 
@@ -117,15 +117,11 @@ export default class TiendaNubeController {
             this.authToken = token
 
             const transaction = await this.getTransaction(order)
-            let resp
+        
             if (transaction.length) {
-                resp = await this.updateTransaction(order, transaction[0])
+                let resp = await this.updateTransaction(order, transaction[0])
+                return response.send(new Responser(200, resp));
             }
-            if (resp) return response.send(new Responser(200, resp));
-
-            const articles = await this.getArticles(this.database, order)
-
-            if (!articles.result.length) return response.send(new Responser(404, null, 'articles not found', null));
 
             const transactionType = await this.getTiendaNubeTransactionsType(this.database);
 
@@ -146,9 +142,9 @@ export default class TiendaNubeController {
 
             if (!movementsOfCash) return response.send(new Responser(404, null, 'movementsOfCash not found', null))
 
-            const movementOfArticle = this.getMovementsOfArticles(articles.result, order)
+            const movementOfArticle = await this.getMovementsOfArticles(order)
 
-            if (!movementOfArticle) return response.send(new Responser(404, null, 'movementOfArticle not found', null));
+            if (!movementOfArticle.length) return response.send(new Responser(404, null, 'movementOfArticle not found', null));
 
             const user = await this.getUser(this.database)
 
@@ -176,7 +172,7 @@ export default class TiendaNubeController {
                 state: statusOrder[order.status],
                 endDate2: moment().format("YYYY-MM-DD HH:mm:ss.SSSSSS"),
                 endDate: moment().format("MM/DD/YYYY"),
-                balance: order.payment_status === "paid" ? order.total : 0,
+                balance: order.total,
                 shipmentMethod: shipmentMethod,
                 paymentMethodEcommerce: order.payment_details.method,
                 type: transactionType._id,
@@ -443,9 +439,10 @@ export default class TiendaNubeController {
         }
     }
 
-    getArticles = async (database: string, order: any) => {
+    getArticlesById = async (producId: any) => {
         try {
-            const articles = await new ArticleController(database).getAll({
+            const ArticlesObj: any = {};
+            const articles = await new ArticleController(this.database).getAll({
                 project: {
                     tiendaNubeId: 1,
                     _id: 1,
@@ -461,27 +458,33 @@ export default class TiendaNubeController {
                     category: 1
                 },
                 match: {
-                    tiendaNubeId: { $in: order.products.map((product: { product_id: number }) => product.product_id) },
+                    tiendaNubeId: { $in: producId}
                 }
             });
-            return articles;
+
+            articles.result.forEach((item: any) => {
+                if (item.tiendaNubeId) {
+                    ArticlesObj[item.tiendaNubeId] = item;
+                }
+            });
+            return ArticlesObj;
         } catch (error) {
             throw error;
         }
     }
 
-    async getCompanyByIdentification(identification: string, id: string) {
+    async getCompanyByIdentification(emails: string, id: string) {
         try {
-            if (identification !== '') {
+            if (emails !== '') {
                 const company = await new CompanyController(this.database).getAll({
                     project: {
                         _id: 1,
                         name: 1,
                         fantasyName: 1,
-                        identificationValue: 1
+                        emails: 1
                     },
                     match: {
-                        identificationValue: identification
+                        emails: emails
                     }
                 });
                 return company.result;
@@ -512,7 +515,7 @@ export default class TiendaNubeController {
         return new Promise<Company>(async (resolve, reject) => {
             try {
                 if (order.customer) {
-                    const company = await this.getCompanyByIdentification(order.customer.identification, '');
+                    const company = await this.getCompanyByIdentification(order.customer.emails, '');
                     if (company.length > 0) {
                         resolve(company[0]);
                     } else {
@@ -538,9 +541,32 @@ export default class TiendaNubeController {
                             .then((result: Responseable) => resolve(result.result))
                             .catch((error) => reject(error));
                     }
-                } else if (transactionType.requestCompany !== null && transactionType.company !== null) {
-                    resolve(transactionType.company);
+                } else {
+                    const company = await this.getCompanyByIdentification(order.contact_email, '');
+                    if (company.length > 0) {
+                        resolve(company[0]);
+                    } else {
+                    const companyType = await this.getCompanyByIdentification('', transactionType.company._id);
+                    let company: Company = CompanySchema.getInstance(this.database);
+                    company = Object.assign(company, {
+                        name: order.billing_name,
+                        type: 'Cliente',
+                        address: order.billing_address,
+                        city: order.billing_city,
+                        phones: order.billing_phone,
+                        emails: order.contact_email,
+                        identificationValue: order.contact_identification,
+                        addressNumber: order.billing_number,
+                        zipCode: order.billing_zipcode,
+                        floorNumber: order.billing_floor,
+                        vatCondition: companyType
+                    });
+
+                    await new CompanyController(this.database).save(company)
+                        .then((result: Responseable) => resolve(result.result))
+                        .catch((error) => reject(error)); 
                 }
+            }
             } catch (err) {
                 reject(err);
             }
@@ -627,27 +653,61 @@ export default class TiendaNubeController {
         return shipmentMethod.result[0]._id
     }
 
-    getMovementsOfArticles(articles: Article[], order: any): MovementOfArticle[] {
-        return articles.map((article, index) => {
-            let movementOfArticle: MovementOfArticle = MovementOfArticleSchema.getInstance(this.database);
-            const products = order.products[index];
-            movementOfArticle = Object.assign(movementOfArticle, {
-                code: article.code,
-                amount: products.quantity,
-                description: article.description,
-                basePrice: article.basePrice,
-                salePrice: products.quantity * article.salePrice,
-                unitPrice: article.salePrice,
-                costPrice: article.costPrice,
-                discountRate: (order.discount / order.subtotal) * 100,
-                article: article._id,
-                modifyStock: true,
-                quantityForStock: -+products.quantity,
-                stockMovement: 'Salida',
-                category: article.category._id
+    async getMovementsOfArticles(order: any) {
+        try {
+           // const producId = order.products.map((product: any) => product.product_id)
+             
+            let variantIds: number[] = [];
+            let productIds: number[] = []
+            order.products.forEach((product: any) => {
+                if (product.variant_values) {
+                    variantIds.push(parseInt(product.variant_id))
+                }else{
+                  productIds.push(product.product_id)
+                }
+
             });
-            return movementOfArticle;
-        });
+            let ids = productIds.concat(variantIds)
+        
+            const articlesObj = await this.getArticlesById(ids);
+         
+            const movOfArticle = [];
+
+            for (const product of order.products) {
+                let article
+                if(product.variant_values){
+                    article = articlesObj[product.variant_id];
+                }else{
+                    article = articlesObj[product.product_id];
+                }
+               
+                if (article) {
+                    let movementOfArticle: MovementOfArticle = MovementOfArticleSchema.getInstance(this.database);
+
+                    movementOfArticle = Object.assign(movementOfArticle, {
+                        code: article.code,
+                        amount: product.quantity,
+                        description: article.description,
+                        basePrice: article.basePrice,
+                        salePrice: product.price * product.quantity,
+                        unitPrice: product.price,
+                        costPrice: article.costPrice,
+                        discountRate: (order.discount / order.subtotal) * 100,
+                        article: article._id,
+                        modifyStock: true,
+                        quantityForStock: -product.quantity,
+                        stockMovement: 'Salida',
+                        category: article.category._id
+                    });
+
+                    movOfArticle.push(movementOfArticle);
+                }
+            }
+            return movOfArticle;
+        } catch (err) {
+            console.log(err);
+            throw err;
+        }
     }
 
     async getPaymentMethod() {

@@ -517,7 +517,8 @@ export class AddArticleComponent implements OnInit {
       width: [this.article.width, []],
       height: [this.article.height, []],
       depth: [this.article.depth, []],
-      showMenu: [this.article.showMenu, []]
+      showMenu: [this.article.showMenu, []],
+      tiendaNubeId: [this.article.tiendaNubeId, []]
     });
 
     this.newDeposit = this._fb.group({
@@ -776,9 +777,9 @@ export class AddArticleComponent implements OnInit {
           for (let tax of this.taxes) {
             this.totalTaxes += tax.taxAmount;
           }
-          if (this.article.url === '') {
-            this.loadURL();
-          }
+          // if (this.article.url === '') {
+          //   this.loadURL();
+          // }
 
           this.imageURL = this.article.picture ?? './../../../assets/img/default.jpg'
           if(this.article.picture == 'default.jpg') this.imageURL = './../../../assets/img/default.jpg'
@@ -802,44 +803,44 @@ export class AddArticleComponent implements OnInit {
     );
   }
 
-  loadURL(): void {
-    if (this.articleForm.value.url === '') {
-      let url = this.articleForm.value.description
-        .split(' ')
-        .join('-')
-        .split(':')
-        .join('')
-        .split('.')
-        .join('')
-        .split('"')
-        .join('')
-        .split('“')
-        .join('')
-        .split('”')
-        .join('')
-        .split('?')
-        .join('')
-        .split('/')
-        .join('-')
-        .split('\\')
-        .join('-')
-        .split('¿')
-        .join('')
-        .split('!')
-        .join('')
-        .split('¡')
-        .join('')
-        .split('+')
-        .join('')
-        .split('-')
-        .join('')
-        .toLocaleLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '');
+  // loadURL(): void {
+  //   if (this.articleForm.value.url === '') {
+  //     let url = this.articleForm.value.description
+  //       .split(' ')
+  //       .join('-')
+  //       .split(':')
+  //       .join('')
+  //       .split('.')
+  //       .join('')
+  //       .split('"')
+  //       .join('')
+  //       .split('“')
+  //       .join('')
+  //       .split('”')
+  //       .join('')
+  //       .split('?')
+  //       .join('')
+  //       .split('/')
+  //       .join('-')
+  //       .split('\\')
+  //       .join('-')
+  //       .split('¿')
+  //       .join('')
+  //       .split('!')
+  //       .join('')
+  //       .split('¡')
+  //       .join('')
+  //       .split('+')
+  //       .join('')
+  //       .split('-')
+  //       .join('')
+  //       .toLocaleLowerCase()
+  //       .normalize('NFD')
+  //       .replace(/[\u0300-\u036f]/g, '');
 
-      this.articleForm.patchValue({ url: url });
-    }
-  }
+  //     this.articleForm.patchValue({ url: url });
+  //   }
+  // }
 
   setValuesArray(): void {
     if (this.article.deposits && this.article.deposits.length > 0) {
@@ -1568,7 +1569,8 @@ export class AddArticleComponent implements OnInit {
       height: this.article.height,
       width: this.article.width,
       depth: this.article.depth,
-      showMenu: this.article.showMenu ?? ''
+      showMenu: this.article.showMenu ?? '',
+      tiendaNubeId: this.article.tiendaNubeId
     };
 
     this.articleForm.patchValue(values);
@@ -1577,7 +1579,7 @@ export class AddArticleComponent implements OnInit {
   addArticle(): void {
       if (this.articleForm.valid) {
         this.loadPosDescription();
-        this.loadURL();
+        //this.loadURL();
         const oldMeliId: string = this.article.meliId;
 
         this.article = Object.assign(this.article, this.articleForm.value);
@@ -1691,7 +1693,6 @@ export class AddArticleComponent implements OnInit {
     if (await this.isValid()) {
 
       if(this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
-
       this._articleService.updateArticle(this.article, this.variants).subscribe(
         async (result) => {
           if (!result.article) {
@@ -1725,7 +1726,7 @@ export class AddArticleComponent implements OnInit {
                 }
               }
             }
-           }else if(this.article.tiendaNubeId){
+          }else if(this.article.tiendaNubeId && this.article.type === Type.Final){
               this.deleteArticleTiendaNube();
            }
           }
@@ -1914,54 +1915,55 @@ export class AddArticleComponent implements OnInit {
           },
         );
       }
-      if (this.article.applications.length > 0 && this.article.type === Type.Final) {
-        await this.getArticleURL().then((result) => {
-          if (result) {
-            this.showToast(null, 'danger', 'La URL ya esta en uso');
-            resolve(false);
-          } else {
-            resolve(true);
-          }
-        });
-      } else {
-        resolve(true);
-      }
+      // if (this.article.applications.length > 0 && this.article.type === Type.Final) {
+      //   await this.getArticleURL().then((result) => {
+      //     if (result) {
+      //       this.showToast(null, 'danger', 'La URL ya esta en uso');
+      //       resolve(false);
+      //     } else {
+      //       resolve(true);
+      //     }
+      //   });
+      // } else {
+        
+      // }
+      resolve(true);
     });
   }
 
-  async getArticleURL(): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      let project = {
-        _id: 1,
-        url: 1,
-        ecommerceEnabled: 1,
-        type: 1,
-        operationType: 1,
-      };
+  // async getArticleURL(): Promise<boolean> {
+  //   return new Promise<boolean>((resolve, reject) => {
+  //     let project = {
+  //       _id: 1,
+  //       url: 1,
+  //       ecommerceEnabled: 1,
+  //       type: 1,
+  //       operationType: 1,
+  //     };
 
-      let match = `{`;
+  //     let match = `{`;
 
-      if (this.article._id && this.article._id !== null) {
-        match += `"_id": { "$ne" : { "$oid" : "${this.article._id}"}},`;
-      }
+  //     if (this.article._id && this.article._id !== null) {
+  //       match += `"_id": { "$ne" : { "$oid" : "${this.article._id}"}},`;
+  //     }
 
-      match += `  "url":"${this.article.url}",
-                    "type": "Final",
-                    "operationType" : { "$ne" : "D" } }`;
+  //     match += `  "url":"${this.article.url}",
+  //                   "type": "Final",
+  //                   "operationType" : { "$ne" : "D" } }`;
 
-      match = JSON.parse(match);
-      this._articleService.getArticlesV2(project, match, {}, {}).subscribe(
-        (result) => {
-          if (result && result.articles && result.articles.length > 0) {
-            resolve(true);
-          } else {
-            resolve(false);
-          }
-        },
-        (error) => this.showToast(error),
-      );
-    });
-  }
+  //     match = JSON.parse(match);
+  //     this._articleService.getArticlesV2(project, match, {}, {}).subscribe(
+  //       (result) => {
+  //         if (result && result.articles && result.articles.length > 0) {
+  //           resolve(true);
+  //         } else {
+  //           resolve(false);
+  //         }
+  //       },
+  //       (error) => this.showToast(error),
+  //     );
+  //   });
+  // }
 
   cleanForm() {
     this.article = new Article();
