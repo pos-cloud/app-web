@@ -1,4 +1,4 @@
-name: sistem dev
+name: system dev
 
 on:
   push:
@@ -29,7 +29,7 @@ jobs:
       - name: Build
         run: npm run build:dev
       
-      - name: Archive build-dev
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: build-dev
