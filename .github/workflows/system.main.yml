@@ -1,4 +1,4 @@
-name: Deploy System to Don Web
+name: system prod
 
 on:
   push:
@@ -36,20 +36,20 @@ jobs:
           path: build-prod
 
   deploy:
-    runs-on: [prod]
+    runs-on: [dev]
     needs: build
     steps:
       - name: Delete old backup
-        run: rm -rf /home/system_backup/*
+        run: rm -rf /home/system-prod-backup/*
 
       - name: Backup current files
-        run: cp -r /home/system/. /home/system_backup/
+        run: cp -r /home/system-prod/. /home/system-prod-backup/
 
       - name: Clean system
-        run: rm -rf /home/system/*
+        run: rm -rf /home/system-prod/*
 
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: build-prod
-          path: /home/system/
+          path: /home/system-prod/
