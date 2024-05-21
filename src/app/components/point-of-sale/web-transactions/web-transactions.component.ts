@@ -68,6 +68,7 @@ export class WebTransactionsComponent implements OnInit {
     public filterCompany;
     public filterOrderNumber;
     public filterState;
+    filterBalance;
     filterObservation;
     filterTotalPrice;
     p;

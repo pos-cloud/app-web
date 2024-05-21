@@ -25,6 +25,7 @@
                         <th>Metodo de Pago</th>
                         <th>Entrega</th>
                         <th (click)="orderBy('observation')">Observación</th>
+                        <th (click)="orderBy('balance')">Balance</th>
                         <th (click)="orderBy('totalPrice')">Precio Total</th>
                     </tr>
                     <tr class="filters">
@@ -46,6 +47,9 @@
                         <th><input type="text" class="form-control" [(ngModel)]="filterObservation"
                                 placeholder="Observación...">
                         </th>
+                        <th><input type="text" class="form-control" [(ngModel)]="filterBalance"
+                            placeholder="Balance...">
+                    </th>
                         <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice"
                                 placeholder="Precio Total...">
                         </th>
@@ -189,6 +193,7 @@
                             </span>
                         </td>
                         <td style="white-space: normal;">{{transaction.observation}}</td>
+                        <td style="white-space: normal;">{{transaction.balance | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                         <td>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                     </tr>
                     <tr align="center" *ngIf="!transactions || transactions.length === 0">
