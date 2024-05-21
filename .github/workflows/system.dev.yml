@@ -1,4 +1,4 @@
-name: Deploy System to Don Web
+name: system dev
 
 on:
   push:
@@ -29,10 +29,10 @@ jobs:
       - name: Build
         run: npm run build:dev
       
-      - name: Archive dist
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: dist
+          name: build-dev
           path: dist
 
   deploy:
@@ -40,16 +40,16 @@ jobs:
     needs: build
     steps:
       - name: Delete old backup
-        run: rm -rf /home/system_backup/*
+        run: rm -rf /home/system-dev-backup/*
 
       - name: Backup current files
-        run: cp -r /home/system/. /home/system_backup/
+        run: cp -r /home/system-dev/. /home/system-dev-backup/
 
       - name: Clean system
-        run: rm -rf /home/system/*
+        run: rm -rf /home/system-dev/*
 
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: dist
-          path: /home/system/
+          name: build-dev
+          path: /home/system-dev/

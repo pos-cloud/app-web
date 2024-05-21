@@ -13,6 +13,7 @@ import { UpdateVariantTiendaNubeDto } from '../dto/update-variant-tienda-nube.dt
 import { UpdateProductTiendaNubeDto } from '../dto/update-product-tienda-nube.dto';
 import { CancelOrderDto } from 'src/modules/orders/dtos/cancel-order.dto';
 import { FulFillOrderDto } from 'src/modules/orders/dtos/fulfill-order.dto';
+import { UpdateCategoryTiendaNubeDto } from '../dto/update-category-tienda-nube.dto';
 
 @Injectable()
 export class TiendaNubeService {
@@ -62,7 +63,35 @@ export class TiendaNubeService {
         ),
       );
       return data;
-    } catch (err) {}
+    } catch (err) { }
+  }
+
+  async updateCategory(
+    updateTiendaNubeDto: UpdateCategoryTiendaNubeDto,
+    tiendaNubeAccesstoken: string,
+    tiendaNubeUserId: string,
+    categoryId: string
+  ) {
+    try {
+      const data = await firstValueFrom(
+        this.httpService
+          .put(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/categories/${categoryId}`,
+            updateTiendaNubeDto,
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccesstoken}`,
+              },
+            },
+          )
+          .pipe(map((resp) => resp.data)),
+      ).catch((er) => {
+      throw new Error('Error al crear categoria en tiendaNube');
+      });
+      return data;
+    } catch (err) {
+      throw err;
+    }
   }
 
   async createProduct(
@@ -113,7 +142,7 @@ export class TiendaNubeService {
         throw err;
       });
 
-    return data;
+      return data;
     } catch (error) {
       console.log(error)
     }

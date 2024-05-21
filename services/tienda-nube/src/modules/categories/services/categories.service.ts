@@ -43,40 +43,76 @@ export class CategoriesService {
         );
       }
 
+      let categoryTN
       if (foundCategory.tiendaNubeId) {
-        const foundCategoryTiendaMia =
-          await this.tiendaNubeService.getCategoryId(
-            foundCategory.tiendaNubeId,
-            token,
-            userID,
-          );
-        if (foundCategoryTiendaMia) {
-          return foundCategoryTiendaMia;
-        }
+        categoryTN = await this.tiendaNubeService.getCategoryId(
+          foundCategory.tiendaNubeId,
+          token,
+          userID,
+        );
+      } else {
+        categoryTN = await this.tiendaNubeService.createCategory(
+          {
+            name: {
+              es: foundCategory.description,
+            }
+          },
+          token,
+          userID,
+        );
+
+        await foundCollection.updateOne(
+          { _id: foundCategory._id },
+          {
+            $set: {
+              tiendaNubeId: categoryTN.id,
+            },
+          },
+        );
+
       }
 
-      const categoryTiendaNube = await this.tiendaNubeService.createCategory(
-        {
-          name: {
-            es: foundCategory.description,
-          },
-        },
-        token,
-        userID,
-      );
+      if (foundCategory.parent) {
+        let parent = foundCategory.parent;
+        let categoryTiendaNubeId = categoryTN.id;
+        while (parent !== null) {
+          const foundCategoryParent = await this.poolDatabase.getDocumentById('categories', parent, database);
+          const categoryTiendaNube = foundCategoryParent.tiendaNubeId
+            ? await this.tiendaNubeService.getCategoryId(
+              foundCategoryParent.tiendaNubeId,
+              token,
+              userID,
+            )
+            : await this.tiendaNubeService.createCategory(
+              { name: { es: foundCategoryParent.description } },
+              token,
+              userID
+            );
 
-      await foundCollection.updateOne(
-        { _id: foundCategory._id },
-        {
-          $set: {
-            tiendaNubeId: categoryTiendaNube.id,
-          },
-        },
-      );
+          if (!foundCategoryParent.tiendaNubeId) {
+            await foundCollection.updateOne(
+              { _id: foundCategoryParent._id },
+              { $set: { tiendaNubeId: categoryTiendaNube.id } }
+            );
+          }
 
-      //  await this.databaseService.closeConnection();
+          const result = await this.tiendaNubeService.updateCategory(
+            {
+              id: categoryTiendaNube.id,
+              parent: categoryTiendaNubeId,
+              name: { es: categoryTiendaNube.name.es },
+            },
+            token,
+            userID,
+            categoryTiendaNube.id
+          );
+          categoryTiendaNubeId = categoryTiendaNube.id;
+          parent = foundCategoryParent.parent || null;
 
-      return categoryTiendaNube;
+          categoryTN = result
+        }
+      }
+      return categoryTN;
     } catch (err) {
       throw err;
     }

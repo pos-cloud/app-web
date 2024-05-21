@@ -6,6 +6,7 @@
         <div class="card-header">
             <span>Pedidos</span>
             <div class="pull-right">
+                 <button class="btn" [disabled]="loading" (click)="openModal('dateTn', null)" >Sincronizar Tienda Nube</button>
                 <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i
                         [ngClass]="{'fa-spin':loading}"></i>Actualizar</button>
             </div>
