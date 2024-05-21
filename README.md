@@ -24,46 +24,16 @@
 - user: admin
 - pass: pos
 
-##### Restore database
+##### Restore database example
 
     mongorestore --db demo --archive=/src/asstes/demo.gz --gzip
 
-### Servicios
-
-##### Ambientes para desarrollo
+##### Sandbox
   - api: https://d-api-v1.poscloud.ar
   - apiv2: https://d-api-v2.poscloud.ar
-  - apiPrint: https://d-api-print.poscloud.ar
+  - apiPrint: https://d-api-print.poscloud.ar 
   - apiStorage: https://d-api-storage.poscloud.ar
   - apiTiendaNube: https://d-api-tiendanube.poscloud.ar
-
-### Infraestructura
-
-#### Doc para servidores
-Puerto para este servidor que estas destinados a las API
-
-- 300 - api-v1-poscloud
-- 301 - api-fit
-- 302 - api-pdf-poscloud
-- 303 - api-storage-poscloud
-- 304 - front-poscloud
-- 308 - api-v2-poscloud
-
-Agregar un nuevo sitio 
-- primero verificamos que el puerto no esta ocupado 
-	netstat -tuln | grep 301
-- segundo creamos el archivo dentro de 
-	cd /etc/apache2/sites-available/
-- agregamos el sitio 
-	sudo a2ensite prod.poscloud
-- verificamos que este bien configurado apache 
-	sudo apache2ctl configtest
-- recargamos la config
-	sudo systemctl reload apache2
-
-Caso de tener que volver atrás 
-- sudo a2dissite nombre_del_sitio
-- sudo systemctl reload apache2
 
 ### Estructura
 ```
@@ -127,7 +97,13 @@ src/
 |   |   |   |-- counter/
 |   |   |   |-- resto/
 |   |   |   |-- delivery/
-|   |   |   |-- pedido-web/
+|   |   |   |-- tienda-nube/
+|   |   |   |   |-- get-orders/
+|   |   |   |   |-- fulfilled/
+|   |   |   |   |-- cancel/
+|   |   |   |   |-- tienda-nube.component.ts
+|   |   |   |   |-- tienda-nube.component.css
+|   |   |   |   |-- tienda-nube.component.html
 |   |-- app.routes.ts
 |   |-- app.component.html
 |   |-- app.component.ts
