@@ -93,6 +93,7 @@ export default class TiendaNubeController {
         this.router.get(`${this.path}/credentials/:storeId`, this.getCredentials);
         this.router.post(`${this.path}/add-transaction`, this.createTransaction);
         this.router.post(`${this.path}/webhook`, this.verifyWebHook);
+        this.router.post(`${this.path}/order`, this.getOrder);
     }
 
     createTransaction = async (
@@ -130,9 +131,13 @@ export default class TiendaNubeController {
             const company = await this.getCompany(order, transactionType)
 
             if (!company) return response.send(new Responser(404, null, 'Company not found', null));
-            const address = await this.createAddress(order, transactionType)
 
-            if (!address) return response.send(new Responser(404, null, 'Address not found', null));
+            let address = null
+            if (order.shipping_address.id !== 0) {
+                address = await this.createAddress(order, transactionType)
+
+                if (!address) return response.send(new Responser(404, null, 'Address not found', null))
+            }
 
             const paymentMethod = await this.getPaymentMethod()
 
@@ -144,7 +149,7 @@ export default class TiendaNubeController {
 
             const movementOfArticle = await this.getMovementsOfArticles(order)
 
-            if (!movementOfArticle.length) return response.send(new Responser(404, null, 'movementOfArticle not found', null));
+            //  if (!movementOfArticle.length) return response.send(new Responser(404, null, 'movementOfArticle not found', null));
 
             const user = await this.getUser(this.database)
 
@@ -170,14 +175,14 @@ export default class TiendaNubeController {
                 number: order.number,
                 madein: 'tiendanube',
                 state: statusOrder[order.status],
-                endDate2: moment().format("YYYY-MM-DD HH:mm:ss.SSSSSS"),
-                endDate: moment().format("MM/DD/YYYY"),
+                endDate2: order.created_at,
+                endDate: moment(order.created_at).format("MM/DD/YYYY"),
                 balance: order.total,
                 shipmentMethod: shipmentMethod,
                 paymentMethodEcommerce: order.payment_details.method,
                 type: transactionType._id,
                 company: company,
-                deliveryAddress: address._id,
+                deliveryAddress: address !== null ? address._id : address,
                 startDate: order.created_at,
                 observation: order.note
             })
@@ -328,9 +333,11 @@ export default class TiendaNubeController {
         }
 
         transaction.state = statusOrder[order.status]
-        let address = await this.getAddress(transaction.deliveryAddress._id, order)
-        transaction.deliveryAddress._id = address
 
+        if (transaction.deliveryAddress) {
+            let address = await this.getAddress(transaction.deliveryAddress._id, order)
+            transaction.deliveryAddress._id = address
+        }
         const updateTransaction = await new TransactionUC(this.database, this.authToken).updateTransaction(transaction._id, transaction)
 
         return updateTransaction
@@ -546,27 +553,27 @@ export default class TiendaNubeController {
                     if (company.length > 0) {
                         resolve(company[0]);
                     } else {
-                    const companyType = await this.getCompanyByIdentification('', transactionType.company._id);
-                    let company: Company = CompanySchema.getInstance(this.database);
-                    company = Object.assign(company, {
-                        name: order.billing_name,
-                        type: 'Cliente',
-                        address: order.billing_address,
-                        city: order.billing_city,
-                        phones: order.billing_phone,
-                        emails: order.contact_email,
-                        identificationValue: order.contact_identification,
-                        addressNumber: order.billing_number,
-                        zipCode: order.billing_zipcode,
-                        floorNumber: order.billing_floor,
-                        vatCondition: companyType
-                    });
+                        const companyType = await this.getCompanyByIdentification('', transactionType.company._id);
+                        let company: Company = CompanySchema.getInstance(this.database);
+                        company = Object.assign(company, {
+                            name: order.billing_name,
+                            type: 'Cliente',
+                            address: order.billing_address,
+                            city: order.billing_city,
+                            phones: order.billing_phone,
+                            emails: order.contact_email,
+                            identificationValue: order.contact_identification,
+                            addressNumber: order.billing_number,
+                            zipCode: order.billing_zipcode,
+                            floorNumber: order.billing_floor,
+                            vatCondition: companyType
+                        });
 
-                    await new CompanyController(this.database).save(company)
-                        .then((result: Responseable) => resolve(result.result))
-                        .catch((error) => reject(error)); 
+                        await new CompanyController(this.database).save(company)
+                            .then((result: Responseable) => resolve(result.result))
+                            .catch((error) => reject(error));
+                    }
                 }
-            }
             } catch (err) {
                 reject(err);
             }
@@ -583,17 +590,16 @@ export default class TiendaNubeController {
                     'fulfilled': 'Enviado',
                     'unfulfilled': 'No enviado'
                 };
-
                 let address: Address = AddressSchema.getInstance(this.database)
                 address = Object.assign(address, {
-                    country: order.shipping_address.country,
-                    city: order.shipping_address.city,
-                    floor: order.shipping_address.floor,
-                    name: order.shipping_address.name,
-                    state: order.billing_province,
+                    country: order.shipping_address.country || "No informado",
+                    city: order.shipping_address.city || "No informado",
+                    floor: order.shipping_address.floor || "No informado",
+                    name: order.shipping_address.name || "No informado",
+                    state: order.billing_province || "No informado",
                     company: company,
-                    number: order.shipping_address.number,
-                    postalCode: order.shipping_address.zipcode,
+                    number: order.shipping_address.number || "No informado",
+                    postalCode: order.shipping_address.zipcode || "No informado",
                     shippingStatus: shippingStatus[order.shipping_status]
                 })
                 await new AddressController(this.database).save(address).then((result: Responseable) =>
@@ -655,29 +661,28 @@ export default class TiendaNubeController {
 
     async getMovementsOfArticles(order: any) {
         try {
-           // const producId = order.products.map((product: any) => product.product_id)
-             
+            // const producId = order.products.map((product: any) => product.product_id)
+
             let variantIds: number[] = [];
             let productIds: number[] = []
             order.products.forEach((product: any) => {
-                if (product.variant_values) {
+                if (product.variant_values.length) {
                     variantIds.push(parseInt(product.variant_id))
-                }else{
-                  productIds.push(product.product_id)
+                } else {
+                    productIds.push(product.product_id)
                 }
 
             });
             let ids = productIds.concat(variantIds)
-        
             const articlesObj = await this.getArticlesById(ids);
          
             const movOfArticle = [];
 
             for (const product of order.products) {
                 let article
-                if(product.variant_values){
+                if (product.variant_values.length) {
                     article = articlesObj[product.variant_id];
-                }else{
+                } else {
                     article = articlesObj[product.product_id];
                 }
                
@@ -725,5 +730,50 @@ export default class TiendaNubeController {
             },
         })
         return result
+    }
+
+    getOrder = async (
+        request: RequestWithUser,
+        response: express.Response,
+        next: express.NextFunction
+    ) => {
+        try {
+            const { date } = request.body
+            if (!date.desde && !date.hasta) {
+                return response.send(new Responser(400, 'Debe ponen las fechas correctamente'))
+            }
+            const dateRangeISO = {
+                desde: new Date(date.desde).toISOString(),
+                hasta: new Date(date.hasta).toISOString()
+            };
+            const URL = `https://api.tiendanube.com/v1/${1350756}/orders?per_page=200&created_at_min=${dateRangeISO.desde}&created_at_max=${dateRangeISO.hasta}`;
+
+            const requestOptions = {
+                headers: {
+                    Authentication: 'bearer 7c4682264c62f8f5cd246fac1687278adb8ce508'
+                }
+            };
+            const res = await axios.get(URL, requestOptions);
+
+            if (!res.data.length) {
+                return response.send('No hay ordenes a sincronizar')
+            }
+            const createTransaction = res.data.map(async (order: any) => {
+                try {
+                    await axios.post('https://api-v2.poscloud.ar/tienda-nube/add-transaction', {
+                        "storeId": 1350756,
+                        "event": "order/created",
+                        "order": order
+                    });
+                } catch (error) {
+                    console.error(`Error al crear la orden ${order.id}: ${error.message}`);
+                }
+            });
+
+            await Promise.all(createTransaction);
+            return response.send(new Responser(200, 'Las ordenes se sincronizaron correctamente'))
+        } catch (error) {
+            console.log(error)
+        }
     }
 }

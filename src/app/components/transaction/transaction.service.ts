@@ -391,6 +391,25 @@ export class TransactionService extends ModelService {
       );
   }
 
+  public syncTiendaNube(value): Observable<any> {
+    const URL = `${Config.apiV8URL}tienda-nube/order`;
+
+    // const headers = new HttpHeaders()
+    //   .set('Content-Type', 'application/json')
+    //   .set('Authorization', this._authService.getToken());
+
+    return this._http
+    .post(URL, { date: value }, { })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        }),
+      );
+  }
+
   public setOrderNumber(transaction: Transaction): Observable<any> {
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
