@@ -257,6 +257,7 @@ import { FulfilledComponent } from './components/tiendaNube/fulfilled/fulfilled.
 import { MenuComponent } from './components/menu/menu.component';
 import { MenuService } from './components/menu/menu.service';
 import { WebTransactionsComponent } from './components/point-of-sale/web-transactions/web-transactions.component';
+import { DateFromToComponent } from './components/tiendaNube/date-from-to/date-from-to.component';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -433,7 +434,8 @@ export function createTranslateLoader(http: HttpClient) {
     CancelComponent,
     FulfilledComponent,
     MenuComponent,
-    WebTransactionsComponent
+    WebTransactionsComponent,
+    DateFromToComponent
   ],
   imports: [
     BrowserModule,

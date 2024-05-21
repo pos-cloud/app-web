@@ -23,6 +23,7 @@ import {MovementOfArticle} from '../../movement-of-article/movement-of-article';
 import {MovementOfArticleService} from '../../movement-of-article/movement-of-article.service';
 import {MovementOfCash} from '../../movement-of-cash/movement-of-cash';
 import {MovementOfCashService} from '../../movement-of-cash/movement-of-cash.service';
+import { DateFromToComponent } from '../../tiendaNube/date-from-to/date-from-to.component'
 
 @Component({
     selector: 'app-web-transactions',
@@ -339,7 +340,12 @@ export class WebTransactionsComponent implements OnInit {
                 modalRef.componentInstance.config = this.config;
                 modalRef.componentInstance.state = state;
                 break
-
+            case 'dateTn':
+                modalRef = this._modalService.open(DateFromToComponent , { size: 'lg', backdrop: 'static' });
+                modalRef.result.then(() =>{
+                    this.refresh()
+                })
+                break
         }
     }
 

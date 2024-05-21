@@ -1,0 +1,28 @@
+<div class="modal-header">
+    <h4 class="modal-title">Sincronizar Tienda Nube</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<section class="container-fluid">
+    <form [formGroup]="syncForm" (ngSubmit)="syncTiendaNube()">
+    <div class="row">
+        <div class="form-group col-md-3" >
+            <label class="control-label">Desde:</label>
+            <input class="form-control" type="date" name="desde" formControlName="desde"/>
+        </div>
+        <div class="form-group col-md-3" >
+            <label class="control-label">Hasta:</label>
+            <input class="form-control" type="date" name="hasta" formControlName="hasta"/>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="loading">
+            <i [ngClass]="{'save':!loading, 'spinner spin':loading}"></i>
+            <span *ngIf="!loading">Enviar</span>
+            <span *ngIf="loading">Espere por favor</span>
+        </button>
+        </div>
+    </form>
+</section>
