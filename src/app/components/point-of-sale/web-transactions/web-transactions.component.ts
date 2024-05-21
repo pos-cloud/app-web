@@ -144,7 +144,6 @@ export class WebTransactionsComponent implements OnInit {
             }
             let match = {
                 state: { $nin: [TransactionState.Canceled] },
-                balance: { $gt: 0 },
                 madein: { $in: ['pedidos-web', 'mercadolibre', 'woocommerce', 'tiendanube'] },
                 operationType: { $ne: 'D' },
                 "type.transactionMovement": this.transactionMovement,
