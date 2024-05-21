@@ -29,6 +29,7 @@ import AddressController from '../address/address.controller'
 import CompanyController from '../company/company.controller'
 import VATConditionController from '../vat-condition/vat-condition.controller'
 import MovementOfCashController from '../movement-of-cash/movement-of-cash.controller'
+import config from '../../utils/config'
 
 const credentialsTiendaNube = [
     {
@@ -760,7 +761,7 @@ export default class TiendaNubeController {
             }
             const createTransaction = res.data.map(async (order: any) => {
                 try {
-                    await axios.post('https://api-v2.poscloud.ar/tienda-nube/add-transaction', {
+                    await axios.post(`${config.API_V8_URL}/tienda-nube/add-transaction`, {
                         "storeId": 1350756,
                         "event": "order/created",
                         "order": order
