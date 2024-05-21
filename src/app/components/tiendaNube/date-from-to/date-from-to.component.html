@@ -4,6 +4,9 @@
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
+<div colspan="99" style="padding: 0px">
+    <app-progressbar [loading]="loading"></app-progressbar>
+</div>
 <section class="container-fluid">
     <form [formGroup]="syncForm" (ngSubmit)="syncTiendaNube()">
     <div class="row">
