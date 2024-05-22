@@ -71,10 +71,14 @@ export class SelectArticleByTransactionComponent implements OnInit {
   }
   }
 
+  async selectTransaction(mov){
+    console.log(mov)
+  }
+
   updateAmount(movemenstOfArticles: MovementOfArticle, inputValue: number){
      if (inputValue > movemenstOfArticles.amount) { 
       this.showToast(null, 'info', null, `la cantidad ingresada no puede ser mayor a la cantidad del articulo (${movemenstOfArticles.amount}).`);
-
+      
   } 
   }
 

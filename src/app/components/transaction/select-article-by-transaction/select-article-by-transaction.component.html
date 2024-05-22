@@ -22,6 +22,7 @@
                         <th>Descripción</th>
                         <th>Cantidad</th>
                         <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                     <tbody>
@@ -36,13 +37,17 @@
                                 (click)="openModal('view', movArticle.transaction)" title="Ver"><i class="fa fa-eye"></i></button>
                         </td>
                         <th>{{movArticle.creationDate | dateFormat:'DD/MM/YYYY'}}</th>
-                        <th>{{movArticle.transaction.type.name}}</th>
-                        <th>{{movArticle.transaction.number}}</th>
-                        <th>{{movArticle.transaction.company.name}}</th>
-                        <th>{{movArticle.description}}</th>
-                        <th>{{movArticle.amount}}</th>
+                        <th>{{movArticle?.transaction?.type?.name}}</th>
+                        <th>{{movArticle?.transaction?.number}}</th>
+                        <th>{{movArticle?.transaction?.company?.name}}</th>
+                        <th>{{movArticle?.description}}</th>
+                        <th>{{movArticle?.amount}}</th>
                         <th>   
                             <input type="number" class="form-control" (blur)="updateAmount(movArticle, $event.target.value)"/></th>
+                            <!-- <td>
+                                <button class="btn btn-primary" (click)="selectTransaction(movArticle, false)"
+                                    style="margin-left: 10px">Total</button>
+                            </td> -->
                     </tr>
                 </tbody>
             </table>

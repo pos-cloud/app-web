@@ -15,6 +15,8 @@ import MovementOfArticle from './movement-of-article.interface'
 import ObjSchema from './movement-of-article.model'
 import MovementOfArticleUC from './movement-of-article.uc'
 import CancellationTypeController from '../cancellation-type/cancellation-type.controller'
+import { ObjectId } from 'bson'
+import TransactionController from '../transaction/transaction.controller'
 
 export default class MovementOfArticleController extends Controller {
   EJSON: any = require('bson').EJSON
@@ -206,7 +208,7 @@ export default class MovementOfArticleController extends Controller {
     try {
 
       const { transactionTypeId } = request.params
-
+   
       const cancelationTypes = await new CancellationTypeController(request.database).getAll({
         project: {
           destination: 1,
@@ -224,34 +226,51 @@ export default class MovementOfArticleController extends Controller {
         }
       })
 
-      const cancelationOrigin = cancelationTypes.result.map((cancelation: any) => cancelation.origin._id)
+      const cancelationOrigin = cancelationTypes.result.map((cancelation: any) => new ObjectId(cancelation.origin._id))
       const cancelationState = cancelationTypes.result.map((cancelation: any) => cancelation.requestStatusOrigin)
+console.log(cancelationOrigin)
+const transaction = await new TransactionController(request.database).getAll({
+  project:{
+    _id: 1,
+    type: 1,
+    state: 1,
+    creationDate: 1,
+    balance:1,
+    number: 1,
+    'company.name': 1
+  },
+  match:{
+   // state: {$in:cancelationState },
+    type: new ObjectId("60f9a13013a1cc2170385ef5")
+  }
+})
+console.log(transaction)
+    //   const movementArticle = await new MovementOfArticleController(request.database)
+    //   .getAll({
+    //     project: {
+    //       description: 1,
+    //       creationDate: 1,
+    //       status: 1,
+    //       operationType: 1,
+    //       amount: 1,
+    //       'transaction.state': 1,
+    //       'transaction._id': 1,
+    //       'transaction.balance': 1,
+    //       'transaction.number': 1,
+    //       'transaction.type.name': 1,
+    //       'transaction.type._id' : 1,
+    //       'transaction.company.name': 1,
 
-      const movementArticle = await new MovementOfArticleController(request.database).getAll({
-        project: {
-          description: 1,
-          creationDate: 1,
-          status: 1,
-          operationType: 1,
-          amount: 1,
-          'article.description': 1,
-          'article.amount': 1,
-          'transaction.state': 1,
-          'transaction._id': 1,
-          'transaction.balance': 1,
-          'transaction.number': 1,
-          'transaction.type.name': 1,
-          'transaction.type._id' : 1,
-          'transaction.company.name': 1,
-
-        },
-        match: {
-        //  'transaction.type._id': { $in: cancelationOrigin},
-          'transaction.state': { $in: cancelationState },
-          operationType: { $ne: 'D' }
-        }
-      })
-      return response.send(new Responser(200, movementArticle.result));
+    //     },
+    //     match: {
+    //       'transaction.type._id': { $in: cancelationOrigin},
+    //       'transaction.state': { $in: cancelationState },
+    //       operationType: { $ne: 'D' }
+    //     }
+    //   })
+    //   const cancelationStateee = movementArticle.result.map((cancelation: any) => cancelation.transaction.type._id)
+    //  console.log(cancelationStateee)
+      return response.send(new Responser(200, 'kk'));
 
     } catch (error) {
       console.log(error)
