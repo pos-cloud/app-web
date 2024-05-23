@@ -1,4 +1,4 @@
-import * as axios from 'axios'
+import Axios, * as axios from 'axios'
 import Responseable from 'interfaces/responsable.interface'
 
 import { ArticleFieldType } from './../../domains/article-field/article-field.interface'
@@ -44,6 +44,7 @@ import VariantValueController from '../variant-value/variant-value.controller'
 import VariantValue from '../variant-value/variant-value.interface'
 import VariantValueSchema from '../variant-value/variant-value.model'
 import { ObjectId } from 'mongodb';
+import ConfigController from '../config/config.controller'
 
 export default class ArticleUC {
 	database: string
@@ -475,7 +476,7 @@ export default class ArticleUC {
 			});
 
 			await this.createMake(data)
-			await this.createCategory(data)
+			await this.createCategoryExel(data)
 			const makesObj = await this.getMake()
 			const categoryObj = await this.getCategory()
 			const printerObj = await this.getPrinters()
@@ -596,7 +597,7 @@ export default class ArticleUC {
 		const ArticlesObj: any = {};
 
 		try {
-			await this.createCategory(data)
+			await this.createAllCategoryTn()
 			await this.createVariantTypes(data)
 			await this.createVariantValues(data)
 			//await this.createMake(data)
@@ -604,7 +605,8 @@ export default class ArticleUC {
 			const articles = await new ArticleController(this.database).getAll({
 				project: {
 					tiendaNubeId: 1,
-					description: 1
+					description: 1,
+					code: 1
 				},
 				match: {
 					tiendaNubeId: { $exists: true, $ne: null }
@@ -631,15 +633,84 @@ export default class ArticleUC {
 				let tiendaNubeId = item.id;
 				if (ArticlesObj[tiendaNubeId]) {
 					const article = ArticlesObj[tiendaNubeId]
+       
+					await new ArticleController(this.database).update(
+						article._id,
+						{
+							code: article.code,
+							barcode: item.variants[0].sku,
+							//make: makeObj[´']._id,
+							category: categoryObj[item.categories[0]?.name.es] !== undefined ? categoryObj[item.categories[0].name.es]._id : null,
+							description: item.name.es,
+							url: item.canonical_url,
+							posDescription: item.name.es,
+							observation: item.description.es,
+							basePrice: 0,
+							taxes: {
+								tax: taxObj[21]._id,
+								percentage: taxObj[21].percentage
+							},
+							markupPercentage: (item.variants[0].price === null || item.variants[0].cost === null) ? null : Number(Math.abs(((Number(item.variants[0].price) - Number(item.variants[0].cost)) / Number(item.variants[0].cost) * 100)).toFixed(2)),
+							salePrice: item.variants[0].price,
+							weight: item.variants[0].weight,
+							width: item.variants[0].width,
+							height: item.variants[0].height,
+							depth: item.variants[0].depth,
+							//picture: item.images[0]?.src,
+							allowPurchase: true,
+							allowSale: true,
+							allowStock: true,
+							allowSaleWithoutStock: item.variants[0].stock_management,
+							// isWeigth: true,
+							// allowMeasure: item.attributes.length > 0,
+							// posKitchen: true,
+							tiendaNubeId: item.id,
+							applications: aplicationsObj['TiendaNube']._id,
+							type: 'Final',
+							tags: item.tags ? item.tags.split(',').map((tag: any) => tag.trim()) : null,
+							containsVariants: item.attributes.length > 0
+						}
+					)
 					if (item.attributes.length) {
 						const variants = await this.getVariant(article._id)
 						item.variants.forEach(async (art: any, index: any) => {
 							const variantProducto = variants[index];
-
-							const result = await new ArticleController(this.database).update(
+							await new ArticleController(this.database).update(
 								variantProducto.articleChild._id,
 								{
+									code: article.code,
+									barcode: art.sku,
+									//make: makeObj['']._id,
+									category: categoryObj[item.categories[0]?.name.es] !== undefined ? categoryObj[item.categories[0].name.es]._id : null,
+									description: art.values.map((items: any) => items.es.toLowerCase()).join(' / '),
+									url: art.canonical_url,
+									posDescription: item.name.es,
+									observation: item.description.es,
+									basePrice: 0,
+									taxes: {
+										tax: taxObj[21]._id,
+										percentage: taxObj[21].percentage
+									},
+									markupPercentage: (item.variants[0].price === null || item.variants[0].cost === null) ? null : Number(Math.abs(((Number(item.variants[0].price) - Number(item.variants[0].cost)) / Number(item.variants[0].cost) * 100)).toFixed(2)),
+									salePrice: art.price,
+									weight: art.weight,
+									width: art.width,
+									height: art.height,
+									depth: art.depth,
+									// picture: (() => {
+									// 	const imageObject = item.images.find((img: any) => img.id === art.image_id);
+									// 	return imageObject ? imageObject.src : null;
+									// })(),
+									allowPurchase: true,
+									allowSale: true,
+									allowStock: true,
+									allowSaleWithoutStock: art.stock_management,
+									// isWeigth: true,
+									// allowMeasure: true,
+									// posKitchen: true,
 									tiendaNubeId: art.inventory_levels[0].variant_id,
+									applications: aplicationsObj['TiendaNube']._id,
+									type: 'Variante'
 								}
 							)
 						})
@@ -758,7 +829,6 @@ export default class ArticleUC {
 							code: resultParent.result.code
 						})
 						const resultArticleStock = await new ArticleController(this.database).save(newArticleStock);
-
 					}
 				}
 			}
@@ -780,7 +850,78 @@ export default class ArticleUC {
 		}
 	}
 
-	async createCategory(data: any) {
+	async createAllCategoryTn() {
+		const categoriesTnObj: any = {};
+
+		const config = await new ConfigController(this.database).getAll({
+			project: {
+				_id: 1,
+				tiendaNube: 1,
+			}
+		})
+		const credentialesTn = config.result[0].tiendaNube
+
+		const categoriesTn = await new CategoryController(this.database).getAll({
+			project: {
+				_id: 1,
+				tiendaNubeId: 1,
+				description: 1,
+				parent: 1
+			},
+			match: {
+				tiendaNubeId: { $exists: true, $ne: null }
+			}
+		});
+
+		categoriesTn.result.forEach((item: any) => {
+			if (item.tiendaNubeId) {
+				categoriesTnObj[item.tiendaNubeId] = item;
+			}
+		});
+
+		const URL = `https://api.tiendanube.com/v1/${credentialesTn.userID}/categories`;
+		const requestOptions = {
+			headers: {
+				Authentication: `bearer ${credentialesTn.token}`
+			}
+		};
+		const resp = await Axios.get(URL, requestOptions);
+
+		const savePromises = [];
+
+		for (let category of resp.data) {
+			if (!categoriesTnObj[category.id]) {
+				let newCategory: Category = CategorySchema.getInstance(this.database);
+				newCategory = Object.assign(newCategory, {
+					description: category?.name?.es,
+					tiendaNubeId: category.id
+				});
+				savePromises.push(new CategoryController(this.database).save(newCategory));
+			}
+		}
+
+		const saveResults = await Promise.all(savePromises);
+		saveResults.forEach((result: any) => {
+			categoriesTnObj[result.result.tiendaNubeId] = result.result;
+		});
+
+		const updatePromises = [];
+
+		for (let category of resp.data) {
+			if (category.parent) {
+				const categoryParent = categoriesTnObj[category.parent];
+				const categoryDes = categoriesTnObj[category.id];
+				updatePromises.push(
+					await new CategoryController(this.database).update( categoryDes._id,{
+						parent:categoryParent._id,
+					})
+				);
+			}
+		}
+		await Promise.all(updatePromises);
+	}
+
+	async createCategoryExel(data: any) {
 		const categoriesObj: any = {};
 		const categories = await new CategoryController(this.database).getAll({
 			project: {
@@ -799,7 +940,7 @@ export default class ArticleUC {
 		});
 
 		for (const item of data) {
-			const description = item.categories === undefined ? item.column5 : item.categories[0]?.name?.es;
+			const description = item.column5
 			if (!categoriesObj[description]) {
 				if (description) {
 					let newCategory: Category = CategorySchema.getInstance(this.database)
@@ -807,7 +948,7 @@ export default class ArticleUC {
 						description: description,
 						tiendaNubeId: item.categories[0].id
 					})
-					const result = await new MakeController(this.database).save(newCategory);
+					const result = await new CategoryController(this.database).save(newCategory);
 					categoriesObj[description] = newCategory;
 				}
 			}
