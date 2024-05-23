@@ -127,7 +127,8 @@ export class Application extends Model {
     transactionType: TransactionType,
     shipmentMethod: ShipmentMethod,
     paymentMethod: PaymentMethod,
-    company: Company
+    company: Company,
+    article: Article
   }
   menu: {
     portain: string,
