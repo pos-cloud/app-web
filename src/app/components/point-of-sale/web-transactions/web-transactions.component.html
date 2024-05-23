@@ -20,7 +20,6 @@
                         <th (click)="orderBy('type','name')">Tipo</th>
                         <th (click)="orderBy('number')">Número</th>
                         <th (click)="orderBy('company','name')">Cliente</th>
-                        <th (click)="orderBy('orderNumber')">Pedido</th>
                         <th (click)="orderBy('state')">Estado</th>
                         <th>Metodo de Pago</th>
                         <th>Entrega</th>
@@ -38,8 +37,6 @@
                         </th>
                         <th><input type="text" class="form-control" [(ngModel)]="filterCompany"
                                 placeholder="Empresa..."></th>
-                        <th><input type="text" class="form-control" [(ngModel)]="filterOrderNumber"
-                                placeholder="Pedido..."></th>
                         <th><input type="text" class="form-control" [(ngModel)]="filterState" placeholder="Estado...">
                         </th>
                         <th></th>
@@ -67,7 +64,6 @@
                                                     | filter: filterCompany:'name':'company'
                                                     | filter: filterTotalPrice:'totalPrice'
                                                     | filter : filterState : 'state'
-                                                    | filter : filterOrderNumber : 'orderNumber'
                                                     | filter : filterObservation : 'observation'
                                                     | orderBy: orderTerm: propertyTerm
                                                     | paginate: { itemsPerPage: itemsPerPage,
@@ -99,7 +95,6 @@
                         <td><b>{{transaction.number}}</b></td>
                         <td *ngIf="transaction.company">{{transaction.company.name}}</td>
                         <td *ngIf="!transaction.company">Consumidor Final</td>
-                        <td>{{transaction.orderNumber}}</td>
                         <td *ngIf="posType==='pedidos-web'">
                             <!-- <div class="btn-group mr-3" *ngIf="transaction.tiendaNubeId === undefined">
                                 <button type="button" class="btn" [ngClass]="{

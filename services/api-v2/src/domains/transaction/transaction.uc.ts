@@ -115,12 +115,12 @@ export default class TransactionUC {
         }
         const transactionType: TransactionType = result.result[0]
 
-        // if (
-        //   transactionType.requestArticles &&
-        //   (!movementsOfArticles || movementsOfArticles.length === 0)
-        // ) {
-        //   throw new Error(`Debe informar movimientos de artículos`)
-        // }
+        if (
+          transactionType.requestArticles &&
+          (!movementsOfArticles || movementsOfArticles.length === 0)
+        ) {
+          throw new Error(`Debe informar movimientos de artículos`)
+        }
 
         if (
           transactionType.requestPaymentMethods &&
