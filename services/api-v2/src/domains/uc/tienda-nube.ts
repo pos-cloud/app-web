@@ -30,6 +30,10 @@ import CompanyController from '../company/company.controller'
 import VATConditionController from '../vat-condition/vat-condition.controller'
 import MovementOfCashController from '../movement-of-cash/movement-of-cash.controller'
 import config from '../../utils/config'
+import ApplicationController from '../application/application.controller'
+import { ApplicationType } from '../application/application.interface'
+import authMiddleware from './../../middleware/auth.middleware'
+import ensureLic from './../../middleware/license.middleware'
 
 const credentialsTiendaNube = [
     {
@@ -94,7 +98,7 @@ export default class TiendaNubeController {
         this.router.get(`${this.path}/credentials/:storeId`, this.getCredentials);
         this.router.post(`${this.path}/add-transaction`, this.createTransaction);
         this.router.post(`${this.path}/webhook`, this.verifyWebHook);
-        this.router.post(`${this.path}/order`, this.getOrder);
+        this.router.post(`${this.path}/order`,[authMiddleware, ensureLic], this.getOrder);
     }
 
     createTransaction = async (
@@ -334,6 +338,7 @@ export default class TiendaNubeController {
         }
 
         transaction.state = statusOrder[order.status]
+        transaction.number = order.number
 
         if (transaction.deliveryAddress) {
             let address = await this.getAddress(transaction.deliveryAddress._id, order)
@@ -450,6 +455,13 @@ export default class TiendaNubeController {
     getArticlesById = async (producId: any) => {
         try {
             const ArticlesObj: any = {};
+
+            let matchCondition;
+            if (Array.isArray(producId)) {
+                matchCondition = { tiendaNubeId: { $in: producId } };
+            } else {
+                matchCondition = { _id: { $oid: producId } };
+            }
             const articles = await new ArticleController(this.database).getAll({
                 project: {
                     tiendaNubeId: 1,
@@ -465,17 +477,19 @@ export default class TiendaNubeController {
                     posDescription: 1,
                     category: 1
                 },
-                match: {
-                    tiendaNubeId: { $in: producId}
-                }
+                match: matchCondition
             });
 
-            articles.result.forEach((item: any) => {
-                if (item.tiendaNubeId) {
-                    ArticlesObj[item.tiendaNubeId] = item;
-                }
-            });
-            return ArticlesObj;
+            if (Array.isArray(producId)) {
+                articles.result.forEach((item: any) => {
+                    if (item.tiendaNubeId) {
+                        ArticlesObj[item.tiendaNubeId] = item;
+                    }
+                })
+                return ArticlesObj;
+            } else {
+                return articles
+            }
         } catch (error) {
             throw error;
         }
@@ -661,8 +675,7 @@ export default class TiendaNubeController {
     }
 
     async getMovementsOfArticles(order: any) {
-        try {
-            // const producId = order.products.map((product: any) => product.product_id)
+       try {
 
             let variantIds: number[] = [];
             let productIds: number[] = []
@@ -707,6 +720,29 @@ export default class TiendaNubeController {
                     });
 
                     movOfArticle.push(movementOfArticle);
+                } else {
+                    const resultApp = await this.getApplications()
+                    const resultArt = await this.getArticlesById(resultApp.result[0].tiendaNube.article);
+                    let article = resultArt.result[0]
+                   
+                    let movementOfArticle: MovementOfArticle = MovementOfArticleSchema.getInstance(this.database);
+                    movementOfArticle = Object.assign(movementOfArticle, {
+                        code: article.code,
+                        amount: product.quantity,
+                        description: product.name,
+                        basePrice: article.basePrice,
+                        salePrice: product.price * product.quantity,
+                        unitPrice: product.price,
+                        costPrice: article.costPrice,
+                        discountRate: (order.discount / order.subtotal) * 100,
+                        article: article._id,
+                        modifyStock: true,
+                        quantityForStock: -product.quantity,
+                        stockMovement: 'Salida',
+                        category: article.category._id
+                    });
+
+                    movOfArticle.push(movementOfArticle);
                 }
             }
             return movOfArticle;
@@ -733,6 +769,24 @@ export default class TiendaNubeController {
         return result
     }
 
+    async getApplications() {
+        let result = await new ApplicationController(this.database).getAll({
+            project: {
+                _id: 1,
+                type: 1,
+                tiendaNube: {
+                    article: 1,
+                }
+            },
+            match: {
+                type: ApplicationType.TiendaNube
+
+            },
+        })
+        return result
+
+    }
+
     getOrder = async (
         request: RequestWithUser,
         response: express.Response,
@@ -740,18 +794,21 @@ export default class TiendaNubeController {
     ) => {
         try {
             const { date } = request.body
-            if (!date.desde && !date.hasta) {
+            const db = request.database
+            if (!date.desde || !date.hasta) {
                 return response.send(new Responser(400, 'Debe ponen las fechas correctamente'))
             }
             const dateRangeISO = {
                 desde: new Date(date.desde).toISOString(),
                 hasta: new Date(date.hasta).toISOString()
             };
-            const URL = `https://api.tiendanube.com/v1/${1350756}/orders?per_page=200&created_at_min=${dateRangeISO.desde}&created_at_max=${dateRangeISO.hasta}`;
+            const credential = credentialsTiendaNube.find(credentials => credentials.database === db);
+
+            const URL = `https://api.tiendanube.com/v1/${credential.storeId}/orders?per_page=200&created_at_min=${dateRangeISO.desde}&created_at_max=${dateRangeISO.hasta}`;
 
             const requestOptions = {
                 headers: {
-                    Authentication: 'bearer 7c4682264c62f8f5cd246fac1687278adb8ce508'
+                    Authentication: `bearer ${credential.tokenTiendaNube}`
                 }
             };
             const res = await axios.get(URL, requestOptions);
@@ -762,7 +819,7 @@ export default class TiendaNubeController {
             const createTransaction = res.data.map(async (order: any) => {
                 try {
                     await axios.post(`${config.API_V8_URL}/tienda-nube/add-transaction`, {
-                        "storeId": 1350756,
+                        "storeId": credential.storeId,
                         "event": "order/created",
                         "order": order
                     });
