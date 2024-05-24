@@ -15,6 +15,7 @@ import Resulteable from './../../../util/Resulteable';
 import { CompanyService } from 'app/components/company/company.service';
 import { Company } from '../../company/company';
 import {ArticleService}  from '../../article/article.service'
+import { Article, Type } from '../../article/article'
 
 @Component({
   selector: 'app-list-applications',
@@ -35,6 +36,7 @@ export class ListApplicationsComponent implements OnInit {
   shipmentMethods: ShipmentMethod[]
   paymentMethods: PaymentMethod[]
   companies: Company[]
+  articles: Article[]
   focusEvent = new EventEmitter<boolean>();
   formErrors = {
     userId: 'Este campo es requerido.',
@@ -43,6 +45,7 @@ export class ListApplicationsComponent implements OnInit {
     shipmentMethod: 'Este campo es requerido.',
     paymentMethod: 'Este campo es requerido.',
     company: 'Este campo es requerido.',
+    article: 'Este campo es requerido.',
   };
 
   constructor(
@@ -65,6 +68,7 @@ export class ListApplicationsComponent implements OnInit {
     this.getShipmentMethod();
     this.getPaymentMethod();
     this.getCompany()
+    this.getArticle()
   }
 
   ngAfterViewInit() {
@@ -78,7 +82,8 @@ export class ListApplicationsComponent implements OnInit {
       transactionType: ['', [Validators.required]],
       shipmentMethod: ['', [Validators.required]],
       paymentMethod: ['', [Validators.required]],
-      company: ['', [Validators.required]]
+      company: ['', [Validators.required]],
+      article: ['', [Validators.required]]
     });
 
     this.focusEvent.emit(true)
@@ -129,7 +134,9 @@ export class ListApplicationsComponent implements OnInit {
       "tiendaNube.transactionType._id": 1,
       "tiendaNube.shipmentMethod._id": 1,
       "tiendaNube.paymentMethod._id": 1,
-      "tiendaNube.company._id": 1, "menu.portain": 1,
+      "tiendaNube.company._id": 1,
+      "tiendaNube.article._id": 1,
+      "menu.portain": 1,
       "menu.background": 1,
       "menu.article.font": 1,
       "menu.article.size": 1,
@@ -270,6 +277,20 @@ export class ListApplicationsComponent implements OnInit {
       error => this.showToast(error)
     )
   }
+
+  public getArticle(){
+    let query = `where="type":"${Type.Final}"`;
+    this._articleService.getArticles(query).subscribe(
+      (result) => {
+        if (result) {
+          this.articles = result.articles
+        } else {
+          this.articles = null
+        }
+      },
+      error => this.showToast(error)
+    )
+  }
   
   setValuesForm(tiendaNube, cartaDigital) {
     let tn = tiendaNube.tiendaNube
@@ -281,7 +302,8 @@ export class ListApplicationsComponent implements OnInit {
       transactionType: tn?.transactionType?._id,
       shipmentMethod: tn?.shipmentMethod?._id,
       paymentMethod: tn?.paymentMethod?._id,
-      company: tn?.company?._id
+      company: tn?.company?._id,
+      article: tn?.article?._id
     };
 
     this.tiendaNubeForm.patchValue(formDataTn);

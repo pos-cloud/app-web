@@ -141,6 +141,16 @@ export class Category extends Model {
                 required: false,
             },
             {
+                name: 'tiendaNubeId',
+                visible: false,
+                disabled: false,
+                filter: true,
+                datatype: 'string',
+                project: null,
+                align: 'left',
+                required: false,
+            },
+            {
                 name: 'creationDate',
                 visible: false,
                 disabled: false,

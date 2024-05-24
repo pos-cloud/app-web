@@ -394,12 +394,12 @@ export class TransactionService extends ModelService {
   public syncTiendaNube(value): Observable<any> {
     const URL = `${Config.apiV8URL}tienda-nube/order`;
 
-    // const headers = new HttpHeaders()
-    //   .set('Content-Type', 'application/json')
-    //   .set('Authorization', this._authService.getToken());
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
     return this._http
-    .post(URL, { date: value }, { })
+    .post(URL, { date: value }, { headers: headers})
       .pipe(
         map((res) => {
           return res;

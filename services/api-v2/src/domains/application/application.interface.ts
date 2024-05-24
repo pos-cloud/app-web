@@ -125,7 +125,8 @@ export default interface Application extends Model {
     transactionType: TransactionType,
     shipmentMethod: ShipmentMethod,
     paymentMethod: PaymentMethod,
-    company: Company
+    company: Company,
+    article: Article
   }
   menu: {
     portain: string,
@@ -166,4 +167,5 @@ export enum ApplicationType {
   App = <any>'App',
   Woocommerce = <any>'Woocommerce',
   MercadoLibre = <any>'MercadoLibre',
+  TiendaNube = <any>'TiendaNube'
 }

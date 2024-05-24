@@ -136,6 +136,7 @@ class ApplicationSchema extends Model {
         shipmentMethod: {type: Schema.Types.ObjectId, ref: 'shipment-method'}, 
         paymentMethod:  {type: Schema.Types.ObjectId, ref: 'payment-method'},
         company: {type: Schema.Types.ObjectId, ref: 'company'},
+        article: {type: Schema.Types.ObjectId, ref: 'article'}
       },
       menu: {
         portain: { type: String },
