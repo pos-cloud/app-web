@@ -4,7 +4,8 @@ import { ApplicationService } from '../application.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateMePipe } from '../../../main/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { TransactionTypeService } from '../../transaction-type/transaction-type.service';
 import { TransactionType } from '../../transaction-type/transaction-type';
 import { ShipmentMethodService } from '../../shipment-method/shipment-method.service';
@@ -13,8 +14,8 @@ import { PaymentMethod } from '../../payment-method/payment-method'
 import { ShipmentMethod } from '../../shipment-method/shipment-method.model'
 import Resulteable from './../../../util/Resulteable';
 import { CompanyService } from 'app/components/company/company.service';
-import { Company } from '../../company/company';
-import {ArticleService}  from '../../article/article.service'
+import { Company, CompanyType } from '../../company/company';
+import { ArticleService } from '../../article/article.service'
 import { Article, Type } from '../../article/article'
 
 @Component({
@@ -48,6 +49,102 @@ export class ListApplicationsComponent implements OnInit {
     article: 'Este campo es requerido.',
   };
 
+  searchArticle = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(() => null),
+      switchMap((term) =>
+        this.getArticle(
+          `where="description": { "$regex": "${term}", "$options": "i" },"type":"${Type.Final}"&sort="description":1&limit=10`,
+        ).then((articles) => {
+          return articles;
+        }),
+      ),
+      tap(() => null),
+    );
+
+  formatterArticles = (x: Article) => {
+    return x.description
+  }
+
+  searchCompany = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(() => null),
+      switchMap((term) =>
+        this.getCompany(
+          `where="name": { "$regex": "${term}", "$options": "i" },"type":"${CompanyType.Client}"&sort="name":1&limit=10`,
+        ).then((articles) => {
+          return articles;
+        }),
+      ),
+      tap(() => null),
+    );
+
+  formatterCompany = (x: Company) => {
+    return x.name
+  }
+
+  searchTransactionType = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(() => null),
+      switchMap((term) =>
+        this.getTransactionTypes(
+          `where="name": { "$regex": "${term}", "$options": "i" }&sort="name":1&limit=10`,
+        ).then((transactionTypes) => {
+          return transactionTypes;
+        }),
+      ),
+      tap(() => null),
+    );
+
+  formatterTransactionType = (x: TransactionType) => {
+    return x.name
+  }
+
+  searchPaymentMethod = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(() => null),
+      switchMap((term) =>
+        this.getPaymentMethod(
+          `where="name": { "$regex": "${term}", "$options": "i" }&sort="name":1&limit=10`,
+        ).then((paymentMethod) => {
+          return paymentMethod;
+        }),
+      ),
+      tap(() => null),
+    );
+
+  formatterPaymentMethod = (x: PaymentMethod) => {
+    return x.name
+  }
+
+  searchpShipmentMethod = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(() => null),
+      switchMap((term) =>
+        this.getShipmentMethod(
+          `where="name": { "$regex": "${term}", "$options": "i" }&sort="name":1&limit=10`,
+        ).then((shipmentMethods) => {
+          return shipmentMethods;
+        }),
+      ),
+      tap(() => null),
+    );
+
+  formatterShipmentMethod = (x: ShipmentMethod) => {
+    return x.name
+  }
+
+
   constructor(
     private fb: FormBuilder,
     public _service: ApplicationService,
@@ -64,11 +161,6 @@ export class ListApplicationsComponent implements OnInit {
     this.buildForm();
 
     this.getAllApplication();
-    this.getTransactionTypes();
-    this.getShipmentMethod();
-    this.getPaymentMethod();
-    this.getCompany()
-    this.getArticle()
   }
 
   ngAfterViewInit() {
@@ -132,10 +224,15 @@ export class ListApplicationsComponent implements OnInit {
       "tiendaNube.userId": 1,
       "tiendaNube.token": 1,
       "tiendaNube.transactionType._id": 1,
+      "tiendaNube.transactionType.name": 1,
+      "tiendaNube.shipmentMethod.name": 1,
       "tiendaNube.shipmentMethod._id": 1,
+      "tiendaNube.paymentMethod.name": 1,
       "tiendaNube.paymentMethod._id": 1,
       "tiendaNube.company._id": 1,
+      "tiendaNube.company.name": 1,
       "tiendaNube.article._id": 1,
+      "tiendaNube.article.description": 1,
       "menu.portain": 1,
       "menu.background": 1,
       "menu.article.font": 1,
@@ -176,120 +273,79 @@ export class ListApplicationsComponent implements OnInit {
     );
   }
 
-  public getTransactionTypes(): Promise<TransactionType[]> {
+  public getTransactionTypes(query): Promise<TransactionType[]> {
     return new Promise<TransactionType[]>((resolve, reject) => {
-      let match = {};
-
-      match = {
-        operationType: { $ne: 'D' },
-      };
-
-      this._transactionTypeService
-        .getAll({
-          project: {
-            _id: 1,
-            operationType: 1,
-            name: 1,
-          },
-          match: match,
-        })
-        .subscribe(
-          (result) => {
-            if (result) {
-              this.transactionTypes = result.result
-              resolve(result.result);
-            } else {
-              this.transactionTypes = null
-              resolve(null);
-            }
-          },
-          (error) => {
+      this._transactionTypeService.getTrasactionTypes(query).subscribe(
+        (result) => {
+          if (!result.transactionTypes) {
             resolve(null);
-          },
-        );
-    });
+          } else {
+            resolve(result.transactionTypes);
+          }
+        },
+        (error) => this.showToast(error),
+      );
+    })
   }
 
-  public getShipmentMethod() {
-    this._shipmentMethodService.getAll({
-      project: {
-        _id: 1,
-        name: 1,
-        operationType: 1,
-      },
-      match: {
-        operationType: { $ne: "D" }
-      }
-    }).subscribe(
-      (result) => {
-        if (result) {
-          this.shipmentMethods = result.result
-        } else {
-          this.shipmentMethods = null
-        }
-      },
-      error => this.showToast(error)
-    )
+  public getShipmentMethod(query): Promise<ShipmentMethod[]> {
+    return new Promise<ShipmentMethod[]>((resolve, reject) => {
+      this._shipmentMethodService.getShipmentMethods(query).subscribe(
+        (result) => {
+          if (!result.result) {
+            resolve(null);
+          } else {
+            resolve(result.result);
+          }
+        },
+        (error) => this.showToast(error),
+      );
+    })
   }
 
-  public getPaymentMethod() {
-    this._paymentMethodService.getAll({
-      project: {
-        _id: 1,
-        name: 1,
-        operationType: 1,
-      },
-      match: {
-        operationType: { $ne: "D" }
-      }
-    }).subscribe(
-      (result) => {
-        if (result) {
-          this.paymentMethods = result.result
-        } else {
-          this.paymentMethods = null
-        }
-      },
-      error => this.showToast(error)
-    )
+  public getPaymentMethod(query): Promise<PaymentMethod[]> {
+    return new Promise<PaymentMethod[]>((resolve, reject) => {
+      this._paymentMethodService.getPaymentMethods(query).subscribe(
+        (result) => {
+          if (!result.paymentMethods) {
+            resolve(null);
+          } else {
+            resolve(result.paymentMethods);
+          }
+        },
+        (error) => this.showToast(error),
+      );
+    })
   }
 
-  public getCompany() {
-    this._companyService.getAll({
-      project: {
-        _id: 1,
-        name: 1,
-        operationType: 1,
-        type: 1
-      },
-      match: {
-        type: 'Cliente',
-        operationType: { $ne: "D" }
-      }
-    }).subscribe(
-      (result) => {
-        if (result) {
-          this.companies = result.result
-        } else {
-          this.companies = null
-        }
-      },
-      error => this.showToast(error)
-    )
+  public getCompany(query): Promise<Company[]> {
+    return new Promise<Company[]>((resolve, reject) => {
+      this._companyService.getCompanies(query).subscribe(
+        (result) => {
+          if (!result.companies) {
+            resolve(null);
+          } else {
+            resolve(result.companies);
+          }
+        },
+        (error) => this.showToast(error),
+      );
+    })
   }
 
-  public getArticle(){
-    let query = `where="type":"${Type.Final}"`;
-    this._articleService.getArticles(query).subscribe(
-      (result) => {
-        if (result) {
-          this.articles = result.articles
-        } else {
-          this.articles = null
-        }
-      },
-      error => this.showToast(error)
-    )
+  public getArticle(query): Promise<Article[]> {
+    return new Promise<Article[]>((resolve, reject) => {
+      this._articleService.getArticles(query).subscribe(
+        (result) => {
+          if (!result.articles) {
+            resolve(null);
+          } else {
+            resolve(result.articles);
+          }
+        },
+        (error) => this.showToast(error),
+      );
+    })
   }
   
   setValuesForm(tiendaNube, cartaDigital) {
@@ -299,11 +355,11 @@ export class ListApplicationsComponent implements OnInit {
     const formDataTn = {
       userId: tn?.userId,
       token: tn?.token,
-      transactionType: tn?.transactionType?._id,
-      shipmentMethod: tn?.shipmentMethod?._id,
-      paymentMethod: tn?.paymentMethod?._id,
-      company: tn?.company?._id,
-      article: tn?.article?._id
+      transactionType: tn?.transactionType,
+      shipmentMethod: tn?.shipmentMethod,
+      paymentMethod: tn?.paymentMethod,
+      company: tn?.company,
+      article: tn?.article
     };
 
     this.tiendaNubeForm.patchValue(formDataTn);
@@ -366,8 +422,8 @@ export class ListApplicationsComponent implements OnInit {
     }
   }
 
-  async updateApplication(type) {
-    this.loading = true
+  updateApplication(type) {
+   this.loading = true
     let application = this.applications.find(app => app.type === type)
     let formData = {};
 
