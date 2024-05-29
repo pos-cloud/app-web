@@ -1,13 +1,11 @@
 import * as express from 'express'
 import axios from 'axios'
 import moment = require('moment')
-
 import Responser from '../../utils/responser'
 import Responseable from 'interfaces/responsable.interface'
 import Transaction from './../transaction/transaction.interface'
 import TransactionSchema from '../transaction/transaction.model'
 import RequestWithUser from '../../interfaces/requestWithUser.interface'
-import TransactionTypeController from '../transaction-type/transaction-type.controller'
 import Address from '../address/address.interface'
 import AddressSchema from '../address/address.model'
 import CompanySchema from '../company/company.model'
@@ -20,20 +18,17 @@ import UserController from '../user/user.controller'
 import { TransactionType } from '../transaction-type/transaction-type.interface'
 import MovementOfArticleSchema from '../movement-of-article/movement-of-article.model'
 import MovementOfArticle from '../movement-of-article/movement-of-article.interface'
-import Article from '../article/article.interface'
 import PaymentMethod from '../payment-method/payment-method.interface'
-import PaymentMethodController from '../payment-method/payment-method.controller'
 import TransactionController from '../transaction/transaction.controller'
-import ShipmentMethodController from '../shipment-method/shipment-method.controller'
 import AddressController from '../address/address.controller'
 import CompanyController from '../company/company.controller'
-import VATConditionController from '../vat-condition/vat-condition.controller'
 import MovementOfCashController from '../movement-of-cash/movement-of-cash.controller'
-import config from '../../utils/config'
 import ApplicationController from '../application/application.controller'
 import { ApplicationType } from '../application/application.interface'
 import authMiddleware from './../../middleware/auth.middleware'
 import ensureLic from './../../middleware/license.middleware'
+import TransactionTypeController from '../transaction-type/transaction-type.controller'
+import IdentificationTypeController from '../identification-type/identification-type.controller'
 
 const credentialsTiendaNube = [
     {
@@ -106,72 +101,78 @@ export default class TiendaNubeController {
         response: express.Response,
         next: express.NextFunction) => {
         try {
-            const { storeId, order, event } = request.body;
-            if (typeof order == "undefined") return response.send(new Responser(404, null, 'Order not found', null));
+            const { storeId, order } = request.body;
+            
+            if(!storeId || !order){
+            return response.send(new Responser(404, null, 'No se encuentra ni el ID de la tienda ni la orden.', null));
+            }
+            return this.createTransactionByOrder(storeId, order).then((data) =>{
+                return response.send(new Responser(200,data))
+            }).catch((error)=>{
+                return response.send(new Responser(404, null, error))
+            })
+        } catch (error) {
+            console.log(error)
+            response.send(new Responser(500, null, error));
+        }
+    }
 
+    async createTransactionByOrder(storeId: any, order: any){
+        try{
             const credential = credentialsTiendaNube.find(credentials => credentials.storeId === parseInt(storeId));
-            if (!credential) return response.send(new Responser(404, null, 'credential not found', null));
-
+            if (!credential) return new Responser(404, null, 'credential not found', null)
+    
             this.database = credential.database
             this.user = credential.user
             this.password = credential.password
-
+    
             const token = await this.getToken()
-
-            if (!token) return response.send(new Responser(404, null, 'token not found', null));
-
+    
+            if (!token) return new Responser(404, null, 'token not found', null)
+    
             this.authToken = token
-
             const transaction = await this.getTransaction(order)
         
-            if (transaction.length) {
+            if (transaction.length > 0) {
                 let resp = await this.updateTransaction(order, transaction[0])
-                return response.send(new Responser(200, resp));
+                return new Responser(200, resp);
             }
+    
+            const application = await this.getApplications()
 
-            const transactionType = await this.getTiendaNubeTransactionsType(this.database);
-
-            if (!transactionType) return response.send(new Responser(404, null, 'TransactionType not found', null));
-
+            const transactionType = await this.getTransactionType(application.result[0].tiendaNube.transactionType)
+       
             const company = await this.getCompany(order, transactionType)
-
-            if (!company) return response.send(new Responser(404, null, 'Company not found', null));
-
+    
+            if (!company) return new Responser(404, null, 'Company not found', null);
+    
             let address = null
             if (order.shipping_address.id !== 0) {
                 address = await this.createAddress(order, transactionType)
-
-                if (!address) return response.send(new Responser(404, null, 'Address not found', null))
+    
+                if (!address)  throw new Error('Address not found');
             }
-
-            const paymentMethod = await this.getPaymentMethod()
-
-            if (!paymentMethod) return response.send(new Responser(404, null, 'paymentMethod not found', null));
-
-            const movementsOfCash = this.getMovementsOfCash(order, paymentMethod.result[0])
-
-            if (!movementsOfCash) return response.send(new Responser(404, null, 'movementsOfCash not found', null))
-
+    
+            const movementsOfCash = this.getMovementsOfCash(order, application.result[0].tiendaNube.paymentMethod)
+    
+            if (!movementsOfCash) throw new Error('movementsOfCash not found');
+       
             const movementOfArticle = await this.getMovementsOfArticles(order)
-
-            //  if (!movementOfArticle.length) return response.send(new Responser(404, null, 'movementOfArticle not found', null));
-
+    
+            if (!movementOfArticle.length)  throw new Error('movementOfArticle not found');
+    
             const user = await this.getUser(this.database)
-
-            if (!user) return response.send(new Responser(404, null, 'user not found', null));
-
-            const shipmentMethod = await this.shipmentMethod()
-
-            if (!shipmentMethod) return response.send(new Responser(404, null, 'shipmentMethod not found', null));
-
+    
+            if (!user) throw new Error('user not found');
+        
             let statusOrder: any = {
                 'open': 'Abierto',
                 'closed': 'Cerrado',
                 'cancelled': 'Anulado'
             };
-
+    
             let transactionTiendaNube: Transaction = TransactionSchema.getInstance(this.database)
-
+    
             transactionTiendaNube = Object.assign(transactionTiendaNube, {
                 tiendaNubeId: order.id,
                 letter: "X",
@@ -183,22 +184,21 @@ export default class TiendaNubeController {
                 endDate2: order.created_at,
                 endDate: moment(order.created_at).format("MM/DD/YYYY"),
                 balance: order.total,
-                shipmentMethod: shipmentMethod,
+                shipmentMethod: application.result[0].tiendaNube.shipmentMethod,
                 paymentMethodEcommerce: order.payment_details.method,
-                type: transactionType._id,
+                type: application.result[0].tiendaNube.transactionType,
                 company: company,
                 deliveryAddress: address !== null ? address._id : address,
                 startDate: order.created_at,
                 observation: order.note
             })
-
+    
             const createTransaction = await new TransactionUC(this.database, this.authToken).createTransaction(transactionTiendaNube, movementsOfCash, movementOfArticle, user.result[0])
-
-            return response.send(new Responser(200, { createTransaction }));
-
-        } catch (error) {
-            console.log(error)
-            response.send(new Responser(500, null, error));
+    
+            return new Responser(200, { createTransaction });
+    
+        }catch(err){
+            console.log(err)
         }
     }
 
@@ -298,7 +298,7 @@ export default class TiendaNubeController {
     }
 
     async updateTransaction(order: any, transaction: Transaction) {
-
+     
         let statusOrder: any = {
             'open': 'Abierto',
             'closed': 'Cerrado',
@@ -329,7 +329,8 @@ export default class TiendaNubeController {
         })
         let movOfCash: MovementOfCash = getMovementsOfCash.result[0]
 
-        movOfCash.status = paymentStatus[order.payment_status]
+        movOfCash.status = paymentStatus[order.payment_status]  
+        
 
         let updateMovOfCash = await new MovementOfCashController(this.database).update(movOfCash._id, movOfCash)
 
@@ -427,31 +428,6 @@ export default class TiendaNubeController {
         }
     }
 
-    getTiendaNubeTransactionsType = async (database: string) => {
-        try {
-            const transactionType = await new TransactionTypeController(database).getAll({
-                project: {
-                    _id: 1,
-                    name: 1,
-                    allowAPP: 1,
-                    'application._id': 1,
-                    'application.name': 1,
-                    'application.type': 1,
-                    requestCompany: 1,
-                    transactionMovement: 1,
-                    company: 1,
-                },
-                match: {
-                    allowAPP: true,
-                    'application.type': 'TiendaNube'
-                },
-            });
-            return transactionType.result[0];
-        } catch (error) {
-            throw error;
-        }
-    }
-
     getArticlesById = async (producId: any) => {
         try {
             const ArticlesObj: any = {};
@@ -503,7 +479,8 @@ export default class TiendaNubeController {
                         _id: 1,
                         name: 1,
                         fantasyName: 1,
-                        emails: 1
+                        emails: 1,
+                        identificationValue: 1
                     },
                     match: {
                         emails: emails
@@ -527,7 +504,6 @@ export default class TiendaNubeController {
                 return company.result[0].vatCondition
             }
 
-
         } catch (error) {
             throw error;
         }
@@ -542,6 +518,7 @@ export default class TiendaNubeController {
                         resolve(company[0]);
                     } else {
                         const companyType = await this.getCompanyByIdentification('', transactionType.company._id);
+                        const identificationType = await this.getIdentificationType()
                         let company: Company = CompanySchema.getInstance(this.database);
                         company = Object.assign(company, {
                             name: order.customer.name,
@@ -556,7 +533,8 @@ export default class TiendaNubeController {
                             addressNumber: order.customer.default_address.number,
                             zipCode: order.customer.default_address.zipCode,
                             floorNumber: order.customer.default_address.floor,
-                            vatCondition: companyType
+                            vatCondition: companyType,
+                            identificationType: identificationType._id
                         });
 
                         await new CompanyController(this.database).save(company)
@@ -569,19 +547,21 @@ export default class TiendaNubeController {
                         resolve(company[0]);
                     } else {
                         const companyType = await this.getCompanyByIdentification('', transactionType.company._id);
+                        const identificationType = await this.getIdentificationType()
                         let company: Company = CompanySchema.getInstance(this.database);
                         company = Object.assign(company, {
-                            name: order.billing_name,
+                            name: order.contact_name,
                             type: 'Cliente',
                             address: order.billing_address,
                             city: order.billing_city,
                             phones: order.billing_phone,
                             emails: order.contact_email,
-                            identificationValue: order.contact_identification,
+                            identificationValue: order.contact_identification || 99999999,
                             addressNumber: order.billing_number,
                             zipCode: order.billing_zipcode,
                             floorNumber: order.billing_floor,
-                            vatCondition: companyType
+                            vatCondition: companyType,
+                            identificationType: identificationType._id
                         });
 
                         await new CompanyController(this.database).save(company)
@@ -596,6 +576,7 @@ export default class TiendaNubeController {
     }
 
     createAddress(order: any, transactionType: TransactionType) {
+        
         return new Promise<Address>(async (resolve, reject) => {
             try {
                 const company = await this.getCompany(order, transactionType)
@@ -658,20 +639,6 @@ export default class TiendaNubeController {
             type: paymentMethod._id
         })
         return [movementOfCash]
-    }
-
-    async shipmentMethod() {
-        const shipmentMethod = await new ShipmentMethodController(this.database).getAll({
-            project: {
-                _id: 1,
-                name: 1,
-                'applications.type': 1
-            },
-            match: {
-                'applications.type': "TiendaNube"
-            }
-        })
-        return shipmentMethod.result[0]._id
     }
 
     async getMovementsOfArticles(order: any) {
@@ -752,23 +719,6 @@ export default class TiendaNubeController {
         }
     }
 
-    async getPaymentMethod() {
-        let result = await new PaymentMethodController(this.database).getAll({
-            project: {
-                _id: 1,
-                name: 1,
-                acceptReturned: 1,
-                isCurrentAccount: 1,
-                'applications.type': 1
-            },
-            match: {
-                'applications.type': "TiendaNube"
-
-            },
-        })
-        return result
-    }
-
     async getApplications() {
         let result = await new ApplicationController(this.database).getAll({
             project: {
@@ -776,6 +726,10 @@ export default class TiendaNubeController {
                 type: 1,
                 tiendaNube: {
                     article: 1,
+                    company: 1,
+                    transactionType: 1,
+                    paymentMethod: 1,
+                    shipmentMethod: 1
                 }
             },
             match: {
@@ -785,6 +739,36 @@ export default class TiendaNubeController {
         })
         return result
 
+    }
+
+    async getTransactionType(id: string){
+        let result = await new TransactionTypeController(this.database).getAll({
+            project: {
+                _id: 1,
+                company: 1
+               
+            },
+            match: {
+                _id: { $oid: id }
+
+            },
+        })
+        return result.result[0]
+    }
+
+    async getIdentificationType(){
+        let result = await new IdentificationTypeController(this.database).getAll({
+            project: {
+                _id: 1,
+                name: 1
+               
+            },
+            match: {
+                name: 'DNI'
+
+            },
+        })
+        return result.result[0]
     }
 
     getOrder = async (
@@ -816,19 +800,9 @@ export default class TiendaNubeController {
             if (!res.data.length) {
                 return response.send('No hay ordenes a sincronizar')
             }
-            const createTransaction = res.data.map(async (order: any) => {
-                try {
-                    await axios.post(`${config.API_V8_URL}/tienda-nube/add-transaction`, {
-                        "storeId": credential.storeId,
-                        "event": "order/created",
-                        "order": order
-                    });
-                } catch (error) {
-                    console.error(`Error al crear la orden ${order.id}: ${error.message}`);
-                }
-            });
-
-            await Promise.all(createTransaction);
+            for (const order of res.data) {
+                await this.createTransactionByOrder(credential.storeId, order);
+            }
             return response.send(new Responser(200, 'Las ordenes se sincronizaron correctamente'))
         } catch (error) {
             console.log(error)
