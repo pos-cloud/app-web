@@ -40,60 +40,70 @@
                                     </div>
                                 </div>
                                 <div class="form-group col-md-3">
+                                    <ng-template #rtTransactionType let-r="result" let-t="term">
+                                        <ngb-highlight [result]="r.name" [term]="t">
+                                        </ngb-highlight>
+                                    </ng-template>
                                     <label for="transactionType" class="control-label">Tipo de transacción:</label>
-                                    <select class="form-control" formControlName="transactionType">
-                                        <option *ngFor="let transactionType of transactionTypes"
-                                            [value]="transactionType._id" [focus]="focusEvent">
-                                            {{transactionType.name}}</option>
-                                    </select>
+                                    <input id="transactionType" type="text" class="form-control" formControlName="transactionType"
+                                    name="transactionType" [ngbTypeahead]="searchTransactionType" [resultTemplate]="rtTransactionType"
+                                     [inputFormatter]="formatterTransactionType"/>
                                     <div *ngIf="tiendaNubeForm.get('transactionType').invalid && (tiendaNubeForm.get('transactionType').dirty || tiendaNubeForm.get('transactionType').touched)"
                                         class="alert alert-danger">
                                         {{ formErrors.transactionType }}
                                     </div>
                                 </div>
                                 <div class="form-group col-md-3">
+                                    <ng-template #rtShipmentMethod let-r="result" let-t="term">
+                                        <ngb-highlight [result]="r.name" [term]="t">
+                                        </ngb-highlight>
+                                    </ng-template>
                                     <label for="shipmentMethod" class="control-label">Método de entrega:</label>
-                                    <select class="form-control" formControlName="shipmentMethod">
-                                        <option *ngFor="let shipmentMethod of shipmentMethods"
-                                            [value]="shipmentMethod._id" [focus]="focusEvent">
-                                            {{shipmentMethod.name}}</option>
-                                    </select>
+                                    <input id="shipmentMethod" type="text" class="form-control" formControlName="shipmentMethod"
+                                    name="shipmentMethod" [ngbTypeahead]="searchpShipmentMethod" [resultTemplate]="rtShipmentMethod"
+                                     [inputFormatter]="formatterShipmentMethod"/>
                                     <div *ngIf="tiendaNubeForm.get('shipmentMethod').invalid && (tiendaNubeForm.get('shipmentMethod').dirty || tiendaNubeForm.get('shipmentMethod').touched)"
                                         class="alert alert-danger">
                                         {{ formErrors.shipmentMethod }}
                                     </div>
                                 </div>
                                 <div class="form-group col-md-3">
+                                    <ng-template #rtPaymentMethod let-r="result" let-t="term">
+                                        <ngb-highlight [result]="r.name" [term]="t">
+                                        </ngb-highlight>
+                                    </ng-template>
                                     <label for="paymentMethod" class="control-label">Método de pago:</label>
-                                    <select class="form-control" formControlName="paymentMethod">
-                                        <option *ngFor="let paymentMethod of paymentMethods" [value]="paymentMethod._id"
-                                            [focus]="focusEvent">
-                                            {{paymentMethod.name}}</option>
-                                    </select>
+                                    <input id="paymentMethod" type="text" class="form-control" formControlName="paymentMethod"
+                                    name="paymentMethod" [ngbTypeahead]="searchPaymentMethod" [resultTemplate]="rtPaymentMethod"
+                                     [inputFormatter]="formatterPaymentMethod"/>
                                     <div *ngIf="tiendaNubeForm.get('paymentMethod').invalid && (tiendaNubeForm.get('paymentMethod').dirty || tiendaNubeForm.get('paymentMethod').touched)"
                                         class="alert alert-danger">
                                         {{ formErrors.paymentMethod }}
                                     </div>
                                 </div>
                                 <div class="form-group col-md-3">
+                                    <ng-template #rtCompany let-r="result" let-t="term">
+                                        <ngb-highlight [result]="r.name" [term]="t">
+                                        </ngb-highlight>
+                                    </ng-template>
                                     <label for="company" class="control-label">Cliente:</label>
-                                    <select class="form-control" formControlName="company">
-                                        <option *ngFor="let company of companies" [value]="company._id"
-                                            [focus]="focusEvent">
-                                            {{company.name}}</option>
-                                    </select>
+                                    <input id="company" type="text" class="form-control" formControlName="company"
+                                    name="company" [ngbTypeahead]="searchCompany" [resultTemplate]="rtCompany"
+                                     [inputFormatter]="formatterCompany"/>
                                     <div *ngIf="tiendaNubeForm.get('company').invalid && (tiendaNubeForm.get('company').dirty || tiendaNubeForm.get('company').touched)"
                                         class="alert alert-danger">
                                         {{ formErrors.company }}
                                     </div>
                                 </div>
                                 <div class="form-group col-md-3">
+                                    <ng-template #rtArticles let-r="result" let-t="term">
+                                        <ngb-highlight [result]="r.description" [term]="t">
+                                        </ngb-highlight>
+                                    </ng-template>
                                     <label for="article" class="control-label">artículo default:</label>
-                                    <select class="form-control" formControlName="article">
-                                        <option *ngFor="let article of articles" [value]="article._id"
-                                            [focus]="focusEvent">
-                                            {{article.description}}</option>
-                                    </select>
+                                    <input id="article" type="text" class="form-control" formControlName="article"
+                                    name="article" [ngbTypeahead]="searchArticle" [resultTemplate]="rtArticles"
+                                     [inputFormatter]="formatterArticles"/>
                                     <div *ngIf="tiendaNubeForm.get('article').invalid && (tiendaNubeForm.get('article').dirty || tiendaNubeForm.get('article').touched)"
                                         class="alert alert-danger">
                                         {{ formErrors.article }}
