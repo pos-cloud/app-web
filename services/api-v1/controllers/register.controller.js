@@ -30,6 +30,7 @@ let Tax;
 let Permission;
 let companyNumber;
 let Branch;
+let Application;
 let Deposit;
 let Origin;
 let IdentificationType;
@@ -168,23 +169,29 @@ async function register(req, res, next) {
 			articles: true,
 			companies: {
 				client: true,
-				provider: true
+				clientAccount: true,
+				clientSummary: true,
+				provider: true,
+				providerAccount: true,
+				providerSummary: true,
+				field:false,
+				group:false
 			},
 			config: true,
 			money: true,
-			production: true,
+			production: false,
 			purchases: true,
 			report: true,
 			sales: {
 				counter: true,
-				delivery: true,
+				delivery: false,
 				resto: true,
 				voucherReader: false,
-				webOrders: true
+				webOrders: false
 			},
 			stock: true,
 			gallery: true,
-			resto: true
+			resto: false
 		};
 		permissionAdmin.creationDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 		permissionAdmin.operationType = 'C';
@@ -228,6 +235,21 @@ async function register(req, res, next) {
 			if (v.description === 'Consumidor Final') vatConditionDefect = result;
 		}
 
+		let applications = [
+			{ type: "TiendaNube", name: "TiendaNube", url: "http://TiendaNube", order: 100 },
+			{ type: "Carta digital", name: "Carta digital", url: "http://Carta digital", order: 110 }
+		]
+
+		for (let a of applications) {
+			let application = new Application()
+			application = Object.assign(application, a);
+			application.creationUser = userAdmin;
+			application.creationDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+			application.operationType = 'C';
+
+			await saveApplication(application)
+		}
+
 		let identificationTypes = [{ name: 'CUIT', code: 80 }, { name: 'DNI', code: 96 }];
 		code = 0;
 
@@ -241,10 +263,11 @@ async function register(req, res, next) {
 		}
 
 		let companies = [
-			{ name: 'Consumidor final', type: 'Cliente'  }
+			{ name: 'Consumidor final', type: 'Cliente' }
 		];
 
 		code = 1;
+		let getIdentificationTypeDNI = await IdentificationType.find({ 'name': 'DNI' })
 		for (let c of companies) {
 			let company = new Company();
 			company = Object.assign(company, c);
@@ -252,7 +275,7 @@ async function register(req, res, next) {
 			company.vatCondition = vatConditionDefect;
 			company.identificationValue = '99999999'
 			company.allowCurrentAccount = true;
-			company.identificationType = identificationTypeDNI;
+			company.identificationType = getIdentificationTypeDNI[0]._id;
 			company.entryDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 			company.entryDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 			company.creationDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
@@ -419,20 +442,6 @@ async function register(req, res, next) {
 			}
 		}
 
-		categoryDefect = new Category();
-		categoryDefect.order = 1;
-		categoryDefect.description = 'Gaseosas';
-		categoryDefect.creationUser = userAdmin;
-		categoryDefect.creationDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-		categoryDefect.operationType = 'C';
-		categoryDefect = await saveCategory(categoryDefect);
-
-		let make = new Make();
-		make.description = 'Coca Cola';
-		make.creationUser = userAdmin;
-		make.creationDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-		make.operationType = 'C';
-		makeDefect = await saveMake(make);
 
 		let unitsOfMeasurements = [
 			{ code: '14', abbreviation: 'g', name: 'gramos' },
@@ -453,36 +462,6 @@ async function register(req, res, next) {
 			const result = await saveUnitOfMeasurement(unitOfMeasurement);
 			if (u.name === 'unidades') unitOfMeasurementDefect = result;
 		}
-
-		let article = new Article();
-		article.type = 'Final';
-		article.containsVariants = false;
-		article.code = '0000000001';
-		article.barcode = '7790895000430';
-		article.description = 'Coca 1.5 Lts';
-		article.posDescription = 'Coca 1.5 Lts';
-		article.unitOfMeasurement = unitOfMeasurementDefect;
-		article.basePrice = 50;
-		article.taxes = [{
-			tax: tax21,
-			percentage: 21,
-			taxBase: 0,
-			taxAmount: 10.5
-		}];
-		article.costPrice = 60.5;
-		article.markupPercentage = 100;
-		article.markupPrice = 60.5;
-		article.salePrice = 121;
-		article.make = makeDefect;
-		article.category = categoryDefect;
-		article.allowPurchase = true;
-		article.allowSale = true;
-		article.allowSaleWithoutStock = true;
-		article.printIn = 'Mostrador';
-		article.creationUser = userAdmin;
-		article.creationDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-		article.operationType = 'C';
-		await saveArticle(article);
 
 		let config = new Config();
 		config.numberCompany = pad(companyNumber, 6);
@@ -533,7 +512,7 @@ function existsDatabase(database) {
 			Database.find(where)
 				.exec((err, databases) => {
 					if (err) throw err;
-					else if (databases && databases.length > 0) reject({ 'status': 409, message: 'El Nombre de negocio ya se encuentra registrado.'});
+					else if (databases && databases.length > 0) reject({ 'status': 409, message: 'El Nombre de negocio ya se encuentra registrado.' });
 					resolve();
 				});
 		} catch (err) { reject(err); }
@@ -547,7 +526,7 @@ function existsEmail(email) {
 			Database.find(where)
 				.exec((err, databases) => {
 					if (err) reject(err);
-					else if (databases && (databases.length > 0)) reject({ 'status': 409, message: 'El email " + email + " ya se encuentra registrado.'});
+					else if (databases && (databases.length > 0)) reject({ 'status': 409, message: 'El email " + email + " ya se encuentra registrado.' });
 					resolve();
 				});
 		} catch (err) {
@@ -719,6 +698,18 @@ function saveVATCondition(vatCondition) {
 				reject(err);
 			} else {
 				resolve(vatConditionSaved);
+			}
+		});
+	});
+}
+
+function saveApplication(application) {
+	return new Promise((resolve, reject) => {
+		application.save((err, applicationSaved) => {
+			if (err) {
+				reject(err);
+			} else {
+				resolve(applicationSaved);
 			}
 		});
 	});
@@ -1181,6 +1172,12 @@ function initConnectionDB(database) {
 		schema: RoomSchema,
 		connection: database
 	});
+
+	let ApplicationSchema = require('./../models/application');
+	Application = new Model('application', {
+		schema: ApplicationSchema,
+		connection: database
+	})
 
 	let BranchSchema = require('./../models/branch');
 	Branch = new Model('branch', {
