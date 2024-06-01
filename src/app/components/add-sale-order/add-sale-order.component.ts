@@ -1186,8 +1186,8 @@ export class AddSaleOrderComponent {
 
           this.movementsOfArticles.forEach((mov: MovementOfArticle) => {
             if (
-              mov._id.toString() !== movementOfArticle._id.toString() &&
-              mov.article._id.toString() === movementOfArticle.article._id.toString()
+              mov?._id?.toString() !== movementOfArticle?._id?.toString() &&
+              mov?.article?._id.toString() === movementOfArticle?.article?._id.toString()
             ) {
               totalStock += mov.amount - mov.quantityForStock;
             }

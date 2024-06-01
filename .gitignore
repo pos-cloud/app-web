@@ -6,7 +6,7 @@
 /out-tsc
 package-lock.json
 settings.json
-
+/services
 # dependencies
 /node_modules
 
