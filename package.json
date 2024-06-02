@@ -36,7 +36,6 @@
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
     "acorn": "^8.7.0",
-    "angular-in-memory-web-api": "^0.13.0",
     "bootstrap": "^4.3.1",
     "core-js": "2.5.3",
     "d3": "4.13.0",
@@ -61,7 +60,6 @@
     "rxjs-compat": "^6.5.2",
     "simple-keyboard": "^2.27.56",
     "tether": "^1.4.0",
-    "tslib": "^2.0.0",
     "xlsx": "^0.17.5",
     "zone.js": "~0.11.4"
   },
