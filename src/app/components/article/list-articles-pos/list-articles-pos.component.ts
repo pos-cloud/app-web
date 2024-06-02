@@ -13,7 +13,7 @@ import { Transaction } from '../../transaction/transaction';
 import { ArticleService } from '../article.service';
 
 import { RoundNumberPipe } from '../../../main/pipes/round-number.pipe';
-import { TransactionMovement } from '../../transaction-type/transaction-type';
+import { StockMovement, TransactionMovement } from '../../transaction-type/transaction-type';
 import { ArticleFields } from 'app/components/article-field/article-fields';
 import { ArticleFieldType } from 'app/components/article-field/article-field';
 import { FilterPipe } from 'app/main/pipes/filter.pipe';
@@ -26,7 +26,7 @@ import { PriceList } from 'app/components/price-list/price-list';
 import { PriceListService } from 'app/components/price-list/price-list.service';
 import { CompanyType } from 'app/components/company/company';
 import { TransactionService } from 'app/components/transaction/transaction.service';
-import { Structure } from 'app/components/structure/structure';
+import { Structure, Utilization } from 'app/components/structure/structure';
 import { StructureService } from 'app/components/structure/structure.service';
 import { TaxService } from 'app/components/tax/tax.service';
 import { Tax } from 'app/components/tax/tax';
@@ -287,7 +287,7 @@ export class ListArticlesPosComponent implements OnInit {
         });
     }
 
-    async addItem(articleSelected: Article, amount?: number, salePrice?: number) {
+    async addItem(articleSelected: Article, amount?: number, salePrice?: number, stockMovement?: StockMovement) {
 
         let err: boolean = false;
 
@@ -357,7 +357,7 @@ export class ListArticlesPosComponent implements OnInit {
                         }
 
                         if (amount && amount > 0) movementOfArticle.amount = amount;
-                        movementOfArticle.stockMovement = this.transaction.type.stockMovement;
+                        movementOfArticle.stockMovement = stockMovement ? stockMovement : this.transaction.type.stockMovement;
 
                         let quotation = 1;
                         if (this.transaction.quotation) {
@@ -541,6 +541,7 @@ export class ListArticlesPosComponent implements OnInit {
             "parent._id": 1,
             "child._id": 1,
             "optional": 1,
+            "utilization": 1,
             "quantity": 1,
             operationType: 1
         }
@@ -569,8 +570,12 @@ export class ListArticlesPosComponent implements OnInit {
                     let structures: Structure[] = result[0].structures
                     if (structures.length > 0) {
                         parent = await this.addItem(articleSelected, amount, salePrice)
-                        for (const iterator of structures) {
-                            child.push(await this.addItem(iterator.child, iterator.quantity))
+                        for (const struct of structures) {
+                            if(struct.utilization == Utilization.Production) {
+                                child.push(await this.addItem(struct.child, struct.quantity, null, StockMovement.Outflows))
+                            } else {
+                                child.push(await this.addItem(struct.child, struct.quantity))
+                            }
                         }
                     } else {
                         parent = await this.addItem(articleSelected, amount, salePrice)
