@@ -3194,6 +3194,7 @@ export class AddSaleOrderComponent {
       }
 
       // ACTUALIZACION DE ORDENES DE PRODUCCION
+      // esto es solo para actualizar el estado de la orden cuando todos los movimientos de articulos fueron leidos
       if (this.transaction.type.transactionMovement === TransactionMovement.Production) {
         await this.updateOrdenOfProduction(this.transaction._id);
       }
@@ -4014,11 +4015,15 @@ export class AddSaleOrderComponent {
       let query = 'where="_id":"' + this.filterArticle + '"';
       const mov = await this.getMovementsOfArticles(query);
 
+      //validate read
+      if (mov.length === 0 || mov[0].read >= mov[0].amount) {
+        this.showToast(null, 'info', `El producto ya fue cerrado`);
+        return;
+      }
 
       if(mov?.[0]?.article) {
         article = mov[0].article;
         this.listArticlesComponent.movementOfArticleOrigin = mov[0];
-        // update mov article 
       }
     }
 
