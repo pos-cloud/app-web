@@ -946,7 +946,6 @@ export default class ArticleUC {
 					let newCategory: Category = CategorySchema.getInstance(this.database)
 					newCategory = Object.assign(newCategory, {
 						description: description,
-						tiendaNubeId: item.categories[0].id
 					})
 					const result = await new CategoryController(this.database).save(newCategory);
 					categoriesObj[description] = newCategory;
@@ -1224,10 +1223,6 @@ export default class ArticleUC {
 		let variant: Variant[] = await new VariantController(this.database).find({
 			articleParent: new ObjectId(id.toString()),
 		}, {})
-		// variant.forEach((item: any) => {
-		// 	VariantObj[item._id] = item;
-		// });
-		//console.log(VariantObj)
 		return variant
 
 	}
