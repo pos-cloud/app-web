@@ -101,12 +101,12 @@ export default class TiendaNubeController {
         response: express.Response,
         next: express.NextFunction) => {
         try {
-            const { storeId, order } = request.body;
+            const { storeId, order, event} = request.body;
             
             if(!storeId || !order){
             return response.send(new Responser(404, null, 'No se encuentra ni el ID de la tienda ni la orden.', null));
             }
-            return this.createTransactionByOrder(storeId, order).then((data) =>{
+            return this.createTransactionByOrder(storeId, order, event).then((data) =>{
                 return response.send(new Responser(200,data))
             }).catch((error)=>{
                 return response.send(new Responser(404, null, error))
@@ -117,7 +117,7 @@ export default class TiendaNubeController {
         }
     }
 
-    async createTransactionByOrder(storeId: any, order: any){
+    async createTransactionByOrder(storeId: any, order: any, event?: string){
         try{
             const credential = credentialsTiendaNube.find(credentials => credentials.storeId === parseInt(storeId));
             if (!credential) return new Responser(404, null, 'credential not found', null)
@@ -133,7 +133,7 @@ export default class TiendaNubeController {
             this.authToken = token
             const transaction = await this.getTransaction(order)
         
-            if (transaction.length > 0) {
+            if (transaction.length > 0 || event === "order/updated") {
                 let resp = await this.updateTransaction(order, transaction[0])
                 return new Responser(200, resp);
             }

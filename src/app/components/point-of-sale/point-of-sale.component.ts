@@ -442,7 +442,7 @@ export class PointOfSaleComponent implements OnInit {
 
             match["operationType"] = { "$ne": "D" }
 
-            if (this.user && this.user.permission && this.user.permission.transactionTypes && this.user.permission.transactionTypes.length > 0) {
+            if (this.user && this.user.permission && this.user.permission.transactionTypes && this.user.permission.transactionTypes.length > 0 && !match['_id']) {
                 let transactionTypes = [];
                 this.user.permission.transactionTypes.forEach(element => {
                     transactionTypes.push({ "$oid": element });
