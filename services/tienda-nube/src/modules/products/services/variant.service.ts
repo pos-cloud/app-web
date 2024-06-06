@@ -19,6 +19,7 @@ export class VariantProduct {
     );
     const variantProducts = await foundCollection
       .find({
+        operationType: { $ne: "D" },
         articleParent: new ObjectId(productId.toString()),
       })
       .toArray();
