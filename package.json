@@ -3,7 +3,6 @@
   "version": "4.4.0",
   "license": "MIT",
   "scripts": {
-    "ng": "ng",
     "start": "ng serve -o",
     "build": "ng build",
     "test": "ng test",
@@ -17,8 +16,7 @@
     "api-v1": "cd services/api-v1 && npm run start",
     "api-v2": "cd services/api-v2 && npm run dev",
     "print": "cd services/print && npm run dev",
-    "storage": "cd services/storage && npm run start:dev",
-    "dev": "concurrently -n 'Angular,APIv1,APIv2,Storage,TiendaNube,Print' -c 'red,blue,yellow,magenta,cyan,green' \"ng serve\" \"npm run api-v1\" \"npm run api-v2\" \"npm run storage\" \"npm run tienda-nube\" \"npm run print\""
+    "storage": "cd services/storage && npm run start:dev"
   },
   "private": true,
   "dependencies": {
@@ -74,7 +72,6 @@
     "@typescript-eslint/eslint-plugin": "^5.27.0",
     "@typescript-eslint/parser": "^5.27.0",
     "ajv": "^7.2.4",
-    "concurrently": "^8.2.2",
     "eslint": "^8.16.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-standard": "^17.0.0",
