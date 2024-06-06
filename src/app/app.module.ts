@@ -15,7 +15,7 @@ import {
   NgbAlertModule,
   NgbNavModule,
 } from '@ng-bootstrap/ng-bootstrap'; // https://ng-bootstrap.github.io/1
-import {NguCarouselModule} from '@ngu/carousel';
+// import {NguCarouselModule} from '@ngu/carousel';
 import {TranslateModule, TranslateLoader} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {NgMultiSelectDropDownModule} from 'ng-multiselect-dropdown';
@@ -112,9 +112,9 @@ import {ListEmployeesComponent} from './components/employee/list-employees/list-
 import {SelectEmployeeComponent} from './components/employee/select-employee/select-employee.component';
 import {ExportersModule} from './components/export/exporters.module';
 import {GalleryService} from './components/gallery/gallery.service';
-import {GalleryComponent} from './components/gallery/gallery/gallery.component';
-import {ListGalleriesComponent} from './components/gallery/list-galleries/list-galleries.component';
-import {ViewGalleryComponent} from './components/gallery/view-gallery/view-gallery.component';
+// import {GalleryComponent} from './components/gallery/gallery/gallery.component';
+// import {ListGalleriesComponent} from './components/gallery/list-galleries/list-galleries.component';
+//import {ViewGalleryComponent} from './components/gallery/view-gallery/view-gallery.component';
 import {IdentificationTypeService} from './components/identification-type/identification-type.service';
 import {AddIdentificationTypeComponent} from './components/identification-type/identification-type/add-identification-type.component';
 import {ListIdentificationTypesComponent} from './components/identification-type/list-identification-types/list-identification-types.component';
@@ -414,9 +414,9 @@ export function createTranslateLoader(http: HttpClient) {
     SelectTableComponent,
     ResourceComponent,
     ListResourcesComponent,
-    GalleryComponent,
-    ListGalleriesComponent,
-    ViewGalleryComponent,
+    // GalleryComponent,
+    // ListGalleriesComponent,
+   // ViewGalleryComponent,
     EmailTemplateComponent,
     ListEmailTemplatesComponent,
     SelectChecksComponent,
@@ -460,7 +460,7 @@ export function createTranslateLoader(http: HttpClient) {
     }),
     //SocketIoModule.forRoot(configSocket),
     ToastrModule.forRoot(),
-    NguCarouselModule,
+    // NguCarouselModule,
     NgxTinymceModule.forRoot({
       //baseURL: '//cdn.bootcss.com/tinymce/4.7.13/',
       baseURL: '//cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.0/',

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { GalleryComponent } from '../gallery/gallery.component';
 import { GalleryService } from 'app/components/gallery/gallery.service';
-import { Socket } from 'ngx-socket-io';
+// import { Socket } from 'ngx-socket-io';
 import { Config } from 'app/app.config';
 
 @Component({
@@ -31,7 +31,7 @@ export class ListGalleriesComponent implements OnInit {
         public _router: Router,
         public _modalService: NgbModal,
         public alertConfig: NgbAlertConfig,
-        private socket: Socket
+        // private socket: Socket
 
     ) { }
 
@@ -129,10 +129,10 @@ export class ListGalleriesComponent implements OnInit {
         }
     };
 
-    public sendSocket(message): void {
+    // public sendSocket(message): void {
 
-        this.socket.emit('sync_gallery', message);
-    }
+    //     this.socket.emit('sync_gallery', message);
+    // }
 
 
     public addItem(gallerySelected) {

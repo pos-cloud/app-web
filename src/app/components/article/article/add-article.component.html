@@ -3,8 +3,8 @@
     <h4 class="modal-title" *ngIf="operation==='update'">Editar {{ articleType }} {{article.code}} -
         {{article.description}}</h4>
     <h4 class="modal-title" *ngIf="operation==='view' || operation==='delete'">{{ articleType }} {{article.code}} - {{article.description}}</h4>
-    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
-        <span aria-hidden="true">&times;</span>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+        <!-- <span aria-hidden="true">&times;</span> -->
     </button>
 </div>
 <section class="container-fluid">
