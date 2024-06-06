@@ -6,9 +6,8 @@
       </div>
     </div>
     <br>
-    <div class="row center-content">
-      <h5 *ngIf="company !== 'syf'">Ingresa a tu cuenta</h5>
-      <h5 *ngIf="company === 'syf'">SyF Colchones y Sommiers</h5>
+    <div class="row" align="center">
+      <h5>Ingresa a tu cuenta</h5>
     </div>
     <hr>
     <div class="row center-content" *ngIf="alertMessage !== ''">
@@ -26,7 +25,7 @@
               <div class="col-md-8">
                 <label for="company" class="control-label">Negocio:</label>
                 <input type="text" class="form-control" formControlName="company" name="company" id="company" [readonly]=checkLockInput [disabled]="company"/>
-                <input type="checkbox" class="position-absolute checklockinput" id="check" name="check" (click)="lockInput()" [checked]="company"/>
+                <!-- <input type="checkbox" class="position-absolute checklockinput" id="check" name="check" (click)="lockInput()" [checked]="company"/> -->
                 <div *ngIf="formErrors.company" class="alert alert-danger">
                   {{ formErrors.company }}
                 </div>
