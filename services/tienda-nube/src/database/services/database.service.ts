@@ -96,6 +96,7 @@ export class DatabaseService {
       .aggregate([
         {
           $match: {
+            operationType: { $ne: "D" },
             articleParent: new ObjectId(productParent),
           },
         },

@@ -106,6 +106,7 @@ export class PoolDatabase {
       .aggregate([
         {
           $match: {
+            operationType: { $ne: "D" },
             articleParent: new ObjectId(productParent),
           },
         },
