@@ -135,6 +135,7 @@ export class ProductsService {
       );
 
       const variantProducts = await foundCollectionV.find({
+        operationType: { $ne: "D" },
         articleParent: new ObjectId(foundArticle._id.toString()),
       }).toArray();
       
@@ -464,6 +465,7 @@ export class ProductsService {
       );
 
       const variantProducts = await foundCollectionV.find({
+        operationType: { $ne: "D" },
         articleParent: new ObjectId(foundArticle._id.toString()),
       }).toArray();
 
