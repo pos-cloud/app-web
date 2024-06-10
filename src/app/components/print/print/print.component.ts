@@ -3302,14 +3302,6 @@ export class PrintComponent implements OnInit {
 
           transport = transport + this.movementsOfArticles[i].salePrice;
 
-          if(this.movementsOfArticles[i].article.containsStructure && this.transaction.type.transactionMovement === TransactionMovement.Sale){
-            console.log(this.movementsOfArticles[i])
-            if (this.movementsOfArticles[i].amount) {
-              totalArticle = totalArticle + this.movementsOfArticles[i].amount;
-              this.doc.text(this.movementsOfArticles[i].amount.toString(), 6, row);
-            }
-          }
-
           row += 5;
 
           if (row > 240) {
