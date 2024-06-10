@@ -406,6 +406,7 @@ export class PrintComponent implements OnInit {
             "transport.address" : 1,
             "transport.city" : 1,
             "transport.identificationValue" : 1,
+            "type.transactionMovement":1,
             "type.requestPaymentMethods":1,
             "type.requestArticles" : 1,
             "type.labelPrint" : 1,
@@ -2957,12 +2958,12 @@ export class PrintComponent implements OnInit {
 
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let i = 0; i < this.movementsOfArticles.length; i++) {
-        if (this.movementsOfArticles[i].amount > 0 && !this.movementsOfArticles[i].movementParent) {
+        if (this.movementsOfArticles[i].amount > 0) {
           if (this.movementsOfArticles[i].amount) {
             totalArticle = totalArticle + this.movementsOfArticles[i].amount;
             this.doc.text(this.movementsOfArticles[i].amount.toString(), 6, row);
           }
-          if (this.movementsOfArticles[i].code) {
+          if (this.movementsOfArticles[i].code && !this.movementsOfArticles[i].movementParent) {
             this.doc.text(
               this.movementsOfArticles[i].code.toString().slice(0, 15),
               15,
@@ -3227,7 +3228,7 @@ export class PrintComponent implements OnInit {
                  'right',
                  'middle',
                );
-              } else {
+              } else if(!this.movementsOfArticles[i].movementParent){
                 this.doc.textEx(
                   '$ ' +
                     this.roundNumber
@@ -3239,6 +3240,8 @@ export class PrintComponent implements OnInit {
                   'middle',
                 );
               }
+
+              if(!this.movementsOfArticles[i].movementParent) {
               this.doc.textEx(
                    '$ ' +
                   this.roundNumber
@@ -3249,8 +3252,9 @@ export class PrintComponent implements OnInit {
                 'right',
                 'middle',
               );
+              }
             }
-            if (this.movementsOfArticles[i].discountRate > 0) {
+            if (this.movementsOfArticles[i].discountRate > 0 && !this.movementsOfArticles[i].movementParent) {
               this.doc.text(`$ ${this.movementsOfArticles[i].discountAmount.toFixed(2)}`,
               165,
               row + 1.5,
@@ -3297,6 +3301,14 @@ export class PrintComponent implements OnInit {
           }
 
           transport = transport + this.movementsOfArticles[i].salePrice;
+
+          if(this.movementsOfArticles[i].article.containsStructure && this.transaction.type.transactionMovement === TransactionMovement.Sale){
+            console.log(this.movementsOfArticles[i])
+            if (this.movementsOfArticles[i].amount) {
+              totalArticle = totalArticle + this.movementsOfArticles[i].amount;
+              this.doc.text(this.movementsOfArticles[i].amount.toString(), 6, row);
+            }
+          }
 
           row += 5;
 
