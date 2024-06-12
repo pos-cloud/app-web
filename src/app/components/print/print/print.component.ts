@@ -44,6 +44,7 @@ import { TransactionTypeService } from '../../transaction-type/transaction-type.
 import { Transaction } from '../../transaction/transaction';
 import { TransactionService } from '../../transaction/transaction.service';
 import { PrintService } from '../print.service';
+import { StructureService } from 'app/components/structure/structure.service';
 
 //Pipes
 
@@ -181,6 +182,7 @@ export class PrintComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public _modalService: NgbModal,
     private domSanitizer: DomSanitizer,
+    private _structureService: StructureService,
     public _branchService: BranchService,
     public _userService: UserService,
     private _voucherService: VoucherService,
@@ -2954,10 +2956,13 @@ export class PrintComponent implements OnInit {
     let margin = 5;
     let totalArticle = 0;
 
-
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let i = 0; i < this.movementsOfArticles.length; i++) {
-        if (this.movementsOfArticles[i].amount > 0 && !this.movementsOfArticles[i].movementParent) {
+        if(this.movementsOfArticles[i].movementParent){
+          const estr = await this.getStructure(this.movementsOfArticles[i].article._id)
+          if (!estr) continue;
+        }
+        if (this.movementsOfArticles[i].amount > 0) {
           if (this.movementsOfArticles[i].amount) {
             totalArticle = totalArticle + this.movementsOfArticles[i].amount;
             this.doc.text(this.movementsOfArticles[i].amount.toString(), 6, row);
@@ -6105,5 +6110,63 @@ export class PrintComponent implements OnInit {
         ' ' +
         data.letrasCentavos
       );
+  }
+
+  private getStructure(childId: string): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+  
+      let match = `{
+        "operationType": { "$ne": "D" },
+        "child._id": { "$oid" : "${childId}"},
+        "utilization" : "Venta",
+        "child.operationType": { "$ne": "D" }
+		  }`;
+
+      match = JSON.parse(match);
+
+      let project = {
+        _id: 1,
+        'parent._id': 1,
+        'parent.description': 1,
+        'child._id': 1,
+        'child.description': 1,
+        'child.operationType': 1,
+        optional: 1,
+        utilization: 1,
+        operationType: 1,
+      };
+
+      let group = {
+        _id: null,
+        count: {$sum: 1},
+        structures: {$push: '$$ROOT'},
+      };
+
+      this._structureService
+        .getStructures(
+          project, // PROJECT
+          match, // MATCH
+          {}, // SORT
+          group, // GROUP
+          0, // LIMIT
+          0, // SKIP
+        )
+        .subscribe(
+          (result) => {
+            console.log(result)
+            this.loading = false;
+            if (result && result[0] && result[0].structures) {
+              resolve(true);
+            } else {
+              resolve(false)
+            }
+          },
+          (error) => {
+            this.showMessage(error._body, 'danger', false);
+            this.loading = false;
+            resolve(true);
+          },
+        );
+    });
   }
 }
