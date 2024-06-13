@@ -74,7 +74,7 @@
                                         <input type="text" class="form-control" formControlName="description"
                                             name="description" id="description"
                                             (blur)="loadPosDescription(); onValueChanged($event.target.id)"
-                                            [readonly]="readonly || (article && article.type && article.type.toString() === 'Variante')" />
+                                            [readonly]="readonly" />
                                         <div class="alert alert-danger"
                                             [style.display]="(formErrors['description'])? 'block': 'none'">
                                             {{ formErrors.description }}
@@ -86,7 +86,7 @@
                                         <input type="text" class="form-control" formControlName="posDescription"
                                             name="posDescription" id="posDescription"
                                             (blur)="loadPosDescription(); onValueChanged($event.target.id)"
-                                            [readonly]="readonly || (article && article.type && article.type.toString() === 'Variante')" />
+                                            [readonly]="readonly" />
                                         <div *ngIf="formErrors.posDescription" class="alert alert-danger">
                                             {{ formErrors.posDescription }}
                                         </div>
