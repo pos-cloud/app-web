@@ -43,8 +43,8 @@ import VariantTypeSchema from '../variant-type/variant-type.model'
 import VariantValueController from '../variant-value/variant-value.controller'
 import VariantValue from '../variant-value/variant-value.interface'
 import VariantValueSchema from '../variant-value/variant-value.model'
-import { ObjectId } from 'mongodb';
 import ConfigController from '../config/config.controller'
+import ArticleStockController from '../article-stock/article-stock.controller'
 
 export default class ArticleUC {
 	database: string
@@ -595,6 +595,7 @@ export default class ArticleUC {
 
 	async importProductTiendaNube(data: any) {
 		const ArticlesObj: any = {};
+		const ArticlesVarintObj: any = {};
 
 		try {
 			await this.createAllCategoryTn()
@@ -606,10 +607,14 @@ export default class ArticleUC {
 				project: {
 					tiendaNubeId: 1,
 					description: 1,
-					code: 1
+					code: 1,
+					operationType: 1,
+					type: 1
 				},
 				match: {
-					tiendaNubeId: { $exists: true, $ne: null }
+					tiendaNubeId: { $exists: true, $ne: null },
+					operationType: { $ne: 'D' },
+					type: 'Final'
 				}
 			});
 
@@ -633,7 +638,7 @@ export default class ArticleUC {
 				let tiendaNubeId = item.id;
 				if (ArticlesObj[tiendaNubeId]) {
 					const article = ArticlesObj[tiendaNubeId]
-       
+
 					await new ArticleController(this.database).update(
 						article._id,
 						{
@@ -643,7 +648,7 @@ export default class ArticleUC {
 							category: categoryObj[item.categories[0]?.name.es] !== undefined ? categoryObj[item.categories[0].name.es]._id : null,
 							description: item.name.es,
 							url: item.canonical_url,
-							posDescription: item.name.es,
+							posDescription: item.name.es.substring(0, 20),
 							observation: item.description.es,
 							basePrice: 0,
 							taxes: {
@@ -671,20 +676,52 @@ export default class ArticleUC {
 							containsVariants: item.attributes.length > 0
 						}
 					)
+
 					if (item.attributes.length) {
-						const variants = await this.getVariant(article._id)
+						const variants = await this.getVariant(article._id);
+						
 						item.variants.forEach(async (art: any, index: any) => {
 							const variantProducto = variants[index];
+							if (art.values[0].es !== variantProducto.value.description) {
+ 
+								const variantValues = await this.getVariantValues(variantProducto.type)
+								for (let values of variantValues) {
+
+									if (art.values[0].es === values.description) {
+										await new VariantController(this.database).update(
+											variantProducto._id,
+											{
+												type: variantProducto.type,
+												value: values._id,
+												articleParent: variantProducto.articleParent,
+												articleChild: variantProducto.articleChild._id
+											}
+										)
+
+										const articleStock = await this.getArticleStock(variantProducto.articleChild._id)
+										if (articleStock) {
+											await new ArticleStockController(this.database).update(
+												articleStock._id,
+												{
+													realStock: art.stock,
+													article: articleStock.article._id
+												}
+											)
+										}
+									}
+								}
+							}
+
 							await new ArticleController(this.database).update(
 								variantProducto.articleChild._id,
 								{
 									code: article.code,
 									barcode: art.sku,
-									//make: makeObj['']._id,
+									// make: makeObj['']._id,
 									category: categoryObj[item.categories[0]?.name.es] !== undefined ? categoryObj[item.categories[0].name.es]._id : null,
 									description: art.values.map((items: any) => items.es.toLowerCase()).join(' / '),
 									url: art.canonical_url,
-									posDescription: item.name.es,
+									posDescription: item.name.es.substring(0, 20),
 									observation: item.description.es,
 									basePrice: 0,
 									taxes: {
@@ -708,7 +745,7 @@ export default class ArticleUC {
 									// isWeigth: true,
 									// allowMeasure: true,
 									// posKitchen: true,
-									tiendaNubeId: art.inventory_levels[0].variant_id,
+									tiendaNubeId: art.id,
 									applications: aplicationsObj['TiendaNube']._id,
 									type: 'Variante'
 								}
@@ -725,7 +762,7 @@ export default class ArticleUC {
 						category: categoryObj[item.categories[0]?.name.es] !== undefined ? categoryObj[item.categories[0].name.es]._id : null,
 						description: item.name.es,
 						url: item.canonical_url,
-						posDescription: item.name.es,
+						posDescription: item.name.es.substring(0, 20),
 						observation: item.description.es,
 						basePrice: 0,
 						taxes: {
@@ -850,6 +887,29 @@ export default class ArticleUC {
 		}
 	}
 
+	async getArticleStock(articleId: any) {
+		try {
+			let stock = await new ArticleStockController(this.database).getAll({
+				project: {
+					_id: 1,
+					'article._id': 1,
+					'article.description': 1,
+					realStock: 1,
+					operationType: 1
+				},
+				match: {
+					'article._id': { $oid: articleId },
+					operationType: { $ne: 'D' },
+				}
+			})
+
+			return stock.result[0]
+
+		} catch (error) {
+			throw error;
+		}
+	}
+
 	async createAllCategoryTn() {
 		const categoriesTnObj: any = {};
 
@@ -912,8 +972,8 @@ export default class ArticleUC {
 				const categoryParent = categoriesTnObj[category.parent];
 				const categoryDes = categoriesTnObj[category.id];
 				updatePromises.push(
-					await new CategoryController(this.database).update( categoryDes._id,{
-						parent:categoryParent._id,
+					await new CategoryController(this.database).update(categoryDes._id, {
+						parent: categoryParent._id,
 					})
 				);
 			}
@@ -959,10 +1019,12 @@ export default class ArticleUC {
 		const variantTypesObj: any = {};
 		const variantTypes = await new VariantTypeController(this.database).getAll({
 			project: {
-				name: 1
+				name: 1,
+				operationType: 1
 			},
 			match: {
-				name: { $exists: true, $ne: null }
+				name: { $exists: true, $ne: null },
+				operationType: { $ne: 'D' },
 			}
 		});
 
@@ -993,10 +1055,12 @@ export default class ArticleUC {
 		const varinatValuesObj: any = {};
 		const VariantValues = await new VariantValueController(this.database).getAll({
 			project: {
-				description: 1
+				description: 1,
+				operationType: 1
 			},
 			match: {
-				description: { $exists: true, $ne: null }
+				description: { $exists: true, $ne: null },
+				operationType: { $ne: 'D' },
 			}
 		});
 
@@ -1070,9 +1134,20 @@ export default class ArticleUC {
 	async getVariantType() {
 		try {
 			let variantTypeObj: any = {}
-			let variantType = await new VariantTypeController(this.database).find({}, {})
+			let variantType = await new VariantTypeController(this.database).getAll(
+				{
+					project: {
+						_id: 1,
+						name: 1,
+						operationType: 1
+					},
+					match: {
+						operationType: { $ne: 'D' },
+					}
+				}
+			)
 
-			variantType.forEach((item: any) => {
+			variantType.result.forEach((item: any) => {
 				variantTypeObj[item.name] = item;
 			});
 			return variantTypeObj
@@ -1219,12 +1294,44 @@ export default class ArticleUC {
 	}
 
 	async getVariant(id: string) {
-		let VariantObj: any = {}
-		let variant: Variant[] = await new VariantController(this.database).find({
-			articleParent: new ObjectId(id.toString()),
-		}, {})
-		return variant
+		let variant = await new VariantController(this.database).getAll({
+			project: {
+				articleParent: 1,
+				'articleChild._id': 1,
+				'value.description': 1,
+				type: 1,
+				operationType: 1
+
+			},
+			match: {
+				operationType: { $ne: 'D' },
+				articleParent: { $oid: id },
+			}
+		})
+		return variant.result
 
 	}
 
+	async getVariantValues(type: any) {
+		try {
+			let variantValue = await new VariantValueController(this.database).getAll({
+				project: {
+					_id: 1,
+					type: 1,
+					description: 1,
+					operationType: 1
+				},
+				match: {
+					type: { $oid: type },
+					operationType: { $ne: 'D' },
+				}
+			})
+
+			return variantValue.result
+
+		} catch (error) {
+			throw error;
+		}
+
+	}
 }
