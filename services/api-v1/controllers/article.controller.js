@@ -1161,7 +1161,12 @@ async function updateArticle (req, res, next) {
   const articleId = req.query.id
   const article = req.body.article
   const variants = req.body.variants
-
+ 
+  variants.forEach(variant => {
+    if(variant.articleChild){
+    delete variant.articleChild.tiendaNubeId;
+  }
+  });
   const user = new User()
   user._id = req.session.user
   article.updateUser = user
@@ -1461,7 +1466,8 @@ async function updateArticle (req, res, next) {
                             meliAttrs: variant.articleChild.meliAttrs,
                           }
                           articleUpdated.description = variant.articleChild.description.replace(articleUpdated.description, newDescription)
-                          variant.articleChild = Object.assign(articleUpdated)
+                      
+                         // variant.articleChild.tiendaNubeId = Object.assign(articleUpdated)
                           variant.articleChild = Object.assign(variant.articleChild, params)
                           const result = await updateVariantArticle(variant.articleChild)
                           if (result.article) {
