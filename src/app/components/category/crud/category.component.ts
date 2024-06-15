@@ -172,19 +172,25 @@ export class CategoryComponent implements OnInit {
             tagType: 'boolean',
             values: ['true', 'false'],
             default: 'false',
-            class: 'form-group col-md-3'
+            class: 'form-group col-md-2'
         },
         {
             name: 'wooId',
             tag: 'input',
             tagType: 'text',
-            class: 'form-group col-md-4'
+            class: 'form-group col-md-2'
         },
         {
             name: 'observation',
             tag: 'input',
             tagType: 'text',
-            class: 'form-group col-md-4'
+            class: 'form-group col-md-2'
+        },
+        {
+            name: 'tiendaNubeId',
+            tag: 'input',
+            tagType: 'text',
+            class: 'form-group col-md-2'
         }
 
     ];
@@ -281,7 +287,8 @@ export class CategoryComponent implements OnInit {
                 'applications._id': 1,
                 'applications.name': 1,
                 'observation': 1,
-                showMenu: 1
+                showMenu: 1,
+                tiendaNubeId: 1
             }
 
             this.subscription.add(this._objService.getAll({
