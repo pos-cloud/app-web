@@ -540,4 +540,86 @@ export class TiendaNubeService {
       throw err;
     }
   }
+
+  async updateVarinat(
+    tiendaNubeAccesstoken: string,
+    tiendaNubeUserId: string,
+    productId: string,
+    variantId: string,
+    updateVariant: UpdateVariantTiendaNubeDto,
+  ) {
+    try {
+      const data = await firstValueFrom(
+        this.httpService
+          .put(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/variants/${variantId}`,
+            updateVariant,
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccesstoken}`,
+              },
+            },
+          )
+          .pipe(map((resp) => resp.data))
+
+      ).catch((err) => {
+        throw err;
+      });
+
+      return data;
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async createVariant( 
+    tiendaNubeAccesstoken: string,
+    tiendaNubeUserId: string,
+    productId: string,
+    dataVariant: any,
+  ) {
+    const data = await firstValueFrom(
+      this.httpService
+        .post(
+          `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/variants`,
+          dataVariant,
+          {
+            headers: {
+              Authentication: `bearer ${tiendaNubeAccesstoken}`,
+            },
+          },
+        )
+        .pipe(map((resp) => resp.data)),
+    );
+
+    return data;
+  }
+  async deleteVariant(
+    tiendaNubeAccesstoken: string,
+    tiendaNubeUserId: string,
+    productId: string,
+    variantId: string,
+  ){
+    try {
+      const data = await firstValueFrom(
+        this.httpService
+          .delete(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/variants/${variantId}`,
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccesstoken}`,
+              },
+            },
+          )
+          .pipe(map((resp) => resp.data))
+
+      ).catch((err) => {
+        throw err;
+      });
+
+      return data;
+    } catch (error) {
+      console.log(error)
+    }
+  }
 }
