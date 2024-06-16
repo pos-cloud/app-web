@@ -1161,7 +1161,7 @@ async function updateArticle (req, res, next) {
   const articleId = req.query.id
   const article = req.body.article
   const variants = req.body.variants
-
+ 
   const user = new User()
   user._id = req.session.user
   article.updateUser = user
@@ -1459,8 +1459,10 @@ async function updateArticle (req, res, next) {
                             codeSAT: variant.articleChild.codeSAT,
                             meliId: variant.articleChild.meliId,
                             meliAttrs: variant.articleChild.meliAttrs,
+                            tiendaNubeId: variant.articleChild.tiendaNubeId
                           }
                           articleUpdated.description = variant.articleChild.description.replace(articleUpdated.description, newDescription)
+                      
                           variant.articleChild = Object.assign(articleUpdated)
                           variant.articleChild = Object.assign(variant.articleChild, params)
                           const result = await updateVariantArticle(variant.articleChild)
