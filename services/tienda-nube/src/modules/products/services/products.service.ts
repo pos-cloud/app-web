@@ -426,12 +426,12 @@ export class ProductsService {
         operationType: "D",
         articleParent: new ObjectId(foundArticle._id.toString()),
       }).toArray();
-
+       
       for (let variant of variantProducts) {
         const article = await foundCollection.find({
-          operationType: "D",
           _id: new ObjectId(variant.articleChild.toString()),
         }).toArray();
+
         if (article[0].tiendaNubeId) {
           await this.tiendaNubeService.deleteVariant(
             token,
@@ -462,7 +462,6 @@ export class ProductsService {
               article: new ObjectId(variant.articleChild ),
             });
 
-            console.log(variant.articleChildInfo.allowSaleWithoutStock)
             await this.tiendaNubeService.updateVarinat(
               token,
               userID,
