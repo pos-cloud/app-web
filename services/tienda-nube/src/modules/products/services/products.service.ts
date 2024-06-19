@@ -462,7 +462,6 @@ export class ProductsService {
               article: new ObjectId(variant.articleChild ),
             });
 
-            console.log(variant.articleChildInfo.allowSaleWithoutStock)
             await this.tiendaNubeService.updateVarinat(
               token,
               userID,
