@@ -429,9 +429,9 @@ export class ProductsService {
 
       for (let variant of variantProducts) {
         const article = await foundCollection.find({
-          operationType: "D",
           _id: new ObjectId(variant.articleChild.toString()),
         }).toArray();
+        
         if (article[0].tiendaNubeId) {
           await this.tiendaNubeService.deleteVariant(
             token,
