@@ -431,7 +431,7 @@ export class ProductsService {
         const article = await foundCollection.find({
           _id: new ObjectId(variant.articleChild.toString()),
         }).toArray();
-        
+
         if (article[0].tiendaNubeId) {
           await this.tiendaNubeService.deleteVariant(
             token,
@@ -443,6 +443,7 @@ export class ProductsService {
             { _id: article[0]._id },
             {
               $set: {
+                operationType: 'D',
                 tiendaNubeId: null,
               },
             },
