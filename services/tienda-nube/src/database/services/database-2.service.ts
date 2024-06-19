@@ -165,6 +165,7 @@ export class PoolDatabase {
         {
           $project: {
             _id: 0,
+            operationType: 1,
             articleParent: '$_id.articleParent',
             articleChild: '$_id.articleChild',
             variants: 1,
