@@ -1459,10 +1459,11 @@ async function updateArticle (req, res, next) {
                             codeSAT: variant.articleChild.codeSAT,
                             meliId: variant.articleChild.meliId,
                             meliAttrs: variant.articleChild.meliAttrs,
-                            tiendaNubeId: variant.articleChild.tiendaNubeId
+                            tiendaNubeId: variant.articleChild.tiendaNubeId,
+                            salePrice: variant.articleChild.salePrice,
                           }
                           articleUpdated.description = variant.articleChild.description.replace(articleUpdated.description, newDescription)
-                      
+ 
                           variant.articleChild = Object.assign(articleUpdated)
                           variant.articleChild = Object.assign(variant.articleChild, params)
                           const result = await updateVariantArticle(variant.articleChild)
