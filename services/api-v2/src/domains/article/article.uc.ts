@@ -624,6 +624,27 @@ export default class ArticleUC {
 				}
 			});
 
+			const articleVariant = await new ArticleController(this.database).getAll({
+				project: {
+					tiendaNubeId: 1,
+					description: 1,
+					code: 1,
+					operationType: 1,
+					type: 1
+				},
+				match: {
+					tiendaNubeId: { $exists: true, $ne: null },
+					operationType: { $ne: 'D' },
+					type: 'Variante'
+				}
+			})
+
+			articleVariant.result.forEach((item: any) => {
+				if (item.tiendaNubeId) {
+					ArticlesVarintObj[item.tiendaNubeId] = item;
+				}
+			});
+
 			//const makeObj= await this.getMake()
 			const categoryObj = await this.getCategory()
 			const taxObj = await this.getTax()
@@ -676,52 +697,130 @@ export default class ArticleUC {
 							containsVariants: item.attributes.length > 0
 						}
 					)
-
 					if (item.attributes.length) {
 						const variants = await this.getVariant(article._id);
-						
+
 						item.variants.forEach(async (art: any, index: any) => {
-							const variantProducto = variants[index];
-							if (art.values[0].es !== variantProducto.value.description) {
- 
-								const variantValues = await this.getVariantValues(variantProducto.type)
-								for (let values of variantValues) {
+							if (ArticlesVarintObj[art.id]) {
+								const variantProducto = variants[index];
 
-									if (art.values[0].es === values.description) {
-										await new VariantController(this.database).update(
-											variantProducto._id,
-											{
-												type: variantProducto.type,
-												value: values._id,
-												articleParent: variantProducto.articleParent,
-												articleChild: variantProducto.articleChild._id
-											}
-										)
+								if (art.values[0].es !== variantProducto?.value?.description) {
+									const variantValues = await this.getVariantValues(variantProducto.type)
+									for (let values of variantValues) {
 
-										const articleStock = await this.getArticleStock(variantProducto.articleChild._id)
-										if (articleStock) {
-											await new ArticleStockController(this.database).update(
-												articleStock._id,
+										if (art.values[0].es === values.description) {
+											await new VariantController(this.database).update(
+												variantProducto._id,
 												{
-													realStock: art.stock,
-													article: articleStock.article._id
+													type: variantProducto.type,
+													value: values._id,
+													articleParent: variantProducto.articleParent,
+													articleChild: variantProducto.articleChild._id
 												}
 											)
+
+											const articleStock = await this.getArticleStock(variantProducto.articleChild._id)
+											if (articleStock) {
+												await new ArticleStockController(this.database).update(
+													articleStock._id,
+													{
+														realStock: art.stock,
+														article: articleStock.article._id
+													}
+												)
+											}
 										}
 									}
-								}
-							}
 
-							await new ArticleController(this.database).update(
-								variantProducto.articleChild._id,
-								{
+									await new ArticleController(this.database).update(
+										variantProducto.articleChild._id,
+										{
+											code: article.code,
+											barcode: art.sku,
+											// make: makeObj['']._id,
+											category: categoryObj[item.categories[0]?.name.es] !== undefined ? categoryObj[item.categories[0].name.es]._id : null,
+											description: art.values.map((items: any) => items.es.toLowerCase()).join(' / '),
+											url: art.canonical_url,
+											posDescription: item.name.es.substring(0, 20),
+											observation: item.description.es,
+											basePrice: 0,
+											taxes: {
+												tax: taxObj[21]._id,
+												percentage: taxObj[21].percentage
+											},
+											markupPercentage: (item.variants[0].price === null || item.variants[0].cost === null) ? null : Number(Math.abs(((Number(item.variants[0].price) - Number(item.variants[0].cost)) / Number(item.variants[0].cost) * 100)).toFixed(2)),
+											salePrice: art.price,
+											weight: art.weight,
+											width: art.width,
+											height: art.height,
+											depth: art.depth,
+											// picture: (() => {
+											// 	const imageObject = item.images.find((img: any) => img.id === art.image_id);
+											// 	return imageObject ? imageObject.src : null;
+											// })(),
+											allowPurchase: true,
+											allowSale: true,
+											allowStock: true,
+											allowSaleWithoutStock: art.stock_management,
+											// isWeigth: true,
+											// allowMeasure: true,
+											// posKitchen: true,
+											tiendaNubeId: art.id,
+											applications: aplicationsObj['TiendaNube']._id,
+											type: 'Variante'
+										}
+									)
+								}
+
+
+								await new ArticleController(this.database).update(
+									variantProducto.articleChild._id,
+									{
+										code: article.code,
+										barcode: art.sku,
+										// make: makeObj['']._id,
+										category: categoryObj[item.categories[0]?.name.es] !== undefined ? categoryObj[item.categories[0].name.es]._id : null,
+										description: art.values.map((items: any) => items.es.toLowerCase()).join(' / '),
+										url: art.canonical_url,
+										posDescription: item.name.es.substring(0, 20),
+										observation: item.description.es,
+										basePrice: 0,
+										taxes: {
+											tax: taxObj[21]._id,
+											percentage: taxObj[21].percentage
+										},
+										markupPercentage: (item.variants[0].price === null || item.variants[0].cost === null) ? null : Number(Math.abs(((Number(item.variants[0].price) - Number(item.variants[0].cost)) / Number(item.variants[0].cost) * 100)).toFixed(2)),
+										salePrice: art.price,
+										weight: art.weight,
+										width: art.width,
+										height: art.height,
+										depth: art.depth,
+										// picture: (() => {
+										// 	const imageObject = item.images.find((img: any) => img.id === art.image_id);
+										// 	return imageObject ? imageObject.src : null;
+										// })(),
+										allowPurchase: true,
+										allowSale: true,
+										allowStock: true,
+										allowSaleWithoutStock: art.stock_management,
+										// isWeigth: true,
+										// allowMeasure: true,
+										// posKitchen: true,
+										tiendaNubeId: art.id,
+										applications: aplicationsObj['TiendaNube']._id,
+										type: 'Variante'
+									}
+								)
+							} else {
+								let newArticle: Article = ArticleSchema.getInstance(this.database)
+								newArticle = Object.assign(newArticle, {
 									code: article.code,
 									barcode: art.sku,
-									// make: makeObj['']._id,
+									//make: makeObj[´']._id,
 									category: categoryObj[item.categories[0]?.name.es] !== undefined ? categoryObj[item.categories[0].name.es]._id : null,
 									description: art.values.map((items: any) => items.es.toLowerCase()).join(' / '),
 									url: art.canonical_url,
-									posDescription: item.name.es.substring(0, 20),
+									posDescription: item.name.es,
 									observation: item.description.es,
 									basePrice: 0,
 									taxes: {
@@ -748,8 +847,31 @@ export default class ArticleUC {
 									tiendaNubeId: art.id,
 									applications: aplicationsObj['TiendaNube']._id,
 									type: 'Variante'
-								}
-							)
+								})
+								let resultChild = await new ArticleController(this.database).save(newArticle);
+								art.values.forEach(async (artic: any, index: number) => {
+									let newVariant: Variant = VariantSchema.getInstance(this.database);
+									newVariant = Object.assign(newVariant, {
+										type: variantType[item.attributes[index].es],
+										value: variantValue[artic.es],
+										articleParent: article._id,
+										articleChild: resultChild.result._id,
+									});
+									const resultVariant = await new VariantController(this.database).save(newVariant);
+								})
+
+								let newArticleStock: ArticleStock = ArticleStockSchema.getInstance(this.database);
+								newArticleStock = Object.assign(newArticleStock, {
+									article: resultChild.result._id,
+									branch: branch,
+									deposit: deposit,
+									realStock: art.stock ?? 0,
+									minStock: 0,
+									maxStock: 0,
+									code: resultChild.result.code
+								})
+								const resultArticleStock = await new ArticleController(this.database).save(newArticleStock);
+							}
 						})
 					}
 				} else {
