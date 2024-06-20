@@ -1461,6 +1461,8 @@ async function updateArticle (req, res, next) {
                             meliAttrs: variant.articleChild.meliAttrs,
                             tiendaNubeId: variant.articleChild.tiendaNubeId,
                             salePrice: variant.articleChild.salePrice,
+                            applications: article.applications,
+                            allowSaleWithoutStock: article.allowSaleWithoutStock
                           }
                           articleUpdated.description = variant.articleChild.description.replace(articleUpdated.description, newDescription)
  
