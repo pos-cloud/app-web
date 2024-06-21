@@ -432,7 +432,7 @@ export class ProductsService {
           _id: new ObjectId(variant.articleChild.toString()),
         }).toArray();
 
-        if (article[0].tiendaNubeId) {
+        if (article.length > 0 && article[0].tiendaNubeId !== null) {
           await this.tiendaNubeService.deleteVariant(
             token,
             userID,
@@ -462,7 +462,6 @@ export class ProductsService {
               operationType: { $ne: 'D' },
               article: new ObjectId(variant.articleChild ),
             });
-
             await this.tiendaNubeService.updateVarinat(
               token,
               userID,
