@@ -120,7 +120,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         });
       }),
       tap(() => (this.loading = false)),
-    );
+  );
   formatterAccount = (x: Account) => {
     return x.description;
   };
@@ -506,7 +506,7 @@ export class AddMovementOfArticleComponent implements OnInit {
       quantityMeasure: [this.movementOfArticle.quantityMeasure, []],
       stock: [this.stock, []],
       position: [this.position, []],
-      account: [this.movementOfArticle.account, []],
+      posDescription: [this.movementOfArticle.article.posDescription, []],
     });
 
     this.movementOfArticleForm.valueChanges.subscribe((data) =>
@@ -735,7 +735,7 @@ export class AddMovementOfArticleComponent implements OnInit {
       quantityMeasure: this.movementOfArticle.quantityMeasure,
       stock: this.stock,
       position: this.position,
-      account: this.movementOfArticle.account,
+      posDescription: this.movementOfArticle.article.posDescription,
     };
 
     this.movementOfArticleForm.setValue(values);

@@ -33,12 +33,10 @@
           </div>
         </div>
         <div class="form-group col-md-5">
-          <ng-template #rtAccount let-r="result" let-t="term">
-            <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
-          </ng-template>
-          <label for="account">Cuenta:</label>
-          <input id="account" type="text" ngMdoel class="form-control" name="account" formControlName="account"
-            [ngbTypeahead]="searchAccount" [resultTemplate]="rtAccount" [inputFormatter]="formatterAccount" />
+          <label for="stock" class="control-label">Descripcion Corta:</label>
+          <div class="input-group">
+            <input type="text" class="form-control" formControlName="posDescription" name="posDescription" id="posDescription" readonly />
+          </div>
         </div>
       </div>
       <div class="row" *ngIf="position">
