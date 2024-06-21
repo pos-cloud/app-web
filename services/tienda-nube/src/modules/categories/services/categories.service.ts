@@ -74,7 +74,7 @@ export class CategoriesService {
 
       if (foundCategory.parent) {
         let parent = foundCategory.parent;
-        let categoryTiendaNubeId = categoryTN.id;
+        let categoryTiendaNubeId = categoryTN;
         while (parent !== null) {
           const foundCategoryParent = await this.poolDatabase.getDocumentById('categories', parent, database);
           const categoryTiendaNube = foundCategoryParent.tiendaNubeId
@@ -98,15 +98,15 @@ export class CategoriesService {
 
           const result = await this.tiendaNubeService.updateCategory(
             {
-              id: categoryTiendaNube.id,
-              parent: categoryTiendaNubeId,
-              name: { es: categoryTiendaNube.name.es },
+              id: categoryTiendaNubeId.id,
+              parent: categoryTiendaNube.id,
+              name: { es: categoryTiendaNubeId.name.es },
             },
             token,
             userID,
-            categoryTiendaNube.id
+            categoryTiendaNubeId.id//   categoryTiendaNube.id
           );
-          categoryTiendaNubeId = categoryTiendaNube.id;
+          categoryTiendaNubeId = categoryTiendaNube;
           parent = foundCategoryParent.parent || null;
 
           categoryTN = result
