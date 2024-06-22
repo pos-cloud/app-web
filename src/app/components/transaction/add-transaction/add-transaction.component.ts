@@ -213,7 +213,7 @@ export class AddTransactionComponent implements OnInit {
             'observation': [this.transaction.observation, []],
             'employeeOpening': [this.transaction.employeeOpening, []],
             'state': [this.transaction.state, []],
-            'VATPeriod': [this.transaction.VATPeriod, []],
+            'VATPeriod': [this.transaction?.VATPeriod || null, []],
             'balance': [this.transaction.balance, []]
         });
 
@@ -258,7 +258,7 @@ export class AddTransactionComponent implements OnInit {
             'observation': this.transaction.observation,
             'employeeOpening': employeeOpening,
             'state': this.transaction.state,
-            'VATPeriod': this.transaction.VATPeriod,
+            'VATPeriod': this.transaction?.VATPeriod || null,
             'balance': (this.transaction.balance) ? this.transaction.balance : 0,
             'account': (this.transaction.account) ? this.transaction.account : null
         });
