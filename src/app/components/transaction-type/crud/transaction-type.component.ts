@@ -533,6 +533,7 @@ export class TransactionTypeComponent implements OnInit {
       name: 'requestCompany',
       tag: 'select',
       tagType: 'text',
+      validators: [Validators.required],
       values: [CompanyType.None, CompanyType.Client, CompanyType.Provider],
       class: 'form-group col-md-4',
     },
@@ -656,6 +657,7 @@ export class TransactionTypeComponent implements OnInit {
         EntryAmount.SaleWithVAT,
         EntryAmount.SaleWithoutVAT,
       ],
+      validators: [Validators.required],
       class: 'form-group col-md-2',
     },
     {
