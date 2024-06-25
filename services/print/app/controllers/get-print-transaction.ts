@@ -790,13 +790,12 @@ export async function getPrintTransaction(
           doc.text(`${movementOfArticle.transaction.type.abbreviation}-${padString(movementOfArticle.transaction.number,10)}`, 3, verticalPosition + 80);
         
           const barcodeImage = getBarcode('code128', movementOfArticle._id);
-          doc.addImage(barcodeImage, 'png', 3, verticalPosition + 90, 80, 25); 
+          doc.addImage(barcodeImage, 'png', 13, verticalPosition + 90, 73, 23); 
           
           verticalPosition += 58;
           articlesOnCurrentPage++;
         }
-      }
-      
+      }    
       
       if (currentPage === 0) {
         doc.addPage();
