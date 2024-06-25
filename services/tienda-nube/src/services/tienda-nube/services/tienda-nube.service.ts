@@ -112,6 +112,7 @@ export class TiendaNubeService {
         )
         .pipe(map((resp) => resp.data)),
     ).catch((err) => {
+      console.log(err)
       throw new Error(`Error al crear el producto en tienda nube`);
     });
     return data;
@@ -125,6 +126,8 @@ export class TiendaNubeService {
     updateVariant: UpdateVariantTiendaNubeDto,
   ) {
     try {
+      console.log(`${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/variants/${variantId}`)
+      console.log(updateVariant)
       const data = await firstValueFrom(
         this.httpService
           .put(
@@ -191,6 +194,7 @@ export class TiendaNubeService {
           )
           .pipe(map((resp) => resp.data)),
       ).catch((e) => {
+        console.log(e)
         throw new Error('Error al actualizar producto con tiendaNube');
       });
 

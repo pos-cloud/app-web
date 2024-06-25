@@ -18,7 +18,7 @@ export class ProductsService {
     private readonly tiendaNubeService: TiendaNubeService,
     private readonly categoryService: CategoriesService,
     private readonly productVariantService: VariantProduct,
-  ) {}
+  ) { }
 
   async create(database: string, productId: string) {
     try {
@@ -48,24 +48,37 @@ export class ProductsService {
         );
       }
 
-      // const pictureUrls = foundArticle.pictures.map(
-      //   (picture) => picture.picture,
-      // );
+      const pictureUrls = foundArticle.pictures.map(
+        (picture) => picture.picture,
+      );
 
-      const dataNewProductTiendaNube = {
-        // images: [
-        //   {
-        //     src: foundArticle.picture,
-        //   },
-        //   ...pictureUrls.map((src) => ({ src })),
-        // ],
-        name: {
-          es: foundArticle.description,
-        },
-        description: {
-          es: foundArticle.observation || '',
-        },
-      };
+      let dataNewProductTiendaNube
+      if (!foundArticle.containsVariants && foundArticle.picture !== "./../../../assets/img/default.jpg") {
+        dataNewProductTiendaNube = {
+          images: [
+            {
+              src: foundArticle.picture,
+            },
+            ...pictureUrls.map((src) => ({ src })),
+          ],
+          name: {
+            es: foundArticle.description,
+          },
+          description: {
+            es: foundArticle.observation || '',
+          },
+        };
+      } else {
+        dataNewProductTiendaNube = {
+          name: {
+            es: foundArticle.description,
+          },
+          description: {
+            es: foundArticle.observation || '',
+          },
+        };
+      }
+
 
       const resultVariantName =
         await this.productVariantService.getProductVariantsPropertyNames(
@@ -128,7 +141,7 @@ export class ProductsService {
         },
       );
       // Creacion de variantes
-      
+
       const foundCollectionV = await this.poolDatabase.getCollection(
         'variants',
         database,
@@ -142,34 +155,34 @@ export class ProductsService {
         operationType: { $ne: "D" },
         articleParent: new ObjectId(foundArticle._id.toString()),
       }).toArray();
-      
-      if(variantProducts.length > 0){
-      await this.massCreactionOfProductVariants(
-        productId,
-        token,
-        userID,
-        result.id,
-        resultVariantName as string[],
-        database,
-      ).then((promise) => {
-        return Promise.all(promise);
-      }).then(async (result) => {
-        result.map(async (productVariante: any, index) => {
-          for(let variant of dataVarinat){
-            if (productVariante.values[0].es === variant.variants[0].value.description) {
-              await foundCollection.updateOne(
-                { _id: variant.articleChild },
-                {
-                  $set: {
-                    tiendaNubeId: productVariante.id,
+
+      if (variantProducts.length > 0) {
+        await this.massCreactionOfProductVariants(
+          productId,
+          token,
+          userID,
+          result.id,
+          resultVariantName as string[],
+          database,
+        ).then((promise) => {
+          return Promise.all(promise);
+        }).then(async (result) => {
+          result.map(async (productVariante: any, index) => {
+            for (let variant of dataVarinat) {
+              if (productVariante.values[0].es === variant.variants[0].value.description) {
+                await foundCollection.updateOne(
+                  { _id: variant.articleChild },
+                  {
+                    $set: {
+                      tiendaNubeId: productVariante.id,
+                    },
                   },
-                },
-              );
+                );
+              }
             }
-          }
-        });
-      })
-    }
+          });
+        })
+      }
 
       await foundCollection.updateOne(
         { _id: foundArticle._id },
@@ -211,7 +224,7 @@ export class ProductsService {
     );
 
     const arrayCreateVariant = variantData.map((e) => {
-     return new Promise(async (resolve) => {
+      return new Promise(async (resolve) => {
         const resultResolve =
           await this.tiendaNubeService.createVarianteByProduct(
             tokenTiendaNube,
@@ -460,8 +473,18 @@ export class ProductsService {
             );
             const stockFound = await stockCollection.findOne({
               operationType: { $ne: 'D' },
-              article: new ObjectId(variant.articleChild ),
+              article: new ObjectId(variant.articleChild),
             });
+
+            if(variant.articleChildInfo.picture !== 'default.jpg'){
+            await this.tiendaNubeService.uploadImageOfProduct(
+              foundArticle.tiendaNubeId,
+              variant.articleChildInfo.picture?? null,
+              token,
+              userID,
+            );
+          }
+
             await this.tiendaNubeService.updateVarinat(
               token,
               userID,
@@ -473,10 +496,10 @@ export class ProductsService {
                     ? stockFound.realStock
                     : 0
                   : null,
-                price: variant.articleChildInfo.salePrice ,
+                price: variant.articleChildInfo.salePrice,
                 sku: variant.articleChildInfo.barcode || null,
                 weight: variant.articleChildInfo.weight || null,
-                width:  variant.articleChildInfo.width || null,
+                width: variant.articleChildInfo.width || null,
                 height: variant.articleChildInfo.height || null,
                 depth: variant.articleChildInfo.depth || null,
               },
@@ -511,6 +534,7 @@ export class ProductsService {
                 price: variant.articleChildInfo.salePrice
               }
             )
+
             await foundCollection.updateOne(
               { _id: variant.articleChild },
               {
@@ -519,8 +543,15 @@ export class ProductsService {
                 },
               },
             );
+
+            await this.tiendaNubeService.uploadImageOfProduct(
+              response.id,
+              variant.articleChildInfo.picture?? null,
+              token,
+              userID,
+            );
           }
-         }
+        }
 
       } else {
         const stockCollection = await this.poolDatabase.getCollection(
@@ -531,6 +562,13 @@ export class ProductsService {
           operationType: { $ne: 'D' },
           article: new ObjectId(productId),
         });
+
+        await this.tiendaNubeService.uploadImageOfProduct(
+          result.id,
+          foundArticle.picture?? null,
+          token,
+          userID,
+        );
 
         await this.tiendaNubeService.updateProductFirstVariant(
           token,
@@ -593,7 +631,7 @@ export class ProductsService {
       }
       await this.poolDatabase.initConnection(database);
 
-      const foundCollection =await this.poolDatabase.getCollection('articles',database);
+      const foundCollection = await this.poolDatabase.getCollection('articles', database);
 
       const data = await foundCollection
         .find({ tiendaNubeId: { $in: products } })
@@ -634,7 +672,7 @@ export class ProductsService {
       if (!tiendaNubeId) {
         throw new BadRequestException(`ID not found`);
       }
-      await this.poolDatabase.getArticleByTiendaNube(tiendaNubeId,database);
+      await this.poolDatabase.getArticleByTiendaNube(tiendaNubeId, database);
 
       const result = await this.tiendaNubeService.removeProduct(
         tiendaNubeId,
