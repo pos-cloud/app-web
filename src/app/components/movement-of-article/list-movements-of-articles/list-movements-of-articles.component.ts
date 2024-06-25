@@ -143,8 +143,11 @@ export class ListMovementsOfArticlesComponent implements OnInit {
         }
 
         this.pathLocation = this._router.url.split('/');
-        this.transactionMovement = this.pathLocation[2].charAt(0).toUpperCase() + this.pathLocation[2].slice(1);
-
+        if (this.pathLocation[2].charAt(0).toUpperCase() + this.pathLocation[2].slice(1) === 'Produccion') {
+            this.transactionMovement = 'Producción'
+        } else {
+            this.transactionMovement = this.pathLocation[2].charAt(0).toUpperCase() + this.pathLocation[2].slice(1);
+        }
         await this.getTransactionTypes().then(
             result => {
                 if (result) {
@@ -490,7 +493,7 @@ export class ListMovementsOfArticlesComponent implements OnInit {
         });
     }
 
-    
+
     public getCategories(): Promise<Category[]> {
 
         return new Promise<Category[]>((resolve, reject) => {

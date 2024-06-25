@@ -290,6 +290,14 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard],
     //data: { module: 'config.modules.production' }
   },
+
+  {
+    path: 'admin/produccion/movimientos-de-productos',
+    component: ListMovementsOfArticlesComponent,
+    canActivate: [AuthGuard, LicenseGuard],
+    //data: { module: 'config.modules.production' }
+  },
+
   {
     path: 'admin/resumenes-de-cuentas',
     component: ListSummaryOfAccountsComponent,
