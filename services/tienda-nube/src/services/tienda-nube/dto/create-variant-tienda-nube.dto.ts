@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString} from 'class-validator';
+import { IsNumber, IsOptional, IsString, IsObject} from 'class-validator';
 
 export class CreateVariantTiendaNubeDto {
   @IsNumber()
@@ -29,4 +29,8 @@ export class CreateVariantTiendaNubeDto {
 
   @IsOptional()
   stock_management: boolean
+
+  @IsObject()
+  @IsOptional()
+  attributes: Object | any;
 }

@@ -495,7 +495,25 @@ export class ProductsService {
             const values = [{
               es: variant.variants[0].value.description
             }]
+            const attributes = [{
+              es: variant.variants[0].type.name
+            }]
 
+            const dataUpdateProductTiendaNube = {
+              attributes,
+              name: {
+                es: foundArticle.description,
+              },
+              description: {
+                es: foundArticle.observation || '',
+              },
+            };
+            await this.tiendaNubeService.updateProduct(
+              token,
+              userID,
+              foundArticle.tiendaNubeId,
+              dataUpdateProductTiendaNube as UpdateProductTiendaNubeDto,
+            );
 
             const response = await this.tiendaNubeService.createVariant(
               token,
