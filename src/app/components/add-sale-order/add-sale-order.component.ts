@@ -3140,31 +3140,6 @@ export class AddSaleOrderComponent {
 
   async finish() {
     try {
-      if (this.transaction.type.requestArticles &&
-        this.transaction.type.modifyStock &&
-        this.config.tiendaNube !== undefined &&
-        this.config.tiendaNube.userID &&
-        this.config.tiendaNube.userID !== '' &&
-        this.movementsOfArticles.length > 0) {
-
-          this.movementsOfArticles.forEach(async movement => {
-            if(movement.article.tiendaNubeId){
-              if(movement.article.type === Type.Final){
-                await this.updateArticleTiendaNube(movement.article._id)
-              }
-              if(movement.article.type === Type.Variant){
-                   const result = await this.getVariantsByArticleChild(movement.article._id);
-              if (result && result.length > 0) {
-                for (const variant of result) {
-                  if (variant && variant.articleParent._id) {
-                    await this.updateArticleTiendaNube(variant.articleParent._id);
-                  }
-                }
-              }
-            }
-          }
-        })
-      }
       this.loading = true;
 
       if (!this.movementsOfArticles || this.movementsOfArticles.length === 0)
@@ -3272,7 +3247,38 @@ export class AddSaleOrderComponent {
       } else {
         this.openModal('cancelation-type-automatic');
       }
+      if (this.transaction.type.requestArticles &&
+        this.transaction.type.modifyStock &&
+        this.config.tiendaNube !== undefined &&
+        this.config.tiendaNube.userID &&
+        this.config.tiendaNube.userID !== '' &&
+        this.movementsOfArticles.length > 0) {
+        let articlesForUpdate = []
 
+        for (let movement of this.movementsOfArticles) {
+          if (movement.article.tiendaNubeId) {
+            if (movement.article.type === Type.Final) {
+              await this.updateArticleTiendaNube(movement.article._id)
+            }
+            if (movement.article.type === Type.Variant) {
+              const result = await this.getVariantsByArticleChild(movement.article._id);
+
+              if (result && result.length > 0) {
+                if (!articlesForUpdate.includes(result[0].articleParent._id)) {
+                  articlesForUpdate.push(result[0].articleParent._id)
+                }
+
+              }
+            }
+          }
+        }
+        if (articlesForUpdate.length > 0) {
+          for (let articleId of articlesForUpdate) {
+            await this.updateArticleTiendaNube(articleId)
+          }
+        }
+      }
+      
       this.loading = false;
     } catch (error) {
       this.showToast(error);
