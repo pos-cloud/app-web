@@ -5,6 +5,9 @@ let bcryptjs = require('bcryptjs');
 let moment = require('moment');
 moment.locale('es');
 
+const { MongoClient } = require('mongodb');
+
+
 let fileController = require('./file.controller');
 let EmailController = require('./email.controller');
 let constants = require('./../utilities/constants');
@@ -22,42 +25,60 @@ let Origin;
 let Permission;
 let CashBoxType;
 
-function login(req, res, next) {
-
-	//Recoger parametros
+async function login(req, res, next) {
+	// Recoger parametros
 	let params = req.body;
 
-	initConnectionDB(params.database);
+	// Verificar existencia de la base de datos antes de conectarse
+	const uri = "mongodb://localhost:27017"; // Cambia esto según sea necesario
+	const client = new MongoClient(uri);
 
-	//Si existen estos datos, empezar a trabajar para loguear
-	if (params.user && params.password) {
+	try {
+		await client.connect();
+		const adminDb = client.db().admin();
+		const databases = await adminDb.listDatabases();
+		const dbExists = databases.databases.some(db => db.name === params.database);
 
-		let where;
-		let json = '{"$and":[{"operationType": {"$ne": "D"}},';
-		json = json + '{"$or":[{"name": "' + params.user + '"},';
-		json = json + '{"email": "' + params.user + '"}]}]}';
-		try {
-			where = JSON.parse(json);
-		} catch (err) {
-			fileController.writeLog(req, res, next, 500, json);
-			return res.status(500).send(constants.ERR_SERVER);
+		if (!dbExists) {
+			return res.status(200).send({ message:'El negocio no existe' });
 		}
 
-		//Comprobar si existe el usuario
-		User.findOne(where, function (err, user) {
-			if (err) {
-				return res.status(500).send('Error al comprobar el usuario');
-			} else {
-				if (!user) {
-					return res.status(200).send({ message: 'El usuario y/o contraseña son incorrectos' });
-				} else {
-					//Comparar contraseñas
-					comparePasswords(req, res, next, params.password, user);
-				}
+		initConnectionDB(params.database);
+
+		// Si existen estos datos, empezar a trabajar para loguear
+		if (params.user && params.password) {
+			let where;
+			let json = '{"$and":[{"operationType": {"$ne": "D"}},';
+			json = json + '{"$or":[{"name": "' + params.user + '"},';
+			json = json + '{"email": "' + params.user + '"}]}]}';
+			try {
+				where = JSON.parse(json);
+			} catch (err) {
+				fileController.writeLog(req, res, next, 500, json);
+				return res.status(500).send(constants.ERR_SERVER);
 			}
-		});
-	} else {
-		return res.status(200).send({ message: constants.COMPLETE_ALL_THE_DATA });
+
+			// Comprobar si existe el usuario
+			User.findOne(where, function (err, user) {
+				if (err) {
+					return res.status(500).send('Error al comprobar el usuario');
+				} else {
+					if (!user) {
+						return res.status(200).send({ message: 'El usuario y/o contraseña son incorrectos' });
+					} else {
+						// Comparar contraseñas
+						comparePasswords(req, res, next, params.password, user);
+					}
+				}
+			});
+		} else {
+			return res.status(200).send({ message: constants.COMPLETE_ALL_THE_DATA });
+		}
+	} catch (err) {
+		console.error(err);
+		return res.status(500).send(constants.ERR_SERVER);
+	} finally {
+		await client.close();
 	}
 }
 
