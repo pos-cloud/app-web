@@ -447,7 +447,7 @@
                 <div *ngIf="transaction.type.allowTransactionClose" class="col-lg-2 col-md-2 btn-action btn-large center-content"
                     (click)="!loading ? close() : $event.stopPropagation()"
                     [ngClass]="{'disabled': loading, 'enabled': !loading }">
-                    Cerrar
+                    Pendiente
                 </div>
             </div>
             <div class="row" *ngIf="display">
