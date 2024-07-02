@@ -5,22 +5,10 @@ import * as moment from 'moment'
 import * as multer from 'multer'
 import * as xlsx from 'xlsx';
 
-import CategoryController from '../../domains/category/category.controller'
-import Category from '../../domains/category/category.interface'
-import categoryModel from '../../domains/category/category.model'
-import CompanyController from '../../domains/company/company.controller'
-import MakeController from '../../domains/make/make.controller'
-import Make from '../../domains/make/make.interface'
-import makeModel from '../../domains/make/make.model'
-import TaxController from '../../domains/tax/tax.controller'
-import UnitOfMeasurementController from '../../domains/unit-of-measurement/unit-of-measurement.controller'
-import User from '../../domains/user/user.interface'
-import userModel from '../../domains/user/user.model'
 import Controller from '../model/model.controller'
 
 import HttpException from './../../exceptions/HttpException'
 import RequestWithUser from './../../interfaces/requestWithUser.interface'
-import Responseable from './../../interfaces/responsable.interface'
 import authMiddleware from './../../middleware/auth.middleware'
 import ensureLic from './../../middleware/license.middleware'
 import validationMiddleware from './../../middleware/validation.middleware'
@@ -30,6 +18,7 @@ import Article from './article.interface'
 import ObjSchema from './article.model'
 import ArticleUC from './article.uc'
 import axios from 'axios';
+import VariantUC from '../variant/variant.uc';
 
 export default class ArticleController extends Controller {
   public EJSON: any = require('bson').EJSON
@@ -46,14 +35,15 @@ export default class ArticleController extends Controller {
   private initializeRoutes() {
     let upload = multer({ storage: this.getStorage() })
 
-    this.router      
-      .get(this.path, [authMiddleware, ensureLic], this.getAllObjs)
-      .get(`${this.path}/articles-tiendanube`, [authMiddleware, ensureLic], this.importTiendaNube) 
+    this.router
+      .get(this.path, this.getAllObjs)
+      .get(`${this.path}/articles-tiendanube`, [authMiddleware, ensureLic], this.importTiendaNube)
+      .get(`${this.path}/last-code`, [authMiddleware, ensureLic], this.getLasCode)
       .get(`${this.path}/:id`, [authMiddleware, ensureLic], this.getObjById)
       .post(
         this.path,
         [authMiddleware, ensureLic, validationMiddleware(ObjDto)],
-        this.saveObj,
+        this.saveArticleObj,
       )
       .put(
         `${this.path}/:id`,
@@ -280,7 +270,7 @@ export default class ArticleController extends Controller {
 
       const res = await new ArticleUC(request.database).importFromExcel(data)
 
-       response.send(new Responser(200, res))
+      response.send(new Responser(200, res))
     } catch (error) {
       console.log(error)
       next(
@@ -313,30 +303,79 @@ export default class ArticleController extends Controller {
     }
   }
 
+  saveArticleObj = async (
+    request: RequestWithUser,
+    response: express.Response,
+    next: express.NextFunction
+  ) => {
+    try {
+      this.initConnectionDB(request.database)
+      this.userAudit = request.user
+      const article = request.body
+
+      // verificamos que el codigo no exista
+      const articleCode = await this.getAll({
+        project: {
+          code: 1,
+          operationType: 1
+        },
+        match: {
+          code: article.code,
+					operationType: { $ne: 'D' },
+
+        }
+      })
+      if (articleCode.result.length > 0) {
+        return response.json({ message: `El código ${articleCode.result[0].code} ya existe` })
+      }
+
+      const resultParent = await this.save(new this.model({ ...article }))
+     
+      const variant = await new VariantUC(this.database).createVariant(resultParent.result._id, article.variants)
+
+      return response.send(variant)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   async getArticlesTn() {
     const URL = 'http://localhost:305/products';
     const articles = [];
     let page = 1;
-  
+
     const requestOptions = {
       headers: {
         Authorization: this.authToken
       }
     };
-  
-      while (true) {
-        const response = await axios.get(URL,{
-          data: { page },
-          ...requestOptions
-        });
-        const responseData = response.data;
-        articles.push(...responseData);
 
-        if (responseData.length < 200) {
-          break; 
-        }
-        page++;
+    while (true) {
+      const response = await axios.get(URL, {
+        data: { page },
+        ...requestOptions
+      });
+      const responseData = response.data;
+      articles.push(...responseData);
+
+      if (responseData.length < 200) {
+        break;
       }
-      return articles;
-  }  
+      page++;
+    }
+    return articles;
+  }
+
+  getLasCode = async (
+    request: RequestWithUser,
+    response: express.Response,
+    next: express.NextFunction) => {
+    try {
+      this.initConnectionDB(request.database)
+      const lastCode = await new ArticleUC(this.database).lastArticle()
+      return response.json({code: lastCode})
+    } catch (error) {
+      console.log(error)
+    }
+  }
 }

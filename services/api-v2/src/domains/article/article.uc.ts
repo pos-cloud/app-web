@@ -877,9 +877,9 @@ export default class ArticleUC {
 					}
 				} else {
 					let newArticle: Article = ArticleSchema.getInstance(this.database)
-					code++;
+					
 					newArticle = Object.assign(newArticle, {
-						code: String(code).padStart(5, '0'),
+						code: code,
 						barcode: item.variants[0].sku,
 						//make: makeObj[´']._id,
 						category: categoryObj[item.categories[0]?.name.es] !== undefined ? categoryObj[item.categories[0].name.es]._id : null,
@@ -1399,20 +1399,34 @@ export default class ArticleUC {
 	}
 
 	async lastArticle() {
+		const config = await new ConfigController(this.database).getAll({
+			project: {
+				_id: 1,
+				'article.code.validators.maxLength': 1,
+			}
+		})
+
 		const todosLosProductos = await new ArticleController(this.database).getAll({
-			match: {
-				type: 'Final'
+			match:{
+				type: 'Final',
+				operationType: { $ne: 'D'}
 			}
 		});
-
 		if (todosLosProductos.result) {
 			todosLosProductos.result.sort((a: any, b: any) => {
 				const dateA = new Date(a.creationDate).getTime();
 				const dateB = new Date(b.creationDate).getTime();
 				return dateB - dateA;
 			});
+		
 			const ultimoProducto = todosLosProductos.result[0];
-			return ultimoProducto?.code ?? 0
+			let codeSum
+			if(ultimoProducto){
+				codeSum = (Number(ultimoProducto?.code) + 1).toString().padStart(config.result[0].article.code.validators.maxLength, '0');
+			}else{
+				codeSum ='1'.padStart(config.result[0].article.code.validators.maxLength, '0');
+			}
+			return codeSum 
 		}
 	}
 

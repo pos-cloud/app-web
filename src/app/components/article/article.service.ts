@@ -71,6 +71,27 @@ export class ArticleService extends ModelService {
       );
   }
 
+  public getLasCode(): Observable<any>{
+    const URL = `${Config.apiV8URL}articles/last-code`;
+
+    const headers = new HttpHeaders()
+      .set("Content-Type", "application/json")
+      .set("Authorization", this._authService.getToken());
+
+    return this._http
+      .get(URL, {
+        headers: headers,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+  }
+
   public getArticlesV2(
     project: {},
     match: {},
@@ -145,8 +166,8 @@ export class ArticleService extends ModelService {
       );
   }
 
-  public saveArticle(article: Article, variants: Variant[]): Observable<any> {
-    const URL = `${Config.apiURL}article`;
+  public saveArticle(article: Article): Observable<any> {
+    const URL = `${Config.apiV8URL}articles`;
 
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json")
@@ -154,8 +175,7 @@ export class ArticleService extends ModelService {
 
     return this._http
       .post(
-        URL,
-        { article: article, variants: variants },
+        URL,article,
         {
           headers: headers,
         }

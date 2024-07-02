@@ -13,6 +13,7 @@ import { Company } from '../company/company';
 import { Classification } from '../classification/classification';
 import { Application } from '../application/application.model';
 import { Account } from '../account/account';
+import { Variant } from '../variant/variant';
 
 export class Article {
 
@@ -102,6 +103,7 @@ export class Article {
     public depth: number;
     public showMenu: Boolean = false;
     public updateVariants: Boolean = true;
+    public variants: any = []
     
     constructor() { }
 }
