@@ -1406,23 +1406,23 @@ export default class ArticleUC {
 			}
 		})
 
-		const todosLosProductos = await new ArticleController(this.database).getAll({
+		const articles = await new ArticleController(this.database).getAll({
 			match:{
 				type: 'Final',
 				operationType: { $ne: 'D'}
 			}
 		});
-		if (todosLosProductos.result) {
-			todosLosProductos.result.sort((a: any, b: any) => {
+		if (articles.result) {
+			articles.result.sort((a: any, b: any) => {
 				const dateA = new Date(a.creationDate).getTime();
 				const dateB = new Date(b.creationDate).getTime();
 				return dateB - dateA;
 			});
 		
-			const ultimoProducto = todosLosProductos.result[0];
+			const lastArticle = articles.result[0];
 			let codeSum
-			if(ultimoProducto){
-				codeSum = (Number(ultimoProducto?.code) + 1).toString().padStart(config.result[0].article.code.validators.maxLength, '0');
+			if(lastArticle){
+				codeSum = (Number(lastArticle?.code) + 1).toString().padStart(config.result[0].article.code.validators.maxLength, '0');
 			}else{
 				codeSum ='1'.padStart(config.result[0].article.code.validators.maxLength, '0');
 			}

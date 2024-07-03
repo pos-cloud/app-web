@@ -38,7 +38,7 @@ export default class ArticleController extends Controller {
     this.router
       .get(this.path, this.getAllObjs)
       .get(`${this.path}/articles-tiendanube`, [authMiddleware, ensureLic], this.importTiendaNube)
-      .get(`${this.path}/last-code`, [authMiddleware, ensureLic], this.getLasCode)
+      .get(`${this.path}/last-code`, [authMiddleware, ensureLic], this.getLastCode)
       .get(`${this.path}/:id`, [authMiddleware, ensureLic], this.getObjById)
       .post(
         this.path,
@@ -329,11 +329,17 @@ export default class ArticleController extends Controller {
         return response.json({ message: `El código ${articleCode.result[0].code} ya existe` })
       }
 
-      const resultParent = await this.save(new this.model({ ...article }))
-     
-      const variant = await new VariantUC(this.database).createVariant(resultParent.result._id, article.variants)
+      let variants
 
-      return response.send(variant)
+      const resultParent = await this.save(new this.model({ ...article }))
+      if(article.variants){
+        variants = await new VariantUC(this.database).createVariant(resultParent.result._id, article.variants)
+      }
+
+      return response.send({
+        resultParent,
+        variants
+      })
     } catch (error) {
       console.log(error)
     }
@@ -366,7 +372,7 @@ export default class ArticleController extends Controller {
     return articles;
   }
 
-  getLasCode = async (
+  getLastCode = async (
     request: RequestWithUser,
     response: express.Response,
     next: express.NextFunction) => {
