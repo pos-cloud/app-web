@@ -477,9 +477,63 @@
                 <li ngbNavItem>
                     <a ngbNavLink *ngIf="articleType === 'Producto'">Variantes</a>
                     <ng-template ngbNavContent>
-                        <app-add-variant (eventAddVariants)="manageVariants($event)" [article]="article"
-                            [variants]="variants" [operation]="operation">
-                        </app-add-variant>
+                        <div class="row">
+                          <div class="form-group col-md-5">
+                            <label for="type" class="control-label">Tipo de variante</label>
+                            <select class="form-control" formControlName="type" [(ngModel)]="variantTypeSelected" (change)="refreshValues()">
+                              <option value="null"></option>
+                              <option *ngFor="let type of variantTypes" [ngValue]="type">{{type.name}}</option>
+                            </select>
+                            <div *ngIf="formErrors.type" class="alert alert-danger">
+                              {{ formErrors.type }}
+                            </div>
+                          </div>
+                          <div class="form-group col-md-5">
+                            <label for="value" class="control-label">Valor</label>
+                            <select class="form-control" formControlName="value" [(ngModel)]="variantValueSelected">
+                              <option value="null"></option>
+                              <option *ngFor="let value of filteredValues" [ngValue]="value">{{value.description}}</option>
+                            </select>
+                            <div *ngIf="formErrors.value" class="alert alert-danger">
+                              {{ formErrors.value }}
+                            </div>
+                          </div>
+                          <div class="form-group col-md-2">
+                            <div>Acción</div>
+                            <button type="submit" class="btn btn-success" (click)="setvaluere()">Agregar</button>
+                          </div>
+                        </div>
+                        <div class="row table-responsive">
+                          <table class="table table-striped">
+                            <thead>
+                              <tr>
+                                <th>Tipo</th>
+                                <th>Valores</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let vt of variantsByTypes">
+                                <td class="flat">{{vt.type.name}}</td>
+                                <td class="flat">
+                                  <div class="btn-group" *ngFor="let v of vt.value">
+                                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                      <label class="btn btn-sm">
+                                        {{v.description}}
+                                      </label>
+                                      <label class="btn btn-sm btn-danger" (click)="deleteVariant(v)">
+                                        <input type="radio" name="options" autocomplete="off">
+                                        <i class="fa fa-trash-o"></i>
+                                      </label>
+                                    </div>
+                                  </div>
+                                </td>
+                              </tr>
+                              <tr align="center" *ngIf="!variantsByTypes || variantsByTypes.length === 0 && !loading">
+                                <td colspan="10">No se encontraron variantes</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
                     </ng-template>
                 </li>
                 <!-- <li ngbNavItem>

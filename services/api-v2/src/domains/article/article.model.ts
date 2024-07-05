@@ -129,6 +129,13 @@ class ArticleSchema extends Model {
       showMenu: { type: Boolean, default: false},
       tiendaNubeId: {type: Number, default: 0},
       updateVariants: {type: Boolean, default: true }
+      variants: [
+        {
+        value: {type: Schema.Types.ObjectId, ref: 'variant-value'},
+        type: {type: Schema.Types.ObjectId, ref: 'variant-type'},
+      }
+    ]
+
     })
   }
 

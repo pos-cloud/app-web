@@ -5,6 +5,7 @@ import ArticleController from "../article/article.controller"
 import Controller from "../model/model.controller"
 import ObjDto from '../article/article.dto'
 import ObjSchema from '../article/article.model'
+import VariantSchema from '../variant/variant.model'
 
 export default class VariantUC extends Controller {
     database: string
@@ -65,10 +66,20 @@ export default class VariantUC extends Controller {
 
                 results.push(articleController.save(new this.model(child)));
             });
-            Promise.all(results).then((result: any) => {
+            Promise.all(results).then(async (result) => {
                 if (result.length) {
                     for (let [index, articleChild] of result.entries()) {
-                        console.log(articleChild, variants[index])
+                        let newVariant: Variant = VariantSchema.getInstance(this.database);
+                        newVariant = Object.assign(newVariant, {
+                            type: variants[index].type._id,
+                            value: variants[index].value._id,
+                            articleParent: articleParentId,
+                            articleChild: articleChild.result._id,
+                        });
+                        const resultVariant = await new VariantController(this.database).save(newVariant);
+                        if(!resultVariant.result && resultVariant.status !== 200){
+                            throw new Error("No se crearon las variantes correctamente");
+                        }
                     }
                 }
             })

@@ -333,7 +333,8 @@ export default class ArticleController extends Controller {
 
       const resultParent = await this.save(new this.model({ ...article }))
       if(article.variants){
-        variants = await new VariantUC(this.database).createVariant(resultParent.result._id, article.variants)
+        console.log(article.variants)
+       // variants = await new VariantUC(this.database).createVariant(resultParent.result._id, article.variants)
       }
 
       return response.send({

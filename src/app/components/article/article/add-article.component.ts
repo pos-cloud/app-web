@@ -65,6 +65,11 @@ import { TranslateMePipe } from './../../../main/pipes/translate-me';
 import Resulteable from './../../../util/Resulteable';
 import { ORIGINMEDIA } from 'app/types';
 import { FileService } from 'app/services/file.service';
+import { VariantType } from 'app/components/variant-type/variant-type';
+import { VariantValue } from 'app/components/variant-value/variant-value';
+import { VariantTypeService } from 'app/components/variant-type/variant-type.service';
+import { VariantValueService } from 'app/components/variant-value/variant-value.service';
+import { OrderByPipe } from 'app/main/pipes/order-by.pipe';
 
 @Component({
   selector: 'app-add-article',
@@ -85,6 +90,7 @@ export class AddArticleComponent implements OnInit {
   articles: Article[];
   config: Config;
   articleForm: UntypedFormGroup;
+  public variantsByTypes: any[];
   newDeposit: UntypedFormGroup;
   newLocation: UntypedFormGroup;
   currencies: Currency[] = new Array();
@@ -136,6 +142,15 @@ export class AddArticleComponent implements OnInit {
   markupPriceWithoutVAT: number = 0;
   meliAttrs: IMeliAttrs;
   database: string;
+
+  public variantTypes: VariantType[];
+  public variantTypeSelected: VariantType;
+  public variantValueSelected: VariantValue;
+  public variantValues: VariantValue[];
+  public orderByPipe: OrderByPipe = new OrderByPipe();
+  variantForm: UntypedFormGroup
+  variant: Variant
+  filteredValues: VariantValue[] = [];
 
   html = '';
 
@@ -197,7 +212,9 @@ export class AddArticleComponent implements OnInit {
     providers: '',
     provider: '',
     note: '',
-    updateVariants: ''
+    updateVariants: '',
+    value: '',
+    type: ''
   };
 
   validationMessages = {
@@ -335,7 +352,9 @@ export class AddArticleComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public _fileService: FileService
+    public _fileService: FileService,
+    public _variantTypeService: VariantTypeService,
+    public _variantValueService: VariantValueService,
   ) {
     if (window.screen.width < 1000) this.orientation = 'vertical';
     this.article = new Article();
@@ -392,6 +411,8 @@ export class AddArticleComponent implements OnInit {
     } else {
       this.imageURL = './../../../assets/img/default.jpg';
     }
+    this.getVariantTypes()
+    this.getVariantValues()
   }
 
   getArticleTypes() {
@@ -458,7 +479,7 @@ export class AddArticleComponent implements OnInit {
   }
 
   buildForm(): void {
-    
+
     this.articleForm = this._fb.group({
       _id: [this.article._id, []],
       order: [this.article.order, []],
@@ -521,8 +542,11 @@ export class AddArticleComponent implements OnInit {
       depth: [this.article.depth, []],
       showMenu: [this.article.showMenu, []],
       tiendaNubeId: [this.article.tiendaNubeId, []],
-      updateVariants:[this.article.updateVariants, []]
+      updateVariants:[this.article.updateVariants, []],
       // variants: [this.variants, []]
+      variants: this._fb.array([]),
+        value:[ '', []],
+        type: ['', []]
     });
 
     this.newDeposit = this._fb.group({
@@ -786,7 +810,7 @@ export class AddArticleComponent implements OnInit {
           // }
 
           this.imageURL = this.article.picture ?? './../../../assets/img/default.jpg'
-          if(this.article.picture == 'default.jpg') this.imageURL = './../../../assets/img/default.jpg'
+          if (this.article.picture == 'default.jpg') this.imageURL = './../../../assets/img/default.jpg'
 
           if (this.article.containsVariants) {
             this.getVariantsByArticleParent();
@@ -807,6 +831,101 @@ export class AddArticleComponent implements OnInit {
     );
   }
 
+  public getVariantTypes(): void {
+
+    this.loading = true;
+
+    let project = {
+      "_id": 1,
+      "name": 1,
+      "operationType": 1
+    };
+    let match = {
+      operationType: { $ne: 'D' }
+    }
+    this._variantTypeService.getAll({ project, match }).subscribe(
+      result => {
+        if (!result.result) {
+          this.loading = false;
+          this.variantTypes = new Array();
+        } else {
+          this.loading = false;
+          this.variantTypes = result.result;
+
+          this.variantTypes.sort((a, b) => {
+            // Comparar los nombres alfabéticamente
+            if (a.name < b.name) {
+              return -1;
+            }
+            if (a.name > b.name) {
+              return 1;
+            }
+            return 0;
+          });
+        //   if (this.variants && this.variants.length > 0) {
+        //     for (let variant of this.variants) {
+        //       this.setVariantByType(variant);
+        //     }
+        //   }
+        }
+      },
+      error => {
+        this.loading = false;
+      }
+    );
+  }
+
+  public getVariantValues(): void {
+
+    this.loading = true;
+    let project = {
+      "_id": 1,
+      "type._id": 1,
+      "type.name": 1,
+      "description": 1,
+      "operationType": 1
+    };
+    let match = {
+      operationType: { $ne: 'D' }
+    }
+    this._variantValueService.getAll({project, match}).subscribe(
+      result => {
+        if (!result.result) {
+          this.loading = false;
+          this.variantValues = new Array();
+        } else {
+          this.loading = false;
+          this.variantValues = result.result;
+        }
+      },
+      error => {
+        this.loading = false;
+      }
+    );
+  }
+
+  private setVariantByType(variant: Variant): void {
+
+    let exist: boolean = false;
+
+    for (let v of this.variantsByTypes) {
+      if (v.type._id === variant.type._id) {
+        exist = true;
+        v.value.push(variant.value);
+        v.value = this.orderByPipe.transform(v.value, ['description']);
+        v.value = this.orderByPipe.transform(v.value, ['order']);
+      }
+    }
+
+    if (!exist) {
+      this.variantsByTypes.push({
+        type: variant.type,
+        value: [variant.value]
+      });
+      this.variantsByTypes = this.orderByPipe.transform(this.variantsByTypes, ['type'], 'name');
+      this.variantsByTypes = this.orderByPipe.transform(this.variantsByTypes, ['type'], 'order');
+    }
+  }
   // loadURL(): void {
   //   if (this.articleForm.value.url === '') {
   //     let url = this.articleForm.value.description
@@ -845,6 +964,24 @@ export class AddArticleComponent implements OnInit {
   //     this.articleForm.patchValue({ url: url });
   //   }
   // }
+  public refreshValues(): void {
+    this.filteredValues = this.variantValues
+    .filter((value: VariantValue) => value.type.name === this.variantTypeSelected.name)
+    .sort((a, b) => {
+      if (a.description < b.description) {
+        return -1;
+      }
+      if (a.description > b.description) {
+        return 1;
+      }
+      return 0;
+    });
+}
+
+public setvaluere() {
+console.log('acaa', this.variantTypeSelected)
+console.log('hhe', this.variantValueSelected)
+}
 
   setValuesArray(): void {
     if (this.article.deposits && this.article.deposits.length > 0) {
@@ -909,6 +1046,20 @@ export class AddArticleComponent implements OnInit {
             _id: null,
             picture: x.picture,
             meliId: x.meliId,
+          }),
+        );
+      });
+    }
+
+    if (this.article.variants && this.article.variants.length > 0) {
+      let variants = this.articleForm.controls.variants as UntypedFormArray;
+
+      this.article.variants.forEach((x) => {
+        console.log(x)
+        variants.push(
+          this._fb.group({
+            type: x.type._id,
+            value: x.value._id,
           }),
         );
       });
@@ -1476,16 +1627,16 @@ export class AddArticleComponent implements OnInit {
     if (!this.article.make) {
       this.article.make = null;
     }
-    if(!this.article.weight){
+    if (!this.article.weight) {
       this.article.weight = null;
     }
-    if(!this.article.height){
+    if (!this.article.height) {
       this.article.height = null;
     }
-    if(!this.article.width){
+    if (!this.article.width) {
       this.article.width = null;
     }
-    if(!this.article.depth){
+    if (!this.article.depth) {
       this.article.depth = null;
     }
 
@@ -1568,67 +1719,67 @@ export class AddArticleComponent implements OnInit {
   }
 
   addArticle(): void {
-      if (this.articleForm.valid) {
-        this.loadPosDescription();
-        //this.loadURL();
-        const oldMeliId: string = this.article.meliId;
+    if (this.articleForm.valid) {
+      this.loadPosDescription();
+      //this.loadURL();
+      const oldMeliId: string = this.article.meliId;
 
-        this.article = Object.assign(this.article, this.articleForm.value);
-        this.article.meliId = oldMeliId;
-        this.article.meliAttrs = this.meliAttrs;
-        if (this.article.make && this.article.make.toString() === '')
-          this.article.make = null;
-        if (this.article.category && this.article.category.toString() === '')
-          this.article.category = null;
-        if (
-          this.article.unitOfMeasurement &&
-          this.article.unitOfMeasurement.toString() === ''
-        )
-          this.article.unitOfMeasurement = null;
-        this.article.notes = this.notes;
-        this.article.tags = this.tags;
-        if (this.variants && this.variants.length > 0) {
-          this.article.containsVariants = true;
-        } else {
-          this.article.containsVariants = false;
-        }
-
-        this.article.taxes = this.taxes;
-        const selectedOrderIds = this.articleForm.value.applications
-          .map((v, i) => (v ? this.applications[i] : null))
-          .filter((v) => v !== null);
-
-        this.article.applications = selectedOrderIds;
-
-        const pathLocation: string[] = this._router.url.split('/');
-
-        if (pathLocation[2] === 'productos') {
-          this.article.type = Type.Final;
-        } else if (pathLocation[2] === 'variantes') {
-          this.article.type = Type.Variant;
-        } else if (pathLocation[2] === 'ingredientes') {
-          this.article.type = Type.Ingredient;
-        } else {
-          this.article.type = Type.Final;
-        }
-
-        if (this.article.provider == null) {
-          this.article.providers = [];
-        } else if (this.article.providers == undefined) {
-          this.article.providers = [this.article.provider];
-        } else if (this.article.providers.length == 0) {
-          this.article.providers = [this.article.provider];
-        }
-
-        if (this.operation === 'add' || this.operation === 'copy') {
-          this.saveArticle();
-        } else if (this.operation === 'update') {
-          this.updateArticle();
-        }
+      this.article = Object.assign(this.article, this.articleForm.value);
+      this.article.meliId = oldMeliId;
+      this.article.meliAttrs = this.meliAttrs;
+      if (this.article.make && this.article.make.toString() === '')
+        this.article.make = null;
+      if (this.article.category && this.article.category.toString() === '')
+        this.article.category = null;
+      if (
+        this.article.unitOfMeasurement &&
+        this.article.unitOfMeasurement.toString() === ''
+      )
+        this.article.unitOfMeasurement = null;
+      this.article.notes = this.notes;
+      this.article.tags = this.tags;
+      if (this.variants && this.variants.length > 0) {
+        this.article.containsVariants = true;
       } else {
-        this.showToast({ message: 'Revisa los errores en el formulario.' });
-        this.onValueChanged();
+        this.article.containsVariants = false;
       }
+
+      this.article.taxes = this.taxes;
+      const selectedOrderIds = this.articleForm.value.applications
+        .map((v, i) => (v ? this.applications[i] : null))
+        .filter((v) => v !== null);
+
+      this.article.applications = selectedOrderIds;
+
+      const pathLocation: string[] = this._router.url.split('/');
+
+      if (pathLocation[2] === 'productos') {
+        this.article.type = Type.Final;
+      } else if (pathLocation[2] === 'variantes') {
+        this.article.type = Type.Variant;
+      } else if (pathLocation[2] === 'ingredientes') {
+        this.article.type = Type.Ingredient;
+      } else {
+        this.article.type = Type.Final;
+      }
+
+      if (this.article.provider == null) {
+        this.article.providers = [];
+      } else if (this.article.providers == undefined) {
+        this.article.providers = [this.article.provider];
+      } else if (this.article.providers.length == 0) {
+        this.article.providers = [this.article.provider];
+      }
+
+      if (this.operation === 'add' || this.operation === 'copy') {
+        this.saveArticle();
+      } else if (this.operation === 'update') {
+        this.updateArticle();
+      }
+    } else {
+      this.showToast({ message: 'Revisa los errores en el formulario.' });
+      this.onValueChanged();
+    }
   }
 
   eventAddMeliAttrs(params: any) {
@@ -1642,11 +1793,11 @@ export class AddArticleComponent implements OnInit {
 
     if (await this.isValid()) {
 
-      if(this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
+      if (this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
 
-      this.variants.forEach((item)=>{
-       this.article.variants.push({value: item.value, type:item.type})
-      })
+      //  this.variants.forEach((item)=>{
+      //  this.article.variants.push({value: item.value._id, type:item.type._id})
+      // })
       this._articleService.saveArticle(this.article).subscribe(
         (result) => {
           if (!result.article) {
@@ -1656,19 +1807,19 @@ export class AddArticleComponent implements OnInit {
               result.error && result.error.message
                 ? result.error.message
                 : result.message
-                ? result.message
-                : '',
+                  ? result.message
+                  : '',
             );
           } else {
             this.hasChanged = true;
             this.article = result.article;
             this.showToast(null, 'success', 'El producto se ha añadido con éxito.');
-            this.activeModal.close({article: this.article});
+            this.activeModal.close({ article: this.article });
             this.loading = false;
-            if(this.article.applications.some(application => application.type === ApplicationType.TiendaNube)){
+            if (this.article.applications.some(application => application.type === ApplicationType.TiendaNube)) {
               this.saveArticleTiendaNube();
             }
-            
+
           }
         },
         (error) => {
@@ -1686,7 +1837,7 @@ export class AddArticleComponent implements OnInit {
 
     if (await this.isValid()) {
 
-      if(this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
+      if (this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
       this._articleService.updateArticle(this.article, this.variants).subscribe(
         async (result) => {
           if (!result.article) {
@@ -1696,33 +1847,33 @@ export class AddArticleComponent implements OnInit {
               result.error && result.error.message
                 ? result.error.message
                 : result.message
-                ? result.message
-                : '',
+                  ? result.message
+                  : '',
             );
           } else {
             this.hasChanged = true;
             this.article = result.article;
-            this.articleForm.patchValue({meliId: this.article.meliId});
-            this.articleForm.patchValue({wooId: this.article.wooId});
+            this.articleForm.patchValue({ meliId: this.article.meliId });
+            this.articleForm.patchValue({ wooId: this.article.wooId });
             this._articleService.setItems(null);
             this.showToast(null, 'success', 'Operación realizada con éxito');
             this.activeModal.close();
             this.loading = false
 
-           if(this.article.applications.some(application => application.type === ApplicationType.TiendaNube)){
-            if (this.article.type === Type.Final) {
-              this.updateArticleTiendaNube(this.article._id)
-            } else if (this.article.type === Type.Variant) {
-              const result = await this.getVariantsByArticleChild(this.article._id);
-              if (result && result.length > 0) {
+            if (this.article.applications.some(application => application.type === ApplicationType.TiendaNube)) {
+              if (this.article.type === Type.Final) {
+                this.updateArticleTiendaNube(this.article._id)
+              } else if (this.article.type === Type.Variant) {
+                const result = await this.getVariantsByArticleChild(this.article._id);
+                if (result && result.length > 0) {
                   if (result[0] && result[0].articleParent._id) {
-                     this.updateArticleTiendaNube(result[0].articleParent._id);
+                    this.updateArticleTiendaNube(result[0].articleParent._id);
+                  }
                 }
               }
-            }
-          }else if(this.article.tiendaNubeId && this.article.type === Type.Final){
+            } else if (this.article.tiendaNubeId && this.article.type === Type.Final) {
               this.deleteArticleTiendaNube();
-           }
+            }
           }
         },
         (error) => {
@@ -1740,7 +1891,7 @@ export class AddArticleComponent implements OnInit {
       (result: Resulteable) => {
         if (result.status == 200) {
           this.activeModal.close('delete_close');
-          if(this.article.tiendaNubeId){
+          if (this.article.tiendaNubeId) {
             this.deleteArticleTiendaNube();
           }
         } else {
@@ -1767,14 +1918,14 @@ export class AddArticleComponent implements OnInit {
             result.error && result.error.message
               ? result.error.message
               : result.message
-              ? result.message
-              : '',
+                ? result.message
+                : '',
           );
         } else {
           this.showToast(null, 'success', 'Producto eliminado con éxito en TiendaNube');
         }
         this.loading = false
-     },
+      },
       (error) => {
         this.showToast(error)
         this.loading = false
@@ -1794,8 +1945,8 @@ export class AddArticleComponent implements OnInit {
             result.error && result.error.message
               ? result.error.message
               : result.message
-              ? result.message
-              : '',
+                ? result.message
+                : '',
           );
         } else {
           this.showToast(null, 'success', 'Producto creado con éxito en Tienda Nube');
@@ -1822,8 +1973,8 @@ export class AddArticleComponent implements OnInit {
             result.error && result.error.message
               ? result.error.message
               : result.message
-              ? result.message
-              : '',
+                ? result.message
+                : '',
           );
         } else {
           this.showToast(null, 'success', 'Producto actualizado con éxito en TiendaNube');
@@ -1841,24 +1992,24 @@ export class AddArticleComponent implements OnInit {
     return new Promise((resolve, reject) => {
       this.loading = true;
       let query = 'where="articleChild":"' + id + '"';
-      
+
       this._variantService.getVariants(query)
-      .subscribe(
-        (result) => {        
-          if (!result.variants) {
-            resolve(null);
-          } else {
-            resolve(result.variants);
-          }
-          this.loading = false;
-        },
-        (error) => {
-          console.error('Error al obtener variantes:', error);
-         // this.showMessage(error._body, 'danger', false);
-          this.loading = false;
-          reject(error);
-        },
-      );
+        .subscribe(
+          (result) => {
+            if (!result.variants) {
+              resolve(null);
+            } else {
+              resolve(result.variants);
+            }
+            this.loading = false;
+          },
+          (error) => {
+            console.error('Error al obtener variantes:', error);
+            // this.showMessage(error._body, 'danger', false);
+            this.loading = false;
+            reject(error);
+          },
+        );
     });
   }
 
@@ -1877,7 +2028,7 @@ export class AddArticleComponent implements OnInit {
             resolve(result);
           },
           (error) => this.showToast(JSON.parse(error))
-          
+
         )
     })
   }
@@ -1919,7 +2070,7 @@ export class AddArticleComponent implements OnInit {
       //     }
       //   });
       // } else {
-        
+
       // }
       resolve(true);
     });
