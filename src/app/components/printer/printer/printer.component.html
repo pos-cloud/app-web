@@ -65,27 +65,40 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="form-group col-md-4">
-                                <label for="pageSize" class="control-label">Tamaño:</label>
-                                <select class="form-control" formControlName="pageSize" (change)="updatePageSize()">
-                                    <option *ngFor="let pageSize of pageSizes" [ngValue]="pageSize">{{pageSize}}
-                                    </option>
-                                </select>
+                            <div class="form-group col-md-3">
+                                <label for="labelWidth" class="control-label">Ancho de etiqueta:</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" formControlName="labelWidth"
+                                        name="labelWidth" id="labelWidth" aria-describedby="basic-addon1" />
+                                        <div class="input-group-prepend"><span class="input-group-text"
+                                            id="basic-addon1">mm</span></div>
+                                </div>
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-3">
+                                <label for="labelHigh" class="control-label">Alto de etiqueta:</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" formControlName="labelHigh"
+                                        name="labelHigh" id="labelHigh" aria-describedby="basic-addon1" />
+                                        <div class="input-group-prepend"><span class="input-group-text"
+                                            id="basic-addon1">mm</span></div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-3">
                                 <label for="pageWidth" class="control-label">Ancho de página:</label>
                                 <div class="input-group">
                                     <input type="number" class="form-control" formControlName="pageWidth"
                                         name="pageWidth" id="pageWidth" aria-describedby="basic-addon1" />
-                                    <span class="input-group-addon" id="basic-addon1">mm</span>
+                                        <div class="input-group-prepend"><span class="input-group-text"
+                                            id="basic-addon1">mm</span></div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-3">
                                 <label for="pageHigh" class="control-label">Alto de página:</label>
                                 <div class="input-group">
                                     <input type="number" class="form-control" formControlName="pageHigh" name="pageHigh"
                                         id="pageHigh" aria-describedby="basic-addon1" />
-                                    <span class="input-group-addon" id="basic-addon1">mm</span>
+                                        <div class="input-group-prepend"><span class="input-group-text"
+                                            id="basic-addon1">mm</span></div>
                                 </div>
                             </div>
                         </div>
@@ -111,16 +124,17 @@
                                 <div class="input-group">
                                     <input type="number" class="form-control" formControlName="labelWidth"
                                         name="labelWidth" id="labelWidth" aria-describedby="basic-addon1" />
-                                    <span class="input-group-addon" id="basic-addon1">mm</span>
+                                        <div class="input-group-prepend"><span class="input-group-text"
+                                            id="basic-addon1">mm</span></div>
                                 </div>
                             </div>
                             <div class="form-group col-md-3">
-
                                 <label for="labelHigh" class="control-label">Alto de etiqueta:</label>
                                 <div class="input-group">
                                     <input type="number" class="form-control" formControlName="labelHigh"
                                         name="labelHigh" id="labelHigh" aria-describedby="basic-addon1" />
-                                    <span class="input-group-addon" id="basic-addon1">mm</span>
+                                        <div class="input-group-prepend"><span class="input-group-text"
+                                            id="basic-addon1">mm</span></div>
                                 </div>
                             </div>
                         </div>
