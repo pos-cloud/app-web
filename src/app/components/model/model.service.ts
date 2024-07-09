@@ -1,6 +1,5 @@
 import {HttpClient, HttpParams, HttpHeaders} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {Config} from 'app/app.config';
 import {of, BehaviorSubject} from 'rxjs';
 import {Observable} from 'rxjs/Observable';
 import {map, catchError} from 'rxjs/operators';
