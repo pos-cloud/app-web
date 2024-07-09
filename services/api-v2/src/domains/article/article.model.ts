@@ -127,8 +127,8 @@ class ArticleSchema extends Model {
       height: { type: Number},
       depth: { type: Number},
       showMenu: { type: Boolean, default: false},
-      tiendaNubeId: {type: Number, default: 0}
-
+      tiendaNubeId: {type: Number, default: 0},
+      updateVariants: {type: Boolean, default: true }
     })
   }
 

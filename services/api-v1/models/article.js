@@ -122,6 +122,7 @@ const ArticleSchema = new Schema({
   depth: { type: Number},
   showMenu: { type: Boolean, default: false },
   tiendaNubeId: { type: Number},
+  updateVariants: {type: Boolean, default: true }
 })
 
 module.exports = ArticleSchema

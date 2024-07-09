@@ -101,6 +101,7 @@ export class Article {
     public height: number;
     public depth: number;
     public showMenu: Boolean = false;
+    public updateVariants: Boolean = true;
     
     constructor() { }
 }

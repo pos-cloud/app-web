@@ -837,11 +837,17 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="form-group col-md-3">
+                                    <div class="form-group col-md-6">
                                         <label for="m3" class="control-label">M3:</label>
                                         <input type="number" class="form-control" formControlName="m3"
                                             name="m3" id="m3" [readonly]="readonly" />
-                                    
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="updateVariants" class="control-label">¿Modifica Variantes?</label>
+                                        <select class="form-control" formControlName="updateVariants">
+                                            <option [value]="true" [disabled]="readonly">Si</option>
+                                            <option [value]="false" [disabled]="readonly">No</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>

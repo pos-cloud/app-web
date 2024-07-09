@@ -95,4 +95,5 @@ export default interface Article extends Model {
   height: Number
   depth: Number
   showMenu: boolean
+  updateVariants: boolean
 }

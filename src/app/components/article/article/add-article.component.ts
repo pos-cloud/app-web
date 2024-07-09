@@ -197,6 +197,7 @@ export class AddArticleComponent implements OnInit {
     providers: '',
     provider: '',
     note: '',
+    updateVariants: ''
   };
 
   validationMessages = {
@@ -518,7 +519,8 @@ export class AddArticleComponent implements OnInit {
       height: [this.article.height, []],
       depth: [this.article.depth, []],
       showMenu: [this.article.showMenu, []],
-      tiendaNubeId: [this.article.tiendaNubeId, []]
+      tiendaNubeId: [this.article.tiendaNubeId, []],
+      updateVariants:[this.article.updateVariants, []]
     });
 
     this.newDeposit = this._fb.group({
@@ -1570,7 +1572,8 @@ export class AddArticleComponent implements OnInit {
       width: this.article.width,
       depth: this.article.depth,
       showMenu: this.article.showMenu ?? '',
-      tiendaNubeId: this.article.tiendaNubeId
+      tiendaNubeId: this.article.tiendaNubeId,
+      updateVariants: this.article.updateVariants
     };
 
     this.articleForm.patchValue(values);

@@ -1442,8 +1442,9 @@ async function updateArticle (req, res, next) {
                             updated = true
                           }
                         }
+
                         if (!updated) {
-                          const params = {
+                           let params = {
                             _id: variant.articleChild._id,
                             type: variant.articleChild.type,
                             containsVariants: variant.articleChild.containsVariants,
@@ -1460,8 +1461,10 @@ async function updateArticle (req, res, next) {
                             meliId: variant.articleChild.meliId,
                             meliAttrs: variant.articleChild.meliAttrs,
                             tiendaNubeId: variant.articleChild.tiendaNubeId,
-                            salePrice: variant.articleChild.salePrice,
                             applications: article.applications,
+                            salePrice:!article.updateVariants ? variant.articleChild.salePrice : article.salePrice,
+                            basePrice:!article.updateVariants ? variant.articleChild.basePrice : article.basePrice,
+                            costPrice:!article.updateVariants ? variant.articleChild.costPrice : article.costPrice,
                             allowSaleWithoutStock: article.allowSaleWithoutStock
                           }
                           articleUpdated.description = variant.articleChild.description.replace(articleUpdated.description, newDescription)

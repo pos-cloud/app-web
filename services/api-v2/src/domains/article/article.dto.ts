@@ -252,4 +252,5 @@ export default class ArticleDto extends ModelDto {
   height: number
   depth: number
   showMenu: boolean
+  updateVariants: boolean
 }
