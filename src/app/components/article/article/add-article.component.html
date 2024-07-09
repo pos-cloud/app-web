@@ -2,7 +2,8 @@
     <h4 class="modal-title" *ngIf="operation==='add' || operation==='copy'">Agregar Producto</h4>
     <h4 class="modal-title" *ngIf="operation==='update'">Editar {{ articleType }} {{article.code}} -
         {{article.description}}</h4>
-    <h4 class="modal-title" *ngIf="operation==='view' || operation==='delete'">{{ articleType }} {{article.code}} - {{article.description}}</h4>
+    <h4 class="modal-title" *ngIf="operation==='view' || operation==='delete'">{{ articleType }} {{article.code}} -
+        {{article.description}}</h4>
     <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
         <span aria-hidden="true">&times;</span>
     </button>
@@ -30,8 +31,7 @@
                                     <div class="form-group col-md-5">
                                         <label for="code" class="control-label">Código Interno (*):</label>
                                         <input type="text" class="form-control" formControlName="code" name="code"
-                                            id="code" [focus]="focusEvent"
-                                            [readonly]="readonly" />
+                                            id="code" [focus]="focusEvent" [readonly]="readonly" />
                                         <div *ngIf="formErrors.code" class="alert alert-danger">
                                             {{ formErrors.code }}
                                         </div>
@@ -47,14 +47,19 @@
                                 </div>
                                 <div class="row">
                                     <div class="form-group col-md-6">
-                                        <ng-template #rtMakes let-r="result" let-t="term">
+                                        <!-- <ng-template #rtMakes let-r="result" let-t="term">
                                             <ngb-highlight [result]="r.description" [term]="t">
                                             </ngb-highlight>x
-                                        </ng-template>
+                                        </ng-template> -->
                                         <label for="make">Marca:</label>
-                                        <input id="make" type="text" class="form-control" formControlName="make"
+                                        <select class="form-control" name="make">
+                                        <option value="null"></option>
+                                        <option *ngFor="let make of makes" [ngValue]="make">{{make.description}}
+                                        </option>
+                                    </select>
+                                        <!-- <input id="make" type="text" class="form-control" formControlName="make"
                                             name="make" [ngbTypeahead]="searchMakes" [resultTemplate]="rtMakes"
-                                            [inputFormatter]="formatterMakes" [readonly]="readonly" />
+                                            [inputFormatter]="formatterMakes" [readonly]="readonly" /> -->
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="category">Rubro (*):</label>
@@ -95,10 +100,15 @@
                             </div>
                             <div class="form-group col-md-3">
                                 <div class="custom-file" style="margin: 30px">
-                                    <label *ngIf="!readonly" class="custom-file-label btn btn-action" for="customFileLang">Imagen</label>
-                                    <input *ngIf="!readonly" type="file" class="custom-file-input" lang="es" placeholder="Buscar Imagen" accept="image/*" id="customFileLang" (change)="fileChangeEvent($event,false)" />
+                                    <label *ngIf="!readonly" class="custom-file-label btn btn-action"
+                                        for="customFileLang">Imagen</label>
+                                    <input *ngIf="!readonly" type="file" class="custom-file-input" lang="es"
+                                        placeholder="Buscar Imagen" accept="image/*" id="customFileLang"
+                                        (change)="fileChangeEvent($event,false)" />
                                     <img class="img-article" [src]="imageURL" height="120" width="120">
-                                    <button class="btn btn-sm btn-danger" (click)="deletePicture(null, article.picture)" *ngIf="this.imageURL != './../../../assets/img/default.jpg' && operation != 'view'"><i class="fa fa-trash-o"></i></button>
+                                    <button class="btn btn-sm btn-danger" (click)="deletePicture(null, article.picture)"
+                                        *ngIf="this.imageURL != './../../../assets/img/default.jpg' && operation != 'view'"><i
+                                            class="fa fa-trash-o"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -179,8 +189,8 @@
                                         <b>Destacado</b>
                                     </label>
                                 </div>
-                                </div>
-                                <div class="form-group col-md-2 center-content">
+                            </div>
+                            <div class="form-group col-md-2 center-content">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" formControlName="showMenu" value=""
                                         id="showMenu" name="showMenu">
@@ -218,8 +228,7 @@
                                         <div class="input-group">
                                             <div class="input-group-prepend"><span class="input-group-text"
                                                     id="basic-addon1">$</span></div>
-                                            <input type="number" class="form-control"
-                                                formControlName="purchasePrice"
+                                            <input type="number" class="form-control" formControlName="purchasePrice"
                                                 readonly />
                                         </div>
                                     </div>
@@ -228,8 +237,7 @@
                                         <div class="input-group">
                                             <div class="input-group-prepend"><span class="input-group-text"
                                                     id="basic-addon1">$</span></div>
-                                            <input type="number" class="form-control"
-                                                formControlName="costPrice2"
+                                            <input type="number" class="form-control" formControlName="costPrice2"
                                                 readonly />
                                         </div>
                                     </div>
@@ -477,63 +485,69 @@
                 <li ngbNavItem>
                     <a ngbNavLink *ngIf="articleType === 'Producto'">Variantes</a>
                     <ng-template ngbNavContent>
-                        <div class="row">
-                          <div class="form-group col-md-5">
-                            <label for="type" class="control-label">Tipo de variante</label>
-                            <select class="form-control" formControlName="type" [(ngModel)]="variantTypeSelected" (change)="refreshValues()">
-                              <option value="null"></option>
-                              <option *ngFor="let type of variantTypes" [ngValue]="type">{{type.name}}</option>
-                            </select>
-                            <div *ngIf="formErrors.type" class="alert alert-danger">
-                              {{ formErrors.type }}
-                            </div>
-                          </div>
-                          <div class="form-group col-md-5">
-                            <label for="value" class="control-label">Valor</label>
-                            <select class="form-control" formControlName="value" [(ngModel)]="variantValueSelected">
-                              <option value="null"></option>
-                              <option *ngFor="let value of filteredValues" [ngValue]="value">{{value.description}}</option>
-                            </select>
-                            <div *ngIf="formErrors.value" class="alert alert-danger">
-                              {{ formErrors.value }}
-                            </div>
-                          </div>
-                          <div class="form-group col-md-2">
-                            <div>Acción</div>
-                            <button type="submit" class="btn btn-success" (click)="setvaluere()">Agregar</button>
-                          </div>
-                        </div>
-                        <div class="row table-responsive">
-                          <table class="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Tipo</th>
-                                <th>Valores</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr *ngFor="let vt of variantsByTypes">
-                                <td class="flat">{{vt.type.name}}</td>
-                                <td class="flat">
-                                  <div class="btn-group" *ngFor="let v of vt.value">
-                                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                      <label class="btn btn-sm">
-                                        {{v.description}}
-                                      </label>
-                                      <label class="btn btn-sm btn-danger" (click)="deleteVariant(v)">
-                                        <input type="radio" name="options" autocomplete="off">
-                                        <i class="fa fa-trash-o"></i>
-                                      </label>
+                        <form #variantsForm="ngForm" (ngSubmit)="addVariants(variantsForm)">
+                            <div class="row">
+                                <div class="form-group col-md-5">
+                                    <label class="control-label">Tipo de variante</label>
+                                    <select class="form-control" name="type" [(ngModel)]="variantTypeSelected"
+                                        (change)="refreshValues()">
+                                        <option value="null"></option>
+                                        <option *ngFor="let type of variantTypes" [ngValue]="type">{{type.name}}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="formErrors.type" class="alert alert-danger">
+                                        {{ formErrors.type }}
                                     </div>
-                                  </div>
-                                </td>
-                              </tr>
-                              <tr align="center" *ngIf="!variantsByTypes || variantsByTypes.length === 0 && !loading">
-                                <td colspan="10">No se encontraron variantes</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
+                                </div>
+                                <div class="form-group col-md-5">
+                                    <label class="control-label">Valor</label>
+                                    <select class="form-control" name="value" [(ngModel)]="variantValueSelected">
+                                        <option value="null"></option>
+                                        <option *ngFor="let value of filteredValues" [ngValue]="value">
+                                            {{value.description}}</option>
+                                    </select>
+                                    <div *ngIf="formErrors.value" class="alert alert-danger">
+                                        {{ formErrors.value }}
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <div>Acción</div>
+                                    <button type="submit" class="btn btn-success">Agregar</button>
+                                </div>
+                            </div>
+                            <div class="row table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Tipo</th>
+                                            <th>Valores</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr
+                                            *ngFor="let field of articleForm.get('variants')['controls']; let i = index;">
+                                            <td class="flat">{{field.value.type}}</td>
+                                            <td class="flat">
+                                                <div class="btn-group">
+                                                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                                        <label class="btn btn-sm">
+                                                            {{field.value.value}}
+                                                        </label>
+                                                        <label class="btn btn-sm btn-danger" (click)="deleteVariant(v)">
+                                                            <input type="radio" name="options" autocomplete="off">
+                                                            <i class="fa fa-trash-o"></i>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr align="center" *ngIf="!field || field === 0 && !loading">
+                                            <td colspan="10">No se encontraron variantes</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </form>
                     </ng-template>
                 </li>
                 <!-- <li ngbNavItem>
@@ -645,22 +659,22 @@
                             <div class="form-group col-md-2">
                                 <label for="weight" class="control-label">Peso:</label>
                                 <input type="number" class="form-control" formControlName="weight" name="weight"
-                                  id="weight" [readonly]="readonly"/>
+                                    id="weight" [readonly]="readonly" />
                             </div>
                             <div class="form-group col-md-2">
                                 <label for="width" class="control-label">Ancho:</label>
                                 <input type="number" class="form-control" formControlName="width" name="width"
-                                 id="width" [readonly]="readonly"/>
+                                    id="width" [readonly]="readonly" />
                             </div>
                             <div class="form-group col-md-2">
                                 <label for="height" class="control-label">Alto:</label>
                                 <input type="number" class="form-control" formControlName="height" name="height"
-                                 id="height" [readonly]="readonly" />
+                                    id="height" [readonly]="readonly" />
                             </div>
                             <div class="form-group col-md-2">
                                 <label for="depth" class="control-label">Profundidad:</label>
                                 <input type="number" class="form-control" formControlName="depth" name="depth"
-                                 id="depth" [readonly]="readonly" />
+                                    id="depth" [readonly]="readonly" />
                             </div>
                         </div>
                         <div class="row">
@@ -690,7 +704,8 @@
                                             <label for="sel"> Agregar Imagenes:</label>
                                             <div class="custom-file">
                                                 <label class="custom-file-label btn btn-action"
-                                                    for="customFileLang">{{fileNameArray?fileNameArray:'Buscar Imagen'}}</label>
+                                                    for="customFileLang">{{fileNameArray?fileNameArray:'Buscar
+                                                    Imagen'}}</label>
                                                 <input type="file" class="custom-file-input" language="es"
                                                     accept="image/*" id="customFileLang"
                                                     (change)="fileChangeEvent($event,true)" />
@@ -947,11 +962,11 @@
                                 </div>
                                 <div class="row">
                                     <div class="form-group col-md-2">
-                                        <label for="tiendaNubeId" class="control-label">Tienda Nube ID:</label>                                     
-                                            <input type="number" class="form-control" formControlName="tiendaNubeId" name="tiendaNubeId"
-                                                id="tiendaNubeId" />                                
+                                        <label for="tiendaNubeId" class="control-label">Tienda Nube ID:</label>
+                                        <input type="number" class="form-control" formControlName="tiendaNubeId"
+                                            name="tiendaNubeId" id="tiendaNubeId" />
                                     </div>
-                                </div>  
+                                </div>
                             </div>
                         </div>
                     </ng-template>
@@ -966,8 +981,8 @@
                 <span *ngIf="!loading">Guardar</span>
                 <span *ngIf="loading">Espere por favor</span>
             </button>
-            <button type="button" class="btn btn-danger" *ngIf="operation === 'delete'"
-                [disabled]="loading" (click)="deleteArticle()">
+            <button type="button" class="btn btn-danger" *ngIf="operation === 'delete'" [disabled]="loading"
+                (click)="deleteArticle()">
                 <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
                 <span *ngIf="!loading">Eliminar</span>
                 <span *ngIf="loading">Espere por favor</span>
