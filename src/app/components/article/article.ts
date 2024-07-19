@@ -106,7 +106,7 @@ export class Article {
     public updateVariants: Boolean = true;
     public variants: [{
         value: VariantValue,
-        type: VariantType
+        type: VariantType,
     }];
     
     constructor() { }
@@ -552,6 +552,7 @@ export let attributes = [
         disabled: false,
         filter: false,
         datatype: 'string',
+        defaultFilter:  `{ "$eq": "Final" }`,
         project: null,
         align: 'left',
         required: true,

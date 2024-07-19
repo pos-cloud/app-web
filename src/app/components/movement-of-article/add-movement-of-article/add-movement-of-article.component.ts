@@ -26,7 +26,7 @@ import {ArticleFields} from '../../article-field/article-fields';
 import {ArticleStock} from '../../article-stock/article-stock';
 import {ArticleStockService} from '../../article-stock/article-stock.service';
 import {Article} from '../../article/article';
-import {AddArticleComponent} from '../../article/article/add-article.component';
+import {AddArticleComponent} from '../../article/crud/add-article.component';
 import {TaxBase} from '../../tax/tax';
 import {Taxes} from '../../tax/taxes';
 import {

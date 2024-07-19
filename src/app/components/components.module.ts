@@ -20,6 +20,7 @@ import {TransactionTypeModule} from './transaction-type/transaction-type.module'
 import {UnitOfMeasurementModule} from './unit-of-measurement/unit-of-measurement.module';
 import {VariantValueModule} from './variant-value/variant-value.module';
 import { ReportsModule } from './reports/reports.module';
+import {ArticleModule} from './article/article.module'
 
 @NgModule({
   imports: [
@@ -42,7 +43,8 @@ import { ReportsModule } from './reports/reports.module';
     VariantValueModule,
     ReportModule,
     BusinessRuleModule,
-    ReportsModule
+    ReportsModule,
+    ArticleModule
   ],
   declarations: [],
 })

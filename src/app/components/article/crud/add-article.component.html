@@ -1,0 +1,738 @@
+<section class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <span style="color: #607D8B" *ngIf="operation==='add' || operation==='copy'">Agregar Producto</span>
+            <span style="color: #607D8B" *ngIf="operation==='update'">Editar {{ articleType }} {{article.code}} -
+                {{article.description}}</span>
+            <span style="color: #607D8B" *ngIf="operation==='view' || operation==='delete'">{{ articleType }}
+                {{article.code}} -
+                {{article.description}}</span>
+            <div class="pull-right">
+                <button type="button" class="btn" [routerLink]="['/admin/articulos']"><i
+                        class="fa fa-arrow-left"></i><span>{{'return' | translate | capitalize}}</span></button>
+                <button type="button" class="btn" [disabled]="loading"
+                    *ngIf="operation !== 'delete' && operation !== 'view'" (click)="addArticle()">
+                    <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+                    <span *ngIf="!loading"> {{'save' | translate | capitalize}}</span>
+                    <span *ngIf="loading"> {{'loading' | translate | capitalize}}</span>
+                </button>
+                <button type="button" class="btn btn-danger" *ngIf="operation === 'delete'" [disabled]="loading"
+                    (click)="deleteArticle()">
+                    <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
+                    <span *ngIf="!loading"> {{'delete' | translate | capitalize}}</span>
+                    <span *ngIf="loading"> {{'loading' | translate | capitalize}}</span>
+                </button>
+            </div>
+        </div>
+        <div class="card-body scroll">
+            <form [formGroup]="articleForm" autocomplete="off">
+                <div class="row">
+                    <label class="form-group col-md-12">
+                        <b>Datos principales</b>
+                    </label>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-5">
+                        <div class="row">
+                            <div class="form-group col-md-2">
+                                <label type="button" for="order" class="control-label" placement="top"
+                                    ngbTooltip="Tooltip on top">Order:</label>
+                                <input type="number" class="form-control" formControlName="order" name="order"
+                                    id="order" [readonly]="readonly" />
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label for="code" class="control-label" placement="top"
+                                    ngbTooltip="Tooltip on top">Código Interno (*):</label>
+                                <input type="text" class="form-control" formControlName="code" name="code" id="code"
+                                    [focus]="focusEvent" [readonly]="readonly" />
+                                <div *ngIf="formErrors.code" class="alert alert-danger">
+                                    {{ formErrors.category }}
+                                </div>
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label for="barcode" class="control-label" placement="top"
+                                    ngbTooltip="Tooltip on top">Código de Barras:</label>
+                                <input type="text" class="form-control" formControlName="barcode" name="barcode"
+                                    id="barcode" [readonly]="readonly" />
+                                <div *ngIf="formErrors.barcode" class="alert alert-danger">
+                                    {{ formErrors.barcode }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <ng-template #rtMakes let-r="result" let-t="term">
+                                    <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
+                                </ng-template>
+                                <label for="make">Marca:</label>
+                                <input id="make" type="text" class="form-control" formControlName="make" name="make"
+                                    [ngbTypeahead]="searchMakes" [resultTemplate]="rtMakes"
+                                    [inputFormatter]="formatterMakes" [readonly]="readonly" />
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="category">Categoría (*):</label>
+                                <input id="category" type="text" class="form-control" formControlName="category"
+                                    name="category" [ngbTypeahead]="searchCategories"
+                                    [resultFormatter]="formatterCategories" [inputFormatter]="inputCategories"
+                                    [readonly]="readonly" />
+                                <div *ngIf="formErrors.category" class="alert alert-danger">
+                                    {{ formErrors.category }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-8">
+                                <label for="description" class="control-label">Descripción (*):</label>
+                                <input type="text" class="form-control" formControlName="description" name="description"
+                                    id="description" (blur)="loadPosDescription(); onValueChanged($event.target.id)"
+                                    [readonly]="readonly" />
+                                <div class="alert alert-danger"
+                                    [style.display]="(formErrors['description'])? 'block': 'none'">
+                                    {{ formErrors.description }}
+                                </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="posDescription" class="control-label">Descripción Corta:</label>
+                                <input type="text" class="form-control" formControlName="posDescription"
+                                    name="posDescription" id="posDescription"
+                                    (blur)="loadPosDescription(); onValueChanged($event.target.id)"
+                                    [readonly]="readonly" />
+                                <div *ngIf="formErrors.posDescription" class="alert alert-danger">
+                                    {{ formErrors.posDescription }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <div class="custom-file" style="margin: 30px">
+                            <label *ngIf="!readonly" class="custom-file-label btn btn-action"
+                                for="customFileLang">Imagen</label>
+                            <input *ngIf="!readonly" type="file" class="custom-file-input" lang="es"
+                                placeholder="Buscar Imagen" accept="image/*" id="customFileLang"
+                                (change)="fileChangeEvent($event,false)" />
+                            <img class="img-article" [src]="imageURL" height="120" width="120" />
+                            <button class="btn btn-sm btn-danger" (click)="deletePicture(null, article.picture)"
+                                *ngIf="this.imageURL != './../../../assets/img/default.jpg' && operation != 'view'">
+                                <i class="fa fa-trash-o"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-4">
+                        <ng-template #result let-r="result" let-t="term">
+                            <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+                        </ng-template>
+                        <label for="unitOfMeasurement">{{'unitOfMeasurement'| translate |
+                            capitalize}}:</label>
+                        <input id="unitOfMeasurement" type="text" class="form-control"
+                            formControlName="unitOfMeasurement" name="unitOfMeasurement"
+                            [ngbTypeahead]="searchUnitsOfMeasurement" [resultTemplate]="result"
+                            [inputFormatter]="formatterUnitsOfMeasurement" [readonly]="readonly" />
+                        <div class="invalid-feedback"
+                            [style.display]="(formErrors['unitOfMeasurement'])? 'block': 'none'">
+                            {{ formErrors['unitOfMeasurement'] }}
+                        </div>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="printIn" class="control-label">Imprime en:</label>
+                        <select class="form-control" formControlName="printIn">
+                            <option *ngFor="let printIn of printIns" [ngValue]="printIn"
+                                [disabled]="readonly || (article && article.type && article.type.toString() === 'Variante')">
+                                {{printIn}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <div class="row">
+                            <div class="form-group col-md-7">
+                                <label for="observation" class="control-label">Observación</label>
+                                <tinymce formControlName="observation" [config]="tinyMCEConfigBody"></tinymce>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-5">
+                                <label for="note" class="control-label">Notas:</label>
+                                <input type="text" class="form-control" name="note" id="note"
+                                    (keydown.enter)="addNote($event.target.value)"
+                                    placeholder="Ingresar la nota y luego presionar enter por cada nota."
+                                    [focus]="focusNoteEvent" [readonly]="readonly" />
+                                <div *ngIf="formErrorsNote" class="alert alert-danger">
+                                    {{ formErrorsNote }}
+                                </div>
+                                <div class="row" style="margin-top: 10px;">
+                                    <div class="col-md-12">
+                                        <span class="badge badge-light" *ngFor="let n of notes">{{n}}
+                                            <span class="badge badge-danger pointer" (click)="deleteNote(n)">X</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="config['country'] === 'MX'" class="row">
+                    <div class="form-group col-md-12">
+                        <label for="codeSAT" class="control-label">Código SAT:</label>
+                        <input type="text" class="form-control" formControlName="codeSAT" name="codeSAT" id="codeSAT"
+                            [readonly]="readonly" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-2 center-content">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" formControlName="favourite" value=""
+                                id="favourite" name="favourite">
+                            <label class="form-check-label" for="favourite"
+                                title="Si es un producto destacado, aparecerá primero en la lista de productos en el pedido para agregar">
+                                <b>Destacado</b>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-2 center-content">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" formControlName="showMenu" value=""
+                                id="showMenu" name="showMenu">
+                            <label class="form-check-label" for="showMenu" title="Si aparece o no en carta digital">
+                                <b>Carta</b>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <label class="form-group col-md-12">
+                        <b>Precios</b>
+                    </label>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-8">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="basePrice" class="control-label">Precio Base (*):</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text"
+                                            id="basic-addon1">$</span></div>
+                                    <input type="number" class="form-control" formControlName="basePrice"
+                                        name="basePrice" id="basePrice" step="1"
+                                        (blur)="updatePrices('basePrice'); onValueChanged($event.target.id)"
+                                        [readonly]="readonly" />
+                                </div>
+                                <div *ngIf="formErrors.basePrice" class="alert alert-danger">
+                                    {{ formErrors.basePrice }}
+                                </div>
+                            </div>
+                            <div *ngIf="!article.containsVariants" class="col-md-3">
+                                <label class="control-label">Precio última compra:</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text"
+                                            id="basic-addon1">$</span></div>
+                                    <input type="number" class="form-control" formControlName="purchasePrice"
+                                        readonly />
+                                </div>
+                            </div>
+                            <div *ngIf="!article.containsVariants" class="col-md-3">
+                                <label class="control-label">Precio Costo:</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text"
+                                            id="basic-addon1">$</span></div>
+                                    <input type="number" class="form-control" formControlName="costPrice2" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <app-add-article-tax (eventAddArticleTax)="addArticleTaxes($event)" [article]="article"
+                            [otherFields]="otherFields" [articleTaxes]="taxes"
+                            [filtersTaxClassification]="filtersTaxClassification">
+                        </app-add-article-tax>
+                        <br>
+                        <div class="row">
+                            <div class="form-group col-md-5">
+                                <label for="costPrice" class="control-label">Costo con Impuestos
+                                    (*):</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text"
+                                            id="basic-addon1">$</span></div>
+                                    <input type="number" class="form-control" formControlName="costPrice"
+                                        name="costPrice" id="costPrice" step="1"
+                                        (blur)="updatePrices('costPrice'); onValueChanged($event.target.id)" readonly />
+                                </div>
+                                <div *ngIf="formErrors.costPrice" class="alert alert-danger">
+                                    {{ formErrors.costPrice }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label for="markupPercentage" class="control-label">Margen (*):</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text"
+                                            id="basic-addon1">%</span></div>
+                                    <input type="number" class="form-control" formControlName="markupPercentage"
+                                        name="markupPercentage" id="markupPercentage" step="1"
+                                        (blur)="updatePrices('markupPercentage'); onValueChanged($event.target.id)"
+                                        [readonly]="readonly" />
+                                </div>
+                                <div *ngIf="formErrors.markupPercentage" class="alert alert-danger">
+                                    {{ formErrors.markupPercentage }}
+                                </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="markupPriceWithoutVAT" class="control-label">Utilidad sin
+                                    Impuestos:</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text"
+                                            id="basic-addon1">$</span></div>
+                                    <input type="number" class="form-control" formControlName="markupPriceWithoutVAT"
+                                        name="markupPriceWithoutVAT" id="markupPriceWithoutVAT" step="1"
+                                        [readonly]="true" />
+                                </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="markupPrice" class="control-label">Utilidad con Impuestos
+                                    (*):</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text"
+                                            id="basic-addon1">$</span></div>
+                                    <input type="number" class="form-control" formControlName="markupPrice"
+                                        name="markupPrice" id="markupPrice" step="1"
+                                        (blur)="updatePrices('markupPrice'); onValueChanged($event.target.id)"
+                                        [readonly]="readonly" />
+                                </div>
+                                <div *ngIf="formErrors.markupPrice" class="alert alert-danger">
+                                    {{ formErrors.markupPrice }}
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="salePriceWithoutVAT" class="control-label">Precio de Venta sin
+                                    Impuestos:</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text"
+                                            id="basic-addon1">$</span></div>
+                                    <input type="number" class="form-control" formControlName="salePriceWithoutVAT"
+                                        name="salePriceWithoutVAT" id="salePriceWithoutVAT" step="1"
+                                        [readonly]="true" />
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="salePrice" class="control-label">Precio de Venta con Impuestos
+                                    (*):</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text"
+                                            id="basic-addon1">$</span></div>
+                                    <input type="number" class="form-control" formControlName="salePrice"
+                                        name="salePrice" id="salePrice" step="1"
+                                        (blur)="updatePrices('salePrice'); onValueChanged($event.target.id)"
+                                        [readonly]="readonly" />
+                                </div>
+                                <div *ngIf="formErrors.salePrice" class="alert alert-danger">
+                                    {{ formErrors.salePrice }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" *ngIf="currencies && currencies.length > 0">
+                            <div class="form-group col-md-12">
+                                <label for="currency" class="control-label">Moneda:</label>
+                                <select class="form-control" formControlName="currency">
+                                    <option *ngFor="let currency of currencies" [selected]="(article.currency && article.currency._id && currency._id===article.currency._id) ||
+                                              (article.currency && currency._id===article.currency)"
+                                        [value]="currency._id"
+                                        [disabled]="readonly || (article && article.type && article.type.toString() === 'Variante')">
+                                        {{currency.name}}</option>
+                                </select>
+                                <div *ngIf="formErrors.currency" class="alert alert-danger">
+                                    {{ formErrors.currency }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label class='form-group col-md-5'>
+                        <b>Variantes</b>
+                    </label>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <form [formGroup]="newVariant" autocomplete="off" (ngSubmit)="addVariant()">
+                            <div class="row">
+                                <div class="form-group col-md-5">
+                                    <label for="type" class="control-label">Tipo de variante</label>
+                                    <select class="form-control" formControlName="type"
+                                        [(ngModel)]="variantTypeSelected" (change)="refreshValues()">
+                                        <option value="null"></option>
+                                        <option *ngFor="let type of variantTypes" [ngValue]="type">{{type.name}}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-5">
+                                    <label for="value" class="control-label">Valor</label>
+                                    <select class="form-control" formControlName="value">
+                                        <option value="null"></option>
+                                        <option *ngFor="let value of variantValues" [ngValue]="value">
+                                            {{value.description}}</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <div>Acción</div>
+                                    <button type="button" class="btn btn-success"
+                                        [disabled]="!newVariant?.valid || loading"
+                                        (click)="addVariant()">Agregar</button>
+                                </div>
+                            </div>
+                            <div class="row table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Tipo</th>
+                                            <th>Valores</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let vt of variantsByTypes">
+                                            <td class="flat">{{vt.type.name}}</td>
+                                            <td class="flat">
+                                                <div class="btn-group" *ngFor="let v of vt.value">
+                                                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                                        <label class="btn btn-sm">{{v.description}}</label>
+                                                        <label class="btn btn-sm btn-danger" (click)="deleteVariant(v)">
+                                                            <input type="radio" name="options" autocomplete="off">
+                                                            <i class="fa fa-trash-o"></i>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr align="center"
+                                            *ngIf="!variantsByTypes || variantsByTypes.length === 0 && !loading">
+                                            <td colspan="10">No se encontraron variantes</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <label class='form-group col-md-5'>
+                        <b>E-Commerce</b>
+                    </label>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-9">
+                        <label>Aplicaciones</label>
+                        <br>
+                        <!-- <label formArrayName="applications"
+                                    *ngFor="let app of articleForm.get('applications')['controls']; let i = index"
+                                    style="margin-right: 20px; font-size: 20px;">
+                                    <input type="checkbox" [formControlName]="i" />
+                                    {{applications[i].name}}
+                                </label> -->
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="forShipping" class="control-label">Utilizar como envío</label>
+                        <select class="form-control" formControlName="forShipping">
+                            <option [ngValue]="true" [disabled]="readonly">Si</option>
+                            <option [ngValue]="false" [disabled]="readonly">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class='row'>
+                    <div class="form-group col-md-2">
+                        <label for="weight" class="control-label">Peso:</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" formControlName="weight" name="weight" id="weight"
+                                aria-describedby="basic-addon1" />
+                            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">Kg</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="width" class="control-label">Ancho:</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" formControlName="width" name="width" id="width"
+                                aria-describedby="basic-addon1" />
+                            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">cm</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="height" class="control-label">Alto:</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" formControlName="height" name="height" id="height"
+                                [readonly]="readonly" aria-describedby="basic-addon1" />
+                            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">cm</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="depth" class="control-label">Profundidad:</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" formControlName="depth" name="depth" id="depth"
+                                [readonly]="readonly" aria-describedby="basic-addon1" />
+                            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">cm</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-5">
+                        <label for="tag" class="control-label">Tags:</label>
+                        <input type="text" class="form-control" name="tag" id="tag"
+                            (keydown.enter)="addTag($event.target.value)"
+                            placeholder="Ingresar el tag y luego presionar enter por cada tag." [focus]="focusTagEvent"
+                            [readonly]="readonly" />
+                        <div *ngIf="formErrorsTag" class="alert alert-danger">
+                            {{ formErrorsTag }}
+                        </div>
+                        <div class="row" style="margin-top: 10px;">
+                            <div class="col-md-12">
+                                <span class="badge badge-ligth" *ngFor="let n of tags">{{n}}
+                                    <span class="badge badge-danger pointer" (click)="deleteTag(n)">X</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <form (ngSubmit)="addPicture()">
+                            <div class="row">
+                                <div class="form-group col-md-10">
+                                    <label for="sel"> Agregar Imagenes:</label>
+                                    <div class="custom-file">
+                                        <label class="custom-file-label btn btn-action"
+                                            for="customFileLang">{{fileNameArray?fileNameArray:'Buscar
+                                            Imagen'}}</label>
+                                        <input type="file" class="custom-file-input" language="es" accept="image/*"
+                                            id="customFileLang" (change)="fileChangeEvent($event,true)" />
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <button type="summit" class="btn btn-success btn-sm especial">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr class="separation">
+                                    <th>Imagenes Cargadas:</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="separation"
+                                    *ngFor="let picture of articleForm.get('pictures')['controls']; let i = index;">
+                                    <td>{{picture.value.picture.split('?')[0]}}</td>
+                                    <td align="right" width="10">
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                            (click)="deletePicture(i,picture.value.picture)">
+                                            <i class="fa fa-trash-o"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <hr>
+                <div class="row" *ngIf="articleForm?.value?.ecommerceEnabled">
+                    <div class="form-group col-md-12">
+                        <h4>Integración con Woocommerce</h4>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="wooId" class="control-label">Id Woocommerce:</label>
+                                <input type="text" class="form-control" formControlName="wooId" name="wooId" id="wooId"
+                                    [readonly]="readonly" />
+                                <div *ngIf="formErrors.wooId" class="alert alert-danger">
+                                    {{ formErrors.wooId }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" *ngIf="articleForm?.value?.ecommerceEnabled">
+                    <div class="form-group col-md-12">
+                        <h4>Integración con Mercado Libre</h4>
+                        <!-- <app-add-meli-attrs [article]="article" [meliAttrs]="meliAttrs"
+                                    (eventAddMeliAttrs)="eventAddMeliAttrs($event)" [readonly]="readonly">
+                                </app-add-meli-attrs> -->
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <label class='form-group col-md-5'>
+                        <b>Configuraciones</b>
+                    </label>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label for="allowPurchase" class="control-label">¿Habilitado para la
+                                    compra?</label>
+                                <select class="form-control" formControlName="allowPurchase">
+                                    <option [value]="true" [disabled]="readonly">Si</option>
+                                    <option [value]="false" [disabled]="readonly">No</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="allowSale" class="control-label">¿Habilitado para la
+                                    venta?</label>
+                                <select class="form-control" formControlName="allowSale">
+                                    <option [value]="true" [disabled]="readonly">Si</option>
+                                    <option [value]="false" [disabled]="readonly">No</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="allowStock" class="control-label">¿Habilitado para
+                                    Stock?</label>
+                                <select class="form-control" formControlName="allowStock">
+                                    <option [value]="true" [disabled]="readonly">Si</option>
+                                    <option [value]="false" [disabled]="readonly">No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label for="allowSaleWithoutStock" class="control-label">¿Se puede vender
+                                    sin
+                                    stock disponible?</label>
+                                <select class="form-control" formControlName="allowSaleWithoutStock">
+                                    <option [value]="true" [disabled]="readonly">Si</option>
+                                    <option [value]="false" [disabled]="readonly">No</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="isWeigth" class="control-label">¿Es pesable?</label>
+                                <select class="form-control" formControlName="isWeigth">
+                                    <option [value]="true" [disabled]="readonly">Si</option>
+                                    <option [value]="false" [disabled]="readonly">No</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="allowMeasure" class="control-label">¿Pide medida?</label>
+                                <select class="form-control" formControlName="allowMeasure">
+                                    <option [value]="true" [disabled]="readonly">Si</option>
+                                    <option [value]="false" [disabled]="readonly">No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label for="posKitchen" class="control-label">¿Aparece en POS
+                                    Cocina?</label>
+                                <select class="form-control" formControlName="posKitchen">
+                                    <option [value]="true" [disabled]="readonly">Si</option>
+                                    <option [value]="false" [disabled]="readonly">No</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="classification" class="control-label">Clasificación</label>
+                                <select class="form-control" formControlName="classification">
+                                    <option [ngValue]="null" [selected]="!article || !article.classification"
+                                        [disabled]="readonly"></option>
+                                    <option *ngFor="let classification of classifications"
+                                        [selected]="(article.classification && article.classification._id && classification._id===article.classification._id) ||
+                                                      (article.classification && classification._id===article.classification)" [value]="classification._id"
+                                        [disabled]="readonly">
+                                        {{classification.name}}</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="provider" class="control-label">Proveedor</label>
+                                <select class="form-control" formControlName="provider">
+                                    <option [ngValue]="null" [selected]="!article || !article.provider"
+                                        [disabled]="readonly"></option>
+                                    <option *ngFor="let provider of companies"
+                                        [selected]="(article.provider && article.provider._id && provider._id===article.provider._id) ||
+                                                      (article.provider && article.provider && provider._id===article.provider)" [value]="provider._id">
+                                        {{provider.name}}</option>
+                                </select>
+                                <div *ngIf="formErrors.provider" class="alert alert-danger">
+                                    {{ formErrors.provider }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label for="codeProvider" class="control-label">Cod Prov:</label>
+                                <input type="text" class="form-control" formControlName="codeProvider"
+                                    name="codeProvider" id="codeProvider" [readonly]="readonly" />
+                                <div *ngIf="formErrors.codeProvider" class="alert alert-danger">
+                                    {{ formErrors.codeProvider }}
+                                </div>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="m3" class="control-label">M3:</label>
+                                <input type="number" class="form-control" formControlName="m3" name="m3" id="m3"
+                                    [readonly]="readonly" />
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <label *ngIf="this.operation !== 'add'" class='form-group col-md-12'>
+                        <b>Auditoría</b>
+                    </label>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label class="control-label">Creado por:</label>
+                                <label *ngIf="article.creationUser" class="control-label"><b>
+                                        {{article.creationUser.name}}</b></label>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="control-label">El día:</label>
+                                <label *ngIf="article.creationDate" class="control-label"><b>
+                                        {{article.creationDate | dateFormat:'DD/MM/YYYY
+                                        HH:mm:ss'}}</b></label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label class="control-label">Última modificación por:</label>
+                                <label *ngIf="article.updateUser"
+                                    class="control-label"><b>{{article.updateUser.name}}</b></label>
+                                <label *ngIf="!article.updateUser" class="control-label"><b>-</b></label>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="control-label">El día:</label>
+                                <label *ngIf="article.updateDate" class="control-label"><b>{{article.updateDate
+                                        | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
+                                <label *ngIf="!article.updateDate" class="control-label"><b>-</b></label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label class="control-label">Id:</label>
+                                <label class="control-label"><b>{{article._id}}</b></label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-2">
+                                <label for="tiendaNubeId" class="control-label">Tienda Nube ID:</label>
+                                <input type="number" class="form-control" formControlName="tiendaNubeId"
+                                    name="tiendaNubeId" id="tiendaNubeId" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

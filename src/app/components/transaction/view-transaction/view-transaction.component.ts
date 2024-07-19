@@ -22,7 +22,7 @@ import {Observable, Subject, Subscription} from 'rxjs';
 import {debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
 
 import {RoundNumberPipe} from '../../../main/pipes/round-number.pipe';
-import {AddArticleComponent} from '../../article/article/add-article.component';
+import {AddArticleComponent} from '../../article/crud/add-article.component';
 import {AddCompanyComponent} from '../../company/company/add-company.component';
 import {MovementOfArticle} from '../../movement-of-article/movement-of-article';
 import {MovementOfArticleService} from '../../movement-of-article/movement-of-article.service';

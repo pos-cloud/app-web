@@ -1,11 +1,11 @@
-<section class="container-fluid">
+ <div>
   <div class="center-content" *ngIf="alertMessage !== ''">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
     </ngb-alert>
   </div>
   <form [formGroup]="articleTaxForm" (ngSubmit)="addArticleTax()" autocomplete="off">
-    <div class="modal-body">
+    <div>
       <div class="row">
         <div class="form-group col-md-4">
           <label for="tax" class="control-label">Impuesto:</label>
@@ -67,4 +67,4 @@
       </div>
     </div>
   </form>
-</section>
+</div>

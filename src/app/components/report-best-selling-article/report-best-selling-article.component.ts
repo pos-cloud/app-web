@@ -13,7 +13,7 @@ import { Config } from 'app/app.config';
 import { Branch } from 'app/components/branch/branch';
 import { BranchService } from 'app/components/branch/branch.service';
 import { AuthService } from 'app/components/login/auth.service';
-import { AddArticleComponent } from '../article/article/add-article.component';
+import { AddArticleComponent } from '../article/crud/add-article.component';
 import { TransactionMovement, Movements, TransactionType } from 'app/components/transaction-type/transaction-type';
 import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
 import { RoundNumberPipe } from 'app/main/pipes/round-number.pipe';

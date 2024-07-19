@@ -42,7 +42,7 @@ import {ArticleFields} from '../article-field/article-fields';
 import {ArticleStock} from '../article-stock/article-stock';
 import {ArticleStockService} from '../article-stock/article-stock.service';
 import {ArticlePrintIn, Article, Type} from '../article/article';
-import {AddArticleComponent} from '../article/article/add-article.component';
+import {AddArticleComponent} from '../article/crud/add-article.component';
 import {ListArticlesPosComponent} from '../article/list-articles-pos/list-articles-pos.component';
 import {BusinessRuleService} from '../business-rules/business-rule.service';
 import {BusinessRule} from '../business-rules/business-rules';
