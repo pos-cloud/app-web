@@ -36,7 +36,8 @@ export default class ArticleController extends Controller {
     let upload = multer({ storage: this.getStorage() })
 
     this.router
-      .get(this.path, this.getAllObjs)
+      .get(this.path, [authMiddleware, ensureLic], this.getAllObjs)
+      .get(`${this.path}/find`, this.getFindObj)
       .get(`${this.path}/articles-tiendanube`, [authMiddleware, ensureLic], this.importTiendaNube)
       .get(`${this.path}/last-code`, [authMiddleware, ensureLic], this.getLastCode)
       .get(`${this.path}/:id`, [authMiddleware, ensureLic], this.getObjById)

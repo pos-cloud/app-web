@@ -85,6 +85,34 @@ export class ModelService {
       );
   }
 
+  public find({
+    project = {},
+    query = {}
+  }): Observable<any> {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+      .set('project', JSON.stringify(project))
+      .set('query', JSON.stringify(query))
+
+
+    return this._http
+      .get(`${this.URL}/find`, {
+        headers: headers,
+        params: params,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        }),
+      );  
+  }
+
   public save(obj: any): Observable<any> {
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
