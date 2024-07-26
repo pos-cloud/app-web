@@ -817,36 +817,52 @@ export default class TransactionUC {
           },
           sort: {order: 1},
         })
+
         const cancellationTypes: CancellationType[] = result.result
-        const response: any = await this.api.post(config.API_URL_FE_AR, body)
-        const data: any = JSON.parse(response.data.toString().trim())
+        // const response: any = await this.api.post(config.API_URL_FE_AR, body)
+      
+        // const data: any = JSON.parse(response.data.toString().trim())
 
-        let msn = ''
+        // let msn = ''
 
-        if (!data.CAE) {
-          if (data.status === 'err') {
-            if (data.code && data.code !== '') {
-              msn += data.code + ' - '
-            }
-            if (data.message && data.message !== '') {
-              msn += data.message + '. '
-            }
-            if (data.observationMessage && data.observationMessage !== '') {
-              msn += data.observationMessage + '. '
-            }
-            if (data.observationMessage2 && data.observationMessage2 !== '') {
-              msn += data.observationMessage2 + '. '
-            }
-            if (msn === '') {
-              msn =
-                'Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.'
-            }
-            throw new Error(msn)
-          } else if (data.message) {
-            throw new Error(data.message)
-          } else {
-            throw new Error(data)
-          }
+        // if (!data.CAE) {
+        //   if (data.status === 'err') {
+        //     if (data.code && data.code !== '') {
+        //       msn += data.code + ' - '
+        //     }
+        //     if (data.message && data.message !== '') {
+        //       msn += data.message + '. '
+        //     }
+        //     if (data.observationMessage && data.observationMessage !== '') {
+        //       msn += data.observationMessage + '. '
+        //     }
+        //     if (data.observationMessage2 && data.observationMessage2 !== '') {
+        //       msn += data.observationMessage2 + '. '
+        //     }
+        //     if (msn === '') {
+        //       msn =
+        //         'Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.'
+        //     }
+        //     throw new Error(msn)
+        //   } else if (data.message) {
+        //     throw new Error(data.message)
+        //   } else {
+        //     throw new Error(data)
+        //   }
+        // }
+
+        const newBody = {
+          config: bodyConfig,
+          transaction: transaction,
+          canceledTransactions: canceledTransactions
+        }
+
+        console.log(JSON.stringify(newBody, null, 2));
+
+        const { data, message } = await this.api.post('http://localhost:3001/endpoint', newBody);
+
+        if(!data || !data.CAE || !data.number || !data.CAEExpirationDate) {
+          throw new Error(message)
         }
 
         transaction.number = data.number
