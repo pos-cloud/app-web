@@ -36,20 +36,20 @@ jobs:
           path: dist
 
   deploy:
-    runs-on: [dev]
+    runs-on: [prod]
     needs: build
     steps:
       - name: Delete old backup
-        run: rm -rf /home/system-prod-backup/*
+        run: rm -rf /home/sites/backup/system/*
 
       - name: Backup current files
-        run: cp -r /home/system-prod/. /home/system-prod-backup/
+        run: cp -r /home/sites/system/. /home/sites/backup/system/
 
       - name: Clean system
-        run: rm -rf /home/system-prod/*
+        run: rm -rf /home/sites/system/*
 
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: build-prod
-          path: /home/system-prod/
+          path: /home/sites/system/
