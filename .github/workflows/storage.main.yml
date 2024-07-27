@@ -1,4 +1,4 @@
-name: Deploy Storage to Don Web
+name: PROD API Storage
 
 on:
   push:

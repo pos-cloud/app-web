@@ -1,4 +1,4 @@
-name: system prod
+name: PROD System
 
 on:
   push:
@@ -39,6 +39,11 @@ jobs:
     runs-on: [prod]
     needs: build
     steps:
+      - name: Create necessary directories if they don't exist
+        run: |
+          mkdir -p /home/sites/backup/system
+          mkdir -p /home/sites/system
+
       - name: Delete old backup
         run: rm -rf /home/sites/backup/system/*
 
@@ -53,3 +58,4 @@ jobs:
         with:
           name: build-prod
           path: /home/sites/system/
+

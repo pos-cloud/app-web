@@ -1,4 +1,4 @@
-name: Deploy Api v2 to Don Web
+name: PROD API V2
 
 on:
   push:

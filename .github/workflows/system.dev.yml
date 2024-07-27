@@ -1,4 +1,4 @@
-name: system dev
+name: DEV System
 
 on:
   push:

@@ -1,4 +1,4 @@
-name: Deploy Storage to Don Web
+name: DEV API Storage
 
 on:
   push:
