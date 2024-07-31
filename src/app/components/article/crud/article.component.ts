@@ -31,16 +31,12 @@ import { ArticleStockService } from '../../article-stock/article-stock.service';
 import { Category } from '../../category/category';
 import { CategoryService } from '../../category/category.service';
 import { Company, CompanyType } from '../../company/company';
-import { Deposit } from '../../deposit/deposit';
-import { DepositService } from '../../deposit/deposit.service';
-import { Location } from '../../location/location';
-import { LocationService } from '../../location/location.service';
 import { Make } from '../../make/make';
 import { MakeService } from '../../make/make.service';
 import { Taxes } from '../../tax/taxes';
 import { Variant } from '../../variant/variant';
 import { VariantService } from '../../variant/variant.service';
-import { Article, ArticlePrintIn, IMeliAttrs, Type } from '../article';
+import { Article, ArticlePrintIn, Type } from '../article';
 import { ArticleService } from '../article.service';
 
 import { Account } from '../../account/account';
@@ -94,14 +90,10 @@ export class ArticleComponent implements OnInit {
   config: Config;
   articleForm: UntypedFormGroup;
   public variantsByTypes: any[];
-  newDeposit: UntypedFormGroup;
-  newLocation: UntypedFormGroup;
   currencies: Currency[] = new Array();
   makes: Make[] = new Array();
   classifications: Classification[] = new Array();
   companies: Company[] = new Array();
-  deposits: Deposit[] = new Array();
-  locations: Location[] = new Array();
   categories: Category[] = new Array();
   variants: any = new Array();
   unitsOfMeasurement: UnitOfMeasurement[] = new Array();
@@ -143,7 +135,6 @@ export class ArticleComponent implements OnInit {
   totalTaxes: number = 0;
   salePriceWithoutVAT: number = 0;
   markupPriceWithoutVAT: number = 0;
-  meliAttrs: IMeliAttrs;
   database: string;
 
   public variantTypes: VariantType[];
@@ -206,8 +197,6 @@ export class ArticleComponent implements OnInit {
     markupPrice: '',
     salePrice: '',
     category: '',
-    deposit: '',
-    location: '',
     barcode: '',
     currency: '',
     providers: '',
@@ -230,8 +219,6 @@ export class ArticleComponent implements OnInit {
       required: 'Este campo es requerido.',
       validateAutocomplete: 'Debe ingresar un valor válido',
     },
-    deposit: { required: 'Este campo es requerido' },
-    location: {},
     unitOfMeasurement: { validateAutocomplete: 'Debe ingresar un valor válido' },
     currency: { maxlength: 'No puede exceder los 14 dígitos.' },
     note: {},
@@ -322,8 +309,6 @@ export class ArticleComponent implements OnInit {
     private _articleService: ArticleService,
     private _articleStockService: ArticleStockService,
     private _variantService: VariantService,
-    private _depositService: DepositService,
-    private _locationService: LocationService,
     private _modalService: NgbModal,
     private _makeService: MakeService,
     private _categoryService: CategoryService,
@@ -370,7 +355,6 @@ export class ArticleComponent implements OnInit {
       this.articleType = 'Variante';
     }
     this.getArticleFields();
-    this.getDeposits();
   }
 
   async ngOnInit() {
@@ -506,8 +490,6 @@ export class ArticleComponent implements OnInit {
       category: [this.article.category, [Validators.required]],
       quantityPerMeasure: [this.article.quantityPerMeasure, []],
       unitOfMeasurement: [this.article.unitOfMeasurement, []],
-      deposits: this._fb.array([]),
-      locations: this._fb.array([]),
       otherFields: this._fb.array([]),
       children: this._fb.array([]),
       observation: [this.article.observation, []],
@@ -537,7 +519,6 @@ export class ArticleComponent implements OnInit {
       maxStock: [this.article.maxStock, []],
       pointOfOrder: [this.article.pointOfOrder, []],
       meliId: [this.article.meliId, []],
-      meliAttrs: [this.article.meliAttrs, []],
       wooId: [this.article.wooId, []],
       purchasePrice: [this.article.purchasePrice, []],
       m3: [this.article.m3, []],
@@ -548,13 +529,6 @@ export class ArticleComponent implements OnInit {
       showMenu: [this.article.showMenu, []],
       tiendaNubeId: [this.article.tiendaNubeId, []],
       variants: this._fb.array([])
-    });
-
-    this.newDeposit = this._fb.group({
-      deposit: [null, []],
-    });
-    this.newLocation = this._fb.group({
-      location: [null, []],
     });
 
     this.articleForm.valueChanges.subscribe((data) => this.onValueChanged(data));
@@ -635,62 +609,6 @@ export class ArticleComponent implements OnInit {
     this.focusTagEvent.emit(true);
   }
 
-  getDeposit(id: string): Promise<Deposit> {
-    return new Promise<Deposit>((resolve, reject) => {
-      this._depositService.getDeposit(id).subscribe((result) => {
-        if (result && result.deposit) {
-          resolve(result.deposit);
-        } else {
-          resolve(null);
-        }
-      });
-    });
-  }
-
-  async addDeposit(depositForm: any) {
-    depositForm = this.newDeposit;
-    let valid = true;
-    const deposits = this.articleForm.controls.deposits as UntypedFormArray;
-
-    let deposit = await this.getDeposit(depositForm.value.deposit);
-
-    for (const element of this.articleForm.controls.deposits.value) {
-      let depositAux = await this.getDeposit(element.deposit);
-
-      if (depositAux.branch._id === deposit.branch._id) {
-        valid = false;
-        this.showToast(null, 'info', 'Solo puede tener un depósito por sucursal.');
-      }
-    }
-
-    this.articleForm.controls.deposits.value.forEach((element) => {
-      if (depositForm.value.deposit == element.deposit) {
-        valid = false;
-        this.showToast(null, 'info', 'El depósito ya existe');
-      }
-    });
-
-    if (
-      depositForm.value.deposit == '' ||
-      depositForm.value.deposit == 0 ||
-      depositForm.value.deposit == null
-    ) {
-      this.showToast(null, 'info', 'Debe seleccionar un depósito');
-      valid = false;
-    }
-
-    if (valid) {
-      deposits.push(
-        this._fb.group({
-          _id: null,
-          deposit: depositForm.value.deposit,
-          capacity: 0,
-        }),
-      );
-      // depositForm.resetForm();
-    }
-  }
-
   async addOtherField(otherFieldsForm: NgForm) {
     let valid = true;
 
@@ -727,55 +645,8 @@ export class ArticleComponent implements OnInit {
     }
   }
 
-  async addLocation(locationForm: any) {
-    locationForm = this.newLocation;
-    let valid = true;
-    const locations = this.articleForm.controls.locations as UntypedFormArray;
-
-    if (
-      (locationForm && locationForm.value && locationForm.value.location == '') ||
-      locationForm.value.location == null
-    ) {
-      this.showToast(null, 'info', 'Debe seleccionar una ubicación.');
-      valid = false;
-    }
-
-    this.articleForm.controls.locations.value.forEach((element) => {
-      if (
-        locationForm &&
-        locationForm.value &&
-        locationForm.value.location == element.location
-      ) {
-        valid = false;
-        this.showToast(null, 'info', 'La ubicación ya existe.');
-      }
-    });
-
-    if (valid) {
-      locations.push(
-        this._fb.group({
-          _id: null,
-          location: locationForm.value.location || null,
-        }),
-      );
-      // locationForm.resetForm();
-    }
-  }
-
-  deleteDeposit(index): void {
-    let control = <UntypedFormArray>this.articleForm.controls.deposits;
-
-    control.removeAt(index);
-  }
-
   deleteOtherField(index): void {
     let control = <UntypedFormArray>this.articleForm.controls.otherFields;
-
-    control.removeAt(index);
-  }
-
-  deleteLocation(index): void {
-    let control = <UntypedFormArray>this.articleForm.controls.locations;
 
     control.removeAt(index);
   }
@@ -799,7 +670,6 @@ export class ArticleComponent implements OnInit {
           this.showToast(result);
         } else {
           this.article = result.result;
-          this.meliAttrs = Object.assign({}, this.article.meliAttrs);
           this.notes = this.article.notes;
           this.tags = this.article.tags;
           this.taxes = this.article.taxes;
@@ -820,7 +690,6 @@ export class ArticleComponent implements OnInit {
             this.article.code = '';
             this.article.posDescription = '';
             this.article.url = '';
-            this.article.meliId = '';
             this.article.wooId = '';
           }
           this.setValuesForm();
@@ -1126,40 +995,6 @@ export class ArticleComponent implements OnInit {
   }
 
   setValuesArray(): void {
-    if (this.article.deposits && this.article.deposits.length > 0) {
-      let deposits = this.articleForm.controls.deposits as UntypedFormArray;
-
-      this.article.deposits.forEach((x) => {
-        if (x.deposit && x.deposit._id && x.deposit.operationType != 'D') {
-          deposits.push(
-            this._fb.group({
-              _id: null,
-              deposit: x.deposit._id,
-              capacity: x.capacity,
-            }),
-          );
-        }
-      });
-    }
-
-    if (this.article.locations && this.article.locations.length > 0) {
-      let locations = this.articleForm.controls.locations as UntypedFormArray;
-
-      this.article.locations.forEach((x) => {
-        let locationId;
-
-        if (x.location && x.location._id && x.location.operationType != 'D') {
-          locationId = x.location._id;
-          locations.push(
-            this._fb.group({
-              _id: null,
-              location: locationId,
-            }),
-          );
-        }
-      });
-    }
-
     if (this.article.otherFields && this.article.otherFields.length > 0) {
       let otherFields = this.articleForm.controls.otherFields as UntypedFormArray;
 
@@ -1353,34 +1188,6 @@ export class ArticleComponent implements OnInit {
         (error) => this.showToast(error),
       );
     });
-  }
-
-  getDeposits(): void {
-    this._depositService.getDeposits().subscribe(
-      (result) => {
-        if (!result.deposits) {
-          this.getLocations();
-        } else {
-          this.deposits = result.deposits;
-          this.getLocations();
-        }
-      },
-      (error) => this.showToast(error),
-    );
-  }
-
-  getLocations(): void {
-    this._locationService.getLocations().subscribe(
-      (result) => {
-        if (!result.locations) {
-          this.getCompany();
-        } else {
-          this.locations = result.locations;
-          this.getCompany();
-        }
-      },
-      (error) => this.showToast(error),
-    );
   }
 
   getCompany(): void {
@@ -1868,11 +1675,8 @@ export class ArticleComponent implements OnInit {
     if (this.articleForm.valid) {
       this.loadPosDescription();
       //this.loadURL();
-      const oldMeliId: string = this.article.meliId;
 
       this.article = Object.assign(this.article, this.articleForm.value);
-      this.article.meliId = oldMeliId;
-      this.article.meliAttrs = this.meliAttrs;
       if (this.article.make && this.article.make.toString() === '')
         this.article.make = null;
       if (this.article.category && this.article.category.toString() === '')
@@ -1928,18 +1732,12 @@ export class ArticleComponent implements OnInit {
     }
   }
 
-  eventAddMeliAttrs(params: any) {
-    this.article.meliId = params.article.meliId;
-    this.articleForm.patchValue({ meliId: this.article.meliId });
-    this.meliAttrs = params.meliAttrs;
-  }
-
   async saveArticle() {
     this.loading = true;
 
     if (await this.isValid()) {
 
-  //    if (this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
+      if(this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
       this._articleService.saveArticle(this.article).subscribe(
         (result) => {
           if (!result.resultParent.result) {
@@ -1982,7 +1780,8 @@ export class ArticleComponent implements OnInit {
   async updateArticle() {
     this.loading = true;
     if (await this.isValid()) {
- //  this.article.picture = await this.uploadFile(this.article.picture);
+ 
+      if(this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
       this._articleService.updateArticle(this.article, this.variants).subscribe(
         async (result) => {
           if (!result.article) {
@@ -2168,28 +1967,21 @@ export class ArticleComponent implements OnInit {
 
   async uploadFile(pictureDelete: string): Promise<string> {
     return new Promise<string>(async (resolve, reject) => {
-      // if (pictureDelete && pictureDelete.includes('https://storage.googleapis')) {
-      //   await this.deleteFile(pictureDelete);
-      // }
-     this._fileService
-       .uploadFile(this.filesToUpload, 'demo/articles/', 'poscloud')
-       .subscribe(
-        (response) => {
-          console.log('File uploaded successfully:', response);
-        },
-        (error) => {
-          console.error('Error uploading file:', error);
-        }
-      );
-      
-          // (result: string) => {
-          //   this.article.picture = result;
-          //   this.imageURL = result;
-          //   resolve(result);
-          // },
-          // (error) => this.showToast(JSON.parse(error))
+      if (pictureDelete && pictureDelete.includes('https://storage.googleapis')) {
+        await this.deleteFile(pictureDelete);
+      }
 
-
+      this._fileService
+        .uploadImage(ORIGINMEDIA.ARTICLES, this.filesToUpload)
+        .then(
+          (result: string) => {
+            this.article.picture = result;
+            this.imageURL = result;
+            resolve(result);
+          },
+          (error) => this.showToast(JSON.parse(error))
+          
+        )
     })
   }
 
