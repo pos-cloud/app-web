@@ -1,14 +1,18 @@
 import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef, HostListener } from "@angular/core";
 import { Router } from "@angular/router";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { NgbModal, NgbAlertConfig } from "@ng-bootstrap/ng-bootstrap";
 import { attributes } from "../article";
 import { IButton } from 'app/util/buttons.interface';
 import { ArticleService } from "../article.service";
 import { ImportComponent } from "../../import/import.component";
 import { PrinterService } from "../../printer/printer.service";
-import { Category } from '../../category/category';
 import { DatatableComponent } from '../../datatable/datatable.component';
-
+import { PrintLabelComponent } from "../actions/print-label/print-label.component"
+import { ListPriceListsComponent } from "app/components/price-list/list-price-lists/list-price-lists.component";
+import { UpdateArticlePriceComponent } from "../update-article-price/update-article-price.component";
+import { PrintPriceListComponent } from "app/components/print/print-price-list/print-price-list.component";
+import { Type } from '../article'
+import { PrintLabelsComponent } from "../actions/print-labels/print-labels.component";
 
 @Component({
   selector: "app-list-articles",
@@ -18,26 +22,50 @@ import { DatatableComponent } from '../../datatable/datatable.component';
 })
 export class ListArticlesComponent {
 
-  public title: string = 'articles';
-  public sort = { "description": 1 };
+  public title: string
+  public sort = { "code": 1 };
   public columns = attributes;
   public pathLocation: string[]
-  public rowButtons: IButton[] = [{
-    title: 'view',
-    class: 'btn btn-success btn-sm',
-    icon: 'fa fa-eye',
-    click: `this.emitEvent('view', item)`
-  }, {
-    title: 'update',
-    class: 'btn btn-primary btn-sm',
-    icon: 'fa fa-pencil',
-    click: `this.emitEvent('update', item)`
-  }, {
-    title: 'delete',
-    class: 'btn btn-danger btn-sm',
-    icon: 'fa fa-trash-o',
-    click: `this.emitEvent('delete', item)`
-  }];
+  public priceListId: string;
+  public loading: boolean = false;
+  public rowButtons: IButton[] = [
+    {
+      title: 'view',
+      class: 'btn btn-success btn-sm',
+      icon: 'fa fa-eye',
+      click: `this.emitEvent('view', item, null)`
+    },
+    {
+      title: 'update',
+      class: 'btn btn-primary btn-sm',
+      icon: 'fa fa-pencil',
+      click: `this.emitEvent('update', item, null)`
+    }, {
+      title: 'delete',
+      class: 'btn btn-danger btn-sm',
+      icon: 'fa fa-trash-o',
+      click: `this.emitEvent('delete', item, null)`
+    },
+    {
+      title: 'Imprimir Etiqueta',
+      class: 'btn btn-light btn-sm',
+      icon: 'fa fa-barcode',
+      click: `this.emitEvent('price-lists', item, null)`
+    },
+    {
+      title: 'Copiar',
+      class: 'btn btn-light btn-sm',
+      icon: ' fa fa-copy',
+      click: `this.emitEvent('copy', item, null)`
+    },
+    {
+      title: 'Historial de Cambios',
+      class: "btn btn-light btn-sm",
+      icon: 'fa fa-history',
+      click: `this.emitEvent('history', item, null)`
+    }
+
+  ]
   public headerButtons: IButton[] = [{
     title: 'add',
     class: 'btn btn-light',
@@ -52,16 +80,27 @@ export class ListArticlesComponent {
     title: 'import',
     class: 'btn btn-light',
     icon: 'fa fa-upload',
-    click: `this.emitEvent('import', null)`
+    click: `this.emitEvent('uploadFile', null)`
   },
   {
-    title: 'print-labels',
+    title: 'Imprimir Etiquetas',
     class: 'btn btn-light',
     icon: 'fa fa-print',
-    click: `this.emitEvent('print-labels', null)`
+    click: `this.emitEvent('print-labels', null, items)`
+  },
+  {
+    title: 'Actualizar Precios',
+    class: 'btn btn-light',
+    icon: 'fa fa-edit',
+    click: `this.emitEvent('update-prices', null, items)`
+  },
+  {
+    title: ' Imprimir Lista',
+    class: 'btn btn-light',
+    icon: 'fa fa-print',
+    click: `this.emitEvent('print-list', null, items)`
   }
   ];
-  public loading = false
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
@@ -69,16 +108,19 @@ export class ListArticlesComponent {
     public _service: ArticleService,
     private _modalService: NgbModal,
     private _router: Router,
-    public _printerService: PrinterService
+    public _printerService: PrinterService,
+    public _alertConfig: NgbAlertConfig
   ) {
 
     let attributeType = this.columns.find(attribute => attribute.name === 'type');
 
     if (attributeType) {
       this.pathLocation = this._router.url.split("/");
-      if (this.pathLocation[2] === "variantes") {
+      if (this.pathLocation[2] === "variants") {
+        this.title = 'Variantes'
         attributeType.defaultFilter = `{ "$eq": "Variante" }`;
-      } else if (this.pathLocation[2] === 'articulos') {
+      } else if (this.pathLocation[2] === 'articles') {
+        this.title = 'Productos'
         attributeType.defaultFilter = `{ "$eq": "Final" }`;
       }
     }
@@ -86,747 +128,126 @@ export class ListArticlesComponent {
   }
 
   public async emitEvent(event) {
-    this.openModal(event.op, event.obj);
+    this.openModal(event.op, event.obj, event.items);
   };
 
-  public async openModal(op: string, obj: any) {
+  public async openModal(op: string, obj: any, items) {
+    let modalRef;
     switch (op) {
       case 'view':
-        this.pathLocation[2] === "variantes"
-          ?  this._router.navigateByUrl("admin/variantes/view/" + obj._id)
-          : this.pathLocation[2] === "articulos"
-            ?  this._router.navigateByUrl("admin/articulos/view/" + obj._id)
+        this.pathLocation[2] === "variants"
+          ? this._router.navigateByUrl("admin/variants/view/" + obj._id)
+          : this.pathLocation[2] === "articles"
+            ? this._router.navigateByUrl("admin/articles/view/" + obj._id)
             : null;
         break;
       case 'add':
-        this._router.navigateByUrl("admin/variantes/add/" + obj._id)
+        this._router.navigateByUrl("admin/article/add")
         break;
       case 'update':
-        this.pathLocation[2] === "variantes"
-          ?  this._router.navigateByUrl("admin/variantes/update/" + obj._id)
-          : this.pathLocation[2] === "articulos"
-            ?  this._router.navigateByUrl("admin/articulos/update/" + obj._id)
+        this.pathLocation[2] === "variants"
+          ? this._router.navigateByUrl("admin/variants/update/" + obj._id)
+          : this.pathLocation[2] === "articles"
+            ? this._router.navigateByUrl("admin/articles/update/" + obj._id)
             : null;
         break;
       case 'delete':
-        this.pathLocation[2] === "variantes"
-          ?  this._router.navigateByUrl("admin/variantes/delete/" + obj._id)
-          : this.pathLocation[2] === "articulos"
-            ?  this._router.navigateByUrl("admin/articulos/delete/" + obj._id)
+        this.pathLocation[2] === "variants"
+          ? this._router.navigateByUrl("admin/variants/delete/" + obj._id)
+          : this.pathLocation[2] === "articles"
+            ? this._router.navigateByUrl("admin/articles/delete/" + obj._id)
             : null;
         break;
-      case 'import':
-        let modalRef;
-        modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
-        let model: any = new Category();
-        model.model = "category";
-        model.primaryKey = "description";
-        model.order = '';
-        model.picture = '';
-        model.visibleInvoice = '';
-        model.visibleOnSale = '';
-        model.visibleOnPurchase = '';
-        model.ecommerceEnabled = '';
-        model.applications = '';
-        model.favourite = '';
-        model.isRequiredOptional = '';
-        model.wooId = '';
-        model.relations = new Array();
-        model.relations.push("parent_relation_description_category");
-        modalRef.componentInstance.model = model;
-        modalRef.result.then((result) => {
-          if (result === 'import_close') {
-            this.refresh();
-          }
-        }, (reason) => {
-
+      case 'uploadFile':
+        modalRef = this._modalService.open(ImportComponent, {
+          size: 'lg',
+          backdrop: 'static',
         });
+        modalRef.componentInstance.model = 'articles'
+        modalRef.componentInstance.title = 'Importar artículos'
+        modalRef.result.then(
+          (result) => {
+            if (result === 'save_close') {
+              this.refresh();
+            }
+          },
+          (reason) => { },
+        );
+
         break;
-      // case "print-labels":
-      //   // const articlesId: string[] = this.items.map(objeto => objeto._id);
-      //   // this.printLabels(articlesId); 
-      //   break;
-      // case "print-label":
-      // this.printArticle(obj);
-      // break;
-      default: ;
+      case 'history':
+        if (obj.type === Type.Variant) {
+          this._router.navigateByUrl(`/admin/variants/history/${obj._id}`);
+        } else {
+          this._router.navigateByUrl(`/admin/articles/history/${obj._id}`);
+        }
+        break;
+      case 'print-label':
+        this.loading = true
+        const printLabelComponent = new PrintLabelComponent(this._printerService, this._alertConfig);
+        printLabelComponent.articleId = obj._id;
+        printLabelComponent.ngOnInit()
+        this.loading = false
+        break;
+      case "print-labels":
+        this.loading = true
+        const articlesIds: string[] = items.map(objeto => objeto._id);
+        const printLabelsComponent = new PrintLabelsComponent(this._printerService, this._alertConfig);
+        printLabelsComponent.articleIds = articlesIds;
+        printLabelsComponent.ngOnInit()
+        this.loading = false
+        break;
+      case 'copy':
+        this._router.navigateByUrl("admin/articles/copy/" + obj._id)
+        break
+      case "price-lists":
+        modalRef = this._modalService.open(ListPriceListsComponent, {
+          size: "lg",
+          backdrop: "static",
+        });
+        modalRef.result.then(
+          (result) => {
+            if (result && result.priceList) {
+              this.priceListId = result.priceList;
+              this.openModal("print-label", obj, null);
+            } else {
+              this.openModal("print-label", obj, null);
+            }
+          },
+          (reason) => {
+            this.refresh()
+          }
+        );
+
+        break;
+      case "update-prices":
+        modalRef = this._modalService.open(UpdateArticlePriceComponent);
+        modalRef.componentInstance.articles = items;
+        modalRef.result.then(
+          (result) => {
+            this.refresh()
+          },
+          (reason) => {
+            this.refresh()
+          }
+        );
+        break;
+      case "print-list":
+        modalRef = this._modalService.open(PrintPriceListComponent);
+        modalRef.result.then(
+          (result) => {
+            this.refresh()
+          },
+          (reason) => {
+            this.refresh()
+          }
+        );
+        break;
+      default:
     }
   };
-
-  // public printArticle(article: Article) {
-  //   this.loading = true;
-  //   this._printerService.printArticle(article._id, 1,).subscribe(
-  //     (res: Blob) => {
-  //       if (res) {     
-  //         const blobUrl = URL.createObjectURL(res);
-  //         printJS(blobUrl);
-  //         this.loading = false;
-  //       } else {
-  //         this.loading = false;
-  //         this.showMessage('Error al cargar el PDF', 'danger', false);
-  //       }
-  //     },
-  //     (error) => {
-  //       this.loading = false;
-  //       this.showMessage(error.message, 'danger', false);
-  //     }
-  //   );
-  // }
 
   public refresh() {
     this.datatableComponent.refresh();
   }
-
-  //  public showMessage(
-  //   message: string,
-  //   type: string,
-  //   dismissible: boolean
-  // ): void {
-  //   this.alertMessage = message;
-  //   this.alertConfig.type = type;
-  //   this.alertConfig.dismissible = dismissible;
-  // }
-
-  // public hideMessage(): void {
-  //   this.alertMessage = "";
-  // }
-
-  // async ngOnInit() {
-  //   this.getPriceList();
-  //   let pathLocation: string[] = this._router.url.split("/");
-  //   this.userType = pathLocation[1];
-  //   this.articleHistoryId = pathLocation[3];
-  //   this.listTitle = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
-  //   this._authService.getIdentity.pipe(first()).subscribe((identity) => {
-  //     this.identity = identity;
-  //   });
-
-  //   await this._configService.getConfig.pipe(first()).subscribe((config) => {
-  //     this.config = config;
-  //   });
-
-  //   this.database = localStorage.getItem('company');
-  //   if ("Variantes" === this.listTitle) {
-  //     this.articleType = Type.Variant;
-  //     this.title = "Listado de Variantes";
-  //   } else if ("Ingredientes" === this.listTitle) {
-  //     this.articleType = Type.Ingredient;
-  //     this.title = "Listado de Ingredientes";
-  //   } else {
-  //     // ENTRA CUANDO SE HACE UNA TRANSACCIÓN O EN LA TABLA
-  //     this.articleType = Type.Final;
-  //     this.title = "Listado de Productos";
-  //   }
-
-  //   if (this.articleHistoryId) this.title = "Historial del producto";
-  //   this.initDragHorizontalScroll();
-  //   this.getItems();
-  // }
-
-  // public initDragHorizontalScroll(): void {
-  //   const slider = document.querySelector(".table-responsive");
-  //   let isDown = false;
-  //   let startX;
-  //   let scrollLeft;
-
-  //   slider.addEventListener("mousedown", (e) => {
-  //     isDown = true;
-  //     slider.classList.add("active");
-  //     startX = e["pageX"] - slider["offsetLeft"];
-  //     scrollLeft = slider.scrollLeft;
-  //   });
-  //   slider.addEventListener("mouseleave", () => {
-  //     isDown = false;
-  //     slider.classList.remove("active");
-  //   });
-  //   slider.addEventListener("mouseup", () => {
-  //     isDown = false;
-  //     slider.classList.remove("active");
-  //   });
-  //   slider.addEventListener("mousemove", (e) => {
-  //     if (!isDown) return;
-  //     e.preventDefault();
-  //     const x = e["pageX"] - slider["offsetLeft"];
-  //     const walk = (x - startX) * 0.7; //scroll-fast
-  //     slider.scrollLeft = scrollLeft - walk;
-  //   });
-  // }
-
-  // public getItems(): void {
-  //   this.loading = true;
-
-  //   // FILTRAMOS LA CONSULTA
-  //   let match: any = `{`;
-  //   for (let i = 0; i < this.columns.length; i++) {
-  //     if (this.columns[i].visible || this.columns[i].required) {
-  //       let value = this.filters[this.columns[i].name];
-  //       if (value && value != "") {
-  //         if (this.columns[i].defaultFilter) {
-  //           match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
-  //         } else {
-  //           match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
-  //         }
-  //         if (i < this.columns.length - 1) {
-  //           match += ",";
-  //         }
-  //       }
-  //     }
-  //   }
-
-  //   if (match.charAt(match.length - 1) === ",")
-  //     match = match.substring(0, match.length - 1);
-  //   match += `}`;
-  //   match = JSON.parse(match);
-
-  //   if (this.userType === "admin") {
-  //     match["type"] = this.articleType;
-  //   }
-
-  //   // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-  //   let project: any = `{`;
-  //   let j = 0;
-  //   for (let i = 0; i < this.columns.length; i++) {
-  //     if (this.columns[i].visible || this.columns[i].required) {
-  //       if (j > 0) {
-  //         project += `,`;
-  //       }
-  //       j++;
-  //       if (!this.columns[i].project) {
-  //         if (this.columns[i].datatype !== "string") {
-  //           if (this.columns[i].datatype === "date") {
-  //             project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`;
-  //           } else {
-  //             project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`;
-  //           }
-  //         } else {
-  //           project += `"${this.columns[i].name}": 1`;
-  //         }
-  //       } else {
-  //         project += `"${this.columns[i].name}": ${this.columns[i].project}`;
-  //       }
-  //     }
-  //   }
-  //   project += `}`;
-
-  //   project = JSON.parse(project);
-
-  //   // AGRUPAMOS EL RESULTADO
-  //   let group = {
-  //     _id: null,
-  //     count: { $sum: 1 },
-  //     items: { $push: "$$ROOT" },
-  //   };
-
-  //   let page = 0;
-  //   if (this.currentPage != 0) {
-  //     page = this.currentPage - 1;
-  //   }
-  //   let skip = !isNaN(page * this.itemsPerPage) ? page * this.itemsPerPage : 0; // SKIP
-  //   let limit = this.itemsPerPage;
-
-  //   if (!this.articleHistoryId) {
-  //     this.subscription.add(
-  //       this._articleService
-  //         .getArticlesV2(
-  //           project, // PROJECT
-  //           match, // MATCH
-  //           this.sort, // SORT
-  //           group, // GROUP
-  //           limit, // LIMIT
-  //           skip // SKIP
-  //         )
-  //         .subscribe(
-  //           (result) => {
-  //             this.loading = false;
-  //             if (result && result[0] && result[0].items) {
-  //               if (this.itemsPerPage === 0) {
-  //                 this.exportExcelComponent.items = result[0].items;
-  //                 this.exportExcelComponent.export();
-  //                 this.itemsPerPage = 10;
-  //                 this.getItems();
-  //               } else {
-  //                 this.items = result[0].items;
-  //                 this.totalItems = result[0].count;
-  //               }
-  //             } else {
-  //               this.items = new Array();
-  //               this.totalItems = 0;
-  //             }
-  //           },
-  //           (error) => {
-  //             this.showMessage(error._body, "danger", false);
-  //             this.loading = false;
-  //             this.totalItems = 0;
-  //           }
-  //         )
-  //     );
-  //   } else {
-  //     for (let column of this.columns) {
-  //       if (column.name === "creationDate") column.visible = true;
-  //     }
-  //     this.subscription.add(
-  //       this._articleService
-  //         .getHArticles(
-  //           {
-  //             ...project,
-  //             harticle: 1
-  //           }, // PROJECT
-  //           {
-  //             ...match,
-  //             harticle: { $oid: this.articleHistoryId }
-  //           }, // MATCH
-  //           this.sort, // SORT
-  //           group, // GROUP
-  //           limit, // LIMIT
-  //           skip // SKIP
-  //         )
-  //         .subscribe(
-  //           (result) => {
-  //             this.loading = false;
-  //             if (result && result[0] && result[0].items) {
-  //               if (this.itemsPerPage === 0) {
-  //                 this.exportExcelComponent.items = result[0].items;
-  //                 this.exportExcelComponent.export();
-  //                 this.itemsPerPage = 10;
-  //                 this.getItems();
-  //               } else {
-  //                 this.items = result[0].items;
-  //                 this.totalItems = result[0].count;
-  //               }
-  //             } else {
-  //               this.items = new Array();
-  //               this.totalItems = 0;
-  //             }
-  //           },
-  //           (error) => {
-  //             this.showMessage(error._body, "danger", false);
-  //             this.loading = false;
-  //             this.totalItems = 0;
-  //           }
-  //         )
-  //     );
-  //   }
-  // }
-
-  // public exportItems(): void {
-  //   this.itemsPerPage = 0;
-  //   this.getItems();
-  // }
-
-  // public getValue(item, column): any {
-  //   let val: string = "item";
-  //   let exists: boolean = true;
-  //   let value: any = "";
-  //   for (let a of column.name.split(".")) {
-  //     val += "." + a;
-  //     if (exists && !eval(val)) {
-  //       exists = false;
-  //     }
-  //   }
-  //   if (exists) {
-  //     switch (column.datatype) {
-  //       case "number":
-  //         value = this.roundNumberPipe.transform(eval(val));
-  //         break;
-  //       case "currency":
-  //         value = this.currencyPipe.transform(
-  //           this.roundNumberPipe.transform(eval(val)),
-  //           "USD",
-  //           "symbol-narrow",
-  //           "1.2-2"
-  //         );
-  //         break;
-  //       case "percent":
-  //         value = this.roundNumberPipe.transform(eval(val)) + "%";
-  //         break;
-  //       default:
-  //         value = eval(val);
-  //         break;
-  //     }
-  //   }
-  //   return value;
-  // }
-
-  // public getColumnsVisibles(): number {
-  //   let count: number = 0;
-  //   for (let column of this.columns) {
-  //     if (column.visible) {
-  //       count++;
-  //     }
-  //   }
-  //   return count;
-  // }
-
-  // public orderBy(term: string): void {
-  //   if (this.sort[term]) {
-  //     this.sort[term] *= -1;
-  //   } else {
-  //     this.sort = JSON.parse('{"' + term + '": 1 }');
-  //   }
-
-  //   this.getItems();
-  // }
-
-  // back() {
-  //   let pathLocation: string[] = this._router.url.split("/");
-  //   this._router.navigateByUrl(pathLocation[1] + '/' + pathLocation[2]);
-  // }
-
-  // public drop(event: CdkDragDrop<string[]>): void {
-  //   moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
-  // }
-
-  // public refresh(): void {
-  //   this.getItems();
-  // }
-
-  // public pageChange(page): void {
-  //   this.currentPage = page;
-  //   this.getItems();
-  // }
-
-  // public selectArticle(articleSelected: Article): void {
-  //   this.activeModal.close({ article: articleSelected });
-  // }
-
-  // public printArticle(article: Article) {
-  //   this.loading = true;
-  //   this._printerService.printArticle(article._id, 1,).subscribe(
-  //     (res: Blob) => {
-  //       if (res) {     
-  //         const blobUrl = URL.createObjectURL(res);
-  //         printJS(blobUrl);
-  //         this.loading = false;
-  //       } else {
-  //         this.loading = false;
-  //         this.showMessage('Error al cargar el PDF', 'danger', false);
-  //       }
-  //     },
-  //     (error) => {
-  //       this.loading = false;
-  //       this.showMessage(error.message, 'danger', false);
-  //     }
-  //   );
-  // }
-
-  // public printLabels(articlesId: string[]) {
-  //   this.loading = true;
-  //   this._printerService.printLabels(articlesId).subscribe(
-  //     (res: Blob) => {
-  //       if (res) {     
-  //         const blobUrl = URL.createObjectURL(res);
-  //         printJS(blobUrl);
-  //         this.loading = false;
-  //       } else {
-  //         this.loading = false;
-  //         this.showMessage('Error al cargar el PDF', 'danger', false);
-  //       }
-  //     },
-  //     (error) => {
-  //       this.loading = false;
-  //       this.showMessage(error.message, 'danger', false);
-  //     }
-  //   );
-  // }
-
-  // async openModal(op: string, article?: Article, type?: string) {
-  //   let modalRef;
-  //   switch (op) {
-  //     case "view":
-  //       modalRef = this._modalService.open(AddArticleComponent, {
-  //         size: "lg",
-  //         backdrop: "static",
-  //       });
-  //       modalRef.componentInstance.articleId = article._id;
-  //       modalRef.componentInstance.readonly = true;
-  //       modalRef.componentInstance.operation = "view";
-  //       break;
-  //     case "add":
-  //       modalRef = this._modalService.open(AddArticleComponent, {
-  //         size: "lg",
-  //         backdrop: "static",
-  //       });
-  //       modalRef.componentInstance.operation = "add";
-  //       modalRef.result.then(
-  //         (result) => {
-  //           this.getItems();
-  //         },
-  //         (reason) => {
-  //           this.getItems();
-  //         }
-  //       );
-  //       break;
-  //     case "update":
-  //       modalRef = this._modalService.open(AddArticleComponent, {
-  //         size: "lg",
-  //         backdrop: "static",
-  //       });
-  //       modalRef.componentInstance.articleId = article._id;
-  //       modalRef.componentInstance.operation = "update";
-  //       modalRef.result.then(
-  //         (result) => {
-  //           this.getItems();
-  //         },
-  //         (reason) => {
-  //           this.getItems();
-  //         }
-  //       );
-  //       break;
-  //     case "delete":
-  //       modalRef = this._modalService.open(AddArticleComponent, {
-  //         size: "lg",
-  //         backdrop: "static",
-  //       });
-  //       modalRef.componentInstance.articleId = article._id;
-  //       modalRef.componentInstance.readonly = true;
-  //       modalRef.componentInstance.operation = "delete";
-  //       modalRef.result.then(
-  //         (result) => {
-  //           if (result === "delete_close") {
-  //             this.getItems();
-  //           }
-  //         },
-  //         (reason) => { }
-  //       );
-  //       break;
-  //     case "print-label":
-  //       this.printArticle(article);
-  //       break;
-  //     case "print-list":
-  //       modalRef = this._modalService.open(PrintPriceListComponent);
-  //       modalRef.result.then(
-  //         (result) => {
-  //           this.getItems();
-  //         },
-  //         (reason) => {
-  //           this.getItems();
-  //         }
-  //       );
-  //       break;
-  //     case "price-lists":
-  //       modalRef = this._modalService.open(ListPriceListsComponent, {
-  //         size: "lg",
-  //         backdrop: "static",
-  //       });
-  //       modalRef.result.then(
-  //         (result) => {
-  //           if (result && result.priceList) {
-  //             this.priceListId = result.priceList;
-  //             this.openModal("print-label", article);
-  //           } else {
-  //             this.openModal("print-label", article);
-  //           }
-  //         },
-  //         (reason) => {
-  //           this.getItems();
-  //         }
-  //       );
-  //       break;
-  //     case "update-prices":
-  //       modalRef = this._modalService.open(UpdateArticlePriceComponent);
-  //       modalRef.componentInstance.articles = this.items;
-  //       modalRef.result.then(
-  //         (result) => {
-  //           this.getItems();
-  //         },
-  //         (reason) => {
-  //           this.getItems();
-  //         }
-  //       );
-  //       break;
-  //     case "copy":
-  //       modalRef = this._modalService.open(AddArticleComponent, {
-  //         size: "lg",
-  //         backdrop: "static",
-  //       });
-  //       modalRef.componentInstance.operation = "copy";
-  //       modalRef.componentInstance.articleId = article._id;
-  //       modalRef.result.then(
-  //         (result) => {
-  //           this.getItems();
-  //         },
-  //         (reason) => {
-  //           this.getItems();
-  //         }
-  //       );
-  //       break;
-  //     case "history":
-  //       if (article.type === Type.Variant) {
-  //         this._router.navigateByUrl(`/admin/variantes/${article._id}`);
-  //       } else {
-  //         this._router.navigateByUrl(`/admin/productos/${article._id}`);
-  //       }
-  //       break;
-  //     case "print-labels":
-  //       const articlesId: string[] = this.items.map(objeto => objeto._id);
-  //       this.printLabels(articlesId); 
-  //       // let printer2 : Printer;
-  //       // await this.getPrinters().then((printers) => {
-  //       //     if (printers && printers.length > 0) {
-  //       //       for (let printerAux of printers) {
-  //       //         if (printerAux.printIn === PrinterPrintIn.Label) {
-  //       //           printer2 = printerAux;
-  //       //         }
-  //       //       }
-  //       //     }
-  //       //   });
-  //       //   if(printer2){
-  //       //     if(printer2.fields && printer2.fields.length > 0){
-  //       //       modalRef = this._modalService.open(
-  //       //         PrintTransactionTypeComponent
-  //       //       );
-  //       //       modalRef.componentInstance.articles = this.items;
-  //       //       modalRef.componentInstance.printerID = printer2._id;
-  //       //       if (this.priceListId) {
-  //       //         modalRef.componentInstance.priceListId = this.priceListId;
-  //       //       }
-  //       //     }else{
-  //       //       modalRef = this._modalService.open(PrintComponent);
-  //       //       modalRef.componentInstance.articles = this.items;
-  //       //     }
-  //       //   } else {
-  //       //     this.showMessage(
-  //       //         "Debe crear una impresora de tipo etiqueta con diseño",
-  //       //         "danger",
-  //       //         false
-  //       //       );
-  //       //   }
-  //       break;
-  //     case 'uploadFile':
-  //         modalRef = this._modalService.open(ImportComponent, {
-  //           size: 'lg',
-  //           backdrop: 'static',
-  //         });
-  //         modalRef.componentInstance.model = 'articles'
-  //         modalRef.componentInstance.title = 'Importar artículos'
-  //         modalRef.result.then(
-  //           (result) => {
-  //             if (result === 'save_close') {
-  //               this.getItems();
-  //             }
-  //           },
-  //           (reason) => {},
-  //         );
-
-  //         break;
-  //       default:
-  //   }
-  // }
-
-  // public getPrinters(): Promise<Printer[]> {
-  //   return new Promise<Printer[]>(async (resolve, reject) => {
-  //     this.loading = true;
-
-  //     this._printerService.getPrinters().subscribe(
-  //       (result) => {
-  //         this.loading = false;
-  //         if (!result.printers) {
-  //           if (result.message && result.message !== "")
-  //             this.showMessage(result.message, "info", true);
-  //           resolve(null);
-  //         } else {
-  //           resolve(result.printers);
-  //         }
-  //       },
-  //       (error) => {
-  //         this.loading = false;
-  //         this.showMessage(error._body, "danger", false);
-  //         resolve(null);
-  //       }
-  //     );
-  //   });
-  // }
-
-  // public getTaxes(query?: string): Promise<Tax[]> {
-  //   return new Promise<Tax[]>((resolve, reject) => {
-  //     this._taxService.getTaxes(query).subscribe(
-  //       (result) => {
-  //         if (!result.taxes) {
-  //           if (result.message && result.message !== "")
-  //             this.showMessage(result.message, "info", true);
-  //           resolve(null);
-  //         } else {
-  //           resolve(result.taxes);
-  //         }
-  //       },
-  //       (error) => {
-  //         this.showMessage(error._body, "danger", false);
-  //         resolve(null);
-  //       }
-  //     );
-  //   });
-  // }
-
-  // public getArticle(articleId: string): Promise<Article> {
-  //   return new Promise<Article>((resolve, reject) => {
-  //     this._articleService.getArticle(articleId).subscribe(
-  //       (result) => {
-  //         if (!result.article) {
-  //           if (result.message && result.message !== "")
-  //             this.showMessage(result.message, "info", true);
-  //           resolve(null);
-  //         } else {
-  //           this.article = result.article
-  //           resolve(result.article);
-  //         }
-  //       },
-  //       (error) => {
-  //         this.showMessage(error._body, "danger", false);
-  //         resolve(null);
-  //       }
-  //     );
-  //   });
-  // }
-
-  // public getPriceList(): void {
-  //   this._priceList.getPriceLists().subscribe(
-  //     (result) => {
-  //       if (result && result.priceLists) {
-  //         this.priceLists = result.priceLists;
-  //       } else {
-  //         this.priceLists = new Array();
-  //       }
-  //     },
-  //     (error) => {
-  //       this.showMessage(error._body, "danger", false);
-  //     }
-  //   );
-  // }
-
-  // public padNumber(n, length) {
-  //   n = n.toString();
-  //   while (n.length < length) n = "0" + n;
-  //   return n;
-  // }
-
-  // public saveClaim(titulo: string, message: string): void {
-  //   this.loading = true;
-
-  //   let claim: Claim = new Claim();
-  //   claim.description = message;
-  //   claim.name = titulo;
-  //   claim.priority = ClaimPriority.High;
-  //   claim.type = ClaimType.Err;
-  //   claim.listName = "ERRORES 500";
-
-  //   this._claimService.saveClaim(claim).subscribe();
-  // }
-
-  // public ngOnDestroy(): void {
-  //   this.subscription.unsubscribe();
-  // }
-
-  // public showMessage(
-  //   message: string,
-  //   type: string,
-  //   dismissible: boolean
-  // ): void {
-  //   this.alertMessage = message;
-  //   this.alertConfig.type = type;
-  //   this.alertConfig.dismissible = dismissible;
-  // }
-
-  // public hideMessage(): void {
-  //   this.alertMessage = "";
-  // }
 }
