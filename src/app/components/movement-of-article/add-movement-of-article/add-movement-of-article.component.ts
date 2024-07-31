@@ -26,7 +26,7 @@ import {ArticleFields} from '../../article-field/article-fields';
 import {ArticleStock} from '../../article-stock/article-stock';
 import {ArticleStockService} from '../../article-stock/article-stock.service';
 import {Article} from '../../article/article';
-import {AddArticleComponent} from '../../article/crud/add-article.component';
+import {ArticleComponent} from '../../article/crud/article.component';
 import {TaxBase} from '../../tax/tax';
 import {Taxes} from '../../tax/taxes';
 import {
@@ -1492,7 +1492,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     switch (op) {
       case 'update':
-        modalRef = this._modalService.open(AddArticleComponent, {
+        modalRef = this._modalService.open(ArticleComponent, {
           size: 'lg',
           backdrop: 'static',
         });

@@ -13,7 +13,7 @@ import { Config } from 'app/app.config';
 import { Branch } from 'app/components/branch/branch';
 import { BranchService } from 'app/components/branch/branch.service';
 import { AuthService } from 'app/components/login/auth.service';
-import { AddArticleComponent } from '../article/crud/add-article.component';
+import { ArticleComponent } from '../article/crud/article.component';
 import { TransactionMovement, Movements, TransactionType } from 'app/components/transaction-type/transaction-type';
 import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
 import { RoundNumberPipe } from 'app/main/pipes/round-number.pipe';
@@ -292,7 +292,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
         let modalRef;
         switch (op) {
             case 'view':
-                modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
+                modalRef = this._modalService.open(ArticleComponent, { size: 'lg', backdrop: 'static' });
                 modalRef.componentInstance.articleId = item['article']._id;
                 modalRef.componentInstance.readonly = true;
                 modalRef.componentInstance.operation = "view";

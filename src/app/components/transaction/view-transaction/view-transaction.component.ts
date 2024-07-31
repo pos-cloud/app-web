@@ -22,7 +22,7 @@ import {Observable, Subject, Subscription} from 'rxjs';
 import {debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
 
 import {RoundNumberPipe} from '../../../main/pipes/round-number.pipe';
-import {AddArticleComponent} from '../../article/crud/add-article.component';
+import {ArticleComponent} from '../../article/crud/article.component';
 import {AddCompanyComponent} from '../../company/company/add-company.component';
 import {MovementOfArticle} from '../../movement-of-article/movement-of-article';
 import {MovementOfArticleService} from '../../movement-of-article/movement-of-article.service';
@@ -442,7 +442,7 @@ export class ViewTransactionComponent implements OnInit {
 
     switch (op) {
       case 'view-article':
-        modalRef = this._modalService.open(AddArticleComponent, {
+        modalRef = this._modalService.open(ArticleComponent, {
           size: 'lg',
           backdrop: 'static',
         });

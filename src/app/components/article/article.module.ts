@@ -14,82 +14,116 @@ import { PipesModule } from 'app/main/pipes/pipes.module';
 import { NgxTinymceModule } from 'ngx-tinymce';
 import { ListArticlesComponent } from './list-articles/list-articles.component';
 import { ArticleService } from './article.service'
-import { AddArticleComponent } from './crud/add-article.component';
+import { ArticleComponent } from './crud/article.component';
 import { AddArticleTaxComponent } from './add-article-tax/add-article-tax.component';
+import { LicenseGuard } from 'app/main/guards/license.guard';
+import { PrintLabelComponent } from './actions/print-label/print-label.component'
+import { HistoryComponent } from './actions/history/history.component';
+import { PrintLabelsComponent } from './actions/print-labels/print-labels.component';
 
 const routes: Routes = [
   {
-    path: 'admin/articulos',
+    path: 'admin/articles',
     component: ListArticlesComponent,
     canActivate: [AuthGuard]
   },
   {
-    path: 'admin/articulos/add',
-    component: AddArticleComponent,
+    path: 'admin/articles/:id',
+    component: ListArticlesComponent,
+    canActivate: [AuthGuard, LicenseGuard]
+  },
+  {
+    path: 'admin/article/add',
+    component: ArticleComponent,
     canActivate: [AuthGuard]
   },
   {
-    path: 'admin/articulos/view/:id',
-    component: AddArticleComponent,
+    path: 'admin/articles/view/:id',
+    component: ArticleComponent,
     canActivate: [AuthGuard]
   },
   {
-    path: 'admin/articulos/update/:id',
-    component: AddArticleComponent,
+    path: 'admin/articles/update/:id',
+    component: ArticleComponent,
+    canActivate: [AuthGuard]
+  }, 
+   {
+    path: 'admin/articles/copy/:id',
+    component: ArticleComponent,
     canActivate: [AuthGuard]
   },
   {
-    path: 'admin/articulos/delete/:id',
-    component: AddArticleComponent,
+    path: 'admin/articles/history/:id',
+    component: HistoryComponent,
     canActivate: [AuthGuard]
   },
   {
-    path: 'admin/variantes/view/:id',
-    component: AddArticleComponent,
+    path: 'admin/articles/delete/:id',
+    component: ArticleComponent,
     canActivate: [AuthGuard]
   },
   {
-    path: 'admin/variantes/update/:id',
-    component: AddArticleComponent,
+    path: 'admin/variants',
+    component: ListArticlesComponent,
     canActivate: [AuthGuard]
   },
   {
-    path: 'admin/variantes/delete/:id',
-    component: AddArticleComponent,
+    path: 'admin/variants/view/:id',
+    component: ArticleComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'admin/variants/update/:id',
+    component: ArticleComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'admin/variants/delete/:id',
+    component: ArticleComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'admin/variants/history/:id',
+    component: HistoryComponent,
     canActivate: [AuthGuard]
   }
 ];
 
 @NgModule({
-    imports: [
-        RouterModule.forChild(routes),
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-        NgxPaginationModule,
-        DirectivesModule,
-        DragDropModule,
-        ProgressbarModule,
-        PipesModule,
-        TranslateModule,
-        NgbDropdownModule,
-        NgbModule,
-        DatatableModule,
-        NgxTinymceModule
-    ],
-    declarations: [
-        ListArticlesComponent,
-        AddArticleComponent,
-        AddArticleTaxComponent
+  imports: [
+    RouterModule.forChild(routes),
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgxPaginationModule,
+    DirectivesModule,
+    DragDropModule,
+    ProgressbarModule,
+    PipesModule,
+    TranslateModule,
+    NgbDropdownModule,
+    NgbModule,
+    DatatableModule,
+    NgxTinymceModule
+  ],
+  declarations: [
+    ListArticlesComponent,
+    ArticleComponent,
+    AddArticleTaxComponent,
+    PrintLabelComponent,
+    HistoryComponent,
+    PrintLabelsComponent,
 
-    ],
-    exports: [
-        AddArticleComponent,
-        AddArticleTaxComponent
-    ],
-    providers: [
-        ArticleService
-    ]
+  ],
+  exports: [
+    ArticleComponent,
+    AddArticleTaxComponent,
+    PrintLabelComponent,
+    HistoryComponent
+  ],
+  providers: [
+    ArticleService
+  ]
 })
 
 export class ArticleModule { }

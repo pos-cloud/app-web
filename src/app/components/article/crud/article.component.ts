@@ -74,16 +74,16 @@ import { OrderByPipe } from 'app/main/pipes/order-by.pipe';
 import { AddVariantComponent } from 'app/components/variant/add-variant/add-variant.component';
 
 @Component({
-  selector: 'app-add-article',
-  templateUrl: './add-article.component.html',
-  styleUrls: ['./add-article.component.scss'],
+  selector: 'app-article',
+  templateUrl: './article.component.html',
+  styleUrls: ['./article.component.scss'],
   providers: [NgbAlertConfig, DecimalPipe, ApplicationService, TranslateMePipe, NgbTypeaheadConfig],
   encapsulation: ViewEncapsulation.None,
 })
-export class AddArticleComponent implements OnInit {
-  @Input() articleId: string;
+export class ArticleComponent implements OnInit {
+  public articleId: string;
   public operation: string;
-  @Input() readonly: boolean;
+  public readonly: boolean;
   @Output() eventAddVariants: EventEmitter<Variant[]> = new EventEmitter<Variant[]>();
 
   public variant: Variant;
@@ -145,7 +145,6 @@ export class AddArticleComponent implements OnInit {
   markupPriceWithoutVAT: number = 0;
   meliAttrs: IMeliAttrs;
   database: string;
-  groupedVariants: any = {}
 
   public variantTypes: VariantType[];
   public variantTypeSelected: VariantType;
@@ -153,8 +152,6 @@ export class AddArticleComponent implements OnInit {
   public variantValues: VariantValue[];
   public orderByPipe: OrderByPipe = new OrderByPipe();
   public pathUrl: string[]
-  newVariant: UntypedFormGroup
-  filteredValues: VariantValue[] = [];
 
   html = '';
 
@@ -361,9 +358,15 @@ export class AddArticleComponent implements OnInit {
 
     const pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    if (pathLocation[2] === 'productos') {
+    this.operation = pathLocation[3]
+    if (pathLocation[2] === 'articles') {
       this.articleType = 'Producto';
-    } else if (pathLocation[2] === 'variantes') {
+      this.readonly = false
+
+      if(pathLocation[3] === 'view') this.readonly = true
+      if(pathLocation[3] === 'add')  this.getVariantTypes()
+    } else if (pathLocation[2] === 'variants') {
+      this.readonly = true
       this.articleType = 'Variante';
     }
     this.getArticleFields();
@@ -415,8 +418,6 @@ export class AddArticleComponent implements OnInit {
     } else {
       this.imageURL = './../../../assets/img/default.jpg';
     }
-    this.getVariantTypes()
-    // this.getVariantValues()
   }
 
   getArticleTypes() {
@@ -546,7 +547,7 @@ export class AddArticleComponent implements OnInit {
       depth: [this.article.depth, []],
       showMenu: [this.article.showMenu, []],
       tiendaNubeId: [this.article.tiendaNubeId, []],
-      variants: this._fb.array([]),
+      variants: this._fb.array([])
     });
 
     this.newDeposit = this._fb.group({
@@ -554,11 +555,6 @@ export class AddArticleComponent implements OnInit {
     });
     this.newLocation = this._fb.group({
       location: [null, []],
-    });
-
-    this.newVariant = this._fb.group({
-      type: [this.variant.type, []],
-      value: [this.variant.value, []],
     });
 
     this.articleForm.valueChanges.subscribe((data) => this.onValueChanged(data));
@@ -811,15 +807,13 @@ export class AddArticleComponent implements OnInit {
           for (let tax of this.taxes) {
             this.totalTaxes += tax.taxAmount;
           }
-          // if (this.article.url === '') {
-          //   this.loadURL();
-          // }
-
           this.imageURL = this.article.picture ?? './../../../assets/img/default.jpg'
           if (this.article.picture == 'default.jpg') this.imageURL = './../../../assets/img/default.jpg'
 
           if (this.article.containsVariants) {
             this.getVariantsByArticleParent();
+          }else if(!this.article.containsVariants){
+            this.getVariantTypes()
           }
           if (this.operation === 'copy') {
             this.article._id = null;
@@ -836,52 +830,6 @@ export class AddArticleComponent implements OnInit {
       (error) => this.showToast(error),
     );
   }
-
-  // public getVariantTypes(): void {
-
-  //   this.loading = true;
-
-  //   let project = {
-  //     "_id": 1,
-  //     "name": 1,
-
-  //     "operationType": 1
-  //   };
-  //   let query = {
-  //     operationType: { $ne: 'D' }
-  //   }
-  //   this._variantTypeService.find({ project, query }).subscribe(
-  //     result => {
-  //       if (!result) {
-  //         this.loading = false;
-  //         this.variantTypes = new Array();
-  //       } else {
-  //         this.loading = false;
-  //         this.variantTypes = result;
-
-  //         this.variantTypes.sort((a, b) => {
-  //           // Comparar los nombres alfabéticamente
-  //           if (a.name < b.name) {
-  //             return -1;
-  //           }
-  //           if (a.name > b.name) {
-  //             return 1;
-  //           }
-  //           return 0;
-  //         });
-  //         //   if (this.variants && this.variants.length > 0) {
-  //         //     for (let variant of this.variants) {
-  //         //       this.setVariantByType(variant);
-  //         //     }
-  //         //   }
-  //       }
-  //     },
-  //     error => {
-  //       this.loading = false;
-  //     }
-  //   );
-  // }
-
 
   public getVariantTypes(): void {
 
@@ -913,9 +861,7 @@ export class AddArticleComponent implements OnInit {
   }
 
   private setVariantByType(variant: Variant): void {
-
     let exist: boolean = false;
-
     for (let v of this.variantsByTypes) {
       if (v.type._id === variant.type._id) {
         exist = true;
@@ -933,17 +879,6 @@ export class AddArticleComponent implements OnInit {
       this.variantsByTypes = this.orderByPipe.transform(this.variantsByTypes, ['type'], 'name');
       this.variantsByTypes = this.orderByPipe.transform(this.variantsByTypes, ['type'], 'order');
     }
-  }
-
-  public setValueFormm(): void {
-
-    if (!this.variant.type) this.variant.type = null;
-    if (!this.variant.value) this.variant.value = null;
-
-    this.newVariant.setValue({
-      'type': this.variant.type,
-      'value': this.variant.value
-    });
   }
 
   public refreshValues(): void {
@@ -981,11 +916,24 @@ export class AddArticleComponent implements OnInit {
     );
   }
 
-  public addVariant(): void {
+  public setValueVariants(): void {
 
-    //Capturamos los valores del formulario de la variante a añadir
-    this.variant = this.newVariant.value;
+    if (!this.variant.type) this.variant.type = null;
+    if (!this.variant.value) this.variant.value = null;
+    const variantsArray = this.articleForm.get('variants') as FormArray;
+  
+    const variantGroup = this._fb.group({
+      type: [this.variant.type, Validators.required],
+      value: [this.variant.value, Validators.required]
+    });
+    
+    variantsArray.push(variantGroup);
+  }
 
+  public addVariant(variantsForm: NgForm): void {
+
+    this.variant = variantsForm.value
+   
     //Comprobamos que la variante no existe
     if (!this.variantExists(this.variant)) {
 
@@ -994,10 +942,11 @@ export class AddArticleComponent implements OnInit {
       this.setVariantByType(this.variant);
       this.eventAddVariants.emit(this.variants);
       let variantTypeAux = this.variant.type;
+      let variantValueAux = this.variant.value
       this.variant = new Variant();
       this.variant.type = variantTypeAux;
-      this.setValueFormm();
-      this.buildForm();
+      this.variant.value = variantValueAux
+      this.setValueVariants();
     } else {
       this.showToast(null, 'info', "La variante " + this.variant.type.name + " " + this.variant.value.description + " ya existe", 'info');
     }
@@ -1176,58 +1125,6 @@ export class AddArticleComponent implements OnInit {
     );
   }
 
-  // loadURL(): void {
-  //   if (this.articleForm.value.url === '') {
-  //     let url = this.articleForm.value.description
-  //       .split(' ')
-  //       .join('-')
-  //       .split(':')
-  //       .join('')
-  //       .split('.')
-  //       .join('')
-  //       .split('"')
-  //       .join('')
-  //       .split('“')
-  //       .join('')
-  //       .split('”')
-  //       .join('')
-  //       .split('?')
-  //       .join('')
-  //       .split('/')
-  //       .join('-')
-  //       .split('\\')
-  //       .join('-')
-  //       .split('¿')
-  //       .join('')
-  //       .split('!')
-  //       .join('')
-  //       .split('¡')
-  //       .join('')
-  //       .split('+')
-  //       .join('')
-  //       .split('-')
-  //       .join('')
-  //       .toLocaleLowerCase()
-  //       .normalize('NFD')
-  //       .replace(/[\u0300-\u036f]/g, '');
-
-  //     this.articleForm.patchValue({ url: url });
-  //   }
-  // }
-
-
-
-  // getVariantDetail(id: string, type: 'type' | 'value'): string {
-  //   if (type === 'type') {
-  //     const variantType = this.variantTypes.find(t => t._id === id);
-  //     return variantType ? variantType.name : 'Desconocido';
-  //   } else if (type === 'value') {
-  //     const variantValue = this.variantValues.find(v => v._id === id);
-  //     return variantValue ? variantValue.description : 'Desconocido';
-  //   }
-  //   return 'Desconocido';
-  // }
-
   setValuesArray(): void {
     if (this.article.deposits && this.article.deposits.length > 0) {
       let deposits = this.articleForm.controls.deposits as UntypedFormArray;
@@ -1312,19 +1209,22 @@ export class AddArticleComponent implements OnInit {
     if (this.applications && this.applications.length > 0) {
       this.applications.forEach((x) => {
         let exists = false;
+
         this.article.applications.forEach((y) => {
-          if (x._id === y?._id) {
+          if (x._id === y._id) {
             exists = true;
             const control = new UntypedFormControl(y); // if first item set to true, else false
+
             (this.articleForm.controls.applications as UntypedFormArray).push(control);
           }
         });
         if (!exists) {
           const control = new UntypedFormControl(false); // if first item set to true, else false
+
           (this.articleForm.controls.applications as UntypedFormArray).push(control);
         }
       });
-    }
+    }   
   }
 
   getVariantsByArticleParent(): void {
@@ -1336,6 +1236,7 @@ export class AddArticleComponent implements OnInit {
           this.variants = new Array();
         } else {
           this.variants = this.getUniqueVariants(result.variants);
+          this.getVariantTypes()
         }
       },
       (error) => this.showToast(error),
@@ -1361,7 +1262,6 @@ export class AddArticleComponent implements OnInit {
         variantsToReturn.push(variant);
       }
     }
-
     return variantsToReturn;
   }
 
@@ -1408,7 +1308,7 @@ export class AddArticleComponent implements OnInit {
 
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(AddArticleComponent, {
+        modalRef = this._modalService.open(ArticleComponent, {
           size: 'lg',
           backdrop: 'static',
         });
@@ -1439,21 +1339,6 @@ export class AddArticleComponent implements OnInit {
       (error) => this.showToast(error),
     );
   }
-
-  // getMakes(query) {
-  //   return new Promise((resolve, reject) => {
-  //     this._makeService.getMakes(query).subscribe(
-  //       (result) => {
-  //         if (!result.makes) {
-  //           resolve(null);
-  //         } else {
-  //           resolve(result.makes);
-  //         }
-  //       },
-  //       (error) => this.showToast(error),
-  //     );
-  //   });
-  // }
 
   getCategories(query): Promise<Category[]> {
     return new Promise<Category[]>((resolve, reject) => {
@@ -1900,6 +1785,10 @@ export class AddArticleComponent implements OnInit {
     if (this.lastPricePurchase && this.lastPricePurchase != 0)
       lastPricePurchase = this.lastPricePurchase;
 
+    if (!this.variant.type) this.variant.type = null;
+    if (!this.variant.value) this.variant.value = null;
+
+
     const values = {
       _id: this.article._id,
       order: this.article.order,
@@ -2009,14 +1898,14 @@ export class AddArticleComponent implements OnInit {
       this.article.applications = selectedOrderIds;
 
       const pathLocation: string[] = this._router.url.split('/');
-      if (pathLocation[2] === 'articulos') {
+      if (pathLocation[2] === 'articles') {
         this.article.type = Type.Final;
-      } else if (pathLocation[2] === 'variantes') {
+      } else if (pathLocation[2] === 'variants') {
         this.article.type = Type.Variant;
-      } 
+      }
       // else if (pathLocation[2] === 'ingredientes') {
       //   this.article.type = Type.Ingredient;
-      // } 
+      // }
       else {
         this.article.type = Type.Final;
       }
@@ -2050,37 +1939,33 @@ export class AddArticleComponent implements OnInit {
 
     if (await this.isValid()) {
 
-      if (this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
-
-      //  this.variants.forEach((item)=>{
-      //  this.article.variants.push({value: item.value._id, type:item.type._id})
-      // })
+  //    if (this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
       this._articleService.saveArticle(this.article).subscribe(
         (result) => {
-          if (!result.article) {
+          if (!result.resultParent.result) {
             this.showToast(
               null,
               'info',
-              result.error && result.error.message
-                ? result.error.message
-                : result.message
-                  ? result.message
+              result.resultParent.error && result.resultParent.error.message
+                ? result.resultParent.error.message
+                : result.resultParent.message
+                  ? result.resultParent.message
                   : '',
             );
           } else {
             this.hasChanged = true;
-            this.article = result.article;
+            this.article = result.resultParent.result;
             this.showToast(null, 'success', 'El producto se ha añadido con éxito.');
-            if (this.pathUrl[2] === "articulos") {
-              this._router.navigate(['/admin/articulos']);
-              }else{
-                this._router.navigate(['/admin/variantes']);
-              }
+            if (this.pathUrl[2] === "articles") {
+              this._router.navigate(['/admin/articles']);
+            } else {
+              this._router.navigate(['/admin/variants']);
+            }
             //  this.activeModal.close({ article: this.article });
             this.loading = false;
-            if (this.article.applications.some(application => application.type === ApplicationType.TiendaNube)) {
-              this.saveArticleTiendaNube();
-            }
+            // if (this.article.applications.some(application => application.type === ApplicationType.TiendaNube)) {
+            //   this.saveArticleTiendaNube();
+            // }
 
           }
         },
@@ -2096,10 +1981,8 @@ export class AddArticleComponent implements OnInit {
 
   async updateArticle() {
     this.loading = true;
-
     if (await this.isValid()) {
-
-      if (this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
+ //  this.article.picture = await this.uploadFile(this.article.picture);
       this._articleService.updateArticle(this.article, this.variants).subscribe(
         async (result) => {
           if (!result.article) {
@@ -2119,10 +2002,10 @@ export class AddArticleComponent implements OnInit {
             this.articleForm.patchValue({ wooId: this.article.wooId });
             this._articleService.setItems(null);
             this.showToast(null, 'success', 'Operación realizada con éxito');
-            if (this.pathUrl[2] === "articulos") {
-            this._router.navigate(['/admin/articulos']);
-            }else{
-              this._router.navigate(['/admin/variantes']);
+            if (this.pathUrl[2] === "articles") {
+              this._router.navigate(['/admin/articles']);
+            } else {
+              this._router.navigate(['/admin/variants']);
             }
             this.loading = false
 
@@ -2156,11 +2039,11 @@ export class AddArticleComponent implements OnInit {
     this._articleService.delete(this.article._id).subscribe(
       (result: Resulteable) => {
         if (result.status == 200) {
-          if (this.pathUrl[2] === "articulos") {
-            this._router.navigate(['/admin/articulos']);
-            }else{
-              this._router.navigate(['/admin/variantes']);
-            }
+          if (this.pathUrl[2] === "articles") {
+            this._router.navigate(['/admin/articles']);
+          } else {
+            this._router.navigate(['/admin/variants']);
+          }
           if (this.article.tiendaNubeId) {
             this.deleteArticleTiendaNube();
           }
@@ -2285,21 +2168,28 @@ export class AddArticleComponent implements OnInit {
 
   async uploadFile(pictureDelete: string): Promise<string> {
     return new Promise<string>(async (resolve, reject) => {
-      if (pictureDelete && pictureDelete.includes('https://storage.googleapis')) {
-        await this.deleteFile(pictureDelete);
-      }
+      // if (pictureDelete && pictureDelete.includes('https://storage.googleapis')) {
+      //   await this.deleteFile(pictureDelete);
+      // }
+     this._fileService
+       .uploadFile(this.filesToUpload, 'demo/articles/', 'poscloud')
+       .subscribe(
+        (response) => {
+          console.log('File uploaded successfully:', response);
+        },
+        (error) => {
+          console.error('Error uploading file:', error);
+        }
+      );
+      
+          // (result: string) => {
+          //   this.article.picture = result;
+          //   this.imageURL = result;
+          //   resolve(result);
+          // },
+          // (error) => this.showToast(JSON.parse(error))
 
-      this._fileService
-        .uploadImage(ORIGINMEDIA.ARTICLES, this.filesToUpload)
-        .then(
-          (result: string) => {
-            this.article.picture = result;
-            this.imageURL = result;
-            resolve(result);
-          },
-          (error) => this.showToast(JSON.parse(error))
 
-        )
     })
   }
 
@@ -2344,40 +2234,6 @@ export class AddArticleComponent implements OnInit {
       resolve(true);
     });
   }
-
-  // async getArticleURL(): Promise<boolean> {
-  //   return new Promise<boolean>((resolve, reject) => {
-  //     let project = {
-  //       _id: 1,
-  //       url: 1,
-  //       ecommerceEnabled: 1,
-  //       type: 1,
-  //       operationType: 1,
-  //     };
-
-  //     let match = `{`;
-
-  //     if (this.article._id && this.article._id !== null) {
-  //       match += `"_id": { "$ne" : { "$oid" : "${this.article._id}"}},`;
-  //     }
-
-  //     match += `  "url":"${this.article.url}",
-  //                   "type": "Final",
-  //                   "operationType" : { "$ne" : "D" } }`;
-
-  //     match = JSON.parse(match);
-  //     this._articleService.getArticlesV2(project, match, {}, {}).subscribe(
-  //       (result) => {
-  //         if (result && result.articles && result.articles.length > 0) {
-  //           resolve(true);
-  //         } else {
-  //           resolve(false);
-  //         }
-  //       },
-  //       (error) => this.showToast(error),
-  //     );
-  //   });
-  // }
 
   cleanForm() {
     this.article = new Article();
