@@ -4,7 +4,7 @@
       <span style="color: #607D8B">{{title}}</span>
       <div class="pull-right">
         <button *ngFor="let button of headerButtons" [type]="'button'" [class]="button.class"
-          (click)="runEvent(button.click, null)" [disabled]="loading"><i
+          (click)="runEvent(button.click, null, null)" [disabled]="loading"><i
             [class]="button.icon"></i><span>{{ button.title | translate | capitalize }}</span>
         </button>
         <div class="columns-area float-right" ngbDropdown>
@@ -69,7 +69,7 @@
 														}">
             <td align="left">
               <button *ngFor="let button of rowButtons" [type]="'button'" [class]="button.class"
-                (click)="runEvent(button.click, item)" [disabled]="loading" [title]="button.title | translate | capitalize"><i
+                (click)="runEvent(button.click, item, items)" [disabled]="loading" [title]="button.title | translate | capitalize"><i
                   [class]="button.icon"></i>
               </button>
             </td>
