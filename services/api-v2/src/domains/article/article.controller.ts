@@ -19,6 +19,8 @@ import ObjSchema from './article.model'
 import ArticleUC from './article.uc'
 import axios from 'axios';
 import VariantUC from '../variant/variant.uc';
+import Application, { ApplicationType } from '../application/application.interface';
+import TiendaNubeController from '../uc/tienda-nube';
 
 export default class ArticleController extends Controller {
   public EJSON: any = require('bson').EJSON
@@ -37,7 +39,7 @@ export default class ArticleController extends Controller {
 
     this.router
       .get(this.path, [authMiddleware, ensureLic], this.getAllObjs)
-      .get(`${this.path}/find`, this.getFindObj)
+      .get(`${this.path}/find`, [authMiddleware, ensureLic], this.getFindObj)
       .get(`${this.path}/articles-tiendanube`, [authMiddleware, ensureLic], this.importTiendaNube)
       .get(`${this.path}/last-code`, [authMiddleware, ensureLic], this.getLastCode)
       .get(`${this.path}/:id`, [authMiddleware, ensureLic], this.getObjById)
@@ -331,13 +333,16 @@ export default class ArticleController extends Controller {
       }
 
       let variants
-
       const resultParent = await this.save(new this.model({ ...article }))
-      if(article.variants){
-        console.log(article.variants)
-       // variants = await new VariantUC(this.database).createVariant(resultParent.result._id, article.variants)
+      
+      if(article.variants.length > 0){
+       variants = await new VariantUC(this.database).createVariant(resultParent.result._id, article.variants)
       }
 
+      if (article.applications.some((application: Application) => application.type === ApplicationType.TiendaNube)) {
+      const createArticleTn = await new TiendaNubeController().saveArticleTiendaNube(article._id, this.authToken)
+     console.log(createArticleTn)
+      }
       return response.send({
         resultParent,
         variants

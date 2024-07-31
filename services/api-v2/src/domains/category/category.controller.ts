@@ -31,7 +31,7 @@ export default class CategoryController extends Controller {
   private initializeRoutes() {
     this.router
       .get(this.path, [authMiddleware, ensureLic], this.getAllObjs)
-      .get(`${this.path}/find`, [authMiddleware, ensureLic], this.getFindObj)
+      .get(`${this.path}/find`, [authMiddleware, ensureLic], [authMiddleware, ensureLic], this.getFindObj)
       .get(`${this.path}/:id`, [authMiddleware, ensureLic], this.getObjById)
       .post(`${this.path}/fullquery`, [authMiddleware, ensureLic], this.getFullQueryObjs)
       .post(
