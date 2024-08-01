@@ -2,7 +2,7 @@ import { getConfig } from "../services/config.services";
 import RequestWithUser from "../interfaces/requestWithUser.interface";
 import { Response } from "express";
 import { getArticlesData } from "../services/article.services";
-import { formatNumber, transform } from "../utils/format-numbers";
+import { addThousandsSeparator, formatNumber, transform } from "../utils/format-numbers";
 const { jsPDF } = require("jspdf");
 const fs = require('fs');
 
@@ -51,7 +51,7 @@ export async function getPrintArticles(
       doc.rect(x, y, 60, 30.5);
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(30);
-      doc.text(x + 5, y + 12, `$${salePriceTransform}`);
+      doc.text(x + 5, y + 12, `$${addThousandsSeparator(salePriceTransform)}`);
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(9);
       doc.setFont('helvetica', 'italic');

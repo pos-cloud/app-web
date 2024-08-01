@@ -38,3 +38,7 @@ export function formatNumber(number: number): string {
         return number.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     }
 }
+
+export function addThousandsSeparator(number: number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
