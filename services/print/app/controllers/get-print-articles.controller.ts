@@ -51,7 +51,7 @@ export async function getPrintArticles(
       doc.rect(x, y, 60, 30.5);
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(30);
-      doc.text(x + 5, y + 12, `$${formatNumber(salePriceTransform)}`);
+      doc.text(x + 5, y + 12, `$${salePriceTransform}`);
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(9);
       doc.setFont('helvetica', 'italic');
