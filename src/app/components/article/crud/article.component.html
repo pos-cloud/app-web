@@ -16,7 +16,7 @@
                     <span *ngIf="!loading"> {{'save' | translate | capitalize}}</span>
                     <span *ngIf="loading"> {{'loading' | translate | capitalize}}</span>
                 </button>
-                <button type="button" class="btn btn-danger" *ngIf="operation === 'delete'" [disabled]="loading"
+                <button type="button" class="btn-danger" *ngIf="operation === 'delete'" [disabled]="loading"
                     (click)="deleteArticle()">
                     <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
                     <span *ngIf="!loading"> {{'delete' | translate | capitalize}}</span>
@@ -201,7 +201,8 @@
                         <br>
                         <app-add-article-tax (eventAddArticleTax)="addArticleTaxes($event)" [article]="article"
                             [otherFields]="otherFields" [articleTaxes]="taxes"
-                            [filtersTaxClassification]="filtersTaxClassification">
+                            [filtersTaxClassification]="filtersTaxClassification"
+                            [readonly]="readonly">
                         </app-add-article-tax>
                         <br>
                         <div class="row">
@@ -325,8 +326,8 @@
                                     <label for="type" class="control-label">Tipo de variante</label>
                                     <select class="form-control" name="type" [(ngModel)]="variantTypeSelected"
                                         (change)="refreshValues()">
-                                        <option value="null"></option>
-                                        <option *ngFor="let type of variantTypes" [ngValue]="type">{{type.name}}
+                                        <option value="null"  [disabled]="readonly"></option>
+                                        <option *ngFor="let type of variantTypes" [disabled]="readonly" [ngValue]="type">{{type.name}}
                                         </option>
                                     </select>
                                 </div>
@@ -335,14 +336,14 @@
                                     <select class="form-control" name="value" [(ngModel)]="variantValueSelected"
                                         id="value">
                                         <option value="null"></option>
-                                        <option *ngFor="let value of variantValues" [ngValue]="value">
+                                        <option *ngFor="let value of variantValues" [disabled]="readonly" [ngValue]="value">
                                             {{value.description}}</option>
                                     </select>
                                 </div>
                                 <div class="form-group col-md-2">
                                     <div>Acción</div>
                                     <button type="submit" class="btn btn-success"
-                                        [disabled]="!variantsForm?.valid || loading">Agregar</button>
+                                        [disabled]="!variantsForm?.valid || loading"  [disabled]="readonly" >Agregar</button>
                                 </div>
                             </div>
                         </form>
@@ -385,26 +386,17 @@
                     </label>
                 </div>
                 <div class="row">
-                    <div class="form-group col-md-12">
-                        <div class="row">
-                            <div class="form-group col-md-4">
-                                <label>Tienda nube</label>
-                                <select class="form-control">
-                                    <option [value]="true">Sí</option>
-                                    <option [value]="false">No</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label>Carta Digital</label>
-                                <select class="form-control">
-                                    <option [value]="true">Sí</option>
-                                    <option [value]="false">No</option>
-                                </select>
-                            </div>
-                        </div>
+                    <div formArrayName="applications" *ngFor="let appControl of articleForm.get('applications')['controls']; let i = index" class="col-md-3">
+                      <label>
+                        {{ applications[i].name }}
+                      </label>
+                      <select class="form-control" [formControl]="appControl" (change)="onAppChange($event, i)">
+                        <option [value]="true">Sí</option>
+                        <option [value]="false">No</option>
+                      </select>
                     </div>
                 </div>
-                  
+                <br />
                 <div class="row">
                     <div class="form-group col-md-6">
                         <label for="forShipping" class="control-label">Utilizar como envío</label>
@@ -634,7 +626,7 @@
                                     {{ formErrors.codeProvider }}
                                 </div>
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-4">
                                 <label for="m3" class="control-label">Metros cúbicos:</label>
                                 <div class="input-group">
                                     <input type="number" class="form-control" formControlName="m3" name="m3" id="m3"

@@ -324,7 +324,7 @@ export default class ArticleController extends Controller {
         },
         match: {
           code: article.code,
-					operationType: { $ne: 'D' },
+          operationType: { $ne: 'D' },
 
         }
       })
@@ -334,14 +334,19 @@ export default class ArticleController extends Controller {
 
       let variants
       const resultParent = await this.save(new this.model({ ...article }))
-      
-      if(article.variants.length > 0){
-       variants = await new VariantUC(this.database).createVariant(resultParent.result._id, article.variants)
+      if (!resultParent.result) {
+        return response.send('Error al crear el producto')
+      }
+      if (article.variants.length > 0) {
+        variants = await new VariantUC(this.database).createVariant(resultParent.result._id, article.variants)
       }
 
       if (article.applications.some((application: Application) => application.type === ApplicationType.TiendaNube)) {
-      const createArticleTn = await new TiendaNubeController().saveArticleTiendaNube(article._id, this.authToken)
-     console.log(createArticleTn)
+        const createArticleTn = await new TiendaNubeController().saveArticleTiendaNube(resultParent.result._id, request.headers.authorization)
+        return response.send({
+          resultParent,
+          createArticleTn
+        })
       }
       return response.send({
         resultParent,
@@ -386,7 +391,7 @@ export default class ArticleController extends Controller {
     try {
       this.initConnectionDB(request.database)
       const lastCode = await new ArticleUC(this.database).lastArticle()
-      return response.json({code: lastCode})
+      return response.json({ code: lastCode })
     } catch (error) {
       console.log(error)
     }

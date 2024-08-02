@@ -809,4 +809,19 @@ export default class TiendaNubeController {
             console.log(error)
         }
     }
+
+    async saveArticleTiendaNube(articleId: string, authentication: string){
+        try {
+            let URL = `https://api-tiendanube.poscloud.ar/products`;
+            const requestOptions = {
+                headers: {
+                    Authorization: `${authentication}`
+                }
+            };
+            const createArticle = await axios.post(URL, { productId: articleId} ,requestOptions)
+            return createArticle.data
+        } catch (error) {
+            console.log(error)
+        }
+    }
 }

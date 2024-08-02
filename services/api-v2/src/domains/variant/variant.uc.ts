@@ -71,8 +71,8 @@ export default class VariantUC extends Controller {
                     for (let [index, articleChild] of result.entries()) {
                         let newVariant: Variant = VariantSchema.getInstance(this.database);
                         newVariant = Object.assign(newVariant, {
-                            type: variants[index].type._id,
-                            value: variants[index].value._id,
+                            type: variants[index]?.type._id,
+                            value: variants[index]?.value._id,
                             articleParent: articleParentId,
                             articleChild: articleChild.result._id,
                         });

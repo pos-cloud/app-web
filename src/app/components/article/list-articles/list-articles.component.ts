@@ -24,7 +24,7 @@ export class ListArticlesComponent {
 
   public title: string
   public sort = { "code": 1 };
-  public columns = attributes;
+  public columns = attributes
   public pathLocation: string[]
   public priceListId: string;
   public loading: boolean = false;
@@ -66,41 +66,7 @@ export class ListArticlesComponent {
     }
 
   ]
-  public headerButtons: IButton[] = [{
-    title: 'add',
-    class: 'btn btn-light',
-    icon: 'fa fa-plus',
-    click: `this.emitEvent('add', null)`
-  }, {
-    title: 'refresh',
-    class: 'btn btn-light',
-    icon: 'fa fa-refresh',
-    click: `this.refresh()`
-  }, {
-    title: 'import',
-    class: 'btn btn-light',
-    icon: 'fa fa-upload',
-    click: `this.emitEvent('uploadFile', null)`
-  },
-  {
-    title: 'Imprimir Etiquetas',
-    class: 'btn btn-light',
-    icon: 'fa fa-print',
-    click: `this.emitEvent('print-labels', null, items)`
-  },
-  {
-    title: 'Actualizar Precios',
-    class: 'btn btn-light',
-    icon: 'fa fa-edit',
-    click: `this.emitEvent('update-prices', null, items)`
-  },
-  {
-    title: ' Imprimir Lista',
-    class: 'btn btn-light',
-    icon: 'fa fa-print',
-    click: `this.emitEvent('print-list', null, items)`
-  }
-  ];
+  public headerButtons: IButton[]
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
@@ -119,9 +85,56 @@ export class ListArticlesComponent {
       if (this.pathLocation[2] === "variants") {
         this.title = 'Variantes'
         attributeType.defaultFilter = `{ "$eq": "Variante" }`;
+        this.headerButtons = [{
+          title: 'refresh',
+          class: 'btn btn-light',
+          icon: 'fa fa-refresh',
+          click: `this.refresh()`
+        },
+        {
+          title: 'Imprimir Etiquetas',
+          class: 'btn btn-light',
+          icon: 'fa fa-print',
+          click: `this.emitEvent('print-labels', null, items)`
+        }];
       } else if (this.pathLocation[2] === 'articles') {
         this.title = 'Productos'
         attributeType.defaultFilter = `{ "$eq": "Final" }`;
+        this.headerButtons = [{
+          title: 'add',
+          class: 'btn btn-light',
+          icon: 'fa fa-plus',
+          click: `this.emitEvent('add', null)`
+        }, {
+          title: 'refresh',
+          class: 'btn btn-light',
+          icon: 'fa fa-refresh',
+          click: `this.refresh()`
+        }, {
+          title: 'import',
+          class: 'btn btn-light',
+          icon: 'fa fa-upload',
+          click: `this.emitEvent('uploadFile', null)`
+        },
+        {
+          title: 'Imprimir Etiquetas',
+          class: 'btn btn-light',
+          icon: 'fa fa-print',
+          click: `this.emitEvent('print-labels', null, items)`
+        },
+        {
+          title: 'Actualizar Precios',
+          class: 'btn btn-light',
+          icon: 'fa fa-edit',
+          click: `this.emitEvent('update-prices', null, items)`
+        },
+        {
+          title: ' Imprimir Lista',
+          class: 'btn btn-light',
+          icon: 'fa fa-print',
+          click: `this.emitEvent('print-list', null, items)`
+        }
+        ];
       }
     }
 

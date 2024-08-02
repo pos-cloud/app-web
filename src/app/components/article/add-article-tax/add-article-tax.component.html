@@ -10,7 +10,7 @@
         <div class="form-group col-md-4">
           <label for="tax" class="control-label">Impuesto:</label>
           <select class="form-control" formControlName="tax" (change)="changeTax('tax')">
-            <option *ngFor="let tax of taxes" [ngValue]="tax">{{tax.name}}</option>
+            <option *ngFor="let tax of taxes" [ngValue]="tax"  [disabled]="readonly">{{tax.name}}</option>
           </select>
           <div *ngIf="formErrors.tax" class="alert alert-danger">
             {{ formErrors.tax }}

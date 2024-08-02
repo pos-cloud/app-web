@@ -80,8 +80,6 @@ export class ArticleComponent implements OnInit {
   public articleId: string;
   public operation: string;
   public readonly: boolean;
-  @Output() eventAddVariants: EventEmitter<Variant[]> = new EventEmitter<Variant[]>();
-
   public variant: Variant;
   private subscription: Subscription = new Subscription();
   article: Article;
@@ -344,12 +342,12 @@ export class ArticleComponent implements OnInit {
     const pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.operation = pathLocation[3]
-    if (pathLocation[2] === 'articles') {
+    if (pathLocation[2] === 'article' || pathLocation[2] === 'articles') {
       this.articleType = 'Producto';
       this.readonly = false
 
-      if(pathLocation[3] === 'view') this.readonly = true
-      if(pathLocation[3] === 'add')  this.getVariantTypes()
+      if (pathLocation[3] === 'view') this.readonly = true
+      if (pathLocation[3] === 'add') this.getVariantTypes()
     } else if (pathLocation[2] === 'variants') {
       this.readonly = true
       this.articleType = 'Variante';
@@ -360,6 +358,8 @@ export class ArticleComponent implements OnInit {
   async ngOnInit() {
     this.pathUrl = this._router.url.split('/');
     this.operation = this.pathUrl[3];
+    this.articleId = this.pathUrl[4];
+    
     if (!this.variant) {
       this.variant = new Variant();
       this.variant.articleParent = this.article;
@@ -395,12 +395,14 @@ export class ArticleComponent implements OnInit {
         }
       })
       .catch((error: Resulteable) => this.showToast(error));
-
-    this.articleId = this.pathUrl[4];
     if (this.articleId && this.articleId !== '') {
       this.getArticle();
     } else {
       this.imageURL = './../../../assets/img/default.jpg';
+    }
+
+    if (this.operation === 'add' || this.operation === 'copy') {
+      this.getLastArticle();
     }
   }
 
@@ -800,24 +802,24 @@ export class ArticleComponent implements OnInit {
   }
 
   public addVariant(variantsForm: NgForm): void {
+    if (typeof variantsForm.value.type !== 'undefined' && typeof variantsForm.value.value !== 'undefined' ) {
+      this.variant = variantsForm.value
 
-    this.variant = variantsForm.value
-   
-    //Comprobamos que la variante no existe
-    if (!this.variantExists(this.variant)) {
+      //Comprobamos que la variante no existe
+      if (!this.variantExists(this.variant)) {
 
-      this.variant.articleParent = this.article;
-      this.variants.push(this.variant);
-      this.setVariantByType(this.variant);
-      this.eventAddVariants.emit(this.variants);
-      let variantTypeAux = this.variant.type;
-      let variantValueAux = this.variant.value
-      this.variant = new Variant();
-      this.variant.type = variantTypeAux;
-      this.variant.value = variantValueAux
-      this.setValueVariants();
-    } else {
-      this.showToast(null, 'info', "La variante " + this.variant.type.name + " " + this.variant.value.description + " ya existe", 'info');
+        this.variant.articleParent = this.article;
+        this.variants.push(this.variant);
+        this.setVariantByType(this.variant);
+        let variantTypeAux = this.variant.type;
+        let variantValueAux = this.variant.value
+        this.variant = new Variant();
+        this.variant.type = variantTypeAux;
+        this.variant.value = variantValueAux
+        this.setValueVariants();
+      } else {
+        this.showToast(null, 'info', "La variante " + this.variant.type.name + " " + this.variant.value.description + " ya existe", 'info');
+      }
     }
   }
 
@@ -879,7 +881,6 @@ export class ArticleComponent implements OnInit {
         this.variants.splice(delvar, 1);
       }
     }
-    this.eventAddVariants.emit(this.variants);
   }
 
   public getVariantValues(): void {
@@ -994,6 +995,12 @@ export class ArticleComponent implements OnInit {
     );
   }
 
+  onAppChange(event: Event, index: number): void {
+    const selectElement = event.target as HTMLSelectElement;
+    const selectedValue = selectElement.value === 'true'; 
+    (this.articleForm.controls.applications as UntypedFormArray).at(index).setValue(selectedValue);
+  }
+
   setValuesArray(): void {
     if (this.article.otherFields && this.article.otherFields.length > 0) {
       let otherFields = this.articleForm.controls.otherFields as UntypedFormArray;
@@ -1046,9 +1053,10 @@ export class ArticleComponent implements OnInit {
         let exists = false;
 
         this.article.applications.forEach((y) => {
-          if (x._id === y._id) {
+          const app: any= typeof y === 'string' ? this.applications.find((app)=> app._id === y) : y._id
+          if (x._id === app._id) {
             exists = true;
-            const control = new UntypedFormControl(y); // if first item set to true, else false
+            const control = new UntypedFormControl(true); // if first item set to true, else false
 
             (this.articleForm.controls.applications as UntypedFormArray).push(control);
           }
@@ -1188,24 +1196,6 @@ export class ArticleComponent implements OnInit {
         (error) => this.showToast(error),
       );
     });
-  }
-
-  getCompany(): void {
-    let query = 'where="type":"' + CompanyType.Provider.toString() + '"';
-
-    this._companyService.getCompanies(query).subscribe(
-      (result) => {
-        if (result.companies) {
-          this.companies = result.companies;
-        }
-        if (this.operation === 'add' || this.operation === 'copy') {
-          this.getLastArticle();
-        } else {
-          this.setValuesForm();
-        }
-      },
-      (error) => this.showToast(error),
-    );
   }
 
   updatePrices(op): void {
@@ -1654,23 +1644,6 @@ export class ArticleComponent implements OnInit {
     this.articleForm.patchValue(values);
   }
 
-  public addVariants(variantsForm: NgForm): void {
-    let valid = true;
-    const variants = this.articleForm.controls.variants as FormArray;
-
-    if (valid) {
-      variants.push(
-        this._fb.group({
-          type: variantsForm.value.type._id,
-          value: variantsForm.value.value._id,
-
-        })
-      );
-      variantsForm.resetForm();
-    }
-
-  }
-
   addArticle(): void {
     if (this.articleForm.valid) {
       this.loadPosDescription();
@@ -1737,7 +1710,7 @@ export class ArticleComponent implements OnInit {
 
     if (await this.isValid()) {
 
-      if(this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
+      if (this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
       this._articleService.saveArticle(this.article).subscribe(
         (result) => {
           if (!result.resultParent.result) {
@@ -1754,17 +1727,13 @@ export class ArticleComponent implements OnInit {
             this.hasChanged = true;
             this.article = result.resultParent.result;
             this.showToast(null, 'success', 'El producto se ha añadido con éxito.');
-            if (this.pathUrl[2] === "articles") {
+     
+            if (this.pathUrl[2] === "article") {
               this._router.navigate(['/admin/articles']);
             } else {
               this._router.navigate(['/admin/variants']);
             }
-            //  this.activeModal.close({ article: this.article });
             this.loading = false;
-            // if (this.article.applications.some(application => application.type === ApplicationType.TiendaNube)) {
-            //   this.saveArticleTiendaNube();
-            // }
-
           }
         },
         (error) => {
@@ -1780,8 +1749,8 @@ export class ArticleComponent implements OnInit {
   async updateArticle() {
     this.loading = true;
     if (await this.isValid()) {
- 
-      if(this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
+
+      if (this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
       this._articleService.updateArticle(this.article, this.variants).subscribe(
         async (result) => {
           if (!result.article) {
@@ -1838,7 +1807,7 @@ export class ArticleComponent implements OnInit {
     this._articleService.delete(this.article._id).subscribe(
       (result: Resulteable) => {
         if (result.status == 200) {
-          if (this.pathUrl[2] === "articles") {
+          if (this.pathUrl[2] === "article") {
             this._router.navigate(['/admin/articles']);
           } else {
             this._router.navigate(['/admin/variants']);
@@ -1881,34 +1850,6 @@ export class ArticleComponent implements OnInit {
       (error) => {
         this.showToast(error)
         this.loading = false
-      }
-    );
-  }
-
-  async saveArticleTiendaNube() {
-    this.loading = true;
-
-    this._articleService.saveArticleTiendaNube(this.article._id).subscribe(
-      (result) => {
-        if (result.error) {
-          this.showToast(
-            null,
-            'info',
-            result.error && result.error.message
-              ? result.error.message
-              : result.message
-                ? result.message
-                : '',
-          );
-        } else {
-          this.showToast(null, 'success', 'Producto creado con éxito en Tienda Nube');
-        }
-        this.loading = false;
-
-      },
-      (error) => {
-        this.showToast(error)
-        this.loading = false;
       }
     );
   }
@@ -1980,7 +1921,7 @@ export class ArticleComponent implements OnInit {
             resolve(result);
           },
           (error) => this.showToast(JSON.parse(error))
-          
+
         )
     })
   }
