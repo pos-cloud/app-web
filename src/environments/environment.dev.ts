@@ -5,9 +5,9 @@ export const environment = {
     // apiPrint: "https://d-api-print.poscloud.ar",
     // apiStorage: "https://d-api-storage.poscloud.ar", 
     // apiTiendaNube: "https://d-api-tiendanube.poscloud.ar",
-    api: "http://149.50.141.176:300",
-    apiv2: "http://149.50.141.176:308",
-    apiPrint: "http://149.50.141.176:302",
-    apiStorage: "http://149.50.141.176:303", 
-    apiTiendaNube: "http://149.50.141.176:305"
+    api: "https://vps-4209130-x.dattaweb.com:300",
+    apiv2: "https://vps-4209130-x.dattaweb.com:308",
+    apiPrint: "https://vps-4209130-x.dattaweb.com:302",
+    apiStorage: "https://vps-4209130-x.dattaweb.com:303", 
+    apiTiendaNube: "https://vps-4209130-x.dattaweb.com:305"
 };
