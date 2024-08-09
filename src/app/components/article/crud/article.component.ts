@@ -9,6 +9,7 @@ import {
   UntypedFormArray,
   NgForm,
   FormArray,
+  FormGroup,
   UntypedFormControl,
 } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -135,7 +136,10 @@ export class ArticleComponent implements OnInit {
   markupPriceWithoutVAT: number = 0;
   database: string;
 
+  filteredVariantTypes: any[] = [];
+
   public variantTypes: VariantType[];
+  public variantType: VariantType[];
   public variantTypeSelected: VariantType;
   public variantValueSelected: VariantValue;
   public variantValues: VariantValue[];
@@ -303,6 +307,7 @@ export class ArticleComponent implements OnInit {
   };
 
   @ViewChild(AddVariantComponent) addVariantComponent: AddVariantComponent;
+
   constructor(
     private _articleService: ArticleService,
     private _articleStockService: ArticleStockService,
@@ -329,6 +334,8 @@ export class ArticleComponent implements OnInit {
     public _variantValueService: VariantValueService,
     config: NgbTypeaheadConfig
   ) {
+    this.getVariantValues()
+    this.getVariantType()
     config.showHint = true;
     if (window.screen.width < 1000) this.orientation = 'vertical';
     this.article = new Article();
@@ -359,7 +366,7 @@ export class ArticleComponent implements OnInit {
     this.pathUrl = this._router.url.split('/');
     this.operation = this.pathUrl[3];
     this.articleId = this.pathUrl[4];
-    
+
     if (!this.variant) {
       this.variant = new Variant();
       this.variant.articleParent = this.article;
@@ -404,6 +411,7 @@ export class ArticleComponent implements OnInit {
     if (this.operation === 'add' || this.operation === 'copy') {
       this.getLastArticle();
     }
+    this.filteredVariantTypes = this.variantTypes;
   }
 
   getArticleTypes() {
@@ -535,7 +543,7 @@ export class ArticleComponent implements OnInit {
 
     this.articleForm.valueChanges.subscribe((data) => this.onValueChanged(data));
     this.focusEvent.emit(true);
-
+  
   }
 
   onValueChanged(fieldID?: any): void {
@@ -684,7 +692,7 @@ export class ArticleComponent implements OnInit {
 
           if (this.article.containsVariants) {
             this.getVariantsByArticleParent();
-          }else if(!this.article.containsVariants){
+          } else if (!this.article.containsVariants) {
             this.getVariantTypes()
           }
           if (this.operation === 'copy') {
@@ -719,7 +727,7 @@ export class ArticleComponent implements OnInit {
           this.variantTypes = result.variantTypes;
           if (this.variants && this.variants.length > 0) {
             for (let variant of this.variants) {
-              this.setVariantByType(variant);
+              this.setVariantByType(this.articleForm.controls.variants.value);
             }
           }
         }
@@ -731,38 +739,42 @@ export class ArticleComponent implements OnInit {
     );
   }
 
-  private setVariantByType(variant: Variant): void {
-    let exist: boolean = false;
-    for (let v of this.variantsByTypes) {
-      if (v.type._id === variant.type._id) {
-        exist = true;
-        v.value.push(variant.value);
-        v.value = this.orderByPipe.transform(v.value, ['description']);
-        v.value = this.orderByPipe.transform(v.value, ['order']);
+  private setVariantByType(variants: Variant[]): void {
+
+    // Crear un mapa para almacenar los valores únicos por tipo
+    const typeMap = new Map<string, { type: any, value: any[] }>();
+    
+    // Procesar cada variante
+    for (let variant of variants) {
+      const typeId = variant.type._id;
+      
+      if (typeMap.has(typeId)) {
+        // Si el tipo ya existe, agregar el valor si no está ya presente
+        let existing = typeMap.get(typeId);
+        const existingValues = existing.value;
+        const valueExists = existingValues.some(val => val._id === variant.value._id);
+        
+        if (!valueExists) {
+          existingValues.push(variant.value);
+          existing.value = this.orderByPipe.transform(existingValues, ['description']);
+          existing.value = this.orderByPipe.transform(existing.value, ['order']);
+        }
+      } else {
+        // Si el tipo no existe, agregar un nuevo tipo con su valor
+        typeMap.set(typeId, {
+          type: variant.type,
+          value: [variant.value]
+        });
       }
     }
-
-    if (!exist) {
-      this.variantsByTypes.push({
-        type: variant.type,
-        value: [variant.value]
-      });
-      this.variantsByTypes = this.orderByPipe.transform(this.variantsByTypes, ['type'], 'name');
-      this.variantsByTypes = this.orderByPipe.transform(this.variantsByTypes, ['type'], 'order');
-    }
+    
+    // Convertir el mapa a un array y ordenar
+    this.variantsByTypes = Array.from(typeMap.values());
+    this.variantsByTypes = this.orderByPipe.transform(this.variantsByTypes, ['type'], 'name');
+    this.variantsByTypes = this.orderByPipe.transform(this.variantsByTypes, ['type'], 'order');
+    
   }
-
-  public refreshValues(): void {
-    if (this.variantTypeSelected) {
-      this.variant.value = null;
-      this.getVariantValuesByType(this.variantTypeSelected);
-    } else {
-      this.variant.type = null;
-      this.variant.value = null;
-      this.setValuesForm();
-    }
-  }
-
+  
   public getVariantValuesByType(variantType: VariantType): void {
 
     this.loading = true;
@@ -787,22 +799,48 @@ export class ArticleComponent implements OnInit {
     );
   }
 
+  public updateAndRefresh() {
+    if (this.operation === 'update') {
+      const selectedTypeNames = this.articleForm.controls.variants.value.map(v => v.value.type.name);
+      if(!selectedTypeNames.length){
+        this.filteredVariantTypes = this.variantTypes;
+      }else {
+        this.filteredVariantTypes = this.variantTypes.filter(type => selectedTypeNames.includes(type.name));
+      }
+    } else {
+      this.filteredVariantTypes = this.variantTypes;
+    }
+  
+  }
+
+  public refreshValues(): void {
+    console.log(this.filteredVariantTypes)
+    if (this.variantTypeSelected) {
+      this.variant.value = null;
+      this.getVariantValuesByType(this.variantTypeSelected);
+    } else {
+      this.variant.type = null;
+      this.variant.value = null;
+      this.setValuesForm();
+    }
+  }
+
   public setValueVariants(): void {
 
     if (!this.variant.type) this.variant.type = null;
     if (!this.variant.value) this.variant.value = null;
     const variantsArray = this.articleForm.get('variants') as FormArray;
-  
+
     const variantGroup = this._fb.group({
       type: [this.variant.type, Validators.required],
       value: [this.variant.value, Validators.required]
     });
-    
+
     variantsArray.push(variantGroup);
   }
 
   public addVariant(variantsForm: NgForm): void {
-    if (typeof variantsForm.value.type !== 'undefined' && typeof variantsForm.value.value !== 'undefined' ) {
+    if (typeof variantsForm.value.type !== 'undefined' && typeof variantsForm.value.value !== 'undefined') {
       this.variant = variantsForm.value
 
       //Comprobamos que la variante no existe
@@ -810,7 +848,8 @@ export class ArticleComponent implements OnInit {
 
         this.variant.articleParent = this.article;
         this.variants.push(this.variant);
-        this.setVariantByType(this.variant);
+        this.articleForm.controls.variants.value.push(variantsForm.value)
+        this.setVariantByType(this.articleForm.controls.variants.value);
         let variantTypeAux = this.variant.type;
         let variantValueAux = this.variant.value
         this.variant = new Variant();
@@ -840,45 +879,58 @@ export class ArticleComponent implements OnInit {
   }
 
   public deleteVariant(v) {
-
-    let countvt: number = 0;
-
-    for (let vt of this.variantsByTypes) {
-      let typeId = v.type;
-      if (v.type && v.type._id) {
-        typeId = v.type._id;
-      }
-      if (vt.type._id === typeId) {
-        let countval: number = 0;
-        let delval: number = -1;
-        for (let val of vt.value) {
-          if (val._id == v._id) {
-            delval = countval;
-
+      let countvt: number = 0;
+      console.log(v)
+      for (let vt of this.variantsByTypes) {
+        let typeId = v.type;
+        if (v.type && v.type._id) {
+          typeId = v.type._id;
+        }
+        if (vt.type._id === typeId) {
+          let countval: number = 0;
+          let delval: number = -1;
+          for (let val of vt.value) {
+            if (val._id == v._id) {
+              delval = countval;
+            }
+            countval++;
           }
-          countval++;
+          if (delval !== -1) {
+            vt.value.splice(delval, 1);
+          }
+          if (vt.value.length === 0) {
+            this.variantsByTypes.splice(countvt, 1);
+          }
         }
-        if (delval !== -1) {
-          vt.value.splice(delval, 1);
-        }
-        if (vt.value.length === 0) {
-          this.variantsByTypes.splice(countvt, 1);
-        }
+        countvt++;
       }
-      countvt++;
-    }
 
-    if (this.variants && this.variants.length > 0) {
-      let countvar: number = 0;
-      let delvar: number = -1;
-      for (let variantAux of this.variants) {
-        if (variantAux.value._id === v._id) {
-          delvar = countvar;
+      if (this.variants && this.variants.length > 0) {
+        let countvar: number = 0;
+        let delvar: number = -1;
+        for (let variantAux of this.variants) {
+          if (variantAux.value._id === v._id) {
+            delvar = countvar;
+          }
+          countvar++;
         }
-        countvar++;
+        if (delvar !== -1) {
+          this.variants.splice(delvar, 1);
+        }
       }
-      if (delvar !== -1) {
-        this.variants.splice(delvar, 1);
+
+    // Eliminar la variante del FormArray
+    this.deleteVariantFromFormArray(v);
+  }
+
+  private deleteVariantFromFormArray(variant): void {
+    const variantsArray = this.articleForm.get('variants') as FormArray;
+    for (let i = 0; i < variantsArray.length; i++) {
+      const variantGroup = variantsArray.at(i) as FormGroup;
+      const variantId = typeof variantGroup.value.value === 'string' ? variantGroup.value.value : variantGroup.value.value._id
+      if (variantId === variant._id) {
+        variantsArray.removeAt(i);
+        break;
       }
     }
   }
@@ -888,27 +940,53 @@ export class ArticleComponent implements OnInit {
     this.loading = true;
     let project = {
       "_id": 1,
-      "type": 1,
+      "type.name": 1,
+      "type._id": 1,
       "description": 1,
       "operationType": 1
     };
-    let query = {
+    let match = {
       operationType: { $ne: 'D' }
     }
-    this._variantValueService.find({ project, query }).subscribe(
+    this._variantValueService.getAll({ project, match }).subscribe(
       result => {
-        if (!result) {
+        if (!result.result) {
           this.loading = false;
           this.variantValues = new Array();
         } else {
           this.loading = false;
-          this.variantValues = result;
+          this.variantValues = result.result;
         }
       },
       error => {
         this.loading = false;
       }
     );
+  }
+
+  getVariantType(): void {
+    let project = {
+      "_id": 1,
+      "name": 1,
+      "operationType": 1
+    };
+    let match = {
+      operationType: { $ne: 'D' }
+    }
+    this._variantTypeService.getAll({ project, match }).subscribe(
+      result => {
+        if (!result.result) {
+          this.loading = false;
+          this.variantType = new Array();
+        } else {
+          this.loading = false;
+          this.variantType = result.result;
+        }
+      },
+      error => {
+        this.loading = false;
+      }
+    )
   }
 
   public getCategory(): void {
@@ -997,7 +1075,7 @@ export class ArticleComponent implements OnInit {
 
   onAppChange(event: Event, index: number): void {
     const selectElement = event.target as HTMLSelectElement;
-    const selectedValue = selectElement.value === 'true'; 
+    const selectedValue = selectElement.value === 'true';
     (this.articleForm.controls.applications as UntypedFormArray).at(index).setValue(selectedValue);
   }
 
@@ -1037,12 +1115,20 @@ export class ArticleComponent implements OnInit {
 
     if (this.article.variants && this.article.variants.length > 0) {
       let variants = this.articleForm.controls.variants as UntypedFormArray;
-
       this.article.variants.forEach((x) => {
+        const selectedType = this.variantType.find(varianType =>
+          varianType._id === (typeof x.type === 'string' ? x.type : x.type._id)
+        );
+
+        const selectedValue = this.variantValues.find(variantValue => {
+          const valueId = typeof x.value === 'string' ? x.value : x.value._id;
+          return variantValue._id === valueId;
+        });
+
         variants.push(
           this._fb.group({
-            'type': x.type,
-            'value': x.value,
+            'type': selectedType,
+            'value': [selectedValue],
           }),
         );
       });
@@ -1053,7 +1139,7 @@ export class ArticleComponent implements OnInit {
         let exists = false;
 
         this.article.applications.forEach((y) => {
-          const app: any= typeof y === 'string' ? this.applications.find((app)=> app._id === y) : y._id
+          const app: any = typeof y === 'string' ? this.applications.find((app) => app._id === y) : y._id
           if (x._id === app._id) {
             exists = true;
             const control = new UntypedFormControl(true); // if first item set to true, else false
@@ -1067,7 +1153,7 @@ export class ArticleComponent implements OnInit {
           (this.articleForm.controls.applications as UntypedFormArray).push(control);
         }
       });
-    }   
+    }
   }
 
   getVariantsByArticleParent(): void {
@@ -1727,7 +1813,7 @@ export class ArticleComponent implements OnInit {
             this.hasChanged = true;
             this.article = result.resultParent.result;
             this.showToast(null, 'success', 'El producto se ha añadido con éxito.');
-     
+
             if (this.pathUrl[2] === "article") {
               this._router.navigate(['/admin/articles']);
             } else {
@@ -1751,21 +1837,21 @@ export class ArticleComponent implements OnInit {
     if (await this.isValid()) {
 
       if (this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
-      this._articleService.updateArticle(this.article, this.variants).subscribe(
-        async (result) => {
-          if (!result.article) {
+      this._articleService.updateArticle(this.article).subscribe(
+        async (resultParent) => {
+          if (!resultParent.resultParent.result) {
             this.showToast(
               null,
               'info',
-              result.error && result.error.message
-                ? result.error.message
-                : result.message
-                  ? result.message
+              resultParent.resultParent.error && resultParent.resultParent.error.message
+                ? resultParent.resultParent.error.message
+                : resultParent.resultParent.message
+                  ? resultParent.resultParent.message
                   : '',
             );
           } else {
             this.hasChanged = true;
-            this.article = result.article;
+            this.article = resultParent.resultParent.result;
             this.articleForm.patchValue({ meliId: this.article.meliId });
             this.articleForm.patchValue({ wooId: this.article.wooId });
             this._articleService.setItems(null);

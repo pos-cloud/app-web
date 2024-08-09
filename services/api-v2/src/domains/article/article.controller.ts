@@ -21,6 +21,7 @@ import axios from 'axios';
 import VariantUC from '../variant/variant.uc';
 import Application, { ApplicationType } from '../application/application.interface';
 import TiendaNubeController from '../uc/tienda-nube';
+import config from '../../utils/config'
 
 export default class ArticleController extends Controller {
   public EJSON: any = require('bson').EJSON
@@ -51,7 +52,7 @@ export default class ArticleController extends Controller {
       .put(
         `${this.path}/:id`,
         [authMiddleware, ensureLic, validationMiddleware(ObjDto)],
-        this.updateObj,
+        this.updateArticleObj,
       )
       .delete(`${this.path}/:id`, [authMiddleware, ensureLic], this.deleteArticle)
       .post(
@@ -357,8 +358,34 @@ export default class ArticleController extends Controller {
     }
   }
 
+  updateArticleObj = async (
+    request: RequestWithUser,
+    response: express.Response,
+    next: express.NextFunction
+  ) => {
+    try {
+      this.initConnectionDB(request.database)
+      this.userAudit = request.user
+      const article = request.body
+      const { id } = request.params
+
+      const resultParent = await this.update(id, new this.model({ ...article }))
+      if (!resultParent.result) {
+        return response.send('Error al crear el producto')
+      }
+      
+      let variants = await new VariantUC(this.database).updateVariant(resultParent.result._id, article.variants)
+    
+      return response.json({resultParent, variants})
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
   async getArticlesTn() {
-    const URL = 'http://localhost:305/products';
+    const URL = `${config.TIENDANUBE_URL}/products`;
     const articles = [];
     let page = 1;
 

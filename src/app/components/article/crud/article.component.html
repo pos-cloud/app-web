@@ -36,17 +36,21 @@
                         <div class="row">
                             <div class="form-group col-md-2">
                                 <label type="button" for="order" class="control-label">Order:</label>
-                                <input type="number" class="form-control" formControlName="order" name="order" id="order" [readonly]="readonly" />
+                                <input type="number" class="form-control" formControlName="order" name="order"
+                                    id="order" [readonly]="readonly" />
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="code" class="control-label">Código Interno:</label>
-                                <input type="text" class="form-control" formControlName="code" name="code" id="code" [focus]="focusEvent" [readonly]="readonly" />
+                                <input type="text" class="form-control" formControlName="code" name="code" id="code"
+                                    [focus]="focusEvent" [readonly]="readonly" />
                                 <div *ngIf="formErrors.code" class="alert alert-danger">{{ formErrors.code }}</div>
                             </div>
                             <div class="form-group col-md-5">
                                 <label for="barcode" class="control-label">Código de Barras:</label>
-                                <input type="text" class="form-control" formControlName="barcode" name="barcode" id="barcode" [readonly]="readonly" />
-                                <div *ngIf="formErrors.barcode" class="alert alert-danger">{{ formErrors.barcode }}</div>
+                                <input type="text" class="form-control" formControlName="barcode" name="barcode"
+                                    id="barcode" />
+                                <div *ngIf="formErrors.barcode" class="alert alert-danger">{{ formErrors.barcode }}
+                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -55,40 +59,63 @@
                                     <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
                                 </ng-template>
                                 <label for="make">Marca:</label>
-                                <input id="make" type="text" class="form-control" formControlName="make" name="make" [ngbTypeahead]="searchMakes" [resultTemplate]="rtMakes" [inputFormatter]="formatterMakes" [readonly]="readonly" />
+                                <input id="make" type="text" class="form-control" formControlName="make" name="make"
+                                    [ngbTypeahead]="searchMakes" [resultTemplate]="rtMakes"
+                                    [inputFormatter]="formatterMakes" [readonly]="readonly" />
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="category">Categoría:</label>
-                                <input id="category" type="text" class="form-control" formControlName="category" name="category" [ngbTypeahead]="searchCategories" [resultFormatter]="formatterCategories" [inputFormatter]="inputCategories" (blur)="onValueChanged($event.target.id)" [ngClass]="{'is-invalid':!articleForm.get('category')?.valid && formErrors.category}" [readonly]="readonly" />
-                                <div class="invalid-feedback" [style.display]="(formErrors.category)? 'block': 'none'">{{ formErrors.category }}</div>
+                                <input id="category" type="text" class="form-control" formControlName="category"
+                                    name="category" [ngbTypeahead]="searchCategories"
+                                    [resultFormatter]="formatterCategories" [inputFormatter]="inputCategories"
+                                    (blur)="onValueChanged($event.target.id)"
+                                    [ngClass]="{'is-invalid':!articleForm.get('category')?.valid && formErrors.category}"
+                                    [readonly]="readonly" />
+                                <div class="invalid-feedback" [style.display]="(formErrors.category)? 'block': 'none'">
+                                    {{ formErrors.category }}</div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label for="description" class="control-label">Descripción:</label>
-                                <input type="text" class="form-control" formControlName="description" name="description" id="description" (blur)="loadPosDescription(); onValueChanged($event.target.id)" [ngClass]="{'is-invalid':!articleForm.get('description')?.valid && formErrors.description}" [readonly]="readonly" />
-                                <div class="invalid-feedback" [style.display]="(formErrors.description)? 'block': 'none'">{{ formErrors.description }}</div>
+                                <input type="text" class="form-control" formControlName="description" name="description"
+                                    id="description" (blur)="loadPosDescription(); onValueChanged($event.target.id)"
+                                    [ngClass]="{'is-invalid':!articleForm.get('description')?.valid && formErrors.description}"
+                                    [readonly]="readonly" />
+                                <div class="invalid-feedback"
+                                    [style.display]="(formErrors.description)? 'block': 'none'">{{
+                                    formErrors.description }}</div>
                             </div>
                             <div class="form-group col-md-5">
                                 <label for="posDescription" class="control-label">Descripción Corta:</label>
-                                <input type="text" class="form-control" formControlName="posDescription" name="posDescription" id="posDescription" (blur)="loadPosDescription(); onValueChanged($event.target.id)" [ngClass]="{'is-invalid':!articleForm.get('posDescription')?.valid && formErrors.posDescription}" [readonly]="readonly" />
-                                <div class="invalid-feedback" [style.display]="(formErrors.posDescription)? 'block': 'none'">{{ formErrors.posDescription }}</div>
+                                <input type="text" class="form-control" formControlName="posDescription"
+                                    name="posDescription" id="posDescription"
+                                    (blur)="loadPosDescription(); onValueChanged($event.target.id)"
+                                    [ngClass]="{'is-invalid':!articleForm.get('posDescription')?.valid && formErrors.posDescription}"
+                                    [readonly]="readonly" />
+                                <div class="invalid-feedback"
+                                    [style.display]="(formErrors.posDescription)? 'block': 'none'">{{
+                                    formErrors.posDescription }}</div>
                             </div>
                         </div>
                     </div>
                     <div class="form-group col-md-4 text-center">
                         <div class="custom-file mt-4">
-                            <label *ngIf="!readonly" class="custom-file-label btn btn-action" for="customFileLang">Imagen</label>
-                            <input *ngIf="!readonly" type="file" class="custom-file-input" lang="es" placeholder="Buscar Imagen" accept="image/*" id="customFileLang" (change)="fileChangeEvent($event,false)" />
+                            <label *ngIf="!readonly" class="custom-file-label btn btn-action"
+                                for="customFileLang">Imagen</label>
+                            <input *ngIf="!readonly" type="file" class="custom-file-input" lang="es"
+                                placeholder="Buscar Imagen" accept="image/*" id="customFileLang"
+                                (change)="fileChangeEvent($event,false)" />
                             <div class="mt-2">
                                 <img class="img-article" [src]="imageURL" height="120" width="120" />
                             </div>
-                            <button class="btn btn-sm btn-danger mt-2" (click)="deletePicture(null, article.picture)" *ngIf="this.imageURL != './../../../assets/img/default.jpg' && operation != 'view'">
+                            <button class="btn btn-sm btn-danger mt-2" (click)="deletePicture(null, article.picture)"
+                                *ngIf="this.imageURL != './../../../assets/img/default.jpg' && operation != 'view'">
                                 <i class="fa fa-trash-o"></i> Eliminar
                             </button>
                         </div>
                     </div>
-                </div>             
+                </div>
                 <div class="row">
                     <div class="form-group col-md-4">
                         <ng-template #result let-r="result" let-t="term">
@@ -173,8 +200,7 @@
                                     <input type="number" class="form-control" formControlName="basePrice"
                                         name="basePrice" id="basePrice" step="1"
                                         (blur)="updatePrices('basePrice'); onValueChanged($event.target.id)"
-                                        [ngClass]="{'is-invalid':!articleForm.get('basePrice')?.valid && formErrors.basePrice}"
-                                        [readonly]="readonly" />
+                                        [ngClass]="{'is-invalid':!articleForm.get('basePrice')?.valid && formErrors.basePrice}" />
                                 </div>
                                 <div class="invalid-feedback" [style.display]="(formErrors.basePrice)? 'block': 'none'">
                                     {{ formErrors.basePrice }}
@@ -201,8 +227,7 @@
                         <br>
                         <app-add-article-tax (eventAddArticleTax)="addArticleTaxes($event)" [article]="article"
                             [otherFields]="otherFields" [articleTaxes]="taxes"
-                            [filtersTaxClassification]="filtersTaxClassification"
-                            [readonly]="readonly">
+                            [filtersTaxClassification]="filtersTaxClassification" [readonly]="readonly">
                         </app-add-article-tax>
                         <br>
                         <div class="row">
@@ -325,25 +350,29 @@
                                 <div class="form-group col-md-5">
                                     <label for="type" class="control-label">Tipo de variante</label>
                                     <select class="form-control" name="type" [(ngModel)]="variantTypeSelected"
-                                        (change)="refreshValues()">
-                                        <option value="null"  [disabled]="readonly"></option>
-                                        <option *ngFor="let type of variantTypes" [disabled]="readonly" [ngValue]="type">{{type.name}}
-                                        </option>
-                                    </select>
+                                    (change)="refreshValues()" (focus)="updateAndRefresh()">
+                                <option value="null" [disabled]="readonly"></option>
+                                <option *ngFor="let type of filteredVariantTypes" [disabled]="readonly"
+                                        [ngValue]="type">
+                                    {{ type.name }}
+                                </option>
+                            </select>
                                 </div>
                                 <div class="form-group col-md-5">
                                     <label for="value" class="control-label">Valor</label>
                                     <select class="form-control" name="value" [(ngModel)]="variantValueSelected"
                                         id="value">
                                         <option value="null"></option>
-                                        <option *ngFor="let value of variantValues" [disabled]="readonly" [ngValue]="value">
-                                            {{value.description}}</option>
+                                        <option *ngFor="let value of variantValues" [disabled]="readonly"
+                                            [ngValue]="value">
+                                            {{ value.description }}
+                                        </option>
                                     </select>
                                 </div>
                                 <div class="form-group col-md-2">
                                     <div>Acción</div>
                                     <button type="submit" class="btn btn-success"
-                                        [disabled]="!variantsForm?.valid || loading"  [disabled]="readonly" >Agregar</button>
+                                        [disabled]="!variantsForm?.valid || loading || readonly">Agregar</button>
                                 </div>
                             </div>
                         </form>
@@ -386,14 +415,16 @@
                     </label>
                 </div>
                 <div class="row">
-                    <div formArrayName="applications" *ngFor="let appControl of articleForm.get('applications')['controls']; let i = index" class="col-md-3">
-                      <label>
-                        {{ applications[i].name }}
-                      </label>
-                      <select class="form-control" [formControl]="appControl" (change)="onAppChange($event, i)">
-                        <option [value]="true">Sí</option>
-                        <option [value]="false">No</option>
-                      </select>
+                    <div formArrayName="applications"
+                        *ngFor="let appControl of articleForm.get('applications')['controls']; let i = index"
+                        class="col-md-3">
+                        <label>
+                            {{ applications[i].name }}
+                        </label>
+                        <select class="form-control" [formControl]="appControl" (change)="onAppChange($event, i)">
+                            <option [value]="true">Sí</option>
+                            <option [value]="false">No</option>
+                        </select>
                     </div>
                 </div>
                 <br />
@@ -429,7 +460,7 @@
                         <label for="height" class="control-label">Alto:</label>
                         <div class="input-group">
                             <input type="number" class="form-control" formControlName="height" name="height" id="height"
-                                [readonly]="readonly" aria-describedby="basic-addon1" />
+                                aria-describedby="basic-addon1" />
                             <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">cm</span>
                             </div>
                         </div>
@@ -438,7 +469,7 @@
                         <label for="depth" class="control-label">Profundidad:</label>
                         <div class="input-group">
                             <input type="number" class="form-control" formControlName="depth" name="depth" id="depth"
-                                [readonly]="readonly" aria-describedby="basic-addon1" />
+                                aria-describedby="basic-addon1" />
                             <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">cm</span>
                             </div>
                         </div>
