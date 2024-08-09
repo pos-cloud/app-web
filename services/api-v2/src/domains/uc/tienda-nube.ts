@@ -812,7 +812,7 @@ export default class TiendaNubeController {
 
     async saveArticleTiendaNube(articleId: string, authentication: string){
         try {
-            let URL = `https://api-tiendanube.poscloud.ar/products`;
+            let URL = `${config.TIENDANUBE_URL}/products` ;
             const requestOptions = {
                 headers: {
                     Authorization: `${authentication}`
