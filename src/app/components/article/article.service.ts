@@ -190,22 +190,16 @@ export class ArticleService extends ModelService {
       );
   }
 
-  public updateArticle(article: Article, variants: Variant[]): Observable<any> {
-    const URL = `${Config.apiURL}article`;
+  public updateArticle(article: Article): Observable<any> {
+    const URL = `${Config.apiV8URL}articles`;
 
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json")
       .set("Authorization", this._authService.getToken());
 
-    const params = new HttpParams().set("id", article._id);
-
     return this._http
-      .put(
-        URL,
-        { article: article, variants: variants },
-        {
+      .put(`${URL}/${article._id}`, article, {
           headers: headers,
-          params: params,
         }
       )
       .pipe(
