@@ -790,13 +790,9 @@ export async function getPrintTransaction(
           doc.text(`${movementOfArticle.transaction.type.abbreviation}-${padString(movementOfArticle.transaction.number,10)}`, 3, verticalPosition + 80);
         
           const barcodeImage = getBarcode('code128', movementOfArticle._id);
-          doc.setGState(new doc.GState({ opacity: 0.8}));
-
-          // Agrega la imagen con la opacidad establecida
-          doc.addImage(barcodeImage, 'png', 15, verticalPosition + 100, 50, 20);
+    
+          doc.addImage(barcodeImage, 'png', 15, verticalPosition + 85, 60, 16);
           
-          // Restablece la opacidad a 100% para otros elementos
-          doc.setGState(new doc.GState({ opacity: 1 })); 
           
           verticalPosition += 58;
           articlesOnCurrentPage++;
