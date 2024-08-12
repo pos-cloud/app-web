@@ -335,7 +335,7 @@ export class ArticleComponent implements OnInit {
     config: NgbTypeaheadConfig
   ) {
     this.getVariantValues()
-    this.getVariantType()
+    this.getVariantTypes()
     config.showHint = true;
     if (window.screen.width < 1000) this.orientation = 'vertical';
     this.article = new Article();
@@ -443,8 +443,8 @@ export class ArticleComponent implements OnInit {
       )
       .subscribe(
         (result) => {
-          if (result && result[0] && result[0].classifications) {
-            this.classifications = result[0].classifications;
+          if (result.result && result.result[0] && result.result[0]) {
+            this.classifications = result.result[0].classifications;
           } else {
             this.classifications = new Array();
           }
@@ -664,9 +664,9 @@ export class ArticleComponent implements OnInit {
   getCurrencies(): void {
     this._currencyService.getCurrencies('sort="name":1').subscribe(
       (result) => {
-        if (!result.currencies) {
+        if (!result.result) {
         } else {
-          this.currencies = result.currencies;
+          this.currencies = result.result;
         }
       },
       (error) => this.showToast(error),
@@ -690,11 +690,6 @@ export class ArticleComponent implements OnInit {
           this.imageURL = this.article.picture ?? './../../../assets/img/default.jpg'
           if (this.article.picture == 'default.jpg') this.imageURL = './../../../assets/img/default.jpg'
 
-          if (this.article.containsVariants) {
-            this.getVariantsByArticleParent();
-          } else if (!this.article.containsVariants) {
-            this.getVariantTypes()
-          }
           if (this.operation === 'copy') {
             this.article._id = null;
             this.article.code = '';
@@ -704,38 +699,10 @@ export class ArticleComponent implements OnInit {
           }
           this.setValuesForm();
           this.setValuesArray();
+          this.setVariantByType(this.articleForm.controls.variants.value);
         }
       },
       (error) => this.showToast(error),
-    );
-  }
-
-  public getVariantTypes(): void {
-
-    this.loading = true;
-
-    let query = 'sort="name":1,"order":1';
-
-    this._variantTypeService.getVariantTypes(query).subscribe(
-      result => {
-        if (!result.variantTypes) {
-          this.loading = false;
-          this.variantTypes = new Array();
-        } else {
-          //  this.hideMessage();
-          this.loading = false;
-          this.variantTypes = result.variantTypes;
-          if (this.variants && this.variants.length > 0) {
-            for (let variant of this.variants) {
-              this.setVariantByType(this.articleForm.controls.variants.value);
-            }
-          }
-        }
-      },
-      error => {
-        // this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
     );
   }
 
@@ -800,7 +767,7 @@ export class ArticleComponent implements OnInit {
   }
 
   public updateAndRefresh() {
-    if (this.operation === 'update') {
+    if (this.article.variants && this.article.variants.length) {
       const selectedTypeNames = this.articleForm.controls.variants.value.map(v => v.value.type.name);
       if(!selectedTypeNames.length){
         this.filteredVariantTypes = this.variantTypes;
@@ -814,7 +781,6 @@ export class ArticleComponent implements OnInit {
   }
 
   public refreshValues(): void {
-    console.log(this.filteredVariantTypes)
     if (this.variantTypeSelected) {
       this.variant.value = null;
       this.getVariantValuesByType(this.variantTypeSelected);
@@ -880,7 +846,6 @@ export class ArticleComponent implements OnInit {
 
   public deleteVariant(v) {
       let countvt: number = 0;
-      console.log(v)
       for (let vt of this.variantsByTypes) {
         let typeId = v.type;
         if (v.type && v.type._id) {
@@ -964,7 +929,7 @@ export class ArticleComponent implements OnInit {
     );
   }
 
-  getVariantType(): void {
+  getVariantTypes(): void {
     let project = {
       "_id": 1,
       "name": 1,
@@ -977,10 +942,10 @@ export class ArticleComponent implements OnInit {
       result => {
         if (!result.result) {
           this.loading = false;
-          this.variantType = new Array();
+          this.variantTypes = new Array();
         } else {
           this.loading = false;
-          this.variantType = result.result;
+          this.variantTypes = result.result;
         }
       },
       error => {
@@ -1116,7 +1081,7 @@ export class ArticleComponent implements OnInit {
     if (this.article.variants && this.article.variants.length > 0) {
       let variants = this.articleForm.controls.variants as UntypedFormArray;
       this.article.variants.forEach((x) => {
-        const selectedType = this.variantType.find(varianType =>
+        const selectedType = this.variantTypes.find(varianType =>
           varianType._id === (typeof x.type === 'string' ? x.type : x.type._id)
         );
 
@@ -1156,20 +1121,11 @@ export class ArticleComponent implements OnInit {
     }
   }
 
-  getVariantsByArticleParent(): void {
-    let query = 'where="articleParent":"' + this.article._id + '"';
-
-    this._variantService.getVariants(query).subscribe(
-      (result) => {
-        if (!result.variants) {
-          this.variants = new Array();
-        } else {
-          this.variants = this.getUniqueVariants(result.variants);
-          this.getVariantTypes()
-        }
-      },
-      (error) => this.showToast(error),
-    );
+  retrunTo(){
+    if(this.article.type === Type.Variant){
+      return this._router.navigate(['/admin/variants']);
+    }
+   return this._router.navigate(['/admin/articles']);
   }
 
   getUniqueVariants(variants: Variant[]): Variant[] {
@@ -1490,13 +1446,13 @@ export class ArticleComponent implements OnInit {
   }
 
   loadPosDescription(): void {
-    if (this.articleForm.value.posDescription === '') {
+    //if (this.articleForm.value.posDescription === '') {
       const slicePipe = new SlicePipe();
 
       this.articleForm.patchValue({
         posDescription: slicePipe.transform(this.articleForm.value.description, 0, 20),
       });
-    }
+   // }
   }
 
   setValuesForm(): void {

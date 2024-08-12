@@ -13,6 +13,8 @@ import { UpdateArticlePriceComponent } from "../update-article-price/update-arti
 import { PrintPriceListComponent } from "app/components/print/print-price-list/print-price-list.component";
 import { Type } from '../article'
 import { PrintLabelsComponent } from "../actions/print-labels/print-labels.component";
+import { PriceListService } from "app/components/price-list/price-list.service";
+import { PriceList } from "app/components/price-list/price-list";
 
 @Component({
   selector: "app-list-articles",
@@ -67,6 +69,7 @@ export class ListArticlesComponent {
 
   ]
   public headerButtons: IButton[]
+  public priceLists: PriceList[]
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
@@ -75,7 +78,8 @@ export class ListArticlesComponent {
     private _modalService: NgbModal,
     private _router: Router,
     public _printerService: PrinterService,
-    public _alertConfig: NgbAlertConfig
+    public _alertConfig: NgbAlertConfig,
+    public _priceListService: PriceListService
   ) {
 
     let attributeType = this.columns.find(attribute => attribute.name === 'type');
@@ -214,6 +218,10 @@ export class ListArticlesComponent {
         this._router.navigateByUrl("admin/articles/copy/" + obj._id)
         break
       case "price-lists":
+        this.getPriceLists()
+        if(!this.priceLists.length){
+          return this.openModal("print-label", obj, null);
+        }
         modalRef = this._modalService.open(ListPriceListsComponent, {
           size: "lg",
           backdrop: "static",
@@ -263,4 +271,16 @@ export class ListArticlesComponent {
   public refresh() {
     this.datatableComponent.refresh();
   }
+
+  public getPriceLists() : void {
+    this._priceListService.getPriceLists().subscribe(
+        result => {
+            if(result.priceLists){
+                this.priceLists = result.priceLists;
+            }else{
+              this.priceLists = []
+            }
+        }
+    )
+}
 }

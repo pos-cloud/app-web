@@ -8,7 +8,7 @@
                 {{article.code}} -
                 {{article.description}}</span>
             <div class="pull-right">
-                <button type="button" class="btn" [routerLink]="['/admin/articles']"><i
+                <button type="button" class="btn"  (click)="retrunTo()"><i
                         class="fa fa-arrow-left"></i><span>{{'return' | translate | capitalize}}</span></button>
                 <button type="button" class="btn" [disabled]="loading"
                     *ngIf="operation !== 'delete' && operation !== 'view'" (click)="addArticle()">

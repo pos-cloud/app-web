@@ -191,7 +191,7 @@ export class ArticleService extends ModelService {
   }
 
   public updateArticle(article: Article): Observable<any> {
-    const URL = `${Config.apiV8URL}articles`;
+    const URL = `${environment.apiv2}articles`;
 
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json")

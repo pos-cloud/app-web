@@ -8,6 +8,7 @@ import { Config } from '../../app.config';
 import { Classification } from './classification';
 import { AuthService } from '../login/auth.service';
 import { ModelService } from '../model/model.service';
+import { environment } from "environments/environment";
 
 @Injectable()
 export class ClassificationService extends ModelService {
@@ -56,7 +57,7 @@ export class ClassificationService extends ModelService {
 		skip: number = 0
 	): Observable<any> {
 
-		const URL = `${Config.apiURL}classifications`;
+		const URL = `${environment.apiv2}classifications`;
 
 		const headers = new HttpHeaders()
 			.set('Content-Type', 'application/json')

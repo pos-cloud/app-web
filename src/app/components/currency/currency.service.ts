@@ -8,6 +8,7 @@ import { Currency } from './currency';
 import { Config } from '../../app.config';
 import { AuthService } from '../login/auth.service';
 import { ModelService } from '../model/model.service';
+import { environment } from "environments/environment";
 
 @Injectable()
 export class CurrencyService extends ModelService {
@@ -51,7 +52,7 @@ export class CurrencyService extends ModelService {
     query?: string
   ): Observable<any> {
 
-    const URL = `${Config.apiURL}currencies`;
+    const URL = `${environment.apiv2}currencies`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
