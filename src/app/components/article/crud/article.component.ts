@@ -26,7 +26,6 @@ import { debounceTime, distinctUntilChanged, tap, switchMap, map } from 'rxjs/op
 import { Config } from '../../../app.config'
 import { RoundNumberPipe } from '../../../main/pipes/round-number.pipe';
 import { ArticleFieldType, ArticleField } from '../../article-field/article-field';
-import { ArticleFields } from '../../article-field/article-fields';
 import { ArticleStock } from '../../article-stock/article-stock';
 import { ArticleStockService } from '../../article-stock/article-stock.service';
 import { Category } from '../../category/category';
@@ -44,7 +43,6 @@ import { Account } from '../../account/account';
 import { AccountService } from '../../account/account.service';
 import { Application, ApplicationType } from '../../application/application.model';
 import { ApplicationService } from '../../application/application.service';
-import { ArticleFieldService } from '../../article-field/article-field.service';
 import { Classification } from '../../classification/classification';
 import { ClassificationService } from '../../classification/classification.service';
 import { CompanyService } from '../../company/company.service';
@@ -97,7 +95,6 @@ export class ArticleComponent implements OnInit {
   variants: any = new Array();
   unitsOfMeasurement: UnitOfMeasurement[] = new Array();
   taxes: Taxes[] = new Array();
-  otherFields: ArticleFields[] = new Array();
   printIns: ArticlePrintIn[] = [
     ArticlePrintIn.Counter,
     ArticlePrintIn.Kitchen,
@@ -120,8 +117,6 @@ export class ArticleComponent implements OnInit {
   filtersTaxClassification: TaxClassification[] = [TaxClassification.Tax];
   lastPricePurchase: number = 0.0;
   lastDatePurchase: string;
-  otherFieldsAlfabetico = false;
-  otherFieldsNumber = false;
   orientation: string = 'horizontal';
   notes: string[];
   tags: string[];
@@ -185,8 +180,6 @@ export class ArticleComponent implements OnInit {
   };
 
   value;
-  articleFieldSelected: ArticleField;
-  articleFields: ArticleField[];
   articleFieldValues = [];
   formErrors = {
     code: '',
@@ -316,9 +309,7 @@ export class ArticleComponent implements OnInit {
     private _makeService: MakeService,
     private _categoryService: CategoryService,
     private _classificationService: ClassificationService,
-    private _companyService: CompanyService,
     private _unitOfMeasurementService: UnitOfMeasurementService,
-    private _articleFields: ArticleFieldService,
     private _applicationService: ApplicationService,
     private _accountService: AccountService,
     private _currencyService: CurrencyService,
@@ -345,6 +336,9 @@ export class ArticleComponent implements OnInit {
     this.variantsByTypes = new Array();
     this.getCurrencies();
     this.getArticleTypes();
+    this.getMake()
+    this.getCategory()
+    this.getUnitsOfMeasurement()
 
     const pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
@@ -359,7 +353,6 @@ export class ArticleComponent implements OnInit {
       this.readonly = true
       this.articleType = 'Variante';
     }
-    this.getArticleFields();
   }
 
   async ngOnInit() {
@@ -387,9 +380,7 @@ export class ArticleComponent implements OnInit {
       this.article.allowSaleWithoutStock =
         this.config.article.allowSaleWithoutStock.default || false;
     });
-    this.getMake()
-    this.getCategory()
-    this.getUnitsOfMeasurement()
+
     await this.getAllApplications({})
       .then((result: Application[]) => {
         this.applications = result;
@@ -407,7 +398,6 @@ export class ArticleComponent implements OnInit {
     } else {
       this.imageURL = './../../../assets/img/default.jpg';
     }
-
     if (this.operation === 'add' || this.operation === 'copy') {
       this.getLastArticle();
     }
@@ -453,17 +443,6 @@ export class ArticleComponent implements OnInit {
       );
   }
 
-  getArticleFields() {
-    this._articleFields.getArticleFields().subscribe(
-      (result) => {
-        if (result && result.articleFields) {
-          this.articleFields = result.articleFields;
-        }
-      },
-      (error) => this.showToast(error),
-    );
-  }
-
   buildListArticleField(articleField: ArticleField) {
     this.articleFieldValues = [];
     this.value = '';
@@ -500,7 +479,6 @@ export class ArticleComponent implements OnInit {
       category: [this.article.category, [Validators.required]],
       quantityPerMeasure: [this.article.quantityPerMeasure, []],
       unitOfMeasurement: [this.article.unitOfMeasurement, []],
-      otherFields: this._fb.array([]),
       children: this._fb.array([]),
       observation: [this.article.observation, []],
       barcode: [this.article.barcode, []],
@@ -543,7 +521,7 @@ export class ArticleComponent implements OnInit {
 
     this.articleForm.valueChanges.subscribe((data) => this.onValueChanged(data));
     this.focusEvent.emit(true);
-  
+
   }
 
   onValueChanged(fieldID?: any): void {
@@ -619,48 +597,6 @@ export class ArticleComponent implements OnInit {
     this.focusTagEvent.emit(true);
   }
 
-  async addOtherField(otherFieldsForm: NgForm) {
-    let valid = true;
-
-    if (otherFieldsForm) {
-      const otherFields = this.articleForm.controls.otherFields as UntypedFormArray;
-
-      this.articleForm.controls.otherFields.value.forEach((element) => {
-        if (otherFieldsForm.value.articleField._id == element.articleField) {
-          valid = false;
-          this.showToast(null, 'info', 'El campo ya existe');
-        }
-      });
-
-      if (
-        (otherFieldsForm.value && otherFieldsForm.value.value == '') ||
-        otherFieldsForm.value.value == null
-      ) {
-        this.showToast(null, 'info', 'Debe ingresar un valor');
-        valid = false;
-      }
-
-      if (valid) {
-        otherFields.push(
-          this._fb.group({
-            _id: null,
-            value: otherFieldsForm.value.value,
-            articleField: otherFieldsForm.value.articleField._id,
-            amount: otherFieldsForm.value.amount,
-          }),
-        );
-        otherFieldsForm.resetForm();
-        this.value = '';
-      }
-    }
-  }
-
-  deleteOtherField(index): void {
-    let control = <UntypedFormArray>this.articleForm.controls.otherFields;
-
-    control.removeAt(index);
-  }
-
   getCurrencies(): void {
     this._currencyService.getCurrencies('sort="name":1').subscribe(
       (result) => {
@@ -710,17 +646,17 @@ export class ArticleComponent implements OnInit {
 
     // Crear un mapa para almacenar los valores únicos por tipo
     const typeMap = new Map<string, { type: any, value: any[] }>();
-    
+
     // Procesar cada variante
     for (let variant of variants) {
       const typeId = variant.type._id;
-      
+
       if (typeMap.has(typeId)) {
         // Si el tipo ya existe, agregar el valor si no está ya presente
         let existing = typeMap.get(typeId);
         const existingValues = existing.value;
         const valueExists = existingValues.some(val => val._id === variant.value._id);
-        
+
         if (!valueExists) {
           existingValues.push(variant.value);
           existing.value = this.orderByPipe.transform(existingValues, ['description']);
@@ -734,14 +670,14 @@ export class ArticleComponent implements OnInit {
         });
       }
     }
-    
+
     // Convertir el mapa a un array y ordenar
     this.variantsByTypes = Array.from(typeMap.values());
     this.variantsByTypes = this.orderByPipe.transform(this.variantsByTypes, ['type'], 'name');
     this.variantsByTypes = this.orderByPipe.transform(this.variantsByTypes, ['type'], 'order');
-    
+
   }
-  
+
   public getVariantValuesByType(variantType: VariantType): void {
 
     this.loading = true;
@@ -769,15 +705,15 @@ export class ArticleComponent implements OnInit {
   public updateAndRefresh() {
     if (this.article.variants && this.article.variants.length) {
       const selectedTypeNames = this.articleForm.controls.variants.value.map(v => v.value.type.name);
-      if(!selectedTypeNames.length){
+      if (!selectedTypeNames.length) {
         this.filteredVariantTypes = this.variantTypes;
-      }else {
+      } else {
         this.filteredVariantTypes = this.variantTypes.filter(type => selectedTypeNames.includes(type.name));
       }
     } else {
       this.filteredVariantTypes = this.variantTypes;
     }
-  
+
   }
 
   public refreshValues(): void {
@@ -845,44 +781,44 @@ export class ArticleComponent implements OnInit {
   }
 
   public deleteVariant(v) {
-      let countvt: number = 0;
-      for (let vt of this.variantsByTypes) {
-        let typeId = v.type;
-        if (v.type && v.type._id) {
-          typeId = v.type._id;
-        }
-        if (vt.type._id === typeId) {
-          let countval: number = 0;
-          let delval: number = -1;
-          for (let val of vt.value) {
-            if (val._id == v._id) {
-              delval = countval;
-            }
-            countval++;
-          }
-          if (delval !== -1) {
-            vt.value.splice(delval, 1);
-          }
-          if (vt.value.length === 0) {
-            this.variantsByTypes.splice(countvt, 1);
-          }
-        }
-        countvt++;
+    let countvt: number = 0;
+    for (let vt of this.variantsByTypes) {
+      let typeId = v.type;
+      if (v.type && v.type._id) {
+        typeId = v.type._id;
       }
+      if (vt.type._id === typeId) {
+        let countval: number = 0;
+        let delval: number = -1;
+        for (let val of vt.value) {
+          if (val._id == v._id) {
+            delval = countval;
+          }
+          countval++;
+        }
+        if (delval !== -1) {
+          vt.value.splice(delval, 1);
+        }
+        if (vt.value.length === 0) {
+          this.variantsByTypes.splice(countvt, 1);
+        }
+      }
+      countvt++;
+    }
 
-      if (this.variants && this.variants.length > 0) {
-        let countvar: number = 0;
-        let delvar: number = -1;
-        for (let variantAux of this.variants) {
-          if (variantAux.value._id === v._id) {
-            delvar = countvar;
-          }
-          countvar++;
+    if (this.variants && this.variants.length > 0) {
+      let countvar: number = 0;
+      let delvar: number = -1;
+      for (let variantAux of this.variants) {
+        if (variantAux.value._id === v._id) {
+          delvar = countvar;
         }
-        if (delvar !== -1) {
-          this.variants.splice(delvar, 1);
-        }
+        countvar++;
       }
+      if (delvar !== -1) {
+        this.variants.splice(delvar, 1);
+      }
+    }
 
     // Eliminar la variante del FormArray
     this.deleteVariantFromFormArray(v);
@@ -1045,24 +981,6 @@ export class ArticleComponent implements OnInit {
   }
 
   setValuesArray(): void {
-    if (this.article.otherFields && this.article.otherFields.length > 0) {
-      let otherFields = this.articleForm.controls.otherFields as UntypedFormArray;
-
-      this.article.otherFields.forEach((x) => {
-        let articleFieldId;
-
-        if (x.articleField && x.articleField._id && x.articleField.operationType != 'D') {
-          articleFieldId = x.articleField._id;
-          otherFields.push(
-            this._fb.group({
-              _id: null,
-              articleField: articleFieldId,
-              value: x.value,
-            }),
-          );
-        }
-      });
-    }
 
     if (this.article.pictures && this.article.pictures.length > 0) {
       let pictures = this.articleForm.controls.pictures as UntypedFormArray;
@@ -1121,11 +1039,11 @@ export class ArticleComponent implements OnInit {
     }
   }
 
-  retrunTo(){
-    if(this.article.type === Type.Variant){
+  retrunTo() {
+    if (this.article.type === Type.Variant) {
       return this._router.navigate(['/admin/variants']);
     }
-   return this._router.navigate(['/admin/articles']);
+    return this._router.navigate(['/admin/articles']);
   }
 
   getUniqueVariants(variants: Variant[]): Variant[] {
@@ -1248,25 +1166,6 @@ export class ArticleComponent implements OnInit {
         this.articleForm.value.costPrice = 0;
         taxedAmount = this.articleForm.value.basePrice;
 
-        if (this.otherFields && this.otherFields.length > 0) {
-          for (const field of this.otherFields) {
-            if (field.articleField.datatype === ArticleFieldType.Percentage) {
-              field.amount = this.roundNumber.transform(
-                (this.articleForm.value.basePrice * parseFloat(field.value)) / 100,
-              );
-            } else if (field.articleField.datatype === ArticleFieldType.Number) {
-              field.amount = parseFloat(field.value);
-            }
-            if (field.articleField.modifyVAT) {
-              taxedAmount += field.amount;
-            } else {
-              if (field.amount) {
-                this.articleForm.value.costPrice += field.amount;
-              }
-            }
-          }
-        }
-
         if (this.taxes && this.taxes.length > 0) {
           this.totalTaxes = 0;
           for (const articleTax of this.taxes) {
@@ -1291,76 +1190,9 @@ export class ArticleComponent implements OnInit {
             this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
         }
         break;
-      case 'otherFields':
-        this.articleForm.value.costPrice = 0;
-        taxedAmount = this.articleForm.value.basePrice;
-
-        if (this.otherFields && this.otherFields.length > 0) {
-          for (const field of this.otherFields) {
-            if (
-              field.articleField.datatype === ArticleFieldType.Percentage ||
-              field.articleField.datatype === ArticleFieldType.Number
-            ) {
-              if (field.articleField.datatype === ArticleFieldType.Percentage) {
-                field.amount = this.roundNumber.transform(
-                  (this.articleForm.value.basePrice * parseFloat(field.value)) / 100,
-                );
-              } else if (field.articleField.datatype === ArticleFieldType.Number) {
-                field.amount = parseFloat(field.value);
-              }
-              if (field.articleField.modifyVAT) {
-                taxedAmount += field.amount;
-              } else {
-                this.articleForm.value.costPrice += field.amount;
-              }
-            }
-          }
-        }
-
-        if (this.taxes && this.taxes.length > 0) {
-          this.totalTaxes = 0;
-          for (const articleTax of this.taxes) {
-            this.articleForm.value.costPrice += articleTax.taxAmount;
-            this.totalTaxes += articleTax.taxAmount;
-          }
-        }
-
-        this.articleForm.value.costPrice += taxedAmount;
-
-        if (!(taxedAmount === 0 && this.articleForm.value.salePrice !== 0)) {
-          this.articleForm.value.markupPrice = this.roundNumber.transform(
-            (this.articleForm.value.costPrice * this.articleForm.value.markupPercentage) /
-            100,
-          );
-          this.articleForm.value.salePrice =
-            this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
-        }
-        break;
       case 'taxes':
         this.articleForm.value.costPrice = 0;
         taxedAmount = this.articleForm.value.basePrice;
-
-        if (this.otherFields && this.otherFields.length > 0) {
-          for (const field of this.otherFields) {
-            if (
-              field.articleField.datatype === ArticleFieldType.Percentage ||
-              field.articleField.datatype === ArticleFieldType.Number
-            ) {
-              if (field.articleField.datatype === ArticleFieldType.Percentage) {
-                field.amount = this.roundNumber.transform(
-                  (this.articleForm.value.basePrice * parseFloat(field.value)) / 100,
-                );
-              } else if (field.articleField.datatype === ArticleFieldType.Number) {
-                field.amount = parseFloat(field.value);
-              }
-              if (field.articleField.modifyVAT) {
-                taxedAmount += field.amount;
-              } else {
-                this.articleForm.value.costPrice += field.amount;
-              }
-            }
-          }
-        }
 
         if (this.taxes && this.taxes.length > 0) {
           this.totalTaxes = 0;
@@ -1446,13 +1278,13 @@ export class ArticleComponent implements OnInit {
   }
 
   loadPosDescription(): void {
-    //if (this.articleForm.value.posDescription === '') {
-      const slicePipe = new SlicePipe();
+    if (this.articleForm.value.posDescription === '') {
+    const slicePipe = new SlicePipe();
 
-      this.articleForm.patchValue({
-        posDescription: slicePipe.transform(this.articleForm.value.description, 0, 20),
-      });
-   // }
+    this.articleForm.patchValue({
+      posDescription: slicePipe.transform(this.articleForm.value.description, 0, 20),
+    });
+     }
   }
 
   setValuesForm(): void {
@@ -1627,7 +1459,6 @@ export class ArticleComponent implements OnInit {
     if (!this.variant.type) this.variant.type = null;
     if (!this.variant.value) this.variant.value = null;
 
-
     const values = {
       _id: this.article._id,
       order: this.article.order,
@@ -1690,10 +1521,19 @@ export class ArticleComponent implements OnInit {
     if (this.articleForm.valid) {
       this.loadPosDescription();
       //this.loadURL();
+      const description = this.articleForm.get('description')?.value;
+
+      const alphanumericPattern = /^[a-zA-Z0-9\s\/áéíóúÁÉÍÓÚñÑ]+$/;
+      console.log(description, alphanumericPattern.test(description))
+      if (!alphanumericPattern.test(description)) {
+        return this.showToast({ message: 'La descripción solo puede contener letras y números.' });
+      
+      }
 
       this.article = Object.assign(this.article, this.articleForm.value);
-      if (this.article.make && this.article.make.toString() === '')
+      if (typeof this.article.make === 'string') {
         this.article.make = null;
+      }
       if (this.article.category && this.article.category.toString() === '')
         this.article.category = null;
       if (
@@ -1755,19 +1595,19 @@ export class ArticleComponent implements OnInit {
       if (this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
       this._articleService.saveArticle(this.article).subscribe(
         (result) => {
-          if (!result.resultParent.result) {
+          if (!result.result) {
             this.showToast(
               null,
               'info',
-              result.resultParent.error && result.resultParent.error.message
-                ? result.resultParent.error.message
-                : result.resultParent.message
-                  ? result.resultParent.message
+              result.error && result.error.message
+                ? result.error.message
+                : result.message
+                  ? result.message
                   : '',
             );
           } else {
             this.hasChanged = true;
-            this.article = result.resultParent.result;
+            this.article = result.result;
             this.showToast(null, 'success', 'El producto se ha añadido con éxito.');
 
             if (this.pathUrl[2] === "article") {
@@ -1794,20 +1634,20 @@ export class ArticleComponent implements OnInit {
 
       if (this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
       this._articleService.updateArticle(this.article).subscribe(
-        async (resultParent) => {
-          if (!resultParent.resultParent.result) {
+        async (result) => {
+          if (!result.result) {
             this.showToast(
               null,
               'info',
-              resultParent.resultParent.error && resultParent.resultParent.error.message
-                ? resultParent.resultParent.error.message
-                : resultParent.resultParent.message
-                  ? resultParent.resultParent.message
+              result.error && result.error.message
+                ? result.error.message
+                : result.message
+                  ? result.message
                   : '',
             );
           } else {
             this.hasChanged = true;
-            this.article = resultParent.resultParent.result;
+            this.article = result.result;
             this.articleForm.patchValue({ meliId: this.article.meliId });
             this.articleForm.patchValue({ wooId: this.article.wooId });
             this._articleService.setItems(null);
@@ -1818,21 +1658,6 @@ export class ArticleComponent implements OnInit {
               this._router.navigate(['/admin/variants']);
             }
             this.loading = false
-
-            if (this.article.applications.some(application => application.type === ApplicationType.TiendaNube)) {
-              if (this.article.type === Type.Final) {
-                this.updateArticleTiendaNube(this.article._id)
-              } else if (this.article.type === Type.Variant) {
-                const result = await this.getVariantsByArticleChild(this.article._id);
-                if (result && result.length > 0) {
-                  if (result[0] && result[0].articleParent._id) {
-                    this.updateArticleTiendaNube(result[0].articleParent._id);
-                  }
-                }
-              }
-            } else if (this.article.tiendaNubeId && this.article.type === Type.Final) {
-              this.deleteArticleTiendaNube();
-            }
           }
         },
         (error) => {
@@ -1896,32 +1721,6 @@ export class ArticleComponent implements OnInit {
     );
   }
 
-  async updateArticleTiendaNube(articleId) {
-    this.loading = true;
-
-    this._articleService.updateArticleTiendaNube(articleId).subscribe(
-      (result) => {
-        if (result.error) {
-          this.showToast(
-            null,
-            'info',
-            result.error && result.error.message
-              ? result.error.message
-              : result.message
-                ? result.message
-                : '',
-          );
-        } else {
-          this.showToast(null, 'success', 'Producto actualizado con éxito en TiendaNube');
-        }
-        this.loading = false;
-      },
-      (error) => {
-        this.loading = false;
-        this.showToast(error)
-      }
-    );
-  }
 
   getVariantsByArticleChild(id): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -2013,7 +1812,6 @@ export class ArticleComponent implements OnInit {
   cleanForm() {
     this.article = new Article();
     this.taxes = new Array();
-    this.otherFields = new Array();
     this.filesToUpload = null;
     this.buildForm();
     this.variants = new Array();
@@ -2126,10 +1924,6 @@ export class ArticleComponent implements OnInit {
   addArticleTaxes(articleTaxes: Taxes[]): void {
     this.taxes = articleTaxes;
     this.updatePrices('taxes');
-  }
-
-  addArticleFields(): void {
-    this.updatePrices('otherFields');
   }
 
   addStock(articleStock: ArticleStock): void {
