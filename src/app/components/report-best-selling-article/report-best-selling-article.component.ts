@@ -292,15 +292,10 @@ export class ReportBestSellingArticleComponent implements OnInit {
         let modalRef;
         switch (op) {
             case 'view':
-                modalRef = this._modalService.open(ArticleComponent, { size: 'lg', backdrop: 'static' });
-                modalRef.componentInstance.articleId = item['article']._id;
-                modalRef.componentInstance.readonly = true;
-                modalRef.componentInstance.operation = "view";
-                modalRef.result.then((result) => {
-                    window.scroll(0, this.scrollY);
-                }, (reason) => {
-                    window.scroll(0, this.scrollY);
-                });
+                window.open(
+                    `/#/admin/articles/view/${item['article']._id}`,
+                    '_blank',
+                );
                 break;
             default: ;
         }
@@ -461,6 +456,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
             "transaction.type.movement": 1,
             "article.category.description": 1,
             "article.make.description": 1,
+            "article._id": 1,
             "article.code": 1,
             "article.description": 1,
             "article.posDescription": 1,
