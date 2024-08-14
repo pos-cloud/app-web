@@ -29,7 +29,6 @@ import UnitOfMeasurementController from '../unit-of-measurement/unit-of-measurem
 import Tax from '../tax/tax.interface'
 import TaxController from '../tax/tax.controller'
 import ApplicationController from '../application/application.controller'
-import { Application, application } from 'express'
 import VariantSchema from '../variant/variant.model'
 import ArticleStock from '../article-stock/article-stock.interface'
 import ArticleStockSchema from '../article-stock/article-stock.model'
@@ -45,6 +44,7 @@ import VariantValue from '../variant-value/variant-value.interface'
 import VariantValueSchema from '../variant-value/variant-value.model'
 import ConfigController from '../config/config.controller'
 import ArticleStockController from '../article-stock/article-stock.controller'
+import Application from '../application/application.interface'
 
 export default class ArticleUC {
 	database: string
@@ -1035,14 +1035,20 @@ export default class ArticleUC {
 
 	async createAllCategoryTn() {
 		const categoriesTnObj: any = {};
-
-		const config = await new ConfigController(this.database).getAll({
+		const app = await new ApplicationController(this.database).getAll({
 			project: {
 				_id: 1,
-				tiendaNube: 1,
+				tiendaNube: {
+                    article: 1,
+                    company: 1,
+                    transactionType: 1,
+                    paymentMethod: 1,
+                    shipmentMethod: 1
+                }
 			}
 		})
-		const credentialesTn = config.result[0].tiendaNube
+
+		const credentialesTn = app.result[0].tiendaNube
 
 		const categoriesTn = await new CategoryController(this.database).getAll({
 			project: {

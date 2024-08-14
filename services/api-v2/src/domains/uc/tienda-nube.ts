@@ -824,4 +824,35 @@ export default class TiendaNubeController {
             console.log(error)
         }
     }
+
+    async updateArticleTiendaNube(articleId: string, authentication: string){
+        try {
+            let URL = `${config.TIENDANUBE_URL}/products/${articleId}` ;
+            const requestOptions = {
+                headers: {
+                    Authorization: `${authentication}`
+                }
+            };
+            const createArticle = await axios.patch(URL, {} ,requestOptions)
+            return createArticle.data
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async deleteArticleTiendaNube(tiendaNubeId: string, authentication: string){
+        try {
+            let URL = `${config.TIENDANUBE_URL}/products/${tiendaNubeId}` ;
+
+            const requestOptions = {
+                headers: {
+                    Authorization: `${authentication}`
+                }
+            };
+            const createArticle = await axios.delete(URL, requestOptions)
+            return createArticle.data
+        } catch (error) {
+            console.log(error)
+        }
+    }
 }

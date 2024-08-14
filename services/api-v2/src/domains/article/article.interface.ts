@@ -103,3 +103,9 @@ export default interface Article extends Model {
     type: VariantType,
   }[]
 }
+
+export enum Type {
+  Final = <any>"Final",
+  Variant = <any>"Variante",
+  Ingredient = <any>"Ingrediente"
+}

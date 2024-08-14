@@ -14,7 +14,7 @@ import ensureLic from './../../middleware/license.middleware'
 import validationMiddleware from './../../middleware/validation.middleware'
 import Responser from './../../utils/responser'
 import ObjDto from './article.dto'
-import Article from './article.interface'
+import Article, { Type } from './article.interface'
 import ObjSchema from './article.model'
 import ArticleUC from './article.uc'
 import axios from 'axios';
@@ -22,6 +22,8 @@ import VariantUC from '../variant/variant.uc';
 import Application, { ApplicationType } from '../application/application.interface';
 import TiendaNubeController from '../uc/tienda-nube';
 import config from '../../utils/config'
+import VariantController from '../variant/variant.controller';
+import Variant from '../variant/variant.interface';
 
 export default class ArticleController extends Controller {
   public EJSON: any = require('bson').EJSON
@@ -334,27 +336,21 @@ export default class ArticleController extends Controller {
       }
 
       let variants
-      const resultParent = await this.save(new this.model({ ...article }))
-      if (!resultParent.result) {
-        return response.send('Error al crear el producto')
+      const { result } = await this.save(new this.model({ ...article }))
+      if (!result) {
+        return response.send(new Responser(404, null, 'Error al crear el producto', null))
       }
       if (article.variants.length > 0) {
-        variants = await new VariantUC(this.database).createVariant(resultParent.result._id, article.variants)
+        variants = await new VariantUC(this.database).createVariant(result._id, article.variants)
       }
 
       if (article.applications.some((application: Application) => application.type === ApplicationType.TiendaNube)) {
-        const createArticleTn = await new TiendaNubeController().saveArticleTiendaNube(resultParent.result._id, request.headers.authorization)
-        return response.send({
-          resultParent,
-          createArticleTn
-        })
+        const createArticleTn = await new TiendaNubeController().saveArticleTiendaNube(result._id, request.headers.authorization)
+        return response.send(new Responser(200, { result, createArticleTn }))
       }
-      return response.send({
-        resultParent,
-        variants
-      })
+      return response.send(new Responser(200, { result, variants }))
     } catch (error) {
-      console.log(error)
+      return response.send(new Responser(500, error))
     }
   }
 
@@ -368,18 +364,36 @@ export default class ArticleController extends Controller {
       this.userAudit = request.user
       const article = request.body
       const { id } = request.params
-
-      const resultParent = await this.update(id, new this.model({ ...article }))
-      if (!resultParent.result) {
-        return response.send('Error al crear el producto')
-      }
+  
+      const articleOld = await this.getById(id)
       
-      let variants = await new VariantUC(this.database).updateVariant(resultParent.result._id, article.variants)
-    
-      return response.json({resultParent, variants})
+      const { result } = await this.update(id, new this.model({ ...article }))
+      if (!result) {
+        return response.send(new Responser(404, null, 'Error al actualizar el producto', null))
+      }
+
+      let variants = await new VariantUC(this.database).updateVariant(result._id, article.variants, articleOld.result)
+
+      if (article.applications.some((application: any )=> application.type === ApplicationType.TiendaNube)) {
+        if (article.type === Type.Final) {
+          await new TiendaNubeController().updateArticleTiendaNube(result._id, request.headers.authorization)
+        } else if (article.type === Type.Variant) {
+
+            const variant: Variant[] = await new VariantController(this.database).find({articleChild: article._id}, {});
+          if (variant && variant.length > 0) {
+            if (variant[0] && variant[0].articleParent._id) {
+              await new TiendaNubeController().updateArticleTiendaNube(result._id, request.headers.authorization)
+            }
+          }
+        }
+      } else if (article.tiendaNubeId && article.type === Type.Final) {
+        await new TiendaNubeController().deleteArticleTiendaNube(article.tiendaNubeId, request.headers.authorization)
+      }
+
+      return response.json(new Responser(200, { result, variants }))
 
     } catch (error) {
-      console.log(error)
+      return response.send(new Responser(500, error))
     }
   }
 

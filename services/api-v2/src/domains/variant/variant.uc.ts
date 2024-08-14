@@ -8,8 +8,7 @@ import ObjSchema from '../article/article.model'
 import VariantSchema from '../variant/variant.model'
 import VariantTypeController from "../variant-type/variant-type.controller"
 import VariantValueController from "../variant-value/variant-value.controller"
-import { ObjectId } from "bson"
-import { match } from "assert"
+import Article from "../article/article.interface"
 
 export default class VariantUC extends Controller {
     database: string
@@ -115,7 +114,7 @@ export default class VariantUC extends Controller {
         }
     };
     
-    updateVariant = async (articleParentId: string, variants: Variant[]) => {
+    updateVariant = async (articleParentId: string, variants: Variant[], articleOld: Article) => {
         try {
             const articleController = new ArticleController(this.database);
             const variantController = new VariantController(this.database);
@@ -152,10 +151,10 @@ export default class VariantUC extends Controller {
             const existingChildren = await this.getExistingChildren(articleParentId, articleController, variantController);
 
             // Crear o actualizar artículos hijos basados en las combinaciones
-            const results = await this.createOrUpdateChildren(combinations, article, completeVariants, articleParentId, articleController, variantController, existingChildren);
+            const results = await this.createOrUpdateChildren(combinations, article, completeVariants, articleParentId, articleController, variantController, existingChildren, articleOld);
 
             // Eliminar artículos hijos que no están en las nuevas combinaciones
-            await this.deleteInvalidChildren(combinations, existingChildren, article, articleController);
+            await this.deleteInvalidChildren(combinations, existingChildren, article, articleController, articleOld);
             await Promise.all(results);
 
             return results;
@@ -240,21 +239,32 @@ export default class VariantUC extends Controller {
         }
     }
     
-    createOrUpdateChildren = async (combinations: any, article: any, completeVariants: any, articleParentId: any, articleController: any, variantController: any, existingChildren: any) => {
+    createOrUpdateChildren = async (combinations: any, article: any, completeVariants: any, articleParentId: any, articleController: any, variantController: any, existingChildren: any, articleOld: Article) => {
         try {
             let results = [];
+            let updatedChildrens = [];
+    
+            // Actualizar las descripciones de los artículos hijos si la descripción del artículo padre cambió
+            if (article.description !== articleOld.description) {
+                for (let articleChild of existingChildren) {
+                    let newDescription = articleChild.description.replace(articleOld.description, article.description);
+                    let { result } = await articleController.update(articleChild._id, { description: newDescription });
+                    updatedChildrens.push(result);
+                }
+            } else {
+                updatedChildrens = existingChildren
+            }
             for (const combination of combinations) {
                 let description: string;
                 let existingChild;
-    
+
                 if (article.type === 'Variante') {
                     description = article.description;
-                    existingChild = existingChildren.find((child: any) => child.description === article.description);
+                    existingChild = updatedChildrens.find((child: any) => child.description === article.description);
                 } else {
                     description = `${article.description} ${combination.join(' / ')}`;
-                    existingChild = existingChildren.find((child: any) => child.description === description);
+                    existingChild = updatedChildrens.find((child: any) => child.description === description);
                 }
-    
                 if (existingChild) {
                     // Si existe el artículo hijo, actualizar su descripción y tipo si es necesario
                     if (existingChild.description !== description || existingChild.type !== 'Variante') {
@@ -302,9 +312,19 @@ export default class VariantUC extends Controller {
     };
     
 
-    deleteInvalidChildren = async (combinations: any, existingChildren: any, article: any, articleController: any) => {
+    deleteInvalidChildren = async (combinations: any, existingChildren: any, article: any, articleController: any, articleOld: Article) => {
         try {
-            for (const child of existingChildren) {
+            let updatedChildrens = []
+            if (article.description !== articleOld.description) {
+                for (let articleChild of existingChildren) {
+                    let { result } = await new ArticleController(this.database).getById(articleChild._id)
+                    updatedChildrens.push(result);
+                }
+            } else {
+                updatedChildrens = existingChildren
+            }
+
+            for (const child of updatedChildrens) {
                
                let existingCombinations;
                 if (article.type === 'Variante') {
