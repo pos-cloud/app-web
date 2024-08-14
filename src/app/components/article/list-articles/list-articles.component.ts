@@ -141,7 +141,7 @@ export class ListArticlesComponent {
         ];
       }
     }
-
+    this.getPriceLists()
   }
 
   public async emitEvent(event) {
@@ -218,7 +218,6 @@ export class ListArticlesComponent {
         this._router.navigateByUrl("admin/articles/copy/" + obj._id)
         break
       case "price-lists":
-        this.getPriceLists()
         if(!this.priceLists.length){
           return this.openModal("print-label", obj, null);
         }
