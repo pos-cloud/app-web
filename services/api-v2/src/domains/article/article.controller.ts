@@ -224,10 +224,23 @@ export default class ArticleController extends Controller {
       this.initConnectionDB(request.database)
       this.userAudit = request.user
       const id = request.params.id
+      const article = await this.getById(id)
+      if (!article.result) {
+        response.send(new Responser(404, null, 'No se encontro el artículo'))
+      }
+      if (article.result.variants) {
+        let variant = await new VariantController(this.database).find({ articleParent: id }, {})
+        const articleChildIds = variant.map((variant: any) => ({ $oid: variant.articleChild }));
 
-      await new ArticleUC(request.database, request.headers.authorization).deleteArticle(id)
+        await this.deleteMany({ _id: { $in: articleChildIds } })
+        await new VariantController(this.database).deleteMany({ articleParent: { $oid: id } })
+        await new ArticleUC(request.database, request.headers.authorization).deleteArticle(id)
+        return response.send(new Responser(200, null, 'Se eliminó el artículo correctamente'))
 
-      response.send(new Responser(200))
+      } else {
+        await new ArticleUC(request.database, request.headers.authorization).deleteArticle(id)
+        return response.send(new Responser(200, null, 'Se eliminó el artículo correctamente'))
+      }
     } catch (error) {
       next(
         new HttpException(new Responser(error.status || 500, null, error.message, error)),
@@ -323,11 +336,13 @@ export default class ArticleController extends Controller {
       const articleCode = await this.getAll({
         project: {
           code: 1,
-          operationType: 1
+          operationType: 1,
+          type: 1
         },
         match: {
           code: article.code,
           operationType: { $ne: 'D' },
+          type: 'Final'
 
         }
       })
@@ -369,17 +384,17 @@ export default class ArticleController extends Controller {
       
       const { result } = await this.update(id, new this.model({ ...article }))
       if (!result) {
-        return response.send(new Responser(404, null, 'Error al actualizar el producto', null))
+        return response.send(new Responser(404, null, 'Error al actualizar el artículo', null))
       }
 
       let variants = await new VariantUC(this.database).updateVariant(result._id, article.variants, articleOld.result)
 
-      if (article.applications.some((application: any )=> application.type === ApplicationType.TiendaNube)) {
+      if (article.applications.some((application: Application) => application.type === ApplicationType.TiendaNube)) {
         if (article.type === Type.Final) {
           await new TiendaNubeController().updateArticleTiendaNube(result._id, request.headers.authorization)
         } else if (article.type === Type.Variant) {
 
-            const variant: Variant[] = await new VariantController(this.database).find({articleChild: article._id}, {});
+          const variant: Variant[] = await new VariantController(this.database).find({ articleChild: article._id }, {});
           if (variant && variant.length > 0) {
             if (variant[0] && variant[0].articleParent._id) {
               await new TiendaNubeController().updateArticleTiendaNube(result._id, request.headers.authorization)
@@ -396,7 +411,6 @@ export default class ArticleController extends Controller {
       return response.send(new Responser(500, error))
     }
   }
-
 
   async getArticlesTn() {
     const URL = `${config.TIENDANUBE_URL}/products`;

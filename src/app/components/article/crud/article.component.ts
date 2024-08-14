@@ -67,6 +67,8 @@ import { VariantTypeService } from 'app/components/variant-type/variant-type.ser
 import { VariantValueService } from 'app/components/variant-value/variant-value.service';
 import { OrderByPipe } from 'app/main/pipes/order-by.pipe';
 import { AddVariantComponent } from 'app/components/variant/add-variant/add-variant.component';
+import { UserService } from 'app/components/user/user.service';
+import { User } from 'app/components/user/user';
 
 @Component({
   selector: 'app-article',
@@ -130,6 +132,9 @@ export class ArticleComponent implements OnInit {
   salePriceWithoutVAT: number = 0;
   markupPriceWithoutVAT: number = 0;
   database: string;
+  users: User[]
+  creationUser: User
+  updateUser: User
 
   filteredVariantTypes: any[] = [];
 
@@ -180,7 +185,6 @@ export class ArticleComponent implements OnInit {
   };
 
   value;
-  articleFieldValues = [];
   formErrors = {
     code: '',
     make: '',
@@ -323,6 +327,7 @@ export class ArticleComponent implements OnInit {
     public _fileService: FileService,
     public _variantTypeService: VariantTypeService,
     public _variantValueService: VariantValueService,
+    public _userService: UserService,
     config: NgbTypeaheadConfig
   ) {
     this.getVariantValues()
@@ -339,6 +344,7 @@ export class ArticleComponent implements OnInit {
     this.getMake()
     this.getCategory()
     this.getUnitsOfMeasurement()
+    this.getUsers()
 
     const pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
@@ -441,15 +447,6 @@ export class ArticleComponent implements OnInit {
         },
         (error) => this.showToast(error),
       );
-  }
-
-  buildListArticleField(articleField: ArticleField) {
-    this.articleFieldValues = [];
-    this.value = '';
-
-    if (articleField && articleField.datatype === ArticleFieldType.Array) {
-      this.articleFieldValues = articleField.value.split(';');
-    }
   }
 
   ngAfterViewInit() {
@@ -633,6 +630,9 @@ export class ArticleComponent implements OnInit {
             this.article.url = '';
             this.article.wooId = '';
           }
+         this.creationUser = this.users.find((user: User )=> user._id === (typeof this.article.creationUser === 'string' ? this.article.creationUser : this.article.creationUser._id))
+         this.updateUser = this.users.find((user: User)=>  user._id === (typeof this.article.updateUser === 'string' ? this.article.updateUser : this.article.updateUser._id))
+
           this.setValuesForm();
           this.setValuesArray();
           this.setVariantByType(this.articleForm.controls.variants.value);
@@ -697,6 +697,32 @@ export class ArticleComponent implements OnInit {
       },
       error => {
         //   this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getUsers(){
+    this.loading = true;
+    let project = {
+      "_id": 1,
+      "name": 1,
+      "operationType": 1
+    };
+    let match = {
+      operationType: { $ne: 'D' }
+    }
+    this._userService.getAll({ project, match }).subscribe(
+      result => {
+        if (!result) {
+          this.loading = false;
+          this.users = new Array();
+        } else {
+          this.loading = false;
+          this.users = result.result;
+        }
+      },
+      error => {
         this.loading = false;
       }
     );
@@ -1279,12 +1305,12 @@ export class ArticleComponent implements OnInit {
 
   loadPosDescription(): void {
     if (this.articleForm.value.posDescription === '') {
-    const slicePipe = new SlicePipe();
+      const slicePipe = new SlicePipe();
 
-    this.articleForm.patchValue({
-      posDescription: slicePipe.transform(this.articleForm.value.description, 0, 20),
-    });
-     }
+      this.articleForm.patchValue({
+        posDescription: slicePipe.transform(this.articleForm.value.description, 0, 20),
+      });
+    }
   }
 
   setValuesForm(): void {
@@ -1524,10 +1550,9 @@ export class ArticleComponent implements OnInit {
       const description = this.articleForm.get('description')?.value;
 
       const alphanumericPattern = /^[a-zA-Z0-9\s\/áéíóúÁÉÍÓÚñÑ]+$/;
-      console.log(description, alphanumericPattern.test(description))
       if (!alphanumericPattern.test(description)) {
         return this.showToast({ message: 'La descripción solo puede contener letras y números.' });
-      
+
       }
 
       this.article = Object.assign(this.article, this.articleForm.value);
@@ -1670,11 +1695,11 @@ export class ArticleComponent implements OnInit {
 
   async deleteArticle() {
     this.loading = true;
-
     this._articleService.delete(this.article._id).subscribe(
       (result: Resulteable) => {
         if (result.status == 200) {
-          if (this.pathUrl[2] === "article") {
+          this.showToast(null, 'success', 'El producto se ha eliminado con éxito.');
+          if (this.pathUrl[2] === "articles") {
             this._router.navigate(['/admin/articles']);
           } else {
             this._router.navigate(['/admin/variants']);
@@ -1683,7 +1708,7 @@ export class ArticleComponent implements OnInit {
             this.deleteArticleTiendaNube();
           }
         } else {
-          this.showToast(result);
+          this.showToast(result.error.message);
         }
         this.loading = false;
       },
@@ -1720,7 +1745,6 @@ export class ArticleComponent implements OnInit {
       }
     );
   }
-
 
   getVariantsByArticleChild(id): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -1784,7 +1808,8 @@ export class ArticleComponent implements OnInit {
   async isValid(): Promise<boolean> {
     return new Promise<boolean>(async (resolve, reject) => {
       if (this.article.category) {
-        await this.getCategories(`where="parent": "${this.article.category._id}"`).then(
+        const category: any = typeof this.article.category === 'string' ? this.categories.find((category: any) => category._id === this.article.category)._id : this.article.category._id
+        await this.getCategories(`where="parent": "${category}"`).then(
           (result) => {
             if (result && result.length > 0) {
               this.showToast(null, 'danger', 'Debe seleccionar una categoría valida');

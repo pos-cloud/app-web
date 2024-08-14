@@ -30,45 +30,8 @@ export class ListArticlesComponent {
   public pathLocation: string[]
   public priceListId: string;
   public loading: boolean = false;
-  public rowButtons: IButton[] = [
-    {
-      title: 'view',
-      class: 'btn btn-success btn-sm',
-      icon: 'fa fa-eye',
-      click: `this.emitEvent('view', item, null)`
-    },
-    {
-      title: 'update',
-      class: 'btn btn-primary btn-sm',
-      icon: 'fa fa-pencil',
-      click: `this.emitEvent('update', item, null)`
-    }, {
-      title: 'delete',
-      class: 'btn btn-danger btn-sm',
-      icon: 'fa fa-trash-o',
-      click: `this.emitEvent('delete', item, null)`
-    },
-    {
-      title: 'Imprimir Etiqueta',
-      class: 'btn btn-light btn-sm',
-      icon: 'fa fa-barcode',
-      click: `this.emitEvent('price-lists', item, null)`
-    },
-    {
-      title: 'Copiar',
-      class: 'btn btn-light btn-sm',
-      icon: ' fa fa-copy',
-      click: `this.emitEvent('copy', item, null)`
-    },
-    {
-      title: 'Historial de Cambios',
-      class: "btn btn-light btn-sm",
-      icon: 'fa fa-history',
-      click: `this.emitEvent('history', item, null)`
-    }
-
-  ]
   public headerButtons: IButton[]
+  public rowButtons: IButton[]
   public priceLists: PriceList[]
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
@@ -101,6 +64,33 @@ export class ListArticlesComponent {
           icon: 'fa fa-print',
           click: `this.emitEvent('print-labels', null, items)`
         }];
+         this.rowButtons = [
+          {
+            title: 'view',
+            class: 'btn btn-success btn-sm',
+            icon: 'fa fa-eye',
+            click: `this.emitEvent('view', item, null)`
+          },
+          {
+            title: 'update',
+            class: 'btn btn-primary btn-sm',
+            icon: 'fa fa-pencil',
+            click: `this.emitEvent('update', item, null)`
+          },
+          {
+            title: 'Imprimir Etiqueta',
+            class: 'btn btn-light btn-sm',
+            icon: 'fa fa-barcode',
+            click: `this.emitEvent('price-lists', item, null)`
+          },
+          {
+            title: 'Historial de Cambios',
+            class: "btn btn-light btn-sm",
+            icon: 'fa fa-history',
+            click: `this.emitEvent('history', item, null)`
+          }
+      
+        ]
       } else if (this.pathLocation[2] === 'articles') {
         this.title = 'Productos'
         attributeType.defaultFilter = `{ "$eq": "Final" }`;
@@ -139,6 +129,45 @@ export class ListArticlesComponent {
           click: `this.emitEvent('print-list', null, items)`
         }
         ];
+
+         this.rowButtons = [
+          {
+            title: 'view',
+            class: 'btn btn-success btn-sm',
+            icon: 'fa fa-eye',
+            click: `this.emitEvent('view', item, null)`
+          },
+          {
+            title: 'update',
+            class: 'btn btn-primary btn-sm',
+            icon: 'fa fa-pencil',
+            click: `this.emitEvent('update', item, null)`
+          }, {
+            title: 'delete',
+            class: 'btn btn-danger btn-sm',
+            icon: 'fa fa-trash-o',
+            click: `this.emitEvent('delete', item, null)`
+          },
+          {
+            title: 'Imprimir Etiqueta',
+            class: 'btn btn-light btn-sm',
+            icon: 'fa fa-barcode',
+            click: `this.emitEvent('price-lists', item, null)`
+          },
+          {
+            title: 'Copiar',
+            class: 'btn btn-light btn-sm',
+            icon: ' fa fa-copy',
+            click: `this.emitEvent('copy', item, null)`
+          },
+          {
+            title: 'Historial de Cambios',
+            class: "btn btn-light btn-sm",
+            icon: 'fa fa-history',
+            click: `this.emitEvent('history', item, null)`
+          }
+      
+        ]
       }
     }
     this.getPriceLists()

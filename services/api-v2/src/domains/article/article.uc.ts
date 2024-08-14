@@ -45,6 +45,7 @@ import VariantValueSchema from '../variant-value/variant-value.model'
 import ConfigController from '../config/config.controller'
 import ArticleStockController from '../article-stock/article-stock.controller'
 import Application from '../application/application.interface'
+import { roundNumber } from '../../utils/roundNumber'
 
 export default class ArticleUC {
 	database: string
@@ -159,16 +160,16 @@ export default class ArticleUC {
 					switch (typePrice) {
 						case 'basePrice':
 							article.costPrice = 0
-							article.basePrice = this.roundNumber(
+							article.basePrice = roundNumber(
 								(article.basePrice * percentage) / 100 + article.basePrice,
 								decimal,
 							)
 							let taxedAmount = article.basePrice
-
+							
 							if (article.otherFields && article.otherFields.length > 0) {
 								for (const field of article.otherFields) {
 									if (field.articleField.datatype === ArticleFieldType.Percentage) {
-										field.amount = this.roundNumber(
+										field.amount = roundNumber(
 											(article.basePrice * parseFloat(field.value)) / 100,
 											decimal,
 										)
@@ -186,7 +187,7 @@ export default class ArticleUC {
 							if (article.taxes && article.taxes.length > 0) {
 								for (const articleTax of article.taxes) {
 									articleTax.taxBase = taxedAmount
-									articleTax.taxAmount = this.roundNumber(
+									articleTax.taxAmount = roundNumber(
 										(taxedAmount * articleTax.percentage) / 100,
 										decimal,
 									)
@@ -196,7 +197,7 @@ export default class ArticleUC {
 							article.costPrice += taxedAmount
 
 							if (!(taxedAmount === 0 && article.salePrice !== 0)) {
-								article.markupPrice = this.roundNumber(
+								article.markupPrice = roundNumber(
 									(article.costPrice * article.markupPercentage) / 100,
 									decimal,
 								)
@@ -207,22 +208,22 @@ export default class ArticleUC {
 							break
 						case 'markupPercentage':
 							article.markupPercentage += percentage
-							article.markupPercentage = this.roundNumber(article.markupPercentage, decimal)
-							article.markupPrice = this.roundNumber(
+							article.markupPercentage = roundNumber(article.markupPercentage, decimal)
+							article.markupPrice = roundNumber(
 								(article.costPrice * article.markupPercentage) / 100,
 							)
 							article.salePrice = article.costPrice + article.markupPrice
 							break
 						case 'salePrice':
-							article.salePrice += this.roundNumber((percentage * article.salePrice) / 100)
-							article.salePrice = this.roundNumber(article.salePrice, decimal)
+							article.salePrice += roundNumber((percentage * article.salePrice) / 100)
+							article.salePrice = roundNumber(article.salePrice, decimal)
 							if (article.basePrice === 0) {
 								article.costPrice === 0
 								article.markupPercentage = 100
 								article.markupPrice = article.salePrice
 							} else {
 								article.markupPrice = article.salePrice - article.costPrice
-								article.markupPercentage = this.roundNumber((article.markupPrice / article.costPrice) * 100, decimal)
+								article.markupPercentage = roundNumber((article.markupPrice / article.costPrice) * 100, decimal)
 							}
 							break
 						default:
@@ -248,7 +249,7 @@ export default class ArticleUC {
 					switch (typePrice) {
 						case 'basePrice':
 							article.costPrice = 0
-							article.basePrice = this.roundNumber(
+							article.basePrice = roundNumber(
 								(article.basePrice * percentage) / 100 + article.basePrice,
 								decimal,
 							)
@@ -257,7 +258,7 @@ export default class ArticleUC {
 							if (article.otherFields && article.otherFields.length > 0) {
 								for (const field of article.otherFields) {
 									if (field.articleField.datatype === ArticleFieldType.Percentage) {
-										field.amount = this.roundNumber(
+										field.amount =roundNumber(
 											(article.basePrice * parseFloat(field.value)) / 100,
 											decimal,
 										)
@@ -275,7 +276,7 @@ export default class ArticleUC {
 							if (article.taxes && article.taxes.length > 0) {
 								for (const articleTax of article.taxes) {
 									articleTax.taxBase = taxedAmount
-									articleTax.taxAmount = this.roundNumber(
+									articleTax.taxAmount = roundNumber(
 										(taxedAmount * articleTax.percentage) / 100,
 										decimal,
 									)
@@ -285,7 +286,7 @@ export default class ArticleUC {
 							article.costPrice += taxedAmount
 
 							if (!(taxedAmount === 0 && article.salePrice !== 0)) {
-								article.markupPrice = this.roundNumber(
+								article.markupPrice = roundNumber(
 									(article.costPrice * article.markupPercentage) / 100,
 									decimal,
 								)
@@ -296,22 +297,22 @@ export default class ArticleUC {
 							break
 						case 'markupPercentage':
 							article.markupPercentage += percentage
-							article.markupPercentage = this.roundNumber(article.markupPercentage, decimal)
-							article.markupPrice = this.roundNumber(
+							article.markupPercentage = roundNumber(article.markupPercentage, decimal)
+							article.markupPrice = roundNumber(
 								(article.costPrice * article.markupPercentage) / 100,
 							)
 							article.salePrice = article.costPrice + article.markupPrice
 							break
 						case 'salePrice':
-							article.salePrice += this.roundNumber((percentage * article.salePrice) / 100)
-							article.salePrice = this.roundNumber(article.salePrice, decimal)
+							article.salePrice += roundNumber((percentage * article.salePrice) / 100)
+							article.salePrice = roundNumber(article.salePrice, decimal)
 							if (article.basePrice === 0) {
 								article.costPrice === 0
 								article.markupPercentage = 100
 								article.markupPrice = article.salePrice
 							} else {
 								article.markupPrice = article.salePrice - article.costPrice
-								article.markupPercentage = this.roundNumber(
+								article.markupPercentage = roundNumber(
 									(article.markupPrice / article.costPrice) * 100,
 								)
 							}
@@ -400,13 +401,13 @@ export default class ArticleUC {
 			await new MercadoLibreController(this.database).syncArticles(articleId)
 			if (article.picture && article.picture !== 'deafult.jpg') {
 				try {
-					await new FileUC(this.database, this.authToken).deleteFile('image', 'article', article.picture)
+				//	await new FileUC(this.database, this.authToken).deleteFile('image', 'article', article.picture)
 				} catch (error) {
 					//ignore error
 				}
 			}
 			article.pictures.forEach((picture) => {
-				new FileUC(this.database, this.authToken).deleteFile('image', 'article', picture.picture)
+			//	new FileUC(this.database, this.authToken).deleteFile('image', 'article', picture.picture)
 			})
 
 			if (article.containsVariants) {
@@ -442,17 +443,6 @@ export default class ArticleUC {
 		} catch (error) {
 			throw error
 		}
-	}
-
-	roundNumber(value: any, numberOfDecimals: number = 2): number {
-
-		if (value !== undefined && !isNaN(value)) {
-			const multiplier = Math.pow(10, numberOfDecimals);
-			return Math.round(value * multiplier) / multiplier;
-		} else {
-			return 0; // Si el valor no es un número válido, devuelve 0
-		}
-
 	}
 
 	async importFromExcel(data: any[]) {

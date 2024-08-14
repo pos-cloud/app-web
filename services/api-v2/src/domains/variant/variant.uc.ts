@@ -124,7 +124,7 @@ export default class VariantUC extends Controller {
             if (!variants.length) {
                 let variant = await variantController.find({ articleParent: articleParentId }, {})
 
-                const articleChildIds = variant.map((variant: any) => ({ $oid: variant.articleChild }));
+                const articleChildIds = variant.map((variant: Variant) => ({ $oid: variant.articleChild }));
 
                 await articleController.deleteMany({ _id: { $in: articleChildIds } })
                 await variantController.deleteMany({})

@@ -8,19 +8,19 @@
                 {{article.code}} -
                 {{article.description}}</span>
             <div class="pull-right">
-                <button type="button" class="btn"  (click)="retrunTo()"><i
-                        class="fa fa-arrow-left"></i><span>{{'return' | translate | capitalize}}</span></button>
+                <button type="button" class="btn" (click)="retrunTo()"><i class="fa fa-arrow-left"></i><span>{{'return'
+                        | translate | capitalize}}</span></button>
                 <button type="button" class="btn" [disabled]="loading"
                     *ngIf="operation !== 'delete' && operation !== 'view'" (click)="addArticle()">
                     <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
                     <span *ngIf="!loading"> {{'save' | translate | capitalize}}</span>
                     <span *ngIf="loading"> {{'loading' | translate | capitalize}}</span>
                 </button>
-                <button type="button" class="btn-danger" *ngIf="operation === 'delete'" [disabled]="loading"
+                <button type="button" class="btn btn-danger" *ngIf="operation === 'delete'" [disabled]="loading"
                     (click)="deleteArticle()">
                     <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
-                    <span *ngIf="!loading"> {{'delete' | translate | capitalize}}</span>
-                    <span *ngIf="loading"> {{'loading' | translate | capitalize}}</span>
+                    <span *ngIf="!loading">Eliminar</span>
+                    <span *ngIf="loading">Espere por favor</span>
                 </button>
             </div>
         </div>
@@ -225,8 +225,9 @@
                             </div>
                         </div>
                         <br>
-                        <app-add-article-tax (eventAddArticleTax)="addArticleTaxes($event)" [article]="article" [articleTaxes]="taxes"
-                            [filtersTaxClassification]="filtersTaxClassification" [readonly]="readonly">
+                        <app-add-article-tax (eventAddArticleTax)="addArticleTaxes($event)" [article]="article"
+                            [articleTaxes]="taxes" [filtersTaxClassification]="filtersTaxClassification"
+                            [readonly]="readonly">
                         </app-add-article-tax>
                         <br>
                         <div class="row">
@@ -349,13 +350,13 @@
                                 <div class="form-group col-md-5">
                                     <label for="type" class="control-label">Tipo de variante</label>
                                     <select class="form-control" name="type" [(ngModel)]="variantTypeSelected"
-                                    (change)="refreshValues()" (focus)="updateAndRefresh()">
-                                <option value="null" [disabled]="readonly"></option>
-                                <option *ngFor="let type of filteredVariantTypes" [disabled]="readonly"
-                                        [ngValue]="type">
-                                    {{ type.name }}
-                                </option>
-                            </select>
+                                        (change)="refreshValues()" (focus)="updateAndRefresh()">
+                                        <option value="null" [disabled]="readonly"></option>
+                                        <option *ngFor="let type of filteredVariantTypes" [disabled]="readonly"
+                                            [ngValue]="type">
+                                            {{ type.name }}
+                                        </option>
+                                    </select>
                                 </div>
                                 <div class="form-group col-md-5">
                                     <label for="value" class="control-label">Valor</label>
@@ -421,8 +422,8 @@
                             {{ applications[i].name }}
                         </label>
                         <select class="form-control" [formControl]="appControl" (change)="onAppChange($event, i)">
-                            <option [value]="true">Sí</option>
-                            <option [value]="false">No</option>
+                            <option [value]="true" [disabled]="readonly">Sí</option>
+                            <option [value]="false" [disabled]="readonly">No</option>
                         </select>
                     </div>
                 </div>
@@ -497,21 +498,21 @@
                         <form (ngSubmit)="addPicture()">
                             <div class="row">
                                 <div class="form-group col-md-10">
-                                    <label for="sel"> Agregar Imagenes:</label>
+                                    <label for="sel">Agregar Imagenes:</label>
                                     <div class="custom-file">
                                         <label class="custom-file-label btn btn-action"
-                                            for="customFileLang">{{fileNameArray?fileNameArray:'Buscar
-                                            Imagen'}}</label>
-                                        <input type="file" class="custom-file-input" language="es" accept="image/*"
+                                            for="customFileLang">{{fileNameArray ? fileNameArray : 'Buscar Imagen'}}</label>
+                                        <input type="file" [disabled]="readonly" class="custom-file-input" language="es" accept="image/*"
                                             id="customFileLang" (change)="fileChangeEvent($event,true)" />
                                     </div>
                                 </div>
-                                <div class="form-group col-md-2">
-                                    <button type="summit" class="btn btn-success btn-sm especial">
+                                <div class="form-group col-md-2 d-flex align-items-end">
+                                    <button [disabled]="readonly" type="submit" class="btn btn-success btn-sm especial">
                                         <i class="fa fa-plus"></i>
                                     </button>
                                 </div>
                             </div>
+                            
                         </form>
                         <table class="table table-striped">
                             <thead>
@@ -680,8 +681,8 @@
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label class="control-label">Creado por:</label>
-                                <label *ngIf="article.creationUser" class="control-label"><b>
-                                        {{article.creationUser.name}}</b></label>
+                                <label *ngIf="creationUser" class="control-label"><b>
+                                        {{creationUser.name}}</b></label>
                             </div>
                             <div class="form-group col-md-6">
                                 <label class="control-label">El día:</label>
@@ -693,8 +694,8 @@
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label class="control-label">Última modificación por:</label>
-                                <label *ngIf="article.updateUser"
-                                    class="control-label"><b>{{article.updateUser.name}}</b></label>
+                                <label *ngIf="updateUser"
+                                    class="control-label"><b>{{updateUser.name}}</b></label>
                                 <label *ngIf="!article.updateUser" class="control-label"><b>-</b></label>
                             </div>
                             <div class="form-group col-md-6">
