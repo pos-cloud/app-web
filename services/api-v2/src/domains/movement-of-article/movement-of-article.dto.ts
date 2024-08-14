@@ -206,4 +206,5 @@ export default class MovementOfArticleDto extends ModelDto {
   recalculateParent: boolean
 
   read: number
+  op: number
 }

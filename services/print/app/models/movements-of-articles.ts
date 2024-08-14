@@ -57,4 +57,5 @@ export default interface MovementOfArticle extends Model {
 //   account: Account
   recalculateParent?: boolean
   transaction: Transaction
+  op: number
 }

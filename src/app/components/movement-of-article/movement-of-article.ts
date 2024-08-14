@@ -53,6 +53,7 @@ export class MovementOfArticle {
   isOptional: boolean = false;
   isGeneratedByPayment: boolean = false;
   account: Account;
+  op: number;
   creationUser: User;
   creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   updateUser: User;

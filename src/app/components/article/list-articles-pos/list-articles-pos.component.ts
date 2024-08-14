@@ -351,6 +351,7 @@ export class ListArticlesPosComponent implements OnInit {
                         movementOfArticle.transaction = this.transaction;
                         movementOfArticle.modifyStock = this.transaction.type.modifyStock;
                         movementOfArticle.otherFields = article.otherFields;
+                        movementOfArticle.op = Date.now()
 
                         if(this.movementOfArticleOrigin){
                             movementOfArticle.movementOrigin = this.movementOfArticleOrigin

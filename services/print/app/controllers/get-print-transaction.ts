@@ -788,9 +788,8 @@ export async function getPrintTransaction(
           doc.setFontSize(20);
           doc.text(movementOfArticle.description, 3, 85);
           doc.text(`${movementOfArticle.transaction.type.abbreviation}-${padString(movementOfArticle.transaction.number,10)}`, 3, verticalPosition + 80);
-          const numbersOnly =  movementOfArticle._id.replace(/\D/g, '');
         
-          const barcodeImage = getBarcode('code128', numbersOnly);
+          const barcodeImage = getBarcode('code128', movementOfArticle.op.toString());
     
           doc.addImage(barcodeImage, 'png', 15, verticalPosition + 85, 60, 16);
           

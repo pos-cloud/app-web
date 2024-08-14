@@ -45,6 +45,7 @@ const MovementOfArticleSchema = new Schema({
   status: { type: String, trim: true, default: 'Listo' },
   printed: { type: Number, default: 0 },
   read: { type: Number, default: 0 },
+  op: { type: Number },
   article: { type: Schema.ObjectId, ref: 'article' },
   transaction: { type: Schema.ObjectId, ref: 'transaction' },
   measure: { type: String, trim: true },

@@ -819,6 +819,7 @@ async function saveMovementOfArticle (req, res, next) {
   movementOfArticle.movementParent = params.movementParent
   movementOfArticle.movementOrigin = params.movementOrigin
   movementOfArticle.read = params.read
+  movementOfArticle.op = params.op
   movementOfArticle.isOptional = params.isOptional
   movementOfArticle.isGeneratedByPayment = params.isGeneratedByPayment
   movementOfArticle.isGeneratedByRule = params.isGeneratedByRule

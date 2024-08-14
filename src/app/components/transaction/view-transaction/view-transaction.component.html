@@ -185,8 +185,8 @@
                                     <th>Descuento ($)</th>
                                     <th>Precio Total</th>
                                     <th>Depósito</th>
-                                    <th>_id</th>
-                                    <th>read</th>
+                                    <th>OP</th>
+                                    <th>Lectura</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -216,7 +216,7 @@
                                     <td>{{ movementOfArticle?.discountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                                     <td>{{movementOfArticle?.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                                     <td>{{movementOfArticle?.deposit?.name}}</td>
-                                    <td>{{movementOfArticle?._id}}</td>
+                                    <td>{{movementOfArticle?.op}}</td>
                                     <td>{{movementOfArticle?.read}}</td>
                                 </tr>
                                 <tr align="center " *ngIf="areMovementsOfArticlesEmpty ">

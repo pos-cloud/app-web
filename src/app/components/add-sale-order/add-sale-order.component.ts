@@ -4016,9 +4016,8 @@ export class AddSaleOrderComponent {
   async filterArticles() {
     this.listArticlesComponent.filterArticle = this.filterArticle;
     let article : Article = null;
-    const regex = /^[0-9a-fA-F]{24}$/;
-    if(this.transaction.type.transactionMovement == TransactionMovement.Production && regex.test(this.filterArticle)) {
-      let query = 'where="_id":"' + this.filterArticle + '"';
+    if(this.transaction.type.transactionMovement == TransactionMovement.Production) {
+      let query = 'where="op":"' + this.filterArticle + '"';
       const mov = await this.getMovementsOfArticles(query);
 
       //validate read

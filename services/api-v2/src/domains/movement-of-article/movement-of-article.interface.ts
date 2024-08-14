@@ -51,6 +51,7 @@ export default interface MovementOfArticle extends Model {
   status: string
   printed: number
   read: number
+  op: number
   article: Article
   transaction: Transaction
   businessRule?: BusinessRule
