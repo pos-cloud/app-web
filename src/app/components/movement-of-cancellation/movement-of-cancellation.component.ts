@@ -841,7 +841,7 @@ export class MovementOfCancellationComponent implements OnInit {
                 movementOfArticle.otherFields = article.otherFields;
                 movementOfArticle.amount = 1;
                 movementOfArticle.stockMovement = transaction.type.stockMovement;
-                movementOfArticle.op = Date.now()
+                movementOfArticle.op = Date.now() + Math.floor(Math.random() * 100000)
 
                 let quotation = 1;
                 if (transaction.quotation) {
@@ -1053,7 +1053,7 @@ export class MovementOfCancellationComponent implements OnInit {
                                     movementOfArticle.transaction._id = this.transactionDestination._id;
                                     movementOfArticle.modifyStock = this.transactionDestination.type.modifyStock;
                                     movementOfArticle.stockMovement = this.transactionDestination.type.stockMovement;
-                                    movementOfArticle.op = Date.now()
+                                    movementOfArticle.op = Date.now() + Math.floor(Math.random() * 100000)
 
                                     movementOfArticle.measure = mov.measure;
                                     movementOfArticle.quantityMeasure = mov.quantityMeasure;
@@ -1127,7 +1127,7 @@ export class MovementOfCancellationComponent implements OnInit {
         movementOfArticle.otherFields = mov.otherFields;
         movementOfArticle.make = mov.make;
         movementOfArticle.category = mov.category;
-        movementOfArticle.op = Date.now()
+        movementOfArticle.op = Date.now() + Math.floor(Math.random() * 100000)
 
         movementOfArticle.costPrice = mov.costPrice;
         movementOfArticle.salePrice = mov.salePrice;
