@@ -8,6 +8,6 @@ export const environment = {
   api: "http://localhost:300",
   apiv2: "http://localhost:308",
   apiPrint: "http://localhost:302",
-  apiStorage: "http://localhost:303", 
+  apiStorage: "https://api-minio.poscloud.ar",
   apiTiendaNube: "http://localhost:305"
 };
