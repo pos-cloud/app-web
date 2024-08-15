@@ -29,6 +29,7 @@ import authMiddleware from './../../middleware/auth.middleware'
 import ensureLic from './../../middleware/license.middleware'
 import TransactionTypeController from '../transaction-type/transaction-type.controller'
 import IdentificationTypeController from '../identification-type/identification-type.controller'
+import config from 'utils/config'
 
 const credentialsTiendaNube = [
     {
@@ -608,7 +609,7 @@ export default class TiendaNubeController {
     }
 
     async getToken() {
-        let URL = 'https://api.poscloud.com.ar/api/login'
+        let URL = `${config.API_URL}/login`
 
         let params = {
             database: this.database,
