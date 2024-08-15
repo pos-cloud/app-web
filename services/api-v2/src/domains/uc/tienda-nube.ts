@@ -29,7 +29,7 @@ import authMiddleware from './../../middleware/auth.middleware'
 import ensureLic from './../../middleware/license.middleware'
 import TransactionTypeController from '../transaction-type/transaction-type.controller'
 import IdentificationTypeController from '../identification-type/identification-type.controller'
-import config from 'utils/config'
+import config from '../../utils/config'
 
 const credentialsTiendaNube = [
     {
