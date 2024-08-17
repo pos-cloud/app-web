@@ -857,19 +857,17 @@ export default class TransactionUC {
           canceledTransactions: canceledTransactions
         }
 
-        console.log(JSON.stringify(newBody, null, 2));
+        const { data } = await this.api.post('https://d-fe-ar.poscloud.ar/validate-transaction', newBody);
 
-        const { data, message } = await this.api.post('http://localhost:3001/endpoint', newBody);
-
-        if(!data || !data.CAE || !data.number || !data.CAEExpirationDate) {
-          throw new Error(message)
+        if(!data.data || !data.data.CAE || !data.data.number || !data.data.CAEExpirationDate) {
+          throw new Error(data.data.message)
         }
 
-        transaction.number = data.number
-        transaction.CAE = data.CAE
+        transaction.number = data.data.number
+        transaction.CAE = data.data.CAE
         transaction.CAEExpirationDate = moment(
-          data.CAEExpirationDate,
-          'DD/MM/YYYY HH:mm:ss',
+          data.data.CAEExpirationDate,
+          'YYYYMMDD',
         ).toDate()
         const endStatus: TransactionState =
           transaction.type.finishState || TransactionState.Closed
@@ -901,26 +899,7 @@ export default class TransactionUC {
 
         resolve(transaction)
       } catch (error) {
-        if (error && error.response && error.response.data) {
-          if (error.response.data.message) {
-            reject(new Error(error.response.data.message))
-          } else {
-            if (error.response.data !== '') {
-              try {
-                const {message} = JSON.parse(error.response.data.toString().trim())
-
-                reject(new Error(message))
-              } catch (error) {
-                if (error.response.data) {
-                  reject(new Error(error.response.data.toString().trim()))
-                } else {
-                  reject(new Error(error.response.toString().trim()))
-                }
-              }
-            } else {
-            }
-          }
-        } else reject(error)
+        reject(error)
       }
     })
   }
