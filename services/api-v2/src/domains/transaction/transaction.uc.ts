@@ -819,37 +819,6 @@ export default class TransactionUC {
         })
 
         const cancellationTypes: CancellationType[] = result.result
-        // const response: any = await this.api.post(config.API_URL_FE_AR, body)
-      
-        // const data: any = JSON.parse(response.data.toString().trim())
-
-        // let msn = ''
-
-        // if (!data.CAE) {
-        //   if (data.status === 'err') {
-        //     if (data.code && data.code !== '') {
-        //       msn += data.code + ' - '
-        //     }
-        //     if (data.message && data.message !== '') {
-        //       msn += data.message + '. '
-        //     }
-        //     if (data.observationMessage && data.observationMessage !== '') {
-        //       msn += data.observationMessage + '. '
-        //     }
-        //     if (data.observationMessage2 && data.observationMessage2 !== '') {
-        //       msn += data.observationMessage2 + '. '
-        //     }
-        //     if (msn === '') {
-        //       msn =
-        //         'Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.'
-        //     }
-        //     throw new Error(msn)
-        //   } else if (data.message) {
-        //     throw new Error(data.message)
-        //   } else {
-        //     throw new Error(data)
-        //   }
-        // }
 
         const newBody = {
           config: bodyConfig,
@@ -857,7 +826,9 @@ export default class TransactionUC {
           canceledTransactions: canceledTransactions
         }
 
-        const { data } = await this.api.post('https://d-fe-ar.poscloud.ar/validate-transaction', newBody);
+        console.log(config.API_URL_FE_AR)
+
+        const { data } = await this.api.post(`${config.API_URL_FE_AR}/validate-transaction`, newBody);
 
         if(!data.data || !data.data.CAE || !data.data.number || !data.data.CAEExpirationDate) {
           throw new Error(data.data.message)

@@ -9,7 +9,7 @@ export default {
   API_URL: process.env.API_URL || 'http://localhost:300/api',
   FORGOT_PASSWORD_EXPIRATION_TIME: 120,
   SESSION_EXPIRATION_TIME: 30,
-  API_URL_FE_AR: 'http://vps-1883265-x.dattaweb.com/libs/fe/ar/index.php',
+  API_URL_FE_AR: process.env.API_URL_FE_AR || 'https://d-fe-ar.poscloud.ar',
   PORT: process.env.PORT || 308,
   API_STORAGE: process.env.API_STORAGE || 'https://api-storage.us-3.evennode.com'
 }
