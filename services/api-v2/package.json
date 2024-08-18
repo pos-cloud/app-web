@@ -67,13 +67,11 @@
 		"supertest": "^3.4.2"
 	},
 	"scripts": {
-		"dev": "cross-env NODE_ENV=development API_URL=https://d-api-v1.poscloud.ar/api nodemon ./src/server.ts",
-		"prod": "cross-env NODE_ENV=production API_URL=https://api-v1.poscloud.ar/api nodemon ./src/server.ts",
-		"lint": "tslint -p tsconfig.json -c tslint.json",
-		"eldesafio": "cross-env NODE_ENV=production URL_SERVER=http://192.168.2.108 API_URL=http://192.168.2.108:300/api API_V8_URL=http://192.168.2.108:308 nodemon ./src/server.ts",
-		"jacksonburgs": "cross-env NODE_ENV=production URL_SERVER=http://192.168.0.88 API_URL=http://192.168.0.88:300/api API_V8_URL=http://192.168.0.88:308 nodemon ./src/server.ts",
-		"granpaso": "cross-env NODE_ENV=production URL_SERVER=http://192.168.88.90 API_URL=http://192.168.88.90:300/api API_V8_URL=http://192.168.88.90:308 nodemon ./src/server.ts",
-		"donweb:dev": "cross-env NODE_ENV=development MONGO_URL=mongodb://localhost:27017/ API_URL=https://d-api-v1.poscloud.ar/api nodemon ./src/server.ts"
+		"start": "cross-env NODE_ENV=development nodemon ./src/server.ts",
+		"dev": "cross-env NODE_ENV=development API_URL=https://d-api-v1.poscloud.ar/api API_URL_FE_AR=https://d-fe-ar.poscloud.ar nodemon ./src/server.ts",
+		"prod": "cross-env NODE_ENV=production API_URL=https://api-v1.poscloud.ar/api API_URL_FE_AR=https://fe-ar.poscloud.ar nodemon ./src/server.ts",
+		"jacksonburgs": "cross-env NODE_ENV=production URL_SERVER=http://192.168.0.88 API_URL=http://192.168.0.88:300/api API_V8_URL=http://192.168.0.88:308 API_URL_FE_AR=https://fe-ar.poscloud.ar nodemon ./src/server.ts",
+		"granpaso": "cross-env NODE_ENV=production URL_SERVER=http://192.168.88.90 API_URL=http://192.168.88.90:300/api API_V8_URL=http://192.168.88.90:308 API_URL_FE_AR=https://fe-ar.poscloud.ar nodemon ./src/server.ts"	
 	},
 	"author": "POS Cloud",
 	"license": "MIT"

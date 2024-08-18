@@ -817,43 +817,28 @@ export default class TransactionUC {
           },
           sort: {order: 1},
         })
+
         const cancellationTypes: CancellationType[] = result.result
-        const response: any = await this.api.post(config.API_URL_FE_AR, body)
-        const data: any = JSON.parse(response.data.toString().trim())
 
-        let msn = ''
-
-        if (!data.CAE) {
-          if (data.status === 'err') {
-            if (data.code && data.code !== '') {
-              msn += data.code + ' - '
-            }
-            if (data.message && data.message !== '') {
-              msn += data.message + '. '
-            }
-            if (data.observationMessage && data.observationMessage !== '') {
-              msn += data.observationMessage + '. '
-            }
-            if (data.observationMessage2 && data.observationMessage2 !== '') {
-              msn += data.observationMessage2 + '. '
-            }
-            if (msn === '') {
-              msn =
-                'Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.'
-            }
-            throw new Error(msn)
-          } else if (data.message) {
-            throw new Error(data.message)
-          } else {
-            throw new Error(data)
-          }
+        const newBody = {
+          config: bodyConfig,
+          transaction: transaction,
+          canceledTransactions: canceledTransactions
         }
 
-        transaction.number = data.number
-        transaction.CAE = data.CAE
+        console.log(config.API_URL_FE_AR)
+
+        const { data } = await this.api.post(`${config.API_URL_FE_AR}/validate-transaction`, newBody);
+
+        if(!data.data || !data.data.CAE || !data.data.number || !data.data.CAEExpirationDate) {
+          throw new Error(data.data.message)
+        }
+
+        transaction.number = data.data.number
+        transaction.CAE = data.data.CAE
         transaction.CAEExpirationDate = moment(
-          data.CAEExpirationDate,
-          'DD/MM/YYYY HH:mm:ss',
+          data.data.CAEExpirationDate,
+          'YYYYMMDD',
         ).toDate()
         const endStatus: TransactionState =
           transaction.type.finishState || TransactionState.Closed
@@ -885,26 +870,7 @@ export default class TransactionUC {
 
         resolve(transaction)
       } catch (error) {
-        if (error && error.response && error.response.data) {
-          if (error.response.data.message) {
-            reject(new Error(error.response.data.message))
-          } else {
-            if (error.response.data !== '') {
-              try {
-                const {message} = JSON.parse(error.response.data.toString().trim())
-
-                reject(new Error(message))
-              } catch (error) {
-                if (error.response.data) {
-                  reject(new Error(error.response.data.toString().trim()))
-                } else {
-                  reject(new Error(error.response.toString().trim()))
-                }
-              }
-            } else {
-            }
-          }
-        } else reject(error)
+        reject(error)
       }
     })
   }

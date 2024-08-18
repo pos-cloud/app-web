@@ -15,7 +15,7 @@
     "test:headless": "ng test --watch=false --browsers=ChromeHeadless",
     "tienda-nube": "cd services/tienda-nube && npm run start:dev",
     "api-v1": "cd services/api-v1 && npm run start",
-    "api-v2": "cd services/api-v2 && npm run dev",
+    "api-v2": "cd services/api-v2 && npm run start",
     "print": "cd services/print && npm run dev",
     "storage": "cd services/storage && npm run start:dev",
     "dev": "concurrently -n 'Angular,APIv1,APIv2,Storage,TiendaNube,Print' -c 'red,blue,yellow,magenta,cyan,green' \"ng serve\" \"npm run api-v1\" \"npm run api-v2\" \"npm run storage\" \"npm run tienda-nube\" \"npm run print\""
