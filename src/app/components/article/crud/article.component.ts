@@ -513,6 +513,7 @@ export class ArticleComponent implements OnInit {
       depth: [this.article.depth, []],
       showMenu: [this.article.showMenu, []],
       tiendaNubeId: [this.article.tiendaNubeId, []],
+      updateVariants: [this.article.updateVariants, []],
       variants: this._fb.array([])
     });
 
@@ -1462,6 +1463,9 @@ export class ArticleComponent implements OnInit {
     if (!this.article.depth) {
       this.article.depth = null;
     }
+    if (this.article.updateVariants === undefined) {
+      this.article.updateVariants = false;
+    }
 
     this.article.basePrice = this.roundNumber.transform(this.article.basePrice);
     this.article.costPrice = this.roundNumber.transform(this.article.costPrice);
@@ -1537,6 +1541,7 @@ export class ArticleComponent implements OnInit {
       width: this.article.width,
       depth: this.article.depth,
       showMenu: this.article.showMenu ?? '',
+      updateVariants: this.article.updateVariants,
       tiendaNubeId: this.article.tiendaNubeId,
     };
 
@@ -1568,7 +1573,7 @@ export class ArticleComponent implements OnInit {
         this.article.unitOfMeasurement = null;
       this.article.notes = this.notes;
       this.article.tags = this.tags;
-      if (this.variants && this.variants.length > 0) {
+      if (this.article.variants && this.article.variants.length > 0) {
         this.article.containsVariants = true;
       } else {
         this.article.containsVariants = false;
@@ -1699,7 +1704,7 @@ export class ArticleComponent implements OnInit {
       (result: Resulteable) => {
         if (result.status == 200) {
           this.showToast(null, 'success', 'El producto se ha eliminado con éxito.');
-          if (this.pathUrl[2] === "articles") {
+          if (this.pathUrl[2] === "article") {
             this._router.navigate(['/admin/articles']);
           } else {
             this._router.navigate(['/admin/variants']);

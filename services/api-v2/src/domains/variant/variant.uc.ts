@@ -127,7 +127,7 @@ export default class VariantUC extends Controller {
                 const articleChildIds = variant.map((variant: Variant) => ({ $oid: variant.articleChild }));
 
                 await articleController.deleteMany({ _id: { $in: articleChildIds } })
-                await variantController.deleteMany({})
+                await variantController.deleteMany({ articleParent: { $oid: articleParentId } })
                 return
             }
 
@@ -343,8 +343,10 @@ export default class VariantUC extends Controller {
                             articleChild: { $oid: child._id }
                         }
                     })
-                    await new VariantController(this.database).delete(variants.result[0]._id)
-                    await articleController.delete(child._id);
+                    for (let variant of variants.result) {
+                        await new VariantController(this.database).delete(variant._id)
+                        await articleController.delete(child._id);
+                    }
                 }
             }
         } catch (error) {

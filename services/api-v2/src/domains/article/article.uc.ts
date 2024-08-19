@@ -401,13 +401,13 @@ export default class ArticleUC {
 			await new MercadoLibreController(this.database).syncArticles(articleId)
 			if (article.picture && article.picture !== 'deafult.jpg') {
 				try {
-				//	await new FileUC(this.database, this.authToken).deleteFile('image', 'article', article.picture)
+					await new FileUC(this.database, this.authToken).deleteFile('image', 'article', article.picture)
 				} catch (error) {
 					//ignore error
 				}
 			}
 			article.pictures.forEach((picture) => {
-			//	new FileUC(this.database, this.authToken).deleteFile('image', 'article', picture.picture)
+			new FileUC(this.database, this.authToken).deleteFile('image', 'article', picture.picture)
 			})
 
 			if (article.containsVariants) {
