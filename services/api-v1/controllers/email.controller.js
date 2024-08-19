@@ -54,7 +54,7 @@ async function sendEmailClient(req, res, next) {
 	}
 }
 
-async function sendEmail(req, res, next, subject, message, attachments, emailReceiver, emailSender = 'info@poscloud.com.ar', password = 'OKU17/K4tD', host = 'vps-1891670-x.dattaweb.com', port = 465) {
+async function sendEmail(req, res, next, subject, message, attachments, emailReceiver, emailSender = 'info@poscloud.com.ar', password = 'elPOScrece@20', host = 'c2660460.ferozo.com', port = 465) {
 
 	return new Promise((resolve, reject) => {
 
