@@ -244,7 +244,7 @@ export class ListArticlesComponent {
         this.loading = false
         break;
       case 'copy':
-        this._router.navigateByUrl("admin/articles/copy/" + obj._id)
+        this._router.navigateByUrl("admin/article/copy/" + obj._id)
         break
       case "price-lists":
         if(!this.priceLists.length){

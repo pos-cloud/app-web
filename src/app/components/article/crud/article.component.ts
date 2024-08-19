@@ -1677,7 +1677,7 @@ export class ArticleComponent implements OnInit {
             this.articleForm.patchValue({ wooId: this.article.wooId });
             this._articleService.setItems(null);
             this.showToast(null, 'success', 'Operación realizada con éxito');
-            if (this.pathUrl[2] === "articles") {
+            if (this.pathUrl[2] === "article") {
               this._router.navigate(['/admin/articles']);
             } else {
               this._router.navigate(['/admin/variants']);

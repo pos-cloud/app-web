@@ -16,7 +16,7 @@
                     <span *ngIf="!loading"> {{'save' | translate | capitalize}}</span>
                     <span *ngIf="loading"> {{'loading' | translate | capitalize}}</span>
                 </button>
-                <button type="button" class="btn btn-danger" *ngIf="operation === 'delete'" [disabled]="loading"
+                <button type="button" class="btnStyle" *ngIf="operation === 'delete'" [disabled]="loading"
                     (click)="deleteArticle()">
                     <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
                     <span *ngIf="!loading">Eliminar</span>

@@ -48,7 +48,7 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   }, 
    {
-    path: 'admin/articles/copy/:id',
+    path: 'admin/article/copy/:id',
     component: ArticleComponent,
     canActivate: [AuthGuard]
   },
