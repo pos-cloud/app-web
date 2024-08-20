@@ -182,26 +182,26 @@ export class ListArticlesComponent {
     switch (op) {
       case 'view':
         this.pathLocation[2] === "variants"
-          ? this._router.navigateByUrl("admin/variants/view/" + obj._id)
+          ? this._router.navigateByUrl("admin/variant/view/" + obj._id)
           : this.pathLocation[2] === "articles"
-            ? this._router.navigateByUrl("admin/articles/view/" + obj._id)
+            ? this._router.navigateByUrl("admin/article/view/" + obj._id)
             : null;
         break;
       case 'add':
-        this._router.navigateByUrl("admin/article/add")
+        this._router.navigateByUrl("admin/articles/add")
         break;
       case 'update':
         this.pathLocation[2] === "variants"
-          ? this._router.navigateByUrl("admin/variants/update/" + obj._id)
+          ? this._router.navigateByUrl("admin/variant/update/" + obj._id)
           : this.pathLocation[2] === "articles"
-            ? this._router.navigateByUrl("admin/articles/update/" + obj._id)
+            ? this._router.navigateByUrl("admin/article/update/" + obj._id)
             : null;
         break;
       case 'delete':
         this.pathLocation[2] === "variants"
-          ? this._router.navigateByUrl("admin/variants/delete/" + obj._id)
+          ? this._router.navigateByUrl("admin/variant/delete/" + obj._id)
           : this.pathLocation[2] === "articles"
-            ? this._router.navigateByUrl("admin/articles/delete/" + obj._id)
+            ? this._router.navigateByUrl("admin/article/delete/" + obj._id)
             : null;
         break;
       case 'uploadFile':
@@ -223,9 +223,9 @@ export class ListArticlesComponent {
         break;
       case 'history':
         if (obj.type === Type.Variant) {
-          this._router.navigateByUrl(`/admin/variants/history/${obj._id}`);
+          this._router.navigateByUrl(`/admin/variant/history/${obj._id}`);
         } else {
-          this._router.navigateByUrl(`/admin/articles/history/${obj._id}`);
+          this._router.navigateByUrl(`/admin/article/history/${obj._id}`);
         }
         break;
       case 'print-label':
