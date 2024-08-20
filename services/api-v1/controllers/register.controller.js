@@ -165,6 +165,11 @@ async function register(req, res, next) {
 		let permissionAdmin = new Permission();
 		permissionAdmin.collections = [];
 		permissionAdmin.name = 'Administrador';
+		permissionAdmin.filterTransaction = false;
+		permissionAdmin.filterCompany = false;
+		permissionAdmin.editArticle = true;
+		permissionAdmin.allowDiscount = true;
+		permissionAdmin.allowPayment = true;
 		permissionAdmin.menu = {
 			articles: true,
 			companies: {
@@ -546,26 +551,26 @@ async function saveDatabase(email) {
 
 			await mkdirpath(constants.DOWNLOADS_PATH);
 			await mkdirpath(constants.DOWNLOADS_PATH + database.name);
-			await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/certificados');
-			await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/CITI');
-			await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/certificados/keys');
-			await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/certificados/xml');
-			await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/logs');
-			await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/CITI/ventas');
-			await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/CITI/compras');
-			await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/invoice');
-			await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/others');
-			await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/kitchen');
-			await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/bar');
-			await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/voucher');
-			await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/cash-box');
-			await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/images');
-			await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/images/article');
-			await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/images/category');
-			await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/images/company');
-			await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/images/make');
+			// await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/certificados');
+			// await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/CITI');
+			// await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/certificados/keys');
+			// await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/certificados/xml');
+			// await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/logs');
+			// await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/CITI/ventas');
+			// await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/CITI/compras');
+			// await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/invoice');
+			// await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/others');
+			// await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/kitchen');
+			// await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/bar');
+			// await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/voucher');
+			// await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/cash-box');
+			// await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/images');
+			// await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/images/article');
+			// await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/images/category');
+			// await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/images/company');
+			// await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/images/make');
 			await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/backups');
-			await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/resource');
+			// await mkdirpath(constants.DOWNLOADS_PATH + database.name + '/resource');
 
 			database.save((error, databaseSaved) => {
 				if (error) throw error

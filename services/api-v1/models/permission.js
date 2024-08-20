@@ -55,6 +55,12 @@ const PermissionSchema = new Schema({
     report: { type: Boolean },
     config: { type: Boolean },
   },
+  filterTransaction: {type: Boolean, default: false},
+  filterCompany: {type: Boolean, default: false},
+  transactionTypes: [{type: Schema.Types.ObjectId, ref: 'transaction-type'}],
+  editArticle: {type: Boolean, default: true },
+  allowDiscount: {type: Boolean, default: true },
+  allowPayment: {type: Boolean, default: true }
 })
 
 module.exports = PermissionSchema
