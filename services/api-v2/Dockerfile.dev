@@ -10,4 +10,4 @@ RUN npm install -g typescript@3.2.1
 RUN npm install -g ts-node@7.0.1
 COPY services/api-v2/ .
 
-CMD [ "npm", "run", "donweb:dev" ]
+CMD [ "npm", "run", "dev" ]
