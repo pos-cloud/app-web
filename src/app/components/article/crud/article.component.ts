@@ -135,6 +135,7 @@ export class ArticleComponent implements OnInit {
   users: User[]
   creationUser: User
   updateUser: User
+  typeSelect = []
 
   filteredVariantTypes: any[] = [];
 
@@ -355,7 +356,7 @@ export class ArticleComponent implements OnInit {
 
       if (pathLocation[3] === 'view') this.readonly = true
       if (pathLocation[3] === 'add') this.getVariantTypes()
-    } else if (pathLocation[2] === 'variants') {
+    } else if (pathLocation[2] === 'variant') {
       this.readonly = true
       this.articleType = 'Variante';
     }
@@ -771,7 +772,16 @@ export class ArticleComponent implements OnInit {
   public addVariant(variantsForm: NgForm): void {
     if (typeof variantsForm.value.type !== 'undefined' && typeof variantsForm.value.value !== 'undefined') {
       this.variant = variantsForm.value
+      const uniqueIds = Array.from(new Set(this.typeSelect));
 
+      // Verificar si el nuevo ID ya está en el array
+      if (uniqueIds.includes(this.variant.type._id)) {
+        this.typeSelect.push(this.variant.type._id);
+      } else if (uniqueIds.length < 3) {
+        this.typeSelect.push(this.variant.type._id);
+      } else {
+        return this.showToast(null, 'info','No puedes agregar más de tres tipos de variantes diferentes.');
+      }
       //Comprobamos que la variante no existe
       if (!this.variantExists(this.variant)) {
 
@@ -786,7 +796,7 @@ export class ArticleComponent implements OnInit {
         this.variant.value = variantValueAux
         this.setValueVariants();
       } else {
-        this.showToast(null, 'info', "La variante " + this.variant.type.name + " " + this.variant.value.description + " ya existe", 'info');
+        this.showToast(null, 'info', "La variante " + this.variant.type.name + " " + this.variant.value.description + " ya existe");
       }
     }
   }
@@ -1640,7 +1650,7 @@ export class ArticleComponent implements OnInit {
             this.article = result.result;
             this.showToast(null, 'success', 'El producto se ha añadido con éxito.');
 
-            if (this.pathUrl[2] === "article") {
+            if (this.pathUrl[2] === "articles") {
               this._router.navigate(['/admin/articles']);
             } else {
               this._router.navigate(['/admin/variants']);
