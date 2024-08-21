@@ -632,8 +632,8 @@ export class ArticleComponent implements OnInit {
             this.article.url = '';
             this.article.wooId = '';
           }
-         this.creationUser = this.users.find((user: User )=> user._id === (typeof this.article.creationUser === 'string' ? this.article.creationUser : this.article.creationUser._id))
-         this.updateUser = this.users.find((user: User)=>  user._id === (typeof this.article.updateUser === 'string' ? this.article.updateUser : this.article.updateUser._id))
+          this.creationUser = this.users.find((user: User) => user._id === (typeof this.article.creationUser === 'string' ? this.article.creationUser : this.article.creationUser._id))
+          this.updateUser = this.users.find((user: User) => user._id === (typeof this.article.updateUser === 'string' ? this.article.updateUser : this.article.updateUser._id))
 
           this.setValuesForm();
           this.setValuesArray();
@@ -704,7 +704,7 @@ export class ArticleComponent implements OnInit {
     );
   }
 
-  public getUsers(){
+  public getUsers() {
     this.loading = true;
     let project = {
       "_id": 1,
@@ -780,7 +780,7 @@ export class ArticleComponent implements OnInit {
       } else if (uniqueIds.length < 3) {
         this.typeSelect.push(this.variant.type._id);
       } else {
-        return this.showToast(null, 'info','No puedes agregar más de tres tipos de variantes diferentes.');
+        return this.showToast(null, 'info', 'No puedes agregar más de tres tipos de variantes diferentes.');
       }
       //Comprobamos que la variante no existe
       if (!this.variantExists(this.variant)) {
@@ -1569,6 +1569,10 @@ export class ArticleComponent implements OnInit {
         return this.showToast({ message: 'La descripción solo puede contener letras y números.' });
 
       }
+      const salePrice = this.articleForm.get('salePrice')?.value;
+      if (salePrice === 0) {
+        return this.showToast({ message: 'El precio tiene que ser mayor a 0.' });
+      }
 
       this.article = Object.assign(this.article, this.articleForm.value);
       if (typeof this.article.make === 'string') {
@@ -1597,9 +1601,9 @@ export class ArticleComponent implements OnInit {
       this.article.applications = selectedOrderIds;
 
       const pathLocation: string[] = this._router.url.split('/');
-      if (pathLocation[2] === 'articles') {
+      if (pathLocation[2] === 'article') {
         this.article.type = Type.Final;
-      } else if (pathLocation[2] === 'variants') {
+      } else if (pathLocation[2] === 'variant') {
         this.article.type = Type.Variant;
       }
       // else if (pathLocation[2] === 'ingredientes') {

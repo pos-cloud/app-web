@@ -32,9 +32,9 @@ export default class VariantUC extends Controller {
             if (!articleResponse.result) {
                 throw new Error(`No se encontró el artículo padre con ID ${articleParentId}`);
             }
-    
+
             const article = articleResponse.result;
-    
+
             // Organizar las variantes por tipo (por ejemplo, color, sexo, talle)
             let variantForType = variants.reduce((acc: any, variant: Variant) => {
                 if (!acc[variant.type.name]) {
@@ -43,11 +43,11 @@ export default class VariantUC extends Controller {
                 acc[variant.type.name].push(variant.value.description);
                 return acc;
             }, {});
-    
+
             // Obtener los tipos de variantes y sus valores
             let types = Object.keys(variantForType).sort();  // Ordena los tipos para mantener la consistencia
             let valuesForType = types.map(type => variantForType[type]);
-    
+
             // Obtener todas las combinaciones de valores de las variantes
             let combinations: string[][] = [[]];
             types.forEach((type, index) => {
@@ -59,33 +59,33 @@ export default class VariantUC extends Controller {
                 });
                 combinations = newResults;
             });
-    
+
             // Crear los artículos hijos con sus respectivas combinaciones de variantes
             let results: any[] = [];
-    
+
             for (const combination of combinations) {
                 let child: any = {
                     ...article._doc,
                     type: 'Variante',
                     description: `${article.description} ${combination.join(' / ')}`
                 };
-    
+
                 // Guardar el artículo hijo y obtener el resultado
                 const savedArticleChild = await articleController.save(new this.model(child));
-    
+
                 if (!savedArticleChild.result) {
                     throw new Error("No se pudo guardar el artículo hijo");
                 }
-    
+
                 // Crear y guardar las variantes para este artículo hijo
                 for (let j = 0; j < types.length; j++) {
                     const type = types[j];
                     const value = combination[j];
-    
-                    const matchingVariant = variants.find(variant => 
+
+                    const matchingVariant = variants.find(variant =>
                         variant.type.name === type && variant.value.description === value
                     );
-    
+
                     if (matchingVariant) {
                         let newVariant: Variant = VariantSchema.getInstance(this.database);
                         newVariant = Object.assign(newVariant, {
@@ -94,26 +94,26 @@ export default class VariantUC extends Controller {
                             articleParent: articleParentId,
                             articleChild: savedArticleChild.result._id,
                         });
-    
+
                         const resultVariant = await new VariantController(this.database).save(newVariant);
-    
+
                         if (!resultVariant.result && resultVariant.status !== 200) {
                             throw new Error("No se crearon las variantes correctamente");
                         }
                     }
                 }
-    
+
                 results.push(savedArticleChild);
             }
-    
+
             return results;
-    
+
         } catch (error) {
             console.error('Error al crear variantes:', error);
             throw error;
         }
     };
-    
+
     updateVariant = async (articleParentId: string, variants: Variant[], articleOld: Article) => {
         try {
             const articleController = new ArticleController(this.database);
@@ -227,7 +227,9 @@ export default class VariantUC extends Controller {
                     description: 1,
                     salePrice: 1,
                     costPrice: 1,
-                    type: 1
+                    type: 1,
+                    picture: 1,
+                    pictures: 1
                 },
                 match: {
                     _id: { $in: existingChildIds }
@@ -238,12 +240,12 @@ export default class VariantUC extends Controller {
             throw error;
         }
     }
-    
+
     createOrUpdateChildren = async (combinations: any, article: any, completeVariants: any, articleParentId: any, articleController: any, variantController: any, existingChildren: any, articleOld: Article) => {
         try {
             let results = [];
             let updatedChildrens = [];
-    
+
             // Actualizar las descripciones de los artículos hijos si la descripción del artículo padre cambió
             if (article.description !== articleOld.description) {
                 for (let articleChild of existingChildren) {
@@ -265,9 +267,13 @@ export default class VariantUC extends Controller {
                     description = `${article.description} ${combination.join(' / ')}`;
                     existingChild = updatedChildrens.find((child: any) => child.description === description);
                 }
+
                 if (existingChild) {
-                    // Si existe el artículo hijo, actualizar su descripción y tipo si es necesario
-                    if (existingChild.description !== description || existingChild.type !== 'Variante') {
+
+                    if (article.updateVariants) {
+                        let updatedChild = { ...article._doc, description: description, type: 'Variante', picture: existingChild.picture, pictures: existingChild.pictures };
+                        results.push(await articleController.update(existingChild._id, updatedChild));
+                    } else {
                         let updatedChild = { description: description, type: 'Variante' };
                         results.push(await articleController.update(existingChild._id, updatedChild));
                     }
@@ -276,16 +282,16 @@ export default class VariantUC extends Controller {
                     let child = { ...article._doc, description: description, type: 'Variante' };
                     delete child._id;
                     let newArticle = await articleController.save(new articleController.model(child));
-    
+
                     // Crear y asociar las variantes correspondientes con el nuevo artículo hijo
                     for (let j = 0; j < combination.length; j++) {
                         const variantValue = combination[j]; // Obtener el valor correspondiente en la combinación
-    
+
                         // Filtrar variantes que coincidan con el valor actual de la combinación
-                        const matchingVariants = completeVariants.filter((v: any) => 
+                        const matchingVariants = completeVariants.filter((v: any) =>
                             v.value.description === variantValue
                         );
-    
+
                         // Crear variantes para el artículo hijo
                         for (const matchingVariant of matchingVariants) {
                             let newVariant = {
@@ -294,14 +300,14 @@ export default class VariantUC extends Controller {
                                 articleParent: articleParentId,
                                 articleChild: newArticle.result._id
                             };
-    
+
                             const savedVariant = await variantController.save(new variantController.model(newVariant));
                             if (!savedVariant.result && savedVariant.status !== 200) {
                                 throw new Error("No se crearon las variantes correctamente");
                             }
                         }
                     }
-    
+
                     results.push(newArticle);
                 }
             }
@@ -310,7 +316,6 @@ export default class VariantUC extends Controller {
             throw error;
         }
     };
-    
 
     deleteInvalidChildren = async (combinations: any, existingChildren: any, article: any, articleController: any, articleOld: Article) => {
         try {
@@ -325,14 +330,14 @@ export default class VariantUC extends Controller {
             }
 
             for (const child of updatedChildrens) {
-               
-               let existingCombinations;
+
+                let existingCombinations;
                 if (article.type === 'Variante') {
-                    existingCombinations =  child.description !== article.description
+                    existingCombinations = child.description !== article.description
                 } else {
                     existingCombinations = !combinations.some((combination: any) => child.description === `${article.description} ${combination.join(' / ')}`)
                 }
-              
+
                 if (existingCombinations) {
                     const variants = await new VariantController(this.database).getAll({
                         project: {
