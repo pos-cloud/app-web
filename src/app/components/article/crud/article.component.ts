@@ -745,7 +745,6 @@ export class ArticleComponent implements OnInit {
   }
 
   public refreshValues(): void {
-    console.log(this.variantTypeSelected)
     if (this.variantTypeSelected) {
       this.variant.value = null;
       this.getVariantValuesByType(this.variantTypeSelected);
@@ -771,7 +770,6 @@ export class ArticleComponent implements OnInit {
   }
 
   public addVariant(variantsForm: NgForm): void {
-    console.log(variantsForm)
     if (typeof variantsForm.value.type !== 'undefined' && typeof variantsForm.value.type !== null  && typeof variantsForm.value.value !== 'undefined' && typeof variantsForm.value.value !== null) {
       this.variant = variantsForm.value
       const uniqueIds = Array.from(new Set(this.typeSelect));
