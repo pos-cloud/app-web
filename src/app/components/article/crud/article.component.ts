@@ -632,8 +632,8 @@ export class ArticleComponent implements OnInit {
             this.article.url = '';
             this.article.wooId = '';
           }
-          this.creationUser = this.users.find((user: User) => user._id === (typeof this.article.creationUser === 'string' ? this.article.creationUser : this.article.creationUser._id))
-          this.updateUser = this.users.find((user: User) => user._id === (typeof this.article.updateUser === 'string' ? this.article.updateUser : this.article.updateUser._id))
+          this.creationUser = this.users.find((user: User) => user._id === (typeof this.article.creationUser === 'string' ? this.article.creationUser : (typeof this.article.creationUser !== 'undefined' ? this.article.creationUser._id : '')))
+          this.updateUser =   this.users.find((user: User) => user._id === (typeof this.article.updateUser === 'string' ? this.article.updateUser : (typeof this.article.updateUser !== 'undefined' ? this.article.updateUser._id : '')))
 
           this.setValuesForm();
           this.setValuesArray();

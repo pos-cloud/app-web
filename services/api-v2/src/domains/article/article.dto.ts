@@ -194,9 +194,9 @@ export default class ArticleDto extends ModelDto {
   @IsBoolean()
   allowSale: boolean
 
-  @ValidateIf((o) => o.allowSaleWithoutStock !== undefined)
-  @IsBoolean()
-  allowSaleWithoutStock: boolean
+  // @ValidateIf((o) => o.allowSaleWithoutStock !== undefined)
+  // @IsBoolean()
+  // allowSaleWithoutStock: boolean
 
   @ValidateIf((o) => o.allowMeasure !== undefined)
   @IsBoolean()
@@ -239,6 +239,7 @@ export default class ArticleDto extends ModelDto {
   harticle: Article
 
   purchaseAccount: Account
+  allowSaleWithoutStock: boolean
   salesAccount: Account
   minStock: number
   maxStock: number

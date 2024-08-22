@@ -229,7 +229,8 @@ export default class VariantUC extends Controller {
                     costPrice: 1,
                     type: 1,
                     picture: 1,
-                    pictures: 1
+                    pictures: 1,
+                    tiendaNubeId: 1
                 },
                 match: {
                     _id: { $in: existingChildIds }
@@ -271,7 +272,7 @@ export default class VariantUC extends Controller {
                 if (existingChild) {
 
                     if (article.updateVariants) {
-                        let updatedChild = { ...article._doc, description: description, type: 'Variante', picture: existingChild.picture, pictures: existingChild.pictures };
+                        let updatedChild = { ...article._doc, description: description, type: 'Variante', picture: existingChild.picture, pictures: existingChild.pictures, tiendaNubeId: existingChild.tiendaNubeId};
                         results.push(await articleController.update(existingChild._id, updatedChild));
                     } else {
                         let updatedChild = { description: description, type: 'Variante' };

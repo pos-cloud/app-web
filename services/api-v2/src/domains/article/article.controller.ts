@@ -361,7 +361,7 @@ export default class ArticleController extends Controller {
 
       if (article.applications.some((application: Application) => application.type === ApplicationType.TiendaNube)) {
         const createArticleTn = await new TiendaNubeController().saveArticleTiendaNube(result._id, request.headers.authorization)
-        return response.send(new Responser(200, { result, createArticleTn }))
+        return response.send(new Responser(200, { result }))
       }
       return response.send(new Responser(200, { result, variants }))
     } catch (error) {
@@ -393,16 +393,15 @@ export default class ArticleController extends Controller {
         if (article.type === Type.Final) {
           await new TiendaNubeController().updateArticleTiendaNube(result._id, request.headers.authorization)
         } else if (article.type === Type.Variant) {
-
           const variant: Variant[] = await new VariantController(this.database).find({ articleChild: article._id }, {});
           if (variant && variant.length > 0) {
             if (variant[0] && variant[0].articleParent._id) {
-              await new TiendaNubeController().updateArticleTiendaNube(result._id, request.headers.authorization)
+              await new TiendaNubeController().updateArticleTiendaNube(variant[0].articleParent._id, request.headers.authorization)
             }
           }
         }
       } else if (article.tiendaNubeId && article.type === Type.Final) {
-        await new TiendaNubeController().deleteArticleTiendaNube(article.tiendaNubeId, request.headers.authorization)
+       await new TiendaNubeController().deleteArticleTiendaNube(article.tiendaNubeId, request.headers.authorization)
       }
 
       return response.json(new Responser(200, { result, variants }))

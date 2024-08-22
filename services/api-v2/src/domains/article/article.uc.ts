@@ -258,7 +258,7 @@ export default class ArticleUC {
 							if (article.otherFields && article.otherFields.length > 0) {
 								for (const field of article.otherFields) {
 									if (field.articleField.datatype === ArticleFieldType.Percentage) {
-										field.amount =roundNumber(
+										field.amount = roundNumber(
 											(article.basePrice * parseFloat(field.value)) / 100,
 											decimal,
 										)
@@ -407,7 +407,7 @@ export default class ArticleUC {
 				}
 			}
 			article.pictures.forEach((picture) => {
-			new FileUC(this.database, this.authToken).deleteFile('image', 'article', picture.picture)
+				new FileUC(this.database, this.authToken).deleteFile('image', 'article', picture.picture)
 			})
 
 			if (article.containsVariants) {
@@ -540,13 +540,15 @@ export default class ArticleUC {
 						printIn: printerObj[item.column9]?.name,
 						observation: item.column10,
 						basePrice: calculatedSalePrice.basePrice2,
-						taxes: item.column12 === "" ? {
-							tax: taxObj[21]._id,
-							percentage: taxObj[21].percentage
-						} : {
-							tax: taxObj[item.column12]._id,
-							percentage: taxObj[item.column12].percentage
-						},
+						taxes: item.column12 === "" ?
+							(taxObj[21] ? {
+								tax: taxObj[21]._id,
+								percentage: taxObj[21].percentage
+							} : []) :
+							(taxObj[item.column12] ? {
+								tax: taxObj[item.column12]._id,
+								percentage: taxObj[item.column12].percentage
+							} : []),
 						markupPercentage: calculatedSalePrice.markupPercentage2,
 						salePrice: calculatedSalePrice.salePrice2,
 						weight: item.column15,
@@ -867,7 +869,7 @@ export default class ArticleUC {
 					}
 				} else {
 					let newArticle: Article = ArticleSchema.getInstance(this.database)
-					
+
 					newArticle = Object.assign(newArticle, {
 						code: code,
 						barcode: item.variants[0].sku,
@@ -1029,12 +1031,12 @@ export default class ArticleUC {
 			project: {
 				_id: 1,
 				tiendaNube: {
-                    article: 1,
-                    company: 1,
-                    transactionType: 1,
-                    paymentMethod: 1,
-                    shipmentMethod: 1
-                }
+					article: 1,
+					company: 1,
+					transactionType: 1,
+					paymentMethod: 1,
+					shipmentMethod: 1
+				}
 			}
 		})
 
@@ -1403,9 +1405,9 @@ export default class ArticleUC {
 		})
 
 		const articles = await new ArticleController(this.database).getAll({
-			match:{
+			match: {
 				type: 'Final',
-				operationType: { $ne: 'D'}
+				operationType: { $ne: 'D' }
 			}
 		});
 		if (articles.result) {
@@ -1414,15 +1416,15 @@ export default class ArticleUC {
 				const dateB = new Date(b.creationDate).getTime();
 				return dateB - dateA;
 			});
-		
+
 			const lastArticle = articles.result[0];
 			let codeSum
-			if(lastArticle){
+			if (lastArticle) {
 				codeSum = (Number(lastArticle?.code) + 1).toString().padStart(config.result[0].article.code.validators.maxLength, '0');
-			}else{
-				codeSum ='1'.padStart(config.result[0].article.code.validators.maxLength, '0');
+			} else {
+				codeSum = '1'.padStart(config.result[0].article.code.validators.maxLength, '0');
 			}
-			return codeSum 
+			return codeSum
 		}
 	}
 
