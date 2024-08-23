@@ -514,7 +514,7 @@ export default class TiendaNubeController {
         return new Promise<Company>(async (resolve, reject) => {
             try {
                 if (order.customer) {
-                    const company = await this.getCompanyByIdentification(order.customer.emails, '');
+                  const company = await this.getCompanyByIdentification(order.customer.email, '');
                     if (company.length > 0) {
                         resolve(company[0]);
                     } else {
