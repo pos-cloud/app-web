@@ -79,11 +79,7 @@ async function register(req, res, next) {
 			.toLocaleLowerCase()
 			.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
 
-		dbName = '';
-		for (let i = 0; i < companyName.length; i++) {
-			let caracter = companyName.charAt(i);
-			if (validateCaracterDBName(caracter)) dbName += caracter;
-		}
+		dbName = companyName
 
 		if (!email) throw { 'status': 400, message: 'Debe ingresar el email del usuario (email)'};
 
@@ -91,7 +87,6 @@ async function register(req, res, next) {
 		email = email.toLocaleLowerCase();
 
 		await existsDatabase(dbName);
-		await existsEmail(email);
 		await saveDatabase(email);
 		const lastCompanyCode = await getLastCompanyCode();
 
@@ -486,6 +481,7 @@ async function register(req, res, next) {
 		await saveConfig(config);
 
 		sendEmailToSales(req, res, next);
+		sendEmailToClient(req, res, next, )
 		//return res.status(200).send({ url: 'http://www.' + dbName + '.poscloud.com.ar' });
 		return res.status(200).send({ password: passwordSoporte, user: userSoporte.name, db: dbName });
 	} catch (error) {
@@ -517,7 +513,7 @@ function existsDatabase(database) {
 			Database.find(where)
 				.exec((err, databases) => {
 					if (err) throw err;
-					else if (databases && databases.length > 0) reject({ 'status': 409, message: 'El Nombre de negocio ya se encuentra registrado.' });
+					else if (databases && databases.length > 0) reject({ 'status': 409, message: 'El nombre del negocio ya se encuentra registrado.' });
 					resolve();
 				});
 		} catch (err) { reject(err); }
@@ -610,18 +606,6 @@ function saveIdentificationType(identificationType) {
 				reject(err);
 			} else {
 				resolve(identificationTypeSave);
-			}
-		});
-	});
-}
-
-function saveCompany(company) {
-	return new Promise((resolve, reject) => {
-		company.save((err, companySaved) => {
-			if (err) {
-				reject(err);
-			} else {
-				resolve(companySaved);
 			}
 		});
 	});
@@ -1009,19 +993,24 @@ async function sendEmailToSales(req, res, next) {
 						<hr>
 						<p style="box-sizing:border-box; margin:12px; padding:0; width:100%; padding-bottom:20px; font-size:24px; font-weight:400;">
 							<span style="box-sizing:border-box; margin:0; padding:0">
-								Datos para ingresar al sistema:
+								Credenciales para ingresar:
 							</span>
 						</p>
 						<p style="box-sizing:border-box; margin:12px; padding:0; width:100%; padding-bottom:20px; font-size:15px; font-weight:400;">
 							<span style="box-sizing:border-box; margin:0; padding:0">
-								Link: <a href="http://www.${dbName}.poscloud.com.ar">http://www.${dbName}.poscloud.com.ar</a>
+								Link: <a href="https://prod.poscloud.ar">https://prod.poscloud.ar</a>
+							</span>
+							<br>
+							<span style="box-sizing:border-box; margin:0; padding:0">
+								Negocio: ${dbName}
 							</span>
 							<br>
 							<span style="box-sizing:border-box; margin:0; padding:0">
 								Usuario: ${userSoporte.name}
 							</span>
+							<br>
 							<span style="box-sizing:border-box; margin:0; padding:0">
-								Password: ${passwordSoporte}
+								Contraseña: ${passwordSoporte}
 							</span>
 						</p>
 						<div class="x_generate-password" style="box-sizing:border-box; display:flex; margin:0 auto; padding-top:20px; padding-bottom:20px;">
@@ -1051,6 +1040,97 @@ async function sendEmailToSales(req, res, next) {
 						</div>`;
 
 		await EmailController.sendEmail(req, res, next, 'Nuevo Registro', message, null, userSoporte.email).then(
+			result => {
+				resolve(result);
+			}
+		).catch(
+			err => {
+				reject(err);
+			}
+		);
+	});
+}
+
+async function sendEmailToClient(req, res, next) {
+	return new Promise(async (resolve, reject) => {
+		let message = `<div class="_3U2q6dcdZCrTrR_42Nxby JWNdg1hee9_Rz6bIGvG1c allowTextSelection">
+						<div>
+						<style type="text/css" style="box-sizing:border-box; margin:0; padding:0">
+						</style>
+						<div class="rps_21ff">
+						<div style="background:#F7F3ED; box-sizing:border-box; color:#000; font-family:"Barlow",sans-serif; font-size:16px; margin:0; overflow-x:hidden; padding:0">
+						<div class="x_container" style="border:1px solid #EDECED; box-sizing:border-box; margin:50px auto; max-width:650px; padding:0; width:100%">
+						<div class="x_reverse" style="box-sizing:border-box; margin:0; padding:0">
+							<a href="http://poscloud.com.ar/" target="_blank" rel="noopener noreferrer" data-auth="NotApplicable" style="box-sizing:border-box; color:#0275D8; font-weight:500; margin:0; padding:0; text-decoration:none">
+								<div class="x_logo" style="color:white; background-color:#0275D8; background-position:center; background-repeat:no-repeat; background-size:auto 24px; box-sizing:border-box; height:60px; margin:0; padding:15px; font-size: 30px;">
+									POS Cloud
+								</div>
+							</a>
+						</div>
+						<div class="x_main x_password-recovery-main" style="background:#fff; box-sizing:border-box; margin:0; padding:40px 38px; padding-top:14px; text-align:center">
+						<h2 style="box-sizing:border-box; color:#0275D8; font-size:43px; font-weight:bold; line-height:1; margin:12px 0; margin-bottom:10px; padding:0">
+							Registro Finalizado
+						</h2>
+						<h4 style="box-sizing:border-box; font-size:24px; font-weight:400; letter-spacing:-0.3; line-height:1.17; margin:0; padding:0">
+							Gracias por confiar en nosotros.
+						</h4>
+						<div class="x_generate-password" style="box-sizing:border-box; display:flex; margin:0 auto; padding-top:20px; padding-bottom:20px;">
+						<div class="x_generate-password__description" style="box-sizing:border-box; font-size:20px; letter-spacing:-0.25; line-height:1.25; margin:0; padding:0; text-align:left;">
+						<span class="x_icon-arrow x_icon-arrow--inline x_icon-arrow--sm" style="background-repeat:no-repeat; background-size:contain; box-sizing:border-box; display:inline-block; height:17px; margin:0; padding:0; width:17px">
+						</span>
+						<p style="box-sizing:border-box; padding:0; width:100%">
+							<span style="box-sizing:border-box; padding:0; margin-bottom:30px;">
+								El registro se realizó con éxito, a continuación ingresa al siguiente link <a href="https://prod.poscloud.ar">https://prod.poscloud.ar</a>.
+							</span>
+						</p>
+						</div>
+						</div>
+						<hr>
+						<p style="box-sizing:border-box; margin:12px; padding:0; width:100%; padding-bottom:20px; font-size:24px; font-weight:400; text-align:left;">
+							<span style="box-sizing:border-box; margin:0; padding:0">
+								Datos para ingresar:
+							</span>
+						</p>
+						<p style="box-sizing:border-box; margin:12px; padding:0; width:100%; padding-bottom:20px; font-size:15px; font-weight:400; text-align:left;">
+							<span style="box-sizing:border-box; margin:0; padding:0">
+								<b>Negocio</b>: ${dbName}
+							</span>
+							<br>
+							<span style="box-sizing:border-box; margin:0; padding:0">
+								<b>Usuario</b>: ${req.body.email}
+							</span>
+							<br>
+							<span style="box-sizing:border-box; margin:0; padding:0">
+								<b>Password</b>: ${req.body.password}
+							</span>
+						</p>
+						<div class="x_generate-password" style="box-sizing:border-box; display:flex; margin:0 auto; padding-top:20px; padding-bottom:20px;">
+						<div class="x_generate-password__description" style="box-sizing:border-box; font-size:15px; letter-spacing:-0.25; line-height:1.25; margin:0; padding:0; text-align:left;">
+							Se ha activado la licencia gratuita por 10 días para la utilización del sistema. Luego un miembro del equipo se comunicará para ofrecerle una extensión de la licencia mensual en caso de seguir operando con el sistema.
+						</div>
+						</div>
+						</div>
+						</div>
+						<p style="box-sizing:border-box; font-size:14px; font-weight:300; letter-spacing:normal; line-height:1.08; margin:12px 0; margin-top:20px; padding:0">
+						<span style="box-sizing:border-box; margin:0; padding:0">Si necesitas ayuda no dudes en dirigirte a nuestra área de contacto en
+						</span>
+						<a href="http://poscloud.com.ar/" target="_blank" rel="noopener noreferrer" data-auth="NotApplicable" style="box-sizing:border-box; color:#0275D8; font-weight:500; margin:0; padding:0; text-decoration:none"> http://poscloud.com.ar/
+						</a>.
+						<span style="box-sizing:border-box; margin:0; padding:0">Para cualquier consulta puedes escribirnos a
+						</span>
+						<a href="mailto:info@poscloud.com.ar" target="_blank" rel="noopener noreferrer" data-auth="NotApplicable" style="box-sizing:border-box; color:#0275D8; font-weight:500; margin:0; padding:0; text-decoration:none"> info@poscloud.com.ar
+						</a>.
+						</span>
+						</p>
+						<p style="box-sizing:border-box; font-size:14px; font-weight:300; letter-spacing:normal; line-height:1.08; margin:12px 0; margin-top:20px; padding:0; text-align: center;">
+						</p>
+						</div>
+						</div>
+						</div>
+						</div>
+						</div>`;
+
+		await EmailController.sendEmail(req, res, next, 'Nuevo Registro', message, null, req.body.email).then(
 			result => {
 				resolve(result);
 			}
