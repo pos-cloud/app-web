@@ -18,121 +18,121 @@ const Sentry = require("@sentry/node");
 function writeLog(req, res, next, status, text) {
 
 
-	let rootFile = constants.DOWNLOADS_PATH;
+	// let rootFile = constants.DOWNLOADS_PATH;
 
-	if (!fs.existsSync(rootFile)) {
-		try {
-			fs.mkdirSync(rootFile);
-		} catch (e) {
-		}
-	}
+	// if (!fs.existsSync(rootFile)) {
+	// 	try {
+	// 		fs.mkdirSync(rootFile);
+	// 	} catch (e) {
+	// 	}
+	// }
 
-	if (req.session) {
-		rootFile += req.session.database;
-	}
+	// if (req.session) {
+	// 	rootFile += req.session.database;
+	// }
 
-	if (!fs.existsSync(rootFile)) {
-		try {
-			fs.mkdirSync(rootFile);
-		} catch (e) {
-		}
-	}
+	// if (!fs.existsSync(rootFile)) {
+	// 	try {
+	// 		fs.mkdirSync(rootFile);
+	// 	} catch (e) {
+	// 	}
+	// }
 
-	rootFile += '/logs/';
+	// rootFile += '/logs/';
 
-	if (!fs.existsSync(rootFile)) {
-		try {
-			fs.mkdirSync(rootFile);
-		} catch (e) {
-		}
-	}
+	// if (!fs.existsSync(rootFile)) {
+	// 	try {
+	// 		fs.mkdirSync(rootFile);
+	// 	} catch (e) {
+	// 	}
+	// }
 
-	let fileName = rootFile + 'LOG-' + moment().format('DD-MM-YYYY') + '.txt';
+	// let fileName = rootFile + 'LOG-' + moment().format('DD-MM-YYYY') + '.txt';
 
-	let agent;
-	if (req.rawHeaders) {
-		for (let i = 0; i < req.rawHeaders.length; i++) {
-			if (req.rawHeaders[i] === "User-Agent") {
-				agent = req.rawHeaders[i + 1];
-			}
-		}
-	}
+	// let agent;
+	// if (req.rawHeaders) {
+	// 	for (let i = 0; i < req.rawHeaders.length; i++) {
+	// 		if (req.rawHeaders[i] === "User-Agent") {
+	// 			agent = req.rawHeaders[i + 1];
+	// 		}
+	// 	}
+	// }
 
-	let user = { name: "", user: "" };
-	let database = '';
-	if (req.session) {
-		user = req.session;
-		database = req.session.database;
-	}
+	// let user = { name: "", user: "" };
+	// let database = '';
+	// if (req.session) {
+	// 	user = req.session;
+	// 	database = req.session.database;
+	// }
 
 
-	let message = moment().format('HH:mm:ss') +
-		" -METHOD " + req.method +
-		" -URL " + req.headers.referer +
-		" -O-URL " + req.originalUrl + '\r\n\t\t' +
-		" -PARAMS " + JSON.stringify(req.params) + '\r\n\t\t' +
-		" -BODY " + JSON.stringify(req.body) + '\r\n\t\t' +
-		" -D " + database + '\r\n\t\t' +
-		" -USER " + user.name + "(" + user.user + ")" + '\r\n\t\t' +
-		" -CLIENT " + agent + '\r\n\t\t' +
-		" -STATUS " + status + '\r\n\t\t' +
-		" -MSN " + text;
+	// let message = moment().format('HH:mm:ss') +
+	// 	" -METHOD " + req.method +
+	// 	" -URL " + req.headers.referer +
+	// 	" -O-URL " + req.originalUrl + '\r\n\t\t' +
+	// 	" -PARAMS " + JSON.stringify(req.params) + '\r\n\t\t' +
+	// 	" -BODY " + JSON.stringify(req.body) + '\r\n\t\t' +
+	// 	" -D " + database + '\r\n\t\t' +
+	// 	" -USER " + user.name + "(" + user.user + ")" + '\r\n\t\t' +
+	// 	" -CLIENT " + agent + '\r\n\t\t' +
+	// 	" -STATUS " + status + '\r\n\t\t' +
+	// 	" -MSN " + text;
 
-	let buffer = new Buffer(message + '\r\n');
-	let mode = 'a';
+	// let buffer = new Buffer(message + '\r\n');
+	// let mode = 'a';
 
-	fs.open(fileName, mode, function (err, fd) {
+	// fs.open(fileName, mode, function (err, fd) {
 
-		if (err) {
-			return console.log(err);
-		} else {
-			fs.write(fd, buffer, 0, buffer.length, null, function (err) {
-				if (err) {
-					return console.log(err);
-				} else {
-					fs.close(fd, function () {
-					});
-				}
-			});
-		}
-	});
+	// 	if (err) {
+	// 		return console.log(err);
+	// 	} else {
+	// 		fs.write(fd, buffer, 0, buffer.length, null, function (err) {
+	// 			if (err) {
+	// 				return console.log(err);
+	// 			} else {
+	// 				fs.close(fd, function () {
+	// 				});
+	// 			}
+	// 		});
+	// 	}
+	// });
 
-	if (status === 500) {
-		console.log(message);
-		try {
-			Sentry.captureException(text);
-		} catch(error) {
-			console.log(error);
-		}
+	// if (status === 500) {
+	// 	console.log(message);
+	// 	try {
+	// 		Sentry.captureException(text);
+	// 	} catch(error) {
+	// 		console.log(error);
+	// 	}
 
-		req.body.claim = {
-			name: text,
-			description: message,
-			listName: 'ERRORES 500'
-		};
+	// 	req.body.claim = {
+	// 		name: text,
+	// 		description: message,
+	// 		listName: 'ERRORES 500'
+	// 	};
 
-		if (req.headers.referer &&
-			!req.headers.referer.toString().includes("localhost")) {
-		}
+	// 	if (req.headers.referer &&
+	// 		!req.headers.referer.toString().includes("localhost")) {
+	// 	}
 
-		let fileName = rootFile + 'ERR-' + moment().format('DD-MM-YYYY') + '.txt';
+	// 	let fileName = rootFile + 'ERR-' + moment().format('DD-MM-YYYY') + '.txt';
 
-		fs.open(fileName, mode, function (err, fd) {
+	// 	fs.open(fileName, mode, function (err, fd) {
 
-			if (err) {
-				return console.log(err);
-			} else {
-				fs.write(fd, buffer, 0, buffer.length, null, function (err) {
-					if (err) {
-						return console.log(err);
-					} else {
-						fs.close(fd, function () {
-						});
-					}
-				});
-			}
-		});
-	}
+	// 		if (err) {
+	// 			return console.log(err);
+	// 		} else {
+	// 			fs.write(fd, buffer, 0, buffer.length, null, function (err) {
+	// 				if (err) {
+	// 					return console.log(err);
+	// 				} else {
+	// 					fs.close(fd, function () {
+	// 					});
+	// 				}
+	// 			});
+	// 		}
+	// 	});
+	// }
 }
 
 function read(req, res, next) {
