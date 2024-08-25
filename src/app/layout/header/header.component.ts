@@ -220,6 +220,12 @@ export class HeaderComponent {
 
                 });
                 break;
+
+            case 'documentation': 
+                window.open('https://docs.poscloud.ar', '_blank');
+                break;
+            case 'chat': 
+                break;
             default:
                 break;
         }
