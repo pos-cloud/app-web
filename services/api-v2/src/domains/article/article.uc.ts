@@ -474,7 +474,7 @@ export default class ArticleUC {
 			const taxObj = await this.getTax()
 
 			for (const item of data) {
-				const calculatedSalePrice = this.calculateSalePrice(item.column11, item.column13, item.column14);
+				const calculatedSalePrice = this.calculateSalePrice(item.column12, item.column14, item.column15);
 				if (item.column2 === '') {
 					return reject(new Responser(500, null, "En el archivo Excel, hay códigos de productos que están incompletos."))
 				}
@@ -488,31 +488,31 @@ export default class ArticleUC {
 							code: item.column2,
 							barcode: item.column13 === "" ? article.barcode : item.column13,
 							make: makesObj[item.column4] === undefined ? article.make : makesObj[item.column4]._id,
-							category: categoryObj[item.column5] === undefined ? article.category : categoryObj[item.column5]?._id,
-							description: item.column6 === "" ? article.description : item.column6,
-							posDescription: item.column7 === "" ? article.posDescription : item.column7.substring(0, 20),
-							unitOfMeasurement: unitOfMeasurementObj[item.column8] === "" ? article.unitOfMeasurement : unitOfMeasurementObj[item.column8]?._id,
-							printIn: printerObj[item.column9] === "" ? article.unitOfMeasurement : printerObj[item.column9]?.name,
-							observation: item.column10 === "" ? article.observation : item.column10,
+							category: categoryObj[item.column6] === undefined ? article.category : categoryObj[item.column6]?._id,
+							description: item.column7 === "" ? article.description : item.column7,
+							posDescription: item.column8 === "" ? article.posDescription : item.column8.substring(0, 20),
+							unitOfMeasurement: unitOfMeasurementObj[item.column9] === "" ? article.unitOfMeasurement : unitOfMeasurementObj[item.column9]?._id,
+							printIn: printerObj[item.column10] === "" ? article.unitOfMeasurement : printerObj[item.column10]?.name,
+							observation: item.column11 === "" ? article.observation : item.column11,
 							basePrice: calculatedSalePrice.basePrice2,
-							taxes: item.column12 === "" ? article.tax : {
-								tax: taxObj[item.column12]._id,
-								percentage: taxObj[item.column12].percentage
+							taxes: item.column13 === "" ? article.tax : {
+								tax: taxObj[item.column13]._id,
+								percentage: taxObj[item.column13].percentage
 							},
 							markupPercentage: calculatedSalePrice.markupPercentage2,
 							salePrice: calculatedSalePrice.salePrice2,
-							weight: item.column15 === "" ? article.weight : item.column15,
-							width: item.column16 === "" ? article.width : item.column16,
-							height: item.column17 === "" ? article.height : item.column17,
-							depth: item.column18 === "" ? article.depth : item.column18,
-							allowPurchase: item.column19 === 'Si',
-							allowSale: item.column20 === 'Si',
-							allowStock: item.column21 === 'Si',
-							allowSaleWithoutStock: item.column22 === 'Si',
-							isWeigth: item.column23 === 'Si',
-							allowMeasure: item.column24 === 'Si',
-							posKitchen: item.column25 === 'Si',
-							m3: item.column26 === "" ? item.m3 : item.column26,
+							weight: item.column16 === "" ? article.weight : item.column16,
+							width: item.column17 === "" ? article.width : item.column17,
+							height: item.column18 === "" ? article.height : item.column18,
+							depth: item.column19 === "" ? article.depth : item.column19,
+							allowPurchase: item.column20 === 'Si',
+							allowSale: item.column21 === 'Si',
+							allowStock: item.column22 === 'Si',
+							allowSaleWithoutStock: item.column23 === 'Si',
+							isWeigth: item.column24 === 'Si',
+							allowMeasure: item.column25 === 'Si',
+							posKitchen: item.column26 === 'Si',
+							m3: item.column27 === "" ? item.m3 : item.column27,
 						}
 					);
 
@@ -533,36 +533,36 @@ export default class ArticleUC {
 						code: item.column2,
 						barcode: item.column3,
 						make: makesObj[item.column4]?._id,
-						category: categoryObj[item.column5]?._id,
-						description: item.column6,
-						posDescription: item.column7.substring(0, 20),
-						unitOfMeasurement: unitOfMeasurementObj[item.column8]?._id,
-						printIn: printerObj[item.column9]?.name,
-						observation: item.column10,
+						category: categoryObj[item.column6]?._id,
+						description: item.column7,
+						posDescription: item.column8.substring(0, 20),
+						unitOfMeasurement: unitOfMeasurementObj[item.column9]?._id,
+						printIn: printerObj[item.column10]?.name,
+						observation: item.column11,
 						basePrice: calculatedSalePrice.basePrice2,
-						taxes: item.column12 === "" ?
+						taxes: item.column13 === "" ?
 							(taxObj[21] ? {
 								tax: taxObj[21]._id,
 								percentage: taxObj[21].percentage
 							} : []) :
-							(taxObj[item.column12] ? {
-								tax: taxObj[item.column12]._id,
-								percentage: taxObj[item.column12].percentage
+							(taxObj[item.column13] ? {
+								tax: taxObj[item.column13]._id,
+								percentage: taxObj[item.column13].percentage
 							} : []),
 						markupPercentage: calculatedSalePrice.markupPercentage2,
 						salePrice: calculatedSalePrice.salePrice2,
-						weight: item.column15,
-						width: item.column16,
-						height: item.column17,
-						depth: item.column18,
-						allowPurchase: item.column19 === 'Si',
-						allowSale: item.column20 === 'Si',
-						allowStock: item.column21 === 'Si',
-						allowSaleWithoutStock: item.column22 === 'Si',
-						isWeigth: item.column23 === 'Si',
-						allowMeasure: item.column24 === 'Si',
-						posKitchen: item.column25 === 'Si',
-						m3: item.column26,
+						weight: item.column16,
+						width: item.column17,
+						height: item.column18,
+						depth: item.column19,
+						allowPurchase: item.column20 === 'Si',
+						allowSale: item.column21 === 'Si',
+						allowStock: item.column22 === 'Si',
+						allowSaleWithoutStock: item.column23 === 'Si',
+						isWeigth: item.column24 === 'Si',
+						allowMeasure: item.column25 === 'Si',
+						posKitchen: item.column26 === 'Si',
+						m3: item.column27,
 					})
 					const result = await new ArticleController(this.database).save(newArticle);
 
@@ -1119,18 +1119,42 @@ export default class ArticleUC {
 				categoriesObj[item.description] = item;
 			}
 		});
-
 		for (const item of data) {
-			const description = item.column5
-			if (!categoriesObj[description]) {
-				if (description) {
-					let newCategory: Category = CategorySchema.getInstance(this.database)
-					newCategory = Object.assign(newCategory, {
-						description: description,
-					})
-					const result = await new CategoryController(this.database).save(newCategory);
-					categoriesObj[description] = newCategory;
-				}
+			const descriptionParent = item.column5;
+			const description = item.column6;
+
+			// Manejo de descriptionParent
+			if (descriptionParent && !categoriesObj[descriptionParent]) {
+				let newCategoryParent: Category = CategorySchema.getInstance(this.database);
+				newCategoryParent = Object.assign(newCategoryParent, {
+					description: descriptionParent,
+				});
+				await new CategoryController(this.database).save(newCategoryParent);
+				categoriesObj[descriptionParent] = newCategoryParent;
+			}
+
+			// Manejo de description
+			if (description && !categoriesObj[description]) {
+				let newCategory: Category = CategorySchema.getInstance(this.database);
+				newCategory = Object.assign(newCategory, {
+					description: description,
+				});
+				await new CategoryController(this.database).save(newCategory);
+				categoriesObj[description] = newCategory;
+			}
+		}
+		for (const item of data) {
+			const descriptionParent = item.column5;
+			const description = item.column6;
+
+			if (description && descriptionParent && categoriesObj[description]) {
+				// Actualizar la categoría existente con la referencia al parent
+				const updatedCategory = Object.assign(categoriesObj[description], {
+					parent: categoriesObj[descriptionParent]._id, // Asumiendo que `parentId` es el campo para la relación
+				});
+				console.log(updatedCategory)
+				await new CategoryController(this.database).update(updatedCategory._id, updatedCategory);
+				categoriesObj[description] = updatedCategory;
 			}
 		}
 		return 200
