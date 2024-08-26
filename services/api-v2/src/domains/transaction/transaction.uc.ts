@@ -644,237 +644,6 @@ export default class TransactionUC {
     })
   }
 
-  // validateElectronicTransaction = async (
-  //   transactionId: string,
-  //   canceledTransactions: {
-  //     typeId: string
-  //     code: number
-  //     origin: number
-  //     letter: string
-  //     number: number
-  //   },
-  // ): Promise<Transaction> => {
-  //   return new Promise<Transaction>(async (resolve, reject) => {
-  //     try {
-  //       const transactionController: TransactionController = new TransactionController(
-  //         this.database,
-  //       )
-
-  //       transactionController.initConnectionDB(this.database)
-
-  //       let result: Responseable
-
-  //       result = await transactionController.getAll({
-  //         project: {
-  //           _id: 1,
-  //           origin: 1,
-  //           letter: 1,
-  //           endDate: 1,
-  //           exempt: 1,
-  //           totalPrice: 1,
-  //           operationType: 1,
-  //           taxes: 1,
-  //           optionalAFIP: 1,
-  //           'company.identificationType.code': 1,
-  //           'company.identificationValue': 1,
-  //           'type._id': 1,
-  //           'type.electronics': 1,
-  //           'type.transactionMovement': 1,
-  //           'type.codes': 1,
-  //           'type.finishState': 1,
-  //         },
-  //         match: {_id: {$oid: transactionId}, operationType: {$ne: 'D'}},
-  //       })
-  //       if (result.result.length === 0)
-  //         throw new Error('No se encontro la transacción a validar')
-
-  //       let transaction: Transaction = result.result[0]
-
-  //       if (!transaction.type.electronics)
-  //         throw new Error(
-  //           'No se puede validar una transacción que no es de tipo electrónica',
-  //         )
-  //       if (transaction.type.transactionMovement != TransactionMovement.Sale)
-  //         throw new Error('No se puede validar una transacción que no es de tipo Venta')
-  //       if (transaction.CAE)
-  //         throw new Error('No se puede validar una transacción que ya tiene CAE')
-  //       try {
-  //         await this.validateLetter(transaction)
-  //       } catch (e) {
-  //         await this.assignLetter(transaction)
-  //         await this.validateLetter(transaction)
-  //       }
-
-  //       if (transaction.taxes && transaction.taxes.length > 0) {
-  //         for (let taxes of transaction.taxes) {
-  //           result = await new TaxController(this.database).getAll({
-  //             match: {
-  //               _id: {$oid: taxes.tax},
-  //               operationType: {$ne: 'D'},
-  //             },
-  //           })
-  //           taxes.tax = result.result[0]
-  //         }
-  //       }
-
-  //       if (!canceledTransactions) {
-  //         result = await new MovementOfCancellationController(this.database).getAll({
-  //           project: {
-  //             _id: 1,
-  //             'transactionOrigin._id': 1,
-  //             'transactionOrigin.origin': 1,
-  //             'transactionOrigin.letter': 1,
-  //             'transactionOrigin.number': 1,
-  //             'transactionOrigin.balance': 1,
-  //             'transactionOrigin.type._id': 1,
-  //             'transactionOrigin.type.movement': 1,
-  //             'transactionOrigin.type.codes': 1,
-  //             'transactionOrigin.type.transactionMovement': 1,
-  //             'transactionOrigin.type.electronics': 1,
-  //             transactionDestination: 1,
-  //             balance: 1,
-  //             operationType: 1,
-  //           },
-  //           match: {
-  //             transactionDestination: {$oid: transactionId},
-  //             operationType: {$ne: 'D'},
-  //           },
-  //         })
-  //         const movementsOfCancellations: MovementOfCancellation[] = result.result
-
-  //         if (movementsOfCancellations && movementsOfCancellations.length > 0) {
-  //           for (let movementOfCancellation of movementsOfCancellations) {
-  //             let code: number
-
-  //             if (
-  //               movementOfCancellation.transactionOrigin &&
-  //               movementOfCancellation.transactionOrigin.type &&
-  //               movementOfCancellation.transactionOrigin.type.codes &&
-  //               movementOfCancellation.transactionOrigin.type.electronics
-  //             ) {
-  //               for (let cod of movementOfCancellation.transactionOrigin.type.codes) {
-  //                 if (cod.letter === movementOfCancellation.transactionOrigin.letter) {
-  //                   code = cod.code
-  //                 }
-  //               }
-  //               if (code) {
-  //                 canceledTransactions = {
-  //                   typeId: movementOfCancellation.transactionOrigin.type._id,
-  //                   code,
-  //                   origin: movementOfCancellation.transactionOrigin.origin,
-  //                   letter: movementOfCancellation.transactionOrigin.letter,
-  //                   number: movementOfCancellation.transactionOrigin.number,
-  //                 }
-  //               }
-  //             }
-  //           }
-  //         }
-  //       }
-
-  //       result = await new ConfigController(this.database).getAll({
-  //         project: {
-  //           _id: 1,
-  //           companyIdentificationValue: 1,
-  //           operationType: 1,
-  //           'companyVatCondition.code': 1,
-  //         },
-  //         match: {
-  //           operationType: {$ne: 'D'},
-  //         },
-  //       })
-  //       const clientConfig: Config = result.result[0] || null
-
-  //       if (!clientConfig) throw new Error('No se encontro configuración del sistema')
-
-  //       const bodyConfig = {
-  //         companyIdentificationValue: clientConfig.companyIdentificationValue,
-  //         vatCondition: clientConfig.companyVatCondition.code,
-  //         database: this.database,
-  //       }
-  //       let body: string = `build=${
-  //         config.NODE_ENV === 'production' ? 'prod' : 'test'
-  //       }&transaction=${JSON.stringify(transaction)}&config=${JSON.stringify(bodyConfig)}`
-
-  //       if (canceledTransactions) {
-  //         body += `&canceledTransactions=${JSON.stringify({
-  //           Tipo: canceledTransactions.code,
-  //           PtoVta: canceledTransactions.origin,
-  //           Nro: canceledTransactions.number,
-  //         })}`
-  //       }
-
-  //       result = await new CancellationTypeController(this.database).getAll({
-  //         project: {
-  //           operationType: 1,
-  //           'destination._id': 1,
-  //           'destination.name': 1,
-  //           'origin._id': 1,
-  //           'origin.name': 1,
-  //         },
-  //         match: {
-  //           'destination._id': {$oid: transaction.type._id},
-  //           operationType: {$ne: 'D'},
-  //         },
-  //         sort: {order: 1},
-  //       })
-
-  //       const cancellationTypes: CancellationType[] = result.result
-
-  //       const newBody = {
-  //         config: bodyConfig,
-  //         transaction: transaction,
-  //         canceledTransactions: canceledTransactions
-  //       }
-
-  //       console.log(config.API_URL_FE_AR)
-
-  //       const { data } = await this.api.post(`${config.API_URL_FE_AR}/validate-transaction`, newBody);
-
-  //       if(!data.data || !data.data.CAE || !data.data.number || !data.data.CAEExpirationDate) {
-  //         throw new Error(data.data.message)
-  //       }
-
-  //       transaction.number = data.data.number
-  //       transaction.CAE = data.data.CAE
-  //       transaction.CAEExpirationDate = moment(
-  //         data.data.CAEExpirationDate,
-  //         'YYYYMMDD',
-  //       ).toDate()
-  //       const endStatus: TransactionState =
-  //         transaction.type.finishState || TransactionState.Closed
-
-  //       transaction.state = endStatus
-  //       if (canceledTransactions) {
-  //         let name: string
-
-  //         if (cancellationTypes && cancellationTypes.length > 0) {
-  //           for (let canc of cancellationTypes) {
-  //             if (canc.origin._id === canceledTransactions.typeId) {
-  //               name = canc.origin.name
-  //             }
-  //           }
-  //         }
-  //         if (name) {
-  //           transaction.observation += ` Corresponde a ${name} ${canceledTransactions.origin}-${canceledTransactions.letter}-${canceledTransactions.number}`
-  //         }
-  //       }
-  //       transaction.state = transaction.type.finishState || TransactionState.Closed
-
-  //       await this.transactionController.update(transaction._id, {
-  //         number: transaction.number,
-  //         CAE: transaction.CAE,
-  //         CAEExpirationDate: transaction.CAEExpirationDate,
-  //         observation: transaction.observation,
-  //         state: transaction.state,
-  //       })
-
-  //       resolve(transaction)
-  //     } catch (error) {
-  //       reject(error)
-  //     }
-  //   })
-  // }
-
   validateElectronicTransaction = async (
     transactionId: string,
     canceledTransactions: {
@@ -1048,43 +817,28 @@ export default class TransactionUC {
           },
           sort: {order: 1},
         })
+
         const cancellationTypes: CancellationType[] = result.result
-        const response: any = await this.api.post('http://vps-1883265-x.dattaweb.com/libs/fe/ar/index.php', body)
-        const data: any = JSON.parse(response.data.toString().trim())
 
-        let msn = ''
-
-        if (!data.CAE) {
-          if (data.status === 'err') {
-            if (data.code && data.code !== '') {
-              msn += data.code + ' - '
-            }
-            if (data.message && data.message !== '') {
-              msn += data.message + '. '
-            }
-            if (data.observationMessage && data.observationMessage !== '') {
-              msn += data.observationMessage + '. '
-            }
-            if (data.observationMessage2 && data.observationMessage2 !== '') {
-              msn += data.observationMessage2 + '. '
-            }
-            if (msn === '') {
-              msn =
-                'Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.'
-            }
-            throw new Error(msn)
-          } else if (data.message) {
-            throw new Error(data.message)
-          } else {
-            throw new Error(data)
-          }
+        const newBody = {
+          config: bodyConfig,
+          transaction: transaction,
+          canceledTransactions: canceledTransactions
         }
 
-        transaction.number = data.number
-        transaction.CAE = data.CAE
+        console.log(config.API_URL_FE_AR)
+
+        const { data } = await this.api.post(`${config.API_URL_FE_AR}/validate-transaction`, newBody);
+
+        if(!data.data || !data.data.CAE || !data.data.number || !data.data.CAEExpirationDate) {
+          throw new Error(data.data.message)
+        }
+
+        transaction.number = data.data.number
+        transaction.CAE = data.data.CAE
         transaction.CAEExpirationDate = moment(
-          data.CAEExpirationDate,
-          'DD/MM/YYYY HH:mm:ss',
+          data.data.CAEExpirationDate,
+          'YYYYMMDD',
         ).toDate()
         const endStatus: TransactionState =
           transaction.type.finishState || TransactionState.Closed
@@ -1116,29 +870,275 @@ export default class TransactionUC {
 
         resolve(transaction)
       } catch (error) {
-        if (error && error.response && error.response.data) {
-          if (error.response.data.message) {
-            reject(new Error(error.response.data.message))
-          } else {
-            if (error.response.data !== '') {
-              try {
-                const {message} = JSON.parse(error.response.data.toString().trim())
-
-                reject(new Error(message))
-              } catch (error) {
-                if (error.response.data) {
-                  reject(new Error(error.response.data.toString().trim()))
-                } else {
-                  reject(new Error(error.response.toString().trim()))
-                }
-              }
-            } else {
-            }
-          }
-        } else reject(error)
+        reject(error)
       }
     })
   }
+
+  // validateElectronicTransaction = async (
+  //   transactionId: string,
+  //   canceledTransactions: {
+  //     typeId: string
+  //     code: number
+  //     origin: number
+  //     letter: string
+  //     number: number
+  //   },
+  // ): Promise<Transaction> => {
+  //   return new Promise<Transaction>(async (resolve, reject) => {
+  //     try {
+  //       const transactionController: TransactionController = new TransactionController(
+  //         this.database,
+  //       )
+
+  //       transactionController.initConnectionDB(this.database)
+
+  //       let result: Responseable
+
+  //       result = await transactionController.getAll({
+  //         project: {
+  //           _id: 1,
+  //           origin: 1,
+  //           letter: 1,
+  //           endDate: 1,
+  //           exempt: 1,
+  //           totalPrice: 1,
+  //           operationType: 1,
+  //           taxes: 1,
+  //           optionalAFIP: 1,
+  //           'company.identificationType.code': 1,
+  //           'company.identificationValue': 1,
+  //           'type._id': 1,
+  //           'type.electronics': 1,
+  //           'type.transactionMovement': 1,
+  //           'type.codes': 1,
+  //           'type.finishState': 1,
+  //         },
+  //         match: {_id: {$oid: transactionId}, operationType: {$ne: 'D'}},
+  //       })
+  //       if (result.result.length === 0)
+  //         throw new Error('No se encontro la transacción a validar')
+
+  //       let transaction: Transaction = result.result[0]
+
+  //       if (!transaction.type.electronics)
+  //         throw new Error(
+  //           'No se puede validar una transacción que no es de tipo electrónica',
+  //         )
+  //       if (transaction.type.transactionMovement != TransactionMovement.Sale)
+  //         throw new Error('No se puede validar una transacción que no es de tipo Venta')
+  //       if (transaction.CAE)
+  //         throw new Error('No se puede validar una transacción que ya tiene CAE')
+  //       try {
+  //         await this.validateLetter(transaction)
+  //       } catch (e) {
+  //         await this.assignLetter(transaction)
+  //         await this.validateLetter(transaction)
+  //       }
+
+  //       if (transaction.taxes && transaction.taxes.length > 0) {
+  //         for (let taxes of transaction.taxes) {
+  //           result = await new TaxController(this.database).getAll({
+  //             match: {
+  //               _id: {$oid: taxes.tax},
+  //               operationType: {$ne: 'D'},
+  //             },
+  //           })
+  //           taxes.tax = result.result[0]
+  //         }
+  //       }
+
+  //       if (!canceledTransactions) {
+  //         result = await new MovementOfCancellationController(this.database).getAll({
+  //           project: {
+  //             _id: 1,
+  //             'transactionOrigin._id': 1,
+  //             'transactionOrigin.origin': 1,
+  //             'transactionOrigin.letter': 1,
+  //             'transactionOrigin.number': 1,
+  //             'transactionOrigin.balance': 1,
+  //             'transactionOrigin.type._id': 1,
+  //             'transactionOrigin.type.movement': 1,
+  //             'transactionOrigin.type.codes': 1,
+  //             'transactionOrigin.type.transactionMovement': 1,
+  //             'transactionOrigin.type.electronics': 1,
+  //             transactionDestination: 1,
+  //             balance: 1,
+  //             operationType: 1,
+  //           },
+  //           match: {
+  //             transactionDestination: {$oid: transactionId},
+  //             operationType: {$ne: 'D'},
+  //           },
+  //         })
+  //         const movementsOfCancellations: MovementOfCancellation[] = result.result
+
+  //         if (movementsOfCancellations && movementsOfCancellations.length > 0) {
+  //           for (let movementOfCancellation of movementsOfCancellations) {
+  //             let code: number
+
+  //             if (
+  //               movementOfCancellation.transactionOrigin &&
+  //               movementOfCancellation.transactionOrigin.type &&
+  //               movementOfCancellation.transactionOrigin.type.codes &&
+  //               movementOfCancellation.transactionOrigin.type.electronics
+  //             ) {
+  //               for (let cod of movementOfCancellation.transactionOrigin.type.codes) {
+  //                 if (cod.letter === movementOfCancellation.transactionOrigin.letter) {
+  //                   code = cod.code
+  //                 }
+  //               }
+  //               if (code) {
+  //                 canceledTransactions = {
+  //                   typeId: movementOfCancellation.transactionOrigin.type._id,
+  //                   code,
+  //                   origin: movementOfCancellation.transactionOrigin.origin,
+  //                   letter: movementOfCancellation.transactionOrigin.letter,
+  //                   number: movementOfCancellation.transactionOrigin.number,
+  //                 }
+  //               }
+  //             }
+  //           }
+  //         }
+  //       }
+
+  //       result = await new ConfigController(this.database).getAll({
+  //         project: {
+  //           _id: 1,
+  //           companyIdentificationValue: 1,
+  //           operationType: 1,
+  //           'companyVatCondition.code': 1,
+  //         },
+  //         match: {
+  //           operationType: {$ne: 'D'},
+  //         },
+  //       })
+  //       const clientConfig: Config = result.result[0] || null
+
+  //       if (!clientConfig) throw new Error('No se encontro configuración del sistema')
+
+  //       const bodyConfig = {
+  //         companyIdentificationValue: clientConfig.companyIdentificationValue,
+  //         vatCondition: clientConfig.companyVatCondition.code,
+  //         database: this.database,
+  //       }
+  //       let body: string = `build=${
+  //         config.NODE_ENV === 'production' ? 'prod' : 'test'
+  //       }&transaction=${JSON.stringify(transaction)}&config=${JSON.stringify(bodyConfig)}`
+
+  //       if (canceledTransactions) {
+  //         body += `&canceledTransactions=${JSON.stringify({
+  //           Tipo: canceledTransactions.code,
+  //           PtoVta: canceledTransactions.origin,
+  //           Nro: canceledTransactions.number,
+  //         })}`
+  //       }
+
+  //       result = await new CancellationTypeController(this.database).getAll({
+  //         project: {
+  //           operationType: 1,
+  //           'destination._id': 1,
+  //           'destination.name': 1,
+  //           'origin._id': 1,
+  //           'origin.name': 1,
+  //         },
+  //         match: {
+  //           'destination._id': {$oid: transaction.type._id},
+  //           operationType: {$ne: 'D'},
+  //         },
+  //         sort: {order: 1},
+  //       })
+  //       const cancellationTypes: CancellationType[] = result.result
+  //       const response: any = await this.api.post('http://vps-1883265-x.dattaweb.com/libs/fe/ar/index.php', body)
+  //       const data: any = JSON.parse(response.data.toString().trim())
+
+  //       let msn = ''
+
+  //       if (!data.CAE) {
+  //         if (data.status === 'err') {
+  //           if (data.code && data.code !== '') {
+  //             msn += data.code + ' - '
+  //           }
+  //           if (data.message && data.message !== '') {
+  //             msn += data.message + '. '
+  //           }
+  //           if (data.observationMessage && data.observationMessage !== '') {
+  //             msn += data.observationMessage + '. '
+  //           }
+  //           if (data.observationMessage2 && data.observationMessage2 !== '') {
+  //             msn += data.observationMessage2 + '. '
+  //           }
+  //           if (msn === '') {
+  //             msn =
+  //               'Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.'
+  //           }
+  //           throw new Error(msn)
+  //         } else if (data.message) {
+  //           throw new Error(data.message)
+  //         } else {
+  //           throw new Error(data)
+  //         }
+  //       }
+
+  //       transaction.number = data.number
+  //       transaction.CAE = data.CAE
+  //       transaction.CAEExpirationDate = moment(
+  //         data.CAEExpirationDate,
+  //         'DD/MM/YYYY HH:mm:ss',
+  //       ).toDate()
+  //       const endStatus: TransactionState =
+  //         transaction.type.finishState || TransactionState.Closed
+
+  //       transaction.state = endStatus
+  //       if (canceledTransactions) {
+  //         let name: string
+
+  //         if (cancellationTypes && cancellationTypes.length > 0) {
+  //           for (let canc of cancellationTypes) {
+  //             if (canc.origin._id === canceledTransactions.typeId) {
+  //               name = canc.origin.name
+  //             }
+  //           }
+  //         }
+  //         if (name) {
+  //           transaction.observation += ` Corresponde a ${name} ${canceledTransactions.origin}-${canceledTransactions.letter}-${canceledTransactions.number}`
+  //         }
+  //       }
+  //       transaction.state = transaction.type.finishState || TransactionState.Closed
+
+  //       await this.transactionController.update(transaction._id, {
+  //         number: transaction.number,
+  //         CAE: transaction.CAE,
+  //         CAEExpirationDate: transaction.CAEExpirationDate,
+  //         observation: transaction.observation,
+  //         state: transaction.state,
+  //       })
+
+  //       resolve(transaction)
+  //     } catch (error) {
+  //       if (error && error.response && error.response.data) {
+  //         if (error.response.data.message) {
+  //           reject(new Error(error.response.data.message))
+  //         } else {
+  //           if (error.response.data !== '') {
+  //             try {
+  //               const {message} = JSON.parse(error.response.data.toString().trim())
+
+  //               reject(new Error(message))
+  //             } catch (error) {
+  //               if (error.response.data) {
+  //                 reject(new Error(error.response.data.toString().trim()))
+  //               } else {
+  //                 reject(new Error(error.response.toString().trim()))
+  //               }
+  //             }
+  //           } else {
+  //           }
+  //         }
+  //       } else reject(error)
+  //     }
+  //   })
+  // }
 
   validateTransaction = async (transaction: Transaction): Promise<Transaction> => {
     return new Promise<Transaction>(async (resolve, reject) => {
