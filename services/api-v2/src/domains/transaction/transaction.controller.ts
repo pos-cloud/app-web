@@ -170,7 +170,7 @@ export default class TransactionController extends Controller {
       response.send(new Responser(200, transaction))
     } catch (error) {
       next(
-        new HttpException(new Responser(error.status || 500, null, error.message, error)),
+        new HttpException(new Responser(500, null, error.message, error)),
       )
     }
   }
@@ -195,6 +195,7 @@ export default class TransactionController extends Controller {
 
       response.send(new Responser(200, result))
     } catch (error) {
+      console.log(error)
       next(
         new HttpException(new Responser(error.status || 500, null, error.message, error)),
       )

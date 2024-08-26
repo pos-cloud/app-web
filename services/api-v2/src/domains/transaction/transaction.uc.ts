@@ -826,12 +826,10 @@ export default class TransactionUC {
           canceledTransactions: canceledTransactions
         }
 
-        console.log(config.API_URL_FE_AR)
-
         const { data } = await this.api.post(`${config.API_URL_FE_AR}/validate-transaction`, newBody);
 
         if(!data.data || !data.data.CAE || !data.data.number || !data.data.CAEExpirationDate) {
-          throw new Error(data.data.message)
+          reject(data)
         }
 
         transaction.number = data.data.number
