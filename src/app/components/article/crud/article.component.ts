@@ -1,7 +1,7 @@
 // Angular
 import { DecimalPipe } from '@angular/common';
 import { SlicePipe } from '@angular/common';
-import { Component, OnInit, EventEmitter, Input, Output, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, EventEmitter, ViewEncapsulation, ViewChild } from '@angular/core';
 import {
   UntypedFormGroup,
   UntypedFormBuilder,
@@ -15,7 +15,7 @@ import {
 import { Router } from '@angular/router';
 
 // Terceros
-import { NgbAlertConfig, NgbActiveModal, NgbModal, NgbTypeaheadConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbTypeaheadConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as $ from 'jquery';
 
 // Models
@@ -24,13 +24,12 @@ import { Subscription, Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, tap, switchMap, map } from 'rxjs/operators';
 
 import { Config } from '../../../app.config'
-import { RoundNumberPipe } from '../../../main/pipes/round-number.pipe';
-import { ArticleFieldType, ArticleField } from '../../article-field/article-field';
+import { RoundNumberPipe } from '../../../main/pipes/round-number.pipe'
 import { ArticleStock } from '../../article-stock/article-stock';
 import { ArticleStockService } from '../../article-stock/article-stock.service';
 import { Category } from '../../category/category';
 import { CategoryService } from '../../category/category.service';
-import { Company, CompanyType } from '../../company/company';
+import { Company } from '../../company/company';
 import { Make } from '../../make/make';
 import { MakeService } from '../../make/make.service';
 import { Taxes } from '../../tax/taxes';
@@ -41,11 +40,10 @@ import { ArticleService } from '../article.service';
 
 import { Account } from '../../account/account';
 import { AccountService } from '../../account/account.service';
-import { Application, ApplicationType } from '../../application/application.model';
+import { Application } from '../../application/application.model';
 import { ApplicationService } from '../../application/application.service';
 import { Classification } from '../../classification/classification';
 import { ClassificationService } from '../../classification/classification.service';
-import { CompanyService } from '../../company/company.service';
 import { ConfigService } from '../../config/config.service';
 import { Currency } from '../../currency/currency';
 
@@ -74,7 +72,7 @@ import { User } from 'app/components/user/user';
   selector: 'app-article',
   templateUrl: './article.component.html',
   styleUrls: ['./article.component.scss'],
-  providers: [NgbAlertConfig, DecimalPipe, ApplicationService, TranslateMePipe, NgbTypeaheadConfig],
+  providers: [ DecimalPipe, ApplicationService, TranslateMePipe, NgbTypeaheadConfig],
   encapsulation: ViewEncapsulation.None,
 })
 export class ArticleComponent implements OnInit {
@@ -324,7 +322,6 @@ export class ArticleComponent implements OnInit {
     public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
     public _fileService: FileService,
     public _variantTypeService: VariantTypeService,
     public _variantValueService: VariantValueService,
@@ -350,13 +347,13 @@ export class ArticleComponent implements OnInit {
     const pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.operation = pathLocation[3]
-    if (pathLocation[2] === 'article' || pathLocation[2] === 'articles') {
+    if (pathLocation[2] === 'articles') {
       this.articleType = 'Producto';
       this.readonly = false
 
       if (pathLocation[3] === 'view') this.readonly = true
       if (pathLocation[3] === 'add') this.getVariantTypes()
-    } else if (pathLocation[2] === 'variant') {
+    } else if (pathLocation[2] === 'variants') {
       this.readonly = true
       this.articleType = 'Variante';
     }
@@ -631,6 +628,12 @@ export class ArticleComponent implements OnInit {
             this.article.posDescription = '';
             this.article.url = '';
             this.article.wooId = '';
+            this.article.tiendaNubeId = '';
+            this.article.creationDate = '';
+            this.article.creationUser = null
+            this.article.updateDate = '';
+            this.article.updateUser = null
+
           }
           this.creationUser = this.users.find((user: User) => user._id === (typeof this.article.creationUser === 'string' ? this.article.creationUser : (typeof this.article.creationUser !== 'undefined' ? this.article.creationUser._id : '')))
           this.updateUser =   this.users.find((user: User) => user._id === (typeof this.article.updateUser === 'string' ? this.article.updateUser : (typeof this.article.updateUser !== 'undefined' ? this.article.updateUser._id : '')))
@@ -1601,9 +1604,9 @@ export class ArticleComponent implements OnInit {
       this.article.applications = selectedOrderIds;
 
       const pathLocation: string[] = this._router.url.split('/');
-      if (pathLocation[2] === 'article') {
+      if (pathLocation[2] === 'articles') {
         this.article.type = Type.Final;
-      } else if (pathLocation[2] === 'variant') {
+      } else if (pathLocation[2] === 'variants') {
         this.article.type = Type.Variant;
       }
       // else if (pathLocation[2] === 'ingredientes') {
@@ -1696,7 +1699,7 @@ export class ArticleComponent implements OnInit {
             this.articleForm.patchValue({ wooId: this.article.wooId });
             this._articleService.setItems(null);
             this.showToast(null, 'success', 'Operación realizada con éxito');
-            if (this.pathUrl[2] === "article") {
+            if (this.pathUrl[2] === "articles") {
               this._router.navigate(['/admin/articles']);
             } else {
               this._router.navigate(['/admin/variants']);
@@ -1718,7 +1721,7 @@ export class ArticleComponent implements OnInit {
       (result: Resulteable) => {
         if (result.status == 200) {
           this.showToast(null, 'success', 'El producto se ha eliminado con éxito.');
-          if (this.pathUrl[2] === "article") {
+          if (this.pathUrl[2] === "articles") {
             this._router.navigate(['/admin/articles']);
           } else {
             this._router.navigate(['/admin/variants']);

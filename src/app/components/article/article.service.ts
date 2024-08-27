@@ -1,7 +1,6 @@
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Config } from "app/app.config";
-import { Variant } from "app/components/variant/variant";
 import { environment } from "environments/environment";
 import { of } from "rxjs";
 import { Observable } from "rxjs/Observable";
@@ -259,7 +258,6 @@ export class ArticleService extends ModelService {
       formData.append('origin', origin)
 
       xhr.onreadystatechange = function () {
-        console.log(xhr);
         if (xhr.readyState == 4) {
           if (xhr.status == 201) {
             resolve(xhr.response);

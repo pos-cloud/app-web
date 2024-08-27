@@ -25,67 +25,62 @@ const routes: Routes = [
   {
     path: 'admin/articles',
     component: ListArticlesComponent,
-    canActivate: [AuthGuard]
-  },
-  {
-    path: 'admin/article/:id',
-    component: ListArticlesComponent,
     canActivate: [AuthGuard, LicenseGuard]
   },
   {
     path: 'admin/articles/add',
     component: ArticleComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard, LicenseGuard]
   },
   {
-    path: 'admin/article/view/:id',
+    path: 'admin/articles/view/:id',
     component: ArticleComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard, LicenseGuard]
   },
   {
-    path: 'admin/article/update/:id',
+    path: 'admin/articles/update/:id',
     component: ArticleComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard, LicenseGuard]
   }, 
    {
-    path: 'admin/article/copy/:id',
+    path: 'admin/articles/copy/:id',
     component: ArticleComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard, LicenseGuard]
   },
   {
-    path: 'admin/article/history/:id',
+    path: 'admin/articles/history/:id',
     component: HistoryComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard, LicenseGuard]
   },
   {
-    path: 'admin/article/delete/:id',
+    path: 'admin/articles/delete/:id',
     component: ArticleComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard, LicenseGuard]
   },
   {
     path: 'admin/variants',
     component: ListArticlesComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard, LicenseGuard]
   },
   {
-    path: 'admin/variant/view/:id',
+    path: 'admin/variants/view/:id',
     component: ArticleComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard, LicenseGuard]
   },
   {
-    path: 'admin/variant/update/:id',
+    path: 'admin/variants/update/:id',
     component: ArticleComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard, LicenseGuard]
   },
   {
-    path: 'admin/variant/delete/:id',
+    path: 'admin/variants/delete/:id',
     component: ArticleComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard, LicenseGuard]
   },
   {
-    path: 'admin/variant/history/:id',
+    path: 'admin/variants/history/:id',
     component: HistoryComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard, LicenseGuard]
   }
 ];
 

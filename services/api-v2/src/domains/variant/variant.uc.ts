@@ -136,7 +136,7 @@ export default class VariantUC extends Controller {
             if (!articleResponse.result) {
                 throw new Error(`No se encontró el artículo padre con ID ${articleParentId}`);
             }
-            const article = articleResponse.result;
+            const article = articleResponse.result.toObject();
 
             // Obtener detalles completos de los tipos y valores si solo se pasan los IDs
             const completeVariants = await this.getAllVariants(variants, variantTypeController, variantValueController);
@@ -164,8 +164,8 @@ export default class VariantUC extends Controller {
         }
     }
 
-    getAllVariants = async (variants: any, variantTypeController: any, variantValueController: any) => {
-        return await Promise.all(variants.map(async (variant: any) => {
+    getAllVariants = async (variants: Variant[], variantTypeController: any, variantValueController: any) => {
+        return await Promise.all(variants.map(async (variant: Variant) => {
             if (typeof variant.type === 'string' || typeof variant.value === 'string') {
                 const typeResponse = await variantTypeController.getById(variant.type);
                 const valueResponse = await variantValueController.getById(variant.value);
@@ -206,7 +206,7 @@ export default class VariantUC extends Controller {
         return combinations;
     }
 
-    getExistingChildren = async (articleParentId: any, articleController: any, variantController: any) => {
+    getExistingChildren = async (articleParentId: string, articleController: any, variantController: any) => {
         try {
             const existingVariantsResponse = await variantController.getAll({
                 project: { articleParent: 1, articleChild: 1 },
@@ -242,11 +242,10 @@ export default class VariantUC extends Controller {
         }
     }
 
-    createOrUpdateChildren = async (combinations: any, article: any, completeVariants: any, articleParentId: any, articleController: any, variantController: any, existingChildren: any, articleOld: Article) => {
+    createOrUpdateChildren = async (combinations: any, article: Article, completeVariants: any, articleParentId: string, articleController: any, variantController: any, existingChildren: any, articleOld: Article) => {
         try {
             let results = [];
             let updatedChildrens = [];
-
             // Actualizar las descripciones de los artículos hijos si la descripción del artículo padre cambió
             if (article.description !== articleOld.description) {
                 for (let articleChild of existingChildren) {
@@ -263,6 +262,7 @@ export default class VariantUC extends Controller {
 
                 if (article.type === 'Variante') {
                     description = article.description;
+                  //  console.log(description, updatedChildrens.find((child: any) => child.description))
                     existingChild = updatedChildrens.find((child: any) => child.description === article.description);
                 } else {
                     description = `${article.description} ${combination.join(' / ')}`;
@@ -272,15 +272,16 @@ export default class VariantUC extends Controller {
                 if (existingChild) {
 
                     if (article.updateVariants) {
-                        let updatedChild = { ...article._doc, description: description, type: 'Variante', picture: existingChild.picture, pictures: existingChild.pictures, tiendaNubeId: existingChild.tiendaNubeId};
+                        let updatedChild = { ...article, description: description, type: 'Variante', picture: existingChild.picture, pictures: existingChild.pictures, tiendaNubeId: existingChild.tiendaNubeId};
                         results.push(await articleController.update(existingChild._id, updatedChild));
                     } else {
                         let updatedChild = { description: description, type: 'Variante' };
                         results.push(await articleController.update(existingChild._id, updatedChild));
                     }
                 } else {
+            
                     // Crear un nuevo artículo hijo
-                    let child = { ...article._doc, description: description, type: 'Variante' };
+                    let child = { ...article, description: description, type: 'Variante' };
                     delete child._id;
                     let newArticle = await articleController.save(new articleController.model(child));
 
@@ -318,7 +319,7 @@ export default class VariantUC extends Controller {
         }
     };
 
-    deleteInvalidChildren = async (combinations: any, existingChildren: any, article: any, articleController: any, articleOld: Article) => {
+    deleteInvalidChildren = async (combinations: any, existingChildren: any, article: Article, articleController: any, articleOld: Article) => {
         try {
             let updatedChildrens = []
             if (article.description !== articleOld.description) {

@@ -1,8 +1,10 @@
 <section class="container-fluid">
     <div class="card">
         <div class="card-header">
-            <span style="color: #607D8B" *ngIf="operation==='add' || operation==='copy'">{{'add-product' | translate | capitalize}}</span>
-            <span style="color: #607D8B" *ngIf="operation==='update'">{{'edit' | translate | capitalize}} {{ articleType }} {{article.code}} -
+            <span style="color: #607D8B" *ngIf="operation==='add' || operation==='copy'">{{'add-product' | translate |
+                capitalize}}</span>
+            <span style="color: #607D8B" *ngIf="operation==='update'">{{'edit' | translate | capitalize}} {{ articleType
+                }} {{article.code}} -
                 {{article.description}}</span>
             <span style="color: #607D8B" *ngIf="operation==='view' || operation==='delete'">{{ articleType }}
                 {{article.code}} -
@@ -24,7 +26,7 @@
                 </button>
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body scroll">
             <form [formGroup]="articleForm" autocomplete="off">
                 <div class="row">
                     <label class="form-group col-md-12">
@@ -151,8 +153,10 @@
                     <div class="form-group col-md-4">
                         <label for="favourite" class="control-label">{{'favourite' | translate | capitalize}}:</label>
                         <select class="form-control" formControlName="favourite">
-                            <option [ngValue]="true" [disabled]="readonly">Si</option>
-                            <option [ngValue]="false" [disabled]="readonly">No</option>
+                            <option [ngValue]="true" [disabled]="readonly">{{'true' | translate |
+                                capitalize}}</option>
+                            <option [ngValue]="false" [disabled]="readonly">{{'false' | translate |
+                                capitalize}}</option>
                         </select>
                     </div>
                 </div>
@@ -437,8 +441,10 @@
                             {{ applications[i].name }}
                         </label>
                         <select class="form-control" [formControl]="appControl" (change)="onAppChange($event, i)">
-                            <option [value]="true" [disabled]="readonly">Sí</option>
-                            <option [value]="false" [disabled]="readonly">No</option>
+                            <option [value]="true" [disabled]="readonly">{{'true' | translate |
+                                capitalize}}</option>
+                            <option [value]="false" [disabled]="readonly">{{'false' | translate |
+                                capitalize}}</option>
                         </select>
                     </div>
                 </div>
@@ -448,8 +454,10 @@
                         <label for="forShipping" class="control-label">{{'forShipping' | translate |
                             capitalize}}</label>
                         <select class="form-control" formControlName="forShipping">
-                            <option [ngValue]="true" [disabled]="readonly">Si</option>
-                            <option [ngValue]="false" [disabled]="readonly">No</option>
+                            <option [ngValue]="true" [disabled]="readonly">{{'true' | translate |
+                                capitalize}}</option>
+                            <option [ngValue]="false" [disabled]="readonly">{{'false' | translate |
+                                capitalize}}</option>
                         </select>
                     </div>
                 </div>
@@ -517,16 +525,13 @@
                                     <label for="sel">{{'add-img' | translate | capitalize}}:</label>
                                     <div class="custom-file">
                                         <label class="custom-file-label btn btn-action"
-                                            for="customFileLang">{{fileNameArray ? fileNameArray : 'Buscar
-                                            Imagen'}}</label>
-                                        <input type="file" [disabled]="operation !=='view'" class="custom-file-input"
-                                            language="es" accept="image/*" id="customFileLang"
-                                            (change)="fileChangeEvent($event,true)" />
+                                            for="customFileLang">{{fileNameArray?fileNameArray:'Buscar Imagen'}}</label>
+                                        <input type="file" class="custom-file-input" language="es" accept="image/*"
+                                            id="customFileLang" (change)="fileChangeEvent($event,true)" />
                                     </div>
                                 </div>
-                                <div class="form-group col-md-2 d-flex align-items-end">
-                                    <button [disabled]="operation !=='view'" type="submit"
-                                        class="btn btn-success btn-sm especial">
+                                <div class="form-group col-md-2">
+                                    <button type="summit"  [disabled]="operation ==='view'" class="btn btn-success btn-sm especial">
                                         <i class="fa fa-plus"></i>
                                     </button>
                                 </div>
@@ -585,24 +590,30 @@
                                 <label for="allowPurchase" class="control-label">{{'allowPurchase' | translate |
                                     capitalize}}</label>
                                 <select class="form-control" formControlName="allowPurchase">
-                                    <option [value]="true" [disabled]="readonly">Si</option>
-                                    <option [value]="false" [disabled]="readonly">No</option>
+                                    <option [value]="true" [disabled]="readonly">{{'true' | translate |
+                                        capitalize}}</option>
+                                    <option [value]="false" [disabled]="readonly">{{'false' | translate |
+                                        capitalize}}</option>
                                 </select>
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="allowSale" class="control-label">{{'allowSale' | translate |
                                     capitalize}}</label>
                                 <select class="form-control" formControlName="allowSale">
-                                    <option [value]="true" [disabled]="readonly">Si</option>
-                                    <option [value]="false" [disabled]="readonly">No</option>
+                                    <option [value]="true" [disabled]="readonly">{{'true' | translate |
+                                        capitalize}}</option>
+                                    <option [value]="false" [disabled]="readonly">{{'false' | translate |
+                                        capitalize}}</option>
                                 </select>
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="allowStock" class="control-label">{{'allowStock' | translate |
                                     capitalize}}</label>
                                 <select class="form-control" formControlName="allowStock">
-                                    <option [value]="true" [disabled]="readonly">Si</option>
-                                    <option [value]="false" [disabled]="readonly">No</option>
+                                    <option [value]="true" [disabled]="readonly">{{'true' | translate |
+                                        capitalize}}</option>
+                                    <option [value]="false" [disabled]="readonly">{{'false' | translate |
+                                        capitalize}}</option>
                                 </select>
                             </div>
                         </div>
@@ -611,24 +622,30 @@
                                 <label for="allowSaleWithoutStock" class="control-label">{{'allowSaleWithoutStock' |
                                     translate | capitalize}}</label>
                                 <select class="form-control" formControlName="allowSaleWithoutStock">
-                                    <option [value]="true" [disabled]="readonly">Si</option>
-                                    <option [value]="false" [disabled]="readonly">No</option>
+                                    <option [value]="true" [disabled]="readonly">{{'true' | translate |
+                                        capitalize}}</option>
+                                    <option [value]="false" [disabled]="readonly">{{'false' | translate |
+                                        capitalize}}</option>
                                 </select>
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="isWeigth" class="control-label">{{'isWeigth' | translate |
                                     capitalize}}</label>
                                 <select class="form-control" formControlName="isWeigth">
-                                    <option [value]="true" [disabled]="readonly">Si</option>
-                                    <option [value]="false" [disabled]="readonly">No</option>
+                                    <option [value]="true" [disabled]="readonly">{{'true' | translate |
+                                        capitalize}}</option>
+                                    <option [value]="false" [disabled]="readonly">{{'false' | translate |
+                                        capitalize}}</option>
                                 </select>
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="allowMeasure" class="control-label">{{'allowMeasure' | translate |
                                     capitalize}}</label>
                                 <select class="form-control" formControlName="allowMeasure">
-                                    <option [value]="true" [disabled]="readonly">Si</option>
-                                    <option [value]="false" [disabled]="readonly">No</option>
+                                    <option [value]="true" [disabled]="readonly">{{'true' | translate |
+                                        capitalize}}</option>
+                                    <option [value]="false" [disabled]="readonly">{{'false' | translate |
+                                        capitalize}}</option>
                                 </select>
                             </div>
                         </div>
@@ -637,8 +654,10 @@
                                 <label for="posKitchen" class="control-label">{{'posKitchen' | translate |
                                     capitalize}}</label>
                                 <select class="form-control" formControlName="posKitchen">
-                                    <option [value]="true" [disabled]="readonly">Si</option>
-                                    <option [value]="false" [disabled]="readonly">No</option>
+                                    <option [value]="true" [disabled]="readonly">{{'true' | translate |
+                                        capitalize}}</option>
+                                    <option [value]="false" [disabled]="readonly">{{'false' | translate |
+                                        capitalize}}</option>
                                 </select>
                             </div>
                             <div class="form-group col-md-4">
@@ -694,8 +713,10 @@
                                 <label for="updateVariants" class="control-label">{{'updateVariants' | translate |
                                     capitalize}}</label>
                                 <select class="form-control" formControlName="updateVariants">
-                                    <option [value]="true" [disabled]="readonly">Si</option>
-                                    <option [value]="false" [disabled]="readonly">No</option>
+                                    <option [value]="true" [disabled]="readonly">{{'true' | translate |
+                                        capitalize}}</option>
+                                    <option [value]="false" [disabled]="readonly">{{'false' | translate |
+                                        capitalize}}</option>
                                 </select>
                             </div>
                         </div>
