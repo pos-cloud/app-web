@@ -513,6 +513,7 @@ export default class ArticleUC {
 							allowMeasure: item.column25 === 'Si',
 							posKitchen: item.column26 === 'Si',
 							m3: item.column27 === "" ? item.m3 : item.column27,
+							codeProvider:  item.column27 === "" ? item.codeProvider : item.column28
 						}
 					);
 
@@ -563,6 +564,7 @@ export default class ArticleUC {
 						allowMeasure: item.column25 === 'Si',
 						posKitchen: item.column26 === 'Si',
 						m3: item.column27,
+						codeProvider: item.column28
 					})
 					const result = await new ArticleController(this.database).save(newArticle);
 
@@ -1152,7 +1154,6 @@ export default class ArticleUC {
 				const updatedCategory = Object.assign(categoriesObj[description], {
 					parent: categoriesObj[descriptionParent]._id, // Asumiendo que `parentId` es el campo para la relación
 				});
-				console.log(updatedCategory)
 				await new CategoryController(this.database).update(updatedCategory._id, updatedCategory);
 				categoriesObj[description] = updatedCategory;
 			}
