@@ -1567,7 +1567,7 @@ export class ArticleComponent implements OnInit {
       //this.loadURL();
       const description = this.articleForm.get('description')?.value;
 
-      const alphanumericPattern = /^[a-zA-Z0-9\s\/áéíóúÁÉÍÓÚñÑ]+$/;
+      const alphanumericPattern = /^[a-zA-Z0-9\s\/áéíóúÁÉÍÓÚñÑ-]+$/;
       if (!alphanumericPattern.test(description)) {
         return this.showToast({ message: 'La descripción solo puede contener letras y números.' });
 

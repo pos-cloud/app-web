@@ -46,8 +46,11 @@
                                 <label for="code" class="control-label">{{'article.code' | translate |
                                     capitalize}}:</label>
                                 <input type="text" class="form-control" formControlName="code" name="code" id="code"
-                                    [focus]="focusEvent" [readonly]="readonly" />
-                                <div *ngIf="formErrors.code" class="alert alert-danger">{{ formErrors.code }}</div>
+                                    [focus]="focusEvent"    
+                                    [ngClass]="{'is-invalid':!articleForm.get('code')?.valid && formErrors.code}"
+                                    [readonly]="readonly" />
+                                    <div class="invalid-feedback" [style.display]="(formErrors.code)? 'block': 'none'">
+                                        {{ formErrors.code }}</div>
                             </div>
                             <div class="form-group col-md-5">
                                 <label for="barcode" class="control-label">{{'article.barcode' | translate |
