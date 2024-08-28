@@ -5,31 +5,25 @@ import * as moment from 'moment'
 import * as multer from 'multer'
 import * as xlsx from 'xlsx';
 
-import CategoryController from '../../domains/category/category.controller'
-import Category from '../../domains/category/category.interface'
-import categoryModel from '../../domains/category/category.model'
-import CompanyController from '../../domains/company/company.controller'
-import MakeController from '../../domains/make/make.controller'
-import Make from '../../domains/make/make.interface'
-import makeModel from '../../domains/make/make.model'
-import TaxController from '../../domains/tax/tax.controller'
-import UnitOfMeasurementController from '../../domains/unit-of-measurement/unit-of-measurement.controller'
-import User from '../../domains/user/user.interface'
-import userModel from '../../domains/user/user.model'
 import Controller from '../model/model.controller'
 
 import HttpException from './../../exceptions/HttpException'
 import RequestWithUser from './../../interfaces/requestWithUser.interface'
-import Responseable from './../../interfaces/responsable.interface'
 import authMiddleware from './../../middleware/auth.middleware'
 import ensureLic from './../../middleware/license.middleware'
 import validationMiddleware from './../../middleware/validation.middleware'
 import Responser from './../../utils/responser'
 import ObjDto from './article.dto'
-import Article from './article.interface'
+import Article, { Type } from './article.interface'
 import ObjSchema from './article.model'
 import ArticleUC from './article.uc'
 import axios from 'axios';
+import VariantUC from '../variant/variant.uc';
+import Application, { ApplicationType } from '../application/application.interface';
+import TiendaNubeController from '../uc/tienda-nube';
+import config from '../../utils/config'
+import VariantController from '../variant/variant.controller';
+import Variant from '../variant/variant.interface';
 
 export default class ArticleController extends Controller {
   public EJSON: any = require('bson').EJSON
@@ -46,19 +40,21 @@ export default class ArticleController extends Controller {
   private initializeRoutes() {
     let upload = multer({ storage: this.getStorage() })
 
-    this.router      
+    this.router
       .get(this.path, [authMiddleware, ensureLic], this.getAllObjs)
-      .get(`${this.path}/articles-tiendanube`, [authMiddleware, ensureLic], this.importTiendaNube) 
+      .get(`${this.path}/find`, [authMiddleware, ensureLic], this.getFindObj)
+      .get(`${this.path}/articles-tiendanube`, [authMiddleware, ensureLic], this.importTiendaNube)
+      .get(`${this.path}/last-code`, [authMiddleware, ensureLic], this.getLastCode)
       .get(`${this.path}/:id`, [authMiddleware, ensureLic], this.getObjById)
       .post(
         this.path,
         [authMiddleware, ensureLic, validationMiddleware(ObjDto)],
-        this.saveObj,
+        this.saveArticleObj,
       )
       .put(
         `${this.path}/:id`,
         [authMiddleware, ensureLic, validationMiddleware(ObjDto)],
-        this.updateObj,
+        this.updateArticleObj,
       )
       .delete(`${this.path}/:id`, [authMiddleware, ensureLic], this.deleteArticle)
       .post(
@@ -228,10 +224,23 @@ export default class ArticleController extends Controller {
       this.initConnectionDB(request.database)
       this.userAudit = request.user
       const id = request.params.id
+      const article = await this.getById(id)
+      if (!article.result) {
+        response.send(new Responser(404, null, 'No se encontro el artículo'))
+      }
+      if (article.result.variants) {
+        let variant = await new VariantController(this.database).find({ articleParent: id }, {})
+        const articleChildIds = variant.map((variant: any) => ({ $oid: variant.articleChild }));
 
-      await new ArticleUC(request.database, request.headers.authorization).deleteArticle(id)
+        await this.deleteMany({ _id: { $in: articleChildIds } })
+        await new VariantController(this.database).deleteMany({ articleParent: { $oid: id } })
+        await new ArticleUC(request.database, request.headers.authorization).deleteArticle(id)
+        return response.send(new Responser(200, null, 'Se eliminó el artículo correctamente'))
 
-      response.send(new Responser(200))
+      } else {
+        await new ArticleUC(request.database, request.headers.authorization).deleteArticle(id)
+        return response.send(new Responser(200, null, 'Se eliminó el artículo correctamente'))
+      }
     } catch (error) {
       next(
         new HttpException(new Responser(error.status || 500, null, error.message, error)),
@@ -280,7 +289,7 @@ export default class ArticleController extends Controller {
 
       const res = await new ArticleUC(request.database).importFromExcel(data)
 
-       response.send(new Responser(200, res))
+      response.send(new Responser(200, res))
     } catch (error) {
       console.log(error)
       next(
@@ -313,30 +322,132 @@ export default class ArticleController extends Controller {
     }
   }
 
+  saveArticleObj = async (
+    request: RequestWithUser,
+    response: express.Response,
+    next: express.NextFunction
+  ) => {
+    try {
+      this.initConnectionDB(request.database)
+      this.userAudit = request.user
+      const article = request.body
+
+      // verificamos que el codigo no exista
+      const articleCode = await this.getAll({
+        project: {
+          code: 1,
+          operationType: 1,
+          type: 1
+        },
+        match: {
+          code: article.code,
+          operationType: { $ne: 'D' },
+          type: 'Final'
+
+        }
+      })
+      if (articleCode.result.length > 0) {
+        return response.json({ message: `El código ${articleCode.result[0].code} ya existe` })
+      }
+
+      let variants
+      const { result } = await this.save(new this.model({ ...article }))
+      if (!result) {
+        return response.send(new Responser(404, null, 'Error al crear el producto', null))
+      }
+      if (article.variants.length > 0) {
+        variants = await new VariantUC(this.database).createVariant(result._id, article.variants)
+      }
+
+      if (article.applications.some((application: Application) => application.type === ApplicationType.TiendaNube)) {
+        const createArticleTn = await new TiendaNubeController().saveArticleTiendaNube(result._id, request.headers.authorization)
+        return response.send(new Responser(200, { result }))
+      }
+      return response.send(new Responser(200, { result, variants }))
+    } catch (error) {
+      return response.send(new Responser(500, error))
+    }
+  }
+
+  updateArticleObj = async (
+    request: RequestWithUser,
+    response: express.Response,
+    next: express.NextFunction
+  ) => {
+    try {
+      this.initConnectionDB(request.database)
+      this.userAudit = request.user
+      const article = request.body
+      const { id } = request.params
+  
+      const articleOld = await this.getById(id)
+      
+      const { result } = await this.update(id, new this.model({ ...article }))
+      if (!result) {
+        return response.send(new Responser(404, null, 'Error al actualizar el artículo', null))
+      }
+
+      let variants = await new VariantUC(this.database).updateVariant(result._id, article.variants, articleOld.result)
+
+      if (article.applications.some((application: Application) => application.type === ApplicationType.TiendaNube)) {
+        if (article.type === Type.Final) {
+          await new TiendaNubeController().updateArticleTiendaNube(result._id, request.headers.authorization)
+        } else if (article.type === Type.Variant) {
+          const variant: Variant[] = await new VariantController(this.database).find({ articleChild: article._id }, {});
+          if (variant && variant.length > 0) {
+            if (variant[0] && variant[0].articleParent._id) {
+              await new TiendaNubeController().updateArticleTiendaNube(variant[0].articleParent._id, request.headers.authorization)
+            }
+          }
+        }
+      } else if (article.tiendaNubeId && article.type === Type.Final) {
+       await new TiendaNubeController().deleteArticleTiendaNube(article.tiendaNubeId, request.headers.authorization)
+      }
+
+      return response.json(new Responser(200, { result, variants }))
+
+    } catch (error) {
+      return response.send(new Responser(500, error))
+    }
+  }
+
   async getArticlesTn() {
-    const URL = 'http://localhost:305/products';
+    const URL = `${config.TIENDANUBE_URL}/products`;
     const articles = [];
     let page = 1;
-  
+
     const requestOptions = {
       headers: {
         Authorization: this.authToken
       }
     };
-  
-      while (true) {
-        const response = await axios.get(URL,{
-          data: { page },
-          ...requestOptions
-        });
-        const responseData = response.data;
-        articles.push(...responseData);
 
-        if (responseData.length < 200) {
-          break; 
-        }
-        page++;
+    while (true) {
+      const response = await axios.get(URL, {
+        data: { page },
+        ...requestOptions
+      });
+      const responseData = response.data;
+      articles.push(...responseData);
+
+      if (responseData.length < 200) {
+        break;
       }
-      return articles;
-  }  
+      page++;
+    }
+    return articles;
+  }
+
+  getLastCode = async (
+    request: RequestWithUser,
+    response: express.Response,
+    next: express.NextFunction) => {
+    try {
+      this.initConnectionDB(request.database)
+      const lastCode = await new ArticleUC(this.database).lastArticle()
+      return response.json({ code: lastCode })
+    } catch (error) {
+      console.log(error)
+    }
+  }
 }

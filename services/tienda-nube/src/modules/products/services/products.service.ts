@@ -462,16 +462,17 @@ export class ProductsService {
               operationType: { $ne: 'D' },
               article: new ObjectId(variant.articleChild ),
             });
+            
             await this.tiendaNubeService.updateVarinat(
               token,
               userID,
               foundArticle.tiendaNubeId,
               variant.articleChildInfo.tiendaNubeId,
               {
-                stock: !variant.articleChildInfo.allowSaleWithoutStock
-                  ? stockFound && stockFound.realStock >= 0
+                stock: variant.articleChildInfo.allowSaleWithoutStock
+                  ? (stockFound && stockFound.realStock >= 0
                     ? stockFound.realStock
-                    : 0
+                    : 0)
                   : null,
                 price: variant.articleChildInfo.salePrice ,
                 sku: variant.articleChildInfo.barcode || null,
@@ -521,10 +522,10 @@ export class ProductsService {
               foundArticle.tiendaNubeId,
               {
                 values,
-                stock: !variant.articleChildInfo.allowSaleWithoutStock
-                  ? stockFound && stockFound.realStock >= 0
+                stock: variant.articleChildInfo.allowSaleWithoutStock
+                  ? (stockFound && stockFound.realStock >= 0
                     ? stockFound.realStock
-                    : 0
+                    : 0)
                   : null,
                 price: variant.articleChildInfo.salePrice
               }
@@ -556,10 +557,10 @@ export class ProductsService {
           result.id,
           result.variants[0].id,
           {
-            stock: !foundArticle.allowSaleWithoutStock
-              ? stockFound && stockFound.realStock >= 0
+            stock: foundArticle.allowSaleWithoutStock
+              ? (stockFound && stockFound.realStock >= 0
                 ? stockFound.realStock
-                : 0
+                : 0)
               : null,
             price: foundArticle.salePrice ? foundArticle.salePrice : null,
             sku: foundArticle.barcode || null,

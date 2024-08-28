@@ -13,7 +13,7 @@ import { Config } from 'app/app.config';
 import { Branch } from 'app/components/branch/branch';
 import { BranchService } from 'app/components/branch/branch.service';
 import { AuthService } from 'app/components/login/auth.service';
-import { AddArticleComponent } from '../article/article/add-article.component';
+import { ArticleComponent } from '../article/crud/article.component';
 import { TransactionMovement, Movements, TransactionType } from 'app/components/transaction-type/transaction-type';
 import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
 import { RoundNumberPipe } from 'app/main/pipes/round-number.pipe';
@@ -292,15 +292,10 @@ export class ReportBestSellingArticleComponent implements OnInit {
         let modalRef;
         switch (op) {
             case 'view':
-                modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
-                modalRef.componentInstance.articleId = item['article']._id;
-                modalRef.componentInstance.readonly = true;
-                modalRef.componentInstance.operation = "view";
-                modalRef.result.then((result) => {
-                    window.scroll(0, this.scrollY);
-                }, (reason) => {
-                    window.scroll(0, this.scrollY);
-                });
+                window.open(
+                    `/#/admin/articles/view/${item['article']._id}`,
+                    '_blank',
+                );
                 break;
             default: ;
         }
@@ -461,6 +456,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
             "transaction.type.movement": 1,
             "article.category.description": 1,
             "article.make.description": 1,
+            "article._id": 1,
             "article.code": 1,
             "article.description": 1,
             "article.posDescription": 1,

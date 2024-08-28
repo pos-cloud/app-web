@@ -505,8 +505,27 @@ export default class Controller {
           .then((result : []) => {
             resolve(result)
           })
-          .catch((error: any) => reject(new NotFoundException('', error)))
+          .catch((error: any) =>{ 
+            console.log(error)
+            reject(new NotFoundException('', error))})
     })
+  }
+
+  getFindObj = async (
+    request: RequestWithUser,
+    response: express.Response,
+    next: express.NextFunction,
+  ) =>{
+    this.initConnectionDB(request.database)
+    this.userAudit = request.user
+    const {project, query} : any = request.query
+    
+    this.find(JSON.parse(query), JSON.parse(project))
+      .then((result: any) => response.json(result))
+      .catch((error: any) =>
+        next(new HttpException(new Responser(500, null, error.message, error))),
+      )
+
   }
 
   getObjById = async (

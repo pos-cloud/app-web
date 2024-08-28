@@ -40,13 +40,7 @@ import {ArticleStockService} from './components/article-stock/article-stock.serv
 import {AddArticleStockComponent} from './components/article-stock/article-stock/add-article-stock.component';
 import {ListArticleStocksComponent} from './components/article-stock/list-article-stocks/list-article-stocks.component';
 import {UpdateArticleStockComponent} from './components/article-stock/update-article-stock/update-article-stock.component';
-import {AddArticleFieldsComponent} from './components/article/add-article-fields/add-article-fields.component';
-import {AddArticleTaxComponent} from './components/article/add-article-tax/add-article-tax.component';
-import {AddMeliAttrsComponent} from './components/article/add-meli-attrs/add-meli-attrs.component';
-import {ArticleService} from './components/article/article.service';
-import {AddArticleComponent} from './components/article/article/add-article.component';
 import {ListArticlesPosComponent} from './components/article/list-articles-pos/list-articles-pos.component';
-import {ListArticlesComponent} from './components/article/list-articles/list-articles.component';
 import {UpdateArticlePriceComponent} from './components/article/update-article-price/update-article-price.component';
 import {BankService} from './components/bank/bank.service';
 import {BankComponent} from './components/bank/bank/bank.component';
@@ -273,8 +267,6 @@ export function createTranslateLoader(http: HttpClient) {
     AppComponent,
     HomeComponent,
     HeaderComponent,
-    ListArticlesComponent,
-    AddArticleComponent,
     ListEmployeesComponent,
     AddEmployeeComponent,
     ListTablesComponent,
@@ -319,10 +311,8 @@ export function createTranslateLoader(http: HttpClient) {
     AddVariantTypeComponent,
     UpdateVariantTypeComponent,
     DeleteVariantTypeComponent,
-    AddArticleFieldsComponent,
     ListVariantTypesComponent,
     AddMovementOfArticleComponent,
-    AddArticleTaxComponent,
     TaxComponent,
     ListTaxesComponent,
     ApplyDiscountComponent,
@@ -428,7 +418,6 @@ export function createTranslateLoader(http: HttpClient) {
     BillingComponent,
     AbandonedCartsComponent,
     SelectPriceListComponent,
-    AddMeliAttrsComponent,
     KardexCheckComponent,
     SafePipe,
     CancelComponent,
@@ -482,7 +471,6 @@ export function createTranslateLoader(http: HttpClient) {
     AddressService,
     NgbActiveModal,
     NgbAlertConfig,
-    ArticleService,
     EmployeeService,
     TableService,
     CashBoxService,

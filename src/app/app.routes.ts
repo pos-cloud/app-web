@@ -204,16 +204,16 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.money' }
   },
-  {
-    path: 'admin/productos',
-    component: ListArticlesComponent,
-    canActivate: [AuthGuard, LicenseGuard]
-  },
-  {
-    path: 'admin/productos/:id',
-    component: ListArticlesComponent,
-    canActivate: [AuthGuard, LicenseGuard]
-  },
+  // {
+  //   path: 'admin/productos',
+  //   component: ListArticlesComponent,
+  //   canActivate: [AuthGuard]
+  // },
+  // {
+  //   path: 'admin/productos/:id',
+  //   component: ListArticlesComponent,
+  //   canActivate: [AuthGuard, LicenseGuard]
+  // },
   {
     path: 'admin/variantes',
     component: ListArticlesComponent,

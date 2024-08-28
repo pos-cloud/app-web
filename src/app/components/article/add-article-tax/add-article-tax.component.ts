@@ -31,6 +31,7 @@ export class AddArticleTaxComponent implements OnInit {
   @Input() articleTaxes: Taxes[] = new Array();
   @Input() filtersTaxClassification: TaxClassification[];
   @Input() transaction: Transaction;
+  @Input() readonly: boolean;
   @Output() eventAddArticleTax: EventEmitter<Taxes[]> = new EventEmitter<Taxes[]>();
 
   public formErrors = {
@@ -58,7 +59,6 @@ export class AddArticleTaxComponent implements OnInit {
 
   async ngOnInit() {
     this.buildForm();
-
     let query;
 
     if (this.filtersTaxClassification && this.filtersTaxClassification.length > 0) {

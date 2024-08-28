@@ -29,7 +29,6 @@ import UnitOfMeasurementController from '../unit-of-measurement/unit-of-measurem
 import Tax from '../tax/tax.interface'
 import TaxController from '../tax/tax.controller'
 import ApplicationController from '../application/application.controller'
-import { Application, application } from 'express'
 import VariantSchema from '../variant/variant.model'
 import ArticleStock from '../article-stock/article-stock.interface'
 import ArticleStockSchema from '../article-stock/article-stock.model'
@@ -45,6 +44,8 @@ import VariantValue from '../variant-value/variant-value.interface'
 import VariantValueSchema from '../variant-value/variant-value.model'
 import ConfigController from '../config/config.controller'
 import ArticleStockController from '../article-stock/article-stock.controller'
+import Application from '../application/application.interface'
+import { roundNumber } from '../../utils/roundNumber'
 
 export default class ArticleUC {
 	database: string
@@ -159,16 +160,16 @@ export default class ArticleUC {
 					switch (typePrice) {
 						case 'basePrice':
 							article.costPrice = 0
-							article.basePrice = this.roundNumber(
+							article.basePrice = roundNumber(
 								(article.basePrice * percentage) / 100 + article.basePrice,
 								decimal,
 							)
 							let taxedAmount = article.basePrice
-
+							
 							if (article.otherFields && article.otherFields.length > 0) {
 								for (const field of article.otherFields) {
 									if (field.articleField.datatype === ArticleFieldType.Percentage) {
-										field.amount = this.roundNumber(
+										field.amount = roundNumber(
 											(article.basePrice * parseFloat(field.value)) / 100,
 											decimal,
 										)
@@ -186,7 +187,7 @@ export default class ArticleUC {
 							if (article.taxes && article.taxes.length > 0) {
 								for (const articleTax of article.taxes) {
 									articleTax.taxBase = taxedAmount
-									articleTax.taxAmount = this.roundNumber(
+									articleTax.taxAmount = roundNumber(
 										(taxedAmount * articleTax.percentage) / 100,
 										decimal,
 									)
@@ -196,7 +197,7 @@ export default class ArticleUC {
 							article.costPrice += taxedAmount
 
 							if (!(taxedAmount === 0 && article.salePrice !== 0)) {
-								article.markupPrice = this.roundNumber(
+								article.markupPrice = roundNumber(
 									(article.costPrice * article.markupPercentage) / 100,
 									decimal,
 								)
@@ -207,22 +208,22 @@ export default class ArticleUC {
 							break
 						case 'markupPercentage':
 							article.markupPercentage += percentage
-							article.markupPercentage = this.roundNumber(article.markupPercentage, decimal)
-							article.markupPrice = this.roundNumber(
+							article.markupPercentage = roundNumber(article.markupPercentage, decimal)
+							article.markupPrice = roundNumber(
 								(article.costPrice * article.markupPercentage) / 100,
 							)
 							article.salePrice = article.costPrice + article.markupPrice
 							break
 						case 'salePrice':
-							article.salePrice += this.roundNumber((percentage * article.salePrice) / 100)
-							article.salePrice = this.roundNumber(article.salePrice, decimal)
+							article.salePrice += roundNumber((percentage * article.salePrice) / 100)
+							article.salePrice = roundNumber(article.salePrice, decimal)
 							if (article.basePrice === 0) {
 								article.costPrice === 0
 								article.markupPercentage = 100
 								article.markupPrice = article.salePrice
 							} else {
 								article.markupPrice = article.salePrice - article.costPrice
-								article.markupPercentage = this.roundNumber((article.markupPrice / article.costPrice) * 100, decimal)
+								article.markupPercentage = roundNumber((article.markupPrice / article.costPrice) * 100, decimal)
 							}
 							break
 						default:
@@ -248,7 +249,7 @@ export default class ArticleUC {
 					switch (typePrice) {
 						case 'basePrice':
 							article.costPrice = 0
-							article.basePrice = this.roundNumber(
+							article.basePrice = roundNumber(
 								(article.basePrice * percentage) / 100 + article.basePrice,
 								decimal,
 							)
@@ -257,7 +258,7 @@ export default class ArticleUC {
 							if (article.otherFields && article.otherFields.length > 0) {
 								for (const field of article.otherFields) {
 									if (field.articleField.datatype === ArticleFieldType.Percentage) {
-										field.amount = this.roundNumber(
+										field.amount = roundNumber(
 											(article.basePrice * parseFloat(field.value)) / 100,
 											decimal,
 										)
@@ -275,7 +276,7 @@ export default class ArticleUC {
 							if (article.taxes && article.taxes.length > 0) {
 								for (const articleTax of article.taxes) {
 									articleTax.taxBase = taxedAmount
-									articleTax.taxAmount = this.roundNumber(
+									articleTax.taxAmount = roundNumber(
 										(taxedAmount * articleTax.percentage) / 100,
 										decimal,
 									)
@@ -285,7 +286,7 @@ export default class ArticleUC {
 							article.costPrice += taxedAmount
 
 							if (!(taxedAmount === 0 && article.salePrice !== 0)) {
-								article.markupPrice = this.roundNumber(
+								article.markupPrice = roundNumber(
 									(article.costPrice * article.markupPercentage) / 100,
 									decimal,
 								)
@@ -296,22 +297,22 @@ export default class ArticleUC {
 							break
 						case 'markupPercentage':
 							article.markupPercentage += percentage
-							article.markupPercentage = this.roundNumber(article.markupPercentage, decimal)
-							article.markupPrice = this.roundNumber(
+							article.markupPercentage = roundNumber(article.markupPercentage, decimal)
+							article.markupPrice = roundNumber(
 								(article.costPrice * article.markupPercentage) / 100,
 							)
 							article.salePrice = article.costPrice + article.markupPrice
 							break
 						case 'salePrice':
-							article.salePrice += this.roundNumber((percentage * article.salePrice) / 100)
-							article.salePrice = this.roundNumber(article.salePrice, decimal)
+							article.salePrice += roundNumber((percentage * article.salePrice) / 100)
+							article.salePrice = roundNumber(article.salePrice, decimal)
 							if (article.basePrice === 0) {
 								article.costPrice === 0
 								article.markupPercentage = 100
 								article.markupPrice = article.salePrice
 							} else {
 								article.markupPrice = article.salePrice - article.costPrice
-								article.markupPercentage = this.roundNumber(
+								article.markupPercentage = roundNumber(
 									(article.markupPrice / article.costPrice) * 100,
 								)
 							}
@@ -444,17 +445,6 @@ export default class ArticleUC {
 		}
 	}
 
-	roundNumber(value: any, numberOfDecimals: number = 2): number {
-
-		if (value !== undefined && !isNaN(value)) {
-			const multiplier = Math.pow(10, numberOfDecimals);
-			return Math.round(value * multiplier) / multiplier;
-		} else {
-			return 0; // Si el valor no es un número válido, devuelve 0
-		}
-
-	}
-
 	async importFromExcel(data: any[]) {
 		return new Promise<{}>(async (resolve, reject) => {
 
@@ -484,7 +474,7 @@ export default class ArticleUC {
 			const taxObj = await this.getTax()
 
 			for (const item of data) {
-				const calculatedSalePrice = this.calculateSalePrice(item.column11, item.column13, item.column14);
+				const calculatedSalePrice = this.calculateSalePrice(item.column12, item.column14, item.column15);
 				if (item.column2 === '') {
 					return reject(new Responser(500, null, "En el archivo Excel, hay códigos de productos que están incompletos."))
 				}
@@ -498,31 +488,32 @@ export default class ArticleUC {
 							code: item.column2,
 							barcode: item.column13 === "" ? article.barcode : item.column13,
 							make: makesObj[item.column4] === undefined ? article.make : makesObj[item.column4]._id,
-							category: categoryObj[item.column5] === undefined ? article.category : categoryObj[item.column5]?._id,
-							description: item.column6 === "" ? article.description : item.column6,
-							posDescription: item.column7 === "" ? article.posDescription : item.column7.substring(0, 20),
-							unitOfMeasurement: unitOfMeasurementObj[item.column8] === "" ? article.unitOfMeasurement : unitOfMeasurementObj[item.column8]?._id,
-							printIn: printerObj[item.column9] === "" ? article.unitOfMeasurement : printerObj[item.column9]?.name,
-							observation: item.column10 === "" ? article.observation : item.column10,
+							category: categoryObj[item.column6] === undefined ? article.category : categoryObj[item.column6]?._id,
+							description: item.column7 === "" ? article.description : item.column7,
+							posDescription: item.column8 === "" ? article.posDescription : item.column8.substring(0, 20),
+							unitOfMeasurement: unitOfMeasurementObj[item.column9] === "" ? article.unitOfMeasurement : unitOfMeasurementObj[item.column9]?._id,
+							printIn: printerObj[item.column10] === "" ? article.unitOfMeasurement : printerObj[item.column10]?.name,
+							observation: item.column11 === "" ? article.observation : item.column11,
 							basePrice: calculatedSalePrice.basePrice2,
-							taxes: item.column12 === "" ? article.tax : {
-								tax: taxObj[item.column12]._id,
-								percentage: taxObj[item.column12].percentage
+							taxes: item.column13 === "" ? article.tax : {
+								tax: taxObj[item.column13]._id,
+								percentage: taxObj[item.column13].percentage
 							},
 							markupPercentage: calculatedSalePrice.markupPercentage2,
 							salePrice: calculatedSalePrice.salePrice2,
-							weight: item.column15 === "" ? article.weight : item.column15,
-							width: item.column16 === "" ? article.width : item.column16,
-							height: item.column17 === "" ? article.height : item.column17,
-							depth: item.column18 === "" ? article.depth : item.column18,
-							allowPurchase: item.column19 === 'Si',
-							allowSale: item.column20 === 'Si',
-							allowStock: item.column21 === 'Si',
-							allowSaleWithoutStock: item.column22 === 'Si',
-							isWeigth: item.column23 === 'Si',
-							allowMeasure: item.column24 === 'Si',
-							posKitchen: item.column25 === 'Si',
-							m3: item.column26 === "" ? item.m3 : item.column26,
+							weight: item.column16 === "" ? article.weight : item.column16,
+							width: item.column17 === "" ? article.width : item.column17,
+							height: item.column18 === "" ? article.height : item.column18,
+							depth: item.column19 === "" ? article.depth : item.column19,
+							allowPurchase: item.column20 === 'Si',
+							allowSale: item.column21 === 'Si',
+							allowStock: item.column22 === 'Si',
+							allowSaleWithoutStock: item.column23 === 'Si',
+							isWeigth: item.column24 === 'Si',
+							allowMeasure: item.column25 === 'Si',
+							posKitchen: item.column26 === 'Si',
+							m3: item.column27 === "" ? item.m3 : item.column27,
+							codeProvider:  item.column27 === "" ? item.codeProvider : item.column28
 						}
 					);
 
@@ -543,34 +534,37 @@ export default class ArticleUC {
 						code: item.column2,
 						barcode: item.column3,
 						make: makesObj[item.column4]?._id,
-						category: categoryObj[item.column5]?._id,
-						description: item.column6,
-						posDescription: item.column7.substring(0, 20),
-						unitOfMeasurement: unitOfMeasurementObj[item.column8]?._id,
-						printIn: printerObj[item.column9]?.name,
-						observation: item.column10,
+						category: categoryObj[item.column6]?._id,
+						description: item.column7,
+						posDescription: item.column8.substring(0, 20),
+						unitOfMeasurement: unitOfMeasurementObj[item.column9]?._id,
+						printIn: printerObj[item.column10]?.name,
+						observation: item.column11,
 						basePrice: calculatedSalePrice.basePrice2,
-						taxes: item.column12 === "" ? {
-							tax: taxObj[21]._id,
-							percentage: taxObj[21].percentage
-						} : {
-							tax: taxObj[item.column12]._id,
-							percentage: taxObj[item.column12].percentage
-						},
+						taxes: item.column13 === "" ?
+							(taxObj[21] ? {
+								tax: taxObj[21]._id,
+								percentage: taxObj[21].percentage
+							} : []) :
+							(taxObj[item.column13] ? {
+								tax: taxObj[item.column13]._id,
+								percentage: taxObj[item.column13].percentage
+							} : []),
 						markupPercentage: calculatedSalePrice.markupPercentage2,
 						salePrice: calculatedSalePrice.salePrice2,
-						weight: item.column15,
-						width: item.column16,
-						height: item.column17,
-						depth: item.column18,
-						allowPurchase: item.column19 === 'Si',
-						allowSale: item.column20 === 'Si',
-						allowStock: item.column21 === 'Si',
-						allowSaleWithoutStock: item.column22 === 'Si',
-						isWeigth: item.column23 === 'Si',
-						allowMeasure: item.column24 === 'Si',
-						posKitchen: item.column25 === 'Si',
-						m3: item.column26,
+						weight: item.column16,
+						width: item.column17,
+						height: item.column18,
+						depth: item.column19,
+						allowPurchase: item.column20 === 'Si',
+						allowSale: item.column21 === 'Si',
+						allowStock: item.column22 === 'Si',
+						allowSaleWithoutStock: item.column23 === 'Si',
+						isWeigth: item.column24 === 'Si',
+						allowMeasure: item.column25 === 'Si',
+						posKitchen: item.column26 === 'Si',
+						m3: item.column27,
+						codeProvider: item.column28
 					})
 					const result = await new ArticleController(this.database).save(newArticle);
 
@@ -877,9 +871,9 @@ export default class ArticleUC {
 					}
 				} else {
 					let newArticle: Article = ArticleSchema.getInstance(this.database)
-					code++;
+
 					newArticle = Object.assign(newArticle, {
-						code: String(code).padStart(5, '0'),
+						code: code,
 						barcode: item.variants[0].sku,
 						//make: makeObj[´']._id,
 						category: categoryObj[item.categories[0]?.name.es] !== undefined ? categoryObj[item.categories[0].name.es]._id : null,
@@ -1035,14 +1029,20 @@ export default class ArticleUC {
 
 	async createAllCategoryTn() {
 		const categoriesTnObj: any = {};
-
-		const config = await new ConfigController(this.database).getAll({
+		const app = await new ApplicationController(this.database).getAll({
 			project: {
 				_id: 1,
-				tiendaNube: 1,
+				tiendaNube: {
+					article: 1,
+					company: 1,
+					transactionType: 1,
+					paymentMethod: 1,
+					shipmentMethod: 1
+				}
 			}
 		})
-		const credentialesTn = config.result[0].tiendaNube
+
+		const credentialesTn = app.result[0].tiendaNube
 
 		const categoriesTn = await new CategoryController(this.database).getAll({
 			project: {
@@ -1121,18 +1121,41 @@ export default class ArticleUC {
 				categoriesObj[item.description] = item;
 			}
 		});
-
 		for (const item of data) {
-			const description = item.column5
-			if (!categoriesObj[description]) {
-				if (description) {
-					let newCategory: Category = CategorySchema.getInstance(this.database)
-					newCategory = Object.assign(newCategory, {
-						description: description,
-					})
-					const result = await new CategoryController(this.database).save(newCategory);
-					categoriesObj[description] = newCategory;
-				}
+			const descriptionParent = item.column5;
+			const description = item.column6;
+
+			// Manejo de descriptionParent
+			if (descriptionParent && !categoriesObj[descriptionParent]) {
+				let newCategoryParent: Category = CategorySchema.getInstance(this.database);
+				newCategoryParent = Object.assign(newCategoryParent, {
+					description: descriptionParent,
+				});
+				await new CategoryController(this.database).save(newCategoryParent);
+				categoriesObj[descriptionParent] = newCategoryParent;
+			}
+
+			// Manejo de description
+			if (description && !categoriesObj[description]) {
+				let newCategory: Category = CategorySchema.getInstance(this.database);
+				newCategory = Object.assign(newCategory, {
+					description: description,
+				});
+				await new CategoryController(this.database).save(newCategory);
+				categoriesObj[description] = newCategory;
+			}
+		}
+		for (const item of data) {
+			const descriptionParent = item.column5;
+			const description = item.column6;
+
+			if (description && descriptionParent && categoriesObj[description]) {
+				// Actualizar la categoría existente con la referencia al parent
+				const updatedCategory = Object.assign(categoriesObj[description], {
+					parent: categoriesObj[descriptionParent]._id, // Asumiendo que `parentId` es el campo para la relación
+				});
+				await new CategoryController(this.database).update(updatedCategory._id, updatedCategory);
+				categoriesObj[description] = updatedCategory;
 			}
 		}
 		return 200
@@ -1399,20 +1422,34 @@ export default class ArticleUC {
 	}
 
 	async lastArticle() {
-		const todosLosProductos = await new ArticleController(this.database).getAll({
+		const config = await new ConfigController(this.database).getAll({
+			project: {
+				_id: 1,
+				'article.code.validators.maxLength': 1,
+			}
+		})
+
+		const articles = await new ArticleController(this.database).getAll({
 			match: {
-				type: 'Final'
+				type: 'Final',
+				operationType: { $ne: 'D' }
 			}
 		});
-
-		if (todosLosProductos.result) {
-			todosLosProductos.result.sort((a: any, b: any) => {
+		if (articles.result) {
+			articles.result.sort((a: any, b: any) => {
 				const dateA = new Date(a.creationDate).getTime();
 				const dateB = new Date(b.creationDate).getTime();
 				return dateB - dateA;
 			});
-			const ultimoProducto = todosLosProductos.result[0];
-			return ultimoProducto?.code ?? 0
+
+			const lastArticle = articles.result[0];
+			let codeSum
+			if (lastArticle) {
+				codeSum = (Number(lastArticle?.code) + 1).toString().padStart(config.result[0].article.code.validators.maxLength, '0');
+			} else {
+				codeSum = '1'.padStart(config.result[0].article.code.validators.maxLength, '0');
+			}
+			return codeSum
 		}
 	}
 

@@ -321,7 +321,7 @@ export class StructureComponent implements OnInit {
             } else {
                 this.structure.parent.containsStructure = true;
             }
-            this._articleService.updateArticle(this.structure.parent, null).subscribe(
+            this._articleService.updateArticle(this.structure.parent).subscribe(
                 result => {
                     if (result && result.article) {
                         resolve(true)

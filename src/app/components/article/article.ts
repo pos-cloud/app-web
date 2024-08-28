@@ -13,6 +13,8 @@ import { Company } from '../company/company';
 import { Classification } from '../classification/classification';
 import { Application } from '../application/application.model';
 import { Account } from '../account/account';
+import { VariantValue } from '../variant-value/variant-value';
+import { VariantType } from '../variant-type/variant-type';
 
 export class Article {
 
@@ -102,6 +104,10 @@ export class Article {
     public depth: number;
     public showMenu: Boolean = false;
     public updateVariants: Boolean = true;
+    public variants: [{
+        value: VariantValue,
+        type: VariantType,
+    }];
     
     constructor() { }
 }
@@ -546,6 +552,7 @@ export let attributes = [
         disabled: false,
         filter: false,
         datatype: 'string',
+        defaultFilter:  `{ "$eq": "Final" }`,
         project: null,
         align: 'left',
         required: true,

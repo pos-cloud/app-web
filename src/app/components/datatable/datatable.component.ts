@@ -29,7 +29,7 @@ export class DatatableComponent {
   private capitalizePipe: CapitalizePipe = new CapitalizePipe();
   private URL: string;
 
-  @Output() eventFunction = new EventEmitter<{ op: string, obj: any }>();
+  @Output() eventFunction = new EventEmitter<{ op: string, obj: any, items: any[]}>();
 
   // TABLA
   public datatableController: DatatableController;
@@ -105,7 +105,7 @@ export class DatatableComponent {
     });
   }
 
-  public runEvent(event: any, item: any) {
+  public runEvent(event: any, item: any, items: any[]) {
     eval(event);
   }
 
@@ -131,8 +131,8 @@ export class DatatableComponent {
     this.getItems();
   }
 
-  public async emitEvent(op: string, obj: any) {
-    this.eventFunction.emit({ op, obj });
+  public async emitEvent(op: string, obj: any, items) {
+    this.eventFunction.emit({ op, obj, items: this.items});
   };
 
   public refresh(): void {

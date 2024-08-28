@@ -1,7 +1,6 @@
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Config } from "app/app.config";
-import { Variant } from "app/components/variant/variant";
 import { environment } from "environments/environment";
 import { of } from "rxjs";
 import { Observable } from "rxjs/Observable";
@@ -60,6 +59,27 @@ export class ArticleService extends ModelService {
       .get(URL, {
         headers: headers,
         params: params,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+  }
+
+  public getLasCode(): Observable<any>{
+    const URL = `${Config.apiV8URL}articles/last-code`;
+
+    const headers = new HttpHeaders()
+      .set("Content-Type", "application/json")
+      .set("Authorization", this._authService.getToken());
+
+    return this._http
+      .get(URL, {
+        headers: headers,
       })
       .pipe(
         map((res) => {
@@ -145,8 +165,8 @@ export class ArticleService extends ModelService {
       );
   }
 
-  public saveArticle(article: Article, variants: Variant[]): Observable<any> {
-    const URL = `${Config.apiURL}article`;
+  public saveArticle(article: Article): Observable<any> {
+    const URL = `${Config.apiV8URL}articles`;
 
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json")
@@ -154,8 +174,7 @@ export class ArticleService extends ModelService {
 
     return this._http
       .post(
-        URL,
-        { article: article, variants: variants },
+        URL,article,
         {
           headers: headers,
         }
@@ -170,22 +189,16 @@ export class ArticleService extends ModelService {
       );
   }
 
-  public updateArticle(article: Article, variants: Variant[]): Observable<any> {
-    const URL = `${Config.apiURL}article`;
+  public updateArticle(article: Article): Observable<any> {
+    const URL = `${environment.apiv2}/articles`;
 
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json")
       .set("Authorization", this._authService.getToken());
 
-    const params = new HttpParams().set("id", article._id);
-
     return this._http
-      .put(
-        URL,
-        { article: article, variants: variants },
-        {
+      .put(`${URL}/${article._id}`, article, {
           headers: headers,
-          params: params,
         }
       )
       .pipe(
@@ -245,7 +258,6 @@ export class ArticleService extends ModelService {
       formData.append('origin', origin)
 
       xhr.onreadystatechange = function () {
-        console.log(xhr);
         if (xhr.readyState == 4) {
           if (xhr.status == 201) {
             resolve(xhr.response);
@@ -369,29 +381,6 @@ export class ArticleService extends ModelService {
 
     return this._http
       .get(URL,
-        {
-          headers: headers,
-        })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public saveArticleTiendaNube(id: string): Observable<any> {
-    const URL = `${environment.apiTiendaNube}/products`;
-
-    const headers = new HttpHeaders()
-      .set("Content-Type", "application/json")
-      .set("Authorization", this._authService.getToken());
-
-    return this._http
-      .post(URL,
-        { productId: id},
         {
           headers: headers,
         })

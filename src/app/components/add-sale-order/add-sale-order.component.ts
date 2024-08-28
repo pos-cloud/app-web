@@ -42,7 +42,7 @@ import {ArticleFields} from '../article-field/article-fields';
 import {ArticleStock} from '../article-stock/article-stock';
 import {ArticleStockService} from '../article-stock/article-stock.service';
 import {ArticlePrintIn, Article, Type} from '../article/article';
-import {AddArticleComponent} from '../article/article/add-article.component';
+import {ArticleComponent} from '../article/crud/article.component';
 import {ListArticlesPosComponent} from '../article/list-articles-pos/list-articles-pos.component';
 import {BusinessRuleService} from '../business-rules/business-rule.service';
 import {BusinessRule} from '../business-rules/business-rules';
@@ -2119,27 +2119,9 @@ export class AddSaleOrderComponent {
         }
         break;
       case 'add-article':
-        this.display = false;
-        modalRef = this._modalService.open(AddArticleComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        modalRef.componentInstance.operation = 'add';
-        modalRef.result.then(
-          (result) => {
-            if (result && result.article) {
-              this.display = true;
-              this.filterArticle = result.article.code;
-              this.focusEvent.emit(true);
-            } else {
-              this.display = true;
-              this.getMovementsOfArticles();
-            }
-          },
-          (reason) => {
-            this.display = true;
-            this.getMovementsOfTransaction();
-          },
+        window.open(
+          '/#/admin/article/add',
+          '_blank',
         );
         break;
       case 'list-cancellations':
@@ -2974,7 +2956,7 @@ export class AddSaleOrderComponent {
           }
 
           await this._articleService
-            .updateArticle(article, null)
+            .updateArticle(article)
             .toPromise()
             .then((result) => {
               if (result && !result.article && result.message)
