@@ -214,6 +214,7 @@
                                     <div class="input-group-prepend"><span class="input-group-text"
                                             id="basic-addon1">$</span></div>
                                     <input type="number" class="form-control" formControlName="basePrice"
+                                        [readonly]="operation==='view'"
                                         name="basePrice" id="basePrice" step="1"
                                         (blur)="updatePrices('basePrice'); onValueChanged($event.target.id)"
                                         [ngClass]="{'is-invalid':!articleForm.get('basePrice')?.valid && formErrors.basePrice}" />
@@ -274,8 +275,9 @@
                                     <input type="number" class="form-control" formControlName="markupPercentage"
                                         name="markupPercentage" id="markupPercentage" step="1"
                                         (blur)="updatePrices('markupPercentage'); onValueChanged($event.target.id)"
+                                        [readonly]="operation==='view'"
                                         [ngClass]="{'is-invalid':!articleForm.get('markupPercentage')?.valid && formErrors.markupPercentage}"
-                                        [readonly]="readonly" />
+                                        />
                                 </div>
                                 <div class="invalid-feedback"
                                     [style.display]="(formErrors.markupPercentage)? 'block': 'none'">
@@ -301,9 +303,10 @@
                                             id="basic-addon1">$</span></div>
                                     <input type="number" class="form-control" formControlName="markupPrice"
                                         name="markupPrice" id="markupPrice" step="1"
+                                        [readonly]="operation==='view'"
                                         (blur)="updatePrices('markupPrice'); onValueChanged($event.target.id)"
                                         [ngClass]="{'is-invalid':!articleForm.get('markupPrice')?.valid && formErrors.markupPrice}"
-                                        [readonly]="readonly" />
+                                         />
                                 </div>
                                 <div class="invalid-feedback"
                                     [style.display]="(formErrors.markupPrice)? 'block': 'none'">
@@ -330,8 +333,9 @@
                                     <input type="number" class="form-control" formControlName="salePrice"
                                         name="salePrice" id="salePrice" step="1"
                                         (blur)="updatePrices('salePrice'); onValueChanged($event.target.id)"
+                                        [readonly]="operation==='view'"
                                         [ngClass]="{'is-invalid':!articleForm.get('salePrice')?.valid && formErrors.salePrice}"
-                                        [readonly]="readonly" />
+                                        />
                                 </div>
                                 <div class="invalid-feedback" [style.display]="(formErrors.salePrice)? 'block': 'none'">
                                     {{ formErrors.salePrice }}

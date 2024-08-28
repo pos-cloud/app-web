@@ -1573,9 +1573,9 @@ export class ArticleComponent implements OnInit {
 
       }
       const salePrice = this.articleForm.get('salePrice')?.value;
-      if (salePrice === 0) {
-        return this.showToast({ message: 'El precio tiene que ser mayor a 0.' });
-      }
+      if (salePrice <= 0) { 
+        return this.showToast({ message: salePrice < 0 ? 'El precio no puede ser negativo.' : 'El precio tiene que ser mayor a 0.' });
+    }    
 
       this.article = Object.assign(this.article, this.articleForm.value);
       if (typeof this.article.make === 'string') {
