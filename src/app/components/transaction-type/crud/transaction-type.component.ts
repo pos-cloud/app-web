@@ -292,7 +292,6 @@ export class TransactionTypeComponent implements OnInit {
       name: 'order',
       tag: 'input',
       tagType: 'number',
-      validators: [Validators.required],
       class: 'form-group col-md-1',
     },
     {
@@ -316,7 +315,6 @@ export class TransactionTypeComponent implements OnInit {
       name: 'abbreviation',
       tag: 'input',
       tagType: 'text',
-      validators: [Validators.required],
       class: 'form-group col-md-1',
     },
     {
@@ -533,8 +531,7 @@ export class TransactionTypeComponent implements OnInit {
       name: 'requestCompany',
       tag: 'select',
       tagType: 'text',
-      validators: [Validators.required],
-      values: [CompanyType.None, CompanyType.Client, CompanyType.Provider],
+      values: [ CompanyType.None, CompanyType.Client, CompanyType.Provider],
       class: 'form-group col-md-4',
     },
     {
