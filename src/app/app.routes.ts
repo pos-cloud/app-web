@@ -38,7 +38,6 @@ import { ListVATConditionsComponent } from './components/vat-condition/list-vat-
 import { ReportBirthdayComponent } from './components/report-birthday/report-birthday.component';
 import { ReportSalesByEmployeeComponent } from './components/report-sales-by-employee/report-sales-by-employee.component'
 import { ListIdentificationTypesComponent } from './components/identification-type/list-identification-types/list-identification-types.component';
-import { ListMakesComponent } from './components/make/list-makes/list-makes.component';
 import { ListPaymentMethodsComponent } from './components/payment-method/list-payment-methods/list-payment-methods.component';
 import { ListUsesOfCFDIComponent } from './components/use-of-CFDI.component.ts/list-uses-of-CFDI/list-uses-of-CFDI.component';
 import { ListRelationTypesComponent } from './components/relation-type/list-relation-types/list-relation-types.component';
@@ -308,11 +307,6 @@ export const _routes: Routes = [
     component: ListRoomsComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.sale.resto' }
-  },
-  {
-    path: 'admin/marcas',
-    component: ListMakesComponent,
-    canActivate: [AuthGuard, LicenseGuard]
   },
   {
     path: 'admin/condiciones-de-iva',

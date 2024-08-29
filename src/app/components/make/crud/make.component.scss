@@ -26,4 +26,19 @@ app-make {
   .tab-content {
     padding-top: 20px;
   }
+
+  .btnStyle {
+    background-color: #d42638;
+    padding: 4px 13px 6px 13px;
+    border-radius: 5px;
+    color: white;
+    border: #d42638;
+  }
+
+  .btnStyle:hover {
+    background-color: #C82333;
+    padding: 4px 13px 6px 13px;
+    border-radius: 5px;
+    color: white;
+  }
 }

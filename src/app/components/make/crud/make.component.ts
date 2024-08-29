@@ -1,5 +1,5 @@
-import { Component, OnInit, EventEmitter, Input, ViewEncapsulation } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl, UntypedFormArray } from '@angular/forms';
+import { Component, OnInit, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -8,10 +8,7 @@ import { Make } from '../make';
 
 import { MakeService } from '../make.service';
 import { Config } from 'app/app.config';
-import { ApplicationService } from 'app/components/application/application.service';
-import { Application } from 'app/components/application/application.model';
 import { Subscription } from 'rxjs';
-import Resulteable from 'app/util/Resulteable';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 
@@ -19,15 +16,15 @@ import { ToastrService } from 'ngx-toastr';
   selector: 'app-make',
   templateUrl: './make.component.html',
   styleUrls: ['./make.component.scss'],
-  providers: [NgbAlertConfig, ApplicationService, TranslateMePipe],
+  providers: [NgbAlertConfig, TranslateMePipe],
   encapsulation: ViewEncapsulation.None
 })
 
 export class MakeComponent implements OnInit {
 
-  @Input() makeId: string;
-  @Input() operation: string;
-  @Input() readonly: boolean;
+  public makeId: string;
+  public operation: string;
+  public readonly: boolean;
   public make: Make;
   public makeForm: UntypedFormGroup;
   public alertMessage: string = '';
@@ -37,7 +34,6 @@ export class MakeComponent implements OnInit {
   public filesToUpload: Array<File>;
   public imageURL: string;
   public orientation: string = 'horizontal';
-  public applications: Application[];
   private subscription: Subscription = new Subscription();
   public formErrors = {
     'description': ''
@@ -48,10 +44,10 @@ export class MakeComponent implements OnInit {
       'required': 'Este campo es requerido.'
     }
   };
+  public pathUrl: string[]
 
   constructor(
     public _makeService: MakeService,
-    public _applicationService: ApplicationService,
     public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -64,24 +60,17 @@ export class MakeComponent implements OnInit {
   }
 
   async ngOnInit() {
-
     this.buildForm();
+
     this.imageURL = './../../../assets/img/default.jpg';
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-
-    await this.getAllApplications({})
-      .then((result: Application[]) => {
-        this.applications = result;
-        if (!this.makeId) {
-          this.applications.forEach(x => {
-            const control = new UntypedFormControl(false);
-            (this.makeForm.controls.applications as UntypedFormArray).push(control);
-          })
-        }
-      })
-      .catch((error: Resulteable) => this.showToast(error));
-
+    this.pathUrl = this._router.url.split('/');
+    this.operation = this.pathUrl[3];
+    this.makeId = this.pathUrl[4];
+    if(this.pathUrl[3] === 'view'){
+      this.readonly = true
+    }
     if (this.makeId) {
       this.getMake();
     } else {
@@ -90,13 +79,13 @@ export class MakeComponent implements OnInit {
   }
 
   public getMake(): void {
-    this._makeService.getMake(this.makeId).subscribe(
+    this._makeService.getById(this.makeId).subscribe(
       result => {
-        if (!result.make) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        if (!result.result) {
+          this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
-          this.make = result.make;
+          this.make = result.result;
           if (this.make.picture && this.make.picture !== 'default.jpg') {
             this.imageURL = Config.apiURL + 'get-image-make/' + this.make.picture + "/" + Config.database;
           } else {
@@ -126,24 +115,6 @@ export class MakeComponent implements OnInit {
       'visibleSale': this.make.visibleSale,
       'ecommerceEnabled': this.make.ecommerceEnabled
     });
-
-
-    if (this.applications && this.applications.length > 0) {
-      this.applications.forEach(x => {
-        let encontro = false;
-        this.make.applications.forEach(y => {
-          if (x._id === y._id) {
-            encontro = true;
-            const control = new UntypedFormControl(y); // if first item set to true, else false
-            (this.makeForm.controls.applications as UntypedFormArray).push(control);
-          }
-        })
-        if (!encontro) {
-          const control = new UntypedFormControl(false); // if first item set to true, else false
-          (this.makeForm.controls.applications as UntypedFormArray).push(control);
-        }
-      })
-    }
   }
 
   ngAfterViewInit() {
@@ -157,7 +128,6 @@ export class MakeComponent implements OnInit {
       'description': [this.make.description, [Validators.required]],
       'visibleSale': [this.make.visibleSale, []],
       'ecommerceEnabled': [this.make.ecommerceEnabled, []],
-      'applications': this._fb.array([])
     });
 
     this.makeForm.valueChanges
@@ -185,15 +155,13 @@ export class MakeComponent implements OnInit {
     }
   }
 
+  retrunTo() {
+    return this._router.navigate(['/admin/makes']);
+  }
+
   public addMake(): void {
     this.loading = true;
     this.make = this.makeForm.value;
-
-    const selectedOrderIds = this.makeForm.value.applications
-      .map((v, i) => (v ? this.applications[i] : null))
-      .filter(v => v !== null);
-
-    this.make.applications = selectedOrderIds;
 
     switch (this.operation) {
       case 'add':
@@ -215,11 +183,11 @@ export class MakeComponent implements OnInit {
 
     this._makeService.saveMake(this.make).subscribe(
       result => {
-        if (!result.make) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        if (!result.result) {
+          this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
-          this.make = result.make;
+          this.make = result.result;
           if (this.filesToUpload) {
             this._makeService.makeFileRequest(this.make._id, this.filesToUpload)
               .then(
@@ -242,10 +210,11 @@ export class MakeComponent implements OnInit {
                 }
               );
           } else {
-            this.showMessage("El rubro se ha añadido con éxito.", 'success', false);
             this.make = new Make();
             this.filesToUpload = null;
+            this.showToast(result, 'success');
             this.buildForm();
+            return this.retrunTo()
           }
         }
         this.loading = false;
@@ -258,16 +227,15 @@ export class MakeComponent implements OnInit {
   }
 
   public updateMake(): void {
-
     this.loading = true;
 
     this._makeService.updateMake(this.make).subscribe(
       result => {
-        if (!result.make) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        if (!result.result) {
+          this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
-          this.make = result.make;
+          this.make = result.result;
           if (this.filesToUpload) {
             this._makeService.makeFileRequest(this.make._id, this.filesToUpload)
               .then(
@@ -287,7 +255,8 @@ export class MakeComponent implements OnInit {
                 }
               );
           } else {
-            this.showMessage("La Marca se ha actualizado con éxito.", 'success', false);
+            this.showToast( result, 'success');
+            return this.retrunTo()
           }
         }
         this.loading = false;
@@ -303,22 +272,8 @@ export class MakeComponent implements OnInit {
     this.filesToUpload = <Array<File>>fileInput.target.files;
   }
 
-  public getAllApplications(match: {}): Promise<Application[]> {
-    return new Promise<Application[]>((resolve, reject) => {
-      this.subscription.add(this._applicationService.getAll({
-        match,
-        sort: { name: 1 },
-      }).subscribe(
-        result => {
-          this.loading = false;
-          (result.status === 200) ? resolve(result.result) : reject(result);
-        },
-        error => reject(error)
-      ));
-    });
-  }
-
   public showMessage(message: string, type: string, dismissible: boolean): void {
+    console.log(message)
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
@@ -334,7 +289,9 @@ export class MakeComponent implements OnInit {
       this._makeService.delete(this.make._id).subscribe(
         async result => {
           this.showToast(result);
-          if (result.status === 200) this.activeModal.close({ make: this.make });
+          if (result.status === 200) {
+           return this.retrunTo()
+          }
         },
         error => this.showToast(error)
       )

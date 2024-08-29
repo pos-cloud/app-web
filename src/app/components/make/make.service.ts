@@ -8,6 +8,7 @@ import { Make } from './make';
 import { Config } from '../../app.config';
 import { AuthService } from '../login/auth.service';
 import { ModelService } from '../model/model.service';
+import { environment } from "environments/environment";
 
 @Injectable()
 export class MakeService extends ModelService {
@@ -137,7 +138,7 @@ export class MakeService extends ModelService {
 
   public saveMake(make: Make): Observable<any> {
 
-    const URL = `${Config.apiURL}make`;
+    const URL = `${environment.apiv2}/makes`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -156,24 +157,21 @@ export class MakeService extends ModelService {
   }
 
   public updateMake(make: Make): Observable<any> {
-
-    const URL = `${Config.apiURL}make`;
+    const URL = `${environment.apiv2}/makes`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams()
-      .set('id', make._id);
-
-    return this._http.put(URL, make, {
+    return this._http.put(`${URL}/${ make._id}`, make, {
       headers: headers,
-      params: params
     }).pipe(
       map(res => {
+        console.log(res)
         return res;
       }),
       catchError((err) => {
+        console.log(err)
         return of(err);
       })
     );

@@ -121,9 +121,7 @@ import {LocationService} from './components/location/location.service';
 import {LocationComponent} from './components/location/location/location.component';
 import {AuthService} from './components/login/auth.service';
 import {LoginComponent} from './components/login/login.component';
-import {ListMakesComponent} from './components/make/list-makes/list-makes.component';
 import {MakeService} from './components/make/make.service';
-import {MakeComponent} from './components/make/make/make.component';
 import {MercadopagoService} from './components/mercadopago/mercadopago.service';
 import {AddMovementOfArticleComponent} from './components/movement-of-article/add-movement-of-article/add-movement-of-article.component';
 import {ListMovementsOfArticlesComponent} from './components/movement-of-article/list-movements-of-articles/list-movements-of-articles.component';
@@ -277,10 +275,8 @@ export function createTranslateLoader(http: HttpClient) {
     DeleteTransactionComponent,
     ListRoomsComponent,
     RoomComponent,
-    ListMakesComponent,
     ListVATConditionsComponent,
     VATConditionComponent,
-    MakeComponent,
     PointOfSaleComponent,
     LoginComponent,
     AddUserComponent,

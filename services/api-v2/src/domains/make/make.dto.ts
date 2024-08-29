@@ -20,8 +20,5 @@ export default class MakeDto extends ModelDto {
   @IsArray()
   public applications: []
 
-  @ValidateIf((o) => !o._id)
-  @IsDefined()
-  @IsString()
   public picture: string
 }

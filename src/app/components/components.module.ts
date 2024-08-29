@@ -21,6 +21,7 @@ import {UnitOfMeasurementModule} from './unit-of-measurement/unit-of-measurement
 import {VariantValueModule} from './variant-value/variant-value.module';
 import { ReportsModule } from './reports/reports.module';
 import {ArticleModule} from './article/article.module'
+import { MakeModule } from './make/make.module';
 
 @NgModule({
   imports: [
@@ -44,7 +45,8 @@ import {ArticleModule} from './article/article.module'
     ReportModule,
     BusinessRuleModule,
     ReportsModule,
-    ArticleModule
+    ArticleModule,
+    MakeModule
   ],
   declarations: [],
 })

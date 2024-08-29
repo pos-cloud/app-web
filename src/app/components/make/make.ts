@@ -16,5 +16,39 @@ export class Make {
   public updateUser: User;
   public updateDate: string;
 
-  constructor() { }
+  constructor() {  }
+
 }
+
+export let attributes = [
+  {
+    name: 'description',
+    visible: true,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    project: null,
+    align: 'left',
+    required: false,
+  },
+  {
+    name: 'creationDate',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'date',
+    project: `{ "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
+    align: 'left',
+    required: false,
+  },
+  {
+    name: 'updateDate',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
+    align: 'left',
+    required: false,
+},
+]

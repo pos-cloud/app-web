@@ -284,6 +284,7 @@
     "madein": "Canal",
     "make": "Marca",
     "make.description": "Marca",
+    "make.visibleSale": "¿La marca es visible en la venta?",
     "male": "Masculino",
     "markupPercentage": "Margen",
     "markupPrice": "Utilidad",
