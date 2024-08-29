@@ -1400,7 +1400,7 @@ export default class ArticleUC {
 		};
 
 		const taxObj = await this.getTax();
-
+console.log(taxObj)
 		if (basePrice !== "" && markupPercentage !== "" && salePrice === "") {
 			price.basePrice = Number(basePrice);
 			price.markupPercentage = Number(markupPercentage);
@@ -1431,8 +1431,10 @@ export default class ArticleUC {
 			price.tax[0].taxAmount = (price.basePrice * percentage) / 100;
 			price.tax[0].taxBase = price.basePrice;
 			price.costPrice = price.tax[0].taxAmount + price.basePrice 
-			price.markupPrice = (price.costPrice * price.markupPercentage) / 100
-			price.markupPercentage = Number( Math.abs(((price.salePrice - price.basePrice) / price.basePrice) * 100).toFixed(2));
+			price.markupPrice = price.salePrice - price.costPrice
+			price.markupPercentage = Number(
+				(price.markupPrice / price.costPrice) * 100,
+			)
 		
 		} else {
 			price.basePrice = Number(basePrice);
