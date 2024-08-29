@@ -19,3 +19,24 @@ db['article-stocks'].aggregate([
     $out: "article-stocks"
   }
 ])
+
+
+// update variant
+
+db.articles.find({ type: "Final", operationType: { $ne: "D" } }).forEach(function(article) {
+    let variants = [];
+    
+    variants = db.variants.find({ articleParent: article._id }).toArray().map(function(variant) {
+        return {
+            type: variant.type,
+            value: variant.value
+        };
+    });
+    
+    if (variants.length > 0) {
+        db.articles.updateOne(
+            { _id: article._id },
+            { $set: { variants: variants } }
+        );
+    }
+});
