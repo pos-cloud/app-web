@@ -1400,7 +1400,7 @@ export default class ArticleUC {
 		};
 
 		const taxObj = await this.getTax();
-console.log(taxObj)
+
 		if (basePrice !== "" && markupPercentage !== "" && salePrice === "") {
 			price.basePrice = Number(basePrice);
 			price.markupPercentage = Number(markupPercentage);

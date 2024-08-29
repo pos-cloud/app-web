@@ -240,6 +240,11 @@ export class AddArticleTaxComponent implements OnInit {
     this.eventAddArticleTax.emit(this.articleTaxes);
   }
 
+  public viewTakeName(taxId) {
+    let taxe = this.taxes.filter((t)=> t._id === (typeof taxId == 'string' ? taxId : taxId._id))
+    return taxe[0].name
+  }
+
   public taxExists(): boolean {
     let exists: boolean = false;
 
