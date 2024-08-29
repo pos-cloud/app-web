@@ -1328,238 +1328,69 @@ export class ArticleComponent implements OnInit {
   }
 
   setValuesForm(): void {
-    if (!this.article._id) {
-      this.article._id = '';
-    }
-    if (!this.article.code) {
-      this.article.code = this.padString(
-        1,
-        this.config.article.code.validators.maxLength,
-      );
-    }
-    if (!this.article.codeSAT) {
-      this.article.codeSAT = '';
-    }
-    if (!this.article.order) {
-      this.article.order = 1;
-    }
-
-    let currency;
-
-    if (!this.article.currency) {
-      currency = null;
-    } else {
-      if (this.article.currency._id) {
-        currency = this.article.currency._id;
-      } else {
-        currency = this.article.currency;
-      }
-    }
-
-    let providers;
-
-    if (!this.article.providers || this.article.providers.length === 0) {
-      providers = null;
-    } else {
-      if (this.article.providers[0]._id) {
-        providers = this.article.providers[0]._id;
-      } else {
-        providers = this.article.providers;
-      }
-    }
-
-    let provider;
-
-    if (!this.article.provider || this.article.provider === null) {
-      provider = null;
-      providers = null;
-    } else {
-      if (this.article.provider._id) {
-        provider = this.article.provider._id;
-        providers = this.article.provider._id;
-      } else {
-        provider = this.article.provider;
-        providers = this.article.provider;
-      }
-    }
-
-    let classification;
-
-    if (!this.article.classification) {
-      classification = null;
-    } else {
-      if (this.article.classification[0]._id) {
-        classification = this.article.classification[0]._id;
-      } else {
-        classification = this.article.classification;
-      }
-    }
-
-    if (!this.article.description) {
-      this.article.description = '';
-    }
-    if (!this.article.posDescription) {
-      this.article.posDescription = '';
-    }
-    if (!this.article.basePrice) {
-      this.article.basePrice = 0.0;
-    }
-    if (!this.article.costPrice) {
-      this.article.costPrice = 0.0;
-    }
-    if (!this.article.markupPercentage) {
-      this.article.markupPercentage = 0.0;
-    }
-    if (!this.article.markupPrice) {
-      this.article.markupPrice = 0.0;
-    }
-    if (!this.article.salePrice) {
-      this.article.salePrice = 0.0;
-    }
-    if (!this.article.quantityPerMeasure) {
-      this.article.quantityPerMeasure = 1;
-    }
-    if (!this.article.observation) {
-      this.article.observation = '';
-    }
-    if (!this.article.barcode) {
-      this.article.barcode = '';
-    }
-    if (!this.article.printIn) {
-      this.article.printIn = ArticlePrintIn.Counter;
-    }
-    if (this.article.allowPurchase === undefined) {
-      this.article.allowPurchase = true;
-    }
-    if (this.article.allowSale === undefined) {
-      this.article.allowSale = true;
-    }
-    if (this.article.allowSaleWithoutStock === undefined) {
-      this.article.allowSaleWithoutStock = false;
-    }
-    if (this.article.ecommerceEnabled === undefined) {
-      this.article.ecommerceEnabled = false;
-    }
-    if (this.article.posKitchen === undefined) {
-      this.article.posKitchen = false;
-    }
-    if (this.article.isWeigth === undefined) {
-      this.article.isWeigth = false;
-    }
-    if (this.article.forShipping === undefined) {
-      this.article.forShipping = false;
-    }
-    if (!this.article.url) {
-      this.article.url = '';
-    }
-    if (!this.article.unitOfMeasurement) {
-      this.article.unitOfMeasurement = null;
-    }
-    if (!this.article.salesAccount) {
-      this.article.salesAccount = null;
-    }
-    if (!this.article.purchaseAccount) {
-      this.article.purchaseAccount = null;
-    }
-    if (!this.article.make) {
-      this.article.make = null;
-    }
-    if (!this.article.weight) {
-      this.article.weight = null;
-    }
-    if (!this.article.height) {
-      this.article.height = null;
-    }
-    if (!this.article.width) {
-      this.article.width = null;
-    }
-    if (!this.article.depth) {
-      this.article.depth = null;
-    }
-    if (this.article.updateVariants === undefined) {
-      this.article.updateVariants = false;
-    }
-
-    this.article.basePrice = this.roundNumber.transform(this.article.basePrice);
-    this.article.costPrice = this.roundNumber.transform(this.article.costPrice);
-    this.article.markupPercentage = this.roundNumber.transform(
-      this.article.markupPercentage,
-    );
-    this.article.markupPrice = this.roundNumber.transform(this.article.markupPrice, 3);
-    this.article.salePrice = this.roundNumber.transform(this.article.salePrice);
-    this.markupPriceWithoutVAT = this.roundNumber.transform(
-      (this.article.basePrice * this.article.markupPercentage) / 100,
-    );
-    this.salePriceWithoutVAT = this.roundNumber.transform(
-      this.article.basePrice + this.markupPriceWithoutVAT,
-    );
-
-    let lastPricePurchase: number = 0;
-
-    if (this.lastPricePurchase && this.lastPricePurchase != 0)
-      lastPricePurchase = this.lastPricePurchase;
-
-    if (!this.variant.type) this.variant.type = null;
-    if (!this.variant.value) this.variant.value = null;
-
     const values = {
-      _id: this.article._id,
-      order: this.article.order,
-      code: this.article.code,
-      codeSAT: this.article.codeSAT,
-      currency: currency,
-      make: this.article.make,
-      description: this.article.description,
-      posDescription: this.article.posDescription,
-      basePrice: this.article.basePrice,
-      costPrice: this.article.costPrice,
-      costPrice2: this.article.costPrice2,
-      markupPercentage: this.article.markupPercentage,
-      markupPrice: this.article.markupPrice,
-      markupPriceWithoutVAT: this.markupPriceWithoutVAT,
-      salePrice: this.article.salePrice,
-      salePriceWithoutVAT: this.salePriceWithoutVAT,
-      category: this.article.category,
-      quantityPerMeasure: this.article.quantityPerMeasure,
-      unitOfMeasurement: this.article.unitOfMeasurement,
-      observation: this.article.observation,
-      barcode: this.article.barcode,
-      printIn: this.article.printIn,
-      allowPurchase: this.article.allowPurchase,
-      allowSale: this.article.allowSale,
-      allowSaleWithoutStock: this.article.allowSaleWithoutStock,
-      isWeigth: this.article.isWeigth,
-      allowMeasure: this.article.allowMeasure,
-      ecommerceEnabled: this.article.ecommerceEnabled,
-      posKitchen: this.article.posKitchen,
-      favourite: this.article.favourite,
-      providers: provider,
-      provider: provider,
-      lastPricePurchase: lastPricePurchase,
-      classification: classification,
-      url: this.article.url,
-      forShipping: this.article.forShipping,
-      salesAccount: this.article.salesAccount,
-      purchaseAccount: this.article.purchaseAccount,
-      minStock: this.article.minStock,
-      maxStock: this.article.maxStock,
-      pointOfOrder: this.article.pointOfOrder,
-      codeProvider: this.article.codeProvider,
-      allowStock: this.article.allowStock,
-      wooId: this.article.wooId,
-      purchasePrice: this.article.purchasePrice,
-      m3: this.article.m3,
-      weight: this.article.weight,
-      height: this.article.height,
-      width: this.article.width,
-      depth: this.article.depth,
-      showMenu: this.article.showMenu ?? '',
-      updateVariants: this.article.updateVariants,
-      tiendaNubeId: this.article.tiendaNubeId,
+        _id: this.article._id ?? '',
+        order: this.article.order ?? 1,
+        code: this.article.code ?? this.padString(1, this.config.article.code.validators.maxLength),
+        codeSAT: this.article.codeSAT ?? '',
+        currency: this.article.currency?._id ?? this.article.currency ?? null,
+        make: this.article.make ?? null,
+        description: this.article.description ?? '',
+        posDescription: this.article.posDescription ?? '',
+        basePrice: this.roundNumber.transform(this.article.basePrice ?? 0.0),
+        costPrice: this.roundNumber.transform(this.article.costPrice ?? 0.0),
+        costPrice2: this.roundNumber.transform(this.article.costPrice2 ?? 0.0),
+        markupPercentage: this.roundNumber.transform(this.article.markupPercentage ?? 0.0),
+        markupPrice: this.roundNumber.transform(this.article.markupPrice ?? 0.0, 3),
+        markupPriceWithoutVAT: this.roundNumber.transform(
+            (this.article.basePrice * this.article.markupPercentage) / 100
+        ),
+        salePrice: this.roundNumber.transform(this.article.salePrice ?? 0.0),
+        salePriceWithoutVAT: this.roundNumber.transform(
+            this.article.basePrice + this.markupPriceWithoutVAT
+        ),
+        category: this.article.category ?? null,
+        quantityPerMeasure: this.article.quantityPerMeasure ?? 1,
+        unitOfMeasurement: this.article.unitOfMeasurement ?? null,
+        observation: this.article.observation ?? '',
+        barcode: this.article.barcode ?? '',
+        printIn: this.article.printIn ?? ArticlePrintIn.Counter,
+        allowPurchase: this.article.allowPurchase ?? true,
+        allowSale: this.article.allowSale ?? true,
+        allowSaleWithoutStock: this.article.allowSaleWithoutStock ?? false,
+        isWeigth: this.article.isWeigth ?? false,
+        allowMeasure: this.article.allowMeasure ?? false,
+        ecommerceEnabled: this.article.ecommerceEnabled ?? false,
+        posKitchen: this.article.posKitchen ?? false,
+        favourite: this.article.favourite ?? false,
+        providers: this.article.provider?._id ?? this.article.provider ?? this.article.providers?.[0]?._id ?? this.article.providers ?? null,
+        provider: this.article.provider?._id ?? this.article.provider ?? null,
+        lastPricePurchase: this.lastPricePurchase ?? 0,
+        classification: this.article.classification?.[0]?._id ?? this.article.classification ?? null,
+        url: this.article.url ?? '',
+        forShipping: this.article.forShipping ?? false,
+        salesAccount: this.article.salesAccount ?? null,
+        purchaseAccount: this.article.purchaseAccount ?? null,
+        minStock: this.article.minStock ?? null,
+        maxStock: this.article.maxStock ?? null,
+        pointOfOrder: this.article.pointOfOrder ?? null,
+        codeProvider: this.article.codeProvider ?? null,
+        allowStock: this.article.allowStock ?? null,
+        wooId: this.article.wooId ?? null,
+        purchasePrice: this.article.purchasePrice ?? null,
+        m3: this.article.m3 ?? null,
+        weight: this.article.weight ?? null,
+        height: this.article.height ?? null,
+        width: this.article.width ?? null,
+        depth: this.article.depth ?? null,
+        showMenu: this.article.showMenu ?? '',
+        updateVariants: this.article.updateVariants ?? false,
+        tiendaNubeId: this.article.tiendaNubeId ?? null,
     };
 
     this.articleForm.patchValue(values);
-  }
+}
+
 
   addArticle(): void {
     if (this.articleForm.valid) {
@@ -1629,7 +1460,7 @@ export class ArticleComponent implements OnInit {
         this.updateArticle();
       }
     } else {
-      this.showToast({ message: 'Revisa los errores en el formulario.' });
+      this.showToast({ message: 'Por favor, revisa los campos en rojo para continuar.' });
       this.onValueChanged();
     }
   }
