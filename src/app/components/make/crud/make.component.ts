@@ -104,16 +104,10 @@ export class MakeComponent implements OnInit {
 
   public setValueForm(): void {
 
-    if (!this.make._id) { this.make._id = ''; }
-    if (!this.make.description) { this.make.description = ''; }
-    if (!this.make.visibleSale) { this.make.visibleSale = false; }
-    if (!this.make.ecommerceEnabled) { this.make.ecommerceEnabled = false; }
-
     this.makeForm.patchValue({
-      '_id': this.make._id,
-      'description': this.make.description,
-      'visibleSale': this.make.visibleSale,
-      'ecommerceEnabled': this.make.ecommerceEnabled
+      '_id': this.make._id ?? '',
+      'description': this.make.description ?? null,
+      'visibleSale': this.make.visibleSale ?? false
     });
   }
 
@@ -126,30 +120,32 @@ export class MakeComponent implements OnInit {
     this.makeForm = this._fb.group({
       '_id': [this.make._id, []],
       'description': [this.make.description, [Validators.required]],
-      'visibleSale': [this.make.visibleSale, []],
-      'ecommerceEnabled': [this.make.ecommerceEnabled, []],
+      'visibleSale': [this.make.visibleSale, []]
     });
-
-    this.makeForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
-
-    this.onValueChanged();
-    this.focusEvent.emit(true);
   }
 
-  public onValueChanged(data?: any): void {
-
-    if (!this.makeForm) { return; }
+  onValueChanged(fieldID?: any): void {
+    if (!this.makeForm) {
+      return;
+    }
     const form = this.makeForm;
 
-    for (const field in this.formErrors) {
-      this.formErrors[field] = '';
-      const control = form.get(field);
+    if (!fieldID || typeof fieldID === 'string') {
+      for (const field in this.formErrors) {
+        if (!fieldID || field === fieldID) {
+          this.formErrors[field] = '';
+          const control = form.get(field);
 
-      if (control && control.dirty && !control.valid) {
-        const messages = this.validationMessages[field];
-        for (const key in control.errors) {
-          this.formErrors[field] += messages[key] + ' ';
+          if (control && !control.valid) {
+            for (const key in control.errors) {
+              if (
+                this.validationMessages[field][key] &&
+                this.validationMessages[field][key] != 'undefined'
+              ) {
+                this.formErrors[field] += this.validationMessages[field][key] + ' ';
+              }
+            }
+          }
         }
       }
     }
@@ -162,19 +158,25 @@ export class MakeComponent implements OnInit {
   public addMake(): void {
     this.loading = true;
     this.make = this.makeForm.value;
-
-    switch (this.operation) {
-      case 'add':
-        this.saveMake();
-        break;
-      case 'update':
-        this.updateMake();
-        break;
-      case 'delete':
-        this.deleteObj();
-      default:
-        break;
+    if (this.makeForm.valid) {
+      switch (this.operation) {
+        case 'add':
+          this.saveMake();
+          break;
+        case 'update':
+          this.updateMake();
+          break;
+        case 'delete':
+          this.deleteObj();
+        default:
+          break;
+      }
+    } else {
+      this.showToast({ message: 'Por favor, revisa los campos en rojo para continuar.' });
+      this.onValueChanged();
     }
+
+
   }
 
   public saveMake(): void {
