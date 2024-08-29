@@ -11,7 +11,7 @@ class TransactionTypeSchema extends Model {
       order: {type: Number, default: 1, required: true},
       branch: {type: Schema.Types.ObjectId, ref: 'branch'},
       transactionMovement: {type: String, trim: true, required: true},
-      abbreviation: {type: String, trim: true, required: true},
+      abbreviation: {type: String, trim: true},
       name: {type: String, trim: true, required: true},
       labelPrint: {type: String, trim: true},
       currentAccount: {type: String, trim: true, required: true},

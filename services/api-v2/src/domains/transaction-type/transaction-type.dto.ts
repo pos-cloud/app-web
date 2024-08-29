@@ -36,9 +36,6 @@ export default class TransactionTypeDto extends ModelDto {
   @IsString()
   public transactionMovement: string
 
-  @ValidateIf((o) => !o._id)
-  @IsDefined()
-  @IsString()
   public abbreviation: string
 
   @ValidateIf((o) => !o._id)
