@@ -165,7 +165,7 @@ export default class ArticleUC {
 								decimal,
 							)
 							let taxedAmount = article.basePrice
-							
+
 							if (article.otherFields && article.otherFields.length > 0) {
 								for (const field of article.otherFields) {
 									if (field.articleField.datatype === ArticleFieldType.Percentage) {
@@ -474,7 +474,8 @@ export default class ArticleUC {
 			const taxObj = await this.getTax()
 
 			for (const item of data) {
-				const calculatedSalePrice = this.calculateSalePrice(item.column12, item.column14, item.column15);
+				const calculatedSalePrice = await this.calculateSalePrice(item.column12, item.column14, item.column15, item.column13);
+				console.log(calculatedSalePrice)
 				if (item.column2 === '') {
 					return reject(new Responser(500, null, "En el archivo Excel, hay códigos de productos que están incompletos."))
 				}
@@ -494,13 +495,10 @@ export default class ArticleUC {
 							unitOfMeasurement: unitOfMeasurementObj[item.column9] === "" ? article.unitOfMeasurement : unitOfMeasurementObj[item.column9]?._id,
 							printIn: printerObj[item.column10] === "" ? article.unitOfMeasurement : printerObj[item.column10]?.name,
 							observation: item.column11 === "" ? article.observation : item.column11,
-							basePrice: calculatedSalePrice.basePrice2,
-							taxes: item.column13 === "" ? article.tax : {
-								tax: taxObj[item.column13]._id,
-								percentage: taxObj[item.column13].percentage
-							},
-							markupPercentage: calculatedSalePrice.markupPercentage2,
-							salePrice: calculatedSalePrice.salePrice2,
+							basePrice: calculatedSalePrice.basePrice,
+							taxes: calculatedSalePrice.tax,
+							markupPercentage: calculatedSalePrice.markupPercentage,
+							salePrice: calculatedSalePrice.salePrice,
 							weight: item.column16 === "" ? article.weight : item.column16,
 							width: item.column17 === "" ? article.width : item.column17,
 							height: item.column18 === "" ? article.height : item.column18,
@@ -513,7 +511,7 @@ export default class ArticleUC {
 							allowMeasure: item.column25 === 'Si',
 							posKitchen: item.column26 === 'Si',
 							m3: item.column27 === "" ? item.m3 : item.column27,
-							codeProvider:  item.column27 === "" ? item.codeProvider : item.column28
+							codeProvider: item.column27 === "" ? item.codeProvider : item.column28
 						}
 					);
 
@@ -540,18 +538,10 @@ export default class ArticleUC {
 						unitOfMeasurement: unitOfMeasurementObj[item.column9]?._id,
 						printIn: printerObj[item.column10]?.name,
 						observation: item.column11,
-						basePrice: calculatedSalePrice.basePrice2,
-						taxes: item.column13 === "" ?
-							(taxObj[21] ? {
-								tax: taxObj[21]._id,
-								percentage: taxObj[21].percentage
-							} : []) :
-							(taxObj[item.column13] ? {
-								tax: taxObj[item.column13]._id,
-								percentage: taxObj[item.column13].percentage
-							} : []),
-						markupPercentage: calculatedSalePrice.markupPercentage2,
-						salePrice: calculatedSalePrice.salePrice2,
+						basePrice: calculatedSalePrice.basePrice,
+						taxes: calculatedSalePrice.tax,
+						markupPercentage: calculatedSalePrice.markupPercentage,
+						salePrice: calculatedSalePrice.salePrice,
 						weight: item.column16,
 						width: item.column17,
 						height: item.column18,
@@ -1388,38 +1378,54 @@ export default class ArticleUC {
 		return categoryObj
 	}
 
-	calculateSalePrice(basePrice: string, markupPercentage: string, salePrice: string) {
-		let price = {
-			basePrice2: 0,
-			markupPercentage2: 0,
-			salePrice2: 0
-		}
+	async calculateSalePrice(basePrice: string, markupPercentage: string, salePrice: string, percentage: number = 21
+	) {
+		const price = {
+			basePrice: 0,
+			markupPercentage: 0,
+			salePrice: 0,
+			tax: [
+				{
+					tax: {},
+					percentage: 0,
+					taxAmount: 0,
+					taxBase: 0,
+				},
+			],
+		};
+
+		const taxObj = await this.getTax();
+
 		if (basePrice !== "" && markupPercentage !== "" && salePrice === "") {
-			price.basePrice2 = Number(basePrice);
-			price.markupPercentage2 = Number(markupPercentage);
-			price.salePrice2 = Number((Number(basePrice) * (1 + Number(markupPercentage) / 100)).toFixed(2))
+			price.basePrice = Number(basePrice);
+			price.markupPercentage = Number(markupPercentage);
+			price.salePrice = Number((price.basePrice * (1 + price.markupPercentage / 100)).toFixed(2));
 
-			return price
 		} else if (basePrice === "" && markupPercentage === "" && salePrice !== "") {
-			price.basePrice2 = Number(basePrice);
-			price.markupPercentage2 = Number(markupPercentage);
-			price.salePrice2 = Number(salePrice)
+			price.basePrice = Number(basePrice);
+			price.markupPercentage = Number(markupPercentage);
+			price.salePrice = Number(salePrice)
 
-			return price;
 		} else if (basePrice !== "" && markupPercentage === "" && salePrice !== "") {
-			price.basePrice2 = Number(basePrice);
-			price.markupPercentage2 = Number(Math.abs(((Number(salePrice) - Number(basePrice)) / Number(basePrice) * 100)).toFixed(2));
-
-			price.salePrice2 = Number(salePrice)
-			return price;
+			price.basePrice = Number(basePrice);
+			price.salePrice = Number(salePrice);
+			price.markupPercentage = Number( Math.abs(((price.salePrice - price.basePrice) / price.basePrice) * 100).toFixed(2));
+		
 		} else {
-			price.basePrice2 = Number(basePrice);
-			price.markupPercentage2 = Number(markupPercentage);
-			price.salePrice2 = Number(salePrice)
+			price.basePrice = Number(basePrice);
+			price.markupPercentage = Number(markupPercentage);
+			price.salePrice = Number(salePrice);
 
-			return price;
 		}
+		
+		price.tax[0].tax = taxObj[percentage];
+		price.tax[0].percentage = percentage;
+		price.tax[0].taxAmount = (price.basePrice * percentage) / 100;
+		price.tax[0].taxBase = price.basePrice;
+
+		return price;
 	}
+
 
 	async lastArticle() {
 		const config = await new ConfigController(this.database).getAll({
