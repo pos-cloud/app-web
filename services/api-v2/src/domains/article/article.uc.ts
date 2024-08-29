@@ -471,11 +471,10 @@ export default class ArticleUC {
 			const categoryObj = await this.getCategory()
 			const printerObj = await this.getPrinters()
 			const unitOfMeasurementObj = await this.getUnitOfMeasurement()
-			const taxObj = await this.getTax()
 
 			for (const item of data) {
 				const calculatedSalePrice = await this.calculateSalePrice(item.column12, item.column14, item.column15, item.column13);
-				console.log(calculatedSalePrice)
+				
 				if (item.column2 === '') {
 					return reject(new Responser(500, null, "En el archivo Excel, hay códigos de productos que están incompletos."))
 				}
@@ -497,7 +496,9 @@ export default class ArticleUC {
 							observation: item.column11 === "" ? article.observation : item.column11,
 							basePrice: calculatedSalePrice.basePrice,
 							taxes: calculatedSalePrice.tax,
+							costPrice:calculatedSalePrice.costPrice,
 							markupPercentage: calculatedSalePrice.markupPercentage,
+							markupPrice: calculatedSalePrice.markupPrice,
 							salePrice: calculatedSalePrice.salePrice,
 							weight: item.column16 === "" ? article.weight : item.column16,
 							width: item.column17 === "" ? article.width : item.column17,
@@ -540,7 +541,9 @@ export default class ArticleUC {
 						observation: item.column11,
 						basePrice: calculatedSalePrice.basePrice,
 						taxes: calculatedSalePrice.tax,
+						costPrice:calculatedSalePrice.costPrice,
 						markupPercentage: calculatedSalePrice.markupPercentage,
+						markupPrice: calculatedSalePrice.markupPrice,
 						salePrice: calculatedSalePrice.salePrice,
 						weight: item.column16,
 						width: item.column17,
@@ -1384,6 +1387,8 @@ export default class ArticleUC {
 			basePrice: 0,
 			markupPercentage: 0,
 			salePrice: 0,
+			markupPrice: 0,
+			costPrice: 0,
 			tax: [
 				{
 					tax: {},
@@ -1399,29 +1404,48 @@ export default class ArticleUC {
 		if (basePrice !== "" && markupPercentage !== "" && salePrice === "") {
 			price.basePrice = Number(basePrice);
 			price.markupPercentage = Number(markupPercentage);
-			price.salePrice = Number((price.basePrice * (1 + price.markupPercentage / 100)).toFixed(2));
+			price.tax[0].tax = taxObj[percentage];
+			price.tax[0].percentage = percentage;
+			price.tax[0].taxAmount = (price.basePrice * percentage) / 100;
+			price.tax[0].taxBase = price.basePrice;
+			price.costPrice = price.tax[0].taxAmount + price.basePrice 
+			price.markupPrice = (price.costPrice * price.markupPercentage) / 100
+			price.salePrice = Number((price.costPrice + price.markupPrice).toFixed(2))
 
 		} else if (basePrice === "" && markupPercentage === "" && salePrice !== "") {
 			price.basePrice = Number(basePrice);
 			price.markupPercentage = Number(markupPercentage);
+			price.tax[0].tax = taxObj[percentage];
+			price.tax[0].percentage = percentage;
+			price.tax[0].taxAmount = (price.basePrice * percentage) / 100;
+			price.tax[0].taxBase = price.basePrice;
+			price.costPrice = price.tax[0].taxAmount + price.basePrice 
+			price.markupPrice = (price.costPrice * price.markupPercentage) / 100
 			price.salePrice = Number(salePrice)
 
 		} else if (basePrice !== "" && markupPercentage === "" && salePrice !== "") {
 			price.basePrice = Number(basePrice);
 			price.salePrice = Number(salePrice);
+			price.tax[0].tax = taxObj[percentage];
+			price.tax[0].percentage = percentage;
+			price.tax[0].taxAmount = (price.basePrice * percentage) / 100;
+			price.tax[0].taxBase = price.basePrice;
+			price.costPrice = price.tax[0].taxAmount + price.basePrice 
+			price.markupPrice = (price.costPrice * price.markupPercentage) / 100
 			price.markupPercentage = Number( Math.abs(((price.salePrice - price.basePrice) / price.basePrice) * 100).toFixed(2));
 		
 		} else {
 			price.basePrice = Number(basePrice);
-			price.markupPercentage = Number(markupPercentage);
+			price.markupPercentage = 100
+			price.tax[0].tax = taxObj[percentage];
+			price.tax[0].percentage = percentage;
+			price.tax[0].taxAmount = (price.basePrice * percentage) / 100;
+			price.tax[0].taxBase = price.basePrice;
+			price.costPrice = price.tax[0].taxAmount + price.basePrice 
+			price.markupPrice = (price.costPrice * price.markupPercentage) / 100
 			price.salePrice = Number(salePrice);
 
 		}
-		
-		price.tax[0].tax = taxObj[percentage];
-		price.tax[0].percentage = percentage;
-		price.tax[0].taxAmount = (price.basePrice * percentage) / 100;
-		price.tax[0].taxBase = price.basePrice;
 
 		return price;
 	}
