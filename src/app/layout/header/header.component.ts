@@ -246,6 +246,7 @@ export class HeaderComponent {
 
     public openReport(link: string): void {
         this.isReportVisible = false;
+        this.closeNavbar()
         this._router.navigate([link]);
     }
 
