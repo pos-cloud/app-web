@@ -31,6 +31,7 @@ import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
 
 export class HeaderComponent {
 
+    toggleNavbar = false;
     public config$: any;
     public identity$: Observable<User>;
     public user$: Observable<User>;
@@ -286,4 +287,13 @@ export class HeaderComponent {
     public reload(){
         window.location.reload();
     }
+
+    toggleMenu() {
+        console.log("entro")
+        this.toggleNavbar = !this.toggleNavbar;
+      }
+
+      closeNavbar() {
+        this.toggleNavbar = false;
+      }
 }
