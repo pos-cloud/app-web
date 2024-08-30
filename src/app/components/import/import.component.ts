@@ -146,6 +146,23 @@ export class ImportComponent implements OnInit {
     }
   }
 
+  public downloadModel() {
+    const urls = {
+      'articles-stock': "https://docs.google.com/spreadsheets/d/1UbWtqcHvWHn-PpVNe3xN72Y2iaWSJQog/edit?usp=sharing&ouid=108486146537654534304&rtpof=true&sd=true",
+      'articles': "https://docs.google.com/spreadsheets/d/1Et1Wj2nYSN9EQwfegTdWhWU3ICK37dW2/edit?usp=sharing&ouid=108486146537654534304&rtpof=true&sd=true",
+      'company': "https://docs.google.com/spreadsheets/d/1KNaAP55GU4_2bmIXE9aopwHX-vzxuf3r/edit?usp=sharing&ouid=108486146537654534304&rtpof=true&sd=true"
+    };
+  
+    const url = urls[this.model];
+  
+    if (url) {
+      window.open(url, '_blank');
+    } else {
+      console.warn('No URL found for the specified model');
+    }
+  }
+  
+
   public showToast(result, type?: string, title?: string, message?: string): void {
     if (result) {
       if (result.status === 0) {

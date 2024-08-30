@@ -4,23 +4,29 @@
       <span style="color: #607D8B">{{title}}</span>
       <div class="pull-right">
         <button *ngFor="let button of headerButtons" [type]="'button'" [class]="button.class"
-          (click)="runEvent(button.click, null, null)" [disabled]="loading"><i
-            [class]="button.icon"></i><span>{{ button.title | translate | capitalize }}</span>
+          (click)="runEvent(button.click, null, null)" [disabled]="loading"><i [class]="button.icon"></i><span>{{
+            button.title | translate | capitalize }}</span>
         </button>
         <div class="columns-area float-right" ngbDropdown>
-          <button class="btn btn-light" type="button" id="user" ngbDropdownToggle aria-haspopup="true" aria-expanded="false">
+          <button class="btn btn-light" type="button" id="user" ngbDropdownToggle aria-haspopup="true"
+            aria-expanded="false">
             <i class="fa fa-columns"></i><span>{{ 'columns' | translate | capitalize }}</span>
           </button>
           <div ngbDropdownMenu>
-            <div ngbDropdownItem cdkDropList class="example-list" (cdkDropListDropped)="datatableController.drop($event)">
+            <div ngbDropdownItem cdkDropList class="example-list"
+              (cdkDropListDropped)="datatableController.drop($event)">
               <div class="example-box" *ngFor="let column of columns" cdkDrag [cdkDragDisabled]="column.disabled">
-                <label for="column"><input type="checkbox" [id]="column.name" (change)="getItems()" [(ngModel)]="column.visible"
-                    [disabled]="column.disabled">{{ column.name | translate}}:</label>
+                <label for="column"><input type="checkbox" [id]="column.name" (change)="getItems()"
+                    [(ngModel)]="column.visible" [disabled]="column.disabled">{{ column.name | translate}}:</label>
               </div>
             </div>
           </div>
         </div>
-        <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems()"></app-export-excel>
+        <span>/</span>
+        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i
+            [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
+        <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns"
+          (eventExport)="exportItems()"></app-export-excel>
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -44,7 +50,8 @@
                   [disabled]="!column.filter || loading">
                 <select class="form-control" *ngIf="column.datatype === 'boolean'" [(ngModel)]="filters[column.name]"
                   (change)="addFilters()">
-                  <option value="" [ngClass]="{'disabled': loading, 'enabled': !loading }" [disabled]="!column.filter || loading">
+                  <option value="" [ngClass]="{'disabled': loading, 'enabled': !loading }"
+                    [disabled]="!column.filter || loading">
                     {{'select filter' | translate | capitalize}}</option>
                   <option [value]="true" [ngClass]="{'disabled': loading, 'enabled': !loading }"
                     [disabled]="!column.filter || loading">{{'true' | translate | capitalize}}
@@ -69,8 +76,8 @@
 														}">
             <td align="left">
               <button *ngFor="let button of rowButtons" [type]="'button'" [class]="button.class"
-                (click)="runEvent(button.click, item, items)" [disabled]="loading" [title]="button.title | translate | capitalize"><i
-                  [class]="button.icon"></i>
+                (click)="runEvent(button.click, item, items)" [disabled]="loading"
+                [title]="button.title | translate | capitalize"><i [class]="button.icon"></i>
               </button>
             </td>
             <ng-container *ngFor="let column of columns">
@@ -82,7 +89,8 @@
             </ng-container>
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
-            <td [attr.colspan]="datatableController.getColumnsVisibles() + 1">{{ 'no data found' | translate | capitalize }}
+            <td [attr.colspan]="datatableController.getColumnsVisibles() + 1">{{ 'no data found' | translate |
+              capitalize }}
             </td>
           </tr>
         </tbody>
@@ -91,8 +99,8 @@
     <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
-          <pagination-controls class="my-pagination" (pageChange)="pageChange($event)" #api previousLabel="Ant." nextLabel="Sig."
-            autoHide="true">
+          <pagination-controls class="my-pagination" (pageChange)="pageChange($event)" #api previousLabel="Ant."
+            nextLabel="Sig." autoHide="true">
           </pagination-controls>
         </div>
         <div class="form-group col-md-2">
@@ -102,7 +110,7 @@
             <option [value]="20">{{'show 20 records' | translate | capitalize}}</option>
             <option [value]="50">{{'show 50 records' | translate | capitalize}}</option>
             <option [value]="100">{{'show 100 records' | translate | capitalize}}</option>
-            <option [value]="-1">Mostrar Todos</option>
+            <option [value]="1000000">Mostrar Todos</option>
           </select>
         </div>
       </div>

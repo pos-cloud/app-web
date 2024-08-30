@@ -52,12 +52,7 @@ export class ListArticlesComponent {
       if (this.pathLocation[2] === "variants") {
         this.title = 'Variantes'
         attributeType.defaultFilter = `{ "$eq": "Variante" }`;
-        this.headerButtons = [{
-          title: 'refresh',
-          class: 'btn btn-light',
-          icon: 'fa fa-refresh',
-          click: `this.refresh()`
-        },
+        this.headerButtons = [
         {
           title: 'Imprimir Etiquetas',
           class: 'btn btn-light',
@@ -99,12 +94,7 @@ export class ListArticlesComponent {
           class: 'btn btn-light',
           icon: 'fa fa-plus',
           click: `this.emitEvent('add', null)`
-        }, {
-          title: 'refresh',
-          class: 'btn btn-light',
-          icon: 'fa fa-refresh',
-          click: `this.refresh()`
-        }, {
+        },{
           title: 'import',
           class: 'btn btn-light',
           icon: 'fa fa-upload',

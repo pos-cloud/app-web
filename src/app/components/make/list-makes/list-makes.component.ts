@@ -58,13 +58,7 @@ export class ListMakesComponent {
         class: "btn btn-light",
         icon: "fa fa-plus",
         click: `this.emitEvent('add', null)`,
-      },
-      {
-        title: 'refresh',
-        class: 'btn btn-light',
-        icon: 'fa fa-refresh',
-        click: `this.refresh()`
-      },
+      }
     ];
     this.title = "Marcas";
   }

@@ -1409,9 +1409,9 @@ export class ArticleComponent implements OnInit {
     }    
 
       this.article = Object.assign(this.article, this.articleForm.value);
-      if (typeof this.article.make === 'string') {
-        this.article.make = null;
-      }
+      // if (typeof this.article.make === 'string') {
+      //   this.article.make = null;
+      // }
       if (this.article.category && this.article.category.toString() === '')
         this.article.category = null;
       if (
@@ -1509,7 +1509,6 @@ export class ArticleComponent implements OnInit {
   async updateArticle() {
     this.loading = true;
     if (await this.isValid()) {
-
       if (this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
       this._articleService.updateArticle(this.article).subscribe(
         async (result) => {

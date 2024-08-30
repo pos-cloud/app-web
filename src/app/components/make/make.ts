@@ -61,5 +61,15 @@ export let attributes = [
     project: null,
     align: 'left',
     required: true,
-  }
+  },
+  {
+    name: 'visibleSale',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'boolean',
+    project: null,
+    align: 'left',
+    required: true,
+},
 ]

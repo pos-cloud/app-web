@@ -41,12 +41,7 @@ export class ListCategoriesComponent {
     class: 'btn btn-light',
     icon: 'fa fa-plus',
     click: `this.emitEvent('add', null)`
-  }, {
-    title: 'refresh',
-    class: 'btn btn-light',
-    icon: 'fa fa-refresh',
-    click: `this.refresh()`
-  }, {
+  },{
     title: 'import',
     class: 'btn btn-light',
     icon: 'fa fa-upload',

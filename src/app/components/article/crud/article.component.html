@@ -233,7 +233,7 @@
                                 </div>
                             </div>
                             <div *ngIf="!article.containsVariants" class="col-md-3">
-                                <label class="control-label">{{'priceCost' | translate | capitalize}}:</label>
+                                <label class="control-label">{{'priceCostStructure' | translate | capitalize}}:</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend"><span class="input-group-text"
                                             id="basic-addon1">$</span></div>
@@ -250,8 +250,7 @@
                         <div class="row">
                             <div class="form-group col-md-5">
                                 <label for="costPrice" class="control-label">{{'article.costPrice' | translate |
-                                    capitalize}}:
-                                    :</label>
+                                    capitalize}}:</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend"><span class="input-group-text"
                                             id="basic-addon1">$</span></div>
@@ -349,7 +348,7 @@
                                 <select class="form-control" formControlName="currency">
                                     <option *ngFor="let currency of currencies" [selected]="(article.currency && article.currency._id && currency._id===article.currency._id) ||
                                               (article.currency && currency._id===article.currency)"
-                                        [value]="currency._id"
+                                        [ngValue]="currency._id"
                                         [disabled]="readonly || (article && article.type && article.type.toString() === 'Variante')">
                                         {{currency.name}}</option>
                                 </select>
@@ -448,19 +447,6 @@
                             {{ applications[i].name }}
                         </label>
                         <select class="form-control" [formControl]="appControl" (change)="onAppChange($event, i)">
-                            <option [value]="true" [disabled]="readonly">{{'true' | translate |
-                                capitalize}}</option>
-                            <option [value]="false" [disabled]="readonly">{{'false' | translate |
-                                capitalize}}</option>
-                        </select>
-                    </div>
-                </div>
-                <br />
-                <div class="row">
-                    <div class="form-group col-md-6">
-                        <label for="forShipping" class="control-label">{{'forShipping' | translate |
-                            capitalize}}</label>
-                        <select class="form-control" formControlName="forShipping">
                             <option [ngValue]="true" [disabled]="readonly">{{'true' | translate |
                                 capitalize}}</option>
                             <option [ngValue]="false" [disabled]="readonly">{{'false' | translate |
@@ -468,6 +454,7 @@
                         </select>
                     </div>
                 </div>
+                <br />
                 <div class='row'>
                     <div class="form-group col-md-2">
                         <label for="weight" class="control-label">{{'weight' | translate | capitalize}}:</label>
@@ -597,9 +584,9 @@
                                 <label for="allowPurchase" class="control-label">{{'allowPurchase' | translate |
                                     capitalize}}</label>
                                 <select class="form-control" formControlName="allowPurchase">
-                                    <option [value]="true" [disabled]="readonly">{{'true' | translate |
+                                    <option [ngValue]="true" [disabled]="readonly">{{'true' | translate |
                                         capitalize}}</option>
-                                    <option [value]="false" [disabled]="readonly">{{'false' | translate |
+                                    <option [ngValue]="false" [disabled]="readonly">{{'false' | translate |
                                         capitalize}}</option>
                                 </select>
                             </div>
@@ -607,9 +594,9 @@
                                 <label for="allowSale" class="control-label">{{'allowSale' | translate |
                                     capitalize}}</label>
                                 <select class="form-control" formControlName="allowSale">
-                                    <option [value]="true" [disabled]="readonly">{{'true' | translate |
+                                    <option [ngValue]="true" [disabled]="readonly">{{'true' | translate |
                                         capitalize}}</option>
-                                    <option [value]="false" [disabled]="readonly">{{'false' | translate |
+                                    <option [ngValue]="false" [disabled]="readonly">{{'false' | translate |
                                         capitalize}}</option>
                                 </select>
                             </div>
@@ -617,9 +604,9 @@
                                 <label for="allowStock" class="control-label">{{'allowStock' | translate |
                                     capitalize}}</label>
                                 <select class="form-control" formControlName="allowStock">
-                                    <option [value]="true" [disabled]="readonly">{{'true' | translate |
+                                    <option [ngValue]="true" [disabled]="readonly">{{'true' | translate |
                                         capitalize}}</option>
-                                    <option [value]="false" [disabled]="readonly">{{'false' | translate |
+                                    <option [ngValue]="false" [disabled]="readonly">{{'false' | translate |
                                         capitalize}}</option>
                                 </select>
                             </div>
@@ -629,9 +616,9 @@
                                 <label for="allowSaleWithoutStock" class="control-label">{{'allowSaleWithoutStock' |
                                     translate | capitalize}}</label>
                                 <select class="form-control" formControlName="allowSaleWithoutStock">
-                                    <option [value]="true" [disabled]="readonly">{{'true' | translate |
+                                    <option [ngValue]="true" [disabled]="readonly">{{'true' | translate |
                                         capitalize}}</option>
-                                    <option [value]="false" [disabled]="readonly">{{'false' | translate |
+                                    <option [ngValue]="false" [disabled]="readonly">{{'false' | translate |
                                         capitalize}}</option>
                                 </select>
                             </div>
@@ -639,9 +626,9 @@
                                 <label for="isWeigth" class="control-label">{{'isWeigth' | translate |
                                     capitalize}}</label>
                                 <select class="form-control" formControlName="isWeigth">
-                                    <option [value]="true" [disabled]="readonly">{{'true' | translate |
+                                    <option [ngValue]="true" [disabled]="readonly">{{'true' | translate |
                                         capitalize}}</option>
-                                    <option [value]="false" [disabled]="readonly">{{'false' | translate |
+                                    <option [ngValue]="false" [disabled]="readonly">{{'false' | translate |
                                         capitalize}}</option>
                                 </select>
                             </div>
@@ -649,9 +636,9 @@
                                 <label for="allowMeasure" class="control-label">{{'allowMeasure' | translate |
                                     capitalize}}</label>
                                 <select class="form-control" formControlName="allowMeasure">
-                                    <option [value]="true" [disabled]="readonly">{{'true' | translate |
+                                    <option [ngValue]="true" [disabled]="readonly">{{'true' | translate |
                                         capitalize}}</option>
-                                    <option [value]="false" [disabled]="readonly">{{'false' | translate |
+                                    <option [ngValue]="false" [disabled]="readonly">{{'false' | translate |
                                         capitalize}}</option>
                                 </select>
                             </div>
@@ -661,9 +648,9 @@
                                 <label for="posKitchen" class="control-label">{{'posKitchen' | translate |
                                     capitalize}}</label>
                                 <select class="form-control" formControlName="posKitchen">
-                                    <option [value]="true" [disabled]="readonly">{{'true' | translate |
+                                    <option [ngValue]="true" [disabled]="readonly">{{'true' | translate |
                                         capitalize}}</option>
-                                    <option [value]="false" [disabled]="readonly">{{'false' | translate |
+                                    <option [ngValue]="false" [disabled]="readonly">{{'false' | translate |
                                         capitalize}}</option>
                                 </select>
                             </div>
@@ -675,7 +662,7 @@
                                         [disabled]="readonly"></option>
                                     <option *ngFor="let classification of classifications"
                                         [selected]="(article.classification && article.classification._id && classification._id===article.classification._id) ||
-                                                      (article.classification && classification._id===article.classification)" [value]="classification._id"
+                                                      (article.classification && classification._id===article.classification)" [ngValue]="classification._id"
                                         [disabled]="readonly">
                                         {{classification.name}}</option>
                                 </select>
@@ -688,7 +675,7 @@
                                         [disabled]="readonly"></option>
                                     <option *ngFor="let provider of companies"
                                         [selected]="(article.provider && article.provider._id && provider._id===article.provider._id) ||
-                                                      (article.provider && article.provider && provider._id===article.provider)" [value]="provider._id">
+                                                      (article.provider && article.provider && provider._id===article.provider)" [ngValue]="provider._id">
                                         {{provider.name}}</option>
                                 </select>
                                 <div *ngIf="formErrors.provider" class="alert alert-danger">
@@ -720,9 +707,9 @@
                                 <label for="updateVariants" class="control-label">{{'updateVariants' | translate |
                                     capitalize}}</label>
                                 <select class="form-control" formControlName="updateVariants">
-                                    <option [value]="true" [disabled]="readonly">{{'true' | translate |
+                                    <option [ngValue]="true" [disabled]="readonly">{{'true' | translate |
                                         capitalize}}</option>
-                                    <option [value]="false" [disabled]="readonly">{{'false' | translate |
+                                    <option [ngValue]="false" [disabled]="readonly">{{'false' | translate |
                                         capitalize}}</option>
                                 </select>
                             </div>
