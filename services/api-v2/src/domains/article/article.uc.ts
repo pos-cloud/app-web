@@ -486,7 +486,7 @@ export default class ArticleUC {
 						{
 							order: item.column1 === "" ? article.order : item.column11,
 							code: item.column2,
-							barcode: item.column13 === "" ? article.barcode : item.column13,
+							barcode: item.column3 === "" ? article.barcode : item.column3,
 							make: makesObj[item.column4] === undefined ? article.make : makesObj[item.column4]._id,
 							category: categoryObj[item.column6] === undefined ? article.category : categoryObj[item.column6]?._id,
 							description: item.column7 === "" ? article.description : item.column7,
