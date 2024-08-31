@@ -139,16 +139,21 @@ export class ConfigService extends ModelService {
     );
   }
 
-  public generateCRS(config: Config): Observable<any> {
+  public generateCRS(companyName: string, companyCUIT: string): Observable<any> {
 
-    const URL = `${Config.apiURL}generate-crs`;
+    const URL = `${environment.feAr}/cert`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    return this._http.post(URL, config, {
-      headers: headers
+    return this._http.post(URL, 
+      {
+        companyName: companyName,
+        companyCUIT: companyCUIT
+    }, {
+      headers: headers,
+      responseType: 'blob' 
     }).pipe(
       map(res => {
         return res;
@@ -212,34 +217,35 @@ export class ConfigService extends ModelService {
     });
   }
 
-  public updloadFile(files: Array<File>) {
-
+  public uploadCRT(files: Array<File>, companyCUIT: string): Promise<any> {
     let xhr: XMLHttpRequest = new XMLHttpRequest();
-    xhr.open('POST', Config.apiURL + 'upload-crt', true);
+    xhr.open('POST', `${environment.feAr}/cert/upload-crt/${companyCUIT}`, true);
     xhr.setRequestHeader('Authorization', this._authService.getToken());
-
-    return new Promise((resolve, reject) => {
-      let formData: any = new FormData();
-
-      if (files && files.length > 0) {
-        for (let i: number = 0; i < files.length; i++) {
-          formData.append('file', files[i], files[i].name);
-        }
+  
+    const formData: FormData = new FormData();
+    
+    // Agregar el archivo(s) al FormData
+    if (files && files.length > 0) {
+      for (let i: number = 0; i < files.length; i++) {
+        formData.append('file', files[i], files[i].name);
       }
-
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4) {
-          if (xhr.status == 200) {
+    }
+  
+    return new Promise((resolve, reject) => {
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 201) {
             resolve(JSON.parse(xhr.response));
           } else {
             reject(xhr.response);
           }
         }
-      }
-
+      };
+  
       xhr.send(formData);
     });
   }
+  
 
   public deletePicture(_id: string): Observable<any> {
 

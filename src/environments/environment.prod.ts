@@ -4,5 +4,6 @@ export const environment = {
   apiv2: "https://api-v2.poscloud.ar",
   apiPrint: "https://api-print.poscloud.ar",
   apiStorage: "https://api-storage.poscloud.ar",
-  apiTiendaNube: "https://api-tiendanube.poscloud.ar"
+  apiTiendaNube: "https://api-tiendanube.poscloud.ar",
+  feAr: "http://fe-ar.poscloud.ar"
 };

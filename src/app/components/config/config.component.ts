@@ -184,20 +184,22 @@ export class ConfigComponent implements OnInit {
         }
       )
   }
+
+
   public upload() {
-
-
-    this._configService.updloadFile(this.filesToUpload)
+    const companyCUIT = this.config['companyIdentificationValue'];
+  
+    this._configService.uploadCRT(this.filesToUpload, companyCUIT)
       .then(
         result => {
           if (result) {
-            this.showToast("Certificado subido correctamente", "success")
+            this.showToast(result.message, "success");
           }
         },
         error => {
-          this.showToast(error, "warning")
+          this.showToast(error, "warning");
         }
-      )
+      );
   }
 
   public fileChangeEvent(event: any) {
@@ -464,17 +466,18 @@ export class ConfigComponent implements OnInit {
     this.loading = true;
     this.cert = true;
 
-    this._configService.generateCRS(this.config).subscribe(
-      result => {
-        if (!result) {
-          if (result.message && result.message !== "") this.showToast(result.message, "info");
-        } else {
-          this.cert = true;
-          this.showToast("Los archivos se generaron correctamente.", "success");
-          this.routeFile = '-' + Config.database + '-certificados-keys-poscloud.csr';
-          this.hideMessage();
+    this._configService.generateCRS(this.config['companyName'],this.config['companyIdentificationValue']).subscribe(
+      (blob: Blob) => {
 
-        }
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'poscloud.csr';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+
         this.loading = false;
       },
       error => {
@@ -637,30 +640,30 @@ export class ConfigComponent implements OnInit {
     if (this.config.tradeBalance.numberOfDecimals === undefined) this.config.tradeBalance.numberOfDecimals = 2;
     if (this.config.voucher.readingLimit === undefined) this.config.voucher.readingLimit = 0;
     if (this.config.voucher.minutesOfExpiration === undefined) this.config.voucher.minutesOfExpiration = 720;
-    if (!this.config.twilio) {
-      this.config.twilio = {
-        senderNumber: '',
-        accountSid: '',
-        authToken: ''
-      }
-    }
-    if (!this.config.twilio.senderNumber) this.config.twilio.senderNumber = '';
-    if (!this.config.twilio.accountSid) this.config.twilio.accountSid = '';
-    if (!this.config.twilio.authToken) this.config.twilio.authToken = '';
+    // if (!this.config.twilio) {
+    //   this.config.twilio = {
+    //     senderNumber: '',
+    //     accountSid: '',
+    //     authToken: ''
+    //   }
+    // }
+    // if (!this.config.twilio.senderNumber) this.config.twilio.senderNumber = '';
+    // if (!this.config.twilio.accountSid) this.config.twilio.accountSid = '';
+    // if (!this.config.twilio.authToken) this.config.twilio.authToken = '';
 
-    if (!this.config.tiendaNube) {
-      this.config.tiendaNube = {
-        appID: '',
-        clientSecret: '',
-        token: '',
-        userID: ''
-      }
-    }
+    // if (!this.config.tiendaNube) {
+    //   this.config.tiendaNube = {
+    //     appID: '',
+    //     clientSecret: '',
+    //     token: '',
+    //     userID: ''
+    //   }
+    // }
 
-    if(!this.config.tiendaNube.appID) this.config.tiendaNube.appID;
-    if(!this.config.tiendaNube.clientSecret) this.config.tiendaNube.clientSecret;
-    if(!this.config.tiendaNube.token) this.config.tiendaNube.token;
-    if(!this.config.tiendaNube.userID) this.config.tiendaNube.userID;
+    // if(!this.config.tiendaNube.appID) this.config.tiendaNube.appID;
+    // if(!this.config.tiendaNube.clientSecret) this.config.tiendaNube.clientSecret;
+    // if(!this.config.tiendaNube.token) this.config.tiendaNube.token;
+    // if(!this.config.tiendaNube.userID) this.config.tiendaNube.userID;
 
 
     let vatConfitionDefault;
@@ -727,13 +730,13 @@ export class ConfigComponent implements OnInit {
       'tradeBalance.numberOfDecimals': this.config.tradeBalance.numberOfDecimals,
       'voucher.readingLimit': this.config.voucher.readingLimit,
       'voucher.minutesOfExpiration': this.config.voucher.minutesOfExpiration,
-      'twilio.senderNumber': this.config.twilio.senderNumber,
-      'twilio.accountSid': this.config.twilio.accountSid,
-      'twilio.authToken': this.config.twilio.authToken,
-      'tiendaNube.appID' : this.config.tiendaNube.appID,
-      'tiendaNube.clientSecret' : this.config.tiendaNube.clientSecret,
-      'tiendaNube.token' : this.config.tiendaNube.token,
-      'tiendaNube.userID' : this.config.tiendaNube.userID,
+      // 'twilio.senderNumber': this.config.twilio.senderNumber,
+      // 'twilio.accountSid': this.config.twilio.accountSid,
+      // 'twilio.authToken': this.config.twilio.authToken,
+      // 'tiendaNube.appID' : this.config.tiendaNube.appID,
+      // 'tiendaNube.clientSecret' : this.config.tiendaNube.clientSecret,
+      // 'tiendaNube.token' : this.config.tiendaNube.token,
+      // 'tiendaNube.userID' : this.config.tiendaNube.userID,
 
     });
   }
@@ -757,7 +760,8 @@ export class ConfigComponent implements OnInit {
         config.companyIdentificationType,
         config.companyIdentificationValue,
         config.licenseCost,
-        config.companyPostalCode);
+        config.companyPostalCode
+      );
     }
   }
 
