@@ -5,6 +5,6 @@ export const environment = {
     apiPrint: "https://d-api-print.poscloud.ar",
     apiStorage: "https://d-api-storage.poscloud.ar", 
     apiTiendaNube: "https://d-api-tiendanube.poscloud.ar",  
-    feAr: "http://d-fe-ar.poscloud.ar"
+    feAr: "https://d-fe-ar.poscloud.ar"
 
 };
