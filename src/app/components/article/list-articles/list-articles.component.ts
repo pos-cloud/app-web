@@ -58,6 +58,12 @@ export class ListArticlesComponent {
           class: 'btn btn-light',
           icon: 'fa fa-print',
           click: `this.emitEvent('print-labels', null, items)`
+        },
+        {
+          title: 'refresh',
+          class: 'btn btn-light',
+          icon: 'fa fa-refresh',
+          click: `this.refresh()`
         }];
          this.rowButtons = [
           {
@@ -117,6 +123,12 @@ export class ListArticlesComponent {
           class: 'btn btn-light',
           icon: 'fa fa-print',
           click: `this.emitEvent('print-list', null, items)`
+        },
+        {
+          title: 'refresh',
+          class: 'btn btn-light',
+          icon: 'fa fa-refresh',
+          click: `this.refresh()`
         }
         ];
 
