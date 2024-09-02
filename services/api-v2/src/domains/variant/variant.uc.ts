@@ -262,7 +262,6 @@ export default class VariantUC extends Controller {
 
                 if (article.type === 'Variante') {
                     description = article.description;
-                  //  console.log(description, updatedChildrens.find((child: any) => child.description))
                     existingChild = updatedChildrens.find((child: any) => child.description === article.description);
                 } else {
                     description = `${article.description} ${combination.join(' / ')}`;
@@ -283,6 +282,7 @@ export default class VariantUC extends Controller {
                     // Crear un nuevo artículo hijo
                     let child = { ...article, description: description, type: 'Variante' };
                     delete child._id;
+                    delete child.tiendaNubeId
                     let newArticle = await articleController.save(new articleController.model(child));
 
                     // Crear y asociar las variantes correspondientes con el nuevo artículo hijo

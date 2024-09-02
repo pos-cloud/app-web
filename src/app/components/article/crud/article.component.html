@@ -244,7 +244,7 @@
                         <br>
                         <app-add-article-tax (eventAddArticleTax)="addArticleTaxes($event)" [article]="article"
                             [articleTaxes]="taxes" [filtersTaxClassification]="filtersTaxClassification"
-                            [readonly]="readonly">
+                            [readonly]="operation==='view'">
                         </app-add-article-tax>
                         <br>
                         <div class="row">
@@ -447,9 +447,9 @@
                             {{ applications[i].name }}
                         </label>
                         <select class="form-control" [formControl]="appControl" (change)="onAppChange($event, i)">
-                            <option [ngValue]="true" [disabled]="readonly">{{'true' | translate |
+                            <option value="true" [disabled]="readonly">{{'true' | translate |
                                 capitalize}}</option>
-                            <option [ngValue]="false" [disabled]="readonly">{{'false' | translate |
+                            <option value="false" [disabled]="readonly">{{'false' | translate |
                                 capitalize}}</option>
                         </select>
                     </div>

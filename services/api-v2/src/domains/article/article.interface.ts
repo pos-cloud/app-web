@@ -98,6 +98,7 @@ export default interface Article extends Model {
   depth: Number
   showMenu: boolean
   updateVariants: boolean
+  tiendaNubeId: Number,
   variants: {
     value: VariantValue,
     type: VariantType,

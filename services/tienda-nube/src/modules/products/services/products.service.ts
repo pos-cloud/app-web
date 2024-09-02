@@ -412,8 +412,8 @@ export class ProductsService {
       //     },
       //   );
       // }
-      const foundCollectionV = await this.poolDatabase.getCollection(
-        'variants',
+      const historiesCollection = await this.poolDatabase.getCollection(
+        'histories',
         database,
       );
 
@@ -422,29 +422,28 @@ export class ProductsService {
         database,
       );
 
-      const variantProducts = await foundCollectionV.find({
-        operationType: "D",
-        articleParent: new ObjectId(foundArticle._id.toString()),
+      const variantProducts = await historiesCollection.find({
+        'doc.articleParent': new ObjectId(foundArticle._id.toString()),
       }).toArray();
 
-      for (let variant of variantProducts) {
-        const article = await foundCollection.find({
-          _id: new ObjectId(variant.articleChild.toString()),
-        }).toArray();
 
-        if (article.length > 0 && article[0].tiendaNubeId !== null) {
+      for (let variant of variantProducts) {
+        const article = await historiesCollection.find({
+          'doc._id': new ObjectId(variant.doc.articleChild.toString()),
+        }).toArray();
+        if (article.length > 0 && article[0].doc.tiendaNubeId !== null) {
           await this.tiendaNubeService.deleteVariant(
             token,
             userID,
             foundArticle.tiendaNubeId,
-            article[0].tiendaNubeId
+            article[0].doc.tiendaNubeId
           )
-          await foundCollection.updateOne(
-            { _id: article[0]._id },
+
+         await historiesCollection.updateOne(
+            { 'doc._id': article[0].doc._id },
             {
               $set: {
-                operationType: 'D',
-                tiendaNubeId: null,
+                'doc.tiendaNubeId': null,
               },
             },
           );
