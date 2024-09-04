@@ -467,18 +467,93 @@ export default class ArticleUC {
 
 			await this.createMake(data)
 			await this.createCategoryExel(data)
+			await this.createVariantTypesExel(data)
+			await this.createVariantValuesExel(data)
+
 			const makesObj = await this.getMake()
 			const categoryObj = await this.getCategory()
 			const printerObj = await this.getPrinters()
 			const unitOfMeasurementObj = await this.getUnitOfMeasurement()
+			const variantType = await this.getVariantType()
+			const variantValue = await this.getVariantValue()
+
+			const count = data.reduce((acc, item) => {
+				acc[item.column2] = (acc[item.column2] || 0) + 1;
+				return acc;
+			}, {});
+
+			// Filtrar los objetos que tienen valores duplicados en column2
+			const items = data.filter(item => count[item.column2] > 1);
+
+			if (items.length) {
+				let newArticle: Article = ArticleSchema.getInstance(this.database);
+				const values = [];
+			
+				for (const item of items) {
+					if (item.column29 !== '' && item.column30 !== '') {
+						const calculatedSalePrice = await this.calculateSalePrice(item.column12, item.column14, item.column15, item.column13);
+						values.push({ 
+							type: variantType[item.column29], 
+							value: variantValue[item.column30],
+							basePrice: calculatedSalePrice.basePrice,
+							taxes: calculatedSalePrice.tax,
+							costPrice: calculatedSalePrice.costPrice,
+							markupPercentage: calculatedSalePrice.markupPercentage,
+							markupPrice: calculatedSalePrice.markupPrice,
+							salePrice: calculatedSalePrice.salePrice,
+							// basePrice: number,
+							// salePrice: number,
+							weight: item.column16,
+							width: item.column17,
+							height: item.column18,
+							depth: item.column19,
+						//	articleId: string,
+						});
+					}
+				}
+
+				if (values.length > 0) {
+					newArticle = Object.assign(newArticle, {
+						order: items[0].column1,
+						code: items[0].column2,
+						barcode: items[0].column3,
+						make: makesObj[items[0].column4]?._id,
+						category: categoryObj[items[0].column6 === '' ? items[0].column5 : items[0].column6]?._id,
+						description: items[0].column7,
+						posDescription: items[0].column8.substring(0, 20),
+						unitOfMeasurement: unitOfMeasurementObj[items[0].column9]?._id,
+						printIn: printerObj[items[0].column10]?.name,
+						observation: items[0].column11,
+						weight: items[0].column16,
+						width: items[0].column17,
+						height: items[0].column18,
+						depth: items[0].column19,
+						allowPurchase: items[0].column20 === 'Si',
+						allowSale: items[0].column21 === 'Si',
+						allowStock: items[0].column22 === 'Si',
+						allowSaleWithoutStock: items[0].column23 === 'Si',
+						isWeigth: items[0].column24 === 'Si',
+						allowMeasure: items[0].column25 === 'Si',
+						posKitchen: items[0].column26 === 'Si',
+						m3: items[0].column27,
+						variants: values, 
+						codeProvider: items[0].column28
+					});
+			
+					const result = await new ArticleController(this.database).save(newArticle);
+
+
+				}
+			}
 
 			for (const item of data) {
 				const calculatedSalePrice = await this.calculateSalePrice(item.column12, item.column14, item.column15, item.column13);
-				
+
 				if (item.column2 === '') {
 					return reject(new Responser(500, null, "En el archivo Excel, hay códigos de productos que están incompletos."))
 				}
 				let code = item.column2;
+
 				if (articlesObj[code]) {
 					const article = articlesObj[code]
 					const result = await new ArticleController(this.database).update(
@@ -496,7 +571,7 @@ export default class ArticleUC {
 							observation: item.column11 === "" ? article.observation : item.column11,
 							basePrice: calculatedSalePrice.basePrice,
 							taxes: calculatedSalePrice.tax,
-							costPrice:calculatedSalePrice.costPrice,
+							costPrice: calculatedSalePrice.costPrice,
 							markupPercentage: calculatedSalePrice.markupPercentage,
 							markupPrice: calculatedSalePrice.markupPrice,
 							salePrice: calculatedSalePrice.salePrice,
@@ -527,6 +602,7 @@ export default class ArticleUC {
 						}
 					}
 				} else {
+
 					let newArticle: Article = ArticleSchema.getInstance(this.database)
 					newArticle = Object.assign(newArticle, {
 						order: item.column1,
@@ -541,7 +617,7 @@ export default class ArticleUC {
 						observation: item.column11,
 						basePrice: calculatedSalePrice.basePrice,
 						taxes: calculatedSalePrice.tax,
-						costPrice:calculatedSalePrice.costPrice,
+						costPrice: calculatedSalePrice.costPrice,
 						markupPercentage: calculatedSalePrice.markupPercentage,
 						markupPrice: calculatedSalePrice.markupPrice,
 						salePrice: calculatedSalePrice.salePrice,
@@ -1190,6 +1266,76 @@ export default class ArticleUC {
 		return 200;
 	}
 
+	async createVariantTypesExel(data: any) {
+		const variantTypeObj: any = {};
+		const variantType = await new VariantTypeController(this.database).getAll({
+			project: {
+				name: 1,
+				operationType: 1,
+			},
+			match: {
+				name: { $exists: true, $ne: null },
+				operationType: { $ne: 'D' },
+			}
+		});
+
+		variantType.result.forEach((item: any) => {
+			if (item.name) {
+				variantTypeObj[item.name] = item;
+			}
+		});
+
+		for (const item of data) {
+			let name = item.column29
+		
+			if (!variantTypeObj[name]) {
+				if (name) {
+					let variantType: VariantType = VariantTypeSchema.getInstance(this.database)
+					variantType = Object.assign(variantType, {
+						name: name
+					})
+				    await new VariantTypeController(this.database).save(variantType);
+					variantTypeObj[name] = variantType
+				}
+			}
+		}
+		return 200
+	}
+
+	async createVariantValuesExel(data: any) {
+		const variantValueObj: any = {};
+		const variantValue = await new VariantValueController(this.database).getAll({
+			project: {
+				description: 1
+			},
+			match: {
+				description: { $exists: true, $ne: null }
+			}
+		});
+
+		variantValue.result.forEach((item: any) => {
+			if (item.description) {
+				variantValueObj[item.description] = item;
+			}
+		});
+		const variantType = await this.getVariantType();
+		for (const item of data) {
+			let description = item.column30
+			if (!variantValueObj[description]) {
+				if (description) {
+					let variantValue: VariantValue = VariantValueSchema.getInstance(this.database)
+					variantValue = Object.assign(variantValue, {
+						type: variantType[item.column29],
+						description: description
+					})
+					await new VariantValueController(this.database).save(variantValue);
+					variantValueObj[description] = variantValue
+				}
+			}
+		}
+		return 200
+	}
+
 	async createVariantValues(data: any) {
 		const varinatValuesObj: any = {};
 		const VariantValues = await new VariantValueController(this.database).getAll({
@@ -1408,7 +1554,7 @@ export default class ArticleUC {
 			price.tax[0].percentage = percentage;
 			price.tax[0].taxAmount = (price.basePrice * percentage) / 100;
 			price.tax[0].taxBase = price.basePrice;
-			price.costPrice = price.tax[0].taxAmount + price.basePrice 
+			price.costPrice = price.tax[0].taxAmount + price.basePrice
 			price.markupPrice = (price.costPrice * price.markupPercentage) / 100
 			price.salePrice = Number((price.costPrice + price.markupPrice).toFixed(2))
 
@@ -1419,7 +1565,7 @@ export default class ArticleUC {
 			price.tax[0].percentage = percentage;
 			price.tax[0].taxAmount = (price.basePrice * percentage) / 100;
 			price.tax[0].taxBase = price.basePrice;
-			price.costPrice = price.tax[0].taxAmount + price.basePrice 
+			price.costPrice = price.tax[0].taxAmount + price.basePrice
 			price.markupPrice = (price.costPrice * price.markupPercentage) / 100
 			price.salePrice = Number(salePrice)
 
@@ -1430,12 +1576,12 @@ export default class ArticleUC {
 			price.tax[0].percentage = percentage;
 			price.tax[0].taxAmount = (price.basePrice * percentage) / 100;
 			price.tax[0].taxBase = price.basePrice;
-			price.costPrice = price.tax[0].taxAmount + price.basePrice 
+			price.costPrice = price.tax[0].taxAmount + price.basePrice
 			price.markupPrice = price.salePrice - price.costPrice
 			price.markupPercentage = Number(
 				(price.markupPrice / price.costPrice) * 100,
 			)
-		
+
 		} else {
 			price.basePrice = Number(basePrice);
 			price.markupPercentage = 100
@@ -1443,7 +1589,7 @@ export default class ArticleUC {
 			price.tax[0].percentage = percentage;
 			price.tax[0].taxAmount = (price.basePrice * percentage) / 100;
 			price.tax[0].taxBase = price.basePrice;
-			price.costPrice = price.tax[0].taxAmount + price.basePrice 
+			price.costPrice = price.tax[0].taxAmount + price.basePrice
 			price.markupPrice = (price.costPrice * price.markupPercentage) / 100
 			price.salePrice = Number(salePrice);
 
@@ -1451,7 +1597,6 @@ export default class ArticleUC {
 
 		return price;
 	}
-
 
 	async lastArticle() {
 		const config = await new ConfigController(this.database).getAll({
