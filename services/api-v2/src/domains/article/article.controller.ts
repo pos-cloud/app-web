@@ -378,8 +378,9 @@ export default class ArticleController extends Controller {
       this.initConnectionDB(request.database)
       this.userAudit = request.user
       const article = request.body
+      this.authToken = request.headers.authorization;
       const { id } = request.params
-  
+      
       const articleOld = await this.getById(id)
       
       const { result } = await this.update(id, new this.model({ ...article }))
@@ -387,8 +388,8 @@ export default class ArticleController extends Controller {
         return response.send(new Responser(404, null, 'Error al actualizar el artículo', null))
       }
 
-      let variants = await new VariantUC(this.database).updateVariant(result._id, article.variants, articleOld.result)
-
+      let variants = await new VariantUC(this.database).updateVariant(result._id, article.variants, articleOld.result, this.authToken)
+    
       if (article.applications.some((application: Application) => application.type === ApplicationType.TiendaNube)) {
         if (article.type === Type.Final) {
           await new TiendaNubeController().updateArticleTiendaNube(result._id, request.headers.authorization)
@@ -450,4 +451,5 @@ export default class ArticleController extends Controller {
       console.log(error)
     }
   }
+
 }

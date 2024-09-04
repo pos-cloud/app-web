@@ -10,13 +10,15 @@ import {
   Put,
 } from '@nestjs/common';
 import { ProductsService } from '../services/products.service';
-import { CreateProductDto } from '../dto/create-product.dto';
-import { UpdateProductDto } from '../dto/update-product.dto';
+import { TiendaNubeService } from '../../../services/tienda-nube/services/tienda-nube.service'
 import CustomRequest from 'src/common/interfaces/request.interface';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(
+     private readonly productsService: ProductsService,
+     private  readonly tiendaNubeService: TiendaNubeService
+    ) {}
 
   @Post()
   create(
@@ -58,6 +60,15 @@ export class ProductsController {
   ) {
     console.log(tiendaNubeIds)
     return this.productsService.massiveUpdate(request.database, tiendaNubeIds);
+  }
+
+  @Delete('variant')
+  removeVariants(
+    @Body('productTn') productTn: string,
+    @Body('variantTn') variantTn: string,
+    @Request() request: CustomRequest,
+  ){
+    return this.productsService.removeVariant(request.database, productTn, variantTn)
   }
 
   @Delete(':tiendaNubeId')

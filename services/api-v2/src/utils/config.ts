@@ -12,5 +12,5 @@ export default {
   API_URL_FE_AR: process.env.API_URL_FE_AR || 'http://localhost:307',
   PORT: process.env.PORT || 308,
   API_STORAGE: process.env.API_STORAGE || 'https://api-storage.us-3.evennode.com',
-  TIENDANUBE_URL: process.env.TIENDANUBE_URL || `https://api-tiendanube.poscloud.ar`
+  TIENDANUBE_URL: process.env.TIENDANUBE_URL || 'http://localhost:305'
 }

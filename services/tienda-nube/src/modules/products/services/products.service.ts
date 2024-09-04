@@ -427,28 +427,28 @@ export class ProductsService {
       }).toArray();
 
 
-      for (let variant of variantProducts) {
-        const article = await historiesCollection.find({
-          'doc._id': new ObjectId(variant.doc.articleChild.toString()),
-        }).toArray();
-        if (article.length > 0 && article[0].doc.tiendaNubeId !== null) {
-          await this.tiendaNubeService.deleteVariant(
-            token,
-            userID,
-            foundArticle.tiendaNubeId,
-            article[0].doc.tiendaNubeId
-          )
+      // for (let variant of variantProducts) {
+      //   const article = await historiesCollection.find({
+      //     'doc._id': new ObjectId(variant.doc.articleChild.toString()),
+      //   }).toArray();
+      //   if (article.length > 0 && article[0].doc.tiendaNubeId !== null) {
+      //     await this.tiendaNubeService.deleteVariant(
+      //       token,
+      //       userID,
+      //       foundArticle.tiendaNubeId,
+      //       article[0].doc.tiendaNubeId
+      //     )
 
-         await historiesCollection.updateOne(
-            { 'doc._id': article[0].doc._id },
-            {
-              $set: {
-                'doc.tiendaNubeId': null,
-              },
-            },
-          );
-        }
-      }
+      //    await historiesCollection.updateOne(
+      //       { 'doc._id': article[0].doc._id },
+      //       {
+      //         $set: {
+      //           'doc.tiendaNubeId': null,
+      //         },
+      //       },
+      //     );
+      //   }
+      // }
 
       if (foundArticle.containsVariants) {
         for (let variant of dataVarinat) {
@@ -459,9 +459,9 @@ export class ProductsService {
             );
             const stockFound = await stockCollection.findOne({
               operationType: { $ne: 'D' },
-              article: new ObjectId(variant.articleChild ),
+              article: new ObjectId(variant.articleChild),
             });
-            
+
             await this.tiendaNubeService.updateVarinat(
               token,
               userID,
@@ -473,10 +473,10 @@ export class ProductsService {
                     ? stockFound.realStock
                     : 0)
                   : null,
-                price: variant.articleChildInfo.salePrice ,
+                price: variant.articleChildInfo.salePrice,
                 sku: variant.articleChildInfo.barcode || null,
                 weight: variant.articleChildInfo.weight || null,
-                width:  variant.articleChildInfo.width || null,
+                width: variant.articleChildInfo.width || null,
                 height: variant.articleChildInfo.height || null,
                 depth: variant.articleChildInfo.depth || null,
               },
@@ -538,7 +538,7 @@ export class ProductsService {
               },
             );
           }
-         }
+        }
 
       } else {
         const stockCollection = await this.poolDatabase.getCollection(
@@ -611,7 +611,7 @@ export class ProductsService {
       }
       await this.poolDatabase.initConnection(database);
 
-      const foundCollection =await this.poolDatabase.getCollection('articles',database);
+      const foundCollection = await this.poolDatabase.getCollection('articles', database);
 
       const data = await foundCollection
         .find({ tiendaNubeId: { $in: products } })
@@ -652,7 +652,7 @@ export class ProductsService {
       if (!tiendaNubeId) {
         throw new BadRequestException(`ID not found`);
       }
-      await this.poolDatabase.getArticleByTiendaNube(tiendaNubeId,database);
+      await this.poolDatabase.getArticleByTiendaNube(tiendaNubeId, database);
 
       const result = await this.tiendaNubeService.removeProduct(
         tiendaNubeId,
@@ -667,6 +667,29 @@ export class ProductsService {
       }
 
       return result;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async removeVariant(database: string, productTn, variantTn) {
+    try {
+      if (!database) {
+        throw new BadRequestException(`Database is required `);
+      }
+
+      await this.poolDatabase.initConnection(database);
+      const { token, userID } = await this.poolDatabase.getCredentialsTiendaNube(database);
+      if (!productTn || !variantTn) {
+        throw new BadRequestException(`ID not found`);
+      }
+
+      const result = await this.tiendaNubeService.deleteVariant(token, userID, productTn, variantTn)
+
+      if (!result) {
+        return 'Error al eliminar el producto';
+      }
+      return result
     } catch (err) {
       throw err;
     }

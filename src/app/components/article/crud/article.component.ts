@@ -821,60 +821,69 @@ export class ArticleComponent implements OnInit {
   }
 
   public deleteVariant(v) {
+    // Verifica si solo hay un tipo con un valor en variantsByTypes
+    if (this.variantsByTypes.length === 1 && this.variantsByTypes[0].value.length === 1 && this.operation !== 'add' ) {
+        this.showToast(null, 'info', "No se puede eliminar la única variante restante.");
+        return; // Sal del método si no se puede eliminar
+    }
+
+    // Procede con la eliminación
     let countvt: number = 0;
     for (let vt of this.variantsByTypes) {
-      let typeId = v.type;
-      if (v.type && v.type._id) {
-        typeId = v.type._id;
-      }
-      if (vt.type._id === typeId) {
-        let countval: number = 0;
-        let delval: number = -1;
-        for (let val of vt.value) {
-          if (val._id == v._id) {
-            delval = countval;
-          }
-          countval++;
+        let typeId = v.type;
+        if (v.type && v.type._id) {
+            typeId = v.type._id;
         }
-        if (delval !== -1) {
-          vt.value.splice(delval, 1);
+        if (vt.type._id === typeId) {
+            let countval: number = 0;
+            let delval: number = -1;
+            for (let val of vt.value) {
+                if (val._id == v._id) {
+                    delval = countval;
+                }
+                countval++;
+            }
+            if (delval !== -1) {
+                vt.value.splice(delval, 1);
+            }
+            if (vt.value.length === 0) {
+                this.variantsByTypes.splice(countvt, 1);
+            }
         }
-        if (vt.value.length === 0) {
-          this.variantsByTypes.splice(countvt, 1);
-        }
-      }
-      countvt++;
+        countvt++;
     }
 
     if (this.variants && this.variants.length > 0) {
-      let countvar: number = 0;
-      let delvar: number = -1;
-      for (let variantAux of this.variants) {
-        if (variantAux.value._id === v._id) {
-          delvar = countvar;
+        let countvar: number = 0;
+        let delvar: number = -1;
+        for (let variantAux of this.variants) {
+            if (variantAux.value._id === v._id) {
+                delvar = countvar;
+            }
+            countvar++;
         }
-        countvar++;
-      }
-      if (delvar !== -1) {
-        this.variants.splice(delvar, 1);
-      }
+        if (delvar !== -1) {
+            this.variants.splice(delvar, 1);
+        }
     }
 
     // Eliminar la variante del FormArray
     this.deleteVariantFromFormArray(v);
-  }
+}
 
-  private deleteVariantFromFormArray(variant): void {
+private deleteVariantFromFormArray(variant): void {
     const variantsArray = this.articleForm.get('variants') as FormArray;
+    
     for (let i = 0; i < variantsArray.length; i++) {
-      const variantGroup = variantsArray.at(i) as FormGroup;
-      const variantId = typeof variantGroup.value.value === 'string' ? variantGroup.value.value : variantGroup.value.value._id
-      if (variantId === variant._id) {
-        variantsArray.removeAt(i);
-        break;
-      }
+        const variantGroup = variantsArray.at(i) as FormGroup;
+        const variantId = typeof variantGroup.value.value === 'string' ? variantGroup.value.value : variantGroup.value.value._id
+        if (variantId === variant._id) {
+            variantsArray.removeAt(i);
+            break;
+        }
     }
-  }
+}
+
 
   public getVariantValues(): void {
 

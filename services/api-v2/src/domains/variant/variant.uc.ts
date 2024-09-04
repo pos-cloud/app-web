@@ -9,6 +9,9 @@ import VariantSchema from '../variant/variant.model'
 import VariantTypeController from "../variant-type/variant-type.controller"
 import VariantValueController from "../variant-value/variant-value.controller"
 import Article from "../article/article.interface"
+import ApplicationController from "../application/application.controller"
+import Application, { ApplicationType } from "../application/application.interface"
+import config from "../../utils/config"
 
 export default class VariantUC extends Controller {
     database: string
@@ -28,7 +31,7 @@ export default class VariantUC extends Controller {
         try {
             const articleController = new ArticleController(this.database);
             const articleResponse = await articleController.getById(articleParentId);
-    
+
             if (!articleResponse.result) {
                 throw new Error(`No se encontró el artículo padre con ID ${articleParentId}`);
             }
@@ -114,29 +117,51 @@ export default class VariantUC extends Controller {
         }
     };
 
-    updateVariant = async (articleParentId: string, variants: Variant[], articleOld: Article) => {
+    updateVariant = async (articleParentId: string, variants: Variant[], articleOld: Article, token: string) => {
         try {
             const articleController = new ArticleController(this.database);
             const variantController = new VariantController(this.database);
             const variantTypeController = new VariantTypeController(this.database);
             const variantValueController = new VariantValueController(this.database);
+            const application: Application[] = await new ApplicationController(this.database).find({ type: ApplicationType.TiendaNube }, {})
+            this.authToken = token
 
-            if (!variants.length) {
-                let variant = await variantController.find({ articleParent: articleParentId }, {})
-
-                const articleChildIds = variant.map((variant: Variant) => ({ $oid: variant.articleChild }));
-
-                await articleController.deleteMany({ _id: { $in: articleChildIds } })
-                await variantController.deleteMany({ articleParent: { $oid: articleParentId } })
-                return
-            }
-
-            // Obtener el artículo padre
             const articleResponse = await articleController.getById(articleParentId);
             if (!articleResponse.result) {
                 throw new Error(`No se encontró el artículo padre con ID ${articleParentId}`);
             }
             const article = articleResponse.result.toObject();
+
+            if (!variants.length) {
+                let variant = await variantController.find({ articleParent: articleParentId }, {})
+
+                const articleChildIds = variant.map((variant: Variant) => ({ $oid: variant.articleChild }));
+                let articleChild = await articleController.getAll({
+                    project: {
+                        _id: 1,
+                        tiendaNubeId: 1
+                    },
+                    match: {
+                        _id: { $in: articleChildIds }
+                    }
+                })
+                for (let child of articleChild.result) {
+                    if (application.length && application[0].tiendaNube.token && application[0].tiendaNube.userId && article.tiendaNubeId && child.tiendaNubeId) {
+                      await axios.delete(`${config.TIENDANUBE_URL}/products/variant`, {
+                            headers: {
+                                Authorization: this.authToken
+                            },
+                            data: {
+                                productTn: article.tiendaNubeId,
+                                variantTn: child.tiendaNubeId
+                            }
+                        })
+                    }
+                }
+                await articleController.deleteMany({ _id: { $in: articleChildIds } })
+                await variantController.deleteMany({ articleParent: { $oid: articleParentId } })
+                return
+            }
 
             // Obtener detalles completos de los tipos y valores si solo se pasan los IDs
             const completeVariants = await this.getAllVariants(variants, variantTypeController, variantValueController);
@@ -154,7 +179,7 @@ export default class VariantUC extends Controller {
             const results = await this.createOrUpdateChildren(combinations, article, completeVariants, articleParentId, articleController, variantController, existingChildren, articleOld);
 
             // Eliminar artículos hijos que no están en las nuevas combinaciones
-            await this.deleteInvalidChildren(combinations, existingChildren, article, articleController, articleOld);
+            await this.deleteInvalidChildren(combinations, existingChildren, article, articleController, articleOld, application);
             await Promise.all(results);
 
             return results;
@@ -271,14 +296,14 @@ export default class VariantUC extends Controller {
                 if (existingChild) {
 
                     if (article.updateVariants) {
-                        let updatedChild = { ...article, description: description, type: 'Variante', picture: existingChild.picture, pictures: existingChild.pictures, tiendaNubeId: existingChild.tiendaNubeId};
+                        let updatedChild = { ...article, description: description, type: 'Variante', picture: existingChild.picture, pictures: existingChild.pictures, tiendaNubeId: existingChild.tiendaNubeId };
                         results.push(await articleController.update(existingChild._id, updatedChild));
                     } else {
                         let updatedChild = { description: description, type: 'Variante' };
                         results.push(await articleController.update(existingChild._id, updatedChild));
                     }
                 } else {
-            
+
                     // Crear un nuevo artículo hijo
                     let child = { ...article, description: description, type: 'Variante' };
                     delete child._id;
@@ -319,7 +344,7 @@ export default class VariantUC extends Controller {
         }
     };
 
-    deleteInvalidChildren = async (combinations: any, existingChildren: any, article: Article, articleController: any, articleOld: Article) => {
+    deleteInvalidChildren = async (combinations: any, existingChildren: any, article: Article, articleController: any, articleOld: Article, applications: Application[]) => {
         try {
             let updatedChildrens = []
             if (article.description !== articleOld.description) {
@@ -351,12 +376,24 @@ export default class VariantUC extends Controller {
                         }
                     })
                     for (let variant of variants.result) {
+                        if (applications.length && applications[0].tiendaNube.token && applications[0].tiendaNube.userId && article.tiendaNubeId && child.tiendaNubeId) {
+                            await axios.delete(`${config.TIENDANUBE_URL}/products/variant`, {
+                                headers: {
+                                    Authorization: this.authToken
+                                },
+                                data: {
+                                    productTn: article.tiendaNubeId,
+                                    variantTn: child.tiendaNubeId
+                                }
+                            })
+                        }
                         await new VariantController(this.database).delete(variant._id)
                         await articleController.delete(child._id);
                     }
                 }
             }
         } catch (error) {
+            console.log(error)
             throw new Error(`Error al elimina el producto`);
         }
     }
