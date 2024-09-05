@@ -1419,7 +1419,7 @@ private deleteVariantFromFormArray(variant): void {
 
       this.article = Object.assign(this.article, this.articleForm.value);
       
-      if (this.article.make.toString() === '') {
+      if (this?.article?.make?.toString() === '') {
         this.article.make = null;
       }
       if (this.article.category && this.article.category.toString() === '')
